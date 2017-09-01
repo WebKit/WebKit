@@ -31,6 +31,19 @@ function doPrep(code)
     return prepare("<test>", 0, code);
 }
 
+function doLex(code)
+{
+    let lexer = new Lexer("<test>", 0, code);
+    var result = [];
+    for (;;) {
+        let next = lexer.next();
+        if (!next)
+            return result;
+        result.push(next);
+    }
+    return result;
+}
+
 function makeInt(program, value)
 {
     return TypedValue.box(program.intrinsics.int32, value);
@@ -42,6 +55,15 @@ function checkInt(program, result, expected)
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
+}
+function checkLexerToken(result, expectedIndex, expectedKind, expectedText)
+{
+    if (result._index != expectedIndex)
+        throw new Error("Wrong lexer index; result: " + result._index + " (expected " + expectedIndex + ")");
+    if (result._kind != expectedKind)
+        throw new Error("Wrong lexer kind; result: " + result._kind + " (expected " + expectedKind + ")");
+    if (result._text != expectedText)
+        throw new Error("Wrong lexer text; result: " + result._text + " (expected " + expectedText + ")");
 }
 
 function checkFail(callback, predicate)
@@ -312,6 +334,26 @@ function TEST_badAdd()
             }
         `),
         (e) => e instanceof WTypeError && e.message.indexOf("native int32 operator+<>(int32,int32)") != -1);
+}
+
+function TEST_lexerKeyword()
+{
+    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3");
+    if (result.length != 13)
+        throw new Error("Lexer emitted an incorrect number of tokens (expected 12): " + result.length);
+    checkLexerToken(result[0],  0,  "identifier", "ident");
+    checkLexerToken(result[1],  6,  "keyword",     "for");
+    checkLexerToken(result[2],  10, "keyword",     "while");
+    checkLexerToken(result[3],  16, "intLiteral",  "123");
+    checkLexerToken(result[4],  20, "uintLiteral", "123u");
+    checkLexerToken(result[5],  25, "punctuation", "{");
+    checkLexerToken(result[6],  27, "punctuation", "}");
+    checkLexerToken(result[7],  29, "punctuation", "{");
+    checkLexerToken(result[8],  30, "identifier",  "asd");
+    checkLexerToken(result[9],  34, "identifier",  "asd");
+    checkLexerToken(result[10], 37, "punctuation", "{");
+    checkLexerToken(result[11], 39, "intLiteral",  "1");
+    checkLexerToken(result[12], 40, "identifier",  "a3");
 }
 
 let before = preciseTime();

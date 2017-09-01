@@ -1,3 +1,20 @@
+2017-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL's lexer will never emit keyword tokens
+        https://bugs.webkit.org/show_bug.cgi?id=176248
+
+        Reviewed by Filip Pizlo.
+
+        Because all tokens are also identified as idents, we need to handle them together.
+
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/Test.js:
+        (doLex):
+        (checkLexerToken):
+        (TEST_lexerKeyword):
+
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
         Rename WebKit2 API tests after directory rename

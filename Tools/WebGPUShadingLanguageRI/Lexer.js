@@ -102,8 +102,11 @@ class Lexer {
             return null;
         
         // FIXME: Make this do Unicode.
-        if (/^[^\d\W]\w*/.test(relevantText))
+        if (/^[^\d\W]\w*/.test(relevantText)) {
+            if (["struct", "protocol", "typedef", "if", "else", "enum", "continue", "break", "switch", "case", "default", "for", "while", "do", "return", "sizeof", "constant", "device", "threadgroup", "thread", "operator", "null"].includes(RegExp.lastMatch))
+                return result("keyword");
             return result("identifier");
+        }
 
         if (/^[0-9]+u/.test(relevantText))
             return result("uintLiteral");
@@ -114,9 +117,6 @@ class Lexer {
         // FIXME: Make this handle exp-form literals like 1e1.
         if (/^([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)/.test(relevantText))
             return result("doubleLiteral");
-        
-        if (/^(struct|protocol|typedef|if|else|enum|continue|break|switch|case|default|for|while|do|return|sizeof|constant|device|threadgroup|thread|operator|null)/.test(relevantText))
-            return result("keyword");
         
         if (/^([{}()\[\]?:=+*\/,.%!~^&|<>\\;-]|->|=>|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=)/.test(relevantText))
             return result("punctuation");
