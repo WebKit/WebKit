@@ -44,6 +44,10 @@
 #include <CoreGraphics/CGFontCache.h>
 #include <CoreGraphics/CoreGraphicsPrivate.h>
 
+#if PLATFORM(COCOA)
+#include <CoreGraphics/CGSNotifier.h>
+#endif
+
 #else
 
 struct CGFontHMetrics {

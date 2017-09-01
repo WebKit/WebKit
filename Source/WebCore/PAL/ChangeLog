@@ -1,5 +1,11 @@
 2017-09-01  Andy Estes  <aestes@apple.com>
 
+        Try to fix the Internal iOS Simulator build after r221485.
+
+        * pal/spi/cg/CoreGraphicsSPI.h:
+
+2017-09-01  Andy Estes  <aestes@apple.com>
+
         [CG] Upstream CoreGraphics-related WebKitSystemInterface functions
         https://bugs.webkit.org/show_bug.cgi?id=176200
 
