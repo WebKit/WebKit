@@ -107,7 +107,6 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
-    m_delegateMethods.webViewIsPlayingMediaDidChange = [delegate respondsToSelector:@selector(_webView:isPlayingMediaDidChange:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAutoFillButtonWithUserInfo:)];
     m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
@@ -464,18 +463,6 @@ void UIDelegate::UIClient::didNotHandleWheelEvent(WebKit::WebPageProxy*, const W
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didNotHandleWheelEvent:event.nativeEvent()];
-}
-
-void UIDelegate::UIClient::isPlayingMediaDidChange(WebKit::WebPageProxy&, bool isPlaying)
-{
-    if (!m_uiDelegate.m_delegateMethods.webViewIsPlayingMediaDidChange)
-        return;
-    
-    auto delegate = m_uiDelegate.m_delegate.get();
-    if (!delegate)
-        return;
-    
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView isPlayingMediaDidChange:isPlaying];
 }
 
 static _WKAutoplayEventFlags toWKAutoplayEventFlags(OptionSet<WebCore::AutoplayEventFlags> flags)

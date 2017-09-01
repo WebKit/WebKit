@@ -344,6 +344,8 @@ public:
     virtual void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) = 0;
 
     virtual void didChangeBackgroundColor() = 0;
+    virtual void isPlayingAudioWillChange() = 0;
+    virtual void isPlayingAudioDidChange() = 0;
 
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;

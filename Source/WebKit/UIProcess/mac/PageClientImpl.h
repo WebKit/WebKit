@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClientImpl_h
-#define PageClientImpl_h
+#pragma once
 
 #if PLATFORM(MAC)
 
@@ -90,6 +89,8 @@ private:
     void setCursor(const WebCore::Cursor&) override;
     void setCursorHiddenUntilMouseMoves(bool) override;
     void didChangeViewportProperties(const WebCore::ViewportAttributes&) override;
+    void isPlayingAudioWillChange() final;
+    void isPlayingAudioDidChange() final;
 
     void registerEditCommand(Ref<WebEditCommandProxy>&&, WebPageProxy::UndoOrRedo) override;
     void clearAllEditCommands() override;
@@ -258,5 +259,3 @@ private:
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
-
-#endif // PageClientImpl_h

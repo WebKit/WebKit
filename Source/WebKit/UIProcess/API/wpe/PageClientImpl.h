@@ -105,6 +105,8 @@ private:
     void didSameDocumentNavigationForMainFrame(SameDocumentNavigationType) override;
 
     void didChangeBackgroundColor() override;
+    void isPlayingAudioWillChange() final { }
+    void isPlayingAudioDidChange() final { }
 
     void refView() override;
     void derefView() override;

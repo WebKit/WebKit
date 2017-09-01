@@ -194,6 +194,8 @@ private:
     void derefView() override;
 
     void didRestoreScrollPosition() override;
+    void isPlayingAudioWillChange() final;
+    void isPlayingAudioDidChange() final;
 
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() override;
 

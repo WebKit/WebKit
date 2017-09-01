@@ -100,7 +100,6 @@ private:
         void takeFocus(WebPageProxy*, WKFocusDirection) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
-        void isPlayingMediaDidChange(WebKit::WebPageProxy&, bool) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
@@ -151,7 +150,6 @@ private:
         bool unfocusWebView : 1;
         bool webViewTakeFocus : 1;
         bool webViewDidNotHandleWheelEvent : 1;
-        bool webViewIsPlayingMediaDidChange : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
         bool webViewDidClickAutoFillButtonWithUserInfo : 1;
         bool webViewDidExceedBackgroundResourceLimitWhileInForeground : 1;

@@ -252,6 +252,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/IconLoadingDelegate.mm
     UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm
     UIProcess/Cocoa/NavigationState.mm
+    UIProcess/Cocoa/PageClientImplCocoa.mm
     UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm
     UIProcess/Cocoa/SessionStateCoding.mm
     UIProcess/Cocoa/UIDelegate.mm

@@ -26,8 +26,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PageClientImpl_h
-#define PageClientImpl_h
+#pragma once
 
 #include "DefaultUndoController.h"
 #include "PageClient.h"
@@ -139,6 +138,8 @@ private:
     void derefView() override;
 
     void didRestoreScrollPosition() override { }
+    void isPlayingAudioWillChange() final { }
+    void isPlayingAudioDidChange() final { }
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
     bool decidePolicyForInstallMissingMediaPluginsPermissionRequest(InstallMissingMediaPluginsPermissionRequest&) override;
@@ -154,5 +155,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PageClientImpl_h

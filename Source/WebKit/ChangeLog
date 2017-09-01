@@ -1,5 +1,43 @@
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Replace WKUIDelegatePrivate's isPlayingMediaDidChange with KVO _isPlayingAudio on WKWebView
+        https://bugs.webkit.org/show_bug.cgi?id=176212
+
+        Reviewed by Tim Horton.
+
+        Dan suggested this in bug 176203, I think it's a good idea,
+        and I'll need to add more KVO properties soon anyways so I'd better learn how.
+        Determining if audio playing changed is important for Safari, so WKPageUIClient's
+        isPlayingAudioDidChange was correctly named but incorrectly fired if either audio
+        or video playing changed and had you check if audio was playing, possibly too often.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::isPlayingMediaDidChange):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _isPlayingAudio]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/API/glib/WebKitUIClient.cpp:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::isPlayingMediaDidChange): Deleted.
+        * UIProcess/Cocoa/WebViewImpl.h:
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::isPlayingAudioWillChange):
+        (WebKit::WebViewImpl::isPlayingAudioDidChange):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::isPlayingMediaDidChange):
+        * UIProcess/mac/PageClientImpl.h:
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::isPlayingAudioDidChange):
+        (WebKit::PageClientImpl::isPlayingAudioWillChange):
+
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Disable ObjC WebGL policy SPI on iOS
         https://bugs.webkit.org/show_bug.cgi?id=176233
 

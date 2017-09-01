@@ -27,24 +27,55 @@
 
 #if WK_API_ENABLED
 
-#if PLATFORM(MAC)
-
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
-#import <Carbon/Carbon.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC)
+#import <Carbon/Carbon.h>
 #import <wtf/mac/AppKitCompatibilityDeclarations.h>
+#endif
+
+static bool done;
+
+@interface AudioObserver : NSObject
+@end
+
+@implementation AudioObserver
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
+{
+    EXPECT_TRUE([keyPath isEqualToString:NSStringFromSelector(@selector(_isPlayingAudio))]);
+    EXPECT_TRUE([[object class] isEqual:[TestWKWebView class]]);
+    EXPECT_FALSE([[change objectForKey:NSKeyValueChangeOldKey] boolValue]);
+    EXPECT_TRUE([[change objectForKey:NSKeyValueChangeNewKey] boolValue]);
+    EXPECT_TRUE(context == nullptr);
+    done = true;
+}
+
+@end
+
+TEST(WebKit2, WKWebViewIsPlayingAudio)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
+    auto observer = adoptNS([[AudioObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"_isPlayingAudio" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [webView synchronouslyLoadTestPageNamed:@"file-with-video"];
+    [webView evaluateJavaScript:@"playVideo()" completionHandler:nil];
+    TestWebKitAPI::Util::run(&done);
+}
+
+#if PLATFORM(MAC)
 
 @class UITestDelegate;
 
 static RetainPtr<WKWebView> webViewFromDelegateCallback;
 static RetainPtr<WKWebView> createdWebView;
 static RetainPtr<UITestDelegate> delegate;
-static bool done;
 
 @interface UITestDelegate : NSObject <WKUIDelegatePrivate, WKURLSchemeHandler>
 @end
@@ -89,29 +120,6 @@ TEST(WebKit2, ShowWebView)
     TestWebKitAPI::Util::run(&done);
     
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
-}
-
-@interface MediaDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation MediaDelegate
-
-- (void)_webView:(WKWebView *)webView isPlayingMediaDidChange:(BOOL)playingMedia
-{
-    ASSERT_TRUE(playingMedia);
-    done = true;
-}
-
-@end
-
-TEST(WebKit2, WKWebViewIsPlayingMedia)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
-    auto delegate = adoptNS([[MediaDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView synchronouslyLoadTestPageNamed:@"file-with-video"];
-    [webView evaluateJavaScript:@"playVideo()" completionHandler:nil];
-    TestWebKitAPI::Util::run(&done);
 }
 
 static bool readyForClick;
