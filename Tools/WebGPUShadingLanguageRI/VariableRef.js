@@ -35,6 +35,8 @@ class VariableRef extends Expression {
     get name() { return this._name; }
     get isConstexpr() { return this.variable.isConstexpr; }
     get unifyNode() { return this.variable.unifyNode; }
+    get isLValue() { return true; }
+    get addressSpace() { return "thread"; }
     
     toString()
     {

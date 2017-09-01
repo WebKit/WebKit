@@ -33,7 +33,7 @@ function callFunction(program, name, typeArguments, argumentList)
         throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")");
     for (let i = 0; i < func.parameters.length; ++i)
         func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, argumentTypes[i].size);
-    let result = new Evaluator(program).runBody(func.body);
-    return new TypedValue(func.returnType, result);
+    let result = new Evaluator(program).runBody(func.returnType, func.body);
+    return new TypedValue(func.returnType.unifyNode, result);
 }
 

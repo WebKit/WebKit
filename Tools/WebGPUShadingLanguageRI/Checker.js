@@ -123,7 +123,8 @@ class Checker extends Visitor {
     
     visitAssignment(node)
     {
-        // FIXME: We need to check that the lhs is assignable.
+        if (!node.lhs.isLValue)
+            throw new WTypeError(node.origin.originString, "LHS of assignment is not an LValue: " + node.lhs);
         let lhsType = node.lhs.visit(this);
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equals(rhsType))
@@ -138,7 +139,18 @@ class Checker extends Visitor {
         if (!type.isPtr)
             throw new WTypeError(node.origin.originString, "Type passed to dereference is not a pointer: " + type);
         node.type = type.elementType;
+        node.addressSpace = type.addressSpace;
         return node.type;
+    }
+    
+    visitMakePtrExpression(node)
+    {
+        if (!node.lValue.isLValue)
+            throw new WTypeError(node.origin.originString, "Operand to \\ is not an LValue: " + node.lValue);
+        
+        let elementType = node.lValue.visit(this).unifyNode;
+        
+        return new PtrType(node.origin, node.lValue.addressSpace, elementType);
     }
     
     visitVariableRef(node)

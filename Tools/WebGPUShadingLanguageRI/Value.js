@@ -27,5 +27,6 @@
 class Value extends Node {
     get kind() { return Value; }
     get isConstexpr() { return false; }
+    get isLValue() { return false; }
 }
 

@@ -24,25 +24,17 @@
  */
 "use strict";
 
-class FunctionLikeBlock extends Value {
-    constructor(origin, returnType, argumentList, parameters, body)
+class MakePtrExpression extends Expression {
+    constructor(origin, lValue)
     {
-        super();
-        this._origin = origin;
-        this._returnType = returnType;
-        this._argumentList = argumentList;
-        this._parameters = parameters;
-        this._body = body;
+        super(origin);
+        this._lValue = lValue;
     }
     
-    get origin() { return this._origin; }
-    get returnType() { return this._returnType; }
-    get argumentList() { return this._argumentList; }
-    get parameters() { return this._parameters; }
-    get body() { return this._body; }
+    get lValue() { return this._lValue; }
     
     toString()
     {
-        return "([&] (" + this.parameters + ") -> " + this.returnType + " { " + this.block + " }(" + this.argumentList + "))";
+        return "\\(" + this.ptr + ")";
     }
 }

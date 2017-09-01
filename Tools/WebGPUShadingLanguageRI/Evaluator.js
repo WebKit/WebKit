@@ -32,7 +32,20 @@ class Evaluator extends Visitor {
         this._program = program;
     }
     
-    runBody(block)
+    // You must snapshot if you use a value in rvalue context. For example, a call expression will
+    // snapshot all of its arguments immedaitely upon executing them. In general, it should not be
+    // possible for a pointer returned from a visit method in rvalue context to live across any effects.
+    _snapshot(type, ptr)
+    {
+        let size = type.size;
+        if (!size)
+            throw new Error("Cannot get size of type: " + type);
+        let result = new EPtr(new EBuffer(size), 0);
+        result.copyFrom(ptr, size);
+        return result;
+    }
+    
+    runBody(type, block)
     {
         try {
             block.visit(this);
@@ -43,7 +56,7 @@ class Evaluator extends Visitor {
             if (e == BreakException || e == ContinueException)
                 throw new Error("Should not see break/continue at function scope");
             if (e instanceof ReturnException)
-                return e.value;
+                return this._snapshot(type, e.value);
             throw e;
         }
     }
@@ -55,7 +68,7 @@ class Evaluator extends Visitor {
                 node.argumentList[i].visit(this),
                 node.parameters[i].type.size);
         }
-        return this.runBody(node.body);
+        return this.runBody(node.returnType, node.body);
     }
     
     visitReturn(node)
@@ -79,17 +92,14 @@ class Evaluator extends Visitor {
         return result;
     }
     
-    _dereference(ptr, type)
-    {
-        let size = type.size;
-        let result = new EPtr(new EBuffer(size), 0);
-        result.copyFrom(ptr.loadValue(), size);
-        return result;
-    }
-    
     visitDereferenceExpression(node)
     {
-        return this._dereference(node.ptr.visit(this), node.type);
+        return node.ptr.visit(this).loadValue();
+    }
+    
+    visitMakePtrExpression(node)
+    {
+        return EPtr.box(node.lValue.visit(this));
     }
     
     visitCommaExpression(node)
@@ -97,6 +107,7 @@ class Evaluator extends Visitor {
         let result;
         for (let expression of node.list)
             result = expression.visit(this);
+        // This should almost snapshot, except that tail-returning a pointer is totally OK.
         return result;
     }
     
@@ -113,12 +124,14 @@ class Evaluator extends Visitor {
     visitCallExpression(node)
     {
         // We evaluate inlined ASTs, so this can only be a native call.
-        let callArguments = node.argumentList.map(argument => {
-            let result = argument.visit(this);
-            if (!result)
-                throw new Error("Null result from " + argument);
-            return result;
-        });
+        let callArguments = [];
+        for (let i = 0; i < node.argumentList.length; ++i) {
+            let argument = node.argumentList[i];
+            let type = node.nativeFuncInstance.parameterTypes[i];
+            if (!type || !argument)
+                throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
+            callArguments.push(this._snapshot(type, argument.visit(this)));
+        }
         return node.func.implementation(callArguments, node);
     }
 }

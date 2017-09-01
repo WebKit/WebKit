@@ -150,6 +150,11 @@ class Rewriter {
         return result;
     }
     
+    visitMakePtrExpression(node)
+    {
+        return new MakePtrExpression(node.origin, node.lValue.visit(this));
+    }
+    
     visitVariableRef(node)
     {
         node.variable = this._getMapping(node.variable);
@@ -178,6 +183,7 @@ class Rewriter {
                 actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
         }
         result.func = node.func;
+        result.nativeFuncInstance = node.nativeFuncInstance;
         return result;
     }
     

@@ -158,6 +158,11 @@ class Visitor {
         node.ptr.visit(this);
     }
     
+    visitMakePtrExpression(node)
+    {
+        node.lValue.visit(this);
+    }
+    
     visitVariableRef(node)
     {
     }
@@ -178,6 +183,11 @@ class Visitor {
             typeArgument.visit(this);
         for (let argument of node.argumentList)
             argument.visit(this);
+        let actualTypeArguments = node.actualTypeArguments;
+        if (actualTypeArguments) {
+            for (let argument of actualTypeArguments)
+                argument.visit(this);
+        }
     }
     
     visitFunctionLikeBlock(node)

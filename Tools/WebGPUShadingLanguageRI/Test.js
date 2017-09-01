@@ -123,6 +123,40 @@ function TEST_simpleDereference()
     checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
 }
 
+function TEST_dereferenceStore()
+{
+    let program = doPrep(`
+        void foo(device int^ p)
+        {
+            ^p = 52;
+        }`);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 13);
+    callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]);
+    if (buffer.get(0) != 52)
+        throw new Error("Expected buffer to contain 52 but it contains: " + buffer.get(0));
+}
+
+function TEST_simpleMakePtr()
+{
+    let program = doPrep(`
+        thread int^ foo()
+        {
+            int x = 42;
+            return \\x;
+        }`);
+    let result = callFunction(program, "foo", [], []);
+    if (!result.type.isPtr)
+        throw new Error("Return type is not a pointer: " + result.type);
+    if (!result.type.elementType.equals(program.intrinsics.int32))
+        throw new Error("Return type is not a pointer to an int: " + result.type);
+    if (!(result.value instanceof EPtr))
+        throw new Error("Return value is not an EPtr: " + result.value);
+    let value = result.value.loadValue();
+    if (value != 42)
+        throw new Error("Expected 42 but got: " + value);
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

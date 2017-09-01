@@ -54,12 +54,27 @@ class FuncInstantiator {
         }
         
         let substitution = Substitution.mapping(func.typeParameters, typeArguments);
-        let resultingFunc = new FuncDef(
-            func.origin, func.name,
-            func.returnType.visit(substitution),
-            [], // We're instantiated so we no longer take type parameters.
-            func.parameters.map(parameter => parameter.visit(substitution)),
-            func.body.visit(substitution));
+        
+        class Instantiate {
+            visitFuncDef(func)
+            {
+                return new FuncDef(
+                    func.origin, func.name,
+                    func.returnType.visit(substitution),
+                    [], // We're instantiated so we no longer take type parameters.
+                    func.parameters.map(parameter => parameter.visit(substitution)),
+                    func.body.visit(substitution));
+            }
+            
+            visitNativeFunc(func)
+            {
+                return new NativeFuncInstance(
+                    func,
+                    func.returnType.visit(substitution),
+                    parameters.map(parameter => parameter.visit(substitution)));
+            }
+        }
+        let resultingFunc = func.visit(new Instantiate());
         let instance = {func: resultingFunc, typeArguments};
         instances.push(instance);
         return resultingFunc;

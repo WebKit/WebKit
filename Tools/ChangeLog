@@ -1,3 +1,70 @@
+2017-08-31  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should support makeptr (\)
+        https://bugs.webkit.org/show_bug.cgi?id=176197
+
+        Reviewed by Saam Barati.
+        
+        This required introducing some sanity about how pointers are carried around in the evaluator.
+        It turns out that we need to be careful about when a pointer to an rvalue is dereferenced. It
+        should be dereferenced basically immediately. If it cannot be, then we need to snapshot the
+        value. To do that, we need to know the types of things in a few more places. That's what this
+        change accomplishes.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/DereferenceExpression.js:
+        (DereferenceExpression.prototype.get isLValue):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype._snapshot):
+        (Evaluator.prototype.runBody):
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype.visitDereferenceExpression):
+        (Evaluator.prototype.visitMakePtrExpression):
+        (Evaluator.prototype.visitCommaExpression):
+        (Evaluator.prototype.visitCallExpression):
+        (Evaluator):
+        (Evaluator.prototype._dereference): Deleted.
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitFuncDef):
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitNativeFunc):
+        (FuncInstantiator.prototype.getUnique.Instantiate):
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/FunctionLikeBlock.js:
+        (FunctionLikeBlock):
+        (FunctionLikeBlock.prototype.get returnType):
+        (FunctionLikeBlock.prototype.toString):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        (Inliner):
+        * WebGPUShadingLanguageRI/MakePtrExpression.js: Added.
+        (MakePtrExpression):
+        (MakePtrExpression.prototype.get lValue):
+        (MakePtrExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js: Added.
+        (NativeFuncInstance):
+        (NativeFuncInstance.prototype.get func):
+        (NativeFuncInstance.prototype.toString):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitMakePtrExpression):
+        (Rewriter.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_dereferenceStore):
+        (TEST_simpleMakePtr):
+        * WebGPUShadingLanguageRI/Value.js:
+        (Value.prototype.get isLValue):
+        (Value):
+        * WebGPUShadingLanguageRI/VariableRef.js:
+        (VariableRef.prototype.get isLValue):
+        (VariableRef.prototype.get addressSpace):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitMakePtrExpression):
+        (Visitor.prototype.visitCallExpression):
+
 2017-08-31  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221445.

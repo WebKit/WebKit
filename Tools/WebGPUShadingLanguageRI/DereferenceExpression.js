@@ -32,6 +32,7 @@ class DereferenceExpression extends Expression {
     }
     
     get ptr() { return this._ptr; }
+    get isLValue() { return true; }
     
     toString()
     {
