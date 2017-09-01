@@ -52,7 +52,7 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    void retrieveCaches(WTF::Function<void()>&&);
+    void retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&&);
     String origin() const;
 
     Vector<Ref<Cache>> m_caches;

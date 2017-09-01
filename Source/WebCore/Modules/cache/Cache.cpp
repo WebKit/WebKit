@@ -55,12 +55,16 @@ Cache::~Cache()
 
 void Cache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    doMatch(WTFMove(info), WTFMove(options), [promise = WTFMove(promise)](FetchResponse* result) mutable {
-        if (!result) {
+    doMatch(WTFMove(info), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<FetchResponse*>&& result) mutable {
+        if (result.hasException()) {
+            promise->reject(result.releaseException());
+            return;
+        }
+        if (!result.returnValue()) {
             promise->resolve();
             return;
         }
-        promise->resolve<IDLInterface<FetchResponse>>(*result);
+        promise->resolve<IDLInterface<FetchResponse>>(*result.returnValue());
     });
 }
 
@@ -76,12 +80,16 @@ void Cache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCallba
     }
     auto request = requestOrException.releaseReturnValue();
 
-    queryCache(request.get(), WTFMove(options), [callback = WTFMove(callback)](const Vector<CacheStorageRecord>& records) mutable {
-        if (records.isEmpty()) {
+    queryCache(request.get(), WTFMove(options), [callback = WTFMove(callback)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
+        if (result.hasException()) {
+            callback(result.releaseException());
+            return;
+        }
+        if (result.returnValue().isEmpty()) {
             callback(nullptr);
             return;
         }
-        callback(records[0].response->cloneForJS().ptr());
+        callback(result.returnValue()[0].response->cloneForJS().ptr());
     });
 }
 
@@ -101,7 +109,11 @@ void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& opti
     }
 
     if (!request) {
-        retrieveRecords([this, promise = WTFMove(promise)]() mutable {
+        retrieveRecords([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+            if (exception) {
+                promise.reject(WTFMove(exception.value()));
+                return;
+            }
             Vector<Ref<FetchResponse>> responses;
             responses.reserveInitialCapacity(m_records.size());
             for (auto& record : m_records)
@@ -110,7 +122,12 @@ void Cache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& opti
         });
         return;
     }
-    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](const Vector<CacheStorageRecord>& records) mutable {
+    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+        auto records = result.releaseReturnValue();
         Vector<Ref<FetchResponse>> responses;
         responses.reserveInitialCapacity(records.size());
         for (auto& record : records)
@@ -361,7 +378,11 @@ void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options,
     }
 
     if (!request) {
-        retrieveRecords([this, promise = WTFMove(promise)]() mutable {
+        retrieveRecords([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+            if (exception) {
+                promise.reject(WTFMove(exception.value()));
+                return;
+            }
             Vector<Ref<FetchRequest>> requests;
             requests.reserveInitialCapacity(m_records.size());
             for (auto& record : m_records)
@@ -371,7 +392,13 @@ void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options,
         return;
     }
 
-    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](const Vector<CacheStorageRecord>& records) mutable {
+    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
+        if (result.hasException()) {
+            promise.reject(result.releaseException());
+            return;
+        }
+
+        auto records = result.releaseReturnValue();
         Vector<Ref<FetchRequest>> requests;
         requests.reserveInitialCapacity(records.size());
         for (auto& record : records)
@@ -380,24 +407,31 @@ void Cache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& options,
     });
 }
 
-void Cache::retrieveRecords(WTF::Function<void()>&& callback)
+void Cache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&& callback)
 {
     setPendingActivity(this);
     m_connection->retrieveRecords(m_identifier, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
         if (!m_isStopped) {
-            // FIXME: We should probably propagate that error up to the promise based operation.
-            ASSERT(result.hasValue());
+            if (!result.hasValue()) {
+                callback(DOMCacheEngine::errorToException(result.error()));
+                return;
+            }
+
             if (result.hasValue())
                 updateRecords(WTFMove(result.value()));
-            callback();
+            callback(std::nullopt);
         }
         unsetPendingActivity(this);
     });
 }
 
-void Cache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(const Vector<CacheStorageRecord>&)>&& callback)
+void Cache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&& callback)
 {
-    retrieveRecords([this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)]() mutable {
+    retrieveRecords([this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](std::optional<Exception>&& exception) mutable {
+        if (exception) {
+            callback(WTFMove(exception.value()));
+            return;
+        }
         callback(queryCacheWithTargetStorage(request.get(), options, m_records));
     });
 }

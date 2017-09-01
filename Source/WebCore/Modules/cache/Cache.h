@@ -56,7 +56,7 @@ public:
     const String& name() const { return m_name; }
     uint64_t identifier() const { return m_identifier; }
 
-    using MatchCallback = WTF::Function<void(FetchResponse*)>;
+    using MatchCallback = WTF::Function<void(ExceptionOr<FetchResponse*>)>;
     void doMatch(RequestInfo&&, CacheQueryOptions&&, MatchCallback&&);
 
 private:
@@ -69,9 +69,9 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
-    void retrieveRecords(WTF::Function<void()>&&);
+    void retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&&);
     Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
-    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(const Vector<CacheStorageRecord>&)>&&);
+    void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&&);
     void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);
     void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
     void batchPutOperation(Vector<DOMCacheEngine::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);

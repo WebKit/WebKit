@@ -1,3 +1,30 @@
+2017-09-01  Youenn Fablet  <youenn@apple.com>
+
+        Reject promises in case of internal CacheStorage engine errors.
+        https://bugs.webkit.org/show_bug.cgi?id=176194
+
+        Reviewed by Alex Christensen.
+
+        No new tests as this covers error cases that should not happen in regular cases.
+        Replacing lambdas that take no parameters to lambdas taking an optional error.
+        Reject promise if an error is found.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::doMatch):
+        (WebCore::Cache::matchAll):
+        (WebCore::Cache::keys):
+        (WebCore::Cache::retrieveRecords):
+        (WebCore::Cache::queryCache):
+        * Modules/cache/Cache.h:
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::match):
+        (WebCore::CacheStorage::has):
+        (WebCore::CacheStorage::retrieveCaches):
+        (WebCore::CacheStorage::open):
+        (WebCore::CacheStorage::remove):
+        (WebCore::CacheStorage::keys):
+        * Modules/cache/CacheStorage.h:
+
 2017-09-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix after r221439.
