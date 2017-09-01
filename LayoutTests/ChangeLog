@@ -1,3 +1,12 @@
+2017-09-01  Matt Lewis  <jlewis3@apple.com>
+
+        Marked webrtc/datachannel/bufferedAmountLowThreshold.html as flaky on Mac WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=172334
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-01  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemEntry.getParent()
