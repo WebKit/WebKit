@@ -69,8 +69,9 @@ def find_latest_release(args):
     try:
         response = urllib2.urlopen(request)
     except urllib2.HTTPError, error:
-        if error.code == 404:
-            return None, None
+        if error.code != 404:
+            print error.code, error.reason
+        return None, None
 
     data = json.loads(response.read())
     for asset in data['assets']:
