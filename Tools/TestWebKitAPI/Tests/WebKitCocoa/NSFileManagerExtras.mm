@@ -40,7 +40,7 @@ static void expectAttributes(NSDictionary *attributes, NSNumber *expectedPermiss
     EXPECT_WK_STREQ(expectedFileType, attributes[NSFileType]);
 }
 
-TEST(WebKit2, _WKNSFileManagerExtras)
+TEST(WebKit, _WKNSFileManagerExtras)
 {
     NSString *fileName = @"test.pdf";
     NSFileManager *fileManager = [NSFileManager defaultManager];

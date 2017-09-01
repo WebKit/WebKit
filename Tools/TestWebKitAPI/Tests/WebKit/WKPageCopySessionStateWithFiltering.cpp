@@ -103,7 +103,7 @@ static void createSessionStates(WKContextRef context)
     sessionStateWithAllItemsRemoved = adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState(webView.page(), reinterpret_cast<void*>(1), filterAllItemsCallback)));
 }
 
-TEST(WebKit2, WKPageCopySessionStateWithFiltering)
+TEST(WebKit, WKPageCopySessionStateWithFiltering)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

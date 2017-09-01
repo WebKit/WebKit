@@ -52,7 +52,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, ReloadBackForward)
+TEST(WebKitLegacy, ReloadBackForward)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<BackForwardListTest> testController = adoptNS([BackForwardListTest new]);

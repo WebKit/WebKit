@@ -67,7 +67,7 @@ static bool testFinished = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, CloseNewWindowInNavigationPolicyDelegate)
+TEST(WebKitLegacy, CloseNewWindowInNavigationPolicyDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

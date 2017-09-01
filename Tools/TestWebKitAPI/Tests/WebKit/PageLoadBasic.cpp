@@ -111,7 +111,7 @@ static void decidePolicyForResponse(WKPageRef page, WKFrameRef frame, WKURLRespo
     WKFramePolicyListenerUse(listener);
 }
 
-TEST(WebKit2, PageLoadBasic)
+TEST(WebKit, PageLoadBasic)
 {
     State state;
 
@@ -154,7 +154,7 @@ TEST(WebKit2, PageLoadBasic)
     Util::run(&test1Done);
 }
 
-TEST(WebKit2, PageReload)
+TEST(WebKit, PageReload)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

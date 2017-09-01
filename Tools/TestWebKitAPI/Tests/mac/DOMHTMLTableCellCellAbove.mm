@@ -54,7 +54,7 @@ static void expectCellAboveCell(DOMDocument *document, NSString *cellID, NSStrin
     EXPECT_WK_STREQ(cellAboveID, [cellAbove getAttribute:@"id"]);
 }
 
-TEST(WebKit1, HTMLTableCellElementCellAbove)
+TEST(WebKitLegacy, HTMLTableCellElementCellAbove)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<HTMLTableCellElementCellAboveTest> testController = adoptNS([HTMLTableCellElementCellAboveTest new]);

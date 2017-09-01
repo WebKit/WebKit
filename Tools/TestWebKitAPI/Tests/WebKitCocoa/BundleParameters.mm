@@ -35,7 +35,7 @@
 
 static bool isDone;
 
-TEST(WebKit2, BundleParameters)
+TEST(WebKit, BundleParameters)
 {
     @autoreleasepool {
         NSString * const testPlugInClassName = @"BundleParametersPlugIn";

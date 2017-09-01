@@ -32,7 +32,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKStringJSString)
+TEST(WebKit, WKStringJSString)
 {
     WKStringRef wkString = WKStringCreateWithUTF8CString("hello");
     JSStringRef jsString = JSStringCreateWithUTF8CString("hello");

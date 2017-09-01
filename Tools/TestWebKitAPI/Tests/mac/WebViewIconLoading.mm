@@ -155,7 +155,7 @@ static NSImage *imageFromData(NSData *data)
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, IconLoadingDelegateDefaultFirst)
+TEST(WebKitLegacy, IconLoadingDelegateDefaultFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 
@@ -196,7 +196,7 @@ TEST(WebKit1, IconLoadingDelegateDefaultFirst)
     [NSURLProtocol unregisterClass:[IconLoadingProtocol class]];
 }
 
-TEST(WebKit1, IconLoadingDelegateCustomFirst)
+TEST(WebKitLegacy, IconLoadingDelegateCustomFirst)
 {
     [NSURLProtocol registerClass:[IconLoadingProtocol class]];
 

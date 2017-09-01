@@ -105,7 +105,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef, WKTypeRef, const v
     didFinishLoad = true;
 }
 
-TEST(WebKit2, WebArchive)
+TEST(WebKit, WebArchive)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("WebArchiveTest"));
     setInjectedBundleClient(context.get());

@@ -64,14 +64,14 @@ static void loadAlternateHTMLString(WKURLRef baseURL, WKURLRef unreachableURL)
     Util::run(&didFinishLoad);
 }
 
-TEST(WebKit2, LoadAlternateHTMLStringWithNonDirectoryURL)
+TEST(WebKit, LoadAlternateHTMLStringWithNonDirectoryURL)
 {
     // Call WKPageLoadAlternateHTMLString() with fileURL which does not point to a directory.
     WKRetainPtr<WKURLRef> fileURL(AdoptWK, Util::createURLForResource("simple", "html"));
     loadAlternateHTMLString(fileURL.get(), fileURL.get());
 }
 
-TEST(WebKit2, LoadAlternateHTMLStringWithEmptyBaseURL)
+TEST(WebKit, LoadAlternateHTMLStringWithEmptyBaseURL)
 {
     // Call WKPageLoadAlternateHTMLString() with empty baseURL to make sure this test works
     // when baseURL does not grant read access to the unreachableURL. We use a separate test

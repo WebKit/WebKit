@@ -53,7 +53,7 @@ static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, 
     didSameDocumentNavigation = true;
 }
 
-TEST(WebKit2, PrivateBrowsingPushStateNoHistoryCallback)
+TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

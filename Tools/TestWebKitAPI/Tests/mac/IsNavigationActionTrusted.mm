@@ -81,7 +81,7 @@ namespace TestWebKitAPI {
 
 #if WK_API_ENABLED
 
-TEST(WebKit2, IsNavigationActionTrusted)
+TEST(WebKit, IsNavigationActionTrusted)
 {
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
@@ -99,7 +99,7 @@ TEST(WebKit2, IsNavigationActionTrusted)
 
 #endif
 
-TEST(WebKit1, IsNavigationActionTrusted)
+TEST(WebKitLegacy, IsNavigationActionTrusted)
 {
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);

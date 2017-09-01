@@ -35,7 +35,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKPageConfigurationEmpty)
+TEST(WebKit, WKPageConfigurationEmpty)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
 
@@ -64,7 +64,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, WKPageConfigurationBasic)
+TEST(WebKit, WKPageConfigurationBasic)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
@@ -83,7 +83,7 @@ TEST(WebKit2, WKPageConfigurationBasic)
     Util::run(&didFinishLoad);
 }
 
-TEST(WebKit2, WKPageConfigurationBasicWithDataStore)
+TEST(WebKit, WKPageConfigurationBasicWithDataStore)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
@@ -105,7 +105,7 @@ TEST(WebKit2, WKPageConfigurationBasicWithDataStore)
     Util::run(&didFinishLoad);
 }
 
-TEST(WebKit2, WKPageConfigurationBasicWithNonPersistentDataStore)
+TEST(WebKit, WKPageConfigurationBasicWithNonPersistentDataStore)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());

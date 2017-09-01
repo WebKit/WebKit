@@ -49,7 +49,7 @@ static void didCountStringMatches(WKPageRef page, WKStringRef string, unsigned n
     didCallCountStringMatches = true;
 }
 
-TEST(WebKit2, Find)
+TEST(WebKit, Find)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

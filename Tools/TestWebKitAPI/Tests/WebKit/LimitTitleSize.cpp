@@ -54,7 +54,7 @@ static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRe
     waitUntilLongTitleReceived = true;
 }
 
-TEST(WebKit2, LimitTitleSize)
+TEST(WebKit, LimitTitleSize)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

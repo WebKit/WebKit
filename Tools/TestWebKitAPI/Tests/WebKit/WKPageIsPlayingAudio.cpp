@@ -95,7 +95,7 @@ static void setUpClients(WKPageRef page)
     WKPageSetPageUIClient(page, &uiClient.base);
 }
 
-TEST(WebKit2, WKPageIsPlayingAudio)
+TEST(WebKit, WKPageIsPlayingAudio)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
 
@@ -114,7 +114,7 @@ TEST(WebKit2, WKPageIsPlayingAudio)
     EXPECT_TRUE(WKPageIsPlayingAudio(webView.page()));
 }
 
-TEST(WebKit2, MSEIsPlayingAudio)
+TEST(WebKit, MSEIsPlayingAudio)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
 

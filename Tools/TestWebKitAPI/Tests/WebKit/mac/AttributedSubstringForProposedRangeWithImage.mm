@@ -55,7 +55,7 @@ static void invalidMessageFunction(WKStringRef messageName)
     didReceiveInvalidMessage = true;
 }
 
-TEST(WebKit2, AttributedSubstringForProposedRangeWithImage)
+TEST(WebKit, AttributedSubstringForProposedRangeWithImage)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(Util::toWK("AttributedSubstringForProposedRangeWithImagePageGroup").get()));

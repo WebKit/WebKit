@@ -58,7 +58,7 @@ static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocum
     didChangeLocationWithinPage = true;
 }
 
-TEST(WebKit2, PageLoadDidChangeLocationWithinPageForFrame)
+TEST(WebKit, PageLoadDidChangeLocationWithinPageForFrame)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

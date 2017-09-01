@@ -70,7 +70,7 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
     WKCookieManagerGetHTTPCookieAcceptPolicy(cookieManager, reinterpret_cast<void*>(0x1234578), didGetUserHTTPCookieAcceptPolicy);
 }
 
-TEST(WebKit2, CookieManager)
+TEST(WebKit, CookieManager)
 {
     wkContext.adopt(WKContextCreate());
     PlatformWebView webView(wkContext.get());

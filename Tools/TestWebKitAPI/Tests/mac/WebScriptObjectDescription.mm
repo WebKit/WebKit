@@ -58,7 +58,7 @@ void nsObjectDescriptionTest(NSObject *object)
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, WebScriptObjectDescription)
+TEST(WebKitLegacy, WebScriptObjectDescription)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<WebScriptDescriptionTest> testController = adoptNS([WebScriptDescriptionTest new]);

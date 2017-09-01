@@ -61,7 +61,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
     return openedWebView->page();
 }
 
-TEST(WebKit2, CloseFromWithinCreatePage)
+TEST(WebKit, CloseFromWithinCreatePage)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

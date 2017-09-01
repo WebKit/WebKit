@@ -41,7 +41,7 @@
 
 static bool done;
 
-TEST(WebKit2, AdditionalReadAccessAllowedURLs)
+TEST(WebKit, AdditionalReadAccessAllowedURLs)
 {
     RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AdditionalReadAccessAllowedURLsPlugIn"]);
 

@@ -73,7 +73,7 @@ static void didCrash(WKPageRef page, const void* clientInfo)
     WKPageReload(page);
 }
 
-TEST(WebKit2, ResizeWindowAfterCrash)
+TEST(WebKit, ResizeWindowAfterCrash)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     TestStatesData states(context.get());

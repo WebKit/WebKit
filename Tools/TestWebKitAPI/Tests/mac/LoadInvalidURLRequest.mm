@@ -62,7 +62,7 @@ static bool didFailProvisionalLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, LoadInvalidURLRequest)
+TEST(WebKitLegacy, LoadInvalidURLRequest)
 {
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);

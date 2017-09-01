@@ -36,7 +36,7 @@ namespace TestWebKitAPI {
 
 static bool done;
 
-TEST(WebKit2, PendingAPIRequestURL)
+TEST(WebKit, PendingAPIRequestURL)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

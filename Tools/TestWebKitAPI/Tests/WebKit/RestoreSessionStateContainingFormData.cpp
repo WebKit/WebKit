@@ -70,7 +70,7 @@ static WKRetainPtr<WKDataRef> createSessionStateDataContainingFormData(WKContext
     return adoptWK(WKSessionStateCopyData(sessionState.get()));
 }
 
-TEST(WebKit2, RestoreSessionStateContainingFormData)
+TEST(WebKit, RestoreSessionStateContainingFormData)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

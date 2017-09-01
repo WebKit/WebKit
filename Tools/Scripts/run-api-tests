@@ -90,10 +90,10 @@ Platform options:
 Examples
 
 The following command will run a single test:
-    $programName WebKit2.AboutBlank
+    $programName WebKit.AboutBlank
 
-The following command will run all tests in suites that begin with 'WebKit2':
-    $programName WebKit2
+The following command will run all tests in suites that begin with 'WebKit':
+    $programName WebKit
 
 EOF
 
@@ -327,8 +327,6 @@ sub listAllTests()
            if ($line =~ m/\.$/) {
               $suite = $line; # "SuiteName."
            } else {
-              # Disabling WebKit2 API test on Windows since we will be disabling WebKit2 on Windows.
-              next if (isAppleWinWebKit() && $suite =~ m/WebKit2*/);       
               $line =~ s/^\s*//; # "TestName"
               my $fullName = $suite . $line; # "SuiteName.TestName";
               push @tests, $fullName;

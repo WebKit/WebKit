@@ -47,7 +47,7 @@ static void checkElementTypeAndBoundingRect(_WKActivatedElementInfo *elementInfo
     EXPECT_EQ(expectedType, elementInfo.type);
 }
     
-TEST(WebKit2, RequestActivatedElementInfoForLink)
+TEST(WebKit, RequestActivatedElementInfoForLink)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style = 'margin: 0px;'><a href='testURL.test' style='display: block; height: 100%;' title='HitTestLinkTitle' id='testID'></a></body></html>" baseURL:nil];
@@ -72,7 +72,7 @@ TEST(WebKit2, RequestActivatedElementInfoForLink)
     TestWebKitAPI::Util::run(&finished);
 }
     
-TEST(WebKit2, RequestActivatedElementInfoForBlank)
+TEST(WebKit, RequestActivatedElementInfoForBlank)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView loadHTMLString:@"<html><head><meta name='viewport' content='initial-scale=1'></head><body style = 'margin: 0px;'></body></html>" baseURL:nil];
@@ -91,7 +91,7 @@ TEST(WebKit2, RequestActivatedElementInfoForBlank)
     TestWebKitAPI::Util::run(&finished);
 }
     
-TEST(WebKit2, RequestActivatedElementInfoWithNestedSynchronousUpdates)
+TEST(WebKit, RequestActivatedElementInfoWithNestedSynchronousUpdates)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='initial-scale=1'><style>body { margin:0 } a { display:block; width:200px; height:200px }</style><a href='https://www.apple.com'>FOO</a>"];
@@ -115,7 +115,7 @@ TEST(WebKit2, RequestActivatedElementInfoWithNestedSynchronousUpdates)
     TestWebKitAPI::Util::run(&finished);
 }
 
-TEST(WebKit2, RequestActivatedElementInfoWithNestedRequests)
+TEST(WebKit, RequestActivatedElementInfoWithNestedRequests)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     [webView synchronouslyLoadTestPageNamed:@"image-and-contenteditable"];

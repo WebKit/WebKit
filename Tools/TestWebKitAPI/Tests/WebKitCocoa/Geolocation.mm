@@ -143,7 +143,7 @@ namespace TestWebKitAPI {
 // view. Without this, the web process would wait until the page is visible before sending
 // the requests to the UI process.
 
-TEST(WebKit2, GeolocationDeniedByLocationProvider)
+TEST(WebKit, GeolocationDeniedByLocationProvider)
 {
     auto uiDelegate = adoptNS([[GeolocationTestUIDelegate alloc] init]);
     auto coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
@@ -167,7 +167,7 @@ TEST(WebKit2, GeolocationDeniedByLocationProvider)
     EXPECT_FALSE(uiDelegate.get().authorizationWasRequested);
 }
 
-TEST(WebKit2, GeolocationDeniedByAPI)
+TEST(WebKit, GeolocationDeniedByAPI)
 {
     auto uiDelegate = adoptNS([[GeolocationTestUIDelegate alloc] init]);
     auto coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
@@ -191,7 +191,7 @@ TEST(WebKit2, GeolocationDeniedByAPI)
     EXPECT_TRUE(uiDelegate.get().authorizationWasRequested);
 }
 
-TEST(WebKit2, GeolocationAllowedByAPI)
+TEST(WebKit, GeolocationAllowedByAPI)
 {
     auto uiDelegate = adoptNS([[GeolocationTestUIDelegate alloc] init]);
     auto coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
@@ -215,7 +215,7 @@ TEST(WebKit2, GeolocationAllowedByAPI)
     EXPECT_TRUE(uiDelegate.get().authorizationWasRequested);
 }
 
-TEST(WebKit2, GeolocationError)
+TEST(WebKit, GeolocationError)
 {
     auto uiDelegate = adoptNS([[GeolocationTestUIDelegate alloc] init]);
     auto coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);
@@ -240,7 +240,7 @@ TEST(WebKit2, GeolocationError)
     EXPECT_TRUE(uiDelegate.get().authorizationWasRequested);
 }
 
-TEST(WebKit2, DuplicateGeolocationAuthorizationCallbackCalls)
+TEST(WebKit, DuplicateGeolocationAuthorizationCallbackCalls)
 {
     auto uiDelegate = adoptNS([[GeolocationTestUIDelegate alloc] init]);
     auto coreLocationProvider = adoptNS([[TestCoreLocationProvider alloc] init]);

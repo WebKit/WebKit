@@ -85,7 +85,7 @@ static RetainPtr<TestNavigationDelegate> createFirstVisuallyNonEmptyWatchingNavi
     return navigationDelegate;
 }
 
-TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
+TEST(WebKit, DISABLED_ResizeWithHiddenContentDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
@@ -109,7 +109,7 @@ TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
     }
 }
 
-TEST(WebKit2, AnimatedResizeDoesNotHang)
+TEST(WebKit, AnimatedResizeDoesNotHang)
 {
     auto webView = createAnimatedResizeWebView();
     [webView loadRequest:[NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"blinking-div" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]]];
@@ -137,7 +137,7 @@ TEST(WebKit2, AnimatedResizeDoesNotHang)
     }
 }
 
-TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
+TEST(WebKit, AnimatedResizeBlocksViewportFitChanges)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];
@@ -184,7 +184,7 @@ TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
     EXPECT_TRUE(didChangeSafeAreaShouldAffectObscuredInsets);
 }
 
-TEST(WebKit2, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
+TEST(WebKit, OverrideLayoutSizeChangesDuringAnimatedResizeSucceed)
 {
     auto webView = createAnimatedResizeWebView();
     [webView setUIDelegate:webView.get()];

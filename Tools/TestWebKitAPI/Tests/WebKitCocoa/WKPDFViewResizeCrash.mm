@@ -35,7 +35,7 @@
 
 static bool finishedDispatch;
 
-TEST(WebKit2, WKPDFViewResizeCrash)
+TEST(WebKit, WKPDFViewResizeCrash)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 

@@ -33,7 +33,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, DOMNodeFromJSObject)
+TEST(WebKitLegacy, DOMNodeFromJSObject)
 {
     WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
 

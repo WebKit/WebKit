@@ -68,7 +68,7 @@ static WKScriptMessage *getNextMessage()
     return [[scriptMessages.takeFirst() retain] autorelease];
 }
 
-TEST(WebKit2, WebsiteDataStoreCustomPaths)
+TEST(WebKit, WebsiteDataStoreCustomPaths)
 {
     RetainPtr<WebsiteDataStoreCustomPathsMessageHandler> handler = adoptNS([[WebsiteDataStoreCustomPathsMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

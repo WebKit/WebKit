@@ -66,7 +66,7 @@ static void checkUserMediaPermissionCallback(WKPageRef, WKFrameRef, WKSecurityOr
     WKUserMediaPermissionCheckSetUserMediaAccessInfo(permissionRequest, WKStringCreateWithUTF8CString("0x123456789"), false);
 }
 
-TEST(WebKit2, UserMediaBasic)
+TEST(WebKit, UserMediaBasic)
 {
     auto context = adoptWK(WKContextCreate());
 

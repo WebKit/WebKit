@@ -54,7 +54,7 @@ static void decidePolicyForNavigationResponse(WKPageRef, WKNavigationResponseRef
     WKFramePolicyListenerUse(listener);
 }
 
-TEST(WebKit2, NavigationClientDefaultCrypto)
+TEST(WebKit, NavigationClientDefaultCrypto)
 {
     auto context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());

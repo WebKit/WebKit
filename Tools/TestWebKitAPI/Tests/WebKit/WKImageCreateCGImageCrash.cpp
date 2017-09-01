@@ -31,7 +31,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKImageCreateCGImageCrash)
+TEST(WebKit, WKImageCreateCGImageCrash)
 {
     EXPECT_FALSE(WKImageCreateCGImage(nullptr));
 }

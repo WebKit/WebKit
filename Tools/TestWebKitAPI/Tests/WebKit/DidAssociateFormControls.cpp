@@ -75,7 +75,7 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-TEST(WebKit2, DidAssociateFormControls)
+TEST(WebKit, DidAssociateFormControls)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DidAssociateFormControlsTest"));
     setInjectedBundleClient(context.get());

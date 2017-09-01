@@ -115,7 +115,7 @@ static void didGetImageForMatchResult(WKPageRef page, WKImageRef image, uint32_t
     didCallGetImage = true;
 }
 
-TEST(WebKit2, FindMatches)
+TEST(WebKit, FindMatches)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

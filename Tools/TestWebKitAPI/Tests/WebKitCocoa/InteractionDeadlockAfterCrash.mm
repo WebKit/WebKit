@@ -56,7 +56,7 @@ static UIGestureRecognizer *recursiveFindHighlightLongPressRecognizer(UIView *vi
     return nil;
 }
 
-TEST(WebKit2, InteractionDeadlockAfterCrash)
+TEST(WebKit, InteractionDeadlockAfterCrash)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 

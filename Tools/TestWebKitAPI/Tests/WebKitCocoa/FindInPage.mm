@@ -76,7 +76,7 @@ static FindResult findMatches(WKWebView *webView, NSString *findString, NSTextFi
     return result;
 }
 
-TEST(WebKit2, FindInPage)
+TEST(WebKit, FindInPage)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
     [webView _setOverrideDeviceScaleFactor:2];
@@ -126,7 +126,7 @@ TEST(WebKit2, FindInPage)
     EXPECT_EQ((NSUInteger)1000, [result.matches count]);
 }
 
-TEST(WebKit2, FindInPageWrapping)
+TEST(WebKit, FindInPageWrapping)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView _setOverrideDeviceScaleFactor:2];
@@ -154,7 +154,7 @@ TEST(WebKit2, FindInPageWrapping)
     EXPECT_TRUE(result.didWrap);
 }
 
-TEST(WebKit2, FindInPageWrappingDisabled)
+TEST(WebKit, FindInPageWrappingDisabled)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView _setOverrideDeviceScaleFactor:2];
@@ -177,7 +177,7 @@ TEST(WebKit2, FindInPageWrappingDisabled)
     EXPECT_FALSE(result.didWrap);
 }
 
-TEST(WebKit2, FindInPageWrappingSubframe)
+TEST(WebKit, FindInPageWrappingSubframe)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     [webView _setOverrideDeviceScaleFactor:2];

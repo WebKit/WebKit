@@ -65,12 +65,12 @@ static void runTestWithWidth(NSNumber *width, CGSize expectedSize)
     Util::run(&testFinished);
 }
 
-TEST(WebKit2, NodeHandleRenderedImageExcludingOverflow)
+TEST(WebKit, NodeHandleRenderedImageExcludingOverflow)
 {
     runTestWithWidth(nil, { 720, 540 });
 }
 
-TEST(WebKit2, NodeHandleRenderedImageWithWidth)
+TEST(WebKit, NodeHandleRenderedImageWithWidth)
 {
     runTestWithWidth(@(-1), { 0, 0 });
     runTestWithWidth(@0, { 0, 0 });

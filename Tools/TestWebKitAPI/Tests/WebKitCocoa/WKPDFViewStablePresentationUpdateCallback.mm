@@ -33,7 +33,7 @@
 
 #if WK_API_ENABLED && PLATFORM(IOS)
 
-TEST(WebKit2, WKPDFViewStablePresentationUpdateCallback)
+TEST(WebKit, WKPDFViewStablePresentationUpdateCallback)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 

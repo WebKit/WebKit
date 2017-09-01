@@ -35,7 +35,7 @@
 
 static bool viewportSizeTestDone;
 
-TEST(WebKit2, ViewportSizeForViewportUnits)
+TEST(WebKit, ViewportSizeForViewportUnits)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 

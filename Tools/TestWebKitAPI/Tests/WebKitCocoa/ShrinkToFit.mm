@@ -36,7 +36,7 @@ static bool shrinkToFitDone;
 static bool shrinkToFitAfterNavigationDone;
 static bool shrinkToFitDisabledDone;
 
-TEST(WebKit2, ShrinkToFit)
+TEST(WebKit, ShrinkToFit)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 

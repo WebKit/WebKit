@@ -51,7 +51,7 @@ static RetainPtr<WKScriptMessage> lastScriptMessage;
 
 @end
 
-TEST(WebKit2, CookieAcceptPolicy)
+TEST(WebKit, CookieAcceptPolicy)
 {
     auto originalCookieAcceptPolicy = [[NSHTTPCookieStorage sharedHTTPCookieStorage] cookieAcceptPolicy];
     

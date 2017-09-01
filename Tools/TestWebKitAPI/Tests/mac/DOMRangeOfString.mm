@@ -46,7 +46,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, DOMRangeOfString)
+TEST(WebKitLegacy, DOMRangeOfString)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     RetainPtr<DOMRangeOfStringFrameLoadDelegate> frameLoadDelegate = adoptNS([DOMRangeOfStringFrameLoadDelegate new]);

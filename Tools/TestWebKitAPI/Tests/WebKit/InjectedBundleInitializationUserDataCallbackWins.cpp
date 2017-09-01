@@ -46,7 +46,7 @@ static WKTypeRef getInjectedBundleInitializationUserData(WKContextRef context, c
     return Util::createInitializationDictionaryForInjectedBundleTest("InjectedBundleInitializationUserDataCallbackWinsTest",  Util::toWK("Set in the getInjectedBundleInitializationUserData callback").get());
 }
 
-TEST(WebKit2, InjectedBundleInitializationUserDataCallbackWins)
+TEST(WebKit, InjectedBundleInitializationUserDataCallbackWins)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     WKRetainPtr<WKDictionaryRef> initializationDictionary(AdoptWK, Util::createInitializationDictionaryForInjectedBundleTest("InjectedBundleInitializationUserDataCallbackWinsTest",  Util::toWK("Set with WKContextSetInitializationUserDataForInjectedBundle").get()));

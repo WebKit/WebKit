@@ -182,12 +182,12 @@ static void runTestWithWebsiteDataStore(WKWebsiteDataStore* dataStore)
     [globalCookieStore removeObserver:observer2.get()];
 }
 
-TEST(WebKit2, WKHTTPCookieStore)
+TEST(WebKit, WKHTTPCookieStore)
 {
     runTestWithWebsiteDataStore([WKWebsiteDataStore defaultDataStore]);
 }
 
-TEST(WebKit2, WKHTTPCookieStoreNonPersistent)
+TEST(WebKit, WKHTTPCookieStoreNonPersistent)
 {
     RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
     @autoreleasepool {
@@ -197,7 +197,7 @@ TEST(WebKit2, WKHTTPCookieStoreNonPersistent)
     runTestWithWebsiteDataStore(nonPersistentDataStore.get());
 }
 
-TEST(WebKit2, WKHTTPCookieStoreCustom)
+TEST(WebKit, WKHTTPCookieStoreCustom)
 {
     NSURL *cookieStorageFile = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/CookieStorage/Cookie.File" stringByExpandingTildeInPath] isDirectory:NO];
     NSURL *idbPath = [NSURL fileURLWithPath:[@"~/Library/WebKit/TestWebKitAPI/CustomWebsiteData/IndexedDB/" stringByExpandingTildeInPath] isDirectory:YES];
@@ -216,7 +216,7 @@ TEST(WebKit2, WKHTTPCookieStoreCustom)
     runTestWithWebsiteDataStore(customDataStore.get());
 }
 
-TEST(WebKit2, CookieObserverCrash)
+TEST(WebKit, CookieObserverCrash)
 {
     RetainPtr<WKWebsiteDataStore> nonPersistentDataStore;
     @autoreleasepool {
@@ -256,7 +256,7 @@ static bool finished;
 }
 @end
 
-TEST(WebKit2, WKHTTPCookieStoreWithoutProcessPool)
+TEST(WebKit, WKHTTPCookieStoreWithoutProcessPool)
 {
     NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:[NSDictionary dictionaryWithObjectsAndKeys:@"127.0.0.1", NSHTTPCookieDomain, @"/", NSHTTPCookiePath, @"cookiename", NSHTTPCookieName, @"cookievalue", NSHTTPCookieValue, [NSDate distantFuture], NSHTTPCookieExpires, nil]];
     NSString *alertCookieHTML = @"<script>alert('cookie:'+document.cookie);</script>";

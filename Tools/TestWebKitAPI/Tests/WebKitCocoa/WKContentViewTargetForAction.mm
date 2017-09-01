@@ -44,7 +44,7 @@
 
 @end
 
-TEST(WebKit2, WKContentViewTargetForAction)
+TEST(WebKit, WKContentViewTargetForAction)
 {
     auto webView = adoptNS([[TestWKContentViewTargetForActionView alloc] init]);
     [webView synchronouslyLoadTestPageNamed:@"rich-and-plain-text"];

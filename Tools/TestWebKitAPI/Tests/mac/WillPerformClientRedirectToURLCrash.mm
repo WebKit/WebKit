@@ -72,7 +72,7 @@ static NSURL *testURL()
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, WillPerformClientRedirectToURLCrash)
+TEST(WebKitLegacy, WillPerformClientRedirectToURLCrash)
 {
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);

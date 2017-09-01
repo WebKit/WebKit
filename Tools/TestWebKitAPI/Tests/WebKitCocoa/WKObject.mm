@@ -35,7 +35,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKObject)
+TEST(WebKit, WKObject)
 {
     WKStringRef stringRef = WKStringCreateWithUTF8CString("just testing");
     ASSERT_TRUE([@"just testing" isEqualToString:(NSString *)stringRef]);
@@ -50,7 +50,7 @@ TEST(WebKit2, WKObject)
     ASSERT_EQ((id)0, weakString);
 }
 
-TEST(WebKit2, WKObject_classMethods)
+TEST(WebKit, WKObject_classMethods)
 {
     Class wkObjectClass = NSClassFromString(@"WKObject");
     ASSERT_NE((Class)0, wkObjectClass);
@@ -58,7 +58,7 @@ TEST(WebKit2, WKObject_classMethods)
     ASSERT_TRUE([wkObjectClass conformsToProtocol:@protocol(NSObject)]);
 }
 
-TEST(WebKit2, WKObject_classInDictionary)
+TEST(WebKit, WKObject_classInDictionary)
 {
     Class wkObjectClass = NSClassFromString(@"WKObject");
     ASSERT_NE((Class)0, wkObjectClass);

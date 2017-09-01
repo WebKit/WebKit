@@ -50,7 +50,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, JSWrapperForNode)
+TEST(WebKitLegacy, JSWrapperForNode)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<JSWrapperForNodeFrameLoadDelegate> frameLoadDelegate = adoptNS([[JSWrapperForNodeFrameLoadDelegate alloc] init]);

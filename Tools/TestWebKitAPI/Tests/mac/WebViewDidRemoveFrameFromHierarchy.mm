@@ -50,7 +50,7 @@ static bool didRemoveFrame;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, DidRemoveFrameFromHierarchy)
+TEST(WebKitLegacy, DidRemoveFrameFromHierarchy)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<DidRemoveFrameFromHierarchyFrameLoadDelegate> frameLoadDelegate = adoptNS([[DidRemoveFrameFromHierarchyFrameLoadDelegate alloc] init]);

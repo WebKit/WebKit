@@ -120,7 +120,7 @@ static WKPageRef createNewPage(WKPageRef page, WKURLRequestRef urlRequest, WKDic
     return openedWebView->page();
 }
 
-TEST(WebKit2, ModalAlertsSPI)
+TEST(WebKit, ModalAlertsSPI)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());

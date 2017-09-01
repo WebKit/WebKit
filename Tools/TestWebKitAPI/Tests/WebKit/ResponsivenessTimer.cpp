@@ -57,7 +57,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, ResponsivenessTimerShouldNotFireAfterTearDown)
+TEST(WebKit, ResponsivenessTimerShouldNotFireAfterTearDown)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     // The two views need to share the same WebContent process.

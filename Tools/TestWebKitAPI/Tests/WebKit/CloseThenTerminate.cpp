@@ -42,7 +42,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 // Test for https://webkit.org/b/115607
 // This tests that we don't crash when calling WKPageClose and WKPageTerminate.
 
-TEST(WebKit2, CloseThenTerminate)
+TEST(WebKit, CloseThenTerminate)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());

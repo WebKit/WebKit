@@ -46,7 +46,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, RenderedImageFromDOMNode)
+TEST(WebKitLegacy, RenderedImageFromDOMNode)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) frameName:nil groupName:nil]);
     RetainPtr<RenderedImageFromDOMNodeFrameLoadDelegate> frameLoadDelegate = adoptNS([RenderedImageFromDOMNodeFrameLoadDelegate new]);

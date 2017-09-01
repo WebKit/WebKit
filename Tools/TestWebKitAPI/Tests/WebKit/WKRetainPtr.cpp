@@ -32,7 +32,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKRetainPtr)
+TEST(WebKit, WKRetainPtr)
 {
     WKRetainPtr<WKStringRef> string1 = adoptWK(WKStringCreateWithUTF8CString("a"));
     WKRetainPtr<WKStringRef> string2 = adoptWK(WKStringCreateWithUTF8CString("a"));

@@ -51,7 +51,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, VisibleContentRect_FullBounds)
+TEST(WebKit, VisibleContentRect_FullBounds)
 {
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebViewWithEnclosingView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
@@ -59,7 +59,7 @@ TEST(WebKit2, VisibleContentRect_FullBounds)
     EXPECT_TRUE(CGRectEqualToRect([webView _visibleContentRect], CGRectMake(0, 0, 800, 600)));
 }
 
-TEST(WebKit2, VisibleContentRect_FullBoundsWithinScrollView)
+TEST(WebKit, VisibleContentRect_FullBoundsWithinScrollView)
 {
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebViewWithEnclosingView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
@@ -71,7 +71,7 @@ TEST(WebKit2, VisibleContentRect_FullBoundsWithinScrollView)
     EXPECT_TRUE(CGRectEqualToRect([webView _visibleContentRect], CGRectMake(0, 0, 800, 600)));
 }
 
-TEST(WebKit2, VisibleContentRect_FullBoundsWhenClippedByNonScrollView)
+TEST(WebKit, VisibleContentRect_FullBoundsWhenClippedByNonScrollView)
 {
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebViewWithEnclosingView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);
@@ -85,7 +85,7 @@ TEST(WebKit2, VisibleContentRect_FullBoundsWhenClippedByNonScrollView)
     EXPECT_TRUE(CGRectEqualToRect([webView _visibleContentRect], CGRectMake(0, 0, 1000, 800)));
 }
 
-TEST(WebKit2, VisibleContentRect_ClippedBoundsWhenClippedByScrollView)
+TEST(WebKit, VisibleContentRect_ClippedBoundsWhenClippedByScrollView)
 {
     CGRect windowBounds = CGRectMake(0, 0, 800, 600);
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -102,7 +102,7 @@ TEST(WebKit2, VisibleContentRect_ClippedBoundsWhenClippedByScrollView)
     EXPECT_TRUE(CGRectEqualToRect([webView _visibleContentRect], CGRectMake(150, 150, 800, 600)));
 }
 
-TEST(WebKit2, VisibleContentRect_ClippedBoundsWhenClippedByEnclosingView)
+TEST(WebKit, VisibleContentRect_ClippedBoundsWhenClippedByEnclosingView)
 {
     auto config = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebViewWithEnclosingView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:config.get()]);

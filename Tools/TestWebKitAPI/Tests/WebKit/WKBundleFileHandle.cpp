@@ -51,7 +51,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     loadDone = true;
 }
 
-TEST(WebKit2, WKBundleFileHandle)
+TEST(WebKit, WKBundleFileHandle)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("WKBundleFileHandleTest"));
 

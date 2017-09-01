@@ -64,7 +64,7 @@ static bool hasRecievedCorrectCaptureState = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, MediaStreamTrackDetached)
+TEST(WebKit, MediaStreamTrackDetached)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

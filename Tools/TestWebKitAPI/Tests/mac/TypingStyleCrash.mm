@@ -27,7 +27,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, TypingStyleCrash)
+TEST(WebKitLegacy, TypingStyleCrash)
 {
     WebView *webView = [[WebView alloc] init];
     (void)[webView typingStyle];

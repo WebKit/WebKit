@@ -37,7 +37,7 @@ static bool fixedLayoutSizeDone;
 static bool fixedLayoutSizeAfterNavigationDone;
 static bool fixedLayoutSizeDisabledDone;
 
-TEST(WebKit2, FixedLayoutSize)
+TEST(WebKit, FixedLayoutSize)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 

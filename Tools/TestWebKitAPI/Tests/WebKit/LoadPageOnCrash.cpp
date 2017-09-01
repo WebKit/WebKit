@@ -95,7 +95,7 @@ void didFinishLoad(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const v
 
 // This test will load a blank page and next kill WebProcess, the expected
 // result is that a call to page load should spawn a new WebProcess.
-TEST(WebKit2, LoadPageAfterCrash)
+TEST(WebKit, LoadPageAfterCrash)
 {
     WebKit2CrashLoader helper;
     helper.loadUrl();

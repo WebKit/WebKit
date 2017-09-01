@@ -76,7 +76,7 @@ static void webProcessCrashed(WKPageRef page, WKProcessTerminationReason reason,
     crashHandlerCalled = true;
 }
 
-TEST(WebKit2, ProcessDidTerminateRequestedByClient)
+TEST(WebKit, ProcessDidTerminateRequestedByClient)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());
@@ -100,7 +100,7 @@ TEST(WebKit2, ProcessDidTerminateRequestedByClient)
     Util::run(&clientTerminationHandlerCalled);
 }
 
-TEST(WebKit2, ProcessDidTerminateWithReasonCrash)
+TEST(WebKit, ProcessDidTerminateWithReasonCrash)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

@@ -129,7 +129,7 @@ static void sawDialog()
 
 @end
 
-TEST(WebKit2, ModalAlerts)
+TEST(WebKit, ModalAlerts)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 

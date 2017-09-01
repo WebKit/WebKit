@@ -74,7 +74,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
+TEST(WebKit, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
@@ -120,7 +120,7 @@ TEST(WebKit2, WKThumbnailViewKeepSnapshotWhenRemovedFromSuperview)
     [thumbnailView removeObserver:observer.get() forKeyPath:@"snapshotSize" context:snapshotSizeChangeKVOContext];
 }
 
-TEST(WebKit2, WKThumbnailViewMaximumSnapshotSize)
+TEST(WebKit, WKThumbnailViewMaximumSnapshotSize)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());

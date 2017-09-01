@@ -40,7 +40,7 @@
 
 static bool isDone;
 
-TEST(WebKit2, RemoteObjectRegistry)
+TEST(WebKit, RemoteObjectRegistry)
 {
     @autoreleasepool {
         NSString * const testPlugInClassName = @"RemoteObjectRegistryPlugIn";

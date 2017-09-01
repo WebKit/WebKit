@@ -70,7 +70,7 @@ static RetainPtr<WKWebView> newWebView;
 
 @end
 
-TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
+TEST(WebKit, ShouldOpenExternalURLsInWindowOpen)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -131,7 +131,7 @@ TEST(WebKit2, ShouldOpenExternalURLsInWindowOpen)
     action = nullptr;
 }
 
-TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
+TEST(WebKit, ShouldOpenExternalURLsInTargetedLink)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -208,7 +208,7 @@ TEST(WebKit2, ShouldOpenExternalURLsInTargetedLink)
     action = nullptr;
 }
 
-TEST(WebKit2, RestoreShouldOpenExternalURLsPolicyAfterCrash)
+TEST(WebKit, RestoreShouldOpenExternalURLsPolicyAfterCrash)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);

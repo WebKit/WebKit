@@ -33,7 +33,7 @@
 #import <WebKit/_WKExperimentalFeature.h>
 #import <wtf/RetainPtr.h>
 
-TEST(WebKit2, DefaultWKPreferences)
+TEST(WebKit, DefaultWKPreferences)
 {
     RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);
 
@@ -42,7 +42,7 @@ TEST(WebKit2, DefaultWKPreferences)
     EXPECT_TRUE([preferences _isStandalone]);
 }
 
-TEST(WebKit2, LoadsImagesAutomatically)
+TEST(WebKit, LoadsImagesAutomatically)
 {
     RetainPtr<WKPreferences> preferences = adoptNS([[WKPreferences alloc] init]);
 
@@ -53,7 +53,7 @@ TEST(WebKit2, LoadsImagesAutomatically)
     EXPECT_TRUE([preferences _loadsImagesAutomatically]);
 }
 
-TEST(WebKit2, ExperimentalFeatures)
+TEST(WebKit, ExperimentalFeatures)
 {
     NSArray *features = [WKPreferences _experimentalFeatures];
     EXPECT_NOT_NULL(features);

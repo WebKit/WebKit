@@ -61,7 +61,7 @@ static void spinLoop(NSTimeInterval timeout, BOOL (^block)())
     }
 }
 
-TEST(WebKit1, WindowlessWebViewWithMedia)
+TEST(WebKitLegacy, WindowlessWebViewWithMedia)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

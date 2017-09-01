@@ -40,7 +40,7 @@ static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
     didFinishLoad = true;
 }
 
-TEST(WebKit2, ScrollByLineCommands)
+TEST(WebKit, ScrollByLineCommands)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
 

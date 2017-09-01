@@ -87,7 +87,7 @@ void cleanUp()
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, CrossPartitionFileSchemeAccess)
+TEST(WebKitLegacy, CrossPartitionFileSchemeAccess)
 {
     NSURL *url = [[NSBundle mainBundle] URLForResource:@"CrossPartitionFileSchemeAccess" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     const char *filePath = [url fileSystemRepresentation];

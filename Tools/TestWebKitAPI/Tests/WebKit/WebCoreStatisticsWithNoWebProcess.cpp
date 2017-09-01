@@ -41,7 +41,7 @@ static void wkContextGetStatisticsCallback(WKDictionaryRef statistics, WKErrorRe
     done = true;
 }
 
-TEST(WebKit2, WebCoreStatisticsWithNoWebProcess)
+TEST(WebKit, WebCoreStatisticsWithNoWebProcess)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     

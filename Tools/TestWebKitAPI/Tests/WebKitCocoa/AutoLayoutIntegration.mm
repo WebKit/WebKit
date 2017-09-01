@@ -118,7 +118,7 @@ static bool didEvaluateJavaScript;
 
 @end
 
-TEST(WebKit2, AutoLayoutIntegration)
+TEST(WebKit, AutoLayoutIntegration)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 
@@ -173,7 +173,7 @@ TEST(WebKit2, AutoLayoutIntegration)
     [webView _setShouldExpandContentToViewHeightForAutoLayout:NO];
 }
 
-TEST(WebKit2, AutoLayoutRenderingProgressRelativeOrdering)
+TEST(WebKit, AutoLayoutRenderingProgressRelativeOrdering)
 {
     RetainPtr<AutoLayoutWKWebView> webView = adoptNS([[AutoLayoutWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 1000, 1000)]);
 

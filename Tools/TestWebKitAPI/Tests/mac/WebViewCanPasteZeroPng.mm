@@ -32,7 +32,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, WebViewCanPasteZeroPng)
+TEST(WebKitLegacy, WebViewCanPasteZeroPng)
 {
     WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil];
     [webView setEditable:YES];

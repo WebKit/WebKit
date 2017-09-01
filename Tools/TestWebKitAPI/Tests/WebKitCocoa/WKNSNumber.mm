@@ -34,7 +34,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKNSNumber)
+TEST(WebKit, WKNSNumber)
 {
     auto booleanRef = adoptWK(WKBooleanCreate(true));
     auto uint64Ref = adoptWK(WKUInt64Create(39));

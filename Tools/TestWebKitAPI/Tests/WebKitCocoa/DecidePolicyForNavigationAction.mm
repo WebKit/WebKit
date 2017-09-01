@@ -73,7 +73,7 @@ static NSString *secondURL = @"data:text/html,Second";
 
 @end
 
-TEST(WebKit2, DecidePolicyForNavigationActionReload)
+TEST(WebKit, DecidePolicyForNavigationActionReload)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -103,7 +103,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionReload)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionReloadFromOrigin)
+TEST(WebKit, DecidePolicyForNavigationActionReloadFromOrigin)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -133,7 +133,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionReloadFromOrigin)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionGoBack)
+TEST(WebKit, DecidePolicyForNavigationActionGoBack)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -167,7 +167,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionGoBack)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionGoForward)
+TEST(WebKit, DecidePolicyForNavigationActionGoForward)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -205,7 +205,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionGoForward)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView)
+TEST(WebKit, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebView)
 {
     auto controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
 
@@ -236,7 +236,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionOpenNewWindowAndDeallocSourceWebVie
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForTargetedHyperlink)
+TEST(WebKit, DecidePolicyForNavigationActionForTargetedHyperlink)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -285,7 +285,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionForTargetedHyperlink)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForTargetedWindowOpen)
+TEST(WebKit, DecidePolicyForNavigationActionForTargetedWindowOpen)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -334,7 +334,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionForTargetedWindowOpen)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForTargetedFormSubmission)
+TEST(WebKit, DecidePolicyForNavigationActionForTargetedFormSubmission)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -382,7 +382,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionForTargetedFormSubmission)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForHyperlinkThatRedirects)
+TEST(WebKit, DecidePolicyForNavigationActionForHyperlinkThatRedirects)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -432,7 +432,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionForHyperlinkThatRedirects)
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsToGET)
+TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsToGET)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
@@ -479,7 +479,7 @@ TEST(WebKit2, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsT
     action = nullptr;
 }
 
-TEST(WebKit2, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsToPOST)
+TEST(WebKit, DecidePolicyForNavigationActionForPOSTFormSubmissionThatRedirectsToPOST)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 

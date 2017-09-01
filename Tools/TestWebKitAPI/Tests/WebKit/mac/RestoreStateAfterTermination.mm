@@ -69,7 +69,7 @@ static void didCrash(WKPageRef page, const void*)
     EXPECT_TRUE(loadBeforeCrash);
 }
 
-TEST(WebKit2, RestoreStateAfterTermination)
+TEST(WebKit, RestoreStateAfterTermination)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

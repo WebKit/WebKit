@@ -48,7 +48,7 @@ static void didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, 
     testDone = true;
 }
 
-TEST(WebKit2, EphemeralSessionPushStateNoHistoryCallback)
+TEST(WebKit, EphemeralSessionPushStateNoHistoryCallback)
 {
     auto configuration = adoptWK(WKPageConfigurationCreate());
 

@@ -45,7 +45,7 @@ static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef, 
         testDone = true;
 }
 
-TEST(WebKit2, LayoutMilestonesWithAllContentInFrame)
+TEST(WebKit, LayoutMilestonesWithAllContentInFrame)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

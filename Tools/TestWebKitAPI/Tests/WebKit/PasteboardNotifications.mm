@@ -58,7 +58,7 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-TEST(WebKit2, PasteboardNotifications)
+TEST(WebKit, PasteboardNotifications)
 {
     [[NSPasteboard generalPasteboard] clearContents];
     

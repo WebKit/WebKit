@@ -136,7 +136,7 @@ static bool didReportException = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, DidCreateJavaScriptContextSanity1)
+TEST(WebKitLegacy, DidCreateJavaScriptContextSanity1)
 {
     didFinishLoad = false;
     @autoreleasepool {
@@ -162,7 +162,7 @@ TEST(WebKit1, DidCreateJavaScriptContextSanity1)
     }
 }
 
-TEST(WebKit1, DidCreateJavaScriptContextSanity2)
+TEST(WebKitLegacy, DidCreateJavaScriptContextSanity2)
 {
     didCallWindowCallback = false;
     @autoreleasepool {
@@ -185,7 +185,7 @@ TEST(WebKit1, DidCreateJavaScriptContextSanity2)
     }
 }
 
-TEST(WebKit1, DidCreateJavaScriptContextCallJSFunctionFromObjCCallbackTest)
+TEST(WebKitLegacy, DidCreateJavaScriptContextCallJSFunctionFromObjCCallbackTest)
 {
     @autoreleasepool {
         RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
@@ -209,7 +209,7 @@ TEST(WebKit1, DidCreateJavaScriptContextCallJSFunctionFromObjCCallbackTest)
     }
 }
 
-TEST(WebKit1, DidCreateJavaScriptContextAddCustomPropertiesFromJSTest)
+TEST(WebKitLegacy, DidCreateJavaScriptContextAddCustomPropertiesFromJSTest)
 {
     didFindMyCustomProperty = false;
     @autoreleasepool {
@@ -235,7 +235,7 @@ TEST(WebKit1, DidCreateJavaScriptContextAddCustomPropertiesFromJSTest)
     }
 }
 
-TEST(WebKit1, DidCreateJavaScriptContextAddCustomPropertiesFromObjCTest)
+TEST(WebKitLegacy, DidCreateJavaScriptContextAddCustomPropertiesFromObjCTest)
 {
     didFindMyCustomProperty = false;
     @autoreleasepool {
@@ -263,7 +263,7 @@ TEST(WebKit1, DidCreateJavaScriptContextAddCustomPropertiesFromObjCTest)
     }
 }
 
-TEST(WebKit1, DidCreateJavaScriptContextBackForwardCacheTest)
+TEST(WebKitLegacy, DidCreateJavaScriptContextBackForwardCacheTest)
 {
     didInsertMyCustomProperty = false;
     didFindMyCustomProperty = false;
@@ -306,7 +306,7 @@ TEST(WebKit1, DidCreateJavaScriptContextBackForwardCacheTest)
     }
 }
 
-TEST(WebKit1, ReportExceptionTest)
+TEST(WebKitLegacy, ReportExceptionTest)
 {
     didReportException = false;
     @autoreleasepool {

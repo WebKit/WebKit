@@ -69,7 +69,7 @@ static void setPagePolicyClient(WKPageRef page)
     WKPageSetPagePolicyClient(page, &policyClient.base);
 }
 
-TEST(WebKit2, DownloadDecideDestinationCrash)
+TEST(WebKit, DownloadDecideDestinationCrash)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     setContextDownloadClient(context.get());

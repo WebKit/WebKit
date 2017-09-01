@@ -48,7 +48,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef f
     testDone = true;
 }
 
-TEST(WebKit2, FailedLoad)
+TEST(WebKit, FailedLoad)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

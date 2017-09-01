@@ -69,7 +69,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, ShouldGoToBackForwardListItem)
+TEST(WebKit, ShouldGoToBackForwardListItem)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ShouldGoToBackForwardListItemTest"));
     // Enable the page cache so we can test the WKBundleBackForwardListItemIsInPageCache API

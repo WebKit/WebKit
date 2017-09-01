@@ -141,7 +141,7 @@ static bool hasAssertionType(CFStringRef type)
     return false;
 }
 
-TEST(WebKit1, MediaPlaybackSleepAssertion)
+TEST(WebKitLegacy, MediaPlaybackSleepAssertion)
 {
     didFinishLoad = false;
     didBeginPlaying = false;

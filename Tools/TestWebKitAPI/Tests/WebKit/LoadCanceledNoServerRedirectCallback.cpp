@@ -58,7 +58,7 @@ static void didPerformServerRedirect(WKContextRef context, WKPageRef page, WKURL
     performedServerRedirect = true;
 }
 
-TEST(WebKit2, LoadCanceledNoServerRedirectCallback)
+TEST(WebKit, LoadCanceledNoServerRedirectCallback)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("LoadCanceledNoServerRedirectCallbackTest"));
     

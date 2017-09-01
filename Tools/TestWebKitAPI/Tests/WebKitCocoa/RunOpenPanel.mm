@@ -52,7 +52,7 @@ static NSString * const expectedFileName = @"这是中文";
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, RunOpenPanelNonLatin1)
+TEST(WebKit, RunOpenPanelNonLatin1)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     auto uiDelegate = adoptNS([[RunOpenPanelUIDelegate alloc] init]);

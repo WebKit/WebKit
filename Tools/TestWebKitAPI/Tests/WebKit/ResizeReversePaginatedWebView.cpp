@@ -59,7 +59,7 @@ static void didLayout(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef, 
     }
 }
 
-TEST(WebKit2, ResizeReversePaginatedWebView)
+TEST(WebKit, ResizeReversePaginatedWebView)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

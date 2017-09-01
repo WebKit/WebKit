@@ -33,7 +33,7 @@
 
 #if PLATFORM(MAC) && WK_API_ENABLED
 
-TEST(WebKit2, ObservedRenderingProgressEventsAfterCrash)
+TEST(WebKit, ObservedRenderingProgressEventsAfterCrash)
 {
     __block bool done = false;
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

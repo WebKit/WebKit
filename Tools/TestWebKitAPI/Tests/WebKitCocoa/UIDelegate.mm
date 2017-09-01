@@ -59,7 +59,7 @@ static bool done;
 
 @end
 
-TEST(WebKit2, WKWebViewIsPlayingAudio)
+TEST(WebKit, WKWebViewIsPlayingAudio)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
     auto observer = adoptNS([[AudioObserver alloc] init]);
@@ -109,7 +109,7 @@ static RetainPtr<UITestDelegate> delegate;
 
 @end
 
-TEST(WebKit2, ShowWebView)
+TEST(WebKit, ShowWebView)
 {
     delegate = adoptNS([[UITestDelegate alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -148,7 +148,7 @@ bool firstToolbarDone;
 
 @end
 
-TEST(WebKit2, ToolbarVisible)
+TEST(WebKit, ToolbarVisible)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:[[[WKWebViewConfiguration alloc] init] autorelease]]);
     auto delegate = adoptNS([[ToolbarDelegate alloc] init]);
@@ -180,7 +180,7 @@ static bool readyForClick;
 
 @end
 
-TEST(WebKit2, ClickAutoFillButton)
+TEST(WebKit, ClickAutoFillButton)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ClickAutoFillButton"];
 
@@ -226,7 +226,7 @@ static _WKFocusDirection takenDirection;
 
 @end
 
-TEST(WebKit2, Focus)
+TEST(WebKit, Focus)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto delegate = adoptNS([[FocusDelegate alloc] init]);
@@ -267,7 +267,7 @@ TEST(WebKit2, Focus)
 
 @end
 
-TEST(WebKit2, SaveDataToFile)
+TEST(WebKit, SaveDataToFile)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto delegate = adoptNS([[SaveDataToFileDelegate alloc] init]);
@@ -315,7 +315,7 @@ static void synthesizeWheelEvents(NSView *view, int x, int y)
 
 @end
 
-TEST(WebKit2, DidNotHandleWheelEvent)
+TEST(WebKit, DidNotHandleWheelEvent)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto delegate = adoptNS([[WheelDelegate alloc] init]);

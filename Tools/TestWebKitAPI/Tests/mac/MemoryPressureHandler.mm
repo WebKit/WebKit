@@ -28,7 +28,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, MemoryPressureHandler)
+TEST(WebKitLegacy, MemoryPressureHandler)
 {
     WebInstallMemoryPressureHandler();
     [[[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil] autorelease];

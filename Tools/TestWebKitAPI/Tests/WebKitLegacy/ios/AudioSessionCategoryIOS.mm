@@ -59,7 +59,7 @@ static bool didBeginPlaying = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, AudioSessionCategoryIOS)
+TEST(WebKitLegacy, AudioSessionCategoryIOS)
 {
     WebCore::Settings::setShouldManageAudioSessionCategory(true);
     RetainPtr<UIWindow> uiWindow = adoptNS([[UIWindow alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

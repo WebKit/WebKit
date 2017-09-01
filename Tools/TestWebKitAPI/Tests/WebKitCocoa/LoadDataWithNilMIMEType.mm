@@ -31,7 +31,7 @@
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
 
-TEST(WebKit2, LoadDataWithNilMIMEType)
+TEST(WebKit, LoadDataWithNilMIMEType)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSZeroRect]);
     NSString *mimeType = nil;

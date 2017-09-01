@@ -62,7 +62,7 @@ static void setClients(WKPageRef page)
     WKPageSetPageUIClient(page, &uiClient.base);
 }
 
-TEST(WebKit2, EventModifiers)
+TEST(WebKit, EventModifiers)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     

@@ -50,7 +50,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, InspectorBarTest)
+TEST(WebKitLegacy, InspectorBarTest)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<InspectorBarController> inspectorBarController = adoptNS([InspectorBarController new]);

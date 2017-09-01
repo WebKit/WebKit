@@ -53,7 +53,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, StopLoadingFromDidReceiveResponse)
+TEST(WebKitLegacy, StopLoadingFromDidReceiveResponse)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

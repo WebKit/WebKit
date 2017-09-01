@@ -45,7 +45,7 @@ static bool finishedLoad = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, FirstResponderSuppression)
+TEST(WebKit, FirstResponderSuppression)
 {
     RetainPtr<NSWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, 800, 600) styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [window makeKeyAndOrderFront:nil];

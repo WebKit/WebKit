@@ -125,7 +125,7 @@ static size_t alertCount;
 
 @end
 
-TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
+TEST(WebKit, WebsitePoliciesContentBlockersEnabled)
 {
     [[_WKUserContentExtensionStore defaultStore] _removeAllContentExtensions];
 
@@ -197,7 +197,7 @@ TEST(WebKit2, WebsitePoliciesContentBlockersEnabled)
 
 @end
 
-TEST(WebKit2, WebsitePoliciesAutoplayEnabled)
+TEST(WebKit, WebsitePoliciesAutoplayEnabled)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
@@ -298,7 +298,7 @@ static void runUntilReceivesAutoplayEvent(WKAutoplayEvent event)
         CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.1, true);
 }
 
-TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
+TEST(WebKit, WebsitePoliciesPlayAfterPreventedAutoplay)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
@@ -366,7 +366,7 @@ TEST(WebKit2, WebsitePoliciesPlayAfterPreventedAutoplay)
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
-TEST(WebKit2, WebsitePoliciesPlayingWithoutInterference)
+TEST(WebKit, WebsitePoliciesPlayingWithoutInterference)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
@@ -385,7 +385,7 @@ TEST(WebKit2, WebsitePoliciesPlayingWithoutInterference)
     ASSERT_TRUE(*receivedAutoplayEventFlags & kWKAutoplayEventFlagsHasAudio);
 }
 
-TEST(WebKit2, WebsitePoliciesUserInterferenceWithPlaying)
+TEST(WebKit, WebsitePoliciesUserInterferenceWithPlaying)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 336, 276) configuration:configuration.get()]);
@@ -509,7 +509,7 @@ struct ParsedRange {
 
 @end
 
-TEST(WebKit2, WebsitePoliciesDuringRedirect)
+TEST(WebKit, WebsitePoliciesDuringRedirect)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto videoData = adoptNS([[NSData alloc] initWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"mp4" subdirectory:@"TestWebKitAPI.resources"]]);
@@ -529,7 +529,7 @@ TEST(WebKit2, WebsitePoliciesDuringRedirect)
     [webView waitForMessage:@"autoplayed"];
 }
 
-TEST(WebKit2, WebsitePoliciesUpdates)
+TEST(WebKit, WebsitePoliciesUpdates)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
@@ -565,7 +565,7 @@ TEST(WebKit2, WebsitePoliciesUpdates)
     runUntilReceivesAutoplayEvent(kWKAutoplayEventDidPreventFromAutoplaying);
 }
 
-TEST(WebKit2, WebsitePoliciesAutoplayQuirks)
+TEST(WebKit, WebsitePoliciesAutoplayQuirks)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);

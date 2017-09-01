@@ -50,7 +50,7 @@ static NSDictionary *regions;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, DeviceScaleFactorInDashboardRegions)
+TEST(WebKitLegacy, DeviceScaleFactorInDashboardRegions)
 {
     NSRect viewFrame = NSMakeRect(0, 0, 800, 600);
     RetainPtr<SyntheticBackingScaleFactorWindow> window = adoptNS([[SyntheticBackingScaleFactorWindow alloc] initWithContentRect:viewFrame styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:YES]);

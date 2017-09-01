@@ -71,7 +71,7 @@ static bool didWriteToPasteboard;
 
 @end
 
-TEST(WebKit2, WKWebProcessPlugInEditingDelegate)
+TEST(WebKit, WKWebProcessPlugInEditingDelegate)
 {
     RetainPtr<WKWebViewConfiguration> configuration = retainPtr([WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"BundleEditingDelegatePlugIn"]);
     [[configuration processPool] _setObject:[NSNumber numberWithBool:NO] forBundleParameter:@"EditingDelegateShouldInsertText"];

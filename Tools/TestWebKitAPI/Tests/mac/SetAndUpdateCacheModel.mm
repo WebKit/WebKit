@@ -35,7 +35,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, SetAndUpdateCacheModelInitialModel)
+TEST(WebKitLegacy, SetAndUpdateCacheModelInitialModel)
 {
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
@@ -44,7 +44,7 @@ TEST(WebKit1, SetAndUpdateCacheModelInitialModel)
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 }
 
-TEST(WebKit1, SetAndUpdateCacheModelStandardPreferenceChange)
+TEST(WebKitLegacy, SetAndUpdateCacheModelStandardPreferenceChange)
 {
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 
@@ -58,7 +58,7 @@ TEST(WebKit1, SetAndUpdateCacheModelStandardPreferenceChange)
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);
 }
 
-TEST(WebKit1, SetAndUpdateCacheModelPreferencesChangeMix)
+TEST(WebKitLegacy, SetAndUpdateCacheModelPreferencesChangeMix)
 {
     // On change, the cache model always take the highest value of any preference bound to a WebView.
     EXPECT_EQ((int)WebCacheModelDocumentViewer, (int)[WebView _cacheModel]);

@@ -105,7 +105,7 @@ static void testAFewStrings(Vector<Vector<UInt16>> testStrings)
 }
 
 // Split up the tests because they take too long otherwise and people start thinking their computer is hung.
-TEST(WebKit2, LineBreaking1)
+TEST(WebKit, LineBreaking1)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x0024, 0x31, 0x32, 0x33},
@@ -117,7 +117,7 @@ TEST(WebKit2, LineBreaking1)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking2)
+TEST(WebKit, LineBreaking2)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x2025, 0x2025},
@@ -129,7 +129,7 @@ TEST(WebKit2, LineBreaking2)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking3)
+TEST(WebKit, LineBreaking3)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x0025},
@@ -141,7 +141,7 @@ TEST(WebKit2, LineBreaking3)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking4)
+TEST(WebKit, LineBreaking4)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x00b0},
@@ -153,7 +153,7 @@ TEST(WebKit2, LineBreaking4)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking5)
+TEST(WebKit, LineBreaking5)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x2033},
@@ -165,7 +165,7 @@ TEST(WebKit2, LineBreaking5)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking6)
+TEST(WebKit, LineBreaking6)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x2103},
@@ -177,7 +177,7 @@ TEST(WebKit2, LineBreaking6)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking7)
+TEST(WebKit, LineBreaking7)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x3043},
@@ -189,7 +189,7 @@ TEST(WebKit2, LineBreaking7)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking8)
+TEST(WebKit, LineBreaking8)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x3083},
@@ -201,7 +201,7 @@ TEST(WebKit2, LineBreaking8)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking9)
+TEST(WebKit, LineBreaking9)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x3096},
@@ -213,7 +213,7 @@ TEST(WebKit2, LineBreaking9)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking10)
+TEST(WebKit, LineBreaking10)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x30a3},
@@ -225,7 +225,7 @@ TEST(WebKit2, LineBreaking10)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking11)
+TEST(WebKit, LineBreaking11)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x30e3},
@@ -237,7 +237,7 @@ TEST(WebKit2, LineBreaking11)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking12)
+TEST(WebKit, LineBreaking12)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x30f6},
@@ -249,7 +249,7 @@ TEST(WebKit2, LineBreaking12)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking13)
+TEST(WebKit, LineBreaking13)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x31f0},
@@ -261,7 +261,7 @@ TEST(WebKit2, LineBreaking13)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking14)
+TEST(WebKit, LineBreaking14)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x31f5},
@@ -273,7 +273,7 @@ TEST(WebKit2, LineBreaking14)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking15)
+TEST(WebKit, LineBreaking15)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x31fa},
@@ -285,7 +285,7 @@ TEST(WebKit2, LineBreaking15)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking16)
+TEST(WebKit, LineBreaking16)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0x31ff},
@@ -297,7 +297,7 @@ TEST(WebKit2, LineBreaking16)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking17)
+TEST(WebKit, LineBreaking17)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0xff1f},
@@ -309,7 +309,7 @@ TEST(WebKit2, LineBreaking17)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking18)
+TEST(WebKit, LineBreaking18)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0xff6a},
@@ -321,7 +321,7 @@ TEST(WebKit2, LineBreaking18)
     testAFewStrings(testStrings);
 }
 
-TEST(WebKit2, LineBreaking19)
+TEST(WebKit, LineBreaking19)
 {
     Vector<Vector<UInt16>> testStrings = {
         {0x4e00, 0x4e8c, 0x4e09, 0x56db, 0xff6f},

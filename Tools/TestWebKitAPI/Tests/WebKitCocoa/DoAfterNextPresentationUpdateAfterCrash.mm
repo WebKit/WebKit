@@ -33,7 +33,7 @@
 
 #if PLATFORM(IOS) && WK_API_ENABLED
 
-TEST(WebKit2, DoAfterNextPresentationUpdateAfterCrash)
+TEST(WebKit, DoAfterNextPresentationUpdateAfterCrash)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
 
@@ -53,7 +53,7 @@ TEST(WebKit2, DoAfterNextPresentationUpdateAfterCrash)
     TestWebKitAPI::Util::run(&gotCallback);
 }
 
-TEST(WebKit2, DoAfterNextStablePresentationUpdateAfterCrash)
+TEST(WebKit, DoAfterNextStablePresentationUpdateAfterCrash)
 {
     RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)]);
     

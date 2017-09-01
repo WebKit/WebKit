@@ -45,7 +45,7 @@ static bool didFinishLoad;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, WordBoundaryTypingAttributes)
+TEST(WebKitLegacy, WordBoundaryTypingAttributes)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSMakeRect(0, 0, 120, 200) frameName:nil groupName:nil]);
     RetainPtr<WordBoundaryTypingAttributesController> controller = adoptNS([WordBoundaryTypingAttributesController new]);

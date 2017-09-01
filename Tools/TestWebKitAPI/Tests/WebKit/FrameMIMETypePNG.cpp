@@ -55,7 +55,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     testDone = true;
 }
 
-TEST(WebKit2, FrameMIMETypePNG)
+TEST(WebKit, FrameMIMETypePNG)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

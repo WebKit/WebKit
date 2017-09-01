@@ -60,7 +60,7 @@ static bool didFinishLoad = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, CancelLoadFromResourceLoadDelegate)
+TEST(WebKitLegacy, CancelLoadFromResourceLoadDelegate)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 

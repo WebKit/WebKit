@@ -77,7 +77,7 @@ static void resetToConsistentState()
 
 @end
 
-TEST(WebKit2, OpenAndCloseWindow)
+TEST(WebKit, OpenAndCloseWindow)
 {
     resetToConsistentState();
 
@@ -139,7 +139,7 @@ TEST(WebKit2, OpenAndCloseWindow)
 
 @end
 
-TEST(WebKit2, OpenAndCloseWindowAsync)
+TEST(WebKit, OpenAndCloseWindowAsync)
 {
     resetToConsistentState();
 
@@ -157,7 +157,7 @@ TEST(WebKit2, OpenAndCloseWindowAsync)
     TestWebKitAPI::Util::run(&isDone);
 }
 
-TEST(WebKit2, OpenAsyncWithNil)
+TEST(WebKit, OpenAsyncWithNil)
 {
     resetToConsistentState();
 
@@ -177,7 +177,7 @@ TEST(WebKit2, OpenAsyncWithNil)
 }
 
 // https://bugs.webkit.org/show_bug.cgi?id=171083 - Try to figure out why this fails for some configs but not others, and resolve.
-//TEST(WebKit2, OpenAndCloseWindowAsyncCallbackException)
+//TEST(WebKit, OpenAndCloseWindowAsyncCallbackException)
 //{
 //    resetToConsistentState();
 //
@@ -228,7 +228,7 @@ TEST(WebKit2, OpenAsyncWithNil)
 
 @end
 
-TEST(WebKit2, OpenWindowFeatures)
+TEST(WebKit, OpenWindowFeatures)
 {
     resetToConsistentState();
 

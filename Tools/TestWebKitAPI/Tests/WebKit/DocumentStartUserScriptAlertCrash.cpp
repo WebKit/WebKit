@@ -46,7 +46,7 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
     done = true;
 }
 
-TEST(WebKit2, DocumentStartUserScriptAlertCrashTest)
+TEST(WebKit, DocumentStartUserScriptAlertCrashTest)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DocumentStartUserScriptAlertCrashTestPageGroup"))); 
 

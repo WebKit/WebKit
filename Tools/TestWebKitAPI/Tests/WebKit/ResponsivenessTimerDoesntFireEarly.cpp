@@ -75,7 +75,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, ResponsivenessTimerDoesntFireEarly)
+TEST(WebKit, ResponsivenessTimerDoesntFireEarly)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("ResponsivenessTimerDoesntFireEarlyTest"));
     setInjectedBundleClient(context.get());

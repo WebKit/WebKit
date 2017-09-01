@@ -123,7 +123,7 @@ static void expectException(void (^completionHandler)())
 
 @end
 
-TEST(WebKit2, DuplicateCompletionHandlerCalls)
+TEST(WebKit, DuplicateCompletionHandlerCalls)
 {
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto delegate = adoptNS([[DuplicateCompletionHandlerCallsDelegate alloc] init]);

@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, MemoryCacheAddImageToCache)
+TEST(WebKitLegacy, MemoryCacheAddImageToCache)
 {
     CGColorSpaceRef rgb = CGColorSpaceCreateDeviceRGB();
     uint32_t pixel = 0;

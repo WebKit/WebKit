@@ -48,7 +48,7 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
     didFinishTest = true;
 }
 
-TEST(WebKit2, DidNotHandleKeyDown)
+TEST(WebKit, DidNotHandleKeyDown)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());

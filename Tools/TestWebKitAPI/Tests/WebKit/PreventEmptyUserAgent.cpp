@@ -58,7 +58,7 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
     testDone = true;
 }
 
-TEST(WebKit2, PreventEmptyUserAgent)
+TEST(WebKit, PreventEmptyUserAgent)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

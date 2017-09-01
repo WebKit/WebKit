@@ -49,7 +49,7 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
         didNotHandleKeyDownEvent = true;
 }
 
-TEST(WebKit2, SpacebarScrolling)
+TEST(WebKit, SpacebarScrolling)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
 

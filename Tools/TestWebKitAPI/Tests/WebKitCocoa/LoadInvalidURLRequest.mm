@@ -66,7 +66,7 @@ static NSURL *literalURL(const char* literal)
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, LoadInvalidURLRequest)
+TEST(WebKit, LoadInvalidURLRequest)
 {
     @autoreleasepool {
         RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);

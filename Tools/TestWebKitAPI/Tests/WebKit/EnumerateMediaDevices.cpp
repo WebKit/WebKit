@@ -47,7 +47,7 @@ void checkUserMediaPermissionCallback(WKPageRef, WKFrameRef, WKSecurityOriginRef
     loadedSecondTime = true;
 }
 
-TEST(WebKit2, EnumerateDevices)
+TEST(WebKit, EnumerateDevices)
 {
     auto context = adoptWK(WKContextCreate());
 

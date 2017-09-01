@@ -78,7 +78,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, EarlyKVOCrash)
+TEST(WebKitLegacy, EarlyKVOCrash)
 {
     auto webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     auto earlyKVOCrashResponder = adoptNS([[EarlyKVOCrashResponder alloc] initWithWebView:webView.get()]);

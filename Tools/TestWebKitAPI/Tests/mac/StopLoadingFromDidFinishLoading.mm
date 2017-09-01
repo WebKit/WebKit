@@ -46,7 +46,7 @@ static bool finished = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, StopLoadingFromDidFinishLoading)
+TEST(WebKitLegacy, StopLoadingFromDidFinishLoading)
 {
     AutodrainedPool pool;
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] init]);

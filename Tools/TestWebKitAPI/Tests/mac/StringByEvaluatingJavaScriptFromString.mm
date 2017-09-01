@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, StringByEvaluatingJavaScriptFromString)
+TEST(WebKitLegacy, StringByEvaluatingJavaScriptFromString)
 {
     // maps expected result <= JavaScript expression
     RetainPtr<NSDictionary> expressions = adoptNS([[NSDictionary alloc] initWithObjectsAndKeys:

@@ -30,7 +30,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, StringTruncator)
+TEST(WebKitLegacy, StringTruncator)
 {
     @autoreleasepool {
         EXPECT_EQ(nil, [WebStringTruncator centerTruncateString:@"abcdefghijklmnopqrstuvwxyz" toWidth:100 withFont:nil]);

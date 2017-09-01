@@ -69,7 +69,7 @@ static void didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTy
     testDone = true;
 }
 
-TEST(WebKit2, ScrollPinningBehaviors)
+TEST(WebKit, ScrollPinningBehaviors)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

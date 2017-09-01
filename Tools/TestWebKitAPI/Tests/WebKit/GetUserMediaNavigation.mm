@@ -67,7 +67,7 @@ static bool shouldReleaseInEnumerate = false;
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, NavigateDuringGetUserMediaPrompt)
+TEST(WebKit, NavigateDuringGetUserMediaPrompt)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
@@ -84,7 +84,7 @@ TEST(WebKit2, NavigateDuringGetUserMediaPrompt)
     TestWebKitAPI::Util::run(&okToProceed);
 }
 
-TEST(WebKit2, NavigateDuringDeviceEnumeration)
+TEST(WebKit, NavigateDuringDeviceEnumeration)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

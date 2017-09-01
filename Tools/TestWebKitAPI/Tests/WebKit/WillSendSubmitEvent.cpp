@@ -69,7 +69,7 @@ static void setInjectedBundleClient(WKContextRef context)
     WKContextSetInjectedBundleClient(context, &injectedBundleClient.base);
 }
 
-TEST(WebKit2, WillSendSubmitEvent)
+TEST(WebKit, WillSendSubmitEvent)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("WillSendSubmitEventTest"));
     setInjectedBundleClient(context.get());

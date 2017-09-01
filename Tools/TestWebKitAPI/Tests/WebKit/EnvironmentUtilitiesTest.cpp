@@ -42,7 +42,7 @@ static const char* strip(const char* input)
     return getenv(environmentVariable);
 }
 
-TEST(WebKit2, StripValuesEndingWithString)
+TEST(WebKit, StripValuesEndingWithString)
 {
     EXPECT_STREQ(strip(""), "");
     EXPECT_STREQ(strip(":"), ":");

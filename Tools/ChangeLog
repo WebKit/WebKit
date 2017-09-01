@@ -1,5 +1,15 @@
 2017-09-01  Alex Christensen  <achristensen@webkit.org>
 
+        Rename WebKit2 API tests after directory rename
+        https://bugs.webkit.org/show_bug.cgi?id=176250
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/Lots of files...
+        Renamed WebKit2 to WebKit and WebKit1 to WebKitLegacy.
+
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's toolbarsAreVisible
         https://bugs.webkit.org/show_bug.cgi?id=176246
         <rdar://problem/29270035>

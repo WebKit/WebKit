@@ -48,7 +48,7 @@ static UIView *recursiveFindWKContentView(UIView *view)
     return nil;
 }
 
-TEST(WebKit2, WKContentViewEditingActions)
+TEST(WebKit, WKContentViewEditingActions)
 {
     [UIPasteboard generalPasteboard].items = @[];
 

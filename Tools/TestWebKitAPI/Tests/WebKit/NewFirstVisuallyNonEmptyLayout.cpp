@@ -73,7 +73,7 @@ static void setPageLoaderClient(WKPageRef page)
 // the frame load is completing before didLayout() manages to unlock the
 // kWKDidHitRelevantRepaintedObjectsAreaThreshold achievement. We probably need to fix this by making
 // this test have a long-running resource.
-TEST(WebKit2, DISABLED_NewFirstVisuallyNonEmptyLayout)
+TEST(WebKit, DISABLED_NewFirstVisuallyNonEmptyLayout)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("NewFirstVisuallyNonEmptyLayoutTest"));
 

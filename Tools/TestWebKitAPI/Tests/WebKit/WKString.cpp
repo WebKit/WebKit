@@ -29,7 +29,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKString)
+TEST(WebKit, WKString)
 {
     WKStringRef string = WKStringCreateWithUTF8CString("hello");
     EXPECT_TRUE(!WKStringIsEmpty(string));

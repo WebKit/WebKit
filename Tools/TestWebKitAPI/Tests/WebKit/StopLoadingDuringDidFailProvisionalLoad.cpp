@@ -60,7 +60,7 @@ static void didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFrameRef, WKErr
     done = true;
 }
 
-TEST(WebKit2, StopLoadingDuringDidFailProvisionalLoadTest)
+TEST(WebKit, StopLoadingDuringDidFailProvisionalLoadTest)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("StopLoadingDuringDidFailProvisionalLoadTest"));
     setInjectedBundleClient(context.get());

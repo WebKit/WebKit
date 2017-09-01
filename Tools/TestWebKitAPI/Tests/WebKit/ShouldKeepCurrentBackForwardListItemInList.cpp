@@ -128,7 +128,7 @@ static void setPageLoaderClient(WKPageRef page)
     WKPageSetPageLoaderClient(page, &loaderClient.base);
 }
 
-TEST(WebKit2, ShouldKeepCurrentBackForwardListItemInList)
+TEST(WebKit, ShouldKeepCurrentBackForwardListItemInList)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

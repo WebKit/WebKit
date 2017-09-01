@@ -49,7 +49,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     WKPageForceRepaint(page, 0, didForceRepaint);
 }
 
-TEST(WebKit2, ForceRepaint)
+TEST(WebKit, ForceRepaint)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

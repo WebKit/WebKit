@@ -90,7 +90,7 @@ NSArray *tests = @[
     @[@"fr-CA", @"fr-CA"],
 ];
 
-TEST(WebKit1, NavigatorLanguage)
+TEST(WebKitLegacy, NavigatorLanguage)
 {
     RetainPtr<WebView> webView = adoptNS([[WebView alloc] initWithFrame:NSZeroRect frameName:nil groupName:nil]);
     RetainPtr<NavigatorLanguageDelegate> frameLoadDelegate = adoptNS([NavigatorLanguageDelegate new]);

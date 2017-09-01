@@ -40,7 +40,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     loaded = true;
 }
 
-TEST(WebKit2, GetPIDAfterAbortedProcessLaunch)
+TEST(WebKit, GetPIDAfterAbortedProcessLaunch)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

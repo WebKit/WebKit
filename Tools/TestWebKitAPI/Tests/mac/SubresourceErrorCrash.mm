@@ -27,7 +27,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit1, SubresourceErrorCrash)
+TEST(WebKitLegacy, SubresourceErrorCrash)
 {
     WebView *webView = [[WebView alloc] initWithFrame:NSZeroRect frameName:@"" groupName:@""];
     [webView.mainFrame loadHTMLString:@"<link rel=stylesheet href='x-error:error'>" baseURL:nil];

@@ -33,7 +33,7 @@
 
 namespace TestWebKitAPI {
 
-TEST(WebKit2, WKPreferencesBasic)
+TEST(WebKit, WKPreferencesBasic)
 {
     WKPreferencesRef preference = WKPreferencesCreate();
 
@@ -42,7 +42,7 @@ TEST(WebKit2, WKPreferencesBasic)
     WKRelease(preference);
 }
 
-TEST(WebKit2, WKPreferencesDefaults)
+TEST(WebKit, WKPreferencesDefaults)
 {
 #if PLATFORM(GTK)
     static const char* expectedStandardFontFamily = "Times";
@@ -106,7 +106,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     WKRelease(preference);
 }
 
-TEST(WebKit2, WKPreferencesCopying)
+TEST(WebKit, WKPreferencesCopying)
 {
     WKRetainPtr<WKStringRef> identifier(AdoptWK, WKStringCreateWithUTF8CString("identifier"));
 

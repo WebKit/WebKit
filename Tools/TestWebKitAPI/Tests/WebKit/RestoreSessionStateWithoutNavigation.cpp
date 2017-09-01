@@ -74,7 +74,7 @@ static WKRetainPtr<WKDataRef> createSessionStateData(WKContextRef context)
     return adoptWK(WKSessionStateCopyData(sessionState.get()));
 }
 
-TEST(WebKit2, RestoreSessionStateWithoutNavigation)
+TEST(WebKit, RestoreSessionStateWithoutNavigation)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

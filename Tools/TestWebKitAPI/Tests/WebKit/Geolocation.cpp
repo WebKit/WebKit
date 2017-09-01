@@ -154,7 +154,7 @@ struct GeolocationBasicStateTracker : GeolocationStateTracker {
     }
 };
 
-TEST(WebKit2, GeolocationBasic)
+TEST(WebKit, GeolocationBasic)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 
@@ -195,7 +195,7 @@ struct GeolocationBasicWithHighAccuracyStateTracker : GeolocationStateTracker {
     }
 };
 
-TEST(WebKit2, GeolocationBasicWithHighAccuracy)
+TEST(WebKit, GeolocationBasicWithHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 
@@ -247,7 +247,7 @@ struct GeolocationTransitionToHighAccuracyStateTracker : GeolocationStateTracker
     }
 };
 
-TEST(WebKit2, GeolocationTransitionToHighAccuracy)
+TEST(WebKit, GeolocationTransitionToHighAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     WKContextSetMaximumNumberOfProcesses(context.get(), 1);
@@ -312,7 +312,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
     *static_cast<bool*>(const_cast<void*>(clientInfo)) = true;
 }
 
-TEST(WebKit2, GeolocationTransitionToLowAccuracy)
+TEST(WebKit, GeolocationTransitionToLowAccuracy)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     WKContextSetMaximumNumberOfProcesses(context.get(), 1);

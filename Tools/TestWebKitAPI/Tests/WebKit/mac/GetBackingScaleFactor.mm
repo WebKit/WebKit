@@ -63,7 +63,7 @@ static RetainPtr<SyntheticBackingScaleFactorWindow> createWindow()
     return window;
 }
 
-TEST(WebKit2, GetBackingScaleFactor)
+TEST(WebKit, GetBackingScaleFactor)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("GetBackingScaleFactorTest"));
     setInjectedBundleClient(context.get());

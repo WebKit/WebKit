@@ -63,7 +63,7 @@ static WKRetainPtr<WKSessionStateRef> createSessionState(WKContextRef context)
     return adoptWK(static_cast<WKSessionStateRef>(WKPageCopySessionState(webView.page(), reinterpret_cast<void*>(1), nullptr)));
 }
 
-TEST(WebKit2, WKPageGetScaleFactorNotZero)
+TEST(WebKit, WKPageGetScaleFactorNotZero)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
 

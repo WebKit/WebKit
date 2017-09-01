@@ -60,7 +60,7 @@ static NSInteger getPixelIndex(NSInteger x, NSInteger y, NSInteger width)
     return (y * width + x) * 4;
 }
 
-TEST(WebKit1, RenderInContextSnapshot)
+TEST(WebKitLegacy, RenderInContextSnapshot)
 {
     const NSInteger width = 800;
     const NSInteger height = 600;

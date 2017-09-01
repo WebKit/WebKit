@@ -49,7 +49,7 @@ static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptVa
     testDone = true;
 }
 
-TEST(WebKit2, EvaluateJavaScriptThatThrowsAnException)
+TEST(WebKit, EvaluateJavaScriptThatThrowsAnException)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
     PlatformWebView webView(context.get());

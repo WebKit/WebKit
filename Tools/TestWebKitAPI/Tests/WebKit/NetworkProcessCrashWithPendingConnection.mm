@@ -44,7 +44,7 @@ static bool loaded = false;
 static bool webProcessCrashed = false;
 static bool networkProcessCrashed = false;
 
-TEST(WebKit2, NetworkProcessCrashWithPendingConnection)
+TEST(WebKit, NetworkProcessCrashWithPendingConnection)
 {
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] init]);

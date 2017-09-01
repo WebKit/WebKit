@@ -73,7 +73,7 @@ static WKStringRef decideDestinationWithSuggestedFilename(WKContextRef, WKDownlo
 
 // Checks that the HTML download attribute is used as suggested filename when selecting
 // the "Download Linked File" item in the context menu.
-TEST(WebKit2, ContextMenuDownloadHTMLDownloadAttribute)
+TEST(WebKit, ContextMenuDownloadHTMLDownloadAttribute)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
 
@@ -119,7 +119,7 @@ static WKStringRef decideDestinationWithSuggestedFilenameContainingSlashes(WKCon
     return Util::toWK("/tmp/WebKitAPITest/ContextMenuDownload").leakRef();
 }
 
-TEST(WebKit2, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
+TEST(WebKit, ContextMenuDownloadHTMLDownloadAttributeWithSlashes)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
 

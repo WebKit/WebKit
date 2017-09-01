@@ -65,7 +65,7 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
         done = true;
 }
 
-TEST(WebKit2, InjectedBundleAppleEvent)
+TEST(WebKit, InjectedBundleAppleEvent)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextForInjectedBundleTest("InjectedBundleAppleEventTest"));
 

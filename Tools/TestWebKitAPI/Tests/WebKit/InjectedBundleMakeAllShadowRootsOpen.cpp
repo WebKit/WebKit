@@ -83,7 +83,7 @@ static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef
     }
 }
 
-TEST(WebKit2, InjectedBundleMakeAllShadowRootOpenTest)
+TEST(WebKit, InjectedBundleMakeAllShadowRootOpenTest)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleMakeAllShadowRootOpenTestPageGroup")));
 

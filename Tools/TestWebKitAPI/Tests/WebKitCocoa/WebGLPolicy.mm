@@ -114,7 +114,7 @@ static void runTest(_WKWebGLLoadPolicy first, _WKWebGLLoadPolicy second = _WKWeb
     TestWebKitAPI::Util::run(&testComplete);
 }
 
-TEST(WebKit2, WebGLPolicy)
+TEST(WebKit, WebGLPolicy)
 {
     htmlURL = [NSURL URLWithString:@"test:///html"];
     
