@@ -54,10 +54,11 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameTree.h>
-#import <WebCore/URL.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/ProxyServer.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/ScriptController.h>
+#import <WebCore/URL.h>
 #import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
@@ -459,7 +460,7 @@ void NetscapePluginInstanceProxy::keyEvent(NSView *pluginView, NSEvent *event, N
                                      type, [event modifierFlags], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersData bytes])), [charactersData length], 
                                      const_cast<char*>(reinterpret_cast<const char*>([charactersIgnoringModifiersData bytes])), [charactersIgnoringModifiersData length], 
-                                     [event isARepeat], [event keyCode], WKGetNSEventKeyChar(event));
+                                     [event isARepeat], [event keyCode], keyCharForEvent(event));
 }
 
 void NetscapePluginInstanceProxy::syntheticKeyDownWithCommandModifier(int keyCode, char character)

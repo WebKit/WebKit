@@ -55,7 +55,6 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawCellFocusRingWithFrameAtTime);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-    INIT(GetWheelEventDeltas);
     INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);
     INIT(MeasureMediaUIPart);

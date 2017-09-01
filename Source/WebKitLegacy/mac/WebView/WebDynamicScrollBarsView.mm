@@ -31,6 +31,7 @@
 #import "WebHTMLViewInternal.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -535,7 +536,7 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     float deltaX;
     float deltaY;
     BOOL isContinuous;
-    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &isContinuous);
+    getWheelEventDeltas(event, deltaX, deltaY, isContinuous);
 
     NSEventPhase momentumPhase = [event momentumPhase];
     BOOL isLatchingEvent = momentumPhase & NSEventPhaseBegan || momentumPhase & NSEventPhaseStationary;

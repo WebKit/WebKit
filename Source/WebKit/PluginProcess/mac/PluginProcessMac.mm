@@ -47,6 +47,7 @@
 #import <mach/vm_statistics.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <sysexits.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
@@ -441,12 +442,12 @@ static void initializeCocoaOverrides()
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
 
     // Track when any Cocoa window is about to be be shown.
-    id orderOnScreenObserver = [defaultCenter addObserverForName:WKWindowWillOrderOnScreenNotification()
+    id orderOnScreenObserver = [defaultCenter addObserverForName:NSWindowWillOrderOnScreenNotification
                                                           object:nil
                                                            queue:nil
                                                            usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowShown([notification object]); }];
     // Track when any Cocoa window is about to be hidden.
-    id orderOffScreenObserver = [defaultCenter addObserverForName:WKWindowWillOrderOffScreenNotification()
+    id orderOffScreenObserver = [defaultCenter addObserverForName:NSWindowWillOrderOffScreenNotification
                                                            object:nil
                                                             queue:nil
                                                        usingBlock:^(NSNotification *notification) { fullscreenWindowTracker().windowHidden([notification object]); }];

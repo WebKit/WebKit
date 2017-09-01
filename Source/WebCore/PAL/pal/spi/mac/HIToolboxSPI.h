@@ -37,6 +37,9 @@
 
 typedef struct __TSMInputSource* TSMInputSourceRef;
 typedef CFStringRef TSMInputSourcePropertyTag;
+typedef struct OpaqueEventRef* EventRef;
+typedef OSType EventParamName;
+typedef OSType EventParamType;
 
 WTF_EXTERN_C_BEGIN
 
@@ -45,5 +48,6 @@ CGWindowID GetNativeWindowFromWindowRef(WindowRef);
 OSStatus TSMProcessRawKeyEvent(EventRef);
 EventRef GetCurrentEvent();
 CFTypeRef TSMGetInputSourceProperty(TSMInputSourceRef, TSMInputSourcePropertyTag);
+OSStatus GetEventParameter(EventRef, EventParamName inName, EventParamType inDesiredType, EventParamType* outActualType, ByteCount inBufferSize, ByteCount* outActualSize, void* outData);
 
 WTF_EXTERN_C_END

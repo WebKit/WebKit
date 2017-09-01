@@ -28,6 +28,7 @@
 #import "WebTextInputWindowController.h"
 
 #import <WebKitSystemInterface.h>
+#import <pal/system/mac/WebPanel.h>
 
 @interface WebTextInputView : NSTextView {
 }
@@ -46,7 +47,7 @@
 
 @end
 
-@interface WebTextInputPanel : NSPanel {
+@interface WebTextInputPanel : WebPanel {
     NSTextView *_inputTextView;
 }
 
@@ -70,7 +71,7 @@
 
 - (id)init
 {
-    self = [super initWithContentRect:NSZeroRect styleMask:WKGetInputPanelWindowStyle() backing:NSBackingStoreBuffered defer:YES];
+    self = [super init];
     if (!self)
         return nil;
     

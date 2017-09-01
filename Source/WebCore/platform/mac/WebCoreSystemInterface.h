@@ -139,7 +139,6 @@ extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float t
 extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, unsigned state);
 extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
-extern void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 extern UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
 extern BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, CGRect *bounds, CGSize *naturalSize);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
-
 #if PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#import <AppKit/NSWindow_Private.h>
+#import <AppKit/NSResponder_Private.h>
 
 #else
 
-#import <AppKit/NSWindow.h>
-
-@interface NSWindow ()
-
-- (id)_newFirstResponderAfterResigning;
-
+@interface NSResponder ()
+- (void)_setShouldPostEventNotifications:(BOOL)postNotifications;
 @end
 
-enum {
-    NSSideUtilityWindowMask = 1 << 9,
-    NSSmallWindowMask = 1 << 10,
-    _NSCarbonWindowMask = 1 << 25,
-};
-
 #endif
-
-extern NSString *NSWindowWillOrderOnScreenNotification;
-extern NSString *NSWindowWillOrderOffScreenNotification;
 
 #endif // PLATFORM(MAC)

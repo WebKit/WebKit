@@ -1,3 +1,20 @@
+2017-08-31  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream AppKit-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176175
+
+        Reviewed by Brady Eidson.
+
+        * Configurations/WebCore.xcconfig: Added -ObjC to OTHER_LDFLAGS so that Objective-C classes
+        in PAL are exported by WebCore even if WebCore doesn't use them.
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::getWheelEventDeltas):
+        (WebCore::keyCharForEvent):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2017-08-31  Alex Christensen  <achristensen@webkit.org>
 
         Fix Windows build after r221422

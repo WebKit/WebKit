@@ -48,7 +48,6 @@ void (*wkWindowSetAlpha)(NSWindow *, float);
 void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
-void (*wkGetWheelEventDeltas)(NSEvent*, float* deltaX, float* deltaY, BOOL* continuous);
 UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);

@@ -385,7 +385,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     float wheelTicksX = 0;
     float wheelTicksY = 0;
 
-    WKGetWheelEventDeltas(event, &deltaX, &deltaY, &continuous);
+    getWheelEventDeltas(event, deltaX, deltaY, continuous);
     
     if (continuous) {
         // smooth scroll events
@@ -433,7 +433,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     String keyIdentifier            = keyIdentifierForKeyEvent(event);
     int windowsVirtualKeyCode       = windowsKeyCodeForKeyEvent(event);
     int nativeVirtualKeyCode        = [event keyCode];
-    int macCharCode                 = WKGetNSEventKeyChar(event);
+    int macCharCode                 = keyCharForEvent(event);
     bool autoRepeat                 = [event type] != NSEventTypeFlagsChanged && [event isARepeat];
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.

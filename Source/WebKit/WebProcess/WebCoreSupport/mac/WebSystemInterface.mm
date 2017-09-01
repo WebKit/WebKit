@@ -52,7 +52,6 @@ void InitWebCoreSystemInterface(void)
 #endif
         INIT(CGContextIsPDFContext);
 #if !PLATFORM(IOS)
-        INIT(GetWheelEventDeltas);
         INIT(GetNSEventKeyChar);
         INIT(HitTestMediaUIPart);
         INIT(MeasureMediaUIPart);

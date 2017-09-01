@@ -132,6 +132,7 @@
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/MainThread.h>
@@ -1409,8 +1410,8 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
-    [notificationCenter removeObserver:self name:WKWindowWillOrderOnScreenNotification() object:window];
-    [notificationCenter removeObserver:self name:WKWindowWillOrderOffScreenNotification() object:window];
+    [notificationCenter removeObserver:self name:NSWindowWillOrderOnScreenNotification object:window];
+    [notificationCenter removeObserver:self name:NSWindowWillOrderOffScreenNotification object:window];
     [notificationCenter removeObserver:self name:NSWindowWillCloseNotification object:window];
     
     _private->observingWindowNotifications = false;
@@ -3449,8 +3450,8 @@ WEBCORE_COMMAND(toggleUnderline)
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter addObserver:self selector:@selector(windowDidBecomeKey:) name:NSWindowDidBecomeKeyNotification object:nil];
     [notificationCenter addObserver:self selector:@selector(windowDidResignKey:) name:NSWindowDidResignKeyNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(windowWillOrderOnScreen:) name:WKWindowWillOrderOnScreenNotification() object:window];
-    [notificationCenter addObserver:self selector:@selector(windowWillOrderOffScreen:) name:WKWindowWillOrderOffScreenNotification() object:window];
+    [notificationCenter addObserver:self selector:@selector(windowWillOrderOnScreen:) name:NSWindowWillOrderOnScreenNotification object:window];
+    [notificationCenter addObserver:self selector:@selector(windowWillOrderOffScreen:) name:NSWindowWillOrderOffScreenNotification object:window];
     [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:window];
     
     _private->observingWindowNotifications = true;

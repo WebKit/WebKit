@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <wtf/Platform.h>
+#import "config.h"
+#import "WebPanel.h"
 
 #if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <pal/spi/mac/NSWindowSPI.h>
 
-#import <AppKit/NSWindow_Private.h>
+@implementation WebPanel
 
-#else
-
-#import <AppKit/NSWindow.h>
-
-@interface NSWindow ()
-
-- (id)_newFirstResponderAfterResigning;
+- (instancetype)init
+{
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    static NSUInteger styleMask = NSMiniaturizableWindowMask | NSClosableWindowMask | NSResizableWindowMask  | NSTitledWindowMask | NSSmallWindowMask | NSSideUtilityWindowMask | NSUtilityWindowMask;
+#pragma clang diagnostic pop
+    
+    return [super initWithContentRect:NSZeroRect styleMask:styleMask backing:NSBackingStoreBuffered defer:YES];
+}
 
 @end
-
-enum {
-    NSSideUtilityWindowMask = 1 << 9,
-    NSSmallWindowMask = 1 << 10,
-    _NSCarbonWindowMask = 1 << 25,
-};
-
-#endif
-
-extern NSString *NSWindowWillOrderOnScreenNotification;
-extern NSString *NSWindowWillOrderOffScreenNotification;
 
 #endif // PLATFORM(MAC)

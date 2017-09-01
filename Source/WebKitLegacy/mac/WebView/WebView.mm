@@ -211,7 +211,9 @@
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/mac/NSResponderSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
+#import <pal/spi/mac/NSWindowSPI.h>
 #import <runtime/ArrayPrototype.h>
 #import <runtime/CatchScope.h>
 #import <runtime/DateInstance.h>
@@ -5866,9 +5868,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowKeyStateChanged:)
             name:NSWindowDidResignKeyNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
-            name:WKWindowWillOrderOnScreenNotification() object:window];
+            name:NSWindowWillOrderOnScreenNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOffScreen:)
-            name:WKWindowWillOrderOffScreenNotification() object:window];
+            name:NSWindowWillOrderOffScreenNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeBackingProperties:)
             name:windowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeScreen:)
@@ -5890,9 +5892,9 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidResignKeyNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:WKWindowWillOrderOnScreenNotification() object:window];
+            name:NSWindowWillOrderOnScreenNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:WKWindowWillOrderOffScreenNotification() object:window];
+            name:NSWindowWillOrderOffScreenNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:windowDidChangeBackingPropertiesNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
@@ -5923,7 +5925,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         // The following are expensive enough that we don't want to call them over
         // and over, so do them when we move into a window.
         [window setAcceptsMouseMovedEvents:YES];
-        WKSetNSWindowShouldPostEventNotifications(window, YES);
+        [window _setShouldPostEventNotifications:YES];
     } else if (!_private->closed) {
         _private->page->setCanStartMedia(false);
         _private->page->setIsInWindow(false);

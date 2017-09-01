@@ -32,8 +32,11 @@
 #import "Scrollbar.h"
 #import "WebCoreSystemInterface.h"
 #import "WindowsKeyboardCodes.h"
+#import <HIToolbox/CarbonEvents.h>
 #import <HIToolbox/Events.h>
 #import <mach/mach_time.h>
+#import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSEventSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/ASCIICType.h>
 
@@ -674,6 +677,39 @@ static int typeForEvent(NSEvent *event)
     return static_cast<int>([NSMenu menuTypeForEvent:event]);
 }
     
+void getWheelEventDeltas(NSEvent *event, float& deltaX, float& deltaY, BOOL& continuous)
+{
+    ASSERT(event);
+    if (event.hasPreciseScrollingDeltas) {
+        deltaX = event.scrollingDeltaX;
+        deltaY = event.scrollingDeltaY;
+        continuous = YES;
+    } else {
+        deltaX = event.deltaX;
+        deltaY = event.deltaY;
+        continuous = NO;
+    }
+}
+
+UInt8 keyCharForEvent(NSEvent *event)
+{
+    EventRef eventRef = (EventRef)[event _eventRef];
+    if (!eventRef)
+        return 0;
+
+    ByteCount keyCharCount = 0;
+    if (GetEventParameter(eventRef, kEventParamKeyMacCharCodes, typeChar, 0, 0, &keyCharCount, 0) != noErr)
+        return 0;
+    if (keyCharCount != 1)
+        return 0;
+
+    UInt8 keyChar = 0;
+    if (GetEventParameter(eventRef, kEventParamKeyMacCharCodes, typeChar, 0, sizeof(keyChar), &keyCharCount, &keyChar) != noErr)
+        return 0;
+    
+    return keyChar;
+}
+
 class PlatformMouseEventBuilder : public PlatformMouseEvent {
 public:
     PlatformMouseEventBuilder(NSEvent *event, NSEvent *correspondingPressureEvent, NSView *windowView)
@@ -744,7 +780,7 @@ public:
         m_granularity = ScrollByPixelWheelEvent;
 
         BOOL continuous;
-        wkGetWheelEventDeltas(event, &m_deltaX, &m_deltaY, &continuous);
+        getWheelEventDeltas(event, m_deltaX, m_deltaY, continuous);
         if (continuous) {
             m_wheelTicksX = m_deltaX / static_cast<float>(Scrollbar::pixelsPerLineStep());
             m_wheelTicksY = m_deltaY / static_cast<float>(Scrollbar::pixelsPerLineStep());
