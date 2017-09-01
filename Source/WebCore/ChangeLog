@@ -1,3 +1,12 @@
+2017-08-31  Alex Christensen  <achristensen@webkit.org>
+
+        Fix Windows build after r221422
+        https://bugs.webkit.org/show_bug.cgi?id=174924
+
+        * platform/text/win/LocaleWin.cpp:
+        (WebCore::LocaleWin::getLocaleInfoString):
+        StringVector is now the type that can be adopted by String::adopt.
+
 2017-08-31  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Apple Windows build following <https://trac.webkit.org/changeset/221459>
