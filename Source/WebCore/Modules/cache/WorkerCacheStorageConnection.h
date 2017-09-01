@@ -48,7 +48,7 @@ private:
 
     void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
-    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<DOMCache::Record>&&) final;
+    void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&) final;
 
     WorkerGlobalScope& m_scope;
     WorkerLoaderProxy& m_proxy;

@@ -35,7 +35,7 @@
 #include "WebProcess.h"
 #include <wtf/MainThread.h>
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 using namespace WebKit::CacheStorage;
 
 namespace WebKit {

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <WebCore/DOMCache.h>
+#include <WebCore/DOMCacheEngine.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -40,22 +40,22 @@ public:
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
 
-    Vector<WebCore::DOMCache::Record> records() const;
-    WebCore::DOMCache::CacheInfo info() const { return { m_identifier, m_name }; }
+    Vector<WebCore::DOMCacheEngine::Record> records() const;
+    WebCore::DOMCacheEngine::CacheInfo info() const { return { m_identifier, m_name }; }
 
-    void put(Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
-    void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+    void put(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
 private:
     Vector<uint64_t> queryCache(const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
 
-    void writeRecordsList(WebCore::DOMCache::CompletionCallback&&);
-    void writeRecordToDisk(WebCore::DOMCache::Record&);
-    void removeRecordFromDisk(WebCore::DOMCache::Record&);
+    void writeRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);
+    void writeRecordToDisk(WebCore::DOMCacheEngine::Record&);
+    void removeRecordFromDisk(WebCore::DOMCacheEngine::Record&);
 
     uint64_t m_identifier { 0 };
     String m_name;
-    Vector<WebCore::DOMCache::Record> m_records;
+    Vector<WebCore::DOMCacheEngine::Record> m_records;
     uint64_t m_nextRecordIdentifier { 0 };
 };
 

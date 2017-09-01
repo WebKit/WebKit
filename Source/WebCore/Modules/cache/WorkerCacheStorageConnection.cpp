@@ -36,7 +36,7 @@
 #include "WorkerRunLoop.h"
 #include "WorkerThread.h"
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
 

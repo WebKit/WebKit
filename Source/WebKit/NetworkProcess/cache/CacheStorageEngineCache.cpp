@@ -42,7 +42,7 @@
 
 
 using namespace WebCore;
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 using namespace WebKit::NetworkCache;
 
 namespace WebKit {
@@ -142,7 +142,7 @@ Vector<uint64_t> Cache::queryCache(const ResourceRequest& request, const CacheQu
 
     Vector<uint64_t> results;
     for (const auto& record : m_records) {
-        if (WebCore::DOMCache::queryCacheMatch(request, record.request, record.response, options))
+        if (WebCore::DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
             results.append(record.identifier);
     }
     return results;

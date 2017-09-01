@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "DOMCache.h"
+#include "DOMCacheEngine.h"
 
 #include "CacheQueryOptions.h"
 #include "Exception.h"
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-namespace DOMCache {
+namespace DOMCacheEngine {
 
 Exception errorToException(Error error)
 {
@@ -89,18 +89,18 @@ ResponseBody isolatedResponseBody(const ResponseBody& body)
     }, [](const Ref<SharedBuffer>& buffer) {
         return buffer->copy();
     }, [](const std::nullptr_t&) {
-        return DOMCache::ResponseBody { };
+        return DOMCacheEngine::ResponseBody { };
     });
 }
 
-static inline ResponseBody copyResponseBody(const DOMCache::ResponseBody& body)
+static inline ResponseBody copyResponseBody(const DOMCacheEngine::ResponseBody& body)
 {
     return WTF::switchOn(body, [](const Ref<FormData>& formData) {
         return formData.copyRef();
     }, [](const Ref<SharedBuffer>& buffer) {
         return buffer.copyRef();
     }, [](const std::nullptr_t&) {
-        return DOMCache::ResponseBody { };
+        return DOMCacheEngine::ResponseBody { };
     });
 }
 
@@ -118,7 +118,7 @@ CacheInfos CacheInfos::isolatedCopy()
     return { WTFMove(isolatedCaches), updateCounter };
 }
 
-} // namespace DOMCache
+} // namespace DOMCacheEngine
 
 } // namespace WebCore
 

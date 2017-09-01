@@ -34,7 +34,7 @@
 #include "ScriptExecutionContext.h"
 #include "URL.h"
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
 
@@ -250,7 +250,7 @@ void Cache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& promi
 
             CacheQueryOptions options;
             for (const auto& record : taskHandler->records()) {
-                if (DOMCache::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
+                if (DOMCacheEngine::queryCacheMatch(request->resourceRequest(), record.request, record.response, options)) {
                     taskHandler->error(Exception { InvalidStateError, ASCIILiteral("addAll cannot store several matching requests")});
                     return;
                 }
@@ -312,7 +312,7 @@ void Cache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDef
             if (result.hasException())
                 promise.reject(result.releaseException());
             else {
-                DOMCache::ResponseBody body;
+                DOMCacheEngine::ResponseBody body;
                 if (auto buffer = result.releaseReturnValue())
                     body = buffer.releaseNonNull();
                 batchPutOperation(request.get(), response.get(), WTFMove(body), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
@@ -405,7 +405,7 @@ void Cache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options,
 static inline bool queryCacheMatch(const FetchRequest& request, const FetchRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)
 {
     // We need to pass the resource request with all correct headers hence why we call resourceRequest().
-    return DOMCache::queryCacheMatch(request.resourceRequest(), cachedRequest.resourceRequest(), cachedResponse, options);
+    return DOMCacheEngine::queryCacheMatch(request.resourceRequest(), cachedRequest.resourceRequest(), cachedResponse, options);
 }
 
 Vector<CacheStorageRecord> Cache::queryCacheWithTargetStorage(const FetchRequest& request, const CacheQueryOptions& options, const Vector<CacheStorageRecord>& targetStorage)
@@ -427,7 +427,7 @@ void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&
     m_connection->batchDeleteOperation(m_identifier, request.internalRequest(), WTFMove(options), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
             if (!result.hasValue())
-                callback(DOMCache::errorToException(result.error()));
+                callback(DOMCacheEngine::errorToException(result.error()));
             else
                 callback(!result.value().isEmpty());
         }
@@ -435,7 +435,7 @@ void Cache::batchDeleteOperation(const FetchRequest& request, CacheQueryOptions&
     });
 }
 
-Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, DOMCache::ResponseBody&& responseBody)
+Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, DOMCacheEngine::ResponseBody&& responseBody)
 {
     // FIXME: Add a setHTTPHeaderFields on ResourceResponseBase.
     ResourceResponse cachedResponse = response.resourceResponse();
@@ -454,7 +454,7 @@ Record toConnectionRecord(const FetchRequest& request, FetchResponse& response, 
     };
 }
 
-void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCache::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
+void Cache::batchPutOperation(const FetchRequest& request, FetchResponse& response, DOMCacheEngine::ResponseBody&& responseBody, WTF::Function<void(ExceptionOr<void>&&)>&& callback)
 {
     Vector<Record> records;
     records.append(toConnectionRecord(request, response, WTFMove(responseBody)));
@@ -468,7 +468,7 @@ void Cache::batchPutOperation(Vector<Record>&& records, WTF::Function<void(Excep
     m_connection->batchPutOperation(m_identifier, WTFMove(records), [this, callback = WTFMove(callback)](RecordIdentifiersOrError&& result) {
         if (!m_isStopped) {
             if (!result.hasValue())
-                callback(DOMCache::errorToException(result.error()));
+                callback(DOMCacheEngine::errorToException(result.error()));
             else
                 callback({ });
         }

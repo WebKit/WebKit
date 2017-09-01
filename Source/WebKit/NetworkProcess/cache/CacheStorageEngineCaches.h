@@ -38,15 +38,15 @@ class Caches : public RefCounted<Caches> {
 public:
     static Ref<Caches> create(Engine& engine, const String& origin) { return adoptRef(*new Caches { engine, origin }); }
 
-    void initialize(WebCore::DOMCache::CompletionCallback&&);
-    void open(String&& name, WebCore::DOMCache::CacheIdentifierCallback&&);
-    void remove(uint64_t identifier, WebCore::DOMCache::CompletionCallback&&);
+    void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
+    void open(String&& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(uint64_t identifier, WebCore::DOMCacheEngine::CompletionCallback&&);
     void clearMemoryRepresentation();
 
     void detach();
 
     bool isInitialized() const { return m_isInitialized; }
-    WebCore::DOMCache::CacheInfos cacheInfos(uint64_t updateCounter) const;
+    WebCore::DOMCacheEngine::CacheInfos cacheInfos(uint64_t updateCounter) const;
 
     const Cache* find(const String& name) const;
     Cache* find(uint64_t identifier);
@@ -54,8 +54,8 @@ public:
 private:
     Caches(Engine&, const String& rootPath);
 
-    void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCache::Error>&&)>&&);
-    void writeCachesToDisk(WebCore::DOMCache::CompletionCallback&&);
+    void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
+    void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 
@@ -69,7 +69,7 @@ private:
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;
     RefPtr<NetworkCache::Storage> m_storage;
-    Vector<WebCore::DOMCache::CompletionCallback> m_pendingInitializationCallbacks;
+    Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingInitializationCallbacks;
 };
 
 } // namespace CacheStorage

@@ -73,10 +73,10 @@ private:
     Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
     void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(const Vector<CacheStorageRecord>&)>&&);
     void batchDeleteOperation(const FetchRequest&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<bool>&&)>&&);
-    void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCache::ResponseBody&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
-    void batchPutOperation(Vector<DOMCache::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
+    void batchPutOperation(const FetchRequest&, FetchResponse&, DOMCacheEngine::ResponseBody&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
+    void batchPutOperation(Vector<DOMCacheEngine::Record>&&, WTF::Function<void(ExceptionOr<void>&&)>&&);
 
-    void updateRecords(Vector<DOMCache::Record>&&);
+    void updateRecords(Vector<DOMCacheEngine::Record>&&);
 
     String m_name;
     uint64_t m_identifier;

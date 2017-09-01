@@ -1,3 +1,37 @@
+2017-09-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error, 'Cache' is not declared.
+        https://bugs.webkit.org/show_bug.cgi?id=176062
+
+        Reviewed by Youenn Fablet.
+
+        Rename DOMCache to DOMCacheEngine.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::queryCache):
+        (WebKit::CacheStorage::Engine::writeFile):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initialize):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DOMCacheEngine::CacheInfo>::encode):
+        (IPC::ArgumentCoder<DOMCacheEngine::CacheInfo>::decode):
+        (IPC::ArgumentCoder<DOMCacheEngine::Record>::encode):
+        (IPC::ArgumentCoder<DOMCacheEngine::Record>::decode):
+        (IPC::ArgumentCoder<DOMCache::CacheInfo>::encode): Deleted.
+        (IPC::ArgumentCoder<DOMCache::CacheInfo>::decode): Deleted.
+        (IPC::ArgumentCoder<DOMCache::Record>::encode): Deleted.
+        (IPC::ArgumentCoder<DOMCache::Record>::decode): Deleted.
+        * Shared/WebCoreArgumentCoders.h:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+        * WebProcess/Cache/WebCacheStorageConnection.messages.in:
+
 2017-08-31  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream AppKit-related WebKitSystemInterface functions

@@ -53,15 +53,15 @@ public:
 
     bool shouldPersist() const { return !!m_ioQueue;}
 
-    void open(const String& origin, const String& cacheName, WebCore::DOMCache::CacheIdentifierCallback&&);
-    void remove(uint64_t cacheIdentifier, WebCore::DOMCache::CacheIdentifierCallback&&);
-    void retrieveCaches(const String& origin, uint64_t updateCounter, WebCore::DOMCache::CacheInfosCallback&&);
+    void open(const String& origin, const String& cacheName, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void remove(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
+    void retrieveCaches(const String& origin, uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
 
-    void retrieveRecords(uint64_t cacheIdentifier, WebCore::DOMCache::RecordsCallback&&);
-    void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCache::Record>&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
-    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCache::RecordIdentifiersCallback&&);
+    void retrieveRecords(uint64_t cacheIdentifier, WebCore::DOMCacheEngine::RecordsCallback&&);
+    void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
+    void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
-    void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCache::CompletionCallback&&);
+    void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
     void readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&&);
     void removeFile(const String& filename);
 
@@ -75,13 +75,13 @@ private:
     static Engine& defaultEngine();
     explicit Engine(String&& rootPath);
 
-    void initialize(Function<void(std::optional<WebCore::DOMCache::Error>&&)>&&);
+    void initialize(Function<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
 
-    using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCache::Error>;
+    using CachesOrError = Expected<std::reference_wrapper<Caches>, WebCore::DOMCacheEngine::Error>;
     using CachesCallback = WTF::Function<void(CachesOrError&&)>;
     void readCachesFromDisk(const String& origin, CachesCallback&&);
 
-    using CacheOrError = Expected<std::reference_wrapper<Cache>, WebCore::DOMCache::Error>;
+    using CacheOrError = Expected<std::reference_wrapper<Cache>, WebCore::DOMCacheEngine::Error>;
     using CacheCallback = WTF::Function<void(CacheOrError&&)>;
     void readCache(uint64_t cacheIdentifier, CacheCallback&&);
 

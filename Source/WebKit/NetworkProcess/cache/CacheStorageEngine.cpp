@@ -34,7 +34,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringHash.h>
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 using namespace WebKit::NetworkCache;
 
 namespace WebKit {
@@ -253,7 +253,7 @@ Cache* Engine::cache(uint64_t cacheIdentifier)
     return result;
 }
 
-void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCore::DOMCache::CompletionCallback&& callback)
+void Engine::writeFile(const String& filename, NetworkCache::Data&& data, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     if (!shouldPersist()) {
         callback(std::nullopt);

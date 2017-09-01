@@ -29,7 +29,7 @@
 #include "NetworkCacheCoders.h"
 #include <wtf/text/StringBuilder.h>
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 using namespace WebKit::NetworkCache;
 
 namespace WebKit {
@@ -56,7 +56,7 @@ Caches::Caches(Engine& engine, const String& origin)
 {
 }
 
-void Caches::initialize(WebCore::DOMCache::CompletionCallback&& callback)
+void Caches::initialize(WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
     if (m_isInitialized || m_rootPath.isNull()) {
         callback(std::nullopt);

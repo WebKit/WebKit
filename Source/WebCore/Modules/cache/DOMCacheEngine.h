@@ -36,7 +36,7 @@ namespace WebCore {
 
 struct CacheQueryOptions;
 
-namespace DOMCache {
+namespace DOMCacheEngine {
 
 enum class Error {
     NotImplemented,
@@ -111,18 +111,18 @@ template<class Decoder> inline bool CacheInfos::decode(Decoder& decoder, CacheIn
     return decoder.decode(cacheInfos.updateCounter);
 }
 
-} // namespace DOMCache
+} // namespace DOMCacheEngine
 
 } // namespace WebCore
 
 namespace WTF {
-template<> struct EnumTraits<WebCore::DOMCache::Error> {
+template<> struct EnumTraits<WebCore::DOMCacheEngine::Error> {
     using values = EnumValues<
-        WebCore::DOMCache::Error,
-        WebCore::DOMCache::Error::NotImplemented,
-        WebCore::DOMCache::Error::ReadDisk,
-        WebCore::DOMCache::Error::WriteDisk,
-        WebCore::DOMCache::Error::Internal
+        WebCore::DOMCacheEngine::Error,
+        WebCore::DOMCacheEngine::Error::NotImplemented,
+        WebCore::DOMCacheEngine::Error::ReadDisk,
+        WebCore::DOMCacheEngine::Error::WriteDisk,
+        WebCore::DOMCacheEngine::Error::Internal
     >;
 };
 }

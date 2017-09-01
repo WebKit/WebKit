@@ -1,3 +1,51 @@
+2017-09-01  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error, 'Cache' is not declared.
+        https://bugs.webkit.org/show_bug.cgi?id=176062
+
+        Reviewed by Youenn Fablet.
+
+        Rename DOMCache to DOMCacheEngine.
+
+        No new tests, covered by existing tests. 
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::addAll):
+        (WebCore::Cache::put):
+        (WebCore::queryCacheMatch):
+        (WebCore::Cache::batchDeleteOperation):
+        (WebCore::toConnectionRecord):
+        (WebCore::Cache::batchPutOperation):
+        * Modules/cache/Cache.h:
+        * Modules/cache/CacheStorage.cpp:
+        (WebCore::CacheStorage::open):
+        (WebCore::CacheStorage::remove):
+        * Modules/cache/CacheStorageConnection.cpp:
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::clearMemoryRepresentation):
+        (WebCore::CacheStorageConnection::openCompleted):
+        (WebCore::CacheStorageConnection::removeCompleted):
+        (WebCore::CacheStorageConnection::doOpen):
+        (WebCore::CacheStorageConnection::doRemove):
+        (WebCore::CacheStorageConnection::doBatchDeleteOperation):
+        (WebCore::CacheStorageConnection::doBatchPutOperation):
+        * Modules/cache/DOMCache.cpp: Removed.
+        * Modules/cache/DOMCache.h: Removed.
+        * Modules/cache/DOMCacheEngine.cpp: Copied from Source/WebCore/Modules/cache/DOMCache.cpp.
+        (WebCore::DOMCacheEngine::isolatedResponseBody):
+        (WebCore::DOMCacheEngine::copyResponseBody):
+        (WebCore::DOMCache::errorToException): Deleted.
+        (WebCore::DOMCache::queryCacheMatch): Deleted.
+        (WebCore::DOMCache::isolatedResponseBody): Deleted.
+        (WebCore::DOMCache::copyResponseBody): Deleted.
+        (WebCore::DOMCache::Record::copy const): Deleted.
+        * Modules/cache/DOMCacheEngine.h: Copied from Source/WebCore/Modules/cache/DOMCache.h.
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        * Modules/cache/WorkerCacheStorageConnection.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp:
+        (WebCore::Internals::clearCacheStorageMemoryRepresentation):
+
 2017-08-31  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream AppKit-related WebKitSystemInterface functions

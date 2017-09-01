@@ -31,7 +31,7 @@
 #include "JSFetchResponse.h"
 #include "ScriptExecutionContext.h"
 
-using namespace WebCore::DOMCache;
+using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
 
@@ -168,7 +168,7 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<Cach
             if (!m_isStopped) {
 
                 if (!result.hasValue())
-                    promise.reject(DOMCache::errorToException(result.error()));
+                    promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else {
                     auto cache = Cache::create(*scriptExecutionContext(), String { name }, result.value(), m_connection.copyRef());
                     promise.resolve(cache);
@@ -196,7 +196,7 @@ void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
         m_connection->remove(m_caches[position]->identifier(), [this, name, promise = WTFMove(promise)](const CacheIdentifierOrError& result) mutable {
             if (!m_isStopped) {
                 if (!result.hasValue())
-                    promise.reject(DOMCache::errorToException(result.error()));
+                    promise.reject(DOMCacheEngine::errorToException(result.error()));
                 else
                     promise.resolve(true);
             }

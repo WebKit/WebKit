@@ -914,7 +914,7 @@ set(WebCore_SOURCES
     Modules/cache/Cache.cpp
     Modules/cache/CacheStorage.cpp
     Modules/cache/CacheStorageConnection.cpp
-    Modules/cache/DOMCache.cpp
+    Modules/cache/DOMCacheEngine.cpp
     Modules/cache/DOMWindowCaches.cpp
     Modules/cache/WorkerCacheStorageConnection.cpp
     Modules/cache/WorkerGlobalScopeCaches.cpp

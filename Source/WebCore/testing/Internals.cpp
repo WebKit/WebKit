@@ -4150,7 +4150,7 @@ void Internals::clearCacheStorageMemoryRepresentation()
         if (!m_cacheStorageConnection)
             return;
     }
-    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [](std::optional<DOMCache::Error>&&) { });
+    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [](std::optional<DOMCacheEngine::Error>&&) { });
 }
 
 } // namespace WebCore
