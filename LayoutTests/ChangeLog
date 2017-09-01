@@ -1,3 +1,16 @@
+2017-09-01  Ms2ger  <Ms2ger@igalia.com>
+
+        Mark media-ended.html as passing.
+        https://bugs.webkit.org/show_bug.cgi?id=131534
+
+        Unreviewed test gardening.
+
+        The test needs to run through the entire audio file twice, so it will
+        take several seconds by design. GTK used to have a shorter timeout,
+        which was extended in r218270. The test hasn't timed out since.
+
+        * platform/gtk/TestExpectations:
+
 2017-08-31  Sam Weinig  <sam@webkit.org>
 
         Implement DOMMatrix2DInit for setTransform()/addPath()
