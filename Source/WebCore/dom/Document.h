@@ -966,9 +966,6 @@ public:
     bool hasNodesWithMissingStyle() const { return m_hasNodesWithMissingStyle; }
     void setHasNodesWithMissingStyle() { m_hasNodesWithMissingStyle = true; }
 
-    void updateFocusAppearanceSoon(SelectionRestorationMode);
-    void cancelFocusAppearanceUpdate();
-
     // Extension for manipulating canvas drawing contexts for use in CSS
     std::optional<RenderingContext> getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
@@ -1412,7 +1409,6 @@ private:
 
     void updateTitleFromTitleElement();
     void updateTitle(const StringWithDirection&);
-    void updateFocusAppearanceTimerFired();
     void updateBaseURL();
 
     void buildAccessKeyMap(TreeScope* root);
@@ -1537,7 +1533,6 @@ private:
     const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
-    Timer m_updateFocusAppearanceTimer;
 
     Element* m_cssTarget { nullptr };
 
@@ -1732,7 +1727,6 @@ private:
     PageCacheState m_pageCacheState { NotInPageCache };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::NoReferrerWhenDowngrade };
     ReadyState m_readyState { Complete };
-    SelectionRestorationMode m_updateFocusAppearanceRestoresSelection { SelectionRestorationMode::SetDefault };
 
     MutationObserverOptions m_mutationObserverTypes { 0 };
 

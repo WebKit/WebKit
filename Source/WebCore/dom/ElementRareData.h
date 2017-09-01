@@ -51,9 +51,6 @@ public:
     bool tabIndexSetExplicitly() const { return m_tabIndexWasSetExplicitly; }
     void clearTabIndexExplicitly() { m_tabIndex = 0; m_tabIndexWasSetExplicitly = false; }
 
-    bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
-    void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
-
     bool styleAffectedByActive() const { return m_styleAffectedByActive; }
     void setStyleAffectedByActive(bool value) { m_styleAffectedByActive = value; }
 
@@ -120,7 +117,6 @@ private:
     int m_tabIndex;
     unsigned short m_childIndex;
     unsigned m_tabIndexWasSetExplicitly : 1;
-    unsigned m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
     unsigned m_styleAffectedByActive : 1;
     unsigned m_styleAffectedByEmpty : 1;
     unsigned m_styleAffectedByFocusWithin : 1;
@@ -166,7 +162,6 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_tabIndex(0)
     , m_childIndex(0)
     , m_tabIndexWasSetExplicitly(false)
-    , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
     , m_styleAffectedByActive(false)
     , m_styleAffectedByEmpty(false)
     , m_styleAffectedByFocusWithin(false)

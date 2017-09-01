@@ -2458,13 +2458,6 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
     // Setting the focused node above might have invalidated the layout due to scripts.
     document().updateLayoutIgnorePendingStylesheets();
 
-    if (!isFocusable()) {
-        ensureElementRareData().setNeedsFocusAppearanceUpdateSoonAfterAttach(true);
-        return;
-    }
-        
-    cancelFocusAppearanceUpdate();
-
     SelectionRevealMode revealMode = SelectionRevealMode::Reveal;
 #if PLATFORM(IOS)
     // Focusing a form element triggers animation in UIKit to scroll to the right position.
@@ -2476,18 +2469,6 @@ void Element::focus(bool restorePreviousSelection, FocusDirection direction)
 #endif
 
     updateFocusAppearance(restorePreviousSelection ? SelectionRestorationMode::Restore : SelectionRestorationMode::SetDefault, revealMode);
-}
-
-void Element::updateFocusAppearanceAfterAttachIfNeeded()
-{
-    if (!hasRareData())
-        return;
-    ElementRareData* data = elementRareData();
-    if (!data->needsFocusAppearanceUpdateSoonAfterAttach())
-        return;
-    if (isFocusable() && document().focusedElement() == this)
-        document().updateFocusAppearanceSoon(SelectionRestorationMode::SetDefault);
-    data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
 }
 
 void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMode revealMode)
@@ -2518,7 +2499,6 @@ void Element::updateFocusAppearance(SelectionRestorationMode, SelectionRevealMod
 
 void Element::blur()
 {
-    cancelFocusAppearanceUpdate();
     if (treeScope().focusedElementInScope() == this) {
         if (Frame* frame = document().frame())
             frame->page()->focusController().setFocusedElement(nullptr, *frame);
@@ -2925,14 +2905,6 @@ AtomicString Element::computeInheritedLanguage() const
 Locale& Element::locale() const
 {
     return document().getCachedLocale(computeInheritedLanguage());
-}
-
-void Element::cancelFocusAppearanceUpdate()
-{
-    if (hasRareData())
-        elementRareData()->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
-    if (document().focusedElement() == this)
-        document().cancelFocusAppearanceUpdate();
 }
 
 void Element::normalizeAttributes()
@@ -3528,7 +3500,6 @@ void Element::resetStyleRelations()
 void Element::clearStyleDerivedDataBeforeDetachingRenderer()
 {
     unregisterNamedFlowContentElement();
-    cancelFocusAppearanceUpdate();
     clearBeforePseudoElement();
     clearAfterPseudoElement();
 }

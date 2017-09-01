@@ -1,3 +1,38 @@
+2017-08-31  Andreas Kling  <akling@apple.com>
+
+        Element focus appearance update should be either immediate or a post-layout task
+        https://bugs.webkit.org/show_bug.cgi?id=176193
+
+        Reviewed by Antti Koivisto.
+
+        This change removes an old mechanism for avoiding element focus appearance updates
+        while we might be in the middle of attaching a renderer.
+
+        Focus appearance updates depend on a clean layout, since they want to be able to
+        scroll the element into the visible viewport if needed.
+        We now simply do the updates either immediately after layout in Element::focus(),
+        or as a post-layout callback when needed for HTMLInputElement::didAttachRenderers().
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::updateFocusAppearanceSoon): Deleted.
+        (WebCore::Document::cancelFocusAppearanceUpdate): Deleted.
+        (WebCore::Document::updateFocusAppearanceTimerFired): Deleted.
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::focus):
+        (WebCore::Element::blur):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        (WebCore::Element::updateFocusAppearanceAfterAttachIfNeeded): Deleted.
+        (WebCore::Element::cancelFocusAppearanceUpdate): Deleted.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::needsFocusAppearanceUpdateSoonAfterAttach const): Deleted.
+        (WebCore::ElementRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach): Deleted.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::didAttachRenderers):
+
 2017-08-31  Don Olmstead  <don.olmstead@sony.com>
 
         [CMake] Make USE_CF conditional within Windows

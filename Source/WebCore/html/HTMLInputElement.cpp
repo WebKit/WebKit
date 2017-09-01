@@ -817,8 +817,11 @@ void HTMLInputElement::didAttachRenderers()
 
     m_inputType->attach();
 
-    if (document().focusedElement() == this)
-        document().updateFocusAppearanceSoon(SelectionRestorationMode::Restore);
+    if (document().focusedElement() == this) {
+        document().view()->queuePostLayoutCallback([protectedThis = makeRef(*this)] {
+            protectedThis->updateFocusAppearance(SelectionRestorationMode::Restore, SelectionRevealMode::Reveal);
+        });
+    }
 }
 
 void HTMLInputElement::didDetachRenderers()

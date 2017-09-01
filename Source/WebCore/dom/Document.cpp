@@ -461,7 +461,6 @@ Document::Document(Frame* frame, const URL& url, unsigned documentClasses, unsig
     , m_visitedLinkState(std::make_unique<VisitedLinkState>(*this))
     , m_markers(std::make_unique<DocumentMarkerController>(*this))
     , m_styleRecalcTimer([this] { updateStyleIfNeeded(); })
-    , m_updateFocusAppearanceTimer(*this, &Document::updateFocusAppearanceTimerFired)
     , m_documentCreationTime(MonotonicTime::now())
     , m_scriptRunner(std::make_unique<ScriptRunner>(*this))
     , m_moduleLoader(std::make_unique<ScriptModuleLoader>(*this))
@@ -5478,29 +5477,6 @@ void Document::statePopped(Ref<SerializedScriptValue>&& stateObject)
         dispatchPopstateEvent(WTFMove(stateObject));
     else
         m_pendingStateObject = WTFMove(stateObject);
-}
-
-void Document::updateFocusAppearanceSoon(SelectionRestorationMode mode)
-{
-    m_updateFocusAppearanceRestoresSelection = mode;
-    if (!m_updateFocusAppearanceTimer.isActive())
-        m_updateFocusAppearanceTimer.startOneShot(0_s);
-}
-
-void Document::cancelFocusAppearanceUpdate()
-{
-    m_updateFocusAppearanceTimer.stop();
-}
-
-void Document::updateFocusAppearanceTimerFired()
-{
-    Element* element = focusedElement();
-    if (!element)
-        return;
-
-    updateLayout();
-    if (element->isFocusable())
-        element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
 }
 
 void Document::attachRange(Range* range)
