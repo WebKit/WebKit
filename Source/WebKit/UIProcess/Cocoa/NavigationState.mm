@@ -173,7 +173,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
     m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidRequestPasswordForQuickLookDocument:)];
 #endif
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && PLATFORM(MAC)
     m_navigationDelegateMethods.webViewWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:webGLLoadPolicyForURL:decisionHandler:)];
     m_navigationDelegateMethods.webViewResolveWebGLLoadPolicyForURL = [delegate respondsToSelector:@selector(_webView:resolveWebGLLoadPolicyForURL:decisionHandler:)];
 #endif
@@ -289,6 +289,7 @@ NavigationState::NavigationClient::~NavigationClient()
 {
 }
 
+#if PLATFORM(MAC)
 inline WebCore::WebGLLoadPolicy toWebCoreWebGLLoadPolicy(_WKWebGLLoadPolicy policy)
 {
     switch (policy) {
@@ -333,6 +334,7 @@ void NavigationState::NavigationClient::resolveWebGLLoadPolicy(WebPageProxy&, co
         completionHandler(toWebCoreWebGLLoadPolicy(policy));
     }).get()];
 }
+#endif
 
 static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const String& currentMainFrameURL, WTF::Function<void(bool)>&& completionHandler)
 {

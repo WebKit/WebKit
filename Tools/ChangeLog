@@ -1,3 +1,12 @@
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ObjC WebGL policy SPI on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176233
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/WebGLPolicy.mm:
+
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Improve the way unit test are run and the results reported

@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if WK_API_ENABLED
+#if WK_API_ENABLED && PLATFORM(MAC)
 
 #import "TestWKWebView.h"
 #import "Utilities.h"

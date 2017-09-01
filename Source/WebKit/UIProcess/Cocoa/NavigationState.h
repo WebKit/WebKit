@@ -116,7 +116,7 @@ private:
         void didFinishLoadForQuickLookDocumentInMainFrame(const QuickLookDocumentData&) override;
 #endif
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && PLATFORM(MAC)
         void webGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
 #endif
@@ -207,7 +207,7 @@ private:
         bool webViewDidRequestPasswordForQuickLookDocument : 1;
 #endif
 
-#if ENABLE(WEBGL)
+#if ENABLE(WEBGL) && PLATFORM(MAC)
         bool webViewWebGLLoadPolicyForURL : 1;
         bool webViewResolveWebGLLoadPolicyForURL : 1;
 #endif

@@ -1,3 +1,18 @@
+2017-09-01  Alex Christensen  <achristensen@webkit.org>
+
+        Disable ObjC WebGL policy SPI on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176233
+
+        Reviewed by Tim Horton.
+        
+        In r221465 I uploaded new SPI that is only needed on Mac with a beautiful test that only works on Mac.
+        Since it fails on iOS and is not needed on iOS, let's just disable it on iOS.
+
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::setNavigationDelegate):
+
 2017-09-01  Andy Estes  <aestes@apple.com>
 
         [CG] Upstream CoreGraphics-related WebKitSystemInterface functions
