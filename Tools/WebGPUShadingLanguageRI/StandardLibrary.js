@@ -40,8 +40,8 @@ typedef uint = uint32;
 
 native int operator+(int, int);
 
-native thread T^ operator\\[]<T>(thread T[], uint);
-native threadgroup T^ operator\\[]<T:primitive>(threadgroup T[], uint);
-native device T^ operator\\[]<T:primitive>(device T[], uint);
-native constant T^ operator\\[]<T:primitive>(constant T[], uint);
+native thread T^ operator&[]<T>(thread T[], uint);
+native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
+native device T^ operator&[]<T:primitive>(device T[], uint);
+native constant T^ operator&[]<T:primitive>(constant T[], uint);
 `;

@@ -1,3 +1,40 @@
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should use & for getting a ^ and @ for getting a []
+        https://bugs.webkit.org/show_bug.cgi?id=176245
+
+        Reviewed by Myles Maxfield.
+        
+        Using \ as an operator was a bad decision since that's an escape character in so many contexts.
+        
+        Henceforth, & is for making pointers, for example:
+        
+        thread int^ foo() { int x; return &x; }
+        
+        And @ is for making array references, for example:
+        
+        thread int[] foo() { int[42] x; return @x; }
+        
+        Having separate operators makes it easy to have pointers to fixed-size arrays:
+        
+        thread int[42]^ foo() { int[42] x; return &x; }
+
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/MakePtrExpression.js:
+        (MakePtrExpression.prototype.toString):
+        (MakePtrExpression):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossibleSuffix):
+        (parsePossiblePrefix):
+        (parseFuncName):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleMakePtr):
+
 2017-09-01  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WSL's lexer will never emit keyword tokens

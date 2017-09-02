@@ -171,7 +171,7 @@ function TEST_simpleMakePtr()
         thread int^ foo()
         {
             int x = 42;
-            return \\x;
+            return &x;
         }
     `);
     let result = callFunction(program, "foo", [], []);

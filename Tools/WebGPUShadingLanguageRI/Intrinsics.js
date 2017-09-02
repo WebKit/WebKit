@@ -88,16 +88,16 @@ class Intrinsics {
         };
         
         this._map.set(
-            "native thread T^ operator\\[]<T>(thread T[],uint)",
+            "native thread T^ operator&[]<T>(thread T[],uint)",
             arrayElementPtr);
         this._map.set(
-            "native threadgroup T^ operator\\[]<T:primitive>(threadgroup T[],uint)",
+            "native threadgroup T^ operator&[]<T:primitive>(threadgroup T[],uint)",
             arrayElementPtr);
         this._map.set(
-            "native device T^ operator\\[]<T:primitive>(device T[],uint)",
+            "native device T^ operator&[]<T:primitive>(device T[],uint)",
             arrayElementPtr);
         this._map.set(
-            "native constant T^ operator\\[]<T:primitive>(constant T[],uint)",
+            "native constant T^ operator&[]<T:primitive>(constant T[],uint)",
             arrayElementPtr);
     }
     

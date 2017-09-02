@@ -382,7 +382,7 @@ function parse(program, origin, lineNumberOffset, text)
                 consume("]");
                 left = new DereferenceExpression(
                     token,
-                    new CallExpression(token, "operator\\[]", [], [left, index]));
+                    new CallExpression(token, "operator&[]", [], [left, index]));
                 break;
             }
             default:
@@ -399,9 +399,9 @@ function parse(program, origin, lineNumberOffset, text)
             return new CallAssignment(token, "operator" + token.text, parsePossiblePrefix());
         if (token = tryConsume("^"))
             return new DereferenceExpression(token, parsePossiblePrefix());
-        if (token = tryConsume("\\"))
-            return new MakePtrExpression(token, parsePossiblePrefix());
         if (token = tryConsume("&"))
+            return new MakePtrExpression(token, parsePossiblePrefix());
+        if (token = tryConsume("@"))
             return new MakeArrayRefExpression(token, parsePossiblePrefix());
         return parsePossibleSuffix();
     }
@@ -626,12 +626,11 @@ function parse(program, origin, lineNumberOffset, text)
     function parseFuncName()
     {
         if (tryConsume("operator")) {
-            let token = consume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "!", "==", "++", "--", "\\");
-            if (token.text != "\\")
+            let token = consume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "!", "==", "++", "--", "&");
+            if (token.text != "&" || !tryConsume("["))
                 return "operator" + token.text;
-            consume("[");
             consume("]");
-            return "operator\\[]";
+            return "operator&[]";
         }
         return consumeKind("identifier").text;
     }
