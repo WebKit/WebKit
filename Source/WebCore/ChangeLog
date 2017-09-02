@@ -1,3 +1,55 @@
+2017-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryEntry.getFile()
+        https://bugs.webkit.org/show_bug.cgi?id=176167
+        <rdar://problem/34187775>
+
+        Reviewed by Andreas Kling.
+
+        Implement FileSystemDirectoryEntry.getFile():
+        - https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getfile
+
+        Test: editing/pasteboard/datatransfer-items-drop-getFile.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::isValidPathNameCharacter):
+        (WebCore::isValidPathSegment):
+        (WebCore::isValidRelativeVirtualPath):
+        (WebCore::isValidAbsoluteVirtualPath):
+        (WebCore::isValidVirtualPath):
+        Implement various path validation functions as per:
+        - https://wicg.github.io/entries-api/#names-paths
+
+        (WebCore::resolveRelativeVirtualPath):
+        - Use StringView for second parameter for efficiency. Had to keep
+          a String for the first parameter because I need the split to
+          return a Vector.
+        - If the input path is absolute, call recursively with '/' as
+          base path so that the virtual path gets sanitized (i.e. '..'
+          and '.' in the absolute URL get resolved).
+
+        (WebCore::DOMFileSystem::listDirectory):
+        Use String instead of auto. It is not much longer and is clearer.
+
+        (WebCore::validatePathIsDirectory):
+        (WebCore::DOMFileSystem::getParent):
+        Move logic to validate that the path is a directory from getParent() to a
+        separate function. This only makes sure the ScriptExecutionContext is only
+        ref'd / deref'd on the main thread.
+
+        (WebCore::validatePathIsFile):
+        Logic for validating that a path is a file, used by getFile().
+
+        (WebCore::DOMFileSystem::getFile):
+        Implement getFile() as per:
+        - https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getfile
+
+        * Modules/entriesapi/DOMFileSystem.h:
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::getFile):
+        Add implementation of FileSystemDirectoryEntry::getFile() which merely calls
+        DOMFileSystem::getFile().
+
 2017-09-01  Brady Eidson  <beidson@apple.com>
 
         ASSERTION FAILED: taken.get() == &job in WebCore::ServiceWorkerContainer::jobDidFinish(WebCore::ServiceWorkerJob &).

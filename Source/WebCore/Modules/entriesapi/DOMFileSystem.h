@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ExceptionOr.h"
+#include "FileSystemDirectoryEntry.h"
 #include "ScriptWrappable.h"
 #include <wtf/RefCounted.h>
 #include <wtf/WorkQueue.h>
@@ -34,7 +35,7 @@
 namespace WebCore {
 
 class File;
-class FileSystemDirectoryEntry;
+class FileSystemFileEntry;
 class FileSystemEntry;
 class ScriptExecutionContext;
 
@@ -56,6 +57,9 @@ public:
 
     using GetParentCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemDirectoryEntry>>&&)>;
     void getParent(ScriptExecutionContext&, FileSystemEntry&, GetParentCallback&&);
+
+    using GetFileCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemFileEntry>>&&)>;
+    void getFile(ScriptExecutionContext&, FileSystemDirectoryEntry&, const String& virtualPath, const FileSystemDirectoryEntry::Flags&, GetFileCallback&&);
 
 private:
     explicit DOMFileSystem(Ref<File>&&);

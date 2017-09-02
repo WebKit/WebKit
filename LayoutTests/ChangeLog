@@ -1,3 +1,16 @@
+2017-09-01  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryEntry.getFile()
+        https://bugs.webkit.org/show_bug.cgi?id=176167
+        <rdar://problem/34187775>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage.
+
+        * editing/pasteboard/datatransfer-items-drop-getFile-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-getFile.html: Added.
+
 2017-09-01  Matt Lewis  <jlewis3@apple.com>
 
         Skipped multiple webgl tests.

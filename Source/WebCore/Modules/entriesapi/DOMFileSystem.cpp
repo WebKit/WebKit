@@ -87,9 +87,51 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
     return WTFMove(entries);
 }
 
-static bool isAbsoluteVirtualPath(const String& virtualPath)
+// https://wicg.github.io/entries-api/#name
+static bool isValidPathNameCharacter(UChar c)
 {
-    return !virtualPath.isEmpty() && virtualPath[0] == '/';
+    return c != '\0' && c != '/' && c != '\\';
+}
+
+// https://wicg.github.io/entries-api/#path-segment
+static bool isValidPathSegment(StringView segment)
+{
+    ASSERT(!segment.isEmpty());
+    if (segment == "." || segment == "..")
+        return true;
+
+    for (unsigned i = 0; i < segment.length(); ++i) {
+        if (!isValidPathNameCharacter(segment[i]))
+            return false;
+    }
+    return true;
+}
+
+// https://wicg.github.io/entries-api/#relative-path
+static bool isValidRelativeVirtualPath(StringView virtualPath)
+{
+    if (virtualPath.isEmpty())
+        return false;
+
+    if (virtualPath[0] == '/')
+        return false;
+
+    auto segments = virtualPath.split('/');
+    for (auto segment : segments) {
+        if (!isValidPathSegment(segment))
+            return false;
+    }
+    return true;
+}
+
+// https://wicg.github.io/entries-api/#valid-path
+static bool isValidVirtualPath(StringView virtualPath)
+{
+    if (virtualPath.isEmpty())
+        return false;
+    if (virtualPath[0] == '/')
+        return isValidRelativeVirtualPath(virtualPath.substring(1));
+    return isValidRelativeVirtualPath(virtualPath);
 }
 
 DOMFileSystem::DOMFileSystem(Ref<File>&& file)
@@ -118,15 +160,15 @@ Ref<FileSystemEntry> DOMFileSystem::fileAsEntry(ScriptExecutionContext& context)
 }
 
 // https://wicg.github.io/entries-api/#resolve-a-relative-path
-static String resolveRelativePath(const String& virtualPath, const String& relativePath)
+static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringView relativeVirtualPath)
 {
-    ASSERT(virtualPath[0] == '/');
-    if (isAbsoluteVirtualPath(relativePath))
-        return relativePath;
+    ASSERT(baseVirtualPath[0] == '/');
+    if (relativeVirtualPath[0] == '/')
+        return resolveRelativeVirtualPath(ASCIILiteral("/"), relativeVirtualPath.substring(1));
 
-    auto virtualPathSegments = virtualPath.split('/');
-    auto relativePathSegments = relativePath.split('/');
-    for (auto& segment : relativePathSegments) {
+    auto virtualPathSegments = baseVirtualPath.split('/');
+    auto relativePathSegments = relativeVirtualPath.split('/');
+    for (auto segment : relativePathSegments) {
         ASSERT(!segment.isEmpty());
         if (segment == ".")
             continue;
@@ -135,7 +177,7 @@ static String resolveRelativePath(const String& virtualPath, const String& relat
                 virtualPathSegments.removeLast();
             continue;
         }
-        virtualPathSegments.append(segment);
+        virtualPathSegments.append(segment.toString());
     }
 
     if (virtualPathSegments.isEmpty())
@@ -176,7 +218,7 @@ void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDir
     ASSERT(&directory.filesystem() == this);
 
     String directoryVirtualPath = directory.virtualPath();
-    auto fullPath = evaluatePath(directoryVirtualPath);
+    String fullPath = evaluatePath(directoryVirtualPath);
     if (fullPath == m_rootPath) {
         Vector<Ref<FileSystemEntry>> children;
         children.append(fileAsEntry(context));
@@ -192,20 +234,76 @@ void DOMFileSystem::listDirectory(ScriptExecutionContext& context, FileSystemDir
     });
 }
 
+static ExceptionOr<String> validatePathIsDirectory(const String& fullPath, String&& virtualPath)
+{
+    ASSERT(!isMainThread());
+
+    if (!fileIsDirectory(fullPath, ShouldFollowSymbolicLinks::No))
+        return Exception { NotFoundError, "Path no longer exists or is no longer a directory" };
+    return WTFMove(virtualPath);
+}
+
 void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& entry, GetParentCallback&& completionCallback)
 {
-    String virtualPath = resolveRelativePath(entry.virtualPath(), ASCIILiteral(".."));
+    ASSERT(&entry.filesystem() == this);
+
+    String virtualPath = resolveRelativeVirtualPath(entry.virtualPath(), "..");
     ASSERT(virtualPath[0] == '/');
     String fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        if (!fileIsDirectory(fullPath, ShouldFollowSymbolicLinks::No)) {
-            callOnMainThread([completionCallback = WTFMove(completionCallback)] {
-                completionCallback(Exception { NotFoundError, "Path no longer exists or is no longer a directory" });
-            });
-            return;
-        }
-        callOnMainThread([this, context = WTFMove(context), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)] {
-            completionCallback(FileSystemDirectoryEntry::create(context, *this, virtualPath));
+        auto validatedVirtualPath = validatePathIsDirectory(fullPath, WTFMove(virtualPath));
+        callOnMainThread([this, context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+            if (validatedVirtualPath.hasException())
+                completionCallback(validatedVirtualPath.releaseException());
+            else
+                completionCallback(FileSystemDirectoryEntry::create(context, *this, validatedVirtualPath.releaseReturnValue()));
+        });
+    });
+}
+
+static ExceptionOr<String> validatePathIsFile(const String& fullPath, String&& virtualPath)
+{
+    ASSERT(!isMainThread());
+
+    FileMetadata metadata;
+    if (!getFileMetadata(fullPath, metadata, ShouldFollowSymbolicLinks::No))
+        return Exception { NotFoundError, ASCIILiteral("File does not exist") };
+
+    if (metadata.type != FileMetadata::TypeFile)
+        return Exception { TypeMismatchError, ASCIILiteral("Entry at path is not a file") };
+
+    return WTFMove(virtualPath);
+}
+
+// https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getfile
+void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, const String& virtualPath, const FileSystemDirectoryEntry::Flags& flags, GetFileCallback&& completionCallback)
+{
+    ASSERT(&directory.filesystem() == this);
+
+    if (!isValidVirtualPath(virtualPath)) {
+        callOnMainThread([completionCallback = WTFMove(completionCallback)] {
+            completionCallback(Exception { TypeMismatchError, ASCIILiteral("Path is invalid") });
+        });
+        return;
+    }
+
+    if (flags.create) {
+        callOnMainThread([completionCallback = WTFMove(completionCallback)] {
+            completionCallback(Exception { SecurityError, ASCIILiteral("create flag cannot be true") });
+        });
+        return;
+    }
+
+    String resolvedVirtualPath = resolveRelativeVirtualPath(directory.virtualPath(), virtualPath);
+    ASSERT(resolvedVirtualPath[0] == '/');
+    String fullPath = evaluatePath(resolvedVirtualPath);
+    m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+        auto validatedVirtualPath = validatePathIsFile(fullPath, WTFMove(resolvedVirtualPath));
+        callOnMainThread([this, context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
+            if (validatedVirtualPath.hasException())
+                completionCallback(validatedVirtualPath.releaseException());
+            else
+                completionCallback(FileSystemFileEntry::create(context, *this, validatedVirtualPath.releaseReturnValue()));
         });
     });
 }

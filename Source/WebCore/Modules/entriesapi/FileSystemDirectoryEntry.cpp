@@ -27,8 +27,12 @@
 #include "FileSystemDirectoryEntry.h"
 
 #include "DOMException.h"
+#include "DOMFileSystem.h"
 #include "ErrorCallback.h"
 #include "FileSystemDirectoryReader.h"
+#include "FileSystemEntryCallback.h"
+#include "FileSystemFileEntry.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
@@ -42,10 +46,20 @@ Ref<FileSystemDirectoryReader> FileSystemDirectoryEntry::createReader(ScriptExec
     return FileSystemDirectoryReader::create(context, *this);
 }
 
-void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
+void FileSystemDirectoryEntry::getFile(ScriptExecutionContext& context, const String& path, const Flags& flags, RefPtr<FileSystemEntryCallback>&& successCallback, RefPtr<ErrorCallback>&& errorCallback)
 {
-    if (errorCallback)
-        errorCallback->scheduleCallback(context, DOMException::create(NotSupportedError));
+    if (!successCallback && !errorCallback)
+        return;
+
+    filesystem().getFile(context, *this, path, flags, [this, pendingActivity = makePendingActivity(*this), successCallback = WTFMove(successCallback), errorCallback = WTFMove(errorCallback)](auto&& result) {
+        if (result.hasException()) {
+            if (errorCallback)
+                errorCallback->handleEvent(DOMException::create(result.releaseException()));
+            return;
+        }
+        if (successCallback)
+            successCallback->handleEvent(result.releaseReturnValue());
+    });
 }
 
 void FileSystemDirectoryEntry::getDirectory(ScriptExecutionContext& context, const String&, const Flags&, RefPtr<FileSystemEntryCallback>&&, RefPtr<ErrorCallback>&& errorCallback)
