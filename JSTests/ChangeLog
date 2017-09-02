@@ -1,3 +1,13 @@
+2017-08-30  Saam Barati  <sbarati@apple.com>
+
+        semicolon is being interpreted as an = in the LiteralParser
+        https://bugs.webkit.org/show_bug.cgi?id=176114
+
+        Reviewed by Oliver Hunt.
+
+        * stress/jsonp-literal-parser-semicolon-is-not-assignment.js: Added.
+        * stress/resources/literal-parser-test-case.js: Added.
+
 2017-08-17  JF Bastien  <jfbastien@apple.com>
 
         WebAssembly: const in unreachable code decoded incorrectly, erroneously rejects binary as invalid
