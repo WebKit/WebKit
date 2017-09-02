@@ -253,7 +253,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Cocoa/LegacyCustomProtocolManagerClient.mm
     UIProcess/Cocoa/NavigationState.mm
     UIProcess/Cocoa/PageClientImplCocoa.mm
-    UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm
     UIProcess/Cocoa/SessionStateCoding.mm
     UIProcess/Cocoa/UIDelegate.mm
     UIProcess/Cocoa/VersionChecks.mm
@@ -276,8 +275,11 @@ list(APPEND WebKit2_SOURCES
     UIProcess/Plugins/mac/PluginProcessManagerMac.mm
     UIProcess/Plugins/mac/PluginProcessProxyMac.mm
 
-    UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp
-    UIProcess/Scrolling/RemoteScrollingTree.cpp
+    UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
+    UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
+    UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
+    UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm
+    UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
 
     UIProcess/WebStorage/StorageManager.cpp
 
@@ -286,8 +288,6 @@ list(APPEND WebKit2_SOURCES
     UIProcess/mac/CorrectionPanel.mm
     UIProcess/mac/LegacySessionStateCoding.cpp
     UIProcess/mac/PageClientImpl.mm
-    UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm
-    UIProcess/mac/RemoteLayerTreeHost.mm
     UIProcess/mac/RemoteWebInspectorProxyMac.mm
     UIProcess/mac/SecItemShimProxy.cpp
     UIProcess/mac/ServicesController.mm
@@ -395,7 +395,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/UIProcess/API/mac"
     "${WEBKIT2_DIR}/UIProcess/Cocoa"
     "${WEBKIT2_DIR}/UIProcess/Launcher/mac"
-    "${WEBKIT2_DIR}/UIProcess/Scrolling"
+    "${WEBKIT2_DIR}/UIProcess/RemoteLayerTree"
+    "${WEBKIT2_DIR}/UIProcess/RemoteLayerTree/ios"
     "${WEBKIT2_DIR}/UIProcess/ios"
     "${WEBKIT2_DIR}/Platform/cg"
     "${WEBKIT2_DIR}/Platform/classifier"
@@ -475,7 +476,8 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/Cocoa/ViewGestureController.messages.in
     UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in
 
-    UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
+    UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
+
     UIProcess/mac/SecItemShimProxy.messages.in
 
     WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in

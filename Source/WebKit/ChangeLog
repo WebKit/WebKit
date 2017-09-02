@@ -1,3 +1,31 @@
+2017-09-02  Tim Horton  <timothy_horton@apple.com>
+
+        Move UI Process part of the Remote Layer Tree code out of a Mac-specific directory
+        https://bugs.webkit.org/show_bug.cgi?id=176273
+
+        Reviewed by Dan Bernstein.
+
+        UI-side compositing works on all Cocoa platforms, so the code should
+        not live inside Mac/. Also merge the Scrolling directory in here,
+        since those files are very related.
+
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.h: Renamed from SourceebKit/UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.h.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in: Renamed from UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm: Renamed from UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.mm.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.h: Renamed from UIProcess/mac/RemoteLayerTreeHost.h.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm: Renamed from UIProcess/mac/RemoteLayerTreeHost.mm.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.h: Renamed from UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.h.
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm: Renamed from UIProcess/Cocoa/RemoteLayerTreeScrollingPerformanceData.mm.
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp: Renamed from UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.cpp.
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h: Renamed from UIProcess/Scrolling/RemoteScrollingCoordinatorProxy.h.
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp: Renamed from UIProcess/Scrolling/RemoteScrollingTree.cpp.
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h: Renamed from UIProcess/Scrolling/RemoteScrollingTree.h.
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm: Renamed from UIProcess/ios/RemoteLayerTreeHostIOS.mm.
+        * UIProcess/RemoteLayerTree/ios/RemoteScrollingCoordinatorProxyIOS.mm: Renamed from UIProcess/ios/RemoteScrollingCoordinatorProxyIOS.mm.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h: Renamed from UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.h.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm: Renamed from UIProcess/Scrolling/ios/ScrollingTreeOverflowScrollingNodeIOS.mm.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Automation: -[_WKAutomationSession init] leaks
