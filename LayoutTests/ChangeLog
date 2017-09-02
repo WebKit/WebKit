@@ -1,3 +1,17 @@
+2017-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryEntry.getDirectory()
+        https://bugs.webkit.org/show_bug.cgi?id=176168
+        <rdar://problem/34187787>
+
+        Reviewed by Darin Adler.
+
+        Add layout test coverage.
+
+        * editing/pasteboard/datatransfer-items-drop-getDirectory-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-drop-getDirectory.html: Added.
+        * platform/wk2/TestExpectations:
+
 2017-09-01  Sam Weinig  <sam@webkit.org>
 
         DOMMatrix and DOMMatrixReadOnly should be available in workers

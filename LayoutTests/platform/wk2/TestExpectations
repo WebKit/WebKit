@@ -567,6 +567,7 @@ editing/pasteboard/datatransfer-items-drop-directoryReader.html
 editing/pasteboard/datatransfer-items-drop-directoryReader-error.html
 editing/pasteboard/datatransfer-items-drop-directoryReader-root.html
 editing/pasteboard/datatransfer-items-drop-getAsEntry.html
+editing/pasteboard/datatransfer-items-drop-getDirectory.html
 editing/pasteboard/datatransfer-items-drop-getFile.html
 editing/pasteboard/datatransfer-items-drop-getParent-root.html
 editing/pasteboard/datatransfer-items-drop-getParent.html

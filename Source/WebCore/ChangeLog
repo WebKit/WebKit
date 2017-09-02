@@ -1,3 +1,27 @@
+2017-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemDirectoryEntry.getDirectory()
+        https://bugs.webkit.org/show_bug.cgi?id=176168
+        <rdar://problem/34187787>
+
+        Reviewed by Darin Adler.
+
+        Implement FileSystemDirectoryEntry.getDirectory() as per:
+        - https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getdirectory
+
+        Test: editing/pasteboard/datatransfer-items-drop-getDirectory.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::isValidVirtualPath):
+        (WebCore::resolveRelativeVirtualPath):
+        (WebCore::DOMFileSystem::getEntry):
+        * Modules/entriesapi/DOMFileSystem.h:
+        * Modules/entriesapi/FileSystemDirectoryEntry.cpp:
+        (WebCore::FileSystemDirectoryEntry::getEntry):
+        (WebCore::FileSystemDirectoryEntry::getFile):
+        (WebCore::FileSystemDirectoryEntry::getDirectory):
+        * Modules/entriesapi/FileSystemDirectoryEntry.h:
+
 2017-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Performance / PerformanceObserver leaks seen on bots

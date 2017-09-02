@@ -58,8 +58,8 @@ public:
     using GetParentCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemDirectoryEntry>>&&)>;
     void getParent(ScriptExecutionContext&, FileSystemEntry&, GetParentCallback&&);
 
-    using GetFileCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemFileEntry>>&&)>;
-    void getFile(ScriptExecutionContext&, FileSystemDirectoryEntry&, const String& virtualPath, const FileSystemDirectoryEntry::Flags&, GetFileCallback&&);
+    using GetEntryCallback = WTF::Function<void(ExceptionOr<Ref<FileSystemEntry>>&&)>;
+    void getEntry(ScriptExecutionContext&, FileSystemDirectoryEntry&, const String& virtualPath, const FileSystemDirectoryEntry::Flags&, GetEntryCallback&&);
 
 private:
     explicit DOMFileSystem(Ref<File>&&);

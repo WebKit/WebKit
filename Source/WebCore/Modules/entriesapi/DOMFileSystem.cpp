@@ -130,7 +130,7 @@ static bool isValidVirtualPath(StringView virtualPath)
     if (virtualPath.isEmpty())
         return false;
     if (virtualPath[0] == '/')
-        return isValidRelativeVirtualPath(virtualPath.substring(1));
+        return virtualPath.length() == 1 || isValidRelativeVirtualPath(virtualPath.substring(1));
     return isValidRelativeVirtualPath(virtualPath);
 }
 
@@ -164,7 +164,7 @@ static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringVi
 {
     ASSERT(baseVirtualPath[0] == '/');
     if (relativeVirtualPath[0] == '/')
-        return resolveRelativeVirtualPath(ASCIILiteral("/"), relativeVirtualPath.substring(1));
+        return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath(ASCIILiteral("/"), relativeVirtualPath.substring(1));
 
     auto virtualPathSegments = baseVirtualPath.split('/');
     auto relativePathSegments = relativeVirtualPath.split('/');
@@ -261,22 +261,9 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
     });
 }
 
-static ExceptionOr<String> validatePathIsFile(const String& fullPath, String&& virtualPath)
-{
-    ASSERT(!isMainThread());
-
-    FileMetadata metadata;
-    if (!getFileMetadata(fullPath, metadata, ShouldFollowSymbolicLinks::No))
-        return Exception { NotFoundError, ASCIILiteral("File does not exist") };
-
-    if (metadata.type != FileMetadata::TypeFile)
-        return Exception { TypeMismatchError, ASCIILiteral("Entry at path is not a file") };
-
-    return WTFMove(virtualPath);
-}
-
 // https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getfile
-void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, const String& virtualPath, const FileSystemDirectoryEntry::Flags& flags, GetFileCallback&& completionCallback)
+// https://wicg.github.io/entries-api/#dom-filesystemdirectoryentry-getdirectory
+void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirectoryEntry& directory, const String& virtualPath, const FileSystemDirectoryEntry::Flags& flags, GetEntryCallback&& completionCallback)
 {
     ASSERT(&directory.filesystem() == this);
 
@@ -297,13 +284,28 @@ void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemDirectory
     String resolvedVirtualPath = resolveRelativeVirtualPath(directory.virtualPath(), virtualPath);
     ASSERT(resolvedVirtualPath[0] == '/');
     String fullPath = evaluatePath(resolvedVirtualPath);
+    if (fullPath == m_rootPath) {
+        callOnMainThread([this, context = makeRef(context), completionCallback = WTFMove(completionCallback)]() mutable {
+            completionCallback(Ref<FileSystemEntry> { root(context) });
+        });
+        return;
+    }
+
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto validatedVirtualPath = validatePathIsFile(fullPath, WTFMove(resolvedVirtualPath));
-        callOnMainThread([this, context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-            if (validatedVirtualPath.hasException())
-                completionCallback(validatedVirtualPath.releaseException());
-            else
-                completionCallback(FileSystemFileEntry::create(context, *this, validatedVirtualPath.releaseReturnValue()));
+        FileMetadata metadata;
+        getFileMetadata(fullPath, metadata, ShouldFollowSymbolicLinks::No);
+        callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType = metadata.type, completionCallback = WTFMove(completionCallback)]() mutable {
+            switch (entryType) {
+            case FileMetadata::TypeDirectory:
+                completionCallback(Ref<FileSystemEntry> { FileSystemDirectoryEntry::create(context, *this, resolvedVirtualPath) });
+                break;
+            case FileMetadata::TypeFile:
+                completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, *this, resolvedVirtualPath) });
+                break;
+            default:
+                completionCallback(Exception { NotFoundError, ASCIILiteral("Cannot find entry at given path") });
+                break;
+            }
         });
     });
 }
