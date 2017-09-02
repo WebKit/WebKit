@@ -2568,7 +2568,7 @@
 				C07E6CAD13FD67650038B22B /* mac */,
 				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				440A1D3614A01000008A66F2 /* WebCore */,
-				CDC8E4981BC728AE00594FEC /* WebKit */,
+				CDC8E4981BC728AE00594FEC /* WebKitLegacy */,
 				BC9096411255616000083756 /* WebKit2 */,
 				1ABC3DEC1899BE55004F0626 /* WebKit2 Cocoa */,
 				BC3C4C6F14575B1D0025FB62 /* WebKit2 Objective-C */,
@@ -2739,12 +2739,12 @@
 			path = cocoa;
 			sourceTree = "<group>";
 		};
-		CDC8E4981BC728AE00594FEC /* WebKit */ = {
+		CDC8E4981BC728AE00594FEC /* WebKitLegacy */ = {
 			isa = PBXGroup;
 			children = (
 				CDC8E4991BC728C000594FEC /* ios */,
 			);
-			path = WebKit;
+			path = WebKitLegacy;
 			sourceTree = "<group>";
 		};
 		CDC8E4991BC728C000594FEC /* ios */ = {

@@ -1,3 +1,26 @@
+2017-08-25  Alex Christensen  <achristensen@webkit.org>
+
+        Rename TestWebKitAPI/Tests/WebKit to WebKitLegacy following Source directory rename.
+
+        Rubber-stamped by Brady Eidson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/AudioSessionCategoryIOS.mm: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/SnapshotViaRenderInContext.mm: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/audio-only.html: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-audio.html: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-audio.mp4: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-muted-audio-and-webaudio.html: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-with-muted-audio.html: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-without-audio.html: Removed.
+        * TestWebKitAPI/Tests/WebKit/ios/video-without-audio.mp4: Removed.
+        * TestWebKitAPI/Tests/WebKit/win: Removed.
+        * TestWebKitAPI/Tests/WebKit/win/ScaleWebView.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKit/win/WebViewDestruction.cpp: Removed.
+        * TestWebKitAPI/Tests/WebKitLegacy: Copied from TestWebKitAPI/Tests/WebKit.
+
 2017-08-28  Ms2ger  <Ms2ger@gmail.com>
 
         Ensure that the alert function is called in TestWebExtensions.
