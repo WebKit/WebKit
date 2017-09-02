@@ -1,3 +1,14 @@
+2017-09-01  Simon Fraser  <simon.fraser@apple.com>
+
+        transformCanLikelyUseFastPath() can read off the end of a string
+        https://bugs.webkit.org/show_bug.cgi?id=176232
+        rdar://problem/33851237
+
+        Reviewed by Tim Horton.
+
+        * fast/css/transform-fast-paths-expected.txt: Added.
+        * fast/css/transform-fast-paths.html: Added.
+
 2017-08-22  Darin Adler  <darin@apple.com>
 
         REGRESSION (r220052): ASSERTION FAILED: !frame().isMainFrame() || !needsStyleRecalcOrLayout()  in WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive()

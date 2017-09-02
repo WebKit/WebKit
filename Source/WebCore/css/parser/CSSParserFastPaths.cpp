@@ -1115,7 +1115,7 @@ static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigne
     return true;
 }
 
-static const int kShortestValidTransformStringLength = 12;
+static const int kShortestValidTransformStringLength = 9; // "rotate(0)"
 
 template <typename CharType>
 static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
@@ -1239,8 +1239,10 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
             ++i;
             continue;
         }
+
         if (length - i < kShortestValidTransformStringLength)
             return false;
+        
         switch (toASCIILower(chars[i])) {
         case 't':
             // translate, translateX, translateY, translateZ, translate3d.
@@ -1266,12 +1268,11 @@ static bool transformCanLikelyUseFastPath(const CharType* chars, unsigned length
                 return false;
             i += 6;
             // rotateZ
-            if (toASCIILower(chars[i + 6]) == 'z')
+            if (toASCIILower(chars[i]) == 'z')
                 ++i;
             break;
 
         default:
-            // All other things, ex. rotate.
             return false;
         }
         size_t argumentsEnd = WTF::find(chars, length, ')', i);

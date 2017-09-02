@@ -1,3 +1,28 @@
+2017-09-01  Simon Fraser  <simon.fraser@apple.com>
+
+        transformCanLikelyUseFastPath() can read off the end of a string
+        https://bugs.webkit.org/show_bug.cgi?id=176232
+        rdar://problem/33851237
+
+        Reviewed by Tim Horton.
+        
+        Code added in r220382 could read one byte past the end of the string when looking for the 'z'
+        of a rotateZ() function. The code was actually incorrect, testing for the 'z at i+6 after
+        already incrementing i by 6. This patch makes the code correctly detect rotateZ().
+        
+        Also, rotate functions at the end of a string could be ignored because kShortestValidTransformStringLength
+        was too long, so set it to the length of "rotate(0)", the shortest transform function that we currently
+        fast-parse.
+
+        There's an implicit assumption in this code that chars is not indexed past i+kShortestValidTransformStringLength.
+        If the 'translate' path is taken, i is incremented by 9 (==kShortestValidTransformStringLength), but that's
+        OK because WTF::find() doesn't index into chars if i >= length.
+
+        Test: fast/css/transform-fast-paths.html
+
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::transformCanLikelyUseFastPath):
+
 2017-08-31  Daniel Bates  <dabates@apple.com>
 
         Another attempt to fix the Apple Windows build following <https://trac.webkit.org/changeset/221459>
