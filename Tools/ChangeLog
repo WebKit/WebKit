@@ -1,3 +1,15 @@
+2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. REGRESSION(r221219): Fix unit tests using resources from WebKit directory.
+
+        The WebKit2 directory was renamed as WebKit in r221219, but neither run-gtk-tests script nor
+        Test::getResourcesDir() were updated to use the new name.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner._setup_testing_environment):
+        * TestWebKitAPI/glib/WebKitGLib/TestMain.h:
+        (Test::getResourcesDir):
+
 2017-08-25  Alex Christensen  <achristensen@webkit.org>
 
         Rename TestWebKitAPI/Tests/WebKit2* to WebKit* following Source directory rename.

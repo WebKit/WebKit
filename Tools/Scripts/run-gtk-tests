@@ -217,7 +217,7 @@ class TestRunner:
 
     def _setup_testing_environment(self):
         self._test_env = self._driver._setup_environ_for_test()
-        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit2")
+        self._test_env["TEST_WEBKIT_API_WEBKIT2_RESOURCES_PATH"] = common.top_level_path("Tools", "TestWebKitAPI", "Tests", "WebKit")
         self._test_env["TEST_WEBKIT_API_WEBKIT2_INJECTED_BUNDLE_PATH"] = common.library_build_path()
         self._test_env["WEBKIT_EXEC_PATH"] = self._programs_path
 

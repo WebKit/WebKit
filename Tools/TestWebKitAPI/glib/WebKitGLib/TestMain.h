@@ -167,7 +167,7 @@ public:
             return resourcesDir.get();
         }
         case WebKit2Resources: {
-            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit2", nullptr));
+            GUniquePtr<char> resourcesDir(g_build_filename(WEBKIT_SRC_DIR, "Tools", "TestWebKitAPI", "Tests", "WebKit", nullptr));
             return resourcesDir.get();
         }
         }
