@@ -31,9 +31,9 @@
 namespace JSC {
 
 // NB. Different platforms may have different requirements here. But 16 bytes is very common.
-inline unsigned stackAlignmentBytes() { return 16; }
+inline constexpr unsigned stackAlignmentBytes() { return 16; }
 
-inline unsigned stackAlignmentRegisters()
+inline constexpr unsigned stackAlignmentRegisters()
 {
     return stackAlignmentBytes() / sizeof(EncodedJSValue);
 }

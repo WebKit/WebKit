@@ -240,7 +240,7 @@ void LocalOSRAvailabilityCalculator::executeNode(Node* node)
             m_availability.m_heap.set(PromotedHeapLocation(ArgumentsCalleePLoc, node), callee);
         }
         
-        for (unsigned i = numberOfArgumentsToSkip; i < inlineCallFrame->arguments.size() - 1; ++i) {
+        for (unsigned i = numberOfArgumentsToSkip; i < inlineCallFrame->argumentCountIncludingThis - 1; ++i) {
             Availability argument = m_availability.m_locals.operand(
                 inlineCallFrame->stackOffset + CallFrame::argumentOffset(i));
             

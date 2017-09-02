@@ -98,9 +98,9 @@ void compile(State& state, Safepoint::Result& safepointResult)
         if (inlineCallFrame->argumentCountRegister.isValid())
             inlineCallFrame->argumentCountRegister += localsOffset;
         
-        for (unsigned argument = inlineCallFrame->arguments.size(); argument-- > 1;) {
-            inlineCallFrame->arguments[argument] =
-                inlineCallFrame->arguments[argument].withLocalsOffset(localsOffset);
+        for (unsigned argument = inlineCallFrame->argumentsWithFixup.size(); argument-- > 1;) {
+            inlineCallFrame->argumentsWithFixup[argument] =
+                inlineCallFrame->argumentsWithFixup[argument].withLocalsOffset(localsOffset);
         }
         
         if (inlineCallFrame->isClosureCall) {

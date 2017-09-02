@@ -103,12 +103,12 @@ ClonedArguments* ClonedArguments::createWithInlineFrame(ExecState* myFrame, Exec
             if (inlineCallFrame->argumentCountRegister.isValid())
                 length = targetFrame->r(inlineCallFrame->argumentCountRegister).unboxedInt32();
             else
-                length = inlineCallFrame->arguments.size();
+                length = inlineCallFrame->argumentCountIncludingThis;
             length--;
             result = createEmpty(myFrame, callee, length);
 
             for (unsigned i = length; i--;)
-                result->putDirectIndex(myFrame, i, inlineCallFrame->arguments[i + 1].recover(targetFrame));
+                result->putDirectIndex(myFrame, i, inlineCallFrame->argumentsWithFixup[i + 1].recover(targetFrame));
         } else {
             length = targetFrame->argumentCount();
             result = createEmpty(myFrame, callee, length);

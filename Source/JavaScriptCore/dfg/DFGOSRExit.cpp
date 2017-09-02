@@ -123,7 +123,7 @@ void OSRExit::emitRestoreArguments(CCallHelpers& jit, const Operands<ValueRecove
                 GPRInfo::regT1);
         } else {
             jit.move(
-                AssemblyHelpers::TrustedImm32(inlineCallFrame->arguments.size()),
+                AssemblyHelpers::TrustedImm32(inlineCallFrame->argumentCountIncludingThis),
                 GPRInfo::regT1);
         }
 

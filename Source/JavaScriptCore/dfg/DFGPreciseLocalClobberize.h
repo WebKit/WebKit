@@ -114,7 +114,7 @@ private:
                 return;
             }
             
-            for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->arguments.size(); i++)
+            for (unsigned i = 1 + numberOfArgumentsToSkip; i < inlineCallFrame->argumentsWithFixup.size(); i++)
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
             if (inlineCallFrame->isVarargs())
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
@@ -219,7 +219,7 @@ private:
             }
 
             ASSERT_WITH_MESSAGE(inlineCallFrame->isVarargs(), "GetArgument is only used for InlineCallFrame if the call frame is varargs.");
-            if (indexIncludingThis < inlineCallFrame->arguments.size())
+            if (indexIncludingThis < inlineCallFrame->argumentsWithFixup.size())
                 m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(indexIncludingThis).offset()));
             m_read(VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount));
             break;
@@ -239,7 +239,7 @@ private:
             // Read all of the inline arguments and call frame headers that we didn't already capture.
             for (InlineCallFrame* inlineCallFrame = m_node->origin.semantic.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->getCallerInlineFrameSkippingTailCalls()) {
                 if (!inlineCallFrame->isStrictMode()) {
-                    for (unsigned i = inlineCallFrame->arguments.size(); i-- > 1;)
+                    for (unsigned i = inlineCallFrame->argumentsWithFixup.size(); i-- > 1;)
                         m_read(VirtualRegister(inlineCallFrame->stackOffset + virtualRegisterForArgument(i).offset()));
                 }
                 if (inlineCallFrame->isClosureCall)

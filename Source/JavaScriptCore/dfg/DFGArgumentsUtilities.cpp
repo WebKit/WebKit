@@ -45,7 +45,8 @@ bool argumentsInvolveStackSlot(InlineCallFrame* inlineCallFrame, VirtualRegister
         && reg == VirtualRegister(inlineCallFrame->stackOffset + CallFrameSlot::argumentCount))
         return true;
     
-    unsigned numArguments = inlineCallFrame->arguments.size() - 1;
+    // We do not include fixups here since it is not related to |arguments|, rest parameters, and varargs.
+    unsigned numArguments = inlineCallFrame->argumentCountIncludingThis - 1;
     VirtualRegister argumentStart =
         VirtualRegister(inlineCallFrame->stackOffset) + CallFrame::argumentOffset(0);
     return reg >= argumentStart && reg < argumentStart + numArguments;
@@ -74,7 +75,7 @@ Node* emitCodeToGetArgumentsArrayLength(
         numberOfArgumentsToSkip = arguments->numberOfArgumentsToSkip();
     
     if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-        unsigned argumentsSize = inlineCallFrame->arguments.size() - 1;
+        unsigned argumentsSize = inlineCallFrame->argumentCountIncludingThis - 1;
         if (argumentsSize >= numberOfArgumentsToSkip)
             argumentsSize -= numberOfArgumentsToSkip;
         else

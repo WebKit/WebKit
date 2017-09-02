@@ -839,7 +839,7 @@ public:
             // Arguments are always live. This would be redundant if it wasn't for our
             // op_call_varargs inlining. See the comment above.
             exclusionStart = stackOffset + CallFrame::argumentOffsetIncludingThis(0);
-            exclusionEnd = stackOffset + CallFrame::argumentOffsetIncludingThis(inlineCallFrame->arguments.size());
+            exclusionEnd = stackOffset + CallFrame::argumentOffsetIncludingThis(inlineCallFrame->argumentsWithFixup.size());
             
             // We will always have a "this" argument and exclusionStart should be a smaller stack
             // offset than exclusionEnd.

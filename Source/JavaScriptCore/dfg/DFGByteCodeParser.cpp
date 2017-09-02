@@ -35,6 +35,7 @@
 #include "CallLinkStatus.h"
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
+#include "CommonSlowPaths.h"
 #include "DFGAbstractHeap.h"
 #include "DFGArrayMode.h"
 #include "DFGCFG.h"
@@ -62,6 +63,7 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
@@ -220,7 +222,7 @@ private:
     void emitFunctionChecks(CallVariant, Node* callTarget, VirtualRegister thisArgumnt);
     void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis);
     Node* getArgumentCount();
-    unsigned inliningCost(CallVariant, int argumentCountIncludingThis, CallMode); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
+    unsigned inliningCost(CallVariant, int argumentCountIncludingThis, InlineCallFrame::Kind); // Return UINT_MAX if it's not an inlining candidate. By convention, intrinsics have a cost of 1.
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, VirtualRegister thisArgument, VirtualRegister argumentsArgument, unsigned argumentsOffset, int argumentCountIncludingThis, unsigned nextOffset, NodeType callOp, InlineCallFrame::Kind, SpeculatedType prediction);
     enum CallerLinkability { CallerDoesNormalLinking, CallerLinksManually };
@@ -470,8 +472,7 @@ private:
     }
     Node* setLocal(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
-        CodeOrigin oldSemanticOrigin = m_currentSemanticOrigin;
-        m_currentSemanticOrigin = semanticOrigin;
+        SetForScope<CodeOrigin> originChange(m_currentSemanticOrigin, semanticOrigin);
 
         unsigned local = operand.toLocal();
         
@@ -490,8 +491,6 @@ private:
             m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.local(local) = node;
-
-        m_currentSemanticOrigin = oldSemanticOrigin;
         return node;
     }
 
@@ -525,8 +524,7 @@ private:
     }
     Node* setArgument(const CodeOrigin& semanticOrigin, VirtualRegister operand, Node* value, SetMode setMode = NormalSet)
     {
-        CodeOrigin oldSemanticOrigin = m_currentSemanticOrigin;
-        m_currentSemanticOrigin = semanticOrigin;
+        SetForScope<CodeOrigin> originChange(m_currentSemanticOrigin, semanticOrigin);
 
         unsigned argument = operand.toArgument();
         ASSERT(argument < m_numArguments);
@@ -549,8 +547,6 @@ private:
             m_inlineStackTop->m_exitProfile.hasExitSite(semanticOrigin.bytecodeIndex, BadIndexingType));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
         m_currentBlock->variablesAtTail.argument(argument) = node;
-
-        m_currentSemanticOrigin = oldSemanticOrigin;
         return node;
     }
     
@@ -572,7 +568,7 @@ private:
                 continue;
             if (operand.offset() == inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset())
                 continue;
-            if (operand.offset() >= static_cast<int>(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset() + inlineCallFrame->arguments.size()))
+            if (operand.offset() >= static_cast<int>(inlineCallFrame->stackOffset + CallFrame::thisArgumentOffset() + inlineCallFrame->argumentsWithFixup.size()))
                 continue;
             int argument = VirtualRegister(operand.offset() - inlineCallFrame->stackOffset).toArgument();
             return stack->m_argumentPositions[argument];
@@ -632,7 +628,7 @@ private:
         int numArguments;
         if (InlineCallFrame* inlineCallFrame = inlineStackEntry->m_inlineCallFrame) {
             ASSERT(!m_hasDebuggerEnabled);
-            numArguments = inlineCallFrame->arguments.size();
+            numArguments = inlineCallFrame->argumentsWithFixup.size();
             if (inlineCallFrame->isClosureCall)
                 flushDirect(inlineStackEntry->remapOperand(VirtualRegister(CallFrameSlot::callee)));
             if (inlineCallFrame->isVarargs())
@@ -1418,7 +1414,7 @@ Node* ByteCodeParser::getArgumentCount()
         if (m_inlineStackTop->m_inlineCallFrame->isVarargs())
             argumentCount = get(VirtualRegister(CallFrameSlot::argumentCount));
         else
-            argumentCount = jsConstant(m_graph.freeze(jsNumber(m_inlineStackTop->m_inlineCallFrame->arguments.size()))->value());
+            argumentCount = jsConstant(m_graph.freeze(jsNumber(m_inlineStackTop->m_inlineCallFrame->argumentCountIncludingThis))->value());
     } else
         argumentCount = addToGraph(GetArgumentCountIncludingThis, OpInfo(0), OpInfo(SpecInt32Only));
     return argumentCount;
@@ -1430,9 +1426,10 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
         addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
 }
 
-unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountIncludingThis, CallMode callMode)
+unsigned ByteCodeParser::inliningCost(CallVariant callee, int, InlineCallFrame::Kind kind)
 {
-    CodeSpecializationKind kind = specializationKindFor(callMode);
+    CallMode callMode = InlineCallFrame::callModeFor(kind);
+    CodeSpecializationKind specializationKind = specializationKindFor(callMode);
     if (verbose)
         dataLog("Considering inlining ", callee, " into ", currentCodeOrigin(), "\n");
     
@@ -1456,30 +1453,21 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
     // to inline it if we had a static proof of what was being called; this might happen for example
     // if you call a global function, where watchpointing gives us static information. Overall,
     // it's a rare case because we expect that any hot callees would have already been compiled.
-    CodeBlock* codeBlock = executable->baselineCodeBlockFor(kind);
+    CodeBlock* codeBlock = executable->baselineCodeBlockFor(specializationKind);
     if (!codeBlock) {
         if (verbose)
             dataLog("    Failing because no code block available.\n");
         return UINT_MAX;
     }
 
-    // Does the number of arguments we're passing match the arity of the target? We currently
-    // inline only if the number of arguments passed is greater than or equal to the number
-    // arguments expected.
-    if (codeBlock->numParameters() > argumentCountIncludingThis) {
-        if (verbose)
-            dataLog("    Failing because of arity mismatch.\n");
-        return UINT_MAX;
-    }
-
     CapabilityLevel capabilityLevel = inlineFunctionForCapabilityLevel(
-        codeBlock, kind, callee.isClosureCall());
+        codeBlock, specializationKind, callee.isClosureCall());
     if (verbose) {
         dataLog("    Call mode: ", callMode, "\n");
         dataLog("    Is closure call: ", callee.isClosureCall(), "\n");
         dataLog("    Capability level: ", capabilityLevel, "\n");
-        dataLog("    Might inline function: ", mightInlineFunctionFor(codeBlock, kind), "\n");
-        dataLog("    Might compile function: ", mightCompileFunctionFor(codeBlock, kind), "\n");
+        dataLog("    Might inline function: ", mightInlineFunctionFor(codeBlock, specializationKind), "\n");
+        dataLog("    Might compile function: ", mightCompileFunctionFor(codeBlock, specializationKind), "\n");
         dataLog("    Is supported for inlining: ", isSupportedForInlining(codeBlock), "\n");
         dataLog("    Is inlining candidate: ", codeBlock->ownerScriptExecutable()->isInliningCandidate(), "\n");
     }
@@ -1545,14 +1533,27 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
 {
     CodeSpecializationKind specializationKind = InlineCallFrame::specializationKindFor(kind);
     
-    ASSERT(inliningCost(callee, argumentCountIncludingThis, InlineCallFrame::callModeFor(kind)) != UINT_MAX);
+    ASSERT(inliningCost(callee, argumentCountIncludingThis, kind) != UINT_MAX);
     
     CodeBlock* codeBlock = callee.functionExecutable()->baselineCodeBlockFor(specializationKind);
     insertChecks(codeBlock);
 
     // FIXME: Don't flush constants!
+
+    // arityFixupCount and numberOfStackPaddingSlots are different. While arityFixupCount does not consider about stack alignment,
+    // numberOfStackPaddingSlots consider alignment. Consider the following case,
+    //
+    // before: [ ... ][arg0][header]
+    // after:  [ ... ][ext ][arg1][arg0][header]
+    //
+    // In the above case, arityFixupCount is 1. But numberOfStackPaddingSlots is 2 because the stack needs to be aligned.
+    // We insert extra slots to align stack.
+    int arityFixupCount = std::max<int>(codeBlock->numParameters() - argumentCountIncludingThis, 0);
+    int numberOfStackPaddingSlots = CommonSlowPaths::numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis);
+    ASSERT(!(numberOfStackPaddingSlots % stackAlignmentRegisters()));
+    int registerOffsetAfterFixup = registerOffset - numberOfStackPaddingSlots;
     
-    int inlineCallFrameStart = m_inlineStackTop->remapOperand(VirtualRegister(registerOffset)).offset() + CallFrame::headerSizeInRegisters;
+    int inlineCallFrameStart = m_inlineStackTop->remapOperand(VirtualRegister(registerOffsetAfterFixup)).offset() + CallFrame::headerSizeInRegisters;
     
     ensureLocals(
         VirtualRegister(inlineCallFrameStart).toLocal() + 1 +
@@ -1567,12 +1568,40 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     VariableAccessData* calleeVariable = nullptr;
     if (callee.isClosureCall()) {
         Node* calleeSet = set(
-            VirtualRegister(registerOffset + CallFrameSlot::callee), callTargetNode, ImmediateNakedSet);
+            VirtualRegister(registerOffsetAfterFixup + CallFrameSlot::callee), callTargetNode, ImmediateNakedSet);
         
         calleeVariable = calleeSet->variableAccessData();
         calleeVariable->mergeShouldNeverUnbox(true);
     }
     
+    if (arityFixupCount) {
+        Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
+        auto fill = [&] (VirtualRegister reg, Node* value) {
+            Node* result = set(reg, value, ImmediateNakedSet);
+            result->variableAccessData()->mergeShouldNeverUnbox(true); // We cannot exit after starting arity fixup.
+        };
+
+        // The stack needs to be aligned due to ABIs. Thus, we have a hole if the count of arguments is not aligned.
+        // We call this hole "extra slot". Consider the following case, the number of arguments is 2. If this argument
+        // count does not fulfill the stack alignment requirement, we already inserted extra slots.
+        //
+        // before: [ ... ][ext ][arg1][arg0][header]
+        //
+        // In the above case, one extra slot is inserted. If the code's parameter count is 3, we will fixup arguments.
+        // At that time, we can simply use this extra slots. So the fixuped stack is the following.
+        //
+        // before: [ ... ][ext ][arg1][arg0][header]
+        // after:  [ ... ][arg2][arg1][arg0][header]
+        //
+        // In such cases, we do not need to move frames.
+        if (registerOffsetAfterFixup != registerOffset) {
+            for (int index = 0; index < argumentCountIncludingThis; ++index)
+                fill(virtualRegisterForArgument(index, registerOffsetAfterFixup), get(virtualRegisterForArgument(index, registerOffset)));
+        }
+        for (int index = 0; index < arityFixupCount; ++index)
+            fill(virtualRegisterForArgument(argumentCountIncludingThis + index, registerOffsetAfterFixup), undefined);
+    }
+
     InlineStackEntry inlineStackEntry(
         this, codeBlock, codeBlock, m_graph.lastBlock(), callee.function(), resultReg,
         (VirtualRegister)inlineCallFrameStart, argumentCountIncludingThis, kind);
@@ -1771,7 +1800,7 @@ bool ByteCodeParser::attemptToInlineCall(Node* callTargetNode, int resultOperand
         }
     }
     
-    unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, InlineCallFrame::callModeFor(kind));
+    unsigned myInliningCost = inliningCost(callee, argumentCountIncludingThis, kind);
     if (myInliningCost > inliningBalance)
         return false;
 
@@ -4348,7 +4377,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             InlineCallFrame* inlineCallFrame = this->inlineCallFrame();
             Node* length;
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-                unsigned argumentsLength = inlineCallFrame->arguments.size() - 1;
+                unsigned argumentsLength = inlineCallFrame->argumentCountIncludingThis - 1;
                 unsigned numParamsToSkip = currentInstruction[2].u.unsignedValue;
                 JSValue restLength;
                 if (argumentsLength <= numParamsToSkip)
@@ -5918,8 +5947,8 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             Node* argument;
             int32_t argumentIndexIncludingThis = currentInstruction[2].u.operand;
             if (inlineCallFrame && !inlineCallFrame->isVarargs()) {
-                int32_t argumentCountIncludingThis = inlineCallFrame->arguments.size();
-                if (argumentIndexIncludingThis < argumentCountIncludingThis)
+                int32_t argumentCountIncludingThisWithFixup = inlineCallFrame->argumentsWithFixup.size();
+                if (argumentIndexIncludingThis < argumentCountIncludingThisWithFixup)
                     argument = get(virtualRegisterForArgument(argumentIndexIncludingThis));
                 else
                     argument = addToGraph(JSConstant, OpInfo(m_constantUndefined));
@@ -6205,8 +6234,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         }
     }
     
-    m_argumentPositions.resize(argumentCountIncludingThis);
-    for (int i = 0; i < argumentCountIncludingThis; ++i) {
+    int argumentCountIncludingThisWithFixup = std::max<int>(argumentCountIncludingThis, codeBlock->numParameters());
+    m_argumentPositions.resize(argumentCountIncludingThisWithFixup);
+    for (int i = 0; i < argumentCountIncludingThisWithFixup; ++i) {
         byteCodeParser->m_graph.m_argumentPositions.append(ArgumentPosition());
         ArgumentPosition* argumentPosition = &byteCodeParser->m_graph.m_argumentPositions.last();
         m_argumentPositions[i] = argumentPosition;
@@ -6224,13 +6254,14 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         // plan finishes.
         m_inlineCallFrame->baselineCodeBlock.setWithoutWriteBarrier(codeBlock->baselineVersion());
         m_inlineCallFrame->setStackOffset(inlineCallFrameStart.offset() - CallFrame::headerSizeInRegisters);
+        m_inlineCallFrame->argumentCountIncludingThis = argumentCountIncludingThis;
         if (callee) {
             m_inlineCallFrame->calleeRecovery = ValueRecovery::constant(callee);
             m_inlineCallFrame->isClosureCall = false;
         } else
             m_inlineCallFrame->isClosureCall = true;
         m_inlineCallFrame->directCaller = byteCodeParser->currentCodeOrigin();
-        m_inlineCallFrame->arguments.resizeToFit(argumentCountIncludingThis); // Set the number of arguments including this, but don't configure the value recoveries, yet.
+        m_inlineCallFrame->argumentsWithFixup.resizeToFit(argumentCountIncludingThisWithFixup); // Set the number of arguments including this, but don't configure the value recoveries, yet.
         m_inlineCallFrame->kind = kind;
         
         m_identifierRemap.resize(codeBlock->numberOfIdentifiers());

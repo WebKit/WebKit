@@ -1,3 +1,91 @@
+2017-09-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Relax arity requirement
+        https://bugs.webkit.org/show_bug.cgi?id=175523
+
+        Reviewed by Saam Barati.
+
+        Our DFG pipeline gives up inlining when the arity of the target function is more than the number of the arguments.
+        It effectively prevents us from inlining and optimizing functions, which takes some optional arguments in the form
+        of the pre-ES6.
+
+        This patch removes the above restriction by performing the arity fixup in DFG.
+
+        SixSpeed shows improvement when we can inline arity-mismatched functions. (For example, calling generator.next()).
+
+                                       baseline                  patched
+
+        defaults.es5             1232.1226+-20.6775    ^    442.3326+-26.1883       ^ definitely 2.7855x faster
+        rest.es6                    5.3406+-0.8588     ^      3.5812+-0.5388        ^ definitely 1.4913x faster
+        spread-generator.es6      320.9107+-12.4808         310.4295+-12.0047         might be 1.0338x faster
+        generator.es6             318.3514+-9.6023     ^    286.4974+-12.6203       ^ definitely 1.1112x faster
+
+        * bytecode/InlineCallFrame.cpp:
+        (JSC::InlineCallFrame::dumpInContext const):
+        * bytecode/InlineCallFrame.h:
+        (JSC::InlineCallFrame::InlineCallFrame):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGArgumentsUtilities.cpp:
+        (JSC::DFG::argumentsInvolveStackSlot):
+        (JSC::DFG::emitCodeToGetArgumentsArrayLength):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::setArgument):
+        (JSC::DFG::ByteCodeParser::findArgumentPositionForLocal):
+        (JSC::DFG::ByteCodeParser::flush):
+        (JSC::DFG::ByteCodeParser::getArgumentCount):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::validateReferences):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::isLiveInBytecode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::forAllLocalsLiveInBytecode):
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        (JSC::DFG::reifyInlinedCallFrames):
+        * dfg/DFGPreciseLocalClobberize.h:
+        (JSC::DFG::PreciseLocalClobberizeAdaptor::readTop):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::emitGetLength):
+        (JSC::DFG::SpeculativeJIT::compileCreateDirectArguments):
+        * dfg/DFGStackLayoutPhase.cpp:
+        (JSC::DFG::StackLayoutPhase::run):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetMyArgumentByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::getArgumentsLength):
+        * ftl/FTLOperations.cpp:
+        (JSC::FTL::operationMaterializeObjectInOSR):
+        * interpreter/StackVisitor.cpp:
+        (JSC::StackVisitor::readInlinedFrame):
+        * jit/AssemblyHelpers.h:
+        (JSC::AssemblyHelpers::argumentsStart):
+        * jit/SetupVarargsFrame.cpp:
+        (JSC::emitSetupVarargsFrameFastCase):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createWithInlineFrame):
+        * runtime/CommonSlowPaths.h:
+        (JSC::CommonSlowPaths::numberOfExtraSlots):
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlots):
+        (JSC::CommonSlowPaths::numberOfStackPaddingSlotsWithExtraSlots):
+        (JSC::CommonSlowPaths::arityCheckFor):
+        * runtime/StackAlignment.h:
+        (JSC::stackAlignmentBytes):
+        (JSC::stackAlignmentRegisters):
+
 2017-09-01  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [FTL] FTL allocation for async Function is incorrect

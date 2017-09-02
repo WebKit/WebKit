@@ -1,3 +1,32 @@
+2017-09-02  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Relax arity requirement
+        https://bugs.webkit.org/show_bug.cgi?id=175523
+
+        Reviewed by Saam Barati.
+
+        * stress/arity-mismatch-arguments-length.js: Added.
+        (shouldBe):
+        (test1):
+        (test):
+        * stress/arity-mismatch-get-argument.js: Added.
+        (shouldBe):
+        (builtin.createBuiltin):
+        (test):
+        * stress/arity-mismatch-inlining-extra-slots.js: Added.
+        (shouldBe):
+        (inlineTarget):
+        (test):
+        * stress/arity-mismatch-inlining.js: Added.
+        (shouldBe):
+        (inlineTarget):
+        (test):
+        * stress/arity-mismatch-rest.js: Added.
+        (shouldBe):
+        (test2):
+        (test1):
+        (test):
+
 2017-08-31  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Fix "name" and "length" of Proxy revoke function

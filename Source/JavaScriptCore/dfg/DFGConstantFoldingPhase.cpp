@@ -357,7 +357,7 @@ private:
                 // GetMyArgumentByVal in such statically-out-of-bounds accesses; we just lose CFA unless
                 // GCSE removes the access entirely.
                 if (inlineCallFrame) {
-                    if (index >= inlineCallFrame->arguments.size() - 1)
+                    if (index >= inlineCallFrame->argumentCountIncludingThis - 1)
                         break;
                 } else {
                     if (index >= m_state.variables().numberOfArguments() - 1)
@@ -378,7 +378,7 @@ private:
                         virtualRegisterForArgument(index + 1), FlushedJSValue);
                 }
                 
-                if (inlineCallFrame && !inlineCallFrame->isVarargs() && index < inlineCallFrame->arguments.size() - 1) {
+                if (inlineCallFrame && !inlineCallFrame->isVarargs() && index < inlineCallFrame->argumentCountIncludingThis - 1) {
                     node->convertToGetStack(data);
                     eliminated = true;
                     break;

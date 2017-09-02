@@ -293,7 +293,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 break;
             }
         } else
-            argumentCount = materialization->origin().inlineCallFrame->arguments.size();
+            argumentCount = materialization->origin().inlineCallFrame->argumentCountIncludingThis;
         RELEASE_ASSERT(argumentCount);
         
         JSFunction* callee = nullptr;

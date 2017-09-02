@@ -74,7 +74,8 @@ void InlineCallFrame::dumpInContext(PrintStream& out, DumpContext* context) cons
         out.print(", closure call");
     else
         out.print(", known callee: ", inContext(calleeRecovery.constant(), context));
-    out.print(", numArgs+this = ", arguments.size());
+    out.print(", numArgs+this = ", argumentCountIncludingThis);
+    out.print(", numFixup = ", argumentsWithFixup.size() - argumentCountIncludingThis);
     out.print(", stackOffset = ", stackOffset);
     out.print(" (", virtualRegisterForLocal(0), " maps to ", virtualRegisterForLocal(0) + stackOffset, ")>");
 }

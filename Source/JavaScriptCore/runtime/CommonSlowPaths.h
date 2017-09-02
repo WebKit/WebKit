@@ -50,24 +50,42 @@ struct ArityCheckData {
     void* thunkToCall;
 };
 
+ALWAYS_INLINE int numberOfExtraSlots(int argumentCountIncludingThis)
+{
+    int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
+    int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), frameSize);
+    return alignedFrameSize - frameSize;
+}
+
+ALWAYS_INLINE int numberOfStackPaddingSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
+{
+    if (argumentCountIncludingThis >= codeBlock->numParameters())
+        return 0;
+    int alignedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), argumentCountIncludingThis + CallFrame::headerSizeInRegisters);
+    int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), codeBlock->numParameters() + CallFrame::headerSizeInRegisters);
+    return alignedFrameSizeForParameters - alignedFrameSize;
+}
+
+ALWAYS_INLINE int numberOfStackPaddingSlotsWithExtraSlots(CodeBlock* codeBlock, int argumentCountIncludingThis)
+{
+    if (argumentCountIncludingThis >= codeBlock->numParameters())
+        return 0;
+    return numberOfStackPaddingSlots(codeBlock, argumentCountIncludingThis) + numberOfExtraSlots(argumentCountIncludingThis);
+}
+
 ALWAYS_INLINE int arityCheckFor(ExecState* exec, VM& vm, CodeSpecializationKind kind)
 {
     JSFunction* callee = jsCast<JSFunction*>(exec->jsCallee());
     ASSERT(!callee->isHostFunction());
     CodeBlock* newCodeBlock = callee->jsExecutable()->codeBlockFor(kind);
-    int argumentCountIncludingThis = exec->argumentCountIncludingThis();
+    ASSERT(exec->argumentCountIncludingThis() < static_cast<unsigned>(newCodeBlock->numParameters()));
+    int padding = numberOfStackPaddingSlotsWithExtraSlots(newCodeBlock, exec->argumentCountIncludingThis());
     
-    ASSERT(argumentCountIncludingThis < newCodeBlock->numParameters());
-    int frameSize = argumentCountIncludingThis + CallFrame::headerSizeInRegisters;
-    int alignedFrameSizeForParameters = WTF::roundUpToMultipleOf(stackAlignmentRegisters(),
-        newCodeBlock->numParameters() + CallFrame::headerSizeInRegisters);
-    int paddedStackSpace = alignedFrameSizeForParameters - frameSize;
-    
-    Register* newStack = exec->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), paddedStackSpace);
+    Register* newStack = exec->registers() - WTF::roundUpToMultipleOf(stackAlignmentRegisters(), padding);
 
     if (UNLIKELY(!vm.ensureStackCapacityFor(newStack)))
         return -1;
-    return paddedStackSpace;
+    return padding;
 }
 
 inline bool opIn(ExecState* exec, JSValue baseVal, JSValue propName, ArrayProfile* arrayProfile = nullptr)

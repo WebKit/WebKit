@@ -176,7 +176,7 @@ void CommonData::validateReferences(const TrackedReferences& trackedReferences)
 {
     if (InlineCallFrameSet* set = inlineCallFrames.get()) {
         for (InlineCallFrame* inlineCallFrame : *set) {
-            for (ValueRecovery& recovery : inlineCallFrame->arguments) {
+            for (ValueRecovery& recovery : inlineCallFrame->argumentsWithFixup) {
                 if (recovery.isConstant())
                     trackedReferences.check(recovery.constant());
             }
