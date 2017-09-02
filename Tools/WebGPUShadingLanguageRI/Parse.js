@@ -548,6 +548,8 @@ function parse(program, origin, lineNumberOffset, text)
     function parseReturn()
     {
         let origin = consume("return");
+        if (tryConsume(";"))
+            return new Return(origin, null);
         let expression = parseExpression();
         consume(";");
         return new Return(origin, expression);

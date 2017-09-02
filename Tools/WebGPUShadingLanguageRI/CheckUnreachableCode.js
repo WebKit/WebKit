@@ -24,17 +24,8 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
+function checkUnreachableCode(program)
 {
-    let program = new Program();
-    parse(program, "<stdlib>", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+    program.visit(new UnreachableCodeChecker());
 }
 

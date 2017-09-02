@@ -24,17 +24,28 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    parse(program, "<stdlib>", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+class ReturnChecker extends Visitor {
+    visitFuncDef(node)
+    {
+        if (node.returnType.equals(node.program.intrinsics.void))
+            return;
+        
+        if (!node.body.visit(this))
+            throw new WTypeError(node.origin.originString, "Function does not return");
+    }
+    
+    visitBlock(node)
+    {
+        // FIXME: This isn't right for break/continue.
+        // https://bugs.webkit.org/show_bug.cgi?id=176263
+        return node.statements.reduce((result, statement) => result || statement.visit(this), false);
+    }
+    
+    // When we add control flow statements, we'll need to return true only if both blocks return true.
+    // If a loop returns, then it counts only if the loop is guaranteed to run at least once.
+    
+    visitReturn(node)
+    {
+        return true;
+    }
 }
-

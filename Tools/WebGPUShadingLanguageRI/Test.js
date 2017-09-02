@@ -356,6 +356,26 @@ function TEST_lexerKeyword()
     checkLexerToken(result[12], 40, "identifier",  "a3");
 }
 
+function TEST_simpleNoReturn()
+{
+    checkFail(
+        () => doPrep("int foo() { }"),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_simpleUnreachableCode()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                return;
+                int x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
 let before = preciseTime();
 
 let filter = /.*/; // run everything by default

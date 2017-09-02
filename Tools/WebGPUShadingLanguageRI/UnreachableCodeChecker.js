@@ -24,17 +24,23 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    parse(program, "<stdlib>", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+class UnreachableCodeChecker extends Visitor {
+    constructor()
+    {
+        super();
+        this._returnChecker = new ReturnChecker();
+    }
+    
+    visitBlock(node)
+    {
+        for (let i = 0; i < node.statements.length - 1; ++i) {
+            let statement = node.statements[i];
+            // FIXME: Need to also check if this statement can break or continue.
+            // https://bugs.webkit.org/show_bug.cgi?id=176263
+            if (statement.visit(this._returnChecker))
+                throw new WTypeError(
+                    node.statements[i + 1].origin.originString,
+                    "Unreachable code");
+        }
+    }
 }
-

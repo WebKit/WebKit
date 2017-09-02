@@ -1,5 +1,36 @@
 2017-09-01  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should check unreachable code and no returns
+        https://bugs.webkit.org/show_bug.cgi?id=176262
+
+        Reviewed by Myles Maxfield.
+        
+        This adds phases to check whether non-void functions return and whether there is any code after
+        a return in any block. Added tests for simple versions of both of those things. We cannot add
+        more complex versions until we support control flow statements.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CheckReturns.js: Added.
+        (checkReturns):
+        * WebGPUShadingLanguageRI/CheckUnreachableCode.js: Added.
+        (checkUnreachableCode):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseReturn):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/ReturnChecker.js: Added.
+        (ReturnChecker.prototype.visitFuncDef):
+        (ReturnChecker.prototype.visitBlock):
+        (ReturnChecker.prototype.visitReturn):
+        (ReturnChecker):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleNoReturn):
+        * WebGPUShadingLanguageRI/UnreachableCodeChecker.js: Added.
+        (UnreachableCodeChecker.prototype.visitBlock):
+        (UnreachableCodeChecker):
+
+2017-09-01  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should use & for getting a ^ and @ for getting a []
         https://bugs.webkit.org/show_bug.cgi?id=176245
 
