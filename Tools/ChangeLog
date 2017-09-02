@@ -1,5 +1,47 @@
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Improve the way unit test are run and the results reported
+        https://bugs.webkit.org/show_bug.cgi?id=176104
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        There are several issues with the way unit tests are run by run-gtk-tests and also with the way results are
+        reported:
+
+         - The results summary only mentions the test binaries, not the actual test cases, so you always have to scroll
+           up to find the actual test cases failing.
+         - The number of reported failures is the number of test binaries that failed, so if a new test case fails for
+           the same binary in a new revision, we won't notice it just looking at the number of failures.
+         - We show detailed information about skipped test in the results summary, which is just noise.
+         - In the case of glib tests, when a test case times out, we finish the test suite, instead of continuing with the
+           rest of the test cases like we do for normal failures or crashes. If a new test case fails after a test case that
+           timed out we will not notice it until we fix or skip the test cases timing out.
+         - In the case of glib tests, the timeout is applied to the whole suite, instead of per test case, we have a hack
+           to make it longer only for that. It has worked so far, but it doesn't scale, and it's an ugly hack.
+         - It's not currently possible to detect flaky tests, because again, we know the binaries/suites that failed but
+           not the actual test cases.
+
+        This patch fixes all these issues and makes it possible to add support for flaky tests in a follow up patch.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunGtkAPITests.commandComplete): Update the RunGtkAPITests step to parse the new output.
+        * Scripts/run-gtk-tests:
+        (TestRunner._start_timeout): Helper to start the timeout if needed.
+        (TestRunner._start_timeout._alarm_handler): Raise timeout exception.
+        (TestRunner._stop_timeout): Helper to stop the timeout if needed.
+        (TestRunner._waitpid): Merged waitpid and return_code_from_exit_status.
+        (TestRunner._run_test_glib): Do not double the timeout anymore, we now start/stop the timeout for every test
+        case. Return a dictionary where keys are test cases and values the results only in case of failures.
+        (TestRunner._run_test_glib.parse_line): Update the parser to also detect test cases and the results.
+        (TestRunner._run_test_glib.parse_line.set_test_result): Helper to set the result of a test case.
+        (TestRunner._run_google_test): Return a dictionary where key is the test case and value is the result only in
+        case of failure.
+        (TestRunner._run_google_test_suite): Updated now that _run_google_test returns a dictionary.
+        (TestRunner.run_tests): Handle the results dictionary and show the results with information about test cases
+        failing and grouped by test binaries.
+
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Several InputMethodFilter tests are failing and crashing
         https://bugs.webkit.org/show_bug.cgi?id=176158
 
