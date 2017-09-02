@@ -1,3 +1,13 @@
+2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Assertion failure when opening a file with a missing tag closing bracket
+        https://bugs.webkit.org/show_bug.cgi?id=176061
+
+        Reviewed by Darin Adler.
+
+        * fast/tokenizer/missing-script-tag-closing-bracket-expected.txt: Added.
+        * fast/tokenizer/missing-script-tag-closing-bracket.html: Added.
+
 2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [SVG] Leak in SVGAnimatedListPropertyTearOff

@@ -1,3 +1,19 @@
+2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Assertion failure when opening a file with a missing tag closing bracket
+        https://bugs.webkit.org/show_bug.cgi?id=176061
+
+        Reviewed by Darin Adler.
+
+        If a tag is missing its closing bracket, the tokenizer just needs to advance()
+        the character position without checking m_currentCharacter != '\n'. Newline
+        character is a valid ending for partially closed tags.
+
+        Test: fast/tokenizer/missing-script-tag-closing-bracket.html
+
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::commitToPartialEndTag):
+
 2017-08-19  Sergio Villar Senin  <svillar@igalia.com>
 
         [SVG] Leak in SVGAnimatedListPropertyTearOff
