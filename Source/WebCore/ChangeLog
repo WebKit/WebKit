@@ -1,3 +1,28 @@
+2017-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Performance / PerformanceObserver leaks seen on bots
+        https://bugs.webkit.org/show_bug.cgi?id=176269
+
+        Reviewed by Darin Adler.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::removeAllEventListeners):
+        * workers/WorkerGlobalScope.cpp:
+        (WebCore::WorkerGlobalScope::removeAllEventListeners):
+        Also use this opportunity to break up the reference cycle
+        between PerformanceObservers and the Performance object.
+
+        * page/Performance.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::removeAllObservers):
+        Disassociate and clear observers.
+
+        * page/PerformanceObserver.h:
+        * page/PerformanceObserver.cpp:
+        (WebCore::PerformanceObserver::disassociate):
+        Clear the back-reference to the Performance object to
+        break the cycle.
+
 2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Wayland] Use fast malloc to allocate backing store cairo surfaces data

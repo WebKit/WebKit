@@ -76,6 +76,7 @@ public:
 
     void addResourceTiming(ResourceTiming&&);
 
+    void removeAllObservers();
     void registerPerformanceObserver(PerformanceObserver&);
     void unregisterPerformanceObserver(PerformanceObserver&);
 

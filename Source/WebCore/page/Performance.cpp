@@ -231,6 +231,13 @@ void Performance::clearMeasures(const String& measureName)
     m_userTiming->clearMeasures(measureName);
 }
 
+void Performance::removeAllObservers()
+{
+    for (auto& observer : m_observers)
+        observer->disassociate();
+    m_observers.clear();
+}
+
 void Performance::registerPerformanceObserver(PerformanceObserver& observer)
 {
     m_observers.add(&observer);

@@ -104,6 +104,7 @@ void WorkerGlobalScope::removeAllEventListeners()
 {
     EventTarget::removeAllEventListeners();
     m_performance->removeAllEventListeners();
+    m_performance->removeAllObservers();
 }
 
 bool WorkerGlobalScope::isSecureContext() const
