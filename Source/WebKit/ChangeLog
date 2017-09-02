@@ -1,3 +1,13 @@
+2017-09-02  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Automation: -[_WKAutomationSession init] leaks
+        https://bugs.webkit.org/show_bug.cgi?id=176268
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/_WKAutomationSession.mm:
+        (-[_WKAutomationSession init]):
+
 2017-09-02  Tim Horton  <timothy_horton@apple.com>
 
         Fix some style issues in the Web Process part of the Remote Layer Tree code

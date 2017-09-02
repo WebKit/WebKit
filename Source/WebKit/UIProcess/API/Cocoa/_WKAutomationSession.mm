@@ -43,7 +43,7 @@
 
 - (instancetype)init
 {
-    return [self initWithConfiguration:[_WKAutomationSessionConfiguration new]];
+    return [self initWithConfiguration:[[[_WKAutomationSessionConfiguration alloc] init] autorelease]];
 }
 
 - (instancetype)initWithConfiguration:(_WKAutomationSessionConfiguration *)configuration
