@@ -347,7 +347,15 @@ list(APPEND WebKit2_SOURCES
     WebProcess/Plugins/PDF/PDFPluginPasswordField.mm
     WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm
 
-    WebProcess/Scrolling/RemoteScrollingCoordinator.mm
+    WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp
+    WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
+    WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp
+    WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm
+    WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp
+    WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm
+    WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm
+    WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm
+    WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
 
     WebProcess/WebCoreSupport/WebPasteboardOverrides.cpp
     WebProcess/WebCoreSupport/WebValidationMessageClient.cpp
@@ -362,17 +370,9 @@ list(APPEND WebKit2_SOURCES
 
     WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 
-    WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.mm
     WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 
-    WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp
     WebProcess/WebPage/mac/PageBannerMac.mm
-    WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm
-    WebProcess/WebPage/mac/PlatformCALayerRemote.cpp
-    WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm
-    WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp
-    WebProcess/WebPage/mac/RemoteLayerTreeContext.mm
-    WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm
     WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
     WebProcess/WebPage/mac/WKAccessibilityWebPageObjectBase.mm
     WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm
@@ -422,8 +422,8 @@ list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/mac"
     "${WEBKIT2_DIR}/WebProcess/Plugins/PDF"
     "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape/mac"
-    "${WEBKIT2_DIR}/WebProcess/Scrolling"
     "${WEBKIT2_DIR}/WebProcess/WebPage/Cocoa"
+    "${WEBKIT2_DIR}/WebProcess/WebPage/RemoteLayerTree"
     "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
     "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
     "${FORWARDING_HEADERS_DIR}/WebCore"
@@ -478,7 +478,7 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/mac/RemoteLayerTreeDrawingAreaProxy.messages.in
     UIProcess/mac/SecItemShimProxy.messages.in
 
-    WebProcess/Scrolling/RemoteScrollingCoordinator.messages.in
+    WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 )
 

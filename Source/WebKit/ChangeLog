@@ -1,3 +1,37 @@
+2017-09-02  Tim Horton  <timothy_horton@apple.com>
+
+        Move Web Process part of the Remote Layer Tree code out of a Mac-specific directory
+        https://bugs.webkit.org/show_bug.cgi?id=176271
+
+        Rubber-stamped by Dan Bernstein.
+
+        UI-side compositing works on all Cocoa platforms, so the code should
+        not live inside Mac/. Also merge the Scrolling directory in here,
+        since those files are very related.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        * DerivedSources.make:
+        * PlatformMac.cmake:
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.cpp: Renamed from WebProcess/WebPage/mac/GraphicsLayerCARemote.cpp.
+        * WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.h: Renamed from WebProcess/WebPage/mac/GraphicsLayerCARemote.h.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h: Renamed from WebProcess/WebPage/mac/PlatformCAAnimationRemote.h.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm: Renamed from WebProcess/WebPage/mac/PlatformCAAnimationRemote.mm.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.cpp: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemote.cpp.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.h: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemote.h.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.h: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.h.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteCustom.mm: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemoteCustom.mm.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.cpp: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.cpp.
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.h: Renamed from WebProcess/WebPage/mac/PlatformCALayerRemoteTiledBacking.h.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.h: Renamed from WebProcess/WebPage/mac/RemoteLayerTreeContext.h.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm: Renamed from WebProcess/WebPage/mac/RemoteLayerTreeContext.mm.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.h: Renamed from WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.h.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDisplayRefreshMonitor.mm: Renamed from WebProcess/WebPage/Cocoa/RemoteLayerTreeDisplayRefreshMonitor.mm.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h: Renamed from WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm: Renamed from WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.h: Renamed from WebProcess/Scrolling/RemoteScrollingCoordinator.h.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.messages.in: Renamed from WebProcess/Scrolling/RemoteScrollingCoordinator.messages.in.
+        * WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm: Renamed from WebProcess/Scrolling/RemoteScrollingCoordinator.mm.
+
 2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Wayland] Use fast malloc to allocate backing store cairo surfaces data
