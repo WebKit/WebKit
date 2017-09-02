@@ -193,6 +193,17 @@ public:
         test->automationStarted(session);
     }
 
+    static GUniquePtr<char> toVersionString(unsigned major, unsigned minor, unsigned micro)
+    {
+        if (!micro && !minor)
+            return GUniquePtr<char>(g_strdup_printf("%u", major));
+
+        if (!micro)
+            return GUniquePtr<char>(g_strdup_printf("%u.%u", major, minor));
+
+        return GUniquePtr<char>(g_strdup_printf("%u.%u.%u", major, minor, micro));
+    }
+
     WebKitAutomationSession* requestSession(const char* sessionID)
     {
         auto signalID = g_signal_connect(m_webContext.get(), "automation-started", G_CALLBACK(automationStartedCallback), this);
@@ -209,7 +220,7 @@ public:
                 const char* browserVersion;
                 g_variant_get(capabilities.get(), "(&s&s)", &browserName, &browserVersion);
                 g_assert_cmpstr(browserName, ==, "AutomationTestBrowser");
-                GUniquePtr<char> versionString(g_strdup_printf("%u.%u.%u", WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION));
+                GUniquePtr<char> versionString = toVersionString(WEBKIT_MAJOR_VERSION, WEBKIT_MINOR_VERSION, WEBKIT_MICRO_VERSION);
                 g_assert_cmpstr(browserVersion, ==, versionString.get());
             }, this
         );

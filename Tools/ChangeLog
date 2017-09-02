@@ -1,3 +1,12 @@
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ test /webkit2/WebKitAutomationSession/request-session.
+
+        It fails when comparing the browser version if micro version is 0 (or if both micro and minor are 0 too).
+
+        * TestWebKitAPI/Tests/WebKitGLib/TestAutomationSession.cpp: Use a helper method to convert major, minor, micro
+        numbers into a version string, using the same approach as WebKitAutomationSession.
+
 2017-08-29  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. REGRESSION(r221219): Fix unit tests using resources from WebKit directory.
