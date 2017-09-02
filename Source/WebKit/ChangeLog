@@ -1,5 +1,20 @@
 2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Wayland] Use fast malloc to allocate backing store cairo surfaces data
+        https://bugs.webkit.org/show_bug.cgi?id=176226
+
+        Reviewed by Michael Catanzaro.
+
+        Do not create the cairo surface for BackingStoreBackendCairoImpl. When not using X11 we are going to use an
+        image surface anyway, so we don't really need to use the create similar. This way we only need to pass the size
+        and device scale factor to BackingStoreBackendCairoImpl that will create the image surface using fast malloc to
+        allocate the data.
+
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::createBackend):
+
+2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Wayland] Opening FedoraProject's pastebin chews CPU
         https://bugs.webkit.org/show_bug.cgi?id=175942
 
