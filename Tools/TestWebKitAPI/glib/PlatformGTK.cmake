@@ -24,30 +24,30 @@ list(APPEND WebKitGLibAPITest_LIBRARIES
 )
 
 list(APPEND WebKitGLibAPIWebProcessTests
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/AutocleanupsTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/DOMClientRectTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/DOMNodeFilterTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/DOMXPathNSResolverTest.cpp
-    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/EditorTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/AutocleanupsTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMClientRectTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMNodeTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMNodeFilterTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/DOMXPathNSResolverTest.cpp
+    ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/EditorTest.cpp
 )
 
-ADD_WK2_TEST(InspectorTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/InspectorTestServer.cpp)
-ADD_WK2_TEST(TestAutocleanups ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestAutocleanups.cpp)
-ADD_WK2_TEST(TestContextMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestContextMenu.cpp)
-ADD_WK2_TEST(TestDOMClientRect ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestDOMClientRect.cpp)
-ADD_WK2_TEST(TestDOMNode ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNode.cpp)
-ADD_WK2_TEST(TestDOMNodeFilter ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestDOMNodeFilter.cpp)
-ADD_WK2_TEST(TestDOMXPathNSResolver ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestDOMXPathNSResolver.cpp)
-ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestEditor.cpp)
-ADD_WK2_TEST(TestInspector ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestInspector.cpp)
-ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestInspectorServer.cpp)
-ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestOptionMenu.cpp)
-ADD_WK2_TEST(TestPrinting ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestPrinting.cpp)
-ADD_WK2_TEST(TestWebKitVersion ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitVersion.cpp)
-ADD_WK2_TEST(TestWebViewEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestWebViewEditor.cpp)
+ADD_WK2_TEST(InspectorTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/InspectorTestServer.cpp)
+ADD_WK2_TEST(TestAutocleanups ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestAutocleanups.cpp)
+ADD_WK2_TEST(TestContextMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestContextMenu.cpp)
+ADD_WK2_TEST(TestDOMClientRect ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMClientRect.cpp)
+ADD_WK2_TEST(TestDOMNode ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMNode.cpp)
+ADD_WK2_TEST(TestDOMNodeFilter ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMNodeFilter.cpp)
+ADD_WK2_TEST(TestDOMXPathNSResolver ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestDOMXPathNSResolver.cpp)
+ADD_WK2_TEST(TestEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestEditor.cpp)
+ADD_WK2_TEST(TestInspector ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspector.cpp)
+ADD_WK2_TEST(TestInspectorServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestInspectorServer.cpp)
+ADD_WK2_TEST(TestOptionMenu ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestOptionMenu.cpp)
+ADD_WK2_TEST(TestPrinting ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp)
+ADD_WK2_TEST(TestWebKitVersion ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebKitVersion.cpp)
+ADD_WK2_TEST(TestWebViewEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebViewEditor.cpp)
 
 if (ATSPI_FOUND)
-    ADD_WK2_TEST(AccessibilityTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/AccessibilityTestServer.cpp)
-    ADD_WK2_TEST(TestWebKitAccessibility ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit2Gtk/TestWebKitAccessibility.cpp)
+    ADD_WK2_TEST(AccessibilityTestServer ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/AccessibilityTestServer.cpp)
+    ADD_WK2_TEST(TestWebKitAccessibility ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKitGtk/TestWebKitAccessibility.cpp)
 endif ()
