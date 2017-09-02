@@ -67,7 +67,7 @@ public:
 
         GUniqueOutPtr<GdkKeymapKey> keys;
         gint nKeys;
-        if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeyValue, &keys.outPtr(), &nKeys))
+        if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeyValue, &keys.outPtr(), &nKeys) && nKeys)
             event->key.hardware_keycode = keys.get()[0].keycode;
 
         filterKeyEvent(&event->key);

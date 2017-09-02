@@ -1,3 +1,19 @@
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Wayland] Crash when gdk_keymap_get_entries_for_keyval returns TRUE but n_keys=0
+        https://bugs.webkit.org/show_bug.cgi?id=176154
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        In Wayland gdk_keymap_get_entries_for_keyval() can return TRUE with n_keys=0. We have several places in WebKit
+        where we just check the return value of gdk_keymap_get_entries_for_keyval() and then use the returned array to
+        get the first position assuming it has at least one item. This has always worked in X11 because the GDK X11
+        backend does the right thing, but it's crashing in Wayland now. It should be fixed in GTK+ but in the meantime
+        it's easy to workaround by also checking n_keys > 0.
+
+        * UIProcess/Automation/gtk/WebAutomationSessionGtk.cpp:
+        (WebKit::doKeyStrokeEvent):
+
 2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement screen capture commands

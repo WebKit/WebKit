@@ -1,5 +1,24 @@
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK][Wayland] Crash when gdk_keymap_get_entries_for_keyval returns TRUE but n_keys=0
+        https://bugs.webkit.org/show_bug.cgi?id=176154
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Also check the n_keys > 0 when using gdk_keymap_get_entries_for_keyval().
+
+        * TestWebKitAPI/Tests/WebKit/gtk/InputMethodFilter.cpp:
+        (TestWebKitAPI::TestInputMethodFilter::sendKeyEventToFilter):
+        * TestWebKitAPI/Tests/WebKitGtk/TestPrinting.cpp: Remove duplicated code and use WebViewTest::keyStroke instead.
+        * TestWebKitAPI/glib/WebKitGLib/gtk/WebViewTestGtk.cpp:
+        (WebViewTest::keyStroke):
+        * TestWebKitAPI/gtk/PlatformWebViewGtk.cpp:
+        (TestWebKitAPI::doKeyStroke):
+        * WebKitTestRunner/gtk/EventSenderProxyGtk.cpp:
+        (WTR::EventSenderProxy::keyDown):
+
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed. Fix GTK+ test /webkit2/WebKitAutomationSession/request-session.
 
         It fails when comparing the browser version if micro version is 0 (or if both micro and minor are 0 too).

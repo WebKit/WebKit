@@ -315,7 +315,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
 
     GUniqueOutPtr<GdkKeymapKey> keys;
     gint nKeys;
-    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys.outPtr(), &nKeys))
+    if (gdk_keymap_get_entries_for_keyval(gdk_keymap_get_default(), gdkKeySym, &keys.outPtr(), &nKeys) && nKeys)
         pressEvent->key.hardware_keycode = keys.get()[0].keycode;
 
     GdkEvent* releaseEvent = gdk_event_copy(pressEvent);
