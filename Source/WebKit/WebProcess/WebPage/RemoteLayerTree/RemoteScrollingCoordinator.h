@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingCoordinator_h
-#define RemoteScrollingCoordinator_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -82,5 +81,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_COORDINATOR(WebKit::RemoteScrollingCoordinator, isRemoteScrollingCoordinator());
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // RemoteScrollingCoordinator_h

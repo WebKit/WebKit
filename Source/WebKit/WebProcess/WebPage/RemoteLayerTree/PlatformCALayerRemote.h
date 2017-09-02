@@ -195,7 +195,7 @@ public:
     RemoteLayerTreeContext* context() const { return m_context; }
 
 protected:
-    PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext& context);
+    PlatformCALayerRemote(WebCore::PlatformCALayer::LayerType, WebCore::PlatformCALayerClient* owner, RemoteLayerTreeContext&);
     PlatformCALayerRemote(const PlatformCALayerRemote&, WebCore::PlatformCALayerClient*, RemoteLayerTreeContext&);
 
     void updateClonedLayerProperties(PlatformCALayerRemote& clone, bool copyContents = true) const;

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeContext_h
-#define RemoteLayerTreeContext_h
+#pragma once
 
 #include "LayerTreeContext.h"
 #include "RemoteLayerBackingStoreCollection.h"
@@ -95,5 +94,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerTreeContext_h

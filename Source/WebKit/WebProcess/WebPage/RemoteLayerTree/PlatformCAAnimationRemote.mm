@@ -602,7 +602,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<TransformationMatrix>& va
 {
     if (animationType() != Keyframe)
         return;
-        
+
     Vector<KeyframeValue> keyframes;
     keyframes.reserveInitialCapacity(values.size());
     
@@ -616,7 +616,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<FloatPoint3D>& values)
 {
     if (animationType() != Keyframe)
         return;
-        
+
     Vector<KeyframeValue> keyframes;
     keyframes.reserveInitialCapacity(values.size());
     
@@ -630,7 +630,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<Color>& values)
 {
     if (animationType() != Keyframe)
         return;
-        
+
     Vector<KeyframeValue> keyframes;
     keyframes.reserveInitialCapacity(values.size());
     
@@ -646,7 +646,7 @@ void PlatformCAAnimationRemote::setValues(const Vector<RefPtr<FilterOperation>>&
     
     if (animationType() != Keyframe)
         return;
-        
+
     Vector<KeyframeValue> keyframes;
     keyframes.reserveInitialCapacity(values.size());
     

@@ -346,10 +346,10 @@ void RemoteLayerTreeDrawingArea::flushLayers()
     if (m_scrolledViewExposedRect)
         visibleRect.intersect(m_scrolledViewExposedRect.value());
 
-    RefPtr<WebPage> retainedPage = &m_webPage;
-    [CATransaction addCommitHandler:[retainedPage] {
-        if (Page* corePage = retainedPage->corePage()) {
-            if (Frame* coreFrame = retainedPage->mainFrame())
+    RefPtr<WebPage> protectedWebPage = &m_webPage;
+    [CATransaction addCommitHandler:[protectedWebPage] {
+        if (Page* corePage = protectedWebPage->corePage()) {
+            if (Frame* coreFrame = protectedWebPage->mainFrame())
                 corePage->inspectorController().didComposite(*coreFrame);
         }
     } forPhase:kCATransactionPhasePostCommit];

@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCAAnimationRemote_h
-#define PlatformCAAnimationRemote_h
+#pragma once
 
 #include <WebCore/PlatformCAAnimation.h>
 #include <wtf/HashMap.h>
@@ -307,5 +306,3 @@ WTF::TextStream& operator<<(WTF::TextStream&, const PlatformCAAnimationRemote::P
 } // namespace WebKit
 
 SPECIALIZE_TYPE_TRAITS_CAANIMATION(WebKit::PlatformCAAnimationRemote, isPlatformCAAnimationRemote())
-
-#endif // PlatformCAAnimationRemote_h

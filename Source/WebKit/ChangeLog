@@ -1,5 +1,33 @@
 2017-09-02  Tim Horton  <timothy_horton@apple.com>
 
+        Fix some style issues in the Web Process part of the Remote Layer Tree code
+        https://bugs.webkit.org/show_bug.cgi?id=176272
+
+        Reviewed by Dan Bernstein.
+
+        In bug 176271, the style bot noticed some existing style issues in the UI-side
+        compositing code. Fix them, because there aren't many and they're straightforward.
+
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/GraphicsLayerCARemote.cpp:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::setValues):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCALayerRemote.cpp:
+        (WebKit::PlatformCALayerRemote::appendSublayer):
+        (WebKit::PlatformCALayerRemote::insertSublayer):
+        (WebKit::PlatformCALayerRemote::replaceSublayer):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCALayerRemote.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCALayerRemoteCustom.mm:
+        (WebKit::PlatformCALayerRemoteCustom::clone const):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/PlatformCALayerRemoteTiledBacking.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/RemoteLayerTreeContext.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::flushLayers):
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/RemoteScrollingCoordinator.h:
+        * WebProcess/WebPage/Cocoa/RemoteLayerTree/RemoteScrollingCoordinator.mm:
+
+2017-09-02  Tim Horton  <timothy_horton@apple.com>
+
         Move Web Process part of the Remote Layer Tree code out of a Mac-specific directory
         https://bugs.webkit.org/show_bug.cgi?id=176271
 

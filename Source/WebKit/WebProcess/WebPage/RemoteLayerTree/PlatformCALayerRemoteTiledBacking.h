@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformCALayerRemoteTiledBacking_h
-#define PlatformCALayerRemoteTiledBacking_h
+#pragma once
 
 #include "PlatformCALayerRemote.h"
 #include <WebCore/TileController.h>
@@ -71,5 +70,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // PlatformCALayerRemoteTiledBacking_h

@@ -277,7 +277,7 @@ void PlatformCALayerRemote::removeAllSublayers()
 
 void PlatformCALayerRemote::appendSublayer(PlatformCALayer& layer)
 {
-    Ref<PlatformCALayer> layerProtector(layer);
+    Ref<PlatformCALayer> protectedLayer(layer);
 
     layer.removeFromSuperlayer();
     m_children.append(&layer);
@@ -287,7 +287,7 @@ void PlatformCALayerRemote::appendSublayer(PlatformCALayer& layer)
 
 void PlatformCALayerRemote::insertSublayer(PlatformCALayer& layer, size_t index)
 {
-    Ref<PlatformCALayer> layerProtector(layer);
+    Ref<PlatformCALayer> protectedLayer(layer);
 
     layer.removeFromSuperlayer();
     m_children.insert(index, &layer);
@@ -298,7 +298,7 @@ void PlatformCALayerRemote::insertSublayer(PlatformCALayer& layer, size_t index)
 void PlatformCALayerRemote::replaceSublayer(PlatformCALayer& reference, PlatformCALayer& layer)
 {
     ASSERT(reference.superlayer() == this);
-    Ref<PlatformCALayer> layerProtector(layer);
+    Ref<PlatformCALayer> protectedLayer(layer);
 
     layer.removeFromSuperlayer();
     size_t referenceIndex = m_children.find(&reference);

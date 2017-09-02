@@ -109,9 +109,9 @@ Ref<WebCore::PlatformCALayer> PlatformCALayerRemoteCustom::clone(PlatformCALayer
         if ([platformLayer() isKindOfClass:getAVPlayerLayerClass()]) {
             clonedLayer = adoptNS([allocAVPlayerLayerInstance() init]);
 
-            AVPlayerLayer* destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
-            AVPlayerLayer* sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
-            dispatch_async(dispatch_get_main_queue(), ^{
+            AVPlayerLayer *destinationPlayerLayer = static_cast<AVPlayerLayer *>(clonedLayer.get());
+            AVPlayerLayer *sourcePlayerLayer = static_cast<AVPlayerLayer *>(platformLayer());
+            dispatch_async(dispatch_get_main_queue(), [destinationPlayerLayer, sourcePlayerLayer] {
                 [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
             });
         } else {
