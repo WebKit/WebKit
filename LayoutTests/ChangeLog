@@ -1,3 +1,12 @@
+2017-08-22  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r220052): ASSERTION FAILED: !frame().isMainFrame() || !needsStyleRecalcOrLayout()  in WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive()
+        https://bugs.webkit.org/show_bug.cgi?id=175270
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        * platform/mac-wk2/TestExpectations: Re-enable the disabled test.
+
 2017-08-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Previous elements with lang= can affect fonts selected for subsequent elements

@@ -1,3 +1,27 @@
+2017-08-22  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r220052): ASSERTION FAILED: !frame().isMainFrame() || !needsStyleRecalcOrLayout()  in WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive()
+        https://bugs.webkit.org/show_bug.cgi?id=175270
+
+        Reviewed by Simon Fraser and Antti Koivisto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Initialize m_styleRecalcTimer with a lamdba so it can work
+        with a function that returns a bool and ignore the return value.
+        (WebCore::Document::updateStyleIfNeeded): Added a boolean return value indicating if the
+        function did any work or not.
+        * dom/Document.h: Updated for above change.
+
+        * page/FrameView.cpp:
+        (WebCore::appendRenderedChildren): Added helper that will later replace the
+        FrameView::renderedChildFrameViews function and is used below.
+        (WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive): Instead of always doing two
+        passes of style and layout update do up to 25 passes, but stop as soon as a pass does
+        no work. This is slightly more efficient in cases where no layout and style update is
+        needed, and works correctly when a additional passes are needed, which is what happens
+        in the test that was failing. We can eventually improve this further, but this resolves
+        the immediate problem we are seeing in the test.
+
 2017-08-30  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Previous elements with lang= can affect fonts selected for subsequent elements
