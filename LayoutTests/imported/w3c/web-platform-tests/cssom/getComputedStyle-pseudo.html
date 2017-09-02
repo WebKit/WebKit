@@ -23,9 +23,17 @@
   height: 10px;
   display: block;
 }
+#none {
+  display: none;
+}
+#none::before,
+#none::after {
+  content: "Foo";
+}
 </style>
 <div id="test">
   <div id="contents"></div>
+  <div id="none"></div>
 </div>
 <script>
 test(function() {
@@ -40,4 +48,23 @@ test(function() {
     assert_equals(getComputedStyle(contents, pseudo).width, "50px");
   });
 }, "Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements");
+test(function() {
+  var has_no_pseudos = document.body;
+  has_no_pseudos.style.position = "relative";
+  [":before", ":after"].forEach(function(pseudo) {
+    assert_equals(getComputedStyle(has_no_pseudos, pseudo).position, "static",
+                  "Nonexistent " + pseudo + " pseudo-element shouldn't claim to have " +
+                  "the same style as the originating element");
+    assert_equals(getComputedStyle(has_no_pseudos, pseudo).width, "auto",
+                  "Nonexistent " + pseudo + " pseudo-element shouldn't claim to have " +
+                  "definite size");
+  });
+}, "Resolution of nonexistent pseudo-element styles");
+test(function() {
+  var none = document.getElementById('none');
+  [":before", ":after"].forEach(function(pseudo) {
+    assert_equals(getComputedStyle(none, pseudo).content, "\"Foo\"",
+                  "Pseudo-styles of display: none elements should be correct");
+  });
+}, "Resolution of pseudo-element styles in display: none elements");
 </script>
