@@ -1,5 +1,26 @@
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Several InputMethodFilter tests are failing and crashing
+        https://bugs.webkit.org/show_bug.cgi?id=176158
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        This started to happen after the GTK+ upgrade from 3.16 to 3.22 in the internal jhbuild. Now, GtkIMContext
+        doesn't emit the preedit signals when using the compose key (GDK_KEY_Multi_key). The composition results are
+        committed directly when they are ready. The test InputMethodFilterComposeKey was failing because it expected
+        preedit events that no longer happen. Tests InputMethodFilterContextFocusOutDuringOngoingComposition and
+        InputMethodFilterContextMouseClickDuringOngoingComposition were crashing because InputMethodFilter::confirmCurrentComposition()
+        accessed the WebPageProxy unconditionally, that is not available in testing mode. I wonder how this ever
+        worked. Other tests results have also been updated because logHandleKeyboardEventWithCompositionResultsForTesting()
+        now uses hexadecimal numbers for the key codes, for consistency with all other event logs.
+
+        * TestWebKitAPI/Tests/WebKit/gtk/InputMethodFilter.cpp:
+        (TestWebKitAPI::TestInputMethodFilter::TestInputMethodFilter):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::verifyCanceledComposition): Deleted.
+
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Wayland] Crash when gdk_keymap_get_entries_for_keyval returns TRUE but n_keys=0
         https://bugs.webkit.org/show_bug.cgi?id=176154
 

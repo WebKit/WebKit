@@ -312,6 +312,14 @@ void InputMethodFilter::confirmCurrentComposition()
 {
     if (!m_composingTextCurrently)
         return;
+
+#if ENABLE(API_TESTS)
+    if (m_testingMode) {
+        m_composingTextCurrently = false;
+        return;
+    }
+#endif
+
     m_page->confirmComposition(String(), -1, 0);
     m_composingTextCurrently = false;
 }
@@ -431,7 +439,7 @@ void InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting(G
 {
     const char* eventType = event->type == GDK_KEY_RELEASE ? "release" : "press";
     const char* fakedString = faked == EventFaked ? " (faked)" : "";
-    m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%u%s", eventType, event->keyval, fakedString));
+    m_events.append(String::format("sendKeyEventWithCompositionResults type=%s keycode=%x%s", eventType, event->keyval, fakedString));
 
     if (resultsToSend & Composition && !m_confirmedComposition.isNull())
         logConfirmCompositionForTesting();

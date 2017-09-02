@@ -1,5 +1,17 @@
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Several InputMethodFilter tests are failing and crashing
+        https://bugs.webkit.org/show_bug.cgi?id=176158
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * UIProcess/gtk/InputMethodFilter.cpp:
+        (WebKit::InputMethodFilter::confirmCurrentComposition): Return early in testing mode because the page is not available.
+        (WebKit::InputMethodFilter::logHandleKeyboardEventWithCompositionResultsForTesting): Use hexadecimal numbers for
+        logging key codes.
+
+2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK][Wayland] Crash when gdk_keymap_get_entries_for_keyval returns TRUE but n_keys=0
         https://bugs.webkit.org/show_bug.cgi?id=176154
 
