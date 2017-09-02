@@ -74,6 +74,7 @@ struct FontDescriptionKey {
         : m_size(description.computedPixelSize())
         , m_fontSelectionRequest(description.fontSelectionRequest())
         , m_flags(makeFlagsKey(description))
+        , m_locale(description.locale())
         , m_featureSettings(description.featureSettings())
 #if ENABLE(VARIATION_FONTS)
         , m_variationSettings(description.variationSettings())
@@ -89,6 +90,7 @@ struct FontDescriptionKey {
         return m_size == other.m_size
             && m_fontSelectionRequest == other.m_fontSelectionRequest
             && m_flags == other.m_flags
+            && m_locale == other.m_locale
 #if ENABLE(VARIATION_FONTS)
             && m_variationSettings == other.m_variationSettings
 #endif
@@ -109,6 +111,7 @@ struct FontDescriptionKey {
         hasher.add(m_fontSelectionRequest.weight);
         hasher.add(m_fontSelectionRequest.width);
         hasher.add(m_fontSelectionRequest.slope);
+        hasher.add(m_locale.existingHash());
         for (unsigned flagItem : m_flags)
             hasher.add(flagItem);
         hasher.add(m_featureSettings.hash());
@@ -154,6 +157,7 @@ private:
     unsigned m_size { 0 };
     FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags {{ 0, 0 }};
+    AtomicString m_locale;
     FontFeatureSettings m_featureSettings;
 #if ENABLE(VARIATION_FONTS)
     FontVariationSettings m_variationSettings;

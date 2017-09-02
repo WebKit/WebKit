@@ -1,3 +1,25 @@
+2017-08-30  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Previous elements with lang= can affect fonts selected for subsequent elements
+        https://bugs.webkit.org/show_bug.cgi?id=175959
+        <rdar://problem/33785853>
+
+        Reviewed by Zalan Bujtas.
+
+        FontCascade::update() was erroneously getting a cache hit. Elements with different lang=
+        should be distinct inside the FontCascadeCache. We should be keying off of the locale
+        string instead of the script enum because the string is the thing we actually pass to the
+        platform APIs when performing font selection. This is a regression because we only
+        recently (within the past few years) started making font selection sensitive to lang= at
+        all.
+
+        Test: fast/text/lang-font-selection-cache.html
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontDescriptionKey::FontDescriptionKey):
+        (WebCore::FontDescriptionKey::operator== const):
+        (WebCore::FontDescriptionKey::computeHash const):
+
 2017-08-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         The SVG fragment identifier is not respected if it is a part of an HTTP URL
