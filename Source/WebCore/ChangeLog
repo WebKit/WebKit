@@ -1,5 +1,14 @@
 2017-08-31  Daniel Bates  <dabates@apple.com>
 
+        Attempt to fix the Apple Windows and WinCairo build following <https://trac.webkit.org/changeset/221459>
+        (https://bugs.webkit.org/show_bug.cgi?id=176171)
+
+        Explicitly cast PseudoIds to unsigned before computing a difference between two PseudoIds.
+
+        * rendering/style/RenderStyle.h:
+
+2017-08-31  Daniel Bates  <dabates@apple.com>
+
         Make RenderStyle's non-inherited flags more human friendly
         https://bugs.webkit.org/show_bug.cgi?id=176171
 

@@ -1771,7 +1771,7 @@ private:
         unsigned isLink : 1;
 
         unsigned styleType : 4; // PseudoId
-        unsigned pseudoBits : (FIRST_INTERNAL_PSEUDOID - FIRST_PUBLIC_PSEUDOID);
+        unsigned pseudoBits : (static_cast<unsigned>(FIRST_INTERNAL_PSEUDOID) - static_cast<unsigned>(FIRST_PUBLIC_PSEUDOID));
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().
     };
