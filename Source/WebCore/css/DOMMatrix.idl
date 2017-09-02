@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Should be exposed to workers as well.
 // FIXME: Should be [LegacyWindowAlias=(SVGMatrix, WebKitCSSMatrix)].
 [
     Constructor(optional (DOMString or sequence<unrestricted double>) init),
     ConstructorMayThrowException,
+    ConstructorCallWith=ScriptExecutionContext,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=(Window,Worker),
     ImplementationLacksVTable
  ] interface DOMMatrix : DOMMatrixReadOnly {
     [MayThrowException, NewObject] static DOMMatrix fromMatrix(optional DOMMatrixInit other);
@@ -89,5 +90,5 @@
     DOMMatrix skewYSelf(optional unrestricted double sy = 0); // Angle is in degrees.
     DOMMatrix invertSelf();
 
-    [MayThrowException, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
+    [Exposed=Window, MayThrowException, ImplementedAs=setMatrixValueForBindings] DOMMatrix setMatrixValue(DOMString transformList);
 };

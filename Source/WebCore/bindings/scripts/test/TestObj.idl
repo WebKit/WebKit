@@ -48,7 +48,8 @@ enum TestConfidence { "high", "kinda-low" };
 [
     ConstructorCallWith=Document,
     Constructor(TestCallbackInterface testCallback, TestCallbackFunction testCallbackFunction),
-    InterfaceName=TestObject
+    InterfaceName=TestObject,
+    Exposed=(Window,Worker)
 ] interface TestObj {
     // Attributes
     readonly attribute long            readOnlyLongAttr;
@@ -454,6 +455,13 @@ enum TestConfidence { "high", "kinda-low" };
 
     [ConditionallyReadWrite=CONDITION] attribute Node conditionallyReadWriteAttribute;
     [Conditional=CONDITION2, ConditionallyReadWrite=CONDITION] attribute Node conditionalAndConditionallyReadWriteAttribute;
+
+    [Exposed=Window] attribute long conditionallyExposedToWindowAttribute;
+    [Exposed=Worker] attribute long conditionallyExposedToWorkerAttribute;
+    [Exposed=(Worker, Window)] attribute long conditionallyExposedToWindowAndWorkerAttribute;
+    [Exposed=Window] void conditionallyExposedToWindowFunction();
+    [Exposed=Worker] void conditionallyExposedToWorkerFunction();
+    [Exposed=(Window, Worker)] void conditionallyExposedToWindowAndWorkerFunction();
 };
 
 // The following comment should not generate any code.

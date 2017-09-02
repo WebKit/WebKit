@@ -26,10 +26,47 @@
 #include "config.h"
 #include "DOMMatrix.h"
 
+#include "ScriptExecutionContext.h"
 #include <cmath>
 #include <limits>
 
 namespace WebCore {
+
+// https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
+ExceptionOr<Ref<DOMMatrix>> DOMMatrix::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+{
+    if (!init)
+        return adoptRef(*new DOMMatrix);
+
+    return WTF::switchOn(init.value(),
+        [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrix>> {
+            if (!scriptExecutionContext.isDocument())
+                return Exception { TypeError };
+
+            auto parseResult = parseStringIntoAbstractMatrix(init);
+            if (parseResult.hasException())
+                return parseResult.releaseException();
+            
+            return adoptRef(*new DOMMatrix(parseResult.returnValue().matrix, parseResult.returnValue().is2D ? Is2D::Yes : Is2D::No));
+        },
+        [](const Vector<double>& init) -> ExceptionOr<Ref<DOMMatrix>> {
+            if (init.size() == 6) {
+                return adoptRef(*new DOMMatrix(TransformationMatrix {
+                    init[0], init[1], init[2], init[3], init[4], init[5]
+                }, Is2D::Yes));
+            }
+            if (init.size() == 16) {
+                return adoptRef(*new DOMMatrix(TransformationMatrix {
+                    init[0], init[1], init[2], init[3],
+                    init[4], init[5], init[6], init[7],
+                    init[8], init[9], init[10], init[11],
+                    init[12], init[13], init[14], init[15]
+                }, Is2D::No));
+            }
+            return Exception { TypeError };
+        }
+    );
+}
 
 DOMMatrix::DOMMatrix(const TransformationMatrix& matrix, Is2D is2D)
     : DOMMatrixReadOnly(matrix, is2D)

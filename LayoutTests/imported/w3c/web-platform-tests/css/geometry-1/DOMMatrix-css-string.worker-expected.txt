@@ -1,13 +1,13 @@
 
-FAIL DOMMatrix constructor with string argument in worker assert_true: DOMMatrix should exist expected true got false
-FAIL DOMMatrix constructor with empty string argument in worker assert_true: DOMMatrix should exist expected true got false
-FAIL DOMMatrix stringifier in worker (2d identity) undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrix stringifier in worker (3d identity) undefined is not an object (evaluating 'self[constr].fromMatrix')
-FAIL DOMMatrix stringifier in worker (non-finite values) undefined is not a constructor (evaluating 'new self[constr]([1, 0, 0, NaN, Infinity, -Infinity])')
-FAIL DOMMatrixReadOnly constructor with string argument in worker assert_true: DOMMatrixReadOnly should exist expected true got false
-FAIL DOMMatrixReadOnly constructor with empty string argument in worker assert_true: DOMMatrixReadOnly should exist expected true got false
-FAIL DOMMatrixReadOnly stringifier in worker (2d identity) undefined is not a constructor (evaluating 'new self[constr]()')
-FAIL DOMMatrixReadOnly stringifier in worker (3d identity) undefined is not an object (evaluating 'self[constr].fromMatrix')
-FAIL DOMMatrixReadOnly stringifier in worker (non-finite values) undefined is not a constructor (evaluating 'new self[constr]([1, 0, 0, NaN, Infinity, -Infinity])')
-FAIL DOMMatrix setMatrixValue in worker Can't find variable: DOMMatrix
+PASS DOMMatrix constructor with string argument in worker 
+PASS DOMMatrix constructor with empty string argument in worker 
+PASS DOMMatrix stringifier in worker (2d identity) 
+PASS DOMMatrix stringifier in worker (3d identity) 
+PASS DOMMatrix stringifier in worker (non-finite values) 
+PASS DOMMatrixReadOnly constructor with string argument in worker 
+PASS DOMMatrixReadOnly constructor with empty string argument in worker 
+PASS DOMMatrixReadOnly stringifier in worker (2d identity) 
+PASS DOMMatrixReadOnly stringifier in worker (3d identity) 
+PASS DOMMatrixReadOnly stringifier in worker (non-finite values) 
+PASS DOMMatrix setMatrixValue in worker 
 

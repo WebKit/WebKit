@@ -1659,12 +1659,43 @@ sub AttributeShouldBeOnInstance
     return 0;
 }
 
+sub IsAlwaysExposedOnInterface
+{
+    my ($interfaceExposures, $contextExposures) = @_;
+
+    my %contextExposureSet = ();
+
+    if (ref($contextExposures) eq "ARRAY") {
+        foreach my $contextExposure (@$contextExposures) {
+            $contextExposureSet{$contextExposure} = 1;
+        }
+    } else {
+        $contextExposureSet{$contextExposures} = 1;
+    }
+
+    if (ref($interfaceExposures) ne "ARRAY") {
+        $interfaceExposures = [$interfaceExposures];
+    }
+
+    foreach my $interfaceExposure (@$interfaceExposures) {
+        return 0 unless exists $contextExposureSet{$interfaceExposure};
+    }
+
+    return 1;
+}
+
 sub NeedsRuntimeCheck
 {
-    my $interface = shift;
-    return $interface->extendedAttributes->{EnabledAtRuntime}
-        || $interface->extendedAttributes->{EnabledForWorld}
-        || $interface->extendedAttributes->{SecureContext};
+    my ($interface, $context) = @_;
+
+    if ($context->extendedAttributes->{Exposed}) {
+        my $interfaceExposures = $interface->extendedAttributes->{Exposed} || "Window";
+        return 1 if !IsAlwaysExposedOnInterface($interfaceExposures, $context->extendedAttributes->{Exposed});
+    }
+
+    return $context->extendedAttributes->{EnabledAtRuntime}
+        || $context->extendedAttributes->{EnabledForWorld}
+        || $context->extendedAttributes->{SecureContext};
 }
 
 # https://heycam.github.io/webidl/#es-operations
@@ -1675,7 +1706,7 @@ sub OperationShouldBeOnInstance
     return 1 if IsGlobalOrPrimaryGlobalInterface($interface);
 
     # FIXME: The bindings generator does not support putting runtime-enabled operations on the instance yet (except for global objects).
-    return 0 if NeedsRuntimeCheck($operation);
+    return 0 if NeedsRuntimeCheck($interface, $operation);
 
     # [Unforgeable] operations should be on the instance. https://heycam.github.io/webidl/#Unforgeable
     return 1 if IsUnforgeable($interface, $operation);
@@ -1698,7 +1729,7 @@ sub IsAcceleratedDOMAttribute
     my ($interface, $attribute) = @_;
 
     # If we use CustomGetterSetter in IDL code generator we cannot skip type check.
-    return 0 if NeedsRuntimeCheck($attribute) and AttributeShouldBeOnInstance($interface, $attribute);
+    return 0 if NeedsRuntimeCheck($interface, $attribute) and AttributeShouldBeOnInstance($interface, $attribute);
     return 0 if $attribute->extendedAttributes->{PrivateIdentifier} and AttributeShouldBeOnInstance($interface, $attribute);
 
     # If the interface has special logic for casting we cannot hoist type check to JSC.
@@ -2989,7 +3020,7 @@ sub GeneratePropertiesHashTable
         next if AttributeShouldBeOnInstance($interface, $attribute) != $isInstance;
 
         # Global objects add RuntimeEnabled attributes after creation so do not add them to the static table.
-        if ($isInstance && NeedsRuntimeCheck($attribute)) {
+        if ($isInstance && NeedsRuntimeCheck($interface, $attribute)) {
             $propertyCount -= 1;
             next;
         }
@@ -3019,7 +3050,7 @@ sub GeneratePropertiesHashTable
         my $readWriteConditional = $attribute->extendedAttributes->{ConditionallyReadWrite};
         $readWriteConditionals->{$name} = $readWriteConditional if $readWriteConditional;
 
-        if (NeedsRuntimeCheck($attribute)) {
+        if (NeedsRuntimeCheck($interface, $attribute)) {
             push(@$runtimeEnabledAttributes, $attribute);
         }
 
@@ -3040,7 +3071,7 @@ sub GeneratePropertiesHashTable
         next if $operation->name eq "[Symbol.Iterator]";
 
         # Global objects add RuntimeEnabled operations after creation so do not add them to the static table.
-        if ($isInstance && NeedsRuntimeCheck($operation)) {
+        if ($isInstance && NeedsRuntimeCheck($interface, $operation)) {
             $propertyCount -= 1;
             next;
         }
@@ -3064,7 +3095,7 @@ sub GeneratePropertiesHashTable
         my $conditional = GetConditionalForOperationConsideringOverloads($operation);
         $conditionals->{$name} = $conditional if $conditional;
 
-        if (NeedsRuntimeCheck($operation)) {
+        if (NeedsRuntimeCheck($interface, $operation)) {
             push(@$runtimeEnabledOperations, $operation);
         }
 
@@ -3575,31 +3606,68 @@ sub ToMethodName
     return $ret;
 }
 
+sub GenerateRuntimeEnableConditionalStringForExposed
+{
+    my ($interface, $context, $conjuncts) = @_;
+
+    assert("Must specify value for Exposed.") if $context->extendedAttributes->{Exposed} eq "VALUE_IS_MISSING";
+
+    AddToImplIncludes("ScriptExecutionContext.h");
+
+    my $exposed = $context->extendedAttributes->{Exposed};
+    if (ref($exposed) eq 'ARRAY') {
+        if (scalar(@$exposed) > 1) {
+            return;
+        }
+        $exposed = @$exposed[0];
+    }
+
+    if ($exposed eq "Window") {
+        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isDocument()");
+    } elsif ($exposed eq "Worker") {
+        push(@$conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isWorkerGlobalScope()");
+    } else {
+        assert("Unrecognized value '" . Dumper($context->extendedAttributes->{Exposed}) . "' for the Exposed extended attribute on '" . ref($context) . "'.");
+    }
+}
+
 # Returns the conditional string that determines whether a method/attribute is enabled at runtime.
 # A method/attribute is enabled at runtime if either its RuntimeEnabledFeatures function returns
 # true or its EnabledForWorld function returns true (or both).
 # NOTE: Parameter passed in must have an 'extendedAttributes' property.
-# (e.g. DOMInterface, DOMAttribute, DOMOperation, DOMIterable, etc.)
+# (e.g. IDLInterface, IDLAttribute, IDLOperation, IDLIterable, etc.)
 sub GenerateRuntimeEnableConditionalString
 {
-    my $context = shift;
-
-    AddToImplIncludes("RuntimeEnabledFeatures.h");
-    AddToImplIncludes("ScriptExecutionContext.h");
+    my ($interface, $context) = @_;
 
     my @conjuncts;
-    push @conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()" if $context->extendedAttributes->{SecureContext};
+    
+    if ($context->extendedAttributes->{SecureContext}) {
+        AddToImplIncludes("ScriptExecutionContext.h");
+
+        push(@conjuncts, "jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext()");
+    }
+
+    if ($context->extendedAttributes->{Exposed}) {
+        GenerateRuntimeEnableConditionalStringForExposed($interface, $context, \@conjuncts);
+    }
 
     if ($context->extendedAttributes->{EnabledForWorld}) {
         assert("Must specify value for EnabledForWorld.") if $context->extendedAttributes->{EnabledForWorld} eq "VALUE_IS_MISSING";
-        push @conjuncts, "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()";
+
+        AddToImplIncludes("DOMWrapperWorld.h");
+
+        push(@conjuncts, "worldForDOMObject(this)." . ToMethodName($context->extendedAttributes->{EnabledForWorld}) . "()");
     }
 
     if ($context->extendedAttributes->{EnabledAtRuntime}) {
         assert("Must specify value for EnabledAtRuntime.") if $context->extendedAttributes->{EnabledAtRuntime} eq "VALUE_IS_MISSING";
-        my @flags = split /&/, $context->extendedAttributes->{EnabledAtRuntime};
+
+        AddToImplIncludes("RuntimeEnabledFeatures.h");
+
+        my @flags = split(/&/, $context->extendedAttributes->{EnabledAtRuntime});
         foreach my $flag (@flags) {
-            push @conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()";
+            push(@conjuncts, "RuntimeEnabledFeatures::sharedFeatures()." . ToMethodName($flag) . "Enabled()");
         }
     }
 
@@ -4050,7 +4118,7 @@ sub GenerateImplementation
         foreach my $operationOrAttribute (@runtimeEnabledProperties) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($operationOrAttribute);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($operationOrAttribute);
+            my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operationOrAttribute);
             my $name = $operationOrAttribute->name;
             push(@implContent, "    if (!${runtimeEnableConditionalString}) {\n");
             push(@implContent, "        auto propertyName = Identifier::fromString(&vm, reinterpret_cast<const LChar*>(\"$name\"), strlen(\"$name\"));\n");
@@ -4180,12 +4248,12 @@ sub GenerateImplementation
 
     # Support for RuntimeEnabled attributes on instances.
     foreach my $attribute (@{$interface->attributes}) {
-        next unless NeedsRuntimeCheck($attribute);
+        next unless NeedsRuntimeCheck($interface, $attribute);
         next unless AttributeShouldBeOnInstance($interface, $attribute);
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($attribute);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($attribute);
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $attribute);
         my $attributeName = $attribute->name;
         push(@implContent, "    if (${runtimeEnableConditionalString}) {\n");
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
@@ -4214,13 +4282,13 @@ sub GenerateImplementation
 
     # Support for RuntimeEnabled operations on instances.
     foreach my $operation (@{$interface->operations}) {
-        next unless NeedsRuntimeCheck($operation);
+        next unless NeedsRuntimeCheck($interface, $operation);
         next unless OperationShouldBeOnInstance($interface, $operation);
         next if $operation->{overloadIndex} && $operation->{overloadIndex} > 1;
 
         my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($operation);
+        my $runtimeEnableConditionalString = GenerateRuntimeEnableConditionalString($interface, $operation);
         my $functionName = $operation->name;
         my $implementationFunction = GetFunctionName($interface, $className, $operation);
         my $functionLength = GetFunctionLength($operation);

@@ -1,3 +1,14 @@
+2017-09-01  Sam Weinig  <sam@webkit.org>
+
+        DOMMatrix and DOMMatrixReadOnly should be available in workers
+        https://bugs.webkit.org/show_bug.cgi?id=176255
+
+        Reviewed by Simon Fraser.
+
+        * web-platform-tests/css/geometry-1/DOMMatrix-css-string.worker-expected.txt:
+        * web-platform-tests/css/geometry-1/interfaces.worker-expected.txt:
+        Update test results.
+
 2017-09-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle behavior for pseudo-elements for layout-dependent properties.

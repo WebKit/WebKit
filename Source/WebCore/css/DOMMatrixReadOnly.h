@@ -40,24 +40,13 @@ namespace WebCore {
 
 class DOMMatrix;
 class DOMPoint;
+class ScriptExecutionContext;
 struct DOMPointInit;
 
 class DOMMatrixReadOnly : public ScriptWrappable, public RefCounted<DOMMatrixReadOnly> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static ExceptionOr<Ref<DOMMatrixReadOnly>> create(std::optional<Variant<String, Vector<double>>>&& init)
-    {
-        auto matrix = adoptRef(*new DOMMatrixReadOnly);
-        if (!init)
-            return WTFMove(matrix);
-
-        ExceptionOr<void> result = WTF::switchOn(init.value(), [&matrix](const auto& init) {
-            return matrix->setMatrixValue(init);
-        });
-        if (result.hasException())
-            return result.releaseException();
-        return WTFMove(matrix);
-    }
+    static ExceptionOr<Ref<DOMMatrixReadOnly>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
 
     enum class Is2D { No, Yes };
     static Ref<DOMMatrixReadOnly> create(const TransformationMatrix& matrix, Is2D is2D)
@@ -134,6 +123,13 @@ protected:
     DOMMatrixReadOnly() = default;
     DOMMatrixReadOnly(const TransformationMatrix&, Is2D);
     DOMMatrixReadOnly(TransformationMatrix&&, Is2D);
+
+    struct AbstractMatrix {
+        TransformationMatrix matrix;
+        bool is2D { true };
+    };
+
+    static ExceptionOr<AbstractMatrix> parseStringIntoAbstractMatrix(const String&);
 
     Ref<DOMMatrix> cloneAsDOMMatrix() const;
 

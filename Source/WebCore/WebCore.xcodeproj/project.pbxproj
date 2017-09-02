@@ -11423,6 +11423,7 @@
 		7C93F3481AA6BA5E00A98BAB /* CompiledContentExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompiledContentExtension.h; sourceTree = "<group>"; };
 		7C93F34B1AA6BF0700A98BAB /* ContentExtensionCompiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensionCompiler.cpp; sourceTree = "<group>"; };
 		7C93F34C1AA6BF0700A98BAB /* ContentExtensionCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentExtensionCompiler.h; sourceTree = "<group>"; };
+		7C9892451F5A07650091DC70 /* GlobalPerformance.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GlobalPerformance.idl; sourceTree = "<group>"; };
 		7C9ACA8F1F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoKeyAlgorithm.h; sourceTree = "<group>"; };
 		7C9ACA911F3CC0AA00F3AA09 /* CryptoKeyAlgorithm.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = CryptoKeyAlgorithm.idl; sourceTree = "<group>"; };
 		7C9ACA961F3CCDAD00F3AA09 /* CryptoAesKeyAlgorithm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CryptoAesKeyAlgorithm.h; sourceTree = "<group>"; };
@@ -19514,6 +19515,7 @@
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
 				574D42791D594FF6002CF50E /* GlobalCrypto.idl */,
+				7C9892451F5A07650091DC70 /* GlobalPerformance.idl */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
 				BC94D1510C275C8B006BC617 /* History.h */,
 				BC94D1520C275C8B006BC617 /* History.idl */,

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestGlobalObject.h"
 
+#include "DOMWrapperWorld.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructorNotConstructable.h"

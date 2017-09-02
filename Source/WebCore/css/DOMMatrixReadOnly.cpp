@@ -30,6 +30,7 @@
 #include "CSSToLengthConversionData.h"
 #include "DOMMatrix.h"
 #include "DOMPoint.h"
+#include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
 #include "TransformFunctions.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
@@ -38,6 +39,42 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+// https://drafts.fxtf.org/geometry/#dom-dommatrixreadonly-dommatrixreadonly
+ExceptionOr<Ref<DOMMatrixReadOnly>> DOMMatrixReadOnly::create(ScriptExecutionContext& scriptExecutionContext, std::optional<Variant<String, Vector<double>>>&& init)
+{
+    if (!init)
+        return adoptRef(*new DOMMatrixReadOnly);
+
+    return WTF::switchOn(init.value(),
+        [&scriptExecutionContext](const String& init) -> ExceptionOr<Ref<DOMMatrixReadOnly>> {
+            if (!scriptExecutionContext.isDocument())
+                return Exception { TypeError };
+
+            auto parseResult = parseStringIntoAbstractMatrix(init);
+            if (parseResult.hasException())
+                return parseResult.releaseException();
+            
+            return adoptRef(*new DOMMatrixReadOnly(parseResult.returnValue().matrix, parseResult.returnValue().is2D ? Is2D::Yes : Is2D::No));
+        },
+        [](const Vector<double>& init) -> ExceptionOr<Ref<DOMMatrixReadOnly>> {
+            if (init.size() == 6) {
+                return adoptRef(*new DOMMatrixReadOnly(TransformationMatrix {
+                    init[0], init[1], init[2], init[3], init[4], init[5]
+                }, Is2D::Yes));
+            }
+            if (init.size() == 16) {
+                return adoptRef(*new DOMMatrixReadOnly(TransformationMatrix {
+                    init[0], init[1], init[2], init[3],
+                    init[4], init[5], init[6], init[7],
+                    init[8], init[9], init[10], init[11],
+                    init[12], init[13], init[14], init[15]
+                }, Is2D::No));
+            }
+            return Exception { TypeError };
+        }
+    );
+}
 
 DOMMatrixReadOnly::DOMMatrixReadOnly(const TransformationMatrix& matrix, Is2D is2D)
     : m_matrix(matrix)
@@ -173,11 +210,10 @@ bool DOMMatrixReadOnly::isIdentity() const
     return m_matrix.isIdentity();
 }
 
-// https://drafts.fxtf.org/geometry/#dom-dommatrix-setmatrixvalue
-ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const String& string)
+ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringIntoAbstractMatrix(const String& string)
 {
     if (string.isEmpty())
-        return { };
+        return AbstractMatrix { };
 
     auto styleDeclaration = MutableStyleProperties::create();
     if (CSSParser::parseValue(styleDeclaration, CSSPropertyTransform, string, true, HTMLStandardMode) == CSSParser::ParseResult::Error)
@@ -188,42 +224,33 @@ ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const String& string)
 
     // Check for a "none" or empty transform. In these cases we can use the default identity matrix.
     if (!value || (is<CSSPrimitiveValue>(*value) && downcast<CSSPrimitiveValue>(*value).valueID() == CSSValueNone))
-        return { };
+        return AbstractMatrix { };
 
     TransformOperations operations;
     if (!transformsForValue(*value, CSSToLengthConversionData(), operations))
         return Exception { SyntaxError };
 
-    m_is2D = true;
-    // Convert transform operations to a TransformationMatrix. This can fail if a parameter has a percentage ('%').
-    TransformationMatrix matrix;
+    AbstractMatrix matrix;
     for (auto& operation : operations.operations()) {
-        if (operation->apply(matrix, IntSize(0, 0)))
+        if (operation->apply(matrix.matrix, { 0, 0 }))
             return Exception { SyntaxError };
         if (operation->is3DOperation())
-            m_is2D = false;
+            matrix.is2D = false;
     }
-    m_matrix = matrix;
-    return { };
+
+    return WTFMove(matrix);
 }
 
-ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const Vector<double>& init)
+// https://drafts.fxtf.org/geometry/#dom-dommatrix-setmatrixvalue
+ExceptionOr<void> DOMMatrixReadOnly::setMatrixValue(const String& string)
 {
-    if (init.size() == 6) {
-        m_matrix = TransformationMatrix { init[0], init[1], init[2], init[3], init[4], init[5] };
-        return { };
-    }
-    if (init.size() == 16) {
-        m_matrix = TransformationMatrix {
-            init[0], init[1], init[2], init[3],
-            init[4], init[5], init[6], init[7],
-            init[8], init[9], init[10], init[11],
-            init[12], init[13], init[14], init[15]
-        };
-        m_is2D = false;
-        return { };
-    }
-    return Exception { TypeError };
+    auto parseResult = parseStringIntoAbstractMatrix(string);
+    if (parseResult.hasException())
+        return parseResult.releaseException();
+
+    m_is2D = parseResult.returnValue().is2D;
+    m_matrix = parseResult.returnValue().matrix;
+    return { };
 }
 
 Ref<DOMMatrix> DOMMatrixReadOnly::translate(double tx, double ty, double tz)

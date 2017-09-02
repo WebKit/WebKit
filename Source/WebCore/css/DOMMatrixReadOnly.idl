@@ -23,11 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Should be exposed to workers as well.
 [
     Constructor(optional (DOMString or sequence<unrestricted double>) init),
     ConstructorMayThrowException,
+    ConstructorCallWith=ScriptExecutionContext,
     ExportMacro=WEBCORE_EXPORT,
+    Exposed=(Window,Worker),
     ImplementationLacksVTable
 ] interface DOMMatrixReadOnly {
     [MayThrowException, NewObject] static DOMMatrixReadOnly fromMatrix(optional DOMMatrixInit other);
@@ -96,6 +97,6 @@
     [MayThrowException] Float32Array toFloat32Array();
     [MayThrowException] Float64Array toFloat64Array();
 
-    [MayThrowException] stringifier;
+    [Exposed=Window, MayThrowException] stringifier;
     serializer = { attribute };
 };

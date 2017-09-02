@@ -27,7 +27,6 @@
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMWrapperCache.h"
-#include "RuntimeEnabledFeatures.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSCInlines.h>

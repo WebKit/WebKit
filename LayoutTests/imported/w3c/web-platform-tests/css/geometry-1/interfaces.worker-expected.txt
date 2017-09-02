@@ -116,419 +116,419 @@ PASS DOMQuad interface: new DOMQuad() must inherit property "p2" with the proper
 PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper type (4) 
 PASS DOMQuad interface: new DOMQuad() must inherit property "p4" with the proper type (5) 
 PASS DOMQuad interface: new DOMQuad() must inherit property "getBounds" with the proper type (6) 
-FAIL DOMMatrixReadOnly interface: existence and properties of interface object assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface object length assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface object name assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation fromMatrix(DOMMatrixInit) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation fromFloat32Array(Float32Array) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation fromFloat64Array(Float64Array) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute a assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute b assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute c assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute d assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute e assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute f assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m11 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m12 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m13 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m14 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m21 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m22 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m23 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m24 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m31 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m32 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m33 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m34 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m41 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m42 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m43 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute m44 assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute is2D assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: attribute isIdentity assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation translate(unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation rotate(unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation skewX(unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation skewY(unrestricted double) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation multiply(DOMMatrixInit) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation flipX() assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation flipY() assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation inverse() assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation transformPoint(DOMPointInit) assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation toFloat32Array() assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: operation toFloat64Array() assert_own_property: self does not have own property "DOMMatrixReadOnly" expected property "DOMMatrixReadOnly" missing
-FAIL DOMMatrixReadOnly interface: member undefined self[this.name] is not an Object. (evaluating 'member.name in self[this.name]')
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "is2D" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "isIdentity" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipX" with the proper type (36) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipY" with the proper type (37) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "inverse" with the proper type (38) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint" with the proper type (39) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array" with the proper type (40) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array" with the proper type (41) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnlyinterface: new DOMMatrixReadOnly()must not have property "undefined" obj is not an Object. (evaluating 'member.name in obj')
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrixReadOnly"
-FAIL DOMMatrixReadOnlyinterface: DOMMatrixReadOnly.fromMatrix({is2D: false})must not have property "undefined" obj is not an Object. (evaluating 'member.name in obj')
-FAIL DOMMatrix interface: existence and properties of interface object assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface object length assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface object name assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
+PASS DOMMatrixReadOnly interface: existence and properties of interface object 
+PASS DOMMatrixReadOnly interface object length 
+PASS DOMMatrixReadOnly interface object name 
+PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object 
+PASS DOMMatrixReadOnly interface: existence and properties of interface prototype object's "constructor" property 
+PASS DOMMatrixReadOnly interface: operation fromMatrix(DOMMatrixInit) 
+PASS DOMMatrixReadOnly interface: operation fromFloat32Array(Float32Array) 
+PASS DOMMatrixReadOnly interface: operation fromFloat64Array(Float64Array) 
+PASS DOMMatrixReadOnly interface: attribute a 
+PASS DOMMatrixReadOnly interface: attribute b 
+PASS DOMMatrixReadOnly interface: attribute c 
+PASS DOMMatrixReadOnly interface: attribute d 
+PASS DOMMatrixReadOnly interface: attribute e 
+PASS DOMMatrixReadOnly interface: attribute f 
+PASS DOMMatrixReadOnly interface: attribute m11 
+PASS DOMMatrixReadOnly interface: attribute m12 
+PASS DOMMatrixReadOnly interface: attribute m13 
+PASS DOMMatrixReadOnly interface: attribute m14 
+PASS DOMMatrixReadOnly interface: attribute m21 
+PASS DOMMatrixReadOnly interface: attribute m22 
+PASS DOMMatrixReadOnly interface: attribute m23 
+PASS DOMMatrixReadOnly interface: attribute m24 
+PASS DOMMatrixReadOnly interface: attribute m31 
+PASS DOMMatrixReadOnly interface: attribute m32 
+PASS DOMMatrixReadOnly interface: attribute m33 
+PASS DOMMatrixReadOnly interface: attribute m34 
+PASS DOMMatrixReadOnly interface: attribute m41 
+PASS DOMMatrixReadOnly interface: attribute m42 
+PASS DOMMatrixReadOnly interface: attribute m43 
+PASS DOMMatrixReadOnly interface: attribute m44 
+PASS DOMMatrixReadOnly interface: attribute is2D 
+PASS DOMMatrixReadOnly interface: attribute isIdentity 
+PASS DOMMatrixReadOnly interface: operation translate(unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation skewX(unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation skewY(unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation multiply(DOMMatrixInit) 
+PASS DOMMatrixReadOnly interface: operation flipX() 
+PASS DOMMatrixReadOnly interface: operation flipY() 
+PASS DOMMatrixReadOnly interface: operation inverse() 
+PASS DOMMatrixReadOnly interface: operation transformPoint(DOMPointInit) 
+PASS DOMMatrixReadOnly interface: operation toFloat32Array() 
+PASS DOMMatrixReadOnly interface: operation toFloat64Array() 
+PASS DOMMatrixReadOnly interface: member undefined 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "a" with the proper type (3) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "b" with the proper type (4) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "c" with the proper type (5) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "d" with the proper type (6) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "e" with the proper type (7) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "f" with the proper type (8) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m11" with the proper type (9) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m12" with the proper type (10) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m13" with the proper type (11) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m14" with the proper type (12) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m21" with the proper type (13) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m22" with the proper type (14) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m23" with the proper type (15) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m24" with the proper type (16) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m31" with the proper type (17) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m32" with the proper type (18) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m33" with the proper type (19) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m34" with the proper type (20) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m41" with the proper type (21) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m42" with the proper type (22) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m43" with the proper type (23) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m44" with the proper type (24) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "is2D" with the proper type (25) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "isIdentity" with the proper type (26) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate" with the proper type (27) 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale" with the proper type (28) 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d" with the proper type (29) 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate" with the proper type (30) 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector" with the proper type (31) 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle" with the proper type (32) 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipX" with the proper type (36) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipY" with the proper type (37) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "inverse" with the proper type (38) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array" with the proper type (40) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnlyinterface: new DOMMatrixReadOnly()must not have property "undefined" 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnlyinterface: DOMMatrixReadOnly.fromMatrix({is2D: false})must not have property "undefined" 
+PASS DOMMatrix interface: existence and properties of interface object 
+PASS DOMMatrix interface object length 
+PASS DOMMatrix interface object name 
 PASS DOMMatrix interface: legacy window alias 
-FAIL DOMMatrix interface: existence and properties of interface prototype object assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation fromMatrix(DOMMatrixInit) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation fromFloat32Array(Float32Array) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation fromFloat64Array(Float64Array) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute a assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute b assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute c assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute d assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute e assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute f assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m11 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m12 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m13 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m14 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m21 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m22 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m23 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m24 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m31 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m32 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m33 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m34 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m41 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m42 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m43 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: attribute m44 assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation multiplySelf(DOMMatrixInit) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation preMultiplySelf(DOMMatrixInit) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation translateSelf(unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation rotateSelf(unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation skewXSelf(unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation skewYSelf(unrestricted double) assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: operation invertSelf() assert_own_property: self does not have own property "DOMMatrix" expected property "DOMMatrix" missing
-FAIL DOMMatrix interface: member setMatrixValue self[this.name] is not an Object. (evaluating 'member.name in self[this.name]')
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling skewXSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling skewYSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixinterface: new DOMMatrix()must not have property "setMatrixValue" obj is not an Object. (evaluating 'member.name in obj')
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "is2D" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "isIdentity" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "translate" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale3d" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotate" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateFromVector" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateAxisAngle" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewX" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewY" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "multiply" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipX" with the proper type (36) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipY" with the proper type (37) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "inverse" with the proper type (38) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "transformPoint" with the proper type (39) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrix() with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat32Array" with the proper type (40) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat64Array" with the proper type (41) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnlyinterface: new DOMMatrix()must not have property "undefined" obj is not an Object. (evaluating 'member.name in obj')
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiplySelf" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "preMultiplySelf" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translateSelf" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scaleSelf" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3dSelf" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateSelf" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVectorSelf" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngleSelf" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewXSelf" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling skewXSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewYSelf" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: calling skewYSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "invertSelf" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "setMatrixValue" obj is not an Object. (evaluating 'member.name in obj')
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) assert_equals: Unexpected exception when evaluating object expected null but got object "ReferenceError: Can't find variable: DOMMatrix"
-FAIL DOMMatrixReadOnlyinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "undefined" obj is not an Object. (evaluating 'member.name in obj')
+PASS DOMMatrix interface: existence and properties of interface prototype object 
+PASS DOMMatrix interface: existence and properties of interface prototype object's "constructor" property 
+PASS DOMMatrix interface: operation fromMatrix(DOMMatrixInit) 
+PASS DOMMatrix interface: operation fromFloat32Array(Float32Array) 
+PASS DOMMatrix interface: operation fromFloat64Array(Float64Array) 
+PASS DOMMatrix interface: attribute a 
+PASS DOMMatrix interface: attribute b 
+PASS DOMMatrix interface: attribute c 
+PASS DOMMatrix interface: attribute d 
+PASS DOMMatrix interface: attribute e 
+PASS DOMMatrix interface: attribute f 
+PASS DOMMatrix interface: attribute m11 
+PASS DOMMatrix interface: attribute m12 
+PASS DOMMatrix interface: attribute m13 
+PASS DOMMatrix interface: attribute m14 
+PASS DOMMatrix interface: attribute m21 
+PASS DOMMatrix interface: attribute m22 
+PASS DOMMatrix interface: attribute m23 
+PASS DOMMatrix interface: attribute m24 
+PASS DOMMatrix interface: attribute m31 
+PASS DOMMatrix interface: attribute m32 
+PASS DOMMatrix interface: attribute m33 
+PASS DOMMatrix interface: attribute m34 
+PASS DOMMatrix interface: attribute m41 
+PASS DOMMatrix interface: attribute m42 
+PASS DOMMatrix interface: attribute m43 
+PASS DOMMatrix interface: attribute m44 
+PASS DOMMatrix interface: operation multiplySelf(DOMMatrixInit) 
+PASS DOMMatrix interface: operation preMultiplySelf(DOMMatrixInit) 
+PASS DOMMatrix interface: operation translateSelf(unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation rotateSelf(unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation skewXSelf(unrestricted double) 
+PASS DOMMatrix interface: operation skewYSelf(unrestricted double) 
+PASS DOMMatrix interface: operation invertSelf() 
+PASS DOMMatrix interface: member setMatrixValue 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrix interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrix interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "a" with the proper type (3) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "b" with the proper type (4) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "c" with the proper type (5) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "d" with the proper type (6) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "e" with the proper type (7) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "f" with the proper type (8) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m11" with the proper type (9) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m12" with the proper type (10) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m13" with the proper type (11) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m14" with the proper type (12) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m21" with the proper type (13) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m22" with the proper type (14) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m23" with the proper type (15) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m24" with the proper type (16) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m31" with the proper type (17) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m32" with the proper type (18) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m33" with the proper type (19) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m34" with the proper type (20) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m41" with the proper type (21) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m42" with the proper type (22) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m43" with the proper type (23) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m44" with the proper type (24) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf" with the proper type (25) 
+PASS DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf" with the proper type (26) 
+PASS DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf" with the proper type (27) 
+PASS DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf" with the proper type (28) 
+PASS DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf" with the proper type (29) 
+PASS DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf" with the proper type (30) 
+PASS DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf" with the proper type (31) 
+PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf" with the proper type (32) 
+PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf" with the proper type (33) 
+PASS DOMMatrix interface: calling skewXSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf" with the proper type (34) 
+PASS DOMMatrix interface: calling skewYSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf" with the proper type (35) 
+PASS DOMMatrixinterface: new DOMMatrix()must not have property "setMatrixValue" 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "a" with the proper type (3) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "b" with the proper type (4) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "c" with the proper type (5) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "d" with the proper type (6) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "e" with the proper type (7) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "f" with the proper type (8) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m11" with the proper type (9) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m12" with the proper type (10) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m13" with the proper type (11) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m14" with the proper type (12) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m21" with the proper type (13) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m22" with the proper type (14) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m23" with the proper type (15) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m24" with the proper type (16) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m31" with the proper type (17) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m32" with the proper type (18) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m33" with the proper type (19) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m34" with the proper type (20) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m41" with the proper type (21) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m42" with the proper type (22) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m43" with the proper type (23) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m44" with the proper type (24) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "is2D" with the proper type (25) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "isIdentity" with the proper type (26) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "translate" with the proper type (27) 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale" with the proper type (28) 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale3d" with the proper type (29) 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotate" with the proper type (30) 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateFromVector" with the proper type (31) 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateAxisAngle" with the proper type (32) 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipX" with the proper type (36) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipY" with the proper type (37) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "inverse" with the proper type (38) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat32Array" with the proper type (40) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnlyinterface: new DOMMatrix()must not have property "undefined" 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrix interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrix interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiplySelf" with the proper type (25) 
+PASS DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "preMultiplySelf" with the proper type (26) 
+PASS DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translateSelf" with the proper type (27) 
+PASS DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scaleSelf" with the proper type (28) 
+PASS DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3dSelf" with the proper type (29) 
+PASS DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateSelf" with the proper type (30) 
+PASS DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVectorSelf" with the proper type (31) 
+PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngleSelf" with the proper type (32) 
+PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewXSelf" with the proper type (33) 
+PASS DOMMatrix interface: calling skewXSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewYSelf" with the proper type (34) 
+PASS DOMMatrix interface: calling skewYSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "invertSelf" with the proper type (35) 
+PASS DOMMatrixinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "setMatrixValue" 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnlyinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "undefined" 
 

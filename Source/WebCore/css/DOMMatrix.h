@@ -29,21 +29,11 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
+
 class DOMMatrix : public DOMMatrixReadOnly {
 public:
-    static ExceptionOr<Ref<DOMMatrix>> create(std::optional<Variant<String, Vector<double>>>&& init)
-    {
-        auto matrix = adoptRef(*new DOMMatrix);
-        if (!init)
-            return WTFMove(matrix);
-
-        ExceptionOr<void> result = WTF::switchOn(init.value(), [&matrix](const auto& init) {
-            return matrix->setMatrixValue(init);
-        });
-        if (result.hasException())
-            return result.releaseException();
-        return WTFMove(matrix);
-    }
+    static ExceptionOr<Ref<DOMMatrix>> create(ScriptExecutionContext&, std::optional<Variant<String, Vector<double>>>&&);
 
     static Ref<DOMMatrix> create(const TransformationMatrix& matrix, Is2D is2D)
     {
@@ -97,6 +87,7 @@ public:
     void setM42(double f) { m_matrix.setM42(f); }
     void setM43(double f);
     void setM44(double f);
+
 private:
     DOMMatrix() = default;
     DOMMatrix(const TransformationMatrix&, Is2D);

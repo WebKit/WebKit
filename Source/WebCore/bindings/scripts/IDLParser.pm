@@ -2319,7 +2319,7 @@ sub parseExtendedAttributeRest2
         $self->assertTokenValue($self->getToken(), "(", __LINE__);
         my @arguments = $self->parseIdentifierList();
         $self->assertTokenValue($self->getToken(), ")", __LINE__);
-        return @arguments;
+        return \@arguments;
     }
     if ($next->type() == IdentifierToken) {
         my $name = $self->parseName();

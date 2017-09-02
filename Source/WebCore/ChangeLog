@@ -1,3 +1,52 @@
+2017-09-01  Sam Weinig  <sam@webkit.org>
+
+        DOMMatrix and DOMMatrixReadOnly should be available in workers
+        https://bugs.webkit.org/show_bug.cgi?id=176255
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+            Add GlobalPerformance.idl to the project. It was missing.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (IsAlwaysExposedOnInterface):
+        (NeedsRuntimeCheck):
+        (GenerateRuntimeEnableConditionalStringForExposed):
+        (GenerateRuntimeEnableConditionalString):
+
+            Adds support for [Exposed] extended attributes on operations, attributes and
+            constants. This allows an interface that is exposed to both windows and workers 
+            (with [Exposed=(Window,Worker)]), to indicate that a specific property should
+            only be be exposed somewhere, e.g only the window. This is need by DOMMatrixReadOnly's
+            stringifier, which is only exposed in the window environment.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseExtendedAttributeRest2):
+
+            Fix bug where array extended attributes, like those found in Exposed expressions
+            where being converter to scalars.
+
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+
+            Add tests and update results. Some results are just improved
+            includes.
+
+        * css/DOMMatrix.cpp:
+        * css/DOMMatrix.h:
+        * css/DOMMatrix.idl:
+        * css/DOMMatrixReadOnly.cpp:
+        * css/DOMMatrixReadOnly.h:
+        * css/DOMMatrixReadOnly.idl:
+            
+            Expose DOMMatrix and DOMMatrixReadOnly to workers and update the constructors
+            to match the current spec, throwing if the argument is a string, and the context
+            is not the window / document context. Also did some refactoring to avoid allocating
+            the DOMMatrix or DOMMatrixReadOnly until after all the exceptional cases were handled.
+
 2017-09-01  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemDirectoryEntry.getFile()
