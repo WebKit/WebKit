@@ -44,7 +44,7 @@ private:
     RefPtr<Image> image(const IntSize& = { }) const final;
     bool errorOccurred() const final { return m_styleImage->errorOccurred(); }
 
-    void setContainerSizeForRenderer(const IntSize&) final;
+    void setContainerContext(const IntSize&, const URL&) final;
 
     bool imageHasRelativeWidth() const final { return m_styleImage->imageHasRelativeWidth(); }
     bool imageHasRelativeHeight() const final { return m_styleImage->imageHasRelativeHeight(); }

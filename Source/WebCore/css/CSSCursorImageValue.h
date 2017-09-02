@@ -52,6 +52,8 @@ public:
         return IntPoint(-1, -1);
     }
 
+    const URL& imageURL() const { return m_originalURL; }
+
     String customCSSText() const;
 
     std::pair<CachedImage*, float> loadImage(CachedResourceLoader&, const ResourceLoaderOptions&);

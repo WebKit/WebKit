@@ -1,3 +1,18 @@
+2017-08-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The SVG fragment identifier is not respected if it is a part of an HTTP URL
+        https://bugs.webkit.org/show_bug.cgi?id=163811
+
+        Reviewed by Darin Adler.
+
+        * http/tests/svg/resources/rgb-icons-1.svg: Added.
+        * http/tests/svg/resources/rgb-icons-2.svg: Added.
+        * http/tests/svg/resources/rgb-icons-3.svg: Added.
+        * http/tests/svg/svg-fragment-background-expected.html: Added.
+        * http/tests/svg/svg-fragment-background.html: Added.
+        * http/tests/svg/svg-fragment-image-expected.html: Added.
+        * http/tests/svg/svg-fragment-image.html: Added.
+
 2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion failure when opening a file with a missing tag closing bracket

@@ -40,24 +40,24 @@ public:
     CSSImageGeneratorValue& imageValue() { return m_imageGeneratorValue; }
 
 private:
-    bool operator==(const StyleImage& other) const override { return data() == other.data(); }
+    bool operator==(const StyleImage& other) const final { return data() == other.data(); }
 
-    WrappedImagePtr data() const override { return m_imageGeneratorValue.ptr(); }
+    WrappedImagePtr data() const final { return m_imageGeneratorValue.ptr(); }
 
-    Ref<CSSValue> cssValue() const override;
+    Ref<CSSValue> cssValue() const final;
 
     bool isPending() const override;
-    void load(CachedResourceLoader&, const ResourceLoaderOptions&) override;
-    FloatSize imageSize(const RenderElement*, float multiplier) const override;
-    bool imageHasRelativeWidth() const override { return !m_fixedSize; }
-    bool imageHasRelativeHeight() const override { return !m_fixedSize; }
-    void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) override;
-    bool usesImageContainerSize() const override { return !m_fixedSize; }
-    void setContainerSizeForRenderer(const RenderElement*, const FloatSize& containerSize, float) override { m_containerSize = containerSize; }
-    void addClient(RenderElement*) override;
-    void removeClient(RenderElement*) override;
-    RefPtr<Image> image(RenderElement*, const FloatSize&) const override;
-    bool knownToBeOpaque(const RenderElement*) const override;
+    void load(CachedResourceLoader&, const ResourceLoaderOptions&) final;
+    FloatSize imageSize(const RenderElement*, float multiplier) const final;
+    bool imageHasRelativeWidth() const final { return !m_fixedSize; }
+    bool imageHasRelativeHeight() const final { return !m_fixedSize; }
+    void computeIntrinsicDimensions(const RenderElement*, Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio) final;
+    bool usesImageContainerSize() const final { return !m_fixedSize; }
+    void setContainerContextForRenderer(const RenderElement&, const FloatSize& containerSize, float) final { m_containerSize = containerSize; }
+    void addClient(RenderElement*) final;
+    void removeClient(RenderElement*) final;
+    RefPtr<Image> image(RenderElement*, const FloatSize&) const final;
+    bool knownToBeOpaque(const RenderElement*) const final;
 
     explicit StyleGeneratedImage(Ref<CSSImageGeneratorValue>&&);
     

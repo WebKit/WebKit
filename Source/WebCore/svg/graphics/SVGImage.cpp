@@ -65,9 +65,8 @@
 
 namespace WebCore {
 
-SVGImage::SVGImage(ImageObserver& observer, const URL& url)
+SVGImage::SVGImage(ImageObserver& observer)
     : Image(&observer)
-    , m_url(url)
 {
 }
 
@@ -165,7 +164,7 @@ IntSize SVGImage::containerSize() const
     return IntSize(300, 150);
 }
 
-ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float zoom, const FloatRect& dstRect,
+ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect,
     const FloatRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode)
 {
     if (!m_page)
@@ -181,12 +180,14 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     setContainerSize(roundedContainerSize);
 
     FloatRect scaledSrc = srcRect;
-    scaledSrc.scale(1 / zoom);
+    scaledSrc.scale(1 / containerZoom);
 
     // Compensate for the container size rounding by adjusting the source rect.
     FloatSize adjustedSrcSize = scaledSrc.size();
     adjustedSrcSize.scale(roundedContainerSize.width() / containerSize.width(), roundedContainerSize.height() / containerSize.height());
     scaledSrc.setSize(adjustedSrcSize);
+
+    frameView()->scrollToFragment(initialFragmentURL);
 
     ImageDrawResult result = draw(context, dstRect, scaledSrc, compositeOp, blendMode, DecodingMode::Synchronous, ImageOrientationDescription());
 
@@ -241,11 +242,11 @@ NativeImagePtr SVGImage::nativeImage(const GraphicsContext* targetContext)
 }
 #endif
 
-void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float zoom, const FloatRect& srcRect,
+void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode blendMode)
 {
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
-    zoomedContainerRect.scale(zoom);
+    zoomedContainerRect.scale(containerZoom);
 
     // The ImageBuffer size needs to be scaled to match the final resolution.
     AffineTransform transform = context.getCTM();
@@ -259,7 +260,7 @@ void SVGImage::drawPatternForContainer(GraphicsContext& context, const FloatSize
     std::unique_ptr<ImageBuffer> buffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(imageBufferSize.size()), 1, ColorSpaceSRGB, context);
     if (!buffer) // Failed to allocate buffer.
         return;
-    drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, CompositeSourceOver, BlendModeNormal);
+    drawForContainer(buffer->context(), containerSize, containerZoom, initialFragmentURL, imageBufferSize, zoomedContainerRect, CompositeSourceOver, BlendModeNormal);
     if (context.drawLuminanceMask())
         buffer->convertToLuminanceMask();
 
@@ -308,9 +309,6 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
     view->resize(containerSize());
 
-    if (!m_url.isEmpty())
-        view->scrollToFragment(m_url);
-    
     if (view->needsLayout())
         view->layout();
 
@@ -487,12 +485,5 @@ bool isInSVGImage(const Element* element)
 
     return page->chrome().client().isSVGImageChromeClient();
 }
-
-void SVGImage::dump(TextStream& ts) const
-{
-    Image::dump(ts);
-    ts.dumpProperty("url", m_url.string());
-}
-
 
 }

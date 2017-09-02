@@ -1,3 +1,93 @@
+2017-08-30  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        The SVG fragment identifier is not respected if it is a part of an HTTP URL
+        https://bugs.webkit.org/show_bug.cgi?id=163811
+
+        Reviewed by Darin Adler.
+
+        If an image is referenced more than once in a page and the URL to that
+        image is an HTTP URL, one CachedImage is created for all the renderers
+        even if the original URLs have different fragmentIdentifiers. In this
+        case the fragment will be removed from the request which is associated
+        with the shared CachedImage. This CachedImage creates an SVGImage with
+        a URL but without a fragmentIdentifier. So SVGImage::draw() does not call
+        FrameView::scrollToFragment() and therefore the viewport is not setup
+        correctly for displaying the SVG in this case.
+
+        The fix is to move the url from the SVGImage to SVGImageForContainer.
+        Because there is one SVGImageForContainer created for every renderer,
+        we can move the full URL there. The drawing of an SVGImage has to start
+        from the SVGImageForContainer::draw() because the SVGImage may not have
+        an intrinsic size and the SVGImageForContainer is the one which knows
+        the destination rectangle. So SVGImageForContainer can pass the full url
+        to SVGImage::drawForContainer() which can be used to scrollToFragment()
+        before calling SVGImage::draw().
+        
+        For clarity and consistency, all setContainerSizeForRenderer() will be 
+        changed to setContainerContext() and the pair SizeAndZoom will be replaced
+        by the struct ContainerContext.
+
+        Tests: http/tests/svg/svg-fragment-background.html
+               http/tests/svg/svg-fragment-image.html
+
+        * css/CSSCursorImageValue.h:
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::fillImageSet):
+        * css/CSSImageSetValue.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::didRemoveClient):
+        (WebCore::CachedImage::switchClientsToRevalidatedResource):
+        (WebCore::CachedImage::allClientsRemoved):
+        (WebCore::CachedImage::setContainerContextForClient):
+        (WebCore::CachedImage::clear):
+        (WebCore::CachedImage::createImage):
+        (WebCore::CachedImage::setContainerSizeForRenderer): Deleted.
+        * loader/cache/CachedImage.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry const):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::updateInnerContentRect):
+        (WebCore::RenderImage::repaintOrMarkForLayout):
+        * rendering/RenderImageResource.cpp:
+        (WebCore::RenderImageResource::setContainerContext):
+        (WebCore::RenderImageResource::setContainerSizeForRenderer): Deleted.
+        * rendering/RenderImageResource.h:
+        * rendering/RenderImageResourceStyleImage.cpp:
+        (WebCore::RenderImageResourceStyleImage::setContainerContext):
+        (WebCore::RenderImageResourceStyleImage::setContainerSizeForRenderer): Deleted.
+        * rendering/RenderImageResourceStyleImage.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::updateContent):
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::createShapeForImage const):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::imageURL):
+        (WebCore::StyleCachedImage::setContainerContextForRenderer):
+        (WebCore::StyleCachedImage::setContainerSizeForRenderer): Deleted.
+        * rendering/style/StyleCachedImage.h:
+        * rendering/style/StyleGeneratedImage.h:
+        * rendering/style/StyleImage.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::updateImageViewport):
+        * svg/SVGImageElement.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::SVGImage):
+        (WebCore::SVGImage::drawForContainer):
+        (WebCore::SVGImage::drawPatternForContainer):
+        (WebCore::SVGImage::draw):
+        (WebCore::SVGImage::dump const): Deleted.
+        * svg/graphics/SVGImage.h:
+        * svg/graphics/SVGImageCache.cpp:
+        (WebCore::SVGImageCache::setContainerContextForClient):
+        (WebCore::SVGImageCache::setContainerSizeForRenderer): Deleted.
+        * svg/graphics/SVGImageCache.h:
+        * svg/graphics/SVGImageForContainer.cpp:
+        (WebCore::SVGImageForContainer::size const):
+        (WebCore::SVGImageForContainer::draw):
+        (WebCore::SVGImageForContainer::drawPattern):
+        * svg/graphics/SVGImageForContainer.h:
+
 2017-08-29  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Assertion failure when opening a file with a missing tag closing bracket

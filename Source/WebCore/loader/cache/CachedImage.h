@@ -63,7 +63,7 @@ public:
 
     bool canRender(const RenderElement* renderer, float multiplier) { return !errorOccurred() && !imageSizeForRenderer(renderer, multiplier).isEmpty(); }
 
-    void setContainerSizeForRenderer(const CachedImageClient*, const LayoutSize&, float);
+    void setContainerContextForClient(const CachedImageClient&, const LayoutSize&, float, const URL&);
     bool usesImageContainerSize() const { return m_image && m_image->usesContainerSize(); }
     bool imageHasRelativeWidth() const { return m_image && m_image->hasRelativeWidth(); }
     bool imageHasRelativeHeight() const { return m_image && m_image->hasRelativeHeight(); }
@@ -150,9 +150,14 @@ private:
 
     void didReplaceSharedBufferContents() override;
 
-    typedef std::pair<LayoutSize, float> SizeAndZoom;
-    typedef HashMap<const CachedImageClient*, SizeAndZoom> ContainerSizeRequests;
-    ContainerSizeRequests m_pendingContainerSizeRequests;
+    struct ContainerContext {
+        LayoutSize containerSize;
+        float containerZoom;
+        URL imageURL;
+    };
+
+    using ContainerContextRequests = HashMap<const CachedImageClient*, ContainerContext>;
+    ContainerContextRequests m_pendingContainerContextRequests;
 
     HashSet<CachedImageClient*> m_pendingImageDrawingClients;
 

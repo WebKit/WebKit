@@ -37,6 +37,7 @@ public:
     static Ref<SVGImageElement> create(const QualifiedName&, Document&);
 
     bool hasSingleSecurityOrigin() const;
+    const AtomicString& imageSourceURL() const final;
 
 private:
     SVGImageElement(const QualifiedName&, Document&);
@@ -52,7 +53,6 @@ private:
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    const AtomicString& imageSourceURL() const final;
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
     bool haveLoadedRequiredResources() final;

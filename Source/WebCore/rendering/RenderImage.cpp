@@ -285,8 +285,12 @@ void RenderImage::updateInnerContentRect()
 {
     // Propagate container size to image resource.
     IntSize containerSize(replacedContentRect(intrinsicSize()).size());
-    if (!containerSize.isEmpty())
-        imageResource().setContainerSizeForRenderer(containerSize);
+    if (!containerSize.isEmpty()) {
+        URL imageSourceURL;
+        if (HTMLImageElement* imageElement = is<HTMLImageElement>(element()) ? downcast<HTMLImageElement>(element()) : nullptr)
+            imageSourceURL = document().completeURL(imageElement->imageSourceURL());
+        imageResource().setContainerContext(containerSize, imageSourceURL);
+    }
 }
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
@@ -323,7 +327,7 @@ void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, co
         // may need values from the containing block, though, so make sure that we're not too
         // early. It may be that layout hasn't even taken place once yet.
 
-        // FIXME: we should not have to trigger another call to setContainerSizeForRenderer()
+        // FIXME: we should not have to trigger another call to setContainerContextForRenderer()
         // from here, since it's already being done during layout.
         updateInnerContentRect();
     }

@@ -75,14 +75,16 @@ bool RenderSVGImage::updateImageViewport()
     SVGLengthContext lengthContext(&imageElement());
     m_objectBoundingBox = FloatRect(imageElement().x().value(lengthContext), imageElement().y().value(lengthContext), imageElement().width().value(lengthContext), imageElement().height().value(lengthContext));
 
+    URL imageSourceURL = document().completeURL(imageElement().imageSourceURL());
+
     // Images with preserveAspectRatio=none should force non-uniform scaling. This can be achieved
     // by setting the image's container size to its intrinsic size.
     // See: http://www.w3.org/TR/SVG/single-page.html, 7.8 The ‘preserveAspectRatio’ attribute.
     if (imageElement().preserveAspectRatio().align() == SVGPreserveAspectRatioValue::SVG_PRESERVEASPECTRATIO_NONE) {
         if (CachedImage* cachedImage = imageResource().cachedImage()) {
-            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(0, style().effectiveZoom());
+            LayoutSize intrinsicSize = cachedImage->imageSizeForRenderer(nullptr, style().effectiveZoom());
             if (intrinsicSize != imageResource().imageSize(style().effectiveZoom())) {
-                imageResource().setContainerSizeForRenderer(roundedIntSize(intrinsicSize));
+                imageResource().setContainerContext(roundedIntSize(intrinsicSize), imageSourceURL);
                 updatedViewport = true;
             }
         }
@@ -90,7 +92,7 @@ bool RenderSVGImage::updateImageViewport()
 
     if (oldBoundaries != m_objectBoundingBox) {
         if (!updatedViewport)
-            imageResource().setContainerSizeForRenderer(enclosingIntRect(m_objectBoundingBox).size());
+            imageResource().setContainerContext(enclosingIntRect(m_objectBoundingBox).size(), imageSourceURL);
         updatedViewport = true;
         m_needsBoundariesUpdate = true;
     }

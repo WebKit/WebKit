@@ -62,10 +62,10 @@ RefPtr<Image> RenderImageResourceStyleImage::image(const IntSize& size) const
     return &Image::nullImage();
 }
 
-void RenderImageResourceStyleImage::setContainerSizeForRenderer(const IntSize& size)
+void RenderImageResourceStyleImage::setContainerContext(const IntSize& size, const URL&)
 {
     ASSERT(renderer());
-    m_styleImage->setContainerSizeForRenderer(renderer(), size, renderer()->style().effectiveZoom());
+    m_styleImage->setContainerContextForRenderer(*renderer(), size, renderer()->style().effectiveZoom());
 }
 
 } // namespace WebCore

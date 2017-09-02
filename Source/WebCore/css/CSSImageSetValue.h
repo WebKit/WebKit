@@ -50,13 +50,15 @@ public:
     String customCSSText() const;
 
     struct ImageWithScale {
-        String imageURL;
+        URL imageURL;
         float scaleFactor;
     };
 
     bool traverseSubresources(const WTF::Function<bool (const CachedResource&)>& handler) const;
 
     void updateDeviceScaleFactor(const Document&);
+
+    URL bestImageForScaleFactorURL() { return bestImageForScaleFactor().imageURL; }
 
 protected:
     ImageWithScale bestImageForScaleFactor();

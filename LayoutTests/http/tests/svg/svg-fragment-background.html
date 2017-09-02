@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .icon {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+        }
+        .green-icon-1 {
+            background: url(resources/rgb-icons-3.svg#green-icon) no-repeat;
+        }
+        .green-icon-2 {
+            background: url(http://localhost:8000/svg/resources/rgb-icons-3.svg#green-icon) no-repeat;
+        }
+    </style>
+</head>
+<body>
+    <div id="group-1">
+        <p>background-image with with hide/show embedded :target CSS</p>
+        <span class="icon green-icon-1"></span>
+        <span class="icon green-icon-2"></span>
+        <span class="icon" id="green-icon"></span>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        document.getElementById("green-icon").style.background = "url('http://127.0.0.1:8000/svg/resources/rgb-icons-3.svg#green-icon') no-repeat";
+
+        setTimeout(function() {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 50);
+    </script>
+</body>
+</html>

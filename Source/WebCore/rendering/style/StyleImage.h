@@ -59,7 +59,7 @@ public:
     virtual bool imageHasRelativeWidth() const = 0;
     virtual bool imageHasRelativeHeight() const = 0;
     virtual bool usesImageContainerSize() const = 0;
-    virtual void setContainerSizeForRenderer(const RenderElement*, const FloatSize&, float) = 0;
+    virtual void setContainerContextForRenderer(const RenderElement&, const FloatSize&, float) = 0;
     virtual void addClient(RenderElement*) = 0;
     virtual void removeClient(RenderElement*) = 0;
     virtual RefPtr<Image> image(RenderElement*, const FloatSize&) const = 0;
