@@ -148,8 +148,8 @@ set(test_webkit_LIBRARIES
 add_library(TestWebKitLib SHARED
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKit/win/ScaleWebView.cpp
-    ${TESTWEBKITAPI_DIR}/Tests/WebKit/win/WebViewDestruction.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/ScaleWebView.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/WebViewDestruction.cpp
     ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
 )
 

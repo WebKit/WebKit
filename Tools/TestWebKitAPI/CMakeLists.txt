@@ -128,30 +128,30 @@ if (ENABLE_WEBKIT)
         ${TESTWEBKITAPI_DIR}/InjectedBundleController.cpp
         ${TESTWEBKITAPI_DIR}/InjectedBundleMain.cpp
         ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/CanHandleRequest_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DidAssociateFormControls_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionBasic_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DOMWindowExtensionNoCache_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleFrameHitTest_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/LoadCanceledNoServerRedirectCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/MouseMoveAfterCrash_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/NewFirstVisuallyNonEmptyLayout_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ParentFrame_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/ShouldGoToBackForwardListItem_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/TextFieldDidBeginAndEndEditing_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/UserMessage_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillLoad_Bundle.cpp
-        ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/CanHandleRequest_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DidAssociateFormControls_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DOMWindowExtensionBasic_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DOMWindowExtensionNoCache_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/DocumentStartUserScriptAlertCrash_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/GetInjectedBundleInitializationUserDataCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/HitTestResultNodeHandle_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleBasic_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleFrameHitTest_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/InjectedBundleInitializationUserDataCallbackWins_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/LoadCanceledNoServerRedirectCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/MouseMoveAfterCrash_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFails_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutForImages_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/NewFirstVisuallyNonEmptyLayout_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ParentFrame_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ProvisionalURLAfterWillSendRequestCallback_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ResponsivenessTimerDoesntFireEarly_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/ShouldGoToBackForwardListItem_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/TextFieldDidBeginAndEndEditing_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/UserMessage_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/WillLoad_Bundle.cpp
+        ${TESTWEBKITAPI_DIR}/Tests/WebKit/WillSendSubmitEvent_Bundle.cpp
     )
 
     target_link_libraries(TestWebKitAPIInjectedBundle ${TestWebKitAPI_LIBRARIES})
