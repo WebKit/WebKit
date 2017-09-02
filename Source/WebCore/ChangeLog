@@ -1,3 +1,183 @@
+2017-08-31  Daniel Bates  <dabates@apple.com>
+
+        Make RenderStyle's non-inherited flags more human friendly
+        https://bugs.webkit.org/show_bug.cgi?id=176171
+
+        Reviewed by Antti Koivisto.
+
+        Revert r166465 as we never followed through and made the CSS JIT update
+        RenderStyle's non-inherited flags directly.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::RenderStyle):
+        (WebCore::RenderStyle::hashForTextAutosizing const):
+        (WebCore::RenderStyle::equalForTextAutosizing const):
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::styleType const):
+        (WebCore::RenderStyle::setStyleType):
+        (WebCore::RenderStyle::setHasViewportUnits):
+        (WebCore::RenderStyle::hasViewportUnits const):
+        (WebCore::RenderStyle::affectedByHover const):
+        (WebCore::RenderStyle::affectedByActive const):
+        (WebCore::RenderStyle::affectedByDrag const):
+        (WebCore::RenderStyle::setAffectedByHover):
+        (WebCore::RenderStyle::setAffectedByActive):
+        (WebCore::RenderStyle::setAffectedByDrag):
+        (WebCore::RenderStyle::isFloating const):
+        (WebCore::RenderStyle::display const):
+        (WebCore::RenderStyle::position const):
+        (WebCore::RenderStyle::floating const):
+        (WebCore::RenderStyle::overflowX const):
+        (WebCore::RenderStyle::overflowY const):
+        (WebCore::RenderStyle::verticalAlign const):
+        (WebCore::RenderStyle::unicodeBidi const):
+        (WebCore::RenderStyle::clear const):
+        (WebCore::RenderStyle::tableLayout const):
+        (WebCore::RenderStyle::hasExplicitlySetDirection const):
+        (WebCore::RenderStyle::isLink const):
+        (WebCore::RenderStyle::setDisplay):
+        (WebCore::RenderStyle::setOriginalDisplay):
+        (WebCore::RenderStyle::setPosition):
+        (WebCore::RenderStyle::setFloating):
+        (WebCore::RenderStyle::setOverflowX):
+        (WebCore::RenderStyle::setOverflowY):
+        (WebCore::RenderStyle::setVerticalAlign):
+        (WebCore::RenderStyle::setUnicodeBidi):
+        (WebCore::RenderStyle::setClear):
+        (WebCore::RenderStyle::setTableLayout):
+        (WebCore::RenderStyle::setHasExplicitlySetDirection):
+        (WebCore::RenderStyle::setIsLink):
+        (WebCore::RenderStyle::hasExplicitlySetWritingMode const):
+        (WebCore::RenderStyle::setHasExplicitlySetWritingMode):
+        (WebCore::RenderStyle::hasExplicitlySetTextAlign const):
+        (WebCore::RenderStyle::setHasExplicitlySetTextAlign):
+        (WebCore::RenderStyle::unique const):
+        (WebCore::RenderStyle::setUnique):
+        (WebCore::RenderStyle::emptyState const):
+        (WebCore::RenderStyle::setEmptyState):
+        (WebCore::RenderStyle::firstChildState const):
+        (WebCore::RenderStyle::setFirstChildState):
+        (WebCore::RenderStyle::lastChildState const):
+        (WebCore::RenderStyle::setLastChildState):
+        (WebCore::RenderStyle::setHasExplicitlyInheritedProperties):
+        (WebCore::RenderStyle::hasExplicitlyInheritedProperties const):
+        (WebCore::RenderStyle::inheritUnicodeBidiFrom):
+        (WebCore::RenderStyle::NonInheritedFlags::operator!= const):
+        (WebCore::RenderStyle::NonInheritedFlags::hasAnyPublicPseudoStyles const):
+        (WebCore::RenderStyle::originalDisplay const):
+        (WebCore::RenderStyle::NonInheritedFlags::operator== const):
+        (WebCore::RenderStyle::NonInheritedFlags::copyNonInheritedFrom):
+        (WebCore::RenderStyle::NonInheritedFlags::hasPseudoStyle const):
+        (WebCore::RenderStyle::NonInheritedFlags::setHasPseudoStyle):
+        (WebCore::RenderStyle::NonInheritedFlags::overflowX const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setOverflowX): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::overflowY const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setOverflowY): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::clear const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setClear): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::effectiveDisplay const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setEffectiveDisplay): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::position const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setPosition): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::originalDisplay const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setOriginalDisplay): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::unicodeBidi const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setUnicodeBidi): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::hasViewportUnits const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasViewportUnits): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::verticalAlign const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setVerticalAlign): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::hasExplicitlyInheritedProperties const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasExplicitlyInheritedProperties): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::isFloating const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::floating const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setFloating): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::tableLayout const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setTableLayout): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::styleType const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setStyleType): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::isUnique const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setIsUnique): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::emptyState const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setEmptyState): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::firstChildState const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setFirstChildState): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::lastChildState const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setLastChildState): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::affectedByHover const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setAffectedByHover): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::affectedByActive const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setAffectedByActive): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::affectedByDrag const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setAffectedByDrag): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::isLink const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setIsLink): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::hasExplicitlySetDirection const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasExplicitlySetDirection): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::hasExplicitlySetWritingMode const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasExplicitlySetWritingMode): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::hasExplicitlySetTextAlign const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasExplicitlySetTextAlign): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagsMemoryOffset): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagIsaffectedByActive): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagIsaffectedByHover): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagPseudoStyle): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setFirstChildStateFlags): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setLastChildStateFlags): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagIsUnique): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagFirstChildState): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::flagLastChildState): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::NonInheritedFlags): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::setHasPseudoStyles): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::updateBoolean): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::getBoolean const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::updateValue): Deleted.
+        (WebCore::RenderStyle::InheritedFlags::operator== const): Deleted.
+        (WebCore::RenderStyle::NonInheritedFlags::getValue const): Deleted.
+        (WebCore::adjustForAbsoluteZoom): Deleted.
+        (WebCore::adjustFloatForAbsoluteZoom): Deleted.
+        (WebCore::adjustLayoutUnitForAbsoluteZoom): Deleted.
+        (WebCore::collapsedBorderStyle): Deleted.
+        (WebCore::RenderStyle::hasBackground const): Deleted.
+        (WebCore::RenderStyle::autoWrap): Deleted.
+        (WebCore::RenderStyle::preserveNewline): Deleted.
+        (WebCore::RenderStyle::collapseWhiteSpace): Deleted.
+        (WebCore::RenderStyle::isCollapsibleWhiteSpace const): Deleted.
+        (WebCore::RenderStyle::breakOnlyAfterWhiteSpace const): Deleted.
+        (WebCore::RenderStyle::breakWords const): Deleted.
+        (WebCore::RenderStyle::hasInlineColumnAxis const): Deleted.
+        (WebCore::RenderStyle::imageOrientation const): Deleted.
+        (WebCore::RenderStyle::setLogicalWidth): Deleted.
+        (WebCore::RenderStyle::setLogicalHeight): Deleted.
+        (WebCore::RenderStyle::setBorderRadius): Deleted.
+        (WebCore::RenderStyle::setZoom): Deleted.
+        (WebCore::RenderStyle::setEffectiveZoom): Deleted.
+        (WebCore::RenderStyle::setTextOrientation): Deleted.
+        (WebCore::RenderStyle::adjustBackgroundLayers): Deleted.
+        (WebCore::RenderStyle::adjustMaskLayers): Deleted.
+        (WebCore::RenderStyle::clearAnimations): Deleted.
+        (WebCore::RenderStyle::clearTransitions): Deleted.
+        (WebCore::RenderStyle::setShapeOutside): Deleted.
+        (WebCore::RenderStyle::setShapeImageThreshold): Deleted.
+        (WebCore::RenderStyle::setClipPath): Deleted.
+        (WebCore::RenderStyle::willChangeCreatesStackingContext const): Deleted.
+        (WebCore::RenderStyle::isDisplayRegionType const): Deleted.
+        (WebCore::RenderStyle::setWritingMode): Deleted.
+        (WebCore::RenderStyle::getShadowInlineDirectionExtent const): Deleted.
+        (WebCore::RenderStyle::getShadowBlockDirectionExtent const): Deleted.
+        (WebCore::RenderStyle::isDisplayReplacedType): Deleted.
+        (WebCore::RenderStyle::isDisplayInlineType): Deleted.
+        (WebCore::RenderStyle::isDisplayFlexibleBox): Deleted.
+        (WebCore::RenderStyle::isDisplayGridBox): Deleted.
+        (WebCore::RenderStyle::isDisplayFlexibleOrGridBox): Deleted.
+        (WebCore::RenderStyle::hasAnyPublicPseudoStyles const): Deleted.
+        (WebCore::RenderStyle::hasPseudoStyle const): Deleted.
+        (WebCore::RenderStyle::setHasPseudoStyle): Deleted.
+        (WebCore::RenderStyle::setHasPseudoStyles): Deleted.
+        (WebCore::RenderStyle::setBoxReflect): Deleted.
+        (WebCore::pseudoElementRendererIsNeeded): Deleted.
+
 2017-08-22  Darin Adler  <darin@apple.com>
 
         REGRESSION (r220052): ASSERTION FAILED: !frame().isMainFrame() || !needsStyleRecalcOrLayout()  in WebCore::FrameView::updateLayoutAndStyleIfNeededRecursive()
