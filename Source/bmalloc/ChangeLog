@@ -1,3 +1,22 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Large virtual memory region allocation requires MMAP_NORESERVE in Linux
+        https://bugs.webkit.org/show_bug.cgi?id=176211
+
+        Reviewed by Geoffrey Garen.
+
+        In Linux, we cannot allocate very large memory region without MMAP_NORESERVE.
+        Linux kernel needs to reserve swap area for allocated memory region. If the
+        swap area is exhausted, kernel fails to allocate the memory region with ENOMEM.
+
+        This patch adds MMAP_NORESERVE to mmap flags in Linux. By adding this flag,
+        mmap does not need to reserve swap area for the reserved memory region.
+        This allows us to reserve very large memory region that is necessary for Gigacage.
+
+        * bmalloc/BPlatform.h:
+        * bmalloc/VMAllocate.h:
+        (bmalloc::tryVMAllocate):
+
 2017-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Strings need to be in some kind of gigacage

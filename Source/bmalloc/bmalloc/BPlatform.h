@@ -42,6 +42,10 @@
 #define BOS_UNIX 1
 #endif
 
+#ifdef __linux__
+#define BOS_LINUX 1
+#endif
+
 #if defined(WIN32) || defined(_WIN32)
 #define BOS_WINDOWS 1
 #endif

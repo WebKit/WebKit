@@ -44,8 +44,13 @@ namespace bmalloc {
 
 #if BOS(DARWIN)
 #define BMALLOC_VM_TAG VM_MAKE_TAG(VM_MEMORY_TCMALLOC)
+#define BMALLOC_NORESERVE 0
+#elif BOS(LINUX)
+#define BMALLOC_VM_TAG -1
+#define BMALLOC_NORESERVE MAP_NORESERVE
 #else
 #define BMALLOC_VM_TAG -1
+#define BMALLOC_NORESERVE 0
 #endif
 
 inline size_t vmPageSize()
@@ -116,7 +121,7 @@ inline void vmValidatePhysical(void* p, size_t vmSize)
 inline void* tryVMAllocate(size_t vmSize)
 {
     vmValidate(vmSize);
-    void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, BMALLOC_VM_TAG, 0);
+    void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, BMALLOC_VM_TAG, 0);
     if (result == MAP_FAILED) {
         logVMFailure();
         return nullptr;
