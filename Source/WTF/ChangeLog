@@ -1,3 +1,22 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [WTF] Add C++03 allocator interface for GCC < 6
+        https://bugs.webkit.org/show_bug.cgi?id=176301
+
+        Reviewed by Darin Adler.
+
+        Unfortunately, std::list in GCC < 6 does not support C++11 allocator interface.
+        This patch adds C++03 allocator interface to FastAllocator to make it usable
+        for std::list. It also allows us to use FastAllocator for data structures that
+        only support C++03 interface.
+
+        * wtf/FastMalloc.h:
+        (WTF::FastAllocator::allocate):
+        (WTF::FastAllocator::construct):
+        (WTF::FastAllocator::destroy):
+        (WTF::FastAllocator::max_size const):
+        (WTF::FastAllocator::select_on_container_copy_construction const):
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy
