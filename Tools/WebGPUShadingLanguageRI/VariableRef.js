@@ -32,6 +32,13 @@ class VariableRef extends Expression {
         this.variable = null;
     }
     
+    static wrap(variable)
+    {
+        let result = new VariableRef(variable.origin, variable.name);
+        result.variable = variable;
+        return result;
+    }
+    
     get name() { return this._name; }
     get isConstexpr() { return this.variable.isConstexpr; }
     get unifyNode() { return this.variable.unifyNode; }

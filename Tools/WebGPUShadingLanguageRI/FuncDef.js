@@ -31,6 +31,15 @@ class FuncDef extends Func {
         this.body = body;
     }
     
+    rewrite(rewriter)
+    {
+        if (this._typeParameters.length)
+            throw new Error("Cannot rewrite an uninstantiated function");
+        this._returnType = this._returnType.visit(rewriter);
+        this._parameters = this._parameters.map(parameter => parameter.visit(rewriter));
+        this.body = this.body.visit(rewriter);
+    }
+    
     toString()
     {
         return super.toString() + " " + this.body;

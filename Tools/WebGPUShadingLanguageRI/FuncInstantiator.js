@@ -32,12 +32,12 @@ class FuncInstantiator {
     }
     
     // Returns a Func object that uniquely identifies a particular system of type arguments. You must
-    // intantiate things with concrete types, because this code casually assumes this.
+    // intantiate things with concrete types, because this code casually assumes this. Note that this
+    // will return a different func from `func` no matter what. This ensures that we can use the
+    // returned func for rewrites that instantiate types without destroying our ability to do overload
+    // resolutions on the original Program.
     getUnique(func, typeArguments)
     {
-        if (!func.typeParameters.length)
-            return func;
-        
         let instances = this._instances.get(func);
         if (!instances)
             this._instances.set(func, instances = []);

@@ -28,8 +28,10 @@ function inline(program)
 {
     for (let funcList of program.functions.values()) {
         for (let func of funcList) {
-            if (!func.typeParameters.length)
+            if (!func.typeParameters.length) {
+                func = program.funcInstantiator.getUnique(func, [])
                 _inlineFunction(program, func, new VisitingSet(func));
+            }
         }
     }
 }
@@ -41,19 +43,23 @@ function _inlineFunction(program, func, visiting)
     if (func.inlined || func.isNative)
         return;
     
+    func.rewrite(new InstantiateImmediates());
+    
     // This is the precise time when we can build EBuffers in order to get them to be uniqued by
     // type instantiation but nothing else.
+    func.visit(new StructLayoutBuilder());
     func.visit(new EBufferBuilder(program));
     
-    func.body = func.body.visit(new Inliner(program, func, visiting));
+    func.rewrite(new Inliner(program, func, visiting));
+
     func.inlined = true;
 }
 
 function resolveInlinedFunction(program, name, typeArguments, argumentTypes)
 {
     let overload = program.resolveFuncOverload(name, typeArguments, argumentTypes);
-    if (!overload)
-        return null;
+    if (!overload.func)
+        return overload.failures;
     if (!overload.func.typeParameters)
         return overload.func;
     let func = program.funcInstantiator.getUnique(overload.func, overload.typeArguments);

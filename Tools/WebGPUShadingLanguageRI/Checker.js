@@ -75,9 +75,9 @@ class Checker extends Visitor {
     {
         for (let i = 0; i < typeParameters.length; ++i) {
             let argumentIsType = typeArguments[i] instanceof Type;
-            let result = node.typeArguments[i].visit(this);
+            let result = typeArguments[i].visit(this);
             if (argumentIsType) {
-                if (!typeArguments[i].inherits(typeArguments[i]))
+                if (!typeArguments[i].inherits(typeParameters[i].protocol))
                     throw new WTypeError(origin.originString, "Type argument does not inherit protocol");
             } else {
                 if (!result.equalsWithCommit(typeParameters[i].type))
@@ -151,6 +151,29 @@ class Checker extends Visitor {
         let elementType = node.lValue.visit(this).unifyNode;
         
         return new PtrType(node.origin, node.lValue.addressSpace, elementType);
+    }
+    
+    visitDotExpression(node)
+    {
+        let structType = node.struct.visit(this).unifyNode;
+        
+        node.structType = structType;
+        
+        let underlyingStruct = structType;
+        
+        if (structType instanceof TypeRef)
+            underlyingStruct = underlyingStruct.type;
+        
+        if (!(underlyingStruct instanceof StructType))
+            throw new WTypeError(node.origin.originString, "Operand to dot expression is not a struct type: " + structType);
+        
+        if (structType instanceof TypeRef) 
+            underlyingStruct = underlyingStruct.instantiate(structType.typeArguments, "shallow");
+        
+        let field = underlyingStruct.fieldByName(node.fieldName);
+        if (!field)
+            throw new WTypeError(node.origin.originString, "Field " + node.fieldName + " not found in " + structType);
+        return field.type;
     }
     
     visitVariableRef(node)
@@ -235,11 +258,8 @@ class Checker extends Visitor {
             if (!overload.func) {
                 failures.push(...overload.failures);
                 let message = "Did not find function for call";
-                if (failures.length) {
-                    let stringifyFailure =
-                        failure => failure.func.toDeclString() + " did not match because: " + failure.reason;
-                    message += ", but considered:\n" + failures.map(stringifyFailure).join("\n")
-                }
+                if (failures.length)
+                    message += ", but considered:\n" + failures.join("\n")
                 throw new WTypeError(node.origin.originString, message);
             }
         }

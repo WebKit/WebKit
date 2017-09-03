@@ -376,7 +376,7 @@ function parse(program, origin, lineNumberOffset, text)
             case "->":
                 if (token.text == "->")
                     left = new DereferenceExpression(token, left);
-                left = new DotExpression(token, left, consumeKind("identifier"));
+                left = new DotExpression(token, left, consumeKind("identifier").text);
                 break;
             case "[": {
                 let index = parseExpression();
@@ -669,6 +669,26 @@ function parse(program, origin, lineNumberOffset, text)
             result.add(parseProtocolFuncDecl());
             consume(";");
         }
+        return result;
+    }
+    
+    function parseField()
+    {
+        let type = parseType();
+        let name = consumeKind("identifier");
+        consume(";");
+        return new Field(name, name.text, type);
+    }
+    
+    function parseStructType()
+    {
+        let origin = consume("struct");
+        let name = consumeKind("identifier").text;
+        let typeParameters = parseTypeParameters();
+        let result = new StructType(origin, name, typeParameters);
+        consume("{");
+        while (!tryConsume("}"))
+            result.add(parseField());
         return result;
     }
     

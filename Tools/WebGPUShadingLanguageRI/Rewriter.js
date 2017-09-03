@@ -61,6 +61,8 @@ class Rewriter {
 
     // This is almost wrong. We instantiate Func in Substitution in ProtocolDecl. Then, we end up
     // not rewriting type variables. I think that just works because not rewriting them there is OK.
+    // Everywhere else, it's mandatory that we don't rewrite these because we always assume that
+    // type variables are outside the scope of rewriting.
     visitTypeVariable(node) { return node; }
 
     visitProtocolFuncDecl(node)
@@ -169,6 +171,16 @@ class Rewriter {
         return result;
     }
     
+    visitDotExpression(node)
+    {
+        let result = new DotExpression(node.origin, node.struct.visit(this), node.fieldName);
+        result.structType = node.structType ? node.structType.visit(this) : null;
+        // We don't want to rewrite field, since this is a deep reference going out of the function.
+        // Also, this is set up during inlining, so we're already fully monomorphised.
+        result.field = node.field;
+        return result;
+    }
+    
     visitMakePtrExpression(node)
     {
         return new MakePtrExpression(node.origin, node.lValue.visit(this));
@@ -176,8 +188,9 @@ class Rewriter {
     
     visitVariableRef(node)
     {
-        node.variable = this._getMapping(node.variable);
-        return node;
+        let result = new VariableRef(node.origin, node.name);
+        result.variable = this._getMapping(node.variable);
+        return result;
     }
     
     visitReturn(node)

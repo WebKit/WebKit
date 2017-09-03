@@ -36,6 +36,7 @@ class StructType extends Type {
     
     add(field)
     {
+        field.struct = this;
         if (this._fields.has(field.name))
             throw new WTypeError(field.origin.originString, "Duplicate field name: " + field.name);
         this._fields.set(field.name, field);
@@ -56,7 +57,7 @@ class StructType extends Type {
         return result;
     }
     
-    instantiate(typeArguments)
+    instantiate(typeArguments, mode)
     {
         if (typeArguments.length != this.typeParameters.length)
             throw new WTypeError(origin.originString, "Wrong number of type arguments to instantiation");
@@ -65,11 +66,23 @@ class StructType extends Type {
             return this;
         
         let substitution = new Substitution(this.typeParameters, typeArguments);
-        let instantiateImmediates = new InstantiateImmediates();
+        let instantiateImmediates = mode == "shallow" ? null : new InstantiateImmediates();
         let result = new StructType(this.origin, this.name, []);
-        for (let field of this.fields)
-            result.add(field.visit(substitution).visit(instantiateImmediates));
+        for (let field of this.fields) {
+            let newField = field.visit(substitution);
+            if (instantiateImmediates)
+                newField = newField.visit(instantiateImmediates);
+            result.add(newField);
+        }
         return result;
+    }
+    
+    populateDefaultValue(buffer, offset)
+    {
+        if (this.size == null)
+            throw new Error("Struct does not have layout: " + this + " " + describe(this));
+        for (let field of this.fields)
+            field.type.populateDefaultValue(buffer, offset + field.offset);
     }
     
     toString()

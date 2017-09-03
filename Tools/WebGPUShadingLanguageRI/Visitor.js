@@ -97,6 +97,8 @@ class Visitor {
     {
         for (let typeArgument of node.typeArguments)
             typeArgument.visit(this);
+        if (node.type)
+            node.type.visit(this);
     }
     
     visitNativeType(node)
@@ -187,6 +189,13 @@ class Visitor {
         node.ptr.visit(this);
     }
     
+    visitDotExpression(node)
+    {
+        node.struct.visit(this);
+        if (node.structType)
+            node.structType.visit(this);
+    }
+    
     visitMakePtrExpression(node)
     {
         node.lValue.visit(this);
@@ -194,6 +203,8 @@ class Visitor {
     
     visitVariableRef(node)
     {
+        if (node.variable)
+            node.variable.visit(this);
     }
     
     visitReturn(node)

@@ -28,11 +28,17 @@
 function callFunction(program, name, typeArguments, argumentList)
 {
     let argumentTypes = argumentList.map(argument => argument.type);
-    let func = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
-    if (!func)
-        throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")");
-    for (let i = 0; i < func.parameters.length; ++i)
-        func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, argumentTypes[i].size);
+    let funcOrFailures = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
+    if (!(funcOrFailures instanceof Func)) {
+        let failures = funcOrFailures;
+        throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")" + (failures.length ? "; tried:\n" + failures.join("\n") : ""));
+    }
+    let func = funcOrFailures;
+    for (let i = 0; i < func.parameters.length; ++i) {
+        let type = argumentTypes[i].instantiatedType;
+        type.visit(new StructLayoutBuilder());
+        func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, type.size);
+    }
     let result = new Evaluator(program).runBody(func.returnType, func.body);
     return new TypedValue(func.returnType.unifyNode, result);
 }

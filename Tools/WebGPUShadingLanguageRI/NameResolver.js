@@ -140,9 +140,9 @@ class NameResolver extends Visitor {
                 if (!thing)
                     new WTypeError(typeArgument.origin.originString, "Could not find type or variable named " + typeArgument.name);
                 if (thing instanceof Value) {
-                    typeArgument[i] = new VariableRef(typeArgument.origin, typeArgument.name);
+                    typeArguments[i] = new VariableRef(typeArgument.origin, typeArgument.name);
                 } else
-                    typeArgument[i] = new TypeRef(typeArgument.origin, typeArgument.name, []);
+                    typeArguments[i] = new TypeRef(typeArgument.origin, typeArgument.name, []);
             }
             
             if (typeArgument[i] instanceof Value
@@ -163,7 +163,7 @@ class NameResolver extends Visitor {
         node.type = type;
         
         if (type.typeParameters.length != node.typeArguments.length)
-            throw new WTypeError(node.origin.originString, "Wrong number of type arguments");
+            throw new WTypeError(node.origin.originString, "Wrong number of type arguments (passed " + node.typeArguments.length + ", expected " + type.typeParameters.length + ")");
         for (let i = 0; i < type.typeParameters.length; ++i) {
             let parameterIsType = type.typeParameters[i] instanceof TypeVariable;
             let argumentIsType = node.typeArguments[i] instanceof Type;

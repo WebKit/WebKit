@@ -56,10 +56,22 @@ class EPtr {
         return this.buffer.get(this.offset);
     }
     
+    get(offset)
+    {
+        return this.buffer.get(this.offset + offset);
+    }
+    
+    set(offset, value)
+    {
+        this.buffer.set(this.offset + offset, value);
+    }
+    
     copyFrom(other, size)
     {
+        if (size == null)
+            throw new Error("Cannot copy null size");
         for (let i = size; i--;)
-            this.buffer.set(i, other.buffer.get(i));
+            this.set(i, other.get(i));
     }
     
     toString()

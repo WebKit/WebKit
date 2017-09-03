@@ -24,9 +24,10 @@
  */
 "use strict";
 
-class Field {
+class Field extends Node {
     constructor(origin, name, type)
     {
+        super();
         this._origin = origin;
         this._name = name;
         this._type = type;

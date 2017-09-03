@@ -87,9 +87,10 @@ class Evaluator extends Visitor {
     
     visitAssignment(node)
     {
-        let result = node.lhs.visit(this);
-        result.copyFrom(node.rhs.visit(this), node.type.size);
-        return result;
+        let target = node.lhs.visit(this);
+        let source = node.rhs.visit(this);
+        target.copyFrom(source, node.type.size);
+        return target;
     }
     
     visitDereferenceExpression(node)
@@ -103,6 +104,12 @@ class Evaluator extends Visitor {
     visitMakePtrExpression(node)
     {
         return EPtr.box(node.lValue.visit(this));
+    }
+    
+    visitDotExpression(node)
+    {
+        let structPtr = node.struct.visit(this);
+        return structPtr.plus(node.field.offset);
     }
     
     visitCommaExpression(node)

@@ -1,5 +1,102 @@
 2017-09-02  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should support structs
+        https://bugs.webkit.org/show_bug.cgi?id=176290
+
+        Reviewed by Mylex Maxfield.
+        
+        This adds parsing of struct types and makes them work.
+        
+        This required adding a struct layout phase, which in turn required being a bit more careful
+        about how we instantiate functions and types. We cannot have any instantiation TypeRefs left
+        once we're doing struct layout.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/DotExpression.js: Added.
+        (DotExpression):
+        (DotExpression.prototype.get struct):
+        (DotExpression.prototype.get fieldName):
+        (DotExpression.prototype.get isLValue):
+        (DotExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype._createEPtr):
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr.prototype.copyFrom): Deleted.
+        (EPtr.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitAssignment):
+        (Evaluator.prototype.visitDotExpression):
+        * WebGPUShadingLanguageRI/Field.js:
+        (Field):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef.prototype.rewrite):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/Inline.js:
+        (inline):
+        (_inlineFunction):
+        (resolveInlinedFunction):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitDotExpression):
+        * WebGPUShadingLanguageRI/InstantiateImmediates.js:
+        (InstantiateImmediates.prototype.visitTypeRef):
+        (InstantiateImmediates.prototype.visitVariableDecl):
+        (InstantiateImmediates):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype._resolveTypeArguments):
+        (NameResolver.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.visit):
+        * WebGPUShadingLanguageRI/OverloadResolutionFailure.js: Added.
+        (OverloadResolutionFailure):
+        (OverloadResolutionFailure.prototype.get func):
+        (OverloadResolutionFailure.prototype.get reason):
+        (OverloadResolutionFailure.prototype.toString):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossibleSuffix):
+        (parseField):
+        (parseStructType):
+        (parse):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitDotExpression):
+        (Rewriter.prototype.visitVariableRef):
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js: Added.
+        (StructLayoutBuilder):
+        (StructLayoutBuilder.prototype.visitStructType):
+        (StructLayoutBuilder.prototype.get offset):
+        (StructLayoutBuilder.prototype.visitField):
+        (StructLayoutBuilder.prototype.visitVariableRef):
+        (StructLayoutBuilder.prototype.visitVariableDecl):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.add):
+        (StructType.prototype.instantiate):
+        (StructType.prototype.populateDefaultValue):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution.prototype.visitTypeRef):
+        (Substitution.prototype.visitVariableRef):
+        (Substitution):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_genericStructInstance):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.inherits):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.instantiate):
+        * WebGPUShadingLanguageRI/VariableRef.js:
+        (VariableRef.wrap):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitTypeRef):
+        (Visitor.prototype.visitDotExpression):
+        (Visitor.prototype.visitVariableRef):
+
+2017-09-02  Filip Pizlo  <fpizlo@apple.com>
+
         WSL NullType should be a special type variable so it can unify with any pointer type
         https://bugs.webkit.org/show_bug.cgi?id=176235
 

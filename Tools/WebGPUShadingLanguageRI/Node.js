@@ -27,6 +27,12 @@
 class Node {
     visit(visitor)
     {
+        // FIXME: We could stash a memo table in the visitor. So, before calling the visitor, we ask
+        // it if they have seen this node before. If they have, then we return what they returned the
+        // last time. This also trivially makes the rewriter do remapping correctly. The downside of
+        // not doing it is mostly that various visitors might check the same types multiple times.
+        // https://bugs.webkit.org/show_bug.cgi?id=176286
+        
         let visitFunc = visitor["visit" + this.constructor.name];
         if (!visitFunc)
             throw new Error("No visit function for " + this.constructor.name + " in " + visitor.constructor.name);

@@ -29,11 +29,11 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
     let failures = [];
     for (let func of functions) {
         if (typeArguments.length && typeArguments.length != func.typeParameters.length) {
-            failures.push({func, reason: "Wrong number of type arguments (passed " + typeArguments.length + ", require " + func.typeParameters.length + ")"});
+            failures.push(new OverloadResolutionFailure(func, "Wrong number of type arguments (passed " + typeArguments.length + ", require " + func.typeParameters.length + ")"));
             continue;
         }
         if (argumentTypes.length != func.parameters.length) {
-            failures.push({func, reason: "Wrong number of arguments (passed " + argumentTypes.length + ", require " + func.parameters.length + ")"});
+            failures.push(new OverloadResolutionFailure(func, "Wrong number of arguments (passed " + argumentTypes.length + ", require " + func.parameters.length + ")"));
             continue;
         }
         let unificationContext = new UnificationContext(func.typeParameters);
@@ -42,7 +42,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
             let argument = typeArguments[i];
             let parameter = func.typeParameters[i];
             if (!argument.unify(unificationContext, parameter)) {
-                failures.push({func, reason: "Type argument #" + (i + 1) + " for parameter " + func.typeParameters.name + " does not match (passed " + argument + ", require " + parameter + ")"});
+                failures.push(new OverloadResolutionFailure(func, "Type argument #" + (i + 1) + " for parameter " + func.typeParameters.name + " does not match (passed " + argument + ", require " + parameter + ")"));
                 ok = false;
                 break;
             }
@@ -53,7 +53,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
             if (!argumentTypes[i])
                 throw new Error("Null argument type at i = " + i);
             if (!argumentTypes[i].unify(unificationContext, func.parameters[i].type)) {
-                failures.push({func, reason: "Argument #" + (i + 1) + " " + (func.parameters[i].name ? "for parameter " + func.parameters[i].name : "") + " does not match (passed " + argumentTypes[i] + ", require " + func.parameters[i].type + ")"});
+                failures.push(new OverloadResolutionFailure(func, "Argument #" + (i + 1) + " " + (func.parameters[i].name ? "for parameter " + func.parameters[i].name : "") + " does not match (passed " + argumentTypes[i] + ", require " + func.parameters[i].type + ")"));
                 ok = false;
                 break;
             }
@@ -61,7 +61,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
         if (!ok)
             continue;
         if (!unificationContext.verify()) {
-            failures.push({func, reason: "Violates type variable constraints"});
+            failures.push(new OverloadResolutionFailure(func, "Violates type variable constraints"));
             continue;
         }
         let shouldBuildTypeArguments = !typeArguments.length;
@@ -70,7 +70,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
         for (let typeParameter of func.typeParameters) {
             let typeArgument = unificationContext.find(typeParameter);
             if (typeArgument == typeParameter) {
-                failures.push({func, reason: "Type parameter " + typeParameter + " did not get assigned a type"});
+                failures.push(new OverloadResolutionFailure(func, "Type parameter " + typeParameter + " did not get assigned a type"));
                 ok = false;
                 break;
             }

@@ -24,19 +24,19 @@
  */
 "use strict";
 
-class Type extends Node {
-    get typeParameters() { return []; }
-    get kind() { return Type; }
-    get isPtr() { return false; }
-    get isArrayRef() { return false; }
-    
-    inherits(protocol)
+class OverloadResolutionFailure {
+    constructor(func, reason)
     {
-        if (!protocol)
-            return true;
-        return protocol.hasHeir(this);
+        this._func = func;
+        this._reason = reason;
     }
     
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
+    get func() { return this._func; }
+    get reason() { return this._reason; }
+    
+    toString()
+    {
+        return this.func.toDeclString() + " did not match because: " + this.reason;
+    }
 }
 

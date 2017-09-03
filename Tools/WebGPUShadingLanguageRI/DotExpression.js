@@ -24,19 +24,20 @@
  */
 "use strict";
 
-class Type extends Node {
-    get typeParameters() { return []; }
-    get kind() { return Type; }
-    get isPtr() { return false; }
-    get isArrayRef() { return false; }
-    
-    inherits(protocol)
+class DotExpression extends Expression {
+    constructor(origin, struct, fieldName)
     {
-        if (!protocol)
-            return true;
-        return protocol.hasHeir(this);
+        super(origin);
+        this._struct = struct;
+        this._fieldName = fieldName;
     }
     
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
+    get struct() { return this._struct; }
+    get fieldName() { return this._fieldName; }
+    get isLValue() { return this.struct.isLValue; }
+    
+    toString()
+    {
+        return "(" + this.struct + "." + this.fieldName + ")";
+    }
 }
-

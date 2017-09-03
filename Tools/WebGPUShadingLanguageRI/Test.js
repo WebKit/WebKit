@@ -384,6 +384,66 @@ function TEST_simpleUnreachableCode()
         (e) => e instanceof WTypeError);
 }
 
+function TEST_simpleStruct()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+            int y;
+        }
+        Foo foo(Foo foo)
+        {
+            Foo result;
+            result.x = foo.y;
+            result.y = foo.x;
+            return result;
+        }
+    `);
+    let structType = program.types.get("Foo");
+    if (!structType)
+        throw new Error("Did not find Foo type");
+    let buffer = new EBuffer(2);
+    buffer.set(0, 62);
+    buffer.set(1, 24);
+    let result = callFunction(program, "foo", [], [new TypedValue(structType, new EPtr(buffer, 0))]);
+    if (!result.type.equals(structType))
+        throw new Error("Wrong result type: " + result.type);
+    let x = result.ePtr.get(0);
+    let y = result.ePtr.get(1);
+    if (x != 24)
+        throw new Error("Wrong result for x: " + x + " (y = " + y + ")");
+    if (y != 62)
+        throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
+}
+
+function TEST_genericStructInstance()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T x;
+            T y;
+        }
+        Foo<int> foo(Foo<int> foo)
+        {
+            Foo<int> result;
+            result.x = foo.y;
+            result.y = foo.x;
+            return result;
+        }
+    `);
+    let structType = TypeRef.instantiate(program.types.get("Foo"), [program.intrinsics.int32]);
+    let buffer = new EBuffer(2);
+    buffer.set(0, 62);
+    buffer.set(1, 24);
+    let result = callFunction(program, "foo", [], [new TypedValue(structType, new EPtr(buffer, 0))]);
+    let x = result.ePtr.get(0);
+    let y = result.ePtr.get(1);
+    if (x != 24)
+        throw new Error("Wrong result for x: " + x + " (y = " + y + ")");
+    if (y != 62)
+        throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
+}
+
 function TEST_doubleGenericCallsDoubleGeneric()
 {
     doPrep(`

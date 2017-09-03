@@ -40,6 +40,13 @@ class TypeRef extends Type {
         result.type = type;
         return result;
     }
+    
+    static instantiate(type, typeArguments)
+    {
+        let result = new TypeRef(type.origin, type.name, typeArguments);
+        result.type = type;
+        return result;
+    }
  
     get origin() { return this._origin; }
     get name() { return this._name; }

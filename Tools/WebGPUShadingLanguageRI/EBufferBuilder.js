@@ -33,7 +33,6 @@ class EBufferBuilder extends Visitor {
     
     _createEPtr(type)
     {
-        type = type.instantiatedType;
         let buffer = new EBuffer(type.size);
         if (!type.populateDefaultValue)
             throw new Error("Cannot populateDefaultValue with: " + type);

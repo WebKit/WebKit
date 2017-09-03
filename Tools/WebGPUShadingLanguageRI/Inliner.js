@@ -32,6 +32,15 @@ class Inliner extends Rewriter {
         this._visiting = visiting;
     }
     
+    visitDotExpression(node)
+    {
+        let result = super.visitDotExpression(node);
+        result.field = result.structType.unifyNode.fieldByName(result.fieldName);
+        if (result.field.offset == null)
+            throw new Error("Un-laid-out field: " + result.field + " (in " + result.structType + ")");
+        return result;
+    }
+    
     visitCallExpression(node)
     {
         return this._visiting.doVisit(node.func, () => {
