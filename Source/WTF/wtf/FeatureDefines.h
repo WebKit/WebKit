@@ -336,10 +336,6 @@ the public iOS SDK. We will also need to update the FeatureDefines.xcconfig file
 #define ENABLE_APNG 1
 #endif
 
-#if !defined(ENABLE_CANVAS_PROXY)
-#define ENABLE_CANVAS_PROXY 0
-#endif
-
 #if !defined(ENABLE_CHANNEL_MESSAGING)
 #define ENABLE_CHANNEL_MESSAGING 1
 #endif

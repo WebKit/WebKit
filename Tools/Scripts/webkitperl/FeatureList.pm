@@ -154,9 +154,6 @@ my @features = (
     { option => "attachment-element", desc => "Toggle Attachment Element support",
       define => "ENABLE_ATTACHMENT_ELEMENT", default => 0, value => \$attachmentElementSupport },
 
-    { option => "canvas-proxy", desc => "Toggle CanvasProxy support",
-      define => "ENABLE_CANVAS_PROXY", default => 0, value => \$canvasProxySupport },
-
     { option => "channel-messaging", desc => "Toggle Channel Messaging support",
       define => "ENABLE_CHANNEL_MESSAGING", default => 1, value => \$channelMessagingSupport },
 

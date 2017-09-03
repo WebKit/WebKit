@@ -49,7 +49,6 @@
 #include "JSBlobPropertyBag.cpp"
 #include "JSCanvasGradient.cpp"
 #include "JSCanvasPattern.cpp"
-#include "JSCanvasProxy.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
 #include "JSByteLengthQueuingStrategy.cpp"
 #include "JSCountQueuingStrategy.cpp"
