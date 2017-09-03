@@ -145,23 +145,11 @@ private:
     int m_generatorFrameSymbolTableIndex;
 };
 
-class GeneratorLivenessAnalysis : public BytecodeLivenessPropagation<GeneratorLivenessAnalysis> {
+class GeneratorLivenessAnalysis : public BytecodeLivenessPropagation {
 public:
     GeneratorLivenessAnalysis(BytecodeGeneratorification& generatorification)
         : m_generatorification(generatorification)
     {
-    }
-
-    template<typename Functor>
-    void computeDefsForBytecodeOffset(UnlinkedCodeBlock* codeBlock, OpcodeID opcodeID, UnlinkedInstruction* instruction, FastBitVector&, const Functor& functor)
-    {
-        JSC::computeDefsForBytecodeOffset(codeBlock, opcodeID, instruction, functor);
-    }
-
-    template<typename Functor>
-    void computeUsesForBytecodeOffset(UnlinkedCodeBlock* codeBlock, OpcodeID opcodeID, UnlinkedInstruction* instruction, FastBitVector&, const Functor& functor)
-    {
-        JSC::computeUsesForBytecodeOffset(codeBlock, opcodeID, instruction, functor);
     }
 
     void run()

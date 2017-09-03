@@ -43,18 +43,6 @@ BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
     compute();
 }
 
-template<typename Functor>
-void BytecodeLivenessAnalysis::computeDefsForBytecodeOffset(CodeBlock* codeBlock, OpcodeID opcodeID, Instruction* instruction, FastBitVector&, const Functor& functor)
-{
-    JSC::computeDefsForBytecodeOffset(codeBlock, opcodeID, instruction, functor);
-}
-
-template<typename Functor>
-void BytecodeLivenessAnalysis::computeUsesForBytecodeOffset(CodeBlock* codeBlock, OpcodeID opcodeID, Instruction* instruction, FastBitVector&, const Functor& functor)
-{
-    JSC::computeUsesForBytecodeOffset(codeBlock, opcodeID, instruction, functor);
-}
-
 void BytecodeLivenessAnalysis::getLivenessInfoAtBytecodeOffset(unsigned bytecodeOffset, FastBitVector& result)
 {
     BytecodeBasicBlock* block = m_graph.findBasicBlockForBytecodeOffset(bytecodeOffset);
@@ -119,7 +107,7 @@ void BytecodeLivenessAnalysis::computeKills(BytecodeKills& result)
         for (unsigned i = block->offsets().size(); i--;) {
             unsigned bytecodeOffset = block->offsets()[i];
             stepOverInstruction(
-                m_graph, bytecodeOffset, out,
+                m_graph, bytecodeOffset,
                 [&] (unsigned index) {
                     // This is for uses.
                     if (out[index])

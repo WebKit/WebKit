@@ -1,3 +1,35 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Clean up BytecodeLivenessAnalysis
+        https://bugs.webkit.org/show_bug.cgi?id=176295
+
+        Reviewed by Saam Barati.
+
+        Previously, computeDefsForBytecodeOffset was a bit customizable.
+        This is used for try-catch handler's liveness analysis. But after
+        careful generatorification implementation, it is now not necessary.
+        This patch drops this customizability.
+
+        * bytecode/BytecodeGeneratorification.cpp:
+        (JSC::GeneratorLivenessAnalysis::computeDefsForBytecodeOffset): Deleted.
+        (JSC::GeneratorLivenessAnalysis::computeUsesForBytecodeOffset): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.cpp:
+        (JSC::BytecodeLivenessAnalysis::computeKills):
+        (JSC::BytecodeLivenessAnalysis::computeDefsForBytecodeOffset): Deleted.
+        (JSC::BytecodeLivenessAnalysis::computeUsesForBytecodeOffset): Deleted.
+        * bytecode/BytecodeLivenessAnalysis.h:
+        * bytecode/BytecodeLivenessAnalysisInlines.h:
+        (JSC::BytecodeLivenessPropagation::stepOverInstruction):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation::computeLocalLivenessForBlock):
+        (JSC::BytecodeLivenessPropagation::getLivenessInfoAtBytecodeOffset):
+        (JSC::BytecodeLivenessPropagation::runLivenessFixpoint):
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::stepOverInstruction): Deleted.
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::computeLocalLivenessForBytecodeOffset): Deleted.
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::computeLocalLivenessForBlock): Deleted.
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::getLivenessInfoAtBytecodeOffset): Deleted.
+        (JSC::BytecodeLivenessPropagation<DerivedAnalysis>::runLivenessFixpoint): Deleted.
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy
