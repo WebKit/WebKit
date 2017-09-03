@@ -27,8 +27,8 @@ PASS {c: -0, m21: 0} (2d)
 PASS {c: -0, m21: -0} (2d) 
 PASS {d: Infinity, m22: Infinity} (2d) 
 PASS {e: -Infinity, m41: -Infinity} (2d) 
-FAIL {f: NaN, m42: NaN} (2d) init.f and init.m42 do not match
-FAIL {f: NaN, m42: NaN, is2D: true} (2d) init.f and init.m42 do not match
+PASS {f: NaN, m42: NaN} (2d) 
+PASS {f: NaN, m42: NaN, is2D: true} (2d) 
 PASS {f: 0, m42: null} (2d) 
 PASS {f: -0, m42: null} (2d) 
 PASS {a: 2} (2d) 

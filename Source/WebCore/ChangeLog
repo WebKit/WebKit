@@ -1,3 +1,17 @@
+2017-09-02  Sam Weinig  <sam@webkit.org>
+
+        DOMMatrix/DOMMatrixReadOnly validation is incorrect for NaN values
+        https://bugs.webkit.org/show_bug.cgi?id=176287
+
+        Reviewed by Chris Dumez.
+
+        * css/DOMMatrixReadOnly.cpp:
+        (WebCore::sameValueZero): Added.
+        (WebCore::DOMMatrixReadOnly::validateAndFixup):
+
+            Switch from using standard != to added sameValueZero helper
+            which implements https://tc39.github.io/ecma262/#sec-samevaluezero
+
 2017-09-02  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemFileEntry.file()

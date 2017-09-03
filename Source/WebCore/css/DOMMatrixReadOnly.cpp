@@ -95,21 +95,28 @@ inline Ref<DOMMatrix> DOMMatrixReadOnly::cloneAsDOMMatrix() const
     return DOMMatrix::create(m_matrix, m_is2D ? Is2D::Yes : Is2D::No);
 }
 
+// https://tc39.github.io/ecma262/#sec-samevaluezero
+static bool sameValueZero(double a, double b)
+{
+    if (std::isnan(a) && std::isnan(b))
+        return true;
+    return a == b;
+}
+
 // https://drafts.fxtf.org/geometry/#matrix-validate-and-fixup
 ExceptionOr<void> DOMMatrixReadOnly::validateAndFixup(DOMMatrix2DInit& init)
 {
-    // FIXME: Should be using SameValueZero rather than c-equality.
-    if (init.a && init.m11 && init.a.value() != init.m11.value())
+    if (init.a && init.m11 && !sameValueZero(init.a.value(), init.m11.value()))
         return Exception { TypeError, ASCIILiteral("init.a and init.m11 do not match") };
-    if (init.b && init.m12 && init.b.value() != init.m12.value())
+    if (init.b && init.m12 && !sameValueZero(init.b.value(), init.m12.value()))
         return Exception { TypeError, ASCIILiteral("init.b and init.m12 do not match") };
-    if (init.c && init.m21 && init.c.value() != init.m21.value())
+    if (init.c && init.m21 && !sameValueZero(init.c.value(), init.m21.value()))
         return Exception { TypeError, ASCIILiteral("init.c and init.m21 do not match") };
-    if (init.d && init.m22 && init.d.value() != init.m22.value())
+    if (init.d && init.m22 && !sameValueZero(init.d.value(), init.m22.value()))
         return Exception { TypeError, ASCIILiteral("init.d and init.m22 do not match") };
-    if (init.e && init.m41 && init.e.value() != init.m41.value())
+    if (init.e && init.m41 && !sameValueZero(init.e.value(), init.m41.value()))
         return Exception { TypeError, ASCIILiteral("init.e and init.m41 do not match") };
-    if (init.f && init.m42 && init.f.value() != init.m42.value())
+    if (init.f && init.m42 && !sameValueZero(init.f.value(), init.m42.value()))
         return Exception { TypeError, ASCIILiteral("init.f and init.m42 do not match") };
 
     if (!init.m11)

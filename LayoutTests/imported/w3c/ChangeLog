@@ -1,3 +1,13 @@
+2017-09-02  Sam Weinig  <sam@webkit.org>
+
+        DOMMatrix/DOMMatrixReadOnly validation is incorrect for NaN values
+        https://bugs.webkit.org/show_bug.cgi?id=176287
+
+        Reviewed by Chris Dumez.
+
+        * web-platform-tests/css/geometry-1/DOMMatrixInit-validate-fixup-expected.txt:
+        Update test results.
+
 2017-09-02  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle result for pseudo-elements in display: none subtrees.
