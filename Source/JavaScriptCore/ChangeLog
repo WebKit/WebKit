@@ -1,3 +1,15 @@
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rolling out r221552.
+
+        Broke the build
+
+        Reverted changeset:
+
+        "[WTF] Add C++03 allocator interface for GCC < 6"
+        https://bugs.webkit.org/show_bug.cgi?id=176301
+        http://trac.webkit.org/changeset/221552
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [WTF] Add C++03 allocator interface for GCC < 6

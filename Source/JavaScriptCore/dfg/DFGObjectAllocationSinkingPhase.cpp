@@ -1361,7 +1361,7 @@ private:
         // Nodes without remaining unmaterialized fields will be
         // materialized first - amongst the remaining unmaterialized
         // nodes
-        std::list<Allocation, FastAllocator<Allocation>> toMaterialize;
+        std::list<Allocation> toMaterialize;
         auto firstPos = toMaterialize.begin();
         auto materializeFirst = [&] (Allocation&& allocation) {
             materialize(allocation.identifier());
