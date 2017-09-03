@@ -1,5 +1,16 @@
 2017-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed, rolling out r221555.
+
+        Did not fix Windows build
+
+        Reverted changeset:
+
+        "Unreviewed attempt to fix Windows build."
+        http://trac.webkit.org/changeset/221555
+
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed attempt to fix Windows build.
 
         * runtime/JSGlobalObjectFunctions.cpp:

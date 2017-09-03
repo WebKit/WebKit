@@ -47,7 +47,6 @@
 #include "ParseInt.h"
 #include "Parser.h"
 #include "StackVisitor.h"
-#include <unicode/utypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/ASCIICType.h>
