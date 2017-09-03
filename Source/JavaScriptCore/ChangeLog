@@ -1,3 +1,18 @@
+2017-09-02  Oliver Hunt  <oliver@apple.com>
+
+        Need an API to get the global context from JSObjectRef
+        https://bugs.webkit.org/show_bug.cgi?id=176291
+
+        Reviewed by Saam Barati.
+
+        Very simple additional API, starting off as SPI on principle.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectGetGlobalContext):
+        * API/JSObjectRefPrivate.h:
+        * API/tests/testapi.c:
+        (main):
+
 2017-09-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Relax arity requirement

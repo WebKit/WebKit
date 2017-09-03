@@ -69,6 +69,8 @@ JS_EXPORT bool JSObjectDeletePrivateProperty(JSContextRef ctx, JSObjectRef objec
 
 JS_EXPORT JSObjectRef JSObjectGetProxyTarget(JSObjectRef);
 
+JS_EXPORT JSGlobalContextRef JSObjectGetGlobalContext(JSObjectRef object);
+    
 #ifdef __cplusplus
 }
 #endif

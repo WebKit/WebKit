@@ -691,3 +691,12 @@ JSObjectRef JSObjectGetProxyTarget(JSObjectRef objectRef)
         result = proxy->target();
     return toRef(result);
 }
+
+JSGlobalContextRef JSObjectGetGlobalContext(JSObjectRef objectRef)
+{
+    JSObject* object = toJS(objectRef);
+    if (!object)
+        return nullptr;
+    return reinterpret_cast<JSGlobalContextRef>(object->globalObject()->globalExec());
+}
+
