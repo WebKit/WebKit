@@ -1,6 +1,6 @@
 
 PASS Resolution of width is correct for ::before and ::after pseudo-elements 
-FAIL Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements assert_equals: expected "50px" but got "auto"
-FAIL Resolution of nonexistent pseudo-element styles assert_equals: Nonexistent :before pseudo-element shouldn't claim to have the same style as the originating element expected "static" but got "relative"
-FAIL Resolution of pseudo-element styles in display: none elements assert_equals: Pseudo-styles of display: none elements should be correct expected "\"Foo\"" but got ""
+FAIL Resolution of width is correct for ::before and ::after pseudo-elements of display: contents elements assert_equals: expected "50px" but got "50%"
+PASS Resolution of nonexistent pseudo-element styles 
+FAIL Resolution of pseudo-element styles in display: none elements assert_equals: Pseudo-styles of display: none elements should be correct expected "\"Foo\"" but got "Foo"
 
