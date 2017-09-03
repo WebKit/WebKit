@@ -1,5 +1,11 @@
 2017-09-03  Chris Dumez  <cdumez@apple.com>
 
+        Unreviewed attempt to fix Windows build.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, rolling out r221552.
 
         Broke the build
