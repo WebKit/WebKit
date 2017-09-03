@@ -153,9 +153,6 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 
-# Directory upload is not enabled.
-fast/forms/file/input-file-directory-upload.html
-
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 

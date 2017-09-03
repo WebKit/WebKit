@@ -179,9 +179,6 @@ http/tests/local/blob/send-sliced-data-blob.html [ Skip ]
 # TODO BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html [ Skip ]
 
-# Directory upload is not enabled.
-fast/forms/file/input-file-directory-upload.html [ Skip ]
-
 # TODO A test that failed because eventSender cannot send function-key events.
 fast/events/keydown-function-keys.html [ Skip ]
 

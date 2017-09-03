@@ -1,3 +1,52 @@
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Consolidate entries-api tests under entries-api/ folders
+        https://bugs.webkit.org/show_bug.cgi?id=176315
+
+        Reviewed by Darin Adler.
+
+        Consolidate entries-api tests under entries-api/ folders, for clarity.
+        Also drop an older test for directory upload which did not pass because
+        it was missing its resources. We now have good coverage for this feature
+        so this test is not needed.
+
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader-error-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader-error-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader-error.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader-error.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader-root-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader-root-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader-root.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader-root.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-directoryReader.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-directoryReader.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-fileEntry-file-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-fileEntry-file-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-fileEntry-file.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-fileEntry-file.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getAsEntry-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getAsEntry-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getAsEntry.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getAsEntry.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getDirectory-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getDirectory-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getDirectory.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getDirectory.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getFile-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getFile-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getFile.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getFile.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent-root-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent-root-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent-root.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent-root.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent.html.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent2-expected.txt: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent2-expected.txt.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getParent2.html: Renamed from LayoutTests/editing/pasteboard/datatransfer-items-drop-getParent2.html.
+        * fast/forms/file/entries-api/resources/testFiles/file1.txt: Renamed from LayoutTests/fast/forms/file/resources/testFiles/file1.txt.
+        * fast/forms/file/entries-api/resources/testFiles/file2.txt: Renamed from LayoutTests/fast/forms/file/resources/testFiles/file2.txt.
+        * fast/forms/file/entries-api/resources/testFiles/subfolder1/file3.txt: Renamed from LayoutTests/fast/forms/file/resources/testFiles/subfolder1/file3.txt.
+        * fast/forms/file/entries-api/resources/testFiles/subfolder2/file4.txt: Renamed from LayoutTests/fast/forms/file/resources/testFiles/subfolder2/file4.txt.
+        * fast/forms/file/entries-api/resources/testFiles/subfolder2/subfolder2a/file5.txt: Renamed from LayoutTests/fast/forms/file/resources/testFiles/subfolder2/subfolder2a/file5.txt.
+        * fast/forms/file/entries-api/webkitdirectory-drag-folder-expected.txt: Renamed from LayoutTests/fast/forms/file/webkitdirectory-drag-folder-expected.txt.
+        * fast/forms/file/entries-api/webkitdirectory-drag-folder.html: Renamed from LayoutTests/fast/forms/file/webkitdirectory-drag-folder.html.
+        * fast/forms/file/entries-api/webkitdirectory-open-panel-expected.txt: Renamed from LayoutTests/fast/forms/file/webkitdirectory-open-panel-expected.txt.
+        * fast/forms/file/entries-api/webkitdirectory-open-panel.html: Renamed from LayoutTests/fast/forms/file/webkitdirectory-open-panel.html.
+        * fast/forms/file/input-file-directory-upload-expected.txt: Removed.
+        * fast/forms/file/input-file-directory-upload.html: Removed.
+        * platform/ios/TestExpectations:
+        * platform/mac-wk1/fast/forms/file/entries-api/webkitdirectory-open-panel-expected.txt: Renamed from LayoutTests/platform/mac-wk1/fast/forms/file/webkitdirectory-open-panel-expected.txt.
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2017-09-02  Chris Dumez  <cdumez@apple.com>
 
         Implement FileSystemFileEntry.file()

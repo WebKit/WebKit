@@ -1942,7 +1942,6 @@ fast/files/workers/worker-read-blob-sync.html
 fast/files/workers/worker-read-file-async.html
 fast/files/workers/worker-read-file-sync.html
 fast/forms/file/get-file-upload.html
-fast/forms/file/input-file-directory-upload.html
 fast/forms/file/input-file-re-render.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 fast/forms/file/selected-files-from-history-state.html

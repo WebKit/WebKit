@@ -3374,7 +3374,7 @@ webkit.org/b/175932 http/tests/media/hls/video-cookie.html [ Failure ]
 
 webkit.org/b/176021 fast/events/overflow-viewport-renderer-deleted.html [ Missing ]
 
-webkit.org/b/176024 fast/forms/file/webkitdirectory-open-panel.html [ Failure ]
+webkit.org/b/176024 fast/forms/file/entries-api/webkitdirectory-open-panel.html [ Failure ]
 
 webkit.org/b/176025 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
 webkit.org/b/176025 inspector/canvas/recording-webgl.html [ Failure ]
