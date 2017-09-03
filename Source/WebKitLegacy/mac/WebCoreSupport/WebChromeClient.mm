@@ -906,6 +906,10 @@ bool WebChromeClient::shouldPaintEntireContents() const
 
 void WebChromeClient::attachRootGraphicsLayer(Frame& frame, GraphicsLayer* graphicsLayer)
 {
+#if !PLATFORM(MAC)
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(graphicsLayer);
+#else
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *documentView = [[kit(&frame) frameView] documentView];
@@ -921,6 +925,7 @@ void WebChromeClient::attachRootGraphicsLayer(Frame& frame, GraphicsLayer* graph
     else
         [webHTMLView detachRootLayer];
     END_BLOCK_OBJC_EXCEPTIONS;
+#endif
 }
 
 void WebChromeClient::attachViewOverlayGraphicsLayer(Frame&, GraphicsLayer*)

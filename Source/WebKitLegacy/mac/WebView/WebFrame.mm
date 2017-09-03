@@ -559,6 +559,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 }
 
 #if PLATFORM(IOS)
+
 - (BOOL)_isCommitting
 {
     return _private->isCommitting;
@@ -568,6 +569,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 {
     _private->isCommitting = value;
 }
+
 #endif
 
 - (NSArray *)_nodesFromList:(Vector<Node*> *)nodesVector
@@ -591,7 +593,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (PaintBehavior)_paintBehaviorForDestinationContext:(CGContextRef)context
 {
-#if !PLATFORM(IOS)
+#if PLATFORM(MAC)
     // -currentContextDrawingToScreen returns YES for bitmap contexts.
     BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
     if (isPrinting)
@@ -601,14 +603,15 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (CGContextGetType(context) != kCGContextTypeBitmap)
         return PaintBehaviorNormal;
 
-    // If we're drawing into a bitmap, we might be snapshotting, or drawing into a layer-backed view.
-    if (WebHTMLView *htmlDocumentView = [self _webHTMLDocumentView]) {
+    // If we're drawing into a bitmap, we could be snapshotting or drawing into a layer-backed view.
+    if (WebHTMLView *documentView = [self _webHTMLDocumentView]) {
 #if PLATFORM(IOS)
-        if ([[htmlDocumentView window] isInSnapshottingPaint])
-            return PaintBehaviorSnapshotting;
+        return [[documentView window] isInSnapshottingPaint] ? PaintBehaviorSnapshotting : PaintBehaviorNormal;
 #endif
-        if ([htmlDocumentView _web_isDrawingIntoLayer])
+#if PLATFORM(MAC)
+        if ([documentView _web_isDrawingIntoLayer])
             return PaintBehaviorNormal;
+#endif
     }
     
     return PaintBehaviorFlattenCompositingLayers | PaintBehaviorSnapshotting;

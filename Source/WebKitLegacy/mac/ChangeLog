@@ -1,3 +1,126 @@
+2017-09-03  Darin Adler  <darin@apple.com>
+
+        [Cocoa] Tidy a few things in legacy WebHTMLView
+        https://bugs.webkit.org/show_bug.cgi?id=176280
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::attachRootGraphicsLayer): Made this function Mac-only, because the
+        methods it calls on WebHTMLView were doing nothing on iOS.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _paintBehaviorForDestinationContext:]): Changed iOS code so that it no longer
+        depends on -[WebHTMLView _web_isDrawingIntoLayer], which always returned YES on iOS.
+
+        * WebView/WebHTMLView.mm: Define WebEvent on both iOS and Mac so more event handling
+        code can be shared without #if below. Use #if PLATFORM(MAC) instead of #if !PLATFORM(IOS)
+        in a lot more places. Move many of the SPI declarations up to the top in alphabetical
+        order. Removed all sorts of unused things. Made more code and fields Mac-only where
+        what was compiled was doing nothing on iOS and it makes the resulting code simpler.
+        Use RetainPtr instead of writing retain/release wherever possible.
+        (+[WebMenuTarget sharedMenuTarget]): Moved global inside this method and used C++
+        initialization for it. Removed various unused methods and declarations of methods.
+        (promisedDataClient): Use NeverDestroyed instead of just doing a "new" on the heap.
+        (-[WebHTMLView _imageExistsAtPaths:]): Deleted.
+        (-[WebHTMLView _documentFragmentWithPaths:]): Use RetainPtr and modern for loop.
+        (+[WebHTMLView _excludedElementsForAttributedStringConversion]): Use C++ initialization,
+        and remove CFRetain no longer needed since we don't support garbage collection any more.
+        (uniqueURLWithRelativePart): Simplified using [NSUUID UUID].
+        (-[WebHTMLView _plainTextFromPasteboard:]): Simplified with RetainPtr.
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): Ditto.
+        (-[WebHTMLView _pasteAsPlainTextWithPasteboard:]): Ditto.
+        (-[WebHTMLView _removeWindowObservers]): Removed code dealing with empty
+        methods windowWillOrderOnScreen: and windowWillOrderOffScreen:.
+        (-[WebHTMLView _shouldDeleteRange:]): Deleted. Was unused.
+        (-[WebHTMLView _writeSelectionWithPasteboardTypes:toPasteboard:cachedAttributedString:]):
+        Simplified with stringByReplacingOccurrencesOfString and modern string literal syntax.
+        (-[WebHTMLView _setMouseDownEvent:]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursive:adjustViewSize:]): Added. Helper method so
+        the next three methhods can be super-simple. Used RetainPtr and a modern for loop to make
+        this method simpler than the functions it replaced. Also got rid of the enumeratingSubviews
+        debug flag; we haven't used it for years and it's not clearly helpful.
+        (-[WebHTMLView _web_setPrintingModeRecursive]): Turned into a one-liner with the above.
+        (-[WebHTMLView _web_clearPrintingModeRecursive]): Ditto.
+        (-[WebHTMLView _web_setPrintingModeRecursiveAndAdjustViewSize]): Ditto.
+        (-[WebHTMLView _web_makePluginSubviewsPerformSelector:withObject:]): Moved from the
+        WebInternal category to the WebHTMLViewFileInternal category so it can be called by
+        two additional methods in the WebPrivate category and still be called by the two
+        methods in the WebInternal category that were already using it.
+        (-[WebHTMLView didAddSubview:]): Deleted.
+        (-[WebHTMLView _insideAnotherHTMLView]): Deleted.
+        (-[WebHTMLView _clearLastHitViewIfSelf]): Deleted. Inlined the implementation in the one
+        place this was called, the close method.
+        (-[WebHTMLView _setToolTip:]): Simplified with RetainPtr.
+        (-[WebHTMLView pasteboard:provideDataForType:]): Ditto.
+        (-[WebHTMLView _autoscroll]): Simplified by making this Mac-only.
+        (-[WebHTMLView _hasHTMLDocument]): Deleted. The one caller was removed a long time ago.
+        (-[WebHTMLView _web_documentFragmentFromPasteboard:pasteboardType:imageMIMEType:]):
+        Added helper method to make the one below simpler.
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        Compared pasteboard type strings using isEqualToString: rather than using == since
+        we want to actually compare the string contents. Also updated to use modern for loop,
+        renamed a local variable from "s" to "localSubresources", and factored out the handling
+        of three image types to use the helper method above.
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]): Rewrite using the
+        _web_makePluginSubviewsPerformSelector:withObject: method.
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]): Ditto.
+        (-[NSView _web_addDescendentWebHTMLViewsToArray:]): Fixed spelling to use the adjective
+        "descendent" rather than the noun "descendant". Also removed Mac-only optimization to
+        not call the -[NSView subviews] method to make this identical on both platforms and used
+        a modern for loop.
+        (-[NSMutableDictionary _web_setObjectIfNotNil:forKey:]): Deleted.
+        (-[WebHTMLView acceptsFirstResponder]): Reduced amount of platform-specific code by
+        defining WebEventMouseDown as a synonym for NSEventTypeLeftMouseDown on Mac.
+        (-[WebHTMLView addWindowObservers]): Removed code dealing with empty
+        methods windowWillOrderOnScreen: and windowWillOrderOffScreen:.
+        (-[WebHTMLView willRemoveSubview:]): Removed the enumeratingSubviews check.
+        (-[WebHTMLView drawSingleRect:]): Rearranged this method to make it clearer that most
+        of it is Mac-only.
+        (-[WebHTMLView windowWillOrderOnScreen:]): Deleted. All the current version of this
+        method did was call itself on the main thread, and do nothing if called on main thread.
+        (-[WebHTMLView windowWillOrderOffScreen:]): Deleted. Ditto.
+        (-[WebHTMLView _isSelectionEvent:]): Merged macOS and iOS versions.
+        (-[WebHTMLView resignFirstResponder]): Removed iOS-specific code in the macOS-specific
+        half of this method.
+        (-[WebHTMLView setDataSource:]): Simplified using RetainPtr.
+        (-[WebHTMLView _setPrinting:minimumPageLogicalWidth:logicalHeight:originalPageWidth:originalPageHeight:maximumShrinkRatio:adjustViewSize:paginateScreenContent:]):
+        Simplified using a modern for loop and RetainPtr.
+        (-[WebHTMLView knowsPageRange:]): Simplified using RetainPtr.
+        (-[WebHTMLView keyDown:]): Ditto.
+        (-[WebHTMLView _selectionStartFontAttributesAsRTF]): Ditto.
+        (-[WebHTMLView performKeyEquivalent:]): Ditto.
+        (-[WebHTMLView _styleForAttributeChange:]): Ditto.
+        (-[WebHTMLView complete:]): Ditto.
+        (-[WebHTMLView _windowChangedKeyState]): Removed iOS-specific code since this method is
+        now macOS-only.
+        (-[WebHTMLView _selectionChanged]): Removed call to _updateSelectionForInputManager on
+        iOS since that is now macOS-only.
+        (-[WebHTMLView promisedDragTIFFDataSource]): Deleted.
+        (-[WebHTMLView _startAutoscrollTimer:]): Moved this into an internal category instead of
+        a private one because it is not used or needed outside WebKit. Also made it macOS-only
+        and reorganized to use early return.
+        (-[WebHTMLView _stopAutoscrollTimer]): Moved into internal category. It remains a no-op
+        on iOS, but kept there so we don't have to do #if at every call site.
+        (-[WebHTMLView _pluginController]): Moved into internal category.
+        (-[WebHTMLView validAttributesForMarkedText]): Simplified by removing CFRetain that was
+        there only for GC, using C++ initialization, removing obsolete comment.
+        (-[WebHTMLView _updateSelectionForInputManager]): Made this macOS-only and removed
+        peculiar iOS-only comment.
+        (+[NSURL _web_uniqueWebDataURL]): Simplified using [NSUUID UUID].
+
+        * WebView/WebHTMLViewInternal.h: Removed unused promisedDragTIFFDataSource method.
+        Made attachRootLayer:, detachRootLayer, _web_isDrawingIntoLayer,
+        _web_isDrawingIntoAcceleratedLayer all macOS-only. Moved _startAutoscrollTimer:,
+        _stopAutoscrollTimer, and _pluginController here from SPI header since they aren't
+        needed or used as SPI. And made _startAutoscrollTimer macOS-only.
+
+        * WebView/WebHTMLViewPrivate.h: Removed unneeded and unused SPI: _insideAnotherHTMLView,
+        _clearLastHitViewIfSelf, _pluginController, _startAutoscrollTimer:, and _stopAutoscrollTimer.
+        Made _transparentBackground and _setTransparentBackground: macOS-only. These probably
+        are not needed on macOS either, but I wasn't able to make absolutely sure I could remove
+        them at this time.
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy

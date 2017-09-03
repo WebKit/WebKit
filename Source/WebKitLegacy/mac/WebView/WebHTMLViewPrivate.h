@@ -37,7 +37,6 @@
 @class DOMDocumentFragment;
 @class DOMNode;
 @class DOMRange;
-@class WebPluginController;
 
 extern const float _WebHTMLViewPrintingMinimumShrinkFactor;
 extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
@@ -53,23 +52,21 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (void)close;
 
 #if !TARGET_OS_IPHONE
+
 // Modifier (flagsChanged) tracking SPI
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
 - (void)_updateMouseoverWithFakeEvent;
 
 - (void)_setAsideSubviews;
 - (void)_restoreSubviews;
-#endif
 
-- (BOOL)_insideAnotherHTMLView;
-- (void)_clearLastHitViewIfSelf;
-#if !TARGET_OS_IPHONE
 - (void)_updateMouseoverWithEvent:(NSEvent *)event;
 
 + (NSArray *)_insertablePasteboardTypes;
 + (NSString *)_dummyPasteboardType;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
+
 #endif
 
 - (void)_frameOrBoundsChanged;
@@ -77,18 +74,10 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 #if !TARGET_OS_IPHONE
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
 #endif
-- (WebPluginController *)_pluginController;
 
 // FIXME: _selectionRect is deprecated in favor of selectionRect, which is in protocol WebDocumentSelection.
 // We can't remove this yet because it's still in use by Mail.
 - (NSRect)_selectionRect;
-
-#if !TARGET_OS_IPHONE
-- (void)_startAutoscrollTimer:(NSEvent *)event;
-#else
-- (void)_startAutoscrollTimer:(WebEvent *)event;
-#endif
-- (void)_stopAutoscrollTimer;
 
 - (BOOL)_canEdit;
 - (BOOL)_canEditRichly;
@@ -97,12 +86,17 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_hasSelectionOrInsertionPoint;
 - (BOOL)_isEditable;
 
+#if !TARGET_OS_IPHONE
+
 - (BOOL)_transparentBackground;
 - (void)_setTransparentBackground:(BOOL)isBackgroundTransparent;
+
+#endif
 
 - (void)_setToolTip:(NSString *)string;
 
 #if !TARGET_OS_IPHONE
+
 // SPI used by Mail.
 // FIXME: These should all be moved to WebView; we won't always have a WebHTMLView.
 - (NSImage *)_selectionDraggingImage;
@@ -116,6 +110,7 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (DOMNode *)_increaseSelectionListLevelUnordered;
 - (void)_decreaseSelectionListLevel;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard forType:(NSString *)pboardType inContext:(DOMRange *)context subresources:(NSArray **)subresources;
+
 #endif
 
 #if ENABLE_NETSCAPE_PLUGIN_API
