@@ -566,6 +566,7 @@ platform/mac/fast/events/objc-event-api.html
 editing/pasteboard/datatransfer-items-drop-directoryReader.html
 editing/pasteboard/datatransfer-items-drop-directoryReader-error.html
 editing/pasteboard/datatransfer-items-drop-directoryReader-root.html
+editing/pasteboard/datatransfer-items-drop-fileEntry-file.html
 editing/pasteboard/datatransfer-items-drop-getAsEntry.html
 editing/pasteboard/datatransfer-items-drop-getDirectory.html
 editing/pasteboard/datatransfer-items-drop-getFile.html

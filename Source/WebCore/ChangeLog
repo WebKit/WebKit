@@ -1,3 +1,25 @@
+2017-09-02  Chris Dumez  <cdumez@apple.com>
+
+        Implement FileSystemFileEntry.file()
+        https://bugs.webkit.org/show_bug.cgi?id=176166
+        <rdar://problem/34187756>
+
+        Reviewed by Sam Weinig.
+
+        Implement FileSystemFileEntry.file():
+        - https://wicg.github.io/entries-api/#dom-filesystemfileentry-file
+
+        Test: editing/pasteboard/datatransfer-items-drop-fileEntry-file.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::validatePathIsExpectedType):
+        (WebCore::DOMFileSystem::listDirectory):
+        (WebCore::DOMFileSystem::getParent):
+        (WebCore::DOMFileSystem::getFile):
+        * Modules/entriesapi/DOMFileSystem.h:
+        * Modules/entriesapi/FileSystemFileEntry.cpp:
+        (WebCore::FileSystemFileEntry::file):
+
 2017-09-02  Andy Estes  <aestes@apple.com>
 
         [CA] Upstream QuartzCore-related WebKitSystemInterface functions
