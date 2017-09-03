@@ -1,3 +1,26 @@
+2017-09-02  Andy Estes  <aestes@apple.com>
+
+        [CA] Upstream QuartzCore-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176270
+
+        Reviewed by Tim Horton.
+
+        * Plugins/Hosted/NetscapePluginHostManager.mm:
+        (WebKit::NetscapePluginHostManager::spawnPluginHost):
+        * Plugins/Hosted/WebHostedNetscapePluginView.h:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (WebKit::SoftwareCARenderer::SoftwareCARenderer):
+        (WebKit::SoftwareCARenderer::~SoftwareCARenderer):
+        (WebKit::SoftwareCARenderer::context const):
+        (WebKit::SoftwareCARenderer::renderContext const):
+        (WebKit::SoftwareCARenderer::render):
+        (-[WebHostedNetscapePluginView createPlugin]):
+        (-[WebHostedNetscapePluginView createPluginLayer]):
+        (-[WebHostedNetscapePluginView destroyPlugin]):
+        (-[WebHostedNetscapePluginView drawRect:]):
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-01  Andy Estes  <aestes@apple.com>
 
         [CG] Upstream CoreGraphics-related WebKitSystemInterface functions

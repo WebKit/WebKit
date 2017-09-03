@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,6 +34,7 @@
 #import "WebNetscapePluginPackage.h"
 #import <WebCore/WebCoreNSStringExtras.h>
 #import <mach/mach_port.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/ServersSPI.h>
 #import <spawn.h>
 #import <wtf/Assertions.h>
@@ -107,7 +108,10 @@ bool NetscapePluginHostManager::spawnPluginHost(const String& pluginPath, cpu_ty
             return false;
     }
 
-    mach_port_t renderServerPort = WKInitializeRenderServer();
+    if (!CARenderServerStart())
+        return MACH_PORT_NULL;
+
+    mach_port_t renderServerPort = CARenderServerGetPort();
     if (renderServerPort == MACH_PORT_NULL)
         return false;
 

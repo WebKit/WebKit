@@ -36,13 +36,11 @@ void InitWebCoreSystemInterface(void)
     static dispatch_once_t initOnce;
     
     dispatch_once(&initOnce, ^{
-        INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
         INIT(CopyCONNECTProxyResponse);
 #if !PLATFORM(IOS)
         INIT(DrawBezeledTextArea);
         INIT(DrawMediaSliderTrack);
         INIT(DrawMediaUIPart);
-        INIT(GetNSEventKeyChar);
         INIT(HitTestMediaUIPart);
         INIT(MeasureMediaUIPart);
         INIT(QTIncludeOnlyModernMediaFileTypes);

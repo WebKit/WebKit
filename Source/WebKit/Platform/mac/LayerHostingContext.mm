@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 
 #import <WebCore/MachSendRight.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
@@ -38,8 +39,15 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForPort(const Ma
 {
     auto layerHostingContext = std::make_unique<LayerHostingContext>();
 
+    NSDictionary *options = @{
+        kCAContextPortNumber : @(serverPort.sendRight()),
+#if PLATFORM(MAC)
+        kCAContextCIFilterBehavior : @"ignore",
+#endif
+    };
+
     layerHostingContext->m_layerHostingMode = LayerHostingMode::InProcess;
-    layerHostingContext->m_context = (CAContext *)WKCAContextMakeRemoteWithServerPort(serverPort.sendRight());
+    layerHostingContext->m_context = [CAContext remoteContextWithOptions:options];
 
     return layerHostingContext;
 }
@@ -57,7 +65,7 @@ std::unique_ptr<LayerHostingContext> LayerHostingContext::createForExternalHosti
         kCAContextIgnoresHitTest : @YES,
         kCAContextDisplayId : @10000 }];
 #else
-    layerHostingContext->m_context = (CAContext *)WKCAContextMakeRemoteForWindowServer();
+    layerHostingContext->m_context = [CAContext contextWithCGSConnection:CGSMainConnectionID() options:@{ kCAContextCIFilterBehavior : @"ignore" }];
 #endif
     
     return layerHostingContext;

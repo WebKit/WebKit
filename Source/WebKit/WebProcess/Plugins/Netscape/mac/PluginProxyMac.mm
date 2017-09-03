@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@
 #import "PluginControllerProxyMessages.h"
 #import "PluginProcessConnection.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebKitSystemInterface.h>
 
 const static double fadeInDuration = 0.5;
@@ -40,7 +41,7 @@ namespace WebKit {
 
 static void makeRenderLayer(CALayer *pluginLayer, uint32_t layerHostingContextID)
 {
-    CALayer *renderLayer = WKMakeRenderLayer(layerHostingContextID);
+    CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerHostingContextID];
     [renderLayer setFrame:[pluginLayer bounds]];
     [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
     [pluginLayer setSublayers:[NSArray arrayWithObject:renderLayer]];

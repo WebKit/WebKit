@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +38,7 @@
 #import <WebCore/IOSurface.h>
 #import <WebCore/PlatformLayer.h>
 #import <WebCore/WebActionDisablingCALayerDelegate.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebKitSystemInterface.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 
@@ -261,7 +262,7 @@ LayerOrView *RemoteLayerTreeHost::createLayer(const RemoteLayerTreeTransaction::
     case PlatformCALayer::LayerTypeAVPlayerLayer:
     case PlatformCALayer::LayerTypeContentsProvidedLayer:
         if (!m_isDebugLayerTreeHost)
-            layer = WKMakeRenderLayer(properties.hostingContextID);
+            layer = [CALayer _web_renderLayerWithContextID:properties.hostingContextID];
         else
             layer = adoptNS([[CALayer alloc] init]);
         break;

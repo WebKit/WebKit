@@ -1,3 +1,23 @@
+2017-09-02  Andy Estes  <aestes@apple.com>
+
+        [CA] Upstream QuartzCore-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176270
+
+        Reviewed by Tim Horton.
+
+        * Platform/mac/LayerHostingContext.mm:
+        (WebKit::LayerHostingContext::createForPort):
+        (WebKit::LayerHostingContext::createForExternalHostingProcess):
+        * UIProcess/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::updateAcceleratedCompositingMode):
+        * UIProcess/mac/RemoteLayerTreeHost.mm:
+        (WebKit::RemoteLayerTreeHost::createLayer):
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::makeRenderLayer):
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-02  Tim Horton  <timothy_horton@apple.com>
 
         Move UI Process part of the Remote Layer Tree code out of a Mac-specific directory

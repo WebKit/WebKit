@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -69,6 +69,7 @@
 #import <WebCore/TextIndicatorWindow.h>
 #import <WebCore/TextUndoInsertionMarkupMac.h>
 #import <WebCore/ValidationBubble.h>
+#import <WebCore/WebCoreCALayerExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
@@ -481,7 +482,7 @@ void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& lay
 {
     ASSERT(!layerTreeContext.isEmpty());
 
-    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+    CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID];
     m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 
@@ -494,7 +495,7 @@ void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& la
 {
     ASSERT(!layerTreeContext.isEmpty());
 
-    CALayer *renderLayer = WKMakeRenderLayer(layerTreeContext.contextID);
+    CALayer *renderLayer = [CALayer _web_renderLayerWithContextID:layerTreeContext.contextID];
     m_impl->setAcceleratedCompositingRootLayer(renderLayer);
 }
 

@@ -23,14 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <CoreVideo/CoreVideo.h>
 #import <QuartzCore/QuartzCore.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/IOSurfaceSPI.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#include <QuartzCore/CABackingStore.h>
-#include <QuartzCore/CAColorMatrix.h>
-#include <QuartzCore/CARenderServer.h>
+#import <QuartzCore/CABackingStore.h>
+#import <QuartzCore/CAColorMatrix.h>
+#import <QuartzCore/CARenderServer.h>
 
 #ifdef __OBJC__
 
@@ -43,17 +45,27 @@
 #import <QuartzCore/CADisplay.h>
 #endif
 
+#if PLATFORM(MAC)
+#import <QuartzCore/CARenderCG.h>
+#endif
+
 #endif // __OBJC__
 
 #else
 
 #ifdef __OBJC__
+typedef struct _CARenderContext CARenderContext;
+
 @interface CAContext : NSObject
 @end
 
 @interface CAContext ()
 + (NSArray *)allContexts;
++ (CAContext *)localContext;
 + (CAContext *)remoteContextWithOptions:(NSDictionary *)dict;
+#if PLATFORM(MAC)
++ (CAContext *)contextWithCGSConnection:(CGSConnectionID)cid options:(NSDictionary *)dict;
+#endif
 + (id)objectForSlot:(uint32_t)name;
 - (uint32_t)createImageSlot:(CGSize)size hasAlpha:(BOOL)flag;
 - (void)deleteSlot:(uint32_t)name;
@@ -71,6 +83,7 @@
 @property (readonly) uint32_t contextId;
 @property (strong) CALayer *layer;
 @property CGColorSpaceRef colorSpace;
+@property (readonly) CARenderContext* renderContext;
 @end
 
 @interface CALayer ()
@@ -180,6 +193,19 @@ CFTypeID CAMachPortGetTypeID(void);
 
 void CABackingStoreCollectBlocking(void);
 
+typedef struct _CARenderCGContext CARenderCGContext;
+typedef struct _CARenderContext CARenderContext;
+typedef struct _CARenderUpdate CARenderUpdate;
+CARenderCGContext *CARenderCGNew(uint32_t feature_flags);
+CARenderUpdate* CARenderUpdateBegin(void* buffer, size_t, CFTimeInterval, const CVTimeStamp*, uint32_t finished_seed, const CGRect* bounds);
+bool CARenderServerStart();
+mach_port_t CARenderServerGetPort();
+void CARenderCGDestroy(CARenderCGContext*);
+void CARenderCGRender(CARenderCGContext*, CARenderUpdate*, CGContextRef);
+void CARenderUpdateAddContext(CARenderUpdate*, CARenderContext*);
+void CARenderUpdateAddRect(CARenderUpdate*, const CGRect*);
+void CARenderUpdateFinish(CARenderUpdate*);
+
 WTF_EXTERN_C_END
 
 extern NSString * const kCAFilterColorInvert;
@@ -204,9 +230,11 @@ extern NSString * const kCAFilterHardLightBlendMode;
 extern NSString * const kCAFilterDifferenceBlendMode;
 extern NSString * const kCAFilterExclusionBlendMode;
 
+extern NSString * const kCAContextCIFilterBehavior;
 extern NSString * const kCAContextDisplayName;
 extern NSString * const kCAContextDisplayId;
 extern NSString * const kCAContextIgnoresHitTest;
+extern NSString * const kCAContextPortNumber;
 
 #if PLATFORM(IOS)
 extern NSString * const kCAContentsFormatRGBA10XR;

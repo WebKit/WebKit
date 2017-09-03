@@ -30,7 +30,6 @@
 
 #import <Foundation/Foundation.h>
 
-void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
     float duration, unsigned state);
@@ -41,7 +40,6 @@ NSView *(*wkCreateMediaUIBackgroundView)(void);
 NSControl *(*wkCreateMediaUIControl)(int);
 NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response);
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
-UInt8 (*wkGetNSEventKeyChar)(NSEvent *);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
 void (*wkQTMovieDisableComponent)(uint32_t[5]);

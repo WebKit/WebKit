@@ -26,7 +26,6 @@
 #import "config.h"
 #import "WebCoreSystemInterface.h"
 
-WEBCORE_EXPORT void (*wkCALayerEnumerateRectsBeingDrawnWithBlock)(CALayer *, CGContextRef context, void (^block)(CGRect rect));
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 WEBCORE_EXPORT id (*wkCreateNSURLConnectionDelegateProxy)(void);
@@ -35,8 +34,6 @@ WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, 
 WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
-
-WEBCORE_EXPORT void(*wkDestroyRenderingResources)(void);
 
 WEBCORE_EXPORT bool (*wkCaptionAppearanceHasUserPreferences)(void);
 WEBCORE_EXPORT bool (*wkCaptionAppearanceShowCaptionsWhenAvailable)(void);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebCoreCALayerExtras_h
-#define WebCoreCALayerExtras_h
-
 #import <QuartzCore/QuartzCore.h>
 
 @interface CALayer (WebCoreCALayerExtras)
 
 - (void)web_disableAllActions;
++ (CALayer *)_web_renderLayerWithContextID:(uint32_t)contextID;
 
 @end
-
-#endif // WebCoreCALayerExtras_h

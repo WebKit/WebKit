@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1207,7 +1207,21 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::createCompatibleLayer(PlatformCALayer
 
 void PlatformCALayerCocoa::enumerateRectsBeingDrawn(CGContextRef context, void (^block)(CGRect))
 {
-    wkCALayerEnumerateRectsBeingDrawnWithBlock(m_layer.get(), context, block);
+    CGSRegionObj region = (CGSRegionObj)[m_layer regionBeingDrawn];
+    if (!region) {
+        block(CGContextGetClipBoundingBox(context));
+        return;
+    }
+
+    CGAffineTransform inverseTransform = CGAffineTransformInvert(CGContextGetCTM(context));
+    CGSRegionEnumeratorObj enumerator = CGSRegionEnumerator(region);
+    const CGRect* nextRect;
+    while ((nextRect = CGSNextRect(enumerator))) {
+        CGRect rectToDraw = CGRectApplyAffineTransform(*nextRect, inverseTransform);
+        block(rectToDraw);
+    }
+    
+    CGSReleaseRegionEnumerator(enumerator);
 }
 
 unsigned PlatformCALayerCocoa::backingStoreBytesPerPixel() const

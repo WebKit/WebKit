@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 
 #import "WebBaseNetscapePluginView.h"
 #import "WebKitSystemInterface.h"
-
 #import <wtf/RefPtr.h>
 
 namespace WebKit {
-    class HostedNetscapePluginStream;
-    class NetscapePluginInstanceProxy;
+class HostedNetscapePluginStream;
+class NetscapePluginInstanceProxy;
+class SoftwareCARenderer;
 }
 
 @interface WebHostedNetscapePluginView : WebBaseNetscapePluginView<WebPluginManualLoader>
@@ -42,7 +42,7 @@ namespace WebKit {
     
     RetainPtr<CALayer> _pluginLayer;
     BOOL _hostsLayersInWindowServer;
-    WKSoftwareCARendererRef _softwareRenderer;
+    std::unique_ptr<WebKit::SoftwareCARenderer> _softwareRenderer;
     
     NSSize _previousSize;
     RefPtr<WebKit::NetscapePluginInstanceProxy> _proxy;

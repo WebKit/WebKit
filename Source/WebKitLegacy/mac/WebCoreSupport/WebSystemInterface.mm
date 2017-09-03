@@ -42,13 +42,11 @@ void InitWebCoreSystemInterface(void)
     if (didInit)
         return;
 
-    INIT(CALayerEnumerateRectsBeingDrawnWithBlock);
     INIT(CopyCONNECTProxyResponse);
 #if !PLATFORM(IOS)
     INIT(DrawBezeledTextArea);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
-    INIT(GetNSEventKeyChar);
     INIT(HitTestMediaUIPart);
     INIT(MeasureMediaUIPart);
     INIT(CreateMediaUIBackgroundView);
