@@ -194,7 +194,21 @@ class Rewriter {
     {
         return node;
     }
-
+    
+    visitNullLiteral(node)
+    {
+        let result = new NullLiteral(node.origin);
+        result.type = node.type.visit(this);
+        return result;
+    }
+    
+    visitNullType(node)
+    {
+        let result = new NullType(node.origin);
+        result.type = node.type ? node.type.visit(this) : null;
+        return result;
+    }
+    
     visitCallExpression(node)
     {
         let result = new CallExpression(

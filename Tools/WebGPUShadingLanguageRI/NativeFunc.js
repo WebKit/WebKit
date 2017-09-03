@@ -32,9 +32,9 @@ class NativeFunc extends Func {
     
     get isNative() { return true; }
 
-    toString()
+    toDeclString()
     {
-        return "native " + super.toString();
+        return "native " + super.toDeclString();
     }
 }
 

@@ -94,7 +94,10 @@ class Evaluator extends Visitor {
     
     visitDereferenceExpression(node)
     {
-        return node.ptr.visit(this).loadValue();
+        let ptr = node.ptr.visit(this).loadValue();
+        if (!ptr)
+            throw new WTrapError(node.origin.originString, "Null dereference");
+        return ptr;
     }
     
     visitMakePtrExpression(node)
@@ -124,6 +127,11 @@ class Evaluator extends Visitor {
     visitUintLiteral(node)
     {
         return EPtr.box(node.value);
+    }
+    
+    visitNullLiteral(node)
+    {
+        return EPtr.box(null);
     }
     
     visitCallExpression(node)

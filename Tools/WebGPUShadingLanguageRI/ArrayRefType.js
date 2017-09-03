@@ -37,6 +37,8 @@ class ArrayRefType extends ReferenceType {
         }
         return this.elementType.unify(unificationContext, other.elementType);
     }
+    
+    get isArrayRef() { return true; }
 
     toString()
     {

@@ -24,18 +24,19 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    parse(program, "<stdlib>", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkLiteralTypes(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+// This phase is for asserting that the compiler didn't violate its internal constraints, so it
+// throws Error not WTypeError.
+//
+// The reason this phase exists is that in a compiler, we need literals like null and 0 to know their
+// exact type so that they know how many bytes they occupy and how to set their default value. For
+// example, null for ^ will probably take one pointer-sized word while null for [] will take two words
+// (one for base and one for length). The type checker is equipped to infer this, and this phase's job
+// is just to verify that the type checker succeeded.
+class LiteralTypeChecker extends Visitor {
+    visitNullType(node)
+    {
+        if (!node.type)
+            throw new Error("Null at " + node.origin.originString + " does not have type");
+    }
 }
 

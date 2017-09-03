@@ -25,9 +25,53 @@
 "use strict";
 
 class NullType extends Type {
-    // FIXME: This will have to behave like a type variable for the purposes of unification, so that
-    // it can be unified with any pointer type. Then, we can do a verification at the end to see if
-    // we got unified with a pointer type.
-    // https://bugs.webkit.org/show_bug.cgi?id=176235
+    constructor(origin)
+    {
+        super();
+        this._origin = origin;
+    }
+    
+    get origin() { return this._origin; }
+    
+    // For now we answer false for isPtr and isArrayRef because that happens to make all of the logic
+    // work. But, it's strange, since as a bottom type it really is the case that this is both isPtr and
+    // isArrayRef.
+    
+    get isPrimitive() { return true; }
+    get isUnifiable() { return true; }
+    
+    typeVariableUnify(unificationContext, other)
+    {
+        if (!(other instanceof Type))
+            return false;
+        
+        return this._typeVariableUnifyImpl(unificationContext, other);
+    }
+    
+    unifyImpl(unificationContext, other)
+    {
+        return this.typeVariableUnify(unificationContext, other);
+    }
+    
+    verifyAsArgument(unificationContext)
+    {
+        let realThis = unificationContext.find(this);
+        return realThis.isPtr || realThis.isArrayRef;
+    }
+    
+    verifyAsParameter(unificationContext)
+    {
+        throw new Error("NullType should never be used as a type parameter");
+    }
+    
+    commitUnification(unificationContext)
+    {
+        this.type = unificationContext.find(this);
+    }
+    
+    toString()
+    {
+        return "null";
+    }
 }
 

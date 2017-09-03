@@ -77,26 +77,39 @@ class UnificationContext {
         return result;
     }
     
+    typeParameters() { return this._typeParameters; }
+    *typeArguments()
+    {
+        for (let typeArgument of this.nodes) {
+            if (!typeArgument.isUnifiable)
+                continue;
+            if (this._typeParameters.has(typeArgument))
+                continue;
+            yield typeArgument;
+        }
+    }
+    
     verify()
     {
         for (let typeParameter of this._typeParameters) {
             if (!typeParameter.verifyAsParameter(this))
                 return false;
         }
-        for (let typeArgument of this.nodes) {
-            if (!typeArgument.isUnifiable)
-                continue;
-            if (this._typeParameters.has(typeArgument))
-                continue;
+        let numTypeVariableArguments = 0;
+        let argumentSet = new Set();
+        for (let typeArgument of this.typeArguments()) {
             if (!typeArgument.verifyAsArgument(this))
                 return false;
+            argumentSet.add(this.find(typeArgument));
+            numTypeVariableArguments++;
         }
-        return true;
+        return argumentSet.size == numTypeVariableArguments;
     }
     
-    isUnunified()
+    commit()
     {
-        return !this._nextMap.size;
+        for (let typeArgument of this.typeArguments())
+            typeArgument.commitUnification(this);
     }
 }
 

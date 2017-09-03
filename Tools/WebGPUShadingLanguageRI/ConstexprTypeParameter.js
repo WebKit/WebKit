@@ -45,16 +45,8 @@ class ConstexprTypeParameter extends Value {
 
         if (!this.type.unify(unificationContext, other.type))
             return false;
-
-        let realThis = unificationContext.find(this);
-        if (realThis != this)
-            return realThis.unify(unificationContext, other);
         
-        if (other instanceof VariableRef)
-            other = other.variable;
-        
-        unificationContext.unify(this, other);
-        return true;
+        return this._typeVariableUnifyImpl(unificationContext, other);
     }
     
     unifyImpl(unificationContext, other)

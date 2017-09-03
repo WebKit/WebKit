@@ -56,12 +56,8 @@ class TypeVariable extends Type {
     {
         if (!(other instanceof Type))
             return false;
-        let realThis = unificationContext.find(this);
-        if (realThis != this)
-            return realThis.unify(unificationContext, other);
         
-        unificationContext.union(this, other);
-        return true;
+        return this._typeVariableUnifyImpl(unificationContext, other);
     }
     
     unifyImpl(unificationContext, other)

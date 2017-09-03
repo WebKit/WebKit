@@ -80,6 +80,8 @@ class Intrinsics {
         let arrayElementPtr = func => {
             func.implementation = ([ref, index], node) => {
                 ref = ref.loadValue();
+                if (!ref)
+                    throw new WTrapError(node.origin.originString, "Null dereference");
                 index = index.loadValue();
                 if (index > ref.length)
                     throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);

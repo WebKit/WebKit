@@ -168,7 +168,7 @@ function parse(program, origin, lineNumberOffset, text)
     {
         let token;
         if (token = tryConsume("null"))
-            return new Null(token);
+            return new NullLiteral(token);
         if (token = tryConsumeKind("identifier"))
             return new VariableRef(token, token.text);
         if (token = tryConsumeKind("intLiteral")) {
@@ -260,7 +260,8 @@ function parse(program, origin, lineNumberOffset, text)
             addressSpaceConsumed = true;
             if (addressSpace)
                 return addressSpace;
-            return tryConsume(...addressSpaces);
+            addressSpace = consume(...addressSpaces);
+            return addressSpace;
         }
         
         while (token = tryConsume("^", "[")) {

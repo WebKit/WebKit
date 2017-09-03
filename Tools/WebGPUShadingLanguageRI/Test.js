@@ -24,7 +24,15 @@
  */
 "use strict";
 
-load("All.js");
+if (this.window) {
+    this.print = (text) => {
+        var span = document.createElement("span");
+        document.getElementById("messages").appendChild(span);
+        span.innerHTML = text + "<br>";
+    };
+    this.preciseTime = () => performance.now() / 1000;
+} else
+    load("All.js");
 
 function doPrep(code)
 {
@@ -376,7 +384,227 @@ function TEST_simpleUnreachableCode()
         (e) => e instanceof WTypeError);
 }
 
-let before = preciseTime();
+function TEST_doubleGenericCallsDoubleGeneric()
+{
+    doPrep(`
+        void foo<T, U>(T, U) { }
+        void bar<V, W>(V x, W y) { foo(x, y); }
+    `);
+}
+
+function TEST_doubleGenericCallsSingleGeneric()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<T>(T, T) { }
+            void bar<V, W>(V x, W y) { foo(x, y); }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_loadNull()
+{
+    checkFail(
+        () => doPrep(`
+            void sink<T>(T) { }
+            void foo() { sink(^null); }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
+}
+
+function TEST_storeNull()
+{
+    checkFail(
+        () => doPrep(`
+            void foo() { ^null = 42; }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
+}
+
+function TEST_returnNull()
+{
+    let program = doPrep(`
+        thread int^ foo() { return null; }
+    `);
+    let result = callFunction(program, "foo", [], []);
+    if (!result.type.isPtr)
+        throw new Error("Return type is not a pointer: " + result.type);
+    if (!result.type.elementType.equals(program.intrinsics.int32))
+        throw new Error("Return type is not a pointer to an int: " + result.type);
+    if (result.value != null)
+        throw new Error("Return value is not null: " + result.value);
+}
+
+function TEST_dereferenceDefaultNull()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            thread int^ p;
+            return ^p;
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_defaultInitializedNull()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            thread int^ p = null;;
+            return ^p;
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_passNullToPtrMonomorphic()
+{
+    let program = doPrep(`
+        int foo(thread int^ ptr)
+        {
+            return ^ptr;
+        }
+        int bar()
+        {
+            return foo(null);
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "bar", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_passNullToPtrPolymorphic()
+{
+    checkFail(
+        () => doPrep(`
+            T foo<T>(thread T^ ptr)
+            {
+                return ^ptr;
+            }
+            int bar()
+            {
+                return foo(null);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_passNullToPolymorphic()
+{
+    checkFail(
+        () => doPrep(`
+            T foo<T>(T ptr)
+            {
+                return ptr;
+            }
+            int bar()
+            {
+                return foo(null);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_loadNullArrayRef()
+{
+    checkFail(
+        () => doPrep(`
+            void sink<T>(T) { }
+            void foo() { sink(null[0u]); }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Did not find function for call") != -1);
+}
+
+function TEST_storeNullArrayRef()
+{
+    checkFail(
+        () => doPrep(`
+            void foo() { null[0u] = 42; }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Did not find function for call") != -1);
+}
+
+function TEST_returnNullArrayRef()
+{
+    let program = doPrep(`
+        thread int[] foo() { return null; }
+    `);
+    let result = callFunction(program, "foo", [], []);
+    if (!result.type.isArrayRef)
+        throw new Error("Return type is not an array reference: " + result.type);
+    if (!result.type.elementType.equals(program.intrinsics.int32))
+        throw new Error("Return type is not an int array reference: " + result.type);
+    if (result.value != null)
+        throw new Error("Return value is not null: " + result.value);
+}
+
+function TEST_dereferenceDefaultNullArrayRef()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            thread int[] p;
+            return p[0u];
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_defaultInitializedNullArrayRef()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            thread int[] p = null;
+            return p[0u];
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_passNullToPtrMonomorphicArrayRef()
+{
+    let program = doPrep(`
+        int foo(thread int[] ptr)
+        {
+            return ptr[0u];
+        }
+        int bar()
+        {
+            return foo(null);
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "bar", [], []),
+        (e) => e instanceof WTrapError);
+}
+
+function TEST_passNullToPtrPolymorphicArrayRef()
+{
+    checkFail(
+        () => doPrep(`
+            T foo<T>(thread T[] ptr)
+            {
+                return ptr[0u];
+            }
+            int bar()
+            {
+                return foo(null);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
 
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
@@ -391,15 +619,22 @@ if (this["arguments"]) {
     }
 }
 
+function doTest(object)
+{
+    let before = preciseTime();
 
-for (let s in this) {
-    if (s.startsWith("TEST_") && s.match(filter)) {
-        print(s + "...");
-        this[s]();
-        print("    OK!");
+    for (let s in object) {
+        if (s.startsWith("TEST_") && s.match(filter)) {
+            print(s + "...");
+            object[s]();
+            print("    OK!");
+        }
     }
+
+    let after = preciseTime();
+    
+    print("That took " + (after - before) * 1000 + " ms.");
 }
 
-let after = preciseTime();
-
-print("That took " + (after - before) * 1000 + " ms.");
+if (!this.window)
+    doTest(this);

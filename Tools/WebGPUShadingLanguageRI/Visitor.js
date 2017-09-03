@@ -25,6 +25,10 @@
 "use strict";
 
 class Visitor {
+    constructor()
+    {
+    }
+    
     visitProgram(node)
     {
         for (let statement of node.topLevelStatements)
@@ -204,6 +208,17 @@ class Visitor {
     
     visitUintLiteral(node)
     {
+    }
+    
+    visitNullLiteral(node)
+    {
+        node.type.visit(this);
+    }
+    
+    visitNullType(node)
+    {
+        if (node.type)
+            node.type.visit(this);
     }
     
     visitCallExpression(node)

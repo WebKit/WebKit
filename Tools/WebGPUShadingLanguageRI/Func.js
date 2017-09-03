@@ -44,9 +44,14 @@ class Func extends Node {
     
     get kind() { return Func; }
     
-    toString()
+    toDeclString()
     {
         return this.returnType + " " + this.name + "<" + this.typeParameters + ">(" + this.parameters + ")";
+    }
+    
+    toString()
+    {
+        return this.toDeclString();
     }
 }
 

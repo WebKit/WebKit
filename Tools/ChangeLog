@@ -1,3 +1,98 @@
+2017-09-02  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL NullType should be a special type variable so it can unify with any pointer type
+        https://bugs.webkit.org/show_bug.cgi?id=176235
+
+        Reviewed by Myles Maxfield.
+        
+        Null is just a type variable that plays by weird rules:
+        
+        - Other type variables don't recognize it, so if it's unified with T, it fails.
+        - It behaves like a type variable for pointer and array reference types.
+        - It arises only in argument (RHS) position.
+        - Once Checker finds it to be equals to something, we need to remember what that was.
+        
+        I refactored some of the type system code to allow for the possibility of type variables being
+        unified during equals() tests. It turns out that we were playing fast and loose here; I needed
+        to beef up UnificationContext.prototype.verify. I added tests for this.
+        
+        I added an equalsWithCommit() that triggers commitUnification(), which allows NullType to
+        remember what type it got unified with.
+        
+        NullLiteral then just instantiates its own NullType, which is what Checker uses as the type of
+        the NullLiteral. Everything else just works.
+        
+        This adds a bunch of tests to make sure we generate type errors in various weird cases while
+        also accepting a number of safe cases.
+        
+        I also added a way to run the tests in-browser.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/ArrayRefType.js:
+        (ArrayRefType.prototype.get isArrayRef):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/ConstexprTypeParameter.js:
+        (ConstexprTypeParameter.prototype.typeVariableUnify):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitDereferenceExpression):
+        (Evaluator.prototype.visitNullLiteral):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.toString):
+        (Func):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc.prototype.toDeclString):
+        (NativeFunc):
+        (NativeFunc.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance.prototype.toDeclString):
+        (NativeFuncInstance):
+        (NativeFuncInstance.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.unify):
+        (Node.prototype._typeVariableUnifyImpl):
+        (Node.prototype.equals):
+        * WebGPUShadingLanguageRI/NullLiteral.js: Added.
+        (NullLiteral):
+        (NullLiteral.prototype.toString):
+        * WebGPUShadingLanguageRI/NullType.js:
+        (NullType):
+        (NullType.prototype.get isPrimitive):
+        (NullType.prototype.get isUnifiable):
+        (NullType.prototype.typeVariableUnify):
+        (NullType.prototype.unifyImpl):
+        (NullType.prototype.verifyAsArgument):
+        (NullType.prototype.verifyAsParameter):
+        (NullType.prototype.toString):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        (parseType.getAddressSpace):
+        (parseType):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitNullLiteral):
+        * WebGPUShadingLanguageRI/Test.html: Added.
+        * WebGPUShadingLanguageRI/Test.js:
+        (this.window.this.print):
+        (TEST_doubleGenericCallsSingleGeneric):
+        (TEST_dereferenceDefaultNull):
+        (TEST_dereferenceDefaultNullArrayRef):
+        (doTest):
+        (let.s.in.this.s.startsWith.string_appeared_here.s.match): Deleted.
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isArrayRef):
+        * WebGPUShadingLanguageRI/TypeVariable.js:
+        (TypeVariable.prototype.typeVariableUnify):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext.prototype.verify):
+        (UnificationContext):
+        (UnificationContext.prototype.isUnunified): Deleted.
+        * WebGPUShadingLanguageRI/VariableRef.js:
+        (VariableRef.prototype.get unifyNode):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitNullLiteral):
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy

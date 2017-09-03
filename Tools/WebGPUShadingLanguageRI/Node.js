@@ -42,6 +42,8 @@ class Node {
             throw new Error("Null other");
         let unifyThis = this.unifyNode;
         let unifyOther = other.unifyNode;
+        if (unifyThis == unifyOther)
+            return true;
         if (unifyOther.typeVariableUnify(unificationContext, unifyThis))
             return true;
         return unifyThis.unifyImpl(unificationContext, unifyOther);
@@ -59,6 +61,19 @@ class Node {
         return false;
     }
     
+    _typeVariableUnifyImpl(unificationContext, other)
+    {
+        let realThis = unificationContext.find(this);
+        if (realThis != this)
+            return realThis.unify(unificationContext, other);
+        
+        unificationContext.union(this, other);
+        return true;
+    }
+    
+    // Most type variables don't care about this.
+    commitUnification(unificatoinContext) { }
+    
     get unifyNode() { return this; }
     get isUnifiable() { return false; }
     
@@ -67,7 +82,18 @@ class Node {
     equals(other)
     {
         let unificationContext = new UnificationContext();
-        return this.unify(unificationContext, other) && unificationContext.isUnunified();
+        if (this.unify(unificationContext, other) && unificationContext.verify())
+            return unificationContext;
+        return false;
+    }
+    
+    equalsWithCommit(other)
+    {
+        let unificationContext = this.equals(other);
+        if (!unificationContext)
+            return false;
+        unificationContext.commit();
+        return unificationContext;
     }
     
     substitute(parameters, argumentList)

@@ -80,7 +80,7 @@ class Checker extends Visitor {
                 if (!typeArguments[i].inherits(typeArguments[i]))
                     throw new WTypeError(origin.originString, "Type argument does not inherit protocol");
             } else {
-                if (!result.equals(typeParameters[i].type))
+                if (!result.equalsWithCommit(typeParameters[i].type))
                     throw new WTypeError(origin.originString, "Wrong type for constexpr");
             }
         }
@@ -116,7 +116,7 @@ class Checker extends Visitor {
         if (node.initializer) {
             let lhsType = node.type;
             let rhsType = node.initializer.visit(this);
-            if (!lhsType.equals(rhsType))
+            if (!lhsType.equalsWithCommit(rhsType))
                 throw new WTypeError(node.origin.originString, "Type mismatch in variable initialization: " + lhsType + " versus " + rhsType);
         }
     }
@@ -127,7 +127,7 @@ class Checker extends Visitor {
             throw new WTypeError(node.origin.originString, "LHS of assignment is not an LValue: " + node.lhs);
         let lhsType = node.lhs.visit(this);
         let rhsType = node.rhs.visit(this);
-        if (!lhsType.equals(rhsType))
+        if (!lhsType.equalsWithCommit(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
         node.type = lhsType;
         return lhsType;
@@ -164,12 +164,12 @@ class Checker extends Visitor {
             let resultType = node.value.visit(this);
             if (!resultType)
                 throw new Error("Null result type from " + node.value);
-            if (!node.func.returnType.equals(resultType))
+            if (!node.func.returnType.equalsWithCommit(resultType))
                 throw new WTypeError(node.origin.originString, "Trying to return " + resultType + " in a function that returns " + node.func.returnType);
             return;
         }
         
-        if (!node.func.returnType.equals(this._program.intrinsics.void))
+        if (!node.func.returnType.equalsWithCommit(this._program.intrinsics.void))
             throw new WTypeError(node.origin.originString, "Non-void function must return a value");
     }
     
@@ -184,6 +184,12 @@ class Checker extends Visitor {
     visitUintLiteral(node)
     {
         return this._program.intrinsics.uint32;
+    }
+    
+    visitNullLiteral(node)
+    {
+        // Return the null literal's type variable.
+        return node.type;
     }
     
     visitCommaExpression(node)
@@ -231,11 +237,19 @@ class Checker extends Visitor {
                 let message = "Did not find function for call";
                 if (failures.length) {
                     let stringifyFailure =
-                        failure => failure.func + " did not match because: " + failure.reason;
+                        failure => failure.func.toDeclString() + " did not match because: " + failure.reason;
                     message += ", but considered:\n" + failures.map(stringifyFailure).join("\n")
                 }
                 throw new WTypeError(node.origin.originString, message);
             }
+        }
+        for (let i = 0; i < argumentTypes.length; ++i) {
+            let argumentType = argumentTypes[i];
+            let parameterType = overload.func.parameters[i].type.substituteToUnification(
+                overload.func.typeParameters, overload.unificationContext);
+            let result = argumentType.equalsWithCommit(parameterType);
+            if (!result)
+                throw new Error("At " + node.origin.originString + " argument and parameter types not equal after type argument substitution: argument = " + argumentType + ", parameter = " + parameterType);
         }
         return node.resolve(overload);
     }

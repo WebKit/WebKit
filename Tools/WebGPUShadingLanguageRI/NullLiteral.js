@@ -24,18 +24,16 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    parse(program, "<stdlib>", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkLiteralTypes(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+class NullLiteral extends Expression {
+    constructor(origin)
+    {
+        super(origin);
+        this.type = new NullType(origin);
+    }
+    
+    toString()
+    {
+        return "null";
+    }
 }
 
