@@ -1,3 +1,27 @@
+2017-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Move shared part of the Remote Layer Tree code out of a Mac-specific directory
+        https://bugs.webkit.org/show_bug.cgi?id=176297
+
+        Reviewed by Dan Bernstein.
+
+        UI-side compositing works on all Cocoa platforms, so the code should
+        not live inside Mac/. Also merge the Scrolling directory in here,
+        since those files are very related.
+
+        * PlatformMac.cmake:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h: Renamed from Shared/mac/RemoteLayerBackingStore.h.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.mm: Renamed from Shared/mac/RemoteLayerBackingStore.mm.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h: Renamed from Shared/mac/RemoteLayerBackingStoreCollection.h.
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm: Renamed from Shared/mac/RemoteLayerBackingStoreCollection.mm.
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.h: Renamed from Shared/mac/RemoteLayerTreePropertyApplier.h.
+        * Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm: Renamed from Shared/mac/RemoteLayerTreePropertyApplier.mm.
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h: Renamed from Shared/mac/RemoteLayerTreeTransaction.h.
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm: Renamed from Shared/mac/RemoteLayerTreeTransaction.mm.
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp: Renamed from Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp.
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.h: Renamed from Shared/Scrolling/RemoteScrollingCoordinatorTransaction.h.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy

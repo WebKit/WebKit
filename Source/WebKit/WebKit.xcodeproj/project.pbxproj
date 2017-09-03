@@ -2284,8 +2284,8 @@
 		0F594795187B3B6000437857 /* RemoteScrollingCoordinatorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorProxy.h; sourceTree = "<group>"; };
 		0F594796187B3B6000437857 /* RemoteScrollingTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollingTree.cpp; sourceTree = "<group>"; };
 		0F594797187B3B6000437857 /* RemoteScrollingTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingTree.h; sourceTree = "<group>"; };
-		0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteScrollingCoordinatorTransaction.cpp; path = Scrolling/RemoteScrollingCoordinatorTransaction.cpp; sourceTree = "<group>"; };
-		0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoteScrollingCoordinatorTransaction.h; path = Scrolling/RemoteScrollingCoordinatorTransaction.h; sourceTree = "<group>"; };
+		0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollingCoordinatorTransaction.cpp; sourceTree = "<group>"; };
+		0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorTransaction.h; sourceTree = "<group>"; };
 		0F5947A5187B517600437857 /* RemoteScrollingCoordinatorMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteScrollingCoordinatorMessageReceiver.cpp; sourceTree = "<group>"; };
 		0F5947A6187B517600437857 /* RemoteScrollingCoordinatorMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteScrollingCoordinatorMessages.h; sourceTree = "<group>"; };
 		0F5E200118E77051003EC3E5 /* PlatformCAAnimationRemote.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformCAAnimationRemote.mm; sourceTree = "<group>"; };
@@ -4631,15 +4631,6 @@
 			tabWidth = 8;
 			usesTabs = 0;
 		};
-		0F5947A0187B3B7100437857 /* Scrolling */ = {
-			isa = PBXGroup;
-			children = (
-				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
-				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
-			);
-			name = Scrolling;
-			sourceTree = "<group>";
-		};
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -4952,7 +4943,7 @@
 				2DA944961884E4DA00ED86DB /* ios */,
 				BC111B5A112F628200337BAB /* mac */,
 				1AAE058C1279DCD400852418 /* Plugins */,
-				0F5947A0187B3B7100437857 /* Scrolling */,
+				2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */,
 				5118E99D1F29531F003EF9F5 /* Storage */,
 				1ABF43781A368035003FB0E6 /* WebsiteData */,
 				A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */,
@@ -5474,6 +5465,23 @@
 				2DC4CF7A1D2DE24B00ECCC94 /* WebPageCocoa.mm */,
 			);
 			path = Cocoa;
+			sourceTree = "<group>";
+		};
+		2D2E04761F5BEC4F00BB25ED /* RemoteLayerTree */ = {
+			isa = PBXGroup;
+			children = (
+				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
+				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
+				2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */,
+				2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */,
+				2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */,
+				2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */,
+				1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */,
+				1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */,
+				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
+				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
+			);
+			path = RemoteLayerTree;
 			sourceTree = "<group>";
 		};
 		2DA944961884E4DA00ED86DB /* ios */ = {
@@ -7313,14 +7321,6 @@
 				E19582D2153CBFD700B60875 /* PDFKitImports.h */,
 				E19582D4153CC05300B60875 /* PDFKitImports.mm */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
-				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
-				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
-				2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */,
-				2DDF731418E95060004F5A66 /* RemoteLayerBackingStoreCollection.mm */,
-				2DDE0AF818298CC900F97EAA /* RemoteLayerTreePropertyApplier.h */,
-				2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */,
-				1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */,
-				1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */,
 				1AAB4AA91296F1540023952F /* SandboxExtensionMac.mm */,
 				E1E552C216AE065E004ED653 /* SandboxInitialiationParametersMac.mm */,
 				E19BDA88193686A400B97F57 /* SandboxUtilities.h */,

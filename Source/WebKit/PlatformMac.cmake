@@ -121,7 +121,11 @@ list(APPEND WebKit2_SOURCES
 
     Shared/Plugins/mac/PluginSandboxProfile.mm
 
-    Shared/Scrolling/RemoteScrollingCoordinatorTransaction.cpp
+    Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
+    Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
+    Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
+    Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm
+    Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
 
     Shared/cf/ArgumentCodersCF.cpp
 
@@ -143,10 +147,6 @@ list(APPEND WebKit2_SOURCES
     Shared/mac/PDFKitImports.mm
     Shared/mac/PasteboardTypes.mm
     Shared/mac/PrintInfoMac.mm
-    Shared/mac/RemoteLayerBackingStore.mm
-    Shared/mac/RemoteLayerBackingStoreCollection.mm
-    Shared/mac/RemoteLayerTreePropertyApplier.mm
-    Shared/mac/RemoteLayerTreeTransaction.mm
     Shared/mac/SandboxExtensionMac.mm
     Shared/mac/SandboxInitialiationParametersMac.mm
     Shared/mac/SandboxUtilities.mm
