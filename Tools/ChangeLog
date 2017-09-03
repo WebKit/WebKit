@@ -1,3 +1,13 @@
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Have getFileMetadata() return a std::optional<FileMetadata>
+        https://bugs.webkit.org/show_bug.cgi?id=176293
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebCore/FileSystem.cpp:
+        (TestWebKitAPI::TEST_F):
+
 2017-09-02  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should support structs

@@ -1,3 +1,33 @@
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Have getFileMetadata() return a std::optional<FileMetadata>
+        https://bugs.webkit.org/show_bug.cgi?id=176293
+
+        Reviewed by Darin Adler.
+
+        Have getFileMetadata() return a std::optional<FileMetadata> instead of
+        using an out parameter for the metadata.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        (WebCore::validatePathIsExpectedType):
+        (WebCore::DOMFileSystem::getEntry):
+        * html/FileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        * platform/FileSystem.cpp:
+        (WebCore::fileIsDirectory):
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::getFileMetadata):
+        * platform/network/BlobDataFileReference.cpp:
+        (WebCore::BlobDataFileReference::startTrackingModifications):
+        * platform/network/mac/BlobDataFileReferenceMac.mm:
+        (WebCore::BlobDataFileReference::generateReplacementFile):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::getFileMetadata):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::getFileMetadata):
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Remove CanvasProxy

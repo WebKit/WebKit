@@ -128,15 +128,15 @@ TEST_F(FileSystemTest, FilesHaveSameVolume)
 
 TEST_F(FileSystemTest, GetFileMetadataSymlink)
 {
-    FileMetadata symlinkMetadata;
-    EXPECT_TRUE(getFileMetadata(tempFileSymlinkPath(), symlinkMetadata, ShouldFollowSymbolicLinks::No));
-    EXPECT_TRUE(symlinkMetadata.type == FileMetadata::TypeSymbolicLink);
-    EXPECT_FALSE(static_cast<size_t>(symlinkMetadata.length) == strlen(FileSystemTestData));
+    auto symlinkMetadata = fileMetadata(tempFileSymlinkPath());
+    ASSERT_TRUE(symlinkMetadata.has_value());
+    EXPECT_TRUE(symlinkMetadata.value().type == FileMetadata::Type::SymbolicLink);
+    EXPECT_FALSE(static_cast<size_t>(symlinkMetadata.value().length) == strlen(FileSystemTestData));
 
-    FileMetadata targetMetadata;
-    EXPECT_TRUE(getFileMetadata(tempFileSymlinkPath(), targetMetadata, ShouldFollowSymbolicLinks::Yes));
-    EXPECT_TRUE(targetMetadata.type == FileMetadata::TypeFile);
-    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata.length));
+    auto targetMetadata = fileMetadataFollowingSymlinks(tempFileSymlinkPath());
+    ASSERT_TRUE(targetMetadata.has_value());
+    EXPECT_TRUE(targetMetadata.value().type == FileMetadata::Type::File);
+    EXPECT_EQ(strlen(FileSystemTestData), static_cast<size_t>(targetMetadata.value().length));
 }
 
 }

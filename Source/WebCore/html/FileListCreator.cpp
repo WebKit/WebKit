@@ -42,17 +42,17 @@ FileListCreator::~FileListCreator()
 static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<RefPtr<File>>& fileObjects)
 {
     for (auto& childPath : listDirectory(directory, "*")) {
-        FileMetadata metadata;
-        if (!getFileMetadata(childPath, metadata, ShouldFollowSymbolicLinks::No))
+        auto metadata = fileMetadata(childPath);
+        if (!metadata)
             continue;
 
-        if (metadata.isHidden)
+        if (metadata.value().isHidden)
             continue;
 
         String childRelativePath = relativePath + "/" + pathGetFileName(childPath);
-        if (metadata.type == FileMetadata::TypeDirectory)
+        if (metadata.value().type == FileMetadata::Type::Directory)
             appendDirectoryFiles(childPath, childRelativePath, fileObjects);
-        else if (metadata.type == FileMetadata::TypeFile)
+        else if (metadata.value().type == FileMetadata::Type::File)
             fileObjects.append(File::createWithRelativePath(childPath, childRelativePath));
     }
 }

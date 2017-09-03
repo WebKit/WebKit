@@ -158,37 +158,61 @@ static String getFinalPathName(const String& path)
     return String::adopt(WTFMove(buffer));
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static inline isSymbolicLink(WIN32_FIND_DATAW findData)
 {
-    WIN32_FIND_DATAW findData;
-    if (!getFindData(path, findData))
-        return false;
+    return findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK;
+}
 
-    bool isSymbolicLink = findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK;
-    if (isSymbolicLink && shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
-        String targetPath = getFinalPathName(path);
-        if (targetPath.isNull())
-            return false;
-        if (!getFindData(targetPath, findData))
-            return false;
-        isSymbolicLink = false;
-    }
+static FileMetadata::Type toFileMetadataType(WIN32_FIND_DATAW findData)
+{
+    if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+        return FileMetadata::Type::Directory;
+    if (isSymbolicLink(findData))
+        return FileMetadata::Type::SymbolicLink;
+    return FileMetadata::Type::File;
+}
 
-    if (!getFileSizeFromFindData(findData, metadata.length))
-        return false;
+static std::optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findData)
+{
+    long long length;
+    if (!getFileSizeFromFindData(findData, length))
+        return std::nullopt;
 
     time_t modificationTime;
     getFileModificationTimeFromFindData(findData, modificationTime);
-    metadata.modificationTime = modificationTime;
-    metadata.isHidden = findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN;
-    if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-        metadata.type = FileMetadata::TypeDirectory;
-    else if (isSymbolicLink)
-        metadata.type = FileMetadata::TypeSymbolicLink;
-    else
-        metadata.type = FileMetadata::TypeFile;
 
-    return true;
+    return FileMetadata {
+        static_cast<double>(modificationTime),
+        length,
+        findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN,
+        toFileMetadataType(findData)
+    };
+}
+
+std::optional<FileMetadata> fileMetadata(const String& path)
+{
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
+        return std::nullopt;
+
+    return findDataToFileMetadata(findData);
+}
+
+std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+{
+    WIN32_FIND_DATAW findData;
+    if (!getFindData(path, findData))
+        return std::nullopt;
+
+    if (isSymbolicLink(findData)) {
+        String targetPath = getFinalPathName(path);
+        if (targetPath.isNull())
+            return std::nullopt;
+        if (!getFindData(targetPath, findData))
+            return std::nullopt;
+    }
+
+    return findDataToFileMetadata(findData);
 }
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)

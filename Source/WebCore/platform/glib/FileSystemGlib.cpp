@@ -164,29 +164,40 @@ bool getFileModificationTime(const String& path, time_t& modifiedTime)
     return true;
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static FileMetadata::Type toFileMetataType(GStatBuf statResult)
+{
+    if (S_ISDIR(statResult.st_mode))
+        return FileMetadata::Type::Directory;
+    if (S_ISLNK(statResult.st_mode))
+        return FileMetadata::Type::SymbolicLink;
+    return FileMetadata::Type::File;
+}
+
+static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path, bool (*statFunc)(const String&, GStatBuf*))
 {
     GStatBuf statResult;
-
-    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
-        if (!getFileStat(path, &statResult))
-            return false;
-    } else {
-        if (!getFileLStat(path, &statResult))
-            return false;
-    }
+    if (!statFunc(path, &statResult))
+        return std::nullopt;
 
     String filename = pathGetFileName(path);
-    metadata.isHidden = !filename.isEmpty() && filename[0] == '.';
-    metadata.modificationTime = statResult.st_mtime;
-    metadata.length = statResult.st_size;
-    if (S_ISDIR(statResult.st_mode))
-        metadata.type = FileMetadata::TypeDirectory;
-    else if (S_ISLNK(statResult.st_mode))
-        metadata.type = FileMetadata::TypeSymbolicLink;
-    else
-        metadata.type = FileMetadata::TypeFile;
-    return true;
+    bool isHidden = !filename.isEmpty() && filename[0] == '.';
+
+    return FileMetadata {
+        static_cast<double>(statResult.st_mtime),
+        statResult.st_size,
+        isHidden,
+        toFileMetataType(statResult)
+    };
+}
+
+std::optional<FileMetadata> fileMetadata(const String& path)
+{
+    return fileMetadataUsingFunction(path, &getFileLStat);
+}
+
+std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+{
+    return fileMetadataUsingFunction(path, &getFileStat);
 }
 
 String pathByAppendingComponent(const String& path, const String& component)

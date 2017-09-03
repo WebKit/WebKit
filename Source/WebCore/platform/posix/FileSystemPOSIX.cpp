@@ -239,35 +239,44 @@ bool getFileModificationTime(const String& path, time_t& result)
     return true;
 }
 
-bool getFileMetadata(const String& path, FileMetadata& metadata, ShouldFollowSymbolicLinks shouldFollowSymbolicLinks)
+static FileMetadata::Type toFileMetataType(struct stat fileInfo)
+{
+    if (S_ISDIR(fileInfo.st_mode))
+        return FileMetadata::Type::Directory;
+    if (S_ISLNK(fileInfo.st_mode))
+        return FileMetadata::Type::SymbolicLink;
+    return FileMetadata::Type::File;
+}
+
+static std::optional<FileMetadata> fileMetadataUsingFunction(const String& path, int (*statFunc)(const char*, struct stat*))
 {
     CString fsRep = fileSystemRepresentation(path);
 
     if (!fsRep.data() || fsRep.data()[0] == '\0')
-        return false;
+        return std::nullopt;
 
     struct stat fileInfo;
-
-    if (shouldFollowSymbolicLinks == ShouldFollowSymbolicLinks::Yes) {
-        if (stat(fsRep.data(), &fileInfo))
-            return false;
-    } else {
-        if (lstat(fsRep.data(), &fileInfo))
-            return false;
-    }
+    if (statFunc(fsRep.data(), &fileInfo))
+        return std::nullopt;
 
     String filename = pathGetFileName(path);
+    bool isHidden = !filename.isEmpty() && filename[0] == '.';
+    return FileMetadata {
+        static_cast<double>(fileInfo.st_mtime),
+        fileInfo.st_size,
+        isHidden,
+        toFileMetataType(fileInfo)
+    };
+}
 
-    metadata.modificationTime = fileInfo.st_mtime;
-    metadata.isHidden = !filename.isEmpty() && filename[0] == '.';
-    metadata.length = fileInfo.st_size;
-    if (S_ISDIR(fileInfo.st_mode))
-        metadata.type = FileMetadata::TypeDirectory;
-    else if (S_ISLNK(fileInfo.st_mode))
-        metadata.type = FileMetadata::TypeSymbolicLink;
-    else
-        metadata.type = FileMetadata::TypeFile;
-    return true;
+std::optional<FileMetadata> fileMetadata(const String& path)
+{
+    return fileMetadataUsingFunction(path, &lstat);
+}
+
+std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path)
+{
+    return fileMetadataUsingFunction(path, &stat);
 }
 
 bool createSymbolicLink(const String& targetPath, const String& symbolicLinkPath)

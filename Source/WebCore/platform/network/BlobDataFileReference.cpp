@@ -28,6 +28,7 @@
 
 #include "File.h"
 #include "FileMetadata.h"
+#include "FileSystem.h"
 
 namespace WebCore {
 
@@ -95,18 +96,18 @@ void BlobDataFileReference::startTrackingModifications()
 #endif
 
     // FIXME: Some platforms provide better ways to listen for file system object changes, consider using these.
-    FileMetadata metadata;
-    if (!getFileMetadata(m_path, metadata, ShouldFollowSymbolicLinks::Yes))
+    auto metadata = fileMetadataFollowingSymlinks(m_path);
+    if (!metadata)
         return;
 
-    m_expectedModificationTime = metadata.modificationTime;
+    m_expectedModificationTime = metadata.value().modificationTime;
 
 #if ENABLE(FILE_REPLACEMENT)
     if (m_replacementShouldBeGenerated)
         return;
 #endif
 
-    m_size = metadata.length;
+    m_size = metadata.value().length;
 }
 
 void BlobDataFileReference::prepareForFileAccess()

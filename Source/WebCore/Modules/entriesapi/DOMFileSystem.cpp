@@ -55,10 +55,10 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     Vector<ListedChild> listedChildren;
     listedChildren.reserveInitialCapacity(childPaths.size());
     for (auto& childPath : childPaths) {
-        FileMetadata metadata;
-        if (!getFileMetadata(childPath, metadata, ShouldFollowSymbolicLinks::No))
+        auto metadata = fileMetadata(childPath);
+        if (!metadata)
             continue;
-        listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.type });
+        listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.value().type });
     }
     return WTFMove(listedChildren);
 }
@@ -74,10 +74,10 @@ static ExceptionOr<Vector<Ref<FileSystemEntry>>> toFileSystemEntries(ScriptExecu
     for (auto& child : listedChildren.returnValue()) {
         String virtualPath = parentVirtualPath + "/" + child.filename;
         switch (child.type) {
-        case FileMetadata::TypeFile:
+        case FileMetadata::Type::File:
             entries.uncheckedAppend(FileSystemFileEntry::create(context, fileSystem, virtualPath));
             break;
-        case FileMetadata::TypeDirectory:
+        case FileMetadata::Type::Directory:
             entries.uncheckedAppend(FileSystemDirectoryEntry::create(context, fileSystem, virtualPath));
             break;
         default:
@@ -163,11 +163,11 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 {
     ASSERT(!isMainThread());
 
-    FileMetadata metadata;
-    if (!getFileMetadata(fullPath, metadata, ShouldFollowSymbolicLinks::No))
+    auto metadata = fileMetadata(fullPath);
+    if (!metadata)
         return Exception { NotFoundError, ASCIILiteral("Path does not exist") };
 
-    if (metadata.type != expectedType)
+    if (metadata.value().type != expectedType)
         return Exception { TypeMismatchError, "Entry at path does not have expected type" };
 
     return WTFMove(virtualPath);
@@ -256,7 +256,7 @@ void DOMFileSystem::getParent(ScriptExecutionContext& context, FileSystemEntry& 
     ASSERT(virtualPath[0] == '/');
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::TypeDirectory);
+        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::Directory);
         callOnMainThread([this, context = WTFMove(context), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
@@ -297,14 +297,19 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
     }
 
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        FileMetadata metadata;
-        getFileMetadata(fullPath, metadata, ShouldFollowSymbolicLinks::No);
-        callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType = metadata.type, completionCallback = WTFMove(completionCallback)]() mutable {
-            switch (entryType) {
-            case FileMetadata::TypeDirectory:
+        std::optional<FileMetadata::Type> entryType;
+        if (auto metadata = fileMetadata(fullPath))
+            entryType = metadata.value().type;
+        callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
+            if (!entryType) {
+                completionCallback(Exception { NotFoundError, ASCIILiteral("Cannot find entry at given path") });
+                return;
+            }
+            switch (entryType.value()) {
+            case FileMetadata::Type::Directory:
                 completionCallback(Ref<FileSystemEntry> { FileSystemDirectoryEntry::create(context, *this, resolvedVirtualPath) });
                 break;
-            case FileMetadata::TypeFile:
+            case FileMetadata::Type::File:
                 completionCallback(Ref<FileSystemEntry> { FileSystemFileEntry::create(context, *this, resolvedVirtualPath) });
                 break;
             default:
@@ -320,7 +325,7 @@ void DOMFileSystem::getFile(ScriptExecutionContext& context, FileSystemFileEntry
     auto virtualPath = fileEntry.virtualPath();
     auto fullPath = evaluatePath(virtualPath);
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), virtualPath = crossThreadCopy(virtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::TypeFile);
+        auto validatedVirtualPath = validatePathIsExpectedType(fullPath, WTFMove(virtualPath), FileMetadata::Type::File);
         callOnMainThread([this, context = WTFMove(context), fullPath = crossThreadCopy(fullPath), validatedVirtualPath = crossThreadCopy(validatedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
             if (validatedVirtualPath.hasException())
                 completionCallback(validatedVirtualPath.releaseException());
