@@ -220,6 +220,7 @@ class Post(AbstractPatchUploadingCommand):
         steps.SuggestReviewers,
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
+        steps.SubmitToEWS,
     ]
 
 
