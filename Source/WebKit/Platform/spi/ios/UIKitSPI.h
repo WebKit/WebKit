@@ -90,6 +90,7 @@
 #if ENABLE(DRAG_SUPPORT)
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragInteraction_Private.h>
+#import <UIKit/UIDragItem_Private.h>
 #import <UIKit/UIDragPreviewParameters.h>
 #import <UIKit/UIDragPreview_Private.h>
 #import <UIKit/UIDragSession.h>
@@ -897,6 +898,10 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 
 @interface UIDragInteraction ()
 @property (nonatomic, assign, getter=_liftDelay, setter=_setLiftDelay:) NSTimeInterval liftDelay;
+@end
+
+@interface UIDragItem ()
+@property (nonatomic, strong, nullable, setter=_setPrivateLocalContext:, getter=_privateLocalContext) id privateLocalContext;
 @end
 
 @protocol UITextInput;

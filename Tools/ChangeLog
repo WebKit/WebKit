@@ -1,3 +1,28 @@
+2017-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Refactor drag and drop logic in WKContentView in preparation for supporting multiple drag items in a drag session
+        https://bugs.webkit.org/show_bug.cgi?id=176264
+        <rdar://problem/31144674>
+
+        Reviewed by Darin Adler.
+
+        Adds two new iOS drag and drop tests to check that the clientX and clientY attributes of mouse events propagated
+        to the page during drop are correct. Each test drags from an image element and drops into three custom-drop-
+        handling elements; `dragenter`, `dragover`, and `drop` event listeners on the body then use the clientX and
+        clientY event attributes to hit-test for drop target elements. The first test is suffixed with "-Basic"; the
+        second test, suffixed with "-WithScrollOffset", makes the document scrollable to check that clientY is correct
+        when scrolled.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/drop-targets.html: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::testDragAndDropOntoTargetElements):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView stringByEvaluatingJavaScript:]):
+
+        Log a warning message when an API test fails due to JavaScript evaluation in TestWKWebView.
+
 2017-09-03  Filip Pizlo  <fpizlo@apple.com>
 
         WSL IntLiteral should have variable type so that it can unify with things like uint

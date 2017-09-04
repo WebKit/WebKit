@@ -246,6 +246,8 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
         evalResult = [[NSString alloc] initWithFormat:@"%@", result];
         isWaitingForJavaScript = true;
         EXPECT_TRUE(!error);
+        if (error)
+            NSLog(@"Encountered error: %@ while evaluating script: %@", error, script);
     }];
 
     TestWebKitAPI::Util::run(&isWaitingForJavaScript);

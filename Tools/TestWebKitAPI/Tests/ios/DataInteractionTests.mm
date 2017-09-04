@@ -1076,6 +1076,62 @@ TEST(DataInteractionTests, CancelledLiftDoesNotCauseSubsequentDragsToFail)
     checkStringArraysAreEqual(@[@"dragstart", @"dragend"], [outputText componentsSeparatedByString:@" "]);
 }
 
+static void testDragAndDropOntoTargetElements(TestWKWebView *webView)
+{
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView]);
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 250)];
+    EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(target1).backgroundColor"]);
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target1.textContent"]);
+
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(250, 50)];
+    EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(target2).backgroundColor"]);
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target2.textContent"]);
+
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(250, 250)];
+    EXPECT_WK_STREQ("rgb(0, 128, 0)", [webView stringByEvaluatingJavaScript:@"getComputedStyle(target3).backgroundColor"]);
+    EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target3.textContent"]);
+}
+
+TEST(DataInteractionTests, DragEventClientCoordinatesBasic)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
+
+    testDragAndDropOntoTargetElements(webView.get());
+}
+
+TEST(DataInteractionTests, DragEventClientCoordinatesWithScrollOffset)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style.margin = '1000px 0'"];
+    [webView stringByEvaluatingJavaScript:@"document.scrollingElement.scrollTop = 1000"];
+    [webView waitForNextPresentationUpdate];
+
+    testDragAndDropOntoTargetElements(webView.get());
+}
+
+TEST(DataInteractionTests, DragEventPageCoordinatesBasic)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
+    [webView stringByEvaluatingJavaScript:@"window.usePageCoordinates = true"];
+
+    testDragAndDropOntoTargetElements(webView.get());
+}
+
+TEST(DataInteractionTests, DragEventPageCoordinatesWithScrollOffset)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"drop-targets"];
+    [webView stringByEvaluatingJavaScript:@"document.body.style.margin = '1000px 0'"];
+    [webView stringByEvaluatingJavaScript:@"document.scrollingElement.scrollTop = 1000"];
+    [webView stringByEvaluatingJavaScript:@"window.usePageCoordinates = true"];
+    [webView waitForNextPresentationUpdate];
+
+    testDragAndDropOntoTargetElements(webView.get());
+}
+
 TEST(DataInteractionTests, DoNotCrashWhenSelectionIsClearedInDragStart)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

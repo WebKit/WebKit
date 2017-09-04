@@ -28,6 +28,7 @@
 #import "WKContentView.h"
 
 #import "AssistedNodeInformation.h"
+#import "DragDropInteractionState.h"
 #import "EditorState.h"
 #import "GestureTypes.h"
 #import "InteractionInformationAtPosition.h"
@@ -39,7 +40,6 @@
 #import "WKSyntheticClickTapGestureRecognizer.h"
 #import <UIKit/UIView.h>
 #import <WebCore/Color.h>
-#import <WebCore/DragActions.h>
 #import <WebCore/FloatQuad.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Forward.h>
@@ -117,33 +117,6 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
     M(toggleUnderline)
 
 namespace WebKit {
-
-#if ENABLE(DRAG_SUPPORT)
-
-struct WKDataInteractionState {
-    RetainPtr<UIImage> image;
-    std::optional<WebCore::TextIndicatorData> indicatorData;
-    CGPoint adjustedOrigin { CGPointZero };
-    CGPoint lastGlobalPosition { CGPointZero };
-    CGRect elementBounds { CGRectZero };
-    BOOL didBeginDragging { NO };
-    BOOL isPerformingOperation { NO };
-    BOOL isAnimatingConcludeEditDrag { NO };
-    BOOL shouldRestoreCalloutBar { NO };
-    RetainPtr<id <UIDragSession>> dragSession;
-    RetainPtr<id <UIDropSession>> dropSession;
-    BlockPtr<void()> dragStartCompletionBlock;
-    BlockPtr<void()> dragCancelSetDownBlock;
-    WebCore::DragSourceAction sourceAction { WebCore::DragSourceActionNone };
-
-    String linkTitle;
-    WebCore::URL linkURL;
-
-    RetainPtr<UIView> visibleContentViewSnapshot;
-    RetainPtr<_UITextDragCaretView> caretView;
-};
-
-#endif // ENABLE(DRAG_SUPPORT)
 
 struct WKSelectionDrawingInfo {
     enum class SelectionType { None, Plugin, Range };
@@ -256,9 +229,13 @@ struct WKAutoCorrectionData {
     BOOL _needsDeferredEndScrollingSelectionUpdate;
 
 #if ENABLE(DATA_INTERACTION)
-    WebKit::WKDataInteractionState _dataInteractionState;
-    RetainPtr<UIDragInteraction> _dataInteraction;
-    RetainPtr<UIDropInteraction> _dataOperation;
+    WebKit::DragDropInteractionState _dragDropInteractionState;
+    RetainPtr<UIDragInteraction> _dragInteraction;
+    RetainPtr<UIDropInteraction> _dropInteraction;
+    BOOL _shouldRestoreCalloutBarAfterDrop;
+    BOOL _isAnimatingConcludeEditDrag;
+    RetainPtr<UIView> _visibleContentViewSnapshot;
+    RetainPtr<_UITextDragCaretView> _editDropCaretView;
 #endif
 }
 

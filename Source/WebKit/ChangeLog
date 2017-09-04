@@ -1,3 +1,126 @@
+2017-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Refactor drag and drop logic in WKContentView in preparation for supporting multiple drag items in a drag session
+        https://bugs.webkit.org/show_bug.cgi?id=176264
+        <rdar://problem/31144674>
+
+        Reviewed by Darin Adler.
+
+        Move DataInteractionState from WKContentViewInteraction.h to DragDropInteractionState.h, and also rename it to
+        DragDropInteractionState. Additionally, refactor drag and drop state in the UI process to capture metadata about
+        the dragged element in a separate DragSourceState struct. This patch also moves drag and drop state transition
+        logic that doesn't involve WKContentView internals out of WKContentView, and into the implementation of
+        DragDropInteractionState.
+
+        To support multiple drag items per session, we also introduce a simple mechanism to trace a UIDragItem back to
+        the DragSourceState used to generate it. When generating a DragSourceState, we assign it a unique identifier,
+        which we also set as the privateLocalContext of all UIDragItems generated when beginning the drag (this
+        includes drag items returned by an internal client that uses one of the SPI hooks to augment drag items when
+        starting a drag). This is subsequently used in the implementation of lift and cancellation preview delegate
+        methods to supply the appropriate drag preview for each UIDragItem.
+
+        Lastly, fix a bug wherein the pageX and pageY of mouse drag events are inconsistent with other synthetic mouse
+        events, such as synthetic clicks. For synthetic clicks, the PlatformMouseEvent is initialized with the same
+        position and globalPosition. Whether this is really intended is unclear (see http://webkit.org/b/173855), but
+        it's a trivial change for now to keep mouse events on iOS consistent by tweaking the behavior during drag and
+        drop. See Tools/ChangeLog for some more information.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
+        Add -[UIDragItem privateLocalContext].
+
+        * UIProcess/ios/DragDropInteractionState.h: Added.
+        (WebKit::DragDropInteractionState::stagedDragSource const):
+        (WebKit::DragDropInteractionState::dropSessionDidExit):
+        (WebKit::DragDropInteractionState::dropSessionWillPerformDrop):
+        (WebKit::DragDropInteractionState::adjustedPositionForDragEnd const):
+        (WebKit::DragDropInteractionState::didBeginDragging const):
+        (WebKit::DragDropInteractionState::isPerformingDrop const):
+        (WebKit::DragDropInteractionState::dragSession const):
+        (WebKit::DragDropInteractionState::dropSession const):
+
+        Wrap private drag/drop state member variables behind const getters, and move drag and drop logic that involves
+        only the DragDropInteractionState into helper methods on DragDropInteractionState.
+
+        (WebKit::DragDropInteractionState::BlockPtr<void):
+        * UIProcess/ios/DragDropInteractionState.mm: Added.
+        (WebKit::dragItemMatchingIdentifier):
+        (WebKit::createTargetedDragPreview):
+        (WebKit::uiImageForImage):
+
+        Move drag preview creation logic here, from WKContentViewInteraction.mm.
+
+        (WebKit::shouldUseTextIndicatorToCreatePreviewForDragAction):
+        (WebKit::DragDropInteractionState::activeDragSourceForItem const):
+        (WebKit::DragDropInteractionState::anyActiveDragSourceIs const):
+        (WebKit::DragDropInteractionState::prepareForDragSession):
+        (WebKit::DragDropInteractionState::dragSessionWillBegin):
+        (WebKit::DragDropInteractionState::previewForDragItem const):
+        (WebKit::DragDropInteractionState::dragSessionWillDelaySetDownAnimation):
+        (WebKit::DragDropInteractionState::dropSessionDidEnterOrUpdate):
+        (WebKit::DragDropInteractionState::stageDragItem):
+        (WebKit::DragDropInteractionState::hasStagedDragSource const):
+        (WebKit::DragDropInteractionState::clearStagedDragSource):
+        (WebKit::DragDropInteractionState::dragAndDropSessionsDidEnd):
+        (WebKit::DragDropInteractionState::updatePreviewsForActiveDragSources):
+        * UIProcess/ios/WKContentViewInteraction.h:
+
+        Move drag-and-drop-related state tied to the WKContentView here, from DataInteractionState (for instance, the
+        UIView for the drop caret, the WKContentView snapshot when dropping, and a flag use to keep track of hiding the
+        callout bar when dragging a text selection).
+
+        (): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _startAssistingNode:userIsInteracting:blurPreviousNode:userObject:]):
+        (-[WKContentView actionSheetAssistant:showCustomSheetForElement:]):
+        (-[WKContentView _didChangeDragInteractionPolicy]):
+        (-[WKContentView setupDataInteractionDelegates]):
+        (-[WKContentView teardownDataInteractionDelegates]):
+        (-[WKContentView _startDrag:item:]):
+        (-[WKContentView _didHandleStartDataInteractionRequest:]):
+        (-[WKContentView computeClientAndGlobalPointsForDropSession:outClientPoint:outGlobalPoint:]):
+        (-[WKContentView cleanUpDragSourceSessionState]):
+        (-[WKContentView _didConcludeEditDataInteraction:]):
+        (-[WKContentView _didPerformDataInteractionControllerOperation:]):
+        (-[WKContentView _didChangeDataInteractionCaretRect:currentRect:]):
+        (-[WKContentView currentDragOrDropSession]):
+        (-[WKContentView _restoreCalloutBarIfNeeded]):
+        (-[WKContentView _dragInteraction:prepareForSession:completion:]):
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+        (-[WKContentView dragInteraction:previewForLiftingItem:session:]):
+        (-[WKContentView dragInteraction:willAnimateLiftWithAnimator:session:]):
+        (-[WKContentView dragInteraction:sessionWillBegin:]):
+        (-[WKContentView dragInteraction:session:didEndWithOperation:]):
+        (-[WKContentView dragInteraction:previewForCancellingItem:withDefault:]):
+        (-[WKContentView _dragInteraction:item:shouldDelaySetDownAnimationWithCompletion:]):
+        (-[WKContentView dragInteraction:item:willAnimateCancelWithAnimator:]):
+        (-[WKContentView dropInteraction:sessionDidEnter:]):
+        (-[WKContentView dropInteraction:sessionDidUpdate:]):
+        (-[WKContentView dropInteraction:sessionDidExit:]):
+        (-[WKContentView dropInteraction:performDrop:]):
+        (-[WKContentView dropInteraction:sessionDidEnd:]):
+
+        Pull out logic that mutates drag and drop state into DragDropInteractionState. Adjust places that previously
+        accessed DataInteractionState's members directly with corresponding getters in DragDropInteractionState.
+
+        (-[WKContentView _simulateDataInteractionEntered:]):
+        (-[WKContentView _simulateDataInteractionUpdated:]):
+        (-[WKContentView _simulateDataInteractionEnded:]):
+        (-[WKContentView _simulateDataInteractionPerformOperation:]):
+        (-[WKContentView _simulateDataInteractionSessionDidEnd:]):
+        (-[WKContentView _simulateWillBeginDataInteractionWithSession:]):
+        (-[WKContentView _simulatedItemsForSession:]):
+        (-[WKContentView _simulatePrepareForDataInteractionSession:completion:]):
+
+        Rename _dataInteraction => _dragInteraction and _dataOperation => _dropInteraction.
+
+        (uiImageForImage): Deleted.
+        (shouldUseTextIndicatorToCreatePreviewForDragAction): Deleted.
+        (-[WKContentView dragPreviewForImage:frameInRootViewCoordinates:clippingRectsInFrameCoordinates:backgroundColor:]): Deleted.
+        (-[WKContentView dragPreviewForCurrentDataInteractionState]): Deleted.
+        (-[WKContentView _transitionDragPreviewToImageIfNecessary:]): Deleted.
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Threaded Compositor] Deadlock in ThreadedDisplayRefreshMonitor

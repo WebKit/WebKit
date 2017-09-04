@@ -207,7 +207,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     RetainPtr<NSArray> _cachedTypeIdentifiers;
     RetainPtr<NSArray> _typeToFileURLMaps;
     RetainPtr<NSArray> _supportedTypeIdentifiers;
-    RetainPtr<NSArray> _registrationInfoLists;
+    RetainPtr<WebItemProviderRegistrationInfoList> _stagedRegistrationInfoList;
 }
 
 + (instancetype)sharedInstance
@@ -228,7 +228,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
         _pendingOperationCount = 0;
         _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
         _supportedTypeIdentifiers = nil;
-        _registrationInfoLists = nil;
+        _stagedRegistrationInfoList = nil;
     }
     return self;
 }
@@ -277,7 +277,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
-    _registrationInfoLists = nil;
+    _stagedRegistrationInfoList = nil;
 
     NSMutableArray *typeToFileURLMaps = [NSMutableArray arrayWithCapacity:itemProviders.count];
     [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
@@ -515,11 +515,6 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     dispatch_group_notify(fileLoadingGroup.get(), dispatch_get_main_queue(), itemLoadCompletion);
 }
 
-- (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index
-{
-    return index < [_registrationInfoLists count] ? [_registrationInfoLists objectAtIndex:index] : nil;
-}
-
 - (UIItemProvider *)itemProviderAtIndex:(NSUInteger)index
 {
     return index < [_itemProviders count] ? [_itemProviders objectAtIndex:index] : nil;
@@ -545,9 +540,16 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     [_itemProviders enumerateObjectsUsingBlock:block];
 }
 
-- (void)setRegistrationInfoLists:(NSArray <WebItemProviderRegistrationInfoList *> *)infoLists
+- (void)stageRegistrationList:(nullable WebItemProviderRegistrationInfoList *)info
 {
-    _registrationInfoLists = infoLists;
+    _stagedRegistrationInfoList = info.numberOfItems ? info : nil;
+}
+
+- (WebItemProviderRegistrationInfoList *)takeRegistrationList
+{
+    auto stagedRegistrationInfoList = _stagedRegistrationInfoList;
+    _stagedRegistrationInfoList = nil;
+    return stagedRegistrationInfoList.autorelease();
 }
 
 @end

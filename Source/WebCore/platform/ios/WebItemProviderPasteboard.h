@@ -76,10 +76,6 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 
 + (instancetype)sharedInstance;
 
-// Registration info lists are only available upon starting data interaction.
-- (WebItemProviderRegistrationInfoList *)registrationInfoAtIndex:(NSUInteger)index;
-- (UIItemProvider *)itemProviderAtIndex:(NSUInteger)index;
-
 @property (copy, nonatomic, nullable) NSArray<__kindof NSItemProvider *> *itemProviders;
 @property (readonly, nonatomic) NSInteger numberOfItems;
 @property (readonly, nonatomic) NSInteger changeCount;

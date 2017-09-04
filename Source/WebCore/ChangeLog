@@ -1,3 +1,57 @@
+2017-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Refactor drag and drop logic in WKContentView in preparation for supporting multiple drag items in a drag session
+        https://bugs.webkit.org/show_bug.cgi?id=176264
+        <rdar://problem/31144674>
+
+        Reviewed by Darin Adler.
+
+        Makes some small adjustments to WebItemProviderPasteboard. Rather than just -setItemProviders: on the
+        WebItemProviderPasteboard when initiating a drag, also stage the WebItemProviderRegistrationList that will be
+        used to generate an item provider. While it would be cleaner to avoid directly setting item providers so we
+        don't overwrite item providers on the WebItemProviderPasteboard when adding items to an existing drag session,
+        this isn't possible without breaking binary compability with older UIKit versions.
+
+        Importantly, WKContentView will now ignore any item providers that have been set on the
+        WebItemProviderPasteboard when initiating a drag or adding items to an existing drag session, and instead only
+        consider the staged registration list when generating item providers for dragging. This only has the drawback of
+        generating an unnecessary item provider, but otherwise maintains backwards compatibility while allowing us to
+        provide WebKit2 support for multiple items per drag session.
+
+        Tests: DataInteractionTests.DragEventClientCoordinatesBasic
+               DataInteractionTests.DragEventClientCoordinatesWithScrollOffset
+               DataInteractionTests.DragEventPageCoordinatesBasic
+               DataInteractionTests.DragEventPageCoordinatesWithScrollOffset
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::registerItemToPasteboard):
+
+        Changed to only stage registration info on the item provider pasteboard, if possible. This has no effect on the
+        copy/paste codepath, since it uses a UIPasteboard.
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+
+        Rename _registrationInfoLists to _stagedRegistrationInfoList, and change it from an array of registration info
+        lists to a single registration info list. This could be updated in the future to be an array of registration
+        lists, but currently, it serves no purpose and makes coordination with DragItem info more difficult. This would
+        need to support multiple registration lists if we are to add a way to begin a drag containing multiple items in
+        vanilla web content, such as dragging multiple selections.
+
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard stageRegistrationList:]):
+
+        Sets the staged item provider registration list.
+
+        (-[WebItemProviderPasteboard takeRegistrationList]):
+
+        Removes the staged item provider registration list from the WebItemProviderPasteboard and also returns it.
+
+        (-[WebItemProviderPasteboard registrationInfoAtIndex:]): Deleted.
+        (-[WebItemProviderPasteboard setRegistrationInfoLists:]): Deleted.
+
 2017-09-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r221494 and r221500.

@@ -179,15 +179,13 @@ static NSString *webIOSPastePboardType = @"iOS rich content paste pasteboard typ
 
 static void registerItemToPasteboard(WebItemProviderRegistrationInfoList *representationsToRegister, id <AbstractPasteboard> pasteboard)
 {
-    UIItemProvider *itemProvider = [representationsToRegister itemProvider];
-    if (!itemProvider) {
+    if (UIItemProvider *itemProvider = representationsToRegister.itemProvider)
+        [pasteboard setItemProviders:@[ itemProvider ]];
+    else
         [pasteboard setItemProviders:@[ ]];
-        return;
-    }
 
-    [pasteboard setItemProviders:@[ itemProvider ]];
-    if ([pasteboard respondsToSelector:@selector(setRegistrationInfoLists:)])
-        [pasteboard setRegistrationInfoLists:@[ representationsToRegister ]];
+    if ([pasteboard respondsToSelector:@selector(stageRegistrationList:)])
+        [pasteboard stageRegistrationList:representationsToRegister];
 }
 
 #else
