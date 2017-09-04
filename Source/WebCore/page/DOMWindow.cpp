@@ -2018,8 +2018,10 @@ void DOMWindow::removeAllEventListeners()
         document->didRemoveEventTargetNode(*document);
 #endif
 
-    if (m_performance)
+    if (m_performance) {
         m_performance->removeAllEventListeners();
+        m_performance->removeAllObservers();
+    }
 
     removeAllUnloadEventListeners(this);
     removeAllBeforeUnloadEventListeners(this);

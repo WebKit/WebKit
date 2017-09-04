@@ -49,6 +49,8 @@ public:
         return adoptRef(*new PerformanceObserver(context, WTFMove(callback)));
     }
 
+    void disassociate();
+
     ExceptionOr<void> observe(Init&&);
     void disconnect();
 

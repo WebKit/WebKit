@@ -48,6 +48,11 @@ PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecution
         ASSERT_NOT_REACHED();
 }
 
+void PerformanceObserver::disassociate()
+{
+    m_performance = nullptr;
+}
+
 ExceptionOr<void> PerformanceObserver::observe(Init&& init)
 {
     if (!m_performance)
