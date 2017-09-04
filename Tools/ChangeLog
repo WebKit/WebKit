@@ -1,3 +1,24 @@
+2017-09-03  Darin Adler  <darin@apple.com>
+
+        REGRESSION (r220052): [Sierra] API test VideoControlsManager.VideoControlsManagerFullSizeVideoInWideMainFrame is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=175329
+
+        Reviewed by Wenson Hsieh.
+
+        These tests rely on using setTimeout to wait a run loop iteration for the
+        video controls to appear. With changes to how loading occurs, it can now
+        take two run loop iterations. The concept here is inherently a bit flaky
+        and racy -- end users will not be able to tell how many run loop cycles it
+        takes for controls to come up, and websites can't tell either -- but for now
+        changing the tests to wait one more run loop should get rid of the flakiness.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/VideoControlsManager.mm: Re-enable test.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/full-size-autoplaying-video-with-audio.html: Add a
+        second setTimeout and a comment.
+        * TestWebKitAPI/Tests/WebKitCocoa/skinny-autoplaying-video-with-audio.html: Ditto.
+        * TestWebKitAPI/Tests/WebKitCocoa/wide-autoplaying-video-with-audio.html: Ditto.
+
 2017-09-03  Sam Weinig  <sam@webkit.org>
 
         Make webkit-patch post --no-review enable EWS just like webkit-patch post-commits --no-review

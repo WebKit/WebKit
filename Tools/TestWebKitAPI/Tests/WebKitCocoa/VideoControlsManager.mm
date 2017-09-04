@@ -432,8 +432,7 @@ TEST(VideoControlsManager, VideoControlsManagerLongSkinnyVideoInWideMainFrame)
     [webView expectControlsManager:NO afterReceivingMessage:@"playing"];
 }
 
-// FIXME: Re-enable this test once <webkit.org/b/175329> is resolved.
-TEST(VideoControlsManager, DISABLED_VideoControlsManagerWideMediumSizedVideoInWideMainFrame)
+TEST(VideoControlsManager, VideoControlsManagerWideMediumSizedVideoInWideMainFrame)
 {
     RetainPtr<VideoControlsManagerTestWebView*> webView = setUpWebViewForTestingVideoControlsManager(NSMakeRect(0, 0, 1600, 800));
 
