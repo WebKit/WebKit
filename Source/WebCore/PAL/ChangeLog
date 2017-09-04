@@ -1,5 +1,17 @@
 2017-09-03  Dan Bernstein  <mitz@apple.com>
 
+        [Cocoa] Tidy up PassKitSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=176323
+
+        Reviewed by Darin Adler.
+
+        * pal/spi/cocoa/PassKitSPI.h: Moved the declarations of requiredShippingContactFields and
+          requiredBillingContactFields to where other PKPaymentRequest properties are declared, and
+          changed the guard to relate to the SDK version. Replaced use of __has_include with checking for
+          the version of the Apple internal SDK in which the typedefs first appeared.
+
+2017-09-03  Dan Bernstein  <mitz@apple.com>
+
         [Cocoa] Remove use of __has_include in CoreAudioSPI.h
         https://bugs.webkit.org/show_bug.cgi?id=176320
 

@@ -51,6 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class PKPaymentRequestShippingMethodUpdate;
 @class PKPaymentRequestShippingContactUpdate;
 
+typedef NSString *PKContactField;
+
 extern NSString * const PKPaymentErrorDomain;
 typedef NS_ERROR_ENUM(PKPaymentErrorDomain, PKPaymentErrorCode) {
     PKPaymentUnknownError = -1,
@@ -186,8 +188,10 @@ typedef NSString * PKPaymentNetwork NS_EXTENSIBLE_STRING_ENUM;
 @property (nonatomic, copy, nullable) NSArray<PKShippingMethod *> *shippingMethods;
 @property (nonatomic, assign) PKShippingType shippingType;
 @property (nonatomic, copy, nullable) NSData *applicationData;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300
 @property (nonatomic, copy, nullable) NSSet<NSString *> *supportedCountries;
+@property (nonatomic, strong) NSSet<PKContactField> *requiredShippingContactFields;
+@property (nonatomic, strong) NSSet<PKContactField> *requiredBillingContactFields;
 #endif
 @end
 
@@ -245,7 +249,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if PLATFORM(MAC) && (!USE(APPLE_INTERNAL_SDK) || !__has_include(<PassKitCore/PKApplePayButton.h>))
+#if PLATFORM(MAC) && (!USE(APPLE_INTERNAL_SDK) || __MAC_OS_X_VERSION_MAX_ALLOWED < 101204)
 typedef NS_ENUM(NSInteger, PKPaymentButtonStyle) {
     PKPaymentButtonStyleWhite = 0,
     PKPaymentButtonStyleWhiteOutline,
@@ -298,12 +302,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) NSString *sourceApplicationBundleIdentifier;
 @property (nonatomic, strong) NSString *sourceApplicationSecondaryIdentifier;
 @property (nonatomic, strong) NSString *CTDataConnectionServiceType;
-
-#if (PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000)
-- (void)setRequiredShippingContactFields:(nonnull NSSet *)contactInformation;
-- (void)setRequiredBillingContactFields:(nonnull NSSet *)contactInformation;
-#endif
-
 @end
 
 NS_ASSUME_NONNULL_END
