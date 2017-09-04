@@ -143,8 +143,10 @@ void ResourceHandle::ensureReadBuffer()
     char* bufferFromClient = client()->getOrCreateReadBuffer(gDefaultReadBufferSize, bufferSize);
     if (bufferFromClient)
         d->m_soupBuffer.reset(soup_buffer_new(SOUP_MEMORY_TEMPORARY, bufferFromClient, bufferSize));
-    else
-        d->m_soupBuffer.reset(soup_buffer_new(SOUP_MEMORY_TAKE, static_cast<char*>(g_malloc(gDefaultReadBufferSize)), gDefaultReadBufferSize));
+    else {
+        auto* buffer = static_cast<uint8_t*>(fastMalloc(gDefaultReadBufferSize));
+        d->m_soupBuffer.reset(soup_buffer_new_with_owner(buffer, gDefaultReadBufferSize, buffer, fastFree));
+    }
 
     ASSERT(d->m_soupBuffer);
 }

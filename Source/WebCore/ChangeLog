@@ -1,3 +1,15 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [SOUP] Use fastMalloced SoupBuffer in ResourcehandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=176311
+
+        Reviewed by Michael Catanzaro.
+
+        Use fastMalloced memory instead of g_malloc for SoupBuffer.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::ensureReadBuffer):
+
 2017-09-02  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle result for pseudo-elements in display: none subtrees.
