@@ -34,6 +34,7 @@
 #include <shlwapi.h>
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/StringExtras.h>
+#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -277,11 +278,13 @@ void markupToCFHTML(const String& markup, const String& srcURL, Vector<char>& re
     unsigned endFragmentOffset = startFragmentOffset + markupUTF8.length();
     unsigned endHTMLOffset = endFragmentOffset + strlen(endMarkup);
 
-    unsigned headerBufferLength = startHTMLOffset + 1; // + 1 for '\0' terminator.
-    char* headerBuffer = (char*)malloc(headerBufferLength);
-    snprintf(headerBuffer, headerBufferLength, header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset);
-    append(result, CString(headerBuffer));
-    free(headerBuffer);
+    {
+        unsigned headerBufferLength = startHTMLOffset + 1; // + 1 for '\0' terminator.
+        static const constexpr unsigned InitialBufferSize { 2048 };
+        Vector<char, InitialBufferSize> headerBuffer(headerBufferLength);
+        snprintf(headerBuffer.data(), headerBufferLength, header, startHTMLOffset, endHTMLOffset, startFragmentOffset, endFragmentOffset);
+        append(result, CString(headerBuffer.data()));
+    }
     if (sourceURLUTF8.length()) {
         append(result, sourceURLPrefix);
         append(result, sourceURLUTF8);

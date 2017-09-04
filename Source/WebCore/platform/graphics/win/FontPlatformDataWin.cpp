@@ -57,14 +57,14 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
     ASSERT_WITH_MESSAGE(bufferSize, "Bitmap fonts not supported with CoreGraphics.");
 
     if (bufferSize) {
-        OUTLINETEXTMETRICW* metrics = (OUTLINETEXTMETRICW*)malloc(bufferSize);
+        static const constexpr unsigned InitialBufferSize { 256 };
+        Vector<char, 256> buffer(bufferSize);
+        auto* metrics = reinterpret_cast<OUTLINETEXTMETRICW*>(buffer.data());
 
         GetOutlineTextMetricsW(hdc, bufferSize, metrics);
         WCHAR* faceName = (WCHAR*)((uintptr_t)metrics + (uintptr_t)metrics->otmpFaceName);
 
         platformDataInit(m_font->get(), size, hdc, faceName);
-
-        free(metrics);
     }
 
     RestoreDC(hdc, -1);

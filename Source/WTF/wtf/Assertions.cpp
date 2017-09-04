@@ -42,6 +42,7 @@
 #include <wtf/Locker.h>
 #include <wtf/LoggingAccumulator.h>
 #include <wtf/PrintStream.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/StackTrace.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
@@ -87,31 +88,29 @@ static void logToStderr(const char* buffer)
     fputs(buffer, stderr);
 }
 
+static const constexpr unsigned InitialBufferSize { 256 };
+
 WTF_ATTRIBUTE_PRINTF(1, 0)
 static void vprintf_stderr_common(const char* format, va_list args)
 {
 #if USE(CF) && !OS(WINDOWS)
     if (strstr(format, "%@")) {
-        CFStringRef cfFormat = CFStringCreateWithCString(NULL, format, kCFStringEncodingUTF8);
+        auto cfFormat = adoptCF(CFStringCreateWithCString(nullptr, format, kCFStringEncodingUTF8));
 
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wformat-nonliteral"
 #endif
-        CFStringRef str = CFStringCreateWithFormatAndArguments(NULL, NULL, cfFormat, args);
+        auto str = adoptCF(CFStringCreateWithFormatAndArguments(nullptr, nullptr, cfFormat.get(), args));
 #if COMPILER(CLANG)
 #pragma clang diagnostic pop
 #endif
-        CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str), kCFStringEncodingUTF8);
-        char* buffer = (char*)malloc(length + 1);
+        CFIndex length = CFStringGetMaximumSizeForEncoding(CFStringGetLength(str.get()), kCFStringEncodingUTF8);
+        Vector<char, InitialBufferSize> buffer(length + 1);
 
-        CFStringGetCString(str, buffer, length, kCFStringEncodingUTF8);
+        CFStringGetCString(str.get(), buffer.data(), length, kCFStringEncodingUTF8);
 
-        logToStderr(buffer);
-
-        free(buffer);
-        CFRelease(str);
-        CFRelease(cfFormat);
+        logToStderr(buffer.data());
         return;
     }
 
@@ -130,20 +129,13 @@ static void vprintf_stderr_common(const char* format, va_list args)
 #elif HAVE(ISDEBUGGERPRESENT)
     if (IsDebuggerPresent()) {
         size_t size = 1024;
-
+        Vector<char> buffer(size);
         do {
-            char* buffer = (char*)malloc(size);
-
-            if (buffer == NULL)
-                break;
-
-            if (vsnprintf(buffer, size, format, args) != -1) {
-                OutputDebugStringA(buffer);
-                free(buffer);
+            buffer.grow(size);
+            if (vsnprintf(buffer.get(), size, format, args) != -1) {
+                OutputDebugStringA(buffer.get());
                 break;
             }
-
-            free(buffer);
             size *= 2;
         } while (size > 1024);
     }

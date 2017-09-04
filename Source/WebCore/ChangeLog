@@ -1,3 +1,36 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove "malloc" and "free" use
+        https://bugs.webkit.org/show_bug.cgi?id=176310
+
+        Reviewed by Darin Adler.
+
+        Use MallocPtr<>, fastMalloc/fastFree, or Vector instead of manual call of system malloc/free.
+        In this patch, we apply the above change if we can easily find the pair of malloc/free.
+        And we do not touch plugin directory since the external code could call free() onto the
+        fastMalloc-ed memory.
+
+        Also, we still use malloc if the system adopts the allocated memory. Later, the system
+        will deallocate it by calling the system "free".
+
+        * platform/audio/mac/FFTFrameMac.cpp:
+        (WebCore::FFTFrame::fftSetupForSize):
+        (WebCore::FFTFrame::cleanup):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::getLinkedFonts):
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/mac/WebCoreNSURLExtras.mm:
+        (WebCore::URLByTruncatingOneCharacterBeforeComponent):
+        (WebCore::dataForURLComponentType):
+        (WebCore::URLByRemovingComponentAndSubsequentCharacter):
+        (WebCore::createStringWithEscapedUnsafeCharacters):
+        (WebCore::userVisibleString):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::markupToCFHTML):
+
 2017-09-03  Chris Dumez  <cdumez@apple.com>
 
         Use StringView in DOMFileSystem::evaluatePath()

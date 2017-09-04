@@ -1,3 +1,15 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove "malloc" and "free" use
+        https://bugs.webkit.org/show_bug.cgi?id=176310
+
+        Reviewed by Darin Adler.
+
+        Use Vector instead.
+
+        * API/JSWrapperMap.mm:
+        (selectorToPropertyName):
+
 2017-09-03  Darin Adler  <darin@apple.com>
 
         Try to fix Windows build.

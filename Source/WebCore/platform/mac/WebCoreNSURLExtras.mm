@@ -750,21 +750,18 @@ NSURL *URLByTruncatingOneCharacterBeforeComponent(NSURL *URL, CFURLComponentType
     if (fragRg.location == kCFNotFound)
         return URL;
     
-    UInt8 *urlBytes, buffer[2048];
-    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, buffer, 2048);
+    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> urlBytes(URL_BYTES_BUFFER_LENGTH);
+    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, urlBytes.data(), urlBytes.size());
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((CFURLRef)URL, NULL, 0);
-        urlBytes = static_cast<UInt8*>(malloc(numBytes));
-        CFURLGetBytes((CFURLRef)URL, urlBytes, numBytes);
-    } else
-        urlBytes = buffer;
-        
-    NSURL *result = (NSURL *)CFURLCreateWithBytes(NULL, urlBytes, fragRg.location - 1, kCFStringEncodingUTF8, NULL);
+        urlBytes.grow(numBytes);
+        CFURLGetBytes((CFURLRef)URL, urlBytes.data(), numBytes);
+    }
+
+    NSURL *result = (NSURL *)CFURLCreateWithBytes(NULL, urlBytes.data(), fragRg.location - 1, kCFStringEncodingUTF8, NULL);
     if (!result)
-        result = (NSURL *)CFURLCreateWithBytes(NULL, urlBytes, fragRg.location - 1, kCFStringEncodingISOLatin1, NULL);
+        result = (NSURL *)CFURLCreateWithBytes(NULL, urlBytes.data(), fragRg.location - 1, kCFStringEncodingISOLatin1, NULL);
         
-    if (urlBytes != buffer)
-        free(urlBytes);
     return result ? [result autorelease] : URL;
 }
 
@@ -877,32 +874,25 @@ static BOOL hasQuestionMarkOnlyQueryString(NSURL *URL)
 
 NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
 {
-    static const int URLComponentTypeBufferLength = 2048;
-    
-    UInt8 staticAllBytesBuffer[URLComponentTypeBufferLength];
-    UInt8 *allBytesBuffer = staticAllBytesBuffer;
-    
-    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)URL, allBytesBuffer, URLComponentTypeBufferLength);
+    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> allBytesBuffer(URL_BYTES_BUFFER_LENGTH);
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)URL, allBytesBuffer.data(), allBytesBuffer.size());
     if (bytesFilled == -1) {
         CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)URL, NULL, 0);
-        allBytesBuffer = static_cast<UInt8 *>(malloc(bytesToAllocate));
-        bytesFilled = CFURLGetBytes((CFURLRef)URL, allBytesBuffer, bytesToAllocate);
+        allBytesBuffer.grow(bytesToAllocate);
+        bytesFilled = CFURLGetBytes((CFURLRef)URL, allBytesBuffer.data(), bytesToAllocate);
     }
     
     CFRange range;
     if (componentType != completeURL) {
         range = CFURLGetByteRangeForComponent((CFURLRef)URL, componentType, NULL);
-        if (range.location == kCFNotFound) {
-            if (staticAllBytesBuffer != allBytesBuffer)
-                free(allBytesBuffer);
+        if (range.location == kCFNotFound)
             return nil;
-        }
     } else {
         range.location = 0;
         range.length = bytesFilled;
     }
     
-    NSData *componentData = [NSData dataWithBytes:allBytesBuffer + range.location length:range.length]; 
+    NSData *componentData = [NSData dataWithBytes:allBytesBuffer.data() + range.location length:range.length]; 
     
     const unsigned char *bytes = static_cast<const unsigned char *>([componentData bytes]);
     NSMutableData *resultData = [NSMutableData data];
@@ -927,9 +917,6 @@ NSData *dataForURLComponentType(NSURL *URL, CFURLComponentType componentType)
         }               
     }
     
-    if (staticAllBytesBuffer != allBytesBuffer)
-        free(allBytesBuffer);
-    
     return resultData;
 }
 
@@ -942,8 +929,8 @@ static NSURL *URLByRemovingComponentAndSubsequentCharacter(NSURL *URL, CFURLComp
     // Remove one subsequent character.
     range.length++;
 
-    Vector<UInt8, 2048> buffer(2048);
-    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, buffer.data(), 2048);
+    Vector<UInt8, URL_BYTES_BUFFER_LENGTH> buffer(URL_BYTES_BUFFER_LENGTH);
+    CFIndex numBytes = CFURLGetBytes((CFURLRef)URL, buffer.data(), buffer.size());
     if (numBytes == -1) {
         numBytes = CFURLGetBytes((CFURLRef)URL, NULL, 0);
         buffer.grow(numBytes);
@@ -1010,10 +997,10 @@ NSData *originalURLData(NSURL *URL)
 static CFStringRef createStringWithEscapedUnsafeCharacters(CFStringRef string)
 {
     CFIndex length = CFStringGetLength(string);
-    Vector<UChar, 2048> sourceBuffer(length);
+    Vector<UChar, URL_BYTES_BUFFER_LENGTH> sourceBuffer(length);
     CFStringGetCharacters(string, CFRangeMake(0, length), sourceBuffer.data());
     
-    Vector<UChar, 2048> outBuffer;
+    Vector<UChar, URL_BYTES_BUFFER_LENGTH> outBuffer;
     
     std::optional<UChar32> previousCodePoint;
     CFIndex i = 0;
@@ -1058,8 +1045,8 @@ NSString *userVisibleString(NSURL *URL)
     
     const unsigned char *p = before;
     int bufferLength = (length * 3) + 1;
-    char *after = static_cast<char *>(malloc(bufferLength)); // large enough to %-escape every character
-    char *q = after;
+    Vector<char, URL_BYTES_BUFFER_LENGTH> after(bufferLength); // large enough to %-escape every character
+    char *q = after.data();
     for (int i = 0; i < length; i++) {
         unsigned char c = p[i];
         // unescape escape sequences that indicate bytes greater than 0x7f
@@ -1086,17 +1073,17 @@ NSString *userVisibleString(NSURL *URL)
     *q = '\0';
     
     // Check string to see if it can be converted to display using UTF-8  
-    NSString *result = [NSString stringWithUTF8String:after];
+    NSString *result = [NSString stringWithUTF8String:after.data()];
     if (!result) {
         // Could not convert to UTF-8.
         // Convert characters greater than 0x7f to escape sequences.
         // Shift current string to the end of the buffer
         // then we will copy back bytes to the start of the buffer 
         // as we convert.
-        int afterlength = q - after;
-        char *p = after + bufferLength - afterlength - 1;
-        memmove(p, after, afterlength + 1); // copies trailing '\0'
-        char *q = after;
+        int afterlength = q - after.data();
+        char *p = after.data() + bufferLength - afterlength - 1;
+        memmove(p, after.data(), afterlength + 1); // copies trailing '\0'
+        char *q = after.data();
         while (*p) {
             unsigned char c = *p;
             if (c > 0x7f) {
@@ -1108,10 +1095,8 @@ NSString *userVisibleString(NSURL *URL)
             p++;
         }
         *q = '\0';
-        result = [NSString stringWithUTF8String:after];
+        result = [NSString stringWithUTF8String:after.data()];
     }
-    
-    free(after);
     
     if (mayNeedHostNameDecoding) {
         // FIXME: Is it good to ignore the failure of mapHostNames and keep result intact?

@@ -146,7 +146,7 @@ void FFTFrame::doInverseFFT(float* data)
 FFTSetup FFTFrame::fftSetupForSize(unsigned fftSize)
 {
     if (!fftSetups) {
-        fftSetups = (FFTSetup*)malloc(sizeof(FFTSetup) * kMaxFFTPow2Size);
+        fftSetups = (FFTSetup*)fastMalloc(sizeof(FFTSetup) * kMaxFFTPow2Size);
         memset(fftSetups, 0, sizeof(FFTSetup) * kMaxFFTPow2Size);
     }
 
@@ -172,7 +172,7 @@ void FFTFrame::cleanup()
             vDSP_destroy_fftsetup(fftSetups[i]);
     }
 
-    free(fftSetups);
+    fastFree(fftSetups);
     fftSetups = 0;
 }
 

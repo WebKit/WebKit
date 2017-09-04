@@ -137,12 +137,12 @@ static const Vector<String>* getLinkedFonts(String& family)
         return result;
     }
 
-    WCHAR* linkedFonts = reinterpret_cast<WCHAR*>(malloc(linkedFontsBufferSize));
-    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts), &linkedFontsBufferSize) == ERROR_SUCCESS) {
-        unsigned length = linkedFontsBufferSize / sizeof(*linkedFonts);
-        appendLinkedFonts(linkedFonts, length, result);
+    static const constexpr unsigned InitialBufferSize { 256 / sizeof(WCHAR) };
+    Vector<WCHAR, InitialBufferSize> linkedFonts(roundUpToMultipleOf<sizeof(WCHAR)>(linkedFontsBufferSize) / sizeof(WCHAR));
+    if (::RegQueryValueEx(fontLinkKey, family.charactersWithNullTermination().data(), 0, nullptr, reinterpret_cast<BYTE*>(linkedFonts.data()), &linkedFontsBufferSize) == ERROR_SUCCESS) {
+        unsigned length = linkedFontsBufferSize / sizeof(WCHAR);
+        appendLinkedFonts(linkedFonts.data(), length, result);
     }
-    free(linkedFonts);
     RegCloseKey(fontLinkKey);
     return result;
 }

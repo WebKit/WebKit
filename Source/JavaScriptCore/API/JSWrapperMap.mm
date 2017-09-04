@@ -62,6 +62,8 @@ static const uint32_t firstSDKVersionWithInitConstructorSupport = 0xA0A00; // OS
 
 @end
 
+static const constexpr unsigned InitialBufferSize { 256 };
+
 // Default conversion of selectors to property names.
 // All semicolons are removed, lowercase letters following a semicolon are capitalized.
 static NSString *selectorToPropertyName(const char* start)
@@ -75,10 +77,10 @@ static NSString *selectorToPropertyName(const char* start)
     size_t header = firstColon - start;
     // The new string needs to be long enough to hold 'header', plus the remainder of the string, excluding
     // at least one ':', but including a '\0'. (This is conservative if there are more than one ':').
-    char* buffer = static_cast<char*>(malloc(header + strlen(firstColon + 1) + 1));
+    Vector<char, InitialBufferSize> buffer(header + strlen(firstColon + 1) + 1);
     // Copy 'header' characters, set output to point to the end of this & input to point past the first ':'.
-    memcpy(buffer, start, header);
-    char* output = buffer + header;
+    memcpy(buffer.data(), start, header);
+    char* output = buffer.data() + header;
     const char* input = start + header + 1;
 
     // On entry to the loop, we have already skipped over a ':' from the input.
@@ -101,9 +103,7 @@ static NSString *selectorToPropertyName(const char* start)
         // If we get here, we've consumed a ':' - wash, rinse, repeat.
     }
 done:
-    NSString *result = [NSString stringWithUTF8String:buffer];
-    free(buffer);
-    return result;
+    return [NSString stringWithUTF8String:buffer.data()];
 }
 
 static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef, JSValueRef possibleInstance, JSValueRef*)
