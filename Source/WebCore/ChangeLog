@@ -1,5 +1,24 @@
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        String#utf8() allocates new CString
+        https://bugs.webkit.org/show_bug.cgi?id=176302
+
+        Reviewed by Sam Weinig.
+
+        Several places uses String#utf8() like an accessor. In reality, it allocates new CString per call.
+        It is very costly. Furthermore, some places uses this incorrectly. For example,
+        `std::vector<char>(srtpAuth.utf8().data(), srtpAuth.utf8().data() + srtpAuth.utf8().length());`
+        is incorrect since each time strpAuth.utf8() allocates different CString.
+
+        This patch calls utf8() first and use it.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        * platform/wpe/PlatformPasteboardWPE.cpp:
+        (WebCore::PlatformPasteboard::write):
+
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [SOUP] Use fastMalloced SoupBuffer in ResourcehandleSoup
         https://bugs.webkit.org/show_bug.cgi?id=176311
 

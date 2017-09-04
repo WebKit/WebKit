@@ -51,9 +51,10 @@ void NetworkRTCSocket::sendTo(const IPC::DataReference& data, const RTCNetwork::
     options.packet_time_params.rtp_sendtime_extension_id = rtpSendtimeExtensionID;
     options.packet_time_params.srtp_packet_index = srtpPacketIndex;
     options.dscp = static_cast<rtc::DiffServCodePoint>(dscp);
-    if (srtpAuth.utf8().length()) {
-        options.packet_time_params.srtp_auth_key = std::vector<char>(srtpAuth.utf8().data(), srtpAuth.utf8().data() + srtpAuth.utf8().length());
-        options.packet_time_params.srtp_auth_tag_len = srtpAuth.utf8().length();
+    auto srtpAuthUTF8 = srtpAuth.utf8();
+    if (srtpAuthUTF8.length()) {
+        options.packet_time_params.srtp_auth_key = std::vector<char>(srtpAuthUTF8.data(), srtpAuthUTF8.data() + srtpAuthUTF8.length());
+        options.packet_time_params.srtp_auth_tag_len = srtpAuthUTF8.length();
     } else
         options.packet_time_params.srtp_auth_tag_len = -1;
     
