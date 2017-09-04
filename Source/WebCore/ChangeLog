@@ -1,3 +1,22 @@
+2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Wayland] Use fast malloc to allocate backing store cairo surfaces data
+        https://bugs.webkit.org/show_bug.cgi?id=176226
+
+        Reviewed by Michael Catanzaro.
+
+        It reduces the memory consumption and improves the performance. Also, since performance is better we don't need
+        to keep the scroll surface allocated all the time, we can create it on demand and keep it allocated only while
+        scrolling too fast.
+
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp:
+        (WebCore::createCairoImageSurfaceWithFastMalloc): Helper to create a cairo image surface using fast malloc.
+        (WebCore::BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl): Create the main surface, but no the
+        scroll one. Initialize the hysteresis activity to discard the scroll surface after scrolling.
+        (WebCore::BackingStoreBackendCairoImpl::scroll): Create the scroll surface only if it's nullptr, and notify the
+        hysteresis activity.
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.h:
+
 2017-09-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle behavior for pseudo-elements for layout-dependent properties.

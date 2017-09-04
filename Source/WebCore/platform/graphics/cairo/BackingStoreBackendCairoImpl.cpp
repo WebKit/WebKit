@@ -26,19 +26,26 @@
 
 namespace WebCore {
 
-BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl(cairo_surface_t* surface, const IntSize& size)
-    : BackingStoreBackendCairo(size)
-{
-    m_surface = surface;
+static const Seconds scrollHysteresisDuration { 300_ms };
 
-    // We keep two copies of the surface here, which will double the memory usage, but increase
-    // scrolling performance since we do not have to keep reallocating a memory region during
-    // quick scrolling requests.
-    double xScale, yScale;
-    cairoSurfaceGetDeviceScale(m_surface.get(), xScale, yScale);
-    IntSize scaledSize = size;
-    scaledSize.scale(xScale, yScale);
-    m_scrollSurface = adoptRef(cairo_surface_create_similar(surface, CAIRO_CONTENT_COLOR_ALPHA, scaledSize.width(), scaledSize.height()));
+static RefPtr<cairo_surface_t> createCairoImageSurfaceWithFastMalloc(const IntSize& size, double deviceScaleFactor)
+{
+    static cairo_user_data_key_t s_surfaceDataKey;
+    int stride = cairo_format_stride_for_width(CAIRO_FORMAT_ARGB32, size.width());
+    auto* surfaceData = fastZeroedMalloc(size.height() * stride);
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(surfaceData), CAIRO_FORMAT_ARGB32, size.width(), size.height(), stride));
+    cairo_surface_set_user_data(surface.get(), &s_surfaceDataKey, surfaceData, [](void* data) { fastFree(data); });
+    cairoSurfaceSetDeviceScale(surface.get(), deviceScaleFactor, deviceScaleFactor);
+    return surface;
+}
+
+BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl(const IntSize& size, float deviceScaleFactor)
+    : BackingStoreBackendCairo(size)
+    , m_scrolledHysteresis([this](HysteresisState state) { if (state == HysteresisState::Stopped) m_scrollSurface = nullptr; }, scrollHysteresisDuration)
+{
+    IntSize scaledSize = m_size;
+    scaledSize.scale(deviceScaleFactor);
+    m_surface = createCairoImageSurfaceWithFastMalloc(scaledSize, deviceScaleFactor);
 }
 
 BackingStoreBackendCairoImpl::~BackingStoreBackendCairoImpl()
@@ -54,8 +61,17 @@ void BackingStoreBackendCairoImpl::scroll(const IntRect& scrollRect, const IntSi
     if (targetRect.isEmpty())
         return;
 
+    if (!m_scrollSurface) {
+        IntSize size(cairo_image_surface_get_width(m_surface.get()), cairo_image_surface_get_height(m_surface.get()));
+        double xScale, yScale;
+        cairoSurfaceGetDeviceScale(m_surface.get(), xScale, yScale);
+        ASSERT(xScale == yScale);
+        m_scrollSurface = createCairoImageSurfaceWithFastMalloc(size, xScale);
+    }
     copyRectFromOneSurfaceToAnother(m_surface.get(), m_scrollSurface.get(), scrollOffset, targetRect);
     copyRectFromOneSurfaceToAnother(m_scrollSurface.get(), m_surface.get(), IntSize(), targetRect);
+
+    m_scrolledHysteresis.impulse();
 }
 
 } // namespace WebCore
