@@ -30,6 +30,7 @@
 #include "VMAllocate.h"
 #include "Vector.h"
 #include "bmalloc.h"
+#include <cstdio>
 #include <mutex>
 
 // FIXME: Ask dyld to put this in its own page, and mprotect the page after we ensure the gigacage.
