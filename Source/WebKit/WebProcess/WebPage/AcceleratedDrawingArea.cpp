@@ -63,6 +63,8 @@ AcceleratedDrawingArea::AcceleratedDrawingArea(WebPage& webPage, const WebPageCr
 #endif
     if (!m_webPage.isVisible())
         suspendPainting();
+
+    m_webPage.corePage()->setDeviceScaleFactor(parameters.deviceScaleFactor);
 }
 
 void AcceleratedDrawingArea::setNeedsDisplay()
