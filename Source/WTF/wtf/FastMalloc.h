@@ -125,10 +125,10 @@ public:
         fastFree(pointer);
     }
 
-#if COMPILER(GCC)
-#if !GCC_VERSION_AT_LEAST(6, 0, 0)
+#if defined(__GLIBCXX__) && (!defined(_GLIBCXX_RELEASE) || _GLIBCXX_RELEASE < 6)
     // This allocator also supports pre-C++11 STL allocator interface. This is a workaround for GCC < 6, which std::list
-    // does not support C++11 allocator.
+    // does not support C++11 allocator. Note that _GLIBCXX_RELEASE is only defined after GCC 7 release. So currently
+    // this workaround is enabled in GCC 6 too.
     // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=55409
 
     using pointer = value_type*;
@@ -177,8 +177,7 @@ public:
     using propagate_on_container_move_assignment = std::false_type;
     using propagate_on_container_swap = std::false_type;
     using is_always_equal = std::is_empty<FastAllocator>;
-#endif // !GCC_VERSION_AT_LEAST(6, 0, 0)
-#endif // COMPILER(GCC)
+#endif // defined(__GLIBCXX__) && (!defined(_GLIBCXX_RELEASE) || _GLIBCXX_RELEASE < 6)
 };
 
 template<typename T, typename U> inline bool operator==(const FastAllocator<T>&, const FastAllocator<U>&) { return true; }
