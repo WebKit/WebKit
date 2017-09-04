@@ -191,7 +191,7 @@ static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringVi
                 virtualPathSegments.removeLast();
             continue;
         }
-        virtualPathSegments.append(segment.toString());
+        virtualPathSegments.append(segment.toStringWithoutCopying());
     }
 
     if (virtualPathSegments.isEmpty())
@@ -206,14 +206,13 @@ static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringVi
 }
 
 // https://wicg.github.io/entries-api/#evaluate-a-path
-String DOMFileSystem::evaluatePath(const String& virtualPath)
+String DOMFileSystem::evaluatePath(StringView virtualPath)
 {
     ASSERT(virtualPath[0] == '/');
     auto components = virtualPath.split('/');
 
     Vector<String> resolvedComponents;
-    resolvedComponents.reserveInitialCapacity(components.size());
-    for (auto& component : components) {
+    for (auto component : components) {
         if (component == ".")
             continue;
         if (component == "..") {
@@ -221,7 +220,7 @@ String DOMFileSystem::evaluatePath(const String& virtualPath)
                 resolvedComponents.removeLast();
             continue;
         }
-        resolvedComponents.uncheckedAppend(component);
+        resolvedComponents.append(component.toStringWithoutCopying());
     }
 
     return pathByAppendingComponents(m_rootPath, resolvedComponents);

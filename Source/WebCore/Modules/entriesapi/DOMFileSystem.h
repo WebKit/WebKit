@@ -67,7 +67,7 @@ public:
 private:
     explicit DOMFileSystem(Ref<File>&&);
 
-    String evaluatePath(const String& virtualPath);
+    String evaluatePath(StringView virtualPath);
     Ref<FileSystemEntry> fileAsEntry(ScriptExecutionContext&);
 
     String m_name;

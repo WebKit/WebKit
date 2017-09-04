@@ -1,3 +1,17 @@
+2017-09-03  Chris Dumez  <cdumez@apple.com>
+
+        Use StringView in DOMFileSystem::evaluatePath()
+        https://bugs.webkit.org/show_bug.cgi?id=176324
+
+        Reviewed by Darin Adler.
+
+        Use StringView in DOMFileSystem::evaluatePath() for performance.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::resolveRelativeVirtualPath):
+        (WebCore::DOMFileSystem::evaluatePath):
+        * Modules/entriesapi/DOMFileSystem.h:
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String#utf8() allocates new CString
