@@ -2703,8 +2703,6 @@ webkit.org/b/120842 fast/regions/overflow/overflow-moving-below-floats-in-variab
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
-webkit.org/b/124360 media/video-canvas-drawing-output.html [ Failure ]
-
 webkit.org/b/124504 fast/text/break-word-pre-wrap.html [ ImageOnlyFailure ]
 
 webkit.org/b/124507 fast/css3-text/css3-text-decoration/text-decoration-skip/text-decoration-skip-ink.html [ ImageOnlyFailure ]

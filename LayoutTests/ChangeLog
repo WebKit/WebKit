@@ -1,3 +1,15 @@
+2017-09-04  Ms2ger  <Ms2ger@igalia.com>
+
+        Loosen the check in video-canvas-drawing-output.html.
+        https://bugs.webkit.org/show_bug.cgi?id=127106
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        GStreamer needs the extra tolerance since version 1.2.1.
+
+        * media/video-canvas-drawing-output.html:
+        * platform/gtk/TestExpectations:
+
 2017-09-03  Chris Dumez  <cdumez@apple.com>
 
         Consolidate entries-api tests under entries-api/ folders
