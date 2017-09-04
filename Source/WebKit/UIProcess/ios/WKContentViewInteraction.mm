@@ -251,11 +251,6 @@ const CGFloat minimumTapHighlightRadius = 2.0;
 @end
 
 @protocol UISelectionInteractionAssistant;
-#if HAVE(LINK_PREVIEW)
-@interface UIPreviewItemController (StagingToRemove)
-@property (strong, nonatomic, readonly) UIGestureRecognizer *presentationSecondaryGestureRecognizer;
-@end
-#endif
 
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithAssistedNodeInformation:(const AssistedNodeInformation&)information isUserInitiated:(BOOL)isUserInitiated;

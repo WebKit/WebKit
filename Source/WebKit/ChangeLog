@@ -1,3 +1,13 @@
+2017-09-03  Dan Bernstein  <mitz@apple.com>
+
+        WKContentViewInteraction.mm includes redundant declaration of UIPreviewItemController's presentationSecondaryGestureRecognizer
+        https://bugs.webkit.org/show_bug.cgi?id=176322
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/ios/WKContentViewInteraction.mm: Removed the declaration, which is already made in the
+          SDK or in UIKitSPI.h.
+
 2017-09-03  Timothy Horton  <timothy_horton@apple.com>
 
         Try to fix the iOS build
