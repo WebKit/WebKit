@@ -1,3 +1,13 @@
+2017-09-03  Brent Fulgham  <bfulgham@apple.com>
+
+        [WK2][iOS] Remove unnecessary IOHIDEventServiceFastPathUserClient access
+        https://bugs.webkit.org/show_bug.cgi?id=175947
+        <rdar://problem/33353627>
+
+        Reviewed by Darin Adler.
+
+        * Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb:
+
 2017-09-03  Dan Bernstein  <mitz@apple.com>
 
         WKContentViewInteraction.mm includes redundant declaration of UIPreviewItemController's presentationSecondaryGestureRecognizer
