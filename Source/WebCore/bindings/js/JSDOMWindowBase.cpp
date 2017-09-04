@@ -91,9 +91,11 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowProxy* proxy)
     Base::finishCreation(vm, proxy);
     ASSERT(inherits(vm, info()));
 
+    auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();
+
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(vm.propertyNames->document, jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(vm.propertyNames->window, m_proxy, DontDelete | ReadOnly),
+        GlobalPropertyInfo(builtinNames.documentPublicName(), jsNull(), DontDelete | ReadOnly),
+        GlobalPropertyInfo(builtinNames.windowPublicName(), m_proxy, DontDelete | ReadOnly),
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
@@ -117,7 +119,7 @@ void JSDOMWindowBase::updateDocument()
     bool shouldThrowReadOnlyError = false;
     bool ignoreReadOnlyErrors = true;
     bool putResult = false;
-    symbolTablePutTouchWatchpointSet(this, exec, exec->vm().propertyNames->document, toJS(exec, this, m_wrapped->document()), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+    symbolTablePutTouchWatchpointSet(this, exec, static_cast<JSVMClientData*>(exec->vm().clientData)->builtinNames().documentPublicName(), toJS(exec, this, m_wrapped->document()), shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
 }
 
 ScriptExecutionContext* JSDOMWindowBase::scriptExecutionContext() const

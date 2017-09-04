@@ -163,10 +163,8 @@ void JSTestGlobalObject::finishCreation(VM& vm)
     ASSERT(inherits(vm, info()));
 
 #if ENABLE(TEST_FEATURE)
-    if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()) {
-        auto* customGetterSetter = CustomGetterSetter::create(vm, jsTestGlobalObjectEnabledAtRuntimeAttribute, setJSTestGlobalObjectEnabledAtRuntimeAttribute);
-        putDirectCustomAccessor(vm, vm.propertyNames->enabledAtRuntimeAttribute, customGetterSetter, attributesForStructure(CustomAccessor));
-    }
+    if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
+        putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledAtRuntimeAttributePublicName(), CustomGetterSetter::create(vm, jsTestGlobalObjectEnabledAtRuntimeAttribute, setJSTestGlobalObjectEnabledAtRuntimeAttribute), attributesForStructure(CustomAccessor));
 #endif
     putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().publicAndPrivateAttributePrivateName(), CustomGetterSetter::create(vm, jsTestGlobalObjectPublicAndPrivateAttribute, nullptr), attributesForStructure(DontDelete | ReadOnly));
 #if ENABLE(TEST_FEATURE)
@@ -174,29 +172,29 @@ void JSTestGlobalObject::finishCreation(VM& vm)
 #endif
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectNativeFunction(vm, this, vm.propertyNames->enabledAtRuntimeOperation, 1, jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledAtRuntimeOperationPublicName(), 1, jsTestGlobalObjectInstanceFunctionEnabledAtRuntimeOperation, NoIntrinsic, attributesForStructure(JSC::Function));
 #endif
     if (worldForDOMObject(this).specificWorld())
-        putDirectNativeFunction(vm, this, vm.propertyNames->enabledInSpecificWorld, 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledInSpecificWorldPublicName(), 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorld, NoIntrinsic, attributesForStructure(JSC::Function));
     if ((worldForDOMObject(this).specificWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()))
-        putDirectNativeFunction(vm, this, vm.propertyNames->enabledInSpecificWorldWhenRuntimeFeatureEnabled, 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledInSpecificWorldWhenRuntimeFeatureEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeatureEnabled, NoIntrinsic, attributesForStructure(JSC::Function));
     if ((worldForDOMObject(this).specificWorld() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled() && RuntimeEnabledFeatures::sharedFeatures().testFeature1Enabled()))
-        putDirectNativeFunction(vm, this, vm.propertyNames->enabledInSpecificWorldWhenRuntimeFeaturesEnabled, 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().enabledInSpecificWorldWhenRuntimeFeaturesEnabledPublicName(), 1, jsTestGlobalObjectInstanceFunctionEnabledInSpecificWorldWhenRuntimeFeaturesEnabled, NoIntrinsic, attributesForStructure(JSC::Function));
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
         putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testPrivateFunctionPrivateName(), 0, jsTestGlobalObjectInstanceFunctionTestPrivateFunction, NoIntrinsic, attributesForStructure(JSC::Function));
 #endif
 #if ENABLE(TEST_FEATURE)
     if (RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled())
-        putDirectBuiltinFunction(vm, this, vm.propertyNames->testJSBuiltinFunction, testGlobalObjectTestJSBuiltinFunctionCodeGenerator(vm), attributesForStructure(JSC::Builtin));
+        putDirectBuiltinFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testJSBuiltinFunctionPublicName(), testGlobalObjectTestJSBuiltinFunctionCodeGenerator(vm), attributesForStructure(JSC::Builtin));
 #endif
     if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext())
-        putDirectNativeFunction(vm, this, vm.propertyNames->calculateSecretResult, 0, jsTestGlobalObjectInstanceFunctionCalculateSecretResult, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().calculateSecretResultPublicName(), 0, jsTestGlobalObjectInstanceFunctionCalculateSecretResult, NoIntrinsic, attributesForStructure(JSC::Function));
     if (jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext())
-        putDirectNativeFunction(vm, this, vm.propertyNames->getSecretBoolean, 0, jsTestGlobalObjectInstanceFunctionGetSecretBoolean, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().getSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunctionGetSecretBoolean, NoIntrinsic, attributesForStructure(JSC::Function));
 #if ENABLE(TEST_FEATURE)
     if ((jsCast<JSDOMGlobalObject*>(globalObject())->scriptExecutionContext()->isSecureContext() && RuntimeEnabledFeatures::sharedFeatures().testFeatureEnabled()))
-        putDirectNativeFunction(vm, this, vm.propertyNames->testFeatureGetSecretBoolean, 0, jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean, NoIntrinsic, attributesForStructure(JSC::Function));
+        putDirectNativeFunction(vm, this, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().testFeatureGetSecretBooleanPublicName(), 0, jsTestGlobalObjectInstanceFunctionTestFeatureGetSecretBoolean, NoIntrinsic, attributesForStructure(JSC::Function));
 #endif
 }
 

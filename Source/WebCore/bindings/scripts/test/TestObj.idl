@@ -58,7 +58,6 @@ enum TestConfidence { "high", "kinda-low" };
     static readonly attribute long     staticReadOnlyLongAttr;
     static attribute DOMString         staticStringAttr;
     static readonly attribute TestSubObjConstructor TestSubObj;
-    [EnabledBySetting=TestSetting] attribute TestSubObjConstructor TestSubObjEnabledBySetting;
     attribute TestEnumType enumAttr;
     attribute byte byteAttr;
     attribute octet octetAttr;
@@ -113,12 +112,7 @@ enum TestConfidence { "high", "kinda-low" };
     [Conditional=TEST_FEATURE, EnabledAtRuntime=TestFeature] void enabledAtRuntimeOperation(long testParam);
 
     [EnabledForWorld=someWorld, EnabledAtRuntime=TestFeature] void enabledInSpecificWorldWhenRuntimeFeatureEnabled(long testParam);
-
     [EnabledForWorld=someWorld] void worldSpecificMethod(long testParam);
-
-    // [EnabledBySetting] attributes and operations.
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] attribute DOMString enabledBySettingAttribute;
-    [Conditional=TEST_FEATURE, EnabledBySetting=TestSetting] void enabledBySettingOperation(DOMString testParam);
 
     // [SecureContext] attributes and operations; will not be exposed to a non-secure context.
     // From <https://w3c.github.io/webappsec-secure-contexts/#integration-idl> (Editor's Draft, 17 November 2016)

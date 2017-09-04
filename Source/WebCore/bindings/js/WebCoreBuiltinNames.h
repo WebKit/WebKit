@@ -30,71 +30,216 @@
 
 namespace WebCore {
 
-#define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro)\
+#define WEBCORE_COMMON_PRIVATE_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+    macro(Animation) \
+    macro(AnimationEffectReadOnly) \
+    macro(AnimationTimeline) \
+    macro(ApplePaySession) \
+    macro(Audio) \
+    macro(Cache) \
+    macro(CacheStorage) \
+    macro(Credential) \
+    macro(CredentialsContainer) \
+    macro(CustomElementRegistry) \
+    macro(DataTransferItem) \
+    macro(DataTransferItemList) \
+    macro(DocumentTimeline) \
+    macro(FederatedCredential) \
+    macro(FileSystem) \
+    macro(FileSystemDirectoryEntry) \
+    macro(FileSystemDirectoryReader) \
+    macro(FileSystemEntry) \
+    macro(FileSystemFileEntry) \
+    macro(Gamepad) \
+    macro(GamepadButton) \
+    macro(GamepadEvent) \
+    macro(HTMLAudioElement) \
+    macro(HTMLSlotElement) \
+    macro(Headers) \
+    macro(IDBCursor) \
+    macro(IDBCursorWithValue) \
+    macro(IDBDatabase) \
+    macro(IDBFactory) \
+    macro(IDBIndex) \
+    macro(IDBKeyRange) \
+    macro(IDBObjectStore) \
+    macro(IDBOpenDBRequest) \
+    macro(IDBRequest) \
+    macro(IDBTransaction) \
+    macro(IDBVersionChangeEvent) \
+    macro(InputEvent) \
+    macro(IntersectionObserver) \
+    macro(IntersectionObserverEntry) \
+    macro(KeyframeEffect) \
+    macro(MediaEncryptedEvent) \
+    macro(MediaKeyMessageEvent) \
+    macro(MediaKeySession) \
+    macro(MediaKeyStatusMap) \
+    macro(MediaKeySystemAccess) \
+    macro(MediaKeys) \
+    macro(MediaSource) \
+    macro(MediaStream) \
+    macro(MediaStreamEvent) \
+    macro(MediaStreamTrack) \
+    macro(ModernMediaControls) \
+    macro(NavigatorCredentials) \
+    macro(NavigatorMediaDevices) \
+    macro(NavigatorUserMedia) \
+    macro(PasswordCredential) \
+    macro(PaymentAddress) \
+    macro(PaymentRequest) \
+    macro(PaymentRequestUpdateEvent) \
+    macro(PaymentResponse) \
+    macro(PerformanceEntry) \
+    macro(PerformanceEntryList) \
+    macro(PerformanceMark) \
+    macro(PerformanceMeasure) \
+    macro(PerformanceObserver) \
+    macro(PerformanceObserverEntryList) \
+    macro(PerformanceResourceTiming) \
+    macro(RTCDTMFSender) \
+    macro(RTCDTMFToneChangeEvent) \
+    macro(RTCDataChannel) \
+    macro(RTCDataChannelEvent) \
+    macro(RTCIceCandidate) \
+    macro(RTCIceTransport) \
+    macro(RTCPeerConnection) \
+    macro(RTCRtpReceiver) \
+    macro(RTCRtpSender) \
+    macro(RTCRtpTransceiver) \
+    macro(RTCSessionDescription) \
+    macro(RTCStatsReport) \
+    macro(RTCTrackEvent) \
+    macro(ReadableByteStreamController) \
+    macro(ReadableStream) \
+    macro(ReadableStreamBYOBReader) \
+    macro(ReadableStreamBYOBRequest) \
+    macro(ReadableStreamDefaultController) \
+    macro(ReadableStreamDefaultReader) \
+    macro(Request) \
+    macro(Response) \
+    macro(ServiceWorker) \
+    macro(ServiceWorkerContainer) \
+    macro(ServiceWorkerGlobalScope) \
+    macro(ServiceWorkerRegistration) \
+    macro(ShadowRoot) \
+    macro(StaticRange) \
+    macro(WebGL2RenderingContext) \
+    macro(WebGLVertexArrayObject) \
+    macro(WebGPUBuffer) \
+    macro(WebGPUCommandBuffer) \
+    macro(WebGPUCommandQueue) \
+    macro(WebGPUComputeCommandEncoder) \
+    macro(WebGPUComputePipelineState) \
+    macro(WebGPUDepthStencilDescriptor) \
+    macro(WebGPUDepthStencilState) \
+    macro(WebGPUDrawable) \
+    macro(WebGPUFunction) \
+    macro(WebGPULibrary) \
+    macro(WebGPURenderCommandEncoder) \
+    macro(WebGPURenderPassAttachmentDescriptor) \
+    macro(WebGPURenderPassColorAttachmentDescriptor) \
+    macro(WebGPURenderPassDepthAttachmentDescriptor) \
+    macro(WebGPURenderPassDescriptor) \
+    macro(WebGPURenderPipelineColorAttachmentDescriptor) \
+    macro(WebGPURenderPipelineDescriptor) \
+    macro(WebGPURenderPipelineState) \
+    macro(WebGPURenderingContext) \
+    macro(WebGPUSize) \
+    macro(WebGPUTexture) \
+    macro(WebGPUTextureDescriptor) \
+    macro(WebKitMediaKeyError) \
+    macro(WebKitMediaKeyMessageEvent) \
+    macro(WebKitMediaKeyNeededEvent) \
+    macro(WebKitMediaKeySession) \
+    macro(WebKitMediaKeys) \
+    macro(WebSocket) \
+    macro(WritableStream) \
+    macro(XMLHttpRequest) \
     macro(addTrack) \
     macro(appendFromJS) \
     macro(associatedReadableByteStreamController) \
     macro(autoAllocateChunkSize) \
     macro(backingMap) \
+    macro(blur) \
     macro(body) \
     macro(byobRequest) \
+    macro(caches) \
     macro(cancel) \
     macro(cloneArrayBuffer) \
     macro(cloneForJS) \
+    macro(close) \
     macro(closeRequested) \
+    macro(closed) \
     macro(closedPromiseCapability) \
+    macro(collectMatchingElementsInFlatTree) \
     macro(consume) \
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
     macro(createReadableStream) \
+    macro(customElements) \
     macro(disturbed) \
+    macro(document) \
     macro(failureKind) \
+    macro(fetch) \
     macro(fetchRequest) \
     macro(fillFromJS) \
     macro(finishConsumingStream) \
-    macro(getUserMedia) \
+    macro(focus) \
+    macro(frames) \
     macro(getRemoteStreams) \
     macro(getSenders) \
     macro(getTracks) \
+    macro(getUserMedia) \
+    macro(header) \
+    macro(indexedDB) \
     macro(initializeWith) \
     macro(isDisturbed) \
     macro(isLoading) \
+    macro(isSecureContext) \
     macro(localStreams) \
-    macro(makeThisTypeError) \
+    macro(location) \
     macro(makeGetterTypeError) \
+    macro(makeThisTypeError) \
+    macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
+    macro(opener) \
     macro(operations) \
     macro(ownerReadableStream) \
+    macro(parent) \
     macro(pendingPullIntos) \
+    macro(postMessage) \
     macro(privateGetStats) \
     macro(pull) \
-    macro(pulling) \
     macro(pullAgain) \
+    macro(pulling) \
     macro(queue) \
     macro(queuedAddIceCandidate) \
     macro(queuedCreateAnswer) \
     macro(queuedCreateOffer) \
     macro(queuedSetLocalDescription) \
     macro(queuedSetRemoteDescription) \
-    macro(reader) \
     macro(readIntoRequests) \
     macro(readRequests) \
     macro(readableByteStreamAPIEnabled) \
     macro(readableStreamController) \
+    macro(reader) \
     macro(readyPromiseCapability) \
     macro(removeTrack) \
+    macro(response) \
     macro(responseCacheIsValid) \
     macro(retrieveResponse) \
-    macro(response) \
+    macro(self) \
     macro(setBody) \
     macro(setBodyAsReadableStream) \
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
-    macro(state) \
+    macro(showModalDialog) \
     macro(startConsumingStream) \
     macro(started) \
     macro(startedPromise) \
+    macro(state) \
     macro(storedError) \
     macro(strategy) \
     macro(strategyHWM) \
@@ -106,27 +251,26 @@ namespace WebCore {
     macro(streamWritable) \
     macro(structuredCloneArrayBuffer) \
     macro(structuredCloneArrayBufferView) \
+    macro(top) \
     macro(totalQueuedBytes) \
     macro(underlyingByteSource) \
     macro(underlyingSink) \
     macro(underlyingSource) \
     macro(view) \
     macro(webRTCLegacyAPIEnabled) \
-    macro(writing) \
-    macro(Headers) \
-    macro(MediaStream) \
-    macro(MediaStreamTrack) \
-    macro(ReadableByteStreamController) \
-    macro(ReadableStream) \
-    macro(ReadableStreamBYOBReader) \
-    macro(ReadableStreamBYOBRequest) \
-    macro(ReadableStreamDefaultController) \
-    macro(ReadableStreamDefaultReader) \
-    macro(Request) \
-    macro(Response) \
-    macro(RTCIceCandidate) \
-    macro(RTCSessionDescription) \
-    macro(XMLHttpRequest)
+    macro(webkit) \
+    macro(webkitAudioContext) \
+    macro(webkitIDBCursor) \
+    macro(webkitIDBDatabase) \
+    macro(webkitIDBFactory) \
+    macro(webkitIDBIndex) \
+    macro(webkitIDBKeyRange) \
+    macro(webkitIDBObjectStore) \
+    macro(webkitIDBRequest) \
+    macro(webkitIDBTransaction) \
+    macro(webkitIndexedDB) \
+    macro(window) \
+    macro(writing)
 
 class WebCoreBuiltinNames {
 public:

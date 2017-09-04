@@ -1,3 +1,15 @@
+2017-09-04  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Unify and simplify EnableBySettings with the rest of the runtime settings
+        https://bugs.webkit.org/show_bug.cgi?id=176312
+
+        Reviewed by Darin Adler.
+
+        * runtime/CommonIdentifiers.h:
+
+            Remove WebCore specific identifiers from CommonIdentifiers. They have been moved
+            to WebCoreBuiltinNames in WebCore.
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove "malloc" and "free" use

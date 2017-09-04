@@ -1,3 +1,62 @@
+2017-09-04  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Simplify EnabledBySettings generation
+        https://bugs.webkit.org/show_bug.cgi?id=176312
+
+        Reviewed by Darin Adler.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (NeedsRuntimeCheck):
+        (OperationShouldBeOnInstance):
+        (GeneratePropertiesHashTable):
+        (GenerateRuntimeEnableConditionalString):
+        (GenerateImplementation):
+        (GenerateAttributeGetterBodyDefinition):
+
+            - Simplify the [EnabledBySetting] code generation by merging it with the other
+            runtime checks (Exposed, EnabledAtRuntime, EnabledForWorld, and SecureContext).
+
+            - Switches to using WebCoreBuiltinNames for identifiers, rather than relying
+            on the appropriate identifiers being available on JavaScriptCore's CommonIdentifiers
+            which was an unnecessary layering violation. There are still problems with this
+            as we continue to be inconsistent  about which identifiers deserve to be in 
+            WebCoreBuiltinNames, and which ones can be created each time and there is no
+            automation of WebCoreBuiltinNames from the IDLs.
+
+            - Enforce at code generation time that [EnabledBySetting] can only be used
+            on interfaces that are uniquely exposed to the window environment. This is a
+            condition we should find a way to remove (e.g. propagating necessary settings 
+            to an object the ScriptExecutionContext owns), but for now, Settings is a main
+            thread only object.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::put):
+        (WebCore::addCrossOriginWindowPropertyNames):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+
+            Switch to using WebCoreBuiltinNames for WebCore specific identifiers.
+
+        * bindings/js/WebCoreBuiltinNames.h:
+
+            Add WebCore specific identifiers from JavaScriptCore's CommonIdentifiers
+            as well as some new ones need by the [EnableBySetting] unification.
+
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp: Added.
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.h: Added.
+        * bindings/scripts/test/TestEnabledBySetting.idl: Added.
+
+            Add new test for [EnabledBySetting].
+
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/TestObj.idl:
+
+            Remove use of [EnabledBySetting] from TestObj, as it is no longer
+            valid to use [EnabledBySetting] on interfaces that are no uniquely
+            exposed to the window environment.
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Remove "malloc" and "free" use
