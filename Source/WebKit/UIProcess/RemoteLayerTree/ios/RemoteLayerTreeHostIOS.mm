@@ -24,23 +24,16 @@
  */
 
 #import "config.h"
+#import "RemoteLayerTreeHost.h"
 
 #if PLATFORM(IOS)
 
-#import "RemoteLayerTreeHost.h"
-#import <QuartzCore/QuartzCore.h>
+#import "UIKitSPI.h"
+#import "WebKitSystemInterface.h"
 #import <UIKit/UIScrollView.h>
-#import <UIKitSPI.h>
-#import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 
 using namespace WebCore;
-
-@interface CALayer(WKLayerInternal)
-- (void)setContextId:(uint32_t)contextID;
-@end
-
-@interface CABackdropLayer : CALayer
-@end
 
 @interface UIView (WKHitTesting)
 - (UIView *)_findDescendantViewAtPoint:(CGPoint)point withEvent:(UIEvent *)event;

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ScrollingTreeOverflowScrollingNodeIOS_h
-#define ScrollingTreeOverflowScrollingNodeIOS_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
@@ -78,5 +77,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
-
-#endif // ScrollingTreeOverflowScrollingNodeIOS_h

@@ -90,7 +90,7 @@ public:
         SecondaryBack
     };
 
-    bool setBufferVolatility(BufferType type, bool isVolatile);
+    bool setBufferVolatility(BufferType, bool isVolatile);
 
     std::chrono::steady_clock::time_point lastDisplayTime() const { return m_lastDisplayTime; }
 

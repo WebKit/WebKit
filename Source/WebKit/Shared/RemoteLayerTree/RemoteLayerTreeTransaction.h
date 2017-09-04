@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerTreeTransaction_h
-#define RemoteLayerTreeTransaction_h
+#pragma once
 
 #include "EditorState.h"
 #include "GenericCallback.h"
@@ -314,5 +313,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerTreeTransaction_h

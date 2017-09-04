@@ -88,6 +88,7 @@ typedef struct _CARenderContext CARenderContext;
 
 @interface CALayer ()
 - (CAContext *)context;
+- (void)setContextId:(uint32_t)contextID;
 - (CGSize)size;
 - (void *)regionBeingDrawn;
 - (void)setContentsChanged;

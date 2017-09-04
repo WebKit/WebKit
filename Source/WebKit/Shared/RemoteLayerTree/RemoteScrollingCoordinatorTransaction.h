@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingCoordinatorTransaction_h
-#define RemoteScrollingCoordinatorTransaction_h
+#pragma once
 
 #include <WebCore/ScrollingStateTree.h>
 
@@ -59,5 +58,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteScrollingCoordinatorTransaction_h

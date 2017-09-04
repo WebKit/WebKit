@@ -1,3 +1,25 @@
+2017-09-03  Tim Horton  <timothy_horton@apple.com>
+
+        Fix some style issues in the Remote Layer Tree code
+        https://bugs.webkit.org/show_bug.cgi?id=176298
+
+        Reviewed by Dan Bernstein.
+
+        In bugs 176273 and 176297, the style bot noticed some existing style
+        issues in the UI-side compositing code. Fix them, because there aren't
+        many and they're straightforward.
+
+        * Shared/RemoteLayerTree/RemoteLayerBackingStore.h:
+        * Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.h:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.mm:
+        * UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.h:
+        * UIProcess/RemoteLayerTree/RemoteScrollingTree.h:
+        * UIProcess/RemoteLayerTree/ios/RemoteLayerTreeHostIOS.mm:
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h:
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String#utf8() allocates new CString

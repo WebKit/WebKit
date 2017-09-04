@@ -26,9 +26,9 @@
 #import "config.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 
+#import "DrawingAreaMessages.h"
 #import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
-#import "DrawingAreaMessages.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "RemoteScrollingCoordinatorTransaction.h"
 #import "WebPageProxy.h"

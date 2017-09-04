@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingTree_h
-#define RemoteScrollingTree_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -75,5 +74,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_SCROLLING_TREE(WebKit::RemoteScrollingTree, isRemoteScrollingTree());
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // RemoteScrollingTree_h

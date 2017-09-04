@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteScrollingCoordinatorProxy_h
-#define RemoteScrollingCoordinatorProxy_h
+#pragma once
 
 #if ENABLE(ASYNC_SCROLLING)
 
@@ -118,5 +117,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(ASYNC_SCROLLING)
-
-#endif // RemoteScrollingCoordinatorProxy_h

@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
-#ifndef RemoteLayerTreeScrollingPerformanceData_h
-#define RemoteLayerTreeScrollingPerformanceData_h
+#pragma once
 
 #import <WebCore/FloatRect.h>
 #import <wtf/Vector.h>
@@ -72,5 +70,3 @@ private:
 };
 
 }
-
-#endif // RemoteLayerTreeScrollingPerformanceData_h

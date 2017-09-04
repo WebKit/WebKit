@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteLayerBackingStoreCollection_h
-#define RemoteLayerBackingStoreCollection_h
+#pragma once
 
 #import <WebCore/Timer.h>
 #import <wtf/HashSet.h>
@@ -63,7 +62,7 @@ private:
         MarkBuffersIgnoringReachability = 1 << 0
     };
     typedef unsigned VolatilityMarkingFlags;
-    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags volatilityMarkingFlags = 0);
+    bool markBackingStoreVolatileImmediately(RemoteLayerBackingStore&, VolatilityMarkingFlags = 0);
     bool markBackingStoreVolatile(RemoteLayerBackingStore&, std::chrono::steady_clock::time_point now);
 
     HashSet<RemoteLayerBackingStore*> m_liveBackingStore;
@@ -78,5 +77,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // RemoteLayerBackingStoreCollection_h
