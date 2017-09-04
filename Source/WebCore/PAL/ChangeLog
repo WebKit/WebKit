@@ -1,3 +1,14 @@
+2017-09-03  Dan Bernstein  <mitz@apple.com>
+
+        [Cocoa] Remove use of __has_include in CoreAudioSPI.h
+        https://bugs.webkit.org/show_bug.cgi?id=176320
+
+        Reviewed by Tim Horton.
+
+        * pal/spi/cf/CoreAudioSPI.h: AudioHardwarePriv.h is available in all Apple internal SDKs and
+          only in Apple internal SDKs. AudioHardwareBase.h is available only in the macOS SDK, where
+          it is included by AudioHardware.h.
+
 2017-09-03  Tim Horton  <timothy_horton@apple.com>
 
         Fix some style issues in the Remote Layer Tree code

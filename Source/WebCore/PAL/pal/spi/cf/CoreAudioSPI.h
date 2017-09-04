@@ -27,12 +27,12 @@
 
 #if PLATFORM(COCOA)
 
-#if __has_include(<CoreAudio/AudioHardwarePriv.h>)
+#if USE(APPLE_INTERNAL_SDK)
 #include <CoreAudio/AudioHardwarePriv.h>
 #else
 
-#if __has_include(<CoreAudio/AudioHardwareBase.h>)
-#include <CoreAudio/AudioHardwareBase.h>
+#if PLATFORM(MAC)
+#include <CoreAudio/AudioHardware.h>
 #else
 
 WTF_EXTERN_C_BEGIN
@@ -71,14 +71,14 @@ extern OSStatus AudioObjectGetPropertyData(AudioObjectID inObjectID, const Audio
 
 WTF_EXTERN_C_END
 
-#endif // __has_include(<CoreAudio/AudioHardwareBase.h>)
+#endif
+
+#endif
 
 WTF_EXTERN_C_BEGIN
 
 extern OSStatus AudioDeviceDuck(AudioDeviceID inDevice, Float32 inDuckedLevel, const AudioTimeStamp* __nullable inStartTime, Float32 inRampDuration);
 
 WTF_EXTERN_C_END
-
-#endif // __has_include(<CoreAudio/AudioHardwarePriv.h>)
 
 #endif // PLATFORM(COCOA)
