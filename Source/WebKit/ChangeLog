@@ -1,3 +1,35 @@
+2017-09-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Wayland] Opening FedoraProject's pastebin chews CPU
+        https://bugs.webkit.org/show_bug.cgi?id=175942
+
+        Reviewed by Žan Doberšek.
+
+        This regressed when we introduced the display refresh monitor. The monitor schedules updates immediately,
+        because we removed the option to not do frame sync in X11 to let swapBuffers do the throttling, but that's
+        not happening in Wayland because the nested compositor is dispatching frame callbacks on surface commit.
+        We need to ensure that frame callbacks are dispatched on every monitor refresh, because swapBuffers waits for
+        frame callbacks to be queued on display.
+
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        (WebKit::WaylandCompositor::Surface::~Surface): Destroy pending frame callbacks too.
+        (WebKit::WaylandCompositor::Surface::setWebPage): Add a tick callback to the web view widget to flush all
+        committed frame callbacks on every frame update.
+        (WebKit::WaylandCompositor::Surface::requestFrame): Add the callbacks to m_pendingFrameCallbackList.
+        (WebKit::WaylandCompositor::Surface::flushFrameCallbacks): Dispatch all committed frame callabcks.
+        (WebKit::WaylandCompositor::Surface::flushPendingFrameCallbacks): Dispatch all pending frame callbacks.
+        (WebKit::WaylandCompositor::Surface::commit): Do not dispatch frame callbacks here, move them to the list of
+        committed frame callbacks that will be dispatched on the next frame clock update.
+        * UIProcess/gtk/WaylandCompositor.h:
+        (WebKit::WaylandCompositor::Surface::setWebPage): Moved to the cpp.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.cpp:
+        (WebKit::AcceleratedSurfaceWayland::AcceleratedSurfaceWayland): Move surface initialization and destruction to
+        the compositing thread.
+        (WebKit::AcceleratedSurfaceWayland::initialize):
+        (WebKit::AcceleratedSurfaceWayland::finalize):
+        (WebKit::AcceleratedSurfaceWayland::~AcceleratedSurfaceWayland): Deleted.
+        * WebProcess/WebPage/gtk/AcceleratedSurfaceWayland.h:
+
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Several InputMethodFilter tests are failing and crashing

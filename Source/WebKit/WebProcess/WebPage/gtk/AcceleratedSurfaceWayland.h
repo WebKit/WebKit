@@ -38,13 +38,15 @@ class AcceleratedSurfaceWayland final : public AcceleratedSurface {
     WTF_MAKE_NONCOPYABLE(AcceleratedSurfaceWayland); WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<AcceleratedSurfaceWayland> create(WebPage&, Client&);
-    ~AcceleratedSurfaceWayland();
+    ~AcceleratedSurfaceWayland() = default;
 
     uint64_t window() const override { return reinterpret_cast<uint64_t>(m_window); }
     uint64_t surfaceID() const override { return m_webPage.pageID(); }
     bool resize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override { return true; }
 
+    void initialize() override;
+    void finalize() override;
     void didRenderFrame() override;
 
 private:

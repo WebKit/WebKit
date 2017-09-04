@@ -156,7 +156,12 @@ WaylandCompositor::Surface::Surface()
 
 WaylandCompositor::Surface::~Surface()
 {
+    setWebPage(nullptr);
+
     // Destroy pending frame callbacks.
+    auto pendingList = WTFMove(m_pendingFrameCallbackList);
+    for (auto* resource : pendingList)
+        wl_resource_destroy(resource);
     auto list = WTFMove(m_frameCallbackList);
     for (auto* resource : list)
         wl_resource_destroy(resource);
@@ -168,6 +173,26 @@ WaylandCompositor::Surface::~Surface()
         eglDestroyImage(PlatformDisplay::sharedDisplay().eglDisplay(), m_image);
 
     glDeleteTextures(1, &m_texture);
+}
+
+void WaylandCompositor::Surface::setWebPage(WebPageProxy* webPage)
+{
+    if (m_webPage) {
+        flushPendingFrameCallbacks();
+        flushFrameCallbacks();
+        gtk_widget_remove_tick_callback(m_webPage->viewWidget(), m_tickCallbackID);
+        m_tickCallbackID = 0;
+    }
+
+    m_webPage = webPage;
+    if (!m_webPage)
+        return;
+
+    m_tickCallbackID = gtk_widget_add_tick_callback(m_webPage->viewWidget(), [](GtkWidget*, GdkFrameClock*, gpointer userData) -> gboolean {
+        auto* surface = static_cast<Surface*>(userData);
+        surface->flushFrameCallbacks();
+        return G_SOURCE_CONTINUE;
+    }, this, nullptr);
 }
 
 void WaylandCompositor::Surface::makePendingBufferCurrent()
@@ -199,10 +224,10 @@ void WaylandCompositor::Surface::requestFrame(struct wl_resource* resource)
 {
     wl_resource_set_implementation(resource, nullptr, this, [](struct wl_resource* resource) {
         auto* surface = static_cast<WaylandCompositor::Surface*>(wl_resource_get_user_data(resource));
-        if (size_t item = surface->m_frameCallbackList.find(resource) != notFound)
-            surface->m_frameCallbackList.remove(item);
+        if (size_t item = surface->m_pendingFrameCallbackList.find(resource) != notFound)
+            surface->m_pendingFrameCallbackList.remove(item);
     });
-    m_frameCallbackList.append(resource);
+    m_pendingFrameCallbackList.append(resource);
 }
 
 bool WaylandCompositor::Surface::prepareTextureForPainting(unsigned& texture, IntSize& textureSize)
@@ -218,8 +243,32 @@ bool WaylandCompositor::Surface::prepareTextureForPainting(unsigned& texture, In
     return true;
 }
 
+void WaylandCompositor::Surface::flushFrameCallbacks()
+{
+    auto list = WTFMove(m_frameCallbackList);
+    for (auto* resource : list) {
+        wl_callback_send_done(resource, 0);
+        wl_resource_destroy(resource);
+    }
+}
+
+void WaylandCompositor::Surface::flushPendingFrameCallbacks()
+{
+    auto list = WTFMove(m_pendingFrameCallbackList);
+    for (auto* resource : list) {
+        wl_callback_send_done(resource, 0);
+        wl_resource_destroy(resource);
+    }
+}
+
 void WaylandCompositor::Surface::commit()
 {
+    if (!m_webPage) {
+        makePendingBufferCurrent();
+        flushPendingFrameCallbacks();
+        return;
+    }
+
     EGLDisplay eglDisplay = PlatformDisplay::sharedDisplay().eglDisplay();
     if (m_image != EGL_NO_IMAGE_KHR)
         eglDestroyImage(eglDisplay, m_image);
@@ -230,18 +279,11 @@ void WaylandCompositor::Surface::commit()
     m_imageSize = m_pendingBuffer->size();
 
     makePendingBufferCurrent();
-    if (m_webPage)
-        m_webPage->setViewNeedsDisplay(IntRect(IntPoint::zero(), m_webPage->viewSize()));
 
-    // From a Wayland point-of-view frame callbacks should be fired where the
-    // compositor knows it has *used* the committed contents, so firing them here
-    // can be surprising but we don't need them as a throttling mechanism because
-    // rendering synchronization is handled elsewhere by WebKit.
-    auto list = WTFMove(m_frameCallbackList);
-    for (auto* resource : list) {
-        wl_callback_send_done(resource, 0);
-        wl_resource_destroy(resource);
-    }
+    m_webPage->setViewNeedsDisplay(IntRect(IntPoint::zero(), m_webPage->viewSize()));
+
+    auto list = WTFMove(m_pendingFrameCallbackList);
+    m_frameCallbackList.appendVector(list);
 }
 
 static const struct wl_surface_interface surfaceInterface = {
