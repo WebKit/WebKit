@@ -28,7 +28,7 @@ if (this.window) {
     this.print = (text) => {
         var span = document.createElement("span");
         document.getElementById("messages").appendChild(span);
-        span.innerHTML = text + "<br>";
+        span.innerHTML = text.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>") + "<br>";
     };
     this.preciseTime = () => performance.now() / 1000;
 } else
@@ -36,12 +36,12 @@ if (this.window) {
 
 function doPrep(code)
 {
-    return prepare("<test>", 0, code);
+    return prepare("/internal/test", 0, code);
 }
 
 function doLex(code)
 {
-    let lexer = new Lexer("<test>", 0, code);
+    let lexer = new Lexer("/internal/test", 0, code);
     var result = [];
     for (;;) {
         let next = lexer.next();
@@ -57,13 +57,21 @@ function makeInt(program, value)
     return TypedValue.box(program.intrinsics.int32, value);
 }
 
-function checkInt(program, result, expected)
+function checkNumber(program, result, expected)
 {
-    if (!result.type.equals(program.intrinsics.int32))
+    if (!result.type.isNumber)
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
+
+function checkInt(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.int32))
+        throw new Error("Wrong result type; result: " + result);
+    checkNumber(program, result, expected);
+}
+
 function checkLexerToken(result, expectedIndex, expectedKind, expectedText)
 {
     if (result._index != expectedIndex)
@@ -105,7 +113,7 @@ function TEST_nameResolutionFailure()
 {
     checkFail(
         () => doPrep("int foo(int x) { return x + y; }"),
-        (e) => e instanceof WTypeError && e.message.indexOf("<test>:1") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
 function TEST_simpleVariable()
@@ -208,6 +216,20 @@ function TEST_threadArrayLoad()
     checkInt(program, result, 89);
 }
 
+function TEST_threadArrayLoadIntLiteral()
+{
+    let program = doPrep(`
+        int foo(thread int[] array)
+        {
+            return array[0];
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 89);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    checkInt(program, result, 89);
+}
+
 function TEST_deviceArrayLoad()
 {
     let program = doPrep(`
@@ -249,6 +271,27 @@ function TEST_deviceArrayStore()
         void foo(device int[] array, int value)
         {
             array[0u] = value;
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 15);
+    let arrayRef = TypedValue.box(
+        new ArrayRefType(null, "device", program.intrinsics.int32),
+        new EArrayRef(new EPtr(buffer, 0), 1));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
+    if (buffer.get(0) != 65)
+        throw new Error("Bad value stored into buffer (expected 65): " + buffer.get(0));
+    callFunction(program, "foo", [], [arrayRef, makeInt(program, -111)]);
+    if (buffer.get(0) != -111)
+        throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
+}
+
+function TEST_deviceArrayStoreIntLiteral()
+{
+    let program = doPrep(`
+        void foo(device int[] array, int value)
+        {
+            array[0] = value;
         }
     `);
     let buffer = new EBuffer(1);
@@ -633,6 +676,20 @@ function TEST_defaultInitializedNullArrayRef()
         (e) => e instanceof WTrapError);
 }
 
+function TEST_defaultInitializedNullArrayRefIntLiteral()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            thread int[] p = null;
+            return p[0];
+        }
+    `);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        (e) => e instanceof WTrapError);
+}
+
 function TEST_passNullToPtrMonomorphicArrayRef()
 {
     let program = doPrep(`
@@ -664,6 +721,39 @@ function TEST_passNullToPtrPolymorphicArrayRef()
             }
         `),
         (e) => e instanceof WTypeError);
+}
+
+function TEST_returnIntLiteralUint()
+{
+    let program = doPrep("uint foo() { return 42; }");
+    checkNumber(program, callFunction(program, "foo", [], []), 42);
+}
+
+function TEST_returnIntLiteralDouble()
+{
+    let program = doPrep("double foo() { return 42; }");
+    checkNumber(program, callFunction(program, "foo", [], []), 42);
+}
+
+function TEST_badIntLiteralForInt()
+{
+    checkFail(
+        () => doPrep("void foo() { int x = 3000000000; }"),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_badIntLiteralForUint()
+{
+    checkFail(
+        () => doPrep("void foo() { uint x = 5000000000; }"),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_badIntLiteralForDouble()
+{
+    checkFail(
+        () => doPrep("void foo() { double x = 5000000000000000000000000000000000000; }"),
+        (e) => e instanceof WSyntaxError);
 }
 
 function TEST_passNullAndNotNull()

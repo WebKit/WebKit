@@ -29,6 +29,7 @@ class IntLiteral extends Expression {
     {
         super(origin);
         this._value = value;
+        this.type = new IntLiteralType(origin, value);
     }
     
     get value() { return this._value; }
@@ -36,7 +37,7 @@ class IntLiteral extends Expression {
     
     toString()
     {
-        return "" + this._value;
+        return "" + this.value;
     }
 }
 

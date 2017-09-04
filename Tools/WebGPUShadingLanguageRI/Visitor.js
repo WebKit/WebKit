@@ -215,6 +215,13 @@ class Visitor {
     
     visitIntLiteral(node)
     {
+        node.type.visit(this);
+    }
+    
+    visitIntLiteralType(node)
+    {
+        if (node.type)
+            node.type.visit(this);
     }
     
     visitUintLiteral(node)

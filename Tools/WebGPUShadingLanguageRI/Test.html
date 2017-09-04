@@ -17,11 +17,13 @@
 <script src="CallExpression.js"></script>
 <script src="CallFunction.js"></script>
 <script src="Check.js"></script>
+<script src="CheckLiteralTypes.js"></script>
 <script src="CheckReturns.js"></script>
 <script src="CheckUnreachableCode.js"></script>
 <script src="Checker.js"></script>
 <script src="CommaExpression.js"></script>
 <script src="ConstexprTypeParameter.js"></script>
+<script src="DotExpression.js"></script>
 <script src="DereferenceExpression.js"></script>
 <script src="EArrayRef.js"></script>
 <script src="EBuffer.js"></script>
@@ -39,7 +41,9 @@
 <script src="Inliner.js"></script>
 <script src="InstantiateImmediates.js"></script>
 <script src="IntLiteral.js"></script>
+<script src="IntLiteralType.js"></script>
 <script src="Intrinsics.js"></script>
+<script src="LiteralTypeChecker.js"></script>
 <script src="Lexer.js"></script>
 <script src="LexerToken.js"></script>
 <script src="MakePtrExpression.js"></script>
@@ -51,6 +55,7 @@
 <script src="NativeTypeInstance.js"></script>
 <script src="NullLiteral.js"></script>
 <script src="NullType.js"></script>
+<script src="OverloadResolutionFailure.js"></script>
 <script src="Parse.js"></script>
 <script src="Prepare.js"></script>
 <script src="Program.js"></script>
@@ -66,6 +71,7 @@
 <script src="ReturnChecker.js"></script>
 <script src="ReturnException.js"></script>
 <script src="StandardLibrary.js"></script>
+<script src="StructLayoutBuilder.js"></script>
 <script src="StructType.js"></script>
 <script src="Substitution.js"></script>
 <script src="SuffixCallAssignment.js"></script>
@@ -86,8 +92,21 @@
 <script src="WTypeError.js"></script>
 
 <script src="Test.js"></script>
+
+<script>
+function doTestInBrowser()
+{
+    try {
+        doTest(window);
+    } catch (e) {
+        print("ERROR: " + e.message);
+        print(e.stack);
+    }
+}
+</script>
+
 </head>
-<body onload="doTest(this)">
+<body onload="doTestInBrowser()">
 <div id="messages"></div>
 </body>
 </html>

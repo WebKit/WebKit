@@ -65,6 +65,7 @@ load("Inline.js");
 load("Inliner.js");
 load("InstantiateImmediates.js");
 load("IntLiteral.js");
+load("IntLiteralType.js");
 load("Intrinsics.js");
 load("Lexer.js");
 load("LexerToken.js");

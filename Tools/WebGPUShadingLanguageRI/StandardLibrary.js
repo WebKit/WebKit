@@ -38,6 +38,8 @@ native primitive typedef uint32;
 typedef int = int32;
 typedef uint = uint32;
 
+native primitive typedef double;
+
 native int operator+(int, int);
 
 native thread T^ operator&[]<T>(thread T[], uint);

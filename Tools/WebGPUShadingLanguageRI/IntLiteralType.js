@@ -24,18 +24,52 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    parse(program, "/internal/stdlib", 28, standardLibrary);
-    parse(program, origin, lineNumberOffset, text);
-    resolveNames(program);
-    resolveTypeDefs(program);
-    check(program);
-    checkLiteralTypes(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    inline(program);
-    return program;
+class IntLiteralType extends Type {
+    constructor(origin, value)
+    {
+        super();
+        this._origin = origin;
+        this._value = value;
+    }
+    
+    get origin() { return this._origin; }
+    get value() { return this._value; }
+    
+    get isPrimitive() { return true; }
+    get isUnifiable() { return true; }
+    
+    typeVariableUnify(unificationContext, other)
+    {
+        if (!(other instanceof Type))
+            return false;
+        
+        return this._typeVariableUnifyImpl(unificationContext, other);
+    }
+    
+    unifyImpl(unificationContext, other)
+    {
+        return this.typeVariableUnify(unificationContext, other);
+    }
+    
+    verifyAsArgument(unificationContext)
+    {
+        let realThis = unificationContext.find(this);
+        return realThis.isNumber && realThis.canRepresent(this.value);
+    }
+    
+    verifyAsParameter(unificationContext)
+    {
+        throw new Error("IntLiteralType should never be used as a type parameter");
+    }
+    
+    commitUnification(unificationContext)
+    {
+        this.type = unificationContext.find(this);
+    }
+    
+    toString()
+    {
+        return "intLiteralType<" + this.value + ">";
+    }
 }
 

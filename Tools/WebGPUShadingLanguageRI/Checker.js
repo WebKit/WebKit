@@ -198,10 +198,7 @@ class Checker extends Visitor {
     
     visitIntLiteral(node)
     {
-        // FIXME: This should return some kind of type variable that defaults to int but is happy to
-        // unify with uint.
-        // https://bugs.webkit.org/show_bug.cgi?id=176209
-        return this._program.intrinsics.int32;
+        return node.type;
     }
     
     visitUintLiteral(node)
@@ -211,7 +208,6 @@ class Checker extends Visitor {
     
     visitNullLiteral(node)
     {
-        // Return the null literal's type variable.
         return node.type;
     }
     

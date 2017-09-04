@@ -29,6 +29,9 @@ class Type extends Node {
     get kind() { return Type; }
     get isPtr() { return false; }
     get isArrayRef() { return false; }
+    get isNumber() { return false; }
+    get isInt() { return false; }
+    get isFloat() { return false; }
     
     inherits(protocol)
     {

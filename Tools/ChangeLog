@@ -1,5 +1,86 @@
 2017-09-03  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL IntLiteral should have variable type so that it can unify with things like uint
+        https://bugs.webkit.org/show_bug.cgi?id=176209
+
+        Reviewed by Mylex Maxfield.
+        
+        This introduces IntLiteralType, which can unify with any number type that can represent the
+        int literal.
+        
+        This means that all of the following are legal:
+        
+            double x = 0; // 0 unifies with double
+            double y = x + 5; // should resolve to double+double
+            double z = array[0]; // 0 unifies with uint
+        
+        We can do similar things with float literals, so that you don't have to suffix "f" all the
+        time.
+        
+        I think that this is very different from what C does. C just supports implicit type
+        conversions. That's why "double x = 0" works in C. We don't do type conversions. Instead, we
+        let each literal unify itself with one type.
+        
+        Also updated Test.html so that it runs again and is better at printing things.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/IntLiteral.js:
+        (IntLiteral):
+        (IntLiteral.prototype.toString):
+        * WebGPUShadingLanguageRI/IntLiteralType.js: Added.
+        (IntLiteralType):
+        (IntLiteralType.prototype.get origin):
+        (IntLiteralType.prototype.get value):
+        (IntLiteralType.prototype.get isPrimitive):
+        (IntLiteralType.prototype.get isUnifiable):
+        (IntLiteralType.prototype.typeVariableUnify):
+        (IntLiteralType.prototype.unifyImpl):
+        (IntLiteralType.prototype.verifyAsArgument):
+        (IntLiteralType.prototype.verifyAsParameter):
+        (IntLiteralType.prototype.commitUnification):
+        (IntLiteralType.prototype.toString):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LiteralTypeChecker.js:
+        (LiteralTypeChecker.prototype.visitIntLiteralType):
+        (LiteralTypeChecker):
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType):
+        (NativeType.prototype.get isNumber):
+        (NativeType.prototype.set isNumber):
+        (NativeType.prototype.get isInt):
+        (NativeType.prototype.set isInt):
+        (NativeType.prototype.get isFloat):
+        (NativeType.prototype.set isFloat):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitIntLiteral):
+        (Rewriter.prototype.visitIntLiteralType):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (this.window.this.print):
+        (doPrep):
+        (doLex):
+        (checkNumber):
+        (checkInt):
+        (TEST_nameResolutionFailure):
+        (TEST_threadArrayLoadIntLiteral):
+        (TEST_deviceArrayStoreIntLiteral):
+        (TEST_returnIntLiteralDouble):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isNumber):
+        (Type.prototype.get isInt):
+        (Type.prototype.get isFloat):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitIntLiteral):
+        (Visitor.prototype.visitIntLiteralType):
+
+2017-09-03  Filip Pizlo  <fpizlo@apple.com>
+
         Add more tests for null behavior in WSL
         https://bugs.webkit.org/show_bug.cgi?id=176318
 

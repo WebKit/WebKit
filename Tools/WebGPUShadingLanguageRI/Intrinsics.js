@@ -45,11 +45,28 @@ class Intrinsics {
                 type.size = 0;
                 type.populateDefaultValue = () => { };
             });
+        
+        function isBitwiseEquivalent(left, right)
+        {
+            let doubleArray = new Float64Array(1);
+            let intArray = new Int32Array(doubleArray.buffer);
+            doubleArray[0] = left;
+            let leftInts = Int32Array.from(intArray);
+            doubleArray[0] = right;
+            for (let i = 0; i < 2; ++i) {
+                if (leftInts[i] != intArray[i])
+                    return false;
+            }
+            return true;
+        }
 
         this._map.set(
             "native primitive type int32<>",
             type => {
                 this.int32 = type;
+                type.isInt = true;
+                type.isNumber = true;
+                type.canRepresent = value => isBitwiseEquivalent(value | 0, value);
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
@@ -58,6 +75,9 @@ class Intrinsics {
             "native primitive type uint32<>",
             type => {
                 this.uint32 = type;
+                type.isInt = true;
+                type.isNumber = true;
+                type.canRepresent = value => isBitwiseEquivalent(value >>> 0, value);
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
@@ -67,6 +87,9 @@ class Intrinsics {
             type => {
                 this.double = type;
                 type.size = 1;
+                type.isFloat = true;
+                type.isNumber = true;
+                type.canRepresent = value => true;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
         

@@ -32,6 +32,9 @@ class NativeType extends Type {
         this._name = name;
         this._isPrimitive = isPrimitive;
         this._typeParameters = typeParameters;
+        this._isNumber = false;
+        this._isInt = false;
+        this._isFloat = false;
     }
     
     get origin() { return this._origin; }
@@ -39,6 +42,14 @@ class NativeType extends Type {
     get isPrimitive() { return this._isPrimitive; }
     get typeParameters() { return this._typeParameters; }
     get isNative() { return true; }
+    
+    // We let Intrinsics.js set these as it likes.
+    get isNumber() { return this._isNumber; }
+    set isNumber(value) { this._isNumber = value; }
+    get isInt() { return this._isInt; }
+    set isInt(value) { this._isInt = value; }
+    get isFloat() { return this._isFloat; }
+    set isFloat(value) { this._isFloat = value; }
     
     instantiate(typeArguments)
     {

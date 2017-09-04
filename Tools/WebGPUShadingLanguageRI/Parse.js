@@ -172,9 +172,9 @@ function parse(program, origin, lineNumberOffset, text)
         if (token = tryConsumeKind("identifier"))
             return new VariableRef(token, token.text);
         if (token = tryConsumeKind("intLiteral")) {
-            let intVersion = token.text | 0;
-            if (intVersion != token.text)
-                lexer.fail("Integer literal is not 32-bit integer");
+            let intVersion = Math.floor(+token.text);
+            if ("" + intVersion !== token.text)
+                lexer.fail("Integer literal is not an integer");
             return new IntLiteral(token, intVersion);
         }
         if (token = tryConsumeKind("uintLiteral")) {

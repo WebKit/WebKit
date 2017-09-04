@@ -200,7 +200,16 @@ class Rewriter {
     
     visitIntLiteral(node)
     {
-        return node;
+        let result = new IntLiteral(node.origin, node.value);
+        result.type = node.type.visit(this);
+        return result;
+    }
+    
+    visitIntLiteralType(node)
+    {
+        let result = new IntLiteralType(node.origin, node.value);
+        result.type = node.type ? node.type.visit(this) : null;
+        return result;
     }
 
     visitUintLiteral(node)
