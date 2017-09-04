@@ -49,6 +49,7 @@
 #include "StackVisitor.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unicode/utf8.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
