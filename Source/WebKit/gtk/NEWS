@@ -1,4 +1,20 @@
 ==================
+WebKitGTK+ 2.17.92
+==================
+
+What's new in WebKitGTK+ 2.17.92?
+
+  - Improve CPU usage when rendering under Wayland in accelerated compositing mode.
+  - Improve the memory consumption of the UI process under Wayland.
+  - Fix rendering issues in some web sites with accelerated compositing enabled.
+  - Fix a web process crash when closing the WebView.
+  - Initialize libgcrypt in the network process too.
+  - Show controls if a video element isn't allowed to play inline.
+  - Add support for cookies and screenshots commands in WebDriver.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Brazilian Portuguese, Polish.
+
+==================
 WebKitGTK+ 2.17.91
 ==================
 
