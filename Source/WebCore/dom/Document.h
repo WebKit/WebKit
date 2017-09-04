@@ -75,10 +75,6 @@ class ExecState;
 class InputCursor;
 }
 
-namespace PAL {
-class Logger;
-}
-
 namespace WebCore {
 
 class AXObjectCache;
@@ -1359,8 +1355,6 @@ public:
     TextAutoSizing& textAutoSizing();
 #endif
 
-    PAL::Logger& logger() const;
-
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1811,7 +1805,6 @@ private:
 
     OrientationNotifier m_orientationNotifier;
     mutable PAL::SessionID m_sessionID;
-    mutable RefPtr<PAL::Logger> m_logger;
 
     static bool hasEverCreatedAnAXObjectCache;
 };
