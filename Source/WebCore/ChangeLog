@@ -1,3 +1,28 @@
+2017-09-02  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Wrong getComputedStyle result for pseudo-elements in display: none subtrees.
+        https://bugs.webkit.org/show_bug.cgi?id=176259
+
+        Reviewed by Antti Koivisto.
+
+        Before this patch, we were wrongly returning the parent style when there wasn't
+        a cached pseudo style.
+
+        With this, the only remaining failures in getComputedStyle-pseudo is a
+        serialisation bug for the "content" property, and the display: contents test,
+        which is because we don't support pseudo-elements of display: contents elements
+        yet.
+
+        Tests: imported/w3c/web-platform-tests/cssom/getComputedStyle-pseudo.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleForElementIgnoringPendingStylesheets):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::resolvePseudoElementStyle):
+        (WebCore::Element::computedStyle):
+        * dom/Element.h:
+
 2017-09-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Performance / PerformanceObserver leaks seen on bots

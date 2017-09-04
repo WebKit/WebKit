@@ -1949,16 +1949,22 @@ void Document::updateLayoutIgnorePendingStylesheets(Document::RunPostLayoutTasks
     m_ignorePendingStylesheets = oldIgnore;
 }
 
-std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, const RenderStyle* parentStyle)
+std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, const RenderStyle* parentStyle, PseudoId pseudoElementSpecifier)
 {
     ASSERT(&element.document() == this);
+    ASSERT(!element.isPseudoElement() || !pseudoElementSpecifier);
+    ASSERT(!pseudoElementSpecifier || parentStyle);
 
     // On iOS request delegates called during styleForElement may result in re-entering WebKit and killing the style resolver.
     Style::PostResolutionCallbackDisabler disabler(*this);
 
     SetForScope<bool> change(m_ignorePendingStylesheets, true);
-    auto elementStyle = element.resolveStyle(parentStyle);
+    auto& resolver = element.styleResolver();
 
+    if (pseudoElementSpecifier)
+        return resolver.pseudoStyleForElement(element, PseudoStyleRequest(pseudoElementSpecifier), *parentStyle);
+
+    auto elementStyle = resolver.styleForElement(element, parentStyle);
     if (elementStyle.relations) {
         Style::Update emptyUpdate(*this);
         Style::commitRelations(WTFMove(elementStyle.relations), emptyUpdate);

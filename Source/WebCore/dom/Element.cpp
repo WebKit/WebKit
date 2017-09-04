@@ -2759,6 +2759,26 @@ const RenderStyle& Element::resolveComputedStyle()
     return *computedStyle;
 }
 
+const RenderStyle& Element::resolvePseudoElementStyle(PseudoId pseudoElementSpecifier)
+{
+    ASSERT(!isPseudoElement());
+
+    auto* parentStyle = existingComputedStyle();
+    ASSERT(parentStyle);
+    ASSERT(!parentStyle->getCachedPseudoStyle(pseudoElementSpecifier));
+
+    auto style = document().styleForElementIgnoringPendingStylesheets(*this, parentStyle, pseudoElementSpecifier);
+    if (!style) {
+        style = RenderStyle::createPtr();
+        style->inheritFrom(*parentStyle);
+        style->setStyleType(pseudoElementSpecifier);
+    }
+
+    auto* computedStyle = style.get();
+    const_cast<RenderStyle*>(parentStyle)->addCachedPseudoStyle(WTFMove(style));
+    return *computedStyle;
+}
+
 const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
     if (!isConnected())
@@ -2774,6 +2794,7 @@ const RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
     if (pseudoElementSpecifier) {
         if (auto* cachedPseudoStyle = style->getCachedPseudoStyle(pseudoElementSpecifier))
             return cachedPseudoStyle;
+        return &resolvePseudoElementStyle(pseudoElementSpecifier);
     }
 
     return style;

@@ -1,3 +1,12 @@
+2017-09-02  Emilio Cobos Álvarez  <emilio@crisal.io>
+
+        Wrong getComputedStyle result for pseudo-elements in display: none subtrees.
+        https://bugs.webkit.org/show_bug.cgi?id=176259
+
+        Reviewed by Antti Koivisto.
+
+        * web-platform-tests/cssom/getComputedStyle-pseudo-expected.txt:
+
 2017-09-01  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Wrong getComputedStyle behavior for pseudo-elements for layout-dependent properties.
