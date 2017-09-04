@@ -50,13 +50,17 @@ bool ThreadedDisplayRefreshMonitor::requestRefreshCallback()
     if (!m_compositor)
         return false;
 
-    LockHolder locker(mutex());
-    setIsScheduled(true);
+    bool previousFrameDone { false };
+    {
+        LockHolder locker(mutex());
+        setIsScheduled(true);
+        previousFrameDone = isPreviousFrameDone();
+    }
 
     // Only request an update in case we're not currently handling the display
     // refresh notifications under ThreadedDisplayRefreshMonitor::displayRefreshCallback().
     // Any such schedule request is handled in that method after the notifications.
-    if (isPreviousFrameDone())
+    if (previousFrameDone)
         m_compositor->requestDisplayRefreshMonitorUpdate();
 
     return true;

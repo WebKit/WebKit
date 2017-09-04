@@ -1,3 +1,23 @@
+2017-09-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Threaded Compositor] Deadlock in ThreadedDisplayRefreshMonitor
+        https://bugs.webkit.org/show_bug.cgi?id=176296
+
+        Reviewed by Žan Doberšek.
+
+        The main thread tries to schedule a display refresh monitor from RAF, requestDisplayRefreshMonitorUpdate() tries
+        to take the attributes lock to update coordinateUpdateCompletionWithClient. The compositing thread has finished
+        a frame and sceneUpdateFinished() takes the attributes lock to update clientRendersNextFrame and then asks the
+        display refresh monitor if it requires a new callback. ThreadedDisplayRefreshMonitor::requiresDisplayRefreshCallback()
+        takes its lock to check the state, and requestDisplayRefreshMonitorUpdate() was called by
+        ThreadedDisplayRefreshMonitor::requestRefreshCallback() with the display refresh monitor lock taken. So,
+        the compositing thread has the attributes lock and wants the display refresh monitor one, and main thread has the
+        display refresh monitor lock and wants the attributes one.
+
+        * Shared/CoordinatedGraphics/threadedcompositor/ThreadedDisplayRefreshMonitor.cpp:
+        (WebKit::ThreadedDisplayRefreshMonitor::requestRefreshCallback): Release the mutex before calling
+        ThreadedCompositor::requestDisplayRefreshMonitorUpdate().
+
 2017-09-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Libgcrypt warning: missing initialization - please fix the application
