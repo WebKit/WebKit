@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2014 Igalia S.L.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +24,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "NetworkProcessMainUnix.h"
+#pragma once
 
-#include <cstdlib>
+#include <gcrypt.h>
 
-#if USE(GCRYPT)
-#include <pal/crypto/gcrypt/Initialization.h>
-#endif
+namespace PAL {
+namespace GCrypt {
 
-using namespace WebKit;
-
-int main(int argc, char** argv)
+static inline void initialize()
 {
-    // Disable SSLv3 very early because it is practically impossible to safely
-    // use setenv() when multiple threads are running, as another thread calling
-    // getenv() could cause a crash, and many functions use getenv() internally.
-    // This workaround will stop working if glib-networking switches away from
-    // GnuTLS or simply stops parsing this variable. We intentionally do not
-    // overwrite this priority string if it's already set by the user.
-    // https://bugzilla.gnome.org/show_bug.cgi?id=738633
-    // WARNING: This needs to be KEPT IN SYNC with WebProcessMain.cpp.
-    setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128", 0);
+    // Call gcry_check_version() before any other libgcrypt call, ignoring the
+    // returned version string.
+    gcry_check_version(nullptr);
 
-#if USE(GCRYPT)
-    PAL::GCrypt::initialize();
-#endif
-
-    return NetworkProcessMainUnix(argc, argv);
+    // Pre-allocate 16kB of secure memory and finish the initialization.
+    gcry_control(GCRYCTL_INIT_SECMEM, 16384, nullptr);
+    gcry_control(GCRYCTL_INITIALIZATION_FINISHED, nullptr);
 }
+
+} // namespace PAL
+} // namespace GCrypt

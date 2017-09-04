@@ -1,3 +1,22 @@
+2017-09-03  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Libgcrypt warning: missing initialization - please fix the application
+        https://bugs.webkit.org/show_bug.cgi?id=171230
+
+        Reviewed by Michael Catanzaro.
+
+        Replicate the libgcrypt initialization in the NetworkProcess entrypoint.
+        This is required due to libgcrypt being used through digest operations
+        originating from the certificate hash computation in SoupNetworkSession.
+
+        The initialization is moved to the PAL library, and the initialize()
+        function is now leveraged in both NetworkProcess and WebProcess entrypoints.
+
+        * NetworkProcess/EntryPoint/unix/NetworkProcessMain.cpp:
+        (main):
+        * WebProcess/EntryPoint/unix/WebProcessMain.cpp:
+        (main):
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String#utf8() allocates new CString

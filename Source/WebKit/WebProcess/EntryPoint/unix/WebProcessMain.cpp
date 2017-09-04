@@ -28,7 +28,7 @@
 #include <cstdlib>
 
 #if USE(GCRYPT)
-#include <gcrypt.h>
+#include <pal/crypto/gcrypt/Initialization.h>
 #endif
 
 using namespace WebKit;
@@ -46,13 +46,7 @@ int main(int argc, char** argv)
     setenv("G_TLS_GNUTLS_PRIORITY", "NORMAL:%COMPAT:!VERS-SSL3.0:!ARCFOUR-128", 0);
 
 #if USE(GCRYPT)
-    // Call gcry_check_version() before any other libgcrypt call, ignoring the
-    // returned version string.
-    gcry_check_version(nullptr);
-
-    // Pre-allocate 16kB of secure memory and finish the initialization.
-    gcry_control(GCRYCTL_INIT_SECMEM, 16384, nullptr);
-    gcry_control(GCRYCTL_INITIALIZATION_FINISHED, nullptr);
+    PAL::GCrypt::initialize();
 #endif
 
     return WebProcessMainUnix(argc, argv);
