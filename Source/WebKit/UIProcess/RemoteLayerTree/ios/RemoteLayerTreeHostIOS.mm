@@ -136,7 +136,7 @@ using namespace WebCore;
 - (instancetype)initWithFrame:(CGRect)frame contextID:(uint32_t)contextID
 {
     if ((self = [super initWithFrame:frame]))
-        [[self layer] setContextId:contextID];
+        [(CALayerHost *)[self layer] setContextId:contextID];
     
     return self;
 }
