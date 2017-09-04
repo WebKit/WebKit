@@ -1,3 +1,81 @@
+2017-09-04  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: hook up real data to spreadsheet style editor
+        https://bugs.webkit.org/show_bug.cgi?id=175343
+        <rdar://problem/33784793>
+
+        Reviewed by Devin Rousso.
+
+        Replace static HTML added in <https://webkit.org/b/174838> with actual data.
+
+        Addressed in this patch:
+        - CSS rules can be copied.
+        - Source links work as expected.
+        - Nonmatching selectors are grayed out.
+
+        Known limitations:
+        - Neither CSS selectors nor CSS properties are editable.
+        - "Inherited from" and media query section headers are missing.
+        - No syntax highlighting of complex CSS values, e.g. hsl(0, 0%, 70%).
+
+        * UserInterface/Main.html:
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor):
+        * UserInterface/Views/CSSStyleDetailsSidebarPanel.js:
+        (WI.CSSStyleDetailsSidebarPanel):
+        * UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.js: Removed.
+        Rename RulesStyleSpreadsheetDetailsPanel to SpreadsheetRulesStyleDetailsPanel. All files related to the spreadsheet editor start with "Spreadsheet" now.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css: Added.
+        (.spreadsheet-style-declaration-editor):
+        (.spreadsheet-style-declaration-editor .name):
+        (.spreadsheet-style-declaration-editor .value):
+        (.spreadsheet-style-declaration-editor.no-properties):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js: Added.
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get delegate):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set delegate):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get style):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set style):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get _propertiesToRender):
+        Similar condition is commonly used in CSSStyleDeclarationTextEditor. Abstact it out to its own method.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._renderProperty):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css: Copied from Source/WebInspectorUI/UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.css.
+        (.spreadsheet-css-declaration):
+        (.spreadsheet-css-declaration .origin):
+        (.spreadsheet-css-declaration.locked .origin::after):
+        (.spreadsheet-css-declaration .origin .go-to-link):
+        (.spreadsheet-css-declaration .origin .go-to-link:hover):
+        (.spreadsheet-css-declaration .styles-source):
+        (.spreadsheet-css-declaration .selector.style-attribute):
+        (.spreadsheet-css-declaration .selector > span):
+        (.spreadsheet-css-declaration .selector > .matched):
+        (.spreadsheet-css-declaration .properties):
+        (.spreadsheet-css-declaration.locked):
+        (.spreadsheet-css-declaration .locked-icon):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js: Added.
+        (WI.SpreadsheetCSSStyleDeclarationSection):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get element):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get style):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.cssStyleDeclarationTextEditorFocused):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get locked):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.get selectorEditable):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css: Renamed from Source/WebInspectorUI/UserInterface/Views/RulesStyleSpreadsheetDetailsPanel.css.
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js: Added.
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        * UserInterface/Views/StyleDetailsPanel.js:
+        (WI.StyleDetailsPanel.prototype.filterDidChange):
+
+        * UserInterface/Views/View.js:
+        (WI.View.prototype.removeAllSubviews):
+        Add a method to remove all subviews more efficiently.
+
 2017-08-29  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Critical content browser toolbar buttons are hidden at narrow widths

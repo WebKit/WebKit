@@ -36,7 +36,7 @@ WI.CSSStyleDetailsSidebarPanel = class CSSStyleDetailsSidebarPanel extends WI.DO
         this._visualStyleDetailsPanel = new WI.VisualStyleDetailsPanel(this);
 
         if (WI.settings.experimentalSpreadsheetStyleEditor.value)
-            this._activeRulesStyleDetailsPanel = new WI.RulesStyleSpreadsheetDetailsPanel(this);
+            this._activeRulesStyleDetailsPanel = new WI.SpreadsheetRulesStyleDetailsPanel(this);
         else
             this._activeRulesStyleDetailsPanel = this._rulesStyleDetailsPanel;
 

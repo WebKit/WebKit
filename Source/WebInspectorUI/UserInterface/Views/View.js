@@ -132,6 +132,15 @@ WI.View = class View extends WI.Object
         view.didMoveToParent(null);
     }
 
+    removeAllSubviews()
+    {
+        for (let subview of this._subviews)
+            subview.didMoveToParent(null);
+
+        this._subviews = [];
+        this._element.removeChildren();
+    }
+
     replaceSubview(oldView, newView)
     {
         console.assert(oldView !== newView, "Cannot replace subview with itself.");

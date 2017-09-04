@@ -114,6 +114,11 @@ WI.StyleDetailsPanel = class StyleDetailsPanel extends WI.View
             this._refreshPreservingScrollPosition(event.data.significantChange);
     }
 
+    filterDidChange(filterBar)
+    {
+        // Implemented by subclasses.
+    }
+
     // Private
 
     get _initialScrollOffset()
