@@ -492,7 +492,8 @@ void WebSocketChannel::startClosingHandshake(int code, const String& reason)
         unsigned char lowByte = code;
         buf.append(static_cast<char>(highByte));
         buf.append(static_cast<char>(lowByte));
-        buf.append(reason.utf8().data(), reason.utf8().length());
+        auto reasonUTF8 = reason.utf8();
+        buf.append(reasonUTF8.data(), reasonUTF8.length());
     }
     enqueueRawFrame(WebSocketFrame::OpCodeClose, buf.data(), buf.size());
     Ref<WebSocketChannel> protectedThis(*this); // An attempt to send closing handshake may fail, which will get the channel closed and dereferenced.

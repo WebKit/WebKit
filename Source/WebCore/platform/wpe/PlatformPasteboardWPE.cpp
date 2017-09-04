@@ -103,8 +103,11 @@ void PlatformPasteboard::write(const String& type, const String& string)
     struct wpe_pasteboard_string_pair pairs[] = {
         { { nullptr, 0 }, { nullptr, 0 } },
     };
-    wpe_pasteboard_string_initialize(&pairs[0].type, type.utf8().data(), type.utf8().length());
-    wpe_pasteboard_string_initialize(&pairs[0].string, string.utf8().data(), string.utf8().length());
+
+    auto typeUTF8 = type.utf8();
+    auto stringUTF8 = string.utf8();
+    wpe_pasteboard_string_initialize(&pairs[0].type, typeUTF8.data(), typeUTF8.length());
+    wpe_pasteboard_string_initialize(&pairs[0].string, stringUTF8.data(), stringUTF8.length());
     struct wpe_pasteboard_string_map map = { pairs, 1 };
 
     wpe_pasteboard_write(m_pasteboard, &map);
