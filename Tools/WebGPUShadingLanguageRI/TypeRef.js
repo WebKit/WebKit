@@ -36,6 +36,8 @@ class TypeRef extends Type {
     
     static wrap(type)
     {
+        if (type instanceof TypeRef && !type.typeArguments)
+            return type;
         let result = new TypeRef(type.origin, type.name, []);
         result.type = type;
         return result;

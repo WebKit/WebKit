@@ -231,7 +231,7 @@ class Checker extends Visitor {
             let newArgument = argument.visit(this);
             if (!newArgument)
                 throw new Error("visitor returned null for " + argument);
-            return newArgument;
+            return TypeRef.wrap(newArgument);
         });
         node.argumentTypes = argumentTypes;
         

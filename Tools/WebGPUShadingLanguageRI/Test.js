@@ -666,6 +666,115 @@ function TEST_passNullToPtrPolymorphicArrayRef()
         (e) => e instanceof WTypeError);
 }
 
+function TEST_passNullAndNotNull()
+{
+    let program = doPrep(`
+        T bar<T:primitive>(device T^ p, device T^)
+        {
+            return ^p;
+        }
+        int foo(device int^ p)
+        {
+            return bar(p, null);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+}
+
+function TEST_passNullAndNotNullFullPoly()
+{
+    let program = doPrep(`
+        T bar<T:primitive>(T p, T)
+        {
+            return p;
+        }
+        int foo(device int^ p)
+        {
+            return ^bar(p, null);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+}
+
+function TEST_passNullAndNotNullFullPolyReverse()
+{
+    let program = doPrep(`
+        T bar<T:primitive>(T, T p)
+        {
+            return p;
+        }
+        int foo(device int^ p)
+        {
+            return ^bar(null, p);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+}
+
+function TEST_nullTypeVariableUnify()
+{
+    let left = new NullType(null);
+    let right = new TypeVariable(null, "T", null);
+    if (left.equals(right))
+        throw new Error("Should not be equal but are: " + left + " and " + right);
+    if (right.equals(left))
+        throw new Error("Should not be equal but are: " + left + " and " + right);
+    
+    function everyOrder(array, callback)
+    {
+        function recurse(array, callback, order)
+        {
+            if (!array.length)
+                return callback.call(null, order);
+            
+            for (let i = 0; i < array.length; ++i) {
+                let nextArray = array.concat();
+                nextArray.splice(i, 1);
+                recurse(nextArray, callback, order.concat([array[i]]));
+            }
+        }
+        
+        recurse(array, callback, []);
+    }
+    
+    function everyPair(things)
+    {
+        let result = [];
+        for (let i = 0; i < things.length; ++i) {
+            for (let j = 0; j < things.length; ++j) {
+                if (i != j)
+                    result.push([things[i], things[j]]);
+            }
+        }
+        return result;
+    }
+    
+    everyOrder(
+        everyPair(["nullType", "variableType", "ptrType"]),
+        order => {
+            let types = {};
+            types.nullType = new NullType(null);
+            types.variableType = new TypeVariable(null, "T", null);
+            types.ptrType = new PtrType(null, "constant", new NativeType(null, "foo_t", true, []));
+            let unificationContext = new UnificationContext([types.variableType]);
+            for (let [leftName, rightName] of order) {
+                let left = types[leftName];
+                let right = types[rightName];
+                let result = left.unify(unificationContext, right);
+                if (!result)
+                    throw new Error("In order " + order + " cannot unify " + left + " with " + right);
+            }
+            if (!unificationContext.verify())
+                throw new Error("In order " + order.map(value => "(" + value + ")") + " cannot verify");
+        });
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

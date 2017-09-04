@@ -64,7 +64,7 @@ class FuncInstantiator {
                 // We may have to re-resolve the function call, if it was a call to a protocol
                 // signature.
                 if (result.func instanceof ProtocolFuncDecl) {
-                    let overload = thisInstantiator._program.resolveFuncOverload(node.name, node.typeArguments, node.argumentTypes);
+                    let overload = thisInstantiator._program.resolveFuncOverload(result.name, result.typeArguments, result.argumentTypes);
                     if (!overload.func)
                         throw new Error("Could not resolve protocol signature function call during instantiation: " + result.func + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
                     result.resolve(overload);

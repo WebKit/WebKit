@@ -44,7 +44,8 @@ class Substitution extends Rewriter {
             return TypeRef.wrap(replacement);
         }
         
-        return super.visitTypeRef(node);
+        let result = super.visitTypeRef(node);
+        return result;
     }
 
     visitVariableRef(node)

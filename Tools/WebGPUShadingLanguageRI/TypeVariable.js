@@ -72,7 +72,7 @@ class TypeVariable extends Type {
         // The thing we get unified with must be a type variable that accepts a broader set of
         // things than we do.
         if (!(realThis instanceof TypeVariable))
-            return true;
+            return false;
         
         if (!this.protocol)
             return !realThis.protocol;
