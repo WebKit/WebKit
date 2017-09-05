@@ -1,3 +1,14 @@
+2017-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Cache Storage Engine should not mix different origin caches
+        https://bugs.webkit.org/show_bug.cgi?id=176394
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/cache-storage/cache-origins.https-expected.txt: Added.
+        * http/tests/cache-storage/cache-origins.https.html: Added.
+        * http/tests/cache-storage/resources/cache-persistency-iframe.html:
+
 2017-09-05  Per Arne Vollan  <pvollan@apple.com>
 
         Unskip two tests which was skipped by mistake.

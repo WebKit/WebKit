@@ -11,7 +11,10 @@ function doTest()
         return;
     }
 
-    self.caches.open("testCacheName").then(() => {
+    var cacheName = "testCacheName";
+    if (window.location.hash.indexOf("#name=") === 0)
+        cacheName = window.location.hash.substring(6);
+    self.caches.open(cacheName).then(() => {
         window.parent.postMessage("ready", "*");
     });
 }

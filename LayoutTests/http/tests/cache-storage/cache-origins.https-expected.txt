@@ -1,0 +1,5 @@
+  
+
+PASS Create a cache storage and look at the representation 
+PASS Caches from different origins should not mix 
+

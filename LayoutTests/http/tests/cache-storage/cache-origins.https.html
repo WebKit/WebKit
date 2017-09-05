@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cache Storage: testing persistency of different origins</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/resources/gc.js"></script>
+</head>
+<body>
+    <script>
+
+    function checkCaches(name) {
+        promise_test(() => {
+            return self.caches.keys().then(keys => {
+                assert_true(keys.indexOf("cache1") !== -1, "Should have cache1");
+                assert_true(keys.indexOf("cache2") === -1, "Should not have cache1");
+            });
+        }, name);
+    }
+
+    promise_test(test => {
+        if (!window.internals)
+            return Promise.reject("Test requires internals");
+
+        return new Promise((resolve, reject) => {
+            var counter = 0;
+            window.addEventListener("message", test.step_func((event) => {
+                if (++counter <= 1)
+                    return;
+                internals.clearCacheStorageMemoryRepresentation();
+                checkCaches("Caches from different origins should not mix");
+                resolve();
+            }));
+        })
+    }, "Create a cache storage and look at the representation");
+    </script>
+    <div>
+        <iframe src="resources/cache-persistency-iframe.html#name=cache1"></iframe>
+        <iframe src="https://localhost:8443/cache-storage/resources/cache-persistency-iframe.html#name=cache2"></iframe>
+    </div>
+</body>
+</html>
+

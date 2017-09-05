@@ -188,31 +188,28 @@ void Engine::initialize(Function<void(std::optional<Error>&&)>&& callback)
 
 void Engine::readCachesFromDisk(const String& origin, CachesCallback&& callback)
 {
-    auto& caches = m_caches.ensure(origin, [&origin, this] {
-        return Caches::create(*this, origin);
-    }).iterator->value;
-
-    if (caches->isInitialized()) {
-        callback(std::reference_wrapper<Caches> { caches.get() });
-        return;
-    }
-
     initialize([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        auto& caches = m_caches.ensure(origin, [&origin, this] {
+            return Caches::create(*this, origin);
+        }).iterator->value;
+
+        if (caches->isInitialized()) {
+            callback(std::reference_wrapper<Caches> { caches.get() });
+            return;
+        }
+
         if (error) {
             callback(makeUnexpected(error.value()));
             return;
         }
 
-        auto caches = m_caches.get(origin);
-        ASSERT(caches);
-
-        caches->initialize([callback = WTFMove(callback), caches](std::optional<Error>&& error) mutable {
+        caches->initialize([callback = WTFMove(callback), caches = caches.copyRef()](std::optional<Error>&& error) mutable {
             if (error) {
                 callback(makeUnexpected(error.value()));
                 return;
             }
 
-            callback(std::reference_wrapper<Caches> { *caches });
+            callback(std::reference_wrapper<Caches> { caches.get() });
         });
     });
 }

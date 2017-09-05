@@ -41,7 +41,7 @@ static inline String cachesRootPath(Engine& engine, const String& origin)
     if (!engine.shouldPersist())
         return { };
 
-    Key key(engine.rootPath(), { }, { }, origin, engine.salt());
+    Key key(origin, { }, { }, { }, engine.salt());
     return WebCore::pathByAppendingComponent(engine.rootPath(), key.partitionHashAsString());
 }
 
