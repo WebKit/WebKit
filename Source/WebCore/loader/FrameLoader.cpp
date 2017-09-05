@@ -2049,12 +2049,6 @@ void FrameLoader::clientRedirected(const URL& url, double seconds, double fireDa
     m_quickRedirectComing = (lockBackForwardList == LockBackForwardList::Yes || history().currentItemShouldBeReplaced()) && m_documentLoader && !m_isExecutingJavaScriptFormAction;
 }
 
-void FrameLoader::performClientRedirect(FrameLoadRequest&& frameLoadRequest)
-{
-    changeLocation(WTFMove(frameLoadRequest));
-    m_client.dispatchDidPerformClientRedirect();
-}
-
 bool FrameLoader::shouldReload(const URL& currentURL, const URL& destinationURL)
 {
     // This function implements the rule: "Don't reload if navigating by fragment within

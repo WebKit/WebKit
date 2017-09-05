@@ -37,6 +37,8 @@
 static bool isDone;
 static RetainPtr<WKNavigation> currentNavigation;
 static RetainPtr<NSURL> redirectURL;
+static NSTimeInterval redirectDelay;
+static bool didCancelRedirect;
 
 @interface NavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -188,40 +190,106 @@ TEST(WKNavigation, DecidePolicyForPageCacheNavigation)
     ASSERT_TRUE([delegate decidedPolicyForBackForwardNavigation]);
 }
 
-@interface DidPerformClientRedirectNavigationDelegate : NSObject<WKNavigationDelegatePrivate>
+@interface ClientRedirectNavigationDelegate : NSObject<WKNavigationDelegatePrivate>
 @end
 
-@implementation DidPerformClientRedirectNavigationDelegate
-- (void)_webView:(WKWebView *)webView didPerformClientRedirectForNavigation:(WKNavigation *)navigation
+@implementation ClientRedirectNavigationDelegate
+- (void)_webView:(WKWebView *)webView willPerformClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)delay
+{
+    redirectURL = URL;
+    redirectDelay = delay;
+}
+- (void)_webViewDidCancelClientRedirect:(WKWebView *)webView
+{
+    didCancelRedirect = true;
+}
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation
 {
     isDone = true;
-    redirectURL = webView.URL;
 }
 @end
 
-TEST(WKNavigation, DidPerformClientRedirect)
+TEST(WKNavigation, WebViewWillPerformClientRedirect)
 {
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
 
-    RetainPtr<DidPerformClientRedirectNavigationDelegate> delegate = adoptNS([[DidPerformClientRedirectNavigationDelegate alloc] init]);
+    auto delegate = adoptNS([[ClientRedirectNavigationDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%220;URL=data:text/html,Page1%22%3E"]];
+    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%22123;URL=data:text/html,Page1%22%3E"]];
 
     isDone = false;
     redirectURL = nil;
+    redirectDelay = 0;
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&isDone);
 
+    ASSERT_DOUBLE_EQ(redirectDelay, 123);
     ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page1");
 
     request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cscript%3Ewindow.location=%22data:text/html,Page2%22;%3C/script%3E"]];
     isDone = false;
     redirectURL = nil;
+    redirectDelay = NSTimeIntervalSince1970; // Use any non-zero value, we will test that the delegate receives a delay of 0.
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&isDone);
 
+    ASSERT_DOUBLE_EQ(redirectDelay, 0);
     ASSERT_STREQ(redirectURL.get().absoluteString.UTF8String, "data:text/html,Page2");
+}
+
+TEST(WKNavigation, WebViewDidCancelClientRedirect)
+{
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+
+    auto delegate = adoptNS([[ClientRedirectNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    // Test 1: During a navigation that is not a client redirect, -_webViewDidCancelClientRedirect: should not be called.
+
+    auto request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,Page1"]];
+
+    isDone = false;
+    didCancelRedirect = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_FALSE(didCancelRedirect);
+
+    // Test 2: When a client redirect does happen, -_webViewDidCancelClientRedirect: should still be called. It essentially
+    // is called whenever the web view transitions from "expecting a redirect" to "not expecting a redirect".
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cscript%3Ewindow.location=%22data:text/html,Page2%22;%3C/script%3E"]];
+    isDone = false;
+    didCancelRedirect = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_FALSE(didCancelRedirect);
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_TRUE(didCancelRedirect);
+
+    // Test 3: When another navigation begins while a client redirect is scheduled, -_webViewDidCancelClientRedirect:
+    // should be called.
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,%3Cmeta%20http-equiv=%22refresh%22%20content=%2210000;URL=data:text/html,Page3%22%3E"]];
+
+    isDone = false;
+    didCancelRedirect = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_FALSE(didCancelRedirect);
+
+    request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"data:text/html,Page4"]];
+    isDone = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDone);
+
+    ASSERT_TRUE(didCancelRedirect);
 }
 
 #endif

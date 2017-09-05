@@ -185,7 +185,7 @@ public:
         ResourceRequest resourceRequest { url(), referrer(), refresh ? ReloadIgnoringCacheData : UseProtocolCachePolicy };
         FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, shouldOpenExternalURLs(), initiatedByMainFrame() };
 
-        frame.loader().performClientRedirect(WTFMove(frameLoadRequest));
+        frame.loader().changeLocation(WTFMove(frameLoadRequest));
     }
 };
 
@@ -201,7 +201,7 @@ public:
         ResourceRequest resourceRequest { url(), referrer(), UseProtocolCachePolicy };
         FrameLoadRequest frameLoadRequest { initiatingDocument(), *securityOrigin(), resourceRequest, "_self", lockHistory(), lockBackForwardList(), MaybeSendReferrer, AllowNavigationToInvalidURL::No, NewFrameOpenerPolicy::Allow, shouldOpenExternalURLs(), initiatedByMainFrame() };
 
-        frame.loader().performClientRedirect(WTFMove(frameLoadRequest));
+        frame.loader().changeLocation(WTFMove(frameLoadRequest));
     }
 };
 
