@@ -34,7 +34,7 @@
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <UIKit/UIColor.h>
 #import <UIKit/UIImage.h>
-#import <WebCore/FileSystemIOS.h>
+#import <WebCore/FileSystem.h>
 #import <WebCore/Pasteboard.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/BlockPtr.h>

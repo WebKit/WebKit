@@ -99,4 +99,33 @@ bool getVolumeFreeSpace(const String& path, uint64_t& freeSpace)
     return true;
 }
 
+NSString *createTemporaryDirectory(NSString *directoryPrefix)
+{
+    NSString *tempDirectory = NSTemporaryDirectory();
+    if (!tempDirectory || ![tempDirectory length])
+        return nil;
+
+    if (!directoryPrefix || ![directoryPrefix length])
+        return nil;
+
+    NSString *tempDirectoryComponent = [directoryPrefix stringByAppendingString:@"-XXXXXXXX"];
+    const char* tempDirectoryCString = [[tempDirectory stringByAppendingPathComponent:tempDirectoryComponent] fileSystemRepresentation];
+    if (!tempDirectoryCString)
+        return nil;
+
+    const size_t length = strlen(tempDirectoryCString);
+    ASSERT(length <= MAXPATHLEN);
+    if (length > MAXPATHLEN)
+        return nil;
+
+    const size_t lengthPlusNullTerminator = length + 1;
+    Vector<char, MAXPATHLEN + 1> path(lengthPlusNullTerminator);
+    memcpy(path.data(), tempDirectoryCString, lengthPlusNullTerminator);
+
+    if (!mkdtemp(path.data()))
+        return nil;
+
+    return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:path.data() length:length];
+}
+
 } // namespace WebCore

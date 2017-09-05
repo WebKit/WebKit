@@ -44,6 +44,8 @@
 typedef const struct __CFData* CFDataRef;
 #endif
 
+OBJC_CLASS NSString;
+
 #if PLATFORM(WIN)
 typedef void *HANDLE;
 #endif
@@ -175,6 +177,10 @@ CString sharedResourcesPath();
 #if PLATFORM(WIN)
 WEBCORE_EXPORT String localUserSpecificStorageDirectory();
 String roamingUserSpecificStorageDirectory();
+#endif
+
+#if PLATFORM(COCOA)
+WEBCORE_EXPORT NSString *createTemporaryDirectory(NSString *directoryPrefix);
 #endif
 
 class MappedFileData {

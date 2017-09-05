@@ -36,10 +36,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
-#if PLATFORM(IOS)
-#import <WebCore/FileSystemIOS.h>
-#endif
-
 @implementation NSFileManager (WebNSFileManagerExtras)
 
 #if !PLATFORM(IOS)

@@ -1,3 +1,52 @@
+2017-09-05  Tim Horton  <timothy_horton@apple.com>
+
+        Remove some unused bits of code and resources
+        https://bugs.webkit.org/show_bug.cgi?id=176275
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, just removing things.
+
+        * Resources/textAreaResizeCorner.tiff: Removed.
+        * Resources/missingImage.tiff: Removed.
+        These files have PNG versions that include more resolutions.
+
+        * Resources/hScrollControl_left.png: Removed.
+        * Resources/hScrollControl_middle.png: Removed.
+        * Resources/hScrollControl_right.png: Removed.
+        * Resources/vScrollControl_bottom.png: Removed.
+        * Resources/vScrollControl_middle.png: Removed.
+        * Resources/vScrollControl_top.png: Removed.
+        * Resources/decrementArrow.tiff: Removed.
+        * Resources/incrementArrow.tiff: Removed.
+        * Resources/markedLeft.png: Removed.
+        * Resources/markedMiddle.png: Removed.
+        * Resources/markedRight.png: Removed.
+        These were added in r161638 as part of the iOS upstreaming, but were
+        unused even then.
+
+        * Resources/inputSpeech.tiff: Removed.
+        The feature this image was for was removed in r172259; the PNG version
+        of this image was removed in r172384.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ios/FileSystemIOS.h: Removed.
+        * platform/ios/FileSystemIOS.mm: Removed.
+        Remove FileSystemIOS; one function is unused, the other is not at all
+        iOS-specific and can be folded into FileSystemCocoa.
+
+        * platform/FileSystem.h:
+        * platform/cocoa/FileSystemCocoa.mm:
+        (WebCore::createTemporaryDirectory):
+        Move this in from FileSystemIOS.
+
+        * platform/PlatformEvent.cpp: Removed.
+        Remove this unused file.
+        
+        * platform/ios/QuickLook.mm:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        Include FileSystem instead of FileSystemIOS.
+
 2017-09-05  Frederic Wang  <fwang@igalia.com>
 
         Use TilesBacking for iframes when async frame scrolling is enabled

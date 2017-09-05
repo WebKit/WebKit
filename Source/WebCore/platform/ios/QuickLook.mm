@@ -28,7 +28,7 @@
 
 #if USE(QUICK_LOOK)
 
-#import "FileSystemIOS.h"
+#import "FileSystem.h"
 #import "PreviewConverter.h"
 #import "ResourceRequest.h"
 #import "SchemeRegistry.h"
