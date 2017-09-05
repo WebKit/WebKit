@@ -1,3 +1,13 @@
+2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Unreviewed, fixing unused constant for initial buffer size
+        https://bugs.webkit.org/show_bug.cgi?id=176310
+
+        Follow-up patch after r221583. Pointed by darin@.
+
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+
 2017-09-04  Sam Weinig  <sam@webkit.org>
 
         [Canvas] Split CanvasRenderingContext2D.idl into separate IDLs to match current HTML spec

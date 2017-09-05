@@ -58,7 +58,7 @@ FontPlatformData::FontPlatformData(GDIObject<HFONT> font, float size, bool bold,
 
     if (bufferSize) {
         static const constexpr unsigned InitialBufferSize { 256 };
-        Vector<char, 256> buffer(bufferSize);
+        Vector<char, InitialBufferSize> buffer(bufferSize);
         auto* metrics = reinterpret_cast<OUTLINETEXTMETRICW*>(buffer.data());
 
         GetOutlineTextMetricsW(hdc, bufferSize, metrics);
