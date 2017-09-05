@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -930,49 +930,31 @@ static String externalRepresentation(RenderBox& renderer, RenderAsTextBehavior b
     return ts.release();
 }
 
-static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& document)
-{
-    document.updateLayoutIgnorePendingStylesheets();
-    auto* frame = document.frame();
-    for (auto* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
-        if (auto* document = subframe->document())
-            document->updateLayoutIgnorePendingStylesheets();
-    }
-}
-
 String externalRepresentation(Frame* frame, RenderAsTextBehavior behavior)
 {
-    ASSERT(frame);
-    ASSERT(frame->document());
-
-    if (!(behavior & RenderAsTextDontUpdateLayout))
-        updateLayoutIgnoringPendingStylesheetsIncludingSubframes(*frame->document());
-
-    auto* renderer = frame->contentRenderer();
+    RenderView* renderer = frame->contentRenderer();
     if (!renderer)
         return String();
 
     PrintContext printContext(frame);
     if (behavior & RenderAsTextPrintingMode)
         printContext.begin(renderer->width());
+    if (!(behavior & RenderAsTextDontUpdateLayout))
+        frame->document()->updateLayout();
 
     return externalRepresentation(*renderer, behavior);
 }
 
 String externalRepresentation(Element* element, RenderAsTextBehavior behavior)
 {
-    ASSERT(element);
-
-    // This function doesn't support printing mode.
-    ASSERT(!(behavior & RenderAsTextPrintingMode));
-
-    if (!(behavior & RenderAsTextDontUpdateLayout))
-        updateLayoutIgnoringPendingStylesheetsIncludingSubframes(element->document());
-
-    auto* renderer = element->renderer();
+    RenderElement* renderer = element->renderer();
     if (!is<RenderBox>(renderer))
         return String();
-
+    // Doesn't support printing mode.
+    ASSERT(!(behavior & RenderAsTextPrintingMode));
+    if (!(behavior & RenderAsTextDontUpdateLayout))
+        element->document().updateLayout();
+    
     return externalRepresentation(downcast<RenderBox>(*renderer), behavior | RenderAsTextShowAllLayers);
 }
 

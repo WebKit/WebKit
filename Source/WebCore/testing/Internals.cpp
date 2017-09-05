@@ -2242,7 +2242,6 @@ ExceptionOr<String> Internals::layerTreeAsText(Document& document, unsigned shor
     if (!document.frame())
         return Exception { InvalidAccessError };
 
-    document.updateLayoutIgnorePendingStylesheets();
     return document.frame()->layerTreeAsText(toLayerTreeFlags(flags));
 }
 
@@ -2251,8 +2250,6 @@ ExceptionOr<uint64_t> Internals::layerIDForElement(Element& element)
     Document* document = contextDocument();
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
-
-    element.document().updateLayoutIgnorePendingStylesheets();
 
     if (!element.renderer() || !element.renderer()->hasLayer())
         return Exception { NotFoundError };
@@ -2319,8 +2316,6 @@ ExceptionOr<void> Internals::setElementUsesDisplayListDrawing(Element& element, 
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
-
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
@@ -2345,8 +2340,6 @@ ExceptionOr<void> Internals::setElementTracksDisplayListReplay(Element& element,
     Document* document = contextDocument();
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
-
-    element.document().updateLayoutIgnorePendingStylesheets();
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -2373,8 +2366,6 @@ ExceptionOr<String> Internals::displayListForElement(Element& element, unsigned 
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
 
-    element.document().updateLayoutIgnorePendingStylesheets();
-
     if (!element.renderer())
         return Exception { InvalidAccessError };
 
@@ -2400,8 +2391,6 @@ ExceptionOr<String> Internals::replayDisplayListForElement(Element& element, uns
     Document* document = contextDocument();
     if (!document || !document->renderView())
         return Exception { InvalidAccessError };
-
-    element.document().updateLayoutIgnorePendingStylesheets();
 
     if (!element.renderer())
         return Exception { InvalidAccessError };
@@ -3044,10 +3033,9 @@ ExceptionOr<bool> Internals::mediaElementHasCharacteristic(HTMLMediaElement& ele
 
 bool Internals::isSelectPopupVisible(HTMLSelectElement& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
-
     auto* renderer = element.renderer();
-    if (!is<RenderMenuList>(renderer))
+    ASSERT(renderer);
+    if (!is<RenderMenuList>(*renderer))
         return false;
 
 #if !PLATFORM(IOS)
@@ -3154,7 +3142,8 @@ ExceptionOr<Ref<DOMRect>> Internals::selectionBounds()
 
 ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
 {
-    if (!is<HTMLPlugInElement>(element))
+    auto* renderer = element.renderer();
+    if (!is<HTMLPlugInElement>(element) || !is<RenderEmbeddedObject>(renderer))
         return Exception { InvalidAccessError };
 
     return downcast<HTMLPlugInElement>(element).isReplacementObscured();
@@ -3530,7 +3519,7 @@ ExceptionOr<String> Internals::pageOverlayLayerTreeAsText(unsigned short flags) 
     if (!document || !document->frame())
         return Exception { InvalidAccessError };
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayout();
 
     return MockPageOverlayClient::singleton().layerTreeAsText(document->frame()->mainFrame(), toLayerTreeFlags(flags));
 }
@@ -3673,10 +3662,10 @@ void Internals::setPlatformMomentumScrollingPredictionEnabled(bool enabled)
 
 ExceptionOr<String> Internals::scrollSnapOffsets(Element& element)
 {
-    element.document().updateLayoutIgnorePendingStylesheets();
-
     if (!element.renderBox())
         return String();
+
+    element.document().updateLayout();
 
     RenderBox& box = *element.renderBox();
     ScrollableArea* scrollableArea;

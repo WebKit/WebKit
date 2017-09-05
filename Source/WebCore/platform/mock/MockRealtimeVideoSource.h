@@ -85,8 +85,13 @@ private:
     void delaySamples(float) override;
 
     float m_baseFontSize { 0 };
+    FontCascade m_timeFont;
+
     float m_bipBopFontSize { 0 };
+    FontCascade m_bipBopFont;
+
     float m_statsFontSize { 0 };
+    FontCascade m_statsFont;
 
     mutable std::unique_ptr<ImageBuffer> m_imageBuffer;
 

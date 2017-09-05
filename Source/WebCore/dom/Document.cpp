@@ -1542,54 +1542,18 @@ void Document::setTitle(const String& title)
         updateTitle({ title, LTR });
 }
 
-void Document::updateTitleElement(Element& changingTitleElement)
+void Document::updateTitleElement(Element* newTitleElement)
 {
-    auto findHTMLTitle = [] (Document& document) -> Element* {
-        return descendantsOfType<HTMLTitleElement>(document).first();
-    };
-    auto isHTMLTitle = [] (Element& element) {
-        return is<HTMLTitleElement>(element);
-    };
-    auto isHTMLTitleEligible = [] (Element& element) {
-        return element.isConnected() && !element.isInShadowTree();
-    };
-
-    auto findSVGTitle = [] (Document& document) -> Element* {
-        return childrenOfType<SVGTitleElement>(*document.documentElement()).first();
-    };
-    auto isSVGTitle = [] (Element& element) {
-        return is<SVGTitleElement>(element);
-    };
-    auto isSVGTitleEligible = [] (Element& element) {
-        return element.parentNode() == element.document().documentElement();
-    };
-
-    // Most documents use HTML title rules.
-    // Documents with SVG document elements use SVG title rules.
-    bool useSVGTitle = is<SVGSVGElement>(documentElement());
-    auto findTitle = useSVGTitle ? findSVGTitle : findHTMLTitle;
-    auto isTitle = useSVGTitle ? isSVGTitle : isHTMLTitle;
-    auto isTitleEligible = useSVGTitle ? isSVGTitleEligible : isHTMLTitleEligible;
-
-    if (!isTitle(changingTitleElement)) {
-        ASSERT(m_titleElement == findTitle(*this));
-        return;
-    }
-
-    Element* newTitleElement;
-    if (m_titleElement)
-        newTitleElement = findTitle(*this);
+    if (is<SVGSVGElement>(documentElement()))
+        m_titleElement = childrenOfType<SVGTitleElement>(*documentElement()).first();
     else {
-        // Optimized common case: We have no title element yet.
-        // We can figure out which title element should be used without searching.
-        newTitleElement = isTitleEligible(changingTitleElement) ? &changingTitleElement : nullptr;
-        ASSERT(newTitleElement == findTitle(*this));
+        if (m_titleElement) {
+            if (isHTMLDocument() || isXHTMLDocument())
+                m_titleElement = descendantsOfType<HTMLTitleElement>(*this).first();
+        } else
+            m_titleElement = newTitleElement;
     }
 
-    if (m_titleElement == newTitleElement)
-        return;
-
-    m_titleElement = newTitleElement;
     updateTitleFromTitleElement();
 }
 
@@ -1598,7 +1562,7 @@ void Document::titleElementAdded(Element& titleElement)
     if (m_titleElement == &titleElement)
         return;
 
-    updateTitleElement(titleElement);
+    updateTitleElement(&titleElement);
 }
 
 void Document::titleElementRemoved(Element& titleElement)
@@ -1606,7 +1570,7 @@ void Document::titleElementRemoved(Element& titleElement)
     if (m_titleElement != &titleElement)
         return;
 
-    updateTitleElement(titleElement);
+    updateTitleElement(nullptr);
 }
 
 void Document::titleElementTextChanged(Element& titleElement)

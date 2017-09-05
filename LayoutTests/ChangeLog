@@ -1,3 +1,17 @@
+2017-09-05  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r221603.
+
+        This caused accessibility/mac/select-element-selection-with-
+        optgroups.html to consistently timeout on macOS
+
+        Reverted changeset:
+
+        "Fix a few minor problems found while working toward removing
+        unneeded calls to updateStyle"
+        https://bugs.webkit.org/show_bug.cgi?id=176279
+        http://trac.webkit.org/changeset/221603
+
 2017-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec
