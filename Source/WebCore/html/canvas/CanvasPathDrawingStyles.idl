@@ -39,13 +39,4 @@
     void setLineDash(sequence<unrestricted float> segments); // default empty
     sequence<unrestricted float> getLineDash();
     attribute unrestricted float lineDashOffset;
-
-
-    // Non-standard legacy aliases.
-    void setLineWidth(optional unrestricted float width = NaN);
-    void setLineCap(optional DOMString cap = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
-    void setLineJoin(optional DOMString join = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
-    void setMiterLimit(optional unrestricted float limit = NaN);
-    attribute sequence<unrestricted float> webkitLineDash;
-    [ImplementedAs=lineDashOffset] attribute unrestricted float webkitLineDashOffset;
 };

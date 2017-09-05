@@ -42,15 +42,4 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     [MayThrowException] CanvasGradient createLinearGradient(float x0, float y0, float x1, float y1);
     [MayThrowException] CanvasGradient createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1);
     [MayThrowException] CanvasPattern? createPattern(CanvasImageSource image, [TreatNullAs=EmptyString] DOMString repetition);
-
-
-    // Non-standard legacy aliases.
-    void setStrokeColor(DOMString color, optional unrestricted float alpha);
-    void setStrokeColor(unrestricted float grayLevel, optional float alpha = 1);
-    void setStrokeColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setStrokeColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
-    void setFillColor(DOMString color, optional unrestricted float alpha);
-    void setFillColor(unrestricted float grayLevel, optional unrestricted float alpha = 1);
-    void setFillColor(unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setFillColor(unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
 };

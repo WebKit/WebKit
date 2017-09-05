@@ -35,10 +35,4 @@
     [MayThrowException] ImageData getImageData(float sx, float sy, float sw, float sh);
     void putImageData(ImageData imagedata, float dx, float dy);
     void putImageData(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
-
-
-    // Non-standard functionality.
-    [MayThrowException] ImageData webkitGetImageDataHD(float sx, float sy, float sw, float sh);
-    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy);
-    void webkitPutImageDataHD(ImageData imagedata, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 };

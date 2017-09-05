@@ -1050,19 +1050,6 @@ static WindRule toWindRule(CanvasFillRule rule)
     return rule == CanvasFillRule::Nonzero ? RULE_NONZERO : RULE_EVENODD;
 }
 
-String CanvasRenderingContext2D::stringForCanvasFillRule(CanvasFillRule windingRule)
-{
-    switch (windingRule) {
-    case CanvasFillRule::Nonzero:
-        return ASCIILiteral("nonzero");
-    case CanvasFillRule::Evenodd:
-        return ASCIILiteral("evenodd");
-    }
-
-    ASSERT_NOT_REACHED();
-    return String();
-}
-
 void CanvasRenderingContext2D::fill(CanvasFillRule windingRule)
 {
     fillInternal(m_path, windingRule);
@@ -1683,16 +1670,6 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement& imageElement,
     if (!parseCompositeAndBlendOperator(compositeOperation, op, blendOp) || blendOp != BlendModeNormal)
         op = CompositeSourceOver;
     drawImage(imageElement, FloatRect { sx, sy, sw, sh }, FloatRect { dx, dy, dw, dh }, op, BlendModeNormal);
-}
-
-void CanvasRenderingContext2D::setAlpha(float alpha)
-{
-    setGlobalAlpha(alpha);
-}
-
-void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
-{
-    setGlobalCompositeOperation(operation);
 }
 
 void CanvasRenderingContext2D::clearCanvas()

@@ -1,3 +1,41 @@
+2017-09-04  Sam Weinig  <sam@webkit.org>
+
+        [Canvas] Move non-standard functionality/aliases back to CanvasRenderingContext2D.idl
+        https://bugs.webkit.org/show_bug.cgi?id=176340
+
+        Reviewed by Darin Adler.
+
+        In r221598 (https://webkit.org/b/176276), the CanvasRenderingContext2D was split out into
+        separate interfaces to the match the spec and prepare for implementing OffscreenCanvas. While
+        doing that, related non-standard functionality and aliases were moved as well. In retrospect,
+        that doesn't really makes sense, as we don't want to add these legacy properties to any new
+        interfaces that happen to implement/use the broken out interfaces. Since they are specific
+        to CanvasRenderingContext2D, let's move them back.
+
+        * html/canvas/CanvasCompositing.idl:
+        * html/canvas/CanvasDrawImage.idl:
+        * html/canvas/CanvasFillStrokeStyles.idl:
+        * html/canvas/CanvasImageData.idl:
+        * html/canvas/CanvasImageSmoothing.idl:
+        * html/canvas/CanvasPathDrawingStyles.idl:
+        * html/canvas/CanvasShadowStyles.idl:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+            Move non-standard operation and attributes back to CanvasRenderingContext2D.idl.
+
+            * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::stringForCanvasFillRule): Deleted.
+            
+            Remove unused function.
+
+        (WebCore::CanvasRenderingContext2D::setAlpha): Deleted.
+        (WebCore::CanvasRenderingContext2D::setCompositeOperation): Deleted.
+
+            Removed. Instead, the IDL uses [ImplementedAs] to forward to the 
+            underlying setGlobalAlpha/setGlobalCompositeOperation. This reduces
+            code and makes it clear they are strict aliases.
+
 2017-09-03  Darin Adler  <darin@apple.com>
 
         Fix a few minor problems found while working toward removing unneeded calls to updateStyle

@@ -32,9 +32,4 @@
     // compositing
     attribute unrestricted float globalAlpha; // (default 1.0)
     attribute DOMString globalCompositeOperation; // (default source-over)
-
-
-    // Non-standard legacy functionality
-    void setAlpha(optional unrestricted float alpha = NaN);
-    void setCompositeOperation(optional DOMString compositeOperation = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.
 };

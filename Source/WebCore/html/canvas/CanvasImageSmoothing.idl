@@ -30,7 +30,4 @@
     // image smoothing
     attribute boolean imageSmoothingEnabled; // (default true)
     attribute ImageSmoothingQuality imageSmoothingQuality; // (default low)
-
-    // Non-standard legacy alias.
-    [ImplementedAs=imageSmoothingEnabled] attribute boolean webkitImageSmoothingEnabled;
 };

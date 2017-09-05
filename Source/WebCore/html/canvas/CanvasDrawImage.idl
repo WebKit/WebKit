@@ -40,11 +40,4 @@ typedef (HTMLImageElement or HTMLCanvasElement) CanvasImageSource;
     [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy);
     [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
     [MayThrowException] void drawImage(CanvasImageSource image, unrestricted double sx, unrestricted double sy, unrestricted double sw, unrestricted double sh, unrestricted double dx, unrestricted double dy, unrestricted double dw, unrestricted double dh);
-
-
-    // Non-standard legacy functionality.
-    void drawImageFromRect(HTMLImageElement image,
-        optional unrestricted float sx = 0, optional unrestricted float sy = 0, optional unrestricted float sw = 0, optional unrestricted float sh = 0,
-        optional unrestricted float dx = 0, optional unrestricted float dy = 0, optional unrestricted float dw = 0, optional unrestricted float dh = 0,
-        optional DOMString compositeOperation = "");
 };

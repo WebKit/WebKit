@@ -34,12 +34,4 @@
     attribute unrestricted double shadowOffsetY; // (default 0)
     attribute unrestricted double shadowBlur; // (default 0)
     attribute DOMString shadowColor; // (default transparent black)
-
-
-    // Non-standard legacy aliases.
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, optional DOMString color, optional unrestricted float alpha);
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float grayLevel, optional unrestricted float alpha = 1);
-    void setShadow(unrestricted float width, unrestricted float height, unrestricted float blur, unrestricted float r, unrestricted float g, unrestricted float b, unrestricted float a);
-    void setShadow(float width, unrestricted float height, unrestricted float blur, unrestricted float c, unrestricted float m, unrestricted float y, unrestricted float k, unrestricted float a);
-    void clearShadow();
 };
