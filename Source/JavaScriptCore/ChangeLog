@@ -1,3 +1,33 @@
+2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Consider increasing the number of DFG worklist threads
+        https://bugs.webkit.org/show_bug.cgi?id=176222
+
+        Reviewed by Saam Barati.
+
+        Attempt to add one more thread to DFG worklist. DFG compiler sometimes takes
+        very long time if the target function is very large. However, DFG worklist
+        has only one thread before this patch. Therefore, one function that takes
+        too much time to be compiled can prevent the other functions from being
+        compiled in DFG or upper tiers.
+
+        One example is Octane/zlib. In zlib, compiling "a1" function in DFG takes
+        super long time (447 ms) because of its super large size of the function.
+        While this function never gets compiled in FTL due to its large size,
+        it can be compiled in DFG and takes super long time. Subsequent "a8" function
+        compilation in DFG is blocked by this "a1". As a consequence, the benchmark
+        takes very long time in a1/Baseline code, which is slower than DFG of course.
+
+        While FTL has a bit more threads, DFG worklist has only one thread. This patch
+        adds one more thread to DFG worklist to alleviate the above situation. This
+        change significantly improves Octane/zlib performance.
+
+                                    baseline                  patched
+
+        zlib           x2     482.32825+-6.07640    ^   408.66072+-14.03856      ^ definitely 1.1803x faster
+
+        * runtime/Options.h:
+
 2017-09-04  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Unify and simplify EnableBySettings with the rest of the runtime settings
