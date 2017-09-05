@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -116,9 +116,9 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
         cocoaSession.m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
     } else {
-        m_task = [cocoaSession.m_sessionWithoutCredentialStorage dataTaskWithRequest:nsRequest];
-        ASSERT(!cocoaSession.m_dataTaskMapWithoutCredentials.contains([m_task taskIdentifier]));
-        cocoaSession.m_dataTaskMapWithoutCredentials.add([m_task taskIdentifier], this);
+        m_task = [cocoaSession.m_statelessSession dataTaskWithRequest:nsRequest];
+        ASSERT(!cocoaSession.m_dataTaskMapWithoutState.contains([m_task taskIdentifier]));
+        cocoaSession.m_dataTaskMapWithoutState.add([m_task taskIdentifier], this);
     }
     LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 
@@ -144,8 +144,8 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         ASSERT(cocoaSession.m_dataTaskMapWithCredentials.get([m_task taskIdentifier]) == this);
         cocoaSession.m_dataTaskMapWithCredentials.remove([m_task taskIdentifier]);
     } else {
-        ASSERT(cocoaSession.m_dataTaskMapWithoutCredentials.get([m_task taskIdentifier]) == this);
-        cocoaSession.m_dataTaskMapWithoutCredentials.remove([m_task taskIdentifier]);
+        ASSERT(cocoaSession.m_dataTaskMapWithoutState.get([m_task taskIdentifier]) == this);
+        cocoaSession.m_dataTaskMapWithoutState.remove([m_task taskIdentifier]);
     }
 }
 

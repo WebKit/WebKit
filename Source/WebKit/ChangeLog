@@ -1,3 +1,29 @@
+2017-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Use a single network storage session for stateless connections
+        https://bugs.webkit.org/show_bug.cgi?id=176386
+        <rdar://problem/34262148>
+
+        Reviewed by Alex Christensen.
+
+        Change the name of 'm_dataTaskMapWithoutCredentials' to 'm_dataTaskMapWithoutState'
+        to reflect that the data tasks do not involve credential or cookie storage. Ditto for
+        the change from 'm_sessionWIthoutCredentialStorage' to 'm_statelessSession'.
+
+        This update should not change behavior, unless some stateless sessions were depending
+        on cookies to be persistent (which would be a bug!)
+
+        * NetworkProcess/cocoa/NetworkDataTaskCocoa.mm:
+        (WebKit::NetworkDataTaskCocoa::NetworkDataTaskCocoa): Update for new variable names.
+        (WebKit::NetworkDataTaskCocoa::~NetworkDataTaskCocoa): Ditto.
+        * NetworkProcess/cocoa/NetworkSessionCocoa.h:
+        * NetworkProcess/cocoa/NetworkSessionCocoa.mm:
+        (WebKit::NetworkSessionCocoa::NetworkSessionCocoa): Update the configuration to block
+        cookies as well.
+        (WebKit::NetworkSessionCocoa::invalidateAndCancel): Update for new names.
+        (WebKit::NetworkSessionCocoa::clearCredentials): Ditto.
+        (WebKit::NetworkSessionCocoa::dataTaskForIdentifier): Ditto.
+
 2017-09-05  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Add Network Process files for wincairo webkit

@@ -597,12 +597,15 @@ NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomP
 
     m_sessionWithCredentialStorageDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:true]);
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+    LOG(NetworkSession, "Created NetworkSession with cookieAcceptPolicy %lu", configuration.HTTPCookieStorage.cookieAcceptPolicy);
 
     configuration.URLCredentialStorage = nil;
     configuration._shouldSkipPreferredClientCertificateLookup = YES;
-    m_sessionWithoutCredentialStorageDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
-    m_sessionWithoutCredentialStorage = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_sessionWithoutCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-    LOG(NetworkSession, "Created NetworkSession with cookieAcceptPolicy %lu", configuration.HTTPCookieStorage.cookieAcceptPolicy);
+    configuration.HTTPCookieStorage = nil;
+    configuration.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
+
+    m_statelessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
+    m_statelessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 }
 
 NetworkSessionCocoa::~NetworkSessionCocoa()
@@ -614,20 +617,20 @@ void NetworkSessionCocoa::invalidateAndCancel()
     NetworkSession::invalidateAndCancel();
 
     [m_sessionWithCredentialStorage invalidateAndCancel];
-    [m_sessionWithoutCredentialStorage invalidateAndCancel];
+    [m_statelessSession invalidateAndCancel];
     [m_sessionWithCredentialStorageDelegate sessionInvalidated];
-    [m_sessionWithoutCredentialStorageDelegate sessionInvalidated];
+    [m_statelessSessionDelegate sessionInvalidated];
 }
 
 void NetworkSessionCocoa::clearCredentials()
 {
 #if !USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     ASSERT(m_dataTaskMapWithCredentials.isEmpty());
-    ASSERT(m_dataTaskMapWithoutCredentials.isEmpty());
+    ASSERT(m_dataTaskMapWithoutState.isEmpty());
     ASSERT(m_downloadMap.isEmpty());
     // FIXME: Use resetWithCompletionHandler instead.
     m_sessionWithCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
-    m_sessionWithoutCredentialStorage = [NSURLSession sessionWithConfiguration:m_sessionWithoutCredentialStorage.get().configuration delegate:static_cast<id>(m_sessionWithoutCredentialStorageDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
+    m_statelessSession = [NSURLSession sessionWithConfiguration:m_statelessSession.get().configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
 #endif
 }
 
@@ -636,7 +639,7 @@ NetworkDataTaskCocoa* NetworkSessionCocoa::dataTaskForIdentifier(NetworkDataTask
     ASSERT(RunLoop::isMain());
     if (storedCredentials == WebCore::StoredCredentials::AllowStoredCredentials)
         return m_dataTaskMapWithCredentials.get(taskIdentifier);
-    return m_dataTaskMapWithoutCredentials.get(taskIdentifier);
+    return m_dataTaskMapWithoutState.get(taskIdentifier);
 }
 
 void NetworkSessionCocoa::addDownloadID(NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, DownloadID downloadID)
