@@ -1,3 +1,18 @@
+2017-09-04  Yoav Weiss  <yoav@yoav.ws>
+
+        [iOS Simulator] http/tests/preload/viewport/meta-viewport-link-headers.php is a flaky failure.
+        https://bugs.webkit.org/show_bug.cgi?id=172518
+
+        This unflakes the test by downloading a "timer" image and kicking off the timer that runs the
+        test only once that image was downloaded, while potentially waiting for the preloaded images to arrive,
+        up to 1 second.
+        That means that slow test environments would have a longer timer than today, avoiding flakiness.
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/preload/viewport/meta-viewport-link-headers.php: Add a "timer" image, which load event starts the test.
+        * platform/ios/TestExpectations: Unflake the test in expectations.
+
 2017-09-03  Darin Adler  <darin@apple.com>
 
         Fix a few minor problems found while working toward removing unneeded calls to updateStyle

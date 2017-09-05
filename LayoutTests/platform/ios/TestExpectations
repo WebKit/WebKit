@@ -2880,8 +2880,6 @@ fast/text/accessibility-bold-system-font-2.html [ Pass ]
 # This test is specific to Core Text.
 fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
 
-webkit.org/b/172518 http/tests/preload/viewport/meta-viewport-link-headers.php [ Pass Failure ]
-
 # Missing support for 521-bit elliptic curves.
 crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
 crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
