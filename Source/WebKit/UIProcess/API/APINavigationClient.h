@@ -69,7 +69,8 @@ public:
 
     virtual void didStartProvisionalNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
     virtual void didReceiveServerRedirectForProvisionalNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }
-    virtual void didPerformClientRedirectForNavigation(WebKit::WebPageProxy&, API::Navigation*) { }
+    virtual void willPerformClientRedirect(WebKit::WebPageProxy&, const WTF::String&, double) { }
+    virtual void didCancelClientRedirect(WebKit::WebPageProxy&) { }
     virtual void didFailProvisionalNavigationWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
     virtual void didFailProvisionalLoadInSubframeWithError(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::SecurityOriginData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) { }
     virtual void didCommitNavigation(WebKit::WebPageProxy&, API::Navigation*, API::Object*) { }

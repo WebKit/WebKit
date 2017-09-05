@@ -263,7 +263,6 @@ public:
     bool allAncestorsAreComplete() const; // including this
     void clientRedirected(const URL&, double delay, double fireDate, LockBackForwardList);
     void clientRedirectCancelledOrFinished(bool cancelWithLoadInProgress);
-    void performClientRedirect(FrameLoadRequest&&);
 
     // FIXME: This is public because this asynchronous callback from the FrameLoaderClient
     // uses the policy machinery (and therefore is called via the PolicyChecker).  Once we

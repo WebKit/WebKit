@@ -150,7 +150,8 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFailNavigationWithError = [delegate respondsToSelector:@selector(webView:didFailNavigation:withError:)];
 
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
-    m_navigationDelegateMethods.webViewDidPerformClientRedirectForNavigation = [delegate respondsToSelector:@selector(_webView:didPerformClientRedirectForNavigation:)];
+    m_navigationDelegateMethods.webViewWillPerformClientRedirect = [delegate respondsToSelector:@selector(_webView:willPerformClientRedirectToURL:delay:)];
+    m_navigationDelegateMethods.webViewDidCancelClientRedirect = [delegate respondsToSelector:@selector(_webViewDidCancelClientRedirect:)];
     m_navigationDelegateMethods.webViewNavigationDidFinishDocumentLoad = [delegate respondsToSelector:@selector(_webView:navigationDidFinishDocumentLoad:)];
     m_navigationDelegateMethods.webViewNavigationDidSameDocumentNavigation = [delegate respondsToSelector:@selector(_webView:navigation:didSameDocumentNavigation:)];
     m_navigationDelegateMethods.webViewRenderingProgressDidChange = [delegate respondsToSelector:@selector(_webView:renderingProgressDidChange:)];
@@ -489,21 +490,30 @@ void NavigationState::NavigationClient::didReceiveServerRedirectForProvisionalNa
     [navigationDelegate webView:m_navigationState.m_webView didReceiveServerRedirectForProvisionalNavigation:wkNavigation];
 }
 
-void NavigationState::NavigationClient::didPerformClientRedirectForNavigation(WebPageProxy& page, API::Navigation* navigation)
+void NavigationState::NavigationClient::willPerformClientRedirect(WebKit::WebPageProxy& page, const WTF::String& urlString, double delay)
 {
-    if (!m_navigationState.m_navigationDelegateMethods.webViewDidPerformClientRedirectForNavigation)
+    if (!m_navigationState.m_navigationDelegateMethods.webViewWillPerformClientRedirect)
         return;
 
     auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
     if (!navigationDelegate)
         return;
 
-    // FIXME: We should assert that navigation is not null here, but it's currently null for some navigations through the page cache.
-    WKNavigation *wkNavigation = nil;
-    if (navigation)
-        wkNavigation = wrapper(*navigation);
+    WebCore::URL url(WebCore::URL(), urlString);
 
-    [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState.m_webView didPerformClientRedirectForNavigation:wkNavigation];
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState.m_webView willPerformClientRedirectToURL:url delay:delay];
+}
+
+void NavigationState::NavigationClient::didCancelClientRedirect(WebKit::WebPageProxy& page)
+{
+    if (!m_navigationState.m_navigationDelegateMethods.webViewDidCancelClientRedirect)
+        return;
+
+    auto navigationDelegate = m_navigationState.m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidCancelClientRedirect:m_navigationState.m_webView];
 }
 
 static RetainPtr<NSError> createErrorWithRecoveryAttempter(WKWebView *webView, WebFrameProxy& webFrameProxy, NSError *originalError)
