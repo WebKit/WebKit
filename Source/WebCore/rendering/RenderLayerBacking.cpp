@@ -211,7 +211,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
 {
     if (layer.isRootLayer()) {
         m_isMainFrameRenderViewLayer = renderer().frame().isMainFrame();
-        m_isMainFrameLayerWithTiledBacking = renderer().page().chrome().client().shouldUseTiledBackingForFrameView(renderer().view().frameView());
+        m_isFrameLayerWithTiledBacking = renderer().page().chrome().client().shouldUseTiledBackingForFrameView(renderer().view().frameView());
     }
     
     createPrimaryGraphicsLayer();
@@ -219,7 +219,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
     if (TiledBacking* tiledBacking = this->tiledBacking()) {
         tiledBacking->setIsInWindow(renderer().page().isInWindow());
 
-        if (m_isMainFrameLayerWithTiledBacking) {
+        if (m_isFrameLayerWithTiledBacking) {
             tiledBacking->setScrollingPerformanceLoggingEnabled(renderer().settings().scrollingPerformanceLoggingEnabled());
             adjustTiledBackingCoverage();
         }
@@ -322,7 +322,7 @@ static TiledBacking::TileCoverage computePageTiledBackingCoverage(RenderLayerBac
 
 void RenderLayerBacking::adjustTiledBackingCoverage()
 {
-    if (!m_isMainFrameLayerWithTiledBacking)
+    if (!m_isFrameLayerWithTiledBacking)
         return;
 
     TiledBacking::TileCoverage tileCoverage = computePageTiledBackingCoverage(this);
@@ -331,7 +331,7 @@ void RenderLayerBacking::adjustTiledBackingCoverage()
 
 void RenderLayerBacking::setTiledBackingHasMargins(bool hasExtendedBackgroundOnLeftAndRight, bool hasExtendedBackgroundOnTopAndBottom)
 {
-    if (!m_isMainFrameLayerWithTiledBacking)
+    if (!m_isFrameLayerWithTiledBacking)
         return;
 
     tiledBacking()->setHasMargins(hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnTopAndBottom, hasExtendedBackgroundOnLeftAndRight, hasExtendedBackgroundOnLeftAndRight);
@@ -389,9 +389,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
         layerName.truncate(maxLayerNameLength);
         layerName.append("...");
     }
-    m_graphicsLayer = createGraphicsLayer(layerName, m_isMainFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
+    m_graphicsLayer = createGraphicsLayer(layerName, m_isFrameLayerWithTiledBacking ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::Normal);
 
-    if (m_isMainFrameLayerWithTiledBacking) {
+    if (m_isFrameLayerWithTiledBacking) {
         m_childContainmentLayer = createGraphicsLayer("Page TiledBacking containment");
         m_graphicsLayer->addChild(m_childContainmentLayer.get());
     }
@@ -566,7 +566,7 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
         return false;
 #endif
 
-    if (m_isMainFrameLayerWithTiledBacking)
+    if (m_isFrameLayerWithTiledBacking)
         return false;
 
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
@@ -1450,7 +1450,7 @@ bool RenderLayerBacking::updateDescendantClippingLayer(bool needsDescendantClip)
     bool layersChanged = false;
 
     if (needsDescendantClip) {
-        if (!m_childContainmentLayer && !m_isMainFrameLayerWithTiledBacking) {
+        if (!m_childContainmentLayer && !m_isFrameLayerWithTiledBacking) {
             m_childContainmentLayer = createGraphicsLayer("child clipping");
             m_childContainmentLayer->setMasksToBounds(true);
             layersChanged = true;
@@ -1959,7 +1959,7 @@ void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(PaintedContents
 
 void RenderLayerBacking::updateRootLayerConfiguration()
 {
-    if (!m_isMainFrameLayerWithTiledBacking)
+    if (!m_isFrameLayerWithTiledBacking)
         return;
 
     Color backgroundColor;
@@ -2399,7 +2399,7 @@ bool RenderLayerBacking::paintsIntoWindow() const
         return false;
 #endif
 
-    if (m_isMainFrameLayerWithTiledBacking)
+    if (m_isFrameLayerWithTiledBacking)
         return false;
 
     if (m_owningLayer.isRootLayer()) {
@@ -3050,8 +3050,8 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
 {
     ts << "RenderLayerBacking " << &backing << " bounds " << backing.compositedBounds();
 
-    if (backing.isMainFrameLayerWithTiledBacking())
-        ts << " main tiled backing";
+    if (backing.isFrameLayerWithTiledBacking())
+        ts << " frame layer tiled backing";
     if (backing.paintsIntoWindow())
         ts << " paintsIntoWindow";
     if (backing.paintsIntoCompositedAncestor())
