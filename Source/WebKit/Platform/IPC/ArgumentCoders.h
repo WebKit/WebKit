@@ -446,6 +446,7 @@ template<> struct ArgumentCoder<CString> {
 template<> struct ArgumentCoder<String> {
     static void encode(Encoder&, const String&);
     static bool decode(Decoder&, String&);
+    static std::optional<String> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<SHA1::Digest> {

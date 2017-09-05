@@ -1,3 +1,20 @@
+2017-09-04  Alex Christensen  <achristensen@webkit.org>
+
+        Allow classes to have modern and legacy decoders to aid transition
+        https://bugs.webkit.org/show_bug.cgi?id=176186
+
+        Reviewed by Zan Dobersek.
+
+        To illustrate this, I made legacy and modern decoders to WTF::String and transitioned one String decoder.
+
+        * Platform/IPC/ArgumentCoder.h:
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<String>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Platform/IPC/Decoder.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+
 2017-09-05  Frederic Wang  <fwang@igalia.com>
 
         Use TilesBacking for iframes when async frame scrolling is enabled

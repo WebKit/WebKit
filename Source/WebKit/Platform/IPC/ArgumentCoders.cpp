@@ -153,7 +153,6 @@ bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
     }
 
     bool is8Bit;
-
     if (!decoder.decode(is8Bit))
         return false;
 
@@ -162,6 +161,31 @@ bool ArgumentCoder<String>::decode(Decoder& decoder, String& result)
     return decodeStringText<UChar>(decoder, length, result);
 }
 
+std::optional<String> ArgumentCoder<String>::decode(Decoder& decoder)
+{
+    uint32_t length;
+    if (!decoder.decode(length))
+        return std::nullopt;
+    
+    if (length == std::numeric_limits<uint32_t>::max()) {
+        // This is the null string.
+        return String();
+    }
+    
+    bool is8Bit;
+    if (!decoder.decode(is8Bit))
+        return std::nullopt;
+    
+    String result;
+    if (is8Bit) {
+        if (!decodeStringText<LChar>(decoder, length, result))
+            return std::nullopt;
+        return result;
+    }
+    if (!decodeStringText<UChar>(decoder, length, result))
+        return std::nullopt;
+    return result;
+}
 
 void ArgumentCoder<SHA1::Digest>::encode(Encoder& encoder, const SHA1::Digest& digest)
 {

@@ -123,7 +123,7 @@ public:
         return bufferIsLargeEnoughToContain(alignof(T), numElements * sizeof(T));
     }
 
-    template<typename T, std::enable_if_t<!std::is_enum<T>::value && !UsesModernDecoder<T>::value>* = nullptr>
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value && UsesLegacyDecoder<T>::value>* = nullptr>
     bool decode(T& t)
     {
         return ArgumentCoder<T>::decode(*this, t);

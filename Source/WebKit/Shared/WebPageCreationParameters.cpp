@@ -144,8 +144,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.paginationLineGridEnabled))
         return std::nullopt;
-    if (!decoder.decode(parameters.userAgent))
+    std::optional<String> userAgent;
+    decoder >> userAgent;
+    if (!userAgent)
         return std::nullopt;
+    parameters.userAgent = WTFMove(*userAgent);
     if (!decoder.decode(parameters.itemStates))
         return std::nullopt;
     if (!decoder.decode(parameters.sessionID))
