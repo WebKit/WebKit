@@ -1,3 +1,15 @@
+2017-09-05  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile errors in pathByAppendingComponents.
+        https://bugs.webkit.org/show_bug.cgi?id=176387
+
+        Reviewed by Brent Fulgham.
+
+        The pathByAppendingComponents function has changed signature.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::pathByAppendingComponents):
+
 2017-09-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix capitalization of scheduleinvalidateStyleAndLayerComposition

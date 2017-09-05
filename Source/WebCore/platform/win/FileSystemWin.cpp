@@ -265,9 +265,9 @@ String pathByAppendingComponent(const String& path, const String& component)
 
 String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
 {
-    String result = path;
+    String result = path.toString();
     for (auto& component : components)
-        result = pathByAppendingComponent(result, component);
+        result = pathByAppendingComponent(result, component.toString());
     return result;
 }
 
