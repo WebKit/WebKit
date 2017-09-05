@@ -147,8 +147,7 @@ public:
         m_graph.m_entrypointToArguments.clear();
         m_graph.m_entrypointToArguments.add(newRoot, newArguments);
 
-        m_graph.m_cpsCFG = std::make_unique<CPSCFG>(m_graph);
-
+        m_graph.invalidateCFG();
         m_graph.resetReachability();
         m_graph.killUnreachableBlocks();
 

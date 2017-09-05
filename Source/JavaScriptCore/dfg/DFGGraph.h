@@ -931,6 +931,7 @@ public:
     BackwardsCFG& ensureBackwardsCFG();
     BackwardsDominators& ensureBackwardsDominators();
     ControlEquivalenceAnalysis& ensureControlEquivalenceAnalysis();
+    CPSCFG& ensureCPSCFG();
 
     // These functions only makes sense to call after bytecode parsing
     // because it queries the m_hasExceptionHandlers boolean whose value
@@ -950,6 +951,14 @@ public:
 
     bool isEntrypoint(BasicBlock* block) const
     {
+        ASSERT_WITH_MESSAGE(!m_isInSSAConversion, "This is not written to work during SSA conversion.");
+
+        if (m_form == SSA) {
+            ASSERT(m_entrypoints.size() == 1);
+            ASSERT(m_entrypoints.contains(this->block(0)));
+            return block == this->block(0);
+        }
+
         if (m_entrypoints.size() <= 4) {
             bool result = m_entrypoints.contains(block);
             ASSERT(result == m_entrypointToArguments.contains(block));
@@ -978,12 +987,13 @@ public:
     
     // In CPS, this is all of the SetArgument nodes for the arguments in the machine code block
     // that survived DCE. All of them except maybe "this" will survive DCE, because of the Flush
-    // nodes.
+    // nodes. In SSA, this has no meaning. It's empty.
+    HashMap<BasicBlock*, ArgumentsVector> m_entrypointToArguments;
+
+    // In SSA, this is the argument speculation that we've locked in for an entrypoint block.
     //
-    // In SSA, this is all of the GetStack nodes for the arguments in the machine code block that
-    // may have some speculation in the prologue and survived DCE. Note that to get the speculation
-    // for an argument in SSA, you must use m_argumentFormats, since we still have to speculate
-    // even if the argument got killed. For example:
+    // We must speculate on the argument types at each entrypoint even if operations involving
+    // arguments get killed. For example:
     //
     //     function foo(x) {
     //        var tmp = x + 1;
@@ -1001,10 +1011,20 @@ public:
     //
     // If we DCE the ArithAdd and we remove the int check on x, then this won't do the side
     // effects.
-    HashMap<BasicBlock*, ArgumentsVector> m_entrypointToArguments;
-    
-    // In CPS, this is meaningless. In SSA, this is the argument speculation that we've locked in.
-    Vector<FlushFormat> m_argumentFormats;
+    //
+    // By convention, entrypoint index 0 is used for the CodeBlock's op_enter entrypoint.
+    // So argumentFormats[0] are the argument formats for the normal call entrypoint.
+    Vector<Vector<FlushFormat>> m_argumentFormats;
+
+    // This maps an entrypoint index to a particular op_catch bytecode offset. By convention,
+    // it'll never have zero as a key because we use zero to mean the op_enter entrypoint.
+    HashMap<unsigned, unsigned> m_entrypointIndexToCatchBytecodeOffset;
+
+    // This is the number of logical entrypoints that we're compiling. This is only used
+    // in SSA. Each EntrySwitch node must have numberOfEntrypoints cases. Note, this is
+    // not the same as m_entrypoints.size(). m_entrypoints.size() represents the number
+    // of roots in the CFG. In SSA, m_entrypoints.size() == 1.
+    unsigned m_numberOfEntrypoints { UINT_MAX };
 
     SegmentedVector<VariableAccessData, 16> m_variableAccessData;
     SegmentedVector<ArgumentPosition, 8> m_argumentPositions;
@@ -1060,6 +1080,7 @@ public:
     std::optional<uint32_t> m_maxLocalsForCatchOSREntry;
     std::unique_ptr<FlowIndexing> m_indexingCache;
     std::unique_ptr<FlowMap<AbstractValue>> m_abstractValuesCache;
+    Bag<EntrySwitchData> m_entrySwitchData;
 
     RegisteredStructure stringStructure;
     RegisteredStructure symbolStructure;

@@ -156,6 +156,8 @@ CCallSpecial* Code::cCallSpecial()
 
 bool Code::isEntrypoint(BasicBlock* block) const
 {
+    // Note: This function must work both before and after LowerEntrySwitch.
+
     if (m_entrypoints.isEmpty())
         return !block->index();
     
@@ -164,6 +166,16 @@ bool Code::isEntrypoint(BasicBlock* block) const
             return true;
     }
     return false;
+}
+
+std::optional<unsigned> Code::entrypointIndex(BasicBlock* block) const
+{
+    RELEASE_ASSERT(m_entrypoints.size());
+    for (unsigned i = 0; i < m_entrypoints.size(); ++i) {
+        if (m_entrypoints[i].block() == block)
+            return i;
+    }
+    return std::nullopt;
 }
 
 void Code::setCalleeSaveRegisterAtOffsetList(RegisterAtOffsetList&& registerAtOffsetList, StackSlot* slot)

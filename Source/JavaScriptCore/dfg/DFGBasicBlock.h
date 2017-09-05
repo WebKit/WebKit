@@ -221,8 +221,6 @@ struct BasicBlock : RefCounted<BasicBlock> {
     
     float executionCount;
     
-    // These fields are reserved for NaturalLoops.
-    
     struct SSAData {
         WTF_MAKE_FAST_ALLOCATED;
     public:

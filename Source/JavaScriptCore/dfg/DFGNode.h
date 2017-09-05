@@ -203,6 +203,10 @@ struct SwitchData {
     bool didUseJumpTable;
 };
 
+struct EntrySwitchData {
+    Vector<BasicBlock*> cases;
+};
+
 struct CallVarargsData {
     int firstVarArgOffset;
 };
@@ -1315,12 +1319,18 @@ public:
         return op() == Switch;
     }
 
+    bool isEntrySwitch() const
+    {
+        return op() == EntrySwitch;
+    }
+
     bool isTerminal()
     {
         switch (op()) {
         case Jump:
         case Branch:
         case Switch:
+        case EntrySwitch:
         case Return:
         case TailCall:
         case DirectTailCall:
@@ -1382,6 +1392,12 @@ public:
         ASSERT(isSwitch());
         return m_opInfo.as<SwitchData*>();
     }
+
+    EntrySwitchData* entrySwitchData()
+    {
+        ASSERT(isEntrySwitch());
+        return m_opInfo.as<EntrySwitchData*>();
+    }
     
     unsigned numSuccessors()
     {
@@ -1392,6 +1408,8 @@ public:
             return 2;
         case Switch:
             return switchData()->cases.size() + 1;
+        case EntrySwitch:
+            return entrySwitchData()->cases.size();
         default:
             return 0;
         }
@@ -1404,7 +1422,8 @@ public:
                 return switchData()->cases[index].target.block;
             RELEASE_ASSERT(index == switchData()->cases.size());
             return switchData()->fallThrough.block;
-        }
+        } else if (isEntrySwitch())
+            return entrySwitchData()->cases[index];
 
         switch (index) {
         case 0:
@@ -2011,6 +2030,12 @@ public:
     Profiler::ExecutionCounter* executionCounter()
     {
         return m_opInfo.as<Profiler::ExecutionCounter*>();
+    }
+
+    unsigned entrypointIndex()
+    {
+        ASSERT(op() == InitializeEntrypointArguments);
+        return m_opInfo.as<unsigned>();
     }
 
     bool shouldGenerate()

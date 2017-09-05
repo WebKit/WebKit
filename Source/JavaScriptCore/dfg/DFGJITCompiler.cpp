@@ -559,7 +559,7 @@ void JITCompiler::noticeCatchEntrypoint(BasicBlock& basicBlock, JITCompiler::Lab
 {
     RELEASE_ASSERT(basicBlock.isCatchEntrypoint);
     RELEASE_ASSERT(basicBlock.intersectionOfCFAHasVisited); // An entrypoint is reachable by definition.
-    m_jitCode->appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.offsetOf(blockHead), WTFMove(argumentFormats));
+    m_jitCode->common.appendCatchEntrypoint(basicBlock.bytecodeBegin, linkBuffer.locationOf(blockHead).executableAddress(), WTFMove(argumentFormats));
 }
 
 void JITCompiler::noticeOSREntry(BasicBlock& basicBlock, JITCompiler::Label blockHead, LinkBuffer& linkBuffer)
@@ -687,7 +687,7 @@ void JITCompiler::makeCatchOSREntryBuffer()
 {
     if (m_graph.m_maxLocalsForCatchOSREntry) {
         uint32_t numberOfLiveLocals = std::max(*m_graph.m_maxLocalsForCatchOSREntry, 1u); // Make sure we always allocate a non-null catchOSREntryBuffer.
-        m_jitCode->catchOSREntryBuffer = vm()->scratchBufferForSize(sizeof(JSValue) * numberOfLiveLocals);
+        m_jitCode->common.catchOSREntryBuffer = vm()->scratchBufferForSize(sizeof(JSValue) * numberOfLiveLocals);
     }
 }
 

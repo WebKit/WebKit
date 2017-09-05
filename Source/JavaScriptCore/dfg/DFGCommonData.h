@@ -31,6 +31,7 @@
 #include "DFGAdaptiveInferredPropertyValueWatchpoint.h"
 #include "DFGAdaptiveStructureWatchpoint.h"
 #include "DFGJumpReplacement.h"
+#include "DFGOSREntry.h"
 #include "InlineCallFrameSet.h"
 #include "JSCell.h"
 #include "ProfilerCompilation.h"
@@ -90,6 +91,20 @@ public:
     void installVMTrapBreakpoints(CodeBlock* owner);
     bool isVMTrapBreakpoint(void* address);
 
+    CatchEntrypointData* catchOSREntryDataForBytecodeIndex(unsigned bytecodeIndex)
+    {
+        return tryBinarySearch<CatchEntrypointData, unsigned>(
+            catchEntrypoints, catchEntrypoints.size(), bytecodeIndex,
+            [] (const CatchEntrypointData* item) { return item->bytecodeIndex; });
+    }
+
+    void appendCatchEntrypoint(unsigned bytecodeIndex, void* machineCode, Vector<FlushFormat>&& argumentFormats)
+    {
+        catchEntrypoints.append(CatchEntrypointData { machineCode,  WTFMove(argumentFormats), bytecodeIndex });
+    }
+
+    void finalizeCatchEntrypoints();
+
     unsigned requiredRegisterCountForExecutionAndExit() const
     {
         return std::max(frameRegisterCount, requiredRegisterCountForExit);
@@ -106,11 +121,13 @@ public:
     Vector<WeakReferenceTransition> transitions;
     Vector<WriteBarrier<JSCell>> weakReferences;
     Vector<WriteBarrier<Structure>> weakStructureReferences;
+    Vector<CatchEntrypointData> catchEntrypoints;
     Bag<CodeBlockJettisoningWatchpoint> watchpoints;
     Bag<AdaptiveStructureWatchpoint> adaptiveStructureWatchpoints;
     Bag<AdaptiveInferredPropertyValueWatchpoint> adaptiveInferredPropertyValueWatchpoints;
     Vector<JumpReplacement> jumpReplacements;
     
+    ScratchBuffer* catchOSREntryBuffer;
     RefPtr<Profiler::Compilation> compilation;
     bool livenessHasBeenProved; // Initialized and used on every GC.
     bool allTransitionsHaveBeenMarked; // Initialized and used on every GC.

@@ -1,3 +1,140 @@
+2017-09-04  Saam Barati  <sbarati@apple.com>
+
+        Support compiling catch in the FTL
+        https://bugs.webkit.org/show_bug.cgi?id=175396
+
+        Reviewed by Filip Pizlo.
+
+        This patch implements op_catch in the FTL. It extends the DFG implementation
+        by supporting multiple entrypoints in DFG-SSA. This patch implements this
+        by introducing an EntrySwitch node. When converting to SSA, we introduce a new
+        root block with an EntrySwitch that has the previous DFG entrypoints as its
+        successors. By convention, we pick the zeroth entry point index to be the
+        op_enter entrypoint. Like in B3, in DFG-SSA, EntrySwitch just acts like a
+        switch over the entrypoint index argument. DFG::EntrySwitch in the FTL
+        simply lowers to B3::EntrySwitch. The EntrySwitch in the root block that
+        SSAConversion creates can not exit because we would both not know where to exit
+        to in the program: we would not have valid OSR exit state. This design also
+        mandates that anything we hoist above EntrySwitch in the new root block
+        can not exit since they also do not have valid OSR exit state.
+        
+        This patch also adds a new metadata node named InitializeEntrypointArguments.
+        InitializeEntrypointArguments is a metadata node that initializes the flush format for
+        the arguments at a given entrypoint. For a given entrypoint index, this node
+        tells AI and OSRAvailabilityAnalysis what the flush format for each argument
+        is. This allows each individual entrypoint to have an independent set of
+        argument types. Currently, this won't happen in practice because ArgumentPosition
+        unifies flush formats, but this is an implementation detail we probably want
+        to modify in the future. SSAConversion will add InitializeEntrypointArguments
+        to the beginning of each of the original DFG entrypoint blocks.
+        
+        This patch also adds the ability to specify custom prologue code generators in Air.
+        This allows the FTL to specify a custom prologue for catch entrypoints that
+        matches the op_catch OSR entry calling convention that the DFG uses. This way,
+        the baseline JIT code OSR enters into op_catch the same way both in the DFG
+        and the FTL. In the future, we can use this same mechanism to perform stack
+        overflow checks instead of using a patchpoint.
+
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::Code::isEntrypoint):
+        (JSC::B3::Air::Code::entrypointIndex):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setPrologueForEntrypoint):
+        (JSC::B3::Air::Code::prologueGeneratorForEntrypoint):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGBasicBlock.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFG.h:
+        (JSC::DFG::selectCFG):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGClobbersExitState.cpp:
+        (JSC::DFG::clobbersExitState):
+        * dfg/DFGCommonData.cpp:
+        (JSC::DFG::CommonData::shrinkToFit):
+        (JSC::DFG::CommonData::finalizeCatchEntrypoints):
+        * dfg/DFGCommonData.h:
+        (JSC::DFG::CommonData::catchOSREntryDataForBytecodeIndex):
+        (JSC::DFG::CommonData::appendCatchEntrypoint):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::invalidateCFG):
+        (JSC::DFG::Graph::ensureCPSCFG):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isEntrypoint):
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        (JSC::DFG::InPlaceAbstractState::mergeToSuccessors):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::shrinkToFit):
+        (JSC::DFG::JITCode::finalizeOSREntrypoints):
+        * dfg/DFGJITCode.h:
+        (JSC::DFG::JITCode::catchOSREntryDataForBytecodeIndex): Deleted.
+        (JSC::DFG::JITCode::appendCatchEntrypoint): Deleted.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::noticeCatchEntrypoint):
+        (JSC::DFG::JITCompiler::makeCatchOSREntryBuffer):
+        * dfg/DFGMayExit.cpp:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isEntrySwitch):
+        (JSC::DFG::Node::isTerminal):
+        (JSC::DFG::Node::entrySwitchData):
+        (JSC::DFG::Node::numSuccessors):
+        (JSC::DFG::Node::successor):
+        (JSC::DFG::Node::entrypointIndex):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOSRAvailabilityAnalysisPhase.cpp:
+        (JSC::DFG::OSRAvailabilityAnalysisPhase::run):
+        (JSC::DFG::LocalOSRAvailabilityCalculator::executeNode):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareCatchOSREntry):
+        * dfg/DFGOSREntry.h:
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::SSAConversionPhase):
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStaticExecutionCountEstimationPhase.cpp:
+        (JSC::DFG::StaticExecutionCountEstimationPhase::run):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLCompile.cpp:
+        (JSC::FTL::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileExtractCatchLocal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetStack):
+        (JSC::FTL::DFG::LowerDFGToB3::compileEntrySwitch):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::appendOSRExitDescriptor):
+        (JSC::FTL::DFG::LowerDFGToB3::appendOSRExit):
+        (JSC::FTL::DFG::LowerDFGToB3::blessSpeculation):
+        * ftl/FTLOutput.cpp:
+        (JSC::FTL::Output::entrySwitch):
+        * ftl/FTLOutput.h:
+        * jit/JITOperations.cpp:
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG][FTL] Efficiently execute number#toString()

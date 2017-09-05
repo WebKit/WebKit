@@ -429,6 +429,8 @@ public:
         }
     }
 
+    void entrySwitch(const Vector<LBasicBlock>&);
+
     void ret(LValue);
 
     void unreachable();

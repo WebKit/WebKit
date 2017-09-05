@@ -861,6 +861,14 @@ void Output::addIncomingToPhi(LValue phi, ValueFromBlock value)
         value.value()->as<B3::UpsilonValue>()->setPhi(phi);
 }
 
+void Output::entrySwitch(const Vector<LBasicBlock>& cases)
+{
+    RELEASE_ASSERT(cases.size() == m_proc.numEntrypoints());
+    m_block->appendNew<Value>(m_proc, EntrySwitch, origin());
+    for (LBasicBlock block : cases)
+        m_block->appendSuccessor(FrequentedBlock(block));
+}
+
 } } // namespace JSC::FTL
 
 #endif // ENABLE(FTL_JIT)

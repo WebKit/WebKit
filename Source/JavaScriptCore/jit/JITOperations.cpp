@@ -42,6 +42,7 @@
 #include "ErrorHandlingScope.h"
 #include "EvalCodeBlock.h"
 #include "ExceptionFuzz.h"
+#include "FTLOSREntry.h"
 #include "FrameTracers.h"
 #include "FunctionCodeBlock.h"
 #include "GetterSetter.h"
@@ -1533,10 +1534,14 @@ char* JIT_OPERATION operationTryOSREnterAtCatch(ExecState* exec, uint32_t byteco
     NativeCallFrameTracer tracer(&vm, exec);
 
     CodeBlock* optimizedReplacement = exec->codeBlock()->replacement();
-    if (optimizedReplacement->jitType() != JITCode::DFGJIT)
-        return nullptr;
-
-    return static_cast<char*>(DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex));
+    switch (optimizedReplacement->jitType()) {
+    case JITCode::DFGJIT:
+    case JITCode::FTLJIT:
+        return static_cast<char*>(DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex));
+    default:
+        break;
+    }
+    return nullptr;
 }
 
 char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, uint32_t bytecodeIndex)
@@ -1546,8 +1551,14 @@ char* JIT_OPERATION operationTryOSREnterAtCatchAndValueProfile(ExecState* exec, 
 
     CodeBlock* codeBlock = exec->codeBlock();
     CodeBlock* optimizedReplacement = codeBlock->replacement();
-    if (optimizedReplacement->jitType() == JITCode::DFGJIT)
+
+    switch (optimizedReplacement->jitType()) {
+    case JITCode::DFGJIT:
+    case JITCode::FTLJIT:
         return static_cast<char*>(DFG::prepareCatchOSREntry(exec, optimizedReplacement, bytecodeIndex));
+    default:
+        break;
+    }
 
     codeBlock->ensureCatchLivenessIsComputedForBytecodeOffset(bytecodeIndex);
     ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(codeBlock->instructions()[bytecodeIndex + 3].u.pointer);

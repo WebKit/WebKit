@@ -53,6 +53,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case LazyJSConstant:
     case Int52Constant:
     case MovHint:
+    case InitializeEntrypointArguments:
     case SetLocal:
     case Flush:
     case Phantom:
@@ -78,6 +79,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case PhantomLocal:
     case CountExecution:
     case Jump:
+    case EntrySwitch:
     case Branch:
     case Unreachable:
     case DoubleRep:

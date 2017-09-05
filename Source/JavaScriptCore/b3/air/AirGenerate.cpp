@@ -208,21 +208,28 @@ void generate(Code& code, CCallHelpers& jit)
         if (disassembler)
             disassembler->startBlock(block, jit); 
 
-        if (code.isEntrypoint(block)) {
+        if (std::optional<unsigned> entrypointIndex = code.entrypointIndex(block)) {
+            ASSERT(code.isEntrypoint(block));
+
             if (disassembler)
                 disassembler->startEntrypoint(jit); 
 
-            jit.emitFunctionPrologue();
-            if (code.frameSize()) {
-                AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
-                jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+            if (RefPtr<PrologueGenerator> prologueGenerator = code.prologueGeneratorForEntrypoint(*entrypointIndex))
+                prologueGenerator->run(jit, code);
+            else {
+                jit.emitFunctionPrologue();
+                if (code.frameSize()) {
+                    AllowMacroScratchRegisterUsageIf allowScratch(jit, isARM64());
+                    jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), MacroAssembler::stackPointerRegister);
+                }
+                
+                jit.emitSave(code.calleeSaveRegisterAtOffsetList());
             }
-            
-            jit.emitSave(code.calleeSaveRegisterAtOffsetList());
 
             if (disassembler)
                 disassembler->endEntrypoint(jit); 
-        }
+        } else
+            ASSERT(!code.isEntrypoint(block));
         
         ASSERT(block->size() >= 1);
         for (unsigned i = 0; i < block->size() - 1; ++i) {

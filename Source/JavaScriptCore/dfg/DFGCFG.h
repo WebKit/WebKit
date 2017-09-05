@@ -98,8 +98,7 @@ using SSACFG = CFG;
 template <typename T, typename = typename std::enable_if<std::is_same<T, CPSCFG>::value>::type>
 CPSCFG& selectCFG(Graph& graph)
 {
-    RELEASE_ASSERT(graph.m_cpsCFG);
-    return *graph.m_cpsCFG;
+    return graph.ensureCPSCFG();
 }
 
 template <typename T, typename = typename std::enable_if<std::is_same<T, SSACFG>::value>::type>

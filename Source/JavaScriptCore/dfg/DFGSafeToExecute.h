@@ -311,6 +311,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case Jump:
     case Branch:
     case Switch:
+    case EntrySwitch:
     case Return:
     case TailCall:
     case DirectTailCall:
@@ -399,6 +400,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case AtomicsSub:
     case AtomicsXor:
     case AtomicsIsLockFree:
+    case InitializeEntrypointArguments:
         return true;
 
     case ArraySlice:

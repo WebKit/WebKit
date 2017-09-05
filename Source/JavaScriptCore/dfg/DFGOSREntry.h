@@ -71,11 +71,11 @@ inline unsigned getOSREntryDataBytecodeIndex(OSREntryData* osrEntryData)
 }
 
 struct CatchEntrypointData {
-    unsigned m_bytecodeIndex;
-    unsigned m_machineCodeOffset;
     // We use this when doing OSR entry at catch. We prove the arguments
     // are of the expected type before entering at a catch block.
-    Vector<FlushFormat> m_argumentFormats;
+    void* machineCode;
+    Vector<FlushFormat> argumentFormats;
+    unsigned bytecodeIndex;
 };
 
 // Returns a pointer to a data buffer that the OSR entry thunk will recognize and

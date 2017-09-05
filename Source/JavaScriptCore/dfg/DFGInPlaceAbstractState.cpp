@@ -100,42 +100,45 @@ void InPlaceAbstractState::initialize()
         entrypoint->cfaStructureClobberStateAtHead = StructuresAreWatched;
         entrypoint->cfaStructureClobberStateAtTail = StructuresAreWatched;
 
-        for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfArguments(); ++i) {
-            entrypoint->valuesAtTail.argument(i).clear();
+        if (m_graph.m_form == SSA)  {
+            for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfArguments(); ++i) {
+                entrypoint->valuesAtHead.argument(i).clear();
+                entrypoint->valuesAtTail.argument(i).clear();
+            }
+        } else {
+            const ArgumentsVector& arguments = m_graph.m_entrypointToArguments.find(entrypoint)->value;
+            for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfArguments(); ++i) {
+                entrypoint->valuesAtTail.argument(i).clear();
 
-            FlushFormat format;
-            if (m_graph.m_form == SSA) {
-                // FIXME: When supporting multiple entrypoints in the FTL, we need to change
-                // what we do here: https://bugs.webkit.org/show_bug.cgi?id=175396
-                format = m_graph.m_argumentFormats[i];
-            } else {
-                Node* node = m_graph.m_entrypointToArguments.find(entrypoint)->value[i];
+                FlushFormat format;
+                Node* node = arguments[i];
                 if (!node)
                     format = FlushedJSValue;
                 else {
                     ASSERT(node->op() == SetArgument);
                     format = node->variableAccessData()->flushFormat();
                 }
-            }
-            
-            switch (format) {
-            case FlushedInt32:
-                entrypoint->valuesAtHead.argument(i).setType(SpecInt32Only);
-                break;
-            case FlushedBoolean:
-                entrypoint->valuesAtHead.argument(i).setType(SpecBoolean);
-                break;
-            case FlushedCell:
-                entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCell);
-                break;
-            case FlushedJSValue:
-                entrypoint->valuesAtHead.argument(i).makeBytecodeTop();
-                break;
-            default:
-                DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
-                break;
+
+                switch (format) {
+                case FlushedInt32:
+                    entrypoint->valuesAtHead.argument(i).setType(SpecInt32Only);
+                    break;
+                case FlushedBoolean:
+                    entrypoint->valuesAtHead.argument(i).setType(SpecBoolean);
+                    break;
+                case FlushedCell:
+                    entrypoint->valuesAtHead.argument(i).setType(m_graph, SpecCell);
+                    break;
+                case FlushedJSValue:
+                    entrypoint->valuesAtHead.argument(i).makeBytecodeTop();
+                    break;
+                default:
+                    DFG_CRASH(m_graph, nullptr, "Bad flush format for argument");
+                    break;
+                }
             }
         }
+
         for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfLocals(); ++i) {
             entrypoint->valuesAtHead.local(i).clear();
             entrypoint->valuesAtTail.local(i).clear();
@@ -163,6 +166,7 @@ void InPlaceAbstractState::initialize()
             block->valuesAtTail.local(i).clear();
         }
     }
+
     if (m_graph.m_form == SSA) {
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
@@ -369,6 +373,14 @@ inline bool InPlaceAbstractState::mergeToSuccessors(BasicBlock* basicBlock)
         bool changed = merge(basicBlock, data->fallThrough.block);
         for (unsigned i = data->cases.size(); i--;)
             changed |= merge(basicBlock, data->cases[i].target.block);
+        return changed;
+    }
+    
+    case EntrySwitch: {
+        EntrySwitchData* data = terminal->entrySwitchData();
+        bool changed = false;
+        for (unsigned i = data->cases.size(); i--;)
+            changed |= merge(basicBlock, data->cases[i]);
         return changed;
     }
 

@@ -338,16 +338,19 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
 }
 
 void* prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIndex)
-{
-    if (!Options::useOSREntryToDFG())
+{ 
+    ASSERT(codeBlock->jitType() == JITCode::DFGJIT || codeBlock->jitType() == JITCode::FTLJIT);
+
+    if (!Options::useOSREntryToDFG() && codeBlock->jitCode()->jitType() == JITCode::DFGJIT)
+        return nullptr;
+    if (!Options::useOSREntryToFTL() && codeBlock->jitCode()->jitType() == JITCode::FTLJIT)
         return nullptr;
 
     VM& vm = exec->vm();
-    ASSERT(codeBlock->jitType() == JITCode::DFGJIT);
-    DFG::JITCode* jitCode = codeBlock->jitCode()->dfg();
-    RELEASE_ASSERT(jitCode);
 
-    DFG::CatchEntrypointData* catchEntrypoint = jitCode->catchOSREntryDataForBytecodeIndex(bytecodeIndex);
+    CommonData* dfgCommon = codeBlock->jitCode()->dfgCommon();
+    RELEASE_ASSERT(dfgCommon);
+    DFG::CatchEntrypointData* catchEntrypoint = dfgCommon->catchOSREntryDataForBytecodeIndex(bytecodeIndex);
     if (!catchEntrypoint) {
         // This can be null under some circumstances. The most common is that we didn't
         // compile this op_catch as an entrypoint since it had never executed when starting
@@ -356,9 +359,9 @@ void* prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytec
     }
 
     // We're only allowed to OSR enter if we've proven we have compatible argument types.
-    for (unsigned argument = 0; argument < catchEntrypoint->m_argumentFormats.size(); ++argument) {
+    for (unsigned argument = 0; argument < catchEntrypoint->argumentFormats.size(); ++argument) {
         JSValue value = exec->uncheckedR(virtualRegisterForArgument(argument)).jsValue();
-        switch (catchEntrypoint->m_argumentFormats[argument]) {
+        switch (catchEntrypoint->argumentFormats[argument]) {
         case DFG::FlushedInt32:
             if (!value.isInt32())
                 return nullptr;
@@ -382,13 +385,13 @@ void* prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytec
         }
     }
 
-    unsigned frameSizeForCheck = jitCode->common.requiredRegisterCountForExecutionAndExit();
+    unsigned frameSizeForCheck = dfgCommon->requiredRegisterCountForExecutionAndExit();
     if (UNLIKELY(!vm.ensureStackCapacityFor(&exec->registers()[virtualRegisterForLocal(frameSizeForCheck).offset()])))
         return nullptr;
 
     ASSERT(Interpreter::getOpcodeID(exec->codeBlock()->instructions()[exec->bytecodeOffset()].u.opcode) == op_catch);
     ValueProfileAndOperandBuffer* buffer = static_cast<ValueProfileAndOperandBuffer*>(exec->codeBlock()->instructions()[exec->bytecodeOffset() + 3].u.pointer);
-    JSValue* dataBuffer = reinterpret_cast<JSValue*>(jitCode->catchOSREntryBuffer->dataBuffer());
+    JSValue* dataBuffer = reinterpret_cast<JSValue*>(dfgCommon->catchOSREntryBuffer->dataBuffer());
     unsigned index = 0;
     buffer->forEach([&] (ValueProfileAndOperand& profile) {
         if (!VirtualRegister(profile.m_operand).isLocal())
@@ -397,9 +400,8 @@ void* prepareCatchOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytec
         ++index;
     });
 
-    jitCode->catchOSREntryBuffer->setActiveLength(sizeof(JSValue) * index);
-
-    return jitCode->executableAddressAtOffset(catchEntrypoint->m_machineCodeOffset);
+    dfgCommon->catchOSREntryBuffer->setActiveLength(sizeof(JSValue) * index);
+    return catchEntrypoint->machineCode;
 }
 
 } } // namespace JSC::DFG

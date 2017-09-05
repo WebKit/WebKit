@@ -142,6 +142,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
         });
 
     state.finalizer->b3CodeLinkBuffer = std::make_unique<LinkBuffer>(jit, codeBlock, JITCompilationCanFail);
+
     if (state.finalizer->b3CodeLinkBuffer->didFailToAllocate()) {
         state.allocationFailed = true;
         return;
@@ -152,8 +153,17 @@ void compile(State& state, Safepoint::Result& safepointResult)
         codeBlock->setPCToCodeOriginMap(std::make_unique<PCToCodeOriginMap>(PCToCodeOriginMapBuilder(vm, WTFMove(originMap)), *state.finalizer->b3CodeLinkBuffer));
 
     state.generatedFunction = bitwise_cast<GeneratedFunction>(
-        state.finalizer->b3CodeLinkBuffer->entrypoint().executableAddress());
+        state.finalizer->b3CodeLinkBuffer->locationOf(state.proc->entrypointLabel(0)));
     state.jitCode->initializeB3Byproducts(state.proc->releaseByproducts());
+
+    for (auto pair : state.graph.m_entrypointIndexToCatchBytecodeOffset) {
+        unsigned catchBytecodeOffset = pair.value;
+        unsigned entrypointIndex = pair.key;
+        Vector<FlushFormat> argumentFormats = state.graph.m_argumentFormats[entrypointIndex];
+        state.jitCode->common.appendCatchEntrypoint(
+            catchBytecodeOffset, state.finalizer->b3CodeLinkBuffer->locationOf(state.proc->entrypointLabel(entrypointIndex)).executableAddress(), WTFMove(argumentFormats));
+    }
+    state.jitCode->common.finalizeCatchEntrypoints();
 
     if (B3::Air::Disassembler* disassembler = state.proc->code().disassembler()) {
         PrintStream& out = WTF::dataFile();

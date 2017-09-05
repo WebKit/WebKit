@@ -5262,9 +5262,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 NEXT_OPCODE(op_catch);
             }
 
-            if (isFTL(m_graph.m_plan.mode)) {
-                // FIXME: Support catch in the FTL.
-                // https://bugs.webkit.org/show_bug.cgi?id=175396
+            if (m_graph.m_plan.mode == FTLForOSREntryMode) {
                 NEXT_OPCODE(op_catch);
             }
 
@@ -6465,8 +6463,6 @@ bool ByteCodeParser::parse()
     m_graph.determineReachability();
     m_graph.killUnreachableBlocks();
 
-    m_graph.m_cpsCFG = std::make_unique<CPSCFG>(m_graph);
-    
     for (BlockIndex blockIndex = m_graph.numBlocks(); blockIndex--;) {
         BasicBlock* block = m_graph.block(blockIndex);
         if (!block)

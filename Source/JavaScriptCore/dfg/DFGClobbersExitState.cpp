@@ -40,6 +40,7 @@ bool clobbersExitState(Graph& graph, Node* node)
     // There are certain nodes whose effect on the exit state has nothing to do with what they
     // normally clobber.
     switch (node->op()) {
+    case InitializeEntrypointArguments:
     case MovHint:
     case ZombieHint:
     case PutHint:

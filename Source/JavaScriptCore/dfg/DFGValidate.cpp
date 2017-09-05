@@ -84,6 +84,10 @@ public:
         // in release builds.
 
         VALIDATE((m_graph.block(0)), m_graph.isEntrypoint(m_graph.block(0)));
+        VALIDATE((m_graph.block(0)), m_graph.block(0) == m_graph.m_entrypoints[0]);
+
+        for (BasicBlock* block : m_graph.m_entrypoints)
+            VALIDATE((block), block->predecessors.isEmpty());
 
         // Validate that all local variables at the head of all entrypoints are dead.
         for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
@@ -549,6 +553,8 @@ private:
                 case PutStack:
                 case KillStack:
                 case GetStack:
+                case EntrySwitch:
+                case InitializeEntrypointArguments:
                     VALIDATE((node), !"unexpected node type in CPS");
                     break;
                 case MaterializeNewObject: {
@@ -639,6 +645,13 @@ private:
         // FIXME: Add more things here.
         // https://bugs.webkit.org/show_bug.cgi?id=123471
         
+        VALIDATE((), m_graph.m_entrypoints.size() == 1);
+        VALIDATE((), m_graph.m_entrypoints[0] == m_graph.block(0));
+        VALIDATE((), !m_graph.m_argumentFormats.isEmpty()); // We always have at least one entrypoint.
+
+        for (unsigned entrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeOffset.keys())
+            VALIDATE((), entrypointIndex > 0); // By convention, 0 is the entrypoint index for the op_enter entrypoint, which can not be in a catch.
+
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
             BasicBlock* block = m_graph.block(blockIndex);
             if (!block)
@@ -740,6 +753,14 @@ private:
                     break;
                 }
 
+                case EntrySwitch:
+                    VALIDATE((node), node->entrySwitchData()->cases.size() == m_graph.m_numberOfEntrypoints);
+                    break;
+
+                case InitializeEntrypointArguments:
+                    VALIDATE((node), node->entrypointIndex() < m_graph.m_numberOfEntrypoints);
+                    break;
+
                 default:
                     m_graph.doToChildren(
                         node,
@@ -780,6 +801,8 @@ private:
             getLocalPositions.operand(operand) < setLocalPositions.operand(operand));
     }
     
+    void reportValidationContext() { }
+
     void reportValidationContext(Node* node)
     {
         dataLogF("@%u", node->index());

@@ -29,6 +29,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGBasicBlockInlines.h"
+#include "DFGBlockInsertionSet.h"
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
@@ -44,7 +45,6 @@ class SSAConversionPhase : public Phase {
 public:
     SSAConversionPhase(Graph& graph)
         : Phase(graph, "SSA conversion")
-        , m_calculator(graph)
         , m_insertionSet(graph)
     {
     }
@@ -52,9 +52,59 @@ public:
     bool run()
     {
         RELEASE_ASSERT(m_graph.m_form == ThreadedCPS);
+        RELEASE_ASSERT(!m_graph.m_isInSSAConversion);
+        m_graph.m_isInSSAConversion = true;
         
         m_graph.clearReplacements();
         m_graph.clearCPSCFGData();
+
+        HashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
+
+        {
+            m_graph.m_numberOfEntrypoints = m_graph.m_entrypoints.size();
+
+            BlockInsertionSet blockInsertionSet(m_graph);
+            BasicBlock* newRoot = blockInsertionSet.insert(0, 1.0f);
+
+            EntrySwitchData* entrySwitchData = m_graph.m_entrySwitchData.add();
+            for (unsigned entrypointIndex = 0; entrypointIndex < m_graph.m_numberOfEntrypoints; ++entrypointIndex) {
+                BasicBlock* oldRoot = m_graph.m_entrypoints[entrypointIndex];
+                entrypointIndexToArgumentsBlock.add(entrypointIndex, oldRoot);
+                entrySwitchData->cases.append(oldRoot);
+
+                ASSERT(oldRoot->predecessors.isEmpty());
+                oldRoot->predecessors.append(newRoot);
+
+                if (oldRoot->isCatchEntrypoint) {
+                    ASSERT(!!entrypointIndex);
+                    m_graph.m_entrypointIndexToCatchBytecodeOffset.add(entrypointIndex, oldRoot->bytecodeBegin);
+                }
+
+                NodeOrigin origin = oldRoot->at(0)->origin;
+                m_insertionSet.insertNode(
+                    0, SpecNone, InitializeEntrypointArguments, origin, OpInfo(entrypointIndex));
+                m_insertionSet.insertNode(
+                    0, SpecNone, ExitOK, origin);
+                m_insertionSet.execute(oldRoot);
+            }
+
+            RELEASE_ASSERT(entrySwitchData->cases[0] == m_graph.block(0)); // We strongly assume the normal call entrypoint is the first item in the list.
+
+            m_graph.m_argumentFormats.resize(m_graph.m_numberOfEntrypoints);
+
+            const bool exitOK = false;
+            NodeOrigin origin { CodeOrigin(0), CodeOrigin(0), exitOK };
+            newRoot->appendNode(
+                m_graph, SpecNone, EntrySwitch, origin, OpInfo(entrySwitchData));
+
+            m_graph.m_entrypoints.clear();
+            m_graph.m_entrypoints.append(newRoot);
+
+            blockInsertionSet.execute();
+        }
+
+        SSACalculator calculator(m_graph);
+
         m_graph.ensureSSADominators();
         
         if (verbose) {
@@ -67,7 +117,7 @@ public:
             if (!variable.isRoot())
                 continue;
             
-            SSACalculator::Variable* ssaVariable = m_calculator.newVariable();
+            SSACalculator::Variable* ssaVariable = calculator.newVariable();
             ASSERT(ssaVariable->index() == m_variableForSSAIndex.size());
             m_variableForSSAIndex.append(&variable);
             m_ssaVariableForVariable.add(&variable, ssaVariable);
@@ -103,7 +153,7 @@ public:
                     m_argumentMapping.add(node, childNode);
                 }
                 
-                m_calculator.newDef(
+                calculator.newDef(
                     m_ssaVariableForVariable.get(variable), block, childNode);
             }
             
@@ -112,7 +162,7 @@ public:
         
         // Decide where Phis are to be inserted. This creates the Phi's but doesn't insert them
         // yet. We will later know where to insert based on where SSACalculator tells us to.
-        m_calculator.computePhis(
+        calculator.computePhis(
             [&] (SSACalculator::Variable* ssaVariable, BasicBlock* block) -> Node* {
                 VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
                 
@@ -167,7 +217,7 @@ public:
             for (unsigned i = 0; i < m_variableForSSAIndex.size(); ++i)
                 dataLog("    ", i, ": ", VariableAccessDataDump(m_graph, m_variableForSSAIndex[i]), "\n");
             dataLog("\n");
-            dataLog("SSA calculator: ", m_calculator, "\n");
+            dataLog("SSA calculator: ", calculator, "\n");
         }
         
         // Do the bulk of the SSA conversion. For each block, this tracks the operand->Node
@@ -220,7 +270,7 @@ public:
                         dataLog("Considering live variable ", VariableAccessDataDump(m_graph, variable), " at head of block ", *block, "\n");
                     
                     SSACalculator::Variable* ssaVariable = m_ssaVariableForVariable.get(variable);
-                    SSACalculator::Def* def = m_calculator.reachingDefAtHead(block, ssaVariable);
+                    SSACalculator::Def* def = calculator.reachingDefAtHead(block, ssaVariable);
                     if (!def) {
                         // If we are required to insert a Phi, then we won't have a reaching def
                         // at head.
@@ -246,7 +296,7 @@ public:
             // valueForOperand with those Phis. For Phis associated with variables that are not
             // flushed, we also insert a MovHint.
             size_t phiInsertionPoint = 0;
-            for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(block)) {
+            for (SSACalculator::Def* phiDef : calculator.phisForBlock(block)) {
                 VariableAccessData* variable = m_variableForSSAIndex[phiDef->variable()->index()];
                 
                 m_insertionSet.insert(phiInsertionPoint, phiDef->value());
@@ -346,7 +396,7 @@ public:
             NodeOrigin upsilonOrigin = terminal.node->origin;
             for (unsigned successorIndex = block->numSuccessors(); successorIndex--;) {
                 BasicBlock* successorBlock = block->successor(successorIndex);
-                for (SSACalculator::Def* phiDef : m_calculator.phisForBlock(successorBlock)) {
+                for (SSACalculator::Def* phiDef : calculator.phisForBlock(successorBlock)) {
                     Node* phiNode = phiDef->value();
                     SSACalculator::Variable* ssaVariable = phiDef->variable();
                     VariableAccessData* variable = m_variableForSSAIndex[ssaVariable->index()];
@@ -383,23 +433,25 @@ public:
             block->ssa = std::make_unique<BasicBlock::SSAData>(block);
         }
 
-        // FIXME: Support multiple entrypoints in DFG SSA:
-        // https://bugs.webkit.org/show_bug.cgi?id=175396
-        RELEASE_ASSERT(m_graph.m_entrypoints.size() == 1);
-        auto& arguments = m_graph.m_entrypointToArguments.find(m_graph.block(0))->value;
-        m_graph.m_argumentFormats.resize(arguments.size());
-        for (unsigned i = arguments.size(); i--;) {
-            FlushFormat format = FlushedJSValue;
-
-            Node* node = m_argumentMapping.get(arguments[i]);
-            
-            RELEASE_ASSERT(node);
-            format = node->stackAccessData()->format;
-            
-            m_graph.m_argumentFormats[i] = format;
-            arguments[i] = node; // Record the load that loads the arguments for the benefit of exit profiling.
+        for (auto& pair : entrypointIndexToArgumentsBlock) {
+            unsigned entrypointIndex = pair.key;
+            BasicBlock* oldRoot = pair.value;
+            ArgumentsVector& arguments = m_graph.m_entrypointToArguments.find(oldRoot)->value;
+            Vector<FlushFormat> argumentFormats;
+            argumentFormats.reserveInitialCapacity(arguments.size());
+            for (unsigned i = 0; i < arguments.size(); ++i) {
+                Node* node = m_argumentMapping.get(arguments[i]);
+                RELEASE_ASSERT(node);
+                argumentFormats.uncheckedAppend(node->stackAccessData()->format);
+            }
+            m_graph.m_argumentFormats[entrypointIndex] = WTFMove(argumentFormats);
         }
-        
+
+        m_graph.m_entrypointToArguments.clear();
+
+        RELEASE_ASSERT(m_graph.m_isInSSAConversion);
+        m_graph.m_isInSSAConversion = false;
+
         m_graph.m_form = SSA;
 
         if (verbose) {
@@ -411,7 +463,6 @@ public:
     }
 
 private:
-    SSACalculator m_calculator;
     InsertionSet m_insertionSet;
     HashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
     HashMap<Node*, Node*> m_argumentMapping;
@@ -421,11 +472,7 @@ private:
 
 bool performSSAConversion(Graph& graph)
 {
-    RELEASE_ASSERT(!graph.m_isInSSAConversion);
-    graph.m_isInSSAConversion = true;
     bool result = runPhase<SSAConversionPhase>(graph);
-    RELEASE_ASSERT(graph.m_isInSSAConversion);
-    graph.m_isInSSAConversion = false;
     return result;
 }
 

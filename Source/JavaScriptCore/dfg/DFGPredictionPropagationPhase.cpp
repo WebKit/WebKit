@@ -1093,6 +1093,7 @@ private:
             RELEASE_ASSERT_NOT_REACHED();
             break;
             
+        case EntrySwitch:
         case Upsilon:
             // These don't get inserted until we go into SSA.
             RELEASE_ASSERT_NOT_REACHED();
@@ -1156,6 +1157,7 @@ private:
         case ForwardVarargs:
         case PutDynamicVar:
         case NukeStructureAndSetButterfly:
+        case InitializeEntrypointArguments:
             break;
             
         // This gets ignored because it only pretends to produce a value.

@@ -426,6 +426,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case Jump:
     case Branch:
     case Switch:
+    case EntrySwitch:
     case ForceOSRExit:
     case CheckBadCell:
     case Return:
@@ -437,6 +438,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ProfileType:
     case ProfileControlFlow:
     case PutHint:
+    case InitializeEntrypointArguments:
         write(SideState);
         return;
         

@@ -5650,7 +5650,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg tagGPR = tag.gpr();
         GPRReg payloadGPR = payload.gpr();
 
-        JSValue* ptr = &reinterpret_cast<JSValue*>(m_jit.jitCode()->catchOSREntryBuffer->dataBuffer())[node->catchOSREntryIndex()];
+        JSValue* ptr = &reinterpret_cast<JSValue*>(m_jit.jitCode()->common.catchOSREntryBuffer->dataBuffer())[node->catchOSREntryIndex()];
         m_jit.move(CCallHelpers::TrustedImmPtr(ptr), tempGPR);
         m_jit.load32(CCallHelpers::Address(tempGPR, TagOffset), tagGPR);
         m_jit.load32(CCallHelpers::Address(tempGPR, PayloadOffset), payloadGPR);
@@ -5703,6 +5703,8 @@ void SpeculativeJIT::compile(Node* node)
     case AtomicsSub:
     case AtomicsXor:
     case IdentityWithProfile:
+    case InitializeEntrypointArguments:
+    case EntrySwitch:
         DFG_CRASH(m_jit.graph(), node, "unexpected node in DFG backend");
         break;
     }

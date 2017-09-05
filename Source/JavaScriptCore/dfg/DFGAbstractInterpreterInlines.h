@@ -260,7 +260,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // DFG execution.
         break;
     }
-        
+
     case KillStack: {
         // This is just a hint telling us that the OSR state of the local is no longer inside the
         // flushed data.
@@ -273,7 +273,33 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // non-clear value.
         ASSERT(!m_state.variables().operand(node->local()).isClear());
         break;
-        
+
+    case InitializeEntrypointArguments: {
+        unsigned entrypointIndex = node->entrypointIndex();
+        const Vector<FlushFormat>& argumentFormats = m_graph.m_argumentFormats[entrypointIndex];
+        for (unsigned argument = 0; argument < argumentFormats.size(); ++argument) {
+            AbstractValue& value = m_state.variables().argument(argument);
+            switch (argumentFormats[argument]) {
+            case FlushedInt32:
+                value.setType(SpecInt32Only);
+                break;
+            case FlushedBoolean:
+                value.setType(SpecBoolean);
+                break;
+            case FlushedCell:
+                value.setType(m_graph, SpecCell);
+                break;
+            case FlushedJSValue:
+                value.makeBytecodeTop();
+                break;
+            default:
+                DFG_CRASH(m_graph, node, "Bad flush format for argument");
+                break;
+            }
+        }
+        break;
+    }
+
     case LoadVarargs:
     case ForwardVarargs: {
         // FIXME: ForwardVarargs should check if the count becomes known, and if it does, it should turn
@@ -1865,6 +1891,9 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         // FIXME: Do sparse conditional things.
         break;
     }
+
+    case EntrySwitch:
+        break;
 
     case Return:
         m_state.setIsValid(false);

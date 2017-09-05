@@ -56,6 +56,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetLocal:
     case SetLocal:
     case MovHint:
+    case InitializeEntrypointArguments:
     case ZombieHint:
     case ExitOK:
     case Phantom:
@@ -184,6 +185,7 @@ bool doesGC(Graph& graph, Node* node)
     case Jump:
     case Branch:
     case Switch:
+    case EntrySwitch:
     case Return:
     case TailCall:
     case DirectTailCall:

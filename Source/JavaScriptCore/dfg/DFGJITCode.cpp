@@ -63,7 +63,6 @@ void JITCode::shrinkToFit()
     common.shrinkToFit();
     osrEntry.shrinkToFit();
     osrExit.shrinkToFit();
-    catchEntrypoints.shrinkToFit();
     speculationRecovery.shrinkToFit();
     minifiedDFG.prepareAndShrink();
     variableEventStream.shrinkToFit();
@@ -243,7 +242,6 @@ void JITCode::finalizeOSREntrypoints()
     auto comparator = [] (const auto& a, const auto& b) {
         return a.m_bytecodeIndex < b.m_bytecodeIndex;
     };
-    std::sort(catchEntrypoints.begin(), catchEntrypoints.end(), comparator);
     std::sort(osrEntry.begin(), osrEntry.end(), comparator);
 
 #if !ASSERT_DISABLED
@@ -251,7 +249,6 @@ void JITCode::finalizeOSREntrypoints()
         for (unsigned i = 0; i + 1 < osrVector.size(); ++i)
             ASSERT(osrVector[i].m_bytecodeIndex <= osrVector[i + 1].m_bytecodeIndex);
     };
-    verifyIsSorted(catchEntrypoints);
     verifyIsSorted(osrEntry);
 #endif
 }

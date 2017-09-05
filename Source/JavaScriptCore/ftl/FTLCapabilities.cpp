@@ -111,6 +111,7 @@ inline CapabilityLevel canCompile(Node* node)
     case Phi:
     case Upsilon:
     case ExtractOSREntryLocal:
+    case ExtractCatchLocal:
     case LoopHint:
     case SkipScope:
     case GetGlobalObject:
@@ -245,6 +246,7 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMyArgumentByVal:
     case GetMyArgumentByValOutOfBounds:
     case ForwardVarargs:
+    case EntrySwitch:
     case Switch:
     case TypeOf:
     case PutById:
@@ -301,6 +303,7 @@ inline CapabilityLevel canCompile(Node* node)
     case AtomicsSub:
     case AtomicsXor:
     case AtomicsIsLockFree:
+    case InitializeEntrypointArguments:
         // These are OK.
         break;
 

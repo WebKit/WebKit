@@ -80,6 +80,11 @@ public:
                 applyCounts(data->fallThrough);
                 break;
             }
+            
+            case EntrySwitch: {
+                DFG_CRASH(m_graph, terminal, "Unexpected EntrySwitch in CPS form.");
+                break;
+            }
 
             default:
                 break;

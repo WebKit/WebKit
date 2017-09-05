@@ -53,10 +53,14 @@ namespace Air {
 class BlockInsertionSet;
 class CCallSpecial;
 class CFG;
+class Code;
 class Disassembler;
 
 typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
+
+typedef void PrologueGeneratorFunction(CCallHelpers&, Code&);
+typedef SharedTask<PrologueGeneratorFunction> PrologueGenerator;
 
 // This is an IR that is very close to the bare metal. It requires about 40x more bytes than the
 // generated machine code - for example if you're generating 1MB of machine code, you need about
@@ -165,7 +169,18 @@ public:
     const Vector<FrequentedBlock>& entrypoints() const { return m_entrypoints; }
     const FrequentedBlock& entrypoint(unsigned index) const { return m_entrypoints[index]; }
     bool isEntrypoint(BasicBlock*) const;
-    
+    // Note: It is only valid to call this function after LowerEntrySwitch.
+    std::optional<unsigned> entrypointIndex(BasicBlock*) const;
+    void setPrologueForEntrypoint(unsigned entrypointIndex, RefPtr<PrologueGenerator> generator)
+    {
+        // Note: We allow this to be called even before we set m_entrypoints just for convenience to users of this API.
+        m_entrypointIndexToGenerator.set(entrypointIndex, generator);
+    }
+    RefPtr<PrologueGenerator> prologueGeneratorForEntrypoint(unsigned entrypointIndex)
+    {
+        return m_entrypointIndexToGenerator.get(entrypointIndex);
+    }
+
     // This is used by lowerEntrySwitch().
     template<typename Vector>
     void setEntrypoints(Vector&& vector)
@@ -353,6 +368,7 @@ private:
     StackSlot* m_calleeSaveStackSlot { nullptr };
     Vector<FrequentedBlock> m_entrypoints; // This is empty until after lowerEntrySwitch().
     Vector<CCallHelpers::Label> m_entrypointLabels; // This is empty until code generation.
+    HashMap<unsigned, RefPtr<PrologueGenerator>, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_entrypointIndexToGenerator;
     RefPtr<WasmBoundsCheckGenerator> m_wasmBoundsCheckGenerator;
     const char* m_lastPhaseName;
     std::unique_ptr<Disassembler> m_disassembler;

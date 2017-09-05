@@ -87,6 +87,7 @@ void CommonData::shrinkToFit()
     codeOrigins.shrinkToFit();
     weakReferences.shrinkToFit();
     transitions.shrinkToFit();
+    catchEntrypoints.shrinkToFit();
 }
 
 static StaticLock pcCodeBlockMapLock;
@@ -191,6 +192,17 @@ void CommonData::validateReferences(const TrackedReferences& trackedReferences)
     
     for (AdaptiveStructureWatchpoint* watchpoint : adaptiveStructureWatchpoints)
         watchpoint->key().validateReferences(trackedReferences);
+}
+
+void CommonData::finalizeCatchEntrypoints()
+{
+    std::sort(catchEntrypoints.begin(), catchEntrypoints.end(),
+        [] (const CatchEntrypointData& a, const CatchEntrypointData& b) { return a.bytecodeIndex < b.bytecodeIndex; });
+
+#if !ASSERT_DISABLED
+    for (unsigned i = 0; i + 1 < catchEntrypoints.size(); ++i)
+        ASSERT(catchEntrypoints[i].bytecodeIndex <= catchEntrypoints[i + 1].bytecodeIndex);
+#endif
 }
 
 } } // namespace JSC::DFG
