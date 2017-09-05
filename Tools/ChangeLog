@@ -1,3 +1,13 @@
+2017-09-05  Youenn Fablet  <youenn@apple.com>
+
+        WebKitTestRunner should set the cache storage directory path
+        https://bugs.webkit.org/show_bug.cgi?id=176373
+
+        Reviewed by Chris Dumez.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::generateContextConfiguration const):
+
 2017-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec

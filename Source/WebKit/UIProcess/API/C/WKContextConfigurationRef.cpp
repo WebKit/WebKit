@@ -58,6 +58,16 @@ void WKContextConfigurationSetDiskCacheDirectory(WKContextConfigurationRef confi
     toImpl(configuration)->setDiskCacheDirectory(toImpl(diskCacheDirectory)->string());
 }
 
+WKStringRef WKContextConfigurationCopyCacheStorageDirectory(WKContextConfigurationRef configuration)
+{
+    return toCopiedAPI(toImpl(configuration)->cacheStorageDirectory());
+}
+
+void WKContextConfigurationSetCacheStorageDirectory(WKContextConfigurationRef configuration, WKStringRef cacheStorageDirectory)
+{
+    toImpl(configuration)->setCacheStorageDirectory(toImpl(cacheStorageDirectory)->string());
+}
+
 WKStringRef WKContextConfigurationCopyApplicationCacheDirectory(WKContextConfigurationRef configuration)
 {
     return toCopiedAPI(toImpl(configuration)->applicationCacheDirectory());
