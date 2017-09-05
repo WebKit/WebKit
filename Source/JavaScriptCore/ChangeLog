@@ -1,3 +1,88 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Efficiently execute number#toString()
+        https://bugs.webkit.org/show_bug.cgi?id=170007
+
+        Reviewed by Keith Miller.
+
+        In JS, the natural way to convert number to string with radix is `number.toString(radix)`.
+        However, our IC only cares about cells. If the base value is a number, it always goes to the slow path.
+
+        While extending our IC for number and boolean, the most meaningful use of this IC is calling `number.toString(radix)`.
+        So, in this patch, we first add a fast path for this in DFG by using watchpoint. We set up a watchpoint for
+        Number.prototype.toString. And if this watchpoint is kept alive and GetById(base, "toString")'s base should be
+        speculated as Number, we emit Number related Checks and convert GetById to Number.prototype.toString constant.
+        It removes costly GetById slow path, and makes it non-clobbering node (JSConstant).
+
+        In addition, we add NumberToStringWithValidRadixConstant node. We have NumberToStringWithRadix node, but it may
+        throw an error if the valid value is incorrect (for example, number.toString(2000)). So its clobbering rule is
+        conservatively use read(World)/write(Heap). But in reality, `number.toString` is mostly called with the constant
+        radix, and we can easily figure out this radix is valid (2 <= radix && radix < 32).
+        We add a rule to the constant folding phase to convert NumberToStringWithRadix to NumberToStringWithValidRadixConstant.
+        It ensures that it has valid constant radix. And we relax our clobbering rule for NumberToStringWithValidRadixConstant.
+
+        Added microbenchmarks show performance improvement.
+
+                                                      baseline                  patched
+
+        number-to-string-with-radix-cse           43.8312+-1.3017     ^      7.4930+-0.5105        ^ definitely 5.8496x faster
+        number-to-string-with-radix-10             7.2775+-0.5225     ^      2.1906+-0.1864        ^ definitely 3.3222x faster
+        number-to-string-with-radix               39.7378+-1.4921     ^     16.6137+-0.7776        ^ definitely 2.3919x faster
+        number-to-string-strength-reduction       94.9667+-2.7157     ^      9.3060+-0.7202        ^ definitely 10.2049x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isWatchingGlobalObjectWatchpoint):
+        (JSC::DFG::Graph::isWatchingArrayIteratorProtocolWatchpoint):
+        (JSC::DFG::Graph::isWatchingNumberToStringWatchpoint):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToNumberToStringWithValidRadixConstant):
+        (JSC::DFG::Node::hasValidRadixConstant):
+        (JSC::DFG::Node::validRadixConstant):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructor):
+        (JSC::DFG::SpeculativeJIT::compileNumberToStringWithValidRadixConstant):
+        (JSC::DFG::SpeculativeJIT::compileToStringOrCallStringConstructorOnNumber): Deleted.
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNumberToStringWithValidRadixConstant):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::numberToStringWatchpoint):
+        (JSC::JSGlobalObject::numberProtoToStringFunction const):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        (JSC::toStringWithRadixInternal):
+        (JSC::toStringWithRadix):
+        (JSC::int32ToStringInternal):
+        (JSC::numberToStringInternal):
+        * runtime/NumberPrototype.h:
+
 2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Consider increasing the number of DFG worklist threads

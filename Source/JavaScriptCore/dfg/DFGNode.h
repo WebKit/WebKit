@@ -691,6 +691,15 @@ public:
         children.setChild2(Edge());
         m_opInfo = cell;
     }
+
+    void convertToNumberToStringWithValidRadixConstant(int32_t radix)
+    {
+        ASSERT(m_op == NumberToStringWithRadix);
+        ASSERT(2 <= radix && radix <= 36);
+        setOpAndDefaultFlags(NumberToStringWithValidRadixConstant);
+        children.setChild2(Edge());
+        m_opInfo = radix;
+    }
     
     void convertToDirectCall(FrozenValue*);
 
@@ -2581,6 +2590,17 @@ public:
     {
         ASSERT(hasBucketOwnerType());
         return m_opInfo.as<BucketOwnerType>();
+    }
+
+    bool hasValidRadixConstant()
+    {
+        return op() == NumberToStringWithValidRadixConstant;
+    }
+
+    int32_t validRadixConstant()
+    {
+        ASSERT(hasValidRadixConstant());
+        return m_opInfo.as<int32_t>();
     }
 
     uint32_t errorType()

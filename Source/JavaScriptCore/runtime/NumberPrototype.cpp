@@ -58,7 +58,6 @@ const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, &nu
 
 /* Source for NumberPrototype.lut.h
 @begin numberPrototypeTable
-  toString          numberProtoFuncToString         DontEnum|Function 1 NumberPrototypeToStringIntrinsic
   toLocaleString    numberProtoFuncToLocaleString   DontEnum|Function 0
   valueOf           numberProtoFuncValueOf          DontEnum|Function 0
   toFixed           numberProtoFuncToFixed          DontEnum|Function 1
@@ -79,10 +78,9 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     setInternalValue(vm, jsNumber(0));
 
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, numberProtoFuncToString, DontEnum, 1, NumberPrototypeToStringIntrinsic);
 #if ENABLE(INTL)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, DontEnum);
-#else
-    UNUSED_PARAM(globalObject);
 #endif // ENABLE(INTL)
 
     ASSERT(inherits(vm, info()));
@@ -165,7 +163,7 @@ static inline char* int52ToStringWithRadix(char* startOfResultString, int64_t in
     return startOfResultString;
 }
 
-static char* toStringWithRadix(RadixBuffer& buffer, double originalNumber, unsigned radix)
+static char* toStringWithRadixInternal(RadixBuffer& buffer, double originalNumber, unsigned radix)
 {
     ASSERT(std::isfinite(originalNumber));
     ASSERT(radix >= 2 && radix <= 36);
@@ -359,7 +357,7 @@ static char* toStringWithRadix(RadixBuffer& buffer, double originalNumber, unsig
     return startOfResultString;
 }
 
-static String toStringWithRadix(int32_t number, unsigned radix)
+static String toStringWithRadixInternal(int32_t number, unsigned radix)
 {
     LChar buf[1 + 32]; // Worst case is radix == 2, which gives us 32 digits + sign.
     LChar* end = std::end(buf);
@@ -382,6 +380,21 @@ static String toStringWithRadix(int32_t number, unsigned radix)
         *--p = '-';
 
     return String(p, static_cast<unsigned>(end - p));
+}
+
+String toStringWithRadix(double doubleValue, int32_t radix)
+{
+    ASSERT(2 <= radix && radix <= 36);
+
+    int32_t integerValue = static_cast<int32_t>(doubleValue);
+    if (integerValue == doubleValue)
+        return toStringWithRadixInternal(integerValue, radix);
+
+    if (radix == 10 || !std::isfinite(doubleValue))
+        return String::numberToStringECMAScript(doubleValue);
+
+    RadixBuffer buffer;
+    return toStringWithRadixInternal(buffer, doubleValue, radix);
 }
 
 // toExponential converts a number to a string, always formatting as an exponential.
@@ -520,7 +533,7 @@ static ALWAYS_INLINE JSString* int32ToStringInternal(VM& vm, int32_t value, int3
     if (radix == 10)
         return jsNontrivialString(&vm, vm.numericStrings.add(value));
 
-    return jsNontrivialString(&vm, toStringWithRadix(value, radix));
+    return jsNontrivialString(&vm, toStringWithRadixInternal(value, radix));
 
 }
 
@@ -539,7 +552,7 @@ static ALWAYS_INLINE JSString* numberToStringInternal(VM& vm, double doubleValue
         return jsNontrivialString(&vm, String::numberToStringECMAScript(doubleValue));
 
     RadixBuffer buffer;
-    return jsString(&vm, toStringWithRadix(buffer, doubleValue, radix));
+    return jsString(&vm, toStringWithRadixInternal(buffer, doubleValue, radix));
 }
 
 JSString* int32ToString(VM& vm, int32_t value, int32_t radix)

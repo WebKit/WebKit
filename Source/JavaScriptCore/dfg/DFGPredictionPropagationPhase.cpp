@@ -912,6 +912,7 @@ private:
         case CallStringConstructor:
         case ToString:
         case NumberToStringWithRadix:
+        case NumberToStringWithValidRadixConstant:
         case MakeRope:
         case StrCat: {
             setPrediction(SpecString);

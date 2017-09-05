@@ -2766,8 +2766,9 @@ public:
     void emitSwitch(Node*);
     
     void compileToStringOrCallStringConstructor(Node*);
-    void compileToStringOrCallStringConstructorOnNumber(Node*);
     void compileNumberToStringWithRadix(Node*);
+    void compileNumberToStringWithValidRadixConstant(Node*);
+    void compileNumberToStringWithValidRadixConstant(Node*, int32_t radix);
     void compileNewStringObject(Node*);
     
     void compileNewTypedArray(Node*);

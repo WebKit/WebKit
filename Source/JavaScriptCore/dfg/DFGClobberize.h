@@ -1584,8 +1584,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case NumberToStringWithRadix:
+        // If the radix is invalid, NumberToStringWithRadix can throw an error.
         read(World);
         write(Heap);
+        return;
+
+    case NumberToStringWithValidRadixConstant:
+        def(PureValue(node, node->validRadixConstant()));
         return;
         
     case LastNodeType:

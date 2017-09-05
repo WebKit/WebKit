@@ -426,6 +426,19 @@ private:
             break;
         }
 
+        case NumberToStringWithValidRadixConstant: {
+            Edge& child1 = m_node->child1();
+            if (child1->hasConstant()) {
+                JSValue value = child1->constant()->value();
+                if (value && value.isNumber()) {
+                    String result = toStringWithRadix(value.asNumber(), m_node->validRadixConstant());
+                    m_node->convertToLazyJSConstant(m_graph, LazyJSValue::newString(m_graph, result));
+                    m_changed = true;
+                }
+            }
+            break;
+        }
+
         case GetArrayLength: {
             if (m_node->arrayMode().type() == Array::Generic
                 || m_node->arrayMode().type() == Array::String) {

@@ -645,6 +645,23 @@ private:
                 break;
             }
 
+            case NumberToStringWithRadix: {
+                JSValue radixValue = m_state.forNode(node->child2()).m_value;
+                if (radixValue && radixValue.isInt32()) {
+                    int32_t radix = radixValue.asInt32();
+                    if (2 <= radix && radix <= 36) {
+                        if (radix == 10) {
+                            node->setOpAndDefaultFlags(ToString);
+                            node->child2() = Edge();
+                        } else
+                            node->convertToNumberToStringWithValidRadixConstant(radix);
+                        changed = true;
+                        break;
+                    }
+                }
+                break;
+            }
+
             case Check: {
                 alreadyHandled = true;
                 m_interpreter.execute(indexInBlock);

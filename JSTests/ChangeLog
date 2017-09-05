@@ -1,3 +1,37 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Efficiently execute number#toString()
+        https://bugs.webkit.org/show_bug.cgi?id=170007
+
+        Reviewed by Keith Miller.
+
+        * microbenchmarks/number-to-string-strength-reduction.js: Added.
+        (test):
+        * microbenchmarks/number-to-string-with-radix-10.js: Added.
+        (test):
+        * microbenchmarks/number-to-string-with-radix-cse.js: Added.
+        (test):
+        * microbenchmarks/number-to-string-with-radix.js: Added.
+        (test):
+        * stress/number-to-string-strength-reduction.js: Added.
+        (shouldBe):
+        (test):
+        * stress/number-to-string-with-radix-10.js: Added.
+        (shouldBe):
+        (test):
+        * stress/number-to-string-with-radix-cse.js: Added.
+        (shouldBe):
+        (test):
+        * stress/number-to-string-with-radix-invalid.js: Added.
+        (shouldThrow):
+        * stress/number-to-string-with-radix-watchpoint.js: Added.
+        (shouldBe):
+        (test):
+        (i.i.1e3.Number.prototype.toString):
+        * stress/number-to-string-with-radix.js: Added.
+        (shouldBe):
+        (test):
+
 2017-09-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Relax arity requirement

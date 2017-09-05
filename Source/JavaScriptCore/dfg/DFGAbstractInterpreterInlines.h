@@ -1949,10 +1949,25 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
-    case NumberToStringWithRadix:
+    case NumberToStringWithRadix: {
+        JSValue radixValue = forNode(node->child2()).m_value;
+        if (radixValue && radixValue.isInt32()) {
+            int32_t radix = radixValue.asInt32();
+            if (2 <= radix && radix <= 36) {
+                m_state.setFoundConstants(true);
+                forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
+                break;
+            }
+        }
         clobberWorld(node->origin.semantic, clobberLimit);
         forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
         break;
+    }
+
+    case NumberToStringWithValidRadixConstant: {
+        forNode(node).set(m_graph, m_graph.m_vm.stringStructure.get());
+        break;
+    }
         
     case NewStringObject: {
         ASSERT(node->structure()->classInfo() == StringObject::info());

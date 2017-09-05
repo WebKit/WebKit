@@ -730,10 +730,8 @@ public:
         return watchpoints().isWatched(globalObject->havingABadTimeWatchpoint());
     }
 
-    bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
+    bool isWatchingGlobalObjectWatchpoint(JSGlobalObject* globalObject, InlineWatchpointSet& set)
     {
-        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
-        InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpoint();
         if (watchpoints().isWatched(set))
             return true;
 
@@ -748,6 +746,20 @@ public:
         }
 
         return false;
+    }
+
+    bool isWatchingArrayIteratorProtocolWatchpoint(Node* node)
+    {
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->arrayIteratorProtocolWatchpoint();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
+    }
+
+    bool isWatchingNumberToStringWatchpoint(Node* node)
+    {
+        JSGlobalObject* globalObject = globalObjectFor(node->origin.semantic);
+        InlineWatchpointSet& set = globalObject->numberToStringWatchpoint();
+        return isWatchingGlobalObjectWatchpoint(globalObject, set);
     }
     
     Profiler::Compilation* compilation() { return m_plan.compilation.get(); }
