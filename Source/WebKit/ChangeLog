@@ -1,5 +1,37 @@
 2017-09-05  Youenn Fablet  <youenn@apple.com>
 
+        Allow retrieving Cache Storage records for a given URL only
+        https://bugs.webkit.org/show_bug.cgi?id=176202
+
+        Reviewed by Alex Christensen.
+
+        Update CacheStorageEngineCache to store records as a map URL -> Vector of Records.
+        This allows regular record retrieval to be faster.
+        Retrieval of all records is less efficient but this should happen less often.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveRecords):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::queryCache):
+        (WebKit::CacheStorage::Cache::retrieveRecords const):
+        (WebKit::CacheStorage::computeKeyURL):
+        (WebKit::CacheStorage::Cache::addNewURLRecord):
+        (WebKit::CacheStorage::Cache::recordsFromURL):
+        (WebKit::CacheStorage::Cache::recordsFromURL const):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::remove):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::retrieveRecords):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::doRetrieveRecords):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
+2017-09-05  Youenn Fablet  <youenn@apple.com>
+
         WebKitTestRunner should set the cache storage directory path
         https://bugs.webkit.org/show_bug.cgi?id=176373
 

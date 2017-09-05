@@ -109,7 +109,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
     }
 
     if (!request) {
-        retrieveRecords([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
             if (exception) {
                 promise.reject(WTFMove(exception.value()));
                 return;
@@ -378,7 +378,7 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     }
 
     if (!request) {
-        retrieveRecords([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
+        retrieveRecords(URL { }, [this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
             if (exception) {
                 promise.reject(WTFMove(exception.value()));
                 return;
@@ -407,10 +407,16 @@ void DOMCache::keys(std::optional<RequestInfo>&& info, CacheQueryOptions&& optio
     });
 }
 
-void DOMCache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&& callback)
+void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<Exception>&&)>&& callback)
 {
     setPendingActivity(this);
-    m_connection->retrieveRecords(m_identifier, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
+
+    URL retrieveURL = url;
+    if (retrieveURL.hasQuery())
+        retrieveURL.setQuery({ });
+    retrieveURL.removeFragmentIdentifier();
+
+    m_connection->retrieveRecords(m_identifier, retrieveURL, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
         if (!m_isStopped) {
             if (!result.hasValue()) {
                 callback(DOMCacheEngine::errorToException(result.error()));
@@ -427,7 +433,8 @@ void DOMCache::retrieveRecords(WTF::Function<void(std::optional<Exception>&&)>&&
 
 void DOMCache::queryCache(Ref<FetchRequest>&& request, CacheQueryOptions&& options, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&& callback)
 {
-    retrieveRecords([this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](std::optional<Exception>&& exception) mutable {
+    auto url = request->url();
+    retrieveRecords(url, [this, request = WTFMove(request), options = WTFMove(options), callback = WTFMove(callback)](std::optional<Exception>&& exception) mutable {
         if (exception) {
             callback(WTFMove(exception.value()));
             return;

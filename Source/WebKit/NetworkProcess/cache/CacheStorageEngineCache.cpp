@@ -49,19 +49,87 @@ namespace WebKit {
 
 namespace CacheStorage {
 
+static inline Vector<uint64_t> queryCache(const Vector<Record>* records, const ResourceRequest& request, const CacheQueryOptions& options)
+{
+    if (!records)
+        return { };
+
+    if (!options.ignoreMethod && request.httpMethod() != "GET")
+        return { };
+
+    Vector<uint64_t> results;
+    for (const auto& record : *records) {
+        if (WebCore::DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
+            results.append(record.identifier);
+    }
+    return results;
+}
+
 Cache::Cache(uint64_t identifier, String&& name)
     : m_identifier(identifier)
     , m_name(WTFMove(name))
 {
 }
 
-Vector<Record> Cache::records() const
+Vector<Record> Cache::retrieveRecords(const URL& url) const
 {
-    Vector<Record> records;
-    records.reserveInitialCapacity(m_records.size());
-    for (auto& record : m_records)
-        records.uncheckedAppend(record.copy());
-    return records;
+    if (url.isNull()) {
+        Vector<Record> result;
+        for (auto& records : m_records.values()) {
+            for (auto& record : records)
+                result.append(record.copy());
+        }
+        std::sort(result.begin(), result.end(), [](const auto& a, const auto& b) {
+            return a.identifier < b.identifier;
+        });
+        return result;
+    }
+
+    const auto* records = recordsFromURL(url);
+    if (!records)
+        return { };
+
+    Vector<Record> result;
+    result.reserveInitialCapacity(records->size());
+    for (auto& record : *records)
+        result.uncheckedAppend(record.copy());
+    return result;
+}
+
+static inline String computeKeyURL(const URL& url)
+{
+    URL keyURL = url;
+    if (keyURL.hasQuery())
+        keyURL.setQuery({ });
+    keyURL.removeFragmentIdentifier();
+    return keyURL;
+}
+
+Record& Cache::addNewURLRecord(Record&& record)
+{
+    auto key = computeKeyURL(record.request.url());
+    ASSERT(!m_records.contains(key));
+
+    Vector<Record> newRecords;
+    newRecords.reserveInitialCapacity(1);
+    newRecords.uncheckedAppend(WTFMove(record));
+    return m_records.set(key, WTFMove(newRecords)).iterator->value.last();
+}
+
+Vector<Record>* Cache::recordsFromURL(const URL& url)
+{
+    auto iterator = m_records.find(computeKeyURL(url));
+    if (iterator == m_records.end())
+        return nullptr;
+    return &iterator->value;
+}
+
+const Vector<Record>* Cache::recordsFromURL(const URL& url) const
+{
+    auto iterator = m_records.find(computeKeyURL(url));
+    if (iterator == m_records.end())
+        return nullptr;
+    return &iterator->value;
 }
 
 void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
@@ -71,20 +139,27 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
     Vector<uint64_t> recordIdentifiers;
     recordIdentifiers.reserveInitialCapacity(records.size());
     for (auto& record : records) {
-        auto matchingRecords = queryCache(record.request, options);
+        auto* sameURLRecords = recordsFromURL(record.request.url());
+
+        auto matchingRecords = queryCache(sameURLRecords, record.request, options);
         if (matchingRecords.isEmpty()) {
             record.identifier = ++m_nextRecordIdentifier;
             recordIdentifiers.uncheckedAppend(record.identifier);
-            m_records.append(WTFMove(record));
 
             shouldWriteRecordList = true;
-            writeRecordToDisk(m_records.last());
+            if (!sameURLRecords) {
+                auto& recordToWrite = addNewURLRecord(WTFMove(record));
+                writeRecordToDisk(recordToWrite);
+            } else {
+                sameURLRecords->append(WTFMove(record));
+                writeRecordToDisk(sameURLRecords->last());
+            }
         } else {
             auto identifier = matchingRecords[0];
-            auto position = m_records.findMatching([&](const auto& item) { return item.identifier == identifier; });
+            auto position = sameURLRecords->findMatching([&](const auto& item) { return item.identifier == identifier; });
             ASSERT(position != notFound);
             if (position != notFound) {
-                auto& existingRecord = m_records[position];
+                auto& existingRecord = (*sameURLRecords)[position];
                 recordIdentifiers.uncheckedAppend(identifier);
                 existingRecord.responseHeadersGuard = record.responseHeadersGuard;
                 existingRecord.response = WTFMove(record.response);
@@ -111,20 +186,19 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
 
 void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)
 {
-    auto recordIdentifiers = queryCache(request, options);
+    auto* records = recordsFromURL(request.url());
+    auto recordIdentifiers = queryCache(records, request, options);
     if (recordIdentifiers.isEmpty()) {
         callback({ });
         return;
     }
 
-    Vector<Record> recordsToKeep;
-    for (auto& record : m_records) {
-        if (recordIdentifiers.findMatching([&](auto item) { return item == record.identifier; }) == notFound)
-            recordsToKeep.append(WTFMove(record));
-        else
-            removeRecordFromDisk(record);
-    }
-    m_records = WTFMove(recordsToKeep);
+    records->removeAllMatching([this, &recordIdentifiers](auto& item) {
+        bool shouldRemove = recordIdentifiers.findMatching([&item](auto identifier) { return identifier == item.identifier; }) != notFound;
+        if (shouldRemove)
+            this->removeRecordFromDisk(item);
+        return shouldRemove;
+    });
 
     writeRecordsList([callback = WTFMove(callback), recordIdentifiers = WTFMove(recordIdentifiers)](std::optional<Error>&& error) mutable {
         if (error) {
@@ -133,19 +207,6 @@ void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOption
         }
         callback(WTFMove(recordIdentifiers));
     });
-}
-
-Vector<uint64_t> Cache::queryCache(const ResourceRequest& request, const CacheQueryOptions& options)
-{
-    if (!options.ignoreMethod && request.httpMethod() != "GET")
-        return { };
-
-    Vector<uint64_t> results;
-    for (const auto& record : m_records) {
-        if (WebCore::DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
-            results.append(record.identifier);
-    }
-    return results;
 }
 
 void Cache::writeRecordsList(CompletionCallback&& callback)

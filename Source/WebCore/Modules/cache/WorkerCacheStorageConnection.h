@@ -46,7 +46,7 @@ private:
     void doRemove(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
     void doRetrieveCaches(uint64_t requestIdentifier, const String& origin, uint64_t updateCounter) final;
 
-    void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier) final;
+    void doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL&) final;
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
     void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<DOMCacheEngine::Record>&&) final;
 

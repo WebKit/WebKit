@@ -1,3 +1,31 @@
+2017-09-05  Youenn Fablet  <youenn@apple.com>
+
+        Allow retrieving Cache Storage records for a given URL only
+        https://bugs.webkit.org/show_bug.cgi?id=176202
+
+        Reviewed by Alex Christensen.
+
+        No observable change of behavior.
+
+        Adding a URL parameter to CacheStorageConnection::retrieveRecords.
+        If given URL is null, all records will be retrieved, which is useful for the keys method.
+        Other operations only need records that share the same URL (modulo query string and frag id).
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::matchAll):
+        (WebCore::Cache::keys):
+        (WebCore::Cache::retrieveRecords):
+        (WebCore::Cache::queryCache):
+        * Modules/cache/Cache.h:
+        * Modules/cache/CacheStorageConnection.cpp:
+        (WebCore::CacheStorageConnection::retrieveRecords):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::doRetrieveRecords):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::doRetrieveRecords):
+        * Modules/cache/WorkerCacheStorageConnection.h:
+        * platform/URL.h:
+
 2017-09-05  Tim Horton  <timothy_horton@apple.com>
 
         Remove some unused bits of code and resources

@@ -161,10 +161,10 @@ public:
     // The query may begin with a question mark, or, if not, one will be added
     // for you. Setting the query to the empty string will leave a "?" in the
     // URL (with nothing after it). To clear the query, pass a null string.
-    void setQuery(const String&);
+    WEBCORE_EXPORT void setQuery(const String&);
 
     void setFragmentIdentifier(StringView);
-    void removeFragmentIdentifier();
+    WEBCORE_EXPORT void removeFragmentIdentifier();
 
     WEBCORE_EXPORT friend bool equalIgnoringFragmentIdentifier(const URL&, const URL&);
 

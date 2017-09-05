@@ -124,15 +124,15 @@ void Engine::retrieveCaches(const String& origin, uint64_t updateCounter, CacheI
     });
 }
 
-void Engine::retrieveRecords(uint64_t cacheIdentifier, RecordsCallback&& callback)
+void Engine::retrieveRecords(uint64_t cacheIdentifier, WebCore::URL&& url, RecordsCallback&& callback)
 {
-    readCache(cacheIdentifier, [callback = WTFMove(callback)](CacheOrError&& result) mutable {
+    readCache(cacheIdentifier, [url = WTFMove(url), callback = WTFMove(callback)](CacheOrError&& result) mutable {
         if (!result.hasValue()) {
             callback(makeUnexpected(result.error()));
             return;
         }
 
-        callback(result.value().get().records());
+        callback(result.value().get().retrieveRecords(url));
     });
 }
 

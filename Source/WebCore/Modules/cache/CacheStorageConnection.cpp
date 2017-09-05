@@ -55,12 +55,12 @@ void CacheStorageConnection::retrieveCaches(const String& origin, uint64_t updat
     doRetrieveCaches(requestIdentifier, origin, updateCounter);
 }
 
-void CacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, RecordsCallback&& callback)
+void CacheStorageConnection::retrieveRecords(uint64_t cacheIdentifier, const URL& url, RecordsCallback&& callback)
 {
     uint64_t requestIdentifier = ++m_lastRequestIdentifier;
     m_retrieveRecordsPendingRequests.add(requestIdentifier, WTFMove(callback));
 
-    doRetrieveRecords(requestIdentifier, cacheIdentifier);
+    doRetrieveRecords(requestIdentifier, cacheIdentifier, url);
 }
 
 void CacheStorageConnection::batchDeleteOperation(uint64_t cacheIdentifier, const ResourceRequest& request, CacheQueryOptions&& options, RecordIdentifiersCallback&& callback)

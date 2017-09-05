@@ -196,13 +196,13 @@ static inline RecordsOrError recordsOrErrorFromRecordsData(Expected<Vector<Cross
     return recordsFromRecordsData(WTFMove(recordsData.value()));
 }
 
-void WorkerCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier)
+void WorkerCacheStorageConnection::doRetrieveRecords(uint64_t requestIdentifier, uint64_t cacheIdentifier, const URL& url)
 {
-    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier](ScriptExecutionContext&) mutable {
+    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), requestIdentifier, cacheIdentifier, url = url.isolatedCopy()](ScriptExecutionContext&) mutable {
         ASSERT(isMainThread());
         ASSERT(m_mainThreadConnection);
 
-        m_mainThreadConnection->retrieveRecords(cacheIdentifier, [this, protectedThis = WTFMove(protectedThis), requestIdentifier](RecordsOrError&& result) mutable {
+        m_mainThreadConnection->retrieveRecords(cacheIdentifier, url, [this, protectedThis = WTFMove(protectedThis), requestIdentifier](RecordsOrError&& result) mutable {
             m_proxy.postTaskForModeToWorkerGlobalScope([this, protectedThis = WTFMove(protectedThis), result = recordsDataOrErrorFromRecords(result), requestIdentifier](ScriptExecutionContext& context) mutable {
                 ASSERT_UNUSED(context, context.isWorkerGlobalScope());
                 updateRecords(requestIdentifier, recordsOrErrorFromRecordsData(WTFMove(result)));

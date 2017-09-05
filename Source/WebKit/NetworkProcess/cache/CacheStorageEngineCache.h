@@ -40,14 +40,16 @@ public:
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
 
-    Vector<WebCore::DOMCacheEngine::Record> records() const;
+    Vector<WebCore::DOMCacheEngine::Record> retrieveRecords(const WebCore::URL&) const;
     WebCore::DOMCacheEngine::CacheInfo info() const { return { m_identifier, m_name }; }
 
     void put(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
 private:
-    Vector<uint64_t> queryCache(const WebCore::ResourceRequest&, const WebCore::CacheQueryOptions&);
+    Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&);
+    const Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&) const;
+    WebCore::DOMCacheEngine::Record& addNewURLRecord(WebCore::DOMCacheEngine::Record&&);
 
     void writeRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);
     void writeRecordToDisk(WebCore::DOMCacheEngine::Record&);
@@ -55,7 +57,7 @@ private:
 
     uint64_t m_identifier { 0 };
     String m_name;
-    Vector<WebCore::DOMCacheEngine::Record> m_records;
+    HashMap<String, Vector<WebCore::DOMCacheEngine::Record>> m_records;
     uint64_t m_nextRecordIdentifier { 0 };
 };
 
