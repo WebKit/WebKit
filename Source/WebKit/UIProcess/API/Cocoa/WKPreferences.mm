@@ -637,6 +637,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
 }
 
+- (void)_setPlugInsEnabled:(BOOL)enabled
+{
+    _preferences->setPluginsEnabled(enabled);
+}
+
+- (BOOL)_plugInsEnabled
+{
+    return _preferences->pluginsEnabled();
+}
+
 - (BOOL)_javaScriptCanAccessClipboard
 {
     return _preferences->javaScriptCanAccessClipboard();

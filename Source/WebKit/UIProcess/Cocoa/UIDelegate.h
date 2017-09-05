@@ -102,6 +102,7 @@ private:
         void unfocus(WebPageProxy*) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
+        void unavailablePluginButtonClicked(WebKit::WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void didClickAutoFillButton(WebPageProxy&, API::Object*) final;
         void toolbarsAreVisible(WebKit::WebPageProxy&, Function<void(bool)>&&) final;
         bool runOpenPanel(WebPageProxy*, WebFrameProxy*, const WebCore::SecurityOriginData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) final;
@@ -152,6 +153,7 @@ private:
         bool webViewTakeFocus : 1;
         bool webViewDidNotHandleWheelEvent : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
+        bool webViewUnavailablePlugInButtonClicked : 1;
         bool webViewDidClickAutoFillButtonWithUserInfo : 1;
         bool webViewGetToolbarsAreVisibleWithCompletionHandler : 1;
         bool webViewDidExceedBackgroundResourceLimitWhileInForeground : 1;

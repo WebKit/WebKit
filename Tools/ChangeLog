@@ -1,3 +1,15 @@
+2017-09-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's unavailablePluginButtonClicked
+        https://bugs.webkit.org/show_bug.cgi?id=176274
+        <rdar://problem/29270035>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[PluginDelegate _webView:unavailablePluginButtonClickedWithReason:pluginInfo:]):
+        (TEST):
+
 2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong use of PLUGIN_ARCHITECTURE(X11) in several places

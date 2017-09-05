@@ -1788,32 +1788,32 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-        void unavailablePluginButtonClicked(WebPageProxy* page, WKPluginUnavailabilityReason pluginUnavailabilityReason, API::Dictionary* pluginInformation) final
+        void unavailablePluginButtonClicked(WebPageProxy& page, WKPluginUnavailabilityReason pluginUnavailabilityReason, API::Dictionary& pluginInformation) final
         {
             if (pluginUnavailabilityReason == kWKPluginUnavailabilityReasonPluginMissing) {
                 if (m_client.missingPluginButtonClicked_deprecatedForUseWithV0)
                     m_client.missingPluginButtonClicked_deprecatedForUseWithV0(
-                        toAPI(page),
-                        toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
-                        toAPI(pluginInformation->get<API::String>(pluginInformationPluginURLKey())),
-                        toAPI(pluginInformation->get<API::String>(pluginInformationPluginspageAttributeURLKey())),
+                        toAPI(&page),
+                        toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())),
+                        toAPI(pluginInformation.get<API::String>(pluginInformationPluginURLKey())),
+                        toAPI(pluginInformation.get<API::String>(pluginInformationPluginspageAttributeURLKey())),
                         m_client.base.clientInfo);
             }
 
             if (m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1)
                 m_client.unavailablePluginButtonClicked_deprecatedForUseWithV1(
-                    toAPI(page),
+                    toAPI(&page),
                     pluginUnavailabilityReason,
-                    toAPI(pluginInformation->get<API::String>(pluginInformationMIMETypeKey())),
-                    toAPI(pluginInformation->get<API::String>(pluginInformationPluginURLKey())),
-                    toAPI(pluginInformation->get<API::String>(pluginInformationPluginspageAttributeURLKey())),
+                    toAPI(pluginInformation.get<API::String>(pluginInformationMIMETypeKey())),
+                    toAPI(pluginInformation.get<API::String>(pluginInformationPluginURLKey())),
+                    toAPI(pluginInformation.get<API::String>(pluginInformationPluginspageAttributeURLKey())),
                     m_client.base.clientInfo);
 
             if (m_client.unavailablePluginButtonClicked)
                 m_client.unavailablePluginButtonClicked(
-                    toAPI(page),
+                    toAPI(&page),
                     pluginUnavailabilityReason,
-                    toAPI(pluginInformation),
+                    toAPI(&pluginInformation),
                     m_client.base.clientInfo);
         }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
