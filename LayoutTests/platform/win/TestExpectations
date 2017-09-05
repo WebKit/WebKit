@@ -4051,6 +4051,7 @@ imported/w3c/web-platform-tests/dom/traversal/NodeFilter-constants.html [ Slow ]
 imported/w3c/web-platform-tests/encoding/api-basics.html [ Slow ]
 imported/w3c/web-platform-tests/fetch/api/basic/accept-header.any.html [ Slow ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Slow ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/001.html [ Slow ]
 
 # No service worker implementation for WK1
 http/tests/workers/service [ Skip ]
