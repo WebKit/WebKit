@@ -209,8 +209,11 @@ namespace JSC {
         void setLoc(unsigned firstLine, unsigned lastLine, int startOffset, int lineStartOffset);
         unsigned lastLine() const { return m_lastLine; }
 
-        StatementNode* next() { return m_next; }
+        StatementNode* next() const { return m_next; }
         void setNext(StatementNode* next) { m_next = next; }
+
+        virtual bool hasCompletionValue() const { return true; }
+        virtual bool hasEarlyBreakOrContinue() const { return false; }
 
         virtual bool isEmptyStatement() const { return false; }
         virtual bool isDebuggerStatement() const { return false; }
@@ -1354,6 +1357,9 @@ namespace JSC {
         StatementNode* singleStatement() const;
         StatementNode* lastStatement() const;
 
+        bool hasCompletionValue() const;
+        bool hasEarlyBreakOrContinue() const;
+
         void emitBytecode(BytecodeGenerator&, RegisterID* destination);
         void analyzeModule(ModuleAnalyzer&);
 
@@ -1374,6 +1380,9 @@ namespace JSC {
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
+        bool hasCompletionValue() const override;
+        bool hasEarlyBreakOrContinue() const override;
+
         bool isBlock() const override { return true; }
 
         SourceElements* m_statements;
@@ -1386,6 +1395,7 @@ namespace JSC {
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
+        bool hasCompletionValue() const override { return false; }
         bool isEmptyStatement() const override { return true; }
     };
     
@@ -1393,6 +1403,7 @@ namespace JSC {
     public:
         DebuggerStatementNode(const JSTokenLocation&);
 
+        bool hasCompletionValue() const override { return false; }
         bool isDebuggerStatement() const override { return true; }
         
     private:
@@ -1418,6 +1429,8 @@ namespace JSC {
         DeclarationStatement(const JSTokenLocation&, ExpressionNode*);
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool hasCompletionValue() const override { return false; }
 
         ExpressionNode* m_expr;
     };
@@ -1539,6 +1552,7 @@ namespace JSC {
         Label* trivialTarget(BytecodeGenerator&);
         
     private:
+        bool hasCompletionValue() const override { return false; }
         bool isContinue() const override { return true; }
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
@@ -1551,6 +1565,7 @@ namespace JSC {
         Label* trivialTarget(BytecodeGenerator&);
         
     private:
+        bool hasCompletionValue() const override { return false; }
         bool isBreak() const override { return true; }
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
@@ -1591,6 +1606,7 @@ namespace JSC {
         bool isLabel() const override { return true; }
 
     private:
+        bool hasCompletionValue() const override { return m_statement->hasCompletionValue(); }
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
 
         const Identifier& m_name;
@@ -1674,6 +1690,9 @@ namespace JSC {
         }
 
         StatementNode* singleStatement() const;
+
+        bool hasCompletionValue() const override;
+        bool hasEarlyBreakOrContinue() const override;
 
         void emitStatementsBytecode(BytecodeGenerator&, RegisterID* destination);
         
@@ -1784,6 +1803,7 @@ namespace JSC {
     class ModuleDeclarationNode : public StatementNode {
     public:
         virtual void analyzeModule(ModuleAnalyzer&) = 0;
+        bool hasCompletionValue() const override { return false; }
         bool isModuleDeclarationNode() const override { return true; }
 
     protected:
@@ -2281,6 +2301,7 @@ namespace JSC {
     public:
         FuncDeclNode(const JSTokenLocation&, const Identifier&, FunctionMetadataNode*, const SourceCode&);
 
+        bool hasCompletionValue() const override { return false; }
         bool isFuncDeclNode() const override { return true; }
         FunctionMetadataNode* metadata() { return m_metadata; }
 
@@ -2296,6 +2317,8 @@ namespace JSC {
 
     private:
         void emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
+
+        bool hasCompletionValue() const override { return false; }
 
         ExpressionNode* m_classDeclaration;
     };

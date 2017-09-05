@@ -66,6 +66,55 @@ StatementNode* SourceElements::singleStatement() const
     return m_head == m_tail ? m_head : nullptr;
 }
 
+StatementNode* SourceElements::lastStatement() const
+{
+    return m_tail;
+}
+
+bool SourceElements::hasCompletionValue() const
+{
+    for (StatementNode* statement = m_head; statement; statement = statement->next()) {
+        if (statement->hasCompletionValue())
+            return true;
+    }
+
+    return false;
+}
+
+bool SourceElements::hasEarlyBreakOrContinue() const
+{
+    for (StatementNode* statement = m_head; statement; statement = statement->next()) {
+        if (statement->isBreak() || statement->isContinue())
+            return true;
+        if (statement->hasCompletionValue())
+            return false;
+    }
+
+    return false;
+}
+
+// ------------------------------ BlockNode ------------------------------------
+
+StatementNode* BlockNode::lastStatement() const
+{
+    return m_statements ? m_statements->lastStatement() : nullptr;
+}
+
+StatementNode* BlockNode::singleStatement() const
+{
+    return m_statements ? m_statements->singleStatement() : nullptr;
+}
+
+bool BlockNode::hasCompletionValue() const
+{
+    return m_statements ? m_statements->hasCompletionValue() : false;
+}
+
+bool BlockNode::hasEarlyBreakOrContinue() const
+{
+    return m_statements ? m_statements->hasEarlyBreakOrContinue() : false;
+}
+
 // ------------------------------ ScopeNode -----------------------------
 
 ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
@@ -100,7 +149,17 @@ ScopeNode::ScopeNode(ParserArena& parserArena, const JSTokenLocation& startLocat
 
 StatementNode* ScopeNode::singleStatement() const
 {
-    return m_statements ? m_statements->singleStatement() : 0;
+    return m_statements ? m_statements->singleStatement() : nullptr;
+}
+
+bool ScopeNode::hasCompletionValue() const
+{
+    return m_statements ? m_statements->hasCompletionValue() : false;
+}
+
+bool ScopeNode::hasEarlyBreakOrContinue() const
+{
+    return m_statements ? m_statements->hasEarlyBreakOrContinue() : false;
 }
 
 // ------------------------------ ProgramNode -----------------------------

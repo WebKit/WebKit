@@ -1,3 +1,59 @@
+2017-09-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: Completion values for control flow do not match the spec
+        https://bugs.webkit.org/show_bug.cgi?id=171265
+
+        Reviewed by Saam Barati.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::shouldBeConcernedWithCompletionValue):
+        When we care about having proper completion values (global code
+        in programs, modules, and eval) insert undefined results for
+        control flow statements.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::SourceElements::emitBytecode):
+        Reduce writing a default `undefined` value to the completion result to
+        only once before the last statement we know will produce a value.
+
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ForOfNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        Insert an undefined to handle cases where code may break out of an
+        if/else or with statement (break/continue).
+
+        (JSC::TryNode::emitBytecode):
+        Same handling for break cases. Also, finally block statement completion
+        values are always ignored for the try statement result.
+
+        (JSC::ClassDeclNode::emitBytecode):
+        Class declarations, like function declarations, produce an empty result.
+
+        * parser/Nodes.cpp:
+        (JSC::SourceElements::lastStatement):
+        (JSC::SourceElements::hasCompletionValue):
+        (JSC::SourceElements::hasEarlyBreakOrContinue):
+        (JSC::BlockNode::lastStatement):
+        (JSC::BlockNode::singleStatement):
+        (JSC::BlockNode::hasCompletionValue):
+        (JSC::BlockNode::hasEarlyBreakOrContinue):
+        (JSC::ScopeNode::singleStatement):
+        (JSC::ScopeNode::hasCompletionValue):
+        (JSC::ScopeNode::hasEarlyBreakOrContinue):
+        The only non-trivial cases need to loop through their list of statements
+        to determine if this has a completion value or not. Likewise for
+        determining if there is an early break / continue, meaning a break or
+        continue statement with no preceding statement that has a completion value.
+
+        * parser/Nodes.h:
+        (JSC::StatementNode::next):
+        (JSC::StatementNode::hasCompletionValue):
+        Helper to check if a statement nodes produces a completion value or not.
+
 2017-09-04  Saam Barati  <sbarati@apple.com>
 
         typeCheckHoistingPhase may emit a CheckStructure on the empty value which leads to a dereference of zero on 64 bit platforms
