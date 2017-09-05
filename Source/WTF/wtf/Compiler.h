@@ -132,12 +132,6 @@
 
 #endif
 
-/* COMPILER(SUNCC) */
-
-#if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
-#define WTF_COMPILER_SUNCC 1
-#endif
-
 #if !COMPILER(CLANG) && !COMPILER(MSVC)
 #define WTF_COMPILER_QUIRK_CONSIDERS_UNREACHABLE_CODE 1
 #endif

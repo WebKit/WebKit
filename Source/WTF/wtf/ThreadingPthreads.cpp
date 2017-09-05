@@ -59,12 +59,7 @@
 #include <semaphore.h>
 #include <sys/mman.h>
 #include <unistd.h>
-
-#if OS(SOLARIS)
-#include <thread.h>
-#else
 #include <pthread.h>
-#endif
 
 #if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>

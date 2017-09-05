@@ -34,10 +34,6 @@
 #include <stdlib.h>
 #include <wtf/StdLibExtras.h>
 
-#if OS(SOLARIS)
-#include <ieeefp.h>
-#endif
-
 #if OS(OPENBSD)
 #include <sys/types.h>
 #include <machine/ieee.h>
@@ -73,24 +69,6 @@ const float sqrtOfTwoFloat = 1.41421356237309504880f;
 #else
 const double sqrtOfTwoDouble = M_SQRT2;
 const float sqrtOfTwoFloat = static_cast<float>(M_SQRT2);
-#endif
-
-#if OS(SOLARIS)
-
-namespace std {
-
-#ifndef isfinite
-inline bool isfinite(double x) { return finite(x) && !isnand(x); }
-#endif
-#ifndef signbit
-inline bool signbit(double x) { return copysign(1.0, x) < 0; }
-#endif
-#ifndef isinf
-inline bool isinf(double x) { return !finite(x) && !isnand(x); }
-#endif
-
-} // namespace std
-
 #endif
 
 #if COMPILER(MSVC)

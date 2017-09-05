@@ -48,8 +48,6 @@ sub applyPreprocessor
         require Config;
         if ($ENV{CC}) {
             $preprocessor = $ENV{CC};
-        } elsif (($Config::Config{'osname'}) =~ /solaris/i) {
-            $preprocessor = "/usr/sfw/bin/gcc";
         } elsif (-x "/usr/bin/clang") {
             $preprocessor = "/usr/bin/clang";
         } else {

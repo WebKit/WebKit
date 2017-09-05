@@ -278,8 +278,6 @@ String InspectorFrontendHost::platform()
     return ASCIILiteral("freebsd");
 #elif OS(OPENBSD)
     return ASCIILiteral("openbsd");
-#elif OS(SOLARIS)
-    return ASCIILiteral("solaris");
 #else
     return ASCIILiteral("unknown");
 #endif

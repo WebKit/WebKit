@@ -67,8 +67,6 @@ require Config;
 my $ccLocation = "";
 if ($ENV{CC}) {
     $ccLocation = $ENV{CC};
-} elsif (($Config::Config{"osname"}) =~ /solaris/i) {
-    $ccLocation = "/usr/sfw/bin/gcc";
 } elsif ($Config::Config{"osname"} eq "darwin" && $ENV{SDKROOT}) {
     chomp($ccLocation = `xcrun -find cc -sdk '$ENV{SDKROOT}'`);
 } else {

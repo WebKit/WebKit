@@ -1,3 +1,30 @@
+2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Remove OS(SOLARIS) support
+        https://bugs.webkit.org/show_bug.cgi?id=176341
+
+        Reviewed by Sam Weinig.
+
+        WebKit project does not have stake holders supporting Solaris right now.
+        And Solaris + SPARC in 64bit environment does not work well since its
+        address space includes non-48bit area. It breaks our JSVALUE64 in JSC.
+        In addition, Solaris a bit complicates our threading implementation
+        because of its special threading stack.
+
+        This patch removes OS(SOLARIS) and COMPILER(SUNCC) support from WebKit.
+
+        * wtf/Compiler.h:
+        * wtf/InlineASM.h:
+        * wtf/MathExtras.h:
+        (std::isfinite): Deleted.
+        (std::signbit): Deleted.
+        (std::isinf): Deleted.
+        * wtf/NumberOfCores.cpp:
+        (WTF::numberOfProcessorCores):
+        * wtf/Platform.h:
+        * wtf/StackBounds.cpp:
+        * wtf/ThreadingPthreads.cpp:
+
 2017-09-04  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r221494 and r221500.

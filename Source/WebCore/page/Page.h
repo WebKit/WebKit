@@ -47,10 +47,6 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/WTFString.h>
 
-#if OS(SOLARIS)
-#include <sys/time.h> // For time_t structure.
-#endif
-
 #if PLATFORM(COCOA)
 #include <wtf/SchedulePair.h>
 #endif

@@ -1,5 +1,19 @@
 2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        Remove OS(SOLARIS) support
+        https://bugs.webkit.org/show_bug.cgi?id=176341
+
+        Reviewed by Sam Weinig.
+
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor):
+        * dom/make_names.pl:
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::platform):
+        * page/Page.h:
+
+2017-09-04  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Unreviewed, fixing unused constant for initial buffer size
         https://bugs.webkit.org/show_bug.cgi?id=176310
 
