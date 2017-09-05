@@ -1,3 +1,12 @@
+2017-09-05  Matt Lewis  <jlewis3@apple.com>
+
+        Marked svg/as-image/svg-image-with-data-uri-background.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=172877
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-05  Per Arne Vollan  <pvollan@apple.com>
 
         DataTransferItem tests are timing out on Windows.

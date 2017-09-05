@@ -400,3 +400,5 @@ webkit.org/b/174218 svg/animations/smil-leak-list-property-instances.svg [ Pass 
 
 webkit.org/b/172334 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Failure ]
 
+webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
+
