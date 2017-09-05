@@ -1372,7 +1372,7 @@ private:
 
     void detachFromFrame() { observeFrame(nullptr); }
 
-    void updateTitleElement(Element* newTitleElement);
+    void updateTitleElement(Element& changingTitleElement);
     void frameDestroyed() final;
 
     void commonTeardown();

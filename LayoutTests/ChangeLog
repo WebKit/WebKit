@@ -1,3 +1,13 @@
+2017-09-03  Darin Adler  <darin@apple.com>
+
+        Fix a few minor problems found while working toward removing unneeded calls to updateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=176279
+
+        Reviewed by Antti Koivisto.
+
+        * svg/hittest/svg-tooltip.svg: Made this test easier to run outside of WebKitTestRunnner,
+        by removing some overzealous checks.
+
 2017-09-04  Sam Weinig  <sam@webkit.org>
 
         [Canvas] Split CanvasRenderingContext2D.idl into separate IDLs to match current HTML spec

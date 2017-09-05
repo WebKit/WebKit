@@ -1,3 +1,14 @@
+2017-09-03  Darin Adler  <darin@apple.com>
+
+        Fix a few minor problems found while working toward removing unneeded calls to updateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=176279
+
+        Reviewed by Antti Koivisto.
+
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::setSelectedChild const): Handle null here. The old code instead
+        would trigger an Objective-C exception unnecessarily.
+
 2017-09-04  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Refactor drag and drop logic in WKContentView in preparation for supporting multiple drag items in a drag session
