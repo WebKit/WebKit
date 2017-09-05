@@ -4881,6 +4881,11 @@ void HTMLMediaElement::mediaEngineWasUpdated()
     }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    if (m_player && m_mediaKeys)
+        m_player->cdmInstanceAttached(m_mediaKeys->cdmInstance());
+#endif
+
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     if (!m_player)
         return;

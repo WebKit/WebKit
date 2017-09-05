@@ -1,5 +1,22 @@
 2017-09-05  Zan Dobersek  <zdobersek@igalia.com>
 
+        HTMLMediaElement: attach any existing EME CDMInstance in mediaEngineWasUpdated()
+        https://bugs.webkit.org/show_bug.cgi?id=176354
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        It's common for MediaKeys to be set on an HTMLMediaElement object before
+        any resource is loaded for that element, meaning no underlying MediaPlayer
+        exists at that point. In order to not stall the pipeline when encrypted
+        content is finally loaded, the CDMInstance object of the current MediaKeys
+        set on this element should be attached in mediaEngineWasUpdated() that's
+        called whenever the underlying MediaPlayerPrivate object is replaced.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaEngineWasUpdated):
+
+2017-09-05  Zan Dobersek  <zdobersek@igalia.com>
+
         [EME] HTMLMediaElement: setMediaKeys() should attach CDMInstance from the arriving MediaKeys
         https://bugs.webkit.org/show_bug.cgi?id=176352
 
