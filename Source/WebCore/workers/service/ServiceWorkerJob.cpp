@@ -82,19 +82,23 @@ void ServiceWorkerJob::fetchScriptWithContext(ScriptExecutionContext& context)
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
 
+    m_fetchLoader = std::make_unique<FetchLoader>(*this, nullptr);
+
     // FIXME: This Fetch request is set up incorrectly and without proper care.
     // The ServiceWorkers spec specifics many details to apply here.
 
-    auto request = ResourceRequest { m_jobData.scriptURL };
+    auto fetchHeaders = FetchHeaders::create();
     auto referrer = m_jobData.clientCreationURL.string();
-    m_loader = ThreadableLoader::create(context, *this, WTFMove(request), { }, WTFMove(referrer));
+    auto fetchRequest = FetchRequest::create(context, std::nullopt, WTFMove(fetchHeaders), { m_jobData.scriptURL }, { }, WTFMove(referrer));
+
+    m_fetchLoader->start(context, fetchRequest);
 }
 
-void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void ServiceWorkerJob::didReceiveResponse(const ResourceResponse& response)
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
-    ASSERT(m_loader);
+    ASSERT(m_fetchLoader);
     ASSERT(!m_scriptData);
 
     m_lastResponse = response;
@@ -105,11 +109,11 @@ void ServiceWorkerJob::didReceiveResponse(unsigned long, const ResourceResponse&
     }
 }
 
-void ServiceWorkerJob::didReceiveData(const char* data, int size)
+void ServiceWorkerJob::didReceiveData(const char* data, size_t size)
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
-    ASSERT(m_loader);
+    ASSERT(m_fetchLoader);
 
     if (!m_scriptData)
         m_scriptData = SharedBuffer::create();
@@ -117,26 +121,26 @@ void ServiceWorkerJob::didReceiveData(const char* data, int size)
     m_scriptData->get().append(data, size);
 }
 
-void ServiceWorkerJob::didFinishLoading(unsigned long)
+void ServiceWorkerJob::didSucceed()
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
-    ASSERT(m_loader);
+    ASSERT(m_fetchLoader);
 
     if (!m_scriptData)
         m_scriptData = SharedBuffer::create();
     m_client->jobFinishedLoadingScript(*this, WTFMove(*m_scriptData));
-    m_loader = nullptr;
+    m_fetchLoader = nullptr;
 }
 
 void ServiceWorkerJob::didFail(const ResourceError& error)
 {
     ASSERT(currentThread() == m_creationThread);
     ASSERT(!m_completed);
-    ASSERT(m_loader);
+    ASSERT(m_fetchLoader);
 
     m_client->jobFailedLoadingScript(*this, error);
-    m_loader = nullptr;
+    m_fetchLoader = nullptr;
 }
 
 } // namespace WebCore

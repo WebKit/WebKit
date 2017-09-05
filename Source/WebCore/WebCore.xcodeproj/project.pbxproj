@@ -2306,8 +2306,8 @@
 		517A53461F50C17F00DCDC0A /* SWServerWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53421F50C16100DCDC0A /* SWServerWorker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A534E1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A534B1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.cpp */; };
 		517A534F1F54A8BA00DCDC0A /* ServiceWorkerRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A534C1F549D4A00DCDC0A /* ServiceWorkerRegistrationData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B61C89912600A7E715 /* FetchLoaderClient.h */; };
-		517A535A1F5889EF00DCDC0A /* FetchLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B51C89912600A7E715 /* FetchLoader.h */; };
+		517A53581F5889E800DCDC0A /* FetchLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B61C89912600A7E715 /* FetchLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		517A535A1F5889EF00DCDC0A /* FetchLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 4147E2B51C89912600A7E715 /* FetchLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A535B1F588A4C00DCDC0A /* FetchBodyConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41CF8BE51D46222000707DC9 /* FetchBodyConsumer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A535D1F5899FE00DCDC0A /* ServiceWorkerFetchResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A535C1F5899F200DCDC0A /* ServiceWorkerFetchResult.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		517A63C31B74318700E7DCDC /* KeyedDecoderCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A63BF1B74317E00E7DCDC /* KeyedDecoderCF.cpp */; };
@@ -11518,8 +11518,8 @@
 		7CBA5BA61F0B4BDE0034D745 /* JSDOMConvertWebGL.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMConvertWebGL.cpp; sourceTree = "<group>"; };
 		7CBBBCC41F560567005EFAAC /* DOMMatrix2DInit.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMMatrix2DInit.idl; sourceTree = "<group>"; };
 		7CBBBCC61F560568005EFAAC /* DOMMatrix2DInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMMatrix2DInit.h; sourceTree = "<group>"; };
-		7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrix2DInit.cpp; sourceTree = "<group>"; };
-		7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSDOMMatrix2DInit.h; sourceTree = "<group>"; };
+		7CBBBCC81F5617C0005EFAAC /* JSDOMMatrix2DInit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMMatrix2DInit.cpp; path = JSDOMMatrix2DInit.cpp; sourceTree = "<group>"; };
+		7CBBBCC91F5617C0005EFAAC /* JSDOMMatrix2DInit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = JSDOMMatrix2DInit.h; path = JSDOMMatrix2DInit.h; sourceTree = "<group>"; };
 		7CC2DDF81EC9415A0027B774 /* NotificationPermission.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NotificationPermission.h; sourceTree = "<group>"; };
 		7CC2DDFA1EC9415A0027B774 /* NotificationPermission.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NotificationPermission.idl; sourceTree = "<group>"; };
 		7CC2DDFE1EC95A440027B774 /* JSNotificationPermission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotificationPermission.cpp; sourceTree = "<group>"; };

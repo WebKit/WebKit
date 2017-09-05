@@ -37,62 +37,62 @@
 
 namespace WebCore {
 
-class ResourceError;
-class ResourceRequest;
-class ResourceResponse;
-class ScriptExecutionContext;
-class ThreadableLoaderClient;
+    class ResourceError;
+    class ResourceRequest;
+    class ResourceResponse;
+    class ScriptExecutionContext;
+    class ThreadableLoaderClient;
 
-enum PreflightPolicy {
-    ConsiderPreflight,
-    ForcePreflight,
-    PreventPreflight
-};
+    enum PreflightPolicy {
+        ConsiderPreflight,
+        ForcePreflight,
+        PreventPreflight
+    };
 
-enum class ContentSecurityPolicyEnforcement {
-    DoNotEnforce,
-    EnforceChildSrcDirective,
-    EnforceConnectSrcDirective,
-    EnforceScriptSrcDirective,
-};
+    enum class ContentSecurityPolicyEnforcement {
+        DoNotEnforce,
+        EnforceChildSrcDirective,
+        EnforceConnectSrcDirective,
+        EnforceScriptSrcDirective,
+    };
 
-enum class ResponseFilteringPolicy {
-    Enable,
-    Disable,
-};
+    enum class ResponseFilteringPolicy {
+        Enable,
+        Disable,
+    };
 
-struct ThreadableLoaderOptions : ResourceLoaderOptions {
-    ThreadableLoaderOptions();
-    ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy);
-    ~ThreadableLoaderOptions();
+    struct ThreadableLoaderOptions : ResourceLoaderOptions {
+        ThreadableLoaderOptions();
+        ThreadableLoaderOptions(const ResourceLoaderOptions&, PreflightPolicy, ContentSecurityPolicyEnforcement, String&& initiator, ResponseFilteringPolicy);
+        ~ThreadableLoaderOptions();
 
-    ThreadableLoaderOptions isolatedCopy() const;
+        ThreadableLoaderOptions isolatedCopy() const;
 
-    PreflightPolicy preflightPolicy { ConsiderPreflight };
-    ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
-    String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
-    ResponseFilteringPolicy filteringPolicy { ResponseFilteringPolicy::Disable };
-};
+        PreflightPolicy preflightPolicy { ConsiderPreflight };
+        ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement { ContentSecurityPolicyEnforcement::EnforceConnectSrcDirective };
+        String initiator; // This cannot be an AtomicString, as isolatedCopy() wouldn't create an object that's safe for passing to another thread.
+        ResponseFilteringPolicy filteringPolicy { ResponseFilteringPolicy::Disable };
+    };
 
-// Useful for doing loader operations from any thread (not threadsafe,
-// just able to run on threads other than the main thread).
-class ThreadableLoader {
-    WTF_MAKE_NONCOPYABLE(ThreadableLoader);
-public:
-    static void loadResourceSynchronously(ScriptExecutionContext&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
-    static RefPtr<ThreadableLoader> create(ScriptExecutionContext&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String());
+    // Useful for doing loader operations from any thread (not threadsafe,
+    // just able to run on threads other than the main thread).
+    class ThreadableLoader {
+        WTF_MAKE_NONCOPYABLE(ThreadableLoader);
+    public:
+        static void loadResourceSynchronously(ScriptExecutionContext&, ResourceRequest&&, ThreadableLoaderClient&, const ThreadableLoaderOptions&);
+        static RefPtr<ThreadableLoader> create(ScriptExecutionContext&, ThreadableLoaderClient&, ResourceRequest&&, const ThreadableLoaderOptions&, String&& referrer = String());
 
-    virtual void cancel() = 0;
-    void ref() { refThreadableLoader(); }
-    void deref() { derefThreadableLoader(); }
+        virtual void cancel() = 0;
+        void ref() { refThreadableLoader(); }
+        void deref() { derefThreadableLoader(); }
 
-    static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
+        static void logError(ScriptExecutionContext&, const ResourceError&, const String&);
 
-protected:
-    ThreadableLoader() { }
-    virtual ~ThreadableLoader() { }
-    virtual void refThreadableLoader() = 0;
-    virtual void derefThreadableLoader() = 0;
-};
+    protected:
+        ThreadableLoader() { }
+        virtual ~ThreadableLoader() { }
+        virtual void refThreadableLoader() = 0;
+        virtual void derefThreadableLoader() = 0;
+    };
 
 } // namespace WebCore

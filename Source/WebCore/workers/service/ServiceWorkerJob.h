@@ -27,11 +27,11 @@
 
 #if ENABLE(SERVICE_WORKER)
 
+#include "FetchLoader.h"
+#include "FetchLoaderClient.h"
 #include "ResourceResponse.h"
 #include "ServiceWorkerJobClient.h"
 #include "ServiceWorkerJobData.h"
-#include "ThreadableLoader.h"
-#include "ThreadableLoaderClient.h"
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -45,7 +45,7 @@ class ScriptExecutionContext;
 enum class ServiceWorkerJobType;
 struct ServiceWorkerRegistrationData;
 
-class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob>, public ThreadableLoaderClient {
+class ServiceWorkerJob : public ThreadSafeRefCounted<ServiceWorkerJob>, public FetchLoaderClient {
 public:
     static Ref<ServiceWorkerJob> create(ServiceWorkerJobClient& client, Ref<DeferredPromise>&& promise, ServiceWorkerJobData&& jobData)
     {
@@ -66,10 +66,10 @@ public:
 private:
     ServiceWorkerJob(ServiceWorkerJobClient&, Ref<DeferredPromise>&&, ServiceWorkerJobData&&);
 
-    // ThreadableLoaderClient
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse&) final;
-    void didReceiveData(const char* data, int length) final;
-    void didFinishLoading(unsigned long identifier) final;
+    // FetchLoaderClient
+    void didReceiveResponse(const ResourceResponse&) final;
+    void didReceiveData(const char*, size_t) final;
+    void didSucceed() final;
     void didFail(const ResourceError&) final;
 
     Ref<ServiceWorkerJobClient> m_client;
@@ -79,7 +79,7 @@ private:
     bool m_completed { false };
 
     Ref<RunLoop> m_runLoop { RunLoop::current() };
-    RefPtr<ThreadableLoader> m_loader;
+    std::unique_ptr<FetchLoader> m_fetchLoader;
     ResourceResponse m_lastResponse;
     std::optional<Ref<SharedBuffer>> m_scriptData;
 

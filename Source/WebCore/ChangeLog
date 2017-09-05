@@ -1,3 +1,16 @@
+2017-09-05  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221495.
+
+        This change introduced  assertion failures on El Capitan Debug
+        WK2.
+
+        Reverted changeset:
+
+        "Move ServiceWorkerJob from FetchLoader to ThreadableLoader."
+        https://bugs.webkit.org/show_bug.cgi?id=176231
+        http://trac.webkit.org/changeset/221495
+
 2017-09-05  Chris Dumez  <cdumez@apple.com>
 
         Add support for input.webkitEntries

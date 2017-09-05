@@ -32,24 +32,24 @@
 
 namespace WebCore {
 
-class ResourceError;
-class ResourceResponse;
-class ResourceTiming;
+    class ResourceError;
+    class ResourceResponse;
+    class ResourceTiming;
 
-class ThreadableLoaderClient {
-    WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient);
-public:
-    virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
+    class ThreadableLoaderClient {
+        WTF_MAKE_NONCOPYABLE(ThreadableLoaderClient); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-    virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
-    virtual void didReceiveData(const char*, int /*dataLength*/) { }
-    virtual void didFinishLoading(unsigned long /*identifier*/) { }
-    virtual void didFail(const ResourceError&) { }
-    virtual void didFinishTiming(const ResourceTiming&) { }
+        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
+        virtual void didReceiveData(const char*, int /*dataLength*/) { }
+        virtual void didFinishLoading(unsigned long /*identifier*/) { }
+        virtual void didFail(const ResourceError&) { }
+        virtual void didFinishTiming(const ResourceTiming&) { }
 
-protected:
-    ThreadableLoaderClient() { }
-    virtual ~ThreadableLoaderClient() { }
-};
+    protected:
+        ThreadableLoaderClient() { }
+        virtual ~ThreadableLoaderClient() { }
+    };
 
 } // namespace WebCore

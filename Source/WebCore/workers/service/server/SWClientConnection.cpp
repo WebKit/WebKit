@@ -31,7 +31,6 @@
 #include "ExceptionData.h"
 #include "ServiceWorkerFetchResult.h"
 #include "ServiceWorkerJobData.h"
-#include "SharedBuffer.h"
 
 namespace WebCore {
 
