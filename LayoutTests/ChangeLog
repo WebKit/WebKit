@@ -1,3 +1,11 @@
+2017-09-05  Per Arne Vollan  <pvollan@apple.com>
+
+        Unskip two tests which was skipped by mistake.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update font selection algorithm to match latest CSS spec
