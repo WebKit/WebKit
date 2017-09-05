@@ -676,6 +676,20 @@ public:
     WEBCORE_EXPORT static void callRegisterMediaEngine(MediaEngineRegister);
 };
 
+} // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WTF::MediaTime> {
+    static String toString(const WTF::MediaTime& time)
+    {
+        return time.toString();
+    }
+};
 }
 
 #endif // ENABLE(VIDEO)
