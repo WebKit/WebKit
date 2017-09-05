@@ -1,3 +1,11 @@
+2017-09-05  JF Bastien  <jfbastien@apple.com>
+
+        StitchMarker build fix
+
+        Unreviewed
+
+        * StitchMarker/ck.sh: was missing `cd ck`
+
 2017-09-05  Shiyu Zhang  <shiyu.zhang@intel.com>
 
         Speedometer 2.0: Add dummy node to notify app is ready for Backbone suite
