@@ -1,3 +1,19 @@
+2017-09-05  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix capitalization of scheduleinvalidateStyleAndLayerComposition
+        https://bugs.webkit.org/show_bug.cgi?id=176266
+
+        Reviewed by Antti Koivisto.
+
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition):
+        (WebCore::HTMLFrameOwnerElement::scheduleinvalidateStyleAndLayerComposition): Deleted.
+        * html/HTMLFrameOwnerElement.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachRootLayer):
+        (WebCore::RenderLayerCompositor::detachRootLayer):
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange):
+
 2017-09-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221603.

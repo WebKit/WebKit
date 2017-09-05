@@ -120,7 +120,7 @@ ExceptionOr<Document&> HTMLFrameOwnerElement::getSVGDocument() const
     return Exception { NotSupportedError };
 }
 
-void HTMLFrameOwnerElement::scheduleinvalidateStyleAndLayerComposition()
+void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
 {
     if (Style::postResolutionCallbacksAreSuspended()) {
         RefPtr<HTMLFrameOwnerElement> element = this;

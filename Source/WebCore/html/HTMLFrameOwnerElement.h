@@ -55,7 +55,7 @@ public:
 
     SandboxFlags sandboxFlags() const { return m_sandboxFlags; }
 
-    void scheduleinvalidateStyleAndLayerComposition();
+    void scheduleInvalidateStyleAndLayerComposition();
 
     virtual bool isURLAllowed(const URL&) const { return true; }
 
