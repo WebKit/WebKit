@@ -1,3 +1,22 @@
+2017-09-05  Aakash Jain  <aakash_jain@apple.com>
+
+        EWS should report when a step succeeds
+        https://bugs.webkit.org/show_bug.cgi?id=176332
+        <rdar://problem/25224607>
+
+        Reviewed by Sam Weinig.
+
+        Most of the EWSes report only if a step fails, but do not report when a step succeed. For e.g.: If a build succeeds,
+        EWS does not report it. Information about a step passing is sometimes very valuable, especially when waiting for a 
+        patch to complete processing. Sometimes, patch authors know that their changes are not covered by any tests. Having EWS 
+        display that build was successful and it is currently running tests is valuable.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.command_passed): Update the EWS status server when a command pass. This is
+        similar to what is done in Commit Queue and Style Queue.
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSystemTest._default_expected_logs): Updated unit-tests appropriately.
+
 2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WSL should support the bool type

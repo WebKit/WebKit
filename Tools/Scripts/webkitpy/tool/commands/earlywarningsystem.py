@@ -127,7 +127,7 @@ class AbstractEarlyWarningSystem(AbstractReviewQueue, EarlyWarningSystemTaskDele
         self.run_webkit_patch(command + [self._deprecated_port.flag()] + (['--architecture=%s' % self._port.architecture()] if self._port.architecture() and self._port.did_override_architecture else []))
 
     def command_passed(self, message, patch):
-        pass
+        self._update_status(message, patch=patch)
 
     def command_failed(self, message, script_error, patch):
         failure_log = self._log_from_script_error_for_upload(script_error)
