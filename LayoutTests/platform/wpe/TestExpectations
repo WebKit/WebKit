@@ -182,9 +182,9 @@ fast/canvas/drawImage-with-negative-source-destination.html [ Failure ]
 fast/canvas/fallback-content.html [ Failure ]
 fast/canvas/toDataURL-supportedTypes.html [ Failure ]
 fast/canvas/webgl/antialiasing-enabled.html [ Failure ]
-fast/canvas/webgl/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 fast/canvas/webgl/context-creation-attributes.html [ Failure ]
 fast/canvas/webgl/copyBufferSubData.html [ Failure ]
+fast/canvas/webgl/drawingbuffer-test.html [ Failure ]
 fast/canvas/webgl/getBufferSubData-webgl1.html [ Failure ]
 fast/canvas/webgl/lose-context-on-status-failure.html [ Failure ]
 fast/canvas/webgl/match-page-color-space.html [ ImageOnlyFailure ]
@@ -299,7 +299,7 @@ Bug(WPE) fast/dynamic/window-resize-scrollbars-test.html [ Timeout ]
 
 fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 
-Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure ]
+Bug(WPE) fast/innerHTML/001.html [ ImageOnlyFailure Pass ]
 
 Bug(WPE) fast/parser/entities-in-attributes.xhtml [ Failure ]
 Bug(WPE) fast/parser/entities-in-xhtml.xhtml [ Failure ]
@@ -326,9 +326,6 @@ Bug(WPE) fast/viewport/viewport-legacy-ordering-5.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-ordering-6.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
-
-Bug(WPE) fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html [ Failure ]
-Bug(WPE) fast/xmlhttprequest/xmlhttprequest-no-file-access.html [ Timeout ]
 
 # These tests were moved on r187990 from platform/ios-simulator/ios/fast/events/touch
 webkit.org/b/148940 fast/events/touch/document-create-touch-list-ios.html [ Skip ]
@@ -525,11 +522,11 @@ webkit.org/b/173419 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ F
 webkit.org/b/173419 fast/events/autoscroll-main-document.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-should-not-stop-on-keypress.html [ Timeout ]
 webkit.org/b/173419 fast/events/autoscroll-when-zoomed.html [ Timeout ]
-webkit.org/b/173419 fast/events/before-input-prevent-insert-replacement.html [ Timeout ]
+webkit.org/b/173419 fast/events/before-input-prevent-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/clipboard-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/drag-dataTransferItemList.html [ Timeout ]
 webkit.org/b/173419 fast/events/event-view-toString.html [ Timeout ]
-webkit.org/b/173419 fast/events/input-event-insert-replacement.html [ Timeout ]
+webkit.org/b/173419 fast/events/input-event-insert-replacement.html [ Failure ]
 webkit.org/b/173419 fast/events/mouse-force-changed.html [ Timeout ]
 webkit.org/b/173419 fast/events/mouse-force-down.html [ Timeout ]
 webkit.org/b/173419 fast/events/mouse-force-up.html [ Timeout ]
@@ -580,7 +577,6 @@ Bug(WPE) fast/dom/HTMLLabelElement [ Pass ]
 Bug(WPE) fast/dom/HTMLMetaElement [ Pass ]
 Bug(WPE) fast/dom/HTMLObjectElement [ Pass ]
 Bug(WPE) fast/dom/HTMLOptionElement [ Pass ]
-Bug(WPE) fast/dom/HTMLOptionElement/option-label-quirksmode2.html [ ImageOnlyFailure ]
 Bug(WPE) fast/dom/HTMLOutputElement [ Pass ]
 Bug(WPE) fast/dom/HTMLProgressElement [ Pass ]
 Bug(WPE) fast/dom/HTMLScriptElement [ Pass ]
@@ -835,6 +831,10 @@ media/encrypted-media/encrypted-media-v2-syntax.html [ Skip ]
 webkit.org/b/168171 http/tests/loading/resourceLoadStatistics [ Timeout Failure ]
 
 webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFailure ]
-webkit.org/b/175380 scrollbars/scrollbar-iframe-click-does-not-blur-content.html [ ImageOnlyFailure ]
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
+
+webkit.org/b/176358 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Failure Pass ]
+
+# Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
+webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
