@@ -207,7 +207,7 @@ String pathByAppendingComponent(const String& path, const String& component)
     return path + G_DIR_SEPARATOR_S + component;
 }
 
-String pathByAppendingComponents(const String& path, const Vector<String>& components)
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
 {
     StringBuilder builder;
     builder.append(path);

@@ -1,3 +1,21 @@
+2017-09-04  Chris Dumez  <cdumez@apple.com>
+
+        Use StringView more in DOMFileSystem code
+        https://bugs.webkit.org/show_bug.cgi?id=176347
+
+        Reviewed by Darin Adler.
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::resolveRelativeVirtualPath):
+        (WebCore::DOMFileSystem::evaluatePath):
+        * platform/FileSystem.h:
+        * platform/glib/FileSystemGlib.cpp:
+        (WebCore::pathByAppendingComponents):
+        * platform/posix/FileSystemPOSIX.cpp:
+        (WebCore::pathByAppendingComponents):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::pathByAppendingComponents):
+
 2017-09-04  Eric Carlson  <eric.carlson@apple.com>
 
         Switch HTMLMediaElement to release logging

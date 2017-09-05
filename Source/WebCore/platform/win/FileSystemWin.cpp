@@ -263,7 +263,7 @@ String pathByAppendingComponent(const String& path, const String& component)
     return String::adopt(WTFMove(buffer));
 }
 
-String pathByAppendingComponents(const String& path, const Vector<String>& components)
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
 {
     String result = path;
     for (auto& component : components)

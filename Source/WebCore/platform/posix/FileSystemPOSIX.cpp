@@ -299,7 +299,7 @@ String pathByAppendingComponent(const String& path, const String& component)
     return path + "/" + component;
 }
 
-String pathByAppendingComponents(const String& path, const Vector<String>& components)
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components)
 {
     StringBuilder builder;
     builder.append(path);

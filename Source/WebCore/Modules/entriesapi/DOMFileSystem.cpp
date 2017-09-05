@@ -174,15 +174,17 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
 }
 
 // https://wicg.github.io/entries-api/#resolve-a-relative-path
-static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringView relativeVirtualPath)
+static String resolveRelativeVirtualPath(StringView baseVirtualPath, StringView relativeVirtualPath)
 {
     ASSERT(baseVirtualPath[0] == '/');
     if (relativeVirtualPath[0] == '/')
-        return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath(ASCIILiteral("/"), relativeVirtualPath.substring(1));
+        return relativeVirtualPath.length() == 1 ? relativeVirtualPath.toString() : resolveRelativeVirtualPath("/", relativeVirtualPath.substring(1));
 
-    auto virtualPathSegments = baseVirtualPath.split('/');
-    auto relativePathSegments = relativeVirtualPath.split('/');
-    for (auto segment : relativePathSegments) {
+    Vector<StringView> virtualPathSegments;
+    for (auto segment : baseVirtualPath.split('/'))
+        virtualPathSegments.append(segment);
+
+    for (auto segment : relativeVirtualPath.split('/')) {
         ASSERT(!segment.isEmpty());
         if (segment == ".")
             continue;
@@ -191,7 +193,7 @@ static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringVi
                 virtualPathSegments.removeLast();
             continue;
         }
-        virtualPathSegments.append(segment.toStringWithoutCopying());
+        virtualPathSegments.append(segment);
     }
 
     if (virtualPathSegments.isEmpty())
@@ -209,10 +211,9 @@ static String resolveRelativeVirtualPath(const String& baseVirtualPath, StringVi
 String DOMFileSystem::evaluatePath(StringView virtualPath)
 {
     ASSERT(virtualPath[0] == '/');
-    auto components = virtualPath.split('/');
 
-    Vector<String> resolvedComponents;
-    for (auto component : components) {
+    Vector<StringView> resolvedComponents;
+    for (auto component : virtualPath.split('/')) {
         if (component == ".")
             continue;
         if (component == "..") {
@@ -220,7 +221,7 @@ String DOMFileSystem::evaluatePath(StringView virtualPath)
                 resolvedComponents.removeLast();
             continue;
         }
-        resolvedComponents.append(component.toStringWithoutCopying());
+        resolvedComponents.append(component);
     }
 
     return pathByAppendingComponents(m_rootPath, resolvedComponents);

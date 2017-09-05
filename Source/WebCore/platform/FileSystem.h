@@ -104,7 +104,7 @@ WEBCORE_EXPORT std::optional<FileMetadata> fileMetadata(const String& path);
 WEBCORE_EXPORT std::optional<FileMetadata> fileMetadataFollowingSymlinks(const String& path);
 bool fileIsDirectory(const String&, ShouldFollowSymbolicLinks);
 WEBCORE_EXPORT String pathByAppendingComponent(const String& path, const String& component);
-String pathByAppendingComponents(const String& path, const Vector<String>& components);
+String pathByAppendingComponents(StringView path, const Vector<StringView>& components);
 String lastComponentOfPathIgnoringTrailingSlash(const String& path);
 WEBCORE_EXPORT bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
