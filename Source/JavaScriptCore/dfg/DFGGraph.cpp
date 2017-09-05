@@ -525,7 +525,7 @@ void Graph::dump(PrintStream& out, DumpContext* context)
             out.print("  Argument formats for entrypoint index: ", entrypointIndex, " : ", listDump(m_argumentFormats[entrypointIndex]), "\n");
     }
     else {
-        for (auto pair : m_entrypointToArguments)
+        for (auto pair : m_rootToArguments)
             out.print("  Arguments for block#", pair.key->index, ": ", listDump(pair.value), "\n");
     }
     out.print("\n");
@@ -664,7 +664,7 @@ void Graph::handleSuccessor(Vector<BasicBlock*, 16>& worklist, BasicBlock* block
 void Graph::determineReachability()
 {
     Vector<BasicBlock*, 16> worklist;
-    for (BasicBlock* entrypoint : m_entrypoints) {
+    for (BasicBlock* entrypoint : m_roots) {
         entrypoint->isReachable = true;
         worklist.append(entrypoint);
     }
@@ -878,7 +878,7 @@ BlockList Graph::blocksInPreOrder()
 {
     BlockList result;
     BlockWorklist worklist;
-    for (BasicBlock* entrypoint : m_entrypoints)
+    for (BasicBlock* entrypoint : m_roots)
         worklist.push(entrypoint);
     while (BasicBlock* block = worklist.pop()) {
         result.append(block);
@@ -916,7 +916,7 @@ BlockList Graph::blocksInPostOrder()
 {
     BlockList result;
     PostOrderBlockWorklist worklist;
-    for (BasicBlock* entrypoint : m_entrypoints)
+    for (BasicBlock* entrypoint : m_roots)
         worklist.push(entrypoint);
     while (BlockWithOrder item = worklist.pop()) {
         switch (item.order) {
@@ -1628,7 +1628,7 @@ MethodOfGettingAValueProfile Graph::methodOfGettingAValueProfileFor(Node* curren
             if (node->accessesStack(*this)) {
                 if (m_form != SSA && node->local().isArgument()) {
                     int argument = node->local().toArgument();
-                    Node* argumentNode = m_entrypointToArguments.find(block(0))->value[argument];
+                    Node* argumentNode = m_rootToArguments.find(block(0))->value[argument];
                     // FIXME: We should match SetArgument nodes at other entrypoints as well:
                     // https://bugs.webkit.org/show_bug.cgi?id=175841
                     if (argumentNode && node->variableAccessData() == argumentNode->variableAccessData())

@@ -113,7 +113,7 @@ public:
         // type checks to here.
         origin = target->at(0)->origin;
         
-        ArgumentsVector newArguments = m_graph.m_entrypointToArguments.find(m_graph.block(0))->value;
+        ArgumentsVector newArguments = m_graph.m_rootToArguments.find(m_graph.block(0))->value;
         for (int argument = 0; argument < baseline->numParameters(); ++argument) {
             Node* oldNode = target->variablesAtHead.argument(argument);
             if (!oldNode) {
@@ -142,10 +142,10 @@ public:
         
         insertionSet.execute();
 
-        RELEASE_ASSERT(m_graph.m_entrypoints.size() == 1);
-        m_graph.m_entrypoints[0] = newRoot;
-        m_graph.m_entrypointToArguments.clear();
-        m_graph.m_entrypointToArguments.add(newRoot, newArguments);
+        RELEASE_ASSERT(m_graph.m_roots.size() == 1);
+        m_graph.m_roots[0] = newRoot;
+        m_graph.m_rootToArguments.clear();
+        m_graph.m_rootToArguments.add(newRoot, newArguments);
 
         m_graph.invalidateCFG();
         m_graph.resetReachability();

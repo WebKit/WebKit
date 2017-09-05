@@ -1,3 +1,62 @@
+2017-09-05  Saam Barati  <sbarati@apple.com>
+
+        Make the distinction between entrypoints and CFG roots more clear by naming things better
+        https://bugs.webkit.org/show_bug.cgi?id=176336
+
+        Reviewed by Mark Lam and Keith Miller and Michael Saboff.
+
+        This patch does renaming to make the distinction between Graph::m_entrypoints
+        and Graph::m_numberOfEntrypoints more clear. The source of confusion is that
+        Graph::m_entrypoints.size() is not equivalent to Graph::m_numberOfEntrypoints.
+        Graph::m_entrypoints is really just the CFG roots. In CPS, this vector has
+        size >= 1. In SSA, the size is always 1. This patch renames Graph::m_entrypoints
+        to Graph::m_roots. To be consistent, this patch also renames Graph's m_entrypointToArguments
+        field to m_rootToArguments.
+        
+        Graph::m_numberOfEntrypoints retains its name. This field is only used in SSA
+        when compiling with EntrySwitch. It represents the logical number of entrypoints
+        the compilation will end up with. Each EntrySwitch has m_numberOfEntrypoints
+        cases.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGCFG.h:
+        (JSC::DFG::CFG::roots):
+        (JSC::DFG::CPSCFG::CPSCFG):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::specialCaseArguments):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::determineReachability):
+        (JSC::DFG::Graph::blocksInPreOrder):
+        (JSC::DFG::Graph::blocksInPostOrder):
+        (JSC::DFG::Graph::methodOfGettingAValueProfileFor):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::isRoot):
+        (JSC::DFG::Graph::isEntrypoint): Deleted.
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::initialize):
+        * dfg/DFGLoopPreHeaderCreationPhase.cpp:
+        (JSC::DFG::createPreHeader):
+        * dfg/DFGMaximalFlushInsertionPhase.cpp:
+        (JSC::DFG::MaximalFlushInsertionPhase::run):
+        (JSC::DFG::MaximalFlushInsertionPhase::treatRegularBlock):
+        * dfg/DFGOSREntrypointCreationPhase.cpp:
+        (JSC::DFG::OSREntrypointCreationPhase::run):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+        * dfg/DFGSSAConversionPhase.cpp:
+        (JSC::DFG::SSAConversionPhase::run):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::linkOSREntries):
+        * dfg/DFGTypeCheckHoistingPhase.cpp:
+        (JSC::DFG::TypeCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+
 2017-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec

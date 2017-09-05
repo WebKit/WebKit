@@ -58,7 +58,7 @@ public:
     List roots()
     {
         List result;
-        for (BasicBlock* root : m_graph.m_entrypoints)
+        for (BasicBlock* root : m_graph.m_roots)
             result.append(root);
         return result;
     }
@@ -89,7 +89,7 @@ public:
     CPSCFG(Graph& graph)
         : SingleRootGraph<CFG>(*graph.m_ssaCFG)
     {
-        ASSERT(graph.m_entrypoints.size());
+        ASSERT(graph.m_roots.size());
     }
 };
 

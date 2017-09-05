@@ -1808,7 +1808,7 @@ void SpeculativeJIT::checkArgumentTypes()
     ASSERT(!m_currentNode);
     m_origin = NodeOrigin(CodeOrigin(0), CodeOrigin(0), true);
 
-    auto& arguments = m_jit.graph().m_entrypointToArguments.find(m_jit.graph().block(0))->value;
+    auto& arguments = m_jit.graph().m_rootToArguments.find(m_jit.graph().block(0))->value;
     for (int i = 0; i < m_jit.codeBlock()->numParameters(); ++i) {
         Node* node = arguments[i];
         if (!node) {
@@ -1912,7 +1912,7 @@ void SpeculativeJIT::linkOSREntries(LinkBuffer& linkBuffer)
         if (!block->isOSRTarget && !block->isCatchEntrypoint)
             continue;
         if (block->isCatchEntrypoint) {
-            auto& argumentsVector = m_jit.graph().m_entrypointToArguments.find(block)->value;
+            auto& argumentsVector = m_jit.graph().m_rootToArguments.find(block)->value;
             Vector<FlushFormat> argumentFormats;
             argumentFormats.reserveInitialCapacity(argumentsVector.size());
             for (Node* setArgument : argumentsVector) {

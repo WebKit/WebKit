@@ -41,7 +41,7 @@ namespace JSC { namespace DFG {
 
 BasicBlock* createPreHeader(Graph& graph, BlockInsertionSet& insertionSet, BasicBlock* block)
 {
-    ASSERT_WITH_MESSAGE(!graph.isEntrypoint(block), "An entrypoint should not be in a loop");
+    ASSERT_WITH_MESSAGE(!graph.isRoot(block), "A CFG root should not be in a loop");
 
     // FIXME: If we run this utility on SSA IR, then we may end up with a bizarre arrangement of
     // Upsilons and Phis, like:

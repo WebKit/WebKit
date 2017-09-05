@@ -370,7 +370,7 @@ private:
         // special-cased. We could have instead used two different node types - one for the arguments
         // at the prologue case, and another for the other uses. But this seemed like IR overkill.
 
-        for (auto& pair : m_graph.m_entrypointToArguments) {
+        for (auto& pair : m_graph.m_rootToArguments) {
             BasicBlock* entrypoint = pair.key;
             const ArgumentsVector& arguments = pair.value;
             for (unsigned i = arguments.size(); i--;)

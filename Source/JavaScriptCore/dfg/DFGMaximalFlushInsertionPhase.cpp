@@ -53,7 +53,7 @@ public:
             insertionSet.execute(block);
         }
 
-        for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
+        for (BasicBlock* entrypoint : m_graph.m_roots) {
             treatRootBlock(entrypoint, insertionSet);
             insertionSet.execute(entrypoint);
         }
@@ -71,8 +71,8 @@ public:
                 Node* node = block->at(i);
                 bool isPrimordialSetArgument = false;
                 if (node->op() == SetArgument && node->local().isArgument()) {
-                    auto iter = m_graph.m_entrypointToArguments.find(block);
-                    if (iter != m_graph.m_entrypointToArguments.end())
+                    auto iter = m_graph.m_rootToArguments.find(block);
+                    if (iter != m_graph.m_rootToArguments.end())
                         isPrimordialSetArgument = node == iter->value[node->local().toArgument()];
                 }
 

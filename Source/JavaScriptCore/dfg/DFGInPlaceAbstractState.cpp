@@ -93,7 +93,7 @@ static void setLiveValues(Vector<NodeAbstractValuePair>& values, const Vector<No
 
 void InPlaceAbstractState::initialize()
 {
-    for (BasicBlock* entrypoint : m_graph.m_entrypoints) {
+    for (BasicBlock* entrypoint : m_graph.m_roots) {
         entrypoint->cfaShouldRevisit = true;
         entrypoint->cfaHasVisited = false;
         entrypoint->cfaFoundConstants = false;
@@ -106,7 +106,7 @@ void InPlaceAbstractState::initialize()
                 entrypoint->valuesAtTail.argument(i).clear();
             }
         } else {
-            const ArgumentsVector& arguments = m_graph.m_entrypointToArguments.find(entrypoint)->value;
+            const ArgumentsVector& arguments = m_graph.m_rootToArguments.find(entrypoint)->value;
             for (size_t i = 0; i < entrypoint->valuesAtHead.numberOfArguments(); ++i) {
                 entrypoint->valuesAtTail.argument(i).clear();
 
@@ -146,8 +146,8 @@ void InPlaceAbstractState::initialize()
     }
 
     for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
-        if (m_graph.isEntrypoint(block)) {
-            // We bootstrapped the entrypoints above.
+        if (m_graph.isRoot(block)) {
+            // We bootstrapped the CFG roots above.
             continue;
         }
 

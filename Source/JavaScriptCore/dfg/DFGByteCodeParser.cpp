@@ -4168,7 +4168,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
     // us to track if a use of an argument may use the actual argument passed, as
     // opposed to using a value we set explicitly.
     if (m_currentBlock == m_graph.block(0) && !inlineCallFrame()) {
-        auto addResult = m_graph.m_entrypointToArguments.add(m_currentBlock, ArgumentsVector());
+        auto addResult = m_graph.m_rootToArguments.add(m_currentBlock, ArgumentsVector());
         RELEASE_ASSERT(addResult.isNewEntry);
         ArgumentsVector& entrypointArguments = addResult.iterator->value;
         entrypointArguments.resize(m_numArguments);
@@ -5276,7 +5276,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             // We're now committed to compiling this as an entrypoint.
             m_currentBlock->isCatchEntrypoint = true;
-            m_graph.m_entrypoints.append(m_currentBlock);
+            m_graph.m_roots.append(m_currentBlock);
 
             Vector<SpeculatedType> argumentPredictions(m_numArguments);
             Vector<SpeculatedType> localPredictions;
@@ -5341,7 +5341,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(ExitOK);
 
             {
-                auto addResult = m_graph.m_entrypointToArguments.add(m_currentBlock, ArgumentsVector());
+                auto addResult = m_graph.m_rootToArguments.add(m_currentBlock, ArgumentsVector());
                 RELEASE_ASSERT(addResult.isNewEntry);
                 ArgumentsVector& entrypointArguments = addResult.iterator->value;
                 entrypointArguments.resize(m_numArguments);
@@ -6400,7 +6400,7 @@ void ByteCodeParser::parseCodeBlock()
                     // The first block is definitely an OSR target.
                     if (!m_graph.numBlocks()) {
                         block->isOSRTarget = true;
-                        m_graph.m_entrypoints.append(block.ptr());
+                        m_graph.m_roots.append(block.ptr());
                     }
                     m_graph.appendBlock(WTFMove(block));
                     prepareToParseBlock();

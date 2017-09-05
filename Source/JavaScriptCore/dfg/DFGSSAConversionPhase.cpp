@@ -61,14 +61,14 @@ public:
         HashMap<unsigned, BasicBlock*, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> entrypointIndexToArgumentsBlock;
 
         {
-            m_graph.m_numberOfEntrypoints = m_graph.m_entrypoints.size();
+            m_graph.m_numberOfEntrypoints = m_graph.m_roots.size();
 
             BlockInsertionSet blockInsertionSet(m_graph);
             BasicBlock* newRoot = blockInsertionSet.insert(0, 1.0f);
 
             EntrySwitchData* entrySwitchData = m_graph.m_entrySwitchData.add();
             for (unsigned entrypointIndex = 0; entrypointIndex < m_graph.m_numberOfEntrypoints; ++entrypointIndex) {
-                BasicBlock* oldRoot = m_graph.m_entrypoints[entrypointIndex];
+                BasicBlock* oldRoot = m_graph.m_roots[entrypointIndex];
                 entrypointIndexToArgumentsBlock.add(entrypointIndex, oldRoot);
                 entrySwitchData->cases.append(oldRoot);
 
@@ -97,8 +97,8 @@ public:
             newRoot->appendNode(
                 m_graph, SpecNone, EntrySwitch, origin, OpInfo(entrySwitchData));
 
-            m_graph.m_entrypoints.clear();
-            m_graph.m_entrypoints.append(newRoot);
+            m_graph.m_roots.clear();
+            m_graph.m_roots.append(newRoot);
 
             blockInsertionSet.execute();
         }
@@ -436,7 +436,7 @@ public:
         for (auto& pair : entrypointIndexToArgumentsBlock) {
             unsigned entrypointIndex = pair.key;
             BasicBlock* oldRoot = pair.value;
-            ArgumentsVector& arguments = m_graph.m_entrypointToArguments.find(oldRoot)->value;
+            ArgumentsVector& arguments = m_graph.m_rootToArguments.find(oldRoot)->value;
             Vector<FlushFormat> argumentFormats;
             argumentFormats.reserveInitialCapacity(arguments.size());
             for (unsigned i = 0; i < arguments.size(); ++i) {
@@ -447,7 +447,7 @@ public:
             m_graph.m_argumentFormats[entrypointIndex] = WTFMove(argumentFormats);
         }
 
-        m_graph.m_entrypointToArguments.clear();
+        m_graph.m_rootToArguments.clear();
 
         RELEASE_ASSERT(m_graph.m_isInSSAConversion);
         m_graph.m_isInSSAConversion = false;
