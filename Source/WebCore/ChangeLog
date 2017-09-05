@@ -1,3 +1,25 @@
+2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update font selection algorithm to match latest CSS spec
+        https://bugs.webkit.org/show_bug.cgi?id=175236
+
+        Reviewed by Darin Adler.
+
+        The CSS WG tweaked the generalization of the font selection
+        algorithm between levels 3 and 4. In particular, the behavior
+        of weights between 400 and 500 works a little differently.
+
+        https://github.com/w3c/csswg-drafts/commit/f6973a21847f1c200ed38bff05dc543cebe1c827
+
+        Test: fast/text/variations/font-selection-font-weight.html
+
+        * platform/graphics/FontSelectionAlgorithm.cpp:
+        (WebCore::FontSelectionAlgorithm::weightDistance const):
+        * platform/graphics/FontSelectionAlgorithm.h:
+        (WebCore::lowerWeightSearchThreshold):
+        (WebCore::upperWeightSearchThreshold):
+        (WebCore::weightSearchThreshold): Deleted.
+
 2017-09-05  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile errors in pathByAppendingComponents.

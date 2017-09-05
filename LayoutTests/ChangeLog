@@ -1,3 +1,13 @@
+2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Update font selection algorithm to match latest CSS spec
+        https://bugs.webkit.org/show_bug.cgi?id=175236
+
+        Reviewed by Darin Adler.
+
+        * fast/text/variations/font-selection-font-weight-expected.html: Added.
+        * fast/text/variations/font-selection-font-weight.html: Added.
+
 2017-09-05  Matt Lewis  <jlewis3@apple.com>
 
         Marked media/W3C/video/events/event_progress.html as flaky.

@@ -99,26 +99,28 @@ auto FontSelectionAlgorithm::weightDistance(FontSelectionCapabilities capabiliti
     if (weight.includes(m_request.weight))
         return { FontSelectionValue(), m_request.weight };
 
-    // The spec states: "If the desired weight is 400, 500 is checked first ... If the desired weight is 500, 400 is checked first"
-    FontSelectionValue offset(1);
-    if (m_request.weight == FontSelectionValue(400) && weight.includes(FontSelectionValue(500)))
-        return { offset, FontSelectionValue(500) };
-    if (m_request.weight == FontSelectionValue(500) && weight.includes(FontSelectionValue(400)))
-        return { offset, FontSelectionValue(400) };
-
-    if (m_request.weight <= weightSearchThreshold()) {
+    if (m_request.weight >= lowerWeightSearchThreshold() && m_request.weight <= upperWeightSearchThreshold()) {
+        if (weight.minimum > m_request.weight && weight.minimum <= upperWeightSearchThreshold())
+            return { weight.minimum - m_request.weight, weight.minimum };
         if (weight.maximum < m_request.weight)
-            return { m_request.weight - weight.maximum + offset, weight.maximum };
+            return { upperWeightSearchThreshold() - weight.maximum, weight.maximum };
+        ASSERT(weight.minimum > upperWeightSearchThreshold());
+        auto threshold = std::min(m_request.weight, m_capabilitiesBounds.weight.minimum);
+        return { weight.minimum - threshold, weight.minimum };
+    }
+    if (m_request.weight < lowerWeightSearchThreshold()) {
+        if (weight.maximum < m_request.weight)
+            return { m_request.weight - weight.maximum, weight.maximum };
         ASSERT(weight.minimum > m_request.weight);
         auto threshold = std::min(m_request.weight, m_capabilitiesBounds.weight.minimum);
-        return { weight.minimum - threshold + offset, weight.minimum };
+        return { weight.minimum - threshold, weight.minimum };
     }
-
+    ASSERT(m_request.weight >= upperWeightSearchThreshold());
     if (weight.minimum > m_request.weight)
-        return { weight.minimum - m_request.weight + offset, weight.minimum };
+        return { weight.minimum - m_request.weight, weight.minimum };
     ASSERT(weight.maximum < m_request.weight);
     auto threshold = std::max(m_request.weight, m_capabilitiesBounds.weight.maximum);
-    return { threshold - weight.maximum + offset, weight.maximum };
+    return { threshold - weight.maximum, weight.maximum };
 }
 
 void FontSelectionAlgorithm::filterCapability(DistanceResult(FontSelectionAlgorithm::*computeDistance)(FontSelectionCapabilities) const, FontSelectionRange FontSelectionCapabilities::*inclusionRange)

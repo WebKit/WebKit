@@ -219,7 +219,13 @@ static inline bool isFontWeightBold(FontSelectionValue fontWeight)
     return fontWeight >= boldThreshold();
 }
 
-static inline FontSelectionValue weightSearchThreshold()
+static inline FontSelectionValue lowerWeightSearchThreshold()
+{
+    static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(400);
+    return result.get();
+}
+
+static inline FontSelectionValue upperWeightSearchThreshold()
 {
     static NeverDestroyed<FontSelectionValue> result = FontSelectionValue(500);
     return result.get();
