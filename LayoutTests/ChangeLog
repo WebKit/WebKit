@@ -1,3 +1,21 @@
+2017-09-05  Chris Dumez  <cdumez@apple.com>
+
+        FileSystemEntry API should ignore hidden files
+        https://bugs.webkit.org/show_bug.cgi?id=176292
+        <rdar://problem/34257666>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage.
+
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getAsEntry-expected.txt:
+        * editing/pasteboard/enties-api/datatransfer-items-drop-getAsEntry.html:
+        * editing/pasteboard/enties-api/datatransfer-items-drop-hidden-file-expected.txt: Added.
+        * editing/pasteboard/enties-api/datatransfer-items-drop-hidden-file.html: Added.
+        * fast/forms/file/entries-api/resources/testFiles/.hidden.txt: Added.
+        * fast/forms/file/entries-api/resources/testFiles/.hidden/hidden.txt: Added.
+        * platform/win/TestExpectations:
+
 2017-09-05  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/as-image/svg-image-with-data-uri-background.html as flaky.

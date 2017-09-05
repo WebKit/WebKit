@@ -56,7 +56,7 @@ static ExceptionOr<Vector<ListedChild>> listDirectoryWithMetadata(const String& 
     listedChildren.reserveInitialCapacity(childPaths.size());
     for (auto& childPath : childPaths) {
         auto metadata = fileMetadata(childPath);
-        if (!metadata)
+        if (!metadata || metadata.value().isHidden)
             continue;
         listedChildren.uncheckedAppend(ListedChild { pathGetFileName(childPath), metadata.value().type });
     }
@@ -164,13 +164,21 @@ static ExceptionOr<String> validatePathIsExpectedType(const String& fullPath, St
     ASSERT(!isMainThread());
 
     auto metadata = fileMetadata(fullPath);
-    if (!metadata)
+    if (!metadata || metadata.value().isHidden)
         return Exception { NotFoundError, ASCIILiteral("Path does not exist") };
 
     if (metadata.value().type != expectedType)
         return Exception { TypeMismatchError, "Entry at path does not have expected type" };
 
     return WTFMove(virtualPath);
+}
+
+static std::optional<FileMetadata::Type> fileType(const String& fullPath)
+{
+    auto metadata = fileMetadata(fullPath);
+    if (!metadata || metadata.value().isHidden)
+        return std::nullopt;
+    return metadata.value().type;
 }
 
 // https://wicg.github.io/entries-api/#resolve-a-relative-path
@@ -297,9 +305,7 @@ void DOMFileSystem::getEntry(ScriptExecutionContext& context, FileSystemDirector
     }
 
     m_workQueue->dispatch([this, context = makeRef(context), fullPath = crossThreadCopy(fullPath), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), completionCallback = WTFMove(completionCallback)]() mutable {
-        std::optional<FileMetadata::Type> entryType;
-        if (auto metadata = fileMetadata(fullPath))
-            entryType = metadata.value().type;
+        auto entryType = fileType(fullPath);
         callOnMainThread([this, context = WTFMove(context), resolvedVirtualPath = crossThreadCopy(resolvedVirtualPath), entryType, completionCallback = WTFMove(completionCallback)]() mutable {
             if (!entryType) {
                 completionCallback(Exception { NotFoundError, ASCIILiteral("Cannot find entry at given path") });

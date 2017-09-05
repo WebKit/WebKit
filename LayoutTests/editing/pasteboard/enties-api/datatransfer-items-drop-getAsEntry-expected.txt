@@ -16,7 +16,7 @@ PASS firstEntry.fullPath is "/test.txt"
 PASS secondDataTransferItem.kind is "file"
 PASS secondDataTransferItem.type is ""
 PASS secondFile.name is "testFiles"
-PASS secondFile.size is 204
+PASS secondFile.size is 272
 PASS secondFile.type is ""
 PASS secondEntry.isDirectory is true
 PASS secondEntry.isFile is false

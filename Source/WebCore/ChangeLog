@@ -1,3 +1,22 @@
+2017-09-05  Chris Dumez  <cdumez@apple.com>
+
+        FileSystemEntry API should ignore hidden files
+        https://bugs.webkit.org/show_bug.cgi?id=176292
+        <rdar://problem/34257666>
+
+        Reviewed by Andreas Kling.
+
+        FileSystemEntry API should ignore hidden files as the user likely does not mean
+        to expose those when drag'n dropping a folder.
+
+        Test: editing/pasteboard/enties-api/datatransfer-items-drop-hidden-file.html
+
+        * Modules/entriesapi/DOMFileSystem.cpp:
+        (WebCore::listDirectoryWithMetadata):
+        (WebCore::validatePathIsExpectedType):
+        (WebCore::fileType):
+        (WebCore::DOMFileSystem::getEntry):
+
 2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Update font selection algorithm to match latest CSS spec
