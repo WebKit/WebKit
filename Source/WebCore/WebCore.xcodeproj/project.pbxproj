@@ -3477,6 +3477,8 @@
 		8358CB6F1C53277200E0C2D8 /* JSXMLDocument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83F570AE1C53268E007FD6CB /* JSXMLDocument.cpp */; };
 		8358CB701C53277500E0C2D8 /* JSXMLDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = 83F570AD1C53268E007FD6CB /* JSXMLDocument.h */; };
 		835B68101F548BE10071F7F6 /* JSFileSystemEntryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */; };
+		835D2D781F5F1FBD00141DED /* HTMLInputElementEntriesAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */; };
+		835D2D791F5F1FC000141DED /* HTMLInputElementEntriesAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835D2D761F5F1FB800141DED /* HTMLInputElementEntriesAPI.cpp */; };
 		835D363719FF6193004C93AB /* StyleBuilderCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D363619FF6193004C93AB /* StyleBuilderCustom.h */; };
 		835D54C41F4DE53800E60671 /* FileListCreator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 835D54C11F4DE53400E60671 /* FileListCreator.cpp */; };
 		835D54C51F4DE53800E60671 /* FileListCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = 835D54C21F4DE53400E60671 /* FileListCreator.h */; };
@@ -3496,6 +3498,8 @@
 		836ACED41ECAAB19004BD012 /* JSDOMMatrixInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 836ACECF1ECAAB04004BD012 /* JSDOMMatrixInit.h */; };
 		836ACED51ECAAB19004BD012 /* JSDOMMatrixReadOnly.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836ACED01ECAAB04004BD012 /* JSDOMMatrixReadOnly.cpp */; };
 		836ACED61ECAAB19004BD012 /* JSDOMMatrixReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 836ACED11ECAAB04004BD012 /* JSDOMMatrixReadOnly.h */; };
+		836B09551F5F34D9003C3702 /* JSHTMLInputElementEntriesAPI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836B09531F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.cpp */; };
+		836B09561F5F34D9003C3702 /* JSHTMLInputElementEntriesAPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 836B09521F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.h */; };
 		836C14431CDEAFD80073493F /* JSXPathNSResolverCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */; };
 		836D032A1DA89B9200FFD96B /* EventInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 836D03281DA89B7300FFD96B /* EventInit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		836D032F1DA8A13A00FFD96B /* JSEventInit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 836D032B1DA8A13200FFD96B /* JSEventInit.cpp */; };
@@ -11701,6 +11705,9 @@
 		83520C7D1A71BFCC006BD2AA /* CSSFontFamily.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFamily.h; sourceTree = "<group>"; };
 		835657C61ECAB0E800CDE72D /* JSDOMMatrixInit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrixInit.cpp; sourceTree = "<group>"; };
 		835B680E1F548BDE0071F7F6 /* JSFileSystemEntryCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFileSystemEntryCustom.cpp; sourceTree = "<group>"; };
+		835D2D741F5F1FB800141DED /* HTMLInputElementEntriesAPI.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLInputElementEntriesAPI.idl; sourceTree = "<group>"; };
+		835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLInputElementEntriesAPI.h; sourceTree = "<group>"; };
+		835D2D761F5F1FB800141DED /* HTMLInputElementEntriesAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLInputElementEntriesAPI.cpp; sourceTree = "<group>"; };
 		835D363619FF6193004C93AB /* StyleBuilderCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleBuilderCustom.h; sourceTree = "<group>"; };
 		835D54C11F4DE53400E60671 /* FileListCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileListCreator.cpp; sourceTree = "<group>"; };
 		835D54C21F4DE53400E60671 /* FileListCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileListCreator.h; sourceTree = "<group>"; };
@@ -11723,6 +11730,8 @@
 		836ACECF1ECAAB04004BD012 /* JSDOMMatrixInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMatrixInit.h; sourceTree = "<group>"; };
 		836ACED01ECAAB04004BD012 /* JSDOMMatrixReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMMatrixReadOnly.cpp; sourceTree = "<group>"; };
 		836ACED11ECAAB04004BD012 /* JSDOMMatrixReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMMatrixReadOnly.h; sourceTree = "<group>"; };
+		836B09521F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLInputElementEntriesAPI.h; sourceTree = "<group>"; };
+		836B09531F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLInputElementEntriesAPI.cpp; sourceTree = "<group>"; };
 		836C14421CDEAFCA0073493F /* JSXPathNSResolverCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXPathNSResolverCustom.cpp; sourceTree = "<group>"; };
 		836D03271DA89B7300FFD96B /* ClipboardEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ClipboardEvent.idl; sourceTree = "<group>"; };
 		836D03281DA89B7300FFD96B /* EventInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInit.h; sourceTree = "<group>"; };
@@ -20235,6 +20244,9 @@
 				83FB33691F508A4E00986E54 /* FileSystemFileEntry.cpp */,
 				83FB336C1F508A4E00986E54 /* FileSystemFileEntry.h */,
 				83FB33671F508A4E00986E54 /* FileSystemFileEntry.idl */,
+				835D2D761F5F1FB800141DED /* HTMLInputElementEntriesAPI.cpp */,
+				835D2D751F5F1FB800141DED /* HTMLInputElementEntriesAPI.h */,
+				835D2D741F5F1FB800141DED /* HTMLInputElementEntriesAPI.idl */,
 			);
 			path = entriesapi;
 			sourceTree = "<group>";
@@ -20260,6 +20272,8 @@
 				837056891F50915000D93425 /* JSFileSystemEntryCallback.h */,
 				833B9E2D1F508D8000E0E428 /* JSFileSystemFileEntry.cpp */,
 				833B9E2C1F508D8000E0E428 /* JSFileSystemFileEntry.h */,
+				836B09531F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.cpp */,
+				836B09521F5F34D0003C3702 /* JSHTMLInputElementEntriesAPI.h */,
 			);
 			name = EntriesAPI;
 			sourceTree = "<group>";
@@ -27005,7 +27019,6 @@
 				073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
 				CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */,
-				7C193BF61F5E10990088F3E6 /* JSCanvasLineJoin.h in Headers */,
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				CD8A7BBC197735FE00CBD643 /* AudioSourceProviderAVFObjC.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
@@ -27139,12 +27152,18 @@
 				952076051F2675FE007D2AAB /* CallTracer.h in Headers */,
 				952076061F2675FE007D2AAB /* CallTracerTypes.h in Headers */,
 				415CDAF51E6B8F8B004F11EE /* CanvasCaptureMediaStreamTrack.h in Headers */,
+				7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */,
+				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,
 				49484FC2102CF23C00187DD3 /* CanvasGradient.h in Headers */,
+				7C193BBD1F5E0EED0088F3E6 /* CanvasLineCap.h in Headers */,
+				7C193BBE1F5E0EED0088F3E6 /* CanvasLineJoin.h in Headers */,
 				4671E0661D67A59600C6B497 /* CanvasPath.h in Headers */,
 				49484FC5102CF23C00187DD3 /* CanvasPattern.h in Headers */,
 				49C7B9DD1042D32F0009D447 /* CanvasRenderingContext.h in Headers */,
 				49484FCB102CF23C00187DD3 /* CanvasRenderingContext2D.h in Headers */,
 				49484FCE102CF23C00187DD3 /* CanvasStyle.h in Headers */,
+				7C193BBF1F5E0EED0088F3E6 /* CanvasTextAlign.h in Headers */,
+				7C193BC01F5E0EED0088F3E6 /* CanvasTextBaseline.h in Headers */,
 				079D0868162F20E800DB8658 /* CaptionUserPreferences.h in Headers */,
 				079D086B162F21F900DB8658 /* CaptionUserPreferencesMediaAF.h in Headers */,
 				07B7116D1D899E63009F0FFB /* CaptureDevice.h in Headers */,
@@ -27228,7 +27247,6 @@
 				CE799FA41C6A503A0097B518 /* ContentSecurityPolicyDirective.h in Headers */,
 				CE799F9C1C6A4BCD0097B518 /* ContentSecurityPolicyDirectiveList.h in Headers */,
 				CE2849871CA360DF00B4A57F /* ContentSecurityPolicyDirectiveNames.h in Headers */,
-				7C193BBB1F5E0EED0088F3E6 /* CanvasDirection.h in Headers */,
 				CE7E17831C83A49100AD06AF /* ContentSecurityPolicyHash.h in Headers */,
 				CE799FA81C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.h in Headers */,
 				CE6DADFA1C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.h in Headers */,
@@ -27337,7 +27355,6 @@
 				31BC742E1AAFF45C006B4340 /* CSSAnimationTriggerScrollValue.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 				94DE5C821D7F3A1400164F2A /* CSSAtRuleID.h in Headers */,
-				7C193BF21F5E10990088F3E6 /* JSCanvasFillRule.h in Headers */,
 				FBD6AF8815EF25C9008B7110 /* CSSBasicShapes.h in Headers */,
 				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
@@ -27794,7 +27811,6 @@
 				A853123D11D0471B00D4D077 /* FragmentScriptingPermission.h in Headers */,
 				65BF022F0974816300C43196 /* Frame.h in Headers */,
 				974A862314B7ADBB003FDC76 /* FrameDestructionObserver.h in Headers */,
-				7C193BF81F5E10990088F3E6 /* JSCanvasTextAlign.h in Headers */,
 				656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */,
 				D000EBA311BDAFD400C47726 /* FrameLoaderStateMachine.h in Headers */,
@@ -27806,7 +27822,6 @@
 				65A21485097A3F5300B9050A /* FrameTree.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* FrameView.h in Headers */,
 				97205AB0123928CA00B17380 /* FTPDirectoryDocument.h in Headers */,
-				7C193C031F5E11050088F3E6 /* JSPath2D.h in Headers */,
 				51C81B8A0C4422F70019ECE3 /* FTPDirectoryParser.h in Headers */,
 				26B999931803B9D900D01121 /* FunctionCall.h in Headers */,
 				FD31600D12B0267600C1A359 /* GainNode.h in Headers */,
@@ -27948,6 +27963,7 @@
 				A8EA7D2D0A19385500A8EF5F /* HTMLImageElement.h in Headers */,
 				A8EA7D2B0A19385500A8EF5F /* HTMLImageLoader.h in Headers */,
 				A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */,
+				835D2D781F5F1FBD00141DED /* HTMLInputElementEntriesAPI.h in Headers */,
 				97BC849B12370A4B000C6161 /* HTMLInputStream.h in Headers */,
 				93309DE6099E64920056E581 /* HTMLInterchange.h in Headers */,
 				A81369E4097374F600D74463 /* HTMLKeygenElement.h in Headers */,
@@ -28058,7 +28074,6 @@
 				5185FC9E1BB4C4E80012898F /* IDBKeyRangeData.h in Headers */,
 				5185FCA01BB4C4E80012898F /* IDBObjectStore.h in Headers */,
 				5160712F1BD8307800DBC4F2 /* IDBObjectStoreInfo.h in Headers */,
-				7C193BC01F5E0EED0088F3E6 /* CanvasTextBaseline.h in Headers */,
 				5185FCA41BB4C4E80012898F /* IDBOpenDBRequest.h in Headers */,
 				5185FCA71BB4C4E80012898F /* IDBRecordIdentifier.h in Headers */,
 				5185FCA91BB4C4E80012898F /* IDBRequest.h in Headers */,
@@ -28102,13 +28117,13 @@
 				2D5A5931152525D00036EE51 /* ImageOrientation.h in Headers */,
 				B51A2F3F17D7D3AE0072517A /* ImageQualityController.h in Headers */,
 				49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */,
+				7C193BC11F5E0EED0088F3E6 /* ImageSmoothingQuality.h in Headers */,
 				B27535710B053814002CE64F /* ImageSource.h in Headers */,
 				4B3480940EEF50D400AC1B41 /* ImageSourceCG.h in Headers */,
 				5550CB421E955E3C00111AA0 /* ImageTypes.h in Headers */,
 				26F756B31B3B66F70005DD79 /* ImmutableNFA.h in Headers */,
 				26F756B51B3B68F20005DD79 /* ImmutableNFANodeBuilder.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
-				7C193BC21F5E0EED0088F3E6 /* Path2D.h in Headers */,
 				BE961C5518AD338C00D07DC5 /* InbandDataTextTrack.h in Headers */,
 				BE16C59317CFE17200852C04 /* InbandGenericTextTrack.h in Headers */,
 				07E9E12E18F5E2760011A3A4 /* InbandMetadataTextTrackPrivateAVF.h in Headers */,
@@ -28234,9 +28249,15 @@
 				7CE191731F2ABE7100272F7A /* JSCacheStorage.h in Headers */,
 				1449E24C107D4A8400B5793F /* JSCallbackData.h in Headers */,
 				07277E4D17D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.h in Headers */,
+				7C193BF01F5E10990088F3E6 /* JSCanvasDirection.h in Headers */,
+				7C193BF21F5E10990088F3E6 /* JSCanvasFillRule.h in Headers */,
 				65DF323A09D1DE65000BE325 /* JSCanvasGradient.h in Headers */,
+				7C193BF41F5E10990088F3E6 /* JSCanvasLineCap.h in Headers */,
+				7C193BF61F5E10990088F3E6 /* JSCanvasLineJoin.h in Headers */,
 				65DF323C09D1DE65000BE325 /* JSCanvasPattern.h in Headers */,
 				49EED1451051969400099FAB /* JSCanvasRenderingContext2D.h in Headers */,
+				7C193BF81F5E10990088F3E6 /* JSCanvasTextAlign.h in Headers */,
+				7C193BFA1F5E10990088F3E6 /* JSCanvasTextBaseline.h in Headers */,
 				93F9B7A10BA6032600854064 /* JSCDATASection.h in Headers */,
 				FDA15EA212B03EE1003A583A /* JSChannelMergerNode.h in Headers */,
 				FDA15EA412B03EE1003A583A /* JSChannelSplitterNode.h in Headers */,
@@ -28480,6 +28501,7 @@
 				BC4918C90BFEA050009D6316 /* JSHTMLIFrameElement.h in Headers */,
 				1AE2AA980A1CDD2D00B42B25 /* JSHTMLImageElement.h in Headers */,
 				A80E7E970A1A83E3007FB8C5 /* JSHTMLInputElement.h in Headers */,
+				836B09561F5F34D9003C3702 /* JSHTMLInputElementEntriesAPI.h in Headers */,
 				A6148A7912E41E3B0044A784 /* JSHTMLKeygenElement.h in Headers */,
 				1AE2AB220A1CE63B00B42B25 /* JSHTMLLabelElement.h in Headers */,
 				1AE2AB240A1CE63B00B42B25 /* JSHTMLLegendElement.h in Headers */,
@@ -28536,6 +28558,7 @@
 				838EF53C1DC14A7C008F0C39 /* JSIDBTransactionMode.h in Headers */,
 				269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */,
 				A77979290D6B9E64003851B9 /* JSImageData.h in Headers */,
+				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				A86629D309DA2B48009633A6 /* JSInputEvent.h in Headers */,
 				7A0E771F10C00DB100A0276E /* JSInspectorFrontendHost.h in Headers */,
 				0F4710E61DB700C7002DCEC3 /* JSIntersectionObserver.h in Headers */,
@@ -28564,7 +28587,6 @@
 				2D9BF72D1DBFDB19007A7D99 /* JSMediaKeySystemConfiguration.h in Headers */,
 				2D9BF72E1DBFDB1C007A7D99 /* JSMediaKeySystemMediaCapability.h in Headers */,
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
-				7C193BF01F5E10990088F3E6 /* JSCanvasDirection.h in Headers */,
 				93D437A31D57B7E200AB85EA /* JSMediaListCustom.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
 				7C5343FD17B74B63004232F0 /* JSMediaQueryListListener.h in Headers */,
@@ -28609,7 +28631,6 @@
 				77A17AA712F28B2A004E02F6 /* JSOESVertexArrayObject.h in Headers */,
 				FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */,
 				FDA9326716703BA9008982DC /* JSOfflineAudioContext.h in Headers */,
-				7C193BBF1F5E0EED0088F3E6 /* CanvasTextAlign.h in Headers */,
 				57E233651DC7DB1F00F28D01 /* JsonWebKey.h in Headers */,
 				FDEA6243152102E200479DF0 /* JSOscillatorNode.h in Headers */,
 				0704A40C1D6DFC690086DCDB /* JSOverconstrainedError.h in Headers */,
@@ -28619,6 +28640,7 @@
 				FDA15EB212B03EE1003A583A /* JSPannerNode.h in Headers */,
 				57B5F7F11E5B8C5A00F34F90 /* JSPasswordCredential.h in Headers */,
 				77D50FF81ED4D9A000DA4C87 /* JSPasswordCredentialData.h in Headers */,
+				7C193C031F5E11050088F3E6 /* JSPath2D.h in Headers */,
 				A1CC56671F46147A00A4555B /* JSPaymentAddress.h in Headers */,
 				A1CC56691F46148000A4555B /* JSPaymentComplete.h in Headers */,
 				A1CC566B1F46148500A4555B /* JSPaymentCurrencyAmount.h in Headers */,
@@ -28720,7 +28742,6 @@
 				B59DD6A911902A71007E9684 /* JSSQLStatementErrorCallback.h in Headers */,
 				BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */,
 				B59DD69D11902A42007E9684 /* JSSQLTransactionCallback.h in Headers */,
-				7C193BBD1F5E0EED0088F3E6 /* CanvasLineCap.h in Headers */,
 				B59DD6A111902A52007E9684 /* JSSQLTransactionErrorCallback.h in Headers */,
 				A86629D309DA2B48009633A7 /* JSStaticRange.h in Headers */,
 				51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */,
@@ -29230,7 +29251,6 @@
 				979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */,
 				A9C6E5A60D746458006442E9 /* Navigator.h in Headers */,
 				E12719C70EEEC16800F61213 /* NavigatorBase.h in Headers */,
-				7C193BFA1F5E10990088F3E6 /* JSCanvasTextBaseline.h in Headers */,
 				8321507E1F27EA1B0095B136 /* NavigatorBeacon.h in Headers */,
 				77D510201ED72D5F00DA4C87 /* NavigatorCredentials.h in Headers */,
 				9711460414EF009A00674FD9 /* NavigatorGeolocation.h in Headers */,
@@ -29343,6 +29363,7 @@
 				1AF5E4E31E5779B1004A1F01 /* PasteboardWriter.h in Headers */,
 				1AF5E4D51E56735B004A1F01 /* PasteboardWriterData.h in Headers */,
 				B27535800B053814002CE64F /* Path.h in Headers */,
+				7C193BC21F5E0EED0088F3E6 /* Path2D.h in Headers */,
 				A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */,
 				2D5002FC1B56D7990020AAF7 /* PathUtilities.h in Headers */,
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
@@ -29401,7 +29422,6 @@
 				0F5E200618E771FC003EC3E5 /* PlatformCAAnimationCocoa.h in Headers */,
 				0F13163E16ED0CC80035CC04 /* PlatformCAFilters.h in Headers */,
 				499B3EC5128CCC4700E726C2 /* PlatformCALayer.h in Headers */,
-				7C193BC11F5E0EED0088F3E6 /* ImageSmoothingQuality.h in Headers */,
 				493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */,
 				2D70BA1318074DDF0001908A /* PlatformCALayerCocoa.h in Headers */,
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
@@ -29517,7 +29537,6 @@
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
-				7C193BF41F5E10990088F3E6 /* JSCanvasLineCap.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */,
 				26B9998F1803AE7200D01121 /* RegisterAllocator.h in Headers */,
@@ -29546,7 +29565,6 @@
 				9B32CDA913DF7FA900F34D13 /* RenderedPosition.h in Headers */,
 				E43A023B17EB370A004CDD25 /* RenderElement.h in Headers */,
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
-				7C193BBC1F5E0EED0088F3E6 /* CanvasFillRule.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */,
@@ -29887,7 +29905,6 @@
 				FD45A95B175D41EE00C21EC8 /* ShapeInterval.h in Headers */,
 				FD45A952175D3F3E00C21EC8 /* ShapeOutsideInfo.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ShapeValue.h in Headers */,
-				7C193BBE1F5E0EED0088F3E6 /* CanvasLineJoin.h in Headers */,
 				1A4A954E0B4EDCCB002D8C3C /* SharedBuffer.h in Headers */,
 				93309EA3099EB78C0056E581 /* SharedTimer.h in Headers */,
 				E48944A3180B57D800F165D8 /* SimpleLineLayout.h in Headers */,
@@ -30102,7 +30119,6 @@
 				B22279C00D00BF220071B782 /* SVGEllipseElement.h in Headers */,
 				B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */,
 				B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */,
-				7C193C011F5E11050088F3E6 /* JSImageSmoothingQuality.h in Headers */,
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
@@ -31114,7 +31130,6 @@
 				CE7B2DB41586ABAD0098B3FA /* AlternativeTextUIController.mm in Sources */,
 				FD31603D12B0267600C1A359 /* AnalyserNode.cpp in Sources */,
 				31A795C81888BCB500382F90 /* ANGLEInstancedArrays.cpp in Sources */,
-				7C193BF31F5E10990088F3E6 /* JSCanvasLineCap.cpp in Sources */,
 				490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */,
 				49E912AA0EFAC906009D0CAF /* Animation.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
@@ -31397,7 +31412,6 @@
 				570440531E5278B200356601 /* CryptoAlgorithmAES_CFB.cpp in Sources */,
 				570440581E53851600356601 /* CryptoAlgorithmAES_CFBMac.cpp in Sources */,
 				57E1E5A21E8C91B500EE37C9 /* CryptoAlgorithmAES_CTR.cpp in Sources */,
-				7C193BF11F5E10990088F3E6 /* JSCanvasFillRule.cpp in Sources */,
 				57E1E5B11E8DD3A100EE37C9 /* CryptoAlgorithmAES_CTRMac.cpp in Sources */,
 				57B5F7F81E5BE84000F34F90 /* CryptoAlgorithmAES_GCM.cpp in Sources */,
 				57B5F80E1E5D2F2D00F34F90 /* CryptoAlgorithmAES_GCMMac.cpp in Sources */,
@@ -31945,7 +31959,6 @@
 				A8CFF7A40A156978000A4234 /* HTMLAnchorElement.cpp in Sources */,
 				A871D45E0A127CBC00B12A68 /* HTMLAppletElement.cpp in Sources */,
 				A8EA7D2F0A19385500A8EF5F /* HTMLAreaElement.cpp in Sources */,
-				7C193C001F5E11050088F3E6 /* JSImageSmoothingQuality.cpp in Sources */,
 				7C5F28FB1A827D8400C0F31F /* HTMLAttachmentElement.cpp in Sources */,
 				E44613A10CD6331000FADA75 /* HTMLAudioElement.cpp in Sources */,
 				A871DC2A0A15205700B12A68 /* HTMLBaseElement.cpp in Sources */,
@@ -31990,6 +32003,7 @@
 				A8EA7D310A19385500A8EF5F /* HTMLImageElement.cpp in Sources */,
 				A8EA7D300A19385500A8EF5F /* HTMLImageLoader.cpp in Sources */,
 				A81369CD097374F600D74463 /* HTMLInputElement.cpp in Sources */,
+				835D2D791F5F1FC000141DED /* HTMLInputElementEntriesAPI.cpp in Sources */,
 				93309DE5099E64920056E581 /* HTMLInterchange.cpp in Sources */,
 				A81369E5097374F600D74463 /* HTMLKeygenElement.cpp in Sources */,
 				A81369E3097374F600D74463 /* HTMLLabelElement.cpp in Sources */,
@@ -32262,10 +32276,16 @@
 				7CE191721F2ABE7100272F7A /* JSCacheStorage.cpp in Sources */,
 				1449E287107D4DB400B5793F /* JSCallbackData.cpp in Sources */,
 				07277E4C17D018CC0015534E /* JSCanvasCaptureMediaStreamTrack.cpp in Sources */,
+				7C193BEF1F5E10990088F3E6 /* JSCanvasDirection.cpp in Sources */,
+				7C193BF11F5E10990088F3E6 /* JSCanvasFillRule.cpp in Sources */,
 				65DF323909D1DE65000BE325 /* JSCanvasGradient.cpp in Sources */,
+				7C193BF31F5E10990088F3E6 /* JSCanvasLineCap.cpp in Sources */,
+				7C193BF51F5E10990088F3E6 /* JSCanvasLineJoin.cpp in Sources */,
 				65DF323B09D1DE65000BE325 /* JSCanvasPattern.cpp in Sources */,
 				49EED1441051969400099FAB /* JSCanvasRenderingContext2D.cpp in Sources */,
 				49EED14E1051971A00099FAB /* JSCanvasRenderingContext2DCustom.cpp in Sources */,
+				7C193BF71F5E10990088F3E6 /* JSCanvasTextAlign.cpp in Sources */,
+				7C193BF91F5E10990088F3E6 /* JSCanvasTextBaseline.cpp in Sources */,
 				93F9B7A00BA6032600854064 /* JSCDATASection.cpp in Sources */,
 				FDA15EA112B03EE1003A583A /* JSChannelMergerNode.cpp in Sources */,
 				FDA15EA312B03EE1003A583A /* JSChannelSplitterNode.cpp in Sources */,
@@ -32309,7 +32329,6 @@
 				BC5825F30C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp in Sources */,
 				BC46C2060C0DDCA10020CFC3 /* JSCSSStyleRule.cpp in Sources */,
 				BCC5BE000C0E93110011C2DB /* JSCSSStyleSheet.cpp in Sources */,
-				7C193BF91F5E10990088F3E6 /* JSCanvasTextBaseline.cpp in Sources */,
 				FD67773A195CB14A0072E0D3 /* JSCSSSupportsRule.cpp in Sources */,
 				9BD4E9161C462872005065BC /* JSCustomElementInterface.cpp in Sources */,
 				9BE6710B1D5AEB2100345514 /* JSCustomElementRegistry.cpp in Sources */,
@@ -32501,11 +32520,11 @@
 				BC4918C80BFEA050009D6316 /* JSHTMLIFrameElement.cpp in Sources */,
 				1AE2AA970A1CDD2D00B42B25 /* JSHTMLImageElement.cpp in Sources */,
 				A80E7E980A1A83E3007FB8C5 /* JSHTMLInputElement.cpp in Sources */,
+				836B09551F5F34D9003C3702 /* JSHTMLInputElementEntriesAPI.cpp in Sources */,
 				A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */,
 				1AE2AB210A1CE63B00B42B25 /* JSHTMLLabelElement.cpp in Sources */,
 				1AE2AB230A1CE63B00B42B25 /* JSHTMLLegendElement.cpp in Sources */,
 				1AE2AB250A1CE63B00B42B25 /* JSHTMLLIElement.cpp in Sources */,
-				7C193BF71F5E10990088F3E6 /* JSCanvasTextAlign.cpp in Sources */,
 				A80E7B100A19D606007FB8C5 /* JSHTMLLinkElement.cpp in Sources */,
 				1AE2AB270A1CE63B00B42B25 /* JSHTMLMapElement.cpp in Sources */,
 				BC491B780C023EFD009D6316 /* JSHTMLMarqueeElement.cpp in Sources */,
@@ -32567,6 +32586,7 @@
 				511EF2CB17F0FD3500E4FA16 /* JSIDBVersionChangeEvent.cpp in Sources */,
 				A77979280D6B9E64003851B9 /* JSImageData.cpp in Sources */,
 				A7D0318E0E93540300E24ACD /* JSImageDataCustom.cpp in Sources */,
+				7C193C001F5E11050088F3E6 /* JSImageSmoothingQuality.cpp in Sources */,
 				A86629D409DA2B48009633A6 /* JSInputEvent.cpp in Sources */,
 				7A0E771E10C00DB100A0276E /* JSInspectorFrontendHost.cpp in Sources */,
 				0F4710E51DB700C7002DCEC3 /* JSIntersectionObserver.cpp in Sources */,
@@ -32657,6 +32677,7 @@
 				FDA15EB112B03EE1003A583A /* JSPannerNode.cpp in Sources */,
 				57B5F7F01E5B8C5A00F34F90 /* JSPasswordCredential.cpp in Sources */,
 				77D50FF91ED4D9A400DA4C87 /* JSPasswordCredentialData.cpp in Sources */,
+				7C193C021F5E11050088F3E6 /* JSPath2D.cpp in Sources */,
 				A1CC56661F46147400A4555B /* JSPaymentAddress.cpp in Sources */,
 				A1CC56681F46147D00A4555B /* JSPaymentComplete.cpp in Sources */,
 				A1CC566A1F46148200A4555B /* JSPaymentCurrencyAmount.cpp in Sources */,
@@ -33137,7 +33158,6 @@
 				05D913CEEAB2A60534218ACF /* MathMLMencloseElement.cpp in Sources */,
 				FABE72FE1059C21100D999DD /* MathMLNames.cpp in Sources */,
 				16EA24CEEAB2A60534218ACF /* MathMLOperatorDictionary.cpp in Sources */,
-				7C193C021F5E11050088F3E6 /* JSPath2D.cpp in Sources */,
 				FA654A6B1108ABED002616F1 /* MathMLOperatorElement.cpp in Sources */,
 				B59CA390CED66C3255F72C59 /* MathMLPaddedElement.cpp in Sources */,
 				FABE72F61059C1EB00D999DD /* MathMLPresentationElement.cpp in Sources */,
@@ -33266,7 +33286,6 @@
 				C6F0900E14327B6100685849 /* MutationObserver.cpp in Sources */,
 				D6E528A3149A926D00EFE1F3 /* MutationObserverInterestGroup.cpp in Sources */,
 				D6E276AF14637455001D280A /* MutationObserverRegistration.cpp in Sources */,
-				7C193BEF1F5E10990088F3E6 /* JSCanvasDirection.cpp in Sources */,
 				C6F08FBC1430FE8F00685849 /* MutationRecord.cpp in Sources */,
 				52B6C9C515E3F4DF00690B05 /* NamedFlowCollection.cpp in Sources */,
 				314BE3A61B3103FB00141982 /* NamedImageGeneratedImage.cpp in Sources */,
@@ -33363,6 +33382,7 @@
 				1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */,
 				1AF5E4D41E56735B004A1F01 /* PasteboardWriterData.cpp in Sources */,
 				B275357F0B053814002CE64F /* Path.cpp in Sources */,
+				7C193C061F5E1FFD0088F3E6 /* Path2D.cpp in Sources */,
 				B27535630B053814002CE64F /* PathCG.cpp in Sources */,
 				A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */,
 				2D5002FB1B56D7990020AAF7 /* PathUtilities.cpp in Sources */,
@@ -33424,7 +33444,6 @@
 				CDA29A301CBF74D400901CCF /* PlaybackSessionInterfaceAVKit.mm in Sources */,
 				CDA29A161CBDA56C00901CCF /* PlaybackSessionInterfaceMac.mm in Sources */,
 				CDA29A0E1CBD9CFE00901CCF /* PlaybackSessionModelMediaElement.mm in Sources */,
-				7C193BF51F5E10990088F3E6 /* JSCanvasLineJoin.cpp in Sources */,
 				1AFFC4551D5E81D000267A66 /* PluginBlacklist.mm in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
 				97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */,
@@ -34353,7 +34372,6 @@
 				31A089131E737D51003B6609 /* WebGPURenderPassDescriptor.cpp in Sources */,
 				31A089141E737D51003B6609 /* WebGPURenderPipelineColorAttachmentDescriptor.cpp in Sources */,
 				31A089151E737D51003B6609 /* WebGPURenderPipelineDescriptor.cpp in Sources */,
-				7C193C061F5E1FFD0088F3E6 /* Path2D.cpp in Sources */,
 				31A089161E737D51003B6609 /* WebGPURenderPipelineState.cpp in Sources */,
 				31A089171E737D51003B6609 /* WebGPUTexture.cpp in Sources */,
 				31A089181E737D51003B6609 /* WebGPUTextureDescriptor.cpp in Sources */,

@@ -1,3 +1,20 @@
+2017-09-05  Chris Dumez  <cdumez@apple.com>
+
+        Add support for input.webkitEntries
+        https://bugs.webkit.org/show_bug.cgi?id=176257
+        <rdar://problem/34218671>
+
+        Reviewed by Andreas Kling.
+
+        Add layout test coverage.
+
+        * fast/forms/file/entries-api/drag-folder-webkitEntries-expected.txt: Added.
+        * fast/forms/file/entries-api/drag-folder-webkitEntries.html: Added.
+        * fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries-expected.txt: Added.
+        * fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html: Added.
+        * http/wpt/entries-api/interfaces-expected.txt:
+        * platform/wk2/TestExpectations:
+
 2017-09-05  Per Arne Vollan  <pvollan@apple.com>
 
         Marked imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/001.html as slow.

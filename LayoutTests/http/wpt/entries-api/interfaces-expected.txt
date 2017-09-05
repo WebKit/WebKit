@@ -60,10 +60,10 @@ PASS File must be primary interface of new File(["myFileBits"], "myFileName")
 PASS Stringification of new File(["myFileBits"], "myFileName") 
 PASS File interface: new File(["myFileBits"], "myFileName") must inherit property "webkitRelativePath" with the proper type (0) 
 PASS HTMLInputElement interface: attribute webkitdirectory 
-FAIL HTMLInputElement interface: attribute webkitEntries assert_true: The prototype object must have a property "webkitEntries" expected true got false
+PASS HTMLInputElement interface: attribute webkitEntries 
 PASS HTMLInputElement must be primary interface of file_input 
 PASS Stringification of file_input 
 PASS HTMLInputElement interface: file_input must inherit property "webkitdirectory" with the proper type (0) 
-FAIL HTMLInputElement interface: file_input must inherit property "webkitEntries" with the proper type (1) assert_inherits: property "webkitEntries" not found in prototype chain
+PASS HTMLInputElement interface: file_input must inherit property "webkitEntries" with the proper type (1) 
 PASS DataTransferItem interface: operation webkitGetAsEntry() 
 

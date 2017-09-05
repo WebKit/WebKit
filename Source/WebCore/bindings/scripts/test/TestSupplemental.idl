@@ -38,6 +38,8 @@
     [CustomGetter, CustomSetter] attribute DOMString supplementalStr3;
     attribute Node supplementalNode;
 
+    [Reflect] attribute DOMString reflectAttribute;
+
     void supplementalMethod1();
     [CallWith=ScriptExecutionContext, MayThrowException] TestObj supplementalMethod2(DOMString strArg, TestObj objArg);
     [Custom] void supplementalMethod3();

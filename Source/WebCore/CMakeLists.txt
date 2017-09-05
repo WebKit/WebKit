@@ -212,6 +212,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/entriesapi/FileSystemEntry.idl
     Modules/entriesapi/FileSystemEntryCallback.idl
     Modules/entriesapi/FileSystemFileEntry.idl
+    Modules/entriesapi/HTMLInputElementEntriesAPI.idl
 
     Modules/fetch/DOMWindowFetch.idl
     Modules/fetch/FetchBody.idl
@@ -954,6 +955,7 @@ set(WebCore_SOURCES
     Modules/entriesapi/FileSystemEntriesCallback.cpp
     Modules/entriesapi/FileSystemEntry.cpp
     Modules/entriesapi/FileSystemFileEntry.cpp
+    Modules/entriesapi/HTMLInputElementEntriesAPI.cpp
 
     Modules/fetch/DOMWindowFetch.cpp
     Modules/fetch/FetchBody.cpp

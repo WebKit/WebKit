@@ -1,5 +1,38 @@
 2017-09-05  Chris Dumez  <cdumez@apple.com>
 
+        Add support for input.webkitEntries
+        https://bugs.webkit.org/show_bug.cgi?id=176257
+        <rdar://problem/34218671>
+
+        Reviewed by Andreas Kling.
+
+        Add support for input.webkitEntries as per:
+        - https://wicg.github.io/entries-api/#html-forms
+
+        Our behavior matches Chrome and Firefox, rather than the specification. This means
+        that webkitEntries is only populated if the webkitdirectory flag is unset.
+
+        Tests: fast/forms/file/entries-api/drag-folder-webkitEntries.html
+               fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.cpp: Added.
+        (WebCore::HTMLInputElementEntriesAPI::webkitEntries):
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.h: Added.
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/generate-bindings.pl:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::jsTestInterfaceReflectAttributeGetter):
+        (WebCore::jsTestInterfaceReflectAttribute):
+        (WebCore::setJSTestInterfaceReflectAttributeSetter):
+        (WebCore::setJSTestInterfaceReflectAttribute):
+        * bindings/scripts/test/TestSupplemental.idl:
+        * html/HTMLInputElement.idl:
+
+2017-09-05  Chris Dumez  <cdumez@apple.com>
+
         FileSystemEntry API should ignore hidden files
         https://bugs.webkit.org/show_bug.cgi?id=176292
         <rdar://problem/34257666>

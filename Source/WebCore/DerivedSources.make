@@ -143,6 +143,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/entriesapi/FileSystemEntry.idl \
     $(WebCore)/Modules/entriesapi/FileSystemEntryCallback.idl \
     $(WebCore)/Modules/entriesapi/FileSystemFileEntry.idl \
+    $(WebCore)/Modules/entriesapi/HTMLInputElementEntriesAPI.idl \
     $(WebCore)/Modules/fetch/DOMWindowFetch.idl \
     $(WebCore)/Modules/fetch/FetchBody.idl \
     $(WebCore)/Modules/fetch/FetchHeaders.idl \

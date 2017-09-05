@@ -170,7 +170,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
                 next unless shouldPropertyBeExposed($attribute, \@targetGlobalContexts);
 
                 # Record that this attribute is implemented by $interfaceName.
-                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial;
+                $attribute->extendedAttributes->{"ImplementedBy"} = $interfaceName if $interface->isPartial && !$attribute->extendedAttributes->{Reflect};
 
                 # Add interface-wide extended attributes to each attribute.
                 foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {

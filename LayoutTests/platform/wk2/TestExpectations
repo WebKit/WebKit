@@ -596,7 +596,9 @@ fast/files/workers/worker-read-blob-async.html
 fast/files/workers/worker-read-blob-sync.html
 fast/files/workers/worker-read-file-async.html
 fast/files/workers/worker-read-file-sync.html
+fast/forms/file/entries-api/drag-folder-webkitEntries.html
 fast/forms/file/entries-api/webkitdirectory-drag-folder.html
+fast/forms/file/entries-api/webkitdirectory-drag-folder-webkitEntries.html
 fast/forms/file/file-input-change-event.html
 fast/forms/file/file-input-reset.html
 fast/forms/file/get-file-upload.html

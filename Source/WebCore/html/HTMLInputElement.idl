@@ -92,10 +92,4 @@
 
     // See http://www.w3.org/TR/html-media-capture/
     [Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;
-
-    // https://wicg.github.io/entries-api/#dom-htmlinputelement-webkitdirectory
-    [Reflect, EnabledAtRuntime=DirectoryUpload] attribute boolean webkitdirectory;
-    // In Chrome & Firefox, webkitEntries is only populated if webkitdirectory is not set and the files were
-    // dragged and dropped (not when the element is clicked).
-    // [EnabledAtRuntime=DirectoryUpload] readonly attribute FrozenArray<FileSystemEntry> webkitEntries;
 };

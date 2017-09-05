@@ -24,6 +24,7 @@
 
 #include "JSTestInterface.h"
 
+#include "HTMLNames.h"
 #include "JSDOMAttribute.h"
 #include "JSDOMBinding.h"
 #include "JSDOMConstructor.h"
@@ -129,6 +130,10 @@ bool setJSTestInterfaceSupplementalStr3(JSC::ExecState*, JSC::EncodedJSValue, JS
 #if ENABLE(Condition11) || ENABLE(Condition12)
 JSC::EncodedJSValue jsTestInterfaceSupplementalNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestInterfaceSupplementalNode(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+JSC::EncodedJSValue jsTestInterfaceReflectAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
+bool setJSTestInterfaceReflectAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #endif
 
 class JSTestInterfacePrototype : public JSC::JSNonFinalObject {
@@ -305,6 +310,11 @@ static const HashTableValue JSTestInterfacePrototypeTableValues[] =
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
     { "supplementalNode", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceSupplementalNode), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceSupplementalNode) } },
+#else
+    { 0, 0, NoIntrinsic, { 0, 0 } },
+#endif
+#if ENABLE(Condition11) || ENABLE(Condition12)
+    { "reflectAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestInterfaceReflectAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestInterfaceReflectAttribute) } },
 #else
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
@@ -782,6 +792,42 @@ static inline bool setJSTestInterfaceSupplementalNodeSetter(ExecState& state, JS
 bool setJSTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceSupplementalNodeSetter>(*state, thisValue, encodedValue, "supplementalNode");
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+static inline JSValue jsTestInterfaceReflectAttributeGetter(ExecState& state, JSTestInterface& thisObject, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(throwScope);
+    UNUSED_PARAM(state);
+    auto& impl = thisObject.wrapped();
+    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr));
+    return result;
+}
+
+EncodedJSValue jsTestInterfaceReflectAttribute(ExecState* state, EncodedJSValue thisValue, PropertyName)
+{
+    return IDLAttribute<JSTestInterface>::get<jsTestInterfaceReflectAttributeGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "reflectAttribute");
+}
+
+#endif
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+static inline bool setJSTestInterfaceReflectAttributeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
+{
+    UNUSED_PARAM(state);
+    UNUSED_PARAM(throwScope);
+    auto& impl = thisObject.wrapped();
+    auto nativeValue = convert<IDLDOMString>(state, value);
+    RETURN_IF_EXCEPTION(throwScope, false);
+    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
+    return true;
+}
+
+bool setJSTestInterfaceReflectAttribute(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
+{
+    return IDLAttribute<JSTestInterface>::set<setJSTestInterfaceReflectAttributeSetter>(*state, thisValue, encodedValue, "reflectAttribute");
 }
 
 #endif
