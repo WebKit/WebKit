@@ -705,3 +705,5 @@ webkit.org/b/172662 [ Debug ] http/tests/cache/disk-cache/redirect-chain-limits.
 
 webkit.org/b/174471 webrtc/filtering-ice-candidate-after-reload.html [ Pass Timeout ]
 
+webkit.org/b/175678 media/W3C/video/events/event_progress.html [ Pass Failure ]
+
