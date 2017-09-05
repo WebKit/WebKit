@@ -26,8 +26,10 @@
  */
 
 [
-    NoInterfaceObject
+    NoInterfaceObject,
+    Exposed=(Window,Worker)
 ] interface CanvasPath {
+    // shared path API methods
     void closePath();
     void moveTo(unrestricted double x, unrestricted double y);
     void lineTo(unrestricted double x, unrestricted double y);

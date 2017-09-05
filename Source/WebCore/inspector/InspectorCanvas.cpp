@@ -31,7 +31,6 @@
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
-#include "DOMPath.h"
 #include "Document.h"
 #include "FloatPoint.h"
 #include "Frame.h"
@@ -45,7 +44,15 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
+#include "JSCanvasDirection.h"
+#include "JSCanvasFillRule.h"
+#include "JSCanvasLineCap.h"
+#include "JSCanvasLineJoin.h"
+#include "JSCanvasTextAlign.h"
+#include "JSCanvasTextBaseline.h"
+#include "JSImageSmoothingQuality.h"
 #include "JSMainThreadExecState.h"
+#include "Path2D.h"
 #include "Pattern.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
@@ -397,8 +404,8 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         attributes->setDouble(ASCIILiteral("globalAlpha"), context2d->globalAlpha());
         attributes->setInteger(ASCIILiteral("globalCompositeOperation"), indexForData(context2d->globalCompositeOperation()));
         attributes->setDouble(ASCIILiteral("lineWidth"), context2d->lineWidth());
-        attributes->setInteger(ASCIILiteral("lineCap"), indexForData(context2d->lineCap()));
-        attributes->setInteger(ASCIILiteral("lineJoin"), indexForData(context2d->lineJoin()));
+        attributes->setInteger(ASCIILiteral("lineCap"), indexForData(convertEnumerationToString(context2d->lineCap())));
+        attributes->setInteger(ASCIILiteral("lineJoin"), indexForData(convertEnumerationToString(context2d->lineJoin())));
         attributes->setDouble(ASCIILiteral("miterLimit"), context2d->miterLimit());
         attributes->setDouble(ASCIILiteral("shadowOffsetX"), context2d->shadowOffsetX());
         attributes->setDouble(ASCIILiteral("shadowOffsetY"), context2d->shadowOffsetY());
@@ -413,9 +420,9 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
 
         attributes->setDouble(ASCIILiteral("lineDashOffset"), context2d->lineDashOffset());
         attributes->setInteger(ASCIILiteral("font"), indexForData(context2d->font()));
-        attributes->setInteger(ASCIILiteral("textAlign"), indexForData(context2d->textAlign()));
-        attributes->setInteger(ASCIILiteral("textBaseline"), indexForData(context2d->textBaseline()));
-        attributes->setInteger(ASCIILiteral("direction"), indexForData(context2d->direction()));
+        attributes->setInteger(ASCIILiteral("textAlign"), indexForData(convertEnumerationToString(context2d->textAlign())));
+        attributes->setInteger(ASCIILiteral("textBaseline"), indexForData(convertEnumerationToString(context2d->textBaseline())));
+        attributes->setInteger(ASCIILiteral("direction"), indexForData(convertEnumerationToString(context2d->direction())));
 
         int strokeStyleIndex;
         if (CanvasGradient* canvasGradient = state.strokeStyle.canvasGradient())
@@ -436,7 +443,7 @@ RefPtr<Inspector::Protocol::Recording::InitialState> InspectorCanvas::buildIniti
         attributes->setInteger(ASCIILiteral("fillStyle"), fillStyleIndex);
 
         attributes->setBoolean(ASCIILiteral("imageSmoothingEnabled"), context2d->imageSmoothingEnabled());
-        attributes->setInteger(ASCIILiteral("imageSmoothingQuality"), indexForData(CanvasRenderingContext2D::stringForImageSmoothingQuality(context2d->imageSmoothingQuality())));
+        attributes->setInteger(ASCIILiteral("imageSmoothingQuality"), indexForData(convertEnumerationToString(context2d->imageSmoothingQuality())));
 
         auto setPath = Inspector::Protocol::Array<InspectorValue>::create();
         setPath->addItem(indexForData(buildStringFromPath(context2d->getPath()->path())));
@@ -477,13 +484,26 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
     RefPtr<Inspector::Protocol::Array<InspectorValue>> parametersData = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
     for (RecordCanvasActionVariant& item : parameters) {
         WTF::switchOn(item,
-            [&] (const CanvasRenderingContext2D::WindingRule& value) {
-                String windingRule = CanvasRenderingContext2D::stringForWindingRule(value);
-                parametersData->addItem(indexForData(windingRule));
+            [&] (CanvasFillRule value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
             },
-            [&] (const CanvasRenderingContext2D::ImageSmoothingQuality& value) {
-                String imageSmoothingQuality = CanvasRenderingContext2D::stringForImageSmoothingQuality(value);
-                parametersData->addItem(indexForData(imageSmoothingQuality));
+            [&] (ImageSmoothingQuality value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
+            },
+            [&] (CanvasDirection value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
+            },
+            [&] (CanvasLineCap value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
+            },
+            [&] (CanvasLineJoin value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
+            },
+            [&] (CanvasTextAlign value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
+            },
+            [&] (CanvasTextBaseline value) {
+                parametersData->addItem(indexForData(convertEnumerationToString(value)));
             },
             [&] (const DOMMatrix2DInit& value) {
                 RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
@@ -495,7 +515,9 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
                 array->addItem(value.f.value_or(0));
                 parametersData->addItem(WTFMove(array));
             },
-            [&] (const DOMPath* value) { parametersData->addItem(indexForData(buildStringFromPath(value->path()))); },
+            [&] (const Path2D* value) {
+                parametersData->addItem(indexForData(buildStringFromPath(value->path())));
+            },
             [&] (const Element*) {
                 // Elements are not serializable, so add a string as a placeholder since the actual
                 // element cannot be reconstructed in the frontend.

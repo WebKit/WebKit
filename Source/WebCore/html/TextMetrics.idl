@@ -22,12 +22,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 [
+    Exposed=Window,
     ImplementationLacksVTable,
 ] interface TextMetrics {
-    readonly attribute unrestricted float width;
+    // FIXME: All the unrestricted float attributes below should be doubles.
+
+    // x-direction
+    readonly attribute unrestricted float width; // advance width
     readonly attribute unrestricted float actualBoundingBoxLeft;
     readonly attribute unrestricted float actualBoundingBoxRight;
+
+    // y-direction
     readonly attribute unrestricted float fontBoundingBoxAscent;
     readonly attribute unrestricted float fontBoundingBoxDescent;
     readonly attribute unrestricted float actualBoundingBoxAscent;

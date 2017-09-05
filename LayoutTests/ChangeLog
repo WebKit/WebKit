@@ -1,3 +1,22 @@
+2017-09-04  Sam Weinig  <sam@webkit.org>
+
+        [Canvas] Split CanvasRenderingContext2D.idl into separate IDLs to match current HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=176276
+
+        Reviewed by Dean Jackson.
+
+        * fast/canvas/canvas-clip-path-expected.txt:
+        * fast/canvas/canvas-fill-path-expected.txt:
+        * fast/canvas/canvas-path-addPath-expected.txt:
+        * fast/canvas/canvas-path-isPointInPath-expected.txt:
+        * fast/canvas/canvas-path-isPointInStroke-expected.txt:
+        * fast/canvas/canvas-stroke-path-expected.txt:
+        * fast/canvas/winding-enumeration-expected.txt:
+        * inspector/canvas/recording-2d-expected.txt:
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+        
+            Update results.
+
 2017-09-04  Ms2ger  <Ms2ger@igalia.com>
 
         Loosen the check in video-canvas-drawing-output.html.

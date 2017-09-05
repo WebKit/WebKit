@@ -588,16 +588,37 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/VoidCallback.idl \
     $(WebCore)/html/WebKitMediaKeyError.idl \
     $(WebCore)/html/canvas/ANGLEInstancedArrays.idl \
+    $(WebCore)/html/canvas/CanvasCompositing.idl \
+    $(WebCore)/html/canvas/CanvasDirection.idl \
+    $(WebCore)/html/canvas/CanvasDrawImage.idl \
+    $(WebCore)/html/canvas/CanvasDrawPath.idl \
+    $(WebCore)/html/canvas/CanvasFillRule.idl \
+    $(WebCore)/html/canvas/CanvasFillStrokeStyles.idl \
+    $(WebCore)/html/canvas/CanvasFilters.idl \
     $(WebCore)/html/canvas/CanvasGradient.idl \
+    $(WebCore)/html/canvas/CanvasImageData.idl \
+    $(WebCore)/html/canvas/CanvasImageSmoothing.idl \
+    $(WebCore)/html/canvas/CanvasLineCap.idl \
+    $(WebCore)/html/canvas/CanvasLineJoin.idl \
     $(WebCore)/html/canvas/CanvasPath.idl \
+    $(WebCore)/html/canvas/CanvasPathDrawingStyles.idl \
     $(WebCore)/html/canvas/CanvasPattern.idl \
+    $(WebCore)/html/canvas/CanvasRect.idl \
     $(WebCore)/html/canvas/CanvasRenderingContext2D.idl \
-    $(WebCore)/html/canvas/DOMPath.idl \
+    $(WebCore)/html/canvas/CanvasShadowStyles.idl \
+    $(WebCore)/html/canvas/CanvasState.idl \
+    $(WebCore)/html/canvas/CanvasText.idl \
+    $(WebCore)/html/canvas/CanvasTextAlign.idl \
+    $(WebCore)/html/canvas/CanvasTextBaseline.idl \
+    $(WebCore)/html/canvas/CanvasTextDrawingStyles.idl \
+    $(WebCore)/html/canvas/CanvasTransform.idl \
+    $(WebCore)/html/canvas/CanvasUserInterface.idl \
     $(WebCore)/html/canvas/EXTBlendMinMax.idl \
     $(WebCore)/html/canvas/EXTFragDepth.idl \
     $(WebCore)/html/canvas/EXTShaderTextureLOD.idl \
     $(WebCore)/html/canvas/EXTTextureFilterAnisotropic.idl \
     $(WebCore)/html/canvas/EXTsRGB.idl \
+    $(WebCore)/html/canvas/ImageSmoothingQuality.idl \
     $(WebCore)/html/canvas/OESElementIndexUint.idl \
     $(WebCore)/html/canvas/OESStandardDerivatives.idl \
     $(WebCore)/html/canvas/OESTextureFloat.idl \
@@ -605,6 +626,7 @@ JS_BINDING_IDLS = \
     $(WebCore)/html/canvas/OESTextureHalfFloat.idl \
     $(WebCore)/html/canvas/OESTextureHalfFloatLinear.idl \
     $(WebCore)/html/canvas/OESVertexArrayObject.idl \
+    $(WebCore)/html/canvas/Path2D.idl \
     $(WebCore)/html/canvas/WebGL2RenderingContext.idl \
     $(WebCore)/html/canvas/WebGLActiveInfo.idl \
     $(WebCore)/html/canvas/WebGLBuffer.idl \

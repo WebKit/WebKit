@@ -31,7 +31,7 @@ Add path B to path A with singular transformation matrix (3).
 PASS refTest(result.data, expected.data) is true
 
 Various tests of invalid values.
-PASS pathA.addPath(matrix, pathB) threw exception TypeError: Argument 1 ('path') to Path2D.addPath must be an instance of DOMPath.
+PASS pathA.addPath(matrix, pathB) threw exception TypeError: Argument 1 ('path') to Path2D.addPath must be an instance of Path2D.
 PASS pathA.addPath(pathB, 0) threw exception TypeError: Type error.
 PASS pathA.addPath(pathB, "0") threw exception TypeError: Type error.
 PASS successfullyParsed is true

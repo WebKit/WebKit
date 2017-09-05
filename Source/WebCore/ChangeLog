@@ -1,3 +1,171 @@
+2017-09-04  Sam Weinig  <sam@webkit.org>
+
+        [Canvas] Split CanvasRenderingContext2D.idl into separate IDLs to match current HTML spec
+        https://bugs.webkit.org/show_bug.cgi?id=176276
+
+        Reviewed by Dean Jackson.
+
+        - Splits CanvasRenderingContext2D.idl out into:
+            CanvasState
+            CanvasTransform
+            CanvasCompositing
+            CanvasImageSmoothing
+            CanvasFillStrokeStyles
+            CanvasShadowStyles
+            CanvasFilters
+            CanvasRect
+            CanvasDrawPath
+            CanvasUserInterface
+            CanvasText
+            CanvasDrawImage
+            CanvasImageData
+            CanvasPathDrawingStyles
+            CanvasTextDrawingStyles
+        - Renames CanvasWindingRule enum to CanvasFillRule, and moves it to its own file
+          so it can be reused by multiple IDLs.
+        - Renames DOMPath to Path2D, which is what it is supposed to be called, and doesn't
+          conflict with any WebCore names.
+        - Converts lineCap, lineJoin, textAlign, textBaseline, direction to use enums, rather
+          than DOMStrings, allowing us to remove a bunch of custom parsing.
+        - Non-standard canvas API was grouped with related functionality in the broken out
+          IDLs and clearly marked as non-standard.
+        - Comments were added for places where we break with the standard, mostly around use
+          of float where we should be using double.
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+            Add new files.
+        
+        * bindings/js/CallTracerTypes.h:
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildInitialState):
+        (WebCore::InspectorCanvas::buildAction):
+
+            Update for renames, and use new convertEnumerationToString to
+            serialize enumerations.
+        
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateEnumerationImplementationContent):
+        (GenerateEnumerationHeaderContent):
+
+            Split string conversion out of convertEnumerationToJS, and into
+            its own function, convertEnumerationToString, to allow serialization
+            to string outside of the bindings context, in this case, for the 
+            InspectorCanvas.
+
+        (GenerateParametersCheck):
+        
+            Improve error message to make it clear which operation has the issue
+            in order to make debugging easier.
+
+        * html/ImageData.idl:
+        
+            Re-order constructors to match specification, and add FIXME for incorrect
+            default argument.
+        
+        * html/TextMetrics.idl:
+            
+            Add spec'd exposure and spec comments, as well a FIXME to convert the
+            unrestricted float parameters should be doubles.
+
+        * html/canvas/CanvasCompositing.idl: Added.
+        * html/canvas/CanvasDirection.h: Added.
+        * html/canvas/CanvasDirection.idl: Added.
+        * html/canvas/CanvasDrawImage.idl: Added.
+        * html/canvas/CanvasDrawPath.idl: Added.
+        * html/canvas/CanvasFillRule.h: Added.
+        * html/canvas/CanvasFillRule.idl: Added.
+        * html/canvas/CanvasFillStrokeStyles.idl: Added.
+        * html/canvas/CanvasFilters.idl: Added.
+        * html/canvas/CanvasImageData.idl: Added.
+        * html/canvas/CanvasImageSmoothing.idl: Added.
+        * html/canvas/CanvasLineCap.h: Added.
+        * html/canvas/CanvasLineCap.idl: Added.
+        * html/canvas/CanvasLineJoin.h: Added.
+        * html/canvas/CanvasLineJoin.idl: Added.
+        * html/canvas/CanvasPathDrawingStyles.idl: Added.
+        * html/canvas/CanvasRect.idl: Added.
+        * html/canvas/CanvasShadowStyles.idl: Added.
+        * html/canvas/CanvasState.idl: Added.
+        * html/canvas/CanvasText.idl: Added.
+        * html/canvas/CanvasTextAlign.h: Added.
+        * html/canvas/CanvasTextAlign.idl: Added.
+        * html/canvas/CanvasTextBaseline.h: Added.
+        * html/canvas/CanvasTextBaseline.idl: Added.
+        * html/canvas/CanvasTextDrawingStyles.idl: Added.
+        * html/canvas/CanvasTransform.idl: Added.
+        * html/canvas/CanvasUserInterface.idl: Added.
+        * html/canvas/ImageSmoothingQuality.h: Added.
+        * html/canvas/ImageSmoothingQuality.idl: Added.
+
+            Move CanvasRenderingContext2D.idl content into separate files to
+            match the specification.
+
+        * html/canvas/CanvasGradient.idl:
+        * html/canvas/CanvasPath.idl:
+        * html/canvas/CanvasPattern.idl:
+
+            Add exposure and FIXMEs on changes need to match the spec.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+
+            Switch to using enums for lineCap, lineJoin, textAlign, textBaseline, and direction.
+            Rather than using the parsing / stringifying functions from GraphicsTypes, add simple
+            switch based to/from converters to convert to/from the canvas type to the platform
+            type. Also update for rename of DOMPath -> Path2D and WindingRule -> CanvasFillRule.
+
+            Unfortunately, not all custom parsing could be removed. To support the legacy functions
+            setLineCap and setLineJoin, which take Strings, two simply parse paths had to be
+            brought back. They can't use the enums, because the rules for enums as parameters
+            is stricter that what was implemented in the custom code (e.g. the bindings would
+            have thrown for strings not in the enum set).
+
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+            Move most of the functions into the new files, which are then 'implemented' by
+            this.
+
+        * html/canvas/DOMPath.cpp: Removed.
+        * html/canvas/DOMPath.h: Removed.
+        * html/canvas/DOMPath.idl: Removed.
+        * html/canvas/Path2D.cpp: Copied from Source/WebCore/html/canvas/DOMPath.cpp.
+        * html/canvas/Path2D.h: Copied from Source/WebCore/html/canvas/DOMPath.h.
+        * html/canvas/Path2D.idl: Copied from Source/WebCore/html/canvas/DOMPath.idl.
+
+            Rename DOMPath to Path2D to match the spec..
+
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::parseLineCap): Deleted.
+        (WebCore::lineCapName): Deleted.
+        (WebCore::parseLineJoin): Deleted.
+        (WebCore::lineJoinName): Deleted.
+        (WebCore::textAlignName): Deleted.
+        (WebCore::parseTextAlign): Deleted.
+        (WebCore::textBaselineName): Deleted.
+        (WebCore::parseTextBaseline): Deleted.
+        * platform/graphics/GraphicsTypes.h:
+
+            Remove now unused parsing / stringifying functions.
+
+        * testing/Internals.cpp:
+
+            Remove unused #include.
+
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        * bindings/scripts/test/JS/JSTestCallbackInterface.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneDictionary.h:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.cpp:
+        * bindings/scripts/test/JS/JSTestStandaloneEnumeration.h:
+
+            Update test results to add convertEnumerationToString.
+
 2017-09-03  Darin Adler  <darin@apple.com>
 
         Follow up FrameView::updateLayoutAndStyleIfNeededRecursive changes with related improvements

@@ -26,9 +26,15 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "CanvasDirection.h"
+#include "CanvasFillRule.h"
+#include "CanvasLineCap.h"
+#include "CanvasLineJoin.h"
 #include "CanvasPath.h"
 #include "CanvasRenderingContext.h"
 #include "CanvasStyle.h"
+#include "CanvasTextAlign.h"
+#include "CanvasTextBaseline.h"
 #include "Color.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
@@ -36,6 +42,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
 #include "ImageBuffer.h"
+#include "ImageSmoothingQuality.h"
 #include "Path.h"
 #include "PlatformLayer.h"
 #include <wtf/Vector.h>
@@ -46,13 +53,13 @@ namespace WebCore {
 class CanvasGradient;
 class CanvasPattern;
 class DOMMatrix;
-class DOMPath;
 class FloatRect;
 class GraphicsContext;
 class HTMLCanvasElement;
 class HTMLImageElement;
 class HTMLVideoElement;
 class ImageData;
+class Path2D;
 class TextMetrics;
 
 struct DOMMatrix2DInit;
@@ -71,10 +78,12 @@ public:
     float lineWidth() const;
     void setLineWidth(float);
 
-    String lineCap() const;
+    CanvasLineCap lineCap() const;
+    void setLineCap(CanvasLineCap);
     void setLineCap(const String&);
 
-    String lineJoin() const;
+    CanvasLineJoin lineJoin() const;
+    void setLineJoin(CanvasLineJoin);
     void setLineJoin(const String&);
 
     float miterLimit() const;
@@ -134,22 +143,21 @@ public:
 
     void beginPath();
 
-    enum class WindingRule { Nonzero, Evenodd };
-    static String stringForWindingRule(WindingRule);
+    static String stringForCanvasFillRule(CanvasFillRule);
 
-    void fill(WindingRule = WindingRule::Nonzero);
+    void fill(CanvasFillRule = CanvasFillRule::Nonzero);
     void stroke();
-    void clip(WindingRule = WindingRule::Nonzero);
+    void clip(CanvasFillRule = CanvasFillRule::Nonzero);
 
-    void fill(DOMPath&, WindingRule = WindingRule::Nonzero);
-    void stroke(DOMPath&);
-    void clip(DOMPath&, WindingRule = WindingRule::Nonzero);
+    void fill(Path2D&, CanvasFillRule = CanvasFillRule::Nonzero);
+    void stroke(Path2D&);
+    void clip(Path2D&, CanvasFillRule = CanvasFillRule::Nonzero);
 
-    bool isPointInPath(float x, float y, WindingRule = WindingRule::Nonzero);
+    bool isPointInPath(float x, float y, CanvasFillRule = CanvasFillRule::Nonzero);
     bool isPointInStroke(float x, float y);
 
-    bool isPointInPath(DOMPath&, float x, float y, WindingRule = WindingRule::Nonzero);
-    bool isPointInStroke(DOMPath&, float x, float y);
+    bool isPointInPath(Path2D&, float x, float y, CanvasFillRule = CanvasFillRule::Nonzero);
+    bool isPointInStroke(Path2D&, float x, float y);
 
     void clearRect(float x, float y, float width, float height);
     void fillRect(float x, float y, float width, float height);
@@ -192,7 +200,7 @@ public:
     void webkitPutImageDataHD(ImageData&, float dx, float dy, float dirtyX, float dirtyY, float dirtyWidth, float dirtyHeight);
 
     void drawFocusIfNeeded(Element&);
-    void drawFocusIfNeeded(DOMPath&, Element&);
+    void drawFocusIfNeeded(Path2D&, Element&);
 
     float webkitBackingStorePixelRatio() const { return 1; }
 
@@ -201,14 +209,14 @@ public:
     String font() const;
     void setFont(const String&);
 
-    String textAlign() const;
-    void setTextAlign(const String&);
+    CanvasTextAlign textAlign() const;
+    void setTextAlign(CanvasTextAlign);
 
-    String textBaseline() const;
-    void setTextBaseline(const String&);
+    CanvasTextBaseline textBaseline() const;
+    void setTextBaseline(CanvasTextBaseline);
 
-    String direction() const;
-    void setDirection(const String&);
+    CanvasDirection direction() const;
+    void setDirection(CanvasDirection);
 
     void fillText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
     void strokeText(const String& text, float x, float y, std::optional<float> maxWidth = std::nullopt);
@@ -220,14 +228,11 @@ public:
     bool imageSmoothingEnabled() const;
     void setImageSmoothingEnabled(bool);
 
-    enum class ImageSmoothingQuality { Low, Medium, High };
-    static String stringForImageSmoothingQuality(ImageSmoothingQuality);
-
     ImageSmoothingQuality imageSmoothingQuality() const;
     void setImageSmoothingQuality(ImageSmoothingQuality);
 
-    void setPath(DOMPath&);
-    Ref<DOMPath> getPath() const;
+    void setPath(Path2D&);
+    Ref<Path2D> getPath() const;
 
     bool usesDisplayListDrawing() const { return m_usesDisplayListDrawing; };
     void setUsesDisplayListDrawing(bool flag) { m_usesDisplayListDrawing = flag; };
@@ -238,11 +243,7 @@ public:
     String displayListAsText(DisplayList::AsTextFlags) const;
     String replayDisplayListAsText(DisplayList::AsTextFlags) const;
 
-    enum class Direction {
-        Inherit,
-        RTL,
-        LTR
-    };
+    using Direction = CanvasDirection;
 
     class FontProxy : public FontSelectorClient {
     public:
@@ -360,11 +361,11 @@ private:
     void beginCompositeLayer();
     void endCompositeLayer();
 
-    void fillInternal(const Path&, WindingRule);
+    void fillInternal(const Path&, CanvasFillRule);
     void strokeInternal(const Path&);
-    void clipInternal(const Path&, WindingRule);
+    void clipInternal(const Path&, CanvasFillRule);
 
-    bool isPointInPathInternal(const Path&, float x, float y, WindingRule);
+    bool isPointInPathInternal(const Path&, float x, float y, CanvasFillRule);
     bool isPointInStrokeInternal(const Path&, float x, float y);
 
     void drawFocusIfNeededInternal(const Path&, Element&);

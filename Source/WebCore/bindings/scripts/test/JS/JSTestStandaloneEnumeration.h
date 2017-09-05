@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+String convertEnumerationToString(TestStandaloneEnumeration);
 template<> JSC::JSString* convertEnumerationToJS(JSC::ExecState&, TestStandaloneEnumeration);
 
 template<> std::optional<TestStandaloneEnumeration> parseEnumeration<TestStandaloneEnumeration>(JSC::ExecState&, JSC::JSValue);

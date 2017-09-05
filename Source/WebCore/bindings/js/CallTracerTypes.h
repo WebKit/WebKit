@@ -29,12 +29,12 @@
 #include "CanvasPattern.h"
 #include "CanvasRenderingContext2D.h"
 #include "DOMMatrix2DInit.h"
-#include "DOMPath.h"
 #include "Element.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageData.h"
+#include "Path2D.h"
 #include <runtime/ArrayBuffer.h>
 #include <runtime/ArrayBufferView.h>
 #include <runtime/Float32Array.h>
@@ -57,10 +57,15 @@
 namespace WebCore {
 
 typedef Variant<
-    CanvasRenderingContext2D::ImageSmoothingQuality,
-    CanvasRenderingContext2D::WindingRule,
+    ImageSmoothingQuality,
+    CanvasDirection,
+    CanvasFillRule,
+    CanvasLineCap,
+    CanvasLineJoin,
+    CanvasTextAlign,
+    CanvasTextBaseline,
     DOMMatrix2DInit,
-    DOMPath*,
+    Path2D*,
     Element*,
     HTMLImageElement*,
     ImageData*,

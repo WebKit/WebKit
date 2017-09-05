@@ -650,11 +650,33 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ValidityState.idl
     html/VoidCallback.idl
 
+    html/canvas/CanvasCompositing.idl
+    html/canvas/CanvasDirection.idl
+    html/canvas/CanvasDrawImage.idl
+    html/canvas/CanvasDrawPath.idl
+    html/canvas/CanvasFillRule.idl
+    html/canvas/CanvasFillStrokeStyles.idl
+    html/canvas/CanvasFilters.idl
     html/canvas/CanvasGradient.idl
+    html/canvas/CanvasImageData.idl
+    html/canvas/CanvasImageSmoothing.idl
+    html/canvas/CanvasLineCap.idl
+    html/canvas/CanvasLineJoin.idl
     html/canvas/CanvasPath.idl
+    html/canvas/CanvasPathDrawingStyles.idl
     html/canvas/CanvasPattern.idl
+    html/canvas/CanvasRect.idl
     html/canvas/CanvasRenderingContext2D.idl
-    html/canvas/DOMPath.idl
+    html/canvas/CanvasShadowStyles.idl
+    html/canvas/CanvasState.idl
+    html/canvas/CanvasText.idl
+    html/canvas/CanvasTextAlign.idl
+    html/canvas/CanvasTextBaseline.idl
+    html/canvas/CanvasTextDrawingStyles.idl
+    html/canvas/CanvasTransform.idl
+    html/canvas/CanvasUserInterface.idl
+    html/canvas/ImageSmoothingQuality.idl
+    html/canvas/Path2D.idl
     html/canvas/WebGPUBuffer.idl
     html/canvas/WebGPUCommandBuffer.idl
     html/canvas/WebGPUCommandQueue.idl
@@ -1910,7 +1932,7 @@ set(WebCore_SOURCES
     html/canvas/CanvasRenderingContext.cpp
     html/canvas/CanvasRenderingContext2D.cpp
     html/canvas/CanvasStyle.cpp
-    html/canvas/DOMPath.cpp
+    html/canvas/Path2D.cpp
     html/canvas/WebGPUBuffer.cpp
     html/canvas/WebGPUCommandBuffer.cpp
     html/canvas/WebGPUCommandQueue.cpp

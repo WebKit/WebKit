@@ -17,14 +17,14 @@ PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 PASS areaColor(imageData.data, {r:0,g:255,b:0,a:255}) is true
 
-PASS ctx.stroke(0) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(null) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke('path2d') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(undefined) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(function() {}) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(false) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
-PASS ctx.stroke(new Date()) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of DOMPath.
+PASS ctx.stroke(0) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(null) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke('path2d') threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(undefined) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(Number.MAX_VALUE) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(function() {}) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(false) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
+PASS ctx.stroke(new Date()) threw exception TypeError: Argument 1 ('path') to CanvasRenderingContext2D.stroke must be an instance of Path2D.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -2044,8 +2044,8 @@ sub GenerateEnumerationImplementationContent
     my $result = "";
     $result .= "#if ${conditionalString}\n\n" if $conditionalString;
 
-    # FIXME: Change to take VM& instead of ExecState*.
-    $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
+
+    $result .= "String convertEnumerationToString($className enumerationValue)\n";
     $result .= "{\n";
     AddToImplIncludes("<wtf/NeverDestroyed.h>");
     $result .= "    static const NeverDestroyed<String> values[] = {\n";
@@ -2064,7 +2064,14 @@ sub GenerateEnumerationImplementationContent
         $index++;
     }
     $result .= "    ASSERT(static_cast<size_t>(enumerationValue) < WTF_ARRAY_LENGTH(values));\n";
-    $result .= "    return jsStringWithCache(&state, values[static_cast<size_t>(enumerationValue)]);\n";
+    $result .= "    return values[static_cast<size_t>(enumerationValue)];\n";
+    $result .= "}\n\n";
+
+
+    # FIXME: Change to take VM& instead of ExecState*.
+    $result .= "template<> JSString* convertEnumerationToJS(ExecState& state, $className enumerationValue)\n";
+    $result .= "{\n";
+    $result .= "    return jsStringWithCache(&state, convertEnumerationToString(enumerationValue));\n";
     $result .= "}\n\n";
 
     # FIXME: Change to take VM& instead of ExecState&.
@@ -2121,6 +2128,7 @@ sub GenerateEnumerationHeaderContent
 
     my $exportMacro = GetExportMacroForJSClass($enumeration);
 
+    $result .= "${exportMacro}String convertEnumerationToString($className);\n";
     $result .= "template<> ${exportMacro}JSC::JSString* convertEnumerationToJS(JSC::ExecState&, $className);\n\n";
     $result .= "template<> ${exportMacro}std::optional<$className> parseEnumeration<$className>(JSC::ExecState&, JSC::JSValue);\n";
     $result .= "template<> ${exportMacro}const char* expectedEnumerationValues<$className>();\n\n";
@@ -5566,7 +5574,7 @@ sub GenerateParametersCheck
     foreach my $argument (@{$operation->arguments}) {
         my $type = $argument->type;
 
-        die "Optional arguments of non-nullable wrapper types are not supported" if $argument->isOptional && !$type->isNullable && $codeGenerator->IsWrapperType($type);
+        assert "Optional arguments of non-nullable wrapper types are not supported (" . $operation->name . ")" if $argument->isOptional && !$type->isNullable && $codeGenerator->IsWrapperType($type);
 
         if ($argument->isOptional && !defined($argument->default)) {
             # As per Web IDL, optional dictionary arguments are always considered to have a default value of an empty dictionary, unless otherwise specified.

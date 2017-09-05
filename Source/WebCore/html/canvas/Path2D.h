@@ -36,40 +36,40 @@ namespace WebCore {
 
 struct DOMMatrix2DInit;
 
-class WEBCORE_EXPORT DOMPath final : public RefCounted<DOMPath>, public CanvasPath {
+class WEBCORE_EXPORT Path2D final : public RefCounted<Path2D>, public CanvasPath {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~DOMPath();
+    virtual ~Path2D();
 
-    static Ref<DOMPath> create()
+    static Ref<Path2D> create()
     {
-        return adoptRef(*new DOMPath);
+        return adoptRef(*new Path2D);
     }
 
-    static Ref<DOMPath> create(const Path& path)
+    static Ref<Path2D> create(const Path& path)
     {
-        return adoptRef(*new DOMPath(path));
+        return adoptRef(*new Path2D(path));
     }
 
-    static Ref<DOMPath> create(const DOMPath& path)
+    static Ref<Path2D> create(const Path2D& path)
     {
         return create(path.path());
     }
 
-    static Ref<DOMPath> create(const String& pathData)
+    static Ref<Path2D> create(const String& pathData)
     {
         Path path;
         buildPathFromString(pathData, path);
         return create(path);
     }
 
-    ExceptionOr<void> addPath(DOMPath&, DOMMatrix2DInit&&);
+    ExceptionOr<void> addPath(Path2D&, DOMMatrix2DInit&&);
 
     const Path& path() const { return m_path; }
 
 private:
-    DOMPath() = default;
-    DOMPath(const Path& path)
+    Path2D() = default;
+    Path2D(const Path& path)
         : CanvasPath(path)
     {
     }

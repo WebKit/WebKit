@@ -46,7 +46,6 @@
 #include "Chrome.h"
 #include "ComposedTreeIterator.h"
 #include "Cursor.h"
-#include "DOMPath.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMStringList.h"

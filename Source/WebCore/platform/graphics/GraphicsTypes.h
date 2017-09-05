@@ -107,12 +107,6 @@ String compositeOperatorName(CompositeOperator, BlendMode);
 bool parseBlendMode(const String&, BlendMode&);
 bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
 
-String lineCapName(LineCap);
-bool parseLineCap(const String&, LineCap&);
-
-String lineJoinName(LineJoin);
-bool parseLineJoin(const String&, LineJoin&);
-
 String textAlignName(TextAlign);
 bool parseTextAlign(const String&, TextAlign&);
 

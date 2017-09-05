@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
- * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +25,27 @@
  * SUCH DAMAGE.
  */
 
-[
-    Constructor,
-    Constructor(DOMPath path),
-    Constructor(DOMString text),
-    ExportMacro=WEBCORE_EXPORT,
-    InterfaceName=Path2D,
-] interface DOMPath {
-    [MayThrowException] void addPath(DOMPath path, optional DOMMatrix2DInit transform);
-};
+#include "config.h"
+#include "Path2D.h"
 
-DOMPath implements CanvasPath;
+#include "AffineTransform.h"
+#include "DOMMatrix2DInit.h"
+#include "DOMMatrixReadOnly.h"
+
+namespace WebCore {
+
+Path2D::~Path2D()
+{
+}
+
+ExceptionOr<void> Path2D::addPath(Path2D& path, DOMMatrix2DInit&& matrixInit)
+{
+    auto checkValid = DOMMatrixReadOnly::validateAndFixup(matrixInit);
+    if (checkValid.hasException())
+        return checkValid.releaseException();
+
+    m_path.addPath(path.path(), { matrixInit.a.value_or(1), matrixInit.b.value_or(0), matrixInit.c.value_or(0), matrixInit.d.value_or(1), matrixInit.e.value_or(0), matrixInit.f.value_or(0) });
+    return { };
+}
+
+}
