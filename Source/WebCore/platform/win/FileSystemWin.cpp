@@ -158,7 +158,7 @@ static String getFinalPathName(const String& path)
     return String::adopt(WTFMove(buffer));
 }
 
-static inline isSymbolicLink(WIN32_FIND_DATAW findData)
+static inline bool isSymbolicLink(WIN32_FIND_DATAW findData)
 {
     return findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT && findData.dwReserved0 == IO_REPARSE_TAG_SYMLINK;
 }
@@ -184,7 +184,7 @@ static std::optional<FileMetadata> findDataToFileMetadata(WIN32_FIND_DATAW findD
     return FileMetadata {
         static_cast<double>(modificationTime),
         length,
-        findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN,
+        static_cast<bool>(findData.dwFileAttributes & FILE_ATTRIBUTE_HIDDEN),
         toFileMetadataType(findData)
     };
 }

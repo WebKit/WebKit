@@ -132,8 +132,8 @@ static void vprintf_stderr_common(const char* format, va_list args)
         Vector<char> buffer(size);
         do {
             buffer.grow(size);
-            if (vsnprintf(buffer.get(), size, format, args) != -1) {
-                OutputDebugStringA(buffer.get());
+            if (vsnprintf(buffer.data(), size, format, args) != -1) {
+                OutputDebugStringA(buffer.data());
                 break;
             }
             size *= 2;
