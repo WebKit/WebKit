@@ -1,3 +1,16 @@
+2017-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+        Relax keychain access to permit users to permanently allow client certificates
+        https://bugs.webkit.org/show_bug.cgi?id=175857
+        <rdar://problem/32293867>
+
+        Reviewed by Alex Christensen.
+
+        Further relax the write permissions on the user's Keychain directory to support local certificates.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2017-09-05  Youenn Fablet  <youenn@apple.com>
 
         Cache Storage Engine should not mix different origin caches
