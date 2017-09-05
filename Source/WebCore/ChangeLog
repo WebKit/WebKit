@@ -1,3 +1,19 @@
+2017-09-05  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] HTMLMediaElement: setMediaKeys() should attach CDMInstance from the arriving MediaKeys
+        https://bugs.webkit.org/show_bug.cgi?id=176352
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        In HTMLMediaElement::setMediaKeys(), use the incoming MediaKeys object
+        to retrieve the CDMInstance that is then attached to the current
+        MediaPlayer, if any.
+
+        Covered by existing W3C tests that focus on multi-key use cases.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setMediaKeys):
+
 2017-09-05  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [Win] Fix the wincairo build after r221558 and r221583
