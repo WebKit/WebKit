@@ -227,9 +227,10 @@ Suites.push({
     url: 'todomvc/architecture-examples/backbone/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
     contentWindow.Backbone.sync = function () {}
-        return runner.waitForElement('.new-todo').then(function (element) {
-            element.focus();
-            return element;
+        return runner.waitForElement('#appIsReady').then(function (element) {
+            var newTodo = contentDocument.querySelector('.new-todo');
+            newTodo.focus();
+            return newTodo;
         });
     },
     tests: [
@@ -241,12 +242,12 @@ Suites.push({
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
+            for (var i = 0; i < numberOfItemsToAdd; i++)
                 checkboxes[i].click();
         }),
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
+            for (var i = 0; i < numberOfItemsToAdd; i++)
                 deleteButtons[i].click();
         }),
     ]

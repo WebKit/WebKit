@@ -1,3 +1,16 @@
+2017-09-05  Shiyu Zhang  <shiyu.zhang@intel.com>
+
+        Speedometer 2.0: Add dummy node to notify app is ready for Backbone suite
+        https://bugs.webkit.org/show_bug.cgi?id=176142
+
+        Reviewed by Ryosuke Niwa.
+
+        Create a dummy node to notify that app is ready for Backbone suite. It prevents Speedometer injecting items before app.js is loaded.
+
+        * Speedometer/resources/tests.js:
+        (Suites.push.prepare):
+        * Speedometer/resources/todomvc/architecture-examples/backbone/js/app.js:
+
 2017-08-30  Shiyu Zhang  <shiyu.zhang@intel.com>
 
         Speedometer 2.0: jQuery test fails occasionally
