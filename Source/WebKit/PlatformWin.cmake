@@ -9,6 +9,13 @@ file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
 add_definitions(-DBUILDING_WEBKIT)
 
 list(APPEND WebKit2_SOURCES
+    NetworkProcess/Downloads/curl/DownloadCurl.cpp
+
+    NetworkProcess/curl/NetworkProcessCurl.cpp
+    NetworkProcess/curl/RemoteNetworkingContextCurl.cpp
+
+    NetworkProcess/win/NetworkProcessMainWin.cpp
+    NetworkProcess/win/SystemProxyWin.cpp
 )
 
 # DerivedSources/JavaScriptCore/inspector/InspectorBackendCommands.js is
@@ -56,6 +63,7 @@ list(APPEND WebProcess_SOURCES
 )
 
 list(APPEND NetworkProcess_SOURCES
+    NetworkProcess/EntryPoint/win/NetworkProcessMain.cpp
 )
 
 list(APPEND StorageProcess_SOURCES
