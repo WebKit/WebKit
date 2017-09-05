@@ -143,7 +143,7 @@ public:
     // Decrements a counter that, when it reaches 0, stops preventing the plug-in from being destroyed.
     virtual void unprotectPluginFromDestruction() = 0;
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
     // Create a plugin container for windowed plugins
     virtual uint64_t createPluginContainer() = 0;
     virtual void windowedPluginGeometryDidChange(const WebCore::IntRect& frameRect, const WebCore::IntRect& clipRect, uint64_t windowID) = 0;

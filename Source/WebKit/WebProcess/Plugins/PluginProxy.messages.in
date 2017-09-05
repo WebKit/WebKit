@@ -70,7 +70,7 @@ messages -> PluginProxy LegacyReceiver {
     SetLayerHostingContextID(uint32_t layerHostingContextID)
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
     # Create the plugin container for windowed plugins
     CreatePluginContainer() -> (uint64_t windowID)
 

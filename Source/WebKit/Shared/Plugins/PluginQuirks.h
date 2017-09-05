@@ -79,7 +79,7 @@ public:
 #endif
 
         // X11 specific quirks:
-#elif PLUGIN_ARCHITECTURE(X11)
+#elif PLATFORM(X11)
         // Flash and npwrapper ask the browser about which GTK version does it use
         // and refuse to load and work if it is not GTK 2 so we need to fake it in
         // NPN_GetValue even when it is a lie.

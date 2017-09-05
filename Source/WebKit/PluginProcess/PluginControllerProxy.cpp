@@ -646,7 +646,7 @@ void PluginControllerProxy::getFormValue(bool& returnValue, String& formValue)
     returnValue = m_plugin->getFormValue(formValue);
 }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 uint64_t PluginControllerProxy::createPluginContainer()
 {
     uint64_t windowID = 0;

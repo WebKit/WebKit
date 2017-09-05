@@ -695,7 +695,7 @@ void PluginProxy::setStatusbarText(const String& statusbarText)
     controller()->setStatusbarText(statusbarText);
 }
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 void PluginProxy::createPluginContainer(uint64_t& windowID)
 {
     windowID = controller()->createPluginContainer();

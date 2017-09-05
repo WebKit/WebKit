@@ -45,7 +45,7 @@
 #include <WebCore/MachSendRight.h>
 #endif
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLATFORM(X11)
 #include <WebCore/PlatformDisplayX11.h>
 #endif
 
@@ -507,7 +507,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 #endif
-#elif PLUGIN_ARCHITECTURE(X11)
+#elif PLATFORM(X11)
         case NPNVxDisplay: {
             if (!npp)
                 return NPERR_GENERIC_ERROR;
