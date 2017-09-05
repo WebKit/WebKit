@@ -1,3 +1,20 @@
+2017-09-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Layout flashing for internal View.prototype.layout
+        https://bugs.webkit.org/show_bug.cgi?id=176389
+
+        Reviewed by Matt Baker.
+
+        Add a checkbox to Settings (Debug panel) to draw an orange outline around an element every time View.prototype.layout is called.
+        This is similar to paint flashing, except this is only for View.prototype.layout.
+
+        * UserInterface/Base/Setting.js:
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createDebugSettingsView):
+        * UserInterface/Views/View.js:
+        (WI.View.prototype._layoutSubtree):
+        (WI.View.prototype._drawLayoutFlashingOutline):
+
 2017-09-04  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: hook up real data to spreadsheet style editor

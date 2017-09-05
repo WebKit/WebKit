@@ -106,6 +106,7 @@ WI.settings = {
     autoLogProtocolMessages: new WI.Setting("auto-collect-protocol-messages", false),
     autoLogTimeStats: new WI.Setting("auto-collect-time-stats", false),
     enableUncaughtExceptionReporter: new WI.Setting("enable-uncaught-exception-reporter", true),
+    enableLayoutFlashing: new WI.Setting("enable-layout-flashing", false),
     enableLineWrapping: new WI.Setting("enable-line-wrapping", false),
     indentUnit: new WI.Setting("indent-unit", 4),
     tabSize: new WI.Setting("tab-size", 4),

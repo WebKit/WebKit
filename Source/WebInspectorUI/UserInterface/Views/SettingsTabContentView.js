@@ -292,6 +292,10 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
         this._debugSettingsView.addSeparator();
 
+        this._debugSettingsView.addSetting(WI.unlocalizedString("Layout Flashing:"), WI.settings.enableLayoutFlashing, WI.unlocalizedString("Draw borders when a view performs a layout"));
+
+        this._debugSettingsView.addSeparator();
+
         this._debugSettingsView.addSetting(WI.unlocalizedString("Uncaught Exception Reporter:"), WI.settings.enableUncaughtExceptionReporter, WI.unlocalizedString("Enabled"));
 
         this._debugSettingsView.addSeparator();
