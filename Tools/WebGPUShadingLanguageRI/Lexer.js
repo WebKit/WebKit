@@ -103,7 +103,7 @@ class Lexer {
         
         // FIXME: Make this do Unicode.
         if (/^[^\d\W]\w*/.test(relevantText)) {
-            if (["struct", "protocol", "typedef", "if", "else", "enum", "continue", "break", "switch", "case", "default", "for", "while", "do", "return", "sizeof", "constant", "device", "threadgroup", "thread", "operator", "null"].includes(RegExp.lastMatch))
+            if (["struct", "protocol", "typedef", "if", "else", "enum", "continue", "break", "switch", "case", "default", "for", "while", "do", "return", "sizeof", "constant", "device", "threadgroup", "thread", "operator", "null", "true", "false"].includes(RegExp.lastMatch))
                 return result("keyword");
             return result("identifier");
         }
@@ -118,7 +118,7 @@ class Lexer {
         if (/^([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)/.test(relevantText))
             return result("doubleLiteral");
         
-        if (/^([{}()\[\]?:=+*\/,.%!~^&|<>@;-]|->|=>|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=)/.test(relevantText))
+        if (/^->|=>|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=|([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
             return result("punctuation");
         
         let remaining = relevantText.substring(0, 20).split(/\s/)[0];

@@ -1,3 +1,84 @@
+2017-09-05  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL should support the bool type
+        https://bugs.webkit.org/show_bug.cgi?id=176285
+
+        Reviewed by Filip Pizlo.
+
+        Very similar to the int and uint types. This patch also adds support for a logical negation expression "!x".
+        This patch also reverts the ability of the program author to create their own "operator!()", and instead
+        adds the ability of the program author to create their own "operator bool()". The code is generic, so
+        programmers can make two arbitrary types Foo and Bar, and implement a "operator Bar(Foo)." The logical
+        negation expression is a built-in, and requires its argument be a bool.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/BoolLiteral.js: Copied from Tools/WebGPUShadingLanguageRI/NativeFunc.js.
+        (BoolLiteral):
+        (BoolLiteral.prototype.get value):
+        (BoolLiteral.prototype.get isConstexpr):
+        (BoolLiteral.prototype.toString):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitBoolLiteral):
+        (Evaluator.prototype.visitLogicalNot):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        (Func.prototype.get isCast):
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        (FuncDef.prototype.get body):
+        (FuncDef.prototype.rewrite):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/LogicalNot.js: Copied from Tools/WebGPUShadingLanguageRI/NativeFunc.js.
+        (LogicalNot):
+        (LogicalNot.prototype.get operand):
+        (LogicalNot.prototype.toString):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        (parsePossiblePrefix):
+        (parsePossibleRelationalEquality):
+        (parseFuncName):
+        (parseOperatorFuncDefValues):
+        (parseNonOperatorFuncDefValues):
+        (parseGenericFuncDefValues):
+        (parseFuncDecl):
+        (parseProtocolFuncDecl):
+        (parseFuncDef):
+        (parseNative):
+        (parse):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitBoolLiteral):
+        (Rewriter.prototype.visitLogicalNot):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeUInt):
+        (makeBool):
+        (checkUInt):
+        (checkBool):
+        (TEST_literalBool):
+        (TEST_identityBool):
+        (TEST_intSimpleMath):
+        (TEST_uintSimpleMath):
+        (TEST_equality):
+        (TEST_logicalNegation):
+        (TEST_notEquality):
+        (TEST_equalityTypeFailure):
+        (TEST_add1): Deleted.
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        (TypeDefResolver.prototype.visitFuncDef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitBoolLiteral):
+        (Visitor.prototype.visitLogicalNot):
+
 2017-09-05  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221603.

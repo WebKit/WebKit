@@ -216,6 +216,11 @@ class Rewriter {
     {
         return node;
     }
+
+    visitBoolLiteral(node)
+    {
+        return node;
+    }
     
     visitNullLiteral(node)
     {
@@ -257,6 +262,11 @@ class Rewriter {
             node.argumentList.map(argument => argument.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this));
+    }
+    
+    visitLogicalNot(node)
+    {
+        return new LogicalNot(node.origin, node.operand.visit(this));
     }
 }
 

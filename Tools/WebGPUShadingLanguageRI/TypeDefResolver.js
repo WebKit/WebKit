@@ -30,6 +30,15 @@ class TypeDefResolver extends Visitor {
         super();
         this._visiting = new VisitingSet();
     }
+
+    visitFuncDef(node)
+    {
+        if (node.isCast && node.returnType.type instanceof TypeDef) {
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176316 Correctly handle the interaction between casting operators and complex types
+            throw new Error("Casting operators don't work with typedefs.");
+        }
+        super.visitFuncDef(node);
+    }
     
     visitTypeRef(node)
     {

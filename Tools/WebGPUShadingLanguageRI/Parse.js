@@ -183,10 +183,10 @@ function parse(program, origin, lineNumberOffset, text)
                 lexer.fail("Integer literal is not 32-bit unsigned integer");
             return new UintLiteral(token, uintVersion);
         }
-        if (token = tryConsumeKind("doubleLiteral")) {
-            token = consumeKind("doubleLiteral");
+        if (token = tryConsumeKind("doubleLiteral"))
             return new DoubleLiteral(token, +token.text);
-        }
+        if (token = tryConsume("true", "false"))
+            return new BoolLiteral(token, token.text == "true");
         // FIXME: Need support for float literals and probably other literals too.
         consume("(");
         let result = parseExpression();
@@ -296,30 +296,6 @@ function parse(program, origin, lineNumberOffset, text)
         return new TypeDef(origin, name, typeParameters, type);
     }
     
-    function parseNative()
-    {
-        let origin = consume("native");
-        let isType = lexer.backtrackingScope(() => {
-            if (tryConsume("typedef"))
-                return "normal";
-            consume("primitive");
-            consume("typedef");
-            return "primitive";
-        });
-        if (isType) {
-            let name = consumeKind("identifier");
-            let parameters = parseTypeParameters();
-            consume(";");
-            return new NativeType(origin, name.text, isType == "primitive", parameters);
-        }
-        let returnType = parseType();
-        let name = parseFuncName();
-        let typeParameters = parseTypeParameters();
-        let parameters = parseParameters();
-        consume(";");
-        return new NativeFunc(origin, name, returnType, typeParameters, parameters);
-    }
-    
     function genericParseLeft(texts, nextParser, constructor)
     {
         let left = nextParser();
@@ -396,7 +372,7 @@ function parse(program, origin, lineNumberOffset, text)
     function parsePossiblePrefix()
     {
         let token;
-        if (token = tryConsume("++", "--", "+", "-", "!", "~"))
+        if (token = tryConsume("++", "--", "+", "-", "~"))
             return new CallAssignment(token, "operator" + token.text, parsePossiblePrefix());
         if (token = tryConsume("^"))
             return new DereferenceExpression(token, parsePossiblePrefix());
@@ -404,6 +380,8 @@ function parse(program, origin, lineNumberOffset, text)
             return new MakePtrExpression(token, parsePossiblePrefix());
         if (token = tryConsume("@"))
             return new MakeArrayRefExpression(token, parsePossiblePrefix());
+        if (token = tryConsume("!"))
+            return new LogicalNot(token, new CallExpression(token, "operator bool", [], [parsePossiblePrefix()]));
         return parsePossibleSuffix();
     }
     
@@ -434,7 +412,7 @@ function parse(program, origin, lineNumberOffset, text)
             (token, left, right) => {
                 let result = new CallExpression(token, "operator==", [], [left, right]);
                 if (token.text == "!=")
-                    result = new CallExpression(token, "operator!", [], [result]);
+                    result = new LogicalNot(token, result);
                 return result;
             });
     }
@@ -629,32 +607,70 @@ function parse(program, origin, lineNumberOffset, text)
     function parseFuncName()
     {
         if (tryConsume("operator")) {
-            let token = consume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "!", "==", "++", "--", "&");
-            if (token.text != "&" || !tryConsume("["))
-                return "operator" + token.text;
-            consume("]");
-            return "operator&[]";
+            let token = tryConsume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "==", "++", "--", "&");
+            if (token) {
+                if (token.text != "&" || !tryConsume("["))
+                    return "operator" + token.text;
+                consume("]");
+                return "operator&[]";
+            }
+            let name = consumeKind("identifier");
+            return "operator " + name;
         }
         return consumeKind("identifier").text;
     }
-    
-    function parseProtocolFuncDecl()
+
+    function parseOperatorFuncDefValues()
     {
-        let returnType = parseType();
-        let name = parseFuncName();
+        let result = {};
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176316 Correctly handle the interaction between casting operators and complex types
+        let castType = consumeKind("identifier").text;
+        result.returnType = new TypeRef(name, castType, []);
+        result.name = "operator " + castType;
+        result.isCast = true;
+        return result;
+    }
+
+    function parseNonOperatorFuncDefValues()
+    {
+        let result = {};
+        result.returnType = parseType();
+        result.origin = result.returnType.origin;
+        result.name = parseFuncName();
+        result.isCast = false;
+        return result;
+    }
+
+    function parseGenericFuncDefValues()
+    {
+        let operatorToken = tryConsume("operator");
+        if (operatorToken) {
+            let result = parseOperatorFuncDefValues();
+            result.origin = operatorToken.origin;
+            return result;
+        }
+        return parseNonOperatorFuncDefValues();
+    }
+
+    function parseFuncDecl()
+    {
+        let values = parseGenericFuncDefValues();
         let typeParameters = parseTypeParameters();
         let parameters = parseParameters();
-        return new ProtocolFuncDecl(returnType.origin, name, returnType, typeParameters, parameters);
+        return new Func(values.origin, values.name, values.returnType, typeParameters, parameters, values.isCast);
+    }
+
+    function parseProtocolFuncDecl()
+    {
+        let func = parseFuncDecl();
+        return new ProtocolFuncDecl(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
     }
     
     function parseFuncDef()
     {
-        let returnType = parseType();
-        let name = parseFuncName();
-        let typeParameters = parseTypeParameters();
-        let parameters = parseParameters();
+        let func = parseFuncDecl();
         let body = parseBlock();
-        return new FuncDef(returnType.origin, name, returnType, typeParameters, parameters, body);
+        return new FuncDef(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, body, func.isCast);
     }
     
     function parseProtocolDecl()
@@ -690,6 +706,27 @@ function parse(program, origin, lineNumberOffset, text)
         while (!tryConsume("}"))
             result.add(parseField());
         return result;
+    }
+    
+    function parseNative()
+    {
+        let origin = consume("native");
+        let isType = lexer.backtrackingScope(() => {
+            if (tryConsume("typedef"))
+                return "normal";
+            consume("primitive");
+            consume("typedef");
+            return "primitive";
+        });
+        if (isType) {
+            let name = consumeKind("identifier");
+            let parameters = parseTypeParameters();
+            consume(";");
+            return new NativeType(origin, name.text, isType == "primitive", parameters);
+        }
+        let func = parseFuncDecl();
+        consume(";");
+        return new NativeFunc(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
     }
     
     for (;;) {

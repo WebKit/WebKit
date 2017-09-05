@@ -25,7 +25,7 @@
 "use strict";
 
 class Func extends Node {
-    constructor(origin, name, returnType, typeParameters, parameters)
+    constructor(origin, name, returnType, typeParameters, parameters, isCast)
     {
         super();
         this._origin = origin;
@@ -33,6 +33,7 @@ class Func extends Node {
         this._returnType = returnType;
         this._typeParameters = typeParameters;
         this._parameters = parameters;
+        this._isCast = isCast;
     }
     
     get origin() { return this._origin; }
@@ -41,12 +42,13 @@ class Func extends Node {
     get typeParameters() { return this._typeParameters; }
     get parameters() { return this._parameters; }
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
+    get isCast() { return this._isCast; }
     
     get kind() { return Func; }
     
     toDeclString()
     {
-        return this.returnType + " " + this.name + "<" + this.typeParameters + ">(" + this.parameters + ")";
+        return (this.isCast ? "" : this.returnType + " ") + this.name + "<" + this.typeParameters + ">(" + this.parameters + ")";
     }
     
     toString()

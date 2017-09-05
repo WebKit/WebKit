@@ -65,11 +65,37 @@ function checkNumber(program, result, expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
+function makeUInt(program, value)
+{
+    return TypedValue.box(program.intrinsics.uint32, value);
+}
+
+function makeBool(program, value)
+{
+    return TypedValue.box(program.intrinsics.bool, value);
+}
+
 function checkInt(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.int32))
         throw new Error("Wrong result type; result: " + result);
     checkNumber(program, result, expected);
+}
+
+function checkUInt(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.uint32))
+        throw new Error("Wrong result type; result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
+}
+
+function checkBool(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.bool))
+        throw new Error("Wrong result type; result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
 function checkLexerToken(result, expectedIndex, expectedKind, expectedText)
@@ -94,6 +120,85 @@ function checkFail(callback, predicate)
         }
         throw e;
     }
+}
+
+function TEST_literalBool() {
+    let program = doPrep("bool foo() { return true; }");
+    checkBool(program, callFunction(program, "foo", [], []), true);
+}
+
+function TEST_identityBool() {
+    let program = doPrep("bool foo(bool x) { return x; }");
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
+}
+
+function TEST_intSimpleMath() {
+    let program = doPrep("int foo(int x, int y) { return x + y; }");
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 12);
+    program = doPrep("int foo(int x, int y) { return x - y; }");
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 2);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5), makeInt(program, 7)]), -2);
+    program = doPrep("int foo(int x, int y) { return x * y; }");
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 35);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, -5)]), -35);
+    program = doPrep("int foo(int x, int y) { return x / y; }");
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 2)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, -2)]), -3);
+}
+
+function TEST_uintSimpleMath() {
+    let program = doPrep("uint foo(uint x, uint y) { return x + y; }");
+    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 12);
+    program = doPrep("uint foo(uint x, uint y) { return x - y; }");
+    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 2);
+    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 5), makeUInt(program, 7)]), 4294967294);
+    program = doPrep("uint foo(uint x, uint y) { return x * y; }");
+    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 35);
+    program = doPrep("uint foo(uint x, uint y) { return x / y; }");
+    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 2)]), 3);
+}
+
+function TEST_equality() {
+    let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 7)]), true);
+    program = doPrep("bool foo(int x, int y) { return x == y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), true);
+    program = doPrep("bool foo(bool x, bool y) { return x == y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+}
+
+function TEST_logicalNegation()
+{
+    let program = doPrep("bool foo(bool x) { return !x; }");
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), true);
+}
+
+function TEST_notEquality() {
+    let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 7)]), false);
+    program = doPrep("bool foo(int x, int y) { return x != y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), false);
+    program = doPrep("bool foo(bool x, bool y) { return x != y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
+}
+
+function TEST_equalityTypeFailure()
+{
+    checkFail(
+        () => doPrep("bool foo(int x, uint y) { return x == y; }"),
+        (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
 function TEST_add1() {

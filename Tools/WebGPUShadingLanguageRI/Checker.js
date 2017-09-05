@@ -211,6 +211,21 @@ class Checker extends Visitor {
         return node.type;
     }
     
+    visitBoolLiteral(node)
+    {
+        return this._program.intrinsics.bool;
+    }
+
+    visitLogicalNot(node)
+    {
+        let resultType = node.operand.visit(this);
+        if (!resultType)
+            throw new Error("Trying to negate something with no type: " + node.value);
+        if (!resultType.equals(this._program.intrinsics.bool))
+            throw new WError("Trying to negate something that isn't a bool: " + node.value);
+        return this._program.intrinsics.bool;
+    }
+    
     visitCommaExpression(node)
     {
         let result = null;

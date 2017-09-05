@@ -92,12 +92,111 @@ class Intrinsics {
                 type.canRepresent = value => true;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
             });
+
+        this._map.set(
+            "native primitive type bool<>",
+            type => {
+                this.bool = type;
+                type.size = 1;
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, false);
+            });
         
         this._map.set(
             "native int operator+<>(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
                     EPtr.box((left.loadValue() + right.loadValue()) | 0);
+            });
+        
+        this._map.set(
+            "native uint operator+<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() + right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator-<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() - right.loadValue()) | 0);
+            });
+        
+        this._map.set(
+            "native uint operator-<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() - right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator*<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() * right.loadValue()) | 0);
+            });
+        
+        this._map.set(
+            "native uint operator*<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() * right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator/<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() / right.loadValue()) | 0);
+            });
+        
+        this._map.set(
+            "native uint operator/<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() / right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native bool operator==<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() == right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator==<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() == right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator==<>(bool,bool)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() == right.loadValue());
+            });
+        
+        this._map.set(
+            "native operator int<>(int)",
+            func => {
+                func.implementation = ([value]) =>
+                    EPtr.box(value.loadValue());
+            });
+        
+        this._map.set(
+            "native operator uint<>(uint)",
+            func => {
+                func.implementation = ([value]) =>
+                    EPtr.box(value.loadValue());
+            });
+        
+        this._map.set(
+            "native operator bool<>(bool)",
+            func => {
+                func.implementation = ([value]) =>
+                    EPtr.box(value.loadValue());
             });
         
         let arrayElementPtr = func => {

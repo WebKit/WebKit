@@ -24,17 +24,19 @@
  */
 "use strict";
 
-class NativeFunc extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, isCast = false)
+class BoolLiteral extends Expression {
+    constructor(origin, value)
     {
-        super(origin, name, returnType, typeParameters, parameters, isCast);
+        super(origin);
+        this._value = value;
     }
     
-    get isNative() { return true; }
-
-    toDeclString()
+    get value() { return this._value; }
+    get isConstexpr() { return true; }
+    
+    toString()
     {
-        return "native " + super.toDeclString();
+        return "" + this._value;
     }
 }
 

@@ -141,6 +141,16 @@ class Evaluator extends Visitor {
         return EPtr.box(null);
     }
     
+    visitBoolLiteral(node)
+    {
+        return EPtr.box(node.value);
+    }
+
+    visitLogicalNot(node)
+    {
+        return EPtr.box(!node.operand.visit(this).loadValue());
+    }
+    
     visitCallExpression(node)
     {
         // We evaluate inlined ASTs, so this can only be a native call.

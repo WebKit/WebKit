@@ -24,17 +24,18 @@
  */
 "use strict";
 
-class NativeFunc extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, isCast = false)
+class LogicalNot extends Expression {
+    constructor(origin, operand)
     {
-        super(origin, name, returnType, typeParameters, parameters, isCast);
+        super(origin);
+        this._operand = operand;
     }
     
-    get isNative() { return true; }
-
-    toDeclString()
+    get operand() { return this._operand; }
+    
+    toString()
     {
-        return "native " + super.toDeclString();
+        return "!(" + this.operand + ")";
     }
 }
 

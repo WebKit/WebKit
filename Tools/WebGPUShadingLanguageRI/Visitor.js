@@ -233,6 +233,10 @@ class Visitor {
         node.type.visit(this);
     }
     
+    visitBoolLiteral(node)
+    {
+    }
+    
     visitNullType(node)
     {
         if (node.type)
@@ -250,6 +254,11 @@ class Visitor {
             for (let argument of actualTypeArguments)
                 argument.visit(this);
         }
+    }
+
+    visitLogicalNot(node)
+    {
+        node.operand.visit(this);
     }
     
     visitFunctionLikeBlock(node)

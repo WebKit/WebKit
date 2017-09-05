@@ -35,12 +35,27 @@ native primitive typedef void;
 
 native primitive typedef int32;
 native primitive typedef uint32;
+native primitive typedef bool;
 typedef int = int32;
 typedef uint = uint32;
 
 native primitive typedef double;
 
 native int operator+(int, int);
+native uint operator+(uint, uint);
+native int operator-(int, int);
+native uint operator-(uint, uint);
+native int operator*(int, int);
+native uint operator*(uint, uint);
+native int operator/(int, int);
+native uint operator/(uint, uint);
+native bool operator==(int, int);
+native bool operator==(uint, uint);
+native bool operator==(bool, bool);
+
+native operator int(int);
+native operator uint(uint);
+native operator bool(bool);
 
 native thread T^ operator&[]<T>(thread T[], uint);
 native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
