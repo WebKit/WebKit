@@ -128,7 +128,7 @@ bool PluginInfoCache::getPluginInfo(const String& pluginPath, PluginModuleInfo& 
     stringValue.reset(g_key_file_get_string(m_cacheFile.get(), pluginGroup.data(), "description", nullptr));
     plugin.info.desc = String::fromUTF8(stringValue.get());
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     stringValue.reset(g_key_file_get_string(m_cacheFile.get(), pluginGroup.data(), "mime-description", nullptr));
     NetscapePluginModule::parseMIMEDescription(String::fromUTF8(stringValue.get()), plugin.info.mimes);
 #endif
@@ -149,7 +149,7 @@ void PluginInfoCache::updatePluginInfo(const String& pluginPath, const PluginMod
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "name", plugin.info.name.utf8().data());
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "description", plugin.info.desc.utf8().data());
 
-#if PLUGIN_ARCHITECTURE(X11)
+#if PLUGIN_ARCHITECTURE(UNIX)
     String mimeDescription = NetscapePluginModule::buildMIMEDescription(plugin.info.mimes);
     g_key_file_set_string(m_cacheFile.get(), pluginGroup.data(), "mime-description", mimeDescription.utf8().data());
 #endif

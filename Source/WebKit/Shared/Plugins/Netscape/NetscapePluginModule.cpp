@@ -223,7 +223,7 @@ bool NetscapePluginModule::tryLoad()
     if (!initializeFuncPtr)
         return false;
 
-#if !PLUGIN_ARCHITECTURE(X11)
+#if !PLUGIN_ARCHITECTURE(UNIX)
     NP_GetEntryPointsFuncPtr getEntryPointsFuncPtr = m_module->functionPointer<NP_GetEntryPointsFuncPtr>("NP_GetEntryPoints");
     if (!getEntryPointsFuncPtr)
         return false;
@@ -263,7 +263,7 @@ bool NetscapePluginModule::tryLoad()
 #endif
 
     return result;
-#elif PLUGIN_ARCHITECTURE(X11)
+#elif PLUGIN_ARCHITECTURE(UNIX)
     if (initializeFuncPtr(netscapeBrowserFuncs(), &m_pluginFuncs) != NPERR_NO_ERROR)
         return false;
 #endif

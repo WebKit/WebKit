@@ -24,12 +24,12 @@
  */
 
 #include "config.h"
-#if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
-
 #include "NetscapePluginModule.h"
 
-#include "PluginProcessProxy.h"
+#if PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+
 #include "NetscapeBrowserFuncs.h"
+#include "PluginProcessProxy.h"
 #include <WebCore/FileSystem.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -249,4 +249,4 @@ bool NetscapePluginModule::scanPlugin(const String& pluginPath)
 
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#endif // PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)

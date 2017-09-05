@@ -26,7 +26,7 @@
 #ifndef NetscapePluginUnix_h
 #define NetscapePluginUnix_h
 
-#if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#if PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include <WebCore/npruntime_internal.h>
 
@@ -60,6 +60,6 @@ public:
 
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#endif // PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #endif // NetscapePluginUnix_h

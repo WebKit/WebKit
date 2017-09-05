@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NetscapePluginUnix.h"
 
-#if PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#if PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
 
 #include "NetscapePlugin.h"
 #include "WebEvent.h"
@@ -170,4 +170,4 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& event)
 
 } // namespace WebKit
 
-#endif // PLUGIN_ARCHITECTURE(X11) && ENABLE(NETSCAPE_PLUGIN_API)
+#endif // PLUGIN_ARCHITECTURE(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
