@@ -57,25 +57,25 @@ layer at (0,0) size 800x212
           RenderBlock {DIV} at (31,0) size 365x18
           RenderBlock {DIV} at (396,0) size 31x18
       RenderText {#text} at (0,0) size 0x0
-layer at (13,14) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
-layer at (13,42) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
+layer at (13,13) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
+layer at (13,41) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
     RenderText {#text} at (0,0) size 180x17
       text run at (0,0) width 180: "12345678901234567890"
-layer at (44,70) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
-layer at (44,98) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
+layer at (44,69) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
+layer at (44,97) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
     RenderText {#text} at (0,0) size 180x17
       text run at (0,0) width 180: "12345678901234567890"
-layer at (44,126) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
-layer at (44,154) size 185x17
-  RenderBlock {DIV} at (0,0) size 185x17
+layer at (44,125) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
+layer at (44,153) size 185x18
+  RenderBlock {DIV} at (0,0) size 185x18
     RenderText {#text} at (0,0) size 180x17
       text run at (0,0) width 180: "12345678901234567890"
-layer at (44,182) size 365x17
-  RenderBlock {DIV} at (0,0) size 365x17
+layer at (44,181) size 365x18
+  RenderBlock {DIV} at (0,0) size 365x18
     RenderText {#text} at (0,0) size 360x17
       text run at (0,0) width 360: "1234567890123456789012345678901234567890"
