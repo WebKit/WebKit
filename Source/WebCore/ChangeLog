@@ -1,3 +1,23 @@
+2017-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile errors in Document::updateTitleElement.
+        https://bugs.webkit.org/show_bug.cgi?id=176381
+
+        Reviewed by Alex Christensen.
+
+        MSVC is not able to compile the statement:
+        'auto result = boolExpression ? lambda1 : lambda2;'
+        where 'lambda1' and 'lambda2' have the same signature.
+
+        * dom/Document.cpp:
+        (WebCore::findHTMLTitle):
+        (WebCore::isHTMLTitle):
+        (WebCore::isHTMLTitleEligible):
+        (WebCore::findSVGTitle):
+        (WebCore::isSVGTitle):
+        (WebCore::isSVGTitleEligible):
+        (WebCore::Document::updateTitleElement):
+
 2017-09-06  Brent Fulgham  <bfulgham@apple.com>
 
         Deny third-party cookie creation for prevalent resources without interaction

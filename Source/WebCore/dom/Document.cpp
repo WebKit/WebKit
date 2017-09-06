@@ -1542,28 +1542,38 @@ void Document::setTitle(const String& title)
         updateTitle({ title, LTR });
 }
 
+static Element* findHTMLTitle(Document& document)
+{
+    return descendantsOfType<HTMLTitleElement>(document).first();
+};
+
+static bool isHTMLTitle(Element& element)
+{
+    return is<HTMLTitleElement>(element);
+};
+
+static bool isHTMLTitleEligible(Element& element)
+{
+    return element.isConnected() && !element.isInShadowTree();
+};
+
+static Element* findSVGTitle(Document& document)
+{
+    return childrenOfType<SVGTitleElement>(*document.documentElement()).first();
+};
+
+static bool isSVGTitle(Element& element)
+{
+    return is<SVGTitleElement>(element);
+};
+
+static bool isSVGTitleEligible(Element& element)
+{
+    return element.parentNode() == element.document().documentElement();
+};
+
 void Document::updateTitleElement(Element& changingTitleElement)
 {
-    auto findHTMLTitle = [] (Document& document) -> Element* {
-        return descendantsOfType<HTMLTitleElement>(document).first();
-    };
-    auto isHTMLTitle = [] (Element& element) {
-        return is<HTMLTitleElement>(element);
-    };
-    auto isHTMLTitleEligible = [] (Element& element) {
-        return element.isConnected() && !element.isInShadowTree();
-    };
-
-    auto findSVGTitle = [] (Document& document) -> Element* {
-        return childrenOfType<SVGTitleElement>(*document.documentElement()).first();
-    };
-    auto isSVGTitle = [] (Element& element) {
-        return is<SVGTitleElement>(element);
-    };
-    auto isSVGTitleEligible = [] (Element& element) {
-        return element.parentNode() == element.document().documentElement();
-    };
-
     // Most documents use HTML title rules.
     // Documents with SVG document elements use SVG title rules.
     bool useSVGTitle = is<SVGSVGElement>(documentElement());
