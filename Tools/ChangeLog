@@ -1,3 +1,16 @@
+2017-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] test-webkitpy test timeout_context_unittest is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=176471
+
+        Reviewed by Brent Fulgham.
+
+        This assert failure is possibly caused by different time resolution on
+        various platforms.
+ 
+        * Scripts/webkitpy/common/timeout_context_unittest.py:
+        (TimeoutContextTests.test_timeout_data):
+
 2017-09-06  Aakash Jain  <aakash_jain@apple.com>
 
         status-bubbles turn orange after checking relevance of patch

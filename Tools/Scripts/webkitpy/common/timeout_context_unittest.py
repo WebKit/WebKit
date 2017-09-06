@@ -44,7 +44,7 @@ class TimeoutContextTests(unittest.TestCase):
         with tmp:
             self.assertNotEqual(None, tmp.data)
             self.assertEqual(threading.current_thread().ident, tmp.data.thread_id)
-            self.assertGreater(time.time() + 1, tmp.data.alarm_time)
+            self.assertTrue(time.time() + 1 >= tmp.data.alarm_time)
         self.assertEqual(None, tmp.data)
 
     def test_nested_inner_precedence(self):
