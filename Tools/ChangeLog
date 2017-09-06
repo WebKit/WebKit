@@ -1,3 +1,31 @@
+2017-09-06  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL: Inliner doesn't allow double-negation
+        https://bugs.webkit.org/show_bug.cgi?id=176440
+
+        Reviewed by Mylex Maxfield.
+        
+        The problem was that we were visiting the operands to calls while inside doVisit. This is too strict
+        since it rejects nested calls like foo(foo(x)). The solution is to visit the operands to calls before
+        entering doVisit.
+        
+        This also fixes some other issues in the parser that made the Inliner's error really strange.
+
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        (Inliner):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseOperatorFuncDefValues):
+        (parseNonOperatorFuncDefValues):
+        (parseGenericFuncDefValues):
+        (parseFuncDecl):
+        * WebGPUShadingLanguageRI/Test.js:
+        * WebGPUShadingLanguageRI/VisitingSet.js:
+        (VisitingSet.prototype.doVisit):
+        (VisitingSet):
+
 2017-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WSL should support the bool type

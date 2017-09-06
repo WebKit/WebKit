@@ -33,7 +33,7 @@ class VisitingSet {
     doVisit(item, callback)
     {
         if (this._set.has(item))
-            throw new WTypeError(item.origin.originString, "Recursive " + item.kind);
+            throw new WTypeError(item.origin.originString, "Recursive " + item.kind.name);
         this._set.add(item);
         try {
             return callback();

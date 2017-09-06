@@ -27,6 +27,8 @@
 class Func extends Node {
     constructor(origin, name, returnType, typeParameters, parameters, isCast)
     {
+        if (!(origin instanceof LexerToken))
+            throw new Error("Bad origin: " + origin);
         super();
         this._origin = origin;
         this._name = name;

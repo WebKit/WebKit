@@ -43,19 +43,16 @@ class Inliner extends Rewriter {
     
     visitCallExpression(node)
     {
+        let result = super.visitCallExpression(node);
         return this._visiting.doVisit(node.func, () => {
-            let func = this._program.funcInstantiator.getUnique(node.func, node.actualTypeArguments);
+            let func = this._program.funcInstantiator.getUnique(result.func, result.actualTypeArguments);
             if (func.isNative) {
-                let result = super.visitCallExpression(node);
                 result.nativeFuncInstance = func;
                 return result;
             }
             _inlineFunction(this._program, func, this._visiting);
             return new FunctionLikeBlock(
-                node.origin,
-                func.returnType,
-                node.argumentList.map(argument => argument.visit(this)),
-                func.parameters, func.body);
+                result.origin, func.returnType, result.argumentList, func.parameters, func.body);
         });
     }
 

@@ -977,6 +977,18 @@ function TEST_nullTypeVariableUnify()
         });
 }
 
+function TEST_doubleNot()
+{
+    let program = doPrep(`
+        bool foo(bool x)
+        {
+            return !!x;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {
