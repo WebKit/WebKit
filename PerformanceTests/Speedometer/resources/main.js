@@ -1,9 +1,9 @@
 window.benchmarkClient = {
     displayUnit: 'runs/min',
     iterationCount: 10,
-    testsCount: null,
+    stepCount: null,
     suitesCount: null,
-    _timeValues: [],
+    _measuredValuesList: [],
     _finishedTestCount: 0,
     _progressCompleted: null,
     willAddTestFrame: function (frame) {
@@ -13,17 +13,17 @@ window.benchmarkClient = {
         frame.style.top = main.offsetTop + parseInt(style.borderTopWidth) + parseInt(style.paddingTop) + 'px';
     },
     willRunTest: function (suite, test) {
-        document.getElementById('info').textContent = suite.name + ' ( ' + this._finishedTestCount + ' / ' + this.testsCount + ' )';
+        document.getElementById('info').textContent = suite.name + ' ( ' + this._finishedTestCount + ' / ' + this.stepCount + ' )';
     },
     didRunTest: function () {
         this._finishedTestCount++;
-        this._progressCompleted.style.width = (this._finishedTestCount * 100 / this.testsCount) + '%';
+        this._progressCompleted.style.width = (this._finishedTestCount * 100 / this.stepCount) + '%';
     },
     didRunSuites: function (measuredValues) {
-        this._timeValues.push(measuredValues.total);
+        this._measuredValuesList.push(measuredValues);
     },
     willStartFirstIteration: function () {
-        this._timeValues = [];
+        this._measuredValuesList = [];
         this._finishedTestCount = 0;
         this._progressCompleted = document.getElementById('progress-completed');
         document.getElementById('logo-link').onclick = function (event) { event.preventDefault(); return false; }
@@ -31,7 +31,7 @@ window.benchmarkClient = {
     didFinishLastIteration: function () {
         document.getElementById('logo-link').onclick = null;
 
-        var results = this._computeResults(this._timeValues, this.displayUnit);
+        var results = this._computeResults(this._measuredValuesList, this.displayUnit);
 
         this._updateGaugeNeedle(results.mean);
         document.getElementById('result-number').textContent = results.formattedMean;
@@ -47,12 +47,12 @@ window.benchmarkClient = {
         } else
             showResultsSummary();
     },
-    _computeResults: function (timeValues, displayUnit) {
+    _computeResults: function (measuredValuesList, displayUnit) {
         var suitesCount = this.suitesCount;
-        function totalTimeInDisplayUnit(time) {
+        function valueForUnit(measuredValues) {
             if (displayUnit == 'ms')
-                return time;
-            return computeScore(time);
+                return measuredValues.geomean;
+            return measuredValues.score;
         }
 
         function sigFigFromPercentDelta(percentDelta) {
@@ -64,7 +64,7 @@ window.benchmarkClient = {
             return number.toPrecision(Math.max(nonDecimalDigitCount, Math.min(6, sigFig)));
         }
 
-        var values = timeValues.map(totalTimeInDisplayUnit);
+        var values = measuredValuesList.map(valueForUnit);
         var sum = values.reduce(function (a, b) { return a + b; }, 0);
         var arithmeticMean = sum / values.length;
         var meanSigFig = 4;
@@ -83,8 +83,8 @@ window.benchmarkClient = {
         var formattedMean = toSigFigPrecision(arithmeticMean, Math.max(meanSigFig, 3));
 
         return {
-            formattedValues: timeValues.map(function (time) {
-                return toSigFigPrecision(totalTimeInDisplayUnit(time), 4) + ' ' + displayUnit;
+            formattedValues: values.map(function (value) {
+                return toSigFigPrecision(value, 4) + ' ' + displayUnit;
             }),
             mean: arithmeticMean,
             formattedMean: formattedMean,
@@ -196,17 +196,13 @@ function startBenchmark() {
     }
 
     var enabledSuites = Suites.filter(function (suite) { return !suite.disabled; });
-    var totalSubtestCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
-    benchmarkClient.testsCount = benchmarkClient.iterationCount * totalSubtestCount;
+    var totalSubtestsCount = enabledSuites.reduce(function (testsCount, suite) { return testsCount + suite.tests.length; }, 0);
+    benchmarkClient.stepCount = benchmarkClient.iterationCount * totalSubtestsCount;
     benchmarkClient.suitesCount = enabledSuites.length;
     var runner = new BenchmarkRunner(Suites, benchmarkClient);
     runner.runMultipleIterations(benchmarkClient.iterationCount);
 
     return true;
-}
-
-function computeScore(time) {
-    return 60 * 1000 * benchmarkClient.suitesCount / time;
 }
 
 function showSection(sectionIdentifier, pushState) {

@@ -194,7 +194,7 @@ BenchmarkState.prototype.prepareCurrentSuite = function (runner, frame) {
 BenchmarkRunner.prototype.step = function (state) {
     if (!state) {
         state = new BenchmarkState(this._suites);
-        this._measuredValues = {tests: {}, total: 0};
+        this._measuredValues = {tests: {}, total: 0, mean: NaN, geomean: NaN, score: NaN};
     }
 
     var suite = state.currentSuite();
@@ -207,7 +207,6 @@ BenchmarkRunner.prototype.step = function (state) {
 
     if (state.isFirstTest()) {
         this._removeFrame();
-        this._masuredValuesForCurrentSuite = {};
         var self = this;
         return state.prepareCurrentSuite(this, this._appendFrame()).then(function (prepareReturnValue) {
             self._prepareReturnValue = prepareReturnValue;
@@ -260,7 +259,6 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
             self._measuredValues.tests[suite.name] = suiteResults;
             suiteResults.tests[test.name] = {tests: {'Sync': syncTime, 'Async': asyncTime}, total: total};
             suiteResults.total += total;
-            self._measuredValues.total += total;
 
             if (self._client && self._client.didRunTest)
                 self._client.didRunTest(suite, test);
@@ -275,8 +273,26 @@ BenchmarkRunner.prototype._runTestAndRecordResults = function (state) {
 BenchmarkRunner.prototype._finalize = function () {
     this._removeFrame();
 
-    if (this._client && this._client.didRunSuites)
+    if (this._client && this._client.didRunSuites) {
+        var product = 1;
+        var values = [];
+        for (var suiteName in this._measuredValues.tests) {
+            var suiteTotal = this._measuredValues.tests[suiteName].total;
+            product *= suiteTotal;
+            values.push(suiteTotal);
+        }
+
+        values.sort(function (a, b) { return a - b }); // Avoid the loss of significance for the sum.
+        var total = values.reduce(function (a, b) { return a + b });
+        var geomean = Math.pow(product, 1 / values.length);
+
+        var correctionFactor = 3; // This factor makes the test score look reasonably fit within 0 to 140.
+        this._measuredValues.total = total;
+        this._measuredValues.mean = total / values.length;
+        this._measuredValues.geomean = geomean;
+        this._measuredValues.score = 60 * 1000 / geomean / correctionFactor;
         this._client.didRunSuites(this._measuredValues);
+    }
 
     if (this._runNextIteration)
         this._runNextIteration();

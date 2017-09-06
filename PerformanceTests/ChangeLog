@@ -1,3 +1,52 @@
+2017-09-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Compute the final score using geometric mean in Speedometer 2.0
+        https://bugs.webkit.org/show_bug.cgi?id=172968
+
+        Reviewed by Saam Barati.
+
+        Make Speedometer 2.0 use the geometric mean of the subtotal of each test suite instead of the total..
+
+        In Speedometer 1.0, we used the total time to compute the final score because we wanted to make
+        the slowest framework and library faster. The fastest suite (FlightJS) still accounted for ~6% and
+        the slowest case (React) accounted for ~25% so we felt the total time, or the arithmetic mean with
+        a constant factor, was a good metric to track.
+
+        In the latest version of Speedometer 2.0, however, the fastest suite (Preact) runs in ~55ms whereas
+        the slowest suite (Inferno) takes 1.5s on Safari. Since the total time is 6.5s, Preact's suite only
+        accounts for ~0.8% of the total score while Inferno's suite accounts for ~23% of the total score.
+        Since the goal of Speedometer is to approximate different kinds of DOM API use patterns on the Web,
+        we want each framework & library to have some measurement impact on the overall benchmark score.
+
+        Furthermore, after r221205, we're testing both debug build of Ember.js as well as release build.
+        Since debug build is 4x slower, using the total time or the arithmetic mean thereof will effectively
+        give 4x as much weight to debug build of Ember.js relative to release build of Ember.js. Given only
+        ~5% of websites that deploy Ember.js use debug build, this weighting is clearly not right.
+
+        This patch, therefore, replaces the arithmetic mean by the geometric mean to compute the final score.
+        It also moves the code to compute the final score to BenchmarkRunner to be shared between main.js
+        and InteractiveRunner.html.
+
+        * Speedometer/InteractiveRunner.html:
+        (.didRunSuites): Show geometric mean, arithmetic mean, total, as well as the score for completeness
+        since this is a debugging page for developers.
+        * Speedometer/resources/benchmark-runner.js:
+        (BenchmarkRunner.prototype.step): Added mean, geomean, and score as measuredValues' properties.
+        (BenchmarkRunner.prototype._runTestAndRecordResults): Removed the dead code.
+        (BenchmarkRunner.prototype._finalize): Compute and add total, arithmetic mean (just mean in the code),
+        and geometric mean (geomean) to measuredValues.
+        * Speedometer/resources/main.js:
+        (window.benchmarkClient): Replaced testsCount by stepsCount and _timeValues by _measuredValuesList.
+        (window.benchmarkClient.willRunTest):
+        (window.benchmarkClient.didRunTest):
+        (window.benchmarkClient.didRunSuites): Store measuredValues object instead of just the total time.
+        (window.benchmarkClient.didFinishLastIteration):
+        (window.benchmarkClient._computeResults):
+        (window.benchmarkClient._computeResults.valueForUnit): Renamed from totalTimeInDisplayUnit. Now simply
+        retrieves the values computed by BenchmarkRunner's_finalize.
+        (startBenchmark):
+        (computeScore): Deleted.
+
 2017-09-05  JF Bastien  <jfbastien@apple.com>
 
         StitchMarker build fix
