@@ -57,6 +57,7 @@ using WebGLAny = Variant<
     float,
     String,
     Vector<bool>,
+    Vector<int>,
     RefPtr<Float32Array>,
     RefPtr<Int32Array>,
     RefPtr<Uint32Array>,

@@ -589,6 +589,14 @@ void GraphicsContext3D::texStorage3D(GC3Denum target, GC3Dsizei levels, GC3Denum
     makeContextCurrent();
     ::glTexStorage3D(target, levels, internalformat, width, height, depth);
 }
+
+void GraphicsContext3D::getActiveUniforms(Platform3DObject program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname, Vector<GC3Dint>& params)
+{
+    ASSERT(program);
+    makeContextCurrent();
+
+    ::glGetActiveUniformsiv(program, uniformIndices.size(), uniformIndices.data(), pname, params.data());
+}
 #endif
 
 GC3Denum GraphicsContext3D::checkFramebufferStatus(GC3Denum target)

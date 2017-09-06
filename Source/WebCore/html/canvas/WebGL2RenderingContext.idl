@@ -449,7 +449,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void bindBufferRange(GLenum target, GLuint index, WebGLBuffer? buffer, GLintptr offset, GLsizeiptr size);
     [OverrideIDLType=IDLWebGLAny] any getIndexedParameter(GLenum target, GLuint index);
     Uint32Array getUniformIndices(WebGLProgram? program, sequence<DOMString> uniformNames);
-    Int32Array getActiveUniforms(WebGLProgram? program, Uint32Array? uniformIndices, GLenum pname);
+    [OverrideIDLType=IDLWebGLAny] any getActiveUniforms(WebGLProgram program, sequence<GLuint> uniformIndices, GLenum pname);
     GLuint getUniformBlockIndex(WebGLProgram? program, DOMString uniformBlockName);
     [OverrideIDLType=IDLWebGLAny] any getActiveUniformBlockParameter(WebGLProgram? program, GLuint uniformBlockIndex, GLenum pname);
     [OverrideIDLType=IDLWebGLAny] any getActiveUniformBlockName(WebGLProgram? program, GLuint uniformBlockIndex);

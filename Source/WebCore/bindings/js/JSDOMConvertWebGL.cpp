@@ -93,6 +93,12 @@ JSValue convertToJSValue(ExecState& state, JSDOMGlobalObject& globalObject, cons
                 list.append(jsBoolean(value));
             return constructArray(&state, 0, &globalObject, list);
         },
+        [&] (const Vector<int>& values) {
+            MarkedArgumentBuffer list;
+            for (auto& value : values)
+                list.append(jsNumber(value));
+            return constructArray(&state, 0, &globalObject, list);
+        },
         [&] (const RefPtr<Float32Array>& array) {
             return toJS(&state, &globalObject, array.get());
         },

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<canvas id="c" width="40" height="40"></canvas>
+<script>
+description("Checks for proper getActiveUniforms() behavior on a simple WebGL 2 program.");
+
+if (window.internals)
+	internals.settings.setWebGL2Enabled(true);
+
+var canvas = document.getElementById("c");
+var gl = canvas.getContext("webgl2");
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+var program = loadStandardProgram(gl);
+var mvpLocation = gl.getUniformLocation(program, "u_modelViewProjMatrix");
+
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_TYPE)", "[gl.FLOAT_MAT4]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_SIZE)", "[1]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_BLOCK_INDEX)", "[-1]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_OFFSET)", "[-1]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_ARRAY_STRIDE)", "[-1]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_MATRIX_STRIDE)", "[-1]");
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR)", "[0]");
+shouldBe("gl.getError()", "gl.NO_ERROR");
+
+// Invalid parameter for getActiveUniforms() in WebGL2.
+shouldBe("gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_NAME_LENGTH)", "null");
+shouldBe("gl.getError()", "gl.INVALID_ENUM");
+</script>
+</body>
+</html>

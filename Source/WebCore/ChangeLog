@@ -1,3 +1,33 @@
+2017-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebGL2] Implement getActiveUniforms()
+        https://bugs.webkit.org/show_bug.cgi?id=175203
+
+        Reviewed by Darin Adler.
+
+        Align getActiveUniforms() WebIDL signature with the spec -- making it
+        return a WebGLAny object, making the program parameter non-nullable,
+        and making the uniformIndices parameter a sequence on GLuint values.
+
+        The getActiveUniforms() implementation in WebGL2RenderingContext
+        validates the passed-in program and parameter name and then calls the
+        GraphicsContext3D::getActiveUniforms() method, retrieving an array of
+        integers that represent values of the requested parameter name for
+        each uniform whose index was passed through uniformIndices.
+
+        Test: fast/canvas/webgl/webgl2-getActiveUniforms.html
+
+        * bindings/js/JSDOMConvertWebGL.cpp:
+        (WebCore::convertToJSValue):
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::getActiveUniforms):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+        * html/canvas/WebGLAny.h:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp:
+        (WebCore::GraphicsContext3D::getActiveUniforms):
+
 2017-09-05  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Downcast parameters and keys at the platform operation callsites

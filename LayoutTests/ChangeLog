@@ -1,3 +1,22 @@
+2017-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebGL2] Implement getActiveUniforms()
+        https://bugs.webkit.org/show_bug.cgi?id=175203
+
+        Reviewed by Darin Adler.
+
+        Add a basic gl.getActiveUniforms() test that checks proper return values
+        for a mat4 uniform in the simple vertex shader that's used when creating
+        the 'standard' program through webgl-test.js utilities. The test remains
+        skipped on GTK+ and Windows (WebGL 2.0 disabled). Mac port skips it as
+        well since the shader can't be compiled properly. WPE and iOS run the
+        test and are passing it.
+
+        * fast/canvas/webgl/webgl2-getActiveUniforms-expected.txt: Added.
+        * fast/canvas/webgl/webgl2-getActiveUniforms.html: Added.
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
 2017-09-05  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, rebaseline test after r221639.

@@ -1,0 +1,21 @@
+CONSOLE MESSAGE: line 1: WebGL: INVALID_ENUM: getActiveUniforms: invalid parameter name
+Checks for proper getActiveUniforms() behavior on a simple WebGL 2 program.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_TYPE) is [gl.FLOAT_MAT4]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_SIZE) is [1]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_BLOCK_INDEX) is [-1]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_OFFSET) is [-1]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_ARRAY_STRIDE) is [-1]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_MATRIX_STRIDE) is [-1]
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_IS_ROW_MAJOR) is [0]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getActiveUniforms(program, [mvpLocation], gl.UNIFORM_NAME_LENGTH) is null
+PASS gl.getError() is gl.INVALID_ENUM
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
