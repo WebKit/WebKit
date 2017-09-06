@@ -1,5 +1,31 @@
 2017-09-06  Saam Barati  <sbarati@apple.com>
 
+        Air should have a Vector of prologue generators instead of a HashMap representing an optional prologue generator
+        https://bugs.webkit.org/show_bug.cgi?id=176346
+
+        Reviewed by Mark Lam.
+
+        * b3/B3Procedure.cpp:
+        (JSC::B3::Procedure::Procedure):
+        (JSC::B3::Procedure::setNumEntrypoints):
+        * b3/B3Procedure.h:
+        (JSC::B3::Procedure::setNumEntrypoints): Deleted.
+        * b3/air/AirCode.cpp:
+        (JSC::B3::Air::defaultPrologueGenerator):
+        (JSC::B3::Air::Code::Code):
+        (JSC::B3::Air::Code::setNumEntrypoints):
+        * b3/air/AirCode.h:
+        (JSC::B3::Air::Code::setPrologueForEntrypoint):
+        (JSC::B3::Air::Code::prologueGeneratorForEntrypoint):
+        (JSC::B3::Air::Code::setEntrypoints):
+        (JSC::B3::Air::Code::setEntrypointLabels):
+        * b3/air/AirGenerate.cpp:
+        (JSC::B3::Air::generate):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::lower):
+
+2017-09-06  Saam Barati  <sbarati@apple.com>
+
         ASSERTION FAILED: op() == CheckStructure in Source/JavaScriptCore/dfg/DFGNode.h(443)
         https://bugs.webkit.org/show_bug.cgi?id=176470
 

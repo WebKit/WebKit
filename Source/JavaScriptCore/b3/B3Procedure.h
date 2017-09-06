@@ -186,8 +186,8 @@ public:
     bool isFastConstant(const ValueKey&);
     
     unsigned numEntrypoints() const { return m_numEntrypoints; }
-    void setNumEntrypoints(unsigned numEntrypoints) { m_numEntrypoints = numEntrypoints; }
-    
+    JS_EXPORT_PRIVATE void setNumEntrypoints(unsigned);
+
     // Only call this after code generation is complete. Note that the label for the 0th entrypoint
     // should point to exactly where the code generation cursor was before you started generating
     // code.

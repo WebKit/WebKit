@@ -157,7 +157,7 @@ public:
             m_proc.setNumEntrypoints(m_graph.m_numberOfEntrypoints);
             CodeBlock* codeBlock = m_graph.m_codeBlock;
 
-            RefPtr<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
+            Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>(
                 [codeBlock] (CCallHelpers& jit, B3::Air::Code& code) {
                     AllowMacroScratchRegisterUsage allowScratch(jit);
                     jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
@@ -167,7 +167,7 @@ public:
 
             for (unsigned catchEntrypointIndex : m_graph.m_entrypointIndexToCatchBytecodeOffset.keys()) {
                 RELEASE_ASSERT(catchEntrypointIndex != 0);
-                m_proc.code().setPrologueForEntrypoint(catchEntrypointIndex, catchPrologueGenerator);
+                m_proc.code().setPrologueForEntrypoint(catchEntrypointIndex, catchPrologueGenerator.copyRef());
             }
 
             if (m_graph.m_maxLocalsForCatchOSREntry) {

@@ -52,6 +52,7 @@ Procedure::Procedure()
     , m_byproducts(std::make_unique<OpaqueByproducts>())
     , m_code(new Air::Code(*this))
 {
+    m_code->setNumEntrypoints(m_numEntrypoints);
 }
 
 Procedure::~Procedure()
@@ -418,6 +419,12 @@ RegisterSet Procedure::mutableGPRs()
 RegisterSet Procedure::mutableFPRs()
 {
     return code().mutableFPRs();
+}
+
+void Procedure::setNumEntrypoints(unsigned numEntrypoints)
+{
+    m_numEntrypoints = numEntrypoints;
+    m_code->setNumEntrypoints(numEntrypoints);
 }
 
 } } // namespace JSC::B3
