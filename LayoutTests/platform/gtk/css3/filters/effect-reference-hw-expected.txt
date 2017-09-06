@@ -53,16 +53,16 @@ layer at (0,0) size 800x600
         text run at (552,96) width 4: " "
       RenderText {#text} at (736,96) size 4x17
         text run at (736,96) width 4: " "
-      RenderText {#text} at (180,209) size 4x17
-        text run at (180,209) width 4: " "
-      RenderText {#text} at (364,209) size 4x17
-        text run at (364,209) width 4: " "
-      RenderText {#text} at (548,209) size 4x17
-        text run at (548,209) width 4: " "
-      RenderText {#text} at (732,209) size 4x17
-        text run at (732,209) width 4: " "
-      RenderText {#text} at (180,322) size 4x17
-        text run at (180,322) width 4: " "
+      RenderText {#text} at (180,210) size 4x17
+        text run at (180,210) width 4: " "
+      RenderText {#text} at (364,210) size 4x17
+        text run at (364,210) width 4: " "
+      RenderText {#text} at (548,210) size 4x17
+        text run at (548,210) width 4: " "
+      RenderText {#text} at (732,210) size 4x17
+        text run at (732,210) width 4: " "
+      RenderText {#text} at (180,324) size 4x17
+        text run at (180,324) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (22,18) size 160x90
   RenderImage {IMG} at (14,10) size 160x90
@@ -72,15 +72,15 @@ layer at (390,18) size 160x90
   RenderImage {IMG} at (382,10) size 160x90
 layer at (574,18) size 160x90
   RenderImage {IMG} at (566,10) size 160x90
-layer at (18,131) size 160x90
-  RenderImage {IMG} at (10,123) size 160x90
-layer at (202,131) size 160x90
-  RenderImage {IMG} at (194,123) size 160x90
-layer at (386,131) size 160x90
-  RenderImage {IMG} at (378,123) size 160x90
-layer at (570,131) size 160x90
-  RenderImage {IMG} at (562,123) size 160x90
-layer at (18,244) size 160x90
-  RenderImage {IMG} at (10,236) size 160x90
-layer at (202,244) size 160x90
-  RenderImage {IMG} at (194,236) size 160x90
+layer at (18,132) size 160x90
+  RenderImage {IMG} at (10,124) size 160x90
+layer at (202,132) size 160x90
+  RenderImage {IMG} at (194,124) size 160x90
+layer at (386,132) size 160x90
+  RenderImage {IMG} at (378,124) size 160x90
+layer at (570,132) size 160x90
+  RenderImage {IMG} at (562,124) size 160x90
+layer at (18,246) size 160x90
+  RenderImage {IMG} at (10,238) size 160x90
+layer at (202,246) size 160x90
+  RenderImage {IMG} at (194,238) size 160x90
