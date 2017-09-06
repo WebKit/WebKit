@@ -1,3 +1,20 @@
+2017-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] WebCore failed to build, InbandTextTrackPrivateAVF: base class undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=176431
+
+        Reviewed by Alex Christensen.
+
+        AVFoundation header detection should be done in WebCore because of build dependencies.
+
+        No new tests, covered by existing tests.
+
+        * AVFoundationSupport.py: Copied from Source/WTF/AVFoundationSupport.py.
+        * PlatformWin.cmake:
+        * config.h:
+        * platform/graphics/ca/win/PlatformCALayerWin.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+
 2017-09-06  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r221598): Legacy "round" and "bevel" options can no longer be used with the legacy CanvasRenderingContext2D setLineJoin operation

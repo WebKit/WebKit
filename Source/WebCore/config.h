@@ -29,6 +29,10 @@
 #define USE_FILE_LOCK 1
 #endif
 
+#if PLATFORM(WIN)
+#include "WebCoreHeaderDetection.h"
+#endif
+
 #include "PlatformExportMacros.h"
 #include <pal/ExportMacros.h>
 #include <runtime/JSExportMacros.h>
@@ -104,3 +108,15 @@ typedef float CGFloat;
 #define CGFLOAT_DEFINED 1
 #endif
 #endif /* USE(CG) */
+
+#if PLATFORM(WIN) && USE(CG) && HAVE(AVCF)
+#define USE_AVFOUNDATION 1
+
+#if HAVE(AVCF_LEGIBLE_OUTPUT)
+#define USE_AVFOUNDATION 1
+#define HAVE_AVFOUNDATION_MEDIA_SELECTION_GROUP 1
+#define HAVE_AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT 1
+#define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK 1
+#endif
+
+#endif
