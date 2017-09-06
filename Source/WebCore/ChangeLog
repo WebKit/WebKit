@@ -1,3 +1,66 @@
+2017-09-05  Darin Adler  <darin@apple.com>
+
+        Fix a few minor problems found while working toward removing unneeded calls to updateStyle
+        https://bugs.webkit.org/show_bug.cgi?id=176279
+
+        Reviewed by Antti Koivisto.
+
+        * dom/Document.cpp:
+        (WebCore::Document::updateTitleElement): Fix the algorithm so that an SVG title won't
+        ever become the title when the document element is not an SVG element. We had this wrong
+        before but we were passing the test because SVGTitleElement::insertedInto had a bug that
+        hid the problem.
+        (WebCore::Document::titleElementAdded): Pass a reference instead of a pointer.
+        (WebCore::Document::titleElementRemoved): Pass a reference instead of nullptr since we
+        want to know which element is being removed.
+
+        * dom/Document.h: Update the argument name and type for updateTitleElement.
+
+        * html/HTMLTitleElement.cpp:
+        (WebCore::HTMLTitleElement::insertedInto): Call titleElementAdded unconditionally.
+        The checks to see if the title element is connected to the document and not in the
+        shadow tree are now handled by the Document class.
+        (WebCore::HTMLTitleElement::removedFrom): Same for titleElementRemoved.
+
+        * platform/mock/MockRealtimeVideoSource.cpp:
+        (WebCore::MockRealtimeVideoSource::applySize): Removed incorrect caching of FontCascade
+        objects; these need to be created each time we draw.
+        (WebCore::MockRealtimeVideoSource::drawText): Create all the fonts here. Since this is
+        a mock for testing, there is no real performance concern with doing this.
+        * platform/mock/MockRealtimeVideoSource.h: Removed the FontCascade data members.
+
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::updateLayoutIgnoringPendingStylesheetsIncludingSubframes): Added. Used below
+        to update layout more thoroughly.
+        (WebCore::externalRepresentation): Update layout of all descendant frames, not just
+        the top level frame.
+
+        * svg/SVGTitleElement.cpp:
+        (WebCore::SVGTitleElement::insertedInto): Removed bogus firstChild check, bogus isSVGDocument
+        check, and unneeded isConnected check and call titleElementAdded unconditionally. The checks
+        are now handled by the Document class.
+        (WebCore::SVGTitleElement::removedFrom): Same for titleElementRemoved.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::layerTreeAsText const): Added missing updateLayoutIgnorePendingStylesheets,
+        since dumping the layer tree without first doing a layout will yield stale results.
+        (WebCore::Internals::layerIDForElement): Added missing updateLayoutIgnorePendingStylesheets,
+        since using a renderer to check if a layer exists without first doing a layout will yield stale results.
+        (WebCore::Internals::setElementUsesDisplayListDrawing): Ditto.
+        (WebCore::Internals::setElementTracksDisplayListReplay): Ditto.
+        (WebCore::Internals::displayListForElement): Ditto.
+        (WebCore::Internals::replayDisplayListForElement): Ditto.
+        (WebCore::Internals::isSelectPopupVisible): Added missing updateLayoutIgnorePendingStylesheets,
+        since working with the RenderMenuList without first doing a layout will yield stale results.
+        Also removed unneeded strict handling of null renderer, instead just returning false.
+        (WebCore::Internals::isPluginUnavailabilityIndicatorObscured): Removed unnneeded check of
+        renderer class, since the HTMLPlugInElement::isReplacementObscured already handles that correctly.
+        (WebCore::Internals::pageOverlayLayerTreeAsText const): Use updateLayoutIgnorePendingStylesheets
+        instead of the normal updateLayout for consistency with the behavior of the other functions in this
+        file, and because we need a real answer here.
+        (WebCore::Internals::scrollSnapOffsets): Ditto. Also rearranged the code so the renderer check is
+        done after updating the renderer tree.
+
 2017-09-05  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221495.

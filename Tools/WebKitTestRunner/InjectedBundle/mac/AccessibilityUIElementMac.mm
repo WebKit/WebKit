@@ -1415,7 +1415,7 @@ void AccessibilityUIElement::press()
 void AccessibilityUIElement::setSelectedChild(AccessibilityUIElement* element) const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
-    NSArray* array = [NSArray arrayWithObject:element->platformUIElement()];
+    NSArray* array = element ? [NSArray arrayWithObject:element->platformUIElement()] : [NSArray array];
     [m_element accessibilitySetValue:array forAttribute:NSAccessibilitySelectedChildrenAttribute];
     END_AX_OBJC_EXCEPTIONS    
 }
