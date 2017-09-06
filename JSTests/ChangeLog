@@ -1,3 +1,13 @@
+2017-09-05  Saam Barati  <sbarati@apple.com>
+
+        isNotCellSpeculation is wrong with respect to SpecEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=176429
+
+        Reviewed by Michael Saboff.
+
+        * microbenchmarks/is-not-cell-speculation-for-empty-value.js: Added.
+        (Foo):
+
 2017-09-05  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: Completion values for control flow do not match the spec

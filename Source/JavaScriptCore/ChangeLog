@@ -1,5 +1,20 @@
 2017-09-05  Saam Barati  <sbarati@apple.com>
 
+        isNotCellSpeculation is wrong with respect to SpecEmpty
+        https://bugs.webkit.org/show_bug.cgi?id=176429
+
+        Reviewed by Michael Saboff.
+
+        The isNotCellSpeculation(SpeculatedType t) function was not taking into account
+        SpecEmpty in the set for t. It should return false when SpecEmpty is present, since
+        the empty value will fail a NotCell check. This bug would cause us to erroneously
+        generate NotCellUse UseKinds for inputs that are the empty value, causing repeated OSR exits.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isNotCellSpeculation):
+
+2017-09-05  Saam Barati  <sbarati@apple.com>
+
         Make the distinction between entrypoints and CFG roots more clear by naming things better
         https://bugs.webkit.org/show_bug.cgi?id=176336
 

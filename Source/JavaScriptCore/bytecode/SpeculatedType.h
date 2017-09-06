@@ -119,7 +119,7 @@ inline bool isCellOrOtherSpeculation(SpeculatedType value)
 
 inline bool isNotCellSpeculation(SpeculatedType value)
 {
-    return !(value & SpecCell) && value;
+    return !(value & SpecCellCheck) && value;
 }
 
 inline bool isObjectSpeculation(SpeculatedType value)
