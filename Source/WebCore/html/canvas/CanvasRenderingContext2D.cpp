@@ -581,9 +581,9 @@ void CanvasRenderingContext2D::setLineJoin(const String& stringValue)
     CanvasLineJoin join;
     if (stringValue == "round")
         join = CanvasLineJoin::Round;
-    if (stringValue == "bevel")
+    else if (stringValue == "bevel")
         join = CanvasLineJoin::Bevel;
-    if (stringValue == "miter")
+    else if (stringValue == "miter")
         join = CanvasLineJoin::Miter;
     else
         return;

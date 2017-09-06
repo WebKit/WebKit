@@ -1,3 +1,18 @@
+2017-09-06  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION (r221598): Legacy "round" and "bevel" options can no longer be used with the legacy CanvasRenderingContext2D setLineJoin operation
+        https://bugs.webkit.org/show_bug.cgi?id=176461
+
+        Reviewed by Alex Christensen.
+
+        Tests: fast/canvas/canvas-strokePath-cap-join-legacy-functions-match-attribute.html
+               fast/canvas/canvas-strokePath-cap-join-legacy.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setLineJoin):
+        
+            Fix silly typo, ifs -> else ifs.
+
 2017-09-06  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile errors in Document::updateTitleElement.
