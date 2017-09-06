@@ -59,7 +59,7 @@ void CryptoAlgorithmHMAC::sign(std::unique_ptr<CryptoAlgorithmParameters>&&, Ref
 {
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(key, data);
+            return platformSign(downcast<CryptoKeyHMAC>(key.get()), data);
         });
 }
 
@@ -67,7 +67,7 @@ void CryptoAlgorithmHMAC::verify(std::unique_ptr<CryptoAlgorithmParameters>&&, R
 {
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(key, signature, data);
+            return platformVerify(downcast<CryptoKeyHMAC>(key.get()), signature, data);
         });
 }
 

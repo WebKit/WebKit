@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmAesCbcCfbParams;
 class CryptoKeyAES;
 
 class CryptoAlgorithmAES_CFB final : public CryptoAlgorithm {
@@ -50,8 +51,8 @@ private:
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformEncrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&);
-    static ExceptionOr<Vector<uint8_t>> platformDecrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformEncrypt(CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformDecrypt(CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

@@ -63,18 +63,14 @@ static ExceptionOr<Vector<uint8_t>> decryptRSA_OAEP(CryptoAlgorithmIdentifier ha
     return WTFMove(plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)
 {
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    return encryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText);
+    return encryptRSA_OAEP(key.hashAlgorithmIdentifier(), parameters.labelVector(), key.platformKey(), key.keySizeInBits(), plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& cipherText)
 {
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    return decryptRSA_OAEP(rsaKey.hashAlgorithmIdentifier(), rsaParameters.labelVector(), rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText);
+    return decryptRSA_OAEP(key.hashAlgorithmIdentifier(), parameters.labelVector(), key.platformKey(), key.keySizeInBits(), cipherText);
 }
 
 } // namespace WebCore

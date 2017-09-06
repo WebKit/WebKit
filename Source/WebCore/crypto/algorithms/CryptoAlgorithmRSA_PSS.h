@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmRsaPssParams;
 class CryptoKeyRSA;
 
 class CryptoAlgorithmRSA_PSS final : public CryptoAlgorithm {
@@ -49,8 +50,8 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformSign(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&);
-    static ExceptionOr<bool> platformVerify(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformSign(CryptoAlgorithmRsaPssParams&, const CryptoKeyRSA&, const Vector<uint8_t>&);
+    static ExceptionOr<bool> platformVerify(CryptoAlgorithmRsaPssParams&, const CryptoKeyRSA&, const Vector<uint8_t>&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

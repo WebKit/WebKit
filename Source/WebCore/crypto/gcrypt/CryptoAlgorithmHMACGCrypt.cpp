@@ -82,29 +82,25 @@ static std::optional<Vector<uint8_t>> calculateSignature(int algorithm, const Ve
     return WTFMove(signature);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
-    auto& hmacKey = downcast<CryptoKeyHMAC>(key);
-
-    auto algorithm = getGCryptDigestAlgorithm(hmacKey.hashAlgorithmIdentifier());
+    auto algorithm = getGCryptDigestAlgorithm(key.hashAlgorithmIdentifier());
     if (algorithm == GCRY_MAC_NONE)
         return Exception { OperationError };
 
-    auto result = calculateSignature(algorithm, hmacKey.key(), data.data(), data.size());
+    auto result = calculateSignature(algorithm, key.key(), data.data(), data.size());
     if (!result)
         return Exception { OperationError };
     return WTFMove(*result);
 }
 
-ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& hmacKey = downcast<CryptoKeyHMAC>(key);
-
-    auto algorithm = getGCryptDigestAlgorithm(hmacKey.hashAlgorithmIdentifier());
+    auto algorithm = getGCryptDigestAlgorithm(key.hashAlgorithmIdentifier());
     if (algorithm == GCRY_MAC_NONE)
         return Exception { OperationError };
 
-    auto expectedSignature = calculateSignature(algorithm, hmacKey.key(), data.data(), data.size());
+    auto expectedSignature = calculateSignature(algorithm, key.key(), data.data(), data.size());
     if (!expectedSignature)
         return Exception { OperationError };
     // Using a constant time comparison to prevent timing attacks.

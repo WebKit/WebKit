@@ -170,23 +170,17 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
-    auto& ecParameters = downcast<CryptoAlgorithmEcdsaParams>(parameters);
-    auto& ecKey = downcast<CryptoKeyEC>(key);
-
-    auto output = gcryptSign(ecKey.platformKey(), data, ecParameters.hashIdentifier, ecKey.keySizeInBits() / 8);
+    auto output = gcryptSign(key.platformKey(), data, parameters.hashIdentifier, key.keySizeInBits() / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& ecParameters = downcast<CryptoAlgorithmEcdsaParams>(parameters);
-    auto& ecKey = downcast<CryptoKeyEC>(key);
-
-    auto output = gcryptVerify(ecKey.platformKey(), signature, data, ecParameters.hashIdentifier, ecKey.keySizeInBits() / 8);
+    auto output = gcryptVerify(key.platformKey(), signature, data, parameters.hashIdentifier, key.keySizeInBits() / 8);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

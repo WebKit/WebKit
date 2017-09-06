@@ -62,20 +62,16 @@ static ExceptionOr<Vector<uint8_t>> transformAES_CBC(CCOperation operation, cons
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-    ASSERT(aesParameters.ivVector().size() == kCCBlockSizeAES128);
-    return transformAES_CBC(kCCEncrypt, aesParameters.ivVector(), aesKey.key(), plainText);
+    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    return transformAES_CBC(kCCEncrypt, parameters.ivVector(), key.key(), plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-    ASSERT(aesParameters.ivVector().size() == kCCBlockSizeAES128);
-    return transformAES_CBC(kCCDecrypt, aesParameters.ivVector(), aesKey.key(), cipherText);
+    ASSERT(parameters.ivVector().size() == kCCBlockSizeAES128);
+    return transformAES_CBC(kCCDecrypt, parameters.ivVector(), key.key(), cipherText);
 }
 
 } // namespace WebCore

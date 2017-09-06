@@ -110,23 +110,17 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(CryptoAlgorithmIdentifier ha
     return mpiData(valueSexp);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformEncrypt(CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)
 {
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-
-    auto output = gcryptEncrypt(rsaKey.hashAlgorithmIdentifier(), rsaKey.platformKey(), rsaParameters.labelVector(), plainText);
+    auto output = gcryptEncrypt(key.hashAlgorithmIdentifier(), key.platformKey(), parameters.labelVector(), plainText);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_OAEP::platformDecrypt(CryptoAlgorithmRsaOaepParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& cipherText)
 {
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaOaepParams>(parameters);
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-
-    auto output = gcryptDecrypt(rsaKey.hashAlgorithmIdentifier(), rsaKey.platformKey(), rsaParameters.labelVector(), cipherText);
+    auto output = gcryptDecrypt(key.hashAlgorithmIdentifier(), key.platformKey(), parameters.labelVector(), cipherText);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

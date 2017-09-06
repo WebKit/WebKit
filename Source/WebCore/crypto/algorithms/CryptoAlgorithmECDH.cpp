@@ -119,7 +119,7 @@ void CryptoAlgorithmECDH::deriveBits(std::unique_ptr<CryptoAlgorithmParameters>&
     context.ref();
     workQueue.dispatch(
         [baseKey = WTFMove(baseKey), publicKey = ecParameters.publicKey.releaseNonNull(), length, unifiedCallback = WTFMove(unifiedCallback), &context]() mutable {
-            auto derivedKey = platformDeriveBits(baseKey, publicKey);
+            auto derivedKey = platformDeriveBits(downcast<CryptoKeyEC>(baseKey.get()), downcast<CryptoKeyEC>(publicKey.get()));
             context.postTask(
                 [derivedKey = WTFMove(derivedKey), length, unifiedCallback = WTFMove(unifiedCallback)](ScriptExecutionContext& context) mutable {
                     unifiedCallback(WTFMove(derivedKey), length);

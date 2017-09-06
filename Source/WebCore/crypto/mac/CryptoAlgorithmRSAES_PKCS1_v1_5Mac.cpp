@@ -54,16 +54,14 @@ static ExceptionOr<Vector<uint8_t>> decryptRSAES_PKCS1_v1_5(const PlatformRSAKey
     return WTFMove(plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    return encryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), plainText);
+    return encryptRSAES_PKCS1_v1_5(key.platformKey(), key.keySizeInBits(), plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const Vector<uint8_t>& cipherText)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    return decryptRSAES_PKCS1_v1_5(rsaKey.platformKey(), rsaKey.keySizeInBits(), cipherText);
+    return decryptRSAES_PKCS1_v1_5(key.platformKey(), key.keySizeInBits(), cipherText);
 }
 
 } // namespace WebCore

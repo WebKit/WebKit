@@ -28,7 +28,7 @@
 
 #if ENABLE(SUBTLE_CRYPTO)
 
-#include "CryptoAlgorithmParameters.h"
+#include "CryptoAlgorithmPbkdf2Params.h"
 #include "CryptoKeyRaw.h"
 
 namespace WebCore {
@@ -52,7 +52,7 @@ void CryptoAlgorithmPBKDF2::deriveBits(std::unique_ptr<CryptoAlgorithmParameters
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), baseKey = WTFMove(baseKey), length] {
-            return platformDeriveBits(*parameters, baseKey, length);
+            return platformDeriveBits(downcast<CryptoAlgorithmPbkdf2Params>(*parameters), downcast<CryptoKeyRaw>(baseKey.get()), length);
         });
 }
 

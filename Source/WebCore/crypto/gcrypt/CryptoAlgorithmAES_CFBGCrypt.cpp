@@ -30,12 +30,12 @@
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformEncrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformEncrypt(CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&)
 {
     return Exception { NotSupportedError };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformDecrypt(CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CFB::platformDecrypt(CryptoAlgorithmAesCbcCfbParams&, const CryptoKeyAES&, const Vector<uint8_t>&)
 {
     return Exception { NotSupportedError };
 }

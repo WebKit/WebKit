@@ -115,9 +115,9 @@ static std::optional<Vector<uint8_t>> gcryptDerive(gcry_sexp_t baseKeySexp, gcry
     return output;
 }
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKey& baseKey, const CryptoKey& publicKey)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
-    return gcryptDerive(downcast<CryptoKeyEC>(baseKey).platformKey(), downcast<CryptoKeyEC>(publicKey).platformKey());
+    return gcryptDerive(baseKey.platformKey(), publicKey.platformKey());
 }
 
 } // namespace WebCore

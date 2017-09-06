@@ -65,7 +65,7 @@ void CryptoAlgorithmAES_CFB::encrypt(std::unique_ptr<CryptoAlgorithmParameters>&
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(*parameters, key, plainText);
+            return platformEncrypt(downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters), downcast<CryptoKeyAES>(key.get()), plainText);
         });
 }
 
@@ -80,7 +80,7 @@ void CryptoAlgorithmAES_CFB::decrypt(std::unique_ptr<CryptoAlgorithmParameters>&
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
-            return platformDecrypt(*parameters, key, cipherText);
+            return platformDecrypt(downcast<CryptoAlgorithmAesCbcCfbParams>(*parameters), downcast<CryptoKeyAES>(key.get()), cipherText);
         });
 }
 

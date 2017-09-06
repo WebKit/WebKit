@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmRsaHashedImportParams.h"
 #include "CryptoAlgorithmRsaHashedKeyGenParams.h"
+#include "CryptoAlgorithmRsaOaepParams.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
 #include <wtf/Variant.h>
@@ -62,7 +63,7 @@ void CryptoAlgorithmRSA_OAEP::encrypt(std::unique_ptr<CryptoAlgorithmParameters>
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(*parameters, key, plainText);
+            return platformEncrypt(downcast<CryptoAlgorithmRsaOaepParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), plainText);
         });
 }
 
@@ -76,7 +77,7 @@ void CryptoAlgorithmRSA_OAEP::decrypt(std::unique_ptr<CryptoAlgorithmParameters>
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), cipherText = WTFMove(cipherText)] {
-            return platformDecrypt(*parameters, key, cipherText);
+            return platformDecrypt(downcast<CryptoAlgorithmRsaOaepParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), cipherText);
         });
 }
 

@@ -59,14 +59,14 @@ static ExceptionOr<Vector<uint8_t>> unwrapKeyAES_KW(const Vector<uint8_t>& key, 
     return WTFMove(result);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    return wrapKeyAES_KW(downcast<CryptoKeyAES>(key).key(), data);
+    return wrapKeyAES_KW(key.key(), data);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    return unwrapKeyAES_KW(downcast<CryptoKeyAES>(key).key(), data);
+    return unwrapKeyAES_KW(key.key(), data);
 }
 
 } // namespace WebCore

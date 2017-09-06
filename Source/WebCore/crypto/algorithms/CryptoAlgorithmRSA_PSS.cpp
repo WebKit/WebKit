@@ -30,6 +30,7 @@
 
 #include "CryptoAlgorithmRsaHashedImportParams.h"
 #include "CryptoAlgorithmRsaHashedKeyGenParams.h"
+#include "CryptoAlgorithmRsaPssParams.h"
 #include "CryptoKeyPair.h"
 #include "CryptoKeyRSA.h"
 #include <wtf/Variant.h>
@@ -61,7 +62,7 @@ void CryptoAlgorithmRSA_PSS::sign(std::unique_ptr<CryptoAlgorithmParameters>&& p
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(*parameters, key, data);
+            return platformSign(downcast<CryptoAlgorithmRsaPssParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), data);
         });
 }
 
@@ -74,7 +75,7 @@ void CryptoAlgorithmRSA_PSS::verify(std::unique_ptr<CryptoAlgorithmParameters>&&
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(*parameters, key, signature, data);
+            return platformVerify(downcast<CryptoAlgorithmRsaPssParams>(*parameters), downcast<CryptoKeyRSA>(key.get()), signature, data);
         });
 }
 

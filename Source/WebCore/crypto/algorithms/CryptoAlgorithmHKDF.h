@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmHkdfParams;
+class CryptoKeyRaw;
+
 class CryptoAlgorithmHKDF final : public CryptoAlgorithm {
 public:
     static constexpr const char* s_name = "HKDF";
@@ -45,7 +48,7 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     ExceptionOr<size_t> getKeyLength(const CryptoAlgorithmParameters&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformDeriveBits(CryptoAlgorithmParameters&, const CryptoKey&, size_t);
+    static ExceptionOr<Vector<uint8_t>> platformDeriveBits(CryptoAlgorithmHkdfParams&, const CryptoKeyRaw&, size_t);
 };
 
 } // namespace WebCore

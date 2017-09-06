@@ -166,23 +166,17 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(const Vector<uint8_t>& key, 
     return output;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformEncrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-
-    auto output = gcryptEncrypt(aesKey.key(), aesParameters.ivVector(), Vector<uint8_t>(plainText));
+    auto output = gcryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText));
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_CBC::platformDecrypt(CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesCbcCfbParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-
-    auto output = gcryptDecrypt(aesKey.key(), aesParameters.ivVector(), cipherText);
+    auto output = gcryptDecrypt(key.key(), parameters.ivVector(), cipherText);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

@@ -33,15 +33,12 @@
 
 namespace WebCore {
 
-std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKey& baseKey, const CryptoKey& publicKey)
+std::optional<Vector<uint8_t>> CryptoAlgorithmECDH::platformDeriveBits(const CryptoKeyEC& baseKey, const CryptoKeyEC& publicKey)
 {
-    auto& ecBaseKey = downcast<CryptoKeyEC>(baseKey);
-    auto& ecPublicKey = downcast<CryptoKeyEC>(publicKey);
-
     std::optional<Vector<uint8_t>> result = std::nullopt;
-    Vector<uint8_t> derivedKey(ecBaseKey.keySizeInBits() / 8); // Per https://tools.ietf.org/html/rfc6090#section-4.
+    Vector<uint8_t> derivedKey(baseKey.keySizeInBits() / 8); // Per https://tools.ietf.org/html/rfc6090#section-4.
     size_t size = derivedKey.size();
-    if (!CCECCryptorComputeSharedSecret(ecBaseKey.platformKey(), ecPublicKey.platformKey(), derivedKey.data(), &size))
+    if (!CCECCryptorComputeSharedSecret(baseKey.platformKey(), publicKey.platformKey(), derivedKey.data(), &size))
         result = WTFMove(derivedKey);
     return result;
 }

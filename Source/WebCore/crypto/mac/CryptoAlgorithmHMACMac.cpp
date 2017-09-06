@@ -81,24 +81,22 @@ static Vector<uint8_t> calculateSignature(CCHmacAlgorithm algorithm, const Vecto
     return result;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHMAC::platformSign(const CryptoKeyHMAC& key, const Vector<uint8_t>& data)
 {
-    auto& hmacKey = downcast<CryptoKeyHMAC>(key);
-    auto algorithm = commonCryptoHMACAlgorithm(hmacKey.hashAlgorithmIdentifier());
+    auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)
         return Exception { OperationError };
 
-    return calculateSignature(*algorithm, hmacKey.key(), data);
+    return calculateSignature(*algorithm, key.key(), data);
 }
 
-ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmHMAC::platformVerify(const CryptoKeyHMAC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& hmacKey = downcast<CryptoKeyHMAC>(key);
-    auto algorithm = commonCryptoHMACAlgorithm(hmacKey.hashAlgorithmIdentifier());
+    auto algorithm = commonCryptoHMACAlgorithm(key.hashAlgorithmIdentifier());
     if (!algorithm)
         return Exception { OperationError };
 
-    auto expectedSignature = calculateSignature(*algorithm, hmacKey.key(), data);
+    auto expectedSignature = calculateSignature(*algorithm, key.key(), data);
     // Using a constant time comparison to prevent timing attacks.
     return signature.size() == expectedSignature.size() && !constantTimeMemcmp(expectedSignature.data(), signature.data(), expectedSignature.size());
 }

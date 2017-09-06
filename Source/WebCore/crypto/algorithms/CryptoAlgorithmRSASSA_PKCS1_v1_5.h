@@ -49,8 +49,8 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoKey&, const Vector<uint8_t>&);
-    static ExceptionOr<bool> platformVerify(const CryptoKey&, const Vector<uint8_t>&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoKeyRSA&, const Vector<uint8_t>&);
+    static ExceptionOr<bool> platformVerify(const CryptoKeyRSA&, const Vector<uint8_t>&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

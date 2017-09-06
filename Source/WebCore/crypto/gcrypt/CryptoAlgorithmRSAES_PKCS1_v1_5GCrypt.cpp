@@ -93,17 +93,17 @@ static std::optional<Vector<uint8_t>> gcryptDecrypt(gcry_sexp_t keySexp, const V
     return mpiData(valueSexp);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformEncrypt(const CryptoKeyRSA& key, const Vector<uint8_t>& plainText)
 {
-    auto output = gcryptEncrypt(downcast<CryptoKeyRSA>(key).platformKey(), plainText);
+    auto output = gcryptEncrypt(key.platformKey(), plainText);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSAES_PKCS1_v1_5::platformDecrypt(const CryptoKeyRSA& key, const Vector<uint8_t>& cipherText)
 {
-    auto output = gcryptDecrypt(downcast<CryptoKeyRSA>(key).platformKey(), cipherText);
+    auto output = gcryptDecrypt(key.platformKey(), cipherText);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

@@ -29,6 +29,7 @@
 #if ENABLE(SUBTLE_CRYPTO)
 
 #include "CryptoAlgorithmEcKeyParams.h"
+#include "CryptoAlgorithmEcdsaParams.h"
 #include "CryptoKeyEC.h"
 
 namespace WebCore {
@@ -57,7 +58,7 @@ void CryptoAlgorithmECDSA::sign(std::unique_ptr<CryptoAlgorithmParameters>&& par
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(*parameters, key, data);
+            return platformSign(downcast<CryptoAlgorithmEcdsaParams>(*parameters), downcast<CryptoKeyEC>(key.get()), data);
         });
 }
 
@@ -70,7 +71,7 @@ void CryptoAlgorithmECDSA::verify(std::unique_ptr<CryptoAlgorithmParameters>&& p
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = WTFMove(parameters), key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(*parameters, key, signature, data);
+            return platformVerify(downcast<CryptoAlgorithmEcdsaParams>(*parameters), downcast<CryptoKeyEC>(key.get()), signature, data);
         });
 }
 

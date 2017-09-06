@@ -56,7 +56,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::encrypt(std::unique_ptr<CryptoAlgorithmPar
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), plainText = WTFMove(plainText)] {
-            return platformEncrypt(key, plainText);
+            return platformEncrypt(downcast<CryptoKeyRSA>(key.get()), plainText);
         });
 }
 
@@ -69,7 +69,7 @@ void CryptoAlgorithmRSAES_PKCS1_v1_5::decrypt(std::unique_ptr<CryptoAlgorithmPar
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), cipherText = WTFMove(cipherText)] {
-            return platformDecrypt(key, cipherText);
+            return platformDecrypt(downcast<CryptoKeyRSA>(key.get()), cipherText);
         });
 }
 

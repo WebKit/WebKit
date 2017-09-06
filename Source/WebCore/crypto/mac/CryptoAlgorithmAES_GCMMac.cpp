@@ -72,18 +72,14 @@ static ExceptionOr<Vector<uint8_t>> decyptAES_GCM(const Vector<uint8_t>& iv, con
     return WTFMove(plainText);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& plainText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformEncrypt(CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-    return encryptAES_GCM(aesParameters.ivVector(), aesKey.key(), plainText, aesParameters.additionalDataVector(), aesParameters.tagLength.value_or(0) / 8);
+    return encryptAES_GCM(parameters.ivVector(), key.key(), plainText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& cipherText)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_GCM::platformDecrypt(CryptoAlgorithmAesGcmParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText)
 {
-    auto& aesParameters = downcast<CryptoAlgorithmAesGcmParams>(parameters);
-    auto& aesKey = downcast<CryptoKeyAES>(key);
-    return decyptAES_GCM(aesParameters.ivVector(), aesKey.key(), cipherText, aesParameters.additionalDataVector(), aesParameters.tagLength.value_or(0) / 8);
+    return decyptAES_GCM(parameters.ivVector(), key.key(), cipherText, parameters.additionalDataVector(), parameters.tagLength.value_or(0) / 8);
 }
 
 } // namespace WebCore

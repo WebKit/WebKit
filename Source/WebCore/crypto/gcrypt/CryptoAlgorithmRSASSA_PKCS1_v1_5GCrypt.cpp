@@ -134,19 +134,17 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformSign(const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    auto output = gcryptSign(rsaKey.platformKey(), data, rsaKey.hashAlgorithmIdentifier());
+    auto output = gcryptSign(key.platformKey(), data, key.hashAlgorithmIdentifier());
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmRSASSA_PKCS1_v1_5::platformVerify(const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    auto output = gcryptVerify(rsaKey.platformKey(), signature, data, rsaKey.hashAlgorithmIdentifier());
+    auto output = gcryptVerify(key.platformKey(), signature, data, key.hashAlgorithmIdentifier());
     if (!output)
         return Exception { OperationError };
     return *output;

@@ -140,23 +140,17 @@ static std::optional<bool> gcryptVerify(gcry_sexp_t keySexp, const Vector<uint8_
     return { error == GPG_ERR_NO_ERROR };
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmRSA_PSS::platformSign(CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& data)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaPssParams>(parameters);
-
-    auto output = gcryptSign(rsaKey.platformKey(), rsaKey.keySizeInBits(), data, rsaKey.hashAlgorithmIdentifier(), rsaParameters.saltLength);
+    auto output = gcryptSign(key.platformKey(), key.keySizeInBits(), data, key.hashAlgorithmIdentifier(), parameters.saltLength);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmRSA_PSS::platformVerify(CryptoAlgorithmRsaPssParams& parameters, const CryptoKeyRSA& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& rsaKey = downcast<CryptoKeyRSA>(key);
-    auto& rsaParameters = downcast<CryptoAlgorithmRsaPssParams>(parameters);
-
-    auto output = gcryptVerify(rsaKey.platformKey(), signature, data, rsaKey.hashAlgorithmIdentifier(), rsaParameters.saltLength);
+    auto output = gcryptVerify(key.platformKey(), signature, data, key.hashAlgorithmIdentifier(), parameters.saltLength);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

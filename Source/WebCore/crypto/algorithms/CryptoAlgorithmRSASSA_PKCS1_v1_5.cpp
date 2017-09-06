@@ -61,7 +61,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::sign(std::unique_ptr<CryptoAlgorithmParam
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), data = WTFMove(data)] {
-            return platformSign(key, data);
+            return platformSign(downcast<CryptoKeyRSA>(key.get()), data);
         });
 }
 
@@ -74,7 +74,7 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::verify(std::unique_ptr<CryptoAlgorithmPar
 
     dispatchOperation(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [key = WTFMove(key), signature = WTFMove(signature), data = WTFMove(data)] {
-            return platformVerify(key, signature, data);
+            return platformVerify(downcast<CryptoKeyRSA>(key.get()), signature, data);
         });
 }
 

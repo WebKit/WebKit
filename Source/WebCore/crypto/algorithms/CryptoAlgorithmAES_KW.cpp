@@ -155,7 +155,7 @@ void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data
         return;
     }
 
-    auto result = platformWrapKey(key, WTFMove(data));
+    auto result = platformWrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;
@@ -166,7 +166,7 @@ void CryptoAlgorithmAES_KW::wrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data
 
 void CryptoAlgorithmAES_KW::unwrapKey(Ref<CryptoKey>&& key, Vector<uint8_t>&& data, VectorCallback&& callback, ExceptionCallback&& exceptionCallback)
 {
-    auto result = platformUnwrapKey(key, WTFMove(data));
+    auto result = platformUnwrapKey(downcast<CryptoKeyAES>(key.get()), WTFMove(data));
     if (result.hasException()) {
         exceptionCallback(result.releaseException().code());
         return;

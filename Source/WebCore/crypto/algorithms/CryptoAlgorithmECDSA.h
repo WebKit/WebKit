@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+class CryptoAlgorithmEcdsaParams;
+class CryptoKeyEC;
+
 class CryptoAlgorithmECDSA final : public CryptoAlgorithm {
 public:
     static constexpr const char* s_name = "ECDSA";
@@ -47,8 +50,8 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&);
-    static ExceptionOr<bool> platformVerify(const CryptoAlgorithmParameters&, const CryptoKey&, const Vector<uint8_t>&, const Vector<uint8_t>&);
+    static ExceptionOr<Vector<uint8_t>> platformSign(const CryptoAlgorithmEcdsaParams&, const CryptoKeyEC&, const Vector<uint8_t>&);
+    static ExceptionOr<bool> platformVerify(const CryptoAlgorithmEcdsaParams&, const CryptoKeyEC&, const Vector<uint8_t>&, const Vector<uint8_t>&);
 };
 
 } // namespace WebCore

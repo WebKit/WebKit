@@ -53,14 +53,11 @@ static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifi
     }
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmParameters& parameters, const CryptoKey& key, size_t length)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmPBKDF2::platformDeriveBits(CryptoAlgorithmPbkdf2Params& parameters, const CryptoKeyRaw& key, size_t length)
 {
-    auto& pbkdf2Parameters = downcast<CryptoAlgorithmPbkdf2Params>(parameters);
-    auto& rawKey = downcast<CryptoKeyRaw>(key);
-
     Vector<uint8_t> result(length / 8);
     // <rdar://problem/32439955> Currently, CCKeyDerivationPBKDF bails out when an empty password/salt is provided.
-    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(rawKey.key().data()), rawKey.key().size(), pbkdf2Parameters.saltVector().data(), pbkdf2Parameters.saltVector().size(), commonCryptoHMACAlgorithm(pbkdf2Parameters.hashIdentifier), pbkdf2Parameters.iterations, result.data(), length / 8))
+    if (CCKeyDerivationPBKDF(kCCPBKDF2, reinterpret_cast<const char *>(key.key().data()), key.key().size(), parameters.saltVector().data(), parameters.saltVector().size(), commonCryptoHMACAlgorithm(parameters.hashIdentifier), parameters.iterations, result.data(), length / 8))
         return Exception { OperationError };
     return WTFMove(result);
 }

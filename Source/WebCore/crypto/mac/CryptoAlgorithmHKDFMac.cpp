@@ -34,17 +34,14 @@
 
 namespace WebCore {
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(CryptoAlgorithmParameters& parameters, const CryptoKey& key, size_t length)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
-    auto& hkdfParameters = downcast<CryptoAlgorithmHkdfParams>(parameters);
-    auto& rawKey = downcast<CryptoKeyRaw>(key);
-
     Vector<uint8_t> result(length / 8);
     CCDigestAlgorithm digestAlgorithm;
-    getCommonCryptoDigestAlgorithm(hkdfParameters.hashIdentifier, digestAlgorithm);
+    getCommonCryptoDigestAlgorithm(parameters.hashIdentifier, digestAlgorithm);
 
-    // <rdar://problem/32439455> Currently, when rawKey is null, CCKeyDerivationHMac will bail out.
-    if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, rawKey.key().data(), rawKey.key().size(), 0, 0, hkdfParameters.infoVector().data(), hkdfParameters.infoVector().size(), 0, 0, hkdfParameters.saltVector().data(), hkdfParameters.saltVector().size(), result.data(), result.size()))
+    // <rdar://problem/32439455> Currently, when key data is empty, CCKeyDerivationHMac will bail out.
+    if (CCKeyDerivationHMac(kCCKDFAlgorithmHKDF, digestAlgorithm, 0, key.key().data(), key.key().size(), 0, 0, parameters.infoVector().data(), parameters.infoVector().size(), 0, 0, parameters.saltVector().data(), parameters.saltVector().size(), result.data(), result.size()))
         return Exception { OperationError };
     return WTFMove(result);
 }

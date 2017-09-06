@@ -151,18 +151,14 @@ static ExceptionOr<bool> verifyECDSA(CryptoAlgorithmIdentifier hash, const Platf
     return valid;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)
 {
-    auto& ecKey = downcast<CryptoKeyEC>(key);
-    auto& ecParameters = downcast<CryptoAlgorithmEcdsaParams>(parameters);
-    return signECDSA(ecParameters.hashIdentifier, ecKey.platformKey(), ecKey.keySizeInBits() / 8, data);
+    return signECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBits() / 8, data);
 }
 
-ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmParameters& parameters, const CryptoKey& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
+ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& signature, const Vector<uint8_t>& data)
 {
-    auto& ecKey = downcast<CryptoKeyEC>(key);
-    auto& ecParameters = downcast<CryptoAlgorithmEcdsaParams>(parameters);
-    return verifyECDSA(ecParameters.hashIdentifier, ecKey.platformKey(), ecKey.keySizeInBits() / 8, signature, data);
+    return verifyECDSA(parameters.hashIdentifier, key.platformKey(), key.keySizeInBits() / 8, signature, data);
 }
 
 } // namespace WebCore

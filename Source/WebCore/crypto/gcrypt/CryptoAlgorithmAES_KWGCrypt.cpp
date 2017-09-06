@@ -115,17 +115,17 @@ static std::optional<Vector<uint8_t>> gcryptUnwrapKey(const Vector<uint8_t>& key
     return output;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformWrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    auto output = gcryptWrapKey(downcast<CryptoKeyAES>(key).key(), data);
+    auto output = gcryptWrapKey(key.key(), data);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKey& key, const Vector<uint8_t>& data)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAES_KW::platformUnwrapKey(const CryptoKeyAES& key, const Vector<uint8_t>& data)
 {
-    auto output = gcryptUnwrapKey(downcast<CryptoKeyAES>(key).key(), data);
+    auto output = gcryptUnwrapKey(key.key(), data);
     if (!output)
         return Exception { OperationError };
     return WTFMove(*output);

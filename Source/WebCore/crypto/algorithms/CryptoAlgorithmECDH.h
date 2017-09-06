@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class CryptoKeyEC;
+
 class CryptoAlgorithmECDH final : public CryptoAlgorithm {
 public:
     static constexpr const char* s_name = "ECDH";
@@ -46,7 +48,7 @@ private:
     void importKey(CryptoKeyFormat, KeyData&&, const std::unique_ptr<CryptoAlgorithmParameters>&&, bool extractable, CryptoKeyUsageBitmap, KeyCallback&&, ExceptionCallback&&) final;
     void exportKey(CryptoKeyFormat, Ref<CryptoKey>&&, KeyDataCallback&&, ExceptionCallback&&) final;
 
-    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKey&, const CryptoKey&);
+    static std::optional<Vector<uint8_t>> platformDeriveBits(const CryptoKeyEC&, const CryptoKeyEC&);
 };
 
 } // namespace WebCore
