@@ -319,10 +319,16 @@ void NetworkProcess::didGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t 
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void NetworkProcess::updateCookiePartitioningForTopPrivatelyOwnedDomains(PAL::SessionID sessionID, const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd,  bool shouldClearFirst)
+void NetworkProcess::updatePrevalentDomainsWithAndWithoutInteraction(PAL::SessionID sessionID, const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, bool shouldClearFirst)
 {
     if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
-        networkStorageSession->setShouldPartitionCookiesForHosts(domainsToRemove, domainsToAdd, shouldClearFirst);
+        networkStorageSession->setPrevalentDomainsWithAndWithoutInteraction(domainsWithInteraction, domainsWithoutInteraction, shouldClearFirst);
+}
+
+void NetworkProcess::removePrevalentDomains(PAL::SessionID sessionID, const Vector<String>& domains)
+{
+    if (auto* networkStorageSession = NetworkStorageSession::storageSession(sessionID))
+        networkStorageSession->removePrevalentDomains(domains);
 }
 #endif
 

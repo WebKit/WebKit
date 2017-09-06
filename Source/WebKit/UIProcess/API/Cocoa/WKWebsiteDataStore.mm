@@ -418,7 +418,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (value)
         store->scheduleCookiePartitioningUpdateForDomains({ }, { host }, WebKit::ShouldClearFirst::No);
     else
-        store->scheduleCookiePartitioningUpdateForDomains({ host }, { }, WebKit::ShouldClearFirst::No);
+        store->scheduleClearPartitioningStateForDomains({ host });
 }
 
 - (void)_resourceLoadStatisticsSubmitTelemetry

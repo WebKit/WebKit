@@ -90,8 +90,10 @@ public:
     WEBCORE_EXPORT static void setCookieStoragePartitioningEnabled(bool);
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&) const;
+    WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&) const;
     String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource) const;
-    WEBCORE_EXPORT void setShouldPartitionCookiesForHosts(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, bool clearFirst);
+    WEBCORE_EXPORT void setPrevalentDomainsWithAndWithoutInteraction(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, bool clearFirst);
+    WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
 #endif
 #elif USE(SOUP)
     NetworkStorageSession(PAL::SessionID, std::unique_ptr<SoupNetworkSession>&&);
@@ -146,7 +148,9 @@ private:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     bool shouldPartitionCookies(const String& topPrivatelyControlledDomain) const;
-    HashSet<String> m_topPrivatelyControlledDomainsForCookiePartitioning;
+    bool shouldAllowThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
+    HashSet<String> m_prevalentTopPrivatelyControlledDomainsWithoutInteraction;
+    HashSet<String> m_prevalentTopPrivatelyControlledDomainsWithInteraction;
 #endif
 
 #if PLATFORM(COCOA)

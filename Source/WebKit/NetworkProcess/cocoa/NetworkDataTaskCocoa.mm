@@ -111,22 +111,30 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
     }
 
     auto& cocoaSession = static_cast<NetworkSessionCocoa&>(m_session.get());
+    if (session.networkStorageSession().shouldBlockCookies(request)) {
+        storedCredentials = WebCore::DoNotAllowStoredCredentials;
+        m_storedCredentials = WebCore::DoNotAllowStoredCredentials;
+    }
+
     if (storedCredentials == WebCore::AllowStoredCredentials) {
         m_task = [cocoaSession.m_sessionWithCredentialStorage dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithCredentials.contains([m_task taskIdentifier]));
         cocoaSession.m_dataTaskMapWithCredentials.add([m_task taskIdentifier], this);
+        LOG(NetworkSession, "%llu Creating stateless NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
     } else {
         m_task = [cocoaSession.m_statelessSession dataTaskWithRequest:nsRequest];
         ASSERT(!cocoaSession.m_dataTaskMapWithoutState.contains([m_task taskIdentifier]));
         cocoaSession.m_dataTaskMapWithoutState.add([m_task taskIdentifier], this);
+        LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
     }
-    LOG(NetworkSession, "%llu Creating NetworkDataTask with URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    String storagePartition = session.networkStorageSession().cookieStoragePartition(request);
-    if (!storagePartition.isEmpty()) {
-        LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
-        m_task.get()._storagePartitionIdentifier = storagePartition;
+    if (storedCredentials == WebCore::AllowStoredCredentials) {
+        String storagePartition = session.networkStorageSession().cookieStoragePartition(request);
+        if (!storagePartition.isEmpty()) {
+            LOG(NetworkSession, "%llu Partitioning cookies for URL %s", [m_task taskIdentifier], nsRequest.URL.absoluteString.UTF8String);
+            m_task.get()._storagePartitionIdentifier = storagePartition;
+        }
     }
 #endif
 

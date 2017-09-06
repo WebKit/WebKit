@@ -145,10 +145,11 @@ static Vector<OperatingDate> mergeOperatingDates(const Vector<OperatingDate>& ex
     return mergedDates;
 }
 
-WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdateCookiePartitioningForDomainsHandler&& updateCookiePartitioningForDomainsHandler)
+WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsWithAndWithoutInteractionHandler&& updatePrevalentDomainsWithAndWithoutInteractionHandler, RemovePrevalentDomainsHandler&& removeDomainsHandler)
     : m_statisticsQueue(WorkQueue::create("WebResourceLoadStatisticsStore Process Data Queue", WorkQueue::Type::Serial, WorkQueue::QOS::Utility))
     , m_persistentStorage(*this, resourceLoadStatisticsDirectory)
-    , m_updateCookiePartitioningForDomainsHandler(WTFMove(updateCookiePartitioningForDomainsHandler))
+    , m_updatePrevalentDomainsWithAndWithoutInteractionHandler(WTFMove(updatePrevalentDomainsWithAndWithoutInteractionHandler))
+    , m_removeDomainsHandler(WTFMove(removeDomainsHandler))
     , m_dailyTasksTimer(RunLoop::main(), this, &WebResourceLoadStatisticsStore::performDailyTasks)
     , m_statisticsTestingCallback(WTFMove(testingCallback))
 {
@@ -468,6 +469,15 @@ void WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains(
     });
 }
 
+void WebResourceLoadStatisticsStore::scheduleClearPartitioningStateForDomains(const Vector<String>& domains)
+{
+    // Helper function used by testing system. Should only be called from the main thread.
+    ASSERT(RunLoop::isMain());
+    m_statisticsQueue->dispatch([this, protectedThis = makeRef(*this), domains = crossThreadCopy(domains)] {
+        clearPartitioningStateForDomains(domains);
+    });
+}
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
 void WebResourceLoadStatisticsStore::scheduleCookiePartitioningStateReset()
 {
@@ -645,46 +655,60 @@ void WebResourceLoadStatisticsStore::updateCookiePartitioning()
 {
     ASSERT(!RunLoop::isMain());
 
-    Vector<String> domainsToRemove;
-    Vector<String> domainsToAdd;
+    Vector<String> domainsWithoutInteraction;
+    Vector<String> domainsWithInteraction;
     for (auto& resourceStatistic : m_resourceStatisticsMap.values()) {
         bool shouldPartition = shouldPartitionCookies(resourceStatistic);
         if (resourceStatistic.isMarkedForCookiePartitioning && !shouldPartition) {
             resourceStatistic.isMarkedForCookiePartitioning = false;
-            domainsToRemove.append(resourceStatistic.highLevelDomain);
+            domainsWithInteraction.append(resourceStatistic.highLevelDomain);
         } else if (!resourceStatistic.isMarkedForCookiePartitioning && shouldPartition) {
             resourceStatistic.isMarkedForCookiePartitioning = true;
-            domainsToAdd.append(resourceStatistic.highLevelDomain);
+            domainsWithoutInteraction.append(resourceStatistic.highLevelDomain);
         }
     }
 
-    if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
+    if (domainsWithInteraction.isEmpty() && domainsWithoutInteraction.isEmpty())
         return;
 
-    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsToRemove = crossThreadCopy(domainsToRemove), domainsToAdd = crossThreadCopy(domainsToAdd)] () {
-        m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, ShouldClearFirst::No);
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domainsWithInteraction = crossThreadCopy(domainsWithInteraction), domainsWithoutInteraction = crossThreadCopy(domainsWithoutInteraction)] () {
+        m_updatePrevalentDomainsWithAndWithoutInteractionHandler(domainsWithInteraction, domainsWithoutInteraction, ShouldClearFirst::No);
     });
 }
 
-void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst shouldClearFirst)
+void WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, ShouldClearFirst shouldClearFirst)
 {
     ASSERT(!RunLoop::isMain());
-    if (domainsToRemove.isEmpty() && domainsToAdd.isEmpty())
+    if (domainsWithInteraction.isEmpty() && domainsWithoutInteraction.isEmpty())
         return;
 
-    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsToRemove = crossThreadCopy(domainsToRemove), domainsToAdd = crossThreadCopy(domainsToAdd)] () {
-        m_updateCookiePartitioningForDomainsHandler(domainsToRemove, domainsToAdd, shouldClearFirst);
+    RunLoop::main().dispatch([this, shouldClearFirst, protectedThis = makeRef(*this), domainsWithInteraction = crossThreadCopy(domainsWithInteraction), domainsWithoutInteraction = crossThreadCopy(domainsWithoutInteraction)] () {
+        m_updatePrevalentDomainsWithAndWithoutInteractionHandler(domainsWithInteraction, domainsWithoutInteraction, shouldClearFirst);
     });
 
     if (shouldClearFirst == ShouldClearFirst::Yes)
         resetCookiePartitioningState();
     else {
-        for (auto& domain : domainsToRemove)
+        for (auto& domain : domainsWithInteraction)
             ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = false;
     }
 
-    for (auto& domain : domainsToAdd)
+    for (auto& domain : domainsWithoutInteraction)
         ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = true;
+}
+
+void WebResourceLoadStatisticsStore::clearPartitioningStateForDomains(const Vector<String>& domains)
+{
+    ASSERT(!RunLoop::isMain());
+    if (domains.isEmpty())
+        return;
+
+    RunLoop::main().dispatch([this, protectedThis = makeRef(*this), domains = crossThreadCopy(domains)] () {
+        m_removeDomainsHandler(domains);
+    });
+
+    for (auto& domain : domains)
+        ensureResourceStatisticsForPrimaryDomain(domain).isMarkedForCookiePartitioning = false;
 }
 
 void WebResourceLoadStatisticsStore::resetCookiePartitioningState()
