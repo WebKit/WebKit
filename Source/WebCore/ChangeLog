@@ -1,3 +1,28 @@
+2017-09-06  Frédéric Wang  <fwang@igalia.com>
+
+        Introduce ScrollingTreeScrollingNodeDelegateIOS to share code between overflow and frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174097
+
+        Reviewed by Darin Adler.
+
+        No new tests, behavior unchanged.
+
+        * WebCore.xcodeproj/project.pbxproj: Add ScrollingTreeScrollingNodeDelegate.
+        * page/scrolling/ScrollingTreeScrollingNode.h: Make ScrollingTreeScrollingNodeDelegate a
+        friend so that it can access private members.
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.cpp: Added. New delegate class for a
+        scrolling node, which is used by the UI process.
+        (WebCore::ScrollingTreeScrollingNodeDelegate::ScrollingTreeScrollingNodeDelegate):
+        Constructor, taking the scrolling node as a parameter.
+        (WebCore::ScrollingTreeScrollingNodeDelegate::~ScrollingTreeScrollingNodeDelegate):
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollingTree const): Expose the scrolling
+        tree containing the scrolling node.
+        (WebCore::ScrollingTreeScrollingNodeDelegate::lastCommittedScrollPosition const): Expose
+        the last committed scroll position of the scrolling node.
+        * page/scrolling/ScrollingTreeScrollingNodeDelegate.h: Added.
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollingNode): Expose the scrolling node.
+        (WebCore::ScrollingTreeScrollingNodeDelegate::scrollingNode const): Ditto.
+
 2017-09-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] grid shorthand should not reset the gutter properties

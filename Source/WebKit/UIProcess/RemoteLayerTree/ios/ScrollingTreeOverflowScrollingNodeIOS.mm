@@ -34,7 +34,6 @@
 #import <UIKit/UIScrollView.h>
 #import <WebCore/ScrollingStateOverflowScrollingNode.h>
 #import <WebCore/ScrollingTree.h>
-#import <WebCore/ScrollingTreeFrameScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
 
@@ -43,31 +42,33 @@
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #endif
 
+#import "ScrollingTreeScrollingNodeDelegateIOS.h"
+
 using namespace WebCore;
 
 @interface WKOverflowScrollViewDelegate : NSObject <UIScrollViewDelegate> {
-    WebKit::ScrollingTreeOverflowScrollingNodeIOS* _scrollingTreeNode;
+    WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
 }
 
 @property (nonatomic, getter=_isInUserInteraction) BOOL inUserInteraction;
 
-- (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node;
+- (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate;
 
 @end
 
 @implementation WKOverflowScrollViewDelegate
 
-- (instancetype)initWithScrollingTreeNode:(WebKit::ScrollingTreeOverflowScrollingNodeIOS*)node
+- (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate
 {
     if ((self = [super init]))
-        _scrollingTreeNode = node;
+        _scrollingTreeNodeDelegate = delegate;
 
     return self;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+    _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
 }
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
@@ -75,8 +76,8 @@ using namespace WebCore;
     _inUserInteraction = YES;
 
     if (scrollView.panGestureRecognizer.state == UIGestureRecognizerStateBegan)
-        _scrollingTreeNode->overflowScrollViewWillStartPanGesture();
-    _scrollingTreeNode->overflowScrollWillStart();
+        _scrollingTreeNodeDelegate->scrollViewWillStartPanGesture();
+    _scrollingTreeNodeDelegate->scrollWillStart();
 }
 
 #if ENABLE(CSS_SCROLL_SNAP)
@@ -85,28 +86,28 @@ using namespace WebCore;
     CGFloat horizontalTarget = targetContentOffset->x;
     CGFloat verticalTarget = targetContentOffset->y;
 
-    unsigned originalHorizontalSnapPosition = _scrollingTreeNode->currentHorizontalSnapPointIndex();
-    unsigned originalVerticalSnapPosition = _scrollingTreeNode->currentVerticalSnapPointIndex();
+    unsigned originalHorizontalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex();
+    unsigned originalVerticalSnapPosition = _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex();
 
-    if (!_scrollingTreeNode->horizontalSnapOffsets().isEmpty()) {
+    if (!_scrollingTreeNodeDelegate->scrollingNode().horizontalSnapOffsets().isEmpty()) {
         unsigned index;
-        float potentialSnapPosition = closestSnapOffset(_scrollingTreeNode->horizontalSnapOffsets(), _scrollingTreeNode->horizontalSnapOffsetRanges(), horizontalTarget, velocity.x, index);
-        _scrollingTreeNode->setCurrentHorizontalSnapPointIndex(index);
+        float potentialSnapPosition = closestSnapOffset(_scrollingTreeNodeDelegate->scrollingNode().horizontalSnapOffsets(), _scrollingTreeNodeDelegate->scrollingNode().horizontalSnapOffsetRanges(), horizontalTarget, velocity.x, index);
+        _scrollingTreeNodeDelegate->scrollingNode().setCurrentHorizontalSnapPointIndex(index);
         if (horizontalTarget >= 0 && horizontalTarget <= scrollView.contentSize.width)
             targetContentOffset->x = potentialSnapPosition;
     }
 
-    if (!_scrollingTreeNode->verticalSnapOffsets().isEmpty()) {
+    if (!_scrollingTreeNodeDelegate->scrollingNode().verticalSnapOffsets().isEmpty()) {
         unsigned index;
-        float potentialSnapPosition = closestSnapOffset(_scrollingTreeNode->verticalSnapOffsets(), _scrollingTreeNode->verticalSnapOffsetRanges(), verticalTarget, velocity.y, index);
-        _scrollingTreeNode->setCurrentVerticalSnapPointIndex(index);
+        float potentialSnapPosition = closestSnapOffset(_scrollingTreeNodeDelegate->scrollingNode().verticalSnapOffsets(), _scrollingTreeNodeDelegate->scrollingNode().verticalSnapOffsetRanges(), verticalTarget, velocity.y, index);
+        _scrollingTreeNodeDelegate->scrollingNode().setCurrentVerticalSnapPointIndex(index);
         if (verticalTarget >= 0 && verticalTarget <= scrollView.contentSize.height)
             targetContentOffset->y = potentialSnapPosition;
     }
 
-    if (originalHorizontalSnapPosition != _scrollingTreeNode->currentHorizontalSnapPointIndex()
-        || originalVerticalSnapPosition != _scrollingTreeNode->currentVerticalSnapPointIndex()) {
-        _scrollingTreeNode->currentSnapPointIndicesDidChange(_scrollingTreeNode->currentHorizontalSnapPointIndex(), _scrollingTreeNode->currentVerticalSnapPointIndex());
+    if (originalHorizontalSnapPosition != _scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex()
+        || originalVerticalSnapPosition != _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex()) {
+        _scrollingTreeNodeDelegate->currentSnapPointIndicesDidChange(_scrollingTreeNodeDelegate->scrollingNode().currentHorizontalSnapPointIndex(), _scrollingTreeNodeDelegate->scrollingNode().currentVerticalSnapPointIndex());
     }
 }
 #endif
@@ -115,8 +116,8 @@ using namespace WebCore;
 {
     if (_inUserInteraction && !willDecelerate) {
         _inUserInteraction = NO;
-        _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
-        _scrollingTreeNode->overflowScrollDidEnd();
+        _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        _scrollingTreeNodeDelegate->scrollDidEnd();
     }
 }
 
@@ -124,8 +125,8 @@ using namespace WebCore;
 {
     if (_inUserInteraction) {
         _inUserInteraction = NO;
-        _scrollingTreeNode->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
-        _scrollingTreeNode->overflowScrollDidEnd();
+        _scrollingTreeNodeDelegate->scrollViewDidScroll(scrollView.contentOffset, _inUserInteraction);
+        _scrollingTreeNodeDelegate->scrollDidEnd();
     }
 }
 
@@ -140,7 +141,7 @@ Ref<ScrollingTreeOverflowScrollingNodeIOS> ScrollingTreeOverflowScrollingNodeIOS
 
 ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree& scrollingTree, WebCore::ScrollingNodeID nodeID)
     : ScrollingTreeOverflowScrollingNode(scrollingTree, nodeID)
-    , m_updatingFromStateNode(false)
+    , m_scrollingNodeDelegate(std::make_unique<ScrollingTreeScrollingNodeDelegateIOS>(*this))
 {
 }
 
@@ -154,6 +155,10 @@ ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS()
             scrollView.delegate = nil;
     }
     END_BLOCK_OBJC_EXCEPTIONS
+
+    // WKOverflowScrollViewDelegate holds a pointer to ScrollingTreeScrollingNodeDelegateIOS, so we ensure it is destroyed first.
+    m_scrollViewDelegate.clear();
+    m_scrollingNodeDelegate.reset();
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren(const WebCore::ScrollingStateNode& stateNode)
@@ -181,7 +186,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
 {
     ScrollingTreeOverflowScrollingNode::commitStateAfterChildren(stateNode);
 
-    SetForScope<bool> updatingChange(m_updatingFromStateNode, true);
+    SetForScope<bool> updatingChange(m_scrollingNodeDelegate->m_updatingFromStateNode, true);
 
     const auto& scrollingStateNode = downcast<ScrollingStateOverflowScrollingNode>(stateNode);
 
@@ -196,7 +201,7 @@ void ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren(const Scrol
 
         if (scrollingStateNode.hasChangedProperty(ScrollingStateScrollingNode::ScrollLayer)) {
             if (!m_scrollViewDelegate)
-                m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNode:this]);
+                m_scrollViewDelegate = adoptNS([[WKOverflowScrollViewDelegate alloc] initWithScrollingTreeNodeDelegate:m_scrollingNodeDelegate.get()]);
 
             scrollView.scrollsToTop = NO;
             scrollView.delegate = m_scrollViewDelegate.get();
@@ -260,60 +265,12 @@ void ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition(const FloatPo
 {
     [m_scrollLayer setPosition:CGPointMake(-scrollPosition.x() + scrollOrigin().x(), -scrollPosition.y() + scrollOrigin().y())];
 
-    updateChildNodesAfterScroll(scrollPosition);
+    m_scrollingNodeDelegate->updateChildNodesAfterScroll(scrollPosition);
 }
 
 void ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterDelegatedScroll(const FloatPoint& scrollPosition)
 {
-    updateChildNodesAfterScroll(scrollPosition);
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll(const FloatPoint& scrollPosition)
-{
-    if (!m_children)
-        return;
-
-    FloatRect fixedPositionRect;
-    ScrollingTreeFrameScrollingNode* frameNode = enclosingFrameNode();
-    if (frameNode && frameNode->parent())
-        fixedPositionRect = frameNode->fixedPositionRect();
-    else
-        fixedPositionRect = scrollingTree().fixedPositionRect();
-    FloatSize scrollDelta = lastCommittedScrollPosition() - scrollPosition;
-
-    for (auto& child : *m_children)
-        child->updateLayersAfterAncestorChange(*this, fixedPositionRect, scrollDelta);
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollWillStart()
-{
-    scrollingTree().scrollingTreeNodeWillStartScroll();
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollDidEnd()
-{
-    scrollingTree().scrollingTreeNodeDidEndScroll();
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture()
-{
-    scrollingTree().scrollingTreeNodeWillStartPanGesture();
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll(const FloatPoint& scrollPosition, bool inUserInteraction)
-{
-    if (m_updatingFromStateNode)
-        return;
-
-    scrollingTree().scrollPositionChangedViaDelegatedScrolling(scrollingNodeID(), scrollPosition, inUserInteraction);
-}
-
-void ScrollingTreeOverflowScrollingNodeIOS::currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical)
-{
-    if (m_updatingFromStateNode)
-        return;
-    
-    scrollingTree().currentSnapPointIndicesDidChange(scrollingNodeID(), horizontal, vertical);
+    m_scrollingNodeDelegate->updateChildNodesAfterScroll(scrollPosition);
 }
 
 } // namespace WebCore

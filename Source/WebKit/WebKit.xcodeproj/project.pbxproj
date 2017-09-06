@@ -90,6 +90,8 @@
 		0F850FE71ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */; };
 		0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */; };
 		0F931C1D18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */; };
+		0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */; };
+		0F931C1D18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */; };
 		0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FB659221208B4DB0044816C /* DrawingAreaInfo.h */; };
 		0FCB4E4618BBE044000FCFC9 /* PageClientImplIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB4E3618BBE044000FCFC9 /* PageClientImplIOS.h */; };
 		0FCB4E4718BBE044000FCFC9 /* PageClientImplIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FCB4E3718BBE044000FCFC9 /* PageClientImplIOS.mm */; };
@@ -2298,6 +2300,8 @@
 		0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPerformanceLoggingClient.h; sourceTree = "<group>"; };
 		0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollingNodeIOS.h; sourceTree = "<group>"; };
 		0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeOverflowScrollingNodeIOS.mm; sourceTree = "<group>"; };
+		0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeScrollingNodeDelegateIOS.h; sourceTree = "<group>"; };
+		0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeScrollingNodeDelegateIOS.mm; sourceTree = "<group>"; };
 		0FB659221208B4DB0044816C /* DrawingAreaInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInfo.h; sourceTree = "<group>"; };
 		0FC0856E187CE0A900780D86 /* __init__.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = __init__.py; path = webkit/__init__.py; sourceTree = "<group>"; };
 		0FC0856F187CE0A900780D86 /* messages.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = messages.py; path = webkit/messages.py; sourceTree = "<group>"; };
@@ -5447,6 +5451,8 @@
 				0F0C365B18C05CA100F607D7 /* RemoteScrollingCoordinatorProxyIOS.mm */,
 				0F931C1A18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h */,
 				0F931C1B18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm */,
+				0F931C1A18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h */,
+				0F931C1B18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -8724,6 +8730,7 @@
 				1AAB4A8D1296F0A20023952F /* SandboxExtension.h in Headers */,
 				E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */,
 				0F931C1C18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.h in Headers */,
+				0F931C1C18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */,
@@ -10309,6 +10316,7 @@
 				E1E552C416AE065F004ED653 /* SandboxInitialiationParametersMac.mm in Sources */,
 				E19BDA8B19368D4600B97F57 /* SandboxUtilities.mm in Sources */,
 				0F931C1D18C5711900DBA7C3 /* ScrollingTreeOverflowScrollingNodeIOS.mm in Sources */,
+				0F931C1D18C5711900DBB8D4 /* ScrollingTreeScrollingNodeDelegateIOS.mm in Sources */,
 				51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */,
 				51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */,
 				E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */,

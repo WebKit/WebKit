@@ -33,12 +33,20 @@
 #include "ScrollingCoordinator.h"
 #include "ScrollingTreeNode.h"
 
+#if PLATFORM(IOS)
+class ScrollingTreeScrollingNodeDelegate;
+#endif
+
 namespace WebCore {
 
 class ScrollingTree;
 class ScrollingStateScrollingNode;
 
 class ScrollingTreeScrollingNode : public ScrollingTreeNode {
+#if PLATFORM(IOS)
+    friend class ScrollingTreeScrollingNodeDelegate;
+#endif
+
 public:
     virtual ~ScrollingTreeScrollingNode();
 

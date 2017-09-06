@@ -35,16 +35,12 @@ OBJC_CLASS WKOverflowScrollViewDelegate;
 
 namespace WebKit {
 
+class ScrollingTreeScrollingNodeDelegateIOS;
+
 class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeOverflowScrollingNode {
 public:
     static Ref<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
-
-    void overflowScrollWillStart();
-    void overflowScrollDidEnd();
-    void overflowScrollViewWillStartPanGesture();
-    void scrollViewDidScroll(const WebCore::FloatPoint&, bool inUserInteraction);
-    void currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical);
 
     CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
@@ -65,13 +61,11 @@ private:
 
     void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
 
-    void updateChildNodesAfterScroll(const WebCore::FloatPoint&);
-    
     RetainPtr<CALayer> m_scrollLayer;
     RetainPtr<CALayer> m_scrolledContentsLayer;
 
     RetainPtr<WKOverflowScrollViewDelegate> m_scrollViewDelegate;
-    bool m_updatingFromStateNode;
+    std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 };
 
 } // namespace WebKit

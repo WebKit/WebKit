@@ -1,3 +1,65 @@
+2017-09-06  Frédéric Wang  <fwang@igalia.com>
+
+        Introduce ScrollingTreeScrollingNodeDelegateIOS to share code between overflow and frame scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=174097
+
+        Reviewed by Darin Adler.
+
+        This patch introduces a new ScrollingTreeScrollingNodeDelegateIOS that can be used by
+        WKOverflowScrollViewDelegate to communicate to the scrolling tree and nodes. It can also be
+        used as a helper class by ScrollingTreeOverflowScrollingNodeIOS. For now, only the non-
+        overriden member functions of ScrollingTreeOverflowScrollingNodeIOS are moved to that new
+        class. In follow-up commits, WKOverflowScrollViewDelegate can become a generic
+        ScrollViewDelegate and more code can be moved into the ScrollingTreeScrollingNodeDelegateIOS
+        file. Frame scrolling nodes will then be able to share the same UI code as overflow:auto when
+        iOS frame scrolling is implemented (bug 149264).
+
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h: Move non-overriden member
+        functions and m_updatingFromStateNode into the delegate class. Also define a member to store
+        that delegate.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm: Use the node delegate to
+        communicate to the scrolling tree and node.
+        (-[WKOverflowScrollViewDelegate initWithScrollingTreeNodeDelegate:]): Init with a delegate.
+        (-[WKOverflowScrollViewDelegate scrollViewDidScroll:]): Call the delegate function.
+        (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]): Ditto.
+        (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]):
+        Use the delegate functions or pass by ScrollingTreeScrollingNodeDelegateIOS::scrollingNode().
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]): Use the delegate
+        functions.
+        (-[WKOverflowScrollViewDelegate scrollViewDidEndDecelerating:]): Ditto.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::ScrollingTreeOverflowScrollingNodeIOS):
+        Init the delegate for this class.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren): Use the delegate.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition): Use the delegate
+        function.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterDelegatedScroll): Ditto.
+        (-[WKOverflowScrollViewDelegate initWithScrollingTreeNode:]): Deleted. This is renamed
+        initWithScrollingTreeNodeDelegate and accepts a delegate.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateChildNodesAfterScroll): Deleted. Moved
+        to ScrollingTreeScrollingNodeDelegateIOS.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollWillStart): Ditto.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollDidEnd): Ditto.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::overflowScrollViewWillStartPanGesture): Ditto.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollViewDidScroll): Ditto.
+        (WebKit::ScrollingTreeOverflowScrollingNodeIOS::currentSnapPointIndicesDidChange): Ditto.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h: Added. New delegate class
+        for ScrollingTreeOverflowScrollingNodeIOS. The members used by WKOverflowScrollViewDelegate
+        are public and the others are private. ScrollingTreeOverflowScrollingNodeIOS is a friend of
+        ScrollingTreeScrollingNodeDelegateIOS so that it can access private members e.g.
+        updateChildNodesAfterScroll() or  m_updatingFromStateNode.
+        * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm: Added.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::ScrollingTreeScrollingNodeDelegateIOS):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::~ScrollingTreeScrollingNodeDelegateIOS):
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateChildNodesAfterScroll): Code extracted
+        from ScrollingTreeOverflowScrollingNodeIOS.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart): Ditto.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollDidEnd): Ditto.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture): Ditto.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll): Ditto.
+        (WebKit::ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange): Ditto.
+        * WebKit.xcodeproj/project.pbxproj: Add ScrollingTreeScrollingNodeDelegateIOS files to the
+        build system.
+
 2017-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Add plumbing for WKContentView to ask the web process for additional drag items
