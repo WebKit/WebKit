@@ -1632,3 +1632,6 @@ crypto/subtle/ecdsa-import-key-verify-p521.html
 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
 
 webkit.org/b/176444 fast/canvas/webgl/webgl2-getActiveUniforms.html [ Failure ]
+
+webkit.org/b/161491 media/video-main-content-allow-then-scroll.html [ Pass Failure ]
+
