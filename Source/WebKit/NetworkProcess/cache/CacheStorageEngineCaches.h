@@ -48,7 +48,6 @@ public:
     bool isInitialized() const { return m_isInitialized; }
     WebCore::DOMCacheEngine::CacheInfos cacheInfos(uint64_t updateCounter) const;
 
-    const Cache* find(const String& name) const;
     Cache* find(uint64_t identifier);
 
 private:
@@ -56,6 +55,9 @@ private:
 
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
+
+
+    Cache* find(const String& name);
 
     bool shouldPersist() const { return !m_rootPath.isNull(); }
 

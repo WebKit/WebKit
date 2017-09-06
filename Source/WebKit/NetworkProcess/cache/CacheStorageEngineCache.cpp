@@ -65,10 +65,51 @@ static inline Vector<uint64_t> queryCache(const Vector<Record>* records, const R
     return results;
 }
 
-Cache::Cache(uint64_t identifier, String&& name)
-    : m_identifier(identifier)
+Cache::Cache(Caches& caches, uint64_t identifier, State state, String&& name)
+    : m_caches(caches)
+    , m_state(state)
+    , m_identifier(identifier)
     , m_name(WTFMove(name))
 {
+}
+
+void Cache::open(CompletionCallback&& callback)
+{
+    if (m_state == State::Open) {
+        callback(std::nullopt);
+        return;
+    }
+    if (m_state == State::Opening) {
+        m_pendingOpeningCallbacks.append(WTFMove(callback));
+        return;
+    }
+    m_state = State::Opening;
+    readRecordsList([caches = makeRef(m_caches), identifier = m_identifier, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+        auto* cache = caches->find(identifier);
+        if (!cache) {
+            callback(Error::Internal);
+            return;
+        }
+        cache->finishOpening(WTFMove(callback), WTFMove(error));
+    });
+}
+
+void Cache::finishOpening(CompletionCallback&& callback, std::optional<Error>&& error)
+{
+    if (error) {
+        m_state = State::Uninitialized;
+        callback(error.value());
+        auto callbacks = WTFMove(m_pendingOpeningCallbacks);
+        for (auto& callback : callbacks)
+            callback(error.value());
+        return;
+    }
+    m_state = State::Open;
+
+    callback(std::nullopt);
+    auto callbacks = WTFMove(m_pendingOpeningCallbacks);
+    for (auto& callback : callbacks)
+        callback(std::nullopt);
 }
 
 Vector<Record> Cache::retrieveRecords(const URL& url) const
@@ -207,6 +248,12 @@ void Cache::remove(WebCore::ResourceRequest&& request, WebCore::CacheQueryOption
         }
         callback(WTFMove(recordIdentifiers));
     });
+}
+
+void Cache::readRecordsList(CompletionCallback&& callback)
+{
+    // FIXME: Implement this.
+    callback(std::nullopt);
 }
 
 void Cache::writeRecordsList(CompletionCallback&& callback)

@@ -101,7 +101,7 @@ void Caches::detach()
     m_rootPath = { };
 }
 
-const Cache* Caches::find(const String& name) const
+Cache* Caches::find(const String& name)
 {
     auto position = m_caches.findMatching([&](const auto& item) { return item.name() == name; });
     return (position != notFound) ? &m_caches[position] : nullptr;
@@ -120,16 +120,22 @@ Cache* Caches::find(uint64_t identifier)
 void Caches::open(const String& name, CacheIdentifierCallback&& callback)
 {
     ASSERT(m_engine);
-
     if (auto* cache = find(name)) {
-        callback(CacheIdentifierOperationResult { cache->identifier(), false });
+        cache->open([cacheIdentifier = cache->identifier(), callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
+            if (error) {
+                callback(makeUnexpected(error.value()));
+                return;
+            }
+            callback(CacheIdentifierOperationResult { cacheIdentifier, false });
+        });
         return;
     }
 
     makeDirty();
 
     uint64_t cacheIdentifier = m_engine->nextCacheIdentifier();
-    m_caches.append(Cache { cacheIdentifier, String { name } });
+    m_caches.append(Cache { *this, cacheIdentifier, Cache::State::Open, String { name } });
+
     writeCachesToDisk([callback = WTFMove(callback), cacheIdentifier](std::optional<Error>&& error) mutable {
         callback(CacheIdentifierOperationResult { cacheIdentifier, !!error });
     });
@@ -149,9 +155,8 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
 
     makeDirty();
 
-    auto cache = WTFMove(m_caches[position]);
+    m_removedCaches.append(WTFMove(m_caches[position]));
     m_caches.remove(position);
-    m_removedCaches.append(WTFMove(cache));
 
     writeCachesToDisk([callback = WTFMove(callback), identifier](std::optional<Error>&& error) mutable {
         callback(CacheIdentifierOperationResult { identifier, !!error });
@@ -223,7 +228,7 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
         Vector<Cache> caches;
         caches.reserveInitialCapacity(result.value().size());
         for (auto& name : result.value())
-            caches.uncheckedAppend(Cache { m_engine->nextCacheIdentifier(), WTFMove(name) });
+            caches.uncheckedAppend(Cache { *this, m_engine->nextCacheIdentifier(), Cache::State::Uninitialized, WTFMove(name) });
 
         callback(WTFMove(caches));
     });

@@ -1,3 +1,27 @@
+2017-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Introduce asynchronous opening of CacheStorageEngine cache
+        https://bugs.webkit.org/show_bug.cgi?id=176425
+
+        Reviewed by Alex Christensen.
+
+        Introducing Cache::open to allow reading from the filesystem to fill the Cache.
+        This is called by Caches when engine requests to open an existing Cache.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::Cache):
+        (WebKit::CacheStorage::Cache::open):
+        (WebKit::CacheStorage::Cache::finishOpening):
+        (WebKit::CacheStorage::Cache::readRecordsList):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::find):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::find const): Deleted.
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+
 2017-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Unreviewed, rolling out r221694.
