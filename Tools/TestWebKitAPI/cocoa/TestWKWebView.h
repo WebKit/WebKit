@@ -63,6 +63,7 @@
 // Simulates clicking with a pressure-sensitive device, if possible.
 - (void)mouseDownAtPoint:(NSPoint)point simulatePressure:(BOOL)simulatePressure;
 - (void)mouseUpAtPoint:(NSPoint)point;
+- (void)mouseMoveToPoint:(NSPoint)point withFlags:(NSEventModifierFlags)flags;
 - (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks;
 - (void)typeCharacter:(char)character;
 @end

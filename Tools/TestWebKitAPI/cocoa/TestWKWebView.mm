@@ -336,6 +336,11 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     [_hostWindow _mouseUpAtPoint:point clickCount:1];
 }
 
+- (void)mouseMoveToPoint:(NSPoint)point withFlags:(NSEventModifierFlags)flags
+{
+    [self mouseMoved:[NSEvent mouseEventWithType:NSEventTypeMouseMoved location:point modifierFlags:flags timestamp:GetCurrentEventTime() windowNumber:[_hostWindow windowNumber] context:[NSGraphicsContext currentContext] eventNumber:++gEventNumber clickCount:0 pressure:0]];
+}
+
 - (void)sendClicksAtPoint:(NSPoint)point numberOfClicks:(NSUInteger)numberOfClicks
 {
     for (NSUInteger clickCount = 1; clickCount <= numberOfClicks; ++clickCount) {

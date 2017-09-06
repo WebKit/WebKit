@@ -1,3 +1,52 @@
+2017-09-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's mouseDidMoveOverElement
+        https://bugs.webkit.org/show_bug.cgi?id=176428
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        Covered by a new API test.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::mouseDidMoveOverElement):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::ContextMenuClient::menuFromProposedMenu):
+        (WebKit::UIDelegate::UIClient::createNewPageCommon):
+        (WebKit::UIDelegate::UIClient::runJavaScriptAlert):
+        (WebKit::UIDelegate::UIClient::runJavaScriptConfirm):
+        (WebKit::UIDelegate::UIClient::runJavaScriptPrompt):
+        (WebKit::UIDelegate::UIClient::runBeforeUnloadConfirmPanel):
+        (WebKit::UIDelegate::UIClient::takeFocus):
+        (WebKit::UIDelegate::UIClient::focus):
+        (WebKit::UIDelegate::UIClient::unfocus):
+        (WebKit::UIDelegate::UIClient::didExceedBackgroundResourceLimitWhileInForeground):
+        (WebKit::UIDelegate::UIClient::didNotHandleWheelEvent):
+        (WebKit::toNSEventModifierFlags):
+        (WebKit::UIDelegate::UIClient::mouseDidMoveOverElement):
+        (WebKit::UIDelegate::UIClient::toolbarsAreVisible):
+        (WebKit::UIDelegate::UIClient::didClickAutoFillButton):
+        (WebKit::UIDelegate::UIClient::handleAutoplayEvent):
+        (WebKit::requestUserMediaAuthorizationForDevices):
+        (WebKit::UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest):
+        (WebKit::UIDelegate::UIClient::checkUserMediaPermissionForOrigin):
+        (WebKit::UIDelegate::UIClient::printFrame):
+        (WebKit::UIDelegate::UIClient::close):
+        (WebKit::UIDelegate::UIClient::fullscreenMayReturnToInline):
+        (WebKit::UIDelegate::UIClient::didEnterFullscreen):
+        (WebKit::UIDelegate::UIClient::didExitFullscreen):
+        (WebKit::UIDelegate::UIClient::requestPointerLock):
+        (WebKit::UIDelegate::UIClient::didLosePointerLock):
+        (WebKit::UIDelegate::UIClient::hasVideoInPictureInPictureDidChange):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::mouseDidMoveOverElement):
+        * UIProcess/WebPageProxy.h:
+
 2017-09-05  Brent Fulgham  <bfulgham@apple.com>
 
         Relax keychain access to permit users to permanently allow client certificates

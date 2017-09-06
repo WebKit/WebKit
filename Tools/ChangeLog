@@ -1,3 +1,18 @@
+2017-09-05  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's mouseDidMoveOverElement
+        https://bugs.webkit.org/show_bug.cgi?id=176428
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[MouseMoveOverElementDelegate _webView:mouseDidMoveOverElement:withFlags:userInfo:]):
+        (TEST):
+        * TestWebKitAPI/cocoa/TestWKWebView.h:
+        * TestWebKitAPI/cocoa/TestWKWebView.mm:
+        (-[TestWKWebView mouseMoveToPoint:withFlags:]):
+
 2017-09-05  Matthew Stewart  <matthew_r_stewart@apple.com>
 
         Benchmark Runner WebDriver maximize window on browser launch

@@ -35,6 +35,7 @@
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/_WKHitTestResult.h>
 #import <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
@@ -183,6 +184,31 @@ TEST(WebKit, ToolbarVisible)
     auto delegate = adoptNS([[ToolbarDelegate alloc] init]);
     [webView setUIDelegate:delegate.get()];
     [webView synchronouslyLoadHTMLString:@"<script>alert('visible:' + window.toolbar.visible);alert('visible:' + window.toolbar.visible)</script>"];
+    TestWebKitAPI::Util::run(&done);
+}
+
+@interface MouseMoveOverElementDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation MouseMoveOverElementDelegate
+
+- (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(NSEventModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo
+{
+    EXPECT_STREQ(hitTestResult.absoluteLinkURL.absoluteString.UTF8String, "http://example.com/path");
+    EXPECT_STREQ(hitTestResult.linkLabel.UTF8String, "link label");
+    EXPECT_STREQ(hitTestResult.linkTitle.UTF8String, "link title");
+    EXPECT_EQ(flags, NSEventModifierFlagShift);
+    done = true;
+}
+
+@end
+
+TEST(WebKit, MouseMoveOverElement)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView setUIDelegate:[[[MouseMoveOverElementDelegate alloc] init] autorelease]];
+    [webView synchronouslyLoadHTMLString:@"<a href='http://example.com/path' title='link title'>link label</a>"];
+    [webView mouseMoveToPoint:NSMakePoint(20, 600 - 20) withFlags:NSEventModifierFlagShift];
     TestWebKitAPI::Util::run(&done);
 }
 
