@@ -440,7 +440,7 @@ public:
 
     void convertToCheckStructureImmediate(Node* structure)
     {
-        ASSERT(op() == CheckStructure);
+        ASSERT(op() == CheckStructure || op() == CheckStructureOrEmpty);
         m_op = CheckStructureImmediate;
         children.setChild1(Edge(structure, CellUse));
     }

@@ -1,3 +1,16 @@
+2017-09-06  Saam Barati  <sbarati@apple.com>
+
+        ASSERTION FAILED: op() == CheckStructure in Source/JavaScriptCore/dfg/DFGNode.h(443)
+        https://bugs.webkit.org/show_bug.cgi?id=176470
+
+        Reviewed by Mark Lam.
+
+        Update Node::convertToCheckStructureImmediate's assertion to allow
+        the node to either be a CheckStructure or CheckStructureOrEmpty.
+
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToCheckStructureImmediate):
+
 2017-09-05  Saam Barati  <sbarati@apple.com>
 
         isNotCellSpeculation is wrong with respect to SpecEmpty
