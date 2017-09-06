@@ -1,3 +1,10 @@
+2017-09-05  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, rebaseline test after r221639.
+
+        * fast/forms/file/entries-api/drag-folder-webkitEntries-expected.txt:
+        * fast/forms/file/entries-api/drag-folder-webkitEntries.html:
+
 2017-09-05  Darin Adler  <darin@apple.com>
 
         Fix a few minor problems found while working toward removing unneeded calls to updateStyle
