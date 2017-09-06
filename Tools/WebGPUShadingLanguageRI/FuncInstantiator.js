@@ -92,7 +92,8 @@ class FuncInstantiator {
                 return new NativeFuncInstance(
                     func,
                     func.returnType.visit(substitution),
-                    func.parameters.map(parameter => parameter.visit(substitution)));
+                    func.parameters.map(parameter => parameter.visit(substitution)),
+                    func.isCast);
             }
         }
         let resultingFunc = func.visit(new Instantiate());

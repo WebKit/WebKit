@@ -235,13 +235,9 @@ class Rewriter {
         result.type = node.type ? node.type.visit(this) : null;
         return result;
     }
-    
-    visitCallExpression(node)
+
+    processDerivedCallData(node, result)
     {
-        let result = new CallExpression(
-            node.origin, node.name,
-            node.typeArguments.map(typeArgument => typeArgument.visit(this)),
-            node.argumentList.map(argument => argument.visit(this)));
         let actualTypeArguments = node.actualTypeArguments;
         if (actualTypeArguments) {
             result.actualTypeArguments =
@@ -253,6 +249,24 @@ class Rewriter {
         result.func = node.func;
         result.nativeFuncInstance = node.nativeFuncInstance;
         return result;
+    }
+
+    visitCastExpression(node)
+    {
+        let result = new CastExpression(
+            node.origin, node.returnType.visit(this),
+            node.typeArguments.map(typeArgument => typeArgument.visit(this)),
+            node.argumentList.map(argument => argument.visit(this)));
+        return this.processDerivedCallData(node, result);
+    }
+    
+    visitCallExpression(node)
+    {
+        let result = new CallExpression(
+            node.origin, node.name,
+            node.typeArguments.map(typeArgument => typeArgument.visit(this)),
+            node.argumentList.map(argument => argument.visit(this)));
+        return this.processDerivedCallData(node, result);
     }
     
     visitFunctionLikeBlock(node)

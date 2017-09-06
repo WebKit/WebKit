@@ -48,7 +48,7 @@ class Func extends Node {
     
     toDeclString()
     {
-        return (this.isCast ? "" : this.returnType + " ") + this.name + "<" + this.typeParameters + ">(" + this.parameters + ")";
+        return (this.isCast ? "operator " + this.returnType : this.returnType + " " + this.name) + "<" + this.typeParameters + ">(" + this.parameters + ")";
     }
     
     toString()

@@ -24,41 +24,23 @@
  */
 "use strict";
 
-// NOTE: The next line is line 28, and we rely on this in Prepare.js.
-const standardLibrary = `
-// This is the WSL standard library. Implementations of all of these things are in
-// Intrinsics.js. The only thing that gets defined before we get here is the primitive
-// protocol.
+// This is a bit of a misnomer, as this represents casts as well as constructors.
+// Syntactically they are identical; a cast just takes one argument whereas a
+// constructor takes 0-n.
+class CastExpression extends CallExpression {
+    constructor(origin, returnType, typeArguments, argumentList)
+    {
+        super(origin, CastExpression.functionName, typeArguments, argumentList);
+        this._returnType = returnType;
+    }
 
-// Need to bootstrap void first.
-native primitive typedef void;
+    static get functionName() { return "operator cast"; }
+    
+    get returnType() { return this._returnType; }
+    
+    toString()
+    {
+        return this.returnType + "<" + this.typeArguments + ">(" + this.argumentList + ")";
+    }
+}
 
-native primitive typedef int32;
-native primitive typedef uint32;
-native primitive typedef bool;
-typedef int = int32;
-typedef uint = uint32;
-
-native primitive typedef double;
-
-native int operator+(int, int);
-native uint operator+(uint, uint);
-native int operator-(int, int);
-native uint operator-(uint, uint);
-native int operator*(int, int);
-native uint operator*(uint, uint);
-native int operator/(int, int);
-native uint operator/(uint, uint);
-native bool operator==(int, int);
-native bool operator==(uint, uint);
-native bool operator==(bool, bool);
-
-native operator int(int);
-native operator uint(uint);
-native operator bool(bool);
-
-native thread T^ operator&[]<T>(thread T[], uint);
-native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
-native device T^ operator&[]<T:primitive>(device T[], uint);
-native constant T^ operator&[]<T:primitive>(constant T[], uint);
-`;

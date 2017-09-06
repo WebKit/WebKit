@@ -27,8 +27,9 @@
 function prepare(origin, lineNumberOffset, text)
 {
     let program = new Program();
-    parse(program, "/internal/stdlib", 28, standardLibrary);
+    parse(program, "/internal/stdlib/prologue", 28, standardLibraryPrologue);
     parse(program, origin, lineNumberOffset, text);
+    parse(program, "/internal/stdlib/epilogue", 28, standardLibraryEpilogue);
     resolveNames(program);
     resolveTypeDefs(program);
     check(program);

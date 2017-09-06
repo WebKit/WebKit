@@ -34,9 +34,9 @@ class Intrinsics {
         this._map = new Map();
 
         // NOTE: Intrinsic resolution happens before type name resolution, so the strings we use here
-        // to catch the intrinsics must be based on the type names that StandardLibrary.js uses. For
-        // example, if a native function is declared using "int" rather than "int32", then we must use
-        // "int" here, since we don't yet know that they are the same type.
+        // to catch the intrinsics must be based on the type names that StandardLibraryPrologue.js uses.
+        // For example, if a native function is declared using "int" rather than "int32", then we must
+        // use "int" here, since we don't yet know that they are the same type.
         
         this._map.set(
             "native primitive type void<>",
@@ -176,27 +176,6 @@ class Intrinsics {
             func => {
                 func.implementation = ([left, right]) =>
                     EPtr.box(left.loadValue() == right.loadValue());
-            });
-        
-        this._map.set(
-            "native operator int<>(int)",
-            func => {
-                func.implementation = ([value]) =>
-                    EPtr.box(value.loadValue());
-            });
-        
-        this._map.set(
-            "native operator uint<>(uint)",
-            func => {
-                func.implementation = ([value]) =>
-                    EPtr.box(value.loadValue());
-            });
-        
-        this._map.set(
-            "native operator bool<>(bool)",
-            func => {
-                func.implementation = ([value]) =>
-                    EPtr.box(value.loadValue());
             });
         
         let arrayElementPtr = func => {

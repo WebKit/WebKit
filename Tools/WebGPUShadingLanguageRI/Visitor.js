@@ -255,6 +255,12 @@ class Visitor {
                 argument.visit(this);
         }
     }
+    
+    visitCastExpression(node)
+    {
+        this.visitCallExpression(node);
+        node.returnType.visit(this);
+    }
 
     visitLogicalNot(node)
     {

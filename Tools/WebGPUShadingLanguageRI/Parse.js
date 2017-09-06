@@ -380,8 +380,10 @@ function parse(program, origin, lineNumberOffset, text)
             return new MakePtrExpression(token, parsePossiblePrefix());
         if (token = tryConsume("@"))
             return new MakeArrayRefExpression(token, parsePossiblePrefix());
-        if (token = tryConsume("!"))
-            return new LogicalNot(token, new CallExpression(token, "operator bool", [], [parsePossiblePrefix()]));
+        if (token = tryConsume("!")) {
+            let remainder = parsePossiblePrefix();
+            return new LogicalNot(token, new CastExpression(remainder.origin, new TypeRef(remainder.origin, "bool", []), [], [remainder]));
+        }
         return parsePossibleSuffix();
     }
     
@@ -620,44 +622,27 @@ function parse(program, origin, lineNumberOffset, text)
         return consumeKind("identifier").text;
     }
 
-    function parseOperatorFuncDefValues()
-    {
-        let result = {};
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176316 Correctly handle the interaction between casting operators and complex types
-        let castType = consumeKind("identifier").text;
-        result.returnType = new TypeRef(name, castType, []);
-        result.name = "operator " + castType;
-        result.isCast = true;
-        return result;
-    }
-
-    function parseNonOperatorFuncDefValues()
-    {
-        let result = {};
-        result.returnType = parseType();
-        result.origin = result.returnType.origin;
-        result.name = parseFuncName();
-        result.isCast = false;
-        return result;
-    }
-
-    function parseGenericFuncDefValues()
-    {
-        let operatorToken = tryConsume("operator");
-        if (operatorToken) {
-            let result = parseOperatorFuncDefValues();
-            result.origin = operatorToken.origin;
-            return result;
-        }
-        return parseNonOperatorFuncDefValues();
-    }
-
     function parseFuncDecl()
     {
-        let values = parseGenericFuncDefValues();
+        let origin;
+        let returnType;
+        let name;
+        let isCast;
+        let operatorToken = tryConsume("operator");
+        if (operatorToken) {
+            origin = operatorToken;
+            returnType = parseType();
+            name = CastExpression.functionName;
+            isCast = true;
+        } else {
+            returnType = parseType();
+            origin = returnType.origin;
+            name = parseFuncName();
+            isCast = false;
+        }
         let typeParameters = parseTypeParameters();
         let parameters = parseParameters();
-        return new Func(values.origin, values.name, values.returnType, typeParameters, parameters, values.isCast);
+        return new Func(origin, name, returnType, typeParameters, parameters, isCast);
     }
 
     function parseProtocolFuncDecl()

@@ -1,3 +1,65 @@
+2017-09-06  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL should correctly handle the interaction between casting operators and complex types
+        https://bugs.webkit.org/show_bug.cgi?id=176316
+
+        Reviewed by Filip Pizlo.
+
+        This allows the standard library to include all identity cast operators for all exsting
+        and yet-to-exist types. The standard library now has a function with the signature:
+        operator T<><T>(T). This means "for all T, define a cast operator from T to T<>." The
+        duplicate <>s lets us say things like operator OutputVector<T><T>(InputVector<T> x).
+
+        For testing, this patch also adds the ability to cast an arbitrary Equatable type to bool,
+        by comparing the value to the default value for that type.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CastExpression.js: Copied from Tools/WebGPUShadingLanguageRI/NativeFuncInstance.js.
+        (CastExpression):
+        (CastExpression.prototype.get functionName):
+        (CastExpression.prototype.get returnType):
+        (CastExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitNativeFunc):
+        (FuncInstantiator.prototype.getUnique.Instantiate):
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCastExpression):
+        (Inliner):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossiblePrefix):
+        (parseFuncDecl):
+        (parseOperatorFuncDefValues): Deleted.
+        (parseNonOperatorFuncDefValues): Deleted.
+        (parseGenericFuncDefValues): Deleted.
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program.prototype.resolveFuncOverload):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.processDerivedCallData):
+        (Rewriter.prototype.visitCastExpression):
+        (Rewriter.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Removed.
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        (TypeDefResolver):
+        (TypeDefResolver.prototype.visitFuncDef): Deleted.
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitCastExpression):
+
 2017-09-06  Daniel Bates  <dabates@apple.com>
 
         Copy WebKit Permalink may generate wrong URL with SVN checkout

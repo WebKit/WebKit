@@ -201,6 +201,13 @@ function TEST_equalityTypeFailure()
         (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
+function TEST_generalNegation()
+{
+    let program = doPrep("bool foo(int x) { return !x; }");
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeInt(program, 0)]), true);
+}
+
 function TEST_add1() {
     let program = doPrep("int foo(int x) { return x + 1; }");
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);

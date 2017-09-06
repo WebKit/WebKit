@@ -58,5 +58,10 @@ class Inliner extends Rewriter {
                 func.parameters, func.body);
         });
     }
+
+    visitCastExpression(node)
+    {
+        return this.visitCallExpression(node);
+    }
 }
 

@@ -25,9 +25,9 @@
 "use strict";
 
 class NativeFuncInstance extends Func {
-    constructor(func, returnType, parameters)
+    constructor(func, returnType, parameters, isCast)
     {
-        super(func.origin, func.name, returnType, [], parameters);
+        super(func.origin, func.name, returnType, [], parameters, isCast);
     }
     
     get func() { return this._func; }

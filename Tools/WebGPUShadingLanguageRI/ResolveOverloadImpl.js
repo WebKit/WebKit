@@ -24,7 +24,7 @@
  */
 "use strict";
 
-function resolveOverloadImpl(functions, typeArguments, argumentTypes)
+function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType)
 {
     let failures = [];
     for (let func of functions) {
@@ -42,7 +42,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
             let argument = typeArguments[i];
             let parameter = func.typeParameters[i];
             if (!argument.unify(unificationContext, parameter)) {
-                failures.push(new OverloadResolutionFailure(func, "Type argument #" + (i + 1) + " for parameter " + func.typeParameters.name + " does not match (passed " + argument + ", require " + parameter + ")"));
+                failures.push(new OverloadResolutionFailure(func, "Type argument #" + (i + 1) + " for parameter " + parameter.name + " does not match (passed " + argument + ", require " + parameter + ")"));
                 ok = false;
                 break;
             }
@@ -60,6 +60,12 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes)
         }
         if (!ok)
             continue;
+        if (returnType) {
+            if (!returnType.unify(unificationContext, func.returnType)) {
+                failures.push(new OverloadResolutionFailure(func, "Return type " + func.returnType + " does not match " + returnType));
+                continue;
+            }
+        }
         if (!unificationContext.verify()) {
             failures.push(new OverloadResolutionFailure(func, "Violates type variable constraints"));
             continue;

@@ -25,7 +25,7 @@
 "use strict";
 
 class NativeFunc extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, isCast = false)
+    constructor(origin, name, returnType, typeParameters, parameters, isCast)
     {
         super(origin, name, returnType, typeParameters, parameters, isCast);
     }
