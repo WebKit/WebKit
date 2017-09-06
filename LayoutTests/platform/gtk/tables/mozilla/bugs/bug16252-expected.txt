@@ -3,30 +3,30 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 600x455
-        RenderTableSection {TBODY} at (0,0) size 600x455
-          RenderTableRow {TR} at (0,0) size 600x455
-            RenderTableCell {TD} at (0,0) size 600x455 [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,0) size 600x477
+        RenderTableSection {TBODY} at (0,0) size 600x477
+          RenderTableRow {TR} at (0,0) size 600x477
+            RenderTableCell {TD} at (0,0) size 600x477 [r=0 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (0,0) size 600x1
                 RenderImage {IMG} at (0,0) size 600x1
                 RenderText {#text} at (0,0) size 0x0
-              RenderBlock {BLOCKQUOTE} at (40,17) size 520x422
-                RenderBlock {BLOCKQUOTE} at (40,0) size 440x422
-                  RenderBlock (anonymous) at (0,0) size 440x204
-                    RenderTable {TABLE} at (180,0) size 260x282
-                      RenderTableSection {TBODY} at (0,0) size 260x282
-                        RenderTableRow {TR} at (0,0) size 260x21
-                          RenderTableCell {TD} at (0,0) size 6x21 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {BLOCKQUOTE} at (40,17) size 520x444
+                RenderBlock {BLOCKQUOTE} at (40,0) size 440x444
+                  RenderBlock (anonymous) at (0,0) size 440x216
+                    RenderTable {TABLE} at (180,0) size 260x283
+                      RenderTableSection {TBODY} at (0,0) size 260x283
+                        RenderTableRow {TR} at (0,0) size 260x22
+                          RenderTableCell {TD} at (0,0) size 6x22 [bgcolor=#FFFFFF] [r=0 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,2) size 0x17
-                          RenderTableCell {TD} at (6,1) size 254x19 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
+                          RenderTableCell {TD} at (6,1) size 254x20 [bgcolor=#CCCCDD] [r=0 c=1 rs=1 cs=1]
                             RenderInline {FONT} at (0,0) size 246x15
                               RenderInline {B} at (0,0) size 246x15
-                                RenderText {#text} at (2,2) size 246x15
+                                RenderText {#text} at (2,1) size 246x17
                                   text run at (2,2) width 246: "CHAMBERLAIN'S CAREER STATISTICS"
-                        RenderTableRow {TR} at (0,21) size 260x261
-                          RenderTableCell {TD} at (0,141) size 6x21 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
+                        RenderTableRow {TR} at (0,22) size 260x261
+                          RenderTableCell {TD} at (0,141) size 6x23 [bgcolor=#FFFFFF] [r=1 c=0 rs=1 cs=1]
                             RenderBR {BR} at (2,122) size 0x17
-                          RenderTableCell {TD} at (6,21) size 254x261 [r=1 c=1 rs=1 cs=1]
+                          RenderTableCell {TD} at (6,22) size 254x261 [r=1 c=1 rs=1 cs=1]
                             RenderTable {TABLE} at (2,2) size 250x240
                               RenderTableSection {TBODY} at (0,0) size 250x240
                                 RenderTableRow {TR} at (0,0) size 250x15 [bgcolor=#EEEEEE]
@@ -490,32 +490,32 @@ layer at (0,0) size 800x600
                                       RenderText {#text} at (3,2) size 22x11
                                         text run at (3,2) width 22: "30.1"
                             RenderBlock {HR} at (2,250) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]
-                    RenderText {#text} at (0,0) size 176x204
+                    RenderText {#text} at (0,0) size 176x215
                       text run at (0,0) width 164: "Known as ``Wilt the Stilt''"
-                      text run at (0,17) width 170: "and ``The Big Dipper,'' the"
-                      text run at (0,34) width 136: "7-foot-1 Chamberlain"
-                      text run at (0,51) width 162: "dominated the NBA from"
-                      text run at (0,68) width 164: "1959 through 1973, when"
-                      text run at (0,85) width 106: "he played for the"
-                      text run at (0,102) width 165: "Philadelphia (later the San"
-                      text run at (0,119) width 152: "Francisco) Warriors, the"
-                      text run at (0,136) width 158: "76ers and the Lakers. He"
-                      text run at (0,153) width 176: "scored 31,419 points during"
-                      text run at (0,170) width 162: "his career, averaging 30.1"
-                      text run at (0,187) width 128: "points for his career."
-                  RenderBlock {P} at (0,220) size 440x51
-                    RenderText {#text} at (0,0) size 155x51
+                      text run at (0,18) width 170: "and ``The Big Dipper,'' the"
+                      text run at (0,36) width 136: "7-foot-1 Chamberlain"
+                      text run at (0,54) width 162: "dominated the NBA from"
+                      text run at (0,72) width 164: "1959 through 1973, when"
+                      text run at (0,90) width 106: "he played for the"
+                      text run at (0,108) width 165: "Philadelphia (later the San"
+                      text run at (0,126) width 152: "Francisco) Warriors, the"
+                      text run at (0,144) width 158: "76ers and the Lakers. He"
+                      text run at (0,162) width 176: "scored 31,419 points during"
+                      text run at (0,180) width 162: "his career, averaging 30.1"
+                      text run at (0,198) width 128: "points for his career."
+                  RenderBlock {P} at (0,232) size 440x54
+                    RenderText {#text} at (0,0) size 155x53
                       text run at (0,0) width 155: "He also led the league in"
-                      text run at (0,17) width 146: "career rebounding with"
-                      text run at (0,34) width 48: "23,924."
-                  RenderBlock {P} at (0,287) size 440x68
-                    RenderText {#text} at (0,0) size 437x68
+                      text run at (0,18) width 146: "career rebounding with"
+                      text run at (0,36) width 48: "23,924."
+                  RenderBlock {P} at (0,302) size 440x72
+                    RenderText {#text} at (0,0) size 437x71
                       text run at (0,0) width 437: "One of only two men named MVP and rookie of the year in the same"
-                      text run at (0,17) width 422: "season (1959), he was also MVP in 1966 through 1968. He led the"
-                      text run at (0,34) width 412: "NBA in scoring seven straight seasons, 1960 to 1966, and led the"
-                      text run at (0,51) width 268: "league in rebounding 11 of his 14 seasons."
-                  RenderBlock {P} at (0,371) size 440x51
-                    RenderText {#text} at (0,0) size 439x51
+                      text run at (0,18) width 422: "season (1959), he was also MVP in 1966 through 1968. He led the"
+                      text run at (0,36) width 412: "NBA in scoring seven straight seasons, 1960 to 1966, and led the"
+                      text run at (0,54) width 268: "league in rebounding 11 of his 14 seasons."
+                  RenderBlock {P} at (0,390) size 440x54
+                    RenderText {#text} at (0,0) size 439x53
                       text run at (0,0) width 439: "One of his most famous records is the 100 points he scored in a single"
-                      text run at (0,17) width 428: "game in the Philadelphia Warriors' 169-147 defeat of the New York"
-                      text run at (0,34) width 267: "Knicks on March 2, 1962, in Hershey, Pa."
+                      text run at (0,18) width 428: "game in the Philadelphia Warriors' 169-147 defeat of the New York"
+                      text run at (0,36) width 267: "Knicks on March 2, 1962, in Hershey, Pa."
