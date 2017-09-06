@@ -346,6 +346,8 @@ public:
     virtual void didChangeBackgroundColor() = 0;
     virtual void isPlayingAudioWillChange() = 0;
     virtual void isPlayingAudioDidChange() = 0;
+    virtual void pinnedStateWillChange() { };
+    virtual void pinnedStateDidChange() { };
 
 #if PLATFORM(MAC)
     virtual void didPerformImmediateActionHitTest(const WebHitTestResultData&, bool contentPreventsDefault, API::Object*) = 0;

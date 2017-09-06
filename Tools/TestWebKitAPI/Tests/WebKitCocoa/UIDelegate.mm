@@ -249,6 +249,32 @@ TEST(WebKit, ClickAutoFillButton)
     TestWebKitAPI::Util::run(&done);
 }
 
+@interface PinnedStateObserver : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation PinnedStateObserver
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *, id> *)change context:(void *)context
+{
+    EXPECT_TRUE([keyPath isEqualToString:NSStringFromSelector(@selector(_pinnedState))]);
+    EXPECT_TRUE([[object class] isEqual:[TestWKWebView class]]);
+    EXPECT_EQ([[change objectForKey:NSKeyValueChangeOldKey] integerValue], _WKRectEdgeAll);
+    EXPECT_EQ([[change objectForKey:NSKeyValueChangeNewKey] integerValue], _WKRectEdgeLeft | _WKRectEdgeRight);
+    EXPECT_TRUE(context == nullptr);
+    done = true;
+}
+
+@end
+
+TEST(WebKit, PinnedState)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto observer = adoptNS([[PinnedStateObserver alloc] init]);
+    [webView addObserver:observer.get() forKeyPath:@"_pinnedState" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [webView loadHTMLString:@"<body onload='scroll(100, 100)' style='height:10000vh;'/>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
 static NSEvent *tabEvent(NSWindow *window, NSEventType type, NSEventModifierFlags flags)
 {
     return [NSEvent keyEventWithType:type location:NSMakePoint(5, 5) modifierFlags:flags timestamp:GetCurrentEventTime() windowNumber:[window windowNumber] context:[NSGraphicsContext currentContext] characters:@"\t" charactersIgnoringModifiers:@"\t" isARepeat:NO keyCode:0];
