@@ -5,7 +5,7 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (10,15) size 368x175
       RenderSVGText {text} at (10,15) size 368x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 368x19
+        RenderSVGInlineText {#text} at (0,0) size 368x18
           chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 47 width 368.00: "Test side effects of assigning to valueAsString"
       RenderSVGRect {rect} at (10,40) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=30.00] [height=30.00]
       RenderSVGRect {rect} at (10,80) size 30x30 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=80.00] [width=30.00] [height=30.00]
@@ -27,6 +27,6 @@ layer at (0,0) size 480x360
       RenderSVGResourceMarker {marker} [id="m"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=1.80]
     RenderSVGContainer {g} at (10,314) size 231x33
       RenderSVGText {text} at (10,314) size 231x33 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x33
+        RenderSVGInlineText {#text} at (0,0) size 231x32
           chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
