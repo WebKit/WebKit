@@ -1,3 +1,11 @@
+2017-09-06  Per Arne Vollan  <pvollan@apple.com>
+
+        Rebaseline printing/width-overflow.html after r219121.
+
+        Unreviewed test gardening.
+
+        * platform/win/printing/width-overflow-expected.txt:
+
 2017-09-06  Matt Lewis  <jlewis3@apple.com>
 
         Marked js/arraybuffer-wrappers.html as flaky.

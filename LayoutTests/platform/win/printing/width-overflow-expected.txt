@@ -1,9 +1,9 @@
 layer at (0,0) size 1300x2284
   RenderView at (0,0) size 1300x2284
-layer at (0,0) size 981x2284
-  RenderBlock {HTML} at (0,0) size 981x2284
-    RenderBody {BODY} at (0,16) size 981x2252
-      RenderBlock {P} at (0,0) size 981x18
+layer at (0,0) size 1300x2284
+  RenderBlock {HTML} at (0,0) size 1300x2284
+    RenderBody {BODY} at (0,16) size 1300x2252
+      RenderBlock {P} at (0,0) size 1300x18
         RenderText {#text} at (0,0) size 748x18
           text run at (0,0) width 748: "To run this test manually, print this page. If the right side of any lines is printed without being truncated, the test passes."
       RenderBlock {DIV} at (0,34) size 1300x2218
