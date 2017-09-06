@@ -1,3 +1,21 @@
+2017-09-06  Ms2ger  <Ms2ger@igalia.com>
+
+        [WPE] Add missing test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=176453
+
+        Unreviewed test gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/fast/events/context-no-deselect-expected.txt: Added.
+        * platform/wpe/fast/events/event-listener-on-link-expected.txt: Added.
+        * platform/wpe/fast/events/ghostly-mousemoves-in-subframe-expected.txt: Added.
+        * platform/wpe/fast/events/onload-re-entry-expected.txt: Added.
+        * platform/wpe/fast/events/pointer-events-2-expected.txt: Added.
+        * platform/wpe/fast/events/resize-events-expected.txt: Added.
+        * platform/wpe/fast/events/reveal-link-when-focused-expected.txt: Added.
+        * platform/wpe/fast/events/updateLayoutForHitTest-expected.txt: Added.
+        * platform/wpe/fast/inspector-support/matchedrules-expected.txt: Added.
+
 2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after Freetype version bump in r221670. Part 7.

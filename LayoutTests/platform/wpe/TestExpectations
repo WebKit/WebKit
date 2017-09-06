@@ -543,6 +543,7 @@ webkit.org/b/173419 fast/events/touch/page-scaled-touch-gesture-click.html [ Tim
 webkit.org/b/173419 fast/events/touch/touch-target-limited.html [ Timeout ]
 webkit.org/b/173419 fast/events/touch/touch-target.html [ Timeout ]
 
+webkit.org/b/163858 fast/events/touch/touch-constructor.html [ Skip ]
 webkit.org/b/173411 fast/events/touch/frame-hover-update.html [ Failure ]
 
 fast/events/ios [ Skip ]
