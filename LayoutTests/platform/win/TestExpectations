@@ -4087,8 +4087,9 @@ imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.
 imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Skip ]
 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Skip ]
 
-# This test is flaky on Windows.
+# Flaky tests on Windows:
 webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
+webkit.org/b/176465 http/tests/preload/single_download_preload.html [ Pass Failure Crash ]
 
 # DatatransferItem tests are timing out.
 webkit.org/b/176423 editing/pasteboard/datatransfer-items-copy-plaintext.html [ Skip ]
