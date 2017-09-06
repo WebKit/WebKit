@@ -5409,7 +5409,7 @@ static RefPtr<CSSValue> consumeImplicitGridAutoFlow(CSSParserTokenRange& range, 
 
 bool CSSPropertyParser::consumeGridShorthand(bool important)
 {
-    ASSERT(shorthandForProperty(CSSPropertyGrid).length() == 8);
+    ASSERT(shorthandForProperty(CSSPropertyGrid).length() == 6);
 
     CSSParserTokenRange rangeCopy = m_range;
 
@@ -5420,8 +5420,6 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
         addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
         addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
         addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyGridColumnGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
-        addProperty(CSSPropertyGridRowGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
         return true;
     }
 
@@ -5486,8 +5484,6 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     addProperty(CSSPropertyGridAutoFlow, CSSPropertyGrid, gridAutoFlow.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoColumns, CSSPropertyGrid, autoColumnsValue.releaseNonNull(), important);
     addProperty(CSSPropertyGridAutoRows, CSSPropertyGrid, autoRowsValue.releaseNonNull(), important);
-    addProperty(CSSPropertyGridColumnGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
-    addProperty(CSSPropertyGridRowGap, CSSPropertyGrid, CSSValuePool::singleton().createImplicitInitialValue(), important);
     
     return true;
 }
