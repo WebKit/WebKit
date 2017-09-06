@@ -44,6 +44,10 @@ class OSXBrowserDriver(BrowserDriver):
 
     @classmethod
     def _launch_webdriver(cls, url, driver):
+        try:
+            driver.maximize_window()
+        except Exception as error:
+            _log.error('Failed to maximize {browser} window - Error: {error}'.format(browser=driver.name, error=error))
         _log.info('Launching "%s" with url "%s"' % (driver.name, url))
         driver.get(url)
 

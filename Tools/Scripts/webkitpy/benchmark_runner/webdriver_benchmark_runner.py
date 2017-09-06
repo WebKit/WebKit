@@ -25,6 +25,7 @@ class WebDriverBenchmarkRunner(BenchmarkRunner):
             driver = self._browser_driver.launch_driver(url, self._plan['options'], self._build_dir)
             _log.info('Waiting on results from web browser')
             result = WebDriverWait(driver, self._plan['timeout'], poll_frequency=1.0).until(self._get_result)
+            driver.quit()
         finally:
             self._browser_driver.close_browsers()
 
