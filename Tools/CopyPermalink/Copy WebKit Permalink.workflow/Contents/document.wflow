@@ -200,50 +200,50 @@ function determineVCSFromPath(path)
 
 function pathRelativeToRepositoryRootForPath(path)
 {
-    var checkoutDirectory = isDirectory(path) ? path : dirname(path);
+    var directoryInCheckout = isDirectory(path) ? path : dirname(path);
     if (g_isSVN)
-        return svnPathRelativeToRepositoryRootForPath(path, checkoutDirectory);
+        return svnPathRelativeToRepositoryRootForPath(path, directoryInCheckout);
     if (g_isGit)
-        return gitPathRelativeToRepositoryRootForPath(path, checkoutDirectory);
+        return gitPathRelativeToRepositoryRootForPath(path, directoryInCheckout);
     return "";
 }
 
-function gitPathRelativeToRepositoryRootForPath(path, checkoutDirectory)
+function gitPathRelativeToRepositoryRootForPath(path, directoryInCheckout)
 {
-    return App.doShellScript(`git -C '${checkoutDirectory}' ls-tree --full-name --name-only HEAD '${path}'`);
+    return App.doShellScript(`git -C '${directoryInCheckout}' ls-tree --full-name --name-only HEAD '${path}'`);
 }
 
-function svnPathRelativeToRepositoryRootForPath(path, checkoutDirectory)
+function svnPathRelativeToRepositoryRootForPath(path, directoryInCheckout)
 {
-    return svnInfoForPath(path, checkoutDirectory).path;
+    return svnInfoForPath(path, directoryInCheckout).path;
 }
 
 function revisionInfoForPath(path)
 {
-    var checkoutDirectory = isDirectory(path) ? path : dirname(path);
+    var directoryInCheckout = isDirectory(path) ? path : dirname(path);
     if (g_isSVN || g_isGitSVN)
-        return svnRevisionInfoForPath(path, checkoutDirectory);
+        return svnRevisionInfoForPath(path, directoryInCheckout);
     if (g_isGit)
-        return gitRevisionInfoForPath(path, checkoutDirectory);
+        return gitRevisionInfoForPath(path, directoryInCheckout);
     return "";
 }
 
-function svnRevisionInfoForPath(path, checkoutDirectory)
+function svnRevisionInfoForPath(path, directoryInCheckout)
 {
-    var svnInfo = svnInfoForPath(path, checkoutDirectory);
+    var svnInfo = svnInfoForPath(path, directoryInCheckout);
     return { "branch": svnInfo.branch, "revision": svnInfo.revision, "repositoryURL": svnInfo.repositoryRoot };
 }
 
-function gitRevisionInfoForPath(path, checkoutDirectory)
+function gitRevisionInfoForPath(path, directoryInCheckout)
 {
-    var repositoryURL = App.doShellScript(`git -C '${checkoutDirectory}' remote get-url origin`);
-    var revision = App.doShellScript(`git -C '${checkoutDirectory}' log -1 --format='%H' '${path}'`);
-    var branch = App.doShellScript(`git -C '${checkoutDirectory}' symbolic-ref -q HEAD`);
+    var repositoryURL = App.doShellScript(`git -C '${directoryInCheckout}' remote get-url origin`);
+    var revision = App.doShellScript(`git -C '${directoryInCheckout}' log -1 --format='%H' '${path}'`);
+    var branch = App.doShellScript(`git -C '${directoryInCheckout}' symbolic-ref -q HEAD`);
     branch = branch.replace(/^refs\/heads\//, "") || "master";
     return { branch, revision, repositoryURL };
 }
 
-function svnInfoForPath(path, checkoutDirectory)
+function svnInfoForPath(path, directoryInCheckout)
 {
     if (g_lastSVNInfo &amp;&amp; g_lastSVNInfo.path === path) {
         // FIXME: We should also ensure that the checkout directory for the cached SVN info is
@@ -254,7 +254,7 @@ function svnInfoForPath(path, checkoutDirectory)
     var svnInfoCommand = "svn info";
     if (g_isGitSVN)
         svnInfoCommand = "git " + svnInfoCommand;
-    var output = App.doShellScript(`cd '${checkoutDirectory}' &amp;&amp; ${svnInfoCommand} '${path}'`, {"alteringLineEndings": false});
+    var output = App.doShellScript(`cd '${directoryInCheckout}' &amp;&amp; ${svnInfoCommand} '${path}'`, {"alteringLineEndings": false});
     if (!output)
         return { };
 
@@ -266,7 +266,6 @@ function svnInfoForPath(path, checkoutDirectory)
             temp[key] = value;
     }
     var svnInfo = {
-        "path": temp["Path"],
         "pathAsURL": temp["URL"],
         "repositoryRoot": temp["Repository Root"],
         "revision": temp["Revision"],
@@ -274,6 +273,11 @@ function svnInfoForPath(path, checkoutDirectory)
     var branch = svnInfo.pathAsURL.replace(svnInfo.repositoryRoot + "/", "");
     branch = branch.substr(0, branch.indexOf("/"));
     svnInfo.branch = branch;
+
+    // Although tempting to use temp["Path"] we cannot because it is relative to directoryInCheckout.
+    // And directoryInCheckout may not be the top-level checkout directory. We need to compute the
+    // relative path with respect to the top-level checkout directory.
+    svnInfo.path = svnInfo.pathAsURL.replace(`${svnInfo.repositoryRoot}/${branch}/`, "");
 
     g_lastSVNInfo = svnInfo;
 

@@ -1,3 +1,22 @@
+2017-09-06  Daniel Bates  <dabates@apple.com>
+
+        Copy WebKit Permalink may generate wrong URL with SVN checkout
+        https://bugs.webkit.org/show_bug.cgi?id=176427
+
+        Reviewed by Darin Adler.
+
+        Fixes an issue where Copy WebKit Permalink would generate an incorrect URL for
+        any file not in the top-level directory of the repository when using an SVN
+        checkout of WebKit.
+
+        Copy WebKit Permalink changes directories to the containing directory D of the
+        active Xcode document F before running "svn info <path to F>". Currently we use
+        the value of "Path" from the output of "svn info" when generating the permalink.
+        This path is relative to D. But we want the path to F relative to the top-level
+        checkout directory. We need to explicitly compute this.
+
+        * CopyPermalink/Copy WebKit Permalink.workflow/Contents/document.wflow:
+
 2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump freetype version to 2.8.0
