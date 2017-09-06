@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x17
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 603x17
           text run at (0,0) width 567: "This tests to make sure that plaintext-only regions aren't styled if they aren't fully selected. "
           text run at (567,0) width 36: "Only "
@@ -12,18 +12,18 @@ layer at (0,0) size 800x600
             text run at (603,0) width 21: "foo"
         RenderText {#text} at (624,0) size 144x17
           text run at (624,0) width 144: " should be bold below."
-      RenderBlock {DIV} at (0,33) size 784x44
-        RenderBlock {DIV} at (0,0) size 784x17
+      RenderBlock {DIV} at (0,34) size 784x46
+        RenderBlock {DIV} at (0,0) size 784x18
           RenderInline {B} at (0,0) size 21x17
             RenderText {#text} at (0,0) size 21x17
               text run at (0,0) width 21: "foo"
-        RenderTable {TABLE} at (0,17) size 181x27 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 179x25
-            RenderTableRow {TR} at (0,2) size 179x21
-              RenderTableCell {TD} at (2,2) size 82x21 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+        RenderTable {TABLE} at (0,18) size 181x28 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 179x26
+            RenderTableRow {TR} at (0,2) size 179x22
+              RenderTableCell {TD} at (2,2) size 82x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 78x17
                   text run at (2,2) width 78: "non-editable"
-              RenderTableCell {TD} at (86,2) size 91x21 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (86,2) size 91x22 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
                 RenderInline {SPAN} at (0,0) size 54x17
                   RenderText {#text} at (2,2) size 54x17
                     text run at (2,2) width 54: "plaintext"

@@ -11,16 +11,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x34
-        RenderText {#text} at (0,0) size 758x34
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 758x35
           text run at (0,0) width 424: "This tests Indent on a selection that ends at the start of a paragraph. "
           text run at (424,0) width 334: "Since we don't paint the gap before the paragraph for"
-          text run at (0,17) width 580: "most selections like this, we don't perform Indent on the paragraph that the selection ends in."
-      RenderBlock {DIV} at (0,50) size 784x34
-        RenderBlock {BLOCKQUOTE} at (40,0) size 744x17
+          text run at (0,18) width 580: "most selections like this, we don't perform Indent on the paragraph that the selection ends in."
+      RenderBlock {DIV} at (0,52) size 784x36
+        RenderBlock {BLOCKQUOTE} at (40,0) size 744x18
           RenderText {#text} at (0,0) size 222x17
             text run at (0,0) width 222: "This paragraph should be indented."
-        RenderBlock (anonymous) at (0,17) size 784x17
+        RenderBlock (anonymous) at (0,18) size 784x18
           RenderText {#text} at (0,0) size 246x17
             text run at (0,0) width 246: "This paragraph should not be indented."
           RenderBR {BR} at (246,14) size 0x0
