@@ -1,3 +1,12 @@
+2017-09-06  Matt Lewis  <jlewis3@apple.com>
+
+        Marked js/arraybuffer-wrappers.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=155092
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
 2017-09-06  Brent Fulgham  <bfulgham@apple.com>
 
         Deny third-party cookie creation for prevalent resources without interaction
