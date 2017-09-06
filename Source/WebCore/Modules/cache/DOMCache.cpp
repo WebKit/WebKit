@@ -289,6 +289,21 @@ void DOMCache::addAll(Vector<RequestInfo>&& infos, DOMPromiseDeferred<void>&& pr
     }
 }
 
+void DOMCache::putWithResponseData(DOMPromiseDeferred<void>&& promise, Ref<FetchRequest>&& request, Ref<FetchResponse>&& response, ExceptionOr<RefPtr<SharedBuffer>>&& responseBody)
+{
+    if (responseBody.hasException()) {
+        promise.reject(responseBody.releaseException());
+        return;
+    }
+
+    DOMCacheEngine::ResponseBody body;
+    if (auto buffer = responseBody.releaseReturnValue())
+        body = buffer.releaseNonNull();
+    batchPutOperation(request.get(), response.get(), WTFMove(body), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
+        promise.settle(WTFMove(result));
+    });
+}
+
 void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromiseDeferred<void>&& promise)
 {
     if (UNLIKELY(!scriptExecutionContext()))
@@ -312,30 +327,24 @@ void DOMCache::put(RequestInfo&& info, Ref<FetchResponse>&& response, DOMPromise
         return;
     }
 
-    // FIXME: Add support for ReadableStream.
-    if (response->hasReadableStreamBody()) {
-        promise.reject(Exception { NotSupportedError, ASCIILiteral("Caching a Response with data stored in a ReadableStream is not yet supported") });
+    if (response->isDisturbedOrLocked()) {
+        promise.reject(Exception { TypeError, ASCIILiteral("Response is disturbed or locked") });
         return;
     }
 
-    if (response->isDisturbed()) {
-        promise.reject(Exception { TypeError, ASCIILiteral("Response is disturbed or locked") });
+    if (response->hasReadableStreamBody()) {
+        setPendingActivity(this);
+        response->consumeBodyFromReadableStream([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
+            putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), WTFMove(result));
+            unsetPendingActivity(this);
+        });
         return;
     }
 
     if (response->isLoading()) {
         setPendingActivity(this);
         response->consumeBodyWhenLoaded([promise = WTFMove(promise), request = WTFMove(request), response = WTFMove(response), this](ExceptionOr<RefPtr<SharedBuffer>>&& result) mutable {
-            if (result.hasException())
-                promise.reject(result.releaseException());
-            else {
-                DOMCacheEngine::ResponseBody body;
-                if (auto buffer = result.releaseReturnValue())
-                    body = buffer.releaseNonNull();
-                batchPutOperation(request.get(), response.get(), WTFMove(body), [promise = WTFMove(promise)](ExceptionOr<void>&& result) mutable {
-                    promise.settle(WTFMove(result));
-                });
-            }
+            putWithResponseData(WTFMove(promise), WTFMove(request), WTFMove(response), WTFMove(result));
             unsetPendingActivity(this);
         });
         return;

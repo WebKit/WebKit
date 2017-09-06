@@ -1,3 +1,63 @@
+2017-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Support caching of Response with a ReadableStream body
+        https://bugs.webkit.org/show_bug.cgi?id=176462
+
+        Reviewed by Alex Christensen.
+
+        Tests: http/wpt/cache-storage/cache-put-stream.https.any.html
+               http/wpt/cache-storage/cache-put-stream.https.any.worker.html
+
+        Making FetchResponse use more of ReadableStream:
+        - Cloning of its body is done through ReadableStream.
+        - Computation of disturbed and locked is done through ReadableStream.
+        - Storing of the ReadableStream body given at constructor time is done in FetchBody for FetchResponse.
+        This allows making FetchResponse closer to FetchRequest.
+        This also allows to correctly compute disturbed and locked in clone cases.
+
+        Adding the ability to consume a Response ReadableStream body as a SharedBuffer.
+        Using that ability in DOMCache.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::putWithResponseData):
+        (WebCore::DOMCache::put):
+        * Modules/cache/DOMCache.h:
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::readableStream const):
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::extract):
+        * Modules/fetch/FetchBodyConsumer.h:
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::isDisturbed const):
+        (WebCore::FetchBodyOwner::isDisturbedOrLocked const):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::hasReadableStreamBody const):
+        * Modules/fetch/FetchBodySource.cpp:
+        * Modules/fetch/FetchBodySource.h:
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::consumeBodyFromReadableStream):
+        (WebCore::FetchResponse::consumeBodyWhenLoaded):
+        (WebCore::FetchResponse::consumeBodyAsStream):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        (clone):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::callFunction):
+        (WebCore::ReadableStream::pipeTo):
+        (WebCore::ReadableStream::tee):
+        (WebCore::checkReadableStream):
+        (WebCore::ReadableStream::isLocked const):
+        (WebCore::ReadableStream::isDisturbed const):
+        (WebCore::ReadableStream::isDisturbed):
+        * bindings/js/ReadableStream.h:
+        * bindings/js/ReadableStreamDefaultController.cpp:
+        * bindings/js/ReadableStreamDefaultController.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::isReadableStreamDisturbed):
+
 2017-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221461.

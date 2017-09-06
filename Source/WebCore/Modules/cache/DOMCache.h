@@ -69,6 +69,8 @@ private:
     const char* activeDOMObjectName() const final;
     bool canSuspendForDocumentSuspension() const final;
 
+    void putWithResponseData(DOMPromiseDeferred<void>&&, Ref<FetchRequest>&&, Ref<FetchResponse>&&, ExceptionOr<RefPtr<SharedBuffer>>&&);
+
     void retrieveRecords(const URL&, WTF::Function<void(std::optional<Exception>&&)>&&);
     Vector<CacheStorageRecord> queryCacheWithTargetStorage(const FetchRequest&, const CacheQueryOptions&, const Vector<CacheStorageRecord>&);
     void queryCache(Ref<FetchRequest>&&, CacheQueryOptions&&, WTF::Function<void(ExceptionOr<Vector<CacheStorageRecord>>&&)>&&);

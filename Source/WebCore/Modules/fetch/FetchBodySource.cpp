@@ -38,11 +38,6 @@ FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
 {
 }
 
-bool FetchBodySource::isReadableStreamLocked() const
-{
-    return controller().isControlledReadableStreamLocked();
-}
-
 void FetchBodySource::setActive()
 {
     m_bodyOwner.setPendingActivity(&m_bodyOwner);

@@ -232,7 +232,6 @@ namespace WebCore {
     macro(retrieveResponse) \
     macro(self) \
     macro(setBody) \
-    macro(setBodyAsReadableStream) \
     macro(setBodyFromInputRequest) \
     macro(setStatus) \
     macro(showModalDialog) \

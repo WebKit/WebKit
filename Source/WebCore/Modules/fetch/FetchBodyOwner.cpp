@@ -59,14 +59,33 @@ void FetchBodyOwner::stop()
     }
 }
 
-bool FetchBodyOwner::isDisturbedOrLocked() const
+bool FetchBodyOwner::isDisturbed() const
 {
+    if (isBodyNull())
+        return false;
+
     if (m_isDisturbed)
         return true;
 
 #if ENABLE(STREAMS_API)
-    if (m_readableStreamSource && m_readableStreamSource->isReadableStreamLocked())
+    if (body().readableStream())
+        return body().readableStream()->isDisturbed();
+#endif
+
+    return false;
+}
+
+bool FetchBodyOwner::isDisturbedOrLocked() const
+{
+    if (isBodyNull())
+        return false;
+
+    if (m_isDisturbed)
         return true;
+
+#if ENABLE(STREAMS_API)
+    if (body().readableStream())
+        return body().readableStream()->isDisturbed() || body().readableStream()->isLocked();
 #endif
 
     return false;

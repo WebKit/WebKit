@@ -79,14 +79,6 @@ void FetchResponse::initializeWith(FetchBody::Init&& body)
     updateContentType();
 }
 
-void FetchResponse::setBodyAsReadableStream()
-{
-    if (isBodyNull())
-        setBody(FetchBody::loadingBody());
-    m_isReadableStream = true;
-    updateContentType();
-}
-
 FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
     : FetchBodyOwner(context, WTFMove(body), WTFMove(headers))
     , m_response(WTFMove(response))
@@ -277,11 +269,22 @@ FetchResponse::ResponseData FetchResponse::consumeBody()
     return body().take();
 }
 
+void FetchResponse::consumeBodyFromReadableStream(ConsumeDataCallback&& callback)
+{
+    ASSERT(m_body);
+    ASSERT(m_body->readableStream());
+
+    ASSERT(!isDisturbed());
+    m_isDisturbed = true;
+
+    m_body->consumer().extract(*m_body->readableStream(), WTFMove(callback));
+}
+
 void FetchResponse::consumeBodyWhenLoaded(ConsumeDataCallback&& callback)
 {
     ASSERT(isLoading());
 
-    ASSERT(!m_isDisturbed);
+    ASSERT(!isDisturbed());
     m_isDisturbed = true;
 
     m_bodyLoader->setConsumeDataCallback(WTFMove(callback));
@@ -329,10 +332,11 @@ void FetchResponse::consumeBodyAsStream()
         return;
     }
 
-    m_isDisturbed = true;
     ASSERT(m_bodyLoader);
 
-    setBodyAsReadableStream();
+    if (isBodyNull())
+        setBody(FetchBody::loadingBody());
+    updateContentType();
 
     auto data = m_bodyLoader->startStreaming();
     if (data) {

@@ -92,6 +92,13 @@ void FetchBodyConsumer::resolveWithData(Ref<DeferredPromise>&& promise, const un
     resolveWithTypeAndData(WTFMove(promise), m_type, m_contentType, data, length);
 }
 
+void FetchBodyConsumer::extract(ReadableStream& stream, ReadableStreamToSharedBufferSink::Callback&& callback)
+{
+    ASSERT(!m_sink);
+    m_sink = ReadableStreamToSharedBufferSink::create(WTFMove(callback));
+    m_sink->pipeFrom(stream);
+}
+
 void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, ReadableStream* stream)
 {
     if (stream) {

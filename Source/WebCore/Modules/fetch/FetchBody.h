@@ -81,6 +81,7 @@ public:
     void cleanConsumer() { m_consumer.clean(); }
 
     FetchBody clone();
+    const ReadableStream* readableStream() const { return m_readableStream.get(); }
     ReadableStream* readableStream() { return m_readableStream.get(); }
     void setReadableStream(Ref<ReadableStream>&& stream)
     {

@@ -1,3 +1,21 @@
+2017-09-06  Youenn Fablet  <youenn@apple.com>
+
+        Support caching of Response with a ReadableStream body
+        https://bugs.webkit.org/show_bug.cgi?id=176462
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations: Removing flakiness expectation for cache-put tests.
+        * http/wpt/cache-storage/cache-put-stream.https.any-expected.txt: Added.
+        * http/wpt/cache-storage/cache-put-stream.https.any.html: Added.
+        * http/wpt/cache-storage/cache-put-stream.https.any.js: Added.
+        (cache_test.):
+        (cache_test):
+        (string_appeared_here.cache_test.return.reader.read.then.):
+        (string_appeared_here.cache_test):
+        * http/wpt/cache-storage/cache-put-stream.https.any.worker-expected.txt: Added.
+        * http/wpt/cache-storage/cache-put-stream.https.any.worker.html: Added.
+
 2017-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221461.

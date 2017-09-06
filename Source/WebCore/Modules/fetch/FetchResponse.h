@@ -71,7 +71,6 @@ public:
 
     ExceptionOr<void> setStatus(int status, const String& statusText);
     void initializeWith(FetchBody::Init&&);
-    void setBodyAsReadableStream();
 
     Type type() const { return m_response.type(); }
     const String& url() const;
@@ -99,11 +98,9 @@ public:
 
     using ConsumeDataCallback = WTF::Function<void(ExceptionOr<RefPtr<SharedBuffer>>&&)>;
     void consumeBodyWhenLoaded(ConsumeDataCallback&&);
+    void consumeBodyFromReadableStream(ConsumeDataCallback&&);
 
     const ResourceResponse& resourceResponse() const { return m_response; }
-
-    // FIXME: Remove this method and use FetchBodyOwner one once we have full support in DOM ReadableStream.
-    bool hasReadableStreamBody() const final { return m_isReadableStream; }
 
 private:
     FetchResponse(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceResponse&&);
@@ -147,8 +144,6 @@ private:
     std::optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
     bool m_shouldExposeBody { true };
-    // FIXME: Remove that flag once we have full support in DOM ReadableStream.
-    bool m_isReadableStream { false };
 
     FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::ArrayBuffer  };
 };

@@ -54,8 +54,6 @@ public:
 
     void close() { invoke(*globalObject().globalExec(), jsController(), "close", JSC::jsUndefined()); }
 
-    bool isControlledReadableStreamLocked() const;
-
 private:
     void error(JSC::ExecState& state, JSC::JSValue value) { invoke(state, jsController(), "error", value); }
     void enqueue(JSC::ExecState& state, JSC::JSValue value) { invoke(state, jsController(), "enqueue", value); }

@@ -47,7 +47,6 @@ public:
     void error(const String&);
 
     bool isCancelling() const { return m_isCancelling; }
-    bool isReadableStreamLocked() const;
 
     void resolvePullPromise() { pullFinished(); }
 

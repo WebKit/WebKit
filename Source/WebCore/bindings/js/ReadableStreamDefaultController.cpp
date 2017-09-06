@@ -69,29 +69,6 @@ JSC::JSValue ReadableStreamDefaultController::invoke(JSC::ExecState& state, JSC:
     return callFunction(state, function, &object, arguments);
 }
 
-bool ReadableStreamDefaultController::isControlledReadableStreamLocked() const
-{
-    auto& globalObject = this->globalObject();
-    JSC::VM& vm = globalObject.vm();
-    JSC::JSLockHolder lock(vm);
-    auto scope = DECLARE_CATCH_SCOPE(vm);
-    auto& state = globalExec();
-
-    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
-    auto readableStream = m_jsController->get(&state, clientData.builtinNames().controlledReadableStreamPrivateName());
-    scope.assertNoException();
-
-    auto* isLocked = globalObject.builtinInternalFunctions().readableStreamInternals().m_isReadableStreamLockedFunction.get();
-    ASSERT(isLocked);
-
-    JSC::MarkedArgumentBuffer arguments;
-    arguments.append(readableStream);
-    auto result = callFunction(state, isLocked, JSC::jsUndefined(), arguments);
-    scope.assertNoException();
-
-    return result.isTrue();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(STREAMS_API)

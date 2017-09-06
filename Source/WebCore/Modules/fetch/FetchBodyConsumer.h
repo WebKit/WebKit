@@ -61,6 +61,7 @@ public:
 
     void clean();
 
+    void extract(ReadableStream&, ReadableStreamToSharedBufferSink::Callback&&);
     void resolve(Ref<DeferredPromise>&&, ReadableStream*);
     void resolveWithData(Ref<DeferredPromise>&&, const unsigned char*, unsigned);
 

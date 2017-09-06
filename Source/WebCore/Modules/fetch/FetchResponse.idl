@@ -85,5 +85,4 @@ dictionary FetchResponseInit {
     [PrivateIdentifier] void initializeWith(BodyInit body);
     [CallWith=ScriptState, NewObject, PrivateIdentifier] ReadableStream? createReadableStream();
     [PrivateIdentifier] boolean isDisturbed();
-    [PrivateIdentifier] void setBodyAsReadableStream();
 };

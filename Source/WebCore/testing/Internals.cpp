@@ -109,6 +109,7 @@
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
+#include "ReadableStream.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -3796,25 +3797,7 @@ void Internals::setShowAllPlugins(bool show)
 
 bool Internals::isReadableStreamDisturbed(JSC::ExecState& state, JSValue stream)
 {
-    JSGlobalObject* globalObject = state.vmEntryGlobalObject();
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(state.vm().clientData);
-    const Identifier& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().isReadableStreamDisturbedPrivateName();
-    JSValue value;
-    PropertySlot propertySlot(value, PropertySlot::InternalMethodType::Get);
-    globalObject->methodTable()->getOwnPropertySlot(globalObject, &state, privateName, propertySlot);
-    value = propertySlot.getValue(&state, privateName);
-    ASSERT(value.isFunction());
-
-    JSObject* function = value.getObject();
-    CallData callData;
-    CallType callType = JSC::getCallData(function, callData);
-    ASSERT(callType != JSC::CallType::None);
-    MarkedArgumentBuffer arguments;
-    arguments.append(stream);
-    JSValue returnedValue = JSC::call(&state, function, callType, callData, JSC::jsUndefined(), arguments);
-    ASSERT(returnedValue.isBoolean());
-
-    return returnedValue.asBoolean();
+    return ReadableStream::isDisturbed(state, stream);
 }
 
 JSValue Internals::cloneArrayBuffer(JSC::ExecState& state, JSValue buffer, JSValue srcByteOffset, JSValue srcLength)

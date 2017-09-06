@@ -1,6 +1,6 @@
 
 PASS Cache.put called with simple Request and Response 
-FAIL Cache.put called with Request and Response from fetch() promise_test: Unhandled rejection with value: object "NotSupportedError: Caching a Response with data stored in a ReadableStream is not yet supported"
+PASS Cache.put called with Request and Response from fetch() 
 PASS Cache.put with Request without a body 
 PASS Cache.put with Response without a body 
 PASS Cache.put with a Response containing an empty URL 

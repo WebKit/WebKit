@@ -49,11 +49,9 @@ function initializeFetchResponse(body, init)
 
         // FIXME: Use @isReadableStream once it is no longer guarded by STREAMS_API compilation guard.
         let isBodyReadableStream = (@isObject(body) && !!body.@readableStreamController);
-        if (isBodyReadableStream) {
+        if (isBodyReadableStream)
             this.@body = body;
-            this.@setBodyAsReadableStream();
-        } else
-            this.@initializeWith(body);
+        this.@initializeWith(body);
     }
 
     return this;
@@ -96,17 +94,15 @@ function clone()
     if (@Response.prototype.@isDisturbed.@call(this) || (this.@body && @isReadableStreamLocked(this.@body)))
         @throwTypeError("Cannot clone a disturbed Response");
 
-    var cloned = @Response.prototype.@cloneForJS.@call(this);
-
     // Let's create @body if response body is loading to provide data to both clones.
     if (@Response.prototype.@isLoading.@call(this) && this.@body === @undefined)
         this.@body = @Response.prototype.@createReadableStream.@call(this);
 
-    if (this.@body) {
-        var teedReadableStreams = @readableStreamTee(this.@body, true);
-        this.@body = teedReadableStreams[0];
-        cloned.@body = teedReadableStreams[1];
-    }
+    var cloned = @Response.prototype.@cloneForJS.@call(this);
+
+    // Let's refresh @body with the cloned stream.
+    this.@body = @Response.prototype.@createReadableStream.@call(this);
+
     return cloned;
 }
 

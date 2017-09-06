@@ -48,7 +48,7 @@ public:
     void json(Ref<DeferredPromise>&&);
     void text(Ref<DeferredPromise>&&);
 
-    bool isDisturbed() const { return m_isDisturbed; };
+    bool isDisturbed() const;
     bool isDisturbedOrLocked() const;
 
     void loadBlob(const Blob&, FetchBodyConsumer*);
@@ -56,7 +56,7 @@ public:
     bool isActive() const { return !!m_blobLoader; }
 
     RefPtr<ReadableStream> readableStream(JSC::ExecState&);
-    virtual bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
+    bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
 
 #if ENABLE(STREAMS_API)
     virtual void consumeBodyAsStream();
