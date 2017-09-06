@@ -11,12 +11,12 @@ These elements explicitly request layers.
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
-          (position 8.00 298.00)
+          (position 8.00 300.00)
           (bounds 100.00 100.00)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 8.00 398.00)
+          (position 8.00 400.00)
           (bounds 100.00 100.00)
           (drawsContent 1)
         )

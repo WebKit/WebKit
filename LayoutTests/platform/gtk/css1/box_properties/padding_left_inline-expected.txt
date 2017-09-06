@@ -3,16 +3,16 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584 [bgcolor=#CCCCCC]
-      RenderBlock {P} at (0,0) size 784x17
+      RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
-      RenderBlock {PRE} at (0,33) size 784x45
+      RenderBlock {PRE} at (0,34) size 784x45
         RenderText {#text} at (0,0) size 408x45
           text run at (0,0) width 400: ".one {padding-left: 25px; background-color: aqua;}"
           text run at (0,15) width 408: ".two {padding-left: -10px; background-color: aqua;}"
           text run at (0,30) width 0: " "
-      RenderBlock {HR} at (0,91) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,109) size 784x52 [bgcolor=#808080]
+      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,110) size 784x54 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 543x17
           text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
           text run at (389,0) width 154: "However, it contains an "
@@ -28,10 +28,10 @@ layer at (0,0) size 800x600
         RenderInline {STRONG} at (0,0) size 27x17
           RenderText {#text} at (527,18) size 27x17
             text run at (527,18) width 27: "first"
-        RenderText {#text} at (554,18) size 730x34
+        RenderText {#text} at (554,18) size 730x35
           text run at (554,18) width 176: " line in which the inline box"
-          text run at (0,35) width 52: "appears."
-      RenderBlock {P} at (0,177) size 784x35 [bgcolor=#808080]
+          text run at (0,36) width 52: "appears."
+      RenderBlock {P} at (0,180) size 784x36 [bgcolor=#808080]
         RenderText {#text} at (0,0) size 543x17
           text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
           text run at (389,0) width 154: "However, it contains an "
@@ -49,19 +49,19 @@ layer at (0,0) size 800x600
             text run at (512,18) width 27: "first"
         RenderText {#text} at (539,18) size 232x17
           text run at (539,18) width 232: " line in which the inline box appears."
-      RenderTable {TABLE} at (0,228) size 784x155 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 782x153
-          RenderTableRow {TR} at (0,0) size 782x25
-            RenderTableCell {TD} at (0,0) size 782x25 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
+      RenderTable {TABLE} at (0,232) size 784x160 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 782x158
+          RenderTableRow {TR} at (0,0) size 782x26
+            RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,25) size 782x128
-            RenderTableCell {TD} at (0,76) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-              RenderText {#text} at (4,4) size 4x18
-                text run at (4,5) width 4: " "
-            RenderTableCell {TD} at (12,25) size 770x128 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderBlock {P} at (4,4) size 762x52 [bgcolor=#808080]
+          RenderTableRow {TR} at (0,26) size 782x132
+            RenderTableCell {TD} at (0,79) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 4x17
+                text run at (4,4) width 4: " "
+            RenderTableCell {TD} at (12,26) size 770x132 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+              RenderBlock {P} at (4,4) size 762x54 [bgcolor=#808080]
                 RenderText {#text} at (0,0) size 543x17
                   text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
                   text run at (389,0) width 154: "However, it contains an "
@@ -76,10 +76,10 @@ layer at (0,0) size 800x600
                 RenderInline {STRONG} at (0,0) size 27x17
                   RenderText {#text} at (570,18) size 27x17
                     text run at (570,18) width 27: "first"
-                RenderText {#text} at (597,18) size 745x34
+                RenderText {#text} at (597,18) size 745x35
                   text run at (597,18) width 148: " line in which the inline"
-                  text run at (0,35) width 80: "box appears."
-              RenderBlock {P} at (4,72) size 762x52 [bgcolor=#808080]
+                  text run at (0,36) width 80: "box appears."
+              RenderBlock {P} at (4,74) size 762x54 [bgcolor=#808080]
                 RenderText {#text} at (0,0) size 543x17
                   text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "
                   text run at (389,0) width 154: "However, it contains an "
@@ -95,6 +95,6 @@ layer at (0,0) size 800x600
                 RenderInline {STRONG} at (0,0) size 27x17
                   RenderText {#text} at (512,18) size 27x17
                     text run at (512,18) width 27: "first"
-                RenderText {#text} at (539,18) size 715x34
+                RenderText {#text} at (539,18) size 715x35
                   text run at (539,18) width 176: " line in which the inline box"
-                  text run at (0,35) width 52: "appears."
+                  text run at (0,36) width 52: "appears."

@@ -22,7 +22,7 @@ Grandchild content
         (GraphicsLayer
           (position 18.00 640.00)
           (anchor 0.50 0.46)
-          (bounds 200.00 217.00)
+          (bounds 200.00 218.00)
           (drawsContent 1)
         )
         (GraphicsLayer

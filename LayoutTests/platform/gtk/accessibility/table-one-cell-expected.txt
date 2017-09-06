@@ -5,7 +5,7 @@ AXRole: AXParagraph
 AXParent: AXWebArea
 AXChildren: 1
 AXPosition: { 11.000000, 11.000000 }
-AXSize: { 132.000000, 85.000000 }
+AXSize: { 132.000000, 90.000000 }
 AXTitle: 
 AXDescription: 
 AXValue: Pick Your Location!<\n>Get specific content for your area. <\n>http://web.apple.com<\n>
