@@ -5,6 +5,7 @@ class DashboardToolbar extends DomainControlToolbar {
         var options = [
             {label: '1D', days: 1},
             {label: '1W', days: 7},
+            {label: '2W', days: 14},
             {label: '1M', days: 30},
             {label: '3M', days: 90},
         ];
