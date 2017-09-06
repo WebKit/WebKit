@@ -1,3 +1,51 @@
+2017-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Add plumbing for WKContentView to ask the web process for additional drag items
+        https://bugs.webkit.org/show_bug.cgi?id=176348
+        Work towards <rdar://problem/31144674>
+
+        Reviewed by Tim Horton.
+
+        Introduces new test infrastructure to simulate tapping to add additional items to the current drag session. We
+        add -[DataInteractionSimulator runFrom:to:additionalItemRequestLocations:], for which the last argument is a
+        dictionary mapping progress (a double between 0 and 1) to NSValues representing the location from which the drag
+        and drop simulation will request an additional drag item. During the simulated drag and drop, when the progress
+        value exceeds a value in the map of remaining additional item request locations, we halt drag simulation
+        progress for that runloop and instead request additional items from the location specified.
+
+        The only (useful) passing test we can create using the new machinery is one that verifies that preventDefault()
+        on dragstart works as expected, preventing additional items from being added. While this trivially passes now,
+        since the web-process-side of the additional items flow is not yet implemented, it should continue to pass after
+        the web process portion is implemented.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/selected-text-image-link-and-editable.html: Added.
+
+        Add a new test page that contains some non-editable text, an image, a link, and a rich text editable area.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[MockDragDropSession addItems:]):
+
+        Convenience method to add additional mock drag items to a drag or drop session.
+
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator runFrom:to:]):
+
+        Converted into a convenience wrapper around the latter version, passing in nil for the additional item request
+        locations dictionary.
+
+        (-[DataInteractionSimulator runFrom:to:additionalItemRequestLocations:]):
+        (-[DataInteractionSimulator _enqueuePendingAdditionalItemRequestLocations]):
+        (-[DataInteractionSimulator _sendQueuedAdditionalItemRequest]):
+
+        New helper methods to detect when and where additional items should be "added", and subsequently simulate adding
+        drag items at these given locations.
+
+        (-[DataInteractionSimulator _advanceProgress]):
+
 2017-09-05  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's mouseDidMoveOverElement

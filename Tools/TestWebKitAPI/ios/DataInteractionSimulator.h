@@ -86,6 +86,8 @@ extern NSString * const DataInteractionPerformOperationEventName;
 extern NSString * const DataInteractionLeaveEventName;
 extern NSString * const DataInteractionStartEventName;
 
+typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
+
 typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionCancelled = 0,
     DataInteractionBeginning = 1,
@@ -107,6 +109,9 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     CGPoint _endLocation;
     CGRect _lastKnownDragCaretRect;
 
+    RetainPtr<NSMutableDictionary<NSNumber *, NSValue *>>_remainingAdditionalItemRequestLocationsByProgress;
+    RetainPtr<NSMutableArray<NSValue *>>_queuedAdditionalItemRequestLocations;
+
     bool _isDoneWaitingForInputSession;
     BOOL _shouldPerformOperation;
     double _currentProgress;
@@ -115,7 +120,9 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 }
 
 - (instancetype)initWithWebView:(TestWKWebView *)webView;
+// The start location, end location, and locations of additional item requests are all in window coordinates.
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation;
+- (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations;
 - (void)waitForInputSession;
 
 @property (nonatomic) BOOL allowsFocusToStartInputSession;

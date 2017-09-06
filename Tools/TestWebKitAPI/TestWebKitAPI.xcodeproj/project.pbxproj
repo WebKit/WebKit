@@ -694,6 +694,7 @@
 		F4D4F3B61E4E2BCB00BB2767 /* DataInteractionSimulator.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B41E4E2BCB00BB2767 /* DataInteractionSimulator.mm */; };
 		F4D4F3B91E4E36E400BB2767 /* DataInteractionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */; };
 		F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */; };
+		F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */; };
 		F4DEF6ED1E9B4DB60048EF61 /* image-in-link-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */; };
 		F4F137921D9B683E002BEC57 /* large-video-test-now-playing.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */; };
 		F4F405BC1D4C0D1C007A9707 /* full-size-autoplaying-video-with-audio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */; };
@@ -953,6 +954,7 @@
 				F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */,
 				A12DDC001E8373E700CF6CAE /* rendered-image-excluding-overflow.html in Copy Resources */,
 				F46849C01EEF5EF300B937FE /* rich-and-plain-text.html in Copy Resources */,
+				F4D65DA81F5E4704009D8C27 /* selected-text-image-link-and-editable.html in Copy Resources */,
 				7A66BDB81EAF18D500CCC924 /* set-long-title.html in Copy Resources */,
 				52B8CF9815868D9100281053 /* SetDocumentURI.html in Copy Resources */,
 				CEBABD491B71687C0051210A /* should-open-external-schemes.html in Copy Resources */,
@@ -1724,6 +1726,7 @@
 		F4D4F3B51E4E2BCB00BB2767 /* DataInteractionSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataInteractionSimulator.h; sourceTree = "<group>"; };
 		F4D4F3B71E4E36E400BB2767 /* DataInteractionTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataInteractionTests.mm; sourceTree = "<group>"; };
 		F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-clear-selection.html"; sourceTree = "<group>"; };
+		F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "selected-text-image-link-and-editable.html"; sourceTree = "<group>"; };
 		F4DEF6EC1E9B4D950048EF61 /* image-in-link-and-input.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "image-in-link-and-input.html"; sourceTree = "<group>"; };
 		F4F137911D9B6832002BEC57 /* large-video-test-now-playing.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-test-now-playing.html"; sourceTree = "<group>"; };
 		F4F405BA1D4C0CF8007A9707 /* full-size-autoplaying-video-with-audio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "full-size-autoplaying-video-with-audio.html"; sourceTree = "<group>"; };
@@ -2234,6 +2237,7 @@
 				F41AB99A1EF4692C0083FA08 /* prevent-start.html */,
 				A12DDBFF1E8373C100CF6CAE /* rendered-image-excluding-overflow.html */,
 				F46849BF1EEF5EDC00B937FE /* rich-and-plain-text.html */,
+				F4D65DA71F5E46C0009D8C27 /* selected-text-image-link-and-editable.html */,
 				C9B4AD291ECA6EA500F5FEA0 /* silence-long.m4a */,
 				F4F405BB1D4C0CF8007A9707 /* skinny-autoplaying-video-with-audio.html */,
 				515BE16E1D4288FF00DD7C68 /* StoreBlobToBeDeleted.html */,

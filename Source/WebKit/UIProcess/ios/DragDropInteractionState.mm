@@ -167,6 +167,17 @@ void DragDropInteractionState::dragSessionWillDelaySetDownAnimation(dispatch_blo
     m_dragCancelSetDownBlock = completion;
 }
 
+bool DragDropInteractionState::shouldRequestAdditionalItemForDragSession(id <UIDragSession> session) const
+{
+    return m_dragSession == session && !m_addDragItemCompletionBlock && !m_dragStartCompletionBlock;
+}
+
+void DragDropInteractionState::dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *))
+{
+    clearStagedDragSource();
+    m_addDragItemCompletionBlock = completion;
+}
+
 void DragDropInteractionState::dropSessionDidEnterOrUpdate(id <UIDropSession> session, const DragData& dragData)
 {
     m_dropSession = session;
@@ -209,6 +220,9 @@ void DragDropInteractionState::dragAndDropSessionsDidEnd()
     // to prevent UIKit from getting into an inconsistent state.
     if (auto completionBlock = takeDragCancelSetDownBlock())
         completionBlock();
+
+    if (auto completionBlock = takeAddDragItemCompletionBlock())
+        completionBlock(@[ ]);
 
     if (auto completionBlock = takeDragStartCompletionBlock())
         completionBlock();

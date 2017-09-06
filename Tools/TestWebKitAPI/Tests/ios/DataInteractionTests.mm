@@ -1234,6 +1234,21 @@ TEST(DataInteractionTests, DoNotCrashWhenSelectionMovesOffscreenAfterDragStart)
     EXPECT_WK_STREQ("FAR OFFSCREEN", [webView stringByEvaluatingJavaScript:@"getSelection().getRangeAt(0).toString()"]);
 }
 
+TEST(DataInteractionTests, AdditionalItemsCanBePreventedOnDragStart)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"selected-text-image-link-and-editable"];
+    [webView stringByEvaluatingJavaScript:@"link.addEventListener('dragstart', e => e.preventDefault())"];
+    [webView stringByEvaluatingJavaScript:@"image.addEventListener('dragstart', e => e.preventDefault())"];
+
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [simulator runFrom:CGPointMake(50, 50) to:CGPointMake(50, 400) additionalItemRequestLocations:@{
+        @0.33: [NSValue valueWithCGPoint:CGPointMake(50, 150)],
+        @0.66: [NSValue valueWithCGPoint:CGPointMake(50, 250)]
+    }];
+    EXPECT_WK_STREQ("ABCD", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(DATA_INTERACTION)

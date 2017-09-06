@@ -5831,6 +5831,13 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif
 }
 
+- (void)_simulateItemsForAddingToSession:(id)session atLocation:(CGPoint)location completion:(void(^)(NSArray *))completion
+{
+#if ENABLE(DATA_INTERACTION)
+    [_contentView _simulateItemsForAddingToSession:session atLocation:location completion:completion];
+#endif
+}
+
 - (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion
 {
 #if ENABLE(DATA_INTERACTION)

@@ -786,6 +786,11 @@ void PageClientImpl::didHandleStartDataInteractionRequest(bool started)
     [m_contentView _didHandleStartDataInteractionRequest:started];
 }
 
+void PageClientImpl::didHandleAdditionalDragItemsRequest(bool added)
+{
+    [m_contentView _didHandleAdditionalDragItemsRequest:added];
+}
+
 void PageClientImpl::startDrag(const DragItem& item, const ShareableBitmap::Handle& image)
 {
     [m_contentView _startDrag:ShareableBitmap::create(image)->makeCGImageCopy() item:item];

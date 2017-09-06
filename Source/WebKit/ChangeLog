@@ -1,3 +1,72 @@
+2017-09-05  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Add plumbing for WKContentView to ask the web process for additional drag items
+        https://bugs.webkit.org/show_bug.cgi?id=176348
+        Work towards <rdar://problem/31144674>
+
+        Reviewed by Tim Horton.
+
+        Adds boilerplate plumbing to request additional items to an existing session. This implements some UI-side logic
+        in WKContentView to send an additional drag items request and handle a response from the web process. 
+        To start, WebPageProxy::requestAdditionalItemsForDragSession is invoked by -_dragInteraction:
+        itemsForAddingToSession:withTouchAtPoint:completion: in WKContentView, and the response from the web process is
+        handled in -[WKContentView _didHandleAdditionalDragItemsRequest:].
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateItemsForAddingToSession:atLocation:completion:]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+        Add SPI to simulate a request for additional drag items. See Tools/ChangeLog for more detail.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
+        Add an IPC message handler for the additional drag items response from the web process.
+
+        * UIProcess/ios/DragDropInteractionState.h:
+        (WebKit::DragDropInteractionState::BlockPtr<void):
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::DragDropInteractionState::shouldRequestAdditionalItemForDragSession const):
+        (WebKit::DragDropInteractionState::dragSessionWillRequestAdditionalItem):
+
+        Invoke the new additional items completion handler when tearing down to avoid getting UIKit into a bad state.
+
+        (WebKit::DragDropInteractionState::dragAndDropSessionsDidEnd):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::didHandleAdditionalDragItemsRequest):
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _didHandleAdditionalDragItemsRequest:]):
+        (-[WKContentView _itemsForBeginningOrAddingToSessionWithRegistrationList:stagedDragSource:]):
+
+        Factors common logic to convert a staged WebItemProviderRegistrationInfoList and DragSourceState into a list of
+        drag items, invoking the private UI delegate in the process. This is called both when starting a drag session,
+        and adding items to an existing drag session.
+
+        (-[WKContentView _dragInteraction:itemsForAddingToSession:withTouchAtPoint:completion:]):
+
+        Implements a (proposed) additional drag item delegate that serves as an asynchronous alternative to the API
+        variant, -_dragInteraction:itemsForAddingToSession:withTouchAtPoint:. See <rdar://problem/33146803> for more
+        information.
+
+        (-[WKContentView dragInteraction:itemsForBeginningSession:]):
+
+        Refactored to use -_itemsForBeginningOrAddingToSessionWithRegistrationList:stagedDragSource:.
+
+        (-[WKContentView _simulateItemsForAddingToSession:atLocation:completion:]):
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::didHandleAdditionalDragItemsRequest):
+        (WebKit::WebPageProxy::requestAdditionalItemsForDragSession):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+        Add an IPC message handler for the additional drag items request from the UI process.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+
 2017-09-05  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's mouseDidMoveOverElement

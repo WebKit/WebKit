@@ -561,7 +561,9 @@ public:
 #if ENABLE(DATA_INTERACTION)
     void didPerformDataInteractionControllerOperation(bool handled);
     void didHandleStartDataInteractionRequest(bool started);
+    void didHandleAdditionalDragItemsRequest(bool added);
     void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+    void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
     void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>);
 #endif
 #endif

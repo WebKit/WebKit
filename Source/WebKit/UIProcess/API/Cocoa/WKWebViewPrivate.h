@@ -373,6 +373,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 - (void)_simulateDataInteractionSessionDidEnd:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_simulateWillBeginDataInteractionWithSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (NSArray *)_simulatedItemsForSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)_simulateItemsForAddingToSession:(id)session atLocation:(CGPoint)location completion:(void(^)(NSArray *))completion WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 

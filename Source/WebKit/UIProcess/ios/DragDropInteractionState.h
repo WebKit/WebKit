@@ -70,6 +70,8 @@ public:
     void clearStagedDragSource(DidBecomeActive = DidBecomeActive::No);
     UITargetedDragPreview *previewForDragItem(UIDragItem *, UIView *contentView, UIView *previewContainer) const;
     void dragSessionWillDelaySetDownAnimation(dispatch_block_t completion);
+    bool shouldRequestAdditionalItemForDragSession(id <UIDragSession>) const;
+    void dragSessionWillRequestAdditionalItem(void (^completion)(NSArray <UIDragItem *> *));
 
     // These helper methods are unique to UIDropInteraction.
     void dropSessionDidEnterOrUpdate(id <UIDropSession>, const WebCore::DragData&);
@@ -86,6 +88,7 @@ public:
     id<UIDropSession> dropSession() const { return m_dropSession.get(); }
     BlockPtr<void()> takeDragStartCompletionBlock() { return WTFMove(m_dragStartCompletionBlock); }
     BlockPtr<void()> takeDragCancelSetDownBlock() { return WTFMove(m_dragCancelSetDownBlock); }
+    BlockPtr<void(NSArray<UIDragItem *> *)> takeAddDragItemCompletionBlock() { return WTFMove(m_addDragItemCompletionBlock); }
 
 private:
     void updatePreviewsForActiveDragSources();
@@ -99,6 +102,7 @@ private:
     RetainPtr<id <UIDropSession>> m_dropSession;
     BlockPtr<void()> m_dragStartCompletionBlock;
     BlockPtr<void()> m_dragCancelSetDownBlock;
+    BlockPtr<void(NSArray<UIDragItem *> *)> m_addDragItemCompletionBlock;
 
     std::optional<DragSourceState> m_stagedDragSource;
     Vector<DragSourceState> m_activeDragSources;

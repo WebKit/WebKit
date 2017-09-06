@@ -133,6 +133,17 @@ using namespace TestWebKitAPI;
     _mockItems = items;
 }
 
+- (void)addItems:(NSArray<UIDragItem *> *)items
+{
+    if (![items count])
+        return;
+
+    if (![_mockItems count])
+        _mockItems = items;
+    else
+        _mockItems = [_mockItems arrayByAddingObjectsFromArray:items];
+}
+
 - (CGPoint)locationInView:(UIView *)view
 {
     return [_window convertPoint:_mockLocationInWindow toView:view];
@@ -307,6 +318,8 @@ static NSArray *dataInteractionEventNames()
     _dataOperationSession = nil;
     _shouldPerformOperation = NO;
     _lastKnownDragCaretRect = CGRectZero;
+    _remainingAdditionalItemRequestLocationsByProgress = nil;
+    _queuedAdditionalItemRequestLocations = adoptNS([[NSMutableArray alloc] init]);
 }
 
 - (NSArray *)observedEventNames
@@ -326,6 +339,11 @@ static NSArray *dataInteractionEventNames()
 
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation
 {
+    [self runFrom:startLocation to:endLocation additionalItemRequestLocations:nil];
+}
+
+- (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation additionalItemRequestLocations:(ProgressToCGPointValueMap)additionalItemRequestLocations
+{
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];
     [defaultCenter addObserver:self selector:@selector(simulateAllTouchesCanceled:) name:TestWebKitAPISimulateCancelAllTouchesNotificationName object:nil];
 
@@ -333,6 +351,9 @@ static NSArray *dataInteractionEventNames()
         UIApplicationInstantiateSingleton([DataInteractionSimulatorApplication class]);
 
     [self _resetSimulatedState];
+
+    if (additionalItemRequestLocations)
+        _remainingAdditionalItemRequestLocationsByProgress = adoptNS([additionalItemRequestLocations mutableCopy]);
 
     RetainPtr<DataInteractionSimulator> strongSelf = self;
     for (NSString *eventName in dataInteractionEventNames()) {
@@ -391,8 +412,45 @@ static NSArray *dataInteractionEventNames()
         [_webView _simulateDataInteractionSessionDidEnd:_dataInteractionSession.get()];
 }
 
+- (void)_enqueuePendingAdditionalItemRequestLocations
+{
+    NSMutableArray *progressValuesToRemove = [NSMutableArray array];
+    for (NSNumber *progressValue in _remainingAdditionalItemRequestLocationsByProgress.get()) {
+        double progress = progressValue.doubleValue;
+        if (progress > _currentProgress)
+            continue;
+        [progressValuesToRemove addObject:progressValue];
+        [_queuedAdditionalItemRequestLocations addObject:[_remainingAdditionalItemRequestLocationsByProgress objectForKey:progressValue]];
+    }
+
+    for (NSNumber *progressToRemove in progressValuesToRemove)
+        [_remainingAdditionalItemRequestLocationsByProgress removeObjectForKey:progressToRemove];
+}
+
+- (BOOL)_sendQueuedAdditionalItemRequest
+{
+    if (![_queuedAdditionalItemRequestLocations count])
+        return NO;
+
+    RetainPtr<NSValue> requestLocationValue = [_queuedAdditionalItemRequestLocations objectAtIndex:0];
+    [_queuedAdditionalItemRequestLocations removeObjectAtIndex:0];
+
+    auto requestLocation = [[_webView window] convertPoint:[requestLocationValue CGPointValue] toView:_webView.get()];
+    [_webView _simulateItemsForAddingToSession:_dataInteractionSession.get() atLocation:requestLocation completion:[dragSession = _dataInteractionSession, dropSession = _dataOperationSession] (NSArray *items) {
+        [dragSession addItems:items];
+        [dropSession addItems:items];
+    }];
+    return YES;
+}
+
 - (void)_advanceProgress
 {
+    [self _enqueuePendingAdditionalItemRequestLocations];
+    if ([self _sendQueuedAdditionalItemRequest]) {
+        [self _scheduleAdvanceProgress];
+        return;
+    }
+
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
     _currentProgress += progressIncrementStep;
     CGPoint locationInWindow = self._currentLocation;

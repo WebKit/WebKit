@@ -4259,6 +4259,31 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
     _dragDropInteractionState.stageDragItem(item, dragImage.get());
 }
 
+- (void)_didHandleAdditionalDragItemsRequest:(BOOL)added
+{
+    auto completion = _dragDropInteractionState.takeAddDragItemCompletionBlock();
+    if (!completion)
+        return;
+
+    WebItemProviderRegistrationInfoList *registrationList = [[WebItemProviderPasteboard sharedInstance] takeRegistrationList];
+    if (!added || !registrationList || !_dragDropInteractionState.hasStagedDragSource()) {
+        _dragDropInteractionState.clearStagedDragSource();
+        completion(@[ ]);
+        return;
+    }
+
+    auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
+    NSArray *dragItemsToAdd = [self _itemsForBeginningOrAddingToSessionWithRegistrationList:registrationList stagedDragSource:stagedDragSource];
+
+    RELEASE_LOG(DragAndDrop, "Drag session: %p adding %tu items", _dragDropInteractionState.dragSession(), dragItemsToAdd.count);
+    _dragDropInteractionState.clearStagedDragSource(dragItemsToAdd.count ? DragDropInteractionState::DidBecomeActive::Yes : DragDropInteractionState::DidBecomeActive::No);
+
+    completion(dragItemsToAdd);
+
+    if (dragItemsToAdd.count)
+        _page->didStartDrag();
+}
+
 - (void)_didHandleStartDataInteractionRequest:(BOOL)started
 {
     BlockPtr<void()> savedCompletionBlock = _dragDropInteractionState.takeDragStartCompletionBlock();
@@ -4454,6 +4479,37 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _shouldRestoreCalloutBarAfterDrop = NO;
 }
 
+- (NSArray<UIDragItem *> *)_itemsForBeginningOrAddingToSessionWithRegistrationList:(WebItemProviderRegistrationInfoList *)registrationList stagedDragSource:(const DragSourceState&)stagedDragSource
+{
+    UIItemProvider *defaultItemProvider = registrationList.itemProvider;
+    if (!defaultItemProvider)
+        return @[ ];
+
+    NSArray *adjustedItemProviders;
+    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
+    if ([uiDelegate respondsToSelector:@selector(_webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:)]) {
+        auto representingObjects = adoptNS([[NSMutableArray alloc] init]);
+        auto additionalData = adoptNS([[NSMutableDictionary alloc] init]);
+        [registrationList enumerateItems:[representingObjects, additionalData] (WebItemProviderRegistrationInfo *item, NSUInteger) {
+            if (item.representingObject)
+                [representingObjects addObject:item.representingObject];
+            if (item.typeIdentifier && item.data)
+                [additionalData setObject:item.data forKey:item.typeIdentifier];
+        }];
+        adjustedItemProviders = [uiDelegate _webView:_webView adjustedDataInteractionItemProvidersForItemProvider:defaultItemProvider representingObjects:representingObjects.get() additionalData:additionalData.get()];
+    } else
+        adjustedItemProviders = @[ defaultItemProvider ];
+
+    NSMutableArray *dragItems = [NSMutableArray arrayWithCapacity:adjustedItemProviders.count];
+    for (UIItemProvider *itemProvider in adjustedItemProviders) {
+        auto item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]);
+        [item _setPrivateLocalContext:@(stagedDragSource.itemIdentifier)];
+        [dragItems addObject:item.autorelease()];
+    }
+
+    return dragItems;
+}
+
 #pragma mark - UIDragInteractionDelegate
 
 - (BOOL)_dragInteraction:(UIDragInteraction *)interaction shouldDelayCompetingGestureRecognizer:(UIGestureRecognizer *)competingGestureRecognizer
@@ -4475,6 +4531,17 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     if ([uiDelegate respondsToSelector:@selector(_webView:dataOwnerForDragSession:)])
         dataOwner = [uiDelegate _webView:_webView dataOwnerForDragSession:session];
     return dataOwner;
+}
+
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion
+{
+    if (!_dragDropInteractionState.shouldRequestAdditionalItemForDragSession(session)) {
+        completion(@[ ]);
+        return;
+    }
+
+    _dragDropInteractionState.dragSessionWillRequestAdditionalItem(completion);
+    _page->requestAdditionalItemsForDragSession(roundedIntPoint(point), roundedIntPoint(point));
 }
 
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id <UIDragSession>)session completion:(dispatch_block_t)completion
@@ -4515,37 +4582,7 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 
     auto stagedDragSource = _dragDropInteractionState.stagedDragSource();
     WebItemProviderRegistrationInfoList *registrationList = [[WebItemProviderPasteboard sharedInstance] takeRegistrationList];
-    UIItemProvider *defaultItemProvider = registrationList.itemProvider;
-    if (!defaultItemProvider) {
-        RELEASE_LOG(DragAndDrop, "Drag session failed: %p (no item providers generated before adjustment)", session);
-        _page->dragCancelled();
-        _dragDropInteractionState.clearStagedDragSource();
-        return @[ ];
-    }
-
-    // Give internal clients such as Mail one final chance to augment the contents of each UIItemProvider before sending the drag items off to UIKit.
-    NSArray *adjustedItemProviders;
-    id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
-    if ([uiDelegate respondsToSelector:@selector(_webView:adjustedDataInteractionItemProvidersForItemProvider:representingObjects:additionalData:)]) {
-        auto representingObjects = adoptNS([[NSMutableArray alloc] init]);
-        auto additionalData = adoptNS([[NSMutableDictionary alloc] init]);
-        [registrationList enumerateItems:[representingObjects, additionalData] (WebItemProviderRegistrationInfo *item, NSUInteger) {
-            if (item.representingObject)
-                [representingObjects addObject:item.representingObject];
-            if (item.typeIdentifier && item.data)
-                [additionalData setObject:item.data forKey:item.typeIdentifier];
-        }];
-        adjustedItemProviders = [uiDelegate _webView:_webView adjustedDataInteractionItemProvidersForItemProvider:defaultItemProvider representingObjects:representingObjects.get() additionalData:additionalData.get()];
-    } else
-        adjustedItemProviders = @[ defaultItemProvider ];
-
-    NSMutableArray *dragItems = [NSMutableArray arrayWithCapacity:adjustedItemProviders.count];
-    for (UIItemProvider *itemProvider in adjustedItemProviders) {
-        auto item = adoptNS([[UIDragItem alloc] initWithItemProvider:itemProvider]);
-        [item _setPrivateLocalContext:@(stagedDragSource.itemIdentifier)];
-        [dragItems addObject:item.autorelease()];
-    }
-
+    NSArray *dragItems = [self _itemsForBeginningOrAddingToSessionWithRegistrationList:registrationList stagedDragSource:stagedDragSource];
     if (![dragItems count])
         _page->dragCancelled();
 
@@ -4826,6 +4863,11 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
 - (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion
 {
     [self _dragInteraction:_dragInteraction.get() prepareForSession:session completion:completion];
+}
+
+- (void)_simulateItemsForAddingToSession:(id)session atLocation:(CGPoint)location completion:(void(^)(NSArray *))completion
+{
+    [self _dragInteraction:_dragInteraction.get() itemsForAddingToSession:session withTouchAtPoint:location completion:completion];
 }
 
 #endif

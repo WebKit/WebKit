@@ -631,6 +631,13 @@ void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const 
     send(Messages::WebPageProxy::DidHandleStartDataInteractionRequest(didStart));
 }
 
+void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
+{
+    notImplemented();
+
+    send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(false));
+}
+
 void WebPage::didConcludeEditDataInteraction()
 {
     std::optional<TextIndicatorData> textIndicatorData;

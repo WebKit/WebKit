@@ -317,6 +317,7 @@ messages -> WebPageProxy {
 #if ENABLE(DATA_INTERACTION)
     DidPerformDataInteractionControllerOperation(bool handled)
     DidHandleStartDataInteractionRequest(bool started)
+    DidHandleAdditionalDragItemsRequest(bool added)
     DidConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData> textIndicator)
 #endif
 

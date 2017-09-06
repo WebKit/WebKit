@@ -1032,6 +1032,7 @@ private:
     RefPtr<WebCore::Range> switchToBlockSelectionAtPoint(const WebCore::IntPoint&, SelectionHandlePosition);
 #if ENABLE(DATA_INTERACTION)
     void requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
+    void requestAdditionalItemsForDragSession(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition);
 #endif
 #endif
 

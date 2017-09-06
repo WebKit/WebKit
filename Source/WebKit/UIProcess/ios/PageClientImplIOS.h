@@ -205,6 +205,7 @@ private:
 #if ENABLE(DATA_INTERACTION)
     void didPerformDataInteractionControllerOperation(bool handled) override;
     void didHandleStartDataInteractionRequest(bool started) override;
+    void didHandleAdditionalDragItemsRequest(bool added) override;
     void startDrag(const WebCore::DragItem&, const ShareableBitmap::Handle& image) override;
     void didConcludeEditDataInteraction(std::optional<WebCore::TextIndicatorData>) override;
     void didChangeDataInteractionCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;

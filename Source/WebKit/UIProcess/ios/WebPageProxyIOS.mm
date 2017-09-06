@@ -1094,10 +1094,21 @@ void WebPageProxy::didHandleStartDataInteractionRequest(bool started)
     m_pageClient.didHandleStartDataInteractionRequest(started);
 }
 
+void WebPageProxy::didHandleAdditionalDragItemsRequest(bool added)
+{
+    m_pageClient.didHandleAdditionalDragItemsRequest(added);
+}
+
 void WebPageProxy::requestStartDataInteraction(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition)
 {
     if (isValid())
         m_process->send(Messages::WebPage::RequestStartDataInteraction(clientPosition, globalPosition), m_pageID);
+}
+
+void WebPageProxy::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
+{
+    if (isValid())
+        m_process->send(Messages::WebPage::RequestAdditionalItemsForDragSession(clientPosition, globalPosition), m_pageID);
 }
 
 void WebPageProxy::didConcludeEditDataInteraction(std::optional<TextIndicatorData> data)
