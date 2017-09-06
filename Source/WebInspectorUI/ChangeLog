@@ -1,3 +1,52 @@
+2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: ⌘E and ⌘G do not work in main content area when quick console drawer is open
+        https://bugs.webkit.org/show_bug.cgi?id=176433
+
+        Reviewed by Brian Burg.
+
+        Make the ⌘E and ⌘G keyboard shortcuts behave more like the global ⌘K clear shortcut.
+        Instead of keeping them inside of FindBanner, and enabling/disabling them when they
+        make sense to apply, we make a single global instance of the keyboard shortcut and
+        apply it to whatever content view / content browser is active. This avoids conflicts
+        in situations where there are two ContentViews that are visible and each can handle
+        the keyboard shortcut.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        New keyboard shortcuts.
+
+        (WI._populateFind):
+        (WI._findNext):
+        (WI._findPrevious):
+        Perform the shortcut on the active content view or content browser.
+
+        * UserInterface/Views/ContentBrowser.js:
+        (WI.ContentBrowser.prototype.shown):
+        (WI.ContentBrowser.prototype.hidden):
+        (WI.ContentBrowser.prototype.handlePopulateFindShortcut):
+        (WI.ContentBrowser.prototype.handleFindNextShortcut):
+        (WI.ContentBrowser.prototype.handleFindPreviousShortcut):
+        (WI.ContentBrowser.prototype.findBannerSearchQueryForSelection): Deleted.
+        * UserInterface/Views/LogContentView.js:
+        (WI.LogContentView.prototype.handlePopulateFindShortcut):
+        (WI.LogContentView.prototype.handleFindNextShortcut):
+        (WI.LogContentView.prototype.handleFindPreviousShortcut):
+        ContentBrowser and LogContentView (the only content view with a custom find banner)
+        now each handle the global keyboard shortcut handlers to do the right thing for
+        their respective cases.
+
+        * UserInterface/Views/FindBanner.js:
+        (WI.FindBanner.prototype.enableKeyboardShortcuts): Deleted.
+        (WI.FindBanner.prototype.disableKeyboardShortcuts): Deleted.
+        (WI.FindBanner.prototype._populateSearchQueryFromSelection): Deleted.
+        Move keyboard shortcut handling up to Main.js to be global.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.prototype.searchQueryWithSelection):
+        Default implementation should grab the selected text from the selection.
+        Previously shortcut selections only worked for selections in text editors.
+
 2017-09-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: display "Inherited From" section headers

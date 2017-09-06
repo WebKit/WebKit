@@ -449,8 +449,11 @@ WI.ContentView = class ContentView extends WI.View
 
     searchQueryWithSelection()
     {
-        // Implemented by subclasses.
-        return null;
+        let selection = window.getSelection();
+        if (selection.isCollapsed)
+            return null;
+
+        return selection.toString().removeWordBreakCharacters();
     }
 
     revealPreviousSearchResult(changeFocus)

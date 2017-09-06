@@ -288,6 +288,12 @@ WI.contentLoaded = function()
 
     this.clearKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "K", this._clear.bind(this));
 
+    // FIXME: <https://webkit.org/b/151310> Web Inspector: Command-E should propagate to other search fields (including the system)
+    this.populateFindKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateFind.bind(this));
+    this.populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
+    this.findNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._findNext.bind(this));
+    this.findPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._findPrevious.bind(this));
+
     this.quickConsole = new WI.QuickConsole(document.getElementById("quick-console"));
 
     this._consoleRepresentedObject = new WI.LogObject;
@@ -1974,6 +1980,51 @@ WI._clear = function(event)
 
     contentView.handleClearShortcut(event);
 };
+
+WI._populateFind = function(event)
+{
+    let focusedContentView = this._focusedContentView();
+    if (focusedContentView.supportsCustomFindBanner) {
+        focusedContentView.handlePopulateFindShortcut();
+        return;
+    }
+
+    let contentBrowser = this._focusedOrVisibleContentBrowser();
+    if (!contentBrowser)
+        return;
+
+    contentBrowser.handlePopulateFindShortcut();
+}
+
+WI._findNext = function(event)
+{
+    let focusedContentView = this._focusedContentView();
+    if (focusedContentView.supportsCustomFindBanner) {
+        focusedContentView.handleFindNextShortcut();
+        return;
+    }
+
+    let contentBrowser = this._focusedOrVisibleContentBrowser();
+    if (!contentBrowser)
+        return;
+
+    contentBrowser.handleFindNextShortcut();
+}
+
+WI._findPrevious = function(event)
+{
+    let focusedContentView = this._focusedContentView();
+    if (focusedContentView.supportsCustomFindBanner) {
+        focusedContentView.handleFindPreviousShortcut();
+        return;
+    }
+
+    let contentBrowser = this._focusedOrVisibleContentBrowser();
+    if (!contentBrowser)
+        return;
+
+    contentBrowser.handleFindPreviousShortcut();
+}
 
 WI._copy = function(event)
 {

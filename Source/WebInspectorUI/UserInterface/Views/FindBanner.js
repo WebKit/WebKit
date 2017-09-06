@@ -84,13 +84,6 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this._searchBackwards = false;
         this._searchKeyPressed = false;
         this._previousSearchValue = "";
-
-        this._populateFindKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "E", this._populateSearchQueryFromSelection.bind(this));
-        this._populateFindKeyboardShortcut.implicitlyPreventsDefault = false;
-        this._findNextKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._nextResultButtonClicked.bind(this));
-        this._findPreviousKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Shift | WI.KeyboardShortcut.Modifier.CommandOrControl, "G", this._previousResultButtonClicked.bind(this));
-
-        this.disableKeyboardShortcuts();
     }
 
     // Public
@@ -223,20 +216,6 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         this.dispatchEventToListeners(WI.FindBanner.Event.DidHide);
     }
 
-    enableKeyboardShortcuts()
-    {
-        this._populateFindKeyboardShortcut.disabled = false;
-        this._findNextKeyboardShortcut.disabled = false;
-        this._findPreviousKeyboardShortcut.disabled = false;
-    }
-
-    disableKeyboardShortcuts()
-    {
-        this._populateFindKeyboardShortcut.disabled = true;
-        this._findNextKeyboardShortcut.disabled = true;
-        this._findPreviousKeyboardShortcut.disabled = true;
-    }
-
     // Private
 
     _inputFieldKeyDown(event)
@@ -277,19 +256,6 @@ WI.FindBanner = class FindBanner extends WI.NavigationItem
         }
 
         this._previousSearchValue = this.searchQuery;
-    }
-
-    _populateSearchQueryFromSelection(event)
-    {
-        if (this._delegate && typeof this._delegate.findBannerSearchQueryForSelection === "function") {
-            var query = this._delegate.findBannerSearchQueryForSelection(this);
-            if (query) {
-                this.searchQuery = query;
-
-                if (this._delegate && typeof this._delegate.findBannerPerformSearch === "function")
-                    this._delegate.findBannerPerformSearch(this, this.searchQuery);
-            }
-        }
     }
 
     _previousResultButtonClicked(event)

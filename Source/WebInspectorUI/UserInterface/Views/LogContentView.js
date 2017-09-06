@@ -232,6 +232,27 @@ WI.LogContentView = class LogContentView extends WI.ContentView
         this._logViewController.requestClearMessages();
     }
 
+    handlePopulateFindShortcut()
+    {
+        let searchQuery = this.searchQueryWithSelection();
+        if (!searchQuery)
+            return;
+
+        this._findBanner.searchQuery = searchQuery;
+
+        this.performSearch(this._findBanner.searchQuery);
+    }
+
+    handleFindNextShortcut()
+    {
+        this.findBannerRevealNextResult(this._findBanner);
+    }
+
+    handleFindPreviousShortcut()
+    {
+        this.findBannerRevealPreviousResult(this._findBanner);
+    }
+
     findBannerRevealPreviousResult()
     {
         this.highlightPreviousSearchMatch();
