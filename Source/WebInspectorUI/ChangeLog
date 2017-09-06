@@ -1,5 +1,27 @@
 2017-09-05  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles Redesign: display "Inherited From" section headers
+        https://bugs.webkit.org/show_bug.cgi?id=176033
+        <rdar://problem/34116930>
+
+        Reviewed by Devin Rousso.
+
+        Compared to the old styles sidebar, the new "Inherited From" sections are more compact.
+        One of the goals of the styles redesign is to make it fit more data vertically.
+
+        The contrast is inceased. The text is darker while the background stayed the same.
+
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.css:
+        (.spreadsheet-style-panel .section-inherited):
+        (.spreadsheet-style-panel .section-inherited .node-link):
+        (.spreadsheet-style-panel .section-inherited .node-link:hover):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        Don't show two identical "Inherited From" sections.
+
+2017-09-05  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Layout flashing for internal View.prototype.layout
         https://bugs.webkit.org/show_bug.cgi?id=176389
 

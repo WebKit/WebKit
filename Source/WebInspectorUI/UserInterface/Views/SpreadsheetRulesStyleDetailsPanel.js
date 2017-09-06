@@ -32,6 +32,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
         const label = WI.UIString("Styles \u2014 Rules");
         super(delegate, className, identifier, label);
 
+        this.element.classList.add("spreadsheet-style-panel");
+
         this._sections = [];
         this._inspectorSection = null;
         this._isInspectorSectionPendingFocus = false;
@@ -81,12 +83,29 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
             return uniqueStyles;
         };
 
+        let createInheritedHeader = (style) => {
+            let inheritedHeader = document.createElement("h2");
+            inheritedHeader.classList.add("section-inherited");
+            inheritedHeader.append(WI.UIString("Inherited From: "), WI.linkifyNodeReference(style.node, {
+                maxLength: 100,
+                excludeRevealElement: true,
+            }));
+
+            return inheritedHeader;
+        };
+
         this.removeAllSubviews();
 
         let orderedStyles = uniqueOrderedStyles(this.nodeStyles.orderedStyles);
+        let previousStyle = null;
+
         for (let style of orderedStyles) {
-            // FIXME: <https://webkit.org/b/176033> Display "Inherited From" and media query section headers
+            if (style.inherited && (!previousStyle || previousStyle.node !== style.node))
+                this.element.append(createInheritedHeader(style));
+
             // FIXME: <https://webkit.org/b/176187> Display matching pseudo-styles
+            // FIXME: <https://webkit.org/b/176289> Display at-rule section headers (@media, @keyframes, etc.)
+
             let section = style[WI.SpreadsheetRulesStyleDetailsPanel.RuleSection];
             if (!section) {
                 section = new WI.SpreadsheetCSSStyleDeclarationSection(this, style);
@@ -98,6 +117,8 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
 
             this.addSubview(section);
             section.needsLayout(WI.View.LayoutReason.Dirty);
+
+            previousStyle = style;
         }
 
         this.element.append(this._emptyFilterResultsElement);

@@ -102,10 +102,21 @@
     color: hsl(0, 0%, 33%);
 }
 
-.style-spreadsheet .inherited {
-    color: hsl(0, 0%, 60%);
+.spreadsheet-style-panel .section-inherited {
+    margin: 0;
     padding: 4px 6px;
+    font-size: inherit;
+    font-weight: inherit;
+    color: hsl(0, 0%, 30%);
     border-bottom: 0.5px solid hsla(0, 0%, 0%, 0.2);
+}
+
+.spreadsheet-style-panel .section-inherited .node-link {
+    color: inherit;
+}
+
+.spreadsheet-style-panel .section-inherited .node-link:hover {
+    color: black;
 }
 
 .style-spreadsheet .declarations {
