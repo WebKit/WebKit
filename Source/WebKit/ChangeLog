@@ -1,3 +1,16 @@
+2017-09-06  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221461.
+
+        The LayoutTest added with this change crashes under
+        GuardMalloc.
+
+        Reverted changeset:
+
+        "Add (entirely incorrect) fetching of ServiceWorker scripts."
+        https://bugs.webkit.org/show_bug.cgi?id=176179
+        http://trac.webkit.org/changeset/221461
+
 2017-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Add modern decoders for POD types

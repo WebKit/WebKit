@@ -30,9 +30,7 @@
 
 #include "Logging.h"
 #include "StorageToWebProcessConnectionMessages.h"
-#include "WebCoreArgumentCoders.h"
 #include "WebSWServerConnectionMessages.h"
-#include <WebCore/ServiceWorkerFetchResult.h>
 #include <WebCore/ServiceWorkerJobData.h>
 
 using namespace PAL;
@@ -56,11 +54,6 @@ WebSWClientConnection::~WebSWClientConnection()
 void WebSWClientConnection::scheduleJobInServer(const ServiceWorkerJobData& jobData)
 {
     send(Messages::WebSWServerConnection::ScheduleJobInServer(jobData));
-}
-
-void WebSWClientConnection::finishFetchingScriptInServer(const ServiceWorkerFetchResult& result)
-{
-    send(Messages::WebSWServerConnection::FinishFetchingScriptInServer(result));
 }
 
 } // namespace WebKit

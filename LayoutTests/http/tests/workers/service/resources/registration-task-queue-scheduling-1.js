@@ -48,8 +48,8 @@ for (var i = 0; i < 1000; ++i) {
 		console.log("Original window resolved successfully (unexpected)")
 		done();
 	}, function(e) {
-		if (e+"" != "UnknownError: Script URL http://127.0.0.1:8000/workers/service/resources/empty-worker.js fetched with 41 bytes, but we're not using the result yet") {
-			alert("Unexpected error received from server: " + e);
+		if (e+"" != "UnknownError: serviceWorker job scheduling is not yet implemented") {
+			alert("Unexpected error received from server");
 			finishSWTest();
 		}
 		

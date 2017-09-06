@@ -30,9 +30,7 @@
 namespace WebCore {
 
 class Exception;
-class ResourceError;
 class ServiceWorkerJob;
-class SharedBuffer;
 struct ServiceWorkerRegistrationData;
 
 class ServiceWorkerJobClient {
@@ -41,9 +39,6 @@ public:
 
     virtual void jobFailedWithException(ServiceWorkerJob&, const Exception&) = 0;
     virtual void jobResolvedWithRegistration(ServiceWorkerJob&, const ServiceWorkerRegistrationData&) = 0;
-    virtual void startScriptFetchForJob(ServiceWorkerJob&) = 0;
-    virtual void jobFinishedLoadingScript(ServiceWorkerJob&, Ref<SharedBuffer>&&) = 0;
-    virtual void jobFailedLoadingScript(ServiceWorkerJob&, const ResourceError&) = 0;
 
     virtual uint64_t connectionIdentifier() = 0;
 

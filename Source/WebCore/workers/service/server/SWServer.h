@@ -43,7 +43,6 @@ namespace WebCore {
 
 class SWServerRegistration;
 struct ExceptionData;
-struct ServiceWorkerFetchResult;
 struct ServiceWorkerRegistrationData;
 
 class SWServer {
@@ -58,12 +57,10 @@ public:
         SWServer& server() { return m_server; }
 
         WEBCORE_EXPORT void scheduleJobInServer(const ServiceWorkerJobData&);
-        WEBCORE_EXPORT void finishFetchingScriptInServer(const ServiceWorkerFetchResult&);
 
     private:
         virtual void rejectJobInClient(uint64_t jobIdentifier, const ExceptionData&) = 0;
         virtual void resolveJobInClient(uint64_t jobIdentifier, const ServiceWorkerRegistrationData&) = 0;
-        virtual void startScriptFetchInClient(uint64_t jobIdentifier) = 0;
 
         SWServer& m_server;
     };
@@ -74,8 +71,6 @@ public:
     void scheduleJob(const ServiceWorkerJobData&);
     void rejectJob(const ServiceWorkerJobData&, const ExceptionData&);
     void resolveJob(const ServiceWorkerJobData&, const ServiceWorkerRegistrationData&);
-    void startScriptFetch(const ServiceWorkerJobData&);
-
     void postTask(CrossThreadTask&&);
     void postTaskReply(CrossThreadTask&&);
 
@@ -85,8 +80,6 @@ private:
 
     void taskThreadEntryPoint();
     void handleTaskRepliesOnMainThread();
-
-    void scriptFetchFinished(const ServiceWorkerFetchResult&);
 
     HashMap<uint64_t, Connection*> m_connections;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerRegistration>> m_registrations;
