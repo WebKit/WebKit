@@ -33,6 +33,7 @@
 #include "config.h"
 #include "Font.h"
 
+#include "CairoUniquePtr.h"
 #include "CairoUtilities.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
@@ -40,6 +41,7 @@
 #include "FontDescription.h"
 #include "GlyphBuffer.h"
 #include "OpenTypeTypes.h"
+#include "RefPtrCairo.h"
 #include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
@@ -52,14 +54,30 @@
 
 namespace WebCore {
 
+static RefPtr<cairo_scaled_font_t> scaledFontWithoutMetricsHinting(cairo_scaled_font_t* scaledFont)
+{
+    CairoUniquePtr<cairo_font_options_t> fontOptions(cairo_font_options_create());
+    cairo_scaled_font_get_font_options(scaledFont, fontOptions.get());
+    cairo_font_options_set_hint_metrics(fontOptions.get(), CAIRO_HINT_METRICS_OFF);
+    cairo_matrix_t fontMatrix;
+    cairo_scaled_font_get_font_matrix(scaledFont, &fontMatrix);
+    cairo_matrix_t fontCTM;
+    cairo_scaled_font_get_ctm(scaledFont, &fontCTM);
+    return adoptRef(cairo_scaled_font_create(cairo_scaled_font_get_font_face(scaledFont), &fontMatrix, &fontCTM, fontOptions.get()));
+}
+
 void Font::platformInit()
 {
     if (!m_platformData.size())
         return;
 
     ASSERT(m_platformData.scaledFont());
+    // Temporarily create a clone that doesn't have metrics hinting in order to avoid incorrect
+    // rounding resulting in incorrect baseline positioning since the sum of ascent and descent
+    // becomes larger than the line height.
+    auto fontWithoutMetricsHinting = scaledFontWithoutMetricsHinting(m_platformData.scaledFont());
     cairo_font_extents_t fontExtents;
-    cairo_scaled_font_extents(m_platformData.scaledFont(), &fontExtents);
+    cairo_scaled_font_extents(fontWithoutMetricsHinting.get(), &fontExtents);
 
     float ascent = narrowPrecisionToFloat(fontExtents.ascent);
     float descent = narrowPrecisionToFloat(fontExtents.descent);
@@ -88,9 +106,7 @@ void Font::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);
-
-    // Match CoreGraphics metrics.
-    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
     m_fontMetrics.setLineGap(lineGap);
 
     cairo_text_extents_t textExtents;
