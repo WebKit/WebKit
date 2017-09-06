@@ -45,7 +45,8 @@ class OSXSafariDriver(OSXBrowserDriver):
         subprocess.Popen(['open', '-a', args[0], url])
 
     def launch_driver(self, url, options, browser_build_path):
-        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
+        import webkitpy.thirdparty.autoinstalled.selenium
+        from selenium import webdriver
         driver = webdriver.Safari(quiet=False)
         self._launch_webdriver(url=url, driver=driver)
         return driver

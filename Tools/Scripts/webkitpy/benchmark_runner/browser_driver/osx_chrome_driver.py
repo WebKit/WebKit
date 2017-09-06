@@ -18,13 +18,14 @@ class OSXChromeDriver(OSXBrowserDriver):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
+        import webkitpy.thirdparty.autoinstalled.selenium
+        from selenium import webdriver
         chrome_options = create_chrome_options()
         if browser_build_path:
             app_path = os.path.join(browser_build_path, self.app_name)
             binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
             chrome_options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
-        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
@@ -40,6 +41,8 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
         self._launch_process(build_dir=browser_build_path, app_name=self.app_name, url=url, args=args_with_url)
 
     def launch_driver(self, url, options, browser_build_path):
+        import webkitpy.thirdparty.autoinstalled.selenium
+        from selenium import webdriver
         chrome_options = create_chrome_options()
         if not browser_build_path:
             browser_build_path = '/Applications/'
@@ -47,7 +50,6 @@ class OSXChromeCanaryDriver(OSXBrowserDriver):
         binary_path = os.path.join(app_path, "Contents/MacOS", self.process_name)
         chrome_options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
-        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Chrome(chrome_options=chrome_options, executable_path=driver_executable)
         self._launch_webdriver(url=url, driver=driver)
         return driver
@@ -58,7 +60,7 @@ def create_args():
     return args
 
 def create_chrome_options():
-    from webkitpy.thirdparty.autoinstalled.selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.chrome.options import Options
     chrome_options = Options()
     chrome_options.add_argument("--disable-web-security")
     chrome_options.add_argument("--user-data-dir")

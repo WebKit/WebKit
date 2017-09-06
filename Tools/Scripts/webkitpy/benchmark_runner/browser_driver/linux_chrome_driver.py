@@ -39,7 +39,9 @@ class LinuxChromeDriver(LinuxBrowserDriver):
         super(LinuxChromeDriver, self).launch_url(url, options, browser_build_path)
 
     def launch_driver(self, url, options, browser_build_path):
-        from webkitpy.thirdparty.autoinstalled.selenium.webdriver.chrome.options import Options
+        import webkitpy.thirdparty.autoinstalled.selenium
+        from selenium import webdriver
+        from selenium.webdriver.chrome.options import Options
         options = Options()
         options.add_argument("--disable-web-security")
         options.add_argument("--user-data-dir")
@@ -49,7 +51,6 @@ class LinuxChromeDriver(LinuxBrowserDriver):
             binary_path = os.path.join(browser_build_path, 'chromium-browser')
             options.binary_location = binary_path
         driver_executable = self.webdriver_binary_path
-        from webkitpy.thirdparty.autoinstalled.selenium import webdriver
         driver = webdriver.Chrome(chrome_options=options, executable_path=driver_executable)
         super(LinuxChromeDriver, self).launch_webdriver(url, driver)
         return driver
