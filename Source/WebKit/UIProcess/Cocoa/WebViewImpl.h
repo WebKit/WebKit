@@ -23,7 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#ifndef WebViewImpl_h
+#define WebViewImpl_h
 
 #if PLATFORM(MAC)
 
@@ -40,8 +41,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
-
-using _WKRectEdge = NSInteger;
 
 OBJC_CLASS NSAccessibilityRemoteUIElement;
 OBJC_CLASS NSImmediateActionGestureRecognizer;
@@ -237,10 +236,6 @@ public:
     void setUnderlayColor(NSColor *);
     NSColor *underlayColor() const;
     NSColor *pageExtendedBackgroundColor() const;
-    
-    _WKRectEdge pinnedState();
-    _WKRectEdge rubberBandingEnabled();
-    void setRubberBandingEnabled(_WKRectEdge);
 
     void setOverlayScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> scrollbarStyle);
     std::optional<WebCore::ScrollbarOverlayStyle> overlayScrollbarStyle() const;
@@ -737,3 +732,5 @@ private:
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
+
+#endif // WebViewImpl_h

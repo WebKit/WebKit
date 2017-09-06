@@ -117,9 +117,6 @@ private:
     virtual WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) = 0;
 #endif
 
-    void pinnedStateWillChange() final;
-    void pinnedStateDidChange() final;
-
     CGRect boundsOfLayerInLayerBackedWindowCoordinates(CALayer *) const override;
 
     void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) override;

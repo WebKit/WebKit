@@ -402,20 +402,6 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
     return toUserSpace(rect, [m_view window]);
 }
 
-void PageClientImpl::pinnedStateWillChange()
-{
-#if WK_API_ENABLED
-    [m_webView willChangeValueForKey:@"_pinnedState"];
-#endif
-}
-
-void PageClientImpl::pinnedStateDidChange()
-{
-#if WK_API_ENABLED
-    [m_webView didChangeValueForKey:@"_pinnedState"];
-#endif
-}
-    
 IntPoint PageClientImpl::screenToRootView(const IntPoint& point)
 {
 #pragma clang diagnostic push

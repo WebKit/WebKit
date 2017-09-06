@@ -1,3 +1,16 @@
+2017-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        Unreviewed, rolling out r221694.
+
+        broke build
+
+        Reverted changeset:
+
+        "Add WKUIDelegatePrivate equivalent of WKPageUIClient's
+        pinnedStateDidChange"
+        https://bugs.webkit.org/show_bug.cgi?id=176474
+        http://trac.webkit.org/changeset/221694
+
 2017-09-06  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221461.

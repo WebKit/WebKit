@@ -57,7 +57,7 @@
 #import "WKPrintingView.h"
 #import "WKTextInputWindowController.h"
 #import "WKViewLayoutStrategy.h"
-#import "WKWebViewPrivate.h"
+#import "WKWebView.h"
 #import "WebBackForwardList.h"
 #import "WebEditCommandProxy.h"
 #import "WebEventFactory.h"
@@ -4842,42 +4842,6 @@ void WebViewImpl::mouseMoved(NSEvent *event)
         return;
 
     mouseMovedInternal(event);
-}
-
-_WKRectEdge WebViewImpl::pinnedState()
-{
-    _WKRectEdge state = _WKRectEdgeNone;
-    if (m_page->isPinnedToLeftSide())
-        state |= _WKRectEdgeLeft;
-    if (m_page->isPinnedToRightSide())
-        state |= _WKRectEdgeRight;
-    if (m_page->isPinnedToTopSide())
-        state |= _WKRectEdgeTop;
-    if (m_page->isPinnedToBottomSide())
-        state |= _WKRectEdgeBottom;
-    return state;
-}
-
-_WKRectEdge WebViewImpl::rubberBandingEnabled()
-{
-    _WKRectEdge state = _WKRectEdgeNone;
-    if (m_page->rubberBandsAtLeft())
-        state |= _WKRectEdgeLeft;
-    if (m_page->rubberBandsAtRight())
-        state |= _WKRectEdgeRight;
-    if (m_page->rubberBandsAtTop())
-        state |= _WKRectEdgeTop;
-    if (m_page->rubberBandsAtBottom())
-        state |= _WKRectEdgeBottom;
-    return state;
-}
-
-void WebViewImpl::setRubberBandingEnabled(_WKRectEdge state)
-{
-    m_page->setRubberBandsAtLeft(state & _WKRectEdgeLeft);
-    m_page->setRubberBandsAtRight(state & _WKRectEdgeRight);
-    m_page->setRubberBandsAtTop(state & _WKRectEdgeTop);
-    m_page->setRubberBandsAtBottom(state & _WKRectEdgeBottom);
 }
 
 void WebViewImpl::mouseDown(NSEvent *event)
