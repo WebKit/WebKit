@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x219
-  RenderBlock {HTML} at (0,0) size 800x219
-    RenderBody {BODY} at (8,8) size 784x203
+layer at (0,0) size 800x220
+  RenderBlock {HTML} at (0,0) size 800x220
+    RenderBody {BODY} at (8,8) size 784x204
       RenderMathMLMath {math} at (0,8) size 112x58
         RenderMathMLRow {mrow} at (0,0) size 112x58
           RenderMathMLMenclose {menclose} at (0,0) size 112x58
@@ -79,20 +79,20 @@ layer at (0,0) size 800x219
           RenderMathMLMenclose {menclose} at (0,0) size 100x50
             RenderMathMLSpace {mspace} at (0,0) size 100x50 [bgcolor=#FF0000]
       RenderText {#text} at (0,0) size 0x0
-      RenderMathMLMath {math} at (0,139) size 108x58
+      RenderMathMLMath {math} at (0,140) size 108x58
         RenderMathMLRow {mrow} at (0,0) size 108x58
           RenderMathMLMenclose {menclose} at (0,0) size 108x58
             RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]
-      RenderText {#text} at (107,178) size 5x17
-        text run at (107,178) width 5: " "
+      RenderText {#text} at (107,179) size 5x17
+        text run at (107,179) width 5: " "
       RenderText {#text} at (0,0) size 0x0
-      RenderMathMLMath {math} at (111,130) size 144x74
+      RenderMathMLMath {math} at (111,131) size 144x74
         RenderMathMLRow {mrow} at (0,0) size 144x74
           RenderMathMLMenclose {menclose} at (0,0) size 144x74
             RenderMathMLSpace {mspace} at (21,11) size 101x51 [bgcolor=#FF0000]
-      RenderText {#text} at (254,178) size 5x17
-        text run at (254,178) width 5: " "
-      RenderMathMLMath {math} at (258,138) size 109x58
+      RenderText {#text} at (254,179) size 5x17
+        text run at (254,179) width 5: " "
+      RenderMathMLMath {math} at (258,139) size 109x58
         RenderMathMLRow {mrow} at (0,0) size 108x58
           RenderMathMLMenclose {menclose} at (0,0) size 108x58
             RenderMathMLSpace {mspace} at (3,3) size 101x51 [bgcolor=#FF0000]

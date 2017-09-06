@@ -1,5 +1,9 @@
 2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline tests after Freetype version bump in r221670. Part 5.
+
+2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline tests after Freetype version bump in r221670. Part 4.
 
 2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
