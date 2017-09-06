@@ -49,30 +49,53 @@ void NavigationActionData::encode(IPC::Encoder& encoder) const
     encoder << isRedirect;
 }
 
-bool NavigationActionData::decode(IPC::Decoder& decoder, NavigationActionData& result)
+std::optional<NavigationActionData> NavigationActionData::decode(IPC::Decoder& decoder)
 {
-    if (!decoder.decodeEnum(result.navigationType))
-        return false;
-    if (!decoder.decodeEnum(result.modifiers))
-        return false;
-    if (!decoder.decodeEnum(result.mouseButton))
-        return false;
-    if (!decoder.decodeEnum(result.syntheticClickType))
-        return false;
-    if (!decoder.decode(result.userGestureTokenIdentifier))
-        return false;
-    if (!decoder.decode(result.canHandleRequest))
-        return false;
-    if (!decoder.decodeEnum(result.shouldOpenExternalURLsPolicy))
-        return false;
-    if (!decoder.decode(result.downloadAttribute))
-        return false;
-    if (!decoder.decode(result.clickLocationInRootViewCoordinates))
-        return false;
-    if (!decoder.decode(result.isRedirect))
-        return false;
+    WebCore::NavigationType navigationType;
+    if (!decoder.decodeEnum(navigationType))
+        return std::nullopt;
+    
+    WebEvent::Modifiers modifiers;
+    if (!decoder.decodeEnum(modifiers))
+        return std::nullopt;
+    
+    WebMouseEvent::Button mouseButton;
+    if (!decoder.decodeEnum(mouseButton))
+        return std::nullopt;
+    
+    WebMouseEvent::SyntheticClickType syntheticClickType;
+    if (!decoder.decodeEnum(syntheticClickType))
+        return std::nullopt;
+    
+    std::optional<uint64_t> userGestureTokenIdentifier;
+    decoder >> userGestureTokenIdentifier;
+    if (!userGestureTokenIdentifier)
+        return std::nullopt;
+    
+    std::optional<bool> canHandleRequest;
+    decoder >> canHandleRequest;
+    if (!canHandleRequest)
+        return std::nullopt;
+    
+    WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
+    if (!decoder.decodeEnum(shouldOpenExternalURLsPolicy))
+        return std::nullopt;
+    
+    std::optional<String> downloadAttribute;
+    decoder >> downloadAttribute;
+    if (!downloadAttribute)
+        return std::nullopt;
+    
+    WebCore::FloatPoint clickLocationInRootViewCoordinates;
+    if (!decoder.decode(clickLocationInRootViewCoordinates))
+        return std::nullopt;
+    
+    std::optional<bool> isRedirect;
+    decoder >> isRedirect;
+    if (!isRedirect)
+        return std::nullopt;
 
-    return true;
+    return {{ WTFMove(navigationType), WTFMove(modifiers), WTFMove(mouseButton), WTFMove(syntheticClickType), WTFMove(*userGestureTokenIdentifier), WTFMove(*canHandleRequest), WTFMove(shouldOpenExternalURLsPolicy), WTFMove(*downloadAttribute), WTFMove(clickLocationInRootViewCoordinates), WTFMove(*isRedirect) }};
 }
 
 } // namespace WebKit
