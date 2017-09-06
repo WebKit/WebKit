@@ -69,8 +69,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         nameContainer.textContent = recordingAction.name;
 
         if (!recordingAction.isGetter && !isInitialState) {
-            let hasMissingParameter = false;
-
             if (recordingAction.isFunction) {
                 titleFragment.append("(");
                 copyText += "(";
@@ -81,6 +79,7 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
             for (let i = 0; i < recordingAction.parameters.length; ++i) {
                 let parameter = recordingAction.parameters[i];
+                let swizzleType = recordingAction.swizzleTypes[i];
 
                 if (i) {
                     titleFragment.append(", ");
@@ -90,30 +89,49 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 let parameterElement = titleFragment.appendChild(document.createElement("span"));
                 parameterElement.classList.add("parameter");
 
-                let swizzleType = recordingAction.parameterSwizzleTypeForTypeAtIndex(recordingType, i);
-                if (swizzleType && swizzleType !== WI.Recording.Swizzle.String) {
-                    parameterElement.classList.add("swizzled");
-                    if (parameter === WI.Recording.Swizzle.Invalid) {
-                        parameterElement.classList.add("missing");
-
-                        hasMissingParameter = true;
-                    }
-
-                    if (parameter instanceof CanvasGradient)
-                        parameterElement.textContent = WI.unlocalizedString("Gradient");
-                    else if (parameter instanceof CanvasPattern)
-                        parameterElement.textContent = WI.unlocalizedString("Pattern");
-                    else
-                        parameterElement.textContent = swizzleType;
-
-                    copyText += parameterElement.textContent;
-                } else if (!isNaN(parameter) && parameter !== null) {
+                switch (swizzleType) {
+                case WI.Recording.Swizzle.Number:
                     parameterElement.textContent = parameter.maxDecimals(2);
-                    copyText += parameter;
-                } else {
+                    break;
+
+                case WI.Recording.Swizzle.Boolean:
+                    parameterElement.textContent = parameter;
+                    break;
+
+                case WI.Recording.Swizzle.String:
                     parameterElement.textContent = JSON.stringify(parameter);
-                    copyText += parameterElement.textContent;
+                    break;
+
+                case WI.Recording.Swizzle.Array:
+                    parameterElement.classList.add("swizzled");
+                    parameterElement.textContent = JSON.stringify(parameter);
+                    break;
+
+                case WI.Recording.Swizzle.TypedArray:
+                case WI.Recording.Swizzle.Image:
+                case WI.Recording.Swizzle.ImageData:
+                case WI.Recording.Swizzle.DOMMatrix:
+                case WI.Recording.Swizzle.Path2D:
+                case WI.Recording.Swizzle.CanvasGradient:
+                case WI.Recording.Swizzle.CanvasPattern:
+                case WI.Recording.Swizzle.WebGLBuffer:
+                case WI.Recording.Swizzle.WebGLFramebuffer:
+                case WI.Recording.Swizzle.WebGLRenderbuffer:
+                case WI.Recording.Swizzle.WebGLTexture:
+                case WI.Recording.Swizzle.WebGLShader:
+                case WI.Recording.Swizzle.WebGLProgram:
+                case WI.Recording.Swizzle.WebGLUniformLocation:
+                    parameterElement.classList.add("swizzled");
+                    parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
+                    break;
                 }
+
+                if (!parameterElement.textContent) {
+                    parameterElement.classList.add("invalid");
+                    parameterElement.textContent = swizzleType === WI.Recording.Swizzle.None ? parameter : WI.Recording.displayNameForSwizzleType(swizzleType);
+                }
+
+                copyText += parameterElement.textContent;
 
                 if (!recordingAction.isFunction)
                     break;
@@ -123,9 +141,6 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
                 titleFragment.append(")");
                 copyText += ")";
             }
-
-            if (hasMissingParameter)
-                classNames.push("missing");
         } else if (isInitialState)
             classNames.push("initial-state");
 

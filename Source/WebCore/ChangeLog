@@ -1,3 +1,26 @@
+2017-09-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Support overloaded CanvasRenderingContext2D actions with identical parameter counts
+        https://bugs.webkit.org/show_bug.cgi?id=176178
+        <rdar://problem/34192229>
+
+        Reviewed by Matt Baker.
+
+        Update existing tests.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::buildArrayForVector):
+        (WebCore::InspectorCanvas::buildAction):
+        Add another array to each action that contains a swizzle type for each parameter. This is
+        used by the frontend to determine how to regenerate the value from what is given in the JSON.
+
+        * inspector/RecordingSwizzleTypes.h: Added.
+        Contains a value-specified enum of types that translate into int values, which are mirrored
+        by an object in the frontend, that indicate the type of each parameter. This enum matches
+        the values in WI.Recording.Swizzle.
+
 2017-09-06  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebCore failed to build, InbandTextTrackPrivateAVF: base class undefined.

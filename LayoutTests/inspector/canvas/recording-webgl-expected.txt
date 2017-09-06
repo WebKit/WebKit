@@ -33,6 +33,9 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             1
           ],
           [
+            1
+          ],
+          [
             3,
             5,
             7,
@@ -132,6 +135,9 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             1
           ],
           [
+            1
+          ],
+          [
             3,
             5,
             7,
@@ -148,11 +154,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           17,
           [
-            18,
-            19
+            0,
+            0
           ],
           [
-            20,
+            17,
+            16
+          ],
+          [
+            18,
             5
           ]
         ]
@@ -161,11 +171,35 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          21,
+          19,
           [
-            18,
+            0,
             1,
-            22
+            20
+          ],
+          [
+            17,
+            1,
+            3
+          ],
+          [
+            21,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          22,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            12
           ],
           [
             23,
@@ -180,10 +214,14 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
           24,
           [
             1,
-            25
+            0
           ],
           [
-            26,
+            1,
+            13
+          ],
+          [
+            25,
             5
           ]
         ]
@@ -192,10 +230,33 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          27,
+          26,
           [
             1,
-            28
+            0
+          ],
+          [
+            1,
+            14
+          ],
+          [
+            27,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          28,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            15
           ],
           [
             29,
@@ -210,10 +271,18 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
           30,
           [
             1,
-            31
+            2,
+            3,
+            4
           ],
           [
-            32,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            31,
             5
           ]
         ]
@@ -222,10 +291,31 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          33,
+          32,
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            33,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          34,
           [
             1,
-            34
+            2
+          ],
+          [
+            1,
+            1
           ],
           [
             35,
@@ -240,9 +330,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
           36,
           [
             1,
-            2,
-            3,
-            4
+            2
+          ],
+          [
+            1,
+            1
           ],
           [
             37,
@@ -256,6 +348,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           38,
           [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            1,
+            1,
+            1,
             1
           ],
           [
@@ -271,72 +372,91 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
           40,
           [
             1,
+            0,
             2
+          ],
+          [
+            1,
+            5,
+            1
           ],
           [
             41,
             5
           ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          42,
-          [
-            1,
-            2
-          ],
-          [
-            43,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          44,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            45,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          46,
-          [
-            1,
-            47,
-            2
-          ],
-          [
-            48,
-            5
-          ]
         ],
         [
-          46,
+          40,
           [
             3,
             4,
             5
           ],
           [
-            49,
+            1,
+            1,
+            1
+          ],
+          [
+            42,
             5
           ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          43,
+          [
+            1,
+            2,
+            0
+          ],
+          [
+            1,
+            1,
+            5
+          ],
+          [
+            44,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          45,
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            46,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          47,
+          [
+            1
+          ],
+          [
+            1
+          ],
+          [
+            48,
+            5
+          ],
+          49
         ]
       ]
     },
@@ -347,7 +467,14 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
           [
             1,
             2,
-            47
+            3,
+            4
+          ],
+          [
+            1,
+            1,
+            1,
+            1
           ],
           [
             51,
@@ -360,6 +487,9 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       "actions": [
         [
           52,
+          [
+            1
+          ],
           [
             1
           ],
@@ -378,26 +508,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             1
           ],
           [
+            1
+          ],
+          [
             55,
             5
-          ],
-          56
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          57,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            58,
-            5
           ]
         ]
       ]
@@ -405,35 +520,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          59,
-          [
-            1
-          ],
-          [
-            60,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          61,
-          [
-            1
-          ],
-          [
-            62,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          63,
+          56,
           [
             1,
             0,
@@ -441,21 +528,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             0
           ],
           [
-            64,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          65,
-          [
-            19
+            2,
+            2,
+            2,
+            2
           ],
           [
-            66,
+            57,
             5
           ]
         ]
@@ -464,7 +543,24 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          67,
+          58,
+          [
+            0
+          ],
+          [
+            16
+          ],
+          [
+            59,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          60,
           [
             1,
             2,
@@ -472,10 +568,19 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4,
             5,
             6,
-            47
+            0
           ],
           [
-            68,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
+          ],
+          [
+            61,
             5
           ]
         ]
@@ -484,7 +589,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          69,
+          62,
           [
             1,
             2,
@@ -493,10 +598,20 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             5,
             6,
             7,
-            47
+            0
           ],
           [
-            70,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
+          ],
+          [
+            63,
             5
           ]
         ]
@@ -505,7 +620,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          71,
+          64,
           [
             1,
             2,
@@ -517,7 +632,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             8
           ],
           [
-            72,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            65,
             5
           ]
         ]
@@ -526,7 +651,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          73,
+          66,
           [
             1,
             2,
@@ -538,7 +663,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             8
           ],
           [
-            74,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            67,
             5
           ]
         ]
@@ -547,10 +682,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          75,
+          68,
+          [],
           [],
           [
-            76,
+            69,
             5
           ]
         ]
@@ -559,10 +695,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          77,
+          70,
+          [],
           [],
           [
-            78,
+            71,
             5
           ]
         ]
@@ -571,10 +708,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          79,
+          72,
+          [],
           [],
           [
-            80,
+            73,
             5
           ]
         ]
@@ -583,10 +721,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          81,
+          74,
+          [],
           [],
           [
-            82,
+            75,
             5
           ]
         ]
@@ -595,12 +734,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          83,
+          76,
           [
             1
           ],
           [
-            84,
+            1
+          ],
+          [
+            77,
             5
           ]
         ]
@@ -609,10 +751,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          85,
+          78,
+          [],
           [],
           [
-            86,
+            79,
             5
           ]
         ]
@@ -621,26 +764,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          87,
+          80,
           [
             1
           ],
           [
-            88,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          89,
-          [
-            25
+            1
           ],
           [
-            90,
+            81,
             5
           ]
         ]
@@ -649,26 +781,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          91,
+          82,
           [
-            28
+            0
           ],
           [
-            92,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          93,
-          [
-            18
+            12
           ],
           [
-            94,
+            83,
             5
           ]
         ]
@@ -677,26 +798,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          95,
+          84,
           [
-            31
+            0
           ],
           [
-            96,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          97,
-          [
-            19
+            13
           ],
           [
-            98,
+            85,
             5
           ]
         ]
@@ -705,12 +815,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          99,
+          86,
           [
-            34
+            0
           ],
           [
-            100,
+            17
+          ],
+          [
+            87,
             5
           ]
         ]
@@ -719,12 +832,66 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          101,
+          88,
+          [
+            0
+          ],
+          [
+            14
+          ],
+          [
+            89,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          90,
+          [
+            0
+          ],
+          [
+            16
+          ],
+          [
+            91,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          92,
+          [
+            0
+          ],
+          [
+            15
+          ],
+          [
+            93,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          94,
           [
             1
           ],
           [
-            102,
+            1
+          ],
+          [
+            95,
             5
           ]
         ]
@@ -733,12 +900,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          103,
+          96,
           [
             1
           ],
           [
-            104,
+            2
+          ],
+          [
+            97,
             5
           ]
         ]
@@ -747,28 +917,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          105,
+          98,
           [
             1,
             2
           ],
           [
-            106,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          107,
-          [
-            18,
-            19
+            1,
+            1
           ],
           [
-            108,
+            99,
             5
           ]
         ]
@@ -777,12 +936,34 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          109,
+          100,
+          [
+            0,
+            0
+          ],
+          [
+            17,
+            16
+          ],
+          [
+            101,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          102,
           [
             1
           ],
           [
-            110,
+            1
+          ],
+          [
+            103,
             5
           ]
         ]
@@ -791,12 +972,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          111,
+          104,
           [
             1
           ],
           [
-            112,
+            1
+          ],
+          [
+            105,
             5
           ]
         ]
@@ -805,24 +989,29 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          113,
+          106,
           [
             1,
             2,
             3
           ],
           [
-            114,
+            1,
+            1,
+            1
+          ],
+          [
+            107,
             5
           ],
-          56
+          49
         ]
       ]
     },
     {
       "actions": [
         [
-          115,
+          108,
           [
             1,
             2,
@@ -830,22 +1019,31 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            116,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            109,
             5
           ],
-          56
+          49
         ]
       ]
     },
     {
       "actions": [
         [
-          117,
+          110,
           [
             1
           ],
           [
-            118,
+            1
+          ],
+          [
+            111,
             5
           ]
         ]
@@ -854,53 +1052,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          119,
+          112,
           [
             1
           ],
           [
-            120,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          121,
-          [],
-          [
-            122,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          123,
-          [],
-          [
-            124,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          125,
-          [
-            1,
-            2,
-            3,
-            31
+            1
           ],
           [
-            126,
+            113,
             5
           ]
         ]
@@ -909,16 +1069,72 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          127,
+          114,
+          [],
+          [],
+          [
+            115,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          116,
+          [],
+          [],
+          [
+            117,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          118,
           [
             1,
             2,
             3,
-            34,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            14
+          ],
+          [
+            119,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          120,
+          [
+            1,
+            2,
+            3,
+            0,
             4
           ],
           [
-            128,
+            1,
+            1,
+            1,
+            15,
+            1
+          ],
+          [
+            121,
             5
           ]
         ]
@@ -927,12 +1143,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          129,
+          122,
           [
             1
           ],
           [
-            130,
+            1
+          ],
+          [
+            123,
             5
           ]
         ]
@@ -941,27 +1160,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          131,
+          124,
           [
             1
           ],
           [
-            132,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          133,
-          [
-            18,
             1
           ],
           [
-            134,
+            125,
             5
           ]
         ]
@@ -970,27 +1177,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          135,
+          126,
           [
-            18,
+            0,
             1
           ],
           [
-            136,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          137,
-          [
-            18
+            17,
+            1
           ],
           [
-            138,
+            127,
             5
           ]
         ]
@@ -999,13 +1196,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          139,
+          128,
           [
-            18,
-            22
+            0,
+            1
           ],
           [
-            140,
+            17,
+            1
+          ],
+          [
+            129,
             5
           ]
         ]
@@ -1014,51 +1215,53 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          141,
+          130,
+          [
+            0
+          ],
+          [
+            17
+          ],
+          [
+            131,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          132,
+          [
+            0,
+            20
+          ],
+          [
+            17,
+            3
+          ],
+          [
+            133,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          134,
           [
             1,
             2
           ],
           [
-            142,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          143,
-          [],
-          [
-            144,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          145,
-          [],
-          [
-            146,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          147,
-          [
-            22
+            1,
+            1
           ],
           [
-            148,
+            135,
             5
           ]
         ]
@@ -1067,14 +1270,62 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          149,
+          136,
+          [],
+          [],
+          [
+            137,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          138,
+          [],
+          [],
+          [
+            139,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          140,
+          [
+            20
+          ],
+          [
+            3
+          ],
+          [
+            141,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          142,
           [
             1,
             2,
             3
           ],
           [
-            150,
+            1,
+            1,
+            1
+          ],
+          [
+            143,
             5
           ]
         ]
@@ -1083,41 +1334,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          151,
+          144,
           [
             1
           ],
           [
-            152,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          153,
-          [
-            18
-          ],
-          [
-            154,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          155,
-          [
-            18,
             1
           ],
           [
-            156,
+            145,
             5
           ]
         ]
@@ -1126,42 +1351,53 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          157,
+          146,
+          [
+            0
+          ],
+          [
+            17
+          ],
+          [
+            147,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          148,
+          [
+            0,
+            1
+          ],
+          [
+            17,
+            1
+          ],
+          [
+            149,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          150,
           [
             1,
             2
           ],
           [
-            158,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          159,
-          [
-            19
-          ],
-          [
-            160,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          161,
-          [
-            19,
+            1,
             1
           ],
           [
-            162,
+            151,
             5
           ]
         ]
@@ -1170,27 +1406,53 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          163,
+          152,
+          [
+            0
+          ],
+          [
+            16
+          ],
+          [
+            153,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          154,
+          [
+            0,
+            1
+          ],
+          [
+            16,
+            1
+          ],
+          [
+            155,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          156,
           [
             1,
             2
           ],
           [
-            164,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          165,
-          [
-            19
+            1,
+            1
           ],
           [
-            166,
+            157,
             5
           ]
         ]
@@ -1199,10 +1461,28 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          167,
+          158,
+          [
+            0
+          ],
+          [
+            16
+          ],
+          [
+            159,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          160,
+          [],
           [],
           [
-            168,
+            161,
             5
           ]
         ]
@@ -1211,27 +1491,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          169,
+          162,
           [
             1,
             2
           ],
           [
-            170,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          171,
-          [
-            18
+            1,
+            1
           ],
           [
-            172,
+            163,
             5
           ]
         ]
@@ -1240,13 +1510,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          173,
+          164,
           [
-            18,
-            22
+            0
           ],
           [
-            174,
+            17
+          ],
+          [
+            165,
             5
           ]
         ]
@@ -1255,13 +1527,36 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          175,
+          166,
+          [
+            0,
+            20
+          ],
+          [
+            17,
+            3
+          ],
+          [
+            167,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          168,
           [
             1,
             2
           ],
           [
-            176,
+            1,
+            1
+          ],
+          [
+            169,
             5
           ]
         ]
@@ -1270,13 +1565,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          177,
+          170,
           [
             1,
             2
           ],
           [
-            178,
+            1,
+            1
+          ],
+          [
+            171,
             5
           ]
         ]
@@ -1285,27 +1584,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          179,
+          172,
           [
             1,
             2
           ],
           [
-            180,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          181,
-          [
-            25
+            1,
+            1
           ],
           [
-            182,
+            173,
             5
           ]
         ]
@@ -1314,10 +1603,28 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          183,
+          174,
+          [
+            0
+          ],
+          [
+            12
+          ],
+          [
+            175,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          176,
+          [],
           [],
           [
-            184,
+            177,
             5
           ]
         ]
@@ -1326,26 +1633,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          185,
+          178,
           [
             1
           ],
           [
-            186,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          187,
-          [
-            28
+            1
           ],
           [
-            188,
+            179,
             5
           ]
         ]
@@ -1354,26 +1650,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          189,
+          180,
           [
-            18
+            0
           ],
           [
-            190,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          191,
-          [
-            31
+            13
           ],
           [
-            192,
+            181,
             5
           ]
         ]
@@ -1382,26 +1667,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          193,
+          182,
           [
-            19
+            0
           ],
           [
-            194,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          195,
-          [
-            34
+            17
           ],
           [
-            196,
+            183,
             5
           ]
         ]
@@ -1410,26 +1684,66 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          197,
+          184,
+          [
+            0
+          ],
+          [
+            14
+          ],
+          [
+            185,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          186,
+          [
+            0
+          ],
+          [
+            16
+          ],
+          [
+            187,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          188,
+          [
+            0
+          ],
+          [
+            15
+          ],
+          [
+            189,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          190,
           [
             1
           ],
           [
-            198,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          199,
-          [
-            18
+            1
           ],
           [
-            200,
+            191,
             5
           ]
         ]
@@ -1438,13 +1752,34 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          201,
+          192,
+          [
+            0
+          ],
+          [
+            17
+          ],
+          [
+            193,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          194,
           [
             1,
             2
           ],
           [
-            202,
+            1,
+            1
+          ],
+          [
+            195,
             5
           ]
         ]
@@ -1453,13 +1788,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          203,
+          196,
           [
             1,
             2
           ],
           [
-            204,
+            1,
+            1
+          ],
+          [
+            197,
             5
           ]
         ]
@@ -1468,7 +1807,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          205,
+          198,
           [
             1,
             2,
@@ -1476,10 +1815,19 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4,
             5,
             6,
-            47
+            0
           ],
           [
-            206,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
+          ],
+          [
+            199,
             5
           ]
         ]
@@ -1488,10 +1836,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          207,
+          200,
+          [],
           [],
           [
-            208,
+            201,
             5
           ]
         ]
@@ -1500,7 +1849,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          209,
+          202,
           [
             1,
             2,
@@ -1508,7 +1857,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            210,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            203,
             5
           ]
         ]
@@ -1517,13 +1872,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          211,
+          204,
           [
             1,
             1
           ],
           [
-            212,
+            1,
+            2
+          ],
+          [
+            205,
             5
           ]
         ]
@@ -1532,7 +1891,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          213,
+          206,
           [
             1,
             2,
@@ -1540,22 +1899,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            214,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          215,
-          [
-            19,
-            22
+            1,
+            1,
+            1,
+            1
           ],
           [
-            216,
+            207,
             5
           ]
         ]
@@ -1564,14 +1914,38 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          217,
+          208,
+          [
+            0,
+            20
+          ],
+          [
+            16,
+            3
+          ],
+          [
+            209,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          210,
           [
             1,
             2,
             3
           ],
           [
-            218,
+            1,
+            1,
+            1
+          ],
+          [
+            211,
             5
           ]
         ]
@@ -1580,7 +1954,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          219,
+          212,
           [
             1,
             2,
@@ -1588,7 +1962,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            220,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            213,
             5
           ]
         ]
@@ -1597,12 +1977,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          221,
+          214,
           [
             1
           ],
           [
-            222,
+            1
+          ],
+          [
+            215,
             5
           ]
         ]
@@ -1611,70 +1994,93 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          223,
+          216,
           [
             1,
             2
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            217,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          218,
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            219,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          220,
+          [
+            1,
+            2,
+            3,
+            4
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            221,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          222,
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            223
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            6
           ],
           [
             224,
             5
           ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          225,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            226,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          227,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            228,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          229,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            230
-          ],
-          [
-            231,
-            5
-          ]
         ],
         [
-          229,
+          222,
           [
             6,
             7,
@@ -1684,7 +2090,118 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             11,
             12,
             13,
-            47
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
+          ],
+          [
+            225,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          226,
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            227,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          228,
+          [
+            1,
+            2,
+            3
+          ],
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            229,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          230,
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            223
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            6
+          ],
+          [
+            231,
+            5
+          ]
+        ],
+        [
+          230,
+          [
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            5
           ],
           [
             232,
@@ -1698,9 +2215,10 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           233,
           [
-            1,
-            2,
-            3
+            1
+          ],
+          [
+            1
           ],
           [
             234,
@@ -1714,9 +2232,10 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           235,
           [
-            1,
-            2,
-            3
+            0
+          ],
+          [
+            5
           ],
           [
             236,
@@ -1730,34 +2249,30 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           237,
           [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            230
+            1
+          ],
+          [
+            1
           ],
           [
             238,
             5
           ]
-        ],
+        ]
+      ]
+    },
+    {
+      "actions": [
         [
-          237,
+          239,
           [
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            47
+            0
           ],
           [
-            239,
+            5
+          ],
+          [
+            240,
             5
           ]
         ]
@@ -1766,12 +2281,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          240,
+          241,
           [
+            1,
+            2
+          ],
+          [
+            1,
             1
           ],
           [
-            241,
+            242,
             5
           ]
         ]
@@ -1780,9 +2300,12 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          242,
+          243,
           [
-            243
+            0
+          ],
+          [
+            5
           ],
           [
             244,
@@ -1796,6 +2319,11 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           245,
           [
+            1,
+            2
+          ],
+          [
+            1,
             1
           ],
           [
@@ -1810,10 +2338,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
         [
           247,
           [
-            248
+            0
           ],
           [
-            249,
+            5
+          ],
+          [
+            248,
             5
           ]
         ]
@@ -1822,86 +2353,19 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          250,
-          [
-            1,
-            2
-          ],
-          [
-            251,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          252,
-          [
-            243
-          ],
-          [
-            253,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          254,
-          [
-            1,
-            2
-          ],
-          [
-            255,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          256,
-          [
-            248
-          ],
-          [
-            257,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          258,
+          249,
           [
             1,
             2,
             3
           ],
           [
-            259,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          260,
-          [
-            243
+            1,
+            1,
+            1
           ],
           [
-            261,
+            250,
             5
           ]
         ]
@@ -1910,28 +2374,36 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          262,
+          251,
+          [
+            0
+          ],
+          [
+            5
+          ],
+          [
+            252,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          253,
           [
             1,
             2,
             3
           ],
           [
-            263,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          264,
-          [
-            248
+            1,
+            1,
+            1
           ],
           [
-            265,
+            254,
             5
           ]
         ]
@@ -1940,7 +2412,24 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          266,
+          255,
+          [
+            0
+          ],
+          [
+            5
+          ],
+          [
+            256,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          257,
           [
             1,
             2,
@@ -1948,21 +2437,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            267,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          268,
-          [
-            243
+            1,
+            1,
+            1,
+            1
           ],
           [
-            269,
+            258,
             5
           ]
         ]
@@ -1971,7 +2452,24 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          270,
+          259,
+          [
+            0
+          ],
+          [
+            5
+          ],
+          [
+            260,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          261,
           [
             1,
             2,
@@ -1979,21 +2477,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            271,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          272,
-          [
-            248
+            1,
+            1,
+            1,
+            1
           ],
           [
-            273,
+            262,
             5
           ]
         ]
@@ -2002,13 +2492,34 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          274,
+          263,
+          [
+            0
+          ],
+          [
+            5
+          ],
+          [
+            264,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          265,
           [
             1,
-            243
+            0
           ],
           [
-            275,
+            2,
+            5
+          ],
+          [
+            266,
             5
           ]
         ]
@@ -2017,13 +2528,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          276,
+          267,
           [
             1,
-            243
+            0
           ],
           [
-            277,
+            2,
+            5
+          ],
+          [
+            268,
             5
           ]
         ]
@@ -2032,13 +2547,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          278,
+          269,
           [
             1,
-            243
+            0
           ],
           [
-            279,
+            2,
+            5
+          ],
+          [
+            270,
             5
           ]
         ]
@@ -2047,12 +2566,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          280,
+          271,
           [
-            18
+            0
           ],
           [
-            281,
+            17
+          ],
+          [
+            272,
             5
           ]
         ]
@@ -2061,12 +2583,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          282,
+          273,
           [
-            18
+            0
           ],
           [
-            283,
+            17
+          ],
+          [
+            274,
             5
           ]
         ]
@@ -2075,28 +2600,17 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          284,
+          275,
           [
             1,
             2
           ],
           [
-            285,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          286,
-          [
             1,
-            243
+            1
           ],
           [
-            287,
+            276,
             5
           ]
         ]
@@ -2105,29 +2619,38 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          288,
+          277,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            278,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          279,
           [
             1,
             2,
             3
           ],
           [
-            289,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          290,
-          [
             1,
-            243
+            1,
+            1
           ],
           [
-            291,
+            280,
             5
           ]
         ]
@@ -2136,7 +2659,26 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          292,
+          281,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            282,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          283,
           [
             1,
             2,
@@ -2144,22 +2686,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            293,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          294,
-          [
             1,
-            243
+            1,
+            1,
+            1
           ],
           [
-            295,
+            284,
             5
           ]
         ]
@@ -2168,7 +2701,26 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          296,
+          285,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            286,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          287,
           [
             1,
             2,
@@ -2177,22 +2729,14 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             5
           ],
           [
-            297,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          298,
-          [
             1,
-            243
+            1,
+            1,
+            1,
+            1
           ],
           [
-            299,
+            288,
             5
           ]
         ]
@@ -2201,7 +2745,26 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          300,
+          289,
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            290,
+            5
+          ]
+        ]
+      ]
+    },
+    {
+      "actions": [
+        [
+          291,
           [
             1,
             2,
@@ -2211,7 +2774,15 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             6
           ],
           [
-            301,
+            1,
+            1,
+            1,
+            2,
+            1,
+            1
+          ],
+          [
+            292,
             5
           ]
         ]
@@ -2220,7 +2791,7 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
     {
       "actions": [
         [
-          302,
+          293,
           [
             1,
             2,
@@ -2228,7 +2799,13 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
             4
           ],
           [
-            303,
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            294,
             5
           ]
         ]
@@ -2289,8 +2866,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       108
     ],
     "attachShader",
-    "WebGLProgram",
-    "WebGLShader",
     [
       1,
       2,
@@ -2306,7 +2881,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       39
     ],
     "bindBuffer",
-    "WebGLBuffer",
     [
       1,
       2,
@@ -2314,7 +2888,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       31
     ],
     "bindFramebuffer",
-    "WebGLFramebuffer",
     [
       1,
       2,
@@ -2322,7 +2895,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       36
     ],
     "bindRenderbuffer",
-    "WebGLRenderbuffer",
     [
       1,
       2,
@@ -2330,7 +2902,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       37
     ],
     "bindTexture",
-    "WebGLTexture",
     [
       1,
       2,
@@ -2373,7 +2944,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       38
     ],
     "bufferData",
-    "BufferDataSource",
     [
       1,
       2,
@@ -3059,7 +3629,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       30
     ],
     "uniform1fv",
-    "Float32List",
     [
       1,
       2,
@@ -3074,7 +3643,6 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       30
     ],
     "uniform1iv",
-    "Int32List",
     [
       1,
       2,
@@ -3300,6 +3868,9 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
       "actions": [
         [
           0,
+          [
+            1
+          ],
           [
             1
           ],

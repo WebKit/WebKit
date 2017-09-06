@@ -1,3 +1,39 @@
+2017-09-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Support overloaded CanvasRenderingContext2D actions with identical parameter counts
+        https://bugs.webkit.org/show_bug.cgi?id=176178
+        <rdar://problem/34192229>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording.displayNameForSwizzleType):
+        (WI.Recording.prototype.swizzle):
+        Replace WI.Recording.Swizzle with an object of swizzle type keys to int values. This object
+        matches the values in WebCore::RecordingSwizzleTypes.h.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.fromPayload):
+        (WI.RecordingAction.prototype.get swizzleTypes):
+        (WI.RecordingAction.prototype.swizzle):
+        (WI.RecordingAction.prototype.toJSON):
+        (WI.RecordingAction.prototype.parameterSwizzleTypeForTypeAtIndex): Deleted.
+        Replace WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex with an array of parameter
+        types sent in the payload. This gives more control over the swizzling to the JSON, but also
+        simplifies the way we regenerate the data in the frontend.
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype._generateContentCanvas2D):
+        (WI.RecordingContentView.prototype._applyAction):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles :matches(.name, .parameter.invalid)):
+        (.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles .name,): Deleted.
+
 2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: ⌘E and ⌘G do not work in main content area when quick console drawer is open

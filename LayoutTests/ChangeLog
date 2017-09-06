@@ -1,3 +1,17 @@
+2017-09-06  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Support overloaded CanvasRenderingContext2D actions with identical parameter counts
+        https://bugs.webkit.org/show_bug.cgi?id=176178
+        <rdar://problem/34192229>
+
+        Reviewed by Matt Baker.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+        * inspector/model/recording-expected.txt:
+        * inspector/model/recording.html:
+
 2017-09-06  Sam Weinig  <sam@webkit.org>
 
         REGRESSION (r221598): Legacy "round" and "bevel" options can no longer be used with the legacy CanvasRenderingContext2D setLineJoin operation

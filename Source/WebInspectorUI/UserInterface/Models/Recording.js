@@ -102,6 +102,53 @@ WI.Recording = class Recording
         return new WI.Recording(payload.version, type, payload.initialState, frames, payload.data);
     }
 
+    static displayNameForSwizzleType(swizzleType)
+    {
+        switch (swizzleType) {
+        case WI.Recording.Swizzle.None:
+            return WI.unlocalizedString("None");
+        case WI.Recording.Swizzle.Number:
+            return WI.unlocalizedString("Number");
+        case WI.Recording.Swizzle.Boolean:
+            return WI.unlocalizedString("Boolean");
+        case WI.Recording.Swizzle.String:
+            return WI.unlocalizedString("String");
+        case WI.Recording.Swizzle.Array:
+            return WI.unlocalizedString("Array");
+        case WI.Recording.Swizzle.TypedArray:
+            return WI.unlocalizedString("TypedArray");
+        case WI.Recording.Swizzle.Image:
+            return WI.unlocalizedString("Image");
+        case WI.Recording.Swizzle.ImageData:
+            return WI.unlocalizedString("ImageData");
+        case WI.Recording.Swizzle.DOMMatrix:
+            return WI.unlocalizedString("DOMMatrix");
+        case WI.Recording.Swizzle.Path2D:
+            return WI.unlocalizedString("Path2D");
+        case WI.Recording.Swizzle.CanvasGradient:
+            return WI.unlocalizedString("CanvasGradient");
+        case WI.Recording.Swizzle.CanvasPattern:
+            return WI.unlocalizedString("CanvasPattern");
+        case WI.Recording.Swizzle.WebGLBuffer:
+            return WI.unlocalizedString("WebGLBuffer");
+        case WI.Recording.Swizzle.WebGLFramebuffer:
+            return WI.unlocalizedString("WebGLFramebuffer");
+        case WI.Recording.Swizzle.WebGLRenderbuffer:
+            return WI.unlocalizedString("WebGLRenderbuffer");
+        case WI.Recording.Swizzle.WebGLTexture:
+            return WI.unlocalizedString("WebGLTexture");
+        case WI.Recording.Swizzle.WebGLShader:
+            return WI.unlocalizedString("WebGLShader");
+        case WI.Recording.Swizzle.WebGLProgram:
+            return WI.unlocalizedString("WebGLProgram");
+        case WI.Recording.Swizzle.WebGLUniformLocation:
+            return WI.unlocalizedString("WebGLUniformLocation");
+        default:
+            console.error("Unknown swizzle type", swizzleType);
+            return null;
+        }
+    }
+
     static synthesizeError(message)
     {
         const target = WI.mainTarget;
@@ -130,76 +177,73 @@ WI.Recording = class Recording
         if (typeof this._swizzle[index] !== "object")
             this._swizzle[index] = {};
 
+        if (type === WI.Recording.Swizzle.Number)
+            return parseFloat(index);
+
+        if (type === WI.Recording.Swizzle.Boolean)
+            return !!index;
+
+        if (type === WI.Recording.Swizzle.Array)
+            return Array.isArray(index) ? index : [];
+
+        if (type === WI.Recording.Swizzle.DOMMatrix)
+            return new DOMMatrix(index);
+
         if (!(type in this._swizzle[index])) {
             try {
                 let data = this._data[index];
                 switch (type) {
-                case WI.Recording.Swizzle.Array:
-                    if (Array.isArray(data))
-                        this._swizzle[index][type] = data;
+                case WI.Recording.Swizzle.None:
+                    this._swizzle[index][type] = data;
                     break;
-                case WI.Recording.Swizzle.CanvasStyle:
-                    if (Array.isArray(data)) {
-                        let context = document.createElement("canvas").getContext("2d");
 
-                        let canvasStyle = this.swizzle(data[0], WI.Recording.Swizzle.String);
-                        if (canvasStyle === "linear-gradient" || canvasStyle === "radial-gradient") {
-                            this._swizzle[index][type] = canvasStyle === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
-                            for (let stop of data[2]) {
-                                let color = this.swizzle(stop[1], WI.Recording.Swizzle.String);
-                                this._swizzle[index][type].addColorStop(stop[0], color);
-                            }
-                        } else if (canvasStyle === "pattern") {
-                            let image = this.swizzle(data[1], WI.Recording.Swizzle.Image);
-                            let repeat = this.swizzle(data[2], WI.Recording.Swizzle.String);
-                            this._swizzle[index][type] = context.createPattern(image, repeat);
-                        }
-                    } else if (typeof data === "string")
-                        this._swizzle[index][type] = data;
+                case WI.Recording.Swizzle.String:
+                    this._swizzle[index][type] = String(data);
                     break;
-                case WI.Recording.Swizzle.Element:
-                    this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
-                    break;
+
                 case WI.Recording.Swizzle.Image:
                     this._swizzle[index][type] = new Image;
                     this._swizzle[index][type].src = data;
                     break;
+
                 case WI.Recording.Swizzle.ImageData:
                     this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(data[0]), parseInt(data[1]), parseInt(data[2]));
                     break;
+
                 case WI.Recording.Swizzle.Path2D:
                     this._swizzle[index][type] = new Path2D(data);
                     break;
+
+                case WI.Recording.Swizzle.CanvasGradient:
+                    var context = document.createElement("canvas").getContext("2d");
+                    var gradientType = this.swizzle(data[0], WI.Recording.Swizzle.String);
+                    this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
+                    for (let stop of data[2]) {
+                        let color = this.swizzle(stop[1], WI.Recording.Swizzle.String);
+                        this._swizzle[index][type].addColorStop(stop[0], color);
+                    }
+                    break;
+
+                case WI.Recording.Swizzle.CanvasPattern:
+                    var context = document.createElement("canvas").getContext("2d");
+                    var image = this.swizzle(data[1], WI.Recording.Swizzle.Image);
+                    var repeat = this.swizzle(data[2], WI.Recording.Swizzle.String);
+                    this._swizzle[index][type] = context.createPattern(image, repeat);
+                    break;
+
                 // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
-                case WI.Recording.Swizzle.ArrayBufferView:
-                case WI.Recording.Swizzle.BufferDataSource:
-                case WI.Recording.Swizzle.Float32List:
-                case WI.Recording.Swizzle.Int32List:
+                case WI.Recording.Swizzle.TypedArray:
                 case WI.Recording.Swizzle.WebGLBuffer:
                 case WI.Recording.Swizzle.WebGLFramebuffer:
-                case WI.Recording.Swizzle.WebGLProgram:
                 case WI.Recording.Swizzle.WebGLRenderbuffer:
-                case WI.Recording.Swizzle.WebGLShader:
                 case WI.Recording.Swizzle.WebGLTexture:
+                case WI.Recording.Swizzle.WebGLShader:
+                case WI.Recording.Swizzle.WebGLProgram:
                 case WI.Recording.Swizzle.WebGLUniformLocation:
-                case WI.Recording.Swizzle.String:
-                    if (typeof data === "string")
-                        this._swizzle[index][type] = data;
-                    break;
-                case WI.Recording.Swizzle.TexImageSource:
-                    if (typeof data === "string") {
-                        this._swizzle[index][type] = new Image;
-                        this._swizzle[index][type].src = data;
-                    } else if (Array.isArray(data))
-                        this._swizzle[index][type] = new ImageData(new Uint8ClampedArray(data[0]), parseInt(data[1]), parseInt(data[2]));
+                    this._swizzle[index][type] = String(data);
                     break;
                 }
-            } catch (e) {
-                this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
-            }
-
-            if (!(type in this._swizzle[index]))
-                this._swizzle[index][type] = WI.Recording.Swizzle.Invalid;
+            } catch { }
         }
 
         return this._swizzle[index][type];
@@ -230,25 +274,25 @@ WI.Recording.Type = {
     CanvasWebGL: "canvas-webgl",
 };
 
+// Keep this in sync with WebCore::RecordingSwizzleTypes.
 WI.Recording.Swizzle = {
-    Array: "Array",
-    ArrayBufferView: "ArrayBufferView",
-    BufferDataSource: "BufferDataSource",
-    CanvasStyle: "CanvasStyle",
-    Element: "Element",
-    Float32List: "Float32List",
-    Image: "Image",
-    ImageData: "ImageData",
-    Int32List: "Int32List",
-    Path2D: "Path2D",
-    String: "String",
-    TexImageSource: "TexImageSource",
-    WebGLBuffer: "WebGLBuffer",
-    WebGLFramebuffer: "WebGLFramebuffer",
-    WebGLProgram: "WebGLProgram",
-    WebGLRenderbuffer: "WebGLRenderbuffer",
-    WebGLShader: "WebGLShader",
-    WebGLTexture: "WebGLTexture",
-    WebGLUniformLocation: "WebGLUniformLocation",
-    Invalid: Symbol("invalid"),
+    None: 0,
+    Number: 1,
+    Boolean: 2,
+    String: 3,
+    Array: 4,
+    TypedArray: 5,
+    Image: 6,
+    ImageData: 7,
+    DOMMatrix: 8,
+    Path2D: 9,
+    CanvasGradient: 10,
+    CanvasPattern: 11,
+    WebGLBuffer: 12,
+    WebGLFramebuffer: 13,
+    WebGLRenderbuffer: 14,
+    WebGLTexture: 15,
+    WebGLShader: 16,
+    WebGLProgram: 17,
+    WebGLUniformLocation: 18,
 };

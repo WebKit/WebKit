@@ -25,10 +25,11 @@
 
 WI.RecordingAction = class RecordingAction
 {
-    constructor(name, parameters, trace, snapshot)
+    constructor(name, parameters, swizzleTypes, trace, snapshot)
     {
         this._payloadName = name;
         this._payloadParameters = parameters;
+        this._payloadSwizzleTypes = swizzleTypes;
         this._payloadTrace = trace;
         this._payloadSnapshot = snapshot || -1;
 
@@ -47,7 +48,7 @@ WI.RecordingAction = class RecordingAction
 
     // Static
 
-    // Payload format: [name, parameters, trace, [snapshot]]
+    // Payload format: [name, parameters, swizzleTypes, trace, [snapshot]]
     static fromPayload(payload)
     {
         if (!Array.isArray(payload))
@@ -62,8 +63,11 @@ WI.RecordingAction = class RecordingAction
         if (!Array.isArray(payload[2]))
             payload[2] = [];
 
-        if (payload.length >= 4 && isNaN(payload[3]))
-            payload[3] = -1;
+        if (!Array.isArray(payload[3]))
+            payload[3] = [];
+
+        if (payload.length >= 5 && isNaN(payload[4]))
+            payload[4] = -1;
 
         return new WI.RecordingAction(...payload);
     }
@@ -81,6 +85,7 @@ WI.RecordingAction = class RecordingAction
 
     get name() { return this._name; }
     get parameters() { return this._parameters; }
+    get swizzleTypes() { return this._payloadSwizzleTypes; }
     get trace() { return this._trace; }
     get snapshot() { return this._snapshot; }
 
@@ -97,20 +102,16 @@ WI.RecordingAction = class RecordingAction
         this._name = recording.swizzle(this._payloadName, WI.Recording.Swizzle.String);
 
         this._parameters = this._payloadParameters.map((item, i) => {
-            let type = this.parameterSwizzleTypeForTypeAtIndex(recording.type, i);
-            if (!type)
-                return item;
-
-            let swizzled = recording.swizzle(item, type);
-            if (swizzled === WI.Recording.Swizzle.Invalid)
+            let swizzledItem = recording.swizzle(item, this._payloadSwizzleTypes[i]);
+            if (this._payloadSwizzleTypes[i] === WI.Recording.Swizzle.None || swizzledItem === undefined)
                 this._valid = false;
 
-            return swizzled;
+            return swizzledItem;
         });
 
         for (let item of this._payloadTrace) {
             try {
-                let array = recording.swizzle(item, WI.Recording.Swizzle.Array);
+                let array = recording.swizzle(item, WI.Recording.Swizzle.None);
                 let callFrame = WI.CallFrame.fromPayload(WI.mainTarget, {
                     functionName: recording.swizzle(array[0], WI.Recording.Swizzle.String),
                     url: recording.swizzle(array[1], WI.Recording.Swizzle.String),
@@ -139,393 +140,14 @@ WI.RecordingAction = class RecordingAction
         }
     }
 
-    parameterSwizzleTypeForTypeAtIndex(type, index)
-    {
-        let functionNames = WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex[type];
-        if (!functionNames)
-            return null;
-
-        let parameterLengths = functionNames[this._name];
-        if (!parameterLengths)
-            return null;
-
-        let argumentSwizzleTypes = parameterLengths[this._payloadParameters.length];
-        if (!argumentSwizzleTypes)
-            return null;
-
-        return argumentSwizzleTypes[index] || null;
-    }
-
     toJSON()
     {
-        let json = [this._payloadName, this._payloadParameters, this._payloadTrace];
+        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
         if (this._payloadSnapshot >= 0)
             json.push(this._payloadSnapshot);
         return json;
     }
 };
-
-// This object instructs the frontend as to how to reconstruct deduplicated objects found in the
-// "data" section of a recording payload. It will only swizzle values if they are of the expected
-// type in the right index of the version of the action (determined by the number of parameters) for
-// the recording type. Since a recording can be created by importing a JSON file, this is used to
-// make sure that inputs are only considered valid if they conform to the structure defined below.
-// 
-// For Example:
-//
-// IDL:
-//
-//     void foo(optional DOMString s = "bar");
-//     void foo(DOMPath path, optional DOMString s = "bar");
-//     void foo(float a, float b, float c, float d);
-//
-// Swizzle Entries:
-//
-//     - For the 1 parameter version, the parameter at index 0 needs to be swizzled as a string
-//     - For the 2 parameter version, the parameters need to be swizzled as a Path and String
-//     - For the 4 parameter version, numbers don't need to be swizzled, so it is not included
-//
-//     "foo": {
-//         1: {0: String}
-//         2: {0: Path2D, 1: String}
-//     }
-
-{
-    let {
-        ArrayBufferView,
-        BufferDataSource,
-        CanvasStyle,
-        Element,
-        Float32List,
-        Image,
-        ImageData,
-        Int32List,
-        Path2D,
-        String,
-        TexImageSource,
-        WebGLBuffer,
-        WebGLFramebuffer,
-        WebGLProgram,
-        WebGLRenderbuffer,
-        WebGLShader,
-        WebGLTexture,
-        WebGLUniformLocation,
-    } = WI.Recording.Swizzle;
-
-    WI.RecordingAction._parameterSwizzleTypeForTypeAtIndex = {
-        [WI.Recording.Type.Canvas2D]: {
-            "clip": {
-                1: {0: String},
-                2: {0: Path2D, 1: String},
-            },
-            "createImageData": {
-                1: {0: ImageData},
-            },
-            "createPattern": {
-                2: {0: Image, 1: String},
-            },
-            "direction": {
-                1: {0: String},
-            },
-            "drawImage": {
-                3: {0: Image},
-                5: {0: Image},
-                9: {0: Image},
-            },
-            "drawImageFromRect": {
-                10: {0: Image, 9: String},
-            },
-            "drawFocusIfNeeded": {
-                1: {0: Element},
-                2: {0: Path2D, 1: Element},
-            },
-            "fill": {
-                1: {0: String},
-                2: {0: Path2D, 1: String},
-            },
-            "fillStyle": {
-                1: {0: CanvasStyle},
-            },
-            "fillText": {
-                3: {0: String},
-                4: {0: String},
-            },
-            "font": {
-                1: {0: String},
-            },
-            "globalCompositeOperation": {
-                1: {0: String},
-            },
-            "imageSmoothingQuality": {
-                1: {0: String},
-            },
-            "isPointInPath": {
-                4: {0: Path2D, 3: String},
-            },
-            "isPointInStroke": {
-                3: {0: Path2D, 3: String},
-            },
-            "lineCap": {
-                1: {0: String},
-            },
-            "lineJoin": {
-                1: {0: String},
-            },
-            "measureText": {
-                1: {0: String},
-            },
-            "putImageData": {
-                3: {0: ImageData},
-                7: {0: ImageData},
-            },
-            "setCompositeOperation": {
-                1: {0: String},
-            },
-            "setFillColor": {
-                1: {0: String},
-                2: {0: String},
-            },
-            "setLineCap": {
-                1: {0: String},
-            },
-            "setLineJoin": {
-                1: {0: String},
-            },
-            "setShadow": {
-                4: {3: String},
-                5: {3: String},
-            },
-            "setStrokeColor": {
-                1: {0: String},
-                2: {0: String},
-            },
-            "shadowColor": {
-                1: {0: String},
-            },
-            "stroke": {
-                1: {0: Path2D},
-            },
-            "strokeStyle": {
-                1: {0: CanvasStyle},
-            },
-            "strokeText": {
-                3: {0: String},
-                4: {0: String},
-            },
-            "textAlign": {
-                1: {0: String},
-            },
-            "textBaseline": {
-                1: {0: String},
-            },
-            "webkitPutImageData": {
-                3: {0: ImageData},
-                7: {0: ImageData},
-            },
-        },
-        [WI.Recording.Type.CanvasWebGL]: {
-            "attachShader": {
-                1: {0: WebGLProgram},
-                2: {0: WebGLProgram, 1: WebGLShader},
-            },
-            "bindAttribLocation": {
-                1: {0: WebGLProgram},
-                2: {0: WebGLProgram},
-                3: {0: WebGLProgram, 2: String},
-            },
-            "bindBuffer": {
-                2: {1: WebGLBuffer},
-            },
-            "bindFramebuffer": {
-                2: {1: WebGLFramebuffer},
-            },
-            "bindRenderbuffer": {
-                2: {1: WebGLRenderbuffer},
-            },
-            "bindTexture": {
-                2: {1: WebGLTexture},
-            },
-            "bufferData": {
-                3: {1: BufferDataSource},
-            },
-            "bufferSubData": {
-                3: {2: BufferDataSource},
-            },
-            "compileShader": {
-                1: {0: WebGLShader},
-            },
-            "compressedTexImage2D": {
-                7: {6: ArrayBufferView},
-            },
-            "compressedTexSubImage2D": {
-                8: {7: ArrayBufferView},
-            },
-            "deleteBuffer": {
-                1: {0: WebGLBuffer},
-            },
-            "deleteFramebuffer": {
-                1: {0: WebGLFramebuffer},
-            },
-            "deleteProgram": {
-                1: {0: WebGLProgram},
-            },
-            "deleteRenderbuffer": {
-                1: {0: WebGLRenderbuffer},
-            },
-            "deleteShader": {
-                1: {0: WebGLShader},
-            },
-            "deleteTexture": {
-                1: {0: WebGLTexture},
-            },
-            "detachShader": {
-                1: {0: WebGLProgram},
-                2: {0: WebGLProgram, 1: WebGLShader},
-            },
-            "framebufferRenderbuffer": {
-                4: {3: WebGLRenderbuffer},
-            },
-            "framebufferTexture2D": {
-                5: {4: WebGLTexture},
-            },
-            "getActiveAttrib": {
-                2: {0: WebGLProgram},
-            },
-            "getActiveUniform": {
-                2: {0: WebGLProgram},
-            },
-            "getAttachedShaders": {
-                1: {0: WebGLProgram},
-            },
-            "getAttribLocation": {
-                2: {0: WebGLProgram, 1: String},
-            },
-            "getExtension": {
-                1: {0: String},
-            },
-            "getProgramInfoLog": {
-                1: {0: WebGLProgram},
-            },
-            "getProgramParameter": {
-                2: {0: WebGLProgram},
-            },
-            "getShaderInfoLog": {
-                1: {0: WebGLShader},
-            },
-            "getShaderParameter": {
-                2: {0: WebGLShader},
-            },
-            "getShaderSource": {
-                1: {0: WebGLShader},
-            },
-            "getUniform": {
-                1: {0: WebGLProgram},
-                2: {0: WebGLProgram, 1: WebGLUniformLocation},
-            },
-            "getUniformLocation": {
-                2: {0: WebGLProgram, 1: String},
-            },
-            "isBuffer": {
-                1: {0: WebGLBuffer},
-            },
-            "isFramebuffer": {
-                1: {0: WebGLFramebuffer},
-            },
-            "isProgram": {
-                1: {0: WebGLProgram},
-            },
-            "isRenderbuffer": {
-                1: {0: WebGLRenderbuffer},
-            },
-            "isShader": {
-                1: {0: WebGLShader},
-            },
-            "isTexture": {
-                1: {0: WebGLTexture},
-            },
-            "linkProgram": {
-                1: {0: WebGLProgram},
-            },
-            "readPixels": {
-                7: {6: ArrayBufferView},
-            },
-            "shaderSource": {
-                2: {0: WebGLShader, 1: String},
-            },
-            "texImage2D": {
-                6: {5: TexImageSource},
-                9: {8: ArrayBufferView},
-            },
-            "texSubImage2D": {
-                7: {6: TexImageSource},
-                9: {8: ArrayBufferView},
-            },
-            "uniform1f": {
-                2: {0: WebGLUniformLocation},
-            },
-            "uniform1fv": {
-                2: {0: WebGLUniformLocation, 1: Float32List},
-            },
-            "uniform1i": {
-                2: {0: WebGLUniformLocation},
-            },
-            "uniform1iv": {
-                2: {0: WebGLUniformLocation, 1: Int32List},
-            },
-            "uniform2f": {
-                3: {0: WebGLUniformLocation},
-            },
-            "uniform2fv": {
-                2: {0: WebGLUniformLocation, 1: Float32List},
-            },
-            "uniform2i": {
-                3: {0: WebGLUniformLocation},
-            },
-            "uniform2iv": {
-                2: {0: WebGLUniformLocation, 1: Int32List},
-            },
-            "uniform3f": {
-                4: {0: WebGLUniformLocation},
-            },
-            "uniform3fv": {
-                2: {0: WebGLUniformLocation, 1: Float32List},
-            },
-            "uniform3i": {
-                4: {0: WebGLUniformLocation},
-            },
-            "uniform3iv": {
-                2: {0: WebGLUniformLocation, 1: Int32List},
-            },
-            "uniform4f": {
-                5: {0: WebGLUniformLocation},
-            },
-            "uniform4fv": {
-                2: {0: WebGLUniformLocation, 1: Float32List},
-            },
-            "uniform4i": {
-                5: {0: WebGLUniformLocation},
-            },
-            "uniform4iv": {
-                2: {0: WebGLUniformLocation, 1: Int32List},
-            },
-            "uniformMatrix2fv": {
-                3: {0: WebGLUniformLocation, 2: Float32List},
-            },
-            "uniformMatrix3fv": {
-                3: {0: WebGLUniformLocation, 2: Float32List},
-            },
-            "uniformMatrix4fv": {
-                3: {0: WebGLUniformLocation, 2: Float32List},
-            },
-            "useProgram": {
-                1: {0: WebGLProgram},
-            },
-            "validateProgram": {
-                1: {0: WebGLProgram},
-            },
-        },
-    };
-}
 
 WI.RecordingAction._functionNames = {
     [WI.Recording.Type.Canvas2D]: new Set([

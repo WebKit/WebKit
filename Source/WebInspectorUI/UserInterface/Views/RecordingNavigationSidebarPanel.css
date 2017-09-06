@@ -139,7 +139,6 @@ body[dir=rtl] .sidebar > .panel.navigation.recording > .content .action:not(.ini
     color: grey;
 }
 
-.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles .name,
-.sidebar > .panel.navigation.recording > .content .action.missing:not(.selected, .initial-state) > .titles .parameter.swizzled.missing {
+.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles :matches(.name, .parameter.invalid) {
     color: red;
 }

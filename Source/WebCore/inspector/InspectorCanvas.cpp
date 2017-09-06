@@ -54,6 +54,7 @@
 #include "JSMainThreadExecState.h"
 #include "Path2D.h"
 #include "Pattern.h"
+#include "RecordingSwizzleTypes.h"
 #include "SVGPathUtilities.h"
 #include "StringAdaptors.h"
 #if ENABLE(WEBGL)
@@ -376,10 +377,11 @@ static RefPtr<Inspector::Protocol::Array<double>> buildArrayForAffineTransform(c
     return array;
 }
 
-static RefPtr<Inspector::Protocol::Array<double>> buildArrayForVector(const Vector<float>& vector)
+template <typename T>
+static RefPtr<Inspector::Protocol::Array<InspectorValue>> buildArrayForVector(const Vector<T>& vector)
 {
-    RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
-    for (double item : vector)
+    RefPtr<Inspector::Protocol::Array<InspectorValue>> array = Inspector::Protocol::Array<InspectorValue>::create();
+    for (auto& item : vector)
         array->addItem(item);
     return array;
 }
@@ -482,29 +484,21 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
     action->addItem(indexForData(name));
 
     RefPtr<Inspector::Protocol::Array<InspectorValue>> parametersData = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
+    RefPtr<Inspector::Protocol::Array<int>> swizzleTypes = Inspector::Protocol::Array<int>::create();
+
+    auto addParameter = [&parametersData, &swizzleTypes] (auto value, RecordingSwizzleTypes swizzleType) {
+        parametersData->addItem(value);
+        swizzleTypes->addItem(static_cast<int>(swizzleType));
+    };
+
     for (RecordCanvasActionVariant& item : parameters) {
         WTF::switchOn(item,
-            [&] (CanvasFillRule value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (ImageSmoothingQuality value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (CanvasDirection value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (CanvasLineCap value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (CanvasLineJoin value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (CanvasTextAlign value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
-            [&] (CanvasTextBaseline value) {
-                parametersData->addItem(indexForData(convertEnumerationToString(value)));
-            },
+            [&] (CanvasDirection value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (CanvasFillRule value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (CanvasLineCap value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (CanvasLineJoin value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (CanvasTextAlign value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (CanvasTextBaseline value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
             [&] (const DOMMatrix2DInit& value) {
                 RefPtr<Inspector::Protocol::Array<double>> array = Inspector::Protocol::Array<double>::create();
                 array->addItem(value.a.value_or(1));
@@ -513,53 +507,54 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
                 array->addItem(value.d.value_or(1));
                 array->addItem(value.e.value_or(0));
                 array->addItem(value.f.value_or(0));
-                parametersData->addItem(WTFMove(array));
-            },
-            [&] (const Path2D* value) {
-                parametersData->addItem(indexForData(buildStringFromPath(value->path())));
+                addParameter(WTFMove(array), RecordingSwizzleTypes::DOMMatrix);
             },
             [&] (const Element*) {
                 // Elements are not serializable, so add a string as a placeholder since the actual
                 // element cannot be reconstructed in the frontend.
-                parametersData->addItem(indexForData(String("element")));
+                addParameter(0, RecordingSwizzleTypes::None);
             },
-            [&] (HTMLImageElement* value) { parametersData->addItem(indexForData(value)); },
-            [&] (ImageData* value) { parametersData->addItem(indexForData(value)); },
+            [&] (HTMLImageElement* value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
+            [&] (ImageData* value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
+            [&] (ImageSmoothingQuality value) { addParameter(indexForData(convertEnumerationToString(value)), RecordingSwizzleTypes::String); },
+            [&] (const Path2D* value) { addParameter(indexForData(buildStringFromPath(value->path())), RecordingSwizzleTypes::Path2D); },
 #if ENABLE(WEBGL)
             // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
-            [&] (const WebGLBuffer*) { parametersData->addItem(indexForData(String("WebGLBuffer"))); },
-            [&] (const WebGLFramebuffer*) { parametersData->addItem(indexForData(String("WebGLFramebuffer"))); },
-            [&] (const WebGLProgram*) { parametersData->addItem(indexForData(String("WebGLProgram"))); },
-            [&] (const WebGLRenderbuffer*) { parametersData->addItem(indexForData(String("WebGLRenderbuffer"))); },
-            [&] (const WebGLShader*) { parametersData->addItem(indexForData(String("WebGLShader"))); },
-            [&] (const WebGLTexture*) { parametersData->addItem(indexForData(String("WebGLTexture"))); },
-            [&] (const WebGLUniformLocation*) { parametersData->addItem(indexForData(String("WebGLUniformLocation"))); },
+            [&] (const WebGLBuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLBuffer); },
+            [&] (const WebGLFramebuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLFramebuffer); },
+            [&] (const WebGLProgram*) { addParameter(0, RecordingSwizzleTypes::WebGLProgram); },
+            [&] (const WebGLRenderbuffer*) { addParameter(0, RecordingSwizzleTypes::WebGLRenderbuffer); },
+            [&] (const WebGLShader*) { addParameter(0, RecordingSwizzleTypes::WebGLShader); },
+            [&] (const WebGLTexture*) { addParameter(0, RecordingSwizzleTypes::WebGLTexture); },
+            [&] (const WebGLUniformLocation*) { addParameter(0, RecordingSwizzleTypes::WebGLUniformLocation); },
 #endif
-            [&] (const RefPtr<ArrayBuffer>&) { parametersData->addItem(indexForData("BufferDataSource")); },
-            [&] (const RefPtr<ArrayBufferView>&) { parametersData->addItem(indexForData("BufferDataSource")); },
-            [&] (const RefPtr<CanvasGradient>& value) { parametersData->addItem(indexForData(value.get())); },
-            [&] (const RefPtr<CanvasPattern>& value) { parametersData->addItem(indexForData(value.get())); },
-            [&] (const RefPtr<Float32Array>&) { parametersData->addItem(indexForData("Float32List")); },
-            [&] (RefPtr<HTMLCanvasElement>& value) { parametersData->addItem(indexForData(value.get())); },
-            [&] (const RefPtr<HTMLImageElement>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (const RefPtr<ArrayBuffer>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (const RefPtr<ArrayBufferView>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (const RefPtr<CanvasGradient>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::CanvasGradient); },
+            [&] (const RefPtr<CanvasPattern>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::CanvasPattern); },
+            [&] (const RefPtr<Float32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (RefPtr<HTMLCanvasElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
+            [&] (const RefPtr<HTMLImageElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
 #if ENABLE(VIDEO)
-            [&] (RefPtr<HTMLVideoElement>& value) { parametersData->addItem(indexForData(value.get())); },
+            [&] (RefPtr<HTMLVideoElement>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::Image); },
 #endif
-            [&] (const RefPtr<ImageData>& value) { parametersData->addItem(indexForData(value.get())); },
-            [&] (const RefPtr<Int32Array>&) { parametersData->addItem(indexForData("Int32List")); },
-            [&] (const Vector<float>& value) { parametersData->addItem(buildArrayForVector(value)); },
-            [&] (const Vector<int>&) { parametersData->addItem(indexForData("Int32List")); },
-            [&] (const String& value) { parametersData->addItem(indexForData(value)); },
-            [&] (double value) { parametersData->addItem(value); },
-            [&] (float value) { parametersData->addItem(value); },
-            [&] (int64_t value) { parametersData->addItem(static_cast<double>(value)); },
-            [&] (uint32_t value) { parametersData->addItem(static_cast<double>(value)); },
-            [&] (int32_t value) { parametersData->addItem(value); },
-            [&] (uint8_t value) { parametersData->addItem(static_cast<int>(value)); },
-            [&] (bool value) { parametersData->addItem(value); }
+            [&] (const RefPtr<ImageData>& value) { addParameter(indexForData(value.get()), RecordingSwizzleTypes::ImageData); },
+            [&] (const RefPtr<Int32Array>&) { addParameter(0, RecordingSwizzleTypes::TypedArray); },
+            [&] (const Vector<float>& value) { addParameter(buildArrayForVector(value), RecordingSwizzleTypes::Array); },
+            [&] (const Vector<int>& value) { addParameter(buildArrayForVector(value), RecordingSwizzleTypes::Array); },
+            [&] (const String& value) { addParameter(indexForData(value), RecordingSwizzleTypes::String); },
+            [&] (double value) { addParameter(value, RecordingSwizzleTypes::Number); },
+            [&] (float value) { addParameter(value, RecordingSwizzleTypes::Number); },
+            [&] (int64_t value) { addParameter(static_cast<double>(value), RecordingSwizzleTypes::Number); },
+            [&] (uint32_t value) { addParameter(static_cast<double>(value), RecordingSwizzleTypes::Number); },
+            [&] (int32_t value) { addParameter(value, RecordingSwizzleTypes::Number); },
+            [&] (uint8_t value) { addParameter(static_cast<int>(value), RecordingSwizzleTypes::Number); },
+            [&] (bool value) { addParameter(value, RecordingSwizzleTypes::Boolean); }
         );
     }
+
     action->addItem(WTFMove(parametersData));
+    action->addItem(WTFMove(swizzleTypes));
 
     RefPtr<Inspector::Protocol::Array<double>> trace = Inspector::Protocol::Array<double>::create();
     if (JSC::CallFrame* callFrame = JSMainThreadExecState::currentState()->vm().topCallFrame) {

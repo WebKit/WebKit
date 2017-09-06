@@ -3750,6 +3750,7 @@
 		9001774112E0347800648462 /* OESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001773E12E0347800648462 /* OESStandardDerivatives.h */; };
 		9001788012E0370700648462 /* JSOESStandardDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */; };
 		9001788112E0370700648462 /* JSOESStandardDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 9001787F12E0370700648462 /* JSOESStandardDerivatives.h */; };
+		91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */; };
 		91C9F2F91AE3BEB00095B61C /* AXTextStateChangeIntent.h in Headers */ = {isa = PBXBuildFile; fileRef = 91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9302B0BD0D79F82900C7EE83 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */; };
 		9302B0BF0D79F82C00C7EE83 /* PageGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 9302B0BE0D79F82C00C7EE83 /* PageGroup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12061,6 +12062,7 @@
 		9001773F12E0347800648462 /* OESStandardDerivatives.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OESStandardDerivatives.idl; sourceTree = "<group>"; };
 		9001787E12E0370700648462 /* JSOESStandardDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESStandardDerivatives.cpp; sourceTree = "<group>"; };
 		9001787F12E0370700648462 /* JSOESStandardDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESStandardDerivatives.h; sourceTree = "<group>"; };
+		91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RecordingSwizzleTypes.h; sourceTree = "<group>"; };
 		91C9F2F81AE3BE240095B61C /* AXTextStateChangeIntent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXTextStateChangeIntent.h; sourceTree = "<group>"; };
 		9302B0BC0D79F82900C7EE83 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		9302B0BE0D79F82C00C7EE83 /* PageGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageGroup.h; sourceTree = "<group>"; };
@@ -17530,6 +17532,7 @@
 				F382088D147D35F90010BC06 /* PageRuntimeAgent.h */,
 				A5F36D3818F758720054C024 /* PageScriptDebugServer.cpp */,
 				A5F36D3918F758720054C024 /* PageScriptDebugServer.h */,
+				91B952221F58A58000931DC2 /* RecordingSwizzleTypes.h */,
 				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
 				7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */,
 				A56C5B98189F34570082D13C /* WebConsoleAgent.cpp */,
@@ -29542,6 +29545,7 @@
 				4A4F65741AA997F100E38CDD /* RealtimeMediaSourceSettings.h in Headers */,
 				07C1C0E51BFB60ED00BD2256 /* RealtimeMediaSourceSupportedConstraints.h in Headers */,
 				41103AAC1E39791000769F03 /* RealtimeOutgoingAudioSource.h in Headers */,
+				91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,

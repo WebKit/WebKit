@@ -287,9 +287,20 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                     let value = initialState.attributes[key];
 
                     switch (key) {
+                    case "setTransform":
+                        value = [this.representedObject.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
+                        break;
+
                     case "fillStyle":
                     case "strokeStyle":
-                        value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasStyle);
+                        if (Array.isArray(value)) {
+                            let canvasStyle = this.swizzle(value[0], WI.Recording.Swizzle.String);
+                            if (canvasStyle.includes("gradient"))
+                                value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasGradient);
+                            else if (canvasStyle === "pattern")
+                                value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasPattern);
+                        } else
+                            value = this.representedObject.swizzle(value, WI.Recording.Swizzle.String);
                         break;
 
                     case "direction":
@@ -310,7 +321,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                         break;
                     }
 
-                    if (value === WI.Recording.Swizzle.Invalid || (Array.isArray(value) && value.includes(WI.Recording.Swizzle.Invalid)))
+                    if (value === undefined || (Array.isArray(value) && value.includes(undefined)))
                         continue;
 
                     snapshot.state[key] = value;
@@ -427,9 +438,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     _applyAction(context, action, options = {})
     {
         if (!action.valid)
-            return;
-
-        if (action.parameters.includes(WI.Recording.Swizzle.Invalid))
             return;
 
         try {

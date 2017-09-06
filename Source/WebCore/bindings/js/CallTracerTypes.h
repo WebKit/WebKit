@@ -57,7 +57,6 @@
 namespace WebCore {
 
 typedef Variant<
-    ImageSmoothingQuality,
     CanvasDirection,
     CanvasFillRule,
     CanvasLineCap,
@@ -65,10 +64,11 @@ typedef Variant<
     CanvasTextAlign,
     CanvasTextBaseline,
     DOMMatrix2DInit,
-    Path2D*,
     Element*,
     HTMLImageElement*,
     ImageData*,
+    ImageSmoothingQuality,
+    Path2D*,
 #if ENABLE(WEBGL)
     WebGLBuffer*,
     WebGLFramebuffer*,
