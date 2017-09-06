@@ -44,6 +44,7 @@ progress_statuses = Set([
     "Started processing patch",
     "Cleaned working directory",
     "Updated working directory",
+    "Checked relevance of patch",
     "Applied patch",
     "Built patch",
     "Watchlist applied",

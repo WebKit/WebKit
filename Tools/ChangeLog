@@ -1,3 +1,12 @@
+2017-09-06  Aakash Jain  <aakash_jain@apple.com>
+
+        status-bubbles turn orange after checking relevance of patch
+        https://bugs.webkit.org/show_bug.cgi?id=176457
+
+        Reviewed by Alexey Proskuryakov.
+
+        * QueueStatusServer/handlers/statusbubble.py: Added "Checked relevance of patch" as a progress_statuses.
+
 2017-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's pinnedStateDidChange
