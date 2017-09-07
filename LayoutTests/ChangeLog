@@ -1,3 +1,15 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] tests/security/contentSecurityPolicy/report-only.php is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=176541
+
+        Reviewed by Brent Fulgham.
+
+        The function call rename will sometimes fail on Windows because one of the files is
+        opened by another process. If rename fails, wait, and try again.
+
+        * http/tests/security/contentSecurityPolicy/resources/save-report.php:
+
 2017-09-07  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Notify client when downloads are redirected

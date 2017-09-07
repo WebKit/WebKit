@@ -21,7 +21,10 @@ foreach ($httpHeaders as $name => $value) {
 fwrite($reportFile, "=== POST DATA ===\n");
 fwrite($reportFile, file_get_contents("php://input"));
 fclose($reportFile);
-rename($reportFilePath . ".tmp", $reportFilePath);
+
+// On Windows, rename will sometimes fail because one of the files is used by another process.
+while (!rename($reportFilePath . ".tmp", $reportFilePath))
+    sleep(1);
 
 if (!isset($DO_NOT_CLEAR_COOKIES) || !$DO_NOT_CLEAR_COOKIES) {
     foreach ($_COOKIE as $name => $value)
