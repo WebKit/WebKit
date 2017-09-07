@@ -48,13 +48,14 @@ public:
     
 private:
     // From API::DownloadClient
-    virtual void didStart(WebProcessPool*, DownloadProxy*);
-    virtual void didReceiveResponse(WebProcessPool*, DownloadProxy*, const WebCore::ResourceResponse&);
-    virtual void didReceiveData(WebProcessPool*, DownloadProxy*, uint64_t length);
-    virtual String decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy*, const String& filename, bool& allowOverwriteParam);
-    virtual void didFinish(WebProcessPool*, DownloadProxy*);
-    virtual void didFail(WebProcessPool*, DownloadProxy*, const WebCore::ResourceError&);
-    virtual void didCancel(WebProcessPool*, DownloadProxy*);
+    void didStart(WebProcessPool*, DownloadProxy*) final;
+    void didReceiveResponse(WebProcessPool*, DownloadProxy*, const WebCore::ResourceResponse&) final;
+    void didReceiveData(WebProcessPool*, DownloadProxy*, uint64_t length) final;
+    String decideDestinationWithSuggestedFilename(WebProcessPool*, DownloadProxy*, const String& filename, bool& allowOverwriteParam) final;
+    void didFinish(WebProcessPool*, DownloadProxy*) final;
+    void didFail(WebProcessPool*, DownloadProxy*, const WebCore::ResourceError&) final;
+    void didCancel(WebProcessPool*, DownloadProxy*) final;
+    void willSendRequest(WebProcessPool*, DownloadProxy*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, WTF::Function<void(const WebCore::ResourceRequest&)>&&) final;
 
     WeakObjCPtr<id <_WKDownloadDelegate>> m_delegate;
 
@@ -66,6 +67,7 @@ private:
         bool downloadDidFinish : 1;
         bool downloadDidFail : 1;
         bool downloadDidCancel : 1;
+        bool downloadDidReceiveServerRedirectToURL : 1;
     } m_delegateMethods;
 };
 

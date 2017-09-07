@@ -34,6 +34,7 @@
 @protocol _WKDownloadDelegate <NSObject>
 @optional
 - (void)_downloadDidStart:(_WKDownload *)download;
+- (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_download:(_WKDownload *)download didReceiveResponse:(NSURLResponse *)response;
 - (void)_download:(_WKDownload *)download didReceiveData:(uint64_t)length;
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite;

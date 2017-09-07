@@ -62,6 +62,7 @@ class BlobDataFileReference;
 class Credential;
 class ResourceError;
 class ResourceHandle;
+class ResourceRequest;
 class ResourceResponse;
 }
 
@@ -104,6 +105,7 @@ public:
     const WebCore::ResourceRequest& request() const { return m_request; }
     void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
     void didStart();
+    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceResponse&&);
     void didReceiveResponse(const WebCore::ResourceResponse&);
     bool shouldDecodeSourceDataOfMIMEType(const String& mimeType);
     String decideDestinationWithSuggestedFilename(const String& filename, bool& allowOverwrite);

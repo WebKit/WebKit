@@ -1,3 +1,18 @@
+2017-09-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Notify client when downloads are redirected
+        https://bugs.webkit.org/show_bug.cgi?id=176481
+        <rdar://problem/34309065>
+
+        Reviewed by Geoffrey Garen.
+
+        Add layout test coverage.
+
+        * http/tests/download/anchor-download-redirect-expected.txt: Added.
+        * http/tests/download/anchor-download-redirect.html: Added.
+        * platform/ios-wk2/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         Marked imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html as slow.

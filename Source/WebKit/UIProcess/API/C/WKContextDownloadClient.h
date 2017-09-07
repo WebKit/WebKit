@@ -39,6 +39,7 @@ typedef void (*WKContextDownloadDidFinishCallback)(WKContextRef context, WKDownl
 typedef void (*WKContextDownloadDidFailCallback)(WKContextRef context, WKDownloadRef download, WKErrorRef error, const void *clientInfo);
 typedef void (*WKContextDownloadDidCancel)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
 typedef void (*WKContextDownloadProcessDidCrashCallback)(WKContextRef context, WKDownloadRef download, const void *clientInfo);
+typedef void (*WKContextDownloadDidReceiveServerRedirect)(WKContextRef context, WKDownloadRef download, WKURLRef url, const void *clientInfo);
 
 typedef struct WKContextDownloadClientBase {
     int                                                                 version;
@@ -61,5 +62,25 @@ typedef struct WKContextDownloadClientV0 {
     WKContextDownloadDidCancel                                          didCancel;
     WKContextDownloadProcessDidCrashCallback                            processDidCrash;
 } WKContextDownloadClientV0;
+
+typedef struct WKContextDownloadClientV1 {
+    WKContextDownloadClientBase                                         base;
+
+    // Version 0.
+    WKContextDownloadDidStartCallback                                   didStart;
+    WKContextDownloadDidReceiveAuthenticationChallengeCallback          didReceiveAuthenticationChallenge;
+    WKContextDownloadDidReceiveResponseCallback                         didReceiveResponse;
+    WKContextDownloadDidReceiveDataCallback                             didReceiveData;
+    WKContextDownloadShouldDecodeSourceDataOfMIMETypeCallback           shouldDecodeSourceDataOfMIMEType;
+    WKContextDownloadDecideDestinationWithSuggestedFilenameCallback     decideDestinationWithSuggestedFilename;
+    WKContextDownloadDidCreateDestinationCallback                       didCreateDestination;
+    WKContextDownloadDidFinishCallback                                  didFinish;
+    WKContextDownloadDidFailCallback                                    didFail;
+    WKContextDownloadDidCancel                                          didCancel;
+    WKContextDownloadProcessDidCrashCallback                            processDidCrash;
+
+    // Version 1.
+    WKContextDownloadDidReceiveServerRedirect                           didReceiveServerRedirect;
+} WKContextDownloadClientV1;
 
 #endif // WKContextDownloadClient_h

@@ -208,6 +208,10 @@ static void dispatchOnMainThread(void (^block)())
 
 - (NSURLRequest *)download:(NSURLDownload *)download willSendRequest:(NSURLRequest *)request redirectResponse:(NSURLResponse *)redirectResponse
 {
+    dispatchOnMainThread(^ {
+        if (_download && redirectResponse)
+            _download->willSendRedirectedRequest(request, redirectResponse);
+    });
     return request;
 }
 

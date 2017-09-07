@@ -1,3 +1,40 @@
+2017-09-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Notify client when downloads are redirected
+        https://bugs.webkit.org/show_bug.cgi?id=176481
+        <rdar://problem/34309065>
+
+        Reviewed by Geoffrey Garen.
+
+        Notify client when downloads are redirected via both ObjC and C
+        API.
+
+        * NetworkProcess/Downloads/Download.cpp:
+        (WebKit::Download::willSendRedirectedRequest):
+        * NetworkProcess/Downloads/Download.h:
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:willSendRequest:redirectResponse:]):
+        * UIProcess/API/APIDownloadClient.h:
+        (API::DownloadClient::willSendRequest):
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetDownloadClient):
+        * UIProcess/API/C/WKContextDownloadClient.h:
+        * UIProcess/API/Cocoa/_WKDownloadDelegate.h:
+        * UIProcess/Cocoa/DownloadClient.h:
+        * UIProcess/Cocoa/DownloadClient.mm:
+        (WebKit::DownloadClient::DownloadClient):
+        (WebKit::DownloadClient::willSendRequest):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::willSendRequest):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/Downloads/DownloadProxy.messages.in:
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::showContextMenuWithItems):
+        Set menu proxy before calling menuFromProposedMenu() client delegate.
+        This allows me to perform one of the menu item's action from the
+        menuFromProposedMenu() client delegate in my API test.
+
 2017-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Modernize Geolocation code

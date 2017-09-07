@@ -31,6 +31,7 @@
 #import "_WKDownloadDelegate.h"
 #import "_WKDownloadInternal.h"
 #import "DownloadProxy.h"
+#import "WKNSURLExtras.h"
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceResponse.h>
 
@@ -52,6 +53,7 @@ DownloadClient::DownloadClient(id <_WKDownloadDelegate> delegate)
     m_delegateMethods.downloadDidFinish = [delegate respondsToSelector:@selector(_downloadDidFinish:)];
     m_delegateMethods.downloadDidFail = [delegate respondsToSelector:@selector(_download:didFailWithError:)];
     m_delegateMethods.downloadDidCancel = [delegate respondsToSelector:@selector(_downloadDidCancel:)];
+    m_delegateMethods.downloadDidReceiveServerRedirectToURL = [delegate respondsToSelector:@selector(_download:didReceiveServerRedirectToURL:)];
 }
 
 void DownloadClient::didStart(WebProcessPool*, DownloadProxy* downloadProxy)
@@ -99,6 +101,14 @@ void DownloadClient::didCancel(WebProcessPool*, DownloadProxy* downloadProxy)
 {
     if (m_delegateMethods.downloadDidCancel)
         [m_delegate.get() _downloadDidCancel:wrapper(*downloadProxy)];
+}
+
+void DownloadClient::willSendRequest(WebProcessPool*, DownloadProxy* downloadProxy, const WebCore::ResourceRequest& request, const WebCore::ResourceResponse&, WTF::Function<void(const WebCore::ResourceRequest&)>&& callback)
+{
+    if (m_delegateMethods.downloadDidReceiveServerRedirectToURL)
+        [m_delegate.get() _download:wrapper(*downloadProxy) didReceiveServerRedirectToURL:[NSURL _web_URLWithWTFString:request.url().string()]];
+
+    callback(request);
 }
 
 } // namespace WebKit

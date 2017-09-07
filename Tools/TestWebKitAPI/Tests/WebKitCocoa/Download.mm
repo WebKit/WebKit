@@ -31,17 +31,22 @@
 
 #import "PlatformUtilities.h"
 #import "Test.h"
+#import "TestProtocol.h"
+#import "TestWKWebView.h"
 #import <WebCore/FileSystem.h>
 #import <WebKit/_WKDownload.h>
 #import <WebKit/_WKDownloadDelegate.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/mac/AppKitCompatibilityDeclarations.h>
 #import <wtf/text/WTFString.h>
 
 static bool isDone;
+static bool hasReceivedRedirect;
 static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
@@ -420,6 +425,82 @@ TEST(_WKDownload, DownloadRequestBlobURL)
 {
     NSURL *originalURL = [[NSBundle mainBundle] URLForResource:@"DownloadRequestBlobURL" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     runTest(adoptNS([[DownloadBlobURLNavigationDelegate alloc] init]).get(), adoptNS([[BlobDownloadDelegate alloc] init]).get(), originalURL);
+}
+
+@interface UIDownloadAsFileTestDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation UIDownloadAsFileTestDelegate
+
+- (NSMenu *)_webView:(WKWebView *)webView contextMenu:(NSMenu *)menu forElement:(_WKContextMenuElementInfo *)element
+{
+    static const long downloadLinkedFileTag = 2;
+    auto index = [menu indexOfItemWithTag:downloadLinkedFileTag];
+    [menu performActionForItemAtIndex:index];
+    return nil;
+}
+
+@end
+
+@interface RedirectedDownloadDelegate : NSObject <_WKDownloadDelegate>
+@end
+
+@implementation RedirectedDownloadDelegate {
+    String _destinationPath;
+}
+
+- (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
+{
+    WebCore::PlatformFileHandle fileHandle;
+    _destinationPath = WebCore::openTemporaryFile("TestWebKitAPI", fileHandle);
+    EXPECT_TRUE(fileHandle != WebCore::invalidPlatformFileHandle);
+    WebCore::closeFile(fileHandle);
+    *allowOverwrite = YES;
+    return _destinationPath;
+}
+
+- (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url
+{
+    EXPECT_STREQ("http://pass/", [url.absoluteString UTF8String]);
+    hasReceivedRedirect = true;
+}
+
+- (void)_downloadDidFinish:(_WKDownload *)download
+{
+    WebCore::deleteFile(_destinationPath);
+    isDone = true;
+}
+
+@end
+
+TEST(_WKDownload, RedirectedDownload)
+{
+    [TestProtocol registerWithScheme:@"http"];
+
+    hasReceivedRedirect = false;
+    isDone = false;
+
+    auto delegate = adoptNS([[UIDownloadAsFileTestDelegate alloc] init]);
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView setUIDelegate:delegate.get()];
+    auto downloadDelegate = adoptNS([[RedirectedDownloadDelegate alloc] init]);
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
+
+    auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
+    [[window contentView] addSubview:webView.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<a style='display: block; height: 100%; width: 100%' href='http://redirect/?pass'>test</a>"];
+
+    NSPoint clickPoint = NSMakePoint(100, 100);
+    [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+    [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
+
+    isDone = false;
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_TRUE(hasReceivedRedirect);
+
+    [TestProtocol unregister];
 }
 
 #endif

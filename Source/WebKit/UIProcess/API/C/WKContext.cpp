@@ -51,7 +51,7 @@
 
 namespace API {
 template<> struct ClientTraits<WKContextDownloadClientBase> {
-    typedef std::tuple<WKContextDownloadClientV0> Versions;
+    typedef std::tuple<WKContextDownloadClientV0, WKContextDownloadClientV1> Versions;
 };
 template<> struct ClientTraits<WKContextHistoryClientBase> {
     typedef std::tuple<WKContextHistoryClientV0> Versions;
@@ -260,6 +260,15 @@ void WKContextSetDownloadClient(WKContextRef contextRef, const WKContextDownload
             
             m_client.processDidCrash(toAPI(processPool), toAPI(downloadProxy), m_client.base.clientInfo);
         }
+
+        void willSendRequest(WebProcessPool* processPool, DownloadProxy* downloadProxy, const ResourceRequest& request, const ResourceResponse&, WTF::Function<void(const ResourceRequest&)>&& callback) override
+        {
+            if (m_client.didReceiveServerRedirect)
+                m_client.didReceiveServerRedirect(toAPI(processPool), toAPI(downloadProxy), toURLRef(request.url().string().impl()), m_client.base.clientInfo);
+
+            callback(request);
+        }
+
 
     };
 

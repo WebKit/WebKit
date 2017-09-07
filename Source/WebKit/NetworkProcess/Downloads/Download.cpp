@@ -152,6 +152,11 @@ void Download::didStart()
     send(Messages::DownloadProxy::DidStart(m_request, m_suggestedName));
 }
 
+void Download::willSendRedirectedRequest(WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse)
+{
+    send(Messages::DownloadProxy::WillSendRequest(WTFMove(redirectRequest), WTFMove(redirectResponse)));
+}
+
 void Download::didReceiveAuthenticationChallenge(const AuthenticationChallenge& authenticationChallenge)
 {
     m_downloadManager.downloadsAuthenticationManager().didReceiveAuthenticationChallenge(*this, authenticationChallenge);
