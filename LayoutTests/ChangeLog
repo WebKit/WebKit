@@ -1,3 +1,22 @@
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump libxml2 version to 1.9.5
+        https://bugs.webkit.org/show_bug.cgi?id=176502
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Rebaselines several tests where only the line number changed in error messages.
+
+        * platform/gtk/fast/dom/adopt-attribute-crash-expected.txt:
+        * platform/gtk/fast/parser/xml-colon-entity-expected.txt: Added.
+        * platform/gtk/fast/parser/xml-declaration-missing-ending-mark-expected.txt: Added.
+        * platform/gtk/fast/xsl/xslt-extra-content-at-end-expected.txt:
+        * platform/gtk/fast/xsl/xslt-missing-namespace-in-xslt-expected.txt:
+        * platform/gtk/svg/custom/bug78807-expected.txt: Added.
+        * platform/gtk/svg/custom/missing-xlink-expected.txt:
+        * platform/gtk/svg/custom/path-bad-data-expected.txt:
+        * platform/gtk/svg/custom/use-font-face-crash-expected.txt:
+
 2017-09-07  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Marking some service-worker related tests as crashing.

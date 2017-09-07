@@ -1,3 +1,14 @@
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Bump libxml2 version to 1.9.5
+        https://bugs.webkit.org/show_bug.cgi?id=176502
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        It has been released very recently, but it fixes the issues that prevented us from upgrading to 1.9.4.
+
+        * gtk/jhbuild.modules:
+
 2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Remove new-run-webkit-httpd as it appears to be old
