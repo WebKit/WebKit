@@ -1,3 +1,9 @@
+2017-09-07  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Marking some service-worker related tests as crashing.
+
+        * platform/gtk/TestExpectations:
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after r221724.
