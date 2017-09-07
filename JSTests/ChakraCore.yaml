@@ -684,8 +684,14 @@
   cmd: runChakra :baseline, "NoException", "parseInt.baseline", []
 - path: ChakraCore/test/GlobalFunctions/parseShortCut.js
   cmd: runChakra :baseline, "NoException", "parseShortCut.baseline", []
+  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/GlobalFunctions/InternalToString.js
-  cmd: runChakra :baseline, "NoException", "InternalToString.baseline", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "InternalToString.baseline", []
+      end
 - path: ChakraCore/test/GlobalFunctions/ParseInt1.js
   cmd: runChakra :baseline, "NoException", "ParseInt1.baseline", []
 - path: ChakraCore/test/GlobalFunctions/toString.js
@@ -1073,8 +1079,14 @@
   cmd: runChakra :baseline, "NoException", "delete3.baseline", []
 - path: ChakraCore/test/Operators/div.js
   cmd: runChakra :baseline, "NoException", "div.baseline-jsc", []
+  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/Operators/equals.js
-  cmd: runChakra :baseline, "NoException", "equals.baseline", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "equals.baseline", []
+      end
 - path: ChakraCore/test/Operators/instanceof.js
   cmd: runChakra :baseline, "NoException", "instanceof.baseline-jsc", []
 - path: ChakraCore/test/Operators/inst_bug.js
@@ -2041,8 +2053,14 @@
   cmd: runChakra :baseline, "NoException", "objtypespec-add-4.baseline", []
 - path: ChakraCore/test/fieldopts/objtypespec-newobj.1.js
   cmd: runChakra :baseline, "NoException", "objtypespec-newobj.1.baseline", []
+  # FIXME: unskip the following test on Windows when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
 - path: ChakraCore/test/fieldopts/objtypespec-newobj.2.js
-  cmd: runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
+  cmd: |
+      if ($hostOS == "windows")
+          skip
+      else
+          runChakra :baseline, "NoException", "objtypespec-newobj.2.baseline", []
+      end
 - path: ChakraCore/test/fieldopts/objtypespec-newobj-invalidation.1.js
   # FIXME: Re-enable once flakiness is resolved <webkit.org/b/175544>.
   cmd: runChakra :skip, "NoException", "objtypespec-newobj-invalidation.1.baseline", []

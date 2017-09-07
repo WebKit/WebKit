@@ -1,3 +1,15 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win32] 10 JSC stress tests are failing.
+        https://bugs.webkit.org/show_bug.cgi?id=176538
+
+        Reviewed by Mark Lam.
+
+        Skip tests on Windows to make the bots green.
+
+        * ChakraCore.yaml:
+        * stress/date-relaxed.js:
+
 2017-09-06  Mark Lam  <mark.lam@apple.com>
 
         constructGenericTypedArrayViewWithArguments() is missing an exception check.

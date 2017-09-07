@@ -1,3 +1,6 @@
+//@ skip if $hostOS == "windows"
+// FIXME: unskip this test when https://bugs.webkit.org/show_bug.cgi?id=176538 is fixed.
+
 function shouldBe(actual, expected)
 {
     if (actual !== expected)
