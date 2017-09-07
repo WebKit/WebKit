@@ -1,3 +1,15 @@
+2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)
+        https://bugs.webkit.org/show_bug.cgi?id=176563
+        <rdar://problem/19639583>
+
+        Reviewed by Matt Baker.
+
+        * inspector/protocol/DOM.json:
+        Add an event that is useful for augmented inspectors to inspect
+        a node. Web pages will still prefer Inspector.inspect.
+
 2017-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Remove "malloc" and "free" from JSC/API

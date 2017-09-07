@@ -389,16 +389,14 @@ WI.contentLoaded = function()
     this._downloadToolbarButton = new WI.ButtonToolbarItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
     this._downloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._downloadWebArchive, this);
 
+    var toolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    var activatedToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, "Images/Crosshair.svg");
+    this._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
+
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
-
-    // The toolbar button for node inspection.
-    if (this.debuggableType === WI.DebuggableType.Web) {
-        var toolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-        var activatedToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-        this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, "Images/Crosshair.svg");
-        this._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
-    }
+    this._updateInspectModeToolbarButton();
 
     this._dashboardContainer = new WI.DashboardContainerView;
     this._dashboardContainer.showDashboardViewForRepresentedObject(this.dashboardManager.dashboards.default);
@@ -418,8 +416,7 @@ WI.contentLoaded = function()
 
     this.toolbar.addToolbarItem(this._dashboardContainer.toolbarItem, WI.Toolbar.Section.Center);
 
-    if (this._inspectModeToolbarButton)
-        this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WI.Toolbar.Section.CenterRight);
+    this.toolbar.addToolbarItem(this._inspectModeToolbarButton, WI.Toolbar.Section.CenterRight);
 
     this.toolbar.addToolbarItem(this._searchToolbarItem, WI.Toolbar.Section.Right);
 
@@ -720,6 +717,8 @@ WI.activateExtraDomains = function(domains)
 
     this._updateReloadToolbarButton();
     this._updateDownloadToolbarButton();
+    this._updateInspectModeToolbarButton();
+
     this._tryToRestorePendingTabs();
 };
 
@@ -1863,6 +1862,16 @@ WI._updateDownloadToolbarButton = function()
 
     this._downloadToolbarButton.enabled = this.canArchiveMainFrame();
 };
+
+WI._updateInspectModeToolbarButton = function()
+{
+    if (!window.DOMAgent || !DOMAgent.setInspectModeEnabled) {
+        this._inspectModeToolbarButton.hidden = true;
+        return;
+    }
+
+    this._inspectModeToolbarButton.hidden = false;
+}
 
 WI._toggleInspectMode = function(event)
 {

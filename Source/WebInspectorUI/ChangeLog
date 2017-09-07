@@ -1,3 +1,20 @@
+2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)
+        https://bugs.webkit.org/show_bug.cgi?id=176563
+        <rdar://problem/19639583>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Always create the element search toolbar icon. Only show it if the DOM domain
+        is available. With augmented agents the DOM domain may be activated later.
+
+        * UserInterface/Protocol/DOMObserver.js:
+        (WI.DOMObserver.prototype.inspect):
+        Select the node in the DOM tree outline.
+
 2017-09-07  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas RecordingAction tree outline virtualization is broken

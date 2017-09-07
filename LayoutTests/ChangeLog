@@ -1,3 +1,15 @@
+2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)
+        https://bugs.webkit.org/show_bug.cgi?id=176563
+        <rdar://problem/19639583>
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/inspect-expected.txt: Added.
+        * inspector/dom/inspect.html: Added.
+        Test the frontend on receiving DOM.inspect events.
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         Marked http/tests/misc/delete-frame-during-readystatechange.html as flaky on Windows.

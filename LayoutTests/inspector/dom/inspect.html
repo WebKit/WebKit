@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    let documentNode;
+
+    function dispatchDOMInspectEvent(nodeId) {
+        WI.dispatchMessageFromBackend({
+            "method": "DOM.inspect",
+            "params": {"nodeId": nodeId},
+        });
+    }
+
+    let suite = InspectorTest.createAsyncSuite("DOM.inspect");
+
+    suite.addTestCase({
+        name: "DOM.inspect.valid",
+        description: "Event given a valid nodeId should select it.",
+        test(resolve, reject) {
+            WI.domTreeManager.querySelector(documentNode.id, "#element-to-select", (nodeId) => {
+                dispatchDOMInspectEvent(nodeId);
+            });
+            WI.domTreeManager.awaitEvent(WI.DOMTreeManager.Event.DOMNodeWasInspected).then((event) => {
+                InspectorTest.pass("DOMNodeWasInspected event");
+                resolve();
+            });
+        }
+    });
+
+    suite.addTestCase({
+        name: "DOM.inspect.invalid",
+        description: "Event given an ivalid nodeId should not cause an exception.",
+        test(resolve, reject) {
+            dispatchDOMInspectEvent("DOES_NOT_EXIST");
+            setTimeout(() => {
+                InspectorTest.pass("No error");
+                resolve()
+            });
+        }
+    });
+
+    WI.domTreeManager.requestDocument((node) => {
+        documentNode = node;
+        suite.runTestCasesAndFinish();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p id="element-to-select">Test for DOM.inspect.</p>
+</body>
+</html>

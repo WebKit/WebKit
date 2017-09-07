@@ -32,6 +32,11 @@ WI.DOMObserver = class DOMObserver
         WI.domTreeManager._documentUpdated();
     }
 
+    inspect(nodeId)
+    {
+        WI.domTreeManager.inspectElement(nodeId);
+    }
+
     setChildNodes(parentId, payloads)
     {
         WI.domTreeManager._setChildNodes(parentId, payloads);

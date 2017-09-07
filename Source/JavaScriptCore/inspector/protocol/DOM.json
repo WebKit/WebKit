@@ -483,6 +483,13 @@
             "description": "Fired when <code>Document</code> has been totally updated. Node ids are no longer valid."
         },
         {
+            "name": "inspect",
+            "description": "Inspect a particular node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "Equivalent of Inspector.inspect but with a nodeId instead of a RemoteObject. Useful for augmented contexts." }
+            ]
+        },
+        {
             "name": "setChildNodes",
             "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids.",
             "parameters": [

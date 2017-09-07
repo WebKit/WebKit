@@ -1,0 +1,10 @@
+Test for DOM.inspect.
+
+
+== Running test suite: DOM.inspect
+-- Running test case: DOM.inspect.valid
+PASS: DOMNodeWasInspected event
+
+-- Running test case: DOM.inspect.invalid
+PASS: No error
+
