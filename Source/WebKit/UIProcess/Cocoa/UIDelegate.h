@@ -79,11 +79,7 @@ private:
 
     private:
         // API::UIClient
-        RefPtr<WebPageProxy> createNewPage(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&) final;
-        void createNewPageAsync(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final;
-        bool canCreateNewPageAsync() final;
-        RefPtr<WebPageProxy> createNewPageCommon(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler);
-
+        void createNewPage(WebPageProxy&, Ref<API::FrameInfo>&&, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, NavigationActionData&&, WTF::Function<void(RefPtr<WebPageProxy>&&)>&&) final;
         void close(WebPageProxy*) final;
         void fullscreenMayReturnToInline(WebPageProxy*) final;
         void didEnterFullscreen(WebPageProxy*) final;
