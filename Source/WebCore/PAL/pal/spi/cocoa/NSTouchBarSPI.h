@@ -28,9 +28,12 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AppKit/NSCandidateListTouchBarItem_Private.h>
-#import <AppKit/NSFunctionBar_Private.h>
 #import <AppKit/NSTextTouchBarItemController_WebKitSPI.h>
 #import <AppKit/NSTouchBar_Private.h>
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101300
+#import <AppKit/NSFunctionBar_Private.h>
+#endif
 
 #endif
 

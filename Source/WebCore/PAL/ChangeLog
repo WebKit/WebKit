@@ -1,3 +1,16 @@
+2017-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Mac] Stop importing NSFunctionBar_Private.h in NSTouchBarSPI.h on the macOS 10.13+ SDK
+        https://bugs.webkit.org/show_bug.cgi?id=176521
+        <rdar://problem/34296289>
+
+        Reviewed by Andy Estes.
+
+        We don't need to import NSFunctionBar_Private.h when building against the macOS 10.13 SDK, or later. Guard this
+        header import with an SDK version check.
+
+        * pal/spi/cocoa/NSTouchBarSPI.h:
+
 2017-09-06  Eric Carlson  <eric.carlson@apple.com>
 
         Require LoggingHelper overrides to provide identifier
