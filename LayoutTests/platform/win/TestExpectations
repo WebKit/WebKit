@@ -4127,6 +4127,7 @@ imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https
 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Skip ]
 
 # Flaky tests on Windows:
+webkit.org/b/176564 http/tests/misc/delete-frame-during-readystatechange.html [ Pass Crash ]
 webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176465 http/tests/preload/single_download_preload.html [ Pass Failure Crash ]
 
