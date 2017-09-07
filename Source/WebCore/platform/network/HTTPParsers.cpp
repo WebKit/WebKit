@@ -478,12 +478,18 @@ ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header
     return ContentTypeOptionsNone;
 }
 
+// For example: "HTTP/1.1 200 OK" => "OK".
+// Note that HTTP/2 does not include a reason phrase, so we return the empty atom.
 AtomicString extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
 {
     StringView view = statusLine;
     size_t spacePos = view.find(' ');
+
     // Remove status code from the status line.
     spacePos = view.find(' ', spacePos + 1);
+    if (spacePos == notFound)
+        return emptyAtom();
+
     return view.substring(spacePos + 1).toAtomicString();
 }
 

@@ -1,3 +1,22 @@
+2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses
+        https://bugs.webkit.org/show_bug.cgi?id=176479
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/wpt/fetch/resources/status-garbage.asis: Added.
+        * http/wpt/fetch/resources/status-normal.txt: Added.
+        * http/wpt/fetch/resources/status-with-message.asis: Added.
+        * http/wpt/fetch/resources/status-without-message.asis: Added.
+        Various text HTTP responses with different status lines.
+
+        * http/wpt/fetch/response-status-text-expected.txt: Added.
+        * http/wpt/fetch/response-status-text.html: Added.
+        Test the Fetch Response's status / statusText for different HTTP status lines.
+        The status without a message is similiar to HTTP/2 because HTTP/2 only
+        has a :status pseudo-header and lacks a reason phrase.
+
 2017-09-06  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcess Cache and Caches should be cleared when the last related WebProcess Cache or CacheStorage is destroyed
