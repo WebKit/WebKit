@@ -148,6 +148,17 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
+#if PLATFORM(MAC)
+static bool needsArbitraryUserGestureAutoplayQuirk(const Document& document)
+{
+    if (!document.settings().needsSiteSpecificQuirks())
+        return false;
+
+    auto host = document.url().host();
+    return equalLettersIgnoringASCIICase(host, "washingtonpost.com") || host.endsWithIgnoringASCIICase(".washingtonpost.com");
+}
+#endif // PLATFORM(MAC)
+
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
     if (element.document().isMediaDocument() && !element.document().ownerElement())
@@ -177,6 +188,9 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
     // FIXME <https://webkit.org/b/175856>: Make this dependent on a runtime flag for desktop autoplay restrictions.
     const auto& topDocument = element.document().topDocument();
     if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.settings().needsSiteSpecificQuirks())
+        return { };
+
+    if (element.document().hasHadUserInteraction() && needsArbitraryUserGestureAutoplayQuirk(element.document()))
         return { };
 #endif
 
