@@ -779,3 +779,5 @@ webkit.org/b/176054 [ Sierra ElCapitan ] media/video-controls-no-display-with-te
 
 webkit.org/b/169238 fast/events/mouse-cursor-no-mousemove.html [ Pass Failure ]
 
+webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass Failure ]
+
