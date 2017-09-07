@@ -1,3 +1,34 @@
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline more tests after Freetype version bump in r221670.
+
+        * platform/gtk/editing/execCommand/print-expected.png:
+        * platform/gtk/editing/execCommand/print-expected.txt:
+        * platform/gtk/fast/forms/large-toggle-elements-expected.png:
+        * platform/gtk/fast/forms/large-toggle-elements-expected.txt:
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.png:
+        * platform/gtk/fast/forms/number/number-size-spinbutton-nocover-expected.txt:
+        * platform/gtk/fast/frames/scrolling-iframe-out-of-viewport-expected.png:
+        * platform/gtk/fast/frames/scrolling-iframe-out-of-viewport-expected.txt:
+        * platform/gtk/fonts/complex-text-shadows-expected.png:
+        * platform/gtk/fonts/complex-text-shadows-expected.txt:
+        * platform/gtk/fonts/custom-font-missing-glyphs-expected.png:
+        * platform/gtk/fonts/custom-font-missing-glyphs-expected.txt:
+        * platform/gtk/fonts/font-face-with-complex-text-expected.png:
+        * platform/gtk/fonts/font-face-with-complex-text-expected.txt:
+        * platform/gtk/fonts/font-with-no-valid-encoding-expected.png:
+        * platform/gtk/fonts/font-with-no-valid-encoding-expected.txt:
+        * platform/gtk/fonts/fontconfig-aliasing-settings-expected.png:
+        * platform/gtk/fonts/fontconfig-aliasing-settings-expected.txt:
+        * platform/gtk/fonts/non-bmp-characters-expected.png:
+        * platform/gtk/fonts/non-bmp-characters-expected.txt:
+        * platform/gtk/fonts/xsettings_antialias_settings-expected.png:
+        * platform/gtk/fonts/xsettings_antialias_settings-expected.txt:
+        * platform/gtk/fonts/zero-pixel-sized-fonts-expected.png:
+        * platform/gtk/fonts/zero-pixel-sized-fonts-expected.txt:
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.png:
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.txt:
+
 2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses
