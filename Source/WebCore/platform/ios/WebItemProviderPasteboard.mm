@@ -413,9 +413,10 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
     return numberOfFiles;
 }
 
-static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *suggestedName)
+static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, NSString *suggestedName, NSString *typeIdentifier)
 {
-    static NSString *defaultDataInteractionFileName = @"file";
+    static NSString *defaultDropFolderName = @"folder";
+    static NSString *defaultDropFileName = @"file";
     static NSString *dataInteractionDirectoryPrefix = @"data-interaction";
     if (!url)
         return nil;
@@ -424,11 +425,18 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
     if (!temporaryDataInteractionDirectory)
         return nil;
 
-    suggestedName = suggestedName ?: defaultDataInteractionFileName;
-    if (![suggestedName containsString:@"."])
+    NSURL *destination = nil;
+    BOOL isFolder = UTTypeConformsTo((CFStringRef)typeIdentifier, kUTTypeFolder);
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+
+    if (!suggestedName)
+        suggestedName = url.lastPathComponent ?: (isFolder ? defaultDropFolderName : defaultDropFileName);
+
+    if (![suggestedName containsString:@"."] && !isFolder)
         suggestedName = [suggestedName stringByAppendingPathExtension:url.pathExtension];
 
-    return [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName ?: url.lastPathComponent]];
+    destination = [NSURL fileURLWithPath:[temporaryDataInteractionDirectory stringByAppendingPathComponent:suggestedName]];
+    return [fileManager linkItemAtURL:url toURL:destination error:nil] ? destination : nil;
 }
 
 - (NSString *)typeIdentifierToLoadForRegisteredTypeIdentfiers:(NSArray<NSString *> *)registeredTypeIdentifiers
@@ -484,14 +492,13 @@ static NSURL *temporaryFileURLForDataInteractionContent(NSURL *url, NSString *su
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
         dispatch_group_enter(fileLoadingGroup.get());
         dispatch_group_enter(synchronousFileLoadingGroup.get());
-        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[synchronousFileLoadingGroup, setFileURLsLock, indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *error) {
+        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[synchronousFileLoadingGroup, setFileURLsLock, indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *) {
             // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
             // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
             // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
-            RetainPtr<NSURL> destinationURL = temporaryFileURLForDataInteractionContent(url, suggestedName.get());
-            if (destinationURL && !error && [[NSFileManager defaultManager] linkItemAtURL:url toURL:destinationURL.get() error:nil]) {
+            if (NSURL *destination = linkTemporaryItemProviderFilesToDropStagingDirectory(url, suggestedName.get(), typeIdentifier.get())) {
                 [setFileURLsLock lock];
-                [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destinationURL.get() forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
+                [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destination forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
                 [setFileURLsLock unlock];
             }
             dispatch_group_leave(fileLoadingGroup.get());

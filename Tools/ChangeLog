@@ -1,3 +1,31 @@
+2017-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [Directory Upload] Extend drag and drop support to iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176492
+        <rdar://problem/34291584>
+
+        Reviewed by Tim Horton.
+
+        Adds two new iOS drag and drop unit tests, which both exercise the DataTransferItem.webKitGetAsEntry codepath
+        upon drop. (...)GetFolderAsEntry creates a new folder in the temporary directory and uses it to generate an item
+        provider. This item provider is then dropped over a custom drop handling element, which writes information about
+        the exposed FileSystemEntries into a textarea. (...)ExternalSourceDataTransferItemGetPlainTextFileAsEntry does
+        something similar, except that it only drops a plain text file instead.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DataTransferItem-getAsEntry.html: Added.
+
+        Introduce a new test page that dumps information about DataTransferItems' file system entries upon drop.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (runTestWithTemporaryTextFile):
+        (runTestWithTemporaryFolder):
+
+        Introduce helpers to set up and tear down temporary files and folders over the duration of a test.
+
+        (TestWebKitAPI::setUpTestWebViewForDataTransferItems):
+        (TestWebKitAPI::TEST):
+
 2017-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should check recursion

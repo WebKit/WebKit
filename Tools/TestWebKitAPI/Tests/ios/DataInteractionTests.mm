@@ -34,6 +34,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
 #import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WebItemProviderPasteboard.h>
@@ -162,6 +163,55 @@ static void checkDragCaretRectIsContainedInRect(CGRect caretRect, CGRect contain
     EXPECT_TRUE(contained);
     if (!contained)
         NSLog(@"Expected caret rect: %@ to fit within container rect: %@", NSStringFromCGRect(caretRect), NSStringFromCGRect(containerRect));
+}
+
+static void runTestWithTemporaryTextFile(void(^runTest)(NSURL *fileURL))
+{
+    NSString *fileName = [NSString stringWithFormat:@"drag-drop-text-file-%@.txt", [NSUUID UUID].UUIDString];
+    RetainPtr<NSURL> temporaryFile = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:fileName] isDirectory:NO];
+    [[NSFileManager defaultManager] removeItemAtURL:temporaryFile.get() error:nil];
+
+    NSError *error = nil;
+    [@"This is a tiny blob of text." writeToURL:temporaryFile.get() atomically:YES encoding:NSUTF8StringEncoding error:&error];
+
+    if (error)
+        NSLog(@"Error writing temporary file: %@", error);
+
+    @try {
+        runTest(temporaryFile.get());
+    } @finally {
+        [[NSFileManager defaultManager] removeItemAtURL:temporaryFile.get() error:nil];
+    }
+}
+
+static void runTestWithTemporaryFolder(void(^runTest)(NSURL *folderURL))
+{
+    NSString *folderName = [NSString stringWithFormat:@"some.directory-%@", [NSUUID UUID].UUIDString];
+    RetainPtr<NSURL> temporaryFolder = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:folderName] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtURL:temporaryFolder.get() error:nil];
+
+    NSError *error = nil;
+    NSFileManager *defaultManager = [NSFileManager defaultManager];
+    [defaultManager createDirectoryAtURL:temporaryFolder.get() withIntermediateDirectories:NO attributes:nil error:&error];
+    [UIImagePNGRepresentation(testIconImage()) writeToURL:[temporaryFolder.get() URLByAppendingPathComponent:@"icon.png" isDirectory:NO] atomically:YES];
+    [testZIPArchive() writeToURL:[temporaryFolder.get() URLByAppendingPathComponent:@"archive.zip" isDirectory:NO] atomically:YES];
+
+    NSURL *firstSubdirectory = [temporaryFolder.get() URLByAppendingPathComponent:@"subdirectory1" isDirectory:YES];
+    [defaultManager createDirectoryAtURL:firstSubdirectory withIntermediateDirectories:NO attributes:nil error:&error];
+    [@"I am a text file in the first subdirectory." writeToURL:[firstSubdirectory URLByAppendingPathComponent:@"text-file-1.txt" isDirectory:NO] atomically:YES encoding:NSUTF8StringEncoding error:&error];
+
+    NSURL *secondSubdirectory = [temporaryFolder.get() URLByAppendingPathComponent:@"subdirectory2" isDirectory:YES];
+    [defaultManager createDirectoryAtURL:secondSubdirectory withIntermediateDirectories:NO attributes:nil error:&error];
+    [@"I am a text file in the second subdirectory." writeToURL:[secondSubdirectory URLByAppendingPathComponent:@"text-file-2.txt" isDirectory:NO] atomically:YES encoding:NSUTF8StringEncoding error:&error];
+
+    if (error)
+        NSLog(@"Error writing temporary file: %@", error);
+
+    @try {
+        runTest(temporaryFolder.get());
+    } @finally {
+        [[NSFileManager defaultManager] removeItemAtURL:temporaryFolder.get() error:nil];
+    }
 }
 
 namespace TestWebKitAPI {
@@ -875,6 +925,88 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
 
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
+}
+
+static RetainPtr<TestWKWebView> setUpTestWebViewForDataTransferItems()
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransferItem-getAsEntry"];
+
+    auto preferences = (WKPreferencesRef)[[webView configuration] preferences];
+    WKPreferencesSetDataTransferItemsEnabled(preferences, true);
+    WKPreferencesSetDirectoryUploadEnabled(preferences, true);
+
+    return webView;
+}
+
+TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
+{
+    NSArray<NSString *> *expectedOutput = @[
+        @"Found data transfer item (kind: 'string', type: 'text/plain')",
+        @"Found data transfer item (kind: 'file', type: '')",
+        @"DIR: /somedirectory",
+        @"FILE: /somedirectory/icon.png ('image/png', 42130 bytes)",
+        @"DIR: /somedirectory/subdirectory1",
+        @"FILE: /somedirectory/subdirectory1/text-file-1.txt ('text/plain', 43 bytes)",
+        @"FILE: /somedirectory/archive.zip ('application/zip', 988 bytes)",
+        @"DIR: /somedirectory/subdirectory2",
+        @"FILE: /somedirectory/subdirectory2/text-file-2.txt ('text/plain', 44 bytes)",
+        @""
+    ];
+
+    auto webView = setUpTestWebViewForDataTransferItems();
+    __block bool done = false;
+    [webView performAfterReceivingMessage:@"dropped" action:^() {
+        done = true;
+    }];
+
+    runTestWithTemporaryFolder(^(NSURL *folderURL) {
+        auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+        [itemProvider setSuggestedName:@"somedirectory"];
+        [itemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeFolder fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFolderURL = retainPtr(folderURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+            completionHandler(capturedFolderURL.get(), NO, nil);
+            return nil;
+        }];
+
+        auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+        [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
+        [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+    });
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ([expectedOutput componentsJoinedByString:@"\n"], [webView stringByEvaluatingJavaScript:@"output.value"]);
+}
+
+TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
+{
+    NSArray<NSString *> *expectedOutput = @[
+        @"Found data transfer item (kind: 'string', type: 'text/plain')",
+        @"Found data transfer item (kind: 'file', type: 'text/plain')",
+        @"FILE: /foo.txt ('text/plain', 28 bytes)",
+        @""
+    ];
+
+    auto webView = setUpTestWebViewForDataTransferItems();
+    __block bool done = false;
+    [webView performAfterReceivingMessage:@"dropped" action:^() {
+        done = true;
+    }];
+
+    runTestWithTemporaryTextFile(^(NSURL *fileURL) {
+        auto itemProvider = adoptNS([[NSItemProvider alloc] init]);
+        [itemProvider setSuggestedName:@"foo"];
+        [itemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[capturedFileURL = retainPtr(fileURL)](FileLoadCompletionBlock completionHandler) -> NSProgress * {
+            completionHandler(capturedFileURL.get(), NO, nil);
+            return nil;
+        }];
+
+        auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+        [dataInteractionSimulator setExternalItemProviders:@[ itemProvider.get() ]];
+        [dataInteractionSimulator runFrom:CGPointMake(50, 50) to:CGPointMake(150, 50)];
+    });
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_WK_STREQ([expectedOutput componentsJoinedByString:@"\n"], [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
 TEST(DataInteractionTests, ExternalSourceOverrideDropInsertURL)
