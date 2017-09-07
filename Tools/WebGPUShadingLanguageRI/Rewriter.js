@@ -27,9 +27,10 @@
 // FIXME: This should have sensible behavior when it encounters definitions that it cannot handle. Right
 // now we are hackishly preventing this by wrapping things in TypeRef. That's probably wrong.
 // https://bugs.webkit.org/show_bug.cgi?id=176208
-class Rewriter {
+class Rewriter extends VisitorBase {
     constructor()
     {
+        super();
         this._mapping = new Map();
     }
     

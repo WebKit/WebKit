@@ -1,3 +1,32 @@
+2017-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL Node.prototype.visit should probably do memoization
+        https://bugs.webkit.org/show_bug.cgi?id=176286
+
+        Reviewed by Mark Lam.
+        
+        Visitors can sometimes revisit the same thing. For example, we may visit a FuncDef because it belongs
+        to Program and we may visit it again because a CallExpression resolved to it. That's just plain silly.
+        
+        Our tests don't currently do this, so it's not a performance problem, yet. Also, we usually avoid that
+        kind of repetitive visiting inside the visitor implementations. But as far as I can tell, this is an
+        emergent property rather than a deliberate design.
+        
+        This change just makes the policy super explicit. If you visit something more than once with the same
+        visitor, you get the same answer back. This is achieved by means of a memo table inside each visitor.
+        
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.visit):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor):
+        * WebGPUShadingLanguageRI/VisitorBase.js: Added.
+        (VisitorBase):
+
 2017-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Directory Upload] Extend drag and drop support to iOS

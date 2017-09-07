@@ -24,9 +24,10 @@
  */
 "use strict";
 
-class Visitor {
+class Visitor extends VisitorBase {
     constructor()
     {
+        super();
     }
     
     visitProgram(node)

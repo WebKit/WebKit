@@ -76,7 +76,7 @@ class FuncInstantiator {
         
         let substitution = new InstantiationSubstitution(func.typeParameters, typeArguments);
         
-        class Instantiate {
+        class Instantiate extends VisitorBase {
             visitFuncDef(func)
             {
                 return new FuncDef(

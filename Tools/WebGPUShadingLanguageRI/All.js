@@ -29,6 +29,7 @@ load("Type.js");
 load("ReferenceType.js");
 load("Value.js");
 load("Expression.js");
+load("VisitorBase.js");
 load("Rewriter.js");
 load("Visitor.js");
 
