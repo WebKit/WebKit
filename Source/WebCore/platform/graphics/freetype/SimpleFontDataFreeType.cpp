@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-// FIXME: Remove this ifdef once WPE upgrqades to Freetype 2.8 and removes the patch for 2.4.11.
+// FIXME: Remove this ifdef once WPE upgrades to Freetype 2.8 and removes the patch for 2.4.11.
 #if !PLATFORM(WPE)
 static RefPtr<cairo_scaled_font_t> scaledFontWithoutMetricsHinting(cairo_scaled_font_t* scaledFont)
 {
@@ -75,7 +75,7 @@ void Font::platformInit()
         return;
 
     ASSERT(m_platformData.scaledFont());
-    // FIXME: Remove this ifdef once WPE upgrqades to Freetype 2.8 and removes the patch for 2.4.11.
+    // FIXME: Remove this ifdef once WPE upgrades to Freetype 2.8 and removes the patch for 2.4.11.
 #if PLATFORM(WPE)
     cairo_font_extents_t fontExtents;
     cairo_scaled_font_extents(m_platformData.scaledFont(), &fontExtents);
@@ -115,12 +115,7 @@ void Font::platformInit()
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);
     m_fontMetrics.setCapHeight(capHeight);
-    // FIXME: Remove this ifdef once WPE upgrqades to Freetype 2.8 and removes the patch for 2.4.11.
-#if PLATFORM(WPE)
     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
-#else
-    m_fontMetrics.setLineSpacing(ascent + descent + lineGap);
-#endif
     m_fontMetrics.setLineGap(lineGap);
 
     cairo_text_extents_t textExtents;
