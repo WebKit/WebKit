@@ -232,7 +232,7 @@ public:
     void setEnhancedAccessibility(bool);
     
     // Downloads.
-    DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&);
+    DownloadProxy* createDownloadProxy(const WebCore::ResourceRequest&, WebPageProxy* originatingPage);
     API::DownloadClient& downloadClient() { return *m_downloadClient; }
 
     API::LegacyContextHistoryClient& historyClient() { return *m_historyClient; }

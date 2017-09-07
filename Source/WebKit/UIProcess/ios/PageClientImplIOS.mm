@@ -260,11 +260,8 @@ void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useC
     [m_contentView _didCommitLoadForMainFrame];
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+void PageClientImpl::handleDownloadRequest(DownloadProxy*)
 {
-    ASSERT_ARG(download, download);
-    ASSERT([download->wrapper() isKindOfClass:[_WKDownload class]]);
-    [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
 }
 
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)

@@ -92,6 +92,16 @@ void DownloadProxy::processDidClose()
     m_processPool->downloadClient().processDidCrash(m_processPool.get(), this);
 }
 
+WebPageProxy* DownloadProxy::originatingPage() const
+{
+    return m_originatingPage.get();
+}
+
+void DownloadProxy::setOriginatingPage(WebPageProxy* page)
+{
+    m_originatingPage = page ? page->createWeakPtr() : nullptr;
+}
+
 void DownloadProxy::didStart(const ResourceRequest& request, const String& suggestedFilename)
 {
     m_request = request;

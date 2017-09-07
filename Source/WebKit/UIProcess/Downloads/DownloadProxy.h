@@ -33,6 +33,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 
 namespace API {
 class Data;
@@ -69,6 +70,9 @@ public:
     void didReceiveDownloadProxyMessage(IPC::Connection&, IPC::Decoder&);
     void didReceiveSyncDownloadProxyMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&);
 
+    WebPageProxy* originatingPage() const;
+    void setOriginatingPage(WebPageProxy*);
+
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebProcessPool&, const WebCore::ResourceRequest&);
 
@@ -103,6 +107,8 @@ private:
     RefPtr<API::Data> m_resumeData;
     WebCore::ResourceRequest m_request;
     String m_suggestedFilename;
+
+    WeakPtr<WebPageProxy> m_originatingPage;
 };
 
 } // namespace WebKit

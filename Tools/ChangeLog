@@ -1,3 +1,20 @@
+2017-09-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add C API to retrieve the originating page of a WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=176557
+        <rdar://problem/34314776>
+
+        Reviewed by Alex Christensen.
+
+        Add layout test coverage for both the ObjC and C API.
+
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuDownload.mm:
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/Tests/WebKitCocoa/Download.mm:
+        (-[RedirectedDownloadDelegate _downloadDidStart:]):
+        (TEST):
+
 2017-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         WSL Node.prototype.visit should probably do memoization

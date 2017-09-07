@@ -42,6 +42,7 @@ WK_EXPORT uint64_t WKDownloadGetID(WKDownloadRef download);
 WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
 WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
 WK_EXPORT void WKDownloadCancel(WKDownloadRef download);
+WK_EXPORT WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download);
 
 #ifdef __cplusplus
 }

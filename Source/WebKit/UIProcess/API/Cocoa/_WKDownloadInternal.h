@@ -30,7 +30,6 @@
 #import "WKObject.h"
 
 @interface _WKDownload () <WKObject>
-@property (nonatomic, weak) WKWebView *originatingWebView;
 @end
 
 #endif // WK_API_ENABLED

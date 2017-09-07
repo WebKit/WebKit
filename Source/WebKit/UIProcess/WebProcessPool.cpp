@@ -995,7 +995,7 @@ void WebProcessPool::pageRemovedFromProcess(WebPageProxy& page)
 
 DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const ResourceRequest& request, const String& suggestedFilename)
 {
-    DownloadProxy* downloadProxy = createDownloadProxy(request);
+    auto* downloadProxy = createDownloadProxy(request, initiatingPage);
     PAL::SessionID sessionID = initiatingPage ? initiatingPage->sessionID() : PAL::SessionID::defaultSessionID();
 
     if (initiatingPage)
@@ -1018,7 +1018,7 @@ DownloadProxy* WebProcessPool::download(WebPageProxy* initiatingPage, const Reso
 
 DownloadProxy* WebProcessPool::resumeDownload(const API::Data* resumeData, const String& path)
 {
-    DownloadProxy* downloadProxy = createDownloadProxy(ResourceRequest());
+    auto* downloadProxy = createDownloadProxy(ResourceRequest(), nullptr);
 
     SandboxExtension::Handle sandboxExtensionHandle;
     if (!path.isEmpty())
@@ -1206,9 +1206,11 @@ void WebProcessPool::setDefaultRequestTimeoutInterval(double timeoutInterval)
     sendToAllProcesses(Messages::WebProcess::SetDefaultRequestTimeoutInterval(timeoutInterval));
 }
 
-DownloadProxy* WebProcessPool::createDownloadProxy(const ResourceRequest& request)
+DownloadProxy* WebProcessPool::createDownloadProxy(const ResourceRequest& request, WebPageProxy* originatingPage)
 {
-    return ensureNetworkProcess().createDownloadProxy(request);
+    auto downloadProxy = ensureNetworkProcess().createDownloadProxy(request);
+    downloadProxy->setOriginatingPage(originatingPage);
+    return downloadProxy;
 }
 
 void WebProcessPool::addMessageReceiver(IPC::StringReference messageReceiverName, IPC::MessageReceiver& messageReceiver)

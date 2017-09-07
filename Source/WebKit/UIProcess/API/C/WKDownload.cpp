@@ -30,6 +30,7 @@
 #include "APIURLRequest.h"
 #include "DownloadProxy.h"
 #include "WKAPICast.h"
+#include "WebPageProxy.h"
 
 using namespace WebKit;
 
@@ -56,4 +57,9 @@ WKDataRef WKDownloadGetResumeData(WKDownloadRef download)
 void WKDownloadCancel(WKDownloadRef download)
 {
     return toImpl(download)->cancel();
+}
+
+WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download)
+{
+    return toAPI(toImpl(download)->originatingPage());
 }

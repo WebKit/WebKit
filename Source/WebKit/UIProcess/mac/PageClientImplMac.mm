@@ -273,13 +273,8 @@ void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& 
 {
 }
 
-void PageClientImpl::handleDownloadRequest(DownloadProxy* download)
+void PageClientImpl::handleDownloadRequest(DownloadProxy*)
 {
-    ASSERT_ARG(download, download);
-#if WK_API_ENABLED
-    ASSERT([download->wrapper() isKindOfClass:[_WKDownload class]]);
-    [static_cast<_WKDownload *>(download->wrapper()) setOriginatingWebView:m_webView];
-#endif
 }
 
 void PageClientImpl::didChangeContentSize(const WebCore::IntSize& newSize)

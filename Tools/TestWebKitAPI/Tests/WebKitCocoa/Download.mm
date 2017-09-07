@@ -49,6 +49,7 @@ static bool isDone;
 static bool hasReceivedRedirect;
 static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+static WKWebView* expectedOriginatingWebView;
 
 @interface DownloadDelegate : NSObject <_WKDownloadDelegate>
 @end
@@ -449,6 +450,12 @@ TEST(_WKDownload, DownloadRequestBlobURL)
     String _destinationPath;
 }
 
+- (void)_downloadDidStart:(_WKDownload *)download
+{
+    EXPECT_NOT_NULL(download);
+    EXPECT_EQ(expectedOriginatingWebView, download.originatingWebView);
+}
+
 - (NSString *)_download:(_WKDownload *)download decideDestinationWithSuggestedFilename:(NSString *)filename allowOverwrite:(BOOL *)allowOverwrite
 {
     WebCore::PlatformFileHandle fileHandle;
@@ -492,6 +499,7 @@ TEST(_WKDownload, RedirectedDownload)
 
     [webView synchronouslyLoadHTMLString:@"<a style='display: block; height: 100%; width: 100%' href='http://redirect/?pass'>test</a>"];
 
+    expectedOriginatingWebView = webView.get();
     NSPoint clickPoint = NSMakePoint(100, 100);
     [[webView hitTest:clickPoint] mouseDown:[NSEvent mouseEventWithType:NSEventTypeRightMouseDown location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];
     [[webView hitTest:clickPoint] mouseUp:[NSEvent mouseEventWithType:NSEventTypeRightMouseUp location:clickPoint modifierFlags:0 timestamp:0 windowNumber:[window windowNumber] context:nil eventNumber:0 clickCount:1 pressure:1]];

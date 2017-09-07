@@ -92,6 +92,7 @@ class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     WeakPtr() : m_ref(WeakReference<T>::create(nullptr)) { }
+    WeakPtr(std::nullptr_t) : m_ref(WeakReference<T>::create(nullptr)) { }
     WeakPtr(const WeakPtr& o) : m_ref(o.m_ref.copyRef()) { }
     template<typename U> WeakPtr(const WeakPtr<U>& o) : m_ref(o.m_ref.copyRef()) { }
 

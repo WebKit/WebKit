@@ -1,3 +1,37 @@
+2017-09-07  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add C API to retrieve the originating page of a WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=176557
+        <rdar://problem/34314776>
+
+        Reviewed by Alex Christensen.
+
+        Add C API to retrieve the original page of a WKDownload. This is the C API equivalent to
+        _WKDownload.originatingWebView which already exists in ObjC. The pointer is weak so as
+        to not keep alive the page for the duration of the download.
+
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadGetOriginatingPage):
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload originatingWebView]):
+        * UIProcess/API/Cocoa/_WKDownloadInternal.h:
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::originatingPage const):
+        (WebKit::DownloadProxy::setOriginatingPage):
+        * UIProcess/Downloads/DownloadProxy.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::download):
+        (WebKit::WebProcessPool::resumeDownload):
+        (WebKit::WebProcessPool::createDownloadProxy):
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+        * UIProcess/mac/PageClientImplMac.mm:
+        (WebKit::PageClientImpl::handleDownloadRequest):
+
 2017-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Clean up Geolocation request handling
