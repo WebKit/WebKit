@@ -33,6 +33,7 @@ class TypeVariable extends Type {
         this._protocol = protocol;
     }
     
+    get origin() { return this._origin; }
     get name() { return this._name; }
     get protocol() { return this._protocol; }
     

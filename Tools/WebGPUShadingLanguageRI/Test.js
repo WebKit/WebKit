@@ -989,6 +989,146 @@ function TEST_doubleNot()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
 }
 
+function TEST_protocolMonoSigPolyDef()
+{
+    let program = doPrep(`
+        struct IntAnd<T> {
+            int first;
+            T second;
+        }
+        IntAnd<T> intAnd<T>(int first, T second)
+        {
+            IntAnd<T> result;
+            result.first = first;
+            result.second = second;
+            return result;
+        }
+        protocol IntAndable {
+            IntAnd<int> intAnd(IntAndable, int);
+        }
+        int foo<T:IntAndable>(T first, int second)
+        {
+            IntAnd<int> result = intAnd(first, second);
+            return result.first + result.second;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
+}
+
+function TEST_protocolPolySigPolyDef()
+{
+    let program = doPrep(`
+        struct IntAnd<T> {
+            int first;
+            T second;
+        }
+        IntAnd<T> intAnd<T>(int first, T second)
+        {
+            IntAnd<T> result;
+            result.first = first;
+            result.second = second;
+            return result;
+        }
+        protocol IntAndable {
+            IntAnd<T> intAnd<T>(IntAndable, T);
+        }
+        int foo<T:IntAndable>(T first, int second)
+        {
+            IntAnd<int> result = intAnd(first, second);
+            return result.first + result.second;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
+}
+
+function TEST_protocolDoublePolySigDoublePolyDef()
+{
+    let program = doPrep(`
+        struct IntAnd<T, U> {
+            int first;
+            T second;
+            U third;
+        }
+        IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
+        {
+            IntAnd<T, U> result;
+            result.first = first;
+            result.second = second;
+            result.third = third;
+            return result;
+        }
+        protocol IntAndable {
+            IntAnd<T, U> intAnd<T, U>(IntAndable, T, U);
+        }
+        int foo<T:IntAndable>(T first, int second, int third)
+        {
+            IntAnd<int, int> result = intAnd(first, second, third);
+            return result.first + result.second + result.third;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
+}
+
+function TEST_protocolDoublePolySigDoublePolyDefExplicit()
+{
+    let program = doPrep(`
+        struct IntAnd<T, U> {
+            int first;
+            T second;
+            U third;
+        }
+        IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
+        {
+            IntAnd<T, U> result;
+            result.first = first;
+            result.second = second;
+            result.third = third;
+            return result;
+        }
+        protocol IntAndable {
+            IntAnd<T, U> intAnd<T, U>(IntAndable, T, U);
+        }
+        int foo<T:IntAndable>(T first, int second, int third)
+        {
+            IntAnd<int, int> result = intAnd<int, int>(first, second, third);
+            return result.first + result.second + result.third;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
+}
+
+function TEST_protocolMonoPolySigDoublePolyDefExplicit()
+{
+    checkFail(
+        () => {
+            let program = doPrep(`
+                struct IntAnd<T, U> {
+                    int first;
+                    T second;
+                    U third;
+                }
+                IntAnd<T, U> intAnd<T, U>(int first, T second, U third)
+                {
+                    IntAnd<T, U> result;
+                    result.first = first;
+                    result.second = second;
+                    result.third = third;
+                    return result;
+                }
+                protocol IntAndable {
+                    IntAnd<T, int> intAnd<T>(IntAndable, T, int);
+                }
+                int foo<T:IntAndable>(T first, int second, int third)
+                {
+                    IntAnd<int, int> result = intAnd<int>(first, second, third);
+                    return result.first + result.second + result.third;
+                }
+            `);
+            callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]);
+        },
+        (e) => e instanceof WTypeError);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

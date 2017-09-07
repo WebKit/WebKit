@@ -1,3 +1,26 @@
+2017-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        [WSL] Rationalize how protocol inheritance deals with type parameters
+        https://bugs.webkit.org/show_bug.cgi?id=176334
+
+        Reviewed by Mark Lam.
+        
+        This adds a bunch of tests for structs, protocols, and functions interacting in interesting
+        ways. The most complex of these tests triggers the case where the protocol contains a function
+        with one type parameter and the real function has more than one. This should give a WTypeError,
+        and now it does.
+        
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl.prototype.hasHeir): Fix the handling of a mismatch of number of type parameters by actually passing the type parameters and then correctly handling the error.
+        * WebGPUShadingLanguageRI/Test.js: Add a bunch of tests for this case and a lot of other protocol cases.
+        (TEST_protocolMonoSigPolyDef):
+        (TEST_protocolPolySigPolyDef):
+        (TEST_protocolDoublePolySigDoublePolyDef):
+        (TEST_protocolDoublePolySigDoublePolyDefExplicit):
+        (TEST_protocolMonoPolySigDoublePolyDefExplicit):
+        * WebGPUShadingLanguageRI/TypeVariable.js:
+        (TypeVariable.prototype.get origin): This wasn't implemented before, which made error reporting harder.
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Dashboard test is failing.

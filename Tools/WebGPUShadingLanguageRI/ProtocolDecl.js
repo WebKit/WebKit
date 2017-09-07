@@ -90,8 +90,8 @@ class ProtocolDecl extends Protocol {
         let signatures = this.signatures;
         for (let signature of signatures) {
             signature = signature.visit(substitution);
-            let overload = this.program.resolveFuncOverload(signature.name, [], signature.parameterTypes);
-            if (!overload)
+            let overload = this.program.resolveFuncOverload(signature.name, signature.typeParameters, signature.parameterTypes);
+            if (!overload.func)
                 return false;
             
             let substitutedReturnType = overload.func.returnType.substituteToUnification(
