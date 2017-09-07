@@ -1,3 +1,22 @@
+2017-09-06  Dean Jackson  <dino@apple.com>
+
+        [WebGL] accelerated texImage2D for video doesn't respect flipY
+        https://bugs.webkit.org/show_bug.cgi?id=176491
+        <rdar://problem/33833511>
+
+        Reviewed by Jer Noble.
+
+        Test that exercises UNPACK_FLIP_Y_WEBGL for video on the accelerated
+        path.
+
+        * fast/canvas/webgl/resources/orientation-flipped.mp4: Added.
+        * fast/canvas/webgl/resources/orientation-normal.mp4: Added.
+        * fast/canvas/webgl/texImage2D-video-flipY-false-expected.txt: Added.
+        * fast/canvas/webgl/texImage2D-video-flipY-false.html: Added.
+        * fast/canvas/webgl/texImage2D-video-flipY-true-expected.txt: Added.
+        * fast/canvas/webgl/texImage2D-video-flipY-true.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         Mark imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html as slow.
