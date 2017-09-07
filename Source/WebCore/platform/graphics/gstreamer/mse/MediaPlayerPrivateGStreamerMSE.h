@@ -85,6 +85,10 @@ public:
 
     static bool supportsCodecs(const String& codecs);
 
+#if ENABLE(ENCRYPTED_MEDIA)
+    void attemptToDecryptWithInstance(const CDMInstance&) final;
+#endif
+
 private:
     static void getSupportedTypes(HashSet<String, ASCIICaseInsensitiveHash>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

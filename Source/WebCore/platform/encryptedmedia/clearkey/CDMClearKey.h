@@ -33,6 +33,7 @@
 #include "CDMFactory.h"
 #include "CDMInstance.h"
 #include "CDMPrivate.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -91,6 +92,17 @@ public:
     void storeRecordOfKeyUsage(const String&) override;
 
     const String& keySystem() const final;
+
+    struct Key {
+        KeyStatus status;
+        RefPtr<SharedBuffer> keyIDData;
+        RefPtr<SharedBuffer> keyValueData;
+    };
+
+    const Vector<Key>& keys() const { return m_keys; }
+
+private:
+    Vector<Key> m_keys;
 };
 
 } // namespace WebCore

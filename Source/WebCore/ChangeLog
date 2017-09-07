@@ -1,3 +1,28 @@
+2017-09-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Implement MediaPlayerPrivateGStreamerMSE::attempToDecryptWithInstance()
+        https://bugs.webkit.org/show_bug.cgi?id=176445
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement MediaPlayerPrivateGStreamerMSE::attempToDecryptWithInstance(), also
+        adding support for dispatching ClearKey keys into the append pipelines.
+
+        CDMInstanceClearKey::Key is added, containing key ID and value buffers as well
+        as the key status value. Vector of keys for a specific CDMInstance is
+        accessible through the CDMInstanceClearKey::keys() getter.
+
+        In MediaPlayerPrivateGStreamerMSE, that Vector is retrieved and then iterated
+        over, constructing corresponding key ID and key value lists that contain
+        GstBuffer objects into which each key ID and value data is copied. Both lists
+        are then set on the 'drm-cipher-clearkey' structure before it's dispatched
+        against each AppendPipeline object.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerMSE::attemptToDecryptWithInstance):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+
 2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses
