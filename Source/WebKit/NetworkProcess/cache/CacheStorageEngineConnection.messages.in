@@ -21,11 +21,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> CacheStorageEngineConnection {
+    Reference(PAL::SessionID sessionID, uint64_t cacheIdentifier);
+    Dereference(PAL::SessionID sessionID, uint64_t cacheIdentifier);
+
     Open(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, String cacheName);
     Remove(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier);
     Caches(PAL::SessionID sessionID, uint64_t requestIdentifier, String origin, uint64_t updateCounter);
 
     ClearMemoryRepresentation(PAL::SessionID sessionID, String origin);
+    EngineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier);
 
     RetrieveRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL url);
     DeleteMatchingRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest request, struct WebCore::CacheQueryOptions options);

@@ -163,6 +163,26 @@ void WorkerCacheStorageConnection::doRetrieveCaches(uint64_t requestIdentifier, 
     });
 }
 
+void WorkerCacheStorageConnection::reference(uint64_t cacheIdentifier)
+{
+    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), cacheIdentifier](ScriptExecutionContext&) {
+        ASSERT(isMainThread());
+        ASSERT(m_mainThreadConnection);
+
+        m_mainThreadConnection->reference(cacheIdentifier);
+    });
+}
+
+void WorkerCacheStorageConnection::dereference(uint64_t cacheIdentifier)
+{
+    m_proxy.postTaskToLoader([this, protectedThis = makeRef(*this), cacheIdentifier](ScriptExecutionContext&) {
+        ASSERT(isMainThread());
+        ASSERT(m_mainThreadConnection);
+
+        m_mainThreadConnection->dereference(cacheIdentifier);
+    });
+}
+
 static inline Vector<CrossThreadRecordData> recordsDataFromRecords(const Vector<Record>& records)
 {
     Vector<CrossThreadRecordData> recordsData;

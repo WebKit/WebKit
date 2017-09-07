@@ -47,10 +47,12 @@ DOMCache::DOMCache(ScriptExecutionContext& context, String&& name, uint64_t iden
     , m_connection(WTFMove(connection))
 {
     suspendIfNeeded();
+    m_connection->reference(m_identifier);
 }
 
 DOMCache::~DOMCache()
 {
+    m_connection->dereference(m_identifier);
 }
 
 void DOMCache::match(RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)

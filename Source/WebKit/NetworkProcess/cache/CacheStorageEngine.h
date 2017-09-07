@@ -43,6 +43,9 @@ namespace WebKit {
 
 namespace CacheStorage {
 
+using CacheIdentifier = uint64_t;
+using LockCount = uint64_t;
+
 class Engine : public ThreadSafeRefCounted<Engine> {
 public:
     ~Engine();
@@ -61,6 +64,9 @@ public:
     void putRecords(uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void deleteMatchingRecords(uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
+    void lock(uint64_t cacheIdentifier);
+    void unlock(uint64_t cacheIdentifier);
+
     void writeFile(const String& filename, NetworkCache::Data&&, WebCore::DOMCacheEngine::CompletionCallback&&);
     void readFile(const String& filename, WTF::Function<void(const NetworkCache::Data&, int error)>&&);
     void removeFile(const String& filename);
@@ -69,7 +75,10 @@ public:
     const NetworkCache::Salt& salt() const { return m_salt.value(); }
     uint64_t nextCacheIdentifier() { return ++m_nextCacheIdentifier; }
 
+    void removeCaches(const String& origin);
+
     void clearMemoryRepresentation(const String& origin);
+    String representation();
 
 private:
     static Engine& defaultEngine();
@@ -92,6 +101,7 @@ private:
     String m_rootPath;
     RefPtr<WorkQueue> m_ioQueue;
     std::optional<NetworkCache::Salt> m_salt;
+    HashMap<CacheIdentifier, LockCount> m_cacheLocks;
 };
 
 } // namespace CacheStorage

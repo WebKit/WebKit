@@ -1,3 +1,60 @@
+2017-09-06  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcess Cache and Caches should be cleared when the last related WebProcess Cache or CacheStorage is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=176249
+
+        Reviewed by Alex Christensen.
+
+        CacheStorageEngineConnection will store the number of Caches references for its related WebProcess.
+        For a new reference, CacheStorageEngineConnection will notify its engine to lock the related Cache.
+        When the last reference is gone, CacheStorageEngineConnection will ask the engine to release the lock.
+
+        CacheStorageEngine will keep locks as a counter for each Cache object.
+        When the counter goes to zero, the engine asks the Cache to dispose itself.
+        Disposal is done by its parent Caches as only Caches knows whether the Cache is persistent or has been removed.
+
+        The Caches will remove the Cache from memory.
+        For removed caches, all information will be lost.
+        For caches that are not removed, they will keep their identifiers but all in-memory record information will be discarded.
+        If there is a need to reopen the Cache, it will need to read its information from the filesystem.
+        If the Caches has no longer any active Cache object, it will ask the engine to release itself.
+
+        WebProcess crashing is handled correctly as the CacheStorageEngineConnection will release its locks at destruction
+        time of the connection to the web process.
+
+        Adding the possiblity to grab an engine representation for test purposes.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::readCachesFromDisk):
+        (WebKit::CacheStorage::Engine::removeCaches):
+        (WebKit::CacheStorage::Engine::lock):
+        (WebKit::CacheStorage::Engine::unlock):
+        * NetworkProcess/cache/CacheStorageEngine.h:
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::Cache::Cache):
+        (WebKit::CacheStorage::Cache::dispose):
+        (WebKit::CacheStorage::Cache::clearMemoryRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        (WebKit::CacheStorage::Cache::isActive const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::Caches):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::dispose):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::create):
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::~CacheStorageEngineConnection):
+        (WebKit::CacheStorageEngineConnection::reference):
+        (WebKit::CacheStorageEngineConnection::dereference):
+        * NetworkProcess/cache/CacheStorageEngineConnection.h:
+        * NetworkProcess/cache/CacheStorageEngineConnection.messages.in:
+        * WebProcess/Cache/WebCacheStorageConnection.cpp:
+        (WebKit::WebCacheStorageConnection::reference):
+        (WebKit::WebCacheStorageConnection::dereference):
+        * WebProcess/Cache/WebCacheStorageConnection.h:
+
 2017-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's pinnedStateDidChange

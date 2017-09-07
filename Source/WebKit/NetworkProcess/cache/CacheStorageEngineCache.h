@@ -44,6 +44,7 @@ public:
 
     uint64_t identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
+    bool isActive() const { return m_state != State::Uninitialized; }
 
     Vector<WebCore::DOMCacheEngine::Record> retrieveRecords(const WebCore::URL&) const;
     WebCore::DOMCacheEngine::CacheInfo info() const { return { m_identifier, m_name }; }
@@ -51,6 +52,9 @@ public:
     void put(Vector<WebCore::DOMCacheEngine::Record>&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
     void remove(WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&, WebCore::DOMCacheEngine::RecordIdentifiersCallback&&);
 
+    void dispose();
+    void clearMemoryRepresentation();
+ 
 private:
     Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&);
     const Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&) const;

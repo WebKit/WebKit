@@ -600,6 +600,7 @@ public:
     String audioSessionCategory() const;
 
     void clearCacheStorageMemoryRepresentation();
+    void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);
 
 private:
     explicit Internals(Document&);

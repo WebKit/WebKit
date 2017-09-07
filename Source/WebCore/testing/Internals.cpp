@@ -4146,4 +4146,21 @@ void Internals::clearCacheStorageMemoryRepresentation()
     m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [](std::optional<DOMCacheEngine::Error>&&) { });
 }
 
+void Internals::cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&& promise)
+{
+    auto* document = contextDocument();
+    if (!document)
+        return;
+
+    if (!m_cacheStorageConnection) {
+        if (auto* page = contextDocument()->page())
+            m_cacheStorageConnection = page->cacheStorageProvider().createCacheStorageConnection(page->sessionID());
+        if (!m_cacheStorageConnection)
+            return;
+    }
+    m_cacheStorageConnection->engineRepresentation([promise = WTFMove(promise)](const String& result) mutable {
+        promise.resolve(result);
+    });
+}
+
 } // namespace WebCore

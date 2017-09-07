@@ -32,6 +32,7 @@
 #include <pal/SessionID.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 using namespace WebCore::DOMCacheEngine;
@@ -190,7 +191,7 @@ void Engine::readCachesFromDisk(const String& origin, CachesCallback&& callback)
 {
     initialize([this, origin, callback = WTFMove(callback)](std::optional<Error>&& error) mutable {
         auto& caches = m_caches.ensure(origin, [&origin, this] {
-            return Caches::create(*this, origin);
+            return Caches::create(*this, String { origin });
         }).iterator->value;
 
         if (caches->isInitialized()) {
@@ -289,6 +290,12 @@ void Engine::removeFile(const String& filename)
     });
 }
 
+void Engine::removeCaches(const String& origin)
+{
+    ASSERT(m_caches.contains(origin));
+    m_caches.remove(origin);
+}
+
 void Engine::clearMemoryRepresentation(const String& origin)
 {
     readCachesFromDisk(origin, [](CachesOrError&& result) {
@@ -296,6 +303,54 @@ void Engine::clearMemoryRepresentation(const String& origin)
             return;
         result.value().get().clearMemoryRepresentation();
     });
+}
+
+void Engine::lock(uint64_t cacheIdentifier)
+{
+    auto& counter = m_cacheLocks.ensure(cacheIdentifier, []() {
+        return 0;
+    }).iterator->value;
+
+    ++counter;
+}
+
+void Engine::unlock(uint64_t cacheIdentifier)
+{
+    auto lockCount = m_cacheLocks.find(cacheIdentifier);
+    ASSERT(lockCount != m_cacheLocks.end());
+    if (lockCount == m_cacheLocks.end())
+        return;
+
+    ASSERT(lockCount->value);
+    if (--lockCount->value)
+        return;
+
+    readCache(cacheIdentifier, [this](CacheOrError&& result) mutable {
+        if (!result.hasValue())
+            return;
+
+        result.value().get().dispose();
+    });
+}
+
+String Engine::representation()
+{
+    bool isFirst = true;
+    StringBuilder builder;
+    builder.append("[");
+    for (auto& keyValue : m_caches) {
+        if (!isFirst)
+            builder.append(",");
+        isFirst = false;
+
+        builder.append("\n{ \"origin\" : \"");
+        builder.append(keyValue.key);
+        builder.append("\", \"caches\" : ");
+        keyValue.value->appendRepresentation(builder);
+        builder.append("}");
+    }
+    builder.append("\n]");
+    return builder.toString();
 }
 
 } // namespace CacheStorage

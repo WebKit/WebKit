@@ -44,7 +44,7 @@ class NetworkConnectionToWebProcess;
 class CacheStorageEngineConnection : public RefCounted<CacheStorageEngineConnection> {
 public:
     static Ref<CacheStorageEngineConnection> create(NetworkConnectionToWebProcess& connection) { return adoptRef(*new CacheStorageEngineConnection(connection)); }
-
+    ~CacheStorageEngineConnection();
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 private:
@@ -54,13 +54,18 @@ private:
     void remove(PAL::SessionID, uint64_t removeRequestIdentifier, uint64_t cacheIdentifier);
     void caches(PAL::SessionID, uint64_t retrieveCachesIdentifier, const String& origin, uint64_t updateCounter);
 
-    void clearMemoryRepresentation(PAL::SessionID, const String& origin);
-
     void retrieveRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL&&);
     void deleteMatchingRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::ResourceRequest&&, WebCore::CacheQueryOptions&&);
     void putRecords(PAL::SessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&);
 
+    void reference(PAL::SessionID, uint64_t cacheIdentifier);
+    void dereference(PAL::SessionID, uint64_t cacheIdentifier);
+
+    void clearMemoryRepresentation(PAL::SessionID, const String& origin);
+    void engineRepresentation(PAL::SessionID, uint64_t requestIdentifier);
+
     NetworkConnectionToWebProcess& m_connection;
+    HashMap<PAL::SessionID, HashMap<CacheStorage::CacheIdentifier, CacheStorage::LockCount>> m_cachesLocks;
 };
 
 }

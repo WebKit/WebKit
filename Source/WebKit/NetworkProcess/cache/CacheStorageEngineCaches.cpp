@@ -50,9 +50,10 @@ static inline String cachesListFilename(const String& cachesRootPath)
     return WebCore::pathByAppendingComponent(cachesRootPath, ASCIILiteral("cacheslist"));
 }
 
-Caches::Caches(Engine& engine, const String& origin)
+Caches::Caches(Engine& engine, String&& origin)
     : m_engine(&engine)
-    , m_rootPath(cachesRootPath(engine, origin))
+    , m_origin(WTFMove(origin))
+    , m_rootPath(cachesRootPath(engine, m_origin))
 {
 }
 
@@ -163,6 +164,20 @@ void Caches::remove(uint64_t identifier, CacheIdentifierCallback&& callback)
     });
 }
 
+void Caches::dispose(Cache& cache)
+{
+    auto position = m_removedCaches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); });
+    if (position != notFound) {
+        m_removedCaches.remove(position);
+        return;
+    }
+    ASSERT(m_caches.findMatching([&](const auto& item) { return item.identifier() == cache.identifier(); }) != notFound);
+    cache.clearMemoryRepresentation();
+
+    if (m_caches.findMatching([](const auto& item) { return item.isActive(); }) == notFound)
+        clearMemoryRepresentation();
+}
+
 static inline Data encodeCacheNames(const Vector<Cache>& caches)
 {
     WTF::Persistence::Encoder encoder;
@@ -260,6 +275,8 @@ void Caches::clearMemoryRepresentation()
     m_caches.clear();
     m_isInitialized = false;
     m_storage = nullptr;
+    if (m_engine)
+        m_engine->removeCaches(m_origin);
 }
 
 bool Caches::isDirty(uint64_t updateCounter) const
@@ -277,6 +294,34 @@ CacheInfos Caches::cacheInfos(uint64_t updateCounter) const
             cacheInfos.uncheckedAppend(CacheInfo { cache.identifier(), cache.name() });
     }
     return { WTFMove(cacheInfos), m_updateCounter };
+}
+
+void Caches::appendRepresentation(StringBuilder& builder) const
+{
+    builder.append("{ \"persistent\": [");
+
+    bool isFirst = true;
+    for (auto& cache : m_caches) {
+        if (!isFirst)
+            builder.append(", ");
+        isFirst = false;
+        builder.append("\"");
+        builder.append(cache.name());
+        builder.append("\"");
+    }
+
+    builder.append("], \"removed\": [");
+
+    isFirst = true;
+    for (auto& cache : m_removedCaches) {
+        if (!isFirst)
+            builder.append(", ");
+        isFirst = false;
+        builder.append("\"");
+        builder.append(cache.name());
+        builder.append("\"");
+    }
+    builder.append("]}\n");
 }
 
 } // namespace CacheStorage

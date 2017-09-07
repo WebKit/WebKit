@@ -42,6 +42,17 @@ CacheStorageEngineConnection::CacheStorageEngineConnection(NetworkConnectionToWe
 {
 }
 
+CacheStorageEngineConnection::~CacheStorageEngineConnection()
+{
+    for (auto& keyValue : m_cachesLocks) {
+        auto& sessionID = keyValue.key;
+        for (auto& references : keyValue.value) {
+            ASSERT(references.value);
+            Engine::from(sessionID).unlock(references.key);
+        }
+    }
+}
+
 void CacheStorageEngineConnection::open(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin, const String& cacheName)
 {
     Engine::from(sessionID).open(origin, cacheName, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](const CacheIdentifierOrError& result) {
@@ -63,11 +74,6 @@ void CacheStorageEngineConnection::caches(PAL::SessionID sessionID, uint64_t req
     });
 }
 
-void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, const String& origin)
-{
-    Engine::from(sessionID).clearMemoryRepresentation(origin);
-}
-
 void CacheStorageEngineConnection::retrieveRecords(PAL::SessionID sessionID, uint64_t requestIdentifier, uint64_t cacheIdentifier, WebCore::URL&& url)
 {
     Engine::from(sessionID).retrieveRecords(cacheIdentifier, WTFMove(url), [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](RecordsOrError&& result) {
@@ -87,6 +93,45 @@ void CacheStorageEngineConnection::putRecords(PAL::SessionID sessionID, uint64_t
     Engine::from(sessionID).putRecords(cacheIdentifier, WTFMove(records), [protectedThis = makeRef(*this), this, sessionID, requestIdentifier](RecordIdentifiersOrError&& result) {
         m_connection.connection().send(Messages::WebCacheStorageConnection::PutRecordsCompleted(requestIdentifier, result), sessionID.sessionID());
     });
+}
+
+void CacheStorageEngineConnection::reference(PAL::SessionID sessionID, uint64_t cacheIdentifier)
+{
+    auto& references = m_cachesLocks.ensure(sessionID, []() {
+        return HashMap<CacheIdentifier, LockCount> { };
+    }).iterator->value;
+    auto& counter = references.ensure(cacheIdentifier, [this]() {
+        return 0;
+    }).iterator->value;
+    if (!counter++)
+        Engine::from(sessionID).lock(cacheIdentifier);
+}
+
+void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_t cacheIdentifier)
+{
+    ASSERT(m_cachesLocks.contains(sessionID));
+    auto& references = m_cachesLocks.ensure(sessionID, []() {
+        return HashMap<CacheIdentifier, LockCount> { };
+    }).iterator->value;
+
+    auto referenceResult = references.find(cacheIdentifier);
+    ASSERT(referenceResult != references.end());
+    if (referenceResult == references.end())
+        return;
+
+    ASSERT(referenceResult->value);
+    if (!--referenceResult->value)
+        Engine::from(sessionID).unlock(cacheIdentifier);
+}
+
+void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, const String& origin)
+{
+    Engine::from(sessionID).clearMemoryRepresentation(origin);
+}
+
+void CacheStorageEngineConnection::engineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier)
+{
+    m_connection.connection().send(Messages::WebCacheStorageConnection::EngineRepresentationCompleted(requestIdentifier, Engine::from(sessionID).representation()), sessionID.sessionID());
 }
 
 }

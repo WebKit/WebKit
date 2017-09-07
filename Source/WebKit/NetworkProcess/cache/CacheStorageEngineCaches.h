@@ -36,12 +36,13 @@ class Engine;
 
 class Caches : public RefCounted<Caches> {
 public:
-    static Ref<Caches> create(Engine& engine, const String& origin) { return adoptRef(*new Caches { engine, origin }); }
+    static Ref<Caches> create(Engine& engine, String&& origin) { return adoptRef(*new Caches { engine, WTFMove(origin) }); }
 
     void initialize(WebCore::DOMCacheEngine::CompletionCallback&&);
     void open(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void remove(uint64_t identifier, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void clearMemoryRepresentation();
+    void dispose(Cache&);
 
     void detach();
 
@@ -49,9 +50,10 @@ public:
     WebCore::DOMCacheEngine::CacheInfos cacheInfos(uint64_t updateCounter) const;
 
     Cache* find(uint64_t identifier);
+    void appendRepresentation(StringBuilder&) const;
 
 private:
-    Caches(Engine&, const String& rootPath);
+    Caches(Engine&, String&& origin);
 
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
@@ -67,6 +69,7 @@ private:
     bool m_isInitialized { false };
     Engine* m_engine { nullptr };
     uint64_t m_updateCounter { 0 };
+    String m_origin;
     String m_rootPath;
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;

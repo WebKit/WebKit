@@ -60,7 +60,11 @@ private:
     void doBatchDeleteOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, const WebCore::ResourceRequest&, WebCore::CacheQueryOptions&&) final;
     void doBatchPutOperation(uint64_t requestIdentifier, uint64_t cacheIdentifier, Vector<WebCore::DOMCacheEngine::Record>&&) final;
 
+    void reference(uint64_t cacheIdentifier) final;
+    void dereference(uint64_t cacheIdentifier) final;
+
     void clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&&) final;
+    void engineRepresentation(WTF::Function<void(const String&)>&&) final;
 
     void openCompleted(uint64_t requestIdentifier, const WebCore::DOMCacheEngine::CacheIdentifierOrError&);
     void removeCompleted(uint64_t requestIdentifier, const WebCore::DOMCacheEngine::CacheIdentifierOrError&);
@@ -70,8 +74,12 @@ private:
     void deleteRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError&&);
     void putRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError&&);
 
+    void engineRepresentationCompleted(uint64_t requestIdentifier, const String& representation);
+
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;
+    uint64_t m_engineRepresentationNextIdentifier { 0 };
+    HashMap<uint64_t, WTF::Function<void(const String&)>> m_engineRepresentationCallbacks;
 };
 
 }

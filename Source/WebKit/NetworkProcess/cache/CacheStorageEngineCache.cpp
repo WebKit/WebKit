@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CacheStorageEngine.h"
 
+#include "CacheStorageEngineCaches.h"
 #include "NetworkCacheIOChannel.h"
 #include "NetworkCacheKey.h"
 #include "NetworkProcess.h"
@@ -73,6 +74,18 @@ Cache::Cache(Caches& caches, uint64_t identifier, State state, String&& name)
 {
 }
 
+void Cache::dispose()
+{
+    m_caches.dispose(*this);
+}
+
+void Cache::clearMemoryRepresentation()
+{
+    m_records = { };
+    m_nextRecordIdentifier = 0;
+    m_state = State::Uninitialized;
+}
+ 
 void Cache::open(CompletionCallback&& callback)
 {
     if (m_state == State::Open) {

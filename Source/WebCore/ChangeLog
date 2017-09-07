@@ -1,3 +1,32 @@
+2017-09-06  Youenn Fablet  <youenn@apple.com>
+
+        NetworkProcess Cache and Caches should be cleared when the last related WebProcess Cache or CacheStorage is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=176249
+
+        Reviewed by Alex Christensen.
+
+        Test: http/tests/cache-storage/cache-representation.https.html
+
+        Each Cache construction/destruction is notified to the CacheStorageConnection
+        so that the WebKit2 engine can handle memory management accordingly.
+
+        Adding an internal API to grab the representation of an engine at any time.
+
+        * Modules/cache/Cache.cpp:
+        (WebCore::Cache::Cache):
+        (WebCore::Cache::~Cache):
+        * Modules/cache/CacheStorageConnection.h:
+        (WebCore::CacheStorageConnection::reference):
+        (WebCore::CacheStorageConnection::dereference):
+        * Modules/cache/WorkerCacheStorageConnection.cpp:
+        (WebCore::WorkerCacheStorageConnection::reference):
+        (WebCore::WorkerCacheStorageConnection::dereference):
+        * Modules/cache/WorkerCacheStorageConnection.h:
+        * testing/Internals.cpp:
+        (WebCore::Internals::cacheStorageEngineRepresentation):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2017-09-05  Matt Rajca  <mrajca@apple.com>
 
         Support new autoplay quirk for arbitrary user gestures.
