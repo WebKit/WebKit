@@ -1,3 +1,13 @@
+2017-09-06  Mark Lam  <mark.lam@apple.com>
+
+        constructGenericTypedArrayViewWithArguments() is missing an exception check.
+        https://bugs.webkit.org/show_bug.cgi?id=176485
+        <rdar://problem/33898874>
+
+        Reviewed by Keith Miller.
+
+        * stress/regress-176485.js: Added.
+
 2017-09-05  Saam Barati  <sbarati@apple.com>
 
         isNotCellSpeculation is wrong with respect to SpecEmpty
