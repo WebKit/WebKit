@@ -1709,26 +1709,26 @@ void WebPageProxy::dragEntered(DragData& dragData, const String& dragStorageName
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
-    performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
+    performDragControllerAction(DragControllerAction::Entered, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
 void WebPageProxy::dragUpdated(DragData& dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
-    performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
+    performDragControllerAction(DragControllerAction::Updated, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
 void WebPageProxy::dragExited(DragData& dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     SandboxExtension::HandleArray sandboxExtensionHandleEmptyArray;
-    performDragControllerAction(DragControllerActionExited, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
+    performDragControllerAction(DragControllerAction::Exited, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionHandleEmptyArray);
 }
 
 void WebPageProxy::performDragOperation(DragData& dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)
 {
-    performDragControllerAction(DragControllerActionPerformDragOperation, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionsForUpload);
+    performDragControllerAction(DragControllerAction::PerformDragOperation, dragData, dragStorageName, sandboxExtensionHandle, sandboxExtensionsForUpload);
 }
 
 void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData& dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsForUpload)

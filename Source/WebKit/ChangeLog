@@ -1,3 +1,22 @@
+2017-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Make DragControllerAction an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=176565
+
+        Reviewed by Andy Estes.
+
+        * Shared/DragControllerAction.h:
+        (): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        (WebKit::WebPageProxy::performDragOperation):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [PAL] Unify PlatformUserPreferredLanguages.h with Language.h

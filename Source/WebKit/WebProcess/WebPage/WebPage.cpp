@@ -3578,7 +3578,7 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent* evt)
 #if ENABLE(DRAG_SUPPORT)
 
 #if PLATFORM(GTK)
-void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&& selection, uint32_t flags)
+void WebPage::performDragControllerAction(DragControllerAction action, const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t draggingSourceOperationMask, WebSelectionData&& selection, uint32_t flags)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0, { }));
@@ -3587,31 +3587,29 @@ void WebPage::performDragControllerAction(uint64_t action, const IntPoint& clien
 
     DragData dragData(selection.selectionData.ptr(), clientPosition, globalPosition, static_cast<DragOperation>(draggingSourceOperationMask), static_cast<DragApplicationFlags>(flags));
     switch (action) {
-    case DragControllerActionEntered: {
+    case DragControllerAction::Entered: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }));
-        break;
+        return;
     }
-    case DragControllerActionUpdated: {
+    case DragControllerAction::Updated: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), { }));
-        break;
+        return;
     }
-    case DragControllerActionExited:
+    case DragControllerAction::Exited:
         m_page->dragController().dragExited(dragData);
-        break;
+        return;
 
-    case DragControllerActionPerformDragOperation: {
+    case DragControllerAction::PerformDragOperation: {
         m_page->dragController().performDragOperation(dragData);
-        break;
+        return;
     }
-
-    default:
-        ASSERT_NOT_REACHED();
     }
+    ASSERT_NOT_REACHED();
 }
 #else
-void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragData& dragData, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
+void WebPage::performDragControllerAction(DragControllerAction action, const WebCore::DragData& dragData, const SandboxExtension::Handle& sandboxExtensionHandle, const SandboxExtension::HandleArray& sandboxExtensionsHandleArray)
 {
     if (!m_page) {
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0, { }));
@@ -3619,23 +3617,22 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
     }
 
     switch (action) {
-    case DragControllerActionEntered: {
+    case DragControllerAction::Entered: {
         DragOperation resolvedDragOperation = m_page->dragController().dragEntered(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates()));
-        break;
-
+        return;
     }
-    case DragControllerActionUpdated: {
+    case DragControllerAction::Updated: {
         DragOperation resolvedDragOperation = m_page->dragController().dragUpdated(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(resolvedDragOperation, m_page->dragController().mouseIsOverFileInput(), m_page->dragController().numberOfItemsToBeAccepted(), m_page->dragCaretController().caretRectInRootViewCoordinates()));
-        break;
+        return;
     }
-    case DragControllerActionExited:
+    case DragControllerAction::Exited:
         m_page->dragController().dragExited(dragData);
         send(Messages::WebPageProxy::DidPerformDragControllerAction(DragOperationNone, false, 0, { }));
-        break;
+        return;
         
-    case DragControllerActionPerformDragOperation: {
+    case DragControllerAction::PerformDragOperation: {
         ASSERT(!m_pendingDropSandboxExtension);
 
         m_pendingDropSandboxExtension = SandboxExtension::create(sandboxExtensionHandle);
@@ -3656,12 +3653,10 @@ void WebPage::performDragControllerAction(uint64_t action, const WebCore::DragDa
 #else
         UNUSED_PARAM(handled);
 #endif
-        break;
+        return;
     }
-
-    default:
-        ASSERT_NOT_REACHED();
     }
+    ASSERT_NOT_REACHED();
 }
 #endif
 

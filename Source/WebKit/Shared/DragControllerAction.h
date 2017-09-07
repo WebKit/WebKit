@@ -23,18 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DragControllerAction_h
-#define DragControllerAction_h
+#pragma once
 
 namespace WebKit {
 
-enum DragControllerAction {
-    DragControllerActionEntered,
-    DragControllerActionUpdated,
-    DragControllerActionExited,
-    DragControllerActionPerformDragOperation
+enum class DragControllerAction {
+    Entered,
+    Updated,
+    Exited,
+    PerformDragOperation
 };
 
 } // namespace WebKit
 
-#endif // DragControllerAction_h
+namespace WTF {
+
+template<> struct EnumTraits<WebKit::DragControllerAction> {
+    using values = EnumValues<
+        WebKit::DragControllerAction,
+        WebKit::DragControllerAction::Entered,
+        WebKit::DragControllerAction::Updated,
+        WebKit::DragControllerAction::Exited,
+        WebKit::DragControllerAction::PerformDragOperation
+    >;
+};
+
+} // namespace WTF
