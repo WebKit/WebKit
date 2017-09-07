@@ -879,6 +879,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setResourceTimingEnabled(TRUE);
     prefsPrivate->setUserTimingEnabled(TRUE);
     prefsPrivate->setDataTransferItemsEnabled(TRUE);
+    prefsPrivate->setInspectorAdditionsEnabled(TRUE);
     prefsPrivate->clearNetworkLoaderSession();
 
     setAlwaysAcceptCookies(false);

@@ -320,6 +320,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitDataTransferItemsEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitInspectorAdditionsEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -2074,6 +2076,20 @@ HRESULT WebPreferences::dataTransferItemsEnabled(_Out_ BOOL* enabled)
 HRESULT WebPreferences::setDataTransferItemsEnabled(BOOL enabled)
 {
     setBoolValue(WebKitDataTransferItemsEnabledPreferenceKey, enabled);
+    return S_OK;
+}
+
+HRESULT WebPreferences::inspectorAdditionsEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitInspectorAdditionsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setInspectorAdditionsEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitInspectorAdditionsEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

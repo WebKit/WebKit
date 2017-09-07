@@ -5241,6 +5241,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     RuntimeEnabledFeatures::sharedFeatures().setDataTransferItemsEnabled(!!enabled);
 
+    hr = prefsPrivate->inspectorAdditionsEnabled(&enabled);
+    if (FAILED(hr))
+        return hr;
+    RuntimeEnabledFeatures::sharedFeatures().setInspectorAdditionsEnabled(!!enabled);
+
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))
         return hr;

@@ -263,6 +263,8 @@ public:
     // IWebPreferencesPrivate6
     virtual HRESULT STDMETHODCALLTYPE dataTransferItemsEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setDataTransferItemsEnabled(BOOL);
+    virtual HRESULT STDMETHODCALLTYPE inspectorAdditionsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setInspectorAdditionsEnabled(BOOL);
 
     // WebPreferences
 

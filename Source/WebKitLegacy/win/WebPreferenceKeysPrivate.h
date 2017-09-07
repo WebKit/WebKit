@@ -189,3 +189,5 @@
 #define WebKitIsSecureContextAttributeEnabledPreferenceKey "WebKitIsSecureContextAttributeEnabled"
 
 #define WebKitDataTransferItemsEnabledPreferenceKey "WebKitDataTransferItemsEnabled"
+
+#define WebKitInspectorAdditionsEnabledPreferenceKey "WebKitInspectorAdditionsEnabled"

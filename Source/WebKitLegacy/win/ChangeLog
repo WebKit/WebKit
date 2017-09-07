@@ -1,3 +1,23 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] fast/canvas/2d.getPath.modification.html is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=176534
+
+        Reviewed by Alex Christensen.
+
+        We need to enable Inspector additions at runtime in order to expose the getPath function.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::setDataTransferItemsEnabled):
+        (WebPreferences::inspectorAdditionsEnabled):
+        (WebPreferences::setInspectorAdditionsEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2017-09-07  Alex Christensen  <achristensen@webkit.org>
 
         Modernize Geolocation code
