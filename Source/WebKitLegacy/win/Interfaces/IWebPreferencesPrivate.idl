@@ -209,3 +209,10 @@ interface IWebPreferencesPrivate5 : IWebPreferencesPrivate4
     HRESULT isSecureContextAttributeEnabled([out, retval] BOOL*);
     HRESULT setIsSecureContextAttributeEnabled([in] BOOL enabled);
 }
+
+[uuid(B8BC62C9-1CA9-4FD1-B328-CB0BD171249F)]
+interface IWebPreferencesPrivate6 : IWebPreferencesPrivate5
+{
+    HRESULT dataTransferItemsEnabled([out, retval] BOOL*);
+    HRESULT setDataTransferItemsEnabled([in] BOOL enabled);
+}

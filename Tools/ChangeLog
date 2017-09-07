@@ -1,3 +1,13 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Enable DatatransferItems in DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=176424
+
+        Reviewed by Brent Fulgham.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetWebPreferencesToConsistentValues):
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump libxml2 version to 1.9.5

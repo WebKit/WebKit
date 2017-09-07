@@ -1,3 +1,22 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Enable DatatransferItems in DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=176424
+
+        Reviewed by Brent Fulgham.
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::QueryInterface):
+        (WebPreferences::isSecureContextAttributeEnabled):
+        (WebPreferences::dataTransferItemsEnabled):
+        (WebPreferences::setDataTransferItemsEnabled):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2017-08-28  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed build fix #2 after r221275.

@@ -318,6 +318,8 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitIsSecureContextAttributeEnabledPreferenceKey), kCFBooleanFalse);
 
+    CFDictionaryAddValue(defaults, CFSTR(WebKitDataTransferItemsEnabledPreferenceKey), kCFBooleanFalse);
+
     defaultSettings = defaults;
 }
 
@@ -565,6 +567,8 @@ HRESULT WebPreferences::QueryInterface(_In_ REFIID riid, _COM_Outptr_ void** ppv
         *ppvObject = static_cast<IWebPreferencesPrivate4*>(this);
     else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate5))
         *ppvObject = static_cast<IWebPreferencesPrivate5*>(this);
+    else if (IsEqualGUID(riid, IID_IWebPreferencesPrivate6))
+        *ppvObject = static_cast<IWebPreferencesPrivate6*>(this);
     else if (IsEqualGUID(riid, CLSID_WebPreferences))
         *ppvObject = this;
     else
@@ -2056,6 +2060,20 @@ HRESULT WebPreferences::isSecureContextAttributeEnabled(_Out_ BOOL* enabled)
     if (!enabled)
         return E_POINTER;
     *enabled = boolValueForKey(WebKitIsSecureContextAttributeEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::dataTransferItemsEnabled(_Out_ BOOL* enabled)
+{
+    if (!enabled)
+        return E_POINTER;
+    *enabled = boolValueForKey(WebKitDataTransferItemsEnabledPreferenceKey);
+    return S_OK;
+}
+
+HRESULT WebPreferences::setDataTransferItemsEnabled(BOOL enabled)
+{
+    setBoolValue(WebKitDataTransferItemsEnabledPreferenceKey, enabled);
     return S_OK;
 }
 

@@ -30,7 +30,7 @@
 #include <WebCore/BString.h>
 #include <wtf/RetainPtr.h>
 
-class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate5 {
+class WebPreferences : public IWebPreferences, public IWebPreferencesPrivate6 {
 public:
     static WebPreferences* createInstance();
 protected:
@@ -259,6 +259,10 @@ public:
     // IWebPreferencesPrivate5
     virtual HRESULT STDMETHODCALLTYPE isSecureContextAttributeEnabled(_Out_ BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setIsSecureContextAttributeEnabled(BOOL);
+
+    // IWebPreferencesPrivate6
+    virtual HRESULT STDMETHODCALLTYPE dataTransferItemsEnabled(_Out_ BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setDataTransferItemsEnabled(BOOL);
 
     // WebPreferences
 

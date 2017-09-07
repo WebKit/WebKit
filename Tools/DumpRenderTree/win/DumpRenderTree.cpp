@@ -792,7 +792,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setAutosaves(FALSE);
 
-    COMPtr<IWebPreferencesPrivate> prefsPrivate(Query, preferences);
+    COMPtr<IWebPreferencesPrivate6> prefsPrivate(Query, preferences);
     ASSERT(prefsPrivate);
     prefsPrivate->setFullScreenEnabled(TRUE);
 
@@ -845,9 +845,7 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
     prefsPrivate->setJavaScriptCanAccessClipboard(TRUE);
     prefsPrivate->setOfflineWebApplicationCacheEnabled(TRUE);
     prefsPrivate->setDeveloperExtrasEnabled(FALSE);
-    COMPtr<IWebPreferencesPrivate2> prefsPrivate2(Query, preferences);
-    if (prefsPrivate2)
-        prefsPrivate2->setJavaScriptRuntimeFlags(WebKitJavaScriptRuntimeFlagsAllEnabled);
+    prefsPrivate->setJavaScriptRuntimeFlags(WebKitJavaScriptRuntimeFlagsAllEnabled);
     // Set JS experiments enabled: YES
     preferences->setLoadsImagesAutomatically(TRUE);
     prefsPrivate->setLoadsSiteIconsIgnoringImageLoadingPreference(FALSE);
@@ -874,15 +872,14 @@ static void resetWebPreferencesToConsistentValues(IWebPreferences* preferences)
 
     preferences->setFontSmoothing(FontSmoothingTypeStandard);
 
-    COMPtr<IWebPreferencesPrivate4> prefsPrivate4(Query, preferences);
-    ASSERT(prefsPrivate4);
-    prefsPrivate4->setFetchAPIEnabled(TRUE);
-    prefsPrivate4->setShadowDOMEnabled(TRUE);
-    prefsPrivate4->setCustomElementsEnabled(TRUE);
-    prefsPrivate4->setModernMediaControlsEnabled(FALSE);
-    prefsPrivate4->setResourceTimingEnabled(TRUE);
-    prefsPrivate4->setUserTimingEnabled(TRUE);
-    prefsPrivate4->clearNetworkLoaderSession();
+    prefsPrivate->setFetchAPIEnabled(TRUE);
+    prefsPrivate->setShadowDOMEnabled(TRUE);
+    prefsPrivate->setCustomElementsEnabled(TRUE);
+    prefsPrivate->setModernMediaControlsEnabled(FALSE);
+    prefsPrivate->setResourceTimingEnabled(TRUE);
+    prefsPrivate->setUserTimingEnabled(TRUE);
+    prefsPrivate->setDataTransferItemsEnabled(TRUE);
+    prefsPrivate->clearNetworkLoaderSession();
 
     setAlwaysAcceptCookies(false);
 }
