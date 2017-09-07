@@ -1,3 +1,39 @@
+2017-09-07  Devin Rousso  <webkit@devinrousso.com>
+
+        Unreviewed, change my copyright email.
+
+        * Scripts/copy-user-interface-resources.pl:
+        * UserInterface/Controllers/CodeMirrorSpringEditingController.js:
+        * UserInterface/Images/AnimationPlayStatePaused.svg:
+        * UserInterface/Images/AnimationPlayStateRunning.svg:
+        * UserInterface/Images/CSSVariable.svg:
+        * UserInterface/Images/ListStylePositionInside.svg:
+        * UserInterface/Images/ListStylePositionOutside.svg:
+        * UserInterface/Images/StyleRule.svg:
+        * UserInterface/Images/StyleRulePseudoElement.svg:
+        * UserInterface/Models/Collection.js:
+        * UserInterface/Models/ResourceCollection.js:
+        * UserInterface/Views/CollectionContentView.css:
+        * UserInterface/Views/CollectionContentView.js:
+        * UserInterface/Views/ContextMenuUtilities.js:
+        * UserInterface/Views/GeneralTabBarItem.js:
+        * UserInterface/Views/GradientEditor.css:
+        * UserInterface/Views/GradientEditor.js:
+        * UserInterface/Views/InlineSwatch.css:
+        * UserInterface/Views/InlineSwatch.js:
+        * UserInterface/Views/PinnedTabBarItem.js:
+        * UserInterface/Views/SettingsTabContentView.css:
+        * UserInterface/Views/SettingsTabContentView.js:
+        * UserInterface/Views/SpringEditor.css:
+        * UserInterface/Views/SpringEditor.js:
+        * UserInterface/Views/StyleRuleIcons.css:
+        * UserInterface/Views/TabBarItem.js:
+        * UserInterface/Views/TitleView.css:
+        * UserInterface/Views/TitleView.js:
+        * UserInterface/Views/VisualStyleBackgroundPicker.css:
+        * UserInterface/Views/VisualStyleBackgroundPicker.js:
+        * UserInterface/Views/VisualStyleBasicInput.js:
+
 2017-09-06  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Relax the maximum sidebar width
