@@ -60,7 +60,7 @@ using namespace WebKit;
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
 
 struct _WebKitGeolocationPermissionRequestPrivate {
-    RefPtr<GeolocationPermissionRequestProxy> request;
+    RefPtr<GeolocationPermissionRequest> request;
     bool madeDecision;
 };
 
@@ -115,7 +115,7 @@ static void webkit_geolocation_permission_request_class_init(WebKitGeolocationPe
     objectClass->dispose = webkitGeolocationPermissionRequestDispose;
 }
 
-WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(GeolocationPermissionRequestProxy* request)
+WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(GeolocationPermissionRequest* request)
 {
     WebKitGeolocationPermissionRequest* geolocationPermissionRequest = WEBKIT_GEOLOCATION_PERMISSION_REQUEST(g_object_new(WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, NULL));
     geolocationPermissionRequest->priv->request = request;

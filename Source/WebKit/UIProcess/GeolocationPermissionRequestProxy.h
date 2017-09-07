@@ -23,16 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationPermissionRequestProxy_h
-#define GeolocationPermissionRequestProxy_h
+#pragma once
 
 #include "APIObject.h"
+#include <wtf/Function.h>
 
 namespace WebKit {
 
 class GeolocationPermissionRequestManagerProxy;
 
-class GeolocationPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {
+class GeolocationPermissionRequestProxy : public RefCounted<GeolocationPermissionRequestProxy> {
 public:
     static Ref<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
     {
@@ -51,6 +51,22 @@ private:
     uint64_t m_geolocationID;
 };
 
-} // namespace WebKit
+class GeolocationPermissionRequest : public API::ObjectImpl<API::Object::Type::GeolocationPermissionRequest> {
+public:
+    static Ref<GeolocationPermissionRequest> create(Function<void(bool)>&& completionHandler)
+    {
+        return adoptRef(*new GeolocationPermissionRequest(WTFMove(completionHandler)));
+    }
+    
+    void allow() { m_completionHandler(true); }
+    void deny() { m_completionHandler(false); }
 
-#endif // GeolocationPermissionRequestProxy_h
+private:
+    GeolocationPermissionRequest(Function<void(bool)>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    { }
+    
+    Function<void(bool)> m_completionHandler;
+};
+
+} // namespace WebKit

@@ -43,7 +43,6 @@ struct Highlight;
 
 namespace WebKit {
 class DrawingAreaProxy;
-class GeolocationPermissionRequestProxy;
 class RemoteLayerTreeTransaction;
 class WebFrameProxy;
 class WebPageProxy;

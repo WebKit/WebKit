@@ -27,9 +27,9 @@
 
 #import <Foundation/NSObject.h>
 #import <WebKit/WKBase.h>
+#import <wtf/Function.h>
 
 namespace WebKit {
-class GeolocationPermissionRequestProxy;
 class WebFrameProxy;
 class WebProcessPool;
 }
@@ -42,7 +42,7 @@ class SecurityOrigin;
 
 @interface WKGeolocationProviderIOS : NSObject
 -(id)initWithProcessPool:(WebKit::WebProcessPool&)processPool;
--(void)decidePolicyForGeolocationRequestFromOrigin:(WebCore::SecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame request:(WebKit::GeolocationPermissionRequestProxy&)permissionRequest view:(WKWebView*)view;
+-(void)decidePolicyForGeolocationRequestFromOrigin:(WebCore::SecurityOrigin&)origin frame:(WebKit::WebFrameProxy&)frame completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)view;
 @end
 
 #endif // PLATFORM(IOS)

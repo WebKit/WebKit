@@ -21,4 +21,4 @@
 
 #include "WebKitGeolocationPermissionRequest.h"
 
-WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(WebKit::GeolocationPermissionRequestProxy*);
+WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(WebKit::GeolocationPermissionRequest*);

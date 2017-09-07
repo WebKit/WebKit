@@ -42,7 +42,7 @@ void GeolocationPermissionRequestProxy::allow()
         return;
 
     m_manager->didReceiveGeolocationPermissionDecision(m_geolocationID, true);
-    m_manager = 0;
+    m_manager = nullptr;
 }
 
 void GeolocationPermissionRequestProxy::deny()
@@ -51,12 +51,12 @@ void GeolocationPermissionRequestProxy::deny()
         return;
     
     m_manager->didReceiveGeolocationPermissionDecision(m_geolocationID, false);
-    m_manager = 0;
+    m_manager = nullptr;
 }
 
 void GeolocationPermissionRequestProxy::invalidate()
 {
-    m_manager = 0;
+    m_manager = nullptr;
 }
 
 } // namespace WebKit

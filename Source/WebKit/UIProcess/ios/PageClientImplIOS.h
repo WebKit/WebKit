@@ -63,7 +63,7 @@ private:
     void pageClosed() override;
     void preferencesDidChange() override;
     void toolTipChanged(const String&, const String&) override;
-    bool decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, GeolocationPermissionRequestProxy&) override;
+    Function<void(bool)> decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, Function<void(bool)>&&) override;
     void didStartProvisionalLoadForMainFrame() override;
     void didFailProvisionalLoadForMainFrame() override;
     void didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider) override;

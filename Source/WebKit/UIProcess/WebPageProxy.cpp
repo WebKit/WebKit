@@ -5811,14 +5811,24 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
     auto origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin());
     auto request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
+    Function<void(bool)> completionHandler = [request = WTFMove(request)](bool allowed) {
+        if (allowed)
+            request->allow();
+        else
+            request->deny();
+    };
 
-    if (m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), request.get()))
-        return;
-
-    if (m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), request.get()))
-        return;
-
-    request->deny();
+    // FIXME: Once iOS migrates to the new WKUIDelegate SPI, clean this up
+    // and make it one UIClient call that calls the completionHandler with false
+    // if there is no delegate instead of returning the completionHandler
+    // for other code paths to try.
+    completionHandler = m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), WTFMove(completionHandler));
+#if PLATFORM(IOS)
+    if (completionHandler)
+        completionHandler = m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), WTFMove(completionHandler));
+#endif
+    if (completionHandler)
+        completionHandler(false);
 }
 
 #if ENABLE(MEDIA_STREAM)

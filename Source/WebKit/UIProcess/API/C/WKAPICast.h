@@ -77,7 +77,7 @@ namespace WebKit {
 class AuthenticationChallengeProxy;
 class AuthenticationDecisionListener;
 class DownloadProxy;
-class GeolocationPermissionRequestProxy;
+class GeolocationPermissionRequest;
 class NotificationPermissionRequest;
 class UserMediaPermissionCheckProxy;
 class UserMediaPermissionRequestProxy;
@@ -131,7 +131,7 @@ WK_ADD_API_MAPPING(WKFrameHandleRef, API::FrameHandle)
 WK_ADD_API_MAPPING(WKFrameInfoRef, API::FrameInfo)
 WK_ADD_API_MAPPING(WKFrameRef, WebFrameProxy)
 WK_ADD_API_MAPPING(WKGeolocationManagerRef, WebGeolocationManagerProxy)
-WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequestProxy)
+WK_ADD_API_MAPPING(WKGeolocationPermissionRequestRef, GeolocationPermissionRequest)
 WK_ADD_API_MAPPING(WKGeolocationPositionRef, WebGeolocationPosition)
 WK_ADD_API_MAPPING(WKHitTestResultRef, API::HitTestResult)
 WK_ADD_API_MAPPING(WKIconDatabaseRef, WebIconDatabase)

@@ -31,7 +31,6 @@
 #import "APIFrameInfo.h"
 #import "APISecurityOrigin.h"
 #import "CompletionHandlerCallChecker.h"
-#import "GeolocationPermissionRequestProxy.h"
 #import "WKFrameInfoInternal.h"
 #import "WKGeolocationManager.h"
 #import "WKProcessPoolInternal.h"
@@ -67,7 +66,7 @@ using namespace WebKit;
 @end
 
 @interface WKWebAllowDenyPolicyListener : NSObject<WebAllowDenyPolicyListener>
-- (id)initWithPermissionRequestProxy:(RefPtr<GeolocationPermissionRequestProxy>&&)permissionRequestProxy;
+- (id)initWithCompletionHandler:(Function<void(bool)>&&)completionHandler;
 - (void)denyOnlyThisRequest NO_RETURN_DUE_TO_ASSERT;
 @end
 
@@ -83,7 +82,7 @@ static inline Ref<WebGeolocationPosition> kit(WebCore::GeolocationPosition *posi
 struct GeolocationRequestData {
     RefPtr<SecurityOrigin> origin;
     RefPtr<WebFrameProxy> frame;
-    RefPtr<GeolocationPermissionRequestProxy> permissionRequest;
+    Function<void(bool)> completionHandler;
     RetainPtr<WKWebView> view;
 };
 
@@ -168,15 +167,15 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
     return self;
 }
 
--(void)decidePolicyForGeolocationRequestFromOrigin:(SecurityOrigin&)origin frame:(WebFrameProxy&)frame request:(GeolocationPermissionRequestProxy&)permissionRequest view:(WKWebView*)contentView
+-(void)decidePolicyForGeolocationRequestFromOrigin:(SecurityOrigin&)origin frame:(WebFrameProxy&)frame completionHandler:(Function<void(bool)>&&)completionHandler view:(WKWebView*)contentView
 {
     // Step 1: ask the user if the app can use Geolocation.
     GeolocationRequestData geolocationRequestData;
     geolocationRequestData.origin = &origin;
     geolocationRequestData.frame = &frame;
-    geolocationRequestData.permissionRequest = &permissionRequest;
+    geolocationRequestData.completionHandler = WTFMove(completionHandler);
     geolocationRequestData.view = contentView;
-    _requestsWaitingForCoreLocationAuthorization.append(geolocationRequestData);
+    _requestsWaitingForCoreLocationAuthorization.append(WTFMove(geolocationRequestData));
     [_coreLocationProvider requestGeolocationAuthorization];
 }
 @end
@@ -189,7 +188,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 {
     // Step 2: ask the user if the this particular page can use gelocation.
     Vector<GeolocationRequestData> requests = WTFMove(_requestsWaitingForCoreLocationAuthorization);
-    for (const auto& request : requests) {
+    for (auto& request : requests) {
         bool requiresUserAuthorization = true;
 
         id<WKUIDelegatePrivate> uiDelegate = static_cast<id <WKUIDelegatePrivate>>([request.view UIDelegate]);
@@ -197,14 +196,12 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
             URL requestFrameURL(URL(), request.frame->url());
             RetainPtr<WKFrameInfo> frameInfo = wrapper(API::FrameInfo::create(*request.frame.get(), *request.origin.get()));
             RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(uiDelegate, @selector(_webView:requestGeolocationAuthorizationForURL:frame:decisionHandler:));
-            [uiDelegate _webView:request.view.get() requestGeolocationAuthorizationForURL:requestFrameURL frame:frameInfo.get() decisionHandler:BlockPtr<void(BOOL)>::fromCallable([request, checker = WTFMove(checker)](BOOL authorized) {
+            WKWebView *viewFromRequest = request.view.get();
+            [uiDelegate _webView:viewFromRequest requestGeolocationAuthorizationForURL:requestFrameURL frame:frameInfo.get() decisionHandler:BlockPtr<void(BOOL)>::fromCallable([request = WTFMove(request), checker = WTFMove(checker)](BOOL authorized) {
                 if (checker->completionHandlerHasBeenCalled())
                     return;
-                if (authorized)
-                    request.permissionRequest->allow();
-                else
-                    request.permissionRequest->deny();
                 checker->didCallCompletionHandler();
+                request.completionHandler(authorized);
             }).get()];
             return;
         }
@@ -221,10 +218,10 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
         }
 
         if (requiresUserAuthorization) {
-            RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithPermissionRequestProxy:request.permissionRequest.get()]);
+            RetainPtr<WKWebAllowDenyPolicyListener> policyListener = adoptNS([[WKWebAllowDenyPolicyListener alloc] initWithCompletionHandler:WTFMove(request.completionHandler)]);
             decidePolicyForGeolocationRequestFromOrigin(request.origin.get(), request.frame->url(), policyListener.get(), [request.view window]);
         } else
-            request.permissionRequest->allow();
+            request.completionHandler(true);
     }
 }
 
@@ -232,7 +229,7 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 {
     Vector<GeolocationRequestData> requests = WTFMove(_requestsWaitingForCoreLocationAuthorization);
     for (const auto& requestData : requests)
-        requestData.permissionRequest->deny();
+        requestData.completionHandler(false);
 }
 
 - (void)positionChanged:(_WKGeolocationPosition *)position
@@ -330,27 +327,27 @@ static void setEnableHighAccuracy(WKGeolocationManagerRef geolocationManager, bo
 
 # pragma mark - Implementation of WKWebAllowDenyPolicyListener
 @implementation WKWebAllowDenyPolicyListener {
-    RefPtr<GeolocationPermissionRequestProxy> _permissionRequestProxy;
+    Function<void(bool)> _completionHandler;
 }
 
-- (id)initWithPermissionRequestProxy:(RefPtr<GeolocationPermissionRequestProxy>&&)permissionRequestProxy
+- (id)initWithCompletionHandler:(Function<void(bool)>&&)completionHandler
 {
     self = [super init];
     if (!self)
         return nil;
 
-    _permissionRequestProxy = WTFMove(permissionRequestProxy);
+    _completionHandler = WTFMove(completionHandler);
     return self;
 }
 
 - (void)allow
 {
-    _permissionRequestProxy->allow();
+    _completionHandler(true);
 }
 
 - (void)deny
 {
-    _permissionRequestProxy->deny();
+    _completionHandler(false);
 }
 
 - (void)denyOnlyThisRequest

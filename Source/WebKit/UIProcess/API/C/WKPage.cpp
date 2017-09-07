@@ -1953,13 +1953,13 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return true;
         }
 
-        bool decidePolicyForGeolocationPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& origin, GeolocationPermissionRequestProxy& permissionRequest) final
+        Function<void(bool)> decidePolicyForGeolocationPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& origin, Function<void(bool)>&& completionHandler) final
         {
             if (!m_client.decidePolicyForGeolocationPermissionRequest)
-                return false;
+                return WTFMove(completionHandler);
 
-            m_client.decidePolicyForGeolocationPermissionRequest(toAPI(&page), toAPI(&frame), toAPI(&origin), toAPI(&permissionRequest), m_client.base.clientInfo);
-            return true;
+            m_client.decidePolicyForGeolocationPermissionRequest(toAPI(&page), toAPI(&frame), toAPI(&origin), toAPI(GeolocationPermissionRequest::create(WTFMove(completionHandler)).ptr()), m_client.base.clientInfo);
+            return nullptr;
         }
 
         bool decidePolicyForUserMediaPermissionRequest(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaDocumentOrigin, API::SecurityOrigin& topLevelDocumentOrigin, UserMediaPermissionRequestProxy& permissionRequest) final

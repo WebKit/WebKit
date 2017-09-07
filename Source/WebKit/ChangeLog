@@ -1,5 +1,53 @@
 2017-09-07  Alex Christensen  <achristensen@webkit.org>
 
+        Clean up Geolocation request handling
+        https://bugs.webkit.org/show_bug.cgi?id=176562
+
+        Reviewed by Tim Horton.
+
+        Instead of passing a GeolocationPermissionRequestProxy& to each client and returning a bool if the request will be handled,
+        pass a Function<void(bool)>&& completionHandler and return the function if it won't be handled.
+        This allows to temporarily support our UIClient/PageClient hybrid design while moving towards a sane design.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::Function<void):
+        (API::UIClient::decidePolicyForGeolocationPermissionRequest): Deleted.
+        * UIProcess/API/C/WKAPICast.h:
+        * UIProcess/API/C/WKGeolocationPermissionRequest.cpp:
+        (WKGeolocationPermissionRequestGetTypeID):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/GeolocationPermissionRequestProxy.cpp:
+        (WebKit::GeolocationPermissionRequestProxy::allow):
+        (WebKit::GeolocationPermissionRequestProxy::deny):
+        (WebKit::GeolocationPermissionRequestProxy::invalidate):
+        * UIProcess/GeolocationPermissionRequestProxy.h:
+        (WebKit::GeolocationPermissionRequest::create):
+        (WebKit::GeolocationPermissionRequest::allow):
+        (WebKit::GeolocationPermissionRequest::deny):
+        (WebKit::GeolocationPermissionRequest::GeolocationPermissionRequest):
+        * UIProcess/PageClient.h:
+        (WebKit::PageClient::decidePolicyForGeolocationPermissionRequest): Deleted.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestGeolocationPermissionForFrame):
+        * UIProcess/ios/PageClientImplIOS.h:
+        * UIProcess/ios/PageClientImplIOS.mm:
+        (WebKit::Function<void):
+        (WebKit::PageClientImpl::decidePolicyForGeolocationPermissionRequest): Deleted.
+        * UIProcess/ios/WKContentView.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.h:
+        * UIProcess/ios/WKGeolocationProviderIOS.mm:
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:completionHandler:view:]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationGranted]):
+        (-[WKGeolocationProviderIOS geolocationAuthorizationDenied]):
+        (-[WKWebAllowDenyPolicyListener initWithCompletionHandler:]):
+        (-[WKWebAllowDenyPolicyListener allow]):
+        (-[WKWebAllowDenyPolicyListener deny]):
+        (-[WKGeolocationProviderIOS decidePolicyForGeolocationRequestFromOrigin:frame:request:view:]): Deleted.
+        (-[WKWebAllowDenyPolicyListener initWithPermissionRequestProxy:]): Deleted.
+
+2017-09-07  Alex Christensen  <achristensen@webkit.org>
+
         Allow modern decoding of enums and OptionSets
         https://bugs.webkit.org/show_bug.cgi?id=176480
 
