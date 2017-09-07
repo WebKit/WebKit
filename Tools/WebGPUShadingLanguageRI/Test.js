@@ -989,6 +989,18 @@ function TEST_doubleNot()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
 }
 
+function TEST_simpleRecursion()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<T>(T x)
+            {
+                foo(&x);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
 function TEST_protocolMonoSigPolyDef()
 {
     let program = doPrep(`

@@ -1,3 +1,26 @@
+2017-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should check recursion
+        https://bugs.webkit.org/show_bug.cgi?id=176553
+
+        Reviewed by Michael Saboff and Mark Lam.
+        
+        This adds a recursion checker. Previously, we would only check for recursion during inlining, but that
+        generally only happens when we call the function.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CheckRecursion.js: Added.
+        (checkRecursion):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/RecursionChecker.js: Added.
+        (RecursionChecker):
+        (RecursionChecker.prototype.visitFuncDef):
+        (RecursionChecker.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleRecursion):
+
 2017-09-07  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Notify client when downloads are redirected
