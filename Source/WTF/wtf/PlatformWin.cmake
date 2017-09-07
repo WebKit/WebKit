@@ -3,11 +3,10 @@ list(APPEND WTF_HEADERS
 )
 
 list(APPEND WTF_SOURCES
-    PlatformUserPreferredLanguagesWin.cpp
-
     text/win/TextBreakIteratorInternalICUWin.cpp
 
     win/CPUTimeWin.cpp
+    win/LanguageWin.cpp
     win/MainThreadWin.cpp
     win/MemoryFootprintWin.cpp
     win/MemoryPressureHandlerWin.cpp

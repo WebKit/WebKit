@@ -36,7 +36,6 @@
 #include "JSDOMWindowCustom.h"
 #include "JSMainThreadExecState.h"
 #include "JSNode.h"
-#include "Language.h"
 #include "Logging.h"
 #include "Page.h"
 #include "RejectedPromiseTracker.h"
@@ -51,6 +50,7 @@
 #include <runtime/JSInternalPromise.h>
 #include <runtime/JSInternalPromiseDeferred.h>
 #include <runtime/Microtask.h>
+#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS)

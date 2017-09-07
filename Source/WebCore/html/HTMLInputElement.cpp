@@ -49,7 +49,6 @@
 #include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
 #include "KeyboardEvent.h"
-#include "Language.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "PlatformMouseEvent.h"
@@ -59,6 +58,7 @@
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Ref.h>
 

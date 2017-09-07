@@ -31,7 +31,6 @@
 #include "AXObjectCache.h"
 #include "ElementIterator.h"
 #include "HTMLNames.h"
-#include "Language.h"
 #include "RenderIterator.h"
 #include "RenderText.h"
 #include "SVGAElement.h"
@@ -40,6 +39,7 @@
 #include "SVGTitleElement.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <wtf/Language.h>
 
 namespace WebCore {
 

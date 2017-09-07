@@ -55,11 +55,11 @@
 #include "WebsiteDataType.h"
 #include <JavaScriptCore/RemoteInspector.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/Language.h>
 #include <glib/gi18n-lib.h>
 #include <libintl.h>
 #include <memory>
 #include <wtf/HashMap.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -1256,7 +1256,7 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
         else
             languages.append(String::fromUTF8(languageList[i]).convertToASCIILowercase().replace("_", "-"));
     }
-    WebCore::overrideUserPreferredLanguages(languages);
+    overrideUserPreferredLanguages(languages);
 }
 
 /**

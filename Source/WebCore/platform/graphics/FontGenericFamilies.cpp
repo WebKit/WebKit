@@ -25,7 +25,8 @@
 
 #include "config.h"
 #include "FontGenericFamilies.h"
-#include "Language.h"
+
+#include <wtf/Language.h>
 
 namespace WebCore {
 

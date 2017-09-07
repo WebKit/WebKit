@@ -105,7 +105,6 @@
 #include "JSCustomElementInterface.h"
 #include "JSLazyEventListener.h"
 #include "KeyboardEvent.h"
-#include "Language.h"
 #include "LayoutDisallowedScope.h"
 #include "LoaderStrategy.h"
 #include "Logging.h"
@@ -206,6 +205,7 @@
 #include <inspector/ScriptCallStack.h>
 #include <pal/Logger.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/SystemTracing.h>

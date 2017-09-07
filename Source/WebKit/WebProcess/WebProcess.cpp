@@ -91,7 +91,6 @@
 #include <WebCore/GlyphPage.h>
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/JSDOMWindow.h>
-#include <WebCore/Language.h>
 #include <WebCore/MainFrame.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/MemoryRelease.h>
@@ -112,6 +111,7 @@
 #include <unistd.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/Language.h>
 #include <wtf/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
@@ -495,7 +495,6 @@ void WebProcess::setShouldUseFontSmoothing(bool useFontSmoothing)
 void WebProcess::userPreferredLanguagesChanged(const Vector<String>& languages) const
 {
     overrideUserPreferredLanguages(languages);
-    languageDidChange();
 }
 
 void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)

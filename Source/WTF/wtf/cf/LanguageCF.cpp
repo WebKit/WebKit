@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2005, 2006, 2010, 2011, 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2010, 2011, 2016, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PlatformUserPreferredLanguages.h"
+#include "config.h"
+#include "Language.h"
 
-#import "BlockObjCExceptions.h"
-#import <mutex>
-#import <unicode/uloc.h>
-#import <wtf/Assertions.h>
-#import <wtf/Lock.h>
-#import <wtf/NeverDestroyed.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/spi/cf/CFBundleSPI.h>
-#import <wtf/text/WTFString.h>
+#include <CoreFoundation/CoreFoundation.h>
+#include <mutex>
+#include <unicode/uloc.h>
+#include <wtf/Assertions.h>
+#include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/spi/cf/CFBundleSPI.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
-
-static void (*callback)();
-
-void setPlatformUserPreferredLanguagesChangedCallback(void (*passedCallback)())
-{
-    callback = passedCallback;
-}
 
 static StaticLock preferredLanguagesMutex;
 
@@ -53,31 +46,7 @@ static Vector<String>& preferredLanguages()
     return languages;
 }
 
-}
-
-@interface WTFLanguageChangeObserver : NSObject
-@end
-
-@implementation WTFLanguageChangeObserver
-
-+ (void)languagePreferencesDidChange:(NSNotification *)notification
-{
-    UNUSED_PARAM(notification);
-
-    {
-        std::lock_guard<StaticLock> lock(WTF::preferredLanguagesMutex);
-        WTF::preferredLanguages().clear();
-    }
-    
-    if (WTF::callback)
-        WTF::callback();
-}
-
-@end
-
-namespace WTF {
-
-static String httpStyleLanguageCode(NSString *language)
+static String httpStyleLanguageCode(CFStringRef language)
 {
     SInt32 languageCode;
     SInt32 regionCode;
@@ -88,31 +57,41 @@ static String httpStyleLanguageCode(NSString *language)
     // 1. There is no reason why CFBundle localization names would be at all related to language names as used on the Web.
     // 2. Script Manager codes cannot represent all languages that are now supported by the platform, so the conversion is lossy.
     // 3. This should probably match what is sent by the network layer as Accept-Language, but currently, that's implemented separately.
-    CFBundleGetLocalizationInfoForLocalization((CFStringRef)language, &languageCode, &regionCode, &scriptCode, &stringEncoding);
+    CFBundleGetLocalizationInfoForLocalization(language, &languageCode, &regionCode, &scriptCode, &stringEncoding);
     RetainPtr<CFStringRef> preferredLanguageCode = adoptCF(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
     if (preferredLanguageCode)
-        language = (NSString *)preferredLanguageCode.get();
+        language = preferredLanguageCode.get();
 
     // Turn a '_' into a '-' if it appears after a 2-letter language code
-    if ([language length] >= 3 && [language characterAtIndex:2] == '_') {
-        RetainPtr<NSMutableString> mutableLanguageCode = adoptNS([language mutableCopy]);
-        [mutableLanguageCode.get() replaceCharactersInRange:NSMakeRange(2, 1) withString:@"-"];
+    if (CFStringGetLength(language) >= 3 && CFStringGetCharacterAtIndex(language, 2) == '_') {
+        auto mutableLanguageCode = adoptCF(CFStringCreateMutableCopy(kCFAllocatorDefault, 0, language));
+        CFStringReplace(mutableLanguageCode.get(), CFRangeMake(2, 1), CFSTR("-"));
         return mutableLanguageCode.get();
     }
 
     return language;
 }
 
+#if PLATFORM(MAC)
+static void languagePreferencesDidChange(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
+{
+    {
+        std::lock_guard<StaticLock> lock(preferredLanguagesMutex);
+        preferredLanguages().clear();
+    }
+    
+    languageDidChange();
+}
+#endif
+
 Vector<String> platformUserPreferredLanguages()
 {
 #if PLATFORM(MAC)
     static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        [[NSDistributedNotificationCenter defaultCenter] addObserver:[WTFLanguageChangeObserver self] selector:@selector(languagePreferencesDidChange:) name:@"AppleLanguagePreferencesChangedNotification" object:nil];
+    dispatch_once(&onceToken, ^ {
+        CFNotificationCenterAddObserver(CFNotificationCenterGetDistributedCenter(), nullptr, &languagePreferencesDidChange, CFSTR("AppleLanguagePreferencesChangedNotification"), nullptr, CFNotificationSuspensionBehaviorCoalesce);
     });
 #endif
-
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     std::lock_guard<StaticLock> lock(preferredLanguagesMutex);
     Vector<String>& userPreferredLanguages = preferredLanguages();
@@ -124,7 +103,7 @@ Vector<String> platformUserPreferredLanguages()
             userPreferredLanguages.append("en");
         else {
             for (CFIndex i = 0; i < languageCount; i++)
-                userPreferredLanguages.append(httpStyleLanguageCode((NSString *)CFArrayGetValueAtIndex(languages.get(), i)));
+                userPreferredLanguages.append(httpStyleLanguageCode(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i))));
         }
     }
 
@@ -135,8 +114,6 @@ Vector<String> platformUserPreferredLanguages()
         userPreferredLanguagesCopy.uncheckedAppend(language.isolatedCopy());
 
     return userPreferredLanguagesCopy;
-
-    END_BLOCK_OBJC_EXCEPTIONS;
 
     return Vector<String>();
 }

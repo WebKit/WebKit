@@ -54,7 +54,6 @@
 #include "JSDOMError.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
-#include "Language.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MainFrame.h"
@@ -94,6 +93,7 @@
 #include <runtime/Uint8Array.h>
 #include <wtf/Algorithms.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/Language.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/Ref.h>

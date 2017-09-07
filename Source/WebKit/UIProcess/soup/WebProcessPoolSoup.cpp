@@ -32,7 +32,7 @@
 #include "WebCookieManagerProxy.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessMessages.h"
-#include <WebCore/Language.h>
+#include <wtf/Language.h>
 
 namespace WebKit {
 
@@ -41,7 +41,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
-    parameters.languages = WebCore::userPreferredLanguages();
+    parameters.languages = userPreferredLanguages();
 #if ENABLE(NETWORK_CACHE)
     parameters.shouldEnableNetworkCacheEfficacyLogging = false;
 #endif

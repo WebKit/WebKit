@@ -33,13 +33,13 @@
 
 #include "DateComponents.h"
 #include "DateTimeFormat.h"
-#include "Language.h"
 #include "LocalizedStrings.h"
 #include <limits>
 #include <windows.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/HashMap.h>
+#include <wtf/Language.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 

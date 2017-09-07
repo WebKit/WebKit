@@ -60,6 +60,7 @@ set(WTF_HEADERS
     IndexedContainerIterator.h
     IteratorAdaptors.h
     IteratorRange.h
+    Language.h
     ListHashSet.h
     Liveness.h
     Lock.h
@@ -229,6 +230,7 @@ set(WTF_SOURCES
     GlobalVersion.cpp
     GregorianDateTime.cpp
     HashTable.cpp
+    Language.cpp
     Lock.cpp
     LockedPrintStream.cpp
     MD5.cpp

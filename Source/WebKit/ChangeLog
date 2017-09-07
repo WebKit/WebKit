@@ -1,3 +1,14 @@
+2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [PAL] Unify PlatformUserPreferredLanguages.h with Language.h
+        https://bugs.webkit.org/show_bug.cgi?id=176561
+
+        Reviewed by Brent Fulgham.
+
+        * UIProcess/WebProcessPool.cpp:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::userPreferredLanguagesChanged const):
+
 2017-09-07  Youenn Fablet  <youenn@apple.com>
 
         Remove entry from CacheStorageEngineConnection lock map when unlocking a Cache

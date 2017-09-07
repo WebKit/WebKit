@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2006, 2010, 2013, 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformUserPreferredLanguages_h
-#define PlatformUserPreferredLanguages_h
+#pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
-WTF_EXPORT_PRIVATE void setPlatformUserPreferredLanguagesChangedCallback(void (*)());
+WTF_EXPORT String defaultLanguage(); // Thread-safe.
+WTF_EXPORT Vector<String> userPreferredLanguages(); // Thread-safe, returns BCP 47 language tags.
+WTF_EXPORT Vector<String> userPreferredLanguagesOverride();
+WTF_EXPORT void overrideUserPreferredLanguages(const Vector<String>&);
+WTF_EXPORT size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch);
+WTF_EXPORT Vector<String> platformUserPreferredLanguages();
+// Called from platform specific code when the user's preferred language(s) change.
+void languageDidChange();
 
-// This is thread-safe.
-WTF_EXPORT_PRIVATE Vector<String> platformUserPreferredLanguages();
+// The observer function will be called when system language changes.
+typedef void (*LanguageChangeObserverFunction)(void* context);
+WTF_EXPORT void addLanguageChangeObserver(void* context, LanguageChangeObserverFunction);
+WTF_EXPORT void removeLanguageChangeObserver(void* context);
 
-} // namespace WTF
+WTF_EXPORT String displayNameForLanguageLocale(const String&);
+}
 
-using WTF::setPlatformUserPreferredLanguagesChangedCallback;
+using WTF::defaultLanguage;
+using WTF::userPreferredLanguages;
+using WTF::userPreferredLanguagesOverride;
+using WTF::overrideUserPreferredLanguages;
+using WTF::indexOfBestMatchingLanguageInList;
 using WTF::platformUserPreferredLanguages;
-
-#endif // PlatformUserPreferredLanguages_h
+using WTF::addLanguageChangeObserver;
+using WTF::removeLanguageChangeObserver;
+using WTF::displayNameForLanguageLocale;
 

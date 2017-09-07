@@ -1,3 +1,40 @@
+2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [PAL] Unify PlatformUserPreferredLanguages.h with Language.h
+        https://bugs.webkit.org/show_bug.cgi?id=176561
+
+        Reviewed by Brent Fulgham.
+
+        No new tests because there is no behavior change.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * accessibility/AccessibilitySVGElement.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSWorkerGlobalScopeBase.cpp:
+        * dom/Document.cpp:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLMediaElement.cpp:
+        * html/shadow/MediaControlElements.cpp:
+        * html/track/TrackBase.cpp:
+        * page/CaptionUserPreferences.cpp:
+        * page/CaptionUserPreferencesMediaAF.cpp:
+        * page/DOMWindow.cpp:
+        * page/Navigator.cpp:
+        * page/NavigatorBase.cpp:
+        * platform/graphics/FontGenericFamilies.cpp:
+        * platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.mm:
+        * platform/network/HTTPParsers.cpp:
+        * platform/text/PlatformLocale.h:
+        * platform/text/cf/HyphenationCF.cpp:
+        * platform/text/mac/LocaleMac.mm:
+        * svg/SVGTests.cpp:
+        * testing/InternalSettings.cpp:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::userPreferredLanguages const):
+        (WebCore::Internals::setUserPreferredLanguages):
+
 2017-09-06  Dean Jackson  <dino@apple.com>
 
         [WebGL] accelerated texImage2D for video doesn't respect flipY

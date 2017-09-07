@@ -22,9 +22,9 @@
 
 #if ENABLE(SPELLCHECK)
 
-#include <Language.h>
 #include <glib.h>
 #include <unicode/ubrk.h>
+#include <wtf/Language.h>
 #include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {

@@ -1,5 +1,4 @@
 list(APPEND WTF_SOURCES
-    PlatformUserPreferredLanguagesUnix.cpp
 
     generic/MainThreadGeneric.cpp
     generic/WorkQueueGeneric.cpp
@@ -8,11 +7,13 @@ list(APPEND WTF_SOURCES
 if (WIN32)
     list(APPEND WTF_SOURCES
         win/CPUTimeWin.cpp
+        win/LanguageWin.cpp
         text/win/TextBreakIteratorInternalICUWin.cpp
     )
 else ()
     list(APPEND WTF_SOURCES
         unix/CPUTimeUnix.cpp
+        unix/LanguageUnix.cpp
         text/unix/TextBreakIteratorInternalICUUnix.cpp
     )
 endif ()

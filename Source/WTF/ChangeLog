@@ -1,3 +1,35 @@
+2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [PAL] Unify PlatformUserPreferredLanguages.h with Language.h
+        https://bugs.webkit.org/show_bug.cgi?id=176561
+
+        Reviewed by Brent Fulgham.
+
+        WebCore/platform/Language was the only* user of PlatformUserPreferredLanguages (with 1 exception).
+        That exception is that JavaScriptCore needed the functionality of WebCore/platform/Language, but it
+        couldn't get it because of the layering violation, so instead it erroneously called into
+        PlatformUserPreferredLanguages instead. This patch merges these two files into WTF so JSC gets the
+        right function and the PAL effort has one less file to move from WebCore/platform into PAL.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/Language.cpp: Renamed from Source/WebCore/platform/Language.cpp.
+        (WTF::addLanguageChangeObserver):
+        (WTF::userPreferredLanguages):
+        * wtf/Language.h: Renamed from Source/WebCore/platform/Language.h.
+        * wtf/PlatformGTK.cmake:
+        * wtf/PlatformJSCOnly.cmake:
+        * wtf/PlatformMac.cmake:
+        * wtf/PlatformUserPreferredLanguages.h: Removed.
+        * wtf/PlatformWPE.cmake:
+        * wtf/PlatformWin.cmake:
+        * wtf/cf/LanguageCF.cpp: Renamed from Source/WTF/wtf/PlatformUserPreferredLanguagesMac.mm.
+        (WTF::httpStyleLanguageCode):
+        (WTF::languagePreferencesDidChange):
+        (WTF::platformUserPreferredLanguages):
+        * wtf/unix/LanguageUnix.cpp: Renamed from Source/WTF/wtf/PlatformUserPreferredLanguagesUnix.cpp.
+        * wtf/win/LanguageWin.cpp: Renamed from Source/WTF/wtf/PlatformUserPreferredLanguagesWin.cpp.
+
 2017-09-06  Eric Carlson  <eric.carlson@apple.com>
 
         Require LoggingHelper overrides to provide identifier

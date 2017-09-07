@@ -66,7 +66,6 @@
 #include "History.h"
 #include "InspectorInstrumentation.h"
 #include "JSMainThreadExecState.h"
-#include "Language.h"
 #include "Location.h"
 #include "MainFrame.h"
 #include "MediaQueryList.h"
@@ -110,6 +109,7 @@
 #include <inspector/ScriptCallStackFactory.h>
 #include <memory>
 #include <wtf/CurrentTime.h>
+#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>

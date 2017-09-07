@@ -33,12 +33,12 @@
 #include "JSDedicatedWorkerGlobalScope.h"
 #include "JSDynamicDowncast.h"
 #include "JSWorkerGlobalScope.h"
-#include "Language.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValueInlines.h>
 #include <runtime/Microtask.h>
+#include <wtf/Language.h>
 
 #if ENABLE(SERVICE_WORKER)
 #include "JSServiceWorkerGlobalScope.h"

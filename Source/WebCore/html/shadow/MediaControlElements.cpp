@@ -43,7 +43,6 @@
 #include "HTMLUListElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageBuffer.h"
-#include "Language.h"
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MediaControls.h"
@@ -60,6 +59,7 @@
 #include "ShadowRoot.h"
 #include "TextTrackList.h"
 #include "VTTRegionList.h"
+#include <wtf/Language.h>
 
 namespace WebCore {
 

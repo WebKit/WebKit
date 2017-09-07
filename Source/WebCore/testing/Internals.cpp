@@ -88,7 +88,6 @@
 #include "IntRect.h"
 #include "InternalSettings.h"
 #include "JSImageData.h"
-#include "Language.h"
 #include "LibWebRTCProvider.h"
 #include "MainFrame.h"
 #include "MallocStatistics.h"
@@ -154,6 +153,7 @@
 #include <inspector/InspectorValues.h>
 #include <runtime/JSCInlines.h>
 #include <runtime/JSCJSValue.h>
+#include <wtf/Language.h>
 #include <wtf/MemoryPressureHandler.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/StringBuffer.h>
@@ -419,7 +419,7 @@ void Internals::resetToConsistentState(Page& page)
     }
 
     WebCore::clearDefaultPortForProtocolMapForTesting();
-    WebCore::overrideUserPreferredLanguages(Vector<String>());
+    overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
     WebCore::Settings::setUsesMockScrollAnimator(false);
 #if ENABLE(VIDEO_TRACK)
@@ -1737,12 +1737,12 @@ ExceptionOr<int> Internals::lastSpellCheckProcessedSequence()
 
 Vector<String> Internals::userPreferredLanguages() const
 {
-    return WebCore::userPreferredLanguages();
+    return WTF::userPreferredLanguages();
 }
 
 void Internals::setUserPreferredLanguages(const Vector<String>& languages)
 {
-    WebCore::overrideUserPreferredLanguages(languages);
+    overrideUserPreferredLanguages(languages);
 }
 
 Vector<String> Internals::userPreferredAudioCharacteristics() const

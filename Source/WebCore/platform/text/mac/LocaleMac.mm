@@ -31,12 +31,12 @@
 #include "config.h"
 #include "LocaleMac.h"
 
+#import "LocalizedStrings.h"
 #import <Foundation/NSDateFormatter.h>
 #import <Foundation/NSLocale.h>
-#include "Language.h"
-#include "LocalizedStrings.h"
-#include <wtf/DateMath.h>
-#include <wtf/RetainPtr.h>
+#import <wtf/DateMath.h>
+#import <wtf/Language.h>
+#import <wtf/RetainPtr.h>
 
 #if PLATFORM(IOS)
 #import "LocalizedDateCache.h"

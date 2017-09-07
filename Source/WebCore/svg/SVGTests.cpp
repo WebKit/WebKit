@@ -24,10 +24,10 @@
 
 #include "DOMImplementation.h"
 #include "HTMLNames.h"
-#include "Language.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include "SVGStringList.h"
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
 
 #if ENABLE(MATHML)

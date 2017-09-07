@@ -30,7 +30,6 @@
 
 #include "AudioTrackList.h"
 #include "DOMWrapperWorld.h"
-#include "Language.h"
 #include "LocalizedStrings.h"
 #include "MediaSelectionOption.h"
 #include "Page.h"
@@ -44,6 +43,7 @@
 #include <heap/HeapInlines.h>
 #include <runtime/JSCellInlines.h>
 #include <runtime/StructureInlines.h>
+#include <wtf/Language.h>
 
 namespace WebCore {
 

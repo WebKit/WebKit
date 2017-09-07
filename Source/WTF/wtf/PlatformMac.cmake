@@ -10,14 +10,14 @@ list(APPEND WTF_LIBRARIES
 list(APPEND WTF_SOURCES
     AutodrainedPoolMac.mm
     BlockObjCExceptions.mm
-    PlatformUserPreferredLanguagesMac.mm
     RunLoopTimerCF.cpp
     SchedulePairCF.cpp
     SchedulePairMac.mm
 
-    text/mac/TextBreakIteratorInternalICUMac.mm
-
+    cf/LanguageCF.cpp
     cf/RunLoopCF.cpp
+
+    text/mac/TextBreakIteratorInternalICUMac.mm
 
     cocoa/CPUTimeCocoa.mm
     cocoa/MemoryFootprintCocoa.cpp

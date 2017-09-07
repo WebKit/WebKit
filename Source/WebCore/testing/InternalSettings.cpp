@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "FontCache.h"
 #include "FrameView.h"
-#include "Language.h"
 #include "LocaleToScriptMapping.h"
 #include "MainFrame.h"
 #include "Page.h"
@@ -41,6 +40,7 @@
 #include "Settings.h"
 #include "Supplementable.h"
 #include "TextRun.h"
+#include <wtf/Language.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"

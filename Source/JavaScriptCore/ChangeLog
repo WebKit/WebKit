@@ -1,3 +1,13 @@
+2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [PAL] Unify PlatformUserPreferredLanguages.h with Language.h
+        https://bugs.webkit.org/show_bug.cgi?id=176561
+
+        Reviewed by Brent Fulgham.
+
+        * runtime/IntlObject.cpp:
+        (JSC::defaultLocale):
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)

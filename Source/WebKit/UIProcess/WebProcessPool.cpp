@@ -72,7 +72,6 @@
 #include "WebsiteDataStore.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/ApplicationCacheStorage.h>
-#include <WebCore/Language.h>
 #include <WebCore/LinkHash.h>
 #include <WebCore/LogInitialization.h>
 #include <WebCore/ResourceRequest.h>
@@ -80,6 +79,7 @@
 #include <pal/SessionID.h>
 #include <runtime/JSCInlines.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/Language.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>

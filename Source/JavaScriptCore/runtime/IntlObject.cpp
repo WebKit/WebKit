@@ -48,8 +48,8 @@
 #include <unicode/uloc.h>
 #include <unicode/unumsys.h>
 #include <wtf/Assertions.h>
+#include <wtf/Language.h>
 #include <wtf/NeverDestroyed.h>
-#include <wtf/PlatformUserPreferredLanguages.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -576,16 +576,14 @@ String defaultLocale(ExecState& state)
     
     // WebCore's global objects will have their own ideas of how to determine the language. It may
     // be determined by WebCore-specific logic like some WK settings. Usually this will return the
-    // same thing as platformUserPreferredLanguages()[0].
+    // same thing as userPreferredLanguages()[0].
     if (auto defaultLanguage = state.jsCallee()->globalObject()->globalObjectMethodTable()->defaultLanguage) {
         String locale = defaultLanguage();
         if (!locale.isEmpty())
             return canonicalizeLanguageTag(locale);
     }
-    
-    // If WebCore isn't around to tell us how to get the language then fall back to our own way of
-    // doing it, which mostly follows what WebCore would have done.
-    Vector<String> languages = platformUserPreferredLanguages();
+
+    Vector<String> languages = userPreferredLanguages();
     if (!languages.isEmpty() && !languages[0].isEmpty())
         return canonicalizeLanguageTag(languages[0]);
     

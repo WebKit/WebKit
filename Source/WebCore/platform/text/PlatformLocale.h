@@ -27,7 +27,7 @@
 #define PlatformLocale_h
 
 #include "DateComponents.h"
-#include "Language.h"
+#include <wtf/Language.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

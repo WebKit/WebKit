@@ -28,10 +28,8 @@
 
 #import "WebNSUserDefaultsExtras.h"
 
-#import <WebCore/Language.h>
+#import <wtf/Language.h>
 #import <wtf/text/WTFString.h>
-
-using namespace WebCore;
 
 @implementation NSUserDefaults (WebNSUserDefaultsExtras)
 
