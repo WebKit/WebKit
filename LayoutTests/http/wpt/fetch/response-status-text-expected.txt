@@ -1,6 +1,0 @@
-
-PASS Normal status text. 
-PASS Abnormal status text. 
-PASS Empty status text. 
-PASS Garbage status line. 
-

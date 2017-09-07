@@ -1,3 +1,16 @@
+2017-09-07  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221716.
+
+        This change caused assertion failures on macOS Debug WK2.
+
+        Reverted changeset:
+
+        "Fetch's Response.statusText is unexpectedly the full http
+        status line for HTTP/2 responses"
+        https://bugs.webkit.org/show_bug.cgi?id=176479
+        http://trac.webkit.org/changeset/221716
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         Update test expectations for failing tests on Windows.
