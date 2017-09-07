@@ -86,6 +86,9 @@ Utilities =
 
     browserPrefix: function()
     {
+        if (this._browserPrefix !== undefined)
+            return this._browserPrefix;
+
         // Get the HTML element's CSSStyleDeclaration
         var styles = window.getComputedStyle(document.documentElement, '');
 
@@ -105,12 +108,14 @@ Utilities =
         var dom = ('WebKit|O|Moz|MS').match(new RegExp(prefix, 'i'))[0];
 
         // Return all the required prefixes.
-        return {
+        this._browserPrefix = {
             dom: dom,
             lowercase: prefix,
             css: '-' + prefix + '-',
             js: prefix[0].toUpperCase() + prefix.substr(1)
         };
+
+        return this._browserPrefix;
     },
 
     setElementPrefixedProperty: function(element, property, value)
