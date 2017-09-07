@@ -1,3 +1,13 @@
+2017-09-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Temporary disable the changes introduced in r221670 for WPE.
+
+        It caused a lot of test failures. Once WPE upgrades to Freetype 2.8 and removes the 2.4.11 patch, we can enable
+        it again.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit):
+
 2017-09-06  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Implement MediaPlayerPrivateGStreamerMSE::attempToDecryptWithInstance()
