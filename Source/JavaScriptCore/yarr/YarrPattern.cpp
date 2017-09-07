@@ -32,8 +32,10 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <wtf/DataLog.h>
+#include <wtf/Optional.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WTF;
 
@@ -430,11 +432,19 @@ public:
         m_pattern.m_userCharacterClasses.append(WTFMove(newCharacterClass));
     }
 
-    void atomParenthesesSubpatternBegin(bool capture = true)
+    void atomParenthesesSubpatternBegin(bool capture = true, std::optional<String> optGroupName = std::nullopt)
     {
         unsigned subpatternId = m_pattern.m_numSubpatterns + 1;
-        if (capture)
+        if (capture) {
             m_pattern.m_numSubpatterns++;
+            if (optGroupName) {
+                while (m_pattern.m_captureGroupNames.size() < subpatternId)
+                    m_pattern.m_captureGroupNames.append(String());
+                m_pattern.m_captureGroupNames.append(optGroupName.value());
+                m_pattern.m_namedGroupToParenIndex.add(optGroupName.value(), subpatternId);
+            }
+        } else
+            ASSERT(!optGroupName);
 
         auto parenthesesDisjunction = std::make_unique<PatternDisjunction>(m_alternative);
         m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false));
@@ -509,7 +519,13 @@ public:
         m_alternative->m_terms.append(PatternTerm(subpatternId));
     }
 
-    // deep copy the argument disjunction.  If filterStartsWithBOL is true, 
+    void atomNamedBackReference(String subpatternName)
+    {
+        ASSERT(m_pattern.m_namedGroupToParenIndex.find(subpatternName) != m_pattern.m_namedGroupToParenIndex.end());
+        atomBackReference(m_pattern.m_namedGroupToParenIndex.get(subpatternName));
+    }
+
+    // deep copy the argument disjunction.  If filterStartsWithBOL is true,
     // skip alternatives with m_startsWithBOL set true.
     PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL = false)
     {
@@ -938,6 +954,8 @@ const char* YarrPattern::errorMessage(YarrPattern::ErrorCode error)
         REGEXP_ERROR_PREFIX "missing )",                                      // MissingParentheses
         REGEXP_ERROR_PREFIX "unmatched parentheses",                          // ParenthesesUnmatched
         REGEXP_ERROR_PREFIX "unrecognized character after (?",                // ParenthesesTypeInvalid
+        REGEXP_ERROR_PREFIX "invalid group specifier name",                   // InvalidGroupName
+        REGEXP_ERROR_PREFIX "duplicate group specifier name",                 // DuplicateGroupName
         REGEXP_ERROR_PREFIX "missing terminating ] for character class",      // CharacterClassUnmatched
         REGEXP_ERROR_PREFIX "range out of order in character class",          // CharacterClassOutOfOrder
         REGEXP_ERROR_PREFIX "\\ at end of pattern",                           // EscapeUnterminated

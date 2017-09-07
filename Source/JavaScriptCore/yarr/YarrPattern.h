@@ -28,6 +28,7 @@
 
 #include "RegExpKey.h"
 #include <wtf/CheckedArithmetic.h>
+#include <wtf/HashMap.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -339,6 +340,8 @@ struct YarrPattern {
         MissingParentheses,
         ParenthesesUnmatched,
         ParenthesesTypeInvalid,
+        InvalidGroupName,
+        DuplicateGroupName,
         CharacterClassUnmatched,
         CharacterClassOutOfOrder,
         EscapeUnterminated,
@@ -378,6 +381,7 @@ struct YarrPattern {
 
         m_disjunctions.clear();
         m_userCharacterClasses.clear();
+        m_captureGroupNames.shrink(0);
     }
 
     bool containsIllegalBackReference()
@@ -493,6 +497,8 @@ struct YarrPattern {
     PatternDisjunction* m_body;
     Vector<std::unique_ptr<PatternDisjunction>, 4> m_disjunctions;
     Vector<std::unique_ptr<CharacterClass>> m_userCharacterClasses;
+    Vector<String> m_captureGroupNames;
+    HashMap<String, unsigned> m_namedGroupToParenIndex;
 
 private:
     const char* compile(const String& patternString, void* stackLimit);

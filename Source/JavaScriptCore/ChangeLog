@@ -1,3 +1,63 @@
+2017-09-07  Michael Saboff  <msaboff@apple.com>
+
+        Add support for RegExp named capture groups
+        https://bugs.webkit.org/show_bug.cgi?id=176435
+
+        Reviewed by Filip Pizlo.
+
+        Added parsing for both naming a captured parenthesis as well and using a named group in
+        a back reference.  Also added support for using named groups with String.prototype.replace().
+
+        This patch does not throw Syntax Errors as described in the current spec text for the two
+        cases of malformed back references in String.prototype.replace() as I believe that it
+        is inconsistent with the current semantics for handling of other malformed replacement
+        tokens.  I filed an issue for the requested change to the proposed spec and also filed
+        a FIXME bug https://bugs.webkit.org/show_bug.cgi?id=176434.
+
+        This patch does not implement strength reduction in the optimizing JITs for named capture
+        groups.  Filed https://bugs.webkit.org/show_bug.cgi?id=176464.
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::haveABadTime):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::regExpMatchesArrayWithGroupsStructure const):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::finishCreation):
+        * runtime/RegExp.h:
+        * runtime/RegExpMatchesArray.cpp:
+        (JSC::createStructureImpl):
+        (JSC::createRegExpMatchesArrayWithGroupsStructure):
+        (JSC::createRegExpMatchesArrayWithGroupsSlowPutStructure):
+        * runtime/RegExpMatchesArray.h:
+        (JSC::createRegExpMatchesArray):
+        * runtime/StringPrototype.cpp:
+        (JSC::substituteBackreferencesSlow):
+        (JSC::replaceUsingRegExpSearch):
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomNamedBackReference):
+        (JSC::Yarr::Parser::parseEscape):
+        (JSC::Yarr::Parser::parseParenthesesBegin):
+        (JSC::Yarr::Parser::tryConsumeUnicodeEscape):
+        (JSC::Yarr::Parser::tryConsumeIdentifierCharacter):
+        (JSC::Yarr::Parser::isIdentifierStart):
+        (JSC::Yarr::Parser::isIdentifierPart):
+        (JSC::Yarr::Parser::tryConsumeGroupName):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::YarrPatternConstructor::atomNamedBackReference):
+        (JSC::Yarr::YarrPattern::errorMessage):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+        * yarr/YarrSyntaxChecker.cpp:
+        (JSC::Yarr::SyntaxChecker::atomParenthesesSubpatternBegin):
+        (JSC::Yarr::SyntaxChecker::atomNamedBackReference):
+
 2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [PAL] Unify PlatformUserPreferredLanguages.h with Language.h

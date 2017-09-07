@@ -129,6 +129,11 @@ public:
         fail(URLFilterParser::BackReference);
     }
 
+    void atomNamedBackReference(String)
+    {
+        fail(URLFilterParser::BackReference);
+    }
+
     void assertionBOL()
     {
         if (hasError())
@@ -203,7 +208,7 @@ public:
         fail(URLFilterParser::AtomCharacter);
     }
 
-    void atomParenthesesSubpatternBegin(bool = true)
+    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt)
     {
         if (hasError())
             return;

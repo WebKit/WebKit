@@ -27,6 +27,8 @@
 #include "YarrSyntaxChecker.h"
 
 #include "YarrParser.h"
+#include <wtf/Optional.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
 
@@ -42,10 +44,11 @@ public:
     void atomCharacterClassRange(UChar, UChar) {}
     void atomCharacterClassBuiltIn(BuiltInCharacterClassID, bool) {}
     void atomCharacterClassEnd() {}
-    void atomParenthesesSubpatternBegin(bool = true) {}
+    void atomParenthesesSubpatternBegin(bool = true, std::optional<String> = std::nullopt) {}
     void atomParentheticalAssertionBegin(bool = false) {}
     void atomParenthesesEnd() {}
     void atomBackReference(unsigned) {}
+    void atomNamedBackReference(String) {}
     void quantifyAtom(unsigned, unsigned, bool) {}
     void disjunction() {}
 };

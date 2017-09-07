@@ -1,3 +1,16 @@
+2017-09-07  Michael Saboff  <msaboff@apple.com>
+
+        Add support for RegExp named capture groups
+        https://bugs.webkit.org/show_bug.cgi?id=176435
+
+        Reviewed by Filip Pizlo.
+
+        New regression tests.
+
+        * js/regexp-named-capture-groups-expected.txt: Added.
+        * js/regexp-named-capture-groups.html: Added.
+        * js/script-tests/regexp-named-capture-groups.js: Added.
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)

@@ -79,6 +79,26 @@ public:
     
     unsigned numSubpatterns() const { return m_numSubpatterns; }
 
+    bool hasNamedCaptures()
+    {
+        return !m_captureGroupNames.isEmpty();
+    }
+
+    String getCaptureGroupName(unsigned i)
+    {
+        if (!i || m_captureGroupNames.size() <= i)
+            return String();
+        return m_captureGroupNames[i];
+    }
+
+    unsigned subpatternForName(String groupName)
+    {
+        auto it = m_namedGroupToParenIndex.find(groupName);
+        if (it == m_namedGroupToParenIndex.end())
+            return 0;
+        return it->value;
+    }
+
     bool hasCode()
     {
         return m_state != NotCompiled;
@@ -134,6 +154,8 @@ private:
     RegExpFlags m_flags;
     const char* m_constructionError;
     unsigned m_numSubpatterns;
+    Vector<String> m_captureGroupNames;
+    HashMap<String, unsigned> m_namedGroupToParenIndex;
 #if ENABLE(REGEXP_TRACING)
     double m_rtMatchOnlyTotalSubjectStringLen;
     double m_rtMatchTotalSubjectStringLen;

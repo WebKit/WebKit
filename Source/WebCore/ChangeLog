@@ -1,3 +1,19 @@
+2017-09-07  Michael Saboff  <msaboff@apple.com>
+
+        Add support for RegExp named capture groups
+        https://bugs.webkit.org/show_bug.cgi?id=176435
+
+        Reviewed by Filip Pizlo.
+
+        Implemented stub routines to support named capture groups.  These are no-ops
+        just like for number capture group.
+
+        No new tests as this is covered by existing tests.
+
+        * contentextensions/URLFilterParser.cpp:
+        (WebCore::ContentExtensions::PatternParser::atomNamedBackReference):
+        (WebCore::ContentExtensions::PatternParser::atomParenthesesSubpatternBegin):
+
 2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [PAL] Unify PlatformUserPreferredLanguages.h with Language.h

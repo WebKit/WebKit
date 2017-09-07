@@ -31,6 +31,7 @@ namespace JSC {
 
 static const PropertyOffset RegExpMatchesArrayIndexPropertyOffset = 100;
 static const PropertyOffset RegExpMatchesArrayInputPropertyOffset = 101;
+static const PropertyOffset RegExpMatchesArrayGroupsPropertyOffset = 102;
 
 ALWAYS_INLINE JSArray* tryCreateUninitializedRegExpMatchesArray(ObjectInitializationScope& scope, GCDeferralContext* deferralContext, Structure* structure, unsigned initialLength)
 {
@@ -76,18 +77,26 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
     // FIXME: This should handle array allocation errors gracefully.
     // https://bugs.webkit.org/show_bug.cgi?id=155144
     
+    unsigned numSubpatterns = regExp->numSubpatterns();
+    bool hasNamedCaptures = regExp->hasNamedCaptures();
+    JSObject* groups = nullptr;
+
     auto setProperties = [&] () {
         array->putDirect(vm, RegExpMatchesArrayIndexPropertyOffset, jsNumber(result.start));
         array->putDirect(vm, RegExpMatchesArrayInputPropertyOffset, input);
+        if (hasNamedCaptures) {
+            groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+            array->putDirect(vm, RegExpMatchesArrayGroupsPropertyOffset, groups);
+        }
     };
-    
-    unsigned numSubpatterns = regExp->numSubpatterns();
-    
+
     GCDeferralContext deferralContext(vm.heap);
-    
+
+    Structure* matchStructure = hasNamedCaptures ? globalObject->regExpMatchesArrayWithGroupsStructure() : globalObject->regExpMatchesArrayStructure();
+
     if (UNLIKELY(globalObject->isHavingABadTime())) {
         ObjectInitializationScope scope(vm);
-        array = JSArray::tryCreateUninitializedRestricted(scope, &deferralContext, globalObject->regExpMatchesArrayStructure(), numSubpatterns + 1);
+        array = JSArray::tryCreateUninitializedRestricted(scope, &deferralContext, matchStructure, numSubpatterns + 1);
         // FIXME: we should probably throw an out of memory error here, but
         // when making this change we should check that all clients of this
         // function will correctly handle an exception being thrown from here.
@@ -106,10 +115,15 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(scope, i, value);
+            if (groups) {
+                String groupName = regExp->getCaptureGroupName(i);
+                if (!groupName.isEmpty())
+                    groups->putDirect(vm, Identifier::fromString(&vm, groupName), value);
+            }
         }
     } else {
         ObjectInitializationScope scope(vm);
-        array = tryCreateUninitializedRegExpMatchesArray(scope, &deferralContext, globalObject->regExpMatchesArrayStructure(), numSubpatterns + 1);
+        array = tryCreateUninitializedRegExpMatchesArray(scope, &deferralContext, matchStructure, numSubpatterns + 1);
         RELEASE_ASSERT(array);
         
         setProperties();
@@ -126,6 +140,11 @@ ALWAYS_INLINE JSArray* createRegExpMatchesArray(
             else
                 value = jsUndefined();
             array->initializeIndexWithoutBarrier(scope, i, value, ArrayWithContiguous);
+            if (groups) {
+                String groupName = regExp->getCaptureGroupName(i);
+                if (!groupName.isEmpty())
+                    groups->putDirect(vm, Identifier::fromString(&vm, groupName), value);
+            }
         }
     }
     return array;
@@ -139,5 +158,7 @@ inline JSArray* createRegExpMatchesArray(ExecState* exec, JSGlobalObject* global
 JSArray* createEmptyRegExpMatchesArray(JSGlobalObject*, JSString*, RegExp*);
 Structure* createRegExpMatchesArrayStructure(VM&, JSGlobalObject*);
 Structure* createRegExpMatchesArraySlowPutStructure(VM&, JSGlobalObject*);
+Structure* createRegExpMatchesArrayWithGroupsStructure(VM&, JSGlobalObject*);
+Structure* createRegExpMatchesArrayWithGroupsSlowPutStructure(VM&, JSGlobalObject*);
 
 } // namespace JSC

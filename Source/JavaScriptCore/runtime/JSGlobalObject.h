@@ -336,6 +336,7 @@ public:
     WriteBarrier<Structure> m_dollarVMStructure;
     WriteBarrier<Structure> m_iteratorResultObjectStructure;
     WriteBarrier<Structure> m_regExpMatchesArrayStructure;
+    WriteBarrier<Structure> m_regExpMatchesArrayWithGroupsStructure;
     WriteBarrier<Structure> m_moduleRecordStructure;
     WriteBarrier<Structure> m_moduleNamespaceObjectStructure;
     WriteBarrier<Structure> m_proxyObjectStructure;
@@ -645,6 +646,7 @@ public:
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(); }
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
+    Structure* regExpMatchesArrayWithGroupsStructure() const { return m_regExpMatchesArrayWithGroupsStructure.get(); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(); }
     Structure* moduleNamespaceObjectStructure() const { return m_moduleNamespaceObjectStructure.get(); }
     Structure* proxyObjectStructure() const { return m_proxyObjectStructure.get(); }

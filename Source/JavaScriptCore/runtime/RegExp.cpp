@@ -233,8 +233,11 @@ void RegExp::finishCreation(VM& vm)
     Yarr::YarrPattern pattern(m_patternString, m_flags, &m_constructionError, vm.stackLimit());
     if (!isValid())
         m_state = ParseError;
-    else
+    else {
         m_numSubpatterns = pattern.m_numSubpatterns;
+        m_captureGroupNames.swap(pattern.m_captureGroupNames);
+        m_namedGroupToParenIndex.swap(pattern.m_namedGroupToParenIndex);
+    }
 }
 
 void RegExp::destroy(JSCell* cell)

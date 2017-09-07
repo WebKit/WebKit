@@ -129,6 +129,7 @@
     macro(get) \
     macro(global) \
     macro(go) \
+    macro(groups) \
     macro(has) \
     macro(hasOwnProperty) \
     macro(hash) \

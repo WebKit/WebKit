@@ -71,7 +71,9 @@ JSArray* createEmptyRegExpMatchesArray(JSGlobalObject* globalObject, JSString* i
     return array;
 }
 
-static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, IndexingType indexingType)
+enum class ShouldCreateGroups { No, Yes };
+
+static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, IndexingType indexingType, ShouldCreateGroups shouldCreateGroups = ShouldCreateGroups::No)
 {
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType);
     PropertyOffset offset;
@@ -79,6 +81,14 @@ static Structure* createStructureImpl(VM& vm, JSGlobalObject* globalObject, Inde
     ASSERT(offset == RegExpMatchesArrayIndexPropertyOffset);
     structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->input, 0, offset);
     ASSERT(offset == RegExpMatchesArrayInputPropertyOffset);
+    switch (shouldCreateGroups) {
+    case ShouldCreateGroups::Yes:
+        structure = Structure::addPropertyTransition(vm, structure, vm.propertyNames->groups, 0, offset);
+        ASSERT(offset == RegExpMatchesArrayGroupsPropertyOffset);
+        break;
+    case ShouldCreateGroups::No:
+        break;
+    }
     return structure;
 }
 
@@ -90,6 +100,16 @@ Structure* createRegExpMatchesArrayStructure(VM& vm, JSGlobalObject* globalObjec
 Structure* createRegExpMatchesArraySlowPutStructure(VM& vm, JSGlobalObject* globalObject)
 {
     return createStructureImpl(vm, globalObject, ArrayWithSlowPutArrayStorage);
+}
+
+Structure* createRegExpMatchesArrayWithGroupsStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return createStructureImpl(vm, globalObject, ArrayWithContiguous, ShouldCreateGroups::Yes);
+}
+
+Structure* createRegExpMatchesArrayWithGroupsSlowPutStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return createStructureImpl(vm, globalObject, ArrayWithSlowPutArrayStorage, ShouldCreateGroups::Yes);
 }
 
 } // namespace JSC

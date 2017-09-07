@@ -510,7 +510,15 @@ private:
                     dataLog("Giving up because of pattern limit.\n");
                 break;
             }
-            
+
+            if (m_node->op() == RegExpExec && regExp->hasNamedCaptures()) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176464
+                // Implement strength reduction optimization for named capture groups.
+                if (verbose)
+                    dataLog("Giving up because of named capture groups.\n");
+                break;
+            }
+
             unsigned lastIndex;
             if (regExp->globalOrSticky()) {
                 // This will only work if we can prove what the value of lastIndex is. To do this
@@ -545,7 +553,12 @@ private:
 
             m_graph.watchpoints().addLazily(globalObject->havingABadTimeWatchpoint());
             
-            Structure* structure = globalObject->regExpMatchesArrayStructure();
+            Structure* structure;
+            if (m_node->op() == RegExpExec && regExp->hasNamedCaptures())
+                structure = globalObject->regExpMatchesArrayWithGroupsStructure();
+            else
+                structure = globalObject->regExpMatchesArrayStructure();
+
             if (structure->indexingType() != ArrayWithContiguous) {
                 // This is further protection against a race with haveABadTime.
                 if (verbose)

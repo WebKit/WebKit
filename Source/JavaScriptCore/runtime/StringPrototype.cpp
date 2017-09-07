@@ -182,6 +182,7 @@ StringPrototype* StringPrototype::create(VM& vm, JSGlobalObject* globalObject, S
 static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, StringView source, const int* ovector, RegExp* reg, size_t i)
 {
     StringBuilder substitutedReplacement;
+    bool hasNamedCaptures = reg && reg->hasNamedCaptures();
     int offset = 0;
     do {
         if (i + 1 == replacement.length())
@@ -208,6 +209,39 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
         } else if (ref == '\'') {
             backrefStart = ovector[1];
             backrefLength = source.length() - backrefStart;
+        } else if (reg && ref == '<') {
+            // Named back reference
+            if (!hasNamedCaptures) {
+                substitutedReplacement.append(replacement.substring(i, 2));
+                offset = i + 1;
+                continue;
+            }
+
+            size_t closingBracket = replacement.find('>', i + 2);
+            if (closingBracket == WTF::notFound) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176434
+                // Current proposed spec change throws a syntax error in this case.
+                // We have made the case that it makes more sense to treat this a literal
+                // If throwSyntaxError(exec, scope, "Missing closing '>' in replacement text");
+                continue;
+            }
+
+            unsigned nameLength = closingBracket - i - 2;
+            unsigned backrefIndex = reg->subpatternForName(replacement.substring(i + 2, nameLength).toString());
+
+            if (!backrefIndex || backrefIndex > reg->numSubpatterns()) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=176434
+                // Proposed spec change throws a throw syntax error in this case.
+                // We have made the case that a non-existent back reference should be replaced with
+                // and empty string.
+                // throwSyntaxError(exec, scope, makeString("Replacement text references non-existent backreference \"" + replacement.substring(i + 2, nameLength).toString()));
+                backrefStart = 0;
+                backrefLength = 0;
+            } else {
+                backrefStart = ovector[2 * backrefIndex];
+                backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
+            }
+            advance = nameLength + 1;
         } else if (reg && isASCIIDigit(ref)) {
             // 1- and 2-digit back references are allowed
             unsigned backrefIndex = ref - '0';
@@ -487,6 +521,7 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
     RegExpObject* regExpObject = asRegExpObject(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
+    bool hasNamedCaptures = regExp->hasNamedCaptures();
 
     if (global) {
         // ES5.1 15.5.4.10 step 8.a.
@@ -528,18 +563,38 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 unsigned i = 0;
                 cachedCall.clearArguments();
+
+                JSObject* groups = nullptr;
+
+                if (hasNamedCaptures) {
+                    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+                }
+
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
+                    JSValue patternValue;
+
                     if (matchStart < 0)
-                        cachedCall.appendArgument(jsUndefined());
+                        patternValue = jsUndefined();
                     else
-                        cachedCall.appendArgument(jsSubstring(&vm, source, matchStart, matchLen));
+                        patternValue = jsSubstring(&vm, source, matchStart, matchLen);
+
+                    cachedCall.appendArgument(patternValue);
+
+                    if (i && hasNamedCaptures) {
+                        String groupName = regExp->getCaptureGroupName(i);
+                        if (!groupName.isEmpty())
+                            groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
+                    }
                 }
 
                 cachedCall.appendArgument(jsNumber(result.start));
                 cachedCall.appendArgument(string);
+                if (hasNamedCaptures)
+                    cachedCall.appendArgument(groups);
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
@@ -569,18 +624,38 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
 
                 unsigned i = 0;
                 cachedCall.clearArguments();
+
+                JSObject* groups = nullptr;
+
+                if (hasNamedCaptures) {
+                    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+                }
+
                 for (; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
+                    JSValue patternValue;
+
                     if (matchStart < 0)
-                        cachedCall.appendArgument(jsUndefined());
+                        patternValue = jsUndefined();
                     else
-                        cachedCall.appendArgument(jsSubstring(&vm, source, matchStart, matchLen));
+                        patternValue = jsSubstring(&vm, source, matchStart, matchLen);
+
+                    cachedCall.appendArgument(patternValue);
+
+                    if (i && hasNamedCaptures) {
+                        String groupName = regExp->getCaptureGroupName(i);
+                        if (!groupName.isEmpty())
+                            groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
+                    }
                 }
 
                 cachedCall.appendArgument(jsNumber(result.start));
                 cachedCall.appendArgument(string);
+                if (hasNamedCaptures)
+                    cachedCall.appendArgument(groups);
 
                 cachedCall.setThis(jsUndefined());
                 JSValue jsResult = cachedCall.call();
@@ -611,19 +686,38 @@ static ALWAYS_INLINE EncodedJSValue replaceUsingRegExpSearch(
                     OUT_OF_MEMORY(exec, scope);
 
                 MarkedArgumentBuffer args;
+                JSObject* groups = nullptr;
+
+                if (hasNamedCaptures) {
+                    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+                    groups = JSFinalObject::create(vm, JSFinalObject::createStructure(vm, globalObject, globalObject->objectPrototype(), 0));
+                }
 
                 for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
                     int matchStart = ovector[i * 2];
                     int matchLen = ovector[i * 2 + 1] - matchStart;
 
+                    JSValue patternValue;
+
                     if (matchStart < 0)
-                        args.append(jsUndefined());
+                        patternValue = jsUndefined();
                     else
-                        args.append(jsSubstring(exec, source, matchStart, matchLen));
+                        patternValue = jsSubstring(exec, source, matchStart, matchLen);
+
+                    args.append(patternValue);
+
+                    if (i && hasNamedCaptures) {
+                        String groupName = regExp->getCaptureGroupName(i);
+                        if (!groupName.isEmpty())
+                            groups->putDirect(vm, Identifier::fromString(&vm, groupName), patternValue);
+                    }
+
                 }
 
                 args.append(jsNumber(result.start));
                 args.append(string);
+                if (hasNamedCaptures)
+                    args.append(groups);
 
                 JSValue replacement = call(exec, replaceValue, callType, callData, jsUndefined(), args);
                 RETURN_IF_EXCEPTION(scope, encodedJSValue());
