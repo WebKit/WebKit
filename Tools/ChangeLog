@@ -1,3 +1,14 @@
+2017-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL tests should run in run-javascriptcore-tests
+        https://bugs.webkit.org/show_bug.cgi?id=176550
+
+        Reviewed by Keith Miller.
+
+        * Scripts/run-javascriptcore-tests:
+        (runJSCStressTests):
+        * WebGPUShadingLanguageRI/wsl-tests.yaml: Added.
+
 2017-09-07  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds started failing with invalid json
