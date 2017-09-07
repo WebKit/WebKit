@@ -1054,6 +1054,30 @@ WI.toggleDetailsSidebar = function(event)
     this.detailsSidebar.collapsed = false;
 };
 
+WI.getMaximumSidebarWidth = function(sidebar)
+{
+    console.assert(sidebar instanceof WI.Sidebar);
+
+    const minimumContentBrowserWidth = 100;
+
+    let minimumWidth = window.innerWidth - minimumContentBrowserWidth;
+    let tabContentView = this.tabBrowser.selectedTabContentView;
+    console.assert(tabContentView);
+    if (!tabContentView)
+        return minimumWidth;
+
+    let otherSidebar = null;
+    if (sidebar === this.navigationSidebar)
+        otherSidebar = tabContentView.detailsSidebarPanels.length ? this.detailsSidebar : null;
+    else
+        otherSidebar = tabContentView.navigationSidebarPanel ? this.navigationSidebar : null;
+
+    if (otherSidebar)
+        minimumWidth -= otherSidebar.width;
+
+    return minimumWidth;
+};
+
 WI.tabContentViewClassForRepresentedObject = function(representedObject)
 {
     if (representedObject instanceof WI.DOMTree)

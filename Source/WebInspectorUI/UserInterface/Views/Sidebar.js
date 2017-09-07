@@ -168,9 +168,7 @@ WI.Sidebar = class Sidebar extends WI.View
 
     get maximumWidth()
     {
-        // FIXME: This is kind of arbitrary and ideally would be a more complex calculation based on the
-        // available space for the sibling elements.
-        return Math.round(window.innerWidth / 3);
+        return WI.getMaximumSidebarWidth(this);
     }
 
     get width()
