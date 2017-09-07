@@ -1,3 +1,13 @@
+2017-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Remove entry from CacheStorageEngineConnection lock map when unlocking a Cache
+        https://bugs.webkit.org/show_bug.cgi?id=176548
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngineConnection.cpp:
+        (WebKit::CacheStorageEngineConnection::dereference):
+
 2017-09-07  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add C API to retrieve the originating page of a WKDownload

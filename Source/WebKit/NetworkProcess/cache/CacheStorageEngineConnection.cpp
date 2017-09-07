@@ -120,8 +120,11 @@ void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_
         return;
 
     ASSERT(referenceResult->value);
-    if (!--referenceResult->value)
-        Engine::from(sessionID).unlock(cacheIdentifier);
+    if (--referenceResult->value)
+        return;
+
+    Engine::from(sessionID).unlock(cacheIdentifier);
+    references.remove(referenceResult);
 }
 
 void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, const String& origin)
