@@ -1,3 +1,16 @@
+2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [WPE][CMake] Add "dist" and "distcheck" targets
+        https://bugs.webkit.org/show_bug.cgi?id=176448
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add "dist" and "distcheck" CMake targets, which create release tarballs.
+        These are available only when configuring with -DDEVELOPER_MODE=TRUE.
+
+        * Source/PlatformWPE.cmake: Added.
+        * Source/cmake/FindXz.cmake: Added.
+
 2017-09-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Wrong use of PLUGIN_ARCHITECTURE(X11) in several places
