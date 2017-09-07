@@ -69,6 +69,15 @@ template<typename T> struct ArgumentCoder<OptionSet<T>> {
         optionSet = OptionSet<T>::fromRaw(value);
         return true;
     }
+
+    static std::optional<OptionSet<T>> decode(Decoder& decoder)
+    {
+        std::optional<uint64_t> value;
+        decoder >> value;
+        if (!value)
+            return std::nullopt;
+        return OptionSet<T>::fromRaw(*value);
+    }
 };
 
 template<typename T> struct ArgumentCoder<std::optional<T>> {

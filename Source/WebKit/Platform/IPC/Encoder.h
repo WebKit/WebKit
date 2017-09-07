@@ -65,13 +65,21 @@ public:
         encode(static_cast<uint64_t>(t));
     }
 
-    template<typename T>
-    auto encode(T&& t) -> std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value>
+    template<typename T, std::enable_if_t<!std::is_enum<typename std::remove_const_t<std::remove_reference_t<T>>>::value>* = nullptr>
+    void encode(T&& t)
     {
         ArgumentCoder<typename std::remove_const<typename std::remove_reference<T>::type>::type>::encode(*this, std::forward<T>(t));
     }
 
-    template<typename T> Encoder& operator<<(T&& t)
+    template<typename T, std::enable_if_t<std::is_enum<T>::value>* = nullptr>
+    Encoder& operator<<(T&& t)
+    {
+        encode(static_cast<uint64_t>(t));
+        return *this;
+    }
+
+    template<typename T, std::enable_if_t<!std::is_enum<T>::value>* = nullptr>
+    Encoder& operator<<(T&& t)
     {
         encode(std::forward<T>(t));
         return *this;

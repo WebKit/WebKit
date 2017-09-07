@@ -109,6 +109,16 @@ public:
         return true;
     }
 
+    template<typename E, std::enable_if_t<std::is_enum<E>::value>* = nullptr>
+    Decoder& operator>>(std::optional<E>& optional)
+    {
+        std::optional<uint64_t> value;
+        *this >> value;
+        if (value && isValidEnum<E>(*value))
+            optional = static_cast<E>(*value);
+        return *this;
+    }
+
     template<typename T> bool decodeEnum(T& result)
     {
         static_assert(sizeof(T) <= 8, "Enum type T must not be larger than 64 bits!");
