@@ -1,3 +1,12 @@
+2017-09-06  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove new-run-webkit-httpd as it appears to be old
+        https://bugs.webkit.org/show_bug.cgi?id=176493
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/new-run-webkit-httpd: Removed.
+
 2017-09-06  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's pageDidScroll
