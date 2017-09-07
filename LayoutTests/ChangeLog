@@ -1,3 +1,11 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html as slow.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-07  Matt Lewis  <jlewis3@apple.com>
 
         Marked media/video-controls-drop-and-restore-timeline.html as flaky on macOS WK2.

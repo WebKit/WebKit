@@ -4090,6 +4090,7 @@ imported/w3c/web-platform-tests/fetch/api/basic/accept-header.any.html [ Slow ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-basic.any.html [ Slow ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/joint_session_history/001.html [ Slow ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html [ Slow ]
+imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Slow ]
 
 # No service worker implementation for WK1
 http/tests/workers/service [ Skip ]
