@@ -249,7 +249,7 @@ TEST(WebKit, ClickAutoFillButton)
     TestWebKitAPI::Util::run(&done);
 }
 
-@interface PinnedStateObserver : NSObject <WKUIDelegatePrivate>
+@interface PinnedStateObserver : NSObject
 @end
 
 @implementation PinnedStateObserver
@@ -271,6 +271,27 @@ TEST(WebKit, PinnedState)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     auto observer = adoptNS([[PinnedStateObserver alloc] init]);
     [webView addObserver:observer.get() forKeyPath:@"_pinnedState" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:nil];
+    [webView loadHTMLString:@"<body onload='scroll(100, 100)' style='height:10000vh;'/>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
+@interface DidScrollDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation DidScrollDelegate
+
+- (void)_webViewDidScroll:(WKWebView *)webView
+{
+    done = true;
+}
+
+@end
+
+TEST(WebKit, DidScroll)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[DidScrollDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
     [webView loadHTMLString:@"<body onload='scroll(100, 100)' style='height:10000vh;'/>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
     TestWebKitAPI::Util::run(&done);
 }

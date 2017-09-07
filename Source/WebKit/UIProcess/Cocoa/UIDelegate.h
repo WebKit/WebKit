@@ -100,6 +100,7 @@ private:
         void takeFocus(WebPageProxy*, WKFocusDirection) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
+        void pageDidScroll(WebPageProxy*) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void unavailablePluginButtonClicked(WebKit::WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
@@ -152,6 +153,7 @@ private:
         bool focusWebView : 1;
         bool unfocusWebView : 1;
         bool webViewTakeFocus : 1;
+        bool webViewDidScroll : 1;
         bool webViewDidNotHandleWheelEvent : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
         bool webViewUnavailablePlugInButtonClicked : 1;

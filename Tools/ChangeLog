@@ -1,3 +1,15 @@
+2017-09-06  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's pageDidScroll
+        https://bugs.webkit.org/show_bug.cgi?id=176482
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[DidScrollDelegate _webViewDidScroll:]):
+        (TEST):
+
 2017-09-06  Eric Carlson  <eric.carlson@apple.com>
 
         Require LoggingHelper overrides to provide identifier
