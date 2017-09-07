@@ -61,7 +61,7 @@ function createTriggerable()
         return Manifest.fetch();
     }).then(() => {
         triggerable = new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-slave', password: 'password'}, new MockLogger);
-        return triggerable.updateTriggerable();
+        return triggerable.initSyncers().then(() => triggerable.updateTriggerable());
     }).then(() => Manifest.fetch()).then(() => {
         return new BuildbotTriggerable(config, TestServer.remoteAPI(), MockRemoteAPI, {name: 'sync-slave', password: 'password'}, new MockLogger);
     });
@@ -156,7 +156,7 @@ describe('sync-buildbot', function () {
             assert.equal(otherCommitSet.rootForRepository(webkit), null);
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
-            syncPromise = triggerable.syncOnce();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 3);
@@ -267,7 +267,7 @@ describe('sync-buildbot', function () {
             assert.deepEqual(otherCommitSet.allRootFiles(), []);
 
             MockRemoteAPI.reset();
-            syncPromise = triggerable.syncOnce();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 3);
@@ -441,7 +441,7 @@ describe('sync-buildbot', function () {
             const otherRoots = otherBuildRequest.commitSet().allRootFiles();
             assert.equal(otherRoots.length, 1);
             assert.deepEqual(otherRoots[0].filename(), 'root46.dat');
-            syncPromise = triggerable.syncOnce();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 3);
@@ -512,7 +512,7 @@ describe('sync-buildbot', function () {
             assert.equal(otherBuildRequest.statusUrl(), null);
             assert.equal(otherBuildRequest.buildId(), null);
 
-            syncPromise = triggerable.syncOnce();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
             return Promise.all([MockRemoteAPI.waitForRequest(), uploadRoot(1, 123)]);
         }).then(() => {
             assert.equal(requests.length, 3);
@@ -596,7 +596,7 @@ describe('sync-buildbot', function () {
             assert.equal(otherBuildRequest.statusUrl(), null);
             assert.equal(otherBuildRequest.buildId(), null);
 
-            syncPromise = triggerable.syncOnce();
+            syncPromise = triggerable.initSyncers().then(() => triggerable.syncOnce());
             return MockRemoteAPI.waitForRequest();
         }).then(() => {
             assert.equal(requests.length, 3);

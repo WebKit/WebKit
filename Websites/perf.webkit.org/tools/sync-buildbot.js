@@ -35,11 +35,13 @@ function syncLoop(options)
     };
 
     Manifest.fetch().then(() => {
-        return makeTriggerable().updateTriggerable();
+        const triggerable = makeTriggerable();
+        return triggerable.initSyncers().then(() => triggerable.updateTriggerable());
     }).then(() => {
         return Manifest.fetch();
     }).then(() => {
-        return makeTriggerable().syncOnce();
+        const triggerable = makeTriggerable();
+        return triggerable.initSyncers().then(() => triggerable.syncOnce());
     }).catch((error) => {
         console.error(error);
         if (typeof(error.stack) == 'string') {

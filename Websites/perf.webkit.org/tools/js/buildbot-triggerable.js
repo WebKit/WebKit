@@ -16,13 +16,23 @@ class BuildbotTriggerable {
         assert(typeof(this._lookbackCount) == 'number' && this._lookbackCount > 0, 'lookbackCount must be a number greater than 0');
 
         this._remote = remote;
+        this._config = config;
+        this._buildbotRemote = buildbotRemote;
 
         this._slaveInfo = slaveInfo;
         assert(typeof(slaveInfo.name) == 'string', 'slave name must be specified');
         assert(typeof(slaveInfo.password) == 'string', 'slave password must be specified');
 
-        this._syncers = BuildbotSyncer._loadConfig(buildbotRemote, config);
+        this._syncers = null;
         this._logger = logger || {log: () => { }, error: () => { }};
+    }
+
+    initSyncers()
+    {
+        return new Promise((resolve, reject) => {
+            this._syncers = BuildbotSyncer._loadConfig(this._buildbotRemote, this._config);
+            setTimeout(resolve, 0);
+        });
     }
 
     name() { return this._name; }
