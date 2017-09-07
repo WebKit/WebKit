@@ -1,3 +1,69 @@
+2017-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Align FetchResponse and FetchRequest body handling
+        https://bugs.webkit.org/show_bug.cgi?id=176539
+
+        Reviewed by Alex Christensen.
+
+        Covered by rebased tests.
+
+        Removing most of FetchResponse JS Builtins now that ReadableStream has full support.
+        Implementing FetchResponse body cloning through ReadableStream.
+        Cloning a loading FetchResponse still requires to create a ReadableStream for the purpose of teeing.
+
+        Moving exposure of the body from FetchResponse to FetchBodyOwner.
+        This is controlled by a boolean flag set according response tainting.
+
+        Moving handling of body ReadableStream consuming from FetchResponse to FetchBodyConsumer.
+        For that purpose, a loading boolean flag is added to FetchBodyConsumer so that it will resolve consume promises
+        when loading is finished.
+
+        Added support for getting a body in case the request/response body is already consumed.
+        In that case, a locked ReadableStream is returned.
+
+        * Modules/cache/DOMCache.cpp:
+        (WebCore::DOMCache::doMatch):
+        (WebCore::DOMCache::matchAll):
+        * Modules/fetch/FetchBody.h:
+        (WebCore::FetchBody::loadingBody):
+        (WebCore::FetchBody::FetchBody):
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyConsumer.cpp:
+        (WebCore::FetchBodyConsumer::resolve):
+        (WebCore::FetchBodyConsumer::loadingFailed):
+        (WebCore::FetchBodyConsumer::loadingSucceeded):
+        * Modules/fetch/FetchBodyConsumer.h:
+        (WebCore::FetchBodyConsumer::setAsLoading):
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::arrayBuffer):
+        (WebCore::FetchBodyOwner::blob):
+        (WebCore::FetchBodyOwner::formData):
+        (WebCore::FetchBodyOwner::json):
+        (WebCore::FetchBodyOwner::text):
+        (WebCore::FetchBodyOwner::readableStream):
+        * Modules/fetch/FetchBodyOwner.h:
+        (WebCore::FetchBodyOwner::isBodyNullOrOpaque const):
+        (WebCore::FetchBodyOwner::setBodyAsOpaque):
+        (WebCore::FetchBodyOwner::isBodyOpaque const):
+        * Modules/fetch/FetchInternals.js:
+        (fillFetchHeaders):
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone):
+        (WebCore::FetchResponse::fetch):
+        (WebCore::FetchResponse::BodyLoader::didReceiveResponse):
+        (WebCore::FetchResponse::setBodyData):
+        (WebCore::FetchResponse::consumeChunk):
+        (WebCore::FetchResponse::consumeBodyAsStream):
+        * Modules/fetch/FetchResponse.h:
+        * Modules/fetch/FetchResponse.idl:
+        * Modules/fetch/FetchResponse.js:
+        (initializeFetchResponse):
+        * bindings/js/ReadableStream.cpp:
+        (WebCore::ReadableStream::create):
+        (WebCore::ReadableStream::lock):
+        * bindings/js/ReadableStream.h:
+        * bindings/js/WebCoreBuiltinNames.h:
+
 2017-09-07  Michael Saboff  <msaboff@apple.com>
 
         Add support for RegExp named capture groups

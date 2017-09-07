@@ -117,6 +117,11 @@ void FetchBodyConsumer::resolve(Ref<DeferredPromise>&& promise, ReadableStream* 
         return;
     }
 
+    if (m_isLoading) {
+        m_consumePromise = WTFMove(promise);
+        return;
+    }
+
     ASSERT(m_type != Type::None);
     switch (m_type) {
     case Type::ArrayBuffer:
@@ -207,6 +212,7 @@ void FetchBodyConsumer::setSource(Ref<FetchBodySource>&& source)
 
 void FetchBodyConsumer::loadingFailed()
 {
+    m_isLoading = false;
     if (m_consumePromise) {
         m_consumePromise->reject();
         m_consumePromise = nullptr;
@@ -219,6 +225,8 @@ void FetchBodyConsumer::loadingFailed()
 
 void FetchBodyConsumer::loadingSucceeded()
 {
+    m_isLoading = false;
+
     if (m_consumePromise)
         resolve(m_consumePromise.releaseNonNull(), nullptr);
     if (m_source) {

@@ -45,8 +45,6 @@ dictionary FetchResponseInit {
     InterfaceName=Response,
     JSBuiltinConstructor,
     // Constructor(optional BodyInit? body = null, optional FetchResponseInit init)
-    PrivateIdentifier,
-    PublicIdentifier,
 ] interface FetchResponse {
     [CallWith=ScriptExecutionContext, NewObject] static FetchResponse error();
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
@@ -62,27 +60,10 @@ dictionary FetchResponseInit {
     // FIXME: Add support for trailers.
     // readonly attribute Promise<Headers> trailer;
 
-    [JSBuiltin] FetchResponse clone();
+    [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchResponse clone();
 
-
-    // FIXME: Copy of FetchBody IDL as we want to implement some of these as built-ins.
-    // This should be a FetchResponse implements FetchBody;
-    [JSBuiltin] readonly attribute ReadableStream? body;
-    [JSBuiltin] readonly attribute boolean bodyUsed;
-    [JSBuiltin] Promise<ArrayBuffer> arrayBuffer();
-    [JSBuiltin] Promise<Blob> blob();
-    [JSBuiltin] Promise<Blob> formData();
-    [JSBuiltin] Promise<any> json();
-    [JSBuiltin] Promise<USVString> text();
-
-    [NewObject, PrivateIdentifier] FetchResponse cloneForJS();
-    [Conditional=STREAMS_API, PrivateIdentifier] void startConsumingStream(unsigned short type);
-    [Conditional=STREAMS_API, PrivateIdentifier] void consumeChunk(Uint8Array chunk);
-    [Conditional=STREAMS_API, PrivateIdentifier] Promise<any> finishConsumingStream();
-    [PrivateIdentifier] Promise<any> consume(unsigned short type);
-    [PrivateIdentifier] boolean isLoading();
     [MayThrowException, PrivateIdentifier] void setStatus(unsigned short status, DOMString statusText);
     [PrivateIdentifier] void initializeWith(BodyInit body);
-    [CallWith=ScriptState, NewObject, PrivateIdentifier] ReadableStream? createReadableStream();
-    [PrivateIdentifier] boolean isDisturbed();
 };
+
+FetchResponse implements FetchBody;

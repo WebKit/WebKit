@@ -73,6 +73,8 @@ public:
     void setConsumePromise(Ref<DeferredPromise>&&);
     void setSource(Ref<FetchBodySource>&&);
 
+    void setAsLoading() { m_isLoading = true; }
+
 private:
     Type m_type;
     String m_contentType;
@@ -80,6 +82,7 @@ private:
     RefPtr<DeferredPromise> m_consumePromise;
     RefPtr<ReadableStreamToSharedBufferSink> m_sink;
     RefPtr<FetchBodySource> m_source;
+    bool m_isLoading { false };
 };
 
 } // namespace WebCore

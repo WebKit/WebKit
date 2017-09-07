@@ -167,7 +167,6 @@ namespace WebCore {
     macro(caches) \
     macro(cancel) \
     macro(cloneArrayBuffer) \
-    macro(cloneForJS) \
     macro(close) \
     macro(closeRequested) \
     macro(closed) \

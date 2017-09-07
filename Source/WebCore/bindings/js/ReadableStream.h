@@ -45,6 +45,7 @@ public:
 
     std::pair<Ref<ReadableStream>, Ref<ReadableStream>> tee();
 
+    void lock();
     void pipeTo(ReadableStreamSink&);
     bool isLocked() const;
     bool isDisturbed() const;

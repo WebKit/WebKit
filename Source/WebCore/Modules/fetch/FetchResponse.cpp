@@ -85,14 +85,20 @@ FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<Fetc
 {
 }
 
-Ref<FetchResponse> FetchResponse::cloneForJS()
+ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& context)
 {
-    ASSERT(scriptExecutionContext());
-    ASSERT(!isDisturbedOrLocked());
+    if (isDisturbedOrLocked())
+        return Exception { TypeError };
 
-    auto clone = adoptRef(*new FetchResponse(*scriptExecutionContext(), std::nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
+    ASSERT(scriptExecutionContext());
+
+    // If loading, let's create a stream so that data is teed on both clones.
+    if (isLoading())
+        readableStream(*context.execState());
+
+    auto clone = adoptRef(*new FetchResponse(context, std::nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
     clone->cloneBody(*this);
-    return clone;
+    return WTFMove(clone);
 }
 
 void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request, NotificationCallback&& responseCallback)
@@ -102,7 +108,9 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
             responseCallback(Exception { NotSupportedError, "ReadableStream uploading is not supported" });
         return;
     }
-    auto response = adoptRef(*new FetchResponse(context, FetchBody::loadingBody(), FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+    auto response = adoptRef(*new FetchResponse(context, FetchBody { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
+
+    response->body().consumer().setAsLoading();
 
     response->m_bodyLoader.emplace(response.get(), WTFMove(responseCallback));
     if (!response->m_bodyLoader->start(context, request))
@@ -173,7 +181,8 @@ FetchResponse::BodyLoader::~BodyLoader()
 void FetchResponse::BodyLoader::didReceiveResponse(const ResourceResponse& resourceResponse)
 {
     m_response.m_response = ResourceResponseBase::filter(resourceResponse);
-    m_response.m_shouldExposeBody = resourceResponse.tainting() != ResourceResponse::Tainting::Opaque;
+    if (resourceResponse.tainting() == ResourceResponse::Tainting::Opaque)
+        m_response.setBodyAsOpaque();
 
     m_response.m_headers->filterAndFill(m_response.m_response.httpHeaderFields(), FetchHeaders::Guard::Response);
     m_response.updateContentType();
@@ -222,40 +231,6 @@ void FetchResponse::BodyLoader::stop()
         m_loader->stop();
 }
 
-void FetchResponse::consume(unsigned type, Ref<DeferredPromise>&& wrapper)
-{
-    ASSERT(type <= static_cast<unsigned>(FetchBodyConsumer::Type::Text));
-    auto consumerType = static_cast<FetchBodyConsumer::Type>(type);
-
-    if (!m_shouldExposeBody) {
-        consumeNullBody(consumerType, WTFMove(wrapper));
-        return;
-    }
-
-    if (isLoading()) {
-        consumeOnceLoadingFinished(consumerType, WTFMove(wrapper));
-        return;
-    }
-
-    switch (consumerType) {
-    case FetchBodyConsumer::Type::ArrayBuffer:
-        arrayBuffer(WTFMove(wrapper));
-        return;
-    case FetchBodyConsumer::Type::Blob:
-        blob(WTFMove(wrapper));
-        return;
-    case FetchBodyConsumer::Type::JSON:
-        json(WTFMove(wrapper));
-        return;
-    case FetchBodyConsumer::Type::Text:
-        text(WTFMove(wrapper));
-        return;
-    case FetchBodyConsumer::Type::None:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-}
-
 FetchResponse::ResponseData FetchResponse::consumeBody()
 {
     ASSERT(!isLoading());
@@ -294,38 +269,24 @@ void FetchResponse::setBodyData(ResponseData&& data)
 {
     WTF::switchOn(data, [this](Ref<FormData>& formData) {
         if (isBodyNull())
-            setBody(FetchBody::loadingBody());
+            setBody({ });
         body().setAsFormData(WTFMove(formData));
     }, [this](Ref<SharedBuffer>& buffer) {
         if (isBodyNull())
-            setBody(FetchBody::loadingBody());
+            setBody({ });
         body().consumer().setData(WTFMove(buffer));
     }, [](std::nullptr_t&) { });
 }
 
 #if ENABLE(STREAMS_API)
-void FetchResponse::startConsumingStream(unsigned type)
-{
-    m_isDisturbed = true;
-    auto consumerType = static_cast<FetchBodyConsumer::Type>(type);
-    m_consumer.setType(consumerType);
-    if (consumerType == FetchBodyConsumer::Type::Blob)
-        m_consumer.setContentType(Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType)));
-}
-
 void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 {
-    m_consumer.append(chunk->data(), chunk->byteLength());
-}
-
-void FetchResponse::finishConsumingStream(Ref<DeferredPromise>&& promise)
-{
-    m_consumer.resolve(WTFMove(promise), nullptr);
+    body().consumer().append(chunk->data(), chunk->byteLength());
 }
 
 void FetchResponse::consumeBodyAsStream()
 {
-    ASSERT(m_shouldExposeBody);
+    ASSERT(!isBodyOpaque());
     ASSERT(m_readableStreamSource);
     if (!isLoading()) {
         FetchBodyOwner::consumeBodyAsStream();
@@ -333,10 +294,6 @@ void FetchResponse::consumeBodyAsStream()
     }
 
     ASSERT(m_bodyLoader);
-
-    if (isBodyNull())
-        setBody(FetchBody::loadingBody());
-    updateContentType();
 
     auto data = m_bodyLoader->startStreaming();
     if (data) {
@@ -373,14 +330,6 @@ void FetchResponse::feedStream()
         return;
 
     closeStream();
-}
-
-RefPtr<ReadableStream> FetchResponse::createReadableStream(JSC::ExecState& state)
-{
-    if (!m_shouldExposeBody)
-        return nullptr;
-
-    return FetchBodyOwner::readableStream(state);
 }
 
 RefPtr<SharedBuffer> FetchResponse::BodyLoader::startStreaming()

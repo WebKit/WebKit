@@ -82,7 +82,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
     }
     auto request = requestOrException.releaseReturnValue();
 
-    queryCache(request.get(), WTFMove(options), [callback = WTFMove(callback)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
+    queryCache(request.get(), WTFMove(options), [this, callback = WTFMove(callback)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
         if (result.hasException()) {
             callback(result.releaseException());
             return;
@@ -91,7 +91,7 @@ void DOMCache::doMatch(RequestInfo&& info, CacheQueryOptions&& options, MatchCal
             callback(nullptr);
             return;
         }
-        callback(result.returnValue()[0].response->cloneForJS().ptr());
+        callback(result.returnValue()[0].response->clone(*scriptExecutionContext()).releaseReturnValue().ptr());
     });
 }
 
@@ -119,12 +119,12 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
             Vector<Ref<FetchResponse>> responses;
             responses.reserveInitialCapacity(m_records.size());
             for (auto& record : m_records)
-                responses.uncheckedAppend(record.response->cloneForJS());
-            promise.resolve(responses);
+                responses.uncheckedAppend(record.response->clone(*scriptExecutionContext()).releaseReturnValue());
+            promise.resolve(WTFMove(responses));
         });
         return;
     }
-    queryCache(request.releaseNonNull(), WTFMove(options), [promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
+    queryCache(request.releaseNonNull(), WTFMove(options), [this, promise = WTFMove(promise)](ExceptionOr<Vector<CacheStorageRecord>>&& result) mutable {
         if (result.hasException()) {
             promise.reject(result.releaseException());
             return;
@@ -133,7 +133,7 @@ void DOMCache::matchAll(std::optional<RequestInfo>&& info, CacheQueryOptions&& o
         Vector<Ref<FetchResponse>> responses;
         responses.reserveInitialCapacity(records.size());
         for (auto& record : records)
-            responses.uncheckedAppend(record.response->cloneForJS());
+            responses.uncheckedAppend(record.response->clone(*scriptExecutionContext()).releaseReturnValue());
         promise.resolve(responses);
     });
 }

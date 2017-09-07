@@ -1,3 +1,18 @@
+2017-09-07  Youenn Fablet  <youenn@apple.com>
+
+        Align FetchResponse and FetchRequest body handling
+        https://bugs.webkit.org/show_bug.cgi?id=176539
+
+        Reviewed by Alex Christensen.
+
+        * web-platform-tests/fetch/api/request/request-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/request/request-consume-expected.txt:
+        * web-platform-tests/fetch/api/request/request-idl-expected.txt:
+        * web-platform-tests/fetch/api/request/request-structure-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-empty-expected.txt:
+        * web-platform-tests/fetch/api/response/response-consume-expected.txt:
+        * web-platform-tests/url/urlencoded-parser-expected.txt:
+
 2017-09-06  Youenn Fablet  <youenn@apple.com>
 
         Support caching of Response with a ReadableStream body

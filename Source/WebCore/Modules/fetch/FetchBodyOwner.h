@@ -68,12 +68,12 @@ protected:
     const FetchBody& body() const { return *m_body; }
     FetchBody& body() { return *m_body; }
     bool isBodyNull() const { return !m_body; }
+    bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
     void cloneBody(FetchBodyOwner&);
 
     void extractBody(ScriptExecutionContext&, FetchBody::Init&&);
     void updateContentType();
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
-    void consumeNullBody(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
 
     void setBody(FetchBody&& body) { m_body = WTFMove(body); }
 
@@ -81,6 +81,9 @@ protected:
     void stop() override;
 
     void setDisturbed() { m_isDisturbed = true; }
+
+    void setBodyAsOpaque() { m_isBodyOpaque = true; }
+    bool isBodyOpaque() const { return m_isBodyOpaque; }
 
 private:
     // Blob loading routines
@@ -113,6 +116,7 @@ protected:
 
 private:
     std::optional<BlobLoader> m_blobLoader;
+    bool m_isBodyOpaque { false };
 };
 
 } // namespace WebCore

@@ -93,7 +93,7 @@ bool FetchBodyOwner::isDisturbedOrLocked() const
 
 void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
 {
-    if (isBodyNull()) {
+    if (isBodyNullOrOpaque()) {
         fulfillPromiseWithArrayBuffer(WTFMove(promise), nullptr, 0);
         return;
     }
@@ -107,7 +107,7 @@ void FetchBodyOwner::arrayBuffer(Ref<DeferredPromise>&& promise)
 
 void FetchBodyOwner::blob(Ref<DeferredPromise>&& promise)
 {
-    if (isBodyNull()) {
+    if (isBodyNullOrOpaque()) {
         promise->resolve<IDLInterface<Blob>>(Blob::create({ }, Blob::normalizedContentType(extractMIMETypeFromMediaType(m_contentType))));
         return;
     }
@@ -153,30 +153,9 @@ void FetchBodyOwner::consumeOnceLoadingFinished(FetchBodyConsumer::Type type, Re
     m_body->consumeOnceLoadingFinished(type, WTFMove(promise), m_contentType);
 }
 
-void FetchBodyOwner::consumeNullBody(FetchBodyConsumer::Type consumerType, Ref<DeferredPromise>&& promise)
-{
-    switch (consumerType) {
-    case FetchBodyConsumer::Type::ArrayBuffer:
-        fulfillPromiseWithArrayBuffer(WTFMove(promise), nullptr, 0);
-        return;
-    case FetchBodyConsumer::Type::Blob:
-        promise->resolve<IDLInterface<Blob>>(Blob::create({ }, String()));
-        return;
-    case FetchBodyConsumer::Type::JSON:
-        promise->reject(SyntaxError);
-        return;
-    case FetchBodyConsumer::Type::Text:
-        promise->resolve<IDLDOMString>({ });
-        return;
-    case FetchBodyConsumer::Type::None:
-        ASSERT_NOT_REACHED();
-        return;
-    }
-}
-
 void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
 {
-    if (isBodyNull()) {
+    if (isBodyNullOrOpaque()) {
         promise->reject();
         return;
     }
@@ -190,7 +169,7 @@ void FetchBodyOwner::formData(Ref<DeferredPromise>&& promise)
 
 void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
 {
-    if (isBodyNull()) {
+    if (isBodyNullOrOpaque()) {
         promise->reject(SyntaxError);
         return;
     }
@@ -204,7 +183,7 @@ void FetchBodyOwner::json(Ref<DeferredPromise>&& promise)
 
 void FetchBodyOwner::text(Ref<DeferredPromise>&& promise)
 {
-    if (isBodyNull()) {
+    if (isBodyNullOrOpaque()) {
         promise->resolve<IDLDOMString>({ });
         return;
     }
@@ -313,8 +292,13 @@ RefPtr<ReadableStream> FetchBodyOwner::readableStream(JSC::ExecState& state)
 
     if (!m_body->hasReadableStream()) {
         ASSERT(!m_readableStreamSource);
-        m_readableStreamSource = adoptRef(*new FetchBodySource(*this));
-        m_body->setReadableStream(ReadableStream::create(state, m_readableStreamSource));
+        if (isDisturbed()) {
+            m_body->setReadableStream(ReadableStream::create(state, nullptr));
+            m_body->readableStream()->lock();
+        } else {
+            m_readableStreamSource = adoptRef(*new FetchBodySource(*this));
+            m_body->setReadableStream(ReadableStream::create(state, m_readableStreamSource));
+        }
     }
     return m_body->readableStream();
 }

@@ -38,6 +38,8 @@ namespace WebCore {
 Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<ReadableStreamSource>&& source)
 {
     VM& vm = execState.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
     auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(execState.lexicalGlobalObject());
 
@@ -51,6 +53,7 @@ Ref<ReadableStream> ReadableStream::create(JSC::ExecState& execState, RefPtr<Rea
     args.append(source ? toJSNewlyCreated(&execState, &globalObject, source.releaseNonNull()) : JSC::jsUndefined());
 
     auto newReadableStream = jsDynamicDowncast<JSReadableStream*>(vm, JSC::construct(&execState, constructor, constructType, constructData, args));
+    scope.assertNoException();
 
     return create(globalObject, *newReadableStream);
 }
@@ -99,6 +102,27 @@ std::pair<Ref<ReadableStream>, Ref<ReadableStream>> ReadableStream::tee()
 
     ASSERT(results.size() == 2);
     return std::make_pair(results[0].releaseNonNull(), results[1].releaseNonNull());
+}
+
+void ReadableStream::lock()
+{
+    auto& state = *m_globalObject->globalExec();
+    VM& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    auto& clientData = *static_cast<JSVMClientData*>(vm.clientData);
+
+    auto* constructor = JSC::asObject(m_globalObject->get(&state, clientData.builtinNames().ReadableStreamDefaultReaderPrivateName()));
+
+    ConstructData constructData;
+    ConstructType constructType = constructor->methodTable(vm)->getConstructData(constructor, constructData);
+    ASSERT(constructType != ConstructType::None);
+
+    MarkedArgumentBuffer args;
+    args.append(readableStream());
+
+    JSC::construct(&state, constructor, constructType, constructData, args);
+    scope.assertNoException();
 }
 
 static inline bool checkReadableStream(JSDOMGlobalObject& globalObject, JSReadableStream* readableStream, JSC::JSValue function)

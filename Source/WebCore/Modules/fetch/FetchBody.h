@@ -64,7 +64,7 @@ public:
 
     using Init = Variant<RefPtr<Blob>, RefPtr<ArrayBufferView>, RefPtr<ArrayBuffer>, RefPtr<DOMFormData>, RefPtr<URLSearchParams>, RefPtr<ReadableStream>, String>;
     static FetchBody extract(ScriptExecutionContext&, Init&&, String&);
-    static FetchBody loadingBody() { return { }; }
+    FetchBody() = default;
 
     void loadingFailed();
     void loadingSucceeded();
@@ -98,7 +98,6 @@ private:
     explicit FetchBody(Ref<const URLSearchParams>&& data) : m_data(WTFMove(data)) { }
     explicit FetchBody(const FetchBodyConsumer& consumer) : m_consumer(consumer) { }
     explicit FetchBody(Ref<ReadableStream>&& stream) : m_readableStream(WTFMove(stream)) { }
-    FetchBody() = default;
 
     void consume(FetchBodyOwner&, Ref<DeferredPromise>&&);
 

@@ -62,7 +62,6 @@ public:
     using NotificationCallback = WTF::Function<void(ExceptionOr<FetchResponse&>&&)>;
     static void fetch(ScriptExecutionContext&, FetchRequest&, NotificationCallback&&);
 
-    void consume(unsigned, Ref<DeferredPromise>&&);
 #if ENABLE(STREAMS_API)
     void startConsumingStream(unsigned);
     void consumeChunk(Ref<JSC::Uint8Array>&&);
@@ -81,10 +80,9 @@ public:
 
     const FetchHeaders& headers() const { return m_headers; }
     FetchHeaders& headers() { return m_headers; }
-    Ref<FetchResponse> cloneForJS();
+    ExceptionOr<Ref<FetchResponse>> clone(ScriptExecutionContext&);
 
 #if ENABLE(STREAMS_API)
-    RefPtr<ReadableStream> createReadableStream(JSC::ExecState&);
     void consumeBodyAsStream() final;
     void feedStream() final;
     void cancel() final;
@@ -143,9 +141,6 @@ private:
     ResourceResponse m_response;
     std::optional<BodyLoader> m_bodyLoader;
     mutable String m_responseURL;
-    bool m_shouldExposeBody { true };
-
-    FetchBodyConsumer m_consumer { FetchBodyConsumer::Type::ArrayBuffer  };
 };
 
 } // namespace WebCore
