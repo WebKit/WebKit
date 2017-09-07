@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationClient_h
-#define WebGeolocationClient_h
+#pragma once
 
 #include <WebCore/COMPtr.h>
 #include <WebCore/GeolocationClient.h>
@@ -40,17 +39,15 @@ class WebGeolocationClient : public WebCore::GeolocationClient {
 public:
     WebGeolocationClient(WebView*);
 
-    virtual void geolocationDestroyed();
-    virtual void startUpdating();
-    virtual void stopUpdating();
-    virtual void setEnableHighAccuracy(bool) { }
-    virtual WebCore::GeolocationPosition* lastPosition();
+    void geolocationDestroyed() final;
+    void startUpdating() final;
+    void stopUpdating() final;
+    void setEnableHighAccuracy(bool) final { }
+    WebCore::GeolocationPosition* lastPosition() final;
 
-    virtual void requestPermission(WebCore::Geolocation*);
-    virtual void cancelPermissionRequest(WebCore::Geolocation*) { }
+    void requestPermission(WebCore::Geolocation&) final;
+    void cancelPermissionRequest(WebCore::Geolocation&) final { }
 
 private:
     COMPtr<WebView> m_webView;
 };
-
-#endif // WebGeolocationClient_h

@@ -48,10 +48,10 @@ const char* WebCookieManager::supplementName()
     return "WebCookieManager";
 }
 
-WebCookieManager::WebCookieManager(ChildProcess* process)
+WebCookieManager::WebCookieManager(ChildProcess& process)
     : m_process(process)
 {
-    m_process->addMessageReceiver(Messages::WebCookieManager::messageReceiverName(), *this);
+    m_process.addMessageReceiver(Messages::WebCookieManager::messageReceiverName(), *this);
 }
 
 void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, CallbackID callbackID)
@@ -63,7 +63,7 @@ void WebCookieManager::getHostnamesWithCookies(PAL::SessionID sessionID, Callbac
     Vector<String> hostnameList;
     copyToVector(hostnames, hostnameList);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidGetHostnamesWithCookies(hostnameList, callbackID), 0);
 }
 
 void WebCookieManager::deleteCookiesForHostname(PAL::SessionID sessionID, const String& hostname)
@@ -84,7 +84,7 @@ void WebCookieManager::deleteCookie(PAL::SessionID sessionID, const Cookie& cook
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         storageSession->deleteCookie(cookie);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
 }
 
 void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, std::chrono::system_clock::time_point time, CallbackID callbackID)
@@ -92,7 +92,7 @@ void WebCookieManager::deleteAllCookiesModifiedSince(PAL::SessionID sessionID, s
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         WebCore::deleteAllCookiesModifiedSince(*storageSession, time);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidDeleteCookies(callbackID), 0);
 }
 
 void WebCookieManager::getAllCookies(PAL::SessionID sessionID, CallbackID callbackID)
@@ -101,7 +101,7 @@ void WebCookieManager::getAllCookies(PAL::SessionID sessionID, CallbackID callba
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         cookies = storageSession->getAllCookies();
 
-    m_process->send(Messages::WebCookieManagerProxy::DidGetCookies(cookies, callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidGetCookies(cookies, callbackID), 0);
 }
 
 void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, CallbackID callbackID)
@@ -110,7 +110,7 @@ void WebCookieManager::getCookies(PAL::SessionID sessionID, const URL& url, Call
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         cookies = storageSession->getCookies(url);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidGetCookies(cookies, callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidGetCookies(cookies, callbackID), 0);
 }
 
 void WebCookieManager::setCookie(PAL::SessionID sessionID, const Cookie& cookie, CallbackID callbackID)
@@ -118,7 +118,7 @@ void WebCookieManager::setCookie(PAL::SessionID sessionID, const Cookie& cookie,
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         storageSession->setCookie(cookie);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidSetCookies(callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidSetCookies(callbackID), 0);
 }
 
 void WebCookieManager::setCookies(PAL::SessionID sessionID, const Vector<Cookie>& cookies, const URL& url, const URL& mainDocumentURL, CallbackID callbackID)
@@ -126,13 +126,13 @@ void WebCookieManager::setCookies(PAL::SessionID sessionID, const Vector<Cookie>
     if (auto* storageSession = NetworkStorageSession::storageSession(sessionID))
         storageSession->setCookies(cookies, url, mainDocumentURL);
 
-    m_process->send(Messages::WebCookieManagerProxy::DidSetCookies(callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidSetCookies(callbackID), 0);
 }
 
 void WebCookieManager::notifyCookiesDidChange(PAL::SessionID sessionID)
 {
     ASSERT(RunLoop::isMain());
-    m_process->send(Messages::WebCookieManagerProxy::CookiesDidChange(sessionID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::CookiesDidChange(sessionID), 0);
 }
 
 void WebCookieManager::startObservingCookieChanges(PAL::SessionID sessionID)
@@ -155,12 +155,12 @@ void WebCookieManager::setHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy, 
     platformSetHTTPCookieAcceptPolicy(policy);
 
     if (callbackID)
-        m_process->send(Messages::WebCookieManagerProxy::DidSetHTTPCookieAcceptPolicy(callbackID.callbackID()), 0);
+        m_process.send(Messages::WebCookieManagerProxy::DidSetHTTPCookieAcceptPolicy(callbackID.callbackID()), 0);
 }
 
 void WebCookieManager::getHTTPCookieAcceptPolicy(CallbackID callbackID)
 {
-    m_process->send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
+    m_process.send(Messages::WebCookieManagerProxy::DidGetHTTPCookieAcceptPolicy(platformGetHTTPCookieAcceptPolicy(), callbackID), 0);
 }
 
 } // namespace WebKit

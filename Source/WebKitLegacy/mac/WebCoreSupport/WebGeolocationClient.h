@@ -49,8 +49,8 @@ public:
 
     WebCore::GeolocationPosition* lastPosition() override;
 
-    void requestPermission(WebCore::Geolocation*) override;
-    void cancelPermissionRequest(WebCore::Geolocation*) override { };
+    void requestPermission(WebCore::Geolocation&) override;
+    void cancelPermissionRequest(WebCore::Geolocation&) override { };
 
 private:
     WebView *m_webView;

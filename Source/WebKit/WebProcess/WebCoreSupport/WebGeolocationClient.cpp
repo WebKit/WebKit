@@ -70,14 +70,14 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     return 0;
 }
 
-void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 {
-    m_page->geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
+    m_page.geolocationPermissionRequestManager().startRequestForGeolocation(geolocation);
 }
 
-void WebGeolocationClient::cancelPermissionRequest(Geolocation* geolocation)
+void WebGeolocationClient::cancelPermissionRequest(Geolocation& geolocation)
 {
-    m_page->geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
+    m_page.geolocationPermissionRequestManager().cancelRequestForGeolocation(geolocation);
 }
 
 } // namespace WebKit

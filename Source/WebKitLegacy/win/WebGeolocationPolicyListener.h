@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebGeolocationPolicyListener_h
-#define WebGeolocationPolicyListener_h
+#pragma once
 
 #include "WebKit.h"
 #include <WebCore/COMPtr.h>
@@ -54,5 +53,3 @@ private:
     ULONG m_refCount { 0 };
     RefPtr<WebCore::Geolocation> m_geolocation;
 };
-
-#endif WebGeolocationPolicyListener_h

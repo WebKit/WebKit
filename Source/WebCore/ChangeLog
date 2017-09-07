@@ -1,3 +1,33 @@
+2017-09-07  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize Geolocation code
+        https://bugs.webkit.org/show_bug.cgi?id=176496
+
+        Reviewed by Andy Estes.
+
+        No change in behavior.  Just more references instead of pointers.
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::createPositionError):
+        (WebCore::Geolocation::resetAllGeolocationPermission):
+        (WebCore::Geolocation::stop):
+        (WebCore::Geolocation::requestPermission):
+        (WebCore::Geolocation::setError):
+        (WebCore::Geolocation::startUpdating):
+        (WebCore::Geolocation::stopUpdating):
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/GeolocationClient.h:
+        * Modules/geolocation/GeolocationController.cpp:
+        (WebCore::GeolocationController::addObserver):
+        (WebCore::GeolocationController::removeObserver):
+        (WebCore::GeolocationController::requestPermission):
+        (WebCore::GeolocationController::cancelPermissionRequest):
+        (WebCore::GeolocationController::positionChanged):
+        (WebCore::GeolocationController::errorOccurred):
+        (WebCore::GeolocationController::activityStateDidChange):
+        (WebCore::provideGeolocationTo):
+        * Modules/geolocation/GeolocationController.h:
+
 2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [ARM] Building FELightningNEON.cpp fails due to missing {Point,Spot}LightSource declarations

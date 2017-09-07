@@ -44,15 +44,15 @@ public:
     virtual void setEnableHighAccuracy(bool) = 0;
     virtual GeolocationPosition* lastPosition() = 0;
 
-    virtual void requestPermission(Geolocation*) = 0;
-    virtual void cancelPermissionRequest(Geolocation*) = 0;
+    virtual void requestPermission(Geolocation&) = 0;
+    virtual void cancelPermissionRequest(Geolocation&) = 0;
 
-    void provideGeolocationTo(Page*, GeolocationClient*);
+    void provideGeolocationTo(Page*, GeolocationClient&);
 
 protected:
     virtual ~GeolocationClient() { }
 };
 
-WEBCORE_EXPORT void provideGeolocationTo(Page*, GeolocationClient*);
+WEBCORE_EXPORT void provideGeolocationTo(Page*, GeolocationClient&);
 
 } // namespace WebCore

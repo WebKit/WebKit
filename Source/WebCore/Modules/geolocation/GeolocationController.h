@@ -47,14 +47,14 @@ public:
     GeolocationController(Page&, GeolocationClient&);
     ~GeolocationController();
 
-    void addObserver(Geolocation*, bool enableHighAccuracy);
-    void removeObserver(Geolocation*);
+    void addObserver(Geolocation&, bool enableHighAccuracy);
+    void removeObserver(Geolocation&);
 
-    void requestPermission(Geolocation*);
-    void cancelPermissionRequest(Geolocation*);
+    void requestPermission(Geolocation&);
+    void cancelPermissionRequest(Geolocation&);
 
     WEBCORE_EXPORT void positionChanged(GeolocationPosition*);
-    WEBCORE_EXPORT void errorOccurred(GeolocationError*);
+    WEBCORE_EXPORT void errorOccurred(GeolocationError&);
 
     GeolocationPosition* lastPosition();
 
@@ -71,13 +71,13 @@ private:
 
     RefPtr<GeolocationPosition> m_lastPosition;
 
-    typedef HashSet<RefPtr<Geolocation>> ObserversSet;
+    typedef HashSet<Ref<Geolocation>> ObserversSet;
     // All observers; both those requesting high accuracy and those not.
     ObserversSet m_observers;
     ObserversSet m_highAccuracyObservers;
 
     // While the page is not visible, we pend permission requests.
-    HashSet<RefPtr<Geolocation>> m_pendedPermissionRequest;
+    HashSet<Ref<Geolocation>> m_pendingPermissionRequest;
 };
 
 } // namespace WebCore

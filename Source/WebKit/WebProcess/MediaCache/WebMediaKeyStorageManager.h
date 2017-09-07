@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WebMediaKeyStorageManager_h
-#define WebMediaKeyStorageManager_h
+#pragma once
 
 #include "WebProcessSupplement.h"
 #include <wtf/Noncopyable.h>
@@ -41,7 +40,7 @@ class WebProcess;
 class WebMediaKeyStorageManager : public WebProcessSupplement {
     WTF_MAKE_NONCOPYABLE(WebMediaKeyStorageManager);
 public:
-    explicit WebMediaKeyStorageManager(WebProcess*) { }
+    explicit WebMediaKeyStorageManager(WebProcess&) { }
     virtual ~WebMediaKeyStorageManager() { }
 
     static const char* supplementName();
@@ -61,5 +60,3 @@ private:
 };
 
 }
-
-#endif

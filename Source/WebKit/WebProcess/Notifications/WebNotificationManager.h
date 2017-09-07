@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebNotificationManager_h
-#define WebNotificationManager_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "WebProcessSupplement.h"
@@ -48,7 +47,7 @@ class WebProcess;
 class WebNotificationManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebNotificationManager);
 public:
-    explicit WebNotificationManager(WebProcess*);
+    explicit WebNotificationManager(WebProcess&);
     ~WebNotificationManager();
 
     static const char* supplementName();
@@ -84,7 +83,7 @@ private:
     void removeNotificationFromContextMap(uint64_t notificationID, WebCore::Notification*);
 #endif
 
-    WebProcess* m_process;
+    WebProcess& m_process;
 
 #if ENABLE(NOTIFICATIONS)
     typedef HashMap<RefPtr<WebCore::Notification>, uint64_t> NotificationMap;
@@ -101,5 +100,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

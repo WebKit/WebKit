@@ -5809,13 +5809,13 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     MESSAGE_CHECK(frame);
 
     // FIXME: Geolocation should probably be using toString() as its string representation instead of databaseIdentifier().
-    RefPtr<API::SecurityOrigin> origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin());
-    RefPtr<GeolocationPermissionRequestProxy> request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
+    auto origin = API::SecurityOrigin::create(SecurityOriginData::fromDatabaseIdentifier(originIdentifier)->securityOrigin());
+    auto request = m_geolocationPermissionRequestManager.createRequest(geolocationID);
 
-    if (m_uiClient->decidePolicyForGeolocationPermissionRequest(this, frame, origin.get(), request.get()))
+    if (m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), request.get()))
         return;
 
-    if (m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, *origin, *request))
+    if (m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), request.get()))
         return;
 
     request->deny();

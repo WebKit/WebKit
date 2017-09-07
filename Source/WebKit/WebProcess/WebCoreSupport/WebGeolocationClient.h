@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationClient_h
-#define WebGeolocationClient_h
+#pragma once
 
 #include <WebCore/GeolocationClient.h>
 
@@ -34,7 +33,7 @@ class WebPage;
 
 class WebGeolocationClient : public WebCore::GeolocationClient {
 public:
-    WebGeolocationClient(WebPage* page)
+    WebGeolocationClient(WebPage& page)
         : m_page(page)
     {
     }
@@ -50,13 +49,10 @@ private:
 
     WebCore::GeolocationPosition* lastPosition() override;
 
-    void requestPermission(WebCore::Geolocation*) override;
-    void cancelPermissionRequest(WebCore::Geolocation*) override;
+    void requestPermission(WebCore::Geolocation&) override;
+    void cancelPermissionRequest(WebCore::Geolocation&) override;
 
-
-    WebPage* m_page;
+    WebPage& m_page;
 };
 
 } // namespace WebKit
-
-#endif // WebGeolocationClient_h

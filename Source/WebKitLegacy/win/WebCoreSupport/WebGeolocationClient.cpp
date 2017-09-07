@@ -75,26 +75,26 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
     return core(position.get());
 }
 
-void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 {
     COMPtr<IWebUIDelegate> uiDelegate;
     if (FAILED(m_webView->uiDelegate(&uiDelegate))) {
-        geolocation->setIsAllowed(false);
+        geolocation.setIsAllowed(false);
         return;
     }
 
     COMPtr<IWebUIDelegatePrivate2> uiDelegatePrivate2(Query, uiDelegate);
     if (!uiDelegatePrivate2) {
-        geolocation->setIsAllowed(false);
+        geolocation.setIsAllowed(false);
         return;
     }
 
-    Frame* frame = geolocation->frame();
+    Frame* frame = geolocation.frame();
     COMPtr<WebSecurityOrigin> origin(AdoptCOM, WebSecurityOrigin::createInstance(&frame->document()->securityOrigin()));
-    COMPtr<WebGeolocationPolicyListener> listener = WebGeolocationPolicyListener::createInstance(geolocation);
+    COMPtr<WebGeolocationPolicyListener> listener = WebGeolocationPolicyListener::createInstance(&geolocation);
     HRESULT hr = uiDelegatePrivate2->decidePolicyForGeolocationRequest(m_webView.get(), kit(frame), origin.get(), listener.get());
     if (hr != E_NOTIMPL)
         return;
 
-    geolocation->setIsAllowed(false);
+    geolocation.setIsAllowed(false);
 }

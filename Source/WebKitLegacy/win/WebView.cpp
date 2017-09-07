@@ -3121,7 +3121,7 @@ HRESULT WebView::initWithFrame(RECT frame, _In_ BSTR frameName, _In_ BSTR groupN
     configuration.pluginInfoProvider = &WebPluginInfoProvider::singleton();
 
     m_page = new Page(WTFMove(configuration));
-    provideGeolocationTo(m_page, new WebGeolocationClient(this));
+    provideGeolocationTo(m_page, *new WebGeolocationClient(this));
 
     unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
     m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
@@ -7249,7 +7249,7 @@ HRESULT WebView::geolocationDidFailWithError(_In_opt_ IWebError* error)
     if (FAILED(error->localizedDescription(&description)))
         return E_FAIL;
 
-    RefPtr<GeolocationError> geolocationError = GeolocationError::create(GeolocationError::PositionUnavailable, toString(description));
+    auto geolocationError = GeolocationError::create(GeolocationError::PositionUnavailable, toString(description));
     GeolocationController::from(m_page)->errorOccurred(geolocationError.get());
     return S_OK;
 }

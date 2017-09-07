@@ -65,7 +65,7 @@ struct NetworkProcessCreationParameters;
 class LegacyCustomProtocolManager : public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(LegacyCustomProtocolManager);
 public:
-    explicit LegacyCustomProtocolManager(ChildProcess*);
+    explicit LegacyCustomProtocolManager(ChildProcess&);
 
     static const char* supplementName();
 
@@ -113,7 +113,7 @@ private:
 
     void registerProtocolClass();
 
-    ChildProcess* m_childProcess;
+    ChildProcess& m_childProcess;
 
     typedef HashMap<uint64_t, CustomProtocol> CustomProtocolMap;
     CustomProtocolMap m_customProtocolMap;

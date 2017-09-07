@@ -47,10 +47,10 @@ const char* LegacyCustomProtocolManager::supplementName()
     return "LegacyCustomProtocolManager";
 }
 
-LegacyCustomProtocolManager::LegacyCustomProtocolManager(ChildProcess* childProcess)
+LegacyCustomProtocolManager::LegacyCustomProtocolManager(ChildProcess& childProcess)
     : m_childProcess(childProcess)
 {
-    m_childProcess->addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
+    m_childProcess.addMessageReceiver(Messages::LegacyCustomProtocolManager::messageReceiverName(), *this);
 }
 
 void LegacyCustomProtocolManager::initialize(const NetworkProcessCreationParameters& parameters)
@@ -77,12 +77,12 @@ void LegacyCustomProtocolManager::removeCustomProtocol(uint64_t customProtocolID
 
 void LegacyCustomProtocolManager::startLoading(uint64_t customProtocolID, const WebCore::ResourceRequest& request)
 {
-    m_childProcess->send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
+    m_childProcess.send(Messages::LegacyCustomProtocolManagerProxy::StartLoading(customProtocolID, request));
 }
 
 void LegacyCustomProtocolManager::stopLoading(uint64_t customProtocolID)
 {
-    m_childProcess->send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
+    m_childProcess.send(Messages::LegacyCustomProtocolManagerProxy::StopLoading(customProtocolID), 0);
 }
 
 } // namespace WebKit

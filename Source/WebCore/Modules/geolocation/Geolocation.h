@@ -69,7 +69,7 @@ public:
     bool isAllowed() const { return m_allowGeolocation == Yes; }
 
     void positionChanged();
-    void setError(GeolocationError*);
+    void setError(GeolocationError&);
     bool shouldBlockGeolocationRequests();
 
 private:

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationPermissionRequestManager_h
-#define GeolocationPermissionRequestManager_h
+#pragma once
 
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -39,10 +38,10 @@ class WebPage;
 
 class GeolocationPermissionRequestManager {
 public:
-    explicit GeolocationPermissionRequestManager(WebPage*);
+    explicit GeolocationPermissionRequestManager(WebPage&);
 
-    void startRequestForGeolocation(WebCore::Geolocation*);
-    void cancelRequestForGeolocation(WebCore::Geolocation*);
+    void startRequestForGeolocation(WebCore::Geolocation&);
+    void cancelRequestForGeolocation(WebCore::Geolocation&);
 
     void didReceiveGeolocationPermissionDecision(uint64_t geolocationID, bool allowed);
 
@@ -52,9 +51,7 @@ private:
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 
-    WebPage* m_page;
+    WebPage& m_page;
 };
 
 } // namespace WebKit
-
-#endif // GeolocationPermissionRequestManager_h

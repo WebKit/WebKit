@@ -44,7 +44,7 @@ class WebProcess;
 
 class UserMediaCaptureManager : public WebProcessSupplement, public IPC::MessageReceiver, public WebCore::RealtimeMediaSource::AudioCaptureFactory, public WebCore::RealtimeMediaSource::VideoCaptureFactory {
 public:
-    explicit UserMediaCaptureManager(WebProcess*);
+    explicit UserMediaCaptureManager(WebProcess&);
     ~UserMediaCaptureManager();
 
     static const char* supplementName();

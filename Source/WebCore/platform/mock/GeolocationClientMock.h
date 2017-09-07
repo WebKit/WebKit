@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef GeolocationClientMock_h
-#define GeolocationClientMock_h
+#pragma once
 
 #include "GeolocationClient.h"
 #include "Timer.h"
@@ -64,8 +63,8 @@ public:
     void stopUpdating() override;
     void setEnableHighAccuracy(bool) override;
     GeolocationPosition* lastPosition() override;
-    void requestPermission(Geolocation*) override;
-    void cancelPermissionRequest(Geolocation*) override;
+    void requestPermission(Geolocation&) override;
+    void cancelPermissionRequest(Geolocation&) override;
 
 private:
     void asyncUpdateController();
@@ -94,5 +93,3 @@ private:
 };
 
 }
-
-#endif

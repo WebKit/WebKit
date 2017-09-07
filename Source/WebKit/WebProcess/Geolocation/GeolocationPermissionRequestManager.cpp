@@ -49,37 +49,37 @@ static uint64_t generateGeolocationID()
     return uniqueGeolocationID++;
 }
 
-GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage* page)
+GeolocationPermissionRequestManager::GeolocationPermissionRequestManager(WebPage& page)
     : m_page(page)
 {
 }
 
-void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation* geolocation)
+void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation& geolocation)
 {
-    Frame* frame = geolocation->frame();
+    Frame* frame = geolocation.frame();
 
     ASSERT_WITH_MESSAGE(frame, "It is not well understood in which cases the Geolocation is alive after its frame goes away. If you hit this assertion, please add a test covering this case.");
     if (!frame) {
-        geolocation->setIsAllowed(false);
+        geolocation.setIsAllowed(false);
         return;
     }
 
     uint64_t geolocationID = generateGeolocationID();
 
-    m_geolocationToIDMap.set(geolocation, geolocationID);
-    m_idToGeolocationMap.set(geolocationID, geolocation);
+    m_geolocationToIDMap.set(&geolocation, geolocationID);
+    m_idToGeolocationMap.set(geolocationID, &geolocation);
 
     WebFrame* webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
 
     SecurityOrigin& origin = frame->document()->securityOrigin();
 
-    m_page->send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(origin).databaseIdentifier()));
+    m_page.send(Messages::WebPageProxy::RequestGeolocationPermissionForFrame(geolocationID, webFrame->frameID(), SecurityOriginData::fromSecurityOrigin(origin).databaseIdentifier()));
 }
 
-void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation* geolocation)
+void GeolocationPermissionRequestManager::cancelRequestForGeolocation(Geolocation& geolocation)
 {
-    uint64_t geolocationID = m_geolocationToIDMap.take(geolocation);
+    uint64_t geolocationID = m_geolocationToIDMap.take(&geolocation);
     if (!geolocationID)
         return;
     m_idToGeolocationMap.remove(geolocationID);

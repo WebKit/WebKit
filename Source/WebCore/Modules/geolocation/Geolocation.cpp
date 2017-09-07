@@ -65,10 +65,10 @@ static RefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
     return Geoposition::create(WTFMove(coordinates), convertSecondsToDOMTimeStamp(position->timestamp()));
 }
 
-static Ref<PositionError> createPositionError(GeolocationError* error)
+static Ref<PositionError> createPositionError(GeolocationError& error)
 {
     PositionError::ErrorCode code = PositionError::POSITION_UNAVAILABLE;
-    switch (error->code()) {
+    switch (error.code()) {
     case GeolocationError::PermissionDenied:
         code = PositionError::PERMISSION_DENIED;
         break;
@@ -77,7 +77,7 @@ static Ref<PositionError> createPositionError(GeolocationError* error)
         break;
     }
 
-    return PositionError::create(code, error->message());
+    return PositionError::create(code, error.message());
 }
 
 bool Geolocation::Watchers::add(int id, RefPtr<GeoNotifier>&& notifier)
@@ -247,7 +247,7 @@ void Geolocation::resetAllGeolocationPermission()
     if (m_allowGeolocation == InProgress) {
         Page* page = this->page();
         if (page)
-            GeolocationController::from(page)->cancelPermissionRequest(this);
+            GeolocationController::from(page)->cancelPermissionRequest(*this);
 
         // This return is not technically correct as GeolocationController::cancelPermissionRequest() should have cleared the active request.
         // Neither iOS nor OS X supports cancelPermissionRequest() (https://bugs.webkit.org/show_bug.cgi?id=89524), so we workaround that and let ongoing requests complete. :(
@@ -277,7 +277,7 @@ void Geolocation::stop()
 {
     Page* page = this->page();
     if (page && m_allowGeolocation == InProgress)
-        GeolocationController::from(page)->cancelPermissionRequest(this);
+        GeolocationController::from(page)->cancelPermissionRequest(*this);
     // The frame may be moving to a new page and we want to get the permissions from the new page's client.
     m_allowGeolocation = Unknown;
     cancelAllRequests();
@@ -646,7 +646,7 @@ void Geolocation::requestPermission()
     m_allowGeolocation = InProgress;
 
     // Ask the embedder: it maintains the geolocation challenge policy itself.
-    GeolocationController::from(page)->requestPermission(this);
+    GeolocationController::from(page)->requestPermission(*this);
 }
 
 void Geolocation::makeSuccessCallbacks(Geoposition& position)
@@ -690,7 +690,7 @@ void Geolocation::positionChanged()
     makeSuccessCallbacks(*position);
 }
 
-void Geolocation::setError(GeolocationError* error)
+void Geolocation::setError(GeolocationError& error)
 {
     if (m_isSuspended) {
         m_errorWaitingForResume = createPositionError(error);
@@ -707,7 +707,7 @@ bool Geolocation::startUpdating(GeoNotifier* notifier)
     if (!page)
         return false;
 
-    GeolocationController::from(page)->addObserver(this, notifier->options().enableHighAccuracy);
+    GeolocationController::from(page)->addObserver(*this, notifier->options().enableHighAccuracy);
     return true;
 }
 
@@ -717,7 +717,7 @@ void Geolocation::stopUpdating()
     if (!page)
         return;
 
-    GeolocationController::from(page)->removeObserver(this);
+    GeolocationController::from(page)->removeObserver(*this);
 }
 
 void Geolocation::handlePendingPermissionNotifiers()

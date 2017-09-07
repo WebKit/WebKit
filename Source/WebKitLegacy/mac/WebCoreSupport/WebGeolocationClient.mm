@@ -50,7 +50,7 @@ using namespace WebCore;
 {
     RefPtr<Geolocation> _geolocation;
 }
-- (id)initWithGeolocation:(Geolocation*)geolocation;
+- (id)initWithGeolocation:(Geolocation&)geolocation;
 @end
 #else
 @interface WebGeolocationPolicyListener : NSObject <WebAllowDenyPolicyListener>
@@ -67,7 +67,7 @@ using namespace WebCore;
 @private
     RefPtr<Geolocation> m_geolocation;
 }
-- (id)initWithGeolocation:(Geolocation*)geolocation;
+- (id)initWithGeolocation:(Geolocation&)geolocation;
 @end
 #endif
 
@@ -100,21 +100,21 @@ void WebGeolocationClient::setEnableHighAccuracy(bool wantsHighAccuracy)
 }
 #endif
 
-void WebGeolocationClient::requestPermission(Geolocation* geolocation)
+void WebGeolocationClient::requestPermission(Geolocation& geolocation)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     SEL selector = @selector(webView:decidePolicyForGeolocationRequestFromOrigin:frame:listener:);
     if (![[m_webView UIDelegate] respondsToSelector:selector]) {
-        geolocation->setIsAllowed(false);
+        geolocation.setIsAllowed(false);
         return;
     }
 
 #if !PLATFORM(IOS)
-    Frame *frame = geolocation->frame();
+    Frame *frame = geolocation.frame();
 
     if (!frame) {
-        geolocation->setIsAllowed(false);
+        geolocation.setIsAllowed(false);
         return;
     }
 
@@ -140,11 +140,11 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 #if !PLATFORM(IOS)
 @implementation WebGeolocationPolicyListener
 
-- (id)initWithGeolocation:(Geolocation*)geolocation
+- (id)initWithGeolocation:(Geolocation&)geolocation
 {
     if (!(self = [super init]))
         return nil;
-    _geolocation = geolocation;
+    _geolocation = &geolocation;
     return self;
 }
 
@@ -206,11 +206,11 @@ GeolocationPosition* WebGeolocationClient::lastPosition()
 @end
 
 @implementation WebGeolocationProviderInitializationListener
-- (id)initWithGeolocation:(Geolocation*)geolocation
+- (id)initWithGeolocation:(Geolocation&)geolocation
 {
     self = [super init];
     if (self)
-        m_geolocation = geolocation;
+        m_geolocation = &geolocation;
     return self;
 }
 

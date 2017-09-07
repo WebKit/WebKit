@@ -59,7 +59,7 @@ using ChallengeCompletionHandler = CompletionHandler<void(AuthenticationChalleng
 class AuthenticationManager : public WebProcessSupplement, public NetworkProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AuthenticationManager);
 public:
-    explicit AuthenticationManager(ChildProcess*);
+    explicit AuthenticationManager(ChildProcess&);
 
     static const char* supplementName();
 
@@ -118,7 +118,7 @@ private:
 
     Vector<uint64_t> coalesceChallengesMatching(uint64_t challengeID) const;
 
-    ChildProcess* m_process;
+    ChildProcess& m_process;
 
     HashMap<uint64_t, Challenge> m_challenges;
 };

@@ -87,17 +87,17 @@ int GeolocationClientMock::numberOfPendingPermissionRequests() const
     return m_pendingPermission.size();
 }
 
-void GeolocationClientMock::requestPermission(Geolocation* geolocation)
+void GeolocationClientMock::requestPermission(Geolocation& geolocation)
 {
-    m_pendingPermission.add(geolocation);
+    m_pendingPermission.add(&geolocation);
     if (m_permissionState != PermissionStateUnset)
         asyncUpdatePermission();
 }
 
-void GeolocationClientMock::cancelPermissionRequest(Geolocation* geolocation)
+void GeolocationClientMock::cancelPermissionRequest(Geolocation& geolocation)
 {
     // Called from Geolocation::disconnectFrame() in response to Frame destruction.
-    m_pendingPermission.remove(geolocation);
+    m_pendingPermission.remove(&geolocation);
     if (m_pendingPermission.isEmpty() && m_permissionTimer.isActive())
         m_permissionTimer.stop();
 }
@@ -176,7 +176,7 @@ void GeolocationClientMock::controllerTimerFired()
         ASSERT(!m_hasError);
         m_controller->positionChanged(m_lastPosition.get());
     } else if (m_hasError) {
-        RefPtr<GeolocationError> geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, m_errorMessage);
+        auto geolocatioError = GeolocationError::create(GeolocationError::PositionUnavailable, m_errorMessage);
         m_controller->errorOccurred(geolocatioError.get());
     }
 }

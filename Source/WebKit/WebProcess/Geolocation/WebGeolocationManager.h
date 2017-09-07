@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebGeolocationManager_h
-#define WebGeolocationManager_h
+#pragma once
 
 #include "MessageReceiver.h"
 #include "WebGeolocationPosition.h"
@@ -46,15 +45,15 @@ class WebPage;
 class WebGeolocationManager : public WebProcessSupplement, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(WebGeolocationManager);
 public:
-    explicit WebGeolocationManager(WebProcess*);
+    explicit WebGeolocationManager(WebProcess&);
 
     static const char* supplementName();
 
-    void registerWebPage(WebPage*);
-    void unregisterWebPage(WebPage*);
-    void setEnableHighAccuracyForPage(WebPage*, bool);
+    void registerWebPage(WebPage&);
+    void unregisterWebPage(WebPage&);
+    void setEnableHighAccuracyForPage(WebPage&, bool);
 
-    void requestPermission(WebCore::Geolocation*);
+    void requestPermission(WebCore::Geolocation&);
 
 private:
     // IPC::MessageReceiver
@@ -69,11 +68,9 @@ private:
     void resetPermissions();
 #endif // PLATFORM(IOS)
 
-    WebProcess* m_process;
+    WebProcess& m_process;
     HashSet<WebPage*> m_pageSet;
     HashSet<WebPage*> m_highAccuracyPageSet;
 };
 
 } // namespace WebKit
-
-#endif // WebGeolocationManager_h

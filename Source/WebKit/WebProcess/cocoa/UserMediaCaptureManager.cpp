@@ -152,8 +152,8 @@ private:
     Deque<ApplyConstraintsCallback> m_pendingApplyConstraintsCallbacks;
 };
 
-UserMediaCaptureManager::UserMediaCaptureManager(WebProcess* process)
-    : m_process(*process)
+UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
+    : m_process(process)
 {
     m_process.addMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName(), *this);
 }
