@@ -1,3 +1,28 @@
+2017-09-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] CDMClearKey: implement remaining methods of CDMPrivate derivative
+        https://bugs.webkit.org/show_bug.cgi?id=176495
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the remaining CDMPrivateClearKey methods, following the
+        ClearKey specification:
+         - server certificates are not supported, but sessions are;
+         - 'keyids' init data in JSON format is acceptable;
+         - JSON responses are acceptable;
+         - session IDs must use the 32-bit integer format.
+
+        No new tests -- covered by imported W3C tests that utilize ClearKey.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::parseJSONObject):
+        (WebCore::CDMPrivateClearKey::loadAndInitialize):
+        (WebCore::CDMPrivateClearKey::supportsServerCertificates const):
+        (WebCore::CDMPrivateClearKey::supportsSessions const):
+        (WebCore::CDMPrivateClearKey::supportsInitData const):
+        (WebCore::CDMPrivateClearKey::sanitizeResponse const):
+        (WebCore::CDMPrivateClearKey::sanitizeSessionId const):
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bring back line height rounding when computing font metrics
