@@ -30,6 +30,8 @@
 #if CPU(ARM_NEON) && CPU(ARM_TRADITIONAL) && COMPILER(GCC_OR_CLANG)
 
 #include "FELighting.h"
+#include "PointLightSource.h"
+#include "SpotLightSource.h"
 #include <wtf/ParallelJobs.h>
 
 namespace WebCore {
@@ -116,17 +118,17 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
 
     if (m_lightSource->type() == LS_POINT) {
         neonData.flags |= FLAG_POINT_LIGHT;
-        PointLightSource* pointLightSource = static_cast<PointLightSource*>(m_lightSource.get());
-        floatArguments.lightX = pointLightSource->position().x();
-        floatArguments.lightY = pointLightSource->position().y();
-        floatArguments.lightZ = pointLightSource->position().z();
+        PointLightSource& pointLightSource = static_cast<PointLightSource&>(m_lightSource.get());
+        floatArguments.lightX = pointLightSource.position().x();
+        floatArguments.lightY = pointLightSource.position().y();
+        floatArguments.lightZ = pointLightSource.position().z();
         floatArguments.padding2 = 0;
     } else if (m_lightSource->type() == LS_SPOT) {
         neonData.flags |= FLAG_SPOT_LIGHT;
-        SpotLightSource* spotLightSource = static_cast<SpotLightSource*>(m_lightSource.get());
-        floatArguments.lightX = spotLightSource->position().x();
-        floatArguments.lightY = spotLightSource->position().y();
-        floatArguments.lightZ = spotLightSource->position().z();
+        SpotLightSource& spotLightSource = static_cast<SpotLightSource&>(m_lightSource.get());
+        floatArguments.lightX = spotLightSource.position().x();
+        floatArguments.lightY = spotLightSource.position().y();
+        floatArguments.lightZ = spotLightSource.position().z();
         floatArguments.padding2 = 0;
 
         floatArguments.directionX = paintingData.directionVector.x();
@@ -137,8 +139,8 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
         floatArguments.coneCutOffLimit = paintingData.coneCutOffLimit;
         floatArguments.coneFullLight = paintingData.coneFullLight;
         floatArguments.coneCutOffRange = paintingData.coneCutOffLimit - paintingData.coneFullLight;
-        neonData.coneExponent = getPowerCoefficients(spotLightSource->specularExponent());
-        if (spotLightSource->specularExponent() == 1)
+        neonData.coneExponent = getPowerCoefficients(spotLightSource.specularExponent());
+        if (spotLightSource.specularExponent() == 1)
             neonData.flags |= FLAG_CONE_EXPONENT_IS_1;
     } else {
         ASSERT(m_lightSource->type() == LS_DISTANT);
