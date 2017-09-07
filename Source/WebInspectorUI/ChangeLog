@@ -1,5 +1,20 @@
 2017-09-07  Devin Rousso  <webkit@devinrousso.com>
 
+        Web Inspector: Canvas RecordingAction tree outline virtualization is broken
+        https://bugs.webkit.org/show_bug.cgi?id=176547
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/TreeOutline.js:
+        (WI.TreeOutline.prototype.updateVirtualizedElements.walk):
+        (WI.TreeOutline.prototype.updateVirtualizedElements):
+        Pass the current `count` to each recursive call of `walk` so that the cumulative index of a
+        TreeElement in any given sub-tree is correct.
+        Drive-by: if there is a focused TreeElement when scrolling, only change the current
+        `scrollTop` if it is not already visible. Also rewrote some loops for clarity.
+
+2017-09-07  Devin Rousso  <webkit@devinrousso.com>
+
         Unreviewed, change my copyright email.
 
         * Scripts/copy-user-interface-resources.pl:

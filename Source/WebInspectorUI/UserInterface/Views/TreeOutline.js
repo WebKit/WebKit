@@ -662,25 +662,24 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         if (!this.virtualized)
             return;
 
-        function walk(parent, callback) {
-            let count = 0;
+        function walk(parent, callback, count = 0) {
             let shouldReturn = false;
-            for (let i = 0; i < parent.children.length; ++i) {
-                if (!parent.children[i].revealed(false))
+            for (let child of parent.children) {
+                if (!child.revealed(false))
                     continue;
 
                 shouldReturn = callback({
                     parent,
-                    treeElement: parent.children[i],
+                    treeElement: child,
                     count,
                 });
                 if (shouldReturn)
                     break;
 
                 ++count;
-                if (parent.children[i].expanded) {
-                    let result = walk(parent.children[i], callback);
-                    count += result.count;
+                if (child.expanded) {
+                    let result = walk(child, callback, count);
+                    count = result.count;
                     if (result.shouldReturn)
                         break;
                 }
@@ -693,6 +692,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         let firstItem = Math.floor(this._virtualizedScrollContainer.scrollTop / this._virtualizedTreeItemHeight) - extraRows;
         let lastItem = firstItem + numberVisible + (extraRows * 2);
 
+        let shouldScroll = false;
         if (focusedTreeElement && focusedTreeElement.revealed(false)) {
             let index = walk(this, ({treeElement}) => treeElement === focusedTreeElement).count;
             if (index < firstItem) {
@@ -702,16 +702,18 @@ WI.TreeOutline = class TreeOutline extends WI.Object
                 firstItem = index - numberVisible - extraRows;
                 lastItem = index + extraRows;
             }
+
+            shouldScroll = index < firstItem || index > lastItem;
         }
 
         let totalItems = walk(this, ({parent, treeElement, count}) => {
-            if (count < firstItem || count > lastItem)
-                treeElement.element.remove();
-            else {
+            if (count >= firstItem && count <= lastItem) {
                 parent._childrenListNode.appendChild(treeElement.element);
                 if (treeElement._childrenListNode)
                     parent._childrenListNode.appendChild(treeElement._childrenListNode);
-            }
+            } else
+                treeElement.element.remove();
+
             return false;
         }).count;
 
@@ -721,7 +723,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         this._virtualizedBottomSpacer.style.height = (Math.max(totalItems - lastItem, 0) * this._virtualizedTreeItemHeight) + "px";
         this.element.parentNode.insertBefore(this._virtualizedBottomSpacer, this.element.nextElementSibling);
 
-        if (focusedTreeElement)
+        if (shouldScroll)
             this._virtualizedScrollContainer.scrollTop = (firstItem + extraRows) * this._virtualizedTreeItemHeight;
     }
 
