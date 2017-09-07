@@ -32,13 +32,14 @@ public:
     virtual ~LoggerHelper() = default;
 
     virtual const Logger& logger() const = 0;
-    virtual const char* className() const = 0;
+    virtual const char* logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
+    virtual const void* logIdentifier() const = 0;
 
 
 #if !RELEASE_LOG_DISABLED
 
-#define LOGTHIS Logger::MethodAndPointer(className(), __func__, this)
+#define LOGIDENTIFIER Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
 
 #define ALWAYS_LOG(...)     logger().logAlways(logChannel(), __VA_ARGS__)
 #define ERROR_LOG(...)      logger().error(logChannel(), __VA_ARGS__)
@@ -49,7 +50,7 @@ public:
 
 #else
 
-#define LOGTHIS ((void)0)
+#define LOGIDENTIFIER ((void)0)
 
 #define ALWAYS_LOG(...)     ((void)0)
 #define ERROR_LOG(...)      ((void)0)

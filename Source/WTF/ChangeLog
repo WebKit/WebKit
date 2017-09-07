@@ -1,3 +1,13 @@
+2017-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Require LoggingHelper overrides to provide identifier
+        https://bugs.webkit.org/show_bug.cgi?id=176477
+
+        Reviewed by Jer Noble.
+
+        * wtf/Assertions.cpp: No more WTFLogLevelNotice.
+        * wtf/Assertions.h: Ditto.
+
 2017-09-06  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebCore failed to build, InbandTextTrackPrivateAVF: base class undefined.

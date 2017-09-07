@@ -569,8 +569,6 @@ void WTFInitializeLogChannelStatesFromString(WTFLogChannel* channels[], size_t c
                 logChannelLevel = WTFLogLevelError;
             else if (equalLettersIgnoringASCIICase(level, "warning"))
                 logChannelLevel = WTFLogLevelWarning;
-            else if (equalLettersIgnoringASCIICase(level, "notice"))
-                logChannelLevel = WTFLogLevelNotice;
             else if (equalLettersIgnoringASCIICase(level, "info"))
                 logChannelLevel = WTFLogLevelInfo;
             else if (equalLettersIgnoringASCIICase(level, "debug"))

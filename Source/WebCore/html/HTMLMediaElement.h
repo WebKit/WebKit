@@ -896,7 +896,8 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     const PAL::Logger& logger() const final { return *m_logger.get(); }
-    const char* className() const final { return "HTMLMediaElement"; }
+    const char* logClassName() const final { return "HTMLMediaElement"; }
+    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 #endif
 
@@ -1121,6 +1122,7 @@ private:
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<PAL::Logger> m_logger;
+    uint64_t m_logIdentifier;
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_SCRIPT)

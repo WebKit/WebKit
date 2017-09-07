@@ -96,15 +96,6 @@ public:
     }
 
     template<typename... Arguments>
-    inline void notice(WTFLogChannel& channel, const Arguments&... arguments) const
-    {
-        if (!willLog(channel, WTFLogLevelNotice))
-            return;
-
-        log(channel, WTFLogLevelNotice, arguments...);
-    }
-
-    template<typename... Arguments>
     inline void info(WTFLogChannel& channel, const Arguments&... arguments) const
     {
         if (!willLog(channel, WTFLogLevelInfo))
@@ -141,14 +132,14 @@ public:
             m_enabled = enabled;
     }
 
-    struct MethodAndPointer {
-        MethodAndPointer(const char* methodName, const void* objectPtr)
+    struct LogSiteIdentifier {
+        LogSiteIdentifier(const char* methodName, const void* objectPtr)
             : methodName { methodName }
             , objectPtr { reinterpret_cast<uintptr_t>(objectPtr) }
         {
         }
 
-        MethodAndPointer(const char* className, const char* methodName, const void* objectPtr)
+        LogSiteIdentifier(const char* className, const char* methodName, const void* objectPtr)
             : className { className }
             , methodName { methodName }
             , objectPtr { reinterpret_cast<uintptr_t>(objectPtr) }
@@ -203,8 +194,8 @@ private:
 };
 
 template <>
-struct LogArgument<Logger::MethodAndPointer> {
-    static String toString(const Logger::MethodAndPointer& value)
+struct LogArgument<Logger::LogSiteIdentifier> {
+    static String toString(const Logger::LogSiteIdentifier& value)
     {
         StringBuilder builder;
 
@@ -213,7 +204,7 @@ struct LogArgument<Logger::MethodAndPointer> {
             builder.appendLiteral("::");
         }
         builder.append(value.methodName);
-        builder.appendLiteral("(0x");
+        builder.appendLiteral("(");
         appendUnsigned64AsHex(value.objectPtr, builder);
         builder.appendLiteral(") ");
         return builder.toString();

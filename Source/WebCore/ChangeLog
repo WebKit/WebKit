@@ -1,3 +1,18 @@
+2017-09-06  Eric Carlson  <eric.carlson@apple.com>
+
+        Require LoggingHelper overrides to provide identifier
+        https://bugs.webkit.org/show_bug.cgi?id=176477
+
+        Reviewed by Jer Noble.
+
+        No new tests, updated API test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::nextLogIdentifier): New.
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize m_logIdendifier. LOGTHIS -> LOGIDENTIFIER.
+        (WebCore::HTMLMediaElement::~HTMLMediaElement): Ditto.
+        * html/HTMLMediaElement.h:
+
 2017-09-06  Youenn Fablet  <youenn@apple.com>
 
         NetworkProcess Cache and Caches should be cleared when the last related WebProcess Cache or CacheStorage is destroyed
