@@ -22,37 +22,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x287 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x84
-          RenderText {#text} at (0,1) size 67x26
-            text run at (0,1) width 67: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x281 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x81
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,29) size 162x26
-            text run at (0,29) width 162: "Fix for this bug: "
+          RenderText {#text} at (0,27) size 162x26
+            text run at (0,27) width 162: "Fix for this bug: "
           RenderInline {A} at (0,0) size 557x26 [color=#0000EE]
-            RenderText {#text} at (162,29) size 557x26
-              text run at (162,29) width 557: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
-          RenderText {#text} at (0,57) size 729x26
-            text run at (0,57) width 729: "Text transformed with text-transform does not copy with transform applied"
-        RenderBlock {DIV} at (14,114) size 756x159
-          RenderBlock (anonymous) at (0,0) size 756x56
-            RenderText {#text} at (0,1) size 189x26
-              text run at (0,1) width 189: "Expected Results: "
-            RenderBR {BR} at (189,22) size 0x0
-            RenderText {#text} at (0,29) size 202x26
-              text run at (0,29) width 202: "Should see the string"
-          RenderBlock {PRE} at (0,80) size 756x27
+            RenderText {#text} at (162,27) size 557x26
+              text run at (162,27) width 557: "<http://bugzilla.opendarwin.org/show_bug.cgi?id=3429>"
+          RenderText {#text} at (0,54) size 729x26
+            text run at (0,54) width 729: "Text transformed with text-transform does not copy with transform applied"
+        RenderBlock {DIV} at (14,111) size 756x156
+          RenderBlock (anonymous) at (0,0) size 756x54
+            RenderText {#text} at (0,0) size 189x26
+              text run at (0,0) width 189: "Expected Results: "
+            RenderBR {BR} at (189,21) size 0x0
+            RenderText {#text} at (0,27) size 202x26
+              text run at (0,27) width 202: "Should see the string"
+          RenderBlock {PRE} at (0,78) size 756x27
             RenderText {#text} at (0,0) size 210x27
               text run at (0,0) width 210: "Foo Bar baz Bar"
-          RenderBlock (anonymous) at (0,131) size 756x28
-            RenderText {#text} at (0,1) size 155x26
-              text run at (0,1) width 155: "(case sensitive)."
-      RenderBlock {DIV} at (0,311) size 784x32 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (0,129) size 756x27
+            RenderText {#text} at (0,0) size 155x26
+              text run at (0,0) width 155: "(case sensitive)."
+      RenderBlock {DIV} at (0,305) size 784x31 [border: (2px solid #FF0000)]
         RenderInline {SPAN} at (0,0) size 153x26
           RenderInline {SPAN} at (0,0) size 78x26
-            RenderText {#text} at (2,3) size 78x26
-              text run at (2,3) width 78: "Foo Bar"
-          RenderText {#text} at (80,3) size 75x26
-            text run at (80,3) width 75: " bazBar"
+            RenderText {#text} at (2,2) size 78x26
+              text run at (2,2) width 78: "Foo Bar"
+          RenderText {#text} at (80,2) size 75x26
+            text run at (80,2) width 75: " bazBar"
         RenderText {#text} at (0,0) size 0x0
 caret: position 7 of child 1 {#text} of child 1 {SPAN} of child 3 {DIV} of body

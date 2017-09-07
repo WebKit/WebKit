@@ -14,9 +14,9 @@ layer at (0,0) size 500x200
             chunk 1 text run 1 at (105.00,50.00) startOffset 0 endOffset 4 width 95.00: "PASS"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGForeignObject {foreignObject} at (210,13) size 100x100
-        RenderBlock {P} at (0,0) size 100x46 [color=#008800]
-          RenderText {#text} at (0,0) size 95x45
-            text run at (0,0) width 95: "PASS"
+        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
+          RenderText {#text} at (0,1) size 95x45
+            text run at (0,1) width 95: "PASS"
       RenderSVGViewportContainer {svg} at (310,14) size 95x45
         RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 95x45
@@ -30,9 +30,9 @@ layer at (0,0) size 500x200
             chunk 1 text run 1 at (105.00,100.00) startOffset 0 endOffset 4 width 95.00: "PASS"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGForeignObject {foreignObject} at (210,63) size 100x100
-        RenderBlock {P} at (0,0) size 100x46 [color=#008800]
-          RenderText {#text} at (0,0) size 95x45
-            text run at (0,0) width 95: "PASS"
+        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
+          RenderText {#text} at (0,1) size 95x45
+            text run at (0,1) width 95: "PASS"
       RenderSVGViewportContainer {svg} at (310,64) size 95x45
         RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 95x45
@@ -46,9 +46,9 @@ layer at (0,0) size 500x200
             chunk 1 text run 1 at (105.00,150.00) startOffset 0 endOffset 4 width 95.00: "PASS"
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGForeignObject {foreignObject} at (210,113) size 100x100
-        RenderBlock {P} at (0,0) size 100x46 [color=#008800]
-          RenderText {#text} at (0,0) size 95x45
-            text run at (0,0) width 95: "PASS"
+        RenderBlock {P} at (0,0) size 100x47 [color=#008800]
+          RenderText {#text} at (0,1) size 95x45
+            text run at (0,1) width 95: "PASS"
       RenderSVGViewportContainer {svg} at (310,114) size 95x45
         RenderSVGText {text} at (0,1) size 95x45 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 95x45

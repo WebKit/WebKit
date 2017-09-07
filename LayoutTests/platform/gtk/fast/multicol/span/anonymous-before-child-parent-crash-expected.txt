@@ -3,17 +3,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
-      RenderBlock {H2} at (0,0) size 784x28 [bgcolor=#EEEEEE]
-        RenderText {#text} at (0,1) size 58x26
-          text run at (0,1) width 58: "PASS"
-layer at (8,56) size 760x194
-  RenderBlock {DIV} at (0,47) size 760x195 [border: (5px solid #800000)]
+      RenderBlock {H2} at (0,0) size 784x27 [bgcolor=#EEEEEE]
+        RenderText {#text} at (0,0) size 58x26
+          text run at (0,0) width 58: "PASS"
+layer at (8,55) size 760x193
+  RenderBlock {DIV} at (0,46) size 760x194 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x8
-    RenderBlock {H2} at (5,32) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 58x26
-        text run at (0,1) width 58: "PASS"
-    RenderMultiColumnSet at (5,80) size 750x109
-layer at (13,61) size 367x222
+    RenderBlock {H2} at (5,32) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 58x26
+        text run at (0,0) width 58: "PASS"
+    RenderMultiColumnSet at (5,79) size 750x109
+layer at (13,60) size 367x222
   RenderMultiColumnFlowThread at (5,5) size 367x222
     RenderBlock {SPAN} at (0,8) size 367x198
       RenderMultiColumnSpannerPlaceholder at (0,0) size 0x0

@@ -1,15 +1,15 @@
-layer at (0,0) size 785x1321
+layer at (0,0) size 785x1318
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1321
-  RenderBlock {HTML} at (0,0) size 785x1322
-    RenderBody {BODY} at (8,16) size 769x1290
-layer at (8,16) size 760x408
-  RenderBlock {DIV} at (0,0) size 760x408 [border: (5px solid #800000)]
+layer at (0,0) size 785x1318
+  RenderBlock {HTML} at (0,0) size 785x1319
+    RenderBody {BODY} at (8,16) size 769x1287
+layer at (8,16) size 760x407
+  RenderBlock {DIV} at (0,0) size 760x407 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x8
-    RenderBlock {H2} at (5,32) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 276x26
-        text run at (0,1) width 276: "This is a spanning element."
-    RenderMultiColumnSet at (5,80) size 750x323
+    RenderBlock {H2} at (5,32) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 276x26
+        text run at (0,0) width 276: "This is a spanning element."
+    RenderMultiColumnSet at (5,79) size 750x323
 layer at (13,21) size 367x636
   RenderMultiColumnFlowThread at (5,5) size 367x636
     RenderBlock {SPAN} at (0,8) size 367x198 [color=#FFFFFF] [bgcolor=#000000]
@@ -58,14 +58,14 @@ layer at (13,21) size 367x636
         text run at (0,378) width 95: "adipiscing elit. "
         text run at (95,378) width 259: "Lorem ipsum dolor sit amet, consectetuer"
         text run at (0,396) width 249: "adipiscing elit. Nulla varius enim ac mi."
-layer at (8,440) size 760x408
-  RenderBlock {DIV} at (0,423) size 760x409 [border: (5px solid #800000)]
+layer at (8,439) size 760x407
+  RenderBlock {DIV} at (0,422) size 760x408 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x322
-    RenderBlock {H2} at (5,346) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 276x26
-        text run at (0,1) width 276: "This is a spanning element."
-    RenderMultiColumnSet at (5,394) size 750x9
-layer at (13,445) size 367x660
+    RenderBlock {H2} at (5,346) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 276x26
+        text run at (0,0) width 276: "This is a spanning element."
+    RenderMultiColumnSet at (5,393) size 750x9
+layer at (13,444) size 367x660
   RenderMultiColumnFlowThread at (5,5) size 367x660
     RenderBlock (anonymous) at (0,0) size 367x592
       RenderText {#text} at (0,0) size 363x591
@@ -109,14 +109,14 @@ layer at (13,445) size 367x660
           text run at (0,0) width 354: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit."
           text run at (0,18) width 154: "Nulla varius enim ac mi."
       RenderMultiColumnSpannerPlaceholder at (0,36) size 0x0
-layer at (8,864) size 760x441
-  RenderBlock {DIV} at (0,847) size 760x443 [border: (5px solid #800000)]
+layer at (8,862) size 760x440
+  RenderBlock {DIV} at (0,845) size 760x442 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x142
-    RenderBlock {H2} at (5,166) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 276x26
-        text run at (0,1) width 276: "This is a spanning element."
-    RenderMultiColumnSet at (5,214) size 750x223
-layer at (13,869) size 367x702 backgroundClip at (0,0) size 785x1321 clip at (0,0) size 785x1321
+    RenderBlock {H2} at (5,166) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 276x26
+        text run at (0,0) width 276: "This is a spanning element."
+    RenderMultiColumnSet at (5,213) size 750x223
+layer at (13,867) size 367x702 backgroundClip at (0,0) size 785x1318 clip at (0,0) size 785x1318
   RenderMultiColumnFlowThread at (5,5) size 367x702
     RenderBlock {P} at (0,16) size 367x198
       RenderText {#text} at (0,0) size 362x197

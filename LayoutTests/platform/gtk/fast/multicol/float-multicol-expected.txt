@@ -1,13 +1,13 @@
-layer at (0,0) size 785x812
+layer at (0,0) size 785x811
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x812
-  RenderBlock {HTML} at (0,0) size 785x812
-layer at (8,8) size 769x796
-  RenderBody {BODY} at (8,8) size 769x796
-    RenderMultiColumnSet at (0,0) size 769x796
-layer at (8,8) size 769x796
-  RenderMultiColumnFlowThread at (0,0) size 769x796
-    RenderBlock {DIV} at (0,19) size 769x29 [bgcolor=#00FFFF]
+layer at (0,0) size 785x811
+  RenderBlock {HTML} at (0,0) size 785x811
+layer at (8,8) size 769x795
+  RenderBody {BODY} at (8,8) size 769x795
+    RenderMultiColumnSet at (0,0) size 769x795
+layer at (8,8) size 769x795
+  RenderMultiColumnFlowThread at (0,0) size 769x795
+    RenderBlock {DIV} at (0,19) size 769x28 [bgcolor=#00FFFF]
       RenderBlock (floating) {DIV} at (4,4) size 386x463 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70
         RenderText {#text} at (133,0) size 379x89
@@ -82,10 +82,10 @@ layer at (8,8) size 769x796
         RenderBlock {P} at (0,288) size 83x18
           RenderText {#text} at (0,0) size 83x17
             text run at (0,0) width 83: "Hello Kitty 9"
-      RenderBlock {H2} at (0,0) size 769x28
-        RenderText {#text} at (394,1) size 263x26
-          text run at (394,1) width 263: "What Needs To Be Done?"
-    RenderBlock (floating) {DIV} at (394,67) size 83x391 [bgcolor=#808080]
+      RenderBlock {H2} at (0,0) size 769x27
+        RenderText {#text} at (394,0) size 263x26
+          text run at (394,0) width 263: "What Needs To Be Done?"
+    RenderBlock (floating) {DIV} at (394,66) size 83x391 [bgcolor=#808080]
       RenderBlock {P} at (0,16) size 82x18
         RenderText {#text} at (0,0) size 74x17
           text run at (0,0) width 74: "Hola hola 1"
@@ -119,7 +119,7 @@ layer at (8,8) size 769x796
       RenderBlock {P} at (0,356) size 82x18
         RenderText {#text} at (0,0) size 82x17
           text run at (0,0) width 82: "Hola hola 11"
-    RenderBlock {DL} at (0,67) size 769x589
+    RenderBlock {DL} at (0,66) size 769x589
       RenderBlock {DT} at (0,0) size 769x18
         RenderText {#text} at (476,0) size 81x17
           text run at (476,0) width 81: "Report Bugs"

@@ -17,19 +17,19 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 508x17
           text run at (0,0) width 508: "The test passed if the word \x{201C}not\x{201D} appears exactly once in the following sentence:"
-      RenderBlock {DIV} at (0,68) size 784x220
-        RenderBlock (anonymous) at (0,0) size 784x110
-          RenderText {#text} at (0,1) size 455x107
-            text run at (0,1) width 455: "The test did"
+      RenderBlock {DIV} at (0,68) size 784x222
+        RenderBlock (anonymous) at (0,0) size 784x111
+          RenderText {#text} at (0,2) size 455x107
+            text run at (0,2) width 455: "The test did"
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {B} at (0,0) size 0x0
-        RenderBlock (anonymous) at (0,110) size 784x0
+        RenderBlock (anonymous) at (0,111) size 784x0
           RenderBlock {DIV} at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,110) size 784x110
+        RenderBlock (anonymous) at (0,111) size 784x111
           RenderInline {SPAN} at (0,0) size 147x107
             RenderInline {B} at (0,0) size 0x0
             RenderInline (generated) at (0,0) size 147x107
-              RenderText at (0,1) size 147x107
-                text run at (0,1) width 147: "not "
-          RenderText {#text} at (147,1) size 153x107
-            text run at (147,1) width 153: "fail."
+              RenderText at (0,2) size 147x107
+                text run at (0,2) width 147: "not "
+          RenderText {#text} at (147,2) size 153x107
+            text run at (147,2) width 153: "fail."

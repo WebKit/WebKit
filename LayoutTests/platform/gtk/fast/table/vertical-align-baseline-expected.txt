@@ -9,12 +9,12 @@ layer at (0,0) size 800x512
             RenderTableCell {TD} at (2,88) size 46x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 42x17
                 text run at (2,2) width 42: "Lorem"
-            RenderTableCell {TD} at (50,70) size 122x45 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,20) size 42x17
-                text run at (2,20) width 42: "ipsum "
+            RenderTableCell {TD} at (50,69) size 122x46 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+              RenderText {#text} at (2,21) size 42x17
+                text run at (2,21) width 42: "ipsum "
               RenderInline {SPAN} at (0,0) size 76x40
-                RenderText {#text} at (44,2) size 76x40
-                  text run at (44,2) width 76: "dolor"
+                RenderText {#text} at (44,3) size 76x40
+                  text run at (44,3) width 76: "dolor"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (174,88) size 18x22 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 14x18

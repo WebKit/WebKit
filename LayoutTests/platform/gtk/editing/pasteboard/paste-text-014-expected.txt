@@ -29,16 +29,16 @@ layer at (0,0) size 800x600
           text run at (736,0) width 4: " "
           text run at (0,18) width 585: "Should see two boxes with blockquoted \"foo\" text, followed by a box with an unquoted \"x\"."
       RenderBlock {DIV} at (0,36) size 784x24
-      RenderBlock {DIV} at (0,60) size 784x104 [border: (2px solid #FF0000)]
-        RenderBlock {DIV} at (14,38) size 756x28
-          RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
-            RenderText {#text} at (0,1) size 32x26
-              text run at (0,1) width 32: "foo"
-      RenderBlock {DIV} at (0,164) size 784x104 [border: (2px solid #FF0000)]
-        RenderBlock {BLOCKQUOTE} at (54,38) size 676x28
-          RenderText {#text} at (0,1) size 32x26
-            text run at (0,1) width 32: "foo"
-      RenderBlock {DIV} at (0,268) size 784x56 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,15) size 12x26
-          text run at (14,15) width 12: "x"
+      RenderBlock {DIV} at (0,60) size 784x103 [border: (2px solid #FF0000)]
+        RenderBlock {DIV} at (14,38) size 756x27
+          RenderBlock {BLOCKQUOTE} at (40,0) size 676x27
+            RenderText {#text} at (0,0) size 32x26
+              text run at (0,0) width 32: "foo"
+      RenderBlock {DIV} at (0,163) size 784x103 [border: (2px solid #FF0000)]
+        RenderBlock {BLOCKQUOTE} at (54,38) size 676x27
+          RenderText {#text} at (0,0) size 32x26
+            text run at (0,0) width 32: "foo"
+      RenderBlock {DIV} at (0,266) size 784x55 [border: (2px solid #FF0000)]
+        RenderText {#text} at (14,14) size 12x26
+          text run at (14,14) width 12: "x"
 caret: position 0 of child 0 {#text} of child 8 {DIV} of body

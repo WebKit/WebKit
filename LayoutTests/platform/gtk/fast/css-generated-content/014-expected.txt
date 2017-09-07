@@ -1,8 +1,8 @@
-layer at (0,0) size 785x887
+layer at (0,0) size 785x886
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x887
-  RenderBlock {HTML} at (0,0) size 785x887
-    RenderBody {BODY} at (8,21) size 769x841
+layer at (0,0) size 785x886
+  RenderBlock {HTML} at (0,0) size 785x886
+    RenderBody {BODY} at (8,21) size 769x840
       RenderBlock {H1} at (0,0) size 769x74
         RenderText {#text} at (0,0) size 750x73
           text run at (0,0) width 750: "Problem: Safari improperly handles generated content"
@@ -71,10 +71,10 @@ layer at (0,0) size 785x887
           RenderText {#text} at (0,0) size 440x15
             text run at (0,0) width 440: "div.box.one:after{ content:'generated content here!'; }"
       RenderBlock {HR} at (0,375) size 769x3 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,397) size 769x29
-        RenderText {#text} at (0,1) size 477x26
-          text run at (0,1) width 477: "Example (view source to see CSS and HTML):"
-      RenderBlock {P} at (0,445) size 769x19
+      RenderBlock {H2} at (0,397) size 769x28
+        RenderText {#text} at (0,0) size 477x26
+          text run at (0,0) width 477: "Example (view source to see CSS and HTML):"
+      RenderBlock {P} at (0,444) size 769x19
         RenderText {#text} at (0,0) size 335x17
           text run at (0,0) width 335: "Both boxes below should contain generated content ("
         RenderInline {SPAN} at (0,0) size 51x17 [color=#008000]
@@ -82,7 +82,7 @@ layer at (0,0) size 785x887
             text run at (335,0) width 51: "in green"
         RenderText {#text} at (386,0) size 9x17
           text run at (386,0) width 9: "):"
-      RenderBlock {DIV} at (0,488) size 769x164 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,487) size 769x164 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 717x23
           RenderText {#text} at (0,0) size 48x21
             text run at (0,0) width 48: "Box 1"
@@ -93,7 +93,7 @@ layer at (0,0) size 785x887
           RenderBlock (generated) at (0,18) size 717x18 [color=#008000]
             RenderText at (0,0) size 111x17
               text run at (0,0) width 111: "generated content"
-      RenderBlock {DIV} at (0,676) size 769x165 [border: (1px solid #000000)]
+      RenderBlock {DIV} at (0,675) size 769x165 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 717x23
           RenderText {#text} at (0,0) size 48x21
             text run at (0,0) width 48: "Box 2"

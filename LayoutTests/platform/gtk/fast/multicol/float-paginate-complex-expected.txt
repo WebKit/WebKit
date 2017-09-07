@@ -296,22 +296,22 @@ layer at (10,850) size 375x436
 layer at (8,1268) size 769x404
   RenderBlock {DIV} at (0,1260) size 769x404 [border: (2px solid #000000)]
     RenderMultiColumnSet at (2,2) size 765x400
-layer at (10,1270) size 375x652 backgroundClip at (0,0) size 1166x1680 clip at (0,0) size 1166x1680
-  RenderMultiColumnFlowThread at (2,2) size 375x652
+layer at (10,1270) size 375x643 backgroundClip at (0,0) size 1166x1680 clip at (0,0) size 1166x1680
+  RenderMultiColumnFlowThread at (2,2) size 375x643
     RenderImage {IMG} at (0,0) size 375x380 [bgcolor=#0000FF]
-    RenderInline {SPAN} at (0,0) size 370x250
+    RenderInline {SPAN} at (0,0) size 370x242
       RenderImage {IMG} at (0,400) size 100x20 [bgcolor=#008000]
-      RenderText {#text} at (100,401) size 211x26
-        text run at (100,401) width 211: "Longer text designed "
-      RenderImage {IMG} at (274,428) size 101x20 [bgcolor=#008000]
-      RenderText {#text} at (311,401) size 370x250
-        text run at (311,401) width 59: "to test"
-        text run at (0,429) width 183: "float and wrapping"
-        text run at (0,457) width 367: "behavior. Longer text designed to test"
-        text run at (0,485) width 356: "float and wrapping behavior. Longer"
-        text run at (0,513) width 286: "text designed to test float and"
-        text run at (0,541) width 307: "wrapping behavior. Longer text"
-        text run at (0,569) width 340: "designed to test float and wrapping"
-        text run at (0,597) width 367: "behavior. Longer text designed to test"
-        text run at (0,625) width 280: "float and wrapping behavior."
+      RenderText {#text} at (100,400) size 211x26
+        text run at (100,400) width 211: "Longer text designed "
+      RenderImage {IMG} at (274,427) size 101x20 [bgcolor=#008000]
+      RenderText {#text} at (311,400) size 370x242
+        text run at (311,400) width 59: "to test"
+        text run at (0,427) width 183: "float and wrapping"
+        text run at (0,454) width 367: "behavior. Longer text designed to test"
+        text run at (0,481) width 356: "float and wrapping behavior. Longer"
+        text run at (0,508) width 286: "text designed to test float and"
+        text run at (0,535) width 307: "wrapping behavior. Longer text"
+        text run at (0,562) width 340: "designed to test float and wrapping"
+        text run at (0,589) width 367: "behavior. Longer text designed to test"
+        text run at (0,616) width 280: "float and wrapping behavior."
     RenderText {#text} at (0,0) size 0x0

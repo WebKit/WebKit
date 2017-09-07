@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
-layer at (8,16) size 784x204
-  RenderBlock {DIV} at (0,0) size 784x204 [border: (5px solid #800000)]
+layer at (8,16) size 784x203
+  RenderBlock {DIV} at (0,0) size 784x203 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 774x18
-    RenderBlock {H2} at (5,42) size 774x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 58x26
-        text run at (0,1) width 58: "PASS"
-    RenderMultiColumnSet at (5,90) size 774x109
+    RenderBlock {H2} at (5,42) size 774x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 58x26
+        text run at (0,0) width 58: "PASS"
+    RenderMultiColumnSet at (5,89) size 774x109
 layer at (13,21) size 379x234
   RenderMultiColumnFlowThread at (5,5) size 379x234
     RenderBlock (anonymous) at (0,0) size 379x18

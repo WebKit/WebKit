@@ -1,5 +1,9 @@
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline tests after r221724.
+
+2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline more tests after Freetype version bump in r221670.
 
         * platform/gtk/editing/execCommand/print-expected.png:

@@ -1,22 +1,22 @@
-layer at (0,0) size 785x3324
+layer at (0,0) size 785x3322
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x3324
-  RenderBlock {HTML} at (0,0) size 785x3324
-    RenderBody {BODY} at (8,21) size 769x3287
+layer at (0,0) size 785x3322
+  RenderBlock {HTML} at (0,0) size 785x3322
+    RenderBody {BODY} at (8,21) size 769x3285
       RenderBlock {H1} at (0,0) size 769x37
         RenderText {#text} at (0,0) size 249x36
           text run at (0,0) width 249: "HTML Test Index"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 310x17
           text run at (0,0) width 310: "The HTML tests are available in several variants."
-      RenderBlock {H2} at (0,96) size 769x29
-        RenderText {#text} at (0,1) size 281x26
-          text run at (0,1) width 281: "Tests With Navigation Aids"
-      RenderBlock {P} at (0,144) size 769x37
+      RenderBlock {H2} at (0,96) size 769x28
+        RenderText {#text} at (0,0) size 281x26
+          text run at (0,0) width 281: "Tests With Navigation Aids"
+      RenderBlock {P} at (0,143) size 769x37
         RenderText {#text} at (0,0) size 769x35
           text run at (0,0) width 769: "Each category of test is available using several different harnesses. The name of the harness describes how the test markup"
           text run at (0,18) width 659: "is contained within it, for example the Xlink embed case uses an XLink with the show axis set to embed."
-      RenderBlock {UL} at (0,196) size 769x181
+      RenderBlock {UL} at (0,195) size 769x181
         RenderListItem {LI} at (40,0) size 729x36
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderInline {A} at (0,0) size 21x17 [color=#0000EE]
@@ -271,10 +271,10 @@ layer at (0,0) size 785x3324
           RenderInline {A} at (0,0) size 83x17 [color=#0000EE]
             RenderText {#text} at (272,18) size 83x17
               text run at (272,18) width 83: "TNG Format"
-      RenderBlock {H2} at (0,396) size 769x29
-        RenderText {#text} at (0,1) size 174x26
-          text run at (0,1) width 174: "Unadorned Tests"
-      RenderBlock {UL} at (0,444) size 769x2809
+      RenderBlock {H2} at (0,395) size 769x28
+        RenderText {#text} at (0,0) size 174x26
+          text run at (0,0) width 174: "Unadorned Tests"
+      RenderBlock {UL} at (0,442) size 769x2809
         RenderListItem {LI} at (40,0) size 729x18
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderInline {A} at (0,0) size 122x17 [color=#0000EE]
@@ -1367,7 +1367,7 @@ layer at (0,0) size 785x3324
               text run at (0,0) width 263: "NEGATED :indeterminate with :checked"
           RenderText {#text} at (263,0) size 45x17
             text run at (263,0) width 45: " (#d5e)"
-      RenderBlock {P} at (0,3268) size 769x19
+      RenderBlock {P} at (0,3266) size 769x19
         RenderText {#text} at (0,0) size 60x17
           text run at (0,0) width 60: "See also: "
         RenderInline {A} at (0,0) size 36x17 [color=#0000EE]

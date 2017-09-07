@@ -1,19 +1,19 @@
-layer at (0,0) size 785x1548
+layer at (0,0) size 785x1542
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1548
-  RenderBlock {HTML} at (0,0) size 785x1548
-    RenderBody {BODY} at (8,16) size 769x1516
-layer at (8,16) size 760x488
-  RenderBlock {DIV} at (0,0) size 760x488 [border: (5px solid #800000)]
+layer at (0,0) size 785x1542
+  RenderBlock {HTML} at (0,0) size 785x1542
+    RenderBody {BODY} at (8,16) size 769x1510
+layer at (8,16) size 760x486
+  RenderBlock {DIV} at (0,0) size 760x486 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x198
-    RenderBlock {H2} at (5,222) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 193x26
-        text run at (0,1) width 193: "This is a first span."
-    RenderMultiColumnSet at (5,270) size 750x19
-    RenderBlock {H2} at (5,308) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 219x26
-        text run at (0,1) width 219: "This is a second span."
-    RenderMultiColumnSet at (5,356) size 750x127
+    RenderBlock {H2} at (5,222) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 193x26
+        text run at (0,0) width 193: "This is a first span."
+    RenderMultiColumnSet at (5,269) size 750x19
+    RenderBlock {H2} at (5,307) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 219x26
+        text run at (0,0) width 219: "This is a second span."
+    RenderMultiColumnSet at (5,354) size 750x127
 layer at (13,21) size 367x666
   RenderMultiColumnFlowThread at (5,5) size 367x666
     RenderBlock (anonymous) at (0,0) size 367x396
@@ -63,18 +63,18 @@ layer at (13,21) size 367x666
         text run at (233,180) width 121: "Lorem ipsum dolor"
         text run at (0,198) width 363: "sit amet, consectetuer adipiscing elit. Nulla varius enim ac"
         text run at (0,216) width 20: "mi."
-layer at (8,520) size 760x501
-  RenderBlock {DIV} at (0,503) size 760x503 [border: (5px solid #800000)]
+layer at (8,518) size 760x499
+  RenderBlock {DIV} at (0,501) size 760x501 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x115
-    RenderBlock {H2} at (5,139) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 193x26
-        text run at (0,1) width 193: "This is a first span."
-    RenderMultiColumnSet at (5,187) size 750x116
-    RenderBlock {H2} at (5,322) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 219x26
-        text run at (0,1) width 219: "This is a second span."
-    RenderMultiColumnSet at (5,370) size 750x127
-layer at (13,525) size 367x694
+    RenderBlock {H2} at (5,139) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 193x26
+        text run at (0,0) width 193: "This is a first span."
+    RenderMultiColumnSet at (5,186) size 750x116
+    RenderBlock {H2} at (5,321) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 219x26
+        text run at (0,0) width 219: "This is a second span."
+    RenderMultiColumnSet at (5,368) size 750x127
+layer at (13,523) size 367x694
   RenderMultiColumnFlowThread at (5,5) size 367x694
     RenderBlock {P} at (0,16) size 367x207
       RenderText {#text} at (0,0) size 362x206
@@ -120,18 +120,18 @@ layer at (13,525) size 367x694
         text run at (233,180) width 121: "Lorem ipsum dolor"
         text run at (0,198) width 363: "sit amet, consectetuer adipiscing elit. Nulla varius enim ac"
         text run at (0,216) width 20: "mi."
-layer at (8,1037) size 760x495
-  RenderBlock {DIV} at (0,1021) size 760x495 [border: (5px solid #800000)]
+layer at (8,1033) size 760x493
+  RenderBlock {DIV} at (0,1017) size 760x493 [border: (5px solid #800000)]
     RenderMultiColumnSet at (5,5) size 750x108
-    RenderBlock {H2} at (5,132) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 193x26
-        text run at (0,1) width 193: "This is a first span."
-    RenderMultiColumnSet at (5,180) size 750x116
-    RenderBlock {H2} at (5,315) size 750x29 [bgcolor=#EEEEEE]
-      RenderText {#text} at (0,1) size 219x26
-        text run at (0,1) width 219: "This is a second span."
-    RenderMultiColumnSet at (5,363) size 750x127
-layer at (13,1042) size 367x662 backgroundClip at (0,0) size 785x1548 clip at (0,0) size 785x1548
+    RenderBlock {H2} at (5,132) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 193x26
+        text run at (0,0) width 193: "This is a first span."
+    RenderMultiColumnSet at (5,179) size 750x116
+    RenderBlock {H2} at (5,314) size 750x28 [bgcolor=#EEEEEE]
+      RenderText {#text} at (0,0) size 219x26
+        text run at (0,0) width 219: "This is a second span."
+    RenderMultiColumnSet at (5,361) size 750x127
+layer at (13,1038) size 367x662 backgroundClip at (0,0) size 785x1542 clip at (0,0) size 785x1542
   RenderMultiColumnFlowThread at (5,5) size 367x662
     RenderBlock (anonymous) at (0,0) size 367x0
       RenderInline {SPAN} at (0,0) size 0x0
