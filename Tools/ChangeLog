@@ -1,3 +1,15 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Dashboard test is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=176527
+
+        Reviewed by Brent Fulgham.
+
+        Skip test on Windows since WebKitTestRunner is required, but not built on Windows.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestFactory.__init__):
+
 2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
 
         [WPE][CMake] Add "dist" and "distcheck" targets
