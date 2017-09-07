@@ -6,3 +6,6 @@ fast/forms/search-vertical-alignment.html [ Skip ]
 fast/forms/number/number-appearance-spinbutton-layer.html [ Skip ]
 media/modern-media-controls/pip-support [ Skip ]
 media/modern-media-controls/button/button-focus-state.html [ Skip ]
+
+webkit.org/b/176229 imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html [ Pass Failure ]
+

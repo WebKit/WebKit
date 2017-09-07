@@ -1,3 +1,12 @@
+2017-09-07  Matt Lewis  <jlewis3@apple.com>
+
+        Marked imported/w3c/web-platform-tests/IndexedDB/idbobjectstore-query-exception-order.html as flaky on El Capitan.
+        https://bugs.webkit.org/show_bug.cgi?id=176229
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan/TestExpectations:
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] tests/security/contentSecurityPolicy/report-only.php is flaky.
