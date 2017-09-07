@@ -1,3 +1,11 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Marked imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/cross_origin_parentage.html as slow.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-07  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/animations/smil-leak-elements.svg as flaky on macOS WK1.
