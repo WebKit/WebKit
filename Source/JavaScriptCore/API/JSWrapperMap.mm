@@ -91,7 +91,7 @@ static NSString *selectorToPropertyName(const char* start)
         while ((c = *(input++)) == ':');
         // Copy the character, converting to upper case if necessary.
         // If the character we copy is '\0', then we're done!
-        if (!(*(output++) = toupper(c)))
+        if (!(*(output++) = toASCIIUpper(c)))
             goto done;
         // Loop over characters other than ':'.
         while ((c = *(input++)) != ':') {
@@ -260,19 +260,25 @@ static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *p
     [renameMap release];
 }
 
-static bool parsePropertyAttributes(objc_property_t property, char*& getterName, char*& setterName)
+struct Property {
+    const char* name;
+    RetainPtr<NSString> getterName;
+    RetainPtr<NSString> setterName;
+};
+
+static bool parsePropertyAttributes(objc_property_t objcProperty, Property& property)
 {
     bool readonly = false;
     unsigned attributeCount;
-    objc_property_attribute_t* attributes = property_copyAttributeList(property, &attributeCount);
+    auto attributes = adoptSystem<objc_property_attribute_t[]>(property_copyAttributeList(objcProperty, &attributeCount));
     if (attributeCount) {
         for (unsigned i = 0; i < attributeCount; ++i) {
             switch (*(attributes[i].name)) {
             case 'G':
-                getterName = strdup(attributes[i].value);
+                property.getterName = @(attributes[i].value);
                 break;
             case 'S':
-                setterName = strdup(attributes[i].value);
+                property.setterName = @(attributes[i].value);
                 break;
             case 'R':
                 readonly = true;
@@ -281,33 +287,28 @@ static bool parsePropertyAttributes(objc_property_t property, char*& getterName,
                 break;
             }
         }
-        free(attributes);
     }
     return readonly;
 }
 
-static char* makeSetterName(const char* name)
+static RetainPtr<NSString> makeSetterName(const char* name)
 {
     size_t nameLength = strlen(name);
-    char* setterName = (char*)malloc(nameLength + 5); // "set" Name ":\0"
-    setterName[0] = 's';
-    setterName[1] = 'e';
-    setterName[2] = 't';
-    setterName[3] = toupper(*name);
-    memcpy(setterName + 4, name + 1, nameLength - 1);
-    setterName[nameLength + 3] = ':';
-    setterName[nameLength + 4] = '\0';
-    return setterName;
+    // "set" Name ":\0"  => nameLength + 5.
+    Vector<char, 128> buffer(nameLength + 5);
+    buffer[0] = 's';
+    buffer[1] = 'e';
+    buffer[2] = 't';
+    buffer[3] = toASCIIUpper(*name);
+    memcpy(buffer.data() + 4, name + 1, nameLength - 1);
+    buffer[nameLength + 3] = ':';
+    buffer[nameLength + 4] = '\0';
+    return @(buffer.data());
 }
 
 static void copyPrototypeProperties(JSContext *context, Class objcClass, Protocol *protocol, JSValue *prototypeValue)
 {
     // First gather propreties into this list, then handle the methods (capturing the accessor methods).
-    struct Property {
-        const char* name;
-        char* getterName;
-        char* setterName;
-    };
     __block Vector<Property> propertyList;
 
     // Map recording the methods used as getters/setters.
@@ -316,41 +317,36 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     // Useful value.
     JSValue *undefined = [JSValue valueWithUndefinedInContext:context];
 
-    forEachPropertyInProtocol(protocol, ^(objc_property_t property){
-        char* getterName = 0;
-        char* setterName = 0;
-        bool readonly = parsePropertyAttributes(property, getterName, setterName);
-        const char* name = property_getName(property);
+    forEachPropertyInProtocol(protocol, ^(objc_property_t objcProperty) {
+        const char* name = property_getName(objcProperty);
+        Property property { name, nullptr, nullptr };
+        bool readonly = parsePropertyAttributes(objcProperty, property);
 
-        // Add the names of the getter & setter methods to 
-        if (!getterName)
-            getterName = strdup(name);
-        accessorMethods[@(getterName)] = undefined;
+        // Add the names of the getter & setter methods to
+        if (!property.getterName)
+            property.getterName = @(name);
+        accessorMethods[property.getterName.get()] = undefined;
         if (!readonly) {
-            if (!setterName)
-                setterName = makeSetterName(name);
-            accessorMethods[@(setterName)] = undefined;
+            if (!property.setterName)
+                property.setterName = makeSetterName(name);
+            accessorMethods[property.setterName.get()] = undefined;
         }
 
         // Add the properties to a list.
-        propertyList.append((Property){ name, getterName, setterName });
+        propertyList.append(WTFMove(property));
     });
 
     // Copy methods to the prototype, capturing accessors in the accessorMethods map.
     copyMethodsToObject(context, objcClass, protocol, YES, prototypeValue, accessorMethods);
 
     // Iterate the propertyList & generate accessor properties.
-    for (size_t i = 0; i < propertyList.size(); ++i) {
-        Property& property = propertyList[i];
-
-        JSValue *getter = accessorMethods[@(property.getterName)];
-        free(property.getterName);
+    for (auto& property : propertyList) {
+        JSValue* getter = accessorMethods[property.getterName.get()];
         ASSERT(![getter isUndefined]);
 
-        JSValue *setter = undefined;
+        JSValue* setter = undefined;
         if (property.setterName) {
-            setter = accessorMethods[@(property.setterName)];
-            free(property.setterName);
+            setter = accessorMethods[property.setterName.get()];
             ASSERT(![setter isUndefined]);
         }
         

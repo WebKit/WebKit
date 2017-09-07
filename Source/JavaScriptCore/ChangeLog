@@ -1,3 +1,39 @@
+2017-09-06  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Remove "malloc" and "free" from JSC/API
+        https://bugs.webkit.org/show_bug.cgi?id=176331
+
+        Reviewed by Keith Miller.
+
+        Remove "malloc" and "free" manual calls in JSC/API.
+
+        * API/JSValue.mm:
+        (createStructHandlerMap):
+        * API/JSWrapperMap.mm:
+        (parsePropertyAttributes):
+        (makeSetterName):
+        (copyPrototypeProperties):
+        Use RetainPtr<NSString> to keep NSString. We avoid repeated "char*" to "NSString" conversion.
+
+        * API/ObjcRuntimeExtras.h:
+        (adoptSystem):
+        Add adoptSystem to automate calling system free().
+
+        (protocolImplementsProtocol):
+        (forEachProtocolImplementingProtocol):
+        (forEachMethodInClass):
+        (forEachMethodInProtocol):
+        (forEachPropertyInProtocol):
+        (StringRange::StringRange):
+        (StringRange::operator const char* const):
+        (StringRange::get const):
+        Use CString for backend.
+
+        (StructBuffer::StructBuffer):
+        (StructBuffer::~StructBuffer):
+        (StringRange::~StringRange): Deleted.
+        Use fastAlignedMalloc/astAlignedFree to get aligned memory.
+
 2017-09-06  Mark Lam  <mark.lam@apple.com>
 
         constructGenericTypedArrayViewWithArguments() is missing an exception check.

@@ -1054,19 +1054,19 @@ static StructHandlers* createStructHandlerMap()
             return;
         char idType[3];
         // Check 2nd argument type is "@"
-        char* secondType = method_copyArgumentType(method, 3);
-        if (strcmp(secondType, "@") != 0) {
-            free(secondType);
-            return;
+        {
+            auto secondType = adoptSystem<char[]>(method_copyArgumentType(method, 3));
+            if (strcmp(secondType.get(), "@") != 0)
+                return;
         }
-        free(secondType);
         // Check result type is also "@"
         method_getReturnType(method, idType, 3);
         if (strcmp(idType, "@") != 0)
             return;
-        char* type = method_copyArgumentType(method, 2);
-        structHandlers->add(StringImpl::create(type), (StructTagHandler){ selector, 0 });
-        free(type);
+        {
+            auto type = adoptSystem<char[]>(method_copyArgumentType(method, 2));
+            structHandlers->add(StringImpl::create(type.get()), (StructTagHandler) { selector, 0 });
+        }
     });
 
     // Step 2: find all to<Foo> instance methods in JSValue.
@@ -1081,10 +1081,8 @@ static StructHandlers* createStructHandlerMap()
         if (method_getNumberOfArguments(method) != 2)
             return;
         // Try to find a matching valueWith<Foo>:context: method.
-        char* type = method_copyReturnType(method);
-
-        StructHandlers::iterator iter = structHandlers->find(type);
-        free(type);
+        auto type = adoptSystem<char[]>(method_copyReturnType(method));
+        StructHandlers::iterator iter = structHandlers->find(type.get());
         if (iter == structHandlers->end())
             return;
         StructTagHandler& handler = iter->value;
