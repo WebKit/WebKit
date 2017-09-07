@@ -402,3 +402,5 @@ webkit.org/b/172334 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Fa
 
 webkit.org/b/172877 svg/as-image/svg-image-with-data-uri-background.html [ Pass ImageOnlyFailure ]
 
+webkit.org/b/174180 svg/animations/smil-leak-elements.svg [ Pass Failure ]
+
