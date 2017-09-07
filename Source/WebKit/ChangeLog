@@ -1,3 +1,56 @@
+2017-09-07  Frederic Wang  <fwang@igalia.com>
+
+         Move more code from ScrollingTreeScrollingNodeDelegateIOS to ScrollingTreeScrollingNodeDelegate
+         https://bugs.webkit.org/show_bug.cgi?id=174130
+
+         Reviewed by Simon Fraser.
+
+         * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.h: Remove some members,
+         headers and pre-declaration that are moved into the delegate.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollLayer): Deleted.
+         * UIProcess/RemoteLayerTree/ios/ScrollingTreeOverflowScrollingNodeIOS.mm: Remove some headers and
+         WKOverflowScrollViewDelegate since they are moved into the delegate file. Also fix the
+         comment to closing the WebKit namespace.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::~ScrollingTreeOverflowScrollingNodeIOS):
+         Remove some code moved into the delegate and call the corresponding helper function to
+         preserve the current behavior.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateBeforeChildren): Ditto.
+         Note that it is only necessary to cast the parameter to a ScrollingStateTreeNode.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::commitStateAfterChildren): Ditto.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::updateLayersAfterAncestorChange): Ditto.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::scrollPosition): Ditto.
+         (WebKit::ScrollingTreeOverflowScrollingNodeIOS::setScrollLayerPosition): Ditto.
+         (-[WKOverflowScrollViewDelegate initWithScrollingTreeNodeDelegate:]): Deleted.
+         (-[WKOverflowScrollViewDelegate scrollViewDidScroll:]): Deleted.
+         (-[WKOverflowScrollViewDelegate scrollViewWillBeginDragging:]): Deleted.
+         (-[WKOverflowScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Deleted.
+         (-[WKOverflowScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]): Deleted.
+         (-[WKOverflowScrollViewDelegate scrollViewDidEndDecelerating:]): Deleted.
+         * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.h: Import headers and members
+         from ScrollingTreeOverflowScrollingNodeIOS. Define new helper functions for the code imported
+         from ScrollingTreeOverflowScrollingNodeIOS. Remove the friendship with
+         ScrollingTreeOverflowScrollingNodeIOS and only makes public the function used by that class.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollLayer): This function is moved from
+         ScrollingTreeOverflowScrollingNodeIOS.
+         * UIProcess/RemoteLayerTree/ios/ScrollingTreeScrollingNodeDelegateIOS.mm: Add headers,
+         WKOverflowScrollViewDelegate (renamed WKScrollingNodeScrollViewDelegate) and some helper code
+         imported from ScrollingTreeOverflowScrollingNodeIOS.
+         (-[WKScrollingNodeScrollViewDelegate scrollViewDidScroll:]): Moved from
+         ScrollingTreeOverflowScrollingNodeIOS.
+         (-[WKScrollingNodeScrollViewDelegate scrollViewWillBeginDragging:]): Ditto.
+         (-[WKScrollingNodeScrollViewDelegate scrollViewWillEndDragging:withVelocity:targetContentOffset:]): Ditto.
+         (-[WKScrollingNodeScrollViewDelegate scrollViewDidEndDragging:willDecelerate:]): Ditto.
+         (-[WKScrollingNodeScrollViewDelegate scrollViewDidEndDecelerating:]): Ditto.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::~ScrollingTreeScrollingNodeDelegateIOS):
+         Import code from ScrollingTreeOverflowScrollingNodeIOS.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::resetScrollViewDelegate): New helper function
+         importing code from ScrollingTreeOverflowScrollingNodeIOS.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateBeforeChildren): Ditto.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren): Ditto.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::updateLayersAfterAncestorChange): Ditto.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::scrollPosition): Ditto.
+         (WebKit::ScrollingTreeScrollingNodeDelegateIOS::setScrollLayerPosition): Ditto.
+
 2017-09-07  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Notify client when downloads are redirected

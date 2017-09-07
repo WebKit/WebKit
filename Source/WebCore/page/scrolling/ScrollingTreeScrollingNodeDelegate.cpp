@@ -51,6 +51,21 @@ FloatPoint ScrollingTreeScrollingNodeDelegate::lastCommittedScrollPosition() con
     return m_scrollingNode.lastCommittedScrollPosition();
 }
 
+const FloatSize& ScrollingTreeScrollingNodeDelegate::totalContentsSize()
+{
+    return m_scrollingNode.totalContentsSize();
+}
+
+const FloatSize& ScrollingTreeScrollingNodeDelegate::reachableContentsSize()
+{
+    return m_scrollingNode.reachableContentsSize();
+}
+
+const IntPoint& ScrollingTreeScrollingNodeDelegate::scrollOrigin() const
+{
+    return m_scrollingNode.scrollOrigin();
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)

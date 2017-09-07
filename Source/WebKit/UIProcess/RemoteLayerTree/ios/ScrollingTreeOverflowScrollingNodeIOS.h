@@ -27,11 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS)
 
-#include <WebCore/ScrollingCoordinator.h>
 #include <WebCore/ScrollingTreeOverflowScrollingNode.h>
-
-OBJC_CLASS CALayer;
-OBJC_CLASS WKOverflowScrollViewDelegate;
 
 namespace WebKit {
 
@@ -41,8 +37,6 @@ class ScrollingTreeOverflowScrollingNodeIOS : public WebCore::ScrollingTreeOverf
 public:
     static Ref<ScrollingTreeOverflowScrollingNodeIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeOverflowScrollingNodeIOS();
-
-    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
 private:
     ScrollingTreeOverflowScrollingNodeIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeID);
@@ -61,10 +55,6 @@ private:
 
     void handleWheelEvent(const WebCore::PlatformWheelEvent&) override { }
 
-    RetainPtr<CALayer> m_scrollLayer;
-    RetainPtr<CALayer> m_scrolledContentsLayer;
-
-    RetainPtr<WKOverflowScrollViewDelegate> m_scrollViewDelegate;
     std::unique_ptr<ScrollingTreeScrollingNodeDelegateIOS> m_scrollingNodeDelegate;
 };
 

@@ -27,22 +27,26 @@
 
 #if PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)
 
+#include <UIKit/UIScrollView.h>
+#include <WebCore/ScrollingCoordinator.h>
+#include <WebCore/ScrollingTreeScrollingNode.h>
 #include <WebCore/ScrollingTreeScrollingNodeDelegate.h>
+
+OBJC_CLASS CALayer;
+OBJC_CLASS WKScrollingNodeScrollViewDelegate;
 
 namespace WebCore {
 
 class FloatPoint;
+class FloatRect;
+class FloatSize;
 class ScrollingTreeScrollingNode;
 
 }
 
 namespace WebKit {
 
-class ScrollingTreeOverflowScrollingNodeIOS;
-
 class ScrollingTreeScrollingNodeDelegateIOS : public WebCore::ScrollingTreeScrollingNodeDelegate {
-    friend class ScrollingTreeOverflowScrollingNodeIOS;
-
 public:
     explicit ScrollingTreeScrollingNodeDelegateIOS(WebCore::ScrollingTreeScrollingNode&);
     ~ScrollingTreeScrollingNodeDelegateIOS() final;
@@ -52,13 +56,33 @@ public:
     void scrollViewWillStartPanGesture() const;
     void scrollViewDidScroll(const WebCore::FloatPoint& scrollPosition, bool inUserInteraction) const;
     void currentSnapPointIndicesDidChange(unsigned horizontal, unsigned vertical) const;
+    CALayer *scrollLayer() const { return m_scrollLayer.get(); }
 
-private:
+    void resetScrollViewDelegate();
+    void commitStateBeforeChildren(const WebCore::ScrollingStateScrollingNode&);
+    void commitStateAfterChildren(const WebCore::ScrollingStateScrollingNode&);
+    void updateLayersAfterAncestorChange(const WebCore::ScrollingTreeNode& changedNode, const WebCore::FloatRect& fixedPositionRect, const WebCore::FloatSize& cumulativeDelta);
+    WebCore::FloatPoint scrollPosition() const;
+    void setScrollLayerPosition(const WebCore::FloatPoint&);
     void updateChildNodesAfterScroll(const WebCore::FloatPoint& scrollPosition);
 
-    bool m_updatingFromStateNode;
+private:
+    RetainPtr<CALayer> m_scrollLayer;
+    RetainPtr<CALayer> m_scrolledContentsLayer;
+    RetainPtr<WKScrollingNodeScrollViewDelegate> m_scrollViewDelegate;
+    bool m_updatingFromStateNode { false };
 };
 
 } // namespace WebKit
+
+@interface WKScrollingNodeScrollViewDelegate : NSObject <UIScrollViewDelegate> {
+    WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
+}
+
+@property (nonatomic, getter=_isInUserInteraction) BOOL inUserInteraction;
+
+- (instancetype)initWithScrollingTreeNodeDelegate:(WebKit::ScrollingTreeScrollingNodeDelegateIOS*)delegate;
+
+@end
 
 #endif // PLATFORM(IOS) && ENABLE(ASYNC_SCROLLING)

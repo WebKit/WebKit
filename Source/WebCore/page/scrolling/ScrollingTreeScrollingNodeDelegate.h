@@ -30,6 +30,8 @@
 namespace WebCore {
 
 class FloatPoint;
+class FloatSize;
+class IntPoint;
 class ScrollingTreeScrollingNode;
 class ScrollingTree;
 
@@ -43,6 +45,9 @@ public:
 protected:
     WEBCORE_EXPORT ScrollingTree& scrollingTree() const;
     WEBCORE_EXPORT FloatPoint lastCommittedScrollPosition() const;
+    WEBCORE_EXPORT const FloatSize& totalContentsSize();
+    WEBCORE_EXPORT const FloatSize& reachableContentsSize();
+    WEBCORE_EXPORT const IntPoint& scrollOrigin() const;
 
 private:
     ScrollingTreeScrollingNode& m_scrollingNode;
