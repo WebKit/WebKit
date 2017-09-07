@@ -1,3 +1,11 @@
+2017-09-07  Per Arne Vollan  <pvollan@apple.com>
+
+        Update test expectations for failing tests on Windows.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump libxml2 version to 1.9.5
