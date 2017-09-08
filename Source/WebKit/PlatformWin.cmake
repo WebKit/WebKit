@@ -16,6 +16,8 @@ list(APPEND WebKit2_SOURCES
 
     NetworkProcess/win/NetworkProcessMainWin.cpp
     NetworkProcess/win/SystemProxyWin.cpp
+
+    StorageProcess/win/StorageProcessMainWin.cpp
 )
 
 # DerivedSources/JavaScriptCore/inspector/InspectorBackendCommands.js is
@@ -67,6 +69,7 @@ list(APPEND NetworkProcess_SOURCES
 )
 
 list(APPEND StorageProcess_SOURCES
+    StorageProcess/EntryPoint/win/StorageProcessMain.cpp
 )
 
 if (${ENABLE_PLUGIN_PROCESS})

@@ -1,3 +1,17 @@
+2017-09-08  Stephan Szabo  <stephan.szabo@am.sony.com>
+
+        [WinCairo] Add Storage Process files for wincairo webkit
+        https://bugs.webkit.org/show_bug.cgi?id=176567
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+        * StorageProcess/EntryPoint/win/StorageProcessMain.cpp: Added.
+        (main):
+        * StorageProcess/win/StorageProcessMainWin.cpp: Added.
+        (WebKit::StorageProcessMainWin):
+        * StorageProcess/win/StorageProcessMainWin.h: Added.
+
 2017-09-08  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221771.
