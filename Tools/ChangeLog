@@ -1,3 +1,58 @@
+2017-09-07  Matthew Stewart  <matthew_r_stewart@apple.com>
+
+        Add Live PLT implemented with WebDriver
+        https://bugs.webkit.org/show_bug.cgi?id=176436
+
+        Reviewed by Stephanie Lewis.
+
+        Adds a new PLT that runs on live websites.
+
+        * Scripts/run-webdriver-plt.py: Added.
+        (parse_args):
+        (start):
+        (make_suites):
+        (main):
+        * Scripts/webkitpy/webdriver_plt/__init__.py: Added.
+        * Scripts/webkitpy/webdriver_plt/liveplt.py: Added.
+        (PageLoadTest):
+        (PageLoadTest.__init__):
+        (PageLoadTest.start):
+        (PageLoadTest.run_suite):
+        (PageLoadTest._get_driver_for_browser):
+        (PageLoadTest._setup_browser_window):
+        (PageLoadTest.run_one_test):
+        (PageLoadTest.get_results):
+        * Scripts/webkitpy/webdriver_plt/pltresults.py: Added.
+        (PLTResults):
+        (PLTResults.__init__):
+        (PLTResults.__add__):
+        (PLTResults.add_timing_result):
+        (PLTResults.mean):
+        (PLTResults.geometric_mean):
+        (PLTResults.mean_coef_variance):
+        (PLTResults.print_results):
+        (PLTResults.print_url_results):
+        (PLTResults._format_time):
+        * Scripts/webkitpy/webdriver_plt/suites/__init__.py: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/arabic.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/cjk.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/news.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/search.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/shopping.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/social.suite: Added.
+        * Scripts/webkitpy/webdriver_plt/suites/suite.py: Added.
+        (Suite):
+        (Suite.__init__):
+        (Suite.get_available_suites):
+        * Scripts/webkitpy/webdriver_plt/urlresults.py: Added.
+        (URLResults):
+        (URLResults.__init__):
+        (URLResults.__add__):
+        (URLResults.mean):
+        (URLResults.coef_variance):
+        (URLResults.print_results):
+        (URLResults._format_time):
+
 2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Add "if" statements to WSL
