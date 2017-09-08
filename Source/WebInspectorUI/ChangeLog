@@ -1,3 +1,14 @@
+2017-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: TypeError: this._heapSnapshot.addEventListener is not a function.
+        https://bugs.webkit.org/show_bug.cgi?id=176633
+
+        Reviewed by Michael Saboff.
+
+        * UserInterface/Proxies/HeapSnapshotDiffProxy.js:
+        (WI.HeapSnapshotDiffProxy):
+        This class has listeners of another object's events. It should extend WI.Object.
+
 2017-09-08  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Canvas: changes to currentX/currentY aren't highlighted in the details sidebar

@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy
+WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
 {
     constructor(snapshotDiffObjectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories)
     {
+        super();
+
         this._proxyObjectId = snapshotDiffObjectId;
 
         console.assert(snapshot1 instanceof WI.HeapSnapshotProxy);
