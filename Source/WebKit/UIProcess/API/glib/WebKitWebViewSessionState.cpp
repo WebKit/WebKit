@@ -369,7 +369,7 @@ static bool decodeSessionState(GBytes* data, SessionState& sessionState)
     decodeBackForwardListItemState(backForwardListStateIter.get(), sessionState.backForwardListState);
 
     if (hasCurrentIndex)
-        sessionState.backForwardListState.currentIndex = currentIndex;
+        sessionState.backForwardListState.currentIndex = std::min<uint32_t>(currentIndex, sessionState.backForwardListState.items.size() - 1);
     return true;
 }
 
