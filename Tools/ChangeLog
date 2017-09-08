@@ -1,3 +1,13 @@
+2017-09-08  Lucas Forschler  <lforschler@apple.com>
+
+        bisect-builds should not print out extracting command
+        https://bugs.webkit.org/show_bug.cgi?id=175632
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/bisect-builds:
+        (extract_archive):
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit should claim that it can show responses for a broader range of JSON MIMETypes

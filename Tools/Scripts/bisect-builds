@@ -71,7 +71,6 @@ def download_archive(options, revision):
 
 def extract_archive(options):
     command = ['python', '../BuildSlaveSupport/built-product-archive', '--platform', options.platform, '--%s' % options.configuration, 'extract']
-    print('Extracting archive: {}'.format(command))
     subprocess.check_call(command)
 
 
