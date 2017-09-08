@@ -22,7 +22,7 @@
 #include "config.h"
 #include "GStreamerEMEUtilities.h"
 
-#include <wtf/glib/GRefPtr.h>
+#include "GRefPtrGStreamer.h"
 
 #if ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)
 

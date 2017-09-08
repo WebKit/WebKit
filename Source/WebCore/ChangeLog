@@ -1,3 +1,15 @@
+2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GStreamer] Incorrect GstCaps unreffing in GStreamerEMEUtilities::createDecryptor()
+        https://bugs.webkit.org/show_bug.cgi?id=176540
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp:
+        Include the GRefPtrGStreamer.h header in order to use specialized template
+        functions that correctly adopt and dereference GstCaps object that is
+        wrapped the GRefPtr<>.
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         WebKit should claim that it can show responses for a broader range of JSON MIMETypes
