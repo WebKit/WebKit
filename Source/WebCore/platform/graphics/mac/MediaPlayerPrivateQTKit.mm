@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,6 @@ SOFT_LINK(QTKit, QTMakeTime, QTTime, (long long timeValue, long timeScale), (tim
 
 SOFT_LINK_CLASS(QTKit, QTMovie)
 SOFT_LINK_CLASS(QTKit, QTMovieLayer)
-SOFT_LINK_CLASS(QTKit, QTUtilities)
 
 SOFT_LINK_POINTER(QTKit, QTTrackMediaTypeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeAttribute, NSString *)
@@ -72,7 +71,6 @@ SOFT_LINK_POINTER(QTKit, QTMovieIsActiveAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateErrorAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieLoadStateDidChangeNotification, NSString *)
-SOFT_LINK_POINTER(QTKit, QTMovieLoadedRangesDidChangeNotification, NSString *);
 SOFT_LINK_POINTER(QTKit, QTMovieNaturalSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieCurrentSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMoviePreventExternalURLLinksAttribute, NSString *)
@@ -97,8 +95,8 @@ SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, 
 - (NSArray *)loadedRanges;
 @end
 
+#define QTMovie getQTMovieClass()
 #define QTMovieLayer getQTMovieLayerClass()
-#define QTUtilities getQTUtilitiesClass()
 
 #define QTTrackMediaTypeAttribute getQTTrackMediaTypeAttribute()
 #define QTMediaTypeAttribute getQTMediaTypeAttribute()
@@ -118,7 +116,6 @@ SOFT_LINK_POINTER_OPTIONAL(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, 
 #define QTMovieLoadStateAttribute getQTMovieLoadStateAttribute()
 #define QTMovieLoadStateErrorAttribute getQTMovieLoadStateErrorAttribute()
 #define QTMovieLoadStateDidChangeNotification getQTMovieLoadStateDidChangeNotification()
-#define QTMovieLoadedRangesDidChangeNotification getQTMovieLoadedRangesDidChangeNotification()
 #define QTMovieNaturalSizeAttribute getQTMovieNaturalSizeAttribute()
 #define QTMovieCurrentSizeAttribute getQTMovieCurrentSizeAttribute()
 #define QTMoviePreventExternalURLLinksAttribute getQTMoviePreventExternalURLLinksAttribute()
@@ -295,7 +292,7 @@ static void disableComponentsOnce()
     // QTKitServer has not yet started.  As a result, we must pass in exactly the flags we want to
     // disable per component.  As a failsafe, if in the future these flags change, we will disable the
     // PDF components for a third time with a wildcard flags field:
-    ComponentDescription componentsToDisable[11] = {
+    uint32_t componentsToDisable[11][5] = {
         {'eat ', 'TEXT', 'text', 0, 0},
         {'eat ', 'TXT ', 'text', 0, 0},    
         {'eat ', 'utxt', 'text', 0, 0},  
@@ -310,7 +307,7 @@ static void disableComponentsOnce()
     };
 
     for (auto& component : componentsToDisable)
-        [getQTMovieClass() disableComponent:component];
+        wkQTMovieDisableComponent(component);
 }
 
 void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttributes)
@@ -348,10 +345,14 @@ void MediaPlayerPrivateQTKit::createQTMovie(NSURL *url, NSDictionary *movieAttri
                                                object:m_qtMovie.get()];
 
     // In updateState(), we track when maxTimeLoaded() == duration().
-    [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
-                                             selector:@selector(loadedRangesChanged:)
-                                                 name:QTMovieLoadedRangesDidChangeNotification
-                                               object:m_qtMovie.get()];
+    // In newer version of QuickTime, a notification is emitted when maxTimeLoaded changes.
+    // In older version of QuickTime, QTMovieLoadStateDidChangeNotification be fired.
+    if (NSString *maxTimeLoadedChangeNotification = wkQTMovieMaxTimeLoadedChangeNotification()) {
+        [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
+                                                 selector:@selector(loadedRangesChanged:)
+                                                     name:maxTimeLoadedChangeNotification
+                                                   object:m_qtMovie.get()];        
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:m_objcObserver.get()
                                              selector:@selector(rateChanged:) 
@@ -770,30 +771,18 @@ bool MediaPlayerPrivateQTKit::hasClosedCaptions() const
 {
     if (!metaDataAvailable())
         return false;
-    return [[m_qtMovie alternateGroupTypes] containsObject:@"clcp"];
+    return wkQTMovieHasClosedCaptions(m_qtMovie.get());  
 }
 
 void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisible)
 {
-    if (!metaDataAvailable())
-        return;
+    if (metaDataAvailable()) {
+        wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-    if (![[m_qtMovie alternateGroupTypes] containsObject:@"clcp"])
-        return;
-
-    NSArray *trackAlternatesArray = [m_qtMovie alternatesForMediaType:@"clcp"];
-    QTTrack *track = trackAlternatesArray[0][@"QTAlternates_QTTrack"];
-    if (!track)
-        return;
-
-    if (!closedCaptionsVisible)
-        [m_qtMovie deselectAlternateGroupTrack:track];
-    else
-        [m_qtMovie selectAlternateGroupTrack:track];
-
-    if (closedCaptionsVisible && m_qtVideoLayer) {
-        // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
-        [m_qtVideoLayer.get() setGeometryFlipped:YES];
+        if (closedCaptionsVisible && m_qtVideoLayer) {
+            // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
+            [m_qtVideoLayer.get() setGeometryFlipped:YES];
+        }
     }
 }
 
@@ -952,58 +941,6 @@ void MediaPlayerPrivateQTKit::prepareForRendering()
         m_player->client().mediaPlayerRenderingModeChanged(m_player);
 }
 
-static void selectPreferredAlternateTrackForMediaType(QTMovie *movie, NSString *mediaType)
-{
-    NSArray *alternates = [movie alternatesForMediaType:mediaType];
-    if (!alternates.count)
-        return;
-
-    auto languageToQTTrackMap = adoptNS([[NSMutableDictionary alloc] initWithCapacity:alternates.count]);
-
-    for (NSUInteger index = 0; index < alternates.count; ++index) {
-        NSDictionary *alternateDict = alternates[index];
-        NSString *languageString = alternateDict[@"QTAlternates_LanguageCodeEncoding_ISO_639_2T"];
-        if (![languageString cStringUsingEncoding:kCFStringEncodingASCII])
-            continue;
-        if (!languageString)
-            languageString = alternateDict[@"QTAlternates_LanguageCodeEncoding_RFC_4646"];
-        if (!languageString) {
-            LangCode langCode = [alternateDict[@"QTAlternates_LanguageCodeEncoding_MacType_LangCode"] intValue];
-            auto identifier = adoptCF(CFLocaleCreateCanonicalLocaleIdentifierFromScriptManagerCodes(kCFAllocatorDefault, langCode, 0));
-            languageString = (NSString *)identifier.autorelease();
-        }
-        if (!languageString)
-            continue;
-
-        id alternateTrack = alternateDict[@"QTAlternates_QTTrack"];
-        if (!alternateTrack)
-            continue;
-
-        if (![[alternateTrack attributeForKey:@"QTTrackEnabledAttribute"] boolValue])
-            continue;
-
-        [languageToQTTrackMap setObject:alternateTrack forKey:languageString];
-    }
-
-    NSArray *preferredLanguages = [NSBundle preferredLocalizationsFromArray:[languageToQTTrackMap allKeys] forPreferences:nil];
-    if (preferredLanguages.count) {
-        id preferredTrack = [languageToQTTrackMap objectForKey:preferredLanguages[0]];
-        if (preferredTrack) {
-            // +[NSBundle preferredLocalizationsFromArray:forPreferences] may return a language which was
-            // not present in preferredLanguages, and will therefore not have an associated track.
-            [movie selectAlternateGroupTrack:preferredTrack];
-        }
-    }
-}
-
-static void selectPreferredAlternates(QTMovie *movie)
-{
-    selectPreferredAlternateTrackForMediaType(movie, @"vide");
-    selectPreferredAlternateTrackForMediaType(movie, @"soun");
-    selectPreferredAlternateTrackForMediaType(movie, @"cplp");
-    selectPreferredAlternateTrackForMediaType(movie, @"sbtl");
-}
-
 void MediaPlayerPrivateQTKit::updateStates()
 {
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
@@ -1028,7 +965,7 @@ void MediaPlayerPrivateQTKit::updateStates()
             loadState = QTMovieLoadStateError;
 
         if (loadState != QTMovieLoadStateError) {
-            selectPreferredAlternates(m_qtMovie.get());
+            wkQTMovieSelectPreferredAlternates(m_qtMovie.get());
             cacheMovieScale();
             MediaPlayer::MovieLoadType movieType = movieLoadType();
             m_isStreaming = movieType == MediaPlayer::StoredStream || movieType == MediaPlayer::LiveStream;
@@ -1330,13 +1267,13 @@ static HashSet<String, ASCIICaseInsensitiveHash> createFileTypesSet(NSArray *fil
 
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeCommonTypesCache()
 {
-    static const auto cache = makeNeverDestroyed(createFileTypesSet([getQTMovieClass() movieFileTypes:QTIncludeCommonTypes]));
+    static const auto cache = makeNeverDestroyed(createFileTypesSet([QTMovie movieFileTypes:QTIncludeCommonTypes]));
     return cache;
 } 
 
 static const HashSet<String, ASCIICaseInsensitiveHash>& mimeModernTypesCache()
 {
-    static const auto cache = makeNeverDestroyed(createFileTypesSet([getQTMovieClass() movieFileTypes:QTIncludeOnlyFigMediaFileTypes]));
+    static const auto cache = makeNeverDestroyed(createFileTypesSet([QTMovie movieFileTypes:(QTMovieFileTypeOptions)wkQTIncludeOnlyModernMediaFileTypes()]));
     return cache;
 }
 
@@ -1387,7 +1324,7 @@ bool MediaPlayerPrivateQTKit::isAvailable()
 HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateQTKit::originsInMediaCache(const String&)
 {
     HashSet<RefPtr<SecurityOrigin>> origins;
-    NSArray *mediaSites = [[QTUtilities qtUtilities] sitesInDownloadCache];
+    NSArray *mediaSites = wkQTGetSitesInMediaDownloadCache();
     
     for (NSString *site in mediaSites) {
         URL siteAsURL = URL(URL(), site);
@@ -1400,14 +1337,14 @@ HashSet<RefPtr<SecurityOrigin>> MediaPlayerPrivateQTKit::originsInMediaCache(con
 void MediaPlayerPrivateQTKit::clearMediaCache(const String&, std::chrono::system_clock::time_point)
 {
     LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCache()");
-    [[QTUtilities qtUtilities] clearDownloadCache];
+    wkQTClearMediaDownloadCache();
 }
 
 void MediaPlayerPrivateQTKit::clearMediaCacheForOrigins(const String&, const HashSet<RefPtr<SecurityOrigin>>& origins)
 {
     LOG(Media, "MediaPlayerPrivateQTKit::clearMediaCacheForOrigins()");
     for (auto& origin : origins)
-        [[QTUtilities qtUtilities] clearDownloadCacheForSite:origin->toRawString()];
+        wkQTClearMediaDownloadCacheForSite(origin->toRawString());
 }
 
 void MediaPlayerPrivateQTKit::disableUnsupportedTracks()
@@ -1531,7 +1468,7 @@ bool MediaPlayerPrivateQTKit::hasSingleSecurityOrigin() const
     if (!m_qtMovie)
         return false;
 
-    Ref<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL([m_qtMovie URL]));
+    Ref<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(URL(wkQTMovieResolvedURL(m_qtMovie.get())));
     Ref<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(m_movieURL);
     return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
@@ -1539,21 +1476,15 @@ bool MediaPlayerPrivateQTKit::hasSingleSecurityOrigin() const
 MediaPlayer::MovieLoadType MediaPlayerPrivateQTKit::movieLoadType() const
 {
     if (!m_qtMovie)
-        return MediaPlayer::MovieLoadType::Unknown;
+        return MediaPlayer::Unknown;
 
-    UInt32 movieType = [m_qtMovie movieType];
-    switch (movieType) {
-    case QTMovieTypeLocal:
-    case QTMovieTypeFastStart:
-        return MediaPlayer::MovieLoadType::Download;
-    case QTMovieTypeLiveStream:
-        return MediaPlayer::MovieLoadType::LiveStream;
-    case QTMovieTypeStoredStream:
-        return MediaPlayer::MovieLoadType::StoredStream;
-    case QTMovieTypeUnknown:
-    default:
-        return MediaPlayer::MovieLoadType::Unknown;
-    }
+    MediaPlayer::MovieLoadType movieType = (MediaPlayer::MovieLoadType)wkQTMovieGetType(m_qtMovie.get());
+
+    // Can't include WebKitSystemInterface from WebCore so we can't get the enum returned
+    // by wkQTMovieGetType, but at least verify that the value is in the valid range.
+    ASSERT(movieType >= MediaPlayer::Unknown && movieType <= MediaPlayer::LiveStream);
+
+    return movieType;
 }
 
 void MediaPlayerPrivateQTKit::setPreload(MediaPlayer::Preload preload)
@@ -1584,7 +1515,7 @@ bool MediaPlayerPrivateQTKit::canSaveMediaData() const
         return false;
 
     if (m_qtMovie)
-        url = URL([m_qtMovie URL]);
+        url = URL(wkQTMovieResolvedURL(m_qtMovie.get()));
     else
         url = URL(ParsedURLString, m_movieURL);
 
