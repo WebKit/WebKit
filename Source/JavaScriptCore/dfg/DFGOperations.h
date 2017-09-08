@@ -71,6 +71,8 @@ EncodedJSValue JIT_OPERATION operationGetByVal(ExecState*, EncodedJSValue encode
 EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState*, JSCell*, EncodedJSValue encodedProperty) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValObjectInt(ExecState*, JSObject*, int32_t) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByValStringInt(ExecState*, JSString*, int32_t) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValObjectString(ExecState*, JSCell*, JSCell* string) WTF_INTERNAL;
+EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(ExecState*, JSCell*, JSCell* symbol) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationToNumber(ExecState*, EncodedJSValue) WTF_INTERNAL;
 EncodedJSValue JIT_OPERATION operationGetByIdWithThis(ExecState*, EncodedJSValue, EncodedJSValue, UniquedStringImpl*) WTF_INTERNAL;

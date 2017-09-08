@@ -1,3 +1,21 @@
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] GetByVal(ObjectUse with Array::Generic, StringUse/SymbolUse) should be supported
+        https://bugs.webkit.org/show_bug.cgi?id=176590
+
+        Reviewed by Saam Barati.
+
+        * microbenchmarks/object-iterate-symbols.js: Added.
+        (test):
+        * microbenchmarks/object-iterate.js: Added.
+        (test):
+        * stress/object-iterate-symbols.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-iterate.js: Added.
+        (shouldBe):
+        (test):
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win32] 10 JSC stress tests are failing.

@@ -2593,6 +2593,18 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         case Array::Generic: {
+            if (node->child1().useKind() == ObjectUse) {
+                if (node->child2().useKind() == StringUse) {
+                    compileGetByValForObjectWithString(node);
+                    break;
+                }
+
+                if (node->child2().useKind() == SymbolUse) {
+                    compileGetByValForObjectWithSymbol(node);
+                    break;
+                }
+            }
+
             SpeculateCellOperand base(this, node->child1()); // Save a register, speculate cell. We'll probably be right.
             JSValueOperand property(this, node->child2());
             GPRReg baseGPR = base.gpr();

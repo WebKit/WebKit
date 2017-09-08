@@ -1,3 +1,33 @@
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] GetByVal(ObjectUse with Array::Generic, StringUse/SymbolUse) should be supported
+        https://bugs.webkit.org/show_bug.cgi?id=176590
+
+        Reviewed by Saam Barati.
+
+        We add fixup edges for GetByVal(Array::Generic) to call faster operation instead of generic operationGetByVal.
+
+                                         baseline                  patched
+
+        object-iterate                5.8531+-0.3029            5.7903+-0.2795          might be 1.0108x faster
+        object-iterate-symbols        7.4099+-0.3993     ^      5.8254+-0.2276        ^ definitely 1.2720x faster
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::getByValObject):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithString):
+        (JSC::DFG::SpeculativeJIT::compileGetByValForObjectWithSymbol):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+
 2017-09-07  Mark Lam  <mark.lam@apple.com>
 
         Use JIT probes for DFG OSR exit.

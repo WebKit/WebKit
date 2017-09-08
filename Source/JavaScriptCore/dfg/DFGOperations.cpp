@@ -184,6 +184,16 @@ static ALWAYS_INLINE EncodedJSValue parseIntResult(double input)
     return JSValue::encode(jsNumber(input));
 }
 
+ALWAYS_INLINE static JSValue getByValObject(ExecState* exec, VM& vm, JSObject* base, PropertyName propertyName)
+{
+    Structure& structure = *base->structure(vm);
+    if (JSCell::canUseFastGetOwnProperty(structure)) {
+        if (JSValue result = base->fastGetOwnProperty(vm, structure, propertyName))
+            return result;
+    }
+    return base->get(exec, propertyName);
+}
+
 extern "C" {
 
 EncodedJSValue JIT_OPERATION operationToThis(ExecState* exec, EncodedJSValue encodedOp)
@@ -582,6 +592,28 @@ EncodedJSValue JIT_OPERATION operationGetByValObjectInt(ExecState* exec, JSObjec
 EncodedJSValue JIT_OPERATION operationGetByValStringInt(ExecState* exec, JSString* base, int32_t index)
 {
     return getByValCellInt(exec, base, index);
+}
+
+EncodedJSValue JIT_OPERATION operationGetByValObjectString(ExecState* exec, JSCell* base, JSCell* string)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto propertyName = asString(string)->toIdentifier(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+
+    scope.release();
+    return JSValue::encode(getByValObject(exec, vm, asObject(base), propertyName));
+}
+
+EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(ExecState* exec, JSCell* base, JSCell* symbol)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    return JSValue::encode(getByValObject(exec, vm, asObject(base), asSymbol(symbol)->privateName()));
 }
 
 void JIT_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)

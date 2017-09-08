@@ -788,6 +788,19 @@ private:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             case Array::Generic:
+                if (node->child1()->shouldSpeculateObject()) {
+                    if (node->child2()->shouldSpeculateString()) {
+                        fixEdge<ObjectUse>(node->child1());
+                        fixEdge<StringUse>(node->child2());
+                        break;
+                    }
+
+                    if (node->child2()->shouldSpeculateSymbol()) {
+                        fixEdge<ObjectUse>(node->child1());
+                        fixEdge<SymbolUse>(node->child2());
+                        break;
+                    }
+                }
 #if USE(JSVALUE32_64)
                 fixEdge<CellUse>(node->child1()); // Speculating cell due to register pressure on 32-bit.
 #endif

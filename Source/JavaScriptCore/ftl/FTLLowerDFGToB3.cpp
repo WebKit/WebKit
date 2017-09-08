@@ -3673,6 +3673,21 @@ private:
         }
             
         case Array::Generic: {
+            if (m_node->child1().useKind() == ObjectUse) {
+                if (m_node->child2().useKind() == StringUse) {
+                    setJSValue(vmCall(
+                        Int64, m_out.operation(operationGetByValObjectString), m_callFrame,
+                        lowObject(m_node->child1()), lowString(m_node->child2())));
+                    return;
+                }
+
+                if (m_node->child2().useKind() == SymbolUse) {
+                    setJSValue(vmCall(
+                        Int64, m_out.operation(operationGetByValObjectSymbol), m_callFrame,
+                        lowObject(m_node->child1()), lowSymbol(m_node->child2())));
+                    return;
+                }
+            }
             setJSValue(vmCall(
                 Int64, m_out.operation(operationGetByVal), m_callFrame,
                 lowJSValue(m_node->child1()), lowJSValue(m_node->child2())));

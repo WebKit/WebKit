@@ -3144,6 +3144,62 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(GPRReg base, GPRReg prope
     noResult(node);
 }
 
+void SpeculativeJIT::compileGetByValForObjectWithString(Node* node)
+{
+    SpeculateCellOperand arg1(this, node->child1());
+    SpeculateCellOperand arg2(this, node->child2());
+
+    GPRReg arg1GPR = arg1.gpr();
+    GPRReg arg2GPR = arg2.gpr();
+
+    speculateObject(node->child1(), arg1GPR);
+    speculateString(node->child2(), arg2GPR);
+
+    GPRFlushedCallResult resultPayload(this);
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+#if USE(JSVALUE64)
+    JSValueRegs resultRegs(resultPayloadGPR);
+#else
+    GPRFlushedCallResult2 resultTag(this);
+    GPRReg resultTagGPR = resultTag.gpr();
+    JSValueRegs resultRegs(resultTagGPR, resultPayloadGPR);
+#endif
+
+    flushRegisters();
+    callOperation(operationGetByValObjectString, extractResult(resultRegs), arg1GPR, arg2GPR);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
+}
+
+void SpeculativeJIT::compileGetByValForObjectWithSymbol(Node* node)
+{
+    SpeculateCellOperand arg1(this, node->child1());
+    SpeculateCellOperand arg2(this, node->child2());
+
+    GPRReg arg1GPR = arg1.gpr();
+    GPRReg arg2GPR = arg2.gpr();
+
+    speculateObject(node->child1(), arg1GPR);
+    speculateSymbol(node->child2(), arg2GPR);
+
+    GPRFlushedCallResult resultPayload(this);
+    GPRReg resultPayloadGPR = resultPayload.gpr();
+#if USE(JSVALUE64)
+    JSValueRegs resultRegs(resultPayloadGPR);
+#else
+    GPRFlushedCallResult2 resultTag(this);
+    GPRReg resultTagGPR = resultTag.gpr();
+    JSValueRegs resultRegs(resultTagGPR, resultPayloadGPR);
+#endif
+
+    flushRegisters();
+    callOperation(operationGetByValObjectSymbol, extractResult(resultRegs), arg1GPR, arg2GPR);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
+}
+
 void SpeculativeJIT::compileInstanceOfForObject(Node*, GPRReg valueReg, GPRReg prototypeReg, GPRReg scratchReg, GPRReg scratch2Reg)
 {
     // Check that prototype is an object.

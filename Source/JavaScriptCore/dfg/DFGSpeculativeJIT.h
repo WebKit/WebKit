@@ -2873,6 +2873,8 @@ public:
     void compilePutByValForIntTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
     void compileGetByValOnFloatTypedArray(Node*, TypedArrayType);
     void compilePutByValForFloatTypedArray(GPRReg base, GPRReg property, Node*, TypedArrayType);
+    void compileGetByValForObjectWithString(Node*);
+    void compileGetByValForObjectWithSymbol(Node*);
     // If this returns false it means that we terminated speculative execution.
     bool getIntTypedArrayStoreOperand(
         GPRTemporary& value,
