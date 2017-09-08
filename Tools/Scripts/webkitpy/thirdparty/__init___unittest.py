@@ -63,3 +63,4 @@ class ThirdpartyTest(unittest.TestCase):
         import webkitpy.thirdparty.autoinstalled.mechanize
         import webkitpy.thirdparty.autoinstalled.pylint
         import webkitpy.thirdparty.autoinstalled.pep8
+        import webkitpy.thirdparty.autoinstalled.requests
