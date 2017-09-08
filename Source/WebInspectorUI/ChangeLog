@@ -1,3 +1,13 @@
+2017-09-08  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Canvas: changes to currentX/currentY aren't highlighted in the details sidebar
+        https://bugs.webkit.org/show_bug.cgi?id=176569
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/RecordingAction.js:
+        Add entries to WI.RecordingAction._stateModifiers for each path function.
+
 2017-09-07  Joseph Pecoraro  <pecoraro@apple.com>
 
         Augmented Inspector: Provide a way to inspect a DOM Node (DOM.inspect)

@@ -376,7 +376,17 @@ WI.RecordingAction._visualNames = {
 
 WI.RecordingAction._stateModifiers = {
     [WI.Recording.Type.Canvas2D]: {
+        arc: ["currentX", "currentY"],
+        arcTo: ["currentX", "currentY"],
+        beginPath: ["currentX", "currentY"],
+        bezierCurveTo: ["currentX", "currentY"],
         clearShadow: ["shadowOffsetX", "shadowOffsetY", "shadowBlur", "shadowColor"],
+        closePath: ["currentX", "currentY"],
+        ellipse: ["currentX", "currentY"],
+        lineTo: ["currentX", "currentY"],
+        moveTo: ["currentX", "currentY"],
+        quadraticCurveTo: ["currentX", "currentY"],
+        rect: ["currentX", "currentY"],
         resetTransform: ["transform"],
         rotate: ["transform"],
         scale: ["transform"],
