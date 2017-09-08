@@ -1,5 +1,25 @@
 2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GStreamer] initializationDataEncountered() dispatch can outlive MediaPlayerPrivateGStreamerBase
+        https://bugs.webkit.org/show_bug.cgi?id=176544
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The RunLoop dispatch that invokes MediaPlayer::initializationDataEncountered()
+        can outlive the MediaPlayerPrivateGStreamerBase object that is referenced
+        from the dispatched functor. To avoid this, a WeakPtrFactory is placed onto
+        MediaPlayerPrivateGStreamerBase and a WeakPtr object is kept in the functor,
+        bailing during dispatch if the factory (along with MediaPlayerPrivateGStreamerBase)
+        has already been destroyed since the schedule of this dispatch.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp:
+        (WebCore::MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase):
+        (WebCore::MediaPlayerPrivateGStreamerBase::handleSyncMessage):
+        Also remove the unused `sessionId` string.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+
+2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
+
         [GStreamer] Add GRefPtr specializations for GstGLDisplay, GstGLContext
         https://bugs.webkit.org/show_bug.cgi?id=176543
 

@@ -43,7 +43,6 @@
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 #include <wtf/MathExtras.h>
-#include <wtf/UUID.h>
 
 #include <gst/audio/streamvolume.h>
 #include <gst/video/gstvideometa.h>
@@ -227,7 +226,8 @@ private:
 #endif // USE(GSTREAMER_GL)
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
-    : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+    : m_weakPtrFactory(this)
+    , m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_player(player)
     , m_fpsSink(nullptr)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -364,13 +364,13 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
         if (concatenatedInitDataChunksNumber > 1)
             eventKeySystemIdString = emptyString();
 
-        String sessionId(createCanonicalUUIDString());
+        RunLoop::main().dispatch([weakThis = m_weakPtrFactory.createWeakPtr(), eventKeySystemIdString, initData = WTFMove(concatenatedInitDataChunks)] {
+            if (!weakThis)
+                return;
 
-        RunLoop::main().dispatch([this, eventKeySystemIdString, sessionId, initData = WTFMove(concatenatedInitDataChunks)] {
             GST_DEBUG("scheduling initializationDataEncountered event for %s with concatenated init datas size of %" G_GSIZE_FORMAT, eventKeySystemIdString.utf8().data(), initData.size());
             GST_MEMDUMP("init datas", initData.data(), initData.size());
-
-            m_player->initializationDataEncountered(ASCIILiteral("cenc"), ArrayBuffer::create(initData.data(), initData.size()));
+            weakThis->m_player->initializationDataEncountered(ASCIILiteral("cenc"), ArrayBuffer::create(initData.data(), initData.size()));
         });
 
         GST_INFO("waiting for a CDM instance");

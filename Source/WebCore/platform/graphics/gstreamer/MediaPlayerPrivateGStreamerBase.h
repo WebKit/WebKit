@@ -34,6 +34,7 @@
 #include <wtf/Condition.h>
 #include <wtf/Forward.h>
 #include <wtf/RunLoop.h>
+#include <wtf/WeakPtr.h>
 
 #if USE(TEXTURE_MAPPER_GL)
 #include "TextureMapperPlatformLayerProxyProvider.h"
@@ -196,6 +197,7 @@ protected:
         SizeChanged = 1 << 6
     };
 
+    WeakPtrFactory<MediaPlayerPrivateGStreamerBase> m_weakPtrFactory;
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
     MediaPlayer* m_player;
     GRefPtr<GstElement> m_pipeline;
