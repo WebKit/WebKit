@@ -34,9 +34,6 @@ class QualifiedName;
 enum class CSSParserSelectorCombinator {
     Child,
     DescendantSpace,
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    DescendantDoubleChild,
-#endif
     DirectAdjacent,
     IndirectAdjacent
 };

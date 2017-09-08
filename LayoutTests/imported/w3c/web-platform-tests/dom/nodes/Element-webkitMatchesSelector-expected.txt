@@ -192,12 +192,12 @@ PASS In-document Element.webkitMatchesSelector: Descendant combinator, matching 
 PASS In-document Element.webkitMatchesSelector: Descendant combinator, matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1 .descendant-div3 
 PASS In-document Element.webkitMatchesSelector: Descendant combinator, whitespace characters (with no refNodes): #descendant	\r
 #descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): body>>#descendant-div1 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): body>>#descendant-div1 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element that is a child of an element with id (with no refNodes): #child>div 
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element (with no refNodes): div>#child-div1 
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element with id (with no refNodes): #child>#child-div1 
@@ -355,11 +355,11 @@ PASS Detached Element.webkitMatchesSelector: Descendant combinator, matching ele
 PASS Detached Element.webkitMatchesSelector: Descendant combinator, matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1 .descendant-div3 
 PASS Detached Element.webkitMatchesSelector: Descendant combinator, whitespace characters (with no refNodes): #descendant	\r
 #descendant-div2 
-PASS Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div 
-PASS Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 
-PASS Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 
-PASS Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 
-PASS Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 
+FAIL Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div The string did not match the expected pattern.
+FAIL Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 The string did not match the expected pattern.
+FAIL Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 The string did not match the expected pattern.
+FAIL Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 The string did not match the expected pattern.
+FAIL Detached Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
 PASS Detached Element.webkitMatchesSelector: Child combinator, matching element that is a child of an element with id (with no refNodes): #child>div 
 PASS Detached Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element (with no refNodes): div>#child-div1 
 PASS Detached Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element with id (with no refNodes): #child>#child-div1 
@@ -517,11 +517,11 @@ PASS Fragment Element.webkitMatchesSelector: Descendant combinator, matching ele
 PASS Fragment Element.webkitMatchesSelector: Descendant combinator, matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1 .descendant-div3 
 PASS Fragment Element.webkitMatchesSelector: Descendant combinator, whitespace characters (with no refNodes): #descendant	\r
 #descendant-div2 
-PASS Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div 
-PASS Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 
-PASS Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 
-PASS Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 
-PASS Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 
+FAIL Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (with no refNodes): #descendant>>div The string did not match the expected pattern.
+FAIL Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (with no refNodes): div>>#descendant-div1 The string did not match the expected pattern.
+FAIL Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (with no refNodes): #descendant>>#descendant-div2 The string did not match the expected pattern.
+FAIL Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (with no refNodes): #descendant>>.descendant-div2 The string did not match the expected pattern.
+FAIL Fragment Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class (with no refNodes): .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
 PASS Fragment Element.webkitMatchesSelector: Child combinator, matching element that is a child of an element with id (with no refNodes): #child>div 
 PASS Fragment Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element (with no refNodes): div>#child-div1 
 PASS Fragment Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element with id (with no refNodes): #child>#child-div1 
@@ -682,12 +682,12 @@ PASS In-document Element.webkitMatchesSelector: Descendant combinator, matching 
 PASS In-document Element.webkitMatchesSelector: Descendant combinator, matching element with class that is a descendant of an element with class (1) (with no refNodes): .descendant-div1 .descendant-div3 
 PASS In-document Element.webkitMatchesSelector: Descendant combinator, whitespace characters (1) (with no refNodes): #descendant	\r
 #descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (1) (with no refNodes): #descendant>>div 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (1) (with no refNodes): body>>#descendant-div1 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (1) (with no refNodes): div>>#descendant-div1 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (1) (with no refNodes): #descendant>>#descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (1) (with no refNodes): #descendant>>.descendant-div2 
-PASS In-document Element.webkitMatchesSelector: Descendant combinator, '>>', matching element with class that is a descendant of an element with class (1) (with no refNodes): .descendant-div1>>.descendant-div3 
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element that is a descendant of an element with id (1) (with no refNodes): #descendant>>div The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (1) (with no refNodes): body>>#descendant-div1 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element (1) (with no refNodes): div>>#descendant-div1 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id (1) (with no refNodes): #descendant>>#descendant-div2 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id (1) (with no refNodes): #descendant>>.descendant-div2 The string did not match the expected pattern.
+FAIL In-document Element.webkitMatchesSelector: Descendant combinator, '>>', matching element with class that is a descendant of an element with class (1) (with no refNodes): .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element that is a child of an element with id (1) (with no refNodes): #child>div 
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element (1) (with no refNodes): div>#child-div1 
 PASS In-document Element.webkitMatchesSelector: Child combinator, matching element with id that is a child of an element with id (1) (with no refNodes): #child>#child-div1 

@@ -1,3 +1,17 @@
+2017-09-08  Antti Koivisto  <antti@apple.com>
+
+        Remove support for >> descendant combinator syntax
+        https://bugs.webkit.org/show_bug.cgi?id=175765
+
+        Reviewed by Sam Weinig.
+
+        Tests for these have been removed in WPT master, just update expectations until new version is imported.
+
+        * web-platform-tests/dom/nodes/Element-matches-expected.txt:
+        * web-platform-tests/dom/nodes/Element-webkitMatchesSelector-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-expected.txt:
+        * web-platform-tests/dom/nodes/ParentNode-querySelector-All-xht-expected.txt:
+
 2017-09-07  Youenn Fablet  <youenn@apple.com>
 
         Align FetchResponse and FetchRequest body handling

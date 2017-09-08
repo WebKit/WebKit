@@ -139,9 +139,6 @@ void SelectorFilter::collectIdentifierHashes(const CSSSelector* selector, unsign
             skipOverSubselectors = true;
             break;
         case CSSSelector::DescendantSpace:
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        case CSSSelector::DescendantDoubleChild:
-#endif
         case CSSSelector::Child:
             skipOverSubselectors = false;
             collectDescendantSelectorIdentifierHashes(selector, hash);

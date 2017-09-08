@@ -54,32 +54,32 @@ function testSelector(selector, expectedIds) {
 }
 
 var simpleCases = [
-    ["[type=foobar i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[attribute1=VALUE1 i] > * > * >> innerTestCase",["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type=foobar i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[attribute1=VALUE1 i] ~ * ~ * >> innerTestCase",["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type=foobar i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[attribute1=VALUE1 i] ~ * ~ *  > * > * >> innerTestCase",["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type=foobar i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[attribute1=VALUE1 i] > * > * innerTestCase",["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type=foobar i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[attribute1=VALUE1 i] ~ * ~ * innerTestCase",["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type=foobar i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[attribute1=VALUE1 i] ~ * ~ *  > * > * innerTestCase",["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 
-    ["[type~=fOobar i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type~=foObar i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type~=foobar i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type~=fOobar i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type~=foObar i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type~=foobar i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 
-    ["[type|=foObar i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type|=fooBar i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type|=foobar i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type|=foObar i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type|=fooBar i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type|=foobar i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 
-    ["[type^=fooBa i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type^=fOoba i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type^=fooba i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type^=fooBa i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type^=fOoba i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type^=fooba i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 
-    ["[type$=oobAr i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type$=oObar i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type$=oobar i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type$=oobAr i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type$=oObar i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type$=oobar i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 
-    ["[type*=oOba i] > * > * >> innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type*=ooBa i] ~ * ~ * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
-    ["[type*=ooba i] ~ * ~ *  > * > * >> innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type*=oOba i] > * > * innerTestCase", ["innertestcase1", "innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type*=ooBa i] ~ * ~ * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
+    ["[type*=ooba i] ~ * ~ *  > * > * innerTestCase", ["innertestcase2", "innertestcase3", "innertestcase4", "innertestcase5", "innertestcase6", "innertestcase7", "innertestcase8"]],
 ];
 
 for (var testCase of simpleCases) {

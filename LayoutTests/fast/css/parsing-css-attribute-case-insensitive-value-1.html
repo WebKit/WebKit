@@ -50,7 +50,7 @@ for (var testCase of simpleValidSelectors) {
     testValidSelector(testCase[0], testCase[1]);
 
     // Used in function pseudo classes.
-    testValidSelector("foo >> bar " + testCase[0], "foo >> bar " + testCase[1]);
+    testValidSelector("foo bar " + testCase[0], "foo bar " + testCase[1]);
     testValidSelector(":nth-child(2n+1 of " + testCase[0] + ")", ":nth-child(2n+1 of " + testCase[1] + ")");
     testValidSelector(":nth-last-child(2n+1 of " + testCase[0] + ")", ":nth-last-child(2n+1 of " + testCase[1] + ")");
     testValidSelector(":matches(foo, " + testCase[0] + ", bar)", ":matches(foo, " + testCase[1] + ", bar)");

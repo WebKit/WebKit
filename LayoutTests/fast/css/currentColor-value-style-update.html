@@ -17,10 +17,10 @@
 <script>
     jsTestIsAsync = true;
     function testColor(expectedColor) {
-        var allTargets = document.querySelectorAll(".test-case >> target");
+        var allTargets = document.querySelectorAll(".test-case target");
         for (var i = 0; i < allTargets.length; ++i) {
-            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case >> target")[' + i + ']).borderColor', expectedColor);
-            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case >> target")[' + i + ']).backgroundColor', expectedColor);
+            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case target")[' + i + ']).borderColor', expectedColor);
+            shouldBeEqualToString('getComputedStyle(document.querySelectorAll(".test-case target")[' + i + ']).backgroundColor', expectedColor);
         }
     }
 

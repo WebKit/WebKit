@@ -145,12 +145,9 @@ unsigned extractCompoundFlags(const CSSParserSelector& simpleSelector, CSSParser
 
 static bool isDescendantCombinator(CSSSelector::RelationType relation)
 {
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    return relation == CSSSelector::DescendantSpace || relation == CSSSelector::DescendantDoubleChild;
-#else
     return relation == CSSSelector::DescendantSpace;
-#endif
 }
+
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeComplexSelector(CSSParserTokenRange& range)
 {
     std::unique_ptr<CSSParserSelector> selector = consumeCompoundSelector(range);
@@ -661,26 +658,11 @@ CSSSelector::RelationType CSSSelectorParser::consumeCombinator(CSSParserTokenRan
     UChar delimiter = range.peek().delimiter();
 
     if (delimiter == '+' || delimiter == '~' || delimiter == '>') {
-        if (delimiter == '+') {
-            range.consumeIncludingWhitespace();
-            return CSSSelector::DirectAdjacent;
-        }
-        
-        if (delimiter == '~') {
-            range.consumeIncludingWhitespace();
-            return CSSSelector::IndirectAdjacent;
-        }
-        
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-        range.consume();
-        if (range.peek().type() == DelimiterToken && range.peek().delimiter() == '>') {
-            range.consumeIncludingWhitespace();
-            return CSSSelector::DescendantDoubleChild;
-        }
-        range.consumeWhitespace();
-#else
         range.consumeIncludingWhitespace();
-#endif
+        if (delimiter == '+')
+            return CSSSelector::DirectAdjacent;
+        if (delimiter == '~')
+            return CSSSelector::IndirectAdjacent;
         return CSSSelector::Child;
     }
 

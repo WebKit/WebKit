@@ -13,15 +13,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo=bar i])") did not throw exception.
@@ -67,15 +67,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo=\"bar\" i])") did not throw exception.
@@ -121,15 +121,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo~=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo~=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo~=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo~=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo~=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo~=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo~=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo~=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo~=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo~=bar i])") did not throw exception.
@@ -175,15 +175,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo~=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo~=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo~=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo~=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo~=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo~=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo~=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo~=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo~=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo~=\"bar\" i])") did not throw exception.
@@ -229,15 +229,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo|=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo|=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo|=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo|=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo|=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo|=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo|=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo|=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo|=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo|=bar i])") did not throw exception.
@@ -283,15 +283,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo|=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo|=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo|=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo|=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo|=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo|=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo|=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo|=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo|=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo|=\"bar\" i])") did not throw exception.
@@ -337,15 +337,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo^=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo^=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo^=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo^=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo^=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo^=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo^=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo^=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo^=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo^=bar i])") did not throw exception.
@@ -391,15 +391,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo^=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo^=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo^=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo^=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo^=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo^=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo^=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo^=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo^=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo^=\"bar\" i])") did not throw exception.
@@ -445,15 +445,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo$=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo$=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo$=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo$=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo$=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo$=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo$=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo$=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo$=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo$=bar i])") did not throw exception.
@@ -499,15 +499,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo$=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo$=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo$=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo$=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo$=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo$=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo$=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo$=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo$=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo$=\"bar\" i])") did not throw exception.
@@ -553,15 +553,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo*=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo*=bar i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo*=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [foo*=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo*=bar i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo*=bar i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo*=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo*=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo*=bar i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo*=bar i])") did not throw exception.
@@ -607,15 +607,15 @@ PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
 PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "[*|foo*=\"bar\" i]"
-PASS document.querySelector("foo >> bar [foo*=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [*|foo*=\"bar\" i]") did not throw exception.
-PASS document.querySelector("foo >> bar [|foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [*|foo*=\"bar\" i]") did not throw exception.
+PASS document.querySelector("foo bar [|foo*=\"bar\" i]") did not throw exception.
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [foo*=\"bar\" i]"
 PASS document.getElementById('style-container').sheet.cssRules.length is 1
-PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo >> bar [*|foo*=\"bar\" i]"
+PASS document.getElementById('style-container').sheet.cssRules[0].selectorText is "foo bar [*|foo*=\"bar\" i]"
 PASS document.querySelector(":nth-child(2n+1 of [foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [*|foo*=\"bar\" i])") did not throw exception.
 PASS document.querySelector(":nth-child(2n+1 of [|foo*=\"bar\" i])") did not throw exception.

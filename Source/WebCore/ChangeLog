@@ -1,3 +1,39 @@
+2017-09-08  Antti Koivisto  <antti@apple.com>
+
+        Remove support for >> descendant combinator syntax
+        https://bugs.webkit.org/show_bug.cgi?id=175765
+
+        Reviewed by Sam Weinig.
+
+        This is an alternative syntax for the normal descendant combinator (just space) that was
+        advertised as being consistent with > (child combinator) and >>> (shadow piercing combinator).
+        The latter has been killed so it is not consistent with anything anymore.
+
+        No other engine besides WebKit has implemented this and the WPT tests have been removed
+        (in https://github.com/w3c/web-platform-tests/pull/6785). Full removal from spec is still
+        open (https://github.com/w3c/csswg-drafts/issues/641) but we shouldn't encourage adoption of
+        this pointless feature.
+
+        While this has shipped the compatibility risk is low as no other engine implemented it and
+        there were no incentives to use it over the standard syntax.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::selectorText const):
+        * css/CSSSelector.h:
+        (WebCore::CSSSelector::hasDescendantRelation const):
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::matchRecursively const):
+        * css/SelectorFilter.cpp:
+        (WebCore::SelectorFilter::collectIdentifierHashes):
+        * css/parser/CSSParserSelector.cpp:
+        (WebCore::CSSParserSelector::appendTagHistory):
+        * css/parser/CSSParserSelector.h:
+        * css/parser/CSSSelectorParser.cpp:
+        (WebCore::isDescendantCombinator):
+        (WebCore::CSSSelectorParser::consumeCombinator):
+        * cssjit/SelectorCompiler.cpp:
+        (WebCore::SelectorCompiler::fragmentRelationForSelectorRelation):
+
 2017-09-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] initializationDataEncountered() dispatch can outlive MediaPlayerPrivateGStreamerBase

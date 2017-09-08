@@ -198,11 +198,6 @@ void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, s
     case CSSParserSelectorCombinator::DescendantSpace:
         selectorRelation = CSSSelector::DescendantSpace;
         break;
-#if ENABLE(CSS_SELECTORS_LEVEL4)
-    case CSSParserSelectorCombinator::DescendantDoubleChild:
-        selectorRelation = CSSSelector::DescendantDoubleChild;
-        break;
-#endif
     case CSSParserSelectorCombinator::DirectAdjacent:
         selectorRelation = CSSSelector::DirectAdjacent;
         break;

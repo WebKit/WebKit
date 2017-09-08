@@ -43,8 +43,8 @@ function testStyling(selector, expectedIds) {
 
 function testSelector(selector, expectedIds) {
     debug("Testing \"" + selector + "\"");
-    testQuerySelector("#test-root >> " + selector, expectedIds);
-    testStyling("#test-root >> " + selector, expectedIds);
+    testQuerySelector("#test-root " + selector, expectedIds);
+    testStyling("#test-root " + selector, expectedIds);
     debug("");
 }
 
