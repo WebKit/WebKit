@@ -58,8 +58,8 @@ public:
     static bool isSupportedImageMIMETypeForEncoding(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a JavaScript or JSON resource.
-    static bool isSupportedJavaScriptMIMEType(const String& mimeType);
-    static bool isSupportedJSONMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedJavaScriptMIMEType(const String& mimeType);
+    WEBCORE_EXPORT static bool isSupportedJSONMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded as a style sheet.
     static bool isSupportedStyleSheetMIMEType(const String& mimeType);
@@ -68,7 +68,7 @@ public:
     static bool isSupportedFontMIMEType(const String& mimeType);
 
     // Check to see if a non-image MIME type is suitable for being loaded as a
-    // document in a frame. Includes supported JavaScript MIME types.
+    // document in a frame. Does not include supported JavaScript and JSON MIME types.
     WEBCORE_EXPORT static bool isSupportedNonImageMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being loaded using <video> and <audio>.
@@ -88,9 +88,10 @@ public:
     static bool isPDFMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is suitable for being shown inside a page.
-    // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(), or
-    // isSupportedMediaMIMEType() returns true or if the given MIME type begins with
-    // "text/" and isUnsupportedTextMIMEType() returns false.
+    // Returns true if any of isSupportedImageMIMEType(), isSupportedNonImageMIMEType(),
+    // isSupportedMediaMIMEType(), isSupportedJavaScriptMIMEType(), isSupportedJSONMIMEType(),
+    // returns true or if the given MIME type begins with "text/" and
+    // isUnsupportedTextMIMEType() returns false.
     WEBCORE_EXPORT static bool canShowMIMEType(const String& mimeType);
 
     // Check to see if a MIME type is one where an XML document should be created

@@ -102,7 +102,7 @@ static void initializeSupportedImageMIMETypes()
     // These were removed for <rdar://problem/6564538> Re-enable UTI code in WebCore now that MobileCoreServices exists
     // But Mail relies on at least image/tif reported as being supported (should be image/tiff).
     // This can be removed when Mail addresses:
-    // <rdar://problem/7879510> Mail should use standard image mimetypes 
+    // <rdar://problem/7879510> Mail should use standard image mimetypes
     // and we fix sniffing so that it corrects items such as image/jpg -> image/jpeg.
     static const char* const malformedMIMETypes[] = {
         // JPEG (image/jpeg)
@@ -637,6 +637,9 @@ bool MIMETypeRegistry::isPDFMIMEType(const String& mimeType)
 bool MIMETypeRegistry::canShowMIMEType(const String& mimeType)
 {
     if (isSupportedImageMIMEType(mimeType) || isSupportedNonImageMIMEType(mimeType) || isSupportedMediaMIMEType(mimeType))
+        return true;
+
+    if (isSupportedJavaScriptMIMEType(mimeType) || isSupportedJSONMIMEType(mimeType))
         return true;
 
     if (mimeType.startsWith("text/", false))
