@@ -1,3 +1,11 @@
+2017-09-08  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-element.html as slow.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-08  Antti Koivisto  <antti@apple.com>
 
         Remove support for >> descendant combinator syntax
