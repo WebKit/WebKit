@@ -1,5 +1,47 @@
 2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] PutByVal with Array::Generic is too generic
+        https://bugs.webkit.org/show_bug.cgi?id=176345
+
+        Reviewed by Filip Pizlo.
+
+        Our DFG/FTL's PutByVal with Array::Generic is too generic implementation.
+        We could have the case like,
+
+            dst[key] = src[key];
+
+        with string or symbol keys. But they are handled in slow path.
+        This patch adds PutByVal(CellUse, StringUse/SymbolUse, UntypedUse). They go
+        to optimized path that does not have generic checks like (isInt32() / isDouble() etc.).
+
+        This improves SixSpeed object-assign.es5 by 9.1%.
+
+        object-assign.es5             424.3159+-11.0471    ^    388.8771+-10.9239       ^ definitely 1.0911x faster
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        (JSC::DFG::putByValInternal):
+        (JSC::DFG::putByValCellInternal):
+        (JSC::DFG::putByValCellStringInternal):
+        (JSC::DFG::operationPutByValInternal): Deleted.
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithString):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForCellWithSymbol):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutByVal):
+        * jit/JITOperations.h:
+
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG][FTL] GetByVal(ObjectUse with Array::Generic, StringUse/SymbolUse) should be supported
         https://bugs.webkit.org/show_bug.cgi?id=176590
 

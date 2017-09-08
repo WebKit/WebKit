@@ -1,5 +1,20 @@
 2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] PutByVal with Array::Generic is too generic
+        https://bugs.webkit.org/show_bug.cgi?id=176345
+
+        Reviewed by Filip Pizlo.
+
+        * stress/object-assign-symbols.js: Added.
+        (shouldBe):
+        (test):
+        * stress/object-assign.js: Added.
+        (shouldBe):
+        (test):
+        (i.shouldBe.JSON.stringify.test):
+
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG][FTL] GetByVal(ObjectUse with Array::Generic, StringUse/SymbolUse) should be supported
         https://bugs.webkit.org/show_bug.cgi?id=176590
 

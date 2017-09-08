@@ -75,10 +75,8 @@
 namespace JSC { namespace DFG {
 
 template<bool strict, bool direct>
-static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, JSValue value)
+static inline void putByVal(ExecState* exec, VM& vm, JSValue baseValue, uint32_t index, JSValue value)
 {
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
     ASSERT(isIndex(index));
     if (direct) {
         RELEASE_ASSERT(baseValue.isObject());
@@ -100,11 +98,9 @@ static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, 
 }
 
 template<bool strict, bool direct>
-ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+ALWAYS_INLINE static void putByValInternal(ExecState* exec, VM& vm, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    auto scope = DECLARE_THROW_SCOPE(*vm);
-    NativeCallFrameTracer tracer(vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue property = JSValue::decode(encodedProperty);
@@ -114,7 +110,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
         // Despite its name, JSValue::isUInt32 will return true only for positive boxed int32_t; all those values are valid array indices.
         ASSERT(isIndex(property.asUInt32()));
         scope.release();
-        putByVal<strict, direct>(exec, baseValue, property.asUInt32(), value);
+        putByVal<strict, direct>(exec, vm, baseValue, property.asUInt32(), value);
         return;
     }
 
@@ -123,7 +119,7 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsDouble == propertyAsUInt32 && isIndex(propertyAsUInt32)) {
             scope.release();
-            putByVal<strict, direct>(exec, baseValue, propertyAsUInt32, value);
+            putByVal<strict, direct>(exec, vm, baseValue, propertyAsUInt32, value);
             return;
         }
     }
@@ -140,11 +136,38 @@ ALWAYS_INLINE static void JIT_OPERATION operationPutByValInternal(ExecState* exe
             asObject(baseValue)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
             return;
         }
-        asObject(baseValue)->putDirect(*vm, propertyName, value, slot);
+        asObject(baseValue)->putDirect(vm, propertyName, value, slot);
         return;
     }
     scope.release();
     baseValue.put(exec, propertyName, value, slot);
+}
+
+template<bool strict, bool direct>
+ALWAYS_INLINE static void putByValCellInternal(ExecState* exec, VM& vm, JSCell* base, PropertyName propertyName, JSValue value)
+{
+    PutPropertySlot slot(base, strict);
+    if (direct) {
+        RELEASE_ASSERT(base->isObject());
+        if (std::optional<uint32_t> index = parseIndex(propertyName))
+            asObject(base)->putDirectIndex(exec, index.value(), value, 0, strict ? PutDirectIndexShouldThrow : PutDirectIndexShouldNotThrow);
+        else
+            asObject(base)->putDirect(vm, propertyName, value, slot);
+        return;
+    }
+    base->putInline(exec, propertyName, value, slot);
+}
+
+template<bool strict, bool direct>
+ALWAYS_INLINE static void putByValCellStringInternal(ExecState* exec, VM& vm, JSCell* base, JSString* property, JSValue value)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto propertyName = property->toIdentifier(exec);
+    RETURN_IF_EXCEPTION(scope, void());
+
+    scope.release();
+    putByValCellInternal<strict, direct>(exec, vm, base, propertyName, value);
 }
 
 template<typename ViewClass>
@@ -618,34 +641,66 @@ EncodedJSValue JIT_OPERATION operationGetByValObjectSymbol(ExecState* exec, JSCe
 
 void JIT_OPERATION operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<true, false>(exec, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<true, false>(exec, vm, encodedBase, encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<false, false>(exec, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<false, false>(exec, vm, encodedBase, encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValCellStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<true, false>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<true, false>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValCellNonStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<false, false>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<false, false>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+}
+
+void JIT_OPERATION operationPutByValCellStringStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellStringInternal<true, false>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValCellStringNonStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellStringInternal<false, false>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValCellSymbolStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellInternal<true, false>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValCellSymbolNonStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellInternal<false, false>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
 }
 
 void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
@@ -714,34 +769,66 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* 
 
 void JIT_OPERATION operationPutByValDirectStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<true, true>(exec, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<true, true>(exec, vm, encodedBase, encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValDirectNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<false, true>(exec, encodedBase, encodedProperty, encodedValue);
+    putByValInternal<false, true>(exec, vm, encodedBase, encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValDirectCellStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<true, true>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<true, true>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
 }
 
 void JIT_OPERATION operationPutByValDirectCellNonStrict(ExecState* exec, JSCell* cell, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
-    operationPutByValInternal<false, true>(exec, JSValue::encode(cell), encodedProperty, encodedValue);
+    putByValInternal<false, true>(exec, vm, JSValue::encode(cell), encodedProperty, encodedValue);
+}
+
+void JIT_OPERATION operationPutByValDirectCellStringStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellStringInternal<true, true>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValDirectCellStringNonStrict(ExecState* exec, JSCell* cell, JSCell* string, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellStringInternal<false, true>(exec, vm, cell, asString(string), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValDirectCellSymbolStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellInternal<true, true>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
+}
+
+void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(ExecState* exec, JSCell* cell, JSCell* symbol, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+
+    putByValCellInternal<false, true>(exec, vm, cell, asSymbol(symbol)->privateName(), JSValue::decode(encodedValue));
 }
 
 void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
