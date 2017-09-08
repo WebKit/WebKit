@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,12 @@
 
 #pragma once
 
-#if USE(APPLE_INTERNAL_SDK) || __MAC_OS_X_VERSION_MAX_ALLOWED < 101200
-#import <QTKit/QTKit.h>
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <QTKit/QTHUDBackgroundView_Private.h>
+#import <QTKit/QTKit_Private.h>
+#import <QTKit/QTUtilities_Private.h>
+
 #else
 
 enum {
@@ -46,7 +50,18 @@ typedef struct {
 
 typedef enum {
     QTIncludeCommonTypes = 0,
+    QTIncludeOnlyFigMediaFileTypes = 1 << 8,
 } QTMovieFileTypeOptions;
+
+enum {
+    QTMovieTypeUnknown = 0,
+    QTMovieTypeLocal,
+    QTMovieTypeFastStart,
+    QTMovieTypeLiveStream,
+    QTMovieTypeStoredStream
+};
+
+@class QTTrack;
 
 @interface QTMedia : NSObject
 
@@ -57,6 +72,8 @@ typedef enum {
 @interface QTMovie : NSObject <NSCoding, NSCopying>
 
 + (NSArray *)movieFileTypes:(QTMovieFileTypeOptions)types;
+
++ (void)disableComponent:(ComponentDescription)component;
 
 - (id)initWithAttributes:(NSDictionary *)attributes error:(NSError **)errorPtr;
 
@@ -81,6 +98,14 @@ typedef enum {
 
 - (NSArray *)tracks;
 
+- (NSArray *)alternateGroupTypes;
+- (NSArray *)alternatesForMediaType:(NSString *)type;
+- (void)deselectAlternateGroupTrack:(QTTrack *)alternateTrack;
+- (void)selectAlternateGroupTrack:(QTTrack *)alternateTrack;
+
+- (NSURL *)URL;
+- (UInt32)movieType;
+
 @end
 
 @interface QTMovieLayer : CALayer
@@ -103,6 +128,22 @@ typedef enum {
 - (void)setEnabled:(BOOL)enabled;
 
 - (id)attributeForKey:(NSString *)attributeKey;
+
+@end
+
+@interface QTHUDBackgroundView : NSView
+
+- (void)setContentBorderPosition:(CGFloat)contentBorderPosition;
+
+@end
+
+@interface QTUtilities : NSObject
+
++ (id)qtUtilities;
+
+- (NSArray *)sitesInDownloadCache;
+- (void)clearDownloadCache;
+- (void)clearDownloadCacheForSite:(NSString *)site;
 
 @end
 

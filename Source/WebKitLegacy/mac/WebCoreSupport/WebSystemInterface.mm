@@ -49,25 +49,9 @@ void InitWebCoreSystemInterface(void)
     INIT(DrawMediaSliderTrack);
     INIT(HitTestMediaUIPart);
     INIT(MeasureMediaUIPart);
-    INIT(CreateMediaUIBackgroundView);
-    INIT(CreateMediaUIControl);
 #endif
     INIT(SetCONNECTProxyAuthorizationForStream);
     INIT(SetCONNECTProxyForStream);
-#if ENABLE(VIDEO) && !PLATFORM(IOS)
-    INIT(QTIncludeOnlyModernMediaFileTypes);
-    INIT(QTMovieDisableComponent);
-    INIT(QTMovieMaxTimeLoaded);
-    INIT(QTMovieMaxTimeLoadedChangeNotification);
-    INIT(QTMovieGetType);
-    INIT(QTMovieHasClosedCaptions);
-    INIT(QTMovieResolvedURL);
-    INIT(QTMovieSetShowClosedCaptions);
-    INIT(QTMovieSelectPreferredAlternates);
-    INIT(QTGetSitesInMediaDownloadCache);
-    INIT(QTClearMediaDownloadCacheForSite);
-    INIT(QTClearMediaDownloadCache);
-#endif
 
 #if !PLATFORM(IOS)
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);

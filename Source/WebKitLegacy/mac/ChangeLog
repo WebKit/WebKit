@@ -1,3 +1,13 @@
+2017-09-07  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream QTKit-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176472
+
+        Reviewed by Eric Carlson.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
 
         [PAL] Unify PlatformUserPreferredLanguages.h with Language.h

@@ -1,3 +1,12 @@
+2017-09-07  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream QTKit-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176472
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/mac/QTKitSPI.h:
+
 2017-09-07  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [Mac] Stop importing NSFunctionBar_Private.h in NSTouchBarSPI.h on the macOS 10.13+ SDK
