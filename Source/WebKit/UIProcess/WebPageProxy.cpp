@@ -3864,14 +3864,14 @@ void WebPageProxy::didUpdateHistoryTitle(const String& title, const String& url,
 
 // UIClient
 
-void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, ResourceRequest&& request, WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, Ref<Messages::WebPageProxy::CreateNewPage::DelayedReply>&& reply)
+void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, uint64_t originatingPageID, ResourceRequest&& request, const WindowFeatures& windowFeatures, NavigationActionData&& navigationActionData, Ref<Messages::WebPageProxy::CreateNewPage::DelayedReply>&& reply)
 {
     MESSAGE_CHECK(m_process->webFrame(originatingFrameInfoData.frameID));
     auto originatingFrameInfo = API::FrameInfo::create(originatingFrameInfoData, m_process->webPage(originatingPageID));
 
     auto mainFrameURL = m_mainFrame->url();
 
-    m_uiClient->createNewPage(*this, WTFMove(originatingFrameInfo), WTFMove(request), WTFMove(windowFeatures), WTFMove(navigationActionData), [this, protectedThis = RefPtr<WebPageProxy>(this), mainFrameURL, request, reply = WTFMove(reply)](RefPtr<WebPageProxy> newPage) {
+    auto completionHandler = [this, protectedThis = RefPtr<WebPageProxy>(this), mainFrameURL, request, reply = WTFMove(reply)](RefPtr<WebPageProxy> newPage) {
         if (!newPage) {
             reply->send(0, { });
             return;
@@ -3881,7 +3881,18 @@ void WebPageProxy::createNewPage(const FrameInfoData& originatingFrameInfoData, 
 
         WebsiteDataStore::cloneSessionData(*this, *newPage);
         newPage->m_shouldSuppressAppLinksInNextNavigationPolicyDecision = hostsAreEqual(URL(ParsedURLString, mainFrameURL), request.url());
-    });
+
+    };
+
+    if (m_uiClient->canCreateNewPageAsync()) {
+        m_uiClient->createNewPageAsync(this, originatingFrameInfo, WTFMove(request), windowFeatures, WTFMove(navigationActionData), [completionHandler = WTFMove(completionHandler)](RefPtr<WebPageProxy> newPage) {
+            completionHandler(newPage);
+        });
+        return;
+    }
+
+    RefPtr<WebPageProxy> newPage = m_uiClient->createNewPage(this, originatingFrameInfo, WTFMove(request), windowFeatures, WTFMove(navigationActionData));
+    completionHandler(WTFMove(newPage));
 }
     
 void WebPageProxy::showPage()

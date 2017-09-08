@@ -1,3 +1,15 @@
+2017-09-08  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221771.
+
+        This change caused two API tests to crash.
+
+        Reverted changeset:
+
+        "Clean up API::UIClient"
+        https://bugs.webkit.org/show_bug.cgi?id=176568
+        http://trac.webkit.org/changeset/221771
+
 2017-09-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] UI process crash in WebBackForwardList::restoreFromState
