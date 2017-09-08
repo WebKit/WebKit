@@ -4144,3 +4144,5 @@ webkit.org/b/176423 editing/pasteboard/enties-api/datatransfer-items-drop-getFil
 webkit.org/b/176423 editing/pasteboard/enties-api/datatransfer-items-drop-getParent-root.html [ Skip ]
 webkit.org/b/176423 editing/pasteboard/enties-api/datatransfer-items-drop-getParent.html [ Skip ]
 webkit.org/b/176423 editing/pasteboard/enties-api/datatransfer-items-drop-getParent2.html [ Skip ]
+
+webkit.org/b/176598 http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Pass Crash ]
