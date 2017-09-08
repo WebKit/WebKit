@@ -90,6 +90,15 @@ class NameResolver extends Visitor {
         for (let statement of node.statements)
             statement.visit(checker);
     }
+
+    visitIfStatement(node)
+    {
+        node.conditional.visit(this);
+        // If statement's bodies might not be Blocks, so we need to explicitly give them a new context.
+        node.body.visit(new NameResolver(new NameContext(this._nameContext)));
+        if (node.elseBody)
+            node.elseBody.visit(new NameResolver(new NameContext(this._nameContext)));
+    }
     
     visitProtocolDecl(node)
     {

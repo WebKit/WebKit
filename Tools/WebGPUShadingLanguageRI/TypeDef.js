@@ -38,5 +38,10 @@ class TypeDef extends Type {
     get name() { return this._name; }
     get typeParameters() { return this._typeParameters; }
     get type() { return this._type; }
+    
+    toString()
+    {
+        return "typedef " + this.name + "<" + this.typeParameters + "> = " + this.type;
+    }
 }
 

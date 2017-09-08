@@ -1,3 +1,80 @@
+2017-09-07  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add "if" statements to WSL
+        https://bugs.webkit.org/show_bug.cgi?id=176294
+
+        Reviewed by Filip Pizlo.
+
+        Fairly straightforward implementation. ReturnChecker only returns true iff there is an else block,
+        and both the if body and the else body recursively return true.
+
+        In order to accept both syntaxes:
+        if (foo)
+            bar;
+        ... and ...
+        if (foo) {
+            bar;
+        }
+        This patch lets parseStatement() call parseBlock(). This means that the following is valid:
+        int x = 7;
+        if (foo) {
+            int x = 8;
+            // x is 8 here!
+        }
+        // x is 7 here!
+
+        This production means that these blocks don't require "if" statements, so you can just have:
+        int foo() {
+           int x = 7;
+           {
+               int x = 8;
+               // x is 8 here!
+           }
+           // x is 7 here!
+        }
+
+        However, this patch doesn't touch the following use-case:
+        if (int x = bar()) {
+            // use x here
+        }
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitIfStatement):
+        * WebGPUShadingLanguageRI/IfStatement.js: Copied from Tools/WebGPUShadingLanguageRI/TypeDef.js.
+        (IfStatement):
+        (IfStatement.prototype.get origin):
+        (IfStatement.prototype.get conditional):
+        (IfStatement.prototype.get body):
+        (IfStatement.prototype.get elseBody):
+        (IfStatement.prototype.toString):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitIfStatement):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTypeParameters):
+        (parseIfStatement):
+        (parseStatement):
+        * WebGPUShadingLanguageRI/ReturnChecker.js:
+        (ReturnChecker.prototype.visitIfStatement):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitIfStatement):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_variableShadowing):
+        (TEST_ifStatement):
+        (TEST_ifElseStatement):
+        (TEST_ifElseIfStatement):
+        (TEST_ifElseIfElseStatement):
+        (TEST_returnIf):
+        (TEST_protocolMonoPolySigDoublePolyDefExplicit): Deleted.
+        * WebGPUShadingLanguageRI/TypeDef.js:
+        (TypeDef.prototype.toString):
+        (TypeDef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitIfStatement):
+
 2017-09-07  Lucas Forschler  <lforschler@apple.com>
 
         Test commit after server upgrade from subversion 1.9.5 to 1.9.7
