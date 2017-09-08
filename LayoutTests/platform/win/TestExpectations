@@ -4147,3 +4147,4 @@ webkit.org/b/176423 editing/pasteboard/enties-api/datatransfer-items-drop-getPar
 
 webkit.org/b/176598 http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Pass Crash ]
 webkit.org/b/176606 http/tests/preload/single_download_preload_headers.php [ Pass Crash ]
+webkit.org/b/176609 http/tests/websocket/tests/hybi/close-code-and-reason.html [ Pass Crash ]
