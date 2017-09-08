@@ -43,6 +43,11 @@ typedef struct _GstQuery GstQuery;
 typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _WebKitWebSrc WebKitWebSrc;
 
+#if USE(GSTREAMER_GL)
+typedef struct _GstGLDisplay GstGLDisplay;
+typedef struct _GstGLContext GstGLContext;
+#endif
+
 namespace WTF {
 
 template<> GRefPtr<GstElement> adoptGRef(GstElement* ptr);
@@ -121,6 +126,16 @@ template<> GRefPtr<WebKitWebSrc> adoptGRef(WebKitWebSrc* ptr);
 GRefPtr<WebKitWebSrc> ensureGRef(WebKitWebSrc* ptr);
 template<> WebKitWebSrc* refGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
 template<> void derefGPtr<WebKitWebSrc>(WebKitWebSrc* ptr);
+
+#if USE(GSTREAMER_GL)
+template<> GRefPtr<GstGLDisplay> adoptGRef(GstGLDisplay* ptr);
+template<> GstGLDisplay* refGPtr<GstGLDisplay>(GstGLDisplay* ptr);
+template<> void derefGPtr<GstGLDisplay>(GstGLDisplay* ptr);
+
+template<> GRefPtr<GstGLContext> adoptGRef(GstGLContext* ptr);
+template<> GstGLContext* refGPtr<GstGLContext>(GstGLContext* ptr);
+template<> void derefGPtr<GstGLContext>(GstGLContext* ptr);
+#endif
 
 } // namespace WTF
 
