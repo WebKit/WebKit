@@ -1,5 +1,14 @@
 2017-09-08  Per Arne Vollan  <pvollan@apple.com>
 
+        Mark http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=176626.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2017-09-08  Per Arne Vollan  <pvollan@apple.com>
+
         Mark imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-element.html as slow.
 
         Unreviewed test gardening.
