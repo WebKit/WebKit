@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 
 namespace JSC { namespace DFG {
 
+// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
 {
     if (!exitKindMayJettison(exit.m_kind)) {
@@ -143,6 +144,7 @@ void handleExitCounts(CCallHelpers& jit, const OSRExitBase& exit)
     doneAdjusting.link(&jit);
 }
 
+// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
 {
     // FIXME: We shouldn't leave holes on the stack when performing an OSR exit
@@ -252,6 +254,7 @@ void reifyInlinedCallFrames(CCallHelpers& jit, const OSRExitBase& exit)
     }
 }
 
+// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
 {
     AssemblyHelpers::Jump ownerIsRememberedOrInEden = jit.barrierBranchWithoutFence(owner);
@@ -272,6 +275,7 @@ static void osrWriteBarrier(CCallHelpers& jit, GPRReg owner, GPRReg scratch)
     ownerIsRememberedOrInEden.link(&jit);
 }
 
+// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 void adjustAndJumpToTarget(VM& vm, CCallHelpers& jit, const OSRExitBase& exit)
 {
     jit.memoryFence();

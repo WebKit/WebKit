@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,6 +32,8 @@
 namespace JSC {
 
 #if ENABLE(JIT)
+// FIXME: This is being supplanted by observeResult(). Remove this one
+// https://bugs.webkit.org/show_bug.cgi?id=175145 has been fixed.
 void ArithProfile::emitObserveResult(CCallHelpers& jit, JSValueRegs regs, TagRegistersMode mode)
 {
     if (!shouldEmitSetDouble() && !shouldEmitSetNonNumber())

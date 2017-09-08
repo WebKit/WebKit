@@ -85,8 +85,9 @@ void JITCompiler::linkOSRExits()
         }
     }
     
+    MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitThunkGenerator);
+    CodeLocationLabel osrExitThunkLabel = CodeLocationLabel(osrExitThunk.code());
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
-        OSRExit& exit = m_jitCode->osrExit[i];
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
         JumpList& failureJumps = info.m_failureJumps;
         if (!failureJumps.empty())
@@ -96,7 +97,10 @@ void JITCompiler::linkOSRExits()
 
         jitAssertHasValidCallFrame();
         store32(TrustedImm32(i), &vm()->osrExitIndex);
-        exit.setPatchableCodeOffset(patchableJump());
+        Jump target = jump();
+        addLinkTask([target, osrExitThunkLabel] (LinkBuffer& linkBuffer) {
+            linkBuffer.link(target, osrExitThunkLabel);
+        });
     }
 }
 
@@ -303,13 +307,8 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
             linkBuffer.locationOfNearCall(record.call));
     }
     
-    MacroAssemblerCodeRef osrExitThunk = vm()->getCTIStub(osrExitGenerationThunkGenerator);
-    CodeLocationLabel target = CodeLocationLabel(osrExitThunk.code());
     for (unsigned i = 0; i < m_jitCode->osrExit.size(); ++i) {
-        OSRExit& exit = m_jitCode->osrExit[i];
         OSRExitCompilationInfo& info = m_exitCompilationInfo[i];
-        linkBuffer.link(exit.getPatchableCodeOffsetAsJump(), target);
-        exit.correctJump(linkBuffer);
         if (info.m_replacementSource.isSet()) {
             m_jitCode->common.jumpReplacements.append(JumpReplacement(
                 linkBuffer.locationOf(info.m_replacementSource),

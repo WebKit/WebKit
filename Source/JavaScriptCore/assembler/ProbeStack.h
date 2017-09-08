@@ -56,14 +56,28 @@ public:
     template<typename T>
     T get(void* logicalAddress)
     {
-        return *physicalAddressFor<T*>(logicalAddress);
+        void* from = physicalAddressFor(logicalAddress);
+        typename std::remove_const<T>::type to { };
+        std::memcpy(&to, from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+        return to;
+    }
+    template<typename T>
+    T get(void* logicalBaseAddress, ptrdiff_t offset)
+    {
+        return get<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset);
     }
 
     template<typename T>
     void set(void* logicalAddress, T value)
     {
         m_dirtyBits |= dirtyBitFor(logicalAddress);
-        *physicalAddressFor<T*>(logicalAddress) = value;
+        void* to = physicalAddressFor(logicalAddress);
+        std::memcpy(to, &value, sizeof(T)); // Use std::memcpy to avoid strict aliasing issues.
+    }
+    template<typename T>
+    void set(void* logicalBaseAddress, ptrdiff_t offset, T value)
+    {
+        set<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset, value);
     }
 
     bool hasWritesToFlush() const { return !!m_dirtyBits; }
@@ -80,18 +94,16 @@ private:
         return static_cast<uintptr_t>(1) << (offset >> s_chunkSizeShift);
     }
 
-    template<typename T, typename = typename std::enable_if<std::is_pointer<T>::value>::type>
-    T physicalAddressFor(void* logicalAddress)
+    void* physicalAddressFor(void* logicalAddress)
     {
-        uintptr_t offset = reinterpret_cast<uintptr_t>(logicalAddress) & s_pageMask;
-        void* physicalAddress = reinterpret_cast<uint8_t*>(&m_buffer) + offset;
-        return reinterpret_cast<T>(physicalAddress);
+        return reinterpret_cast<uint8_t*>(logicalAddress) + m_physicalAddressOffset;
     }
 
     void flushWrites();
 
     void* m_baseLogicalAddress { nullptr };
     uintptr_t m_dirtyBits { 0 };
+    ptrdiff_t m_physicalAddressOffset;
 
     static constexpr size_t s_pageSize = 1024;
     static constexpr uintptr_t s_pageMask = s_pageSize - 1;
@@ -120,40 +132,39 @@ public:
     { }
     Stack(Stack&& other);
 
-    void* lowWatermark() { return m_lowWatermark; }
+    void* lowWatermark()
+    {
+        // We use the chunkAddress for the low watermark because we'll be doing write backs
+        // to the stack in increments of chunks. Hence, we'll treat the lowest address of
+        // the chunk as the low watermark of any given set address.
+        return Page::chunkAddressFor(m_lowWatermark);
+    }
 
     template<typename T>
-    typename std::enable_if<!std::is_same<double, typename std::remove_cv<T>::type>::value, T>::type get(void* address)
+    T get(void* address)
     {
         Page* page = pageFor(address);
         return page->get<T>(address);
     }
+    template<typename T>
+    T get(void* logicalBaseAddress, ptrdiff_t offset)
+    {
+        return get<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset);
+    }
 
-    template<typename T, typename = typename std::enable_if<!std::is_same<double, typename std::remove_cv<T>::type>::value>::type>
+    template<typename T>
     void set(void* address, T value)
     {
         Page* page = pageFor(address);
         page->set<T>(address, value);
 
-        // We use the chunkAddress for the low watermark because we'll be doing write backs
-        // to the stack in increments of chunks. Hence, we'll treat the lowest address of
-        // the chunk as the low watermark of any given set address.
-        void* chunkAddress = Page::chunkAddressFor(address);
-        if (chunkAddress < m_lowWatermark)
-            m_lowWatermark = chunkAddress;
+        if (address < m_lowWatermark)
+            m_lowWatermark = address;
     }
-
     template<typename T>
-    typename std::enable_if<std::is_same<double, typename std::remove_cv<T>::type>::value, T>::type get(void* address)
+    void set(void* logicalBaseAddress, ptrdiff_t offset, T value)
     {
-        Page* page = pageFor(address);
-        return bitwise_cast<double>(page->get<uint64_t>(address));
-    }
-
-    template<typename T, typename = typename std::enable_if<std::is_same<double, typename std::remove_cv<T>::type>::value>::type>
-    void set(void* address, double value)
-    {
-        set<uint64_t>(address, bitwise_cast<uint64_t>(value));
+        set<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset, value);
     }
 
     JS_EXPORT_PRIVATE Page* ensurePageFor(void* address);

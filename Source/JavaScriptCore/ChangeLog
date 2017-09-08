@@ -1,3 +1,198 @@
+2017-09-07  Mark Lam  <mark.lam@apple.com>
+
+        Use JIT probes for DFG OSR exit.
+        https://bugs.webkit.org/show_bug.cgi?id=175144
+        <rdar://problem/33437050>
+
+        Reviewed by Saam Barati.
+
+        This patch does the following:
+        1. Replaces osrExitGenerationThunkGenerator() with osrExitThunkGenerator().
+           While osrExitGenerationThunkGenerator() generates a thunk that compiles a
+           unique OSR offramp for each DFG OSR exit site, osrExitThunkGenerator()
+           generates a thunk that just executes the OSR exit.
+
+           The osrExitThunkGenerator() generated thunk works by using a single JIT probe
+           to call OSRExit::executeOSRExit().  The JIT probe takes care of preserving
+           CPU registers, and providing the Probe::Stack mechanism for modifying the
+           stack frame.
+
+           OSRExit::executeOSRExit() replaces OSRExit::compileOSRExit() and
+           OSRExit::compileExit().  It is basically a re-write of those functions to
+           execute the OSR exit work instead of compiling code to execute the work.
+
+           As a result, we get the following savings:
+           a. no more OSR exit ramp compilation time.
+           b. no use of JIT executable memory for storing each unique OSR exit ramp.
+
+           On the negative side, we incur these costs:
+
+           c. the OSRExit::executeOSRExit() ramp may be a little slower than the compiled
+              version of the ramp.  However, OSR exits are rare.  Hence, this small
+              difference should not matter much.  It is also offset by the savings from
+              (a).
+
+           d. the Probe::Stack allocates 1K pages for memory for buffering stack
+              modifcations.  The number of these pages depends on the span of stack memory
+              that the OSR exit ramp reads from and writes to.  Since the OSR exit ramp
+              tends to only modify values in the current DFG frame and the current
+              VMEntryRecord, the number of pages tends to only be 1 or 2.
+
+              Using the jsc tests as a workload, the vast majority of tests that do OSR
+              exit, uses 3 or less 1K pages (with the overwhelming number using just 1 page).
+              A few tests that are pathological uses up to 14 pages, and one particularly
+              bad test (function-apply-many-args.js) uses 513 pages.
+
+           Similar to the old code, the OSR exit ramp still has 2 parts: 1 part that is
+           only executed once to compute some values for the exit site that is used by
+           all exit operations from that site, and a 2nd part to execute the exit.  The
+           1st part is protected by a checking if exit.exitState has already been
+           initialized.  The computed values are cached in exit.exitState.
+
+           Because the OSR exit thunk no longer compiles an OSR exit off-ramp, we no
+           longer need the facility to patch the site that jumps to the OSR exit ramp.
+           The DFG::JITCompiler has been modified to remove this patching code.
+
+        2. Fixed the bottom most Probe::Context and Probe::Stack get/set methods to use
+           std::memcpy to avoid strict aliasing issues.
+
+           Also optimized the implementation of Probe::Stack::physicalAddressFor().
+
+        3. Miscellaneous convenience methods added to make the Probe::Context easier of
+           use.
+
+        4. Added a Probe::Frame class that makes it easier to get/set operands and
+           arguments in a given frame using the deferred write properties of the
+           Probe::Stack.  Probe::Frame makes it easier to do some of the recovery work in
+           the OSR exit ramp.
+
+        5. Cloned or converted some functions needed by the OSR exit ramp.  The original
+           JIT versions of these functions are still left in place because they are still
+           needed for FTL OSR exit.  A FIXME comment has been added to remove them later.
+           These functions include:
+
+           DFGOSRExitCompilerCommon.cpp's handleExitCounts() ==>
+               CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize()
+           DFGOSRExitCompilerCommon.cpp's reifyInlinedCallFrames() ==>
+               DFGOSRExit.cpp's reifyInlinedCallFrames()
+           DFGOSRExitCompilerCommon.cpp's adjustAndJumpToTarget() ==>
+               DFGOSRExit.cpp's adjustAndJumpToTarget()
+
+           MethodOfGettingAValueProfile::emitReportValue() ==>
+               MethodOfGettingAValueProfile::reportValue()
+
+           DFGOperations.cpp's operationCreateDirectArgumentsDuringExit() ==>
+               DFGOSRExit.cpp's createDirectArgumentsDuringExit()
+           DFGOperations.cpp's operationCreateClonedArgumentsDuringExit() ==>
+               DFGOSRExit.cpp's createClonedArgumentsDuringExit()
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printCallback):
+        * assembler/ProbeContext.h:
+        (JSC::Probe::CPUState::gpr const):
+        (JSC::Probe::CPUState::spr const):
+        (JSC::Probe::Context::Context):
+        (JSC::Probe::Context::arg):
+        (JSC::Probe::Context::gpr):
+        (JSC::Probe::Context::spr):
+        (JSC::Probe::Context::fpr):
+        (JSC::Probe::Context::gprName):
+        (JSC::Probe::Context::sprName):
+        (JSC::Probe::Context::fprName):
+        (JSC::Probe::Context::gpr const):
+        (JSC::Probe::Context::spr const):
+        (JSC::Probe::Context::fpr const):
+        (JSC::Probe::Context::pc):
+        (JSC::Probe::Context::fp):
+        (JSC::Probe::Context::sp):
+        (JSC::Probe:: const): Deleted.
+        * assembler/ProbeFrame.h: Added.
+        (JSC::Probe::Frame::Frame):
+        (JSC::Probe::Frame::getArgument):
+        (JSC::Probe::Frame::getOperand):
+        (JSC::Probe::Frame::get):
+        (JSC::Probe::Frame::setArgument):
+        (JSC::Probe::Frame::setOperand):
+        (JSC::Probe::Frame::set):
+        * assembler/ProbeStack.cpp:
+        (JSC::Probe::Page::Page):
+        * assembler/ProbeStack.h:
+        (JSC::Probe::Page::get):
+        (JSC::Probe::Page::set):
+        (JSC::Probe::Page::physicalAddressFor):
+        (JSC::Probe::Stack::lowWatermark):
+        (JSC::Probe::Stack::get):
+        (JSC::Probe::Stack::set):
+        * bytecode/ArithProfile.cpp:
+        * bytecode/ArithProfile.h:
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::observeArrayMode):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addressOfOSRExitCounter): Deleted.
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::hasCrossedThreshold const):
+        (JSC::ExecutionCounter::setNewThresholdForOSRExit):
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::reportValue):
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::findPC): Deleted.
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::jsValueFor):
+        (JSC::DFG::restoreCalleeSavesFor):
+        (JSC::DFG::saveCalleeSavesFor):
+        (JSC::DFG::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer):
+        (JSC::DFG::saveOrCopyCalleeSavesFor):
+        (JSC::DFG::createDirectArgumentsDuringExit):
+        (JSC::DFG::createClonedArgumentsDuringExit):
+        (JSC::DFG::OSRExit::OSRExit):
+        (JSC::DFG::emitRestoreArguments):
+        (JSC::DFG::OSRExit::executeOSRExit):
+        (JSC::DFG::reifyInlinedCallFrames):
+        (JSC::DFG::adjustAndJumpToTarget):
+        (JSC::DFG::printOSRExit):
+        (JSC::DFG::OSRExit::setPatchableCodeOffset): Deleted.
+        (JSC::DFG::OSRExit::getPatchableCodeOffsetAsJump const): Deleted.
+        (JSC::DFG::OSRExit::codeLocationForRepatch const): Deleted.
+        (JSC::DFG::OSRExit::correctJump): Deleted.
+        (JSC::DFG::OSRExit::emitRestoreArguments): Deleted.
+        (JSC::DFG::OSRExit::compileOSRExit): Deleted.
+        (JSC::DFG::OSRExit::compileExit): Deleted.
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure): Deleted.
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExitState::OSRExitState):
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitThunkGenerator):
+        (JSC::DFG::osrExitGenerationThunkGenerator): Deleted.
+        * dfg/DFGThunks.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall): Deleted.
+        * jit/AssemblyHelpers.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * profiler/ProfilerOSRExit.h:
+        (JSC::Profiler::OSRExit::incCount):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/VM.h:
+
 2017-09-07  Michael Saboff  <msaboff@apple.com>
 
         Add support for RegExp named capture groups

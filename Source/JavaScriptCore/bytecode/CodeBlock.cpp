@@ -2315,6 +2315,53 @@ bool CodeBlock::checkIfOptimizationThresholdReached()
     return m_jitExecuteCounter.checkIfThresholdCrossedAndSet(this);
 }
 
+auto CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState& exitState) -> OptimizeAction
+{
+    DFG::OSRExitBase& exit = exitState.exit;
+    if (!exitKindMayJettison(exit.m_kind)) {
+        // FIXME: We may want to notice that we're frequently exiting
+        // at an op_catch that we didn't compile an entrypoint for, and
+        // then trigger a reoptimization of this CodeBlock:
+        // https://bugs.webkit.org/show_bug.cgi?id=175842
+        return OptimizeAction::None;
+    }
+
+    exit.m_count++;
+    m_osrExitCounter++;
+
+    CodeBlock* baselineCodeBlock = exitState.baselineCodeBlock;
+    ASSERT(baselineCodeBlock == baselineAlternative());
+    if (UNLIKELY(baselineCodeBlock->jitExecuteCounter().hasCrossedThreshold()))
+        return OptimizeAction::ReoptimizeNow;
+
+    // We want to figure out if there's a possibility that we're in a loop. For the outermost
+    // code block in the inline stack, we handle this appropriately by having the loop OSR trigger
+    // check the exit count of the replacement of the CodeBlock from which we are OSRing. The
+    // problem is the inlined functions, which might also have loops, but whose baseline versions
+    // don't know where to look for the exit count. Figure out if those loops are severe enough
+    // that we had tried to OSR enter. If so, then we should use the loop reoptimization trigger.
+    // Otherwise, we should use the normal reoptimization trigger.
+
+    bool didTryToEnterInLoop = false;
+    for (InlineCallFrame* inlineCallFrame = exit.m_codeOrigin.inlineCallFrame; inlineCallFrame; inlineCallFrame = inlineCallFrame->directCaller.inlineCallFrame) {
+        if (inlineCallFrame->baselineCodeBlock->ownerScriptExecutable()->didTryToEnterInLoop()) {
+            didTryToEnterInLoop = true;
+            break;
+        }
+    }
+
+    uint32_t exitCountThreshold = didTryToEnterInLoop
+        ? exitCountThresholdForReoptimizationFromLoop()
+        : exitCountThresholdForReoptimization();
+
+    if (m_osrExitCounter > exitCountThreshold)
+        return OptimizeAction::ReoptimizeNow;
+
+    // Too few fails. Adjust the execution counter such that the target is to only optimize after a while.
+    baselineCodeBlock->m_jitExecuteCounter.setNewThresholdForOSRExit(exitState.activeThreshold, exitState.memoryUsageAdjustedThreshold);
+    return OptimizeAction::None;
+}
+
 void CodeBlock::optimizeNextInvocation()
 {
     if (Options::verboseOSR())
