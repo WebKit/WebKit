@@ -1,5 +1,16 @@
 2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK+ gardening.
+
+        Added failure expectation for the HTTP test introduced in r221633,
+        and updated baselines for the editing/execCommand/print.html test.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/editing/execCommand/print-expected.png:
+        * platform/gtk/editing/execCommand/print-expected.txt:
+
+2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK+ gardening. Adding ImageOnlyFailure expectations
         for reference tests failing after Freetype changes in r221670
         and r221724.
