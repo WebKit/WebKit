@@ -1,3 +1,20 @@
+2017-09-09  Frederic Wang  <fwang@igalia.com>
+
+        Use RenderLayerBacking::renderer() when possible
+        https://bugs.webkit.org/show_bug.cgi?id=176585
+
+        The private member renderer() is a shorthand for m_owningLayer.renderer(). This patch uses
+        it in RenderLayerBacking when possible.
+
+        Reviewed by Carlos Garcia Campos.
+
+        No new tests, behavior not changed.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplay):
+        (WebCore::RenderLayerBacking::setContentsNeedDisplayInRect):
+
 2017-09-08  Sam Weinig  <sam@webkit.org>
 
         Replace JS builtin implementation of the FetchResponse constructor with a C++ one
