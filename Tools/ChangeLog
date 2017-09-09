@@ -1,3 +1,16 @@
+2017-09-09  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221776.
+
+        This change caused wsl-tests.yaml/Test.js to time out on Debug
+        JSC bots.
+
+        Reverted changeset:
+
+        "Add "if" statements to WSL"
+        https://bugs.webkit.org/show_bug.cgi?id=176294
+        http://trac.webkit.org/changeset/221776
+
 2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         MiniBrowser closes tab instead of window on close signal

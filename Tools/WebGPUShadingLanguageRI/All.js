@@ -65,7 +65,6 @@ load("FuncDef.js");
 load("FuncInstantiator.js");
 load("FuncParameter.js");
 load("FunctionLikeBlock.js");
-load("IfStatement.js");
 load("Inline.js");
 load("Inliner.js");
 load("InstantiateImmediates.js");

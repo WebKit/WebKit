@@ -208,14 +208,6 @@ class Visitor extends VisitorBase {
             node.variable.visit(this);
     }
     
-    visitIfStatement(node)
-    {
-        node.conditional.visit(this);
-        node.body.visit(this);
-        if (node.elseBody)
-            node.elseBody.visit(this);
-    }
-
     visitReturn(node)
     {
         if (node.value)

@@ -40,12 +40,8 @@ class ReturnChecker extends Visitor {
         // https://bugs.webkit.org/show_bug.cgi?id=176263
         return node.statements.reduce((result, statement) => result || statement.visit(this), false);
     }
-
-    visitIfStatement(node)
-    {
-        return node.elseBody && node.body.visit(this) && node.elseBody.visit(this);
-    }
-
+    
+    // When we add control flow statements, we'll need to return true only if both blocks return true.
     // If a loop returns, then it counts only if the loop is guaranteed to run at least once.
     
     visitReturn(node)

@@ -148,7 +148,7 @@ function parse(program, origin, lineNumberOffset, text)
                 let type = parseType();
                 let name = consumeKind("identifier");
                 assertNext(",", ">", ">>");
-                return new ConstexprTypeParameter(type.origin, name.text, type);
+                return new ConstexprTypeParameter(type.origin, name, type);
             });
             if (constexpr)
                 result.push(constexpr);
@@ -535,19 +535,6 @@ function parse(program, origin, lineNumberOffset, text)
         consume(";");
         return new Return(origin, expression);
     }
-
-    function parseIfStatement()
-    {
-        let origin = consume("if");
-        consume("(");
-        let conditional = parseExpression();
-        consume(")");
-        let body = parseStatement();
-        let elseBody;
-        if (tryConsume("else"))
-            elseBody = parseStatement();
-        return new IfStatement(origin, new CastExpression(conditional.origin, new TypeRef(conditional.origin, "bool", []), [], [conditional]), body, elseBody);
-    }
     
     function parseVariableDecls()
     {
@@ -580,10 +567,6 @@ function parse(program, origin, lineNumberOffset, text)
             return parseDo();
         if (token.text == "for")
             return parseFor();
-        if (token.text == "if")
-            return parseIfStatement();
-        if (token.text == "{")
-            return parseBlock();
         let variableDecl = lexer.backtrackingScope(parseVariableDecls);
         if (variableDecl)
             return variableDecl;

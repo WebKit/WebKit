@@ -150,14 +150,6 @@ class Evaluator extends Visitor {
     {
         return EPtr.box(!node.operand.visit(this).loadValue());
     }
-
-    visitIfStatement(node)
-    {
-        if (node.conditional.visit(this).loadValue())
-            return node.body.visit(this);
-        else if (node.elseBody)
-            return node.elseBody.visit(this);
-    }
     
     visitCallExpression(node)
     {
