@@ -283,5 +283,10 @@ class Rewriter extends VisitorBase {
     {
         return new LogicalNot(node.origin, node.operand.visit(this));
     }
+
+    visitIfStatement(node)
+    {
+        return new IfStatement(node.origin, node.conditional.visit(this), node.body.visit(this), node.elseBody ? node.elseBody.visit(this) : undefined);
+    }
 }
 

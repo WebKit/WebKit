@@ -1109,6 +1109,233 @@ function TEST_protocolDoublePolySigDoublePolyDefExplicit()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
 }
 
+function TEST_variableShadowing()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int y;
+            int x = 7;
+            {
+                int x = 8;
+                y = x;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 8);
+    program = doPrep(`
+        int foo()
+        {
+            int y;
+            int x = 7;
+            {
+                int x = 8;
+            }
+            y = x;
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 7);
+}
+
+function TEST_ifStatement()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
+}
+
+function TEST_ifElseStatement()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else {
+                y = 9;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 9);
+}
+
+function TEST_ifElseIfStatement()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else if (x == 8) {
+                y = 9;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
+}
+
+function TEST_ifElseIfElseStatement()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                y = 8;
+            } else if (x == 8) {
+                y = 9;
+            } else {
+                y = 10;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 10);
+}
+
+function TEST_returnIf()
+{
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7) {
+                    return y;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7) {
+                    return y;
+                } else {
+                    y = 8;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7) {
+                    y = 8;
+                } else {
+                    return y;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                return 8;
+            } else {
+                return 10;
+            }
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 10);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7) {
+                    return 8;
+                } else if (x == 9) {
+                    return 10;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7) {
+                return 8;
+            } else {
+                y = 9;
+            }
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 8)]), 9);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 9);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                int y = 6;
+                if (x == 7) {
+                    return 8;
+                } else {
+                    return 10;
+                }
+                return 11;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
 function TEST_protocolMonoPolySigDoublePolyDefExplicit()
 {
     checkFail(

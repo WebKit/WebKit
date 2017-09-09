@@ -220,10 +220,22 @@ class Checker extends Visitor {
     {
         let resultType = node.operand.visit(this);
         if (!resultType)
-            throw new Error("Trying to negate something with no type: " + node.value);
+            throw new Error("Trying to negate something with no type: " + node.operand);
         if (!resultType.equals(this._program.intrinsics.bool))
-            throw new WError("Trying to negate something that isn't a bool: " + node.value);
+            throw new WError("Trying to negate something that isn't a bool: " + node.operand);
         return this._program.intrinsics.bool;
+    }
+
+    visitIfStatement(node)
+    {
+        let conditionalResultType = node.conditional.visit(this);
+        if (!conditionalResultType)
+            throw new Error("Trying to negate something with no type: " + node.conditional);
+        if (!conditionalResultType.equals(this._program.intrinsics.bool))
+            throw new WError("Trying to negate something that isn't a bool: " + node.conditional);
+        node.body.visit(this);
+        if (node.elseBody)
+            node.elseBody.visit(this);
     }
     
     visitCommaExpression(node)
