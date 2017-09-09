@@ -1,3 +1,23 @@
+2017-09-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: ensure we close all windows handles when closing the session
+        https://bugs.webkit.org/show_bug.cgi?id=176508
+
+        Reviewed by Brian Burg.
+
+        The spec says that when closing the session all top level browsing contexts should be closed. We are currently
+        checking if we have an active top level browsing context and then we try to close it before trying with the
+        rest. It can happen that we are in an inconsistent state, for example if the current top level browsing context
+        has been closed by JavaScript or another action and the user didn't switch to another one before closing the
+        session. In such case, closing the session will fail with NoSuchwindow and any other window open will not be
+        closed. It's safer to always ask for all window handles and close them, which is what the spec says too.
+
+        * Session.cpp:
+        (WebDriver::firstWindowHandleInResult): Helper class to get the first window handle in the result array.
+        (WebDriver::Session::closeAllToplevelBrowsingContexts): Use firstWindowHandleInResult().
+        (WebDriver::Session::close): Close the current top level browsing context and get all window handles to close
+        them all if needed.
+
 2017-08-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: implement screen capture commands
