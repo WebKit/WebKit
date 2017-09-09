@@ -1,3 +1,17 @@
+2017-09-07  Adrian Perez de Castro  <aperez@igalia.com>
+
+        [ARM] Building FELightningNEON.cpp fails due to missing {Point,Spot}LightSource declarations
+        https://bugs.webkit.org/show_bug.cgi?id=176531
+
+        Reviewed by Žan Doberšek.
+
+        The m_lightSource member is a Ref<LightSource>, and its get() method returns
+        a reference, therefore the casts have to be done to the corresponding reference
+        types.
+
+        * platform/graphics/cpu/arm/filters/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon): Adjust casts and member accesses accordingly.
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         String#utf8() allocates new CString
