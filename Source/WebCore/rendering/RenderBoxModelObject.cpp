@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLFrameSetElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "ImageBuffer.h"
 #include "ImageQualityController.h"
@@ -325,6 +326,8 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
         return DecodingMode::Synchronous;
 #endif
     if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
+        return DecodingMode::Asynchronous;
+    if (is<HTMLImageElement>(element()) && element()->hasAttribute(asyncAttr))
         return DecodingMode::Asynchronous;
     if (document().isImageDocument())
         return DecodingMode::Synchronous;

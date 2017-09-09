@@ -1,3 +1,13 @@
+2017-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement the attribute HTMLImageElement.async 
+        https://bugs.webkit.org/show_bug.cgi?id=176204
+
+        Reviewed by Darin Adler.
+
+        * fast/images/async-attribute-with-small-image-expected.html: Added.
+        * fast/images/async-attribute-with-small-image.html: Added.
+
 2017-09-08  Per Arne Vollan  <pvollan@apple.com>
 
         Fix duplicate entry warnings on Windows.
