@@ -1,5 +1,17 @@
 2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] NewArrayWithSize(size)'s size does not care negative zero
+        https://bugs.webkit.org/show_bug.cgi?id=176300
+
+        Reviewed by Saam Barati.
+
+        * stress/new-array-with-size-div.js: Added.
+        (shouldBe):
+        (test):
+        (i.i):
+
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] PutByVal with Array::Generic is too generic
         https://bugs.webkit.org/show_bug.cgi?id=176345
 

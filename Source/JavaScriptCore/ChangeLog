@@ -1,5 +1,20 @@
 2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] NewArrayWithSize(size)'s size does not care negative zero
+        https://bugs.webkit.org/show_bug.cgi?id=176300
+
+        Reviewed by Saam Barati.
+
+        NewArrayWithSize(size)'s size does not care negative zero as
+        is the same to NewTypedArray. We propagate this information
+        in DFGBackwardsPropagationPhase. This removes negative zero
+        check in kraken fft's deinterleave function.
+
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+
+2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         [DFG] PutByVal with Array::Generic is too generic
         https://bugs.webkit.org/show_bug.cgi?id=176345
 
