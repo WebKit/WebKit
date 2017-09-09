@@ -1,3 +1,22 @@
+2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        MiniBrowser closes tab instead of window on close signal
+        https://bugs.webkit.org/show_bug.cgi?id=176587
+
+        Reviewed by Carlos Garcia Campos.
+
+        This has been broken since we added support for multiple tabs. We need to run try_close for
+        every open tab, not just the current one. If there are no onbeforeonload handlers then all
+        tabs will close; if there are some, then they'll be respected, but the remaining tabs will
+        be closed.
+
+        Note that we cannot simply iterate through the tabs of the GtkNotebook, as we'd be deleting
+        tabs as we go, so save all the tabs into a separate list and then try to close each in turn.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowTryClose):
+        (browserWindowDeleteEvent):
+
 2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE build fix.

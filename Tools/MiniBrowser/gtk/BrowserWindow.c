@@ -1045,12 +1045,27 @@ static void browserWindowSaveSession(BrowserWindow *window)
     g_bytes_unref(bytes);
 }
 
+static void browserWindowTryClose(BrowserWindow *window)
+{
+    GSList *webViews = NULL;
+    int n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
+    int i;
+
+    for (i = 0; i < n; ++i) {
+        BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), i);
+        webViews = g_slist_prepend(webViews, browser_tab_get_web_view(tab));
+    }
+
+    GSList *link;
+    for (link = webViews; link; link = link->next)
+        webkit_web_view_try_close(link->data);
+}
+
 static gboolean browserWindowDeleteEvent(GtkWidget *widget, GdkEventAny* event)
 {
     BrowserWindow *window = BROWSER_WINDOW(widget);
     browserWindowSaveSession(window);
-    WebKitWebView *webView = browser_tab_get_web_view(window->activeTab);
-    webkit_web_view_try_close(webView);
+    browserWindowTryClose(window);
     return TRUE;
 }
 
