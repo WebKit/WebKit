@@ -1,3 +1,48 @@
+2017-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Implement HTMLImageElement.decoode() method
+        https://bugs.webkit.org/show_bug.cgi?id=176016
+
+        Reviewed by Simon Fraser.
+
+        The specs is:
+        https://html.spec.whatwg.org/multipage/embedded-content.html#dom-img-decode.
+
+        -- img.decode() waits till loading the image finishes. Otherwise it starts
+        decoding the image immediately.
+        -- If the image frame is already decoded, the promise will be resolved
+        before return.
+        -- If an error happens in loading the image or decoding the image frame,
+        the promise will be rejected with 'EncodingError' exception.
+        -- Animated image resolves the promise when the next frame is decoded and 
+        the animation is advanced it. If the image is not displayed, decode() will
+        request the decoding the first frame and start animating the image.
+
+        Tests: fast/images/decode-animated-image.html
+               fast/images/decode-render-animated-image.html
+               fast/images/decode-render-static-image.html
+               fast/images/decode-static-image-reject.html
+               fast/images/decode-static-image-resolve.html
+
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::decode):
+        * html/HTMLImageElement.h:
+        * html/HTMLImageElement.idl:
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        (WebCore::ImageLoader::decode):
+        (WebCore::ImageLoader::decodeError):
+        * loader/ImageLoader.h:
+        (WebCore::ImageLoader::hasPendingDecodePromise const):
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::internalStartAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::decode):
+        (WebCore::BitmapImage::imageFrameAvailableAtIndex):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        (WebCore::Image::decode):
+
 2017-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses

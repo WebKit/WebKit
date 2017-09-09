@@ -538,6 +538,11 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
+void HTMLImageElement::decode(Ref<DeferredPromise>&& promise)
+{
+    return m_imageLoader.decode(WTFMove(promise));
+}
+
 void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);

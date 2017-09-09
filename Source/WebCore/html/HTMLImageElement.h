@@ -79,6 +79,8 @@ public:
 
     WEBCORE_EXPORT bool complete() const;
 
+    WEBCORE_EXPORT void decode(Ref<DeferredPromise>&&);
+
 #if PLATFORM(IOS)
     bool willRespondToMouseClickEvents() override;
 #endif

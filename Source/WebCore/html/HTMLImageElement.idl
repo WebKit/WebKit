@@ -49,5 +49,7 @@
     readonly attribute long naturalWidth;
     readonly attribute long x;
     readonly attribute long y;
+
+    Promise<void> decode();
 };
 

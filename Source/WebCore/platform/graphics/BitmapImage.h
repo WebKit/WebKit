@@ -178,8 +178,7 @@ protected:
     // automatically pause once all observers no longer want to render the image anywhere.
     void stopAnimation() override;
     void resetAnimation() override;
-    void imageFrameAvailableAtIndex(size_t) override;
-
+    
     // Handle platform-specific data
     void invalidatePlatformData();
 
@@ -197,6 +196,9 @@ private:
     bool canDestroyDecodedData();
     void setCurrentFrameDecodingStatusIfNecessary(DecodingStatus);
     bool isBitmapImage() const override { return true; }
+    void decode(WTF::Function<void()>&&) override;
+    void callDecodingCallbacks();
+    void imageFrameAvailableAtIndex(size_t) override;
     void dump(WTF::TextStream&) const override;
 
     // Animated images over a certain size are considered large enough that we'll only hang on to one frame at a time.
@@ -211,6 +213,7 @@ private:
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().
 
+    Vector<Function<void()>, 1> m_decodingCallbacks;
     Seconds m_frameDecodingDurationForTesting;
     MonotonicTime m_desiredFrameDecodeTimeForTesting;
 

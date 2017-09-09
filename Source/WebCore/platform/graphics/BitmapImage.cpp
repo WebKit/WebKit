@@ -464,7 +464,9 @@ void BitmapImage::internalAdvanceAnimation()
 
     DecodingStatus decodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
     setCurrentFrameDecodingStatusIfNecessary(decodingStatus);
-    
+
+    callDecodingCallbacks();
+
     if (imageObserver())
         imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::Yes, nullptr, decodingStatus);
 
@@ -497,6 +499,47 @@ void BitmapImage::resetAnimation()
     destroyDecodedDataIfNecessary(true);
 }
 
+void BitmapImage::decode(WTF::Function<void()>&& callback)
+{
+    m_decodingCallbacks.append(WTFMove(callback));
+
+    if (canAnimate())  {
+        if (m_desiredFrameStartTime) {
+            internalStartAnimation();
+            return;
+        }
+
+        // The animated image has not been displayed. In this case, either the first frame has not been decoded yet or the animation has not started yet.
+        bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+        bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, std::optional<IntSize>());
+
+        if (frameIsCompatible)
+            internalStartAnimation();
+        else if (!frameIsBeingDecoded) {
+            m_source.requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+            m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+        }
+        return;
+    }
+
+    bool frameIsCompatible = frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+    bool frameIsBeingDecoded = frameIsBeingDecodedAndIsCompatibleWithOptionsAtIndex(m_currentFrame, std::optional<IntSize>());
+    
+    if (frameIsCompatible)
+        callDecodingCallbacks();
+    else if (!frameIsBeingDecoded) {
+        m_source.requestFrameAsyncDecodingAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>());
+        m_currentFrameDecodingStatus = DecodingStatus::Decoding;
+    }
+}
+
+void BitmapImage::callDecodingCallbacks()
+{
+    for (auto& decodingCallback : m_decodingCallbacks)
+        decodingCallback();
+    m_decodingCallbacks.clear();
+}
+
 void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 {
     LOG(Images, "BitmapImage::%s - %p - url: %s [requested frame %ld is now available]", __FUNCTION__, this, sourceURL().string().utf8().data(), index);
@@ -524,9 +567,13 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
 
     DecodingStatus decodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
     setCurrentFrameDecodingStatusIfNecessary(decodingStatus);
-    
+
     if (m_currentFrameDecodingStatus == DecodingStatus::Complete)
         ++m_decodeCountForTesting;
+
+    // Call m_decodingCallbacks only if the image frame was decoded with the native size.
+    if (frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>()))
+        callDecodingCallbacks();
 
     if (imageObserver())
         imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
