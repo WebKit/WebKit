@@ -57,6 +57,18 @@ const Capabilities& Session::capabilities() const
     return m_host->capabilities();
 }
 
+static std::optional<String> firstWindowHandleInResult(InspectorValue& result)
+{
+    RefPtr<InspectorArray> handles;
+    if (result.asArray(handles) && handles->length()) {
+        auto handleValue = handles->get(0);
+        String handle;
+        if (handleValue->asString(handle))
+            return handle;
+    }
+    return std::nullopt;
+}
+
 void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingContext, Function<void (CommandResult&&)>&& completionHandler)
 {
     closeTopLevelBrowsingContext(toplevelBrowsingContext, [this, protectedThis = makeRef(*this), completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
@@ -64,14 +76,9 @@ void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingCon
             completionHandler(WTFMove(result));
             return;
         }
-        RefPtr<InspectorArray> handles;
-        if (result.result()->asArray(handles) && handles->length()) {
-            auto handleValue = handles->get(0);
-            String handle;
-            if (handleValue->asString(handle)) {
-                closeAllToplevelBrowsingContexts(handle, WTFMove(completionHandler));
-                return;
-            }
+        if (auto handle = firstWindowHandleInResult(*result.result())) {
+            closeAllToplevelBrowsingContexts(handle.value(), WTFMove(completionHandler));
+            return;
         }
         completionHandler(CommandResult::success());
     });
@@ -79,13 +86,18 @@ void Session::closeAllToplevelBrowsingContexts(const String& toplevelBrowsingCon
 
 void Session::close(Function<void (CommandResult&&)>&& completionHandler)
 {
-    if (!m_toplevelBrowsingContext) {
+    m_toplevelBrowsingContext = std::nullopt;
+    getWindowHandles([this, completionHandler = WTFMove(completionHandler)](CommandResult&& result) mutable {
+        if (result.isError()) {
+            completionHandler(WTFMove(result));
+            return;
+        }
+        if (auto handle = firstWindowHandleInResult(*result.result())) {
+            closeAllToplevelBrowsingContexts(handle.value(), WTFMove(completionHandler));
+            return;
+        }
         completionHandler(CommandResult::success());
-        return;
-    }
-
-    auto toplevelBrowsingContext = std::exchange(m_toplevelBrowsingContext, std::nullopt);
-    closeAllToplevelBrowsingContexts(toplevelBrowsingContext.value(), WTFMove(completionHandler));
+    });
 }
 
 void Session::setTimeouts(const Timeouts& timeouts, Function<void (CommandResult&&)>&& completionHandler)
