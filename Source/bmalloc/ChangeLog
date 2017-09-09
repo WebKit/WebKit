@@ -1,3 +1,12 @@
+2017-09-04  Adrian Perez de Castro  <aperez@igalia.com>
+
+        Unreviewed build fix for Clang with libc++
+
+        Fixes a build failure when building with Clang, -stdlib=libc++, and gigacage
+        support enabled, which resulted in "stderr" being undefined.
+
+        * bmalloc/Gigacage.cpp: Add missing <ctsdio> include to pull the definition.
+
 2017-08-08  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT should do caging
