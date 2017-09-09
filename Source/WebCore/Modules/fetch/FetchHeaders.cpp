@@ -169,14 +169,6 @@ ExceptionOr<void> FetchHeaders::set(const String& name, const String& value)
     return { };
 }
 
-void FetchHeaders::fill(const FetchHeaders* headers)
-{
-    ASSERT(m_guard != Guard::Immutable);
-    if (!headers)
-        return;
-    filterAndFill(headers->m_headers, m_guard);
-}
-
 void FetchHeaders::filterAndFill(const HTTPHeaderMap& headers, Guard guard)
 {
     for (auto& header : headers) {

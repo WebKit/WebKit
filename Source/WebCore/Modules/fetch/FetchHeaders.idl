@@ -35,8 +35,6 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     InterfaceName=Headers,
     Constructor(optional HeadersInit init),
     ConstructorMayThrowException,
-    PrivateIdentifier,
-    PublicIdentifier,
 ] interface FetchHeaders {
     [MayThrowException] void append(ByteString name, ByteString value);
     [MayThrowException, ImplementedAs=remove] void delete(ByteString name);
@@ -45,7 +43,4 @@ typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) Heade
     [MayThrowException] void set(ByteString name, ByteString value);
 
     iterable<ByteString, ByteString>;
-
-    [ImplementedAs=append, MayThrowException, PrivateIdentifier] void appendFromJS(ByteString name, ByteString value);
-    [ImplementedAs=fill, PrivateIdentifier] void fillFromJS(FetchHeaders? headers);
 };

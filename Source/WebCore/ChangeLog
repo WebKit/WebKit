@@ -1,3 +1,65 @@
+2017-09-08  Sam Weinig  <sam@webkit.org>
+
+        Replace JS builtin implementation of the FetchResponse constructor with a C++ one
+        https://bugs.webkit.org/show_bug.cgi?id=176627
+
+        Reviewed by Alex Christensen.
+
+        Removes the last of the Fetch related JS builtin code.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * Modules/fetch/FetchInternals.js: Removed.
+        * Modules/fetch/FetchResponse.js: Removed.
+        
+            Remove FetchInternals.js and FetchResponse.js.
+
+
+        * Modules/fetch/FetchBody.idl:
+        * Modules/fetch/FetchBodyConsumer.h:
+
+            Remove no longer correct FIXMEs.
+
+        * Modules/fetch/FetchBodySource.cpp:
+
+            Add missing newline between functions.
+
+        * Modules/fetch/FetchHeaders.idl:
+        * Modules/fetch/FetchResponse.idl:
+
+            Remove builtin related operations and extended attributes.
+
+        * Modules/fetch/FetchHeaders.h:
+        (WebCore::FetchHeaders::fastHas const):
+        * Modules/fetch/FetchHeaders.cpp:
+
+            Added fastHas to allow checking for a header using a HTTPHeaderName. Remove
+            now unused filter function.
+
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::isNullBodyStatus):
+
+            Added helper predicate for 'null body status' concept.
+
+        (WebCore::FetchResponse::create):
+
+            Add spec defined constructor implementation.
+
+        (WebCore::FetchResponse::setBodyData):
+
+            Reformatted to match more common WTF::switchOn style.
+
+        (WebCore::FetchResponse::setStatus): Deleted.
+        (WebCore::FetchResponse::initializeWith): Deleted.
+
+            Removed now unused functions.
+
+        * Modules/fetch/FetchResponse.h:
+        (WebCore::FetchResponse::create):
+
+            Move inline create out of the class definition to make things a bit less crowded.
+
 2017-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement HTMLImageElement.decoode() method

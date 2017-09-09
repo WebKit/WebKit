@@ -69,6 +69,7 @@ void FetchBodySource::close()
     controller().close();
     clean();
 }
+
 void FetchBodySource::error(const String& value)
 {
     controller().error(value);

@@ -42,6 +42,81 @@ static inline bool isRedirectStatus(int status)
     return status == 301 || status == 302 || status == 303 || status == 307 || status == 308;
 }
 
+// https://fetch.spec.whatwg.org/#null-body-status
+static inline bool isNullBodyStatus(int status)
+{
+    return status == 101 || status == 204 || status == 205 || status == 304;
+}
+
+ExceptionOr<Ref<FetchResponse>> FetchResponse::create(ScriptExecutionContext& context, std::optional<FetchBody::Init>&& body, Init&& init)
+{
+    // 1. If init’s status member is not in the range 200 to 599, inclusive, then throw a RangeError.
+    if (init.status < 200  || init.status > 599)
+        return Exception { RangeError, ASCIILiteral("Status must be between 200 and 599") };
+
+    // 2. If init’s statusText member does not match the reason-phrase token production, then throw a TypeError.
+    if (!isValidReasonPhrase(init.statusText))
+        return Exception { TypeError, ASCIILiteral("Status text must be a valid reason-phrase.") };
+
+    // 3. Let r be a new Response object associated with a new response.
+    // NOTE: Creation of the Response object is delayed until all potential exceptional cases are handled.
+    
+    // 4. Set r’s headers to a new Headers object, whose header list is r’s response’s header list, and guard is "response".
+    auto headers = FetchHeaders::create(FetchHeaders::Guard::Response);
+
+    // 5. Set r’s response’s status to init’s status member.
+    auto status = init.status;
+    
+    // 6. Set r’s response’s status message to init’s statusText member.
+    auto statusText = init.statusText;
+    
+    // 7. If init’s headers member is present, then fill r’s headers with init’s headers member.
+    if (init.headers) {
+        auto result = headers->fill(*init.headers);
+        if (result.hasException())
+            return result.releaseException();
+    }
+
+    std::optional<FetchBody> extractedBody;
+
+    // 8. If body is non-null, run these substeps:
+    if (body) {
+        // 8.1 If init’s status member is a null body status, then throw a TypeError.
+        //     (NOTE: 101 is included in null body status due to its use elsewhere. It does not affect this step.)
+        if (isNullBodyStatus(init.status))
+            return Exception { TypeError, ASCIILiteral("Response cannot have a body with the given status.") };
+
+        // 8.2 Let Content-Type be null.
+        String contentType;
+
+        // 8.3 Set r’s response’s body and Content-Type to the result of extracting body.
+        extractedBody = FetchBody::extract(context, WTFMove(*body), contentType);
+
+        // 8.4 If Content-Type is non-null and r’s response’s header list does not contain `Content-Type`, then append
+        //     `Content-Type`/Content-Type to r’s response’s header list.
+        if (!contentType.isNull() && !headers->fastHas(HTTPHeaderName::ContentType))
+            headers->fastSet(HTTPHeaderName::ContentType, contentType);
+    }
+
+    // 9. Set r’s MIME type to the result of extracting a MIME type from r’s response’s header list.
+    auto contentType = headers->fastGet(HTTPHeaderName::ContentType);
+
+    // 10. Set r’s response’s HTTPS state to current settings object’s HTTPS state.
+    // FIXME: Implement.
+
+    // 11. Resolve r’s trailer promise with a new Headers object whose guard is "immutable".
+    // FIXME: Implement.
+    
+    // 12. Return r.
+    auto r = adoptRef(*new FetchResponse(context, WTFMove(extractedBody), WTFMove(headers), { }));
+
+    r->m_contentType = contentType;
+    r->m_response.setHTTPStatusCode(status);
+    r->m_response.setHTTPStatusText(statusText);
+
+    return WTFMove(r);
+}
+
 Ref<FetchResponse> FetchResponse::error(ScriptExecutionContext& context)
 {
     auto response = adoptRef(*new FetchResponse(context, { }, FetchHeaders::create(FetchHeaders::Guard::Immutable), { }));
@@ -61,22 +136,6 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::redirect(ScriptExecutionContext& 
     redirectResponse->m_response.setHTTPStatusCode(status);
     redirectResponse->m_headers->fastSet(HTTPHeaderName::Location, requestURL.string());
     return WTFMove(redirectResponse);
-}
-
-ExceptionOr<void> FetchResponse::setStatus(int status, const String& statusText)
-{
-    if (!isValidReasonPhrase(statusText))
-        return Exception { TypeError };
-    m_response.setHTTPStatusCode(status);
-    m_response.setHTTPStatusText(statusText);
-    return { };
-}
-
-void FetchResponse::initializeWith(FetchBody::Init&& body)
-{
-    ASSERT(scriptExecutionContext());
-    extractBody(*scriptExecutionContext(), WTFMove(body));
-    updateContentType();
 }
 
 FetchResponse::FetchResponse(ScriptExecutionContext& context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers, ResourceResponse&& response)
@@ -267,15 +326,20 @@ void FetchResponse::consumeBodyWhenLoaded(ConsumeDataCallback&& callback)
 
 void FetchResponse::setBodyData(ResponseData&& data)
 {
-    WTF::switchOn(data, [this](Ref<FormData>& formData) {
-        if (isBodyNull())
-            setBody({ });
-        body().setAsFormData(WTFMove(formData));
-    }, [this](Ref<SharedBuffer>& buffer) {
-        if (isBodyNull())
-            setBody({ });
-        body().consumer().setData(WTFMove(buffer));
-    }, [](std::nullptr_t&) { });
+    WTF::switchOn(data,
+        [this](Ref<FormData>& formData) {
+            if (isBodyNull())
+                setBody({ });
+            body().setAsFormData(WTFMove(formData));
+        },
+        [this](Ref<SharedBuffer>& buffer) {
+            if (isBodyNull())
+                setBody({ });
+            body().consumer().setData(WTFMove(buffer));
+        },
+        [](std::nullptr_t&) {
+        }
+    );
 }
 
 #if ENABLE(STREAMS_API)

@@ -61,11 +61,10 @@ public:
 
     ExceptionOr<void> fill(const Init&);
     ExceptionOr<void> fill(const FetchHeaders&);
-
-    void fill(const FetchHeaders*);
     void filterAndFill(const HTTPHeaderMap&, Guard);
 
     String fastGet(HTTPHeaderName name) const { return m_headers.get(name); }
+    bool fastHas(HTTPHeaderName name) const { return m_headers.contains(name); }
     void fastSet(HTTPHeaderName name, const String& value) { m_headers.set(name, value); }
 
     class Iterator {

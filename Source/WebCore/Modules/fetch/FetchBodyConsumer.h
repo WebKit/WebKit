@@ -41,7 +41,6 @@ class ReadableStream;
 
 class FetchBodyConsumer {
 public:
-    // Type is used in FetchResponse.js and should be kept synchronized with it.
     enum class Type { None, ArrayBuffer, Blob, JSON, Text };
 
     FetchBodyConsumer(Type type) : m_type(type) { }

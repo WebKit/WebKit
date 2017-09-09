@@ -39,12 +39,12 @@ dictionary FetchResponseInit {
 
 [
     ActiveDOMObject,
+    Constructor(optional BodyInit? body = null, optional FetchResponseInit init),
     ConstructorCallWith=ScriptExecutionContext,
+    ConstructorMayThrowException,
     EnabledAtRuntime=FetchAPI,
     Exposed=(Window,Worker),
     InterfaceName=Response,
-    JSBuiltinConstructor,
-    // Constructor(optional BodyInit? body = null, optional FetchResponseInit init)
 ] interface FetchResponse {
     [CallWith=ScriptExecutionContext, NewObject] static FetchResponse error();
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] static FetchResponse redirect(USVString url, optional unsigned short status = 302);
@@ -61,9 +61,6 @@ dictionary FetchResponseInit {
     // readonly attribute Promise<Headers> trailer;
 
     [CallWith=ScriptExecutionContext, MayThrowException, NewObject] FetchResponse clone();
-
-    [MayThrowException, PrivateIdentifier] void setStatus(unsigned short status, DOMString statusText);
-    [PrivateIdentifier] void initializeWith(BodyInit body);
 };
 
 FetchResponse implements FetchBody;
