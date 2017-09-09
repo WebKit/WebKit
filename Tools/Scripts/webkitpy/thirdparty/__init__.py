@@ -106,12 +106,6 @@ class AutoinstallImportHook(object):
             self.install_chromedriver()
         elif '.geckodriver' in fullname:
             self.install_geckodriver()
-        elif '.requests' in fullname:
-            self._install_requests()
-
-    def _install_requests(self):
-        self._install("https://pypi.python.org/packages/b0/e1/eab4fc3752e3d240468a8c0b284607899d2fbfb236a56b7377a329aa8d09/requests-2.18.4.tar.gz#md5=081412b2ef79bdc48229891af13f4d82",
-                             "requests-2.18.4/requests")
 
     def _install_mechanize(self):
         self._install("http://pypi.python.org/packages/source/m/mechanize/mechanize-0.2.5.tar.gz",

@@ -30,12 +30,12 @@ import argparse
 import bisect
 import math
 import os
+import requests
 import shutil
 import subprocess
 import sys
 import tempfile
 import urlparse
-import webkitpy.thirdparty.autoinstalled.requests as requests
 
 REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2/'
 REST_API_ENDPOINT = 'archives/'
