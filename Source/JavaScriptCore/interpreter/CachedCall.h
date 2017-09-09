@@ -41,8 +41,8 @@ namespace JSC {
     public:
         CachedCall(CallFrame* callFrame, JSFunction* function, int argumentCount)
             : m_valid(false)
-            , m_interpreter(callFrame->interpreter())
             , m_vm(callFrame->vm())
+            , m_interpreter(m_vm.interpreter)
             , m_entryScope(m_vm, function->scope()->globalObject(m_vm))
         {
             VM& vm = m_entryScope.vm();
@@ -70,8 +70,8 @@ namespace JSC {
 
     private:
         bool m_valid;
-        Interpreter* m_interpreter;
         VM& m_vm;
+        Interpreter* m_interpreter;
         VMEntryScope m_entryScope;
         ProtoCallFrame m_protoCallFrame;
         MarkedArgumentBuffer m_arguments;

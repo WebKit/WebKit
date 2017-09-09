@@ -72,8 +72,9 @@ public:
     
     uint32_t length(ExecState* exec) const
     {
+        VM& vm = exec->vm();
         if (UNLIKELY(m_overrodeThings))
-            return get(exec, exec->propertyNames().length).toUInt32(exec);
+            return get(exec, vm.propertyNames->length).toUInt32(exec);
         return internalLength();
     }
     

@@ -189,9 +189,10 @@ JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
 
-    return toRef(jsCast<JSObject*>(exec->lexicalGlobalObject()->methodTable()->toThis(exec->lexicalGlobalObject(), exec, NotStrictMode)));
+    return toRef(jsCast<JSObject*>(exec->lexicalGlobalObject()->methodTable(vm)->toThis(exec->lexicalGlobalObject(), exec, NotStrictMode)));
 }
 
 JSContextGroupRef JSContextGetGroup(JSContextRef ctx)
@@ -304,9 +305,10 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
         return 0;
     }
     ExecState* exec = toJS(ctx);
-    JSLockHolder lock(exec);
+    VM& vm = exec->vm();
+    JSLockHolder lock(vm);
     StringBuilder builder;
-    CallFrame* frame = exec->vm().topCallFrame;
+    CallFrame* frame = vm.topCallFrame;
 
     ASSERT(maxStackSize);
     BacktraceFunctor functor(builder, maxStackSize);

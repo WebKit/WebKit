@@ -100,7 +100,8 @@ bool JSLexicalEnvironment::put(JSCell* cell, ExecState* exec, PropertyName prope
 
 bool JSLexicalEnvironment::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
-    if (propertyName == exec->propertyNames().arguments)
+    VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->arguments)
         return false;
 
     return Base::deleteProperty(cell, exec, propertyName);

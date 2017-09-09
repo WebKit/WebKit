@@ -386,7 +386,7 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
         return;
     }
     JSC::CallData callData;
-    auto callType = overlay->methodTable()->getCallData(overlay, callData);
+    auto callType = overlay->methodTable(vm)->getCallData(overlay, callData);
     if (callType == JSC::CallType::None)
         return;
 

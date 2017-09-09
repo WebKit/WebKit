@@ -143,13 +143,13 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
 
     JSValue value = exec->uncheckedArgument(0);
     if (value.isString())
-        return exec->vm().smallStrings.stringString();
+        return vm.smallStrings.stringString();
     if (value.isBoolean())
-        return exec->vm().smallStrings.booleanString();
+        return vm.smallStrings.booleanString();
     if (value.isNumber())
-        return exec->vm().smallStrings.numberString();
+        return vm.smallStrings.numberString();
     if (value.isSymbol())
-        return exec->vm().smallStrings.symbolString();
+        return vm.smallStrings.symbolString();
 
     JSObject* object = asObject(value);
     if (object) {
@@ -187,9 +187,9 @@ JSValue JSInjectedScriptHost::subtype(ExecState* exec)
         return jsNontrivialString(exec, ASCIILiteral("iterator"));
 
     if (object) {
-        if (object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())
-            || object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().mapBucketPrivateName())
-            || object->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().setBucketPrivateName()))
+        if (object->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())
+            || object->getDirect(vm, vm.propertyNames->builtinNames().mapBucketPrivateName())
+            || object->getDirect(vm, vm.propertyNames->builtinNames().setBucketPrivateName()))
             return jsNontrivialString(exec, ASCIILiteral("iterator"));
     }
 
@@ -256,9 +256,10 @@ JSValue JSInjectedScriptHost::functionDetails(ExecState* exec)
 
 static JSObject* constructInternalProperty(ExecState* exec, const String& name, JSValue value)
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, name));
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "value"), value);
+    result->putDirect(vm, Identifier::fromString(exec, "name"), jsString(exec, name));
+    result->putDirect(vm, Identifier::fromString(exec, "value"), value);
     return result;
 }
 
@@ -275,7 +276,7 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
         unsigned index = 0;
         JSArray* array = constructEmptyArray(exec, nullptr);
         RETURN_IF_EXCEPTION(scope, JSValue());
-        switch (promise->status(exec->vm())) {
+        switch (promise->status(vm)) {
         case JSPromise::Status::Pending:
             scope.release();
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("pending"))));
@@ -284,13 +285,13 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("resolved"))));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(exec->vm())));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(vm)));
             return array;
         case JSPromise::Status::Rejected:
             array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("status"), jsNontrivialString(exec, ASCIILiteral("rejected"))));
             RETURN_IF_EXCEPTION(scope, JSValue());
             scope.release();
-            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(exec->vm())));
+            array->putDirectIndex(exec, index++, constructInternalProperty(exec, ASCIILiteral("result"), promise->result(vm)));
             return array;
         }
         // FIXME: <https://webkit.org/b/141664> Web Inspector: ES6: Improved Support for Promises - Promise Reactions
@@ -325,9 +326,9 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
     }
 
     if (JSObject* iteratorObject = jsDynamicCast<JSObject*>(vm, value)) {
-        if (iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())) {
-            JSValue iteratedValue = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedObjectPrivateName());
-            JSValue kind = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().arrayIteratorKindPrivateName());
+        if (iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorNextIndexPrivateName())) {
+            JSValue iteratedValue = iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().iteratedObjectPrivateName());
+            JSValue kind = iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().arrayIteratorKindPrivateName());
 
             unsigned index = 0;
             JSArray* array = constructEmptyArray(exec, nullptr, 2);
@@ -339,10 +340,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             return array;
         }
 
-        if (iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().mapBucketPrivateName())) {
-            JSValue iteratedValue = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedObjectPrivateName());
+        if (iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().mapBucketPrivateName())) {
+            JSValue iteratedValue = iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().iteratedObjectPrivateName());
             String kind;
-            switch (static_cast<IterationKind>(iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().mapIteratorKindPrivateName()).asInt32())) {
+            switch (static_cast<IterationKind>(iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().mapIteratorKindPrivateName()).asInt32())) {
             case IterateKey:
                 kind = ASCIILiteral("key");
                 break;
@@ -363,10 +364,10 @@ JSValue JSInjectedScriptHost::getInternalProperties(ExecState* exec)
             return array;
         }
 
-        if (iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().setBucketPrivateName())) {
-            JSValue iteratedValue = iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().iteratedObjectPrivateName());
+        if (iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().setBucketPrivateName())) {
+            JSValue iteratedValue = iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().iteratedObjectPrivateName());
             String kind;
-            switch (static_cast<IterationKind>(iteratorObject->getDirect(exec->vm(), exec->vm().propertyNames->builtinNames().setIteratorKindPrivateName()).asInt32())) {
+            switch (static_cast<IterationKind>(iteratorObject->getDirect(vm, vm.propertyNames->builtinNames().setIteratorKindPrivateName()).asInt32())) {
             case IterateKey:
                 kind = ASCIILiteral("key");
                 break;
@@ -456,8 +457,8 @@ JSValue JSInjectedScriptHost::weakMapEntries(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, JSValue());
     for (auto it = weakMap->begin(); it != weakMap->end(); ++it) {
         JSObject* entry = constructEmptyObject(exec);
-        entry->putDirect(exec->vm(), Identifier::fromString(exec, "key"), it->key);
-        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->value.get());
+        entry->putDirect(vm, Identifier::fromString(exec, "key"), it->key);
+        entry->putDirect(vm, Identifier::fromString(exec, "value"), it->value.get());
         array->putDirectIndex(exec, fetched++, entry);
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (numberToFetch && fetched >= numberToFetch)
@@ -505,7 +506,7 @@ JSValue JSInjectedScriptHost::weakSetEntries(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, JSValue());
     for (auto it = weakSet->begin(); it != weakSet->end(); ++it) {
         JSObject* entry = constructEmptyObject(exec);
-        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), it->key);
+        entry->putDirect(vm, Identifier::fromString(exec, "value"), it->key);
         array->putDirectIndex(exec, fetched++, entry);
         RETURN_IF_EXCEPTION(scope, JSValue());
         if (numberToFetch && fetched >= numberToFetch)
@@ -604,7 +605,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, { });
 
         JSObject* entry = constructEmptyObject(exec);
-        entry->putDirect(exec->vm(), Identifier::fromString(exec, "value"), nextValue);
+        entry->putDirect(vm, Identifier::fromString(exec, "value"), nextValue);
         array->putDirectIndex(exec, i, entry);
         if (UNLIKELY(scope.exception())) {
             scope.release();

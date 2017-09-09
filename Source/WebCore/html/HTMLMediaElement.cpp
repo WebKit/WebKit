@@ -4256,7 +4256,7 @@ void HTMLMediaElement::updateCaptionContainer()
         return;
 
     JSC::CallData callData;
-    JSC::CallType callType = methodObject->methodTable()->getCallData(methodObject, callData);
+    JSC::CallType callType = methodObject->methodTable(vm)->getCallData(methodObject, callData);
     if (callType == JSC::CallType::None)
         return;
 
@@ -6998,7 +6998,8 @@ void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JS
     ScriptController& scriptController = document().frame()->script();
     JSDOMGlobalObject* globalObject = JSC::jsCast<JSDOMGlobalObject*>(scriptController.globalObject(world));
     JSC::ExecState* exec = globalObject->globalExec();
-    JSC::JSLockHolder lock(exec);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder lock(vm);
 
     JSC::JSValue controllerValue = controllerJSValue(*exec, *globalObject, *this);
     if (controllerValue.isNull())
@@ -7009,7 +7010,7 @@ void HTMLMediaElement::setControllerJSProperty(const char* propertyName, JSC::JS
     if (!controllerObject)
         return;
 
-    controllerObject->methodTable()->put(controllerObject, exec, JSC::Identifier::fromString(exec, propertyName), propertyValue, propertySlot);
+    controllerObject->methodTable(vm)->put(controllerObject, exec, JSC::Identifier::fromString(exec, propertyName), propertyValue, propertySlot);
 }
 
 void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -7059,7 +7060,7 @@ void HTMLMediaElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     JSC::JSObject* function = functionValue.toObject(exec);
     scope.assertNoException();
     JSC::CallData callData;
-    JSC::CallType callType = function->methodTable()->getCallData(function, callData);
+    JSC::CallType callType = function->methodTable(vm)->getCallData(function, callData);
     if (callType == JSC::CallType::None)
         return;
 
@@ -7143,7 +7144,7 @@ void HTMLMediaElement::updateMediaControlsAfterPresentationModeChange()
     JSC::JSObject* function = functionValue.toObject(exec);
     scope.assertNoException();
     JSC::CallData callData;
-    JSC::CallType callType = function->methodTable()->getCallData(function, callData);
+    JSC::CallType callType = function->methodTable(vm)->getCallData(function, callData);
     if (callType == JSC::CallType::None)
         return;
 
@@ -7185,7 +7186,7 @@ String HTMLMediaElement::getCurrentMediaControlsStatus()
     JSC::JSObject* function = functionValue.toObject(exec);
     scope.assertNoException();
     JSC::CallData callData;
-    JSC::CallType callType = function->methodTable()->getCallData(function, callData);
+    JSC::CallType callType = function->methodTable(vm)->getCallData(function, callData);
     JSC::MarkedArgumentBuffer argList;
     if (callType == JSC::CallType::None)
         return emptyString();

@@ -44,10 +44,11 @@ CompiledBytecode::~CompiledBytecode()
 
 JSValue CompiledBytecode::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
     
-    result->putDirect(exec->vm(), exec->propertyNames().origin, m_origin.toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().description, jsString(exec, String::fromUTF8(m_description)));
+    result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(exec));
+    result->putDirect(vm, vm.propertyNames->description, jsString(exec, String::fromUTF8(m_description)));
     
     return result;
 }

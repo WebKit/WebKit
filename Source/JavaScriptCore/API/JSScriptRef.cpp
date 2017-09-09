@@ -145,8 +145,9 @@ void JSScriptRelease(JSScriptRef script)
 JSValueRef JSScriptEvaluate(JSContextRef context, JSScriptRef script, JSValueRef thisValueRef, JSValueRef* exception)
 {
     ExecState* exec = toJS(context);
-    JSLockHolder locker(exec);
-    if (&script->vm() != &exec->vm()) {
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    if (&script->vm() != &vm) {
         RELEASE_ASSERT_NOT_REACHED();
         return 0;
     }

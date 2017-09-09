@@ -194,7 +194,7 @@ bool QuickTimePluginReplacement::installReplacement(ShadowRoot& root)
     JSC::JSObject* replacementObject = replacementFunction.toObject(exec);
     scope.assertNoException();
     JSC::CallData callData;
-    JSC::CallType callType = replacementObject->methodTable()->getCallData(replacementObject, callData);
+    JSC::CallType callType = replacementObject->methodTable(vm)->getCallData(replacementObject, callData);
     if (callType == JSC::CallType::None)
         return false;
 

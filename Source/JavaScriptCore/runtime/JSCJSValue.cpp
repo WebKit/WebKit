@@ -299,14 +299,15 @@ void JSValue::dumpForBacktrace(PrintStream& out) const
     else if (isDouble())
         out.printf("%lf", asDouble());
     else if (isCell()) {
-        if (asCell()->inherits(*asCell()->vm(), JSString::info())) {
+        VM& vm = *asCell()->vm();
+        if (asCell()->inherits(vm, JSString::info())) {
             JSString* string = asString(asCell());
             const StringImpl* impl = string->tryGetValueImpl();
             if (impl)
                 out.print("\"", impl, "\"");
             else
                 out.print("(unresolved string)");
-        } else if (asCell()->inherits(*asCell()->vm(), Structure::info())) {
+        } else if (asCell()->inherits(vm, Structure::info())) {
             out.print("Structure[ ", asCell()->structure()->classInfo()->className);
 #if USE(JSVALUE64)
             out.print(" ID: ", asCell()->structureID());

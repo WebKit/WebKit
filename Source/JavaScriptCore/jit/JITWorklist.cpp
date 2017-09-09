@@ -273,7 +273,8 @@ void JITWorklist::compileLater(CodeBlock* codeBlock, unsigned loopOSREntryByteco
 
 void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecodeOffset)
 {
-    DeferGC deferGC(codeBlock->vm()->heap);
+    VM* vm = codeBlock->vm();
+    DeferGC deferGC(vm->heap);
     if (codeBlock->jitType() != JITCode::InterpreterThunk)
         return;
     
@@ -286,7 +287,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecode
     if (isPlanned) {
         RELEASE_ASSERT(Options::useConcurrentJIT());
         // This is expensive, but probably good enough.
-        completeAllForVM(*codeBlock->vm());
+        completeAllForVM(*vm);
     }
     
     // Now it might be compiled!
@@ -298,7 +299,7 @@ void JITWorklist::compileNow(CodeBlock* codeBlock, unsigned loopOSREntryBytecode
     codeBlock->resetJITData();
     
     // OK, just compile it.
-    JIT::compile(codeBlock->vm(), codeBlock, JITCompilationMustSucceed, loopOSREntryBytecodeOffset);
+    JIT::compile(vm, codeBlock, JITCompilationMustSucceed, loopOSREntryBytecodeOffset);
     codeBlock->ownerScriptExecutable()->installCode(codeBlock);
 }
 

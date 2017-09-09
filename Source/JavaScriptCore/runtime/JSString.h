@@ -669,7 +669,8 @@ ALWAYS_INLINE JSString* jsStringWithCache(ExecState* exec, const String& s)
 
 ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    if (propertyName == exec->propertyNames().length) {
+    VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->length) {
         slot.setValue(this, DontEnum | DontDelete | ReadOnly, jsNumber(length()));
         return true;
     }

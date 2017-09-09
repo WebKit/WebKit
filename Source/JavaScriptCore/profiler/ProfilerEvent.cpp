@@ -46,15 +46,16 @@ void Event::dump(PrintStream& out) const
 
 JSValue Event::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
     
-    result->putDirect(exec->vm(), exec->propertyNames().time, jsNumber(m_time));
-    result->putDirect(exec->vm(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(vm, vm.propertyNames->time, jsNumber(m_time));
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     if (m_compilation)
-        result->putDirect(exec->vm(), exec->propertyNames().compilationUID, m_compilation->uid().toJS(exec));
-    result->putDirect(exec->vm(), exec->propertyNames().summary, jsString(exec, String::fromUTF8(m_summary)));
+        result->putDirect(vm, vm.propertyNames->compilationUID, m_compilation->uid().toJS(exec));
+    result->putDirect(vm, vm.propertyNames->summary, jsString(exec, String::fromUTF8(m_summary)));
     if (m_detail.length())
-        result->putDirect(exec->vm(), exec->propertyNames().detail, jsString(exec, String::fromUTF8(m_detail)));
+        result->putDirect(vm, vm.propertyNames->detail, jsString(exec, String::fromUTF8(m_detail)));
     
     return result;
 }

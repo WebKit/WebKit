@@ -76,8 +76,9 @@ CallType BooleanConstructor::getCallData(JSCell*, CallData& callData)
 
 JSObject* constructBooleanFromImmediateBoolean(ExecState* exec, JSGlobalObject* globalObject, JSValue immediateBooleanValue)
 {
-    BooleanObject* obj = BooleanObject::create(exec->vm(), globalObject->booleanObjectStructure());
-    obj->setInternalValue(exec->vm(), immediateBooleanValue);
+    VM& vm = exec->vm();
+    BooleanObject* obj = BooleanObject::create(vm, globalObject->booleanObjectStructure());
+    obj->setInternalValue(vm, immediateBooleanValue);
     return obj;
 }
 

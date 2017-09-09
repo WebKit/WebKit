@@ -119,10 +119,11 @@ static JSValue valueForScopeLocation(ExecState* exec, const DebuggerLocation& lo
         return jsNull();
 
     // Debugger.Location protocol object.
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "scriptId"), jsString(exec, String::number(location.sourceID)));
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "lineNumber"), jsNumber(location.line));
-    result->putDirect(exec->vm(), Identifier::fromString(exec, "columnNumber"), jsNumber(location.column));
+    result->putDirect(vm, Identifier::fromString(exec, "scriptId"), jsString(exec, String::number(location.sourceID)));
+    result->putDirect(vm, Identifier::fromString(exec, "lineNumber"), jsNumber(location.line));
+    result->putDirect(vm, Identifier::fromString(exec, "columnNumber"), jsNumber(location.column));
     return result;
 }
 
@@ -142,9 +143,9 @@ JSValue JSJavaScriptCallFrame::scopeDescriptions(ExecState* exec)
     for (DebuggerScope::iterator iter = scopeChain->begin(); iter != end; ++iter) {
         DebuggerScope* scope = iter.get();
         JSObject* description = constructEmptyObject(exec);
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "type"), valueForScopeType(scope));
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "name"), jsString(exec, scope->name()));
-        description->putDirect(exec->vm(), Identifier::fromString(exec, "location"), valueForScopeLocation(exec, scope->location()));
+        description->putDirect(vm, Identifier::fromString(exec, "type"), valueForScopeType(scope));
+        description->putDirect(vm, Identifier::fromString(exec, "name"), jsString(exec, scope->name()));
+        description->putDirect(vm, Identifier::fromString(exec, "location"), valueForScopeLocation(exec, scope->location()));
         array->putDirectIndex(exec, index++, description);
         RETURN_IF_EXCEPTION(throwScope, JSValue());
     }
@@ -226,9 +227,10 @@ JSValue toJS(ExecState* exec, JSGlobalObject* globalObject, JavaScriptCallFrame*
     if (!impl)
         return jsNull();
 
-    JSObject* prototype = JSJavaScriptCallFrame::createPrototype(exec->vm(), globalObject);
-    Structure* structure = JSJavaScriptCallFrame::createStructure(exec->vm(), globalObject, prototype);
-    JSJavaScriptCallFrame* javaScriptCallFrame = JSJavaScriptCallFrame::create(exec->vm(), structure, *impl);
+    VM& vm = exec->vm();
+    JSObject* prototype = JSJavaScriptCallFrame::createPrototype(vm, globalObject);
+    Structure* structure = JSJavaScriptCallFrame::createStructure(vm, globalObject, prototype);
+    JSJavaScriptCallFrame* javaScriptCallFrame = JSJavaScriptCallFrame::create(vm, structure, *impl);
 
     return javaScriptCallFrame;
 }

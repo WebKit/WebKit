@@ -4406,7 +4406,7 @@ sub GenerateImplementation
         } else {
             push(@implContent, "    JSValue constructor = ${className}Constructor::create(state->vm(), ${className}Constructor::createStructure(state->vm(), *prototype->globalObject(), prototype->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(prototype->globalObject()));\n");
             push(@implContent, "    // Shadowing constructor property to ensure reusing the same constructor object\n");
-            push(@implContent, "    prototype->putDirect(state->vm(), state->propertyNames().constructor, constructor, DontEnum | ReadOnly);\n");
+            push(@implContent, "    prototype->putDirect(vm, vm.propertyNames->constructor, constructor, DontEnum | ReadOnly);\n");
             push(@implContent, "    return JSValue::encode(constructor);\n");
         }
         push(@implContent, "}\n\n");
@@ -4423,7 +4423,7 @@ sub GenerateImplementation
         push(@implContent, "        return false;\n");
         push(@implContent, "    }\n");
         push(@implContent, "    // Shadowing a built-in constructor\n");
-        push(@implContent, "    return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));\n");
+        push(@implContent, "    return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));\n");
         push(@implContent, "}\n\n");
 
     }

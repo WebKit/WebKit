@@ -675,10 +675,11 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     }
 
     JSC::ExecState* exec = toJS([context JSGlobalContextRef]);
-    JSC::JSLockHolder locker(exec);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
     auto impl = std::make_unique<JSC::ObjCCallbackFunctionImpl>(invocation, type, instanceClass, WTFMove(arguments), WTFMove(result));
     const String& name = impl->name();
-    return toRef(JSC::ObjCCallbackFunction::create(exec->vm(), exec->lexicalGlobalObject(), name, WTFMove(impl)));
+    return toRef(JSC::ObjCCallbackFunction::create(vm, exec->lexicalGlobalObject(), name, WTFMove(impl)));
 }
 
 JSObjectRef objCCallbackFunctionForInit(JSContext *context, Class cls, Protocol *protocol, SEL sel, const char* types)

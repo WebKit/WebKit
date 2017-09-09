@@ -37,10 +37,11 @@ public:
     typedef InternalFunction Base;
     static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | TypeOfShouldCallGetCallData;
 
-    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
+    static RuntimeMethod* create(ExecState*, JSGlobalObject* globalObject, Structure* structure, const String& name, Bindings::Method* method)
     {
-        RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(globalObject, structure, method);
-        runtimeMethod->finishCreation(exec->vm(), name);
+        VM& vm = globalObject->vm();
+        RuntimeMethod* runtimeMethod = new (NotNull, allocateCell<RuntimeMethod>(vm.heap)) RuntimeMethod(globalObject, structure, method);
+        runtimeMethod->finishCreation(vm, name);
         return runtimeMethod;
     }
 

@@ -52,7 +52,8 @@ JSInternalPromise::JSInternalPromise(VM& vm, Structure* structure)
 
 JSInternalPromise* JSInternalPromise::then(ExecState* exec, JSFunction* onFulfilled, JSFunction* onRejected)
 {
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().thenPublicName()));
+    VM& vm = exec->vm();
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().thenPublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);

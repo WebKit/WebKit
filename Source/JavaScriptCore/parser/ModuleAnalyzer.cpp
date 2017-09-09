@@ -37,7 +37,7 @@ namespace JSC {
 
 ModuleAnalyzer::ModuleAnalyzer(ExecState* exec, const Identifier& moduleKey, const SourceCode& sourceCode, const VariableEnvironment& declaredVariables, const VariableEnvironment& lexicalVariables)
     : m_vm(&exec->vm())
-    , m_moduleRecord(exec->vm(), JSModuleRecord::create(exec, exec->vm(), exec->lexicalGlobalObject()->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables))
+    , m_moduleRecord(*m_vm, JSModuleRecord::create(exec, *m_vm, exec->lexicalGlobalObject()->moduleRecordStructure(), moduleKey, sourceCode, declaredVariables, lexicalVariables))
 {
 }
 

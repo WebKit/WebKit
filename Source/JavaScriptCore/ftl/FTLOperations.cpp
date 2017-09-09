@@ -103,7 +103,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
             if (property.location().kind() != ClosureVarPLoc)
                 continue;
 
-            activation->variableAt(ScopeOffset(property.location().info())).set(exec->vm(), activation, JSValue::decode(values[i]));
+            activation->variableAt(ScopeOffset(property.location().info())).set(vm, activation, JSValue::decode(values[i]));
         }
 
         break;
@@ -225,7 +225,7 @@ extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
                 continue;
 
             result->variableAt(ScopeOffset(property.location().info())).set(
-                exec->vm(), result, jsNumber(29834));
+                vm, result, jsNumber(29834));
         }
 
         if (validationEnabled()) {

@@ -205,9 +205,10 @@ JSValue JSModuleRecord::evaluate(ExecState* exec)
 {
     if (!m_moduleProgramExecutable)
         return jsUndefined();
+    VM& vm = exec->vm();
     ModuleProgramExecutable* executable = m_moduleProgramExecutable.get();
     m_moduleProgramExecutable.clear();
-    return exec->interpreter()->executeModuleProgram(executable, exec, m_moduleEnvironment.get());
+    return vm.interpreter->executeModuleProgram(executable, exec, m_moduleEnvironment.get());
 }
 
 } // namespace JSC

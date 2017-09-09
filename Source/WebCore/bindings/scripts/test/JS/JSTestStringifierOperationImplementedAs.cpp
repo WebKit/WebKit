@@ -164,7 +164,7 @@ bool setJSTestStringifierOperationImplementedAsConstructor(ExecState* state, Enc
         return false;
     }
     // Shadowing a built-in constructor
-    return prototype->putDirect(state->vm(), state->propertyNames().constructor, JSValue::decode(encodedValue));
+    return prototype->putDirect(vm, vm.propertyNames->constructor, JSValue::decode(encodedValue));
 }
 
 static inline JSC::EncodedJSValue jsTestStringifierOperationImplementedAsPrototypeFunctionIdentifierBody(JSC::ExecState* state, typename IDLOperation<JSTestStringifierOperationImplementedAs>::ClassParameter castedThis, JSC::ThrowScope& throwScope)

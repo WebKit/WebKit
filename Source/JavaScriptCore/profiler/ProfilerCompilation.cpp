@@ -118,8 +118,8 @@ JSValue Compilation::toJS(ExecState* exec) const
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* result = constructEmptyObject(exec);
     RETURN_IF_EXCEPTION(scope, { });
-    result->putDirect(vm, exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
-    result->putDirect(vm, exec->propertyNames().compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(vm, vm.propertyNames->compilationKind, jsString(exec, String::fromUTF8(toCString(m_kind))));
     
     JSArray* profiledBytecodes = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -129,7 +129,7 @@ JSValue Compilation::toJS(ExecState* exec) const
         profiledBytecodes->putDirectIndex(exec, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    result->putDirect(vm, exec->propertyNames().profiledBytecodes, profiledBytecodes);
+    result->putDirect(vm, vm.propertyNames->profiledBytecodes, profiledBytecodes);
     
     JSArray* descriptions = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -139,7 +139,7 @@ JSValue Compilation::toJS(ExecState* exec) const
         descriptions->putDirectIndex(exec, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    result->putDirect(vm, exec->propertyNames().descriptions, descriptions);
+    result->putDirect(vm, vm.propertyNames->descriptions, descriptions);
     
     JSArray* counters = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -148,12 +148,12 @@ JSValue Compilation::toJS(ExecState* exec) const
         RETURN_IF_EXCEPTION(scope, { });
         auto value = it->key.toJS(exec);
         RETURN_IF_EXCEPTION(scope, { });
-        counterEntry->putDirect(vm, exec->propertyNames().origin, value);
-        counterEntry->putDirect(vm, exec->propertyNames().executionCount, jsNumber(it->value->count()));
+        counterEntry->putDirect(vm, vm.propertyNames->origin, value);
+        counterEntry->putDirect(vm, vm.propertyNames->executionCount, jsNumber(it->value->count()));
         counters->push(exec, counterEntry);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    result->putDirect(vm, exec->propertyNames().counters, counters);
+    result->putDirect(vm, vm.propertyNames->counters, counters);
     
     JSArray* exitSites = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -163,7 +163,7 @@ JSValue Compilation::toJS(ExecState* exec) const
         exitSites->putDirectIndex(exec, i, value);
         RETURN_IF_EXCEPTION(scope, { });
     }
-    result->putDirect(vm, exec->propertyNames().osrExitSites, exitSites);
+    result->putDirect(vm, vm.propertyNames->osrExitSites, exitSites);
     
     JSArray* exits = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, { });
@@ -171,16 +171,16 @@ JSValue Compilation::toJS(ExecState* exec) const
         exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
         RETURN_IF_EXCEPTION(scope, { });
     }
-    result->putDirect(vm, exec->propertyNames().osrExits, exits);
+    result->putDirect(vm, vm.propertyNames->osrExits, exits);
     
-    result->putDirect(vm, exec->propertyNames().numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
-    result->putDirect(vm, exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
-    result->putDirect(vm, exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
-    result->putDirect(vm, exec->propertyNames().jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
+    result->putDirect(vm, vm.propertyNames->numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
+    result->putDirect(vm, vm.propertyNames->numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
+    result->putDirect(vm, vm.propertyNames->numInlinedCalls, jsNumber(m_numInlinedCalls));
+    result->putDirect(vm, vm.propertyNames->jettisonReason, jsString(exec, String::fromUTF8(toCString(m_jettisonReason))));
     if (!m_additionalJettisonReason.isNull())
-        result->putDirect(vm, exec->propertyNames().additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
+        result->putDirect(vm, vm.propertyNames->additionalJettisonReason, jsString(exec, String::fromUTF8(m_additionalJettisonReason)));
     
-    result->putDirect(vm, exec->propertyNames().uid, m_uid.toJS(exec));
+    result->putDirect(vm, vm.propertyNames->uid, m_uid.toJS(exec));
     
     return result;
 }

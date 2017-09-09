@@ -154,10 +154,11 @@ inline void tryCachePutToScopeGlobal(
             return;
         }
         
-        scope->structure()->didCachePropertyReplacement(exec->vm(), slot.cachedOffset());
+        VM& vm = exec->vm();
+        scope->structure()->didCachePropertyReplacement(vm, slot.cachedOffset());
 
         ConcurrentJSLocker locker(codeBlock->m_lock);
-        pc[5].u.structure.set(exec->vm(), codeBlock, scope->structure());
+        pc[5].u.structure.set(vm, codeBlock, scope->structure());
         pc[6].u.operand = slot.cachedOffset();
     }
 }
@@ -193,7 +194,7 @@ inline void tryCacheGetFromScopeGlobal(
             Structure* structure = scope->structure(vm);
             {
                 ConcurrentJSLocker locker(codeBlock->m_lock);
-                pc[5].u.structure.set(exec->vm(), codeBlock, structure);
+                pc[5].u.structure.set(vm, codeBlock, structure);
                 pc[6].u.operand = slot.cachedOffset();
             }
             structure->startWatchingPropertyForReplacements(vm, slot.cachedOffset());

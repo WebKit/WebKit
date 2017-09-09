@@ -46,7 +46,7 @@ IndirectEvalExecutable* IndirectEvalExecutable::create(ExecState* exec, const So
         return 0;
     }
 
-    auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(*exec->heap())) IndirectEvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
+    auto* executable = new (NotNull, allocateCell<IndirectEvalExecutable>(vm.heap)) IndirectEvalExecutable(exec, source, isInStrictContext, derivedContextType, isArrowFunctionContext, evalContextType);
     executable->finishCreation(vm);
 
     ParserError error;

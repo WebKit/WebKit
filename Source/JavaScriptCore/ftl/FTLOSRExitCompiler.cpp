@@ -507,19 +507,18 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
     if (shouldDumpDisassembly() || Options::verboseOSR() || Options::verboseFTLOSRExit())
         dataLog("Compiling OSR exit with exitID = ", exitID, "\n");
 
-    if (exec->vm().callFrameForCatch)
-        RELEASE_ASSERT(exec->vm().callFrameForCatch == exec);
+    VM& vm = exec->vm();
+    if (vm.callFrameForCatch)
+        RELEASE_ASSERT(vm.callFrameForCatch == exec);
     
     CodeBlock* codeBlock = exec->codeBlock();
     
     ASSERT(codeBlock);
     ASSERT(codeBlock->jitType() == JITCode::FTLJIT);
     
-    VM* vm = &exec->vm();
-    
     // It's sort of preferable that we don't GC while in here. Anyways, doing so wouldn't
     // really be profitable.
-    DeferGCForAWhile deferGC(vm->heap);
+    DeferGCForAWhile deferGC(vm.heap);
 
     JITCode* jitCode = codeBlock->jitCode()->ftl();
     OSRExit& exit = jitCode->osrExit[exitID];
@@ -543,7 +542,7 @@ extern "C" void* compileFTLOSRExit(ExecState* exec, unsigned exitID)
 
     prepareCodeOriginForOSRExit(exec, exit.m_codeOrigin);
     
-    compileStub(exitID, jitCode, exit, vm, codeBlock);
+    compileStub(exitID, jitCode, exit, &vm, codeBlock);
 
     MacroAssembler::repatchJump(
         exit.codeLocationForRepatch(codeBlock), CodeLocationLabel(exit.m_code.code()));

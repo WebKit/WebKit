@@ -342,7 +342,7 @@ JSValue WebAssemblyModuleRecord::evaluate(ExecState* exec)
     if (JSObject* startFunction = m_startFunction.get()) {
         CallData callData;
         CallType callType = JSC::getCallData(startFunction, callData);
-        call(exec, startFunction, callType, callData, jsUndefined(), exec->emptyList());
+        call(exec, startFunction, callType, callData, jsUndefined(), *vm.emptyList);
         RETURN_IF_EXCEPTION(scope, { });
     }
 

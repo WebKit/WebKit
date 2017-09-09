@@ -105,12 +105,13 @@ RefPtr<DataView> JSDataView::unsharedTypedImpl()
 bool JSDataView::getOwnPropertySlot(
     JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    VM& vm = exec->vm();
     JSDataView* thisObject = jsCast<JSDataView*>(object);
-    if (propertyName == exec->propertyNames().byteLength) {
+    if (propertyName == vm.propertyNames->byteLength) {
         slot.setValue(thisObject, DontEnum | ReadOnly, jsNumber(thisObject->m_length));
         return true;
     }
-    if (propertyName == exec->propertyNames().byteOffset) {
+    if (propertyName == vm.propertyNames->byteOffset) {
         slot.setValue(thisObject, DontEnum | ReadOnly, jsNumber(thisObject->byteOffset()));
         return true;
     }
@@ -156,9 +157,10 @@ bool JSDataView::defineOwnProperty(
 bool JSDataView::deleteProperty(
     JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
     JSDataView* thisObject = jsCast<JSDataView*>(cell);
-    if (propertyName == exec->propertyNames().byteLength
-        || propertyName == exec->propertyNames().byteOffset)
+    if (propertyName == vm.propertyNames->byteLength
+        || propertyName == vm.propertyNames->byteOffset)
         return false;
 
     return Base::deleteProperty(thisObject, exec, propertyName);
@@ -167,11 +169,12 @@ bool JSDataView::deleteProperty(
 void JSDataView::getOwnNonIndexPropertyNames(
     JSObject* object, ExecState* exec, PropertyNameArray& array, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     JSDataView* thisObject = jsCast<JSDataView*>(object);
     
     if (mode.includeDontEnumProperties()) {
-        array.add(exec->propertyNames().byteOffset);
-        array.add(exec->propertyNames().byteLength);
+        array.add(vm.propertyNames->byteOffset);
+        array.add(vm.propertyNames->byteLength);
     }
     
     Base::getOwnNonIndexPropertyNames(thisObject, exec, array, mode);

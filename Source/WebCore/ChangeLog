@@ -1,3 +1,213 @@
+2017-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Avoid duplicate computations of ExecState::vm().
+        https://bugs.webkit.org/show_bug.cgi?id=176647
+
+        Reviewed by Saam Barati.
+
+        No new tests because this is only a refactoring patch.  There is no
+        significant behavior change.
+
+        * Modules/mediastream/SDPProcessor.cpp:
+        (WebCore::SDPProcessor::callScript const):
+        * Modules/plugins/QuickTimePluginReplacement.mm:
+        (WebCore::QuickTimePluginReplacement::installReplacement):
+        * bindings/js/JSCallbackData.cpp:
+        (WebCore::JSCallbackData::invokeCallback):
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::constructCustomElementSynchronously):
+        (WebCore::JSCustomElementInterface::upgradeElement):
+        (WebCore::JSCustomElementInterface::invokeCallback):
+        * bindings/js/JSDOMConvertRecord.h:
+        * bindings/js/JSDOMMapLike.h:
+        (WebCore::forwardSizeToMapLike):
+        (WebCore::forwardEntriesToMapLike):
+        (WebCore::forwardKeysToMapLike):
+        (WebCore::forwardValuesToMapLike):
+        (WebCore::forwardGetToMapLike):
+        (WebCore::forwardHasToMapLike):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::addCrossOriginWindowOwnPropertyNames):
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::reportMemoryForDocumentIfFrameless):
+        * bindings/js/JSErrorHandler.cpp:
+        (WebCore::JSErrorHandler::handleEvent):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        (WebCore::putCommon):
+        (WebCore::addCrossOriginLocationPropertyNames):
+        (WebCore::addCrossOriginLocationOwnPropertyNames):
+        (WebCore::JSLocation::defineOwnProperty):
+        (WebCore::JSLocationPrototype::put):
+        (WebCore::JSLocationPrototype::defineOwnProperty):
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::serialize):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::setJSInterfaceNameConstructor):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::setJSMapLikeConstructor):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::setJSReadOnlyMapLikeConstructor):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::setJSTestActiveDOMObjectConstructor):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::setJSTestCEReactionsConstructor):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::setJSTestCEReactionsStringifierConstructor):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::setJSTestCallTracerConstructor):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestClassWithJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+        (WebCore::setJSTestCustomConstructorWithNoInterfaceObjectConstructor):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::setJSTestDOMJITConstructor):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::setJSTestEnabledBySettingConstructor):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::setJSTestEventConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::setJSTestEventTargetConstructor):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::setJSTestExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::setJSTestGenerateIsReachableConstructor):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::setJSTestGlobalObjectConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::setJSTestIndexedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::setJSTestIndexedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::setJSTestIndexedSetterWithIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::setJSTestInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::setJSTestInterfaceLeadingUnderscoreConstructor):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::setJSTestIterableConstructor):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::setJSTestJSBuiltinConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::setJSTestMediaQueryListListenerConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::setJSTestNamedAndIndexedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::setJSTestNamedAndIndexedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::setJSTestNamedAndIndexedSetterWithIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::setJSTestNamedConstructorConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::setJSTestNamedDeleterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::setJSTestNamedDeleterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::setJSTestNamedDeleterWithIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::setJSTestNamedDeleterWithIndexedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::setJSTestNamedGetterCallWithConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::setJSTestNamedGetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::setJSTestNamedGetterWithIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::setJSTestNamedSetterNoIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::setJSTestNamedSetterThrowingExceptionConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::setJSTestNamedSetterWithIdentifierConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::setJSTestNamedSetterWithIndexedGetterConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::setJSTestNamedSetterWithIndexedGetterAndSetterConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::setJSTestNamedSetterWithOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::setJSTestNamedSetterWithUnforgablePropertiesConstructor):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::setJSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::setJSTestNodeConstructor):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::setJSTestObjConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::setJSTestOverloadedConstructorsConstructor):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::setJSTestOverloadedConstructorsWithSequenceConstructor):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::setJSTestOverrideBuiltinsConstructor):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::setJSTestPluginInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::setJSTestPromiseRejectionEventConstructor):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::setJSTestSerializationConstructor):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::setJSTestSerializationIndirectInheritanceConstructor):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::setJSTestSerializationInheritConstructor):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::setJSTestSerializationInheritFinalConstructor):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::setJSTestSerializedScriptValueInterfaceConstructor):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::setJSTestStringifierConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::setJSTestStringifierAnonymousOperationConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::setJSTestStringifierNamedOperationConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::setJSTestStringifierOperationImplementedAsConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::setJSTestStringifierOperationNamedToStringConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::setJSTestStringifierReadOnlyAttributeConstructor):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::setJSTestStringifierReadWriteAttributeConstructor):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::setJSTestTypedefsConstructor):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_Enumerate):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CRuntimeMethod::create):
+        * bridge/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::create):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::create):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertyNames):
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::put):
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        * bridge/runtime_method.h:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateCaptionContainer):
+        (WebCore::HTMLMediaElement::setControllerJSProperty):
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+        (WebCore::HTMLMediaElement::updateMediaControlsAfterPresentationModeChange):
+        (WebCore::HTMLMediaElement::getCurrentMediaControlsStatus):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::didAddUserAgentShadowRoot):
+        * testing/Internals.cpp:
+        (WebCore::Internals::cloneArrayBuffer):
+
 2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] MediaKeySession: handle MediaKeys association through a WeakPtr

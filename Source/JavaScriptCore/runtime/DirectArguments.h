@@ -74,8 +74,10 @@ public:
     
     uint32_t length(ExecState* exec) const
     {
-        if (UNLIKELY(m_mappedArguments))
-            return get(exec, exec->propertyNames().length).toUInt32(exec);
+        if (UNLIKELY(m_mappedArguments)) {
+            VM& vm = exec->vm();
+            return get(exec, vm.propertyNames->length).toUInt32(exec);
+        }
         return m_length;
     }
     

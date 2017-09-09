@@ -410,7 +410,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     // 4. Return the result of calling the [[Call]] internal method of func providing array as the this value and an empty arguments list.
     if (!isJSArray(thisObject) || callType != CallType::Host || callData.native.function != arrayProtoFuncJoin) {
         scope.release();
-        return JSValue::encode(call(exec, function, callType, callData, thisObject, exec->emptyList()));
+        return JSValue::encode(call(exec, function, callType, callData, thisObject, *vm.emptyList));
     }
 
     ASSERT(isJSArray(thisValue));
@@ -490,7 +490,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
         CallData callData;
         CallType callType = getCallData(conversionFunction, callData);
         if (callType != CallType::None) {
-            element = call(exec, conversionFunction, callType, callData, element, exec->emptyList());
+            element = call(exec, conversionFunction, callType, callData, element, *vm.emptyList);
             RETURN_IF_EXCEPTION(scope, encodedJSValue());
         }
         stringJoiner.append(*exec, element);

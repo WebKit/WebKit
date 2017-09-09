@@ -43,9 +43,10 @@ public:
 
     static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const String& name, NPIdentifier npIdent)
     {
+        JSC::VM& vm = globalObject->vm();
         JSC::Structure* structure = createStructure(exec->vm(), globalObject, globalObject->functionPrototype());
-        JSNPMethod* method = new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(globalObject, structure, npIdent);
-        method->finishCreation(exec->vm(), name);
+        JSNPMethod* method = new (JSC::allocateCell<JSNPMethod>(vm.heap)) JSNPMethod(globalObject, structure, npIdent);
+        method->finishCreation(vm, name);
         return method;
     }
 

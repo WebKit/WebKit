@@ -235,7 +235,7 @@ SLOW_PATH_DECL(slow_path_create_this)
         JSFunction* constructor = jsCast<JSFunction*>(constructorAsObject);
         auto& cacheWriteBarrier = pc[4].u.jsCell;
         if (!cacheWriteBarrier)
-            cacheWriteBarrier.set(exec->vm(), exec->codeBlock(), constructor);
+            cacheWriteBarrier.set(vm, exec->codeBlock(), constructor);
         else if (cacheWriteBarrier.unvalidatedGet() != JSCell::seenMultipleCalleeObjects() && cacheWriteBarrier.get() != constructor)
             cacheWriteBarrier.setWithoutWriteBarrier(JSCell::seenMultipleCalleeObjects());
 
@@ -244,7 +244,7 @@ SLOW_PATH_DECL(slow_path_create_this)
         result = constructEmptyObject(exec, structure);
     } else {
         // http://ecma-international.org/ecma-262/6.0/#sec-ordinarycreatefromconstructor
-        JSValue proto = constructorAsObject->get(exec, exec->propertyNames().prototype);
+        JSValue proto = constructorAsObject->get(exec, vm.propertyNames->prototype);
         CHECK_EXCEPTION();
         if (proto.isObject())
             result = constructEmptyObject(exec, asObject(proto));
@@ -907,7 +907,6 @@ SLOW_PATH_DECL(slow_path_get_by_val_with_this)
     JSValue subscript = OP_C(4).jsValue();
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        VM& vm = exec->vm();
         Structure& structure = *baseValue.asCell()->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
             if (RefPtr<AtomicStringImpl> existingAtomicString = asString(subscript)->toExistingAtomicString(exec)) {

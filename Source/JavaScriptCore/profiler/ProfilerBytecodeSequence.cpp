@@ -85,7 +85,7 @@ void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) 
         header->putDirectIndex(exec, i, jsString(exec, String::fromUTF8(m_header[i])));
         RETURN_IF_EXCEPTION(scope, void());
     }
-    result->putDirect(vm, exec->propertyNames().header, header);
+    result->putDirect(vm, vm.propertyNames->header, header);
     
     JSArray* sequence = constructEmptyArray(exec, 0);
     RETURN_IF_EXCEPTION(scope, void());
@@ -93,7 +93,7 @@ void BytecodeSequence::addSequenceProperties(ExecState* exec, JSObject* result) 
         sequence->putDirectIndex(exec, i, m_sequence[i].toJS(exec));
         RETURN_IF_EXCEPTION(scope, void());
     }
-    result->putDirect(vm, exec->propertyNames().bytecode, sequence);
+    result->putDirect(vm, vm.propertyNames->bytecode, sequence);
 }
 
 } } // namespace JSC::Profiler

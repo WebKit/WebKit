@@ -402,7 +402,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSObject* object = jsDynamicDowncast<JSObject*>(vm, [self _imp]);
     PutPropertySlot slot(object);
-    object->methodTable()->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
+    object->methodTable(vm)->put(object, exec, Identifier::fromString(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);
@@ -456,7 +456,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    [self _imp]->methodTable()->deleteProperty([self _imp], exec, Identifier::fromString(exec, String(key)));
+    [self _imp]->methodTable(vm)->deleteProperty([self _imp], exec, Identifier::fromString(exec, String(key)));
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);
@@ -537,7 +537,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     auto scope = DECLARE_CATCH_SCOPE(vm);
     ExecState* exec = globalObject->globalExec();
 
-    [self _imp]->methodTable()->putByIndex([self _imp], exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), false);
+    [self _imp]->methodTable(vm)->putByIndex([self _imp], exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), false);
 
     if (UNLIKELY(scope.exception())) {
         addExceptionToConsole(exec);

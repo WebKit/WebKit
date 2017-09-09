@@ -306,7 +306,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
 
     // Return the result of calling the [[Call]] internal method of toString passing the this value and no arguments.
     scope.release();
-    return JSValue::encode(call(exec, toString, callType, callData, thisValue, exec->emptyList()));
+    return JSValue::encode(call(exec, toString, callType, callData, thisValue, *vm.emptyList));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)

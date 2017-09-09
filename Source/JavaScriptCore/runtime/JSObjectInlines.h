@@ -60,9 +60,9 @@ void createListFromArrayLike(ExecState* exec, JSValue arrayLikeValue, RuntimeTyp
     }
 }
 
-ALWAYS_INLINE bool JSObject::canPerformFastPutInline(ExecState* exec, VM& vm, PropertyName propertyName)
+ALWAYS_INLINE bool JSObject::canPerformFastPutInline(VM& vm, PropertyName propertyName)
 {
-    if (UNLIKELY(propertyName == exec->propertyNames().underscoreProto))
+    if (UNLIKELY(propertyName == vm.propertyNames->underscoreProto))
         return false;
 
     // Check if there are any setters or getters in the prototype chain
@@ -211,7 +211,7 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
 
-    if (thisObject->canPerformFastPutInline(exec, vm, propertyName)) {
+    if (thisObject->canPerformFastPutInline(vm, propertyName)) {
         ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName));
         if (!thisObject->putDirectInternal<PutModePut>(vm, propertyName, value, 0, slot))
             return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
@@ -226,10 +226,11 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
 // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-hasownproperty
 ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot) const
 {
+    VM& vm = exec->vm();
     ASSERT(slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty);
-    if (LIKELY(const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot == JSObject::getOwnPropertySlot))
+    if (LIKELY(const_cast<JSObject*>(this)->methodTable(vm)->getOwnPropertySlot == JSObject::getOwnPropertySlot))
         return JSObject::getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
-    return const_cast<JSObject*>(this)->methodTable(exec->vm())->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
+    return const_cast<JSObject*>(this)->methodTable(vm)->getOwnPropertySlot(const_cast<JSObject*>(this), exec, propertyName, slot);
 }
 
 ALWAYS_INLINE bool JSObject::hasOwnProperty(ExecState* exec, PropertyName propertyName) const

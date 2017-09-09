@@ -264,10 +264,11 @@ private:
 - (JSValue *)value
 {
     WTF::Locker<JSC::JSLock> locker(m_lock.get());
-    if (!m_lock->vm())
+    JSC::VM* vm = m_lock->vm();
+    if (!vm)
         return nil;
 
-    JSC::JSLockHolder apiLocker(m_lock->vm());
+    JSC::JSLockHolder apiLocker(vm);
     if (!m_globalObject)
         return nil;
     if (m_weakValue.isClear())

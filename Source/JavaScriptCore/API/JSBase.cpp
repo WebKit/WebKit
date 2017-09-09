@@ -96,7 +96,8 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
         return false;
     }
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
 
     startingLineNumber = std::max(1, startingLineNumber);
 
@@ -110,7 +111,7 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
         if (exception)
             *exception = toRef(exec, syntaxException);
 #if ENABLE(REMOTE_INSPECTOR)
-        Exception* exception = Exception::create(exec->vm(), syntaxException);
+        Exception* exception = Exception::create(vm, syntaxException);
         exec->vmEntryGlobalObject()->inspectorController().reportAPIException(exec, exception);
 #endif
         return false;
@@ -130,9 +131,10 @@ void JSGarbageCollect(JSContextRef ctx)
         return;
 
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
 
-    exec->vm().heap.reportAbandonedObjectGraph();
+    vm.heap.reportAbandonedObjectGraph();
 }
 
 void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
@@ -142,9 +144,10 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
         return;
     }
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
 
-    exec->vm().heap.deprecatedReportExtraMemory(size);
+    vm.heap.deprecatedReportExtraMemory(size);
 }
 
 extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -156,8 +159,9 @@ void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
         return;
 
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
-    exec->vm().heap.collectNow(Sync, CollectionScope::Full);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    vm.heap.collectNow(Sync, CollectionScope::Full);
 }
 
 void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
@@ -166,8 +170,9 @@ void JSSynchronousEdenCollectForDebugging(JSContextRef ctx)
         return;
 
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
-    exec->vm().heap.collectSync(CollectionScope::Eden);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    vm.heap.collectSync(CollectionScope::Eden);
 }
 
 void JSDisableGCTimer(void)

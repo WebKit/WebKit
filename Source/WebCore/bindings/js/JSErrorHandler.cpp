@@ -64,7 +64,8 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
 
     ErrorEvent& errorEvent = downcast<ErrorEvent>(event);
 
-    JSLockHolder lock(scriptExecutionContext.vm());
+    VM& vm = scriptExecutionContext.vm();
+    JSLockHolder lock(vm);
 
     JSObject* jsFunction = this->jsFunction(scriptExecutionContext);
     if (!jsFunction)
@@ -77,7 +78,7 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext& scriptExecutionContext,
     ExecState* exec = globalObject->globalExec();
 
     CallData callData;
-    CallType callType = jsFunction->methodTable()->getCallData(jsFunction, callData);
+    CallType callType = jsFunction->methodTable(vm)->getCallData(jsFunction, callData);
 
     if (callType != CallType::None) {
         Ref<JSErrorHandler> protectedThis(*this);

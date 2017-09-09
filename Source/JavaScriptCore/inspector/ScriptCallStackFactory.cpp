@@ -124,11 +124,11 @@ static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
-    JSValue lineValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "line"));
+    JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "line"));
     *lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
-    JSValue columnValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "column"));
+    JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "column"));
     *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
-    JSValue sourceURLValue = exceptionObject->getDirect(exec->vm(), Identifier::fromString(exec, "sourceURL"));
+    JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "sourceURL"));
     *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toWTFString(exec) : ASCIILiteral("undefined");
     scope.clearException();
 }
@@ -170,10 +170,11 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
 
 Ref<ScriptArguments> createScriptArguments(JSC::ExecState* exec, unsigned skipArgumentCount)
 {
+    VM& vm = exec->vm();
     Vector<Deprecated::ScriptValue> arguments;
     size_t argumentCount = exec->argumentCount();
     for (size_t i = skipArgumentCount; i < argumentCount; ++i)
-        arguments.append(Deprecated::ScriptValue(exec->vm(), exec->uncheckedArgument(i)));
+        arguments.append(Deprecated::ScriptValue(vm, exec->uncheckedArgument(i)));
     return ScriptArguments::create(exec, arguments);
 }
 

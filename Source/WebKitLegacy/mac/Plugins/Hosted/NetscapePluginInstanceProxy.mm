@@ -960,7 +960,7 @@ bool NetscapePluginInstanceProxy::invokeDefault(uint32_t objectID, data_t argume
 
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
     CallData callData;
-    CallType callType = object->methodTable()->getCallData(object, callData);
+    CallType callType = object->methodTable(vm)->getCallData(object, callData);
     if (callType == CallType::None)
         return false;
 
@@ -996,7 +996,7 @@ bool NetscapePluginInstanceProxy::construct(uint32_t objectID, data_t argumentsD
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
 
     ConstructData constructData;
-    ConstructType constructType = object->methodTable()->getConstructData(object, constructData);
+    ConstructType constructType = object->methodTable(vm)->getConstructData(object, constructData);
     if (constructType == ConstructType::None)
         return false;
 
@@ -1084,7 +1084,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, const Identifie
 
     JSValue value = demarshalValue(exec, valueData, valueLength);
     PutPropertySlot slot(object);
-    object->methodTable()->put(object, exec, propertyName, value, slot);
+    object->methodTable(vm)->put(object, exec, propertyName, value, slot);
     
     scope.clearException();
     return true;
@@ -1112,7 +1112,7 @@ bool NetscapePluginInstanceProxy::setProperty(uint32_t objectID, unsigned proper
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
     
     JSValue value = demarshalValue(exec, valueData, valueLength);
-    object->methodTable()->putByIndex(object, exec, propertyName, value, false);
+    object->methodTable(vm)->putByIndex(object, exec, propertyName, value, false);
     
     scope.clearException();
     return true;
@@ -1143,7 +1143,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, const Identi
         return false;
     }
     
-    object->methodTable()->deleteProperty(object, exec, propertyName);
+    object->methodTable(vm)->deleteProperty(object, exec, propertyName);
     scope.clearException();
     return true;
 }
@@ -1173,7 +1173,7 @@ bool NetscapePluginInstanceProxy::removeProperty(uint32_t objectID, unsigned pro
         return false;
     }
     
-    object->methodTable()->deletePropertyByIndex(object, exec, propertyName);
+    object->methodTable(vm)->deletePropertyByIndex(object, exec, propertyName);
     scope.clearException();
     return true;
 }
@@ -1277,7 +1277,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
  
     PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
-    object->methodTable()->getPropertyNames(object, exec, propertyNames, EnumerationMode());
+    object->methodTable(vm)->getPropertyNames(object, exec, propertyNames, EnumerationMode());
 
     RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);
     for (unsigned i = 0; i < propertyNames.size(); i++) {

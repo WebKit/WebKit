@@ -1168,7 +1168,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToJSON(ExecState* exec)
     if (callType == CallType::None)
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString is not a function"));
 
-    JSValue result = call(exec, asObject(toISOValue), callType, callData, object, exec->emptyList());
+    JSValue result = call(exec, asObject(toISOValue), callType, callData, object, *vm.emptyList);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (result.isObject())
         return throwVMTypeError(exec, scope, ASCIILiteral("toISOString did not return a primitive value"));

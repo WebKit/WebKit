@@ -76,7 +76,7 @@ static EncodedJSValue JSC_HOST_CALL constructMap(ExecState* exec)
     JSMap* map = JSMap::create(exec, vm, mapStructure);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
-    JSValue adderFunction = map->JSObject::get(exec, exec->propertyNames().set);
+    JSValue adderFunction = map->JSObject::get(exec, vm.propertyNames->set);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     CallData adderFunctionCallData;

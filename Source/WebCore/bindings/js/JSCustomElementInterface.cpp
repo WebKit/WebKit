@@ -121,7 +121,7 @@ static RefPtr<Element> constructCustomElementSynchronously(Document& document, V
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
     ConstructData constructData;
-    ConstructType constructType = constructor->methodTable()->getConstructData(constructor, constructData);
+    ConstructType constructType = constructor->methodTable(vm)->getConstructData(constructor, constructData);
     if (constructType == ConstructType::None) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -189,7 +189,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     RETURN_IF_EXCEPTION(scope, void());
 
     ConstructData constructData;
-    ConstructType constructType = m_constructor->methodTable()->getConstructData(m_constructor.get(), constructData);
+    ConstructType constructType = m_constructor->methodTable(vm)->getConstructData(m_constructor.get(), constructData);
     if (constructType == ConstructType::None) {
         ASSERT_NOT_REACHED();
         return;
@@ -231,7 +231,8 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
         return;
 
     Ref<JSCustomElementInterface> protectedThis(*this);
-    JSLockHolder lock(m_isolatedWorld->vm());
+    VM& vm = m_isolatedWorld->vm();
+    JSLockHolder lock(vm);
 
     ASSERT(context);
     ASSERT(context->isDocument());
@@ -241,7 +242,7 @@ void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callba
     JSObject* jsElement = asObject(toJS(state, globalObject, element));
 
     CallData callData;
-    CallType callType = callback->methodTable()->getCallData(callback, callData);
+    CallType callType = callback->methodTable(vm)->getCallData(callback, callData);
     ASSERT(callType != CallType::None);
 
     MarkedArgumentBuffer args;

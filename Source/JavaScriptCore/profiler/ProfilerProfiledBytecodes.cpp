@@ -44,9 +44,10 @@ ProfiledBytecodes::~ProfiledBytecodes()
 
 JSValue ProfiledBytecodes::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
     
-    result->putDirect(exec->vm(), exec->propertyNames().bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     addSequenceProperties(exec, result);
     
     return result;

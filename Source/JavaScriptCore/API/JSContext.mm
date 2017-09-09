@@ -115,9 +115,11 @@
 
 - (void)setException:(JSValue *)value
 {
-    JSC::JSLockHolder locker(toJS(m_context));
+    JSC::ExecState* exec = toJS(m_context);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
     if (value)
-        m_exception.set(toJS(m_context)->vm(), toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
+        m_exception.set(vm, toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
     else
         m_exception.clear();
 }

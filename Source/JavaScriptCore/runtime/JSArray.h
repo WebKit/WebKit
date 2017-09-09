@@ -112,7 +112,8 @@ public:
 
     bool shiftCountForShift(ExecState* exec, unsigned startIndex, unsigned count)
     {
-        return shiftCountWithArrayStorage(exec->vm(), startIndex, count, ensureArrayStorage(exec->vm()));
+        VM& vm = exec->vm();
+        return shiftCountWithArrayStorage(vm, startIndex, count, ensureArrayStorage(vm));
     }
     bool shiftCountForSplice(ExecState* exec, unsigned& startIndex, unsigned count)
     {

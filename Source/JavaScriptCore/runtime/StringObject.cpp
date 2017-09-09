@@ -96,7 +96,8 @@ bool StringObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNa
 
 static bool isStringOwnProperty(ExecState* exec, StringObject* object, PropertyName propertyName)
 {
-    if (propertyName == exec->propertyNames().length)
+    VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->length)
         return true;
     if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         if (object->internalValue()->canGetIndex(index.value()))
@@ -132,8 +133,9 @@ bool StringObject::defineOwnProperty(JSObject* object, ExecState* exec, Property
 
 bool StringObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
     StringObject* thisObject = jsCast<StringObject*>(cell);
-    if (propertyName == exec->propertyNames().length)
+    if (propertyName == vm.propertyNames->length)
         return false;
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && thisObject->internalValue()->canGetIndex(index.value()))
@@ -162,9 +164,10 @@ void StringObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Proper
 
 void StringObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     StringObject* thisObject = jsCast<StringObject*>(object);
     if (mode.includeDontEnumProperties())
-        propertyNames.add(exec->propertyNames().length);
+        propertyNames.add(vm.propertyNames->length);
     return JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 

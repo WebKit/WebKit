@@ -804,7 +804,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
                 globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
                 PutPropertySlot slot(globalObject);
-                globalObject->methodTable()->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                globalObject->methodTable(vm)->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
                 result = jsUndefined();
                 continue;
             }
@@ -1103,7 +1103,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     VM& vm = *scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(scope->vm() == &callFrame->vm());
+    ASSERT(&vm == &callFrame->vm());
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());
@@ -1185,7 +1185,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 PutPropertySlot slot(variableObject);
                 if (!variableObject->isExtensible(callFrame))
                     return checkedReturn(throwTypeError(callFrame, throwScope, ASCIILiteral(NonExtensibleObjectPropertyDefineError)));
-                variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
+                variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
         }
@@ -1195,7 +1195,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 FunctionExecutable* function = codeBlock->functionDecl(i);
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
+                variableObject->methodTable(vm)->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
             }
         } else {
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
@@ -1205,7 +1205,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                     return checkedReturn(throwSyntaxError(callFrame, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
-                variableObject->methodTable()->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
+                variableObject->methodTable(vm)->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
                 RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
 
@@ -1215,7 +1215,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 if (!resolvedScope.isUndefined()) {
                     if (!variableObject->hasProperty(callFrame, ident)) {
                         PutPropertySlot slot(variableObject);
-                        variableObject->methodTable()->put(variableObject, callFrame, ident, jsUndefined(), slot);
+                        variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
                         RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                     }
                 }
@@ -1246,7 +1246,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
     VM& vm = *scope->vm();
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-    ASSERT(scope->vm() == &callFrame->vm());
+    ASSERT(&vm == &callFrame->vm());
     throwScope.assertNoException();
     ASSERT(!vm.isCollectorBusyOnCurrentThread());
     RELEASE_ASSERT(vm.currentThreadIsHoldingAPILock());

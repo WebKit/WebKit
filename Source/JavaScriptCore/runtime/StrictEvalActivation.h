@@ -36,8 +36,9 @@ public:
 
     static StrictEvalActivation* create(ExecState* exec, JSScope* currentScope)
     {
-        StrictEvalActivation* lexicalEnvironment = new (NotNull, allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec, currentScope);
-        lexicalEnvironment->finishCreation(exec->vm());
+        VM& vm = exec->vm();
+        StrictEvalActivation* lexicalEnvironment = new (NotNull, allocateCell<StrictEvalActivation>(vm.heap)) StrictEvalActivation(exec, currentScope);
+        lexicalEnvironment->finishCreation(vm);
         return lexicalEnvironment;
     }
 

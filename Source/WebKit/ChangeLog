@@ -1,3 +1,17 @@
+2017-09-09  Mark Lam  <mark.lam@apple.com>
+
+        Avoid duplicate computations of ExecState::vm().
+        https://bugs.webkit.org/show_bug.cgi?id=176647
+
+        Reviewed by Saam Barati.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::create):
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::setProperty):
+        (WebKit::NPJSObject::removeProperty):
+        (WebKit::NPJSObject::enumerate):
+
 2017-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses

@@ -106,7 +106,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     }
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
-    if (propertyName == exec->propertyNames().toStringTagSymbol || propertyName == exec->propertyNames().hasInstanceSymbol || propertyName == exec->propertyNames().isConcatSpreadableSymbol) {
+    if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
         slot.setValue(thisObject, ReadOnly | DontEnum, jsUndefined());
         return true;
     }
@@ -137,7 +137,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
         // Only allow access to these specific properties.
         if (propertyName == builtinNames.locationPublicName()
             || propertyName == builtinNames.closedPublicName()
-            || propertyName == exec->propertyNames().length
+            || propertyName == vm.propertyNames->length
             || propertyName == builtinNames.selfPublicName()
             || propertyName == builtinNames.windowPublicName()
             || propertyName == builtinNames.framesPublicName()
@@ -338,11 +338,12 @@ static void addScopedChildrenIndexes(ExecState& state, DOMWindow& window, Proper
 // https://html.spec.whatwg.org/#crossoriginownpropertykeys-(-o-)
 static void addCrossOriginWindowOwnPropertyNames(ExecState& state, PropertyNameArray& propertyNames)
 {
-    addCrossOriginWindowPropertyNames(state.vm(), propertyNames);
+    VM& vm = state.vm();
+    addCrossOriginWindowPropertyNames(vm, propertyNames);
 
-    propertyNames.add(state.propertyNames().toStringTagSymbol);
-    propertyNames.add(state.propertyNames().hasInstanceSymbol);
-    propertyNames.add(state.propertyNames().isConcatSpreadableSymbol);
+    propertyNames.add(vm.propertyNames->toStringTagSymbol);
+    propertyNames.add(vm.propertyNames->hasInstanceSymbol);
+    propertyNames.add(vm.propertyNames->isConcatSpreadableSymbol);
 }
 
 // https://html.spec.whatwg.org/#windowproxy-ownpropertykeys

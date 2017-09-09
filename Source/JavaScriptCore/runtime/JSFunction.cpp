@@ -375,7 +375,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
         slot.setValue(thisObject, attributes, thisObject->getDirect(offset), offset);
     }
 
-    if (propertyName == exec->propertyNames().arguments) {
+    if (propertyName == vm.propertyNames->arguments) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
             return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
         
@@ -383,7 +383,7 @@ bool JSFunction::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
         return true;
     }
 
-    if (propertyName == exec->propertyNames().caller) {
+    if (propertyName == vm.propertyNames->caller) {
         if (!thisObject->jsExecutable()->hasCallerAndArgumentsProperties())
             return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);
 
@@ -487,10 +487,10 @@ bool JSFunction::deleteProperty(JSCell* cell, ExecState* exec, PropertyName prop
         // For non-host functions, don't let these properties by deleted - except by DefineOwnProperty.
         FunctionExecutable* executable = thisObject->jsExecutable();
         
-        if (propertyName == exec->propertyNames().caller || propertyName == exec->propertyNames().arguments)
+        if (propertyName == vm.propertyNames->caller || propertyName == vm.propertyNames->arguments)
             return !executable->hasCallerAndArgumentsProperties();
 
-        if (propertyName == exec->propertyNames().prototype && !executable->isArrowFunction())
+        if (propertyName == vm.propertyNames->prototype && !executable->isArrowFunction())
             return false;
 
         thisObject->reifyLazyPropertyIfNeeded(vm, exec, propertyName);
@@ -649,8 +649,8 @@ void JSFunction::reifyName(VM& vm, ExecState* exec)
     // https://tc39.github.io/ecma262/#sec-exports-runtime-semantics-evaluation
     // When the ident is "*default*", we need to set "default" for the ecma name.
     // This "*default*" name is never shown to users.
-    if (ecmaName == exec->propertyNames().builtinNames().starDefaultPrivateName())
-        name = exec->propertyNames().defaultKeyword.string();
+    if (ecmaName == vm.propertyNames->builtinNames().starDefaultPrivateName())
+        name = vm.propertyNames->defaultKeyword.string();
     else
         name = ecmaName.string();
     reifyName(vm, exec, name);

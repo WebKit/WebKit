@@ -72,15 +72,16 @@ void JSModuleLoader::finishCreation(ExecState* exec, VM& vm, JSGlobalObject* glo
 
 static String printableModuleKey(ExecState* exec, JSValue key)
 {
+    VM& vm = exec->vm();
     if (key.isString() || key.isSymbol())
         return key.toPropertyKey(exec).impl();
-    return exec->propertyNames().emptyIdentifier.impl();
+    return vm.propertyNames->emptyIdentifier.impl();
 }
 
 JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, const SourceCode& sourceCode)
 {
     VM& vm = exec->vm();
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().providePublicName()));
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().providePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);
@@ -96,7 +97,8 @@ JSValue JSModuleLoader::provide(ExecState* exec, JSValue key, Status status, con
 
 JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValue moduleName, JSValue referrer, JSValue scriptFetcher)
 {
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadAndEvaluateModulePublicName()));
+    VM& vm = exec->vm();
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().loadAndEvaluateModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);
@@ -111,7 +113,8 @@ JSInternalPromise* JSModuleLoader::loadAndEvaluateModule(ExecState* exec, JSValu
 
 JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleName, JSValue referrer, JSValue scriptFetcher)
 {
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().loadModulePublicName()));
+    VM& vm = exec->vm();
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().loadModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);
@@ -126,7 +129,8 @@ JSInternalPromise* JSModuleLoader::loadModule(ExecState* exec, JSValue moduleNam
 
 JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey, JSValue scriptFetcher)
 {
-    JSObject* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().linkAndEvaluateModulePublicName()));
+    VM& vm = exec->vm();
+    JSObject* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().linkAndEvaluateModulePublicName()));
     CallData callData;
     CallType callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);
@@ -140,7 +144,8 @@ JSValue JSModuleLoader::linkAndEvaluateModule(ExecState* exec, JSValue moduleKey
 
 JSInternalPromise* JSModuleLoader::requestImportModule(ExecState* exec, const Identifier& moduleKey, JSValue scriptFetcher)
 {
-    auto* function = jsCast<JSObject*>(get(exec, exec->propertyNames().builtinNames().requestImportModulePublicName()));
+    VM& vm = exec->vm();
+    auto* function = jsCast<JSObject*>(get(exec, vm.propertyNames->builtinNames().requestImportModulePublicName()));
     CallData callData;
     auto callType = JSC::getCallData(function, callData);
     ASSERT(callType != CallType::None);

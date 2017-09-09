@@ -44,17 +44,18 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
     ASSERT(callback);
 
     ExecState* exec = globalObject.globalExec();
+    VM& vm = exec->vm();
     JSValue function;
     CallData callData;
     CallType callType = CallType::None;
 
     if (method != CallbackType::Object) {
         function = callback;
-        callType = callback->methodTable()->getCallData(callback, callData);
+        callType = callback->methodTable(vm)->getCallData(callback, callData);
     }
     if (callType == CallType::None) {
         if (method == CallbackType::Function) {
-            returnedException = JSC::Exception::create(exec->vm(), createTypeError(exec));
+            returnedException = JSC::Exception::create(vm, createTypeError(exec));
             return JSValue();
         }
 
@@ -62,7 +63,7 @@ JSValue JSCallbackData::invokeCallback(JSDOMGlobalObject& globalObject, JSObject
         function = callback->get(exec, functionName);
         callType = getCallData(function, callData);
         if (callType == CallType::None) {
-            returnedException = JSC::Exception::create(exec->vm(), createTypeError(exec));
+            returnedException = JSC::Exception::create(vm, createTypeError(exec));
             return JSValue();
         }
     }

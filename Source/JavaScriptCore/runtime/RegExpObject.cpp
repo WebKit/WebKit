@@ -62,7 +62,8 @@ void RegExpObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
 
 bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
-    if (propertyName == exec->propertyNames().lastIndex) {
+    VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
         unsigned attributes = regExp->m_lastIndexIsWritable ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly;
         slot.setValue(regExp, attributes, regExp->getLastIndex());
@@ -73,29 +74,33 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
 
 bool RegExpObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
-    if (propertyName == exec->propertyNames().lastIndex)
+    VM& vm = exec->vm();
+    if (propertyName == vm.propertyNames->lastIndex)
         return false;
     return Base::deleteProperty(cell, exec, propertyName);
 }
 
 void RegExpObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     if (mode.includeDontEnumProperties())
-        propertyNames.add(exec->propertyNames().lastIndex);
+        propertyNames.add(vm.propertyNames->lastIndex);
     Base::getOwnNonIndexPropertyNames(object, exec, propertyNames, mode);
 }
 
 void RegExpObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     if (mode.includeDontEnumProperties())
-        propertyNames.add(exec->propertyNames().lastIndex);
+        propertyNames.add(vm.propertyNames->lastIndex);
     Base::getPropertyNames(object, exec, propertyNames, mode);
 }
 
 void RegExpObject::getGenericPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    VM& vm = exec->vm();
     if (mode.includeDontEnumProperties())
-        propertyNames.add(exec->propertyNames().lastIndex);
+        propertyNames.add(vm.propertyNames->lastIndex);
     Base::getGenericPropertyNames(object, exec, propertyNames, mode);
 }
 
@@ -144,12 +149,13 @@ static bool regExpObjectSetLastIndexNonStrict(ExecState* exec, EncodedJSValue th
 
 bool RegExpObject::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)
 {
+    VM& vm = exec->vm();
     RegExpObject* thisObject = jsCast<RegExpObject*>(cell);
 
     if (UNLIKELY(isThisValueAltered(slot, thisObject)))
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
 
-    if (propertyName == exec->propertyNames().lastIndex) {
+    if (propertyName == vm.propertyNames->lastIndex) {
         bool result = asRegExpObject(cell)->setLastIndex(exec, value, slot.isStrictMode());
         slot.setCustomValue(asRegExpObject(cell), slot.isStrictMode()
             ? regExpObjectSetLastIndexStrict

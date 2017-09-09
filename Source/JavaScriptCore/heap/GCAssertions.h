@@ -47,7 +47,7 @@
 
 #define ASSERT_THIS_GC_OBJECT_INHERITS(classInfo) do {\
     ASSERT_THIS_GC_OBJECT_LOOKS_VALID(); \
-    RELEASE_ASSERT(this->inherits(*this->vm(), classInfo)); \
+    RELEASE_ASSERT(this->inherits(vm, classInfo)); \
 } while (0)
 
 #else

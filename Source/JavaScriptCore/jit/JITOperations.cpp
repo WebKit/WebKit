@@ -412,7 +412,7 @@ void JIT_OPERATION operationPutByIdDirectStrict(ExecState* exec, StructureStubIn
     Identifier ident = Identifier::fromUid(vm, uid);
     LOG_IC((ICEvent::OperationPutByIdDirectStrict, baseValue.classInfoOrNull(*vm), ident));
     PutPropertySlot slot(baseValue, true, exec->codeBlock()->putByIdContext());
-    asObject(baseValue)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
+    asObject(baseValue)->putDirect(*vm, ident, JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -428,7 +428,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrict(ExecState* exec, StructureStu
     Identifier ident = Identifier::fromUid(vm, uid);
     LOG_IC((ICEvent::OperationPutByIdDirectNonStrict, baseValue.classInfoOrNull(*vm), ident));
     PutPropertySlot slot(baseValue, false, exec->codeBlock()->putByIdContext());
-    asObject(baseValue)->putDirect(exec->vm(), ident, JSValue::decode(encodedValue), slot);
+    asObject(baseValue)->putDirect(*vm, ident, JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByIdStrictOptimize(ExecState* exec, StructureStubInfo* stubInfo, EncodedJSValue encodedValue, EncodedJSValue encodedBase, UniquedStringImpl* uid)
@@ -504,7 +504,7 @@ void JIT_OPERATION operationPutByIdDirectStrictOptimize(ExecState* exec, Structu
     PutPropertySlot slot(baseObject, true, codeBlock->putByIdContext());
     
     Structure* structure = baseObject->structure(*vm);
-    baseObject->putDirect(exec->vm(), ident, value, slot);
+    baseObject->putDirect(*vm, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
@@ -530,7 +530,7 @@ void JIT_OPERATION operationPutByIdDirectNonStrictOptimize(ExecState* exec, Stru
     PutPropertySlot slot(baseObject, false, codeBlock->putByIdContext());
     
     Structure* structure = baseObject->structure(*vm);
-    baseObject->putDirect(exec->vm(), ident, value, slot);
+    baseObject->putDirect(*vm, ident, value, slot);
     
     if (accessType != static_cast<AccessType>(stubInfo->accessType))
         return;
@@ -554,7 +554,7 @@ static void putByVal(CallFrame* callFrame, JSValue baseValue, JSValue subscript,
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
             if (object->canSetIndexQuickly(i))
-                object->setIndexQuickly(callFrame->vm(), i, value);
+                object->setIndexQuickly(vm, i, value);
             else {
                 // FIXME: This will make us think that in-bounds typed array accesses are actually
                 // out-of-bounds.
@@ -631,7 +631,7 @@ static void directPutByVal(CallFrame* callFrame, JSObject* baseObject, JSValue s
         byValInfo->tookSlowPath = true;
 
     PutPropertySlot slot(baseObject, isStrictMode);
-    baseObject->putDirect(callFrame->vm(), property, value, slot);
+    baseObject->putDirect(vm, property, value, slot);
 }
 
 enum class OptimizationResult {
@@ -2266,7 +2266,7 @@ void JIT_OPERATION operationPutToScope(ExecState* exec, Instruction* bytecodePC)
     }
 
     PutPropertySlot slot(scope, codeBlock->isStrictMode(), PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
-    scope->methodTable()->put(scope, exec, ident, value, slot);
+    scope->methodTable(vm)->put(scope, exec, ident, value, slot);
     
     RETURN_IF_EXCEPTION(throwScope, void());
 

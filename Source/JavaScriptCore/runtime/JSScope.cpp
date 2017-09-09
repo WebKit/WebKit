@@ -201,7 +201,7 @@ static inline bool isUnscopable(ExecState* exec, JSScope* scope, JSObject* objec
     if (scope->type() != WithScopeType)
         return false;
 
-    JSValue unscopables = object->get(exec, exec->propertyNames().unscopablesSymbol);
+    JSValue unscopables = object->get(exec, vm.propertyNames->unscopablesSymbol);
     RETURN_IF_EXCEPTION(throwScope, false);
     if (!unscopables.isObject())
         return false;
@@ -258,6 +258,7 @@ ALWAYS_INLINE JSObject* JSScope::resolve(ExecState* exec, JSScope* scope, const 
 
 JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope* scope, const Identifier& ident)
 {
+    VM& vm = exec->vm();
     auto returnPredicate = [&] (JSScope* scope) -> bool {
         return scope->isVarScope();
     };
@@ -267,8 +268,8 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(ExecState* exec, JSScope*
     JSObject* object = resolve(exec, scope, ident, returnPredicate, skipPredicate);
     
     bool result = false;
-    if (JSScope* scope = jsDynamicCast<JSScope*>(exec->vm(), object)) {
-        if (SymbolTable* scopeSymbolTable = scope->symbolTable(exec->vm())) {
+    if (JSScope* scope = jsDynamicCast<JSScope*>(vm, object)) {
+        if (SymbolTable* scopeSymbolTable = scope->symbolTable(vm)) {
             result = scope->isGlobalObject()
                 ? JSObject::isExtensible(object, exec)
                 : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;

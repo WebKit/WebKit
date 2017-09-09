@@ -102,10 +102,11 @@ void GenericArguments<Type>::getOwnPropertyNames(JSObject* object, ExecState* ex
     }
 
     if (mode.includeDontEnumProperties() && !thisObject->overrodeThings()) {
-        array.add(exec->propertyNames().length);
-        array.add(exec->propertyNames().callee);
+        VM& vm = exec->vm();
+        array.add(vm.propertyNames->length);
+        array.add(vm.propertyNames->callee);
         if (array.includeSymbolProperties())
-            array.add(exec->propertyNames().iteratorSymbol);
+            array.add(vm.propertyNames->iteratorSymbol);
     }
     Base::getOwnPropertyNames(thisObject, exec, array, mode);
 }

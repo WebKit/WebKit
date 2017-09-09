@@ -83,7 +83,8 @@ JSObject* createStackOverflowError(ExecState* exec, JSGlobalObject* globalObject
 JSObject* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
     if (ident.isPrivateName()) {
-        String message(makeString("Can't find private variable: @", exec->propertyNames().lookUpPublicName(ident).string()));
+        VM& vm = exec->vm();
+        String message(makeString("Can't find private variable: @", vm.propertyNames->lookUpPublicName(ident).string()));
         return createReferenceError(exec, message);
     }
     String message(makeString("Can't find variable: ", ident.string()));
@@ -97,10 +98,11 @@ JSString* errorDescriptionForValue(ExecState* exec, JSValue v)
     if (v.isSymbol())
         return jsNontrivialString(exec, asSymbol(v)->descriptiveString());
     if (v.isObject()) {
+        VM& vm = exec->vm();
         CallData callData;
         JSObject* object = asObject(v);
-        if (object->methodTable()->getCallData(object, callData) != CallType::None)
-            return exec->vm().smallStrings.functionString();
+        if (object->methodTable(vm)->getCallData(object, callData) != CallType::None)
+            return vm.smallStrings.functionString();
         return jsString(exec, JSObject::calculatedClassName(object));
     }
     return v.toString(exec);

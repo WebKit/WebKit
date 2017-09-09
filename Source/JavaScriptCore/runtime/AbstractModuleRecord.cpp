@@ -138,9 +138,10 @@ auto AbstractModuleRecord::Resolution::ambiguous() -> Resolution
 
 static JSValue identifierToJSValue(ExecState* exec, const Identifier& identifier)
 {
+    VM& vm = exec->vm();
     if (identifier.isSymbol())
-        return Symbol::create(exec->vm(), static_cast<SymbolImpl&>(*identifier.impl()));
-    return jsString(&exec->vm(), identifier.impl());
+        return Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl()));
+    return jsString(&vm, identifier.impl());
 }
 
 AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState* exec, const Identifier& moduleName)
@@ -494,7 +495,8 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
         // section 15.2.1.16.3, step 6
         // If the "default" name is not resolved in the current module, we need to throw an error and stop resolution immediately,
         // Rationale to this error: A default export cannot be provided by an export *.
-        if (query.exportName == exec->propertyNames().defaultKeyword.impl())
+        VM& vm = exec->vm();
+        if (query.exportName == vm.propertyNames->defaultKeyword.impl())
             return false;
 
         // step 7, If exportStarSet contains module, then return null.
@@ -660,6 +662,7 @@ auto AbstractModuleRecord::resolveExport(ExecState* exec, const Identifier& expo
 
 static void getExportedNames(ExecState* exec, AbstractModuleRecord* root, IdentifierSet& exportedNames)
 {
+    VM& vm = exec->vm();
     HashSet<AbstractModuleRecord*> exportStarSet;
     Vector<AbstractModuleRecord*, 8> pendingModules;
 
@@ -673,7 +676,7 @@ static void getExportedNames(ExecState* exec, AbstractModuleRecord* root, Identi
 
         for (const auto& pair : moduleRecord->exportEntries()) {
             const AbstractModuleRecord::ExportEntry& exportEntry = pair.value;
-            if (moduleRecord == root || exec->propertyNames().defaultKeyword != exportEntry.exportName)
+            if (moduleRecord == root || vm.propertyNames->defaultKeyword != exportEntry.exportName)
                 exportedNames.add(exportEntry.exportName.impl());
         }
 

@@ -246,7 +246,7 @@ JSCell* JIT_OPERATION operationCreateThis(ExecState* exec, JSObject* constructor
         return constructEmptyObject(exec, rareData->objectAllocationProfile()->structure());
     }
 
-    JSValue proto = constructor->get(exec, exec->propertyNames().prototype);
+    JSValue proto = constructor->get(exec, vm.propertyNames->prototype);
     RETURN_IF_EXCEPTION(scope, nullptr);
     if (proto.isObject())
         return constructEmptyObject(exec, asObject(proto));
@@ -714,7 +714,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsStrict(ExecState* exec, JSO
     }
     
     PutPropertySlot slot(array, true);
-    array->methodTable()->put(
+    array->methodTable(vm)->put(
         array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
@@ -729,7 +729,7 @@ void JIT_OPERATION operationPutByValBeyondArrayBoundsNonStrict(ExecState* exec, 
     }
     
     PutPropertySlot slot(array, false);
-    array->methodTable()->put(
+    array->methodTable(*vm)->put(
         array, exec, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
@@ -746,7 +746,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsStrict(ExecState* exe
     }
     
     PutPropertySlot slot(array, true);
-    array->methodTable()->put(
+    array->methodTable(*vm)->put(
         array, exec, Identifier::from(exec, index), jsValue, slot);
 }
 
@@ -763,7 +763,7 @@ void JIT_OPERATION operationPutDoubleByValBeyondArrayBoundsNonStrict(ExecState* 
     }
     
     PutPropertySlot slot(array, false);
-    array->methodTable()->put(
+    array->methodTable(*vm)->put(
         array, exec, Identifier::from(exec, index), jsValue, slot);
 }
 
@@ -833,21 +833,21 @@ void JIT_OPERATION operationPutByValDirectCellSymbolNonStrict(ExecState* exec, J
 
 void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     if (index >= 0) {
         array->putDirectIndex(exec, index, JSValue::decode(encodedValue), 0, PutDirectIndexShouldThrow);
         return;
     }
     
     PutPropertySlot slot(array, true);
-    array->putDirect(exec->vm(), Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    array->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* exec, JSObject* array, int32_t index, EncodedJSValue encodedValue)
 {
-    VM* vm = &exec->vm();
-    NativeCallFrameTracer tracer(vm, exec);
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
     
     if (index >= 0) {
         array->putDirectIndex(exec, index, JSValue::decode(encodedValue));
@@ -855,7 +855,7 @@ void JIT_OPERATION operationPutByValDirectBeyondArrayBoundsNonStrict(ExecState* 
     }
     
     PutPropertySlot slot(array, false);
-    array->putDirect(exec->vm(), Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
+    array->putDirect(vm, Identifier::from(exec, index), JSValue::decode(encodedValue), slot);
 }
 
 EncodedJSValue JIT_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue encodedValue, JSArray* array)
@@ -2345,7 +2345,7 @@ void JIT_OPERATION operationPutDynamicVar(ExecState* exec, JSObject* scope, Enco
         strictMode = exec->codeBlock()->isStrictMode();
     PutPropertySlot slot(scope, strictMode, PutPropertySlot::UnknownContext, isInitialization(getPutInfo.initializationMode()));
     throwScope.release();
-    scope->methodTable()->put(scope, exec, ident, JSValue::decode(value), slot);
+    scope->methodTable(vm)->put(scope, exec, ident, JSValue::decode(value), slot);
 }
 
 int32_t JIT_OPERATION operationMapHash(ExecState* exec, EncodedJSValue input)

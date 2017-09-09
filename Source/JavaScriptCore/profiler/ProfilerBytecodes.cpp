@@ -53,13 +53,14 @@ void Bytecodes::dump(PrintStream& out) const
 
 JSValue Bytecodes::toJS(ExecState* exec) const
 {
+    VM& vm = exec->vm();
     JSObject* result = constructEmptyObject(exec);
     
-    result->putDirect(exec->vm(), exec->propertyNames().bytecodesID, jsNumber(m_id));
-    result->putDirect(exec->vm(), exec->propertyNames().inferredName, jsString(exec, String::fromUTF8(m_inferredName)));
-    result->putDirect(exec->vm(), exec->propertyNames().sourceCode, jsString(exec, String::fromUTF8(m_sourceCode)));
-    result->putDirect(exec->vm(), exec->propertyNames().hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
-    result->putDirect(exec->vm(), exec->propertyNames().instructionCount, jsNumber(m_instructionCount));
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_id));
+    result->putDirect(vm, vm.propertyNames->inferredName, jsString(exec, String::fromUTF8(m_inferredName)));
+    result->putDirect(vm, vm.propertyNames->sourceCode, jsString(exec, String::fromUTF8(m_sourceCode)));
+    result->putDirect(vm, vm.propertyNames->hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
+    result->putDirect(vm, vm.propertyNames->instructionCount, jsNumber(m_instructionCount));
     addSequenceProperties(exec, result);
     
     return result;

@@ -109,23 +109,25 @@ done:
 static bool constructorHasInstance(JSContextRef ctx, JSObjectRef constructorRef, JSValueRef possibleInstance, JSValueRef*)
 {
     JSC::ExecState* exec = toJS(ctx);
-    JSC::JSLockHolder locker(exec);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
 
     JSC::JSObject* constructor = toJS(constructorRef);
     JSC::JSValue instance = toJS(exec, possibleInstance);
-    return JSC::JSObject::defaultHasInstance(exec, instance, constructor->get(exec, exec->propertyNames().prototype));
+    return JSC::JSObject::defaultHasInstance(exec, instance, constructor->get(exec, vm.propertyNames->prototype));
 }
 
 static JSC::JSObject* makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrappedObject)
 {
     JSC::ExecState* exec = toJS(ctx);
-    JSC::JSLockHolder locker(exec);
+    JSC::VM& vm = exec->vm();
+    JSC::JSLockHolder locker(vm);
 
     ASSERT(jsClass);
     JSC::JSCallbackObject<JSC::JSAPIWrapperObject>* object = JSC::JSCallbackObject<JSC::JSAPIWrapperObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->objcWrapperObjectStructure(), jsClass, 0);
     object->setWrappedObject(wrappedObject);
     if (JSC::JSObject* prototype = jsClass->prototype(exec))
-        object->setPrototypeDirect(exec->vm(), prototype);
+        object->setPrototypeDirect(vm, prototype);
 
     return object;
 }

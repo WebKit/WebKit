@@ -51,8 +51,9 @@ JSObject* construct(ExecState* exec, JSValue constructorObject, const ArgList& a
 
 JSObject* construct(ExecState* exec, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)
 {
+    VM& vm = exec->vm();
     ASSERT(constructType == ConstructType::JS || constructType == ConstructType::Host);
-    return exec->interpreter()->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, newTarget);
+    return vm.interpreter->executeConstruct(exec, asObject(constructorObject), constructType, constructData, args, newTarget);
 }
 
 JSObject* profiledConstruct(ExecState* exec, ProfilingReason reason, JSValue constructorObject, ConstructType constructType, const ConstructData& constructData, const ArgList& args, JSValue newTarget)

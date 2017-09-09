@@ -60,7 +60,8 @@ inline Ref<StringImpl> Identifier::add(ExecState* exec, StringImpl* r)
 #ifndef NDEBUG
     checkCurrentAtomicStringTable(exec);
 #endif
-    return *AtomicStringImpl::addWithStringTableProvider(*exec, r);
+    VM& vm = exec->vm();
+    return *AtomicStringImpl::addWithStringTableProvider(vm, r);
 }
 inline Ref<StringImpl> Identifier::add(VM* vm, StringImpl* r)
 {

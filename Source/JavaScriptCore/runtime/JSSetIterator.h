@@ -56,14 +56,15 @@ public:
         HashMapBucketType* prev = m_iter.get();
         if (!prev)
             return nullptr;
+        VM& vm = exec->vm();
         HashMapBucketType* bucket = m_iter->next();
         while (bucket && bucket->deleted())
             bucket = bucket->next();
         if (!bucket) {
-            setIterator(exec->vm(), nullptr);
+            setIterator(vm, nullptr);
             return nullptr;
         }
-        setIterator(exec->vm(), bucket); // We keep m_iter on the last value since the first thing we do in this function is call next().
+        setIterator(vm, bucket); // We keep m_iter on the last value since the first thing we do in this function is call next().
         return bucket;
     }
 

@@ -37,14 +37,15 @@ namespace JSC { namespace DFG {
 void ArrayBufferViewWatchpointAdaptor::add(
     CodeBlock* codeBlock, JSArrayBufferView* view, CommonData& common)
 {
+    VM& vm = *codeBlock->vm();
     Watchpoint* watchpoint = common.watchpoints.add(codeBlock);
     ArrayBufferNeuteringWatchpoint* neuteringWatchpoint =
-        ArrayBufferNeuteringWatchpoint::create(*codeBlock->vm());
+        ArrayBufferNeuteringWatchpoint::create(vm);
     neuteringWatchpoint->set()->add(watchpoint);
     codeBlock->addConstant(neuteringWatchpoint);
     // FIXME: We don't need to set this watchpoint at all for shared buffers.
     // https://bugs.webkit.org/show_bug.cgi?id=164108
-    codeBlock->vm()->heap.addReference(neuteringWatchpoint, view->possiblySharedBuffer());
+    vm.heap.addReference(neuteringWatchpoint, view->possiblySharedBuffer());
 }
 
 void InferredValueAdaptor::add(

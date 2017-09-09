@@ -102,9 +102,10 @@ void JSModuleEnvironment::getOwnNonIndexPropertyNames(JSObject* cell, ExecState*
 {
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     if (propertyNamesArray.includeStringProperties()) {
+        VM& vm = exec->vm();
         for (const auto& pair : thisObject->moduleRecord()->importEntries()) {
             const AbstractModuleRecord::ImportEntry& importEntry = pair.value;
-            if (!importEntry.isNamespace(exec->vm()))
+            if (!importEntry.isNamespace(vm))
                 propertyNamesArray.add(importEntry.localName);
         }
     }

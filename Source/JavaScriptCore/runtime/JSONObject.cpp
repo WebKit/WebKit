@@ -259,7 +259,7 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
         return;
     }
 
-    m_replacerCallType = m_replacer.asObject()->methodTable()->getCallData(m_replacer.asObject().get(), m_replacerCallData);
+    m_replacerCallType = m_replacer.asObject()->methodTable(vm)->getCallData(m_replacer.asObject().get(), m_replacerCallData);
 }
 
 Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
@@ -378,7 +378,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     JSObject* object = asObject(value);
 
     CallData callData;
-    if (object->methodTable()->getCallData(object, callData) != CallType::None) {
+    if (object->methodTable(vm)->getCallData(object, callData) != CallType::None) {
         if (holder.isArray()) {
             builder.appendLiteral("null");
             return StringifySucceeded;
@@ -485,7 +485,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
             else {
                 PropertyNameArray objectPropertyNames(exec, PropertyNameMode::Strings);
-                m_object->methodTable()->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
+                m_object->methodTable(vm)->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
             }
@@ -515,7 +515,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             value = asArray(m_object.get())->getIndexQuickly(index);
         else {
             PropertySlot slot(m_object.get(), PropertySlot::InternalMethodType::Get);
-            if (m_object->methodTable()->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot))
+            if (m_object->methodTable(vm)->getOwnPropertySlotByIndex(m_object.get(), exec, index, slot))
                 value = slot.getValue(exec, index);
             else
                 value = jsUndefined();
@@ -534,7 +534,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
         // Get the value.
         PropertySlot slot(m_object.get(), PropertySlot::InternalMethodType::Get);
         Identifier& propertyName = m_propertyNames->propertyNameVector()[index];
-        if (!m_object->methodTable()->getOwnPropertySlot(m_object.get(), exec, propertyName, slot))
+        if (!m_object->methodTable(vm)->getOwnPropertySlot(m_object.get(), exec, propertyName, slot))
             return true;
         JSValue value = slot.getValue(exec, propertyName);
         RETURN_IF_EXCEPTION(scope, false);
