@@ -1253,6 +1253,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                     m_asciiBuffer.clear();
                     state = State::NoScheme;
                     c = beginAfterControlAndSpace;
+                    break;
                 }
                 state = State::Scheme;
             } else
