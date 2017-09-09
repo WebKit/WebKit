@@ -3386,6 +3386,15 @@ webkit.org/b/176024 fast/forms/file/entries-api/webkitdirectory-open-panel.html 
 webkit.org/b/176025 inspector/canvas/recording-webgl-snapshots.html [ Failure ]
 webkit.org/b/176025 inspector/canvas/recording-webgl.html [ Failure ]
 
+webkit.org/b/176648 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/selectors/040.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/text/decorations-vertical-underline.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/text/mark-matches-broken-line-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/176648 fast/text/mark-matches-rendering.html [ ImageOnlyFailure ]
+webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
