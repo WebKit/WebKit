@@ -1,3 +1,10 @@
+2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE build fix.
+
+        * TestWebKitAPI/PlatformWPE.cmake:
+        Link WebCore archives into the TestWebCore binary as a group.
+
 2017-09-08  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds doesn't work due to missing requests module

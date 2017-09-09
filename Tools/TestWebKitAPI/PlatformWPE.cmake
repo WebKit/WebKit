@@ -53,7 +53,7 @@ add_executable(TestWebCore
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/PublicSuffix.cpp
 )
 
-target_link_libraries(TestWebCore ${test_webcore_LIBRARIES})
+target_link_libraries(TestWebCore ${test_webcore_LIBRARIES} -Wl,--start-group WebCore WebCoreDerivedSources WebCorePlatformWPE -Wl,--end-group)
 add_dependencies(TestWebCore ${ForwardingHeadersForTestWebKitAPI_NAME})
 
 add_test(TestWebCore ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebCore/TestWebCore)
