@@ -1,3 +1,13 @@
+2017-09-09  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, fix typo forwad -> forward
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowUpdateNavigationActions):
+        (backForwardlistChanged):
+        (browserWindowSwitchTab):
+        (backForwadlistChanged): Deleted.
+
 2017-09-09  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221801.
