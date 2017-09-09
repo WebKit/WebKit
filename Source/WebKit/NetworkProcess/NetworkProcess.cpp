@@ -66,6 +66,7 @@
 #include <pal/SessionID.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RunLoop.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(SEC_ITEM_SHIM)
@@ -207,6 +208,7 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
     platformInitializeNetworkProcess(parameters);
 
     WTF::Thread::setCurrentThreadIsUserInitiated();
+    AtomicString::init();
 
     m_suppressMemoryPressureHandler = parameters.shouldSuppressMemoryPressureHandler;
     m_loadThrottleLatency = parameters.loadThrottleLatency;

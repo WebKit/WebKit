@@ -1,3 +1,22 @@
+2017-09-08  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Fetch's Response.statusText is unexpectedly the full http status line for HTTP/2 responses
+        https://bugs.webkit.org/show_bug.cgi?id=176479
+
+        Reviewed by Alex Christensen.
+
+        * http/wpt/fetch/resources/status-garbage.asis: Added.
+        * http/wpt/fetch/resources/status-normal.txt: Added.
+        * http/wpt/fetch/resources/status-with-message.asis: Added.
+        * http/wpt/fetch/resources/status-without-message.asis: Added.
+        Various text HTTP responses with different status lines.
+
+        * http/wpt/fetch/response-status-text-expected.txt: Added.
+        * http/wpt/fetch/response-status-text.html: Added.
+        Test the Fetch Response's status / statusText for different HTTP status lines.
+        The status without a message is similiar to HTTP/2 because HTTP/2 only
+        has a :status pseudo-header and lacks a reason phrase.
+
 2017-09-08  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Implement the attribute HTMLImageElement.async 
