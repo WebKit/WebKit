@@ -992,6 +992,9 @@ public:
         return GPRInfo::regT5;
     }
 
+    // Add a debug call. This call has no effect on JIT code execution state.
+    void debugCall(VM&, V_DebugOperation_EPP function, void* argument);
+
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
 #if !ASSERT_DISABLED
     void jitAssertIsInt32(GPRReg);
@@ -1462,7 +1465,6 @@ public:
     
     void emitDumbVirtualCall(VM&, CallLinkInfo*);
     
-    // FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
     Vector<BytecodeAndMachineOffset>& decodedCodeMapFor(CodeBlock*);
 
     void makeSpaceOnStackForCCall();
@@ -1654,7 +1656,6 @@ protected:
     CodeBlock* m_codeBlock;
     CodeBlock* m_baselineCodeBlock;
 
-    // FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
     HashMap<CodeBlock*, Vector<BytecodeAndMachineOffset>> m_decodedCodeMaps;
 };
 

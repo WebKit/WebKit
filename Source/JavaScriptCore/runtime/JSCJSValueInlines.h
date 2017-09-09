@@ -340,7 +340,7 @@ inline JSValue::JSValue(int i)
     u.asBits.payload = i;
 }
 
-#if USE(JSVALUE32_64)
+#if !ENABLE(JIT)
 inline JSValue::JSValue(int32_t tag, int32_t payload)
 {
     u.asBits.tag = tag;

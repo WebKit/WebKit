@@ -2307,7 +2307,6 @@ char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
     return reinterpret_cast<char*>(result);
 }
 
-// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 void JIT_OPERATION operationOSRWriteBarrier(ExecState* exec, JSCell* cell)
 {
     VM* vm = &exec->vm();

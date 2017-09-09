@@ -38,7 +38,7 @@ const double MacroAssembler::twoToThe32 = (double)0x100000000ull;
 #if ENABLE(MASM_PROBE)
 static void stdFunctionCallback(Probe::Context& context)
 {
-    auto func = context.arg<const std::function<void(Probe::Context&)>*>();
+    auto func = static_cast<const std::function<void(Probe::Context&)>*>(context.arg);
     (*func)(context);
 }
     
