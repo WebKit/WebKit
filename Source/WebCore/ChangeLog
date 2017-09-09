@@ -1,5 +1,29 @@
 2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
 
+        [EME] MediaKeySession: handle MediaKeys association through a WeakPtr
+        https://bugs.webkit.org/show_bug.cgi?id=176584
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Don't keep a raw pointer to the originating MediaKeys object in
+        MediaKeySession that gets nulled out once MediaKeys is destroyed.
+        Instead, make MediaKeys a WeakPtrFactory and use a WeakPtr<MediaKeys>
+        object to maintain the association between MediaKeySession and
+        MediaKeys.
+
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::create):
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::detachKeys): Deleted.
+        * Modules/encryptedmedia/MediaKeySession.h:
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::MediaKeys):
+        (WebCore::MediaKeys::createSession):
+        (WebCore::MediaKeys::~MediaKeys): Deleted.
+        * Modules/encryptedmedia/MediaKeys.h:
+
+2017-09-09  Zan Dobersek  <zdobersek@igalia.com>
+
         [GStreamer] Missing GRefPtr adoptions in MediaPlayerPrivateGStreamerBase, PlaybackPipeline
         https://bugs.webkit.org/show_bug.cgi?id=176646
 

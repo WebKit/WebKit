@@ -45,16 +45,16 @@
 
 namespace WebCore {
 
-Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, MediaKeys& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+Ref<MediaKeySession> MediaKeySession::create(ScriptExecutionContext& context, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
 {
-    auto session = adoptRef(*new MediaKeySession(context, keys, sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instance)));
+    auto session = adoptRef(*new MediaKeySession(context, WTFMove(keys), sessionType, useDistinctiveIdentifier, WTFMove(implementation), WTFMove(instance)));
     session->suspendIfNeeded();
     return session;
 }
 
-MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeys& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
+MediaKeySession::MediaKeySession(ScriptExecutionContext& context, WeakPtr<MediaKeys>&& keys, MediaKeySessionType sessionType, bool useDistinctiveIdentifier, Ref<CDM>&& implementation, Ref<CDMInstance>&& instance)
     : ActiveDOMObject(&context)
-    , m_keys(&keys)
+    , m_keys(WTFMove(keys))
     , m_expiration(std::numeric_limits<double>::quiet_NaN())
     , m_keyStatuses(MediaKeyStatusMap::create(*this))
     , m_useDistinctiveIdentifier(useDistinctiveIdentifier)
@@ -90,11 +90,6 @@ MediaKeySession::MediaKeySession(ScriptExecutionContext& context, MediaKeys& key
 MediaKeySession::~MediaKeySession()
 {
     m_keyStatuses->detachSession();
-}
-
-void MediaKeySession::detachKeys()
-{
-    m_keys = nullptr;
 }
 
 const String& MediaKeySession::sessionId() const

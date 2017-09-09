@@ -36,6 +36,7 @@
 #include "MediaKeySessionType.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -75,6 +76,7 @@ protected:
     Ref<CDM> m_implementation;
     Ref<CDMInstance> m_instance;
 
+    WeakPtrFactory<MediaKeys> m_weakPtrFactory;
     Vector<Ref<MediaKeySession>> m_sessions;
     Vector<CDMClient*> m_cdmClients;
     GenericTaskQueue<Timer> m_taskQueue;

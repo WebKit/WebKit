@@ -45,14 +45,11 @@ MediaKeys::MediaKeys(bool useDistinctiveIdentifier, bool persistentStateAllowed,
     , m_supportedSessionTypes(supportedSessionTypes)
     , m_implementation(WTFMove(implementation))
     , m_instance(WTFMove(instance))
+    , m_weakPtrFactory(this)
 {
 }
 
-MediaKeys::~MediaKeys()
-{
-    for (auto& session : m_sessions)
-        session->detachKeys();
-}
+MediaKeys::~MediaKeys() = default;
 
 ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContext& context, MediaKeySessionType sessionType)
 {
@@ -71,7 +68,7 @@ ExceptionOr<Ref<MediaKeySession>> MediaKeys::createSession(ScriptExecutionContex
     // 3. Let session be a new MediaKeySession object, and initialize it as follows:
     // NOTE: Continued in MediaKeySession.
     // 4. Return session.
-    auto session = MediaKeySession::create(context, *this, sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
+    auto session = MediaKeySession::create(context, m_weakPtrFactory.createWeakPtr(), sessionType, m_useDistinctiveIdentifier, m_implementation.copyRef(), m_instance.copyRef());
     m_sessions.append(session.copyRef());
     return WTFMove(session);
 }
