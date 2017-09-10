@@ -29,7 +29,10 @@
 class ArrayRefType extends ReferenceType {
     unifyImpl(unificationContext, other)
     {
-        if (!(other instanceof ArrayRefType)) {
+        if (other instanceof ArrayRefType) {
+            if (this.addressSpace != other.addressSpace)
+                return false;
+        } else {
             if (!(other instanceof ArrayType))
                 return false;
             if (this.addressSpace != "thread")

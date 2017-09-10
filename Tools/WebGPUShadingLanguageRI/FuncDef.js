@@ -29,6 +29,7 @@ class FuncDef extends Func {
     {
         super(origin, name, returnType, typeParameters, parameters, isCast);
         this._body = body;
+        this.isRestricted = false;
     }
 
     get body() { return this._body; }

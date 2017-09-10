@@ -50,6 +50,7 @@ class NameResolver extends Visitor {
         let checker = new NameResolver(nameContext);
         for (let statement of node.topLevelStatements)
             nameContext.doStatement(statement, () => statement.visit(checker));
+        node.globalNameContext = nameContext;
     }
     
     _visitTypeParametersAndBuildNameContext(node)
@@ -115,6 +116,15 @@ class NameResolver extends Visitor {
         if (!result)
             throw new WTypeError(node.origin.originString, "Could not find protocol named " + node.name);
         node.protocolDecl = result;
+    }
+    
+    visitProtocolFuncDecl(node)
+    {
+        this.visitFunc(node);
+        let funcs = this._nameContext.get(Func, node.name);
+        if (!funcs)
+            throw new WTypeError(node.origin.originString, "Cannot find any functions named " + node.na,e);
+        node.possibleOverloads = funcs;
     }
     
     visitTypeDef(node)
@@ -218,6 +228,20 @@ class NameResolver extends Visitor {
     visitCallExpression(node)
     {
         this._resolveTypeArguments(node.typeArguments);
+        
+        let funcs = this._nameContext.get(Func, node.name);
+        if (funcs)
+            node.possibleOverloads = funcs;
+        else {
+            let type = this._nameContext.get(Type, node.name);
+            if (!type)
+                throw new WTypeError(node.origin.originString, "Cannot find any function or type named " + node.name);
+            node.becomeCast(type);
+            node.possibleOverloads = this._nameContext.get(Func, "operator cast");
+            if (!node.possibleOverloads)
+                throw new WTypeError(node.origin.originString, "Cannot find any operator cast implementations in cast to " + type);
+        }
+        
         super.visitCallExpression(node);
     }
 }

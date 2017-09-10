@@ -74,6 +74,7 @@ class Rewriter extends VisitorBase {
             node.typeParameters.map(parameter => parameter.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)));
         result.protocolDecl = node.protocolDecl;
+        result.possibleOverloads = node.possibleOverloads;
         return result;
     }
     
@@ -249,18 +250,12 @@ class Rewriter extends VisitorBase {
             result.argumentTypes = argumentTypes.map(argumentType => argumentType.visit(this));
         result.func = node.func;
         result.nativeFuncInstance = node.nativeFuncInstance;
+        result.possibleOverloads = node.possibleOverloads;
+        if (node.isCast)
+            result.setCastData(node.returnType.visit(this));
         return result;
     }
 
-    visitCastExpression(node)
-    {
-        let result = new CastExpression(
-            node.origin, node.returnType.visit(this),
-            node.typeArguments.map(typeArgument => typeArgument.visit(this)),
-            node.argumentList.map(argument => argument.visit(this)));
-        return this.processDerivedCallData(node, result);
-    }
-    
     visitCallExpression(node)
     {
         let result = new CallExpression(

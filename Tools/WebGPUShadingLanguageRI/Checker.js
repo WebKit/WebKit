@@ -246,7 +246,7 @@ class Checker extends Visitor {
         return result;
     }
 
-    checkCastOrCallExpression(node, returnType)
+    visitCallExpression(node)
     {
         for (let typeArgument of node.typeArguments)
             typeArgument.visit(this);
@@ -257,8 +257,8 @@ class Checker extends Visitor {
             return TypeRef.wrap(newArgument);
         });
         node.argumentTypes = argumentTypes;
-        if (returnType)
-            returnType.visit(this);
+        if (node.returnType)
+            node.returnType.visit(this);
         
         let overload = null;
         let failures = [];
@@ -271,18 +271,23 @@ class Checker extends Visitor {
                 typeParameter.protocol.protocolDecl.signaturesByNameWithTypeVariable(node.name, typeParameter);
             if (!signatures)
                 continue;
-            overload = resolveOverloadImpl(signatures, node.typeArguments, argumentTypes, returnType);
+            overload = resolveOverloadImpl(signatures, node.typeArguments, argumentTypes, node.returnType);
             if (overload.func)
                 break;
             failures.push(...overload.failures);
             overload = null;
         }
         if (!overload) {
-            overload = this._program.resolveFuncOverload(
-                node.name, node.typeArguments, argumentTypes, returnType);
+            overload = resolveOverloadImpl(
+                node.possibleOverloads, node.typeArguments, argumentTypes, node.returnType);
             if (!overload.func) {
                 failures.push(...overload.failures);
-                let message = "Did not find function for call";
+                let message = "Did not find function for call with ";
+                if (node.typeArguments.length)
+                    message += "type arguments <" + node.typeArguments + "> and ";
+                message += "argument types (" + argumentTypes + ")";
+                if (node.returnType)
+                    message +=" and return type " + node.returnType;
                 if (failures.length)
                     message += ", but considered:\n" + failures.join("\n")
                 throw new WTypeError(node.origin.originString, message);
@@ -297,16 +302,6 @@ class Checker extends Visitor {
                 throw new Error("At " + node.origin.originString + " argument and parameter types not equal after type argument substitution: argument = " + argumentType + ", parameter = " + parameterType);
         }
         return node.resolve(overload);
-    }
-
-    visitCastExpression(node)
-    {
-        return this.checkCastOrCallExpression(node, node.returnType);
-    }
-    
-    visitCallExpression(node)
-    {
-        return this.checkCastOrCallExpression(node, undefined);
     }
 }
 

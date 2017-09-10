@@ -25,7 +25,7 @@
 "use strict";
 
 // NOTE: The next line is line 28, and we rely on this in Prepare.js.
-const standardLibraryPrologue = `
+const standardLibrary = `
 // This is the WSL standard library. Implementations of all of these things are in
 // Intrinsics.js. The only thing that gets defined before we get here is the primitive
 // protocol.
@@ -57,8 +57,20 @@ protocol Equatable {
     bool operator==(Equatable, Equatable);
 }
 
-operator T<><T>(T x) {
+restricted operator<T> T()
+{
+    T defaultValue;
+    return defaultValue;
+}
+
+restricted operator<T> T(T x)
+{
     return x;
+}
+
+operator<T:Equatable> bool(T x)
+{
+    return x != T();
 }
 
 native thread T^ operator&[]<T>(thread T[], uint);

@@ -116,6 +116,8 @@ class TypeRef extends Type {
     
     toString()
     {
+        if (!this.name)
+            return this.type.toString();
         if (!this.typeArguments.length)
             return this.name;
         return this.name + "<" + this.typeArguments + ">";

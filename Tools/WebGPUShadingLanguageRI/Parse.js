@@ -24,9 +24,9 @@
  */
 "use strict";
 
-function parse(program, origin, lineNumberOffset, text)
+function parse(program, origin, originKind, lineNumberOffset, text)
 {
-    let lexer = new Lexer(origin, lineNumberOffset, text);
+    let lexer = new Lexer(origin, originKind, lineNumberOffset, text);
     
     // The hardest part of dealing with C-like languages is parsing variable declaration statements.
     // Let's consider if this happens in WSL. Here are the valid statements in WSL that being with an
@@ -382,7 +382,7 @@ function parse(program, origin, lineNumberOffset, text)
             return new MakeArrayRefExpression(token, parsePossiblePrefix());
         if (token = tryConsume("!")) {
             let remainder = parsePossiblePrefix();
-            return new LogicalNot(token, new CastExpression(remainder.origin, new TypeRef(remainder.origin, "bool", []), [], [remainder]));
+            return new LogicalNot(token, new CallExpression(remainder.origin, "bool", [], [remainder]));
         }
         return parsePossibleSuffix();
     }
@@ -546,7 +546,7 @@ function parse(program, origin, lineNumberOffset, text)
         let elseBody;
         if (tryConsume("else"))
             elseBody = parseStatement();
-        return new IfStatement(origin, new CastExpression(conditional.origin, new TypeRef(conditional.origin, "bool", []), [], [conditional]), body, elseBody);
+        return new IfStatement(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body, elseBody);
     }
     
     function parseVariableDecls()
@@ -644,20 +644,22 @@ function parse(program, origin, lineNumberOffset, text)
         let origin;
         let returnType;
         let name;
+        let typeParameters;
         let isCast;
         let operatorToken = tryConsume("operator");
         if (operatorToken) {
             origin = operatorToken;
+            typeParameters = parseTypeParameters();
             returnType = parseType();
-            name = CastExpression.functionName;
+            name = "operator cast";
             isCast = true;
         } else {
             returnType = parseType();
             origin = returnType.origin;
             name = parseFuncName();
+            typeParameters = parseTypeParameters();
             isCast = false;
         }
-        let typeParameters = parseTypeParameters();
         let parameters = parseParameters();
         return new Func(origin, name, returnType, typeParameters, parameters, isCast);
     }
@@ -710,6 +712,13 @@ function parse(program, origin, lineNumberOffset, text)
         return result;
     }
     
+    function parseNativeFunc()
+    {
+        let func = parseFuncDecl();
+        consume(";");
+        return new NativeFunc(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
+    }
+    
     function parseNative()
     {
         let origin = consume("native");
@@ -726,9 +735,19 @@ function parse(program, origin, lineNumberOffset, text)
             consume(";");
             return new NativeType(origin, name.text, isType == "primitive", parameters);
         }
-        let func = parseFuncDecl();
-        consume(";");
-        return new NativeFunc(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
+        return parseNativeFunc();
+    }
+    
+    function parseRestrictedFuncDef()
+    {
+        consume("restricted");
+        let result;
+        if (tryConsume("native"))
+            result = parseNativeFunc();
+        else
+            result = parseFuncDef();
+        result.isRestricted = true;
+        return result;
     }
     
     for (;;) {
@@ -739,8 +758,10 @@ function parse(program, origin, lineNumberOffset, text)
             lexer.next();
         else if (token.text == "typedef")
             program.add(parseTypeDef());
-        else if (token.text == "native")
+        else if (originKind == "native" && token.text == "native")
             program.add(parseNative());
+        else if (originKind == "native" && token.text == "restricted")
+            program.add(parseRestrictedFuncDef());
         else if (token.text == "struct")
             program.add(parseStructType());
         else if (token.text == "enum")

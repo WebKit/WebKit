@@ -263,14 +263,10 @@ class Visitor extends VisitorBase {
             for (let argument of actualTypeArguments)
                 argument.visit(this);
         }
+        if (node.returnType)
+            node.returnType.visit(this);
     }
     
-    visitCastExpression(node)
-    {
-        this.visitCallExpression(node);
-        node.returnType.visit(this);
-    }
-
     visitLogicalNot(node)
     {
         node.operand.visit(this);

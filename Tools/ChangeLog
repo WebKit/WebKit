@@ -1,3 +1,131 @@
+2017-09-07  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL overload resolution should not be cascading
+        https://bugs.webkit.org/show_bug.cgi?id=176333
+
+        Reviewed by Myles Maxfield.
+        
+        This removes the cascading nature of overload resolution that WSL used to have, and replaces it with
+        something C++-like. If there are multiple overload candidates that match the callsite, then we resolve
+        them against each other. Anytime a function cannot be resolved onto another function, it is removed,
+        since this means that this function is in some way more general than the other one, and we are just
+        looking for the most specific function.
+        
+        If this process ends with only one function being selected, then we succeed, else we fail.
+        
+        Also changed the syntax for defining generic casts to:
+        
+        operator<T> Thingy<T>(things)
+        
+        Also fixed parsing of cast expressions. It's now possible to say a cast expression in WSL.
+        
+        The removal of cascading causes some problems. For example, the following two operators in our standard
+        library are ambiguous for bool(bool):
+        
+        operator<T> T(T)
+        operator<T:Equatable> bool(T)
+        
+        I think that what we really want is to say that the following operators are restricted to the standard
+        library:
+        
+        operator<T> T()
+        operator<T> T(T)
+        
+        It should not be possible to ever overload these.
+        
+        These changes are mostly tested by existing tests and the changes in the standard library, which has to
+        be parsed for every test.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/ArrayRefType.js:
+        (ArrayRefType.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression):
+        (CallExpression.prototype.get isCast):
+        (CallExpression.prototype.get returnType):
+        (CallExpression.prototype.resolve):
+        (CallExpression.prototype.becomeCast):
+        (CallExpression.prototype.setCastData):
+        (CallExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitLogicalNot):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.get returnTypeForOverloadResolution):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.FindTypeVariable.prototype.visitTypeVariable):
+        (FuncInstantiator.prototype.getUnique.FindTypeVariable):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution.prototype.visitCallExpression):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution):
+        * WebGPUShadingLanguageRI/FunctionLikeBlock.js:
+        (FunctionLikeBlock.prototype.toString):
+        (FunctionLikeBlock):
+        * WebGPUShadingLanguageRI/InferTypesForCall.js: Added.
+        (inferTypesForCall):
+        * WebGPUShadingLanguageRI/Inline.js:
+        (resolveInlinedFunction):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer):
+        (Lexer.prototype.next):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext):
+        (NameContext.prototype.mapFor):
+        (NameContext.prototype.add):
+        (NameContext.prototype.get let):
+        (NameContext.prototype.Symbol.iterator):
+        (NameContext.get currentStatement): Deleted.
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProgram):
+        (NameResolver.prototype.determinePossibleOverloads):
+        (NameResolver.prototype.visitProtocolFuncDecl):
+        (NameResolver.prototype.visitCallExpression):
+        (NameResolver):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.visit):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossiblePrefix):
+        (parseFuncDecl):
+        (parseNativeFunc):
+        (parseNative):
+        (parsePreferredFuncDef):
+        (parse):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program.prototype.resolveFuncOverload): Deleted.
+        (Program.prototype.get nameContext): Deleted.
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl.prototype.inherits):
+        (ProtocolDecl.prototype.hasHeir):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitProtocolFuncDecl):
+        (Rewriter.prototype.processDerivedCallData):
+        (Rewriter.prototype.visitCastExpression): Deleted.
+        * WebGPUShadingLanguageRI/StandardLibrary.js: Added.
+        (preferred.operator.T.T):
+        (operator.T.Equatable.bool):
+        * WebGPUShadingLanguageRI/StandardLibraryEpilogue.js: Removed.
+        * WebGPUShadingLanguageRI/StandardLibraryPrologue.js: Removed.
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (doLex):
+        (checkUInt):
+        (checkBool):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.prototype.toString):
+        (TypeRef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitCallExpression):
+        (Visitor.prototype.visitCastExpression): Deleted.
+
 2017-09-10  Brady Eidson  <beidson@apple.com>
 
         Try to avoid creating the default WKWebsiteDataStore until its actually needed.

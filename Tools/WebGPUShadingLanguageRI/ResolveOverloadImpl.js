@@ -27,66 +27,69 @@
 function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType)
 {
     let failures = [];
+    let successes = [];
     for (let func of functions) {
-        if (typeArguments.length && typeArguments.length != func.typeParameters.length) {
-            failures.push(new OverloadResolutionFailure(func, "Wrong number of type arguments (passed " + typeArguments.length + ", require " + func.typeParameters.length + ")"));
-            continue;
-        }
-        if (argumentTypes.length != func.parameters.length) {
-            failures.push(new OverloadResolutionFailure(func, "Wrong number of arguments (passed " + argumentTypes.length + ", require " + func.parameters.length + ")"));
-            continue;
-        }
-        let unificationContext = new UnificationContext(func.typeParameters);
-        let ok = true;
-        for (let i = 0; i < typeArguments.length; ++i) {
-            let argument = typeArguments[i];
-            let parameter = func.typeParameters[i];
-            if (!argument.unify(unificationContext, parameter)) {
-                failures.push(new OverloadResolutionFailure(func, "Type argument #" + (i + 1) + " for parameter " + parameter.name + " does not match (passed " + argument + ", require " + parameter + ")"));
-                ok = false;
-                break;
-            }
-        }
-        if (!ok)
-            continue;
-        for (let i = 0; i < argumentTypes.length; ++i) {
-            if (!argumentTypes[i])
-                throw new Error("Null argument type at i = " + i);
-            if (!argumentTypes[i].unify(unificationContext, func.parameters[i].type)) {
-                failures.push(new OverloadResolutionFailure(func, "Argument #" + (i + 1) + " " + (func.parameters[i].name ? "for parameter " + func.parameters[i].name : "") + " does not match (passed " + argumentTypes[i] + ", require " + func.parameters[i].type + ")"));
-                ok = false;
-                break;
-            }
-        }
-        if (!ok)
-            continue;
-        if (returnType) {
-            if (!returnType.unify(unificationContext, func.returnType)) {
-                failures.push(new OverloadResolutionFailure(func, "Return type " + func.returnType + " does not match " + returnType));
-                continue;
-            }
-        }
-        if (!unificationContext.verify()) {
-            failures.push(new OverloadResolutionFailure(func, "Violates type variable constraints"));
-            continue;
-        }
-        let shouldBuildTypeArguments = !typeArguments.length;
-        if (shouldBuildTypeArguments)
-            typeArguments = [];
-        for (let typeParameter of func.typeParameters) {
-            let typeArgument = unificationContext.find(typeParameter);
-            if (typeArgument == typeParameter) {
-                failures.push(new OverloadResolutionFailure(func, "Type parameter " + typeParameter + " did not get assigned a type"));
-                ok = false;
-                break;
-            }
-            if (shouldBuildTypeArguments)
-                typeArguments.push(typeArgument);
-        }
-        if (!ok)
-            continue;
-        return {func, unificationContext, typeArguments};
+        let overload = inferTypesForCall(func, typeArguments, argumentTypes, returnType);
+        if (overload.failure)
+            failures.push(overload.failure);
+        else
+            successes.push(overload);
     }
     
-    return {failures: failures};
+    if (!successes.length)
+        return {failures: failures};
+    
+    // If any of the signatures are restricted then we consider those first. This is an escape mechanism for
+    // built-in things.
+    // FIXME: It should be an error to declare a function that is at least as specific as a restricted function.
+    // https://bugs.webkit.org/show_bug.cgi?id=176580
+    let hasRestricted = false;
+    for (let overload of successes) {
+        if (overload.func.isRestricted) {
+            hasRestricted = true;
+            break;
+        }
+    }
+    
+    if (hasRestricted)
+        successes = successes.filter(overload => overload.func.isRestricted);
+    
+    // We are only interested in functions that are at least as specific as all of the others. This means
+    // that they can be "turned around" and applied onto all of the other functions in the list.
+    let prunedSuccesses = [];
+    for (let i = 0; i < successes.length; ++i) {
+        let ok = true;
+        let argumentFunc = successes[i].func;
+        for (let j = 0; j < successes.length; ++j) {
+            if (i == j)
+                continue;
+            let parameterFunc = successes[j].func;
+            let overload = inferTypesForCall(
+                parameterFunc,
+                typeArguments.length ? argumentFunc.typeParameters : [],
+                argumentFunc.parameterTypes,
+                argumentFunc.returnTypeForOverloadResolution);
+            if (!overload.func) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok)
+            prunedSuccesses.push(successes[i]);
+    }
+    
+    if (prunedSuccesses.length == 1)
+        return prunedSuccesses[0];
+    
+    let ambiguityList;
+    let message;
+    if (prunedSuccesses.length == 0) {
+        ambiguityList = successes;
+        message = "Ambiguous overload - no function can be applied to all others";
+    } else {
+        ambiguityList = prunedSuccesses;
+        message = "Ambiguous overload - functions mutually applicable";
+    }
+    
+    return {failures: ambiguityList.map(overload => new OverloadResolutionFailure(overload.func, message))};
 }

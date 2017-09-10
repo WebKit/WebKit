@@ -41,7 +41,7 @@ function doPrep(code)
 
 function doLex(code)
 {
-    let lexer = new Lexer("/internal/test", 0, code);
+    let lexer = new Lexer("/internal/test", "native", 0, code);
     var result = [];
     for (;;) {
         let next = lexer.next();
@@ -85,17 +85,17 @@ function checkInt(program, result, expected)
 function checkUInt(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.uint32))
-        throw new Error("Wrong result type; result: " + result);
+        throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
-        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
 }
 
 function checkBool(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.bool))
-        throw new Error("Wrong result type; result: " + result);
+        throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
-        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
 }
 
 function checkLexerToken(result, expectedIndex, expectedKind, expectedText)
@@ -1366,6 +1366,38 @@ function TEST_protocolMonoPolySigDoublePolyDefExplicit()
             callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]);
         },
         (e) => e instanceof WTypeError);
+}
+
+function TEST_ambiguousOverloadSimple()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<T>(int, T) { }
+            void foo<T>(T, int) { }
+            void bar(int a, int b) { foo(a, b); }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_ambiguousOverloadOverlapping()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<T>(int, T) { }
+            void foo<T>(T, T) { }
+            void bar(int a, int b) { foo(a, b); }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_ambiguousOverloadTieBreak()
+{
+    doPrep(`
+        void foo<T>(int, T) { }
+        void foo<T>(T, T) { }
+        void foo(int, int) { }
+        void bar(int a, int b) { foo(a, b); }
+    `);
 }
 
 let filter = /.*/; // run everything by default

@@ -25,9 +25,10 @@
 "use strict";
 
 class Lexer {
-    constructor(origin, lineNumberOffset, text)
+    constructor(origin, originKind, lineNumberOffset, text)
     {
         this._origin = origin;
+        this._originKind = originKind;
         this._lineNumberOffset = lineNumberOffset;
         this._text = text;
         this._index = 0;
@@ -103,8 +104,12 @@ class Lexer {
         
         // FIXME: Make this do Unicode.
         if (/^[^\d\W]\w*/.test(relevantText)) {
-            if (["struct", "protocol", "typedef", "if", "else", "enum", "continue", "break", "switch", "case", "default", "for", "while", "do", "return", "sizeof", "constant", "device", "threadgroup", "thread", "operator", "null", "true", "false"].includes(RegExp.lastMatch))
+            if (/^(struct|protocol|typedef|if|else|enum|continue|break|switch|case|default|for|while|do|return|constant|device|threadgroup|thread|operator|null|true|false)$/.test(RegExp.lastMatch))
                 return result("keyword");
+            
+            if (this._originKind == "native" && /^(native|restricted)$/.test(RegExp.lastMatch))
+                return result("keyword");
+            
             return result("identifier");
         }
 

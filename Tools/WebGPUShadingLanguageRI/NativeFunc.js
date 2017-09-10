@@ -28,6 +28,7 @@ class NativeFunc extends Func {
     constructor(origin, name, returnType, typeParameters, parameters, isCast)
     {
         super(origin, name, returnType, typeParameters, parameters, isCast);
+        this.isRestricted = false;
     }
     
     get isNative() { return true; }

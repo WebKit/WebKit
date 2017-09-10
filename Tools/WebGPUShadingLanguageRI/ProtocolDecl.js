@@ -72,7 +72,7 @@ class ProtocolDecl extends Protocol {
             let signatures = this.signaturesByName(otherSignature.name);
             if (!signatures)
                 return false;
-            let overload = resolveOverloadImpl(signatures, [], otherSignature.parameterTypes);
+            let overload = resolveOverloadImpl(signatures, [], otherSignature.parameterTypes, otherSignature.returnTypeForOverloadResolution);
             if (!overload.func)
                 return false;
             let substitutedReturnType =
@@ -90,7 +90,7 @@ class ProtocolDecl extends Protocol {
         let signatures = this.signatures;
         for (let signature of signatures) {
             signature = signature.visit(substitution);
-            let overload = this.program.resolveFuncOverload(signature.name, signature.typeParameters, signature.parameterTypes);
+            let overload = resolveOverloadImpl(signature.possibleOverloads, signature.typeParameters, signature.parameterTypes, signature.returnTyupeForOverloadResolution);
             if (!overload.func)
                 return false;
             

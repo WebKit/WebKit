@@ -27,17 +27,12 @@
 class Node {
     visit(visitor)
     {
-        let memoTable = visitor._memoTable;
-        if (memoTable.has(this))
-            return memoTable.get(this);
-        
         let visitFunc = visitor["visit" + this.constructor.name];
         if (!visitFunc)
             throw new Error("No visit function for " + this.constructor.name + " in " + visitor.constructor.name);
         let returnValue = visitFunc.call(visitor, this);
         if ("returnValue" in visitor)
             returnValue = visitor.returnValue;
-        memoTable.set(this, returnValue);
         return returnValue;
     }
     

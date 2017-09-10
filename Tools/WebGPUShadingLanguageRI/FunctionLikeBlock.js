@@ -43,6 +43,6 @@ class FunctionLikeBlock extends Value {
     
     toString()
     {
-        return "([&] (" + this.parameters + ") -> " + this.returnType + " { " + this.block + " }(" + this.argumentList + "))";
+        return "([&] (" + this.parameters + ") -> " + this.returnType + " { " + this.body + " }(" + this.argumentList + "))";
     }
 }

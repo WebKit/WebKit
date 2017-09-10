@@ -58,23 +58,6 @@ class Program extends Node {
         this._topLevelStatements.push(statement);
     }
     
-    resolveFuncOverload(name, typeArguments, argumentTypes, returnType)
-    {
-        let functions = this.functions.get(name);
-        if (!functions)
-            return {failures: []};
-        
-        return resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType);
-    }
-    
-    get nameContext()
-    {
-        let result = new NameContext();
-        for (let statement of this.topLevelStatements)
-            result.add(statement);
-        return result;
-    }
-    
     toString()
     {
         if (!this._topLevelStatements.length)

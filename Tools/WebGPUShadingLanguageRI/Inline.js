@@ -57,7 +57,7 @@ function _inlineFunction(program, func, visiting)
 
 function resolveInlinedFunction(program, name, typeArguments, argumentTypes)
 {
-    let overload = program.resolveFuncOverload(name, typeArguments, argumentTypes);
+    let overload = program.globalNameContext.resolveFuncOverload(name, typeArguments, argumentTypes);
     if (!overload.func)
         return overload.failures;
     if (!overload.func.typeParameters)

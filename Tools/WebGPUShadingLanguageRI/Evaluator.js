@@ -148,7 +148,8 @@ class Evaluator extends Visitor {
 
     visitLogicalNot(node)
     {
-        return EPtr.box(!node.operand.visit(this).loadValue());
+        let result = !node.operand.visit(this).loadValue();
+        return EPtr.box(result);
     }
 
     visitIfStatement(node)

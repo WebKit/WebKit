@@ -32,16 +32,20 @@ class CallExpression extends Expression {
         this._typeArguments = typeArguments;
         this._argumentList = argumentList;
         this.func = null;
+        this._isCast = false;
+        this._returnType = null;
     }
     
     get name() { return this._name; }
     get typeArguments() { return this._typeArguments; }
     get argumentList() { return this._argumentList; }
+    get isCast() { return this._isCast; }
+    get returnType() { return this._returnType; }
     
     resolve(overload)
     {
         this.func = overload.func;
-        this.actualTypeArguments = overload.typeArguments;
+        this.actualTypeArguments = overload.typeArguments.map(TypeRef.wrap);
         let result = overload.func.returnType.substituteToUnification(
             overload.func.typeParameters, overload.unificationContext);
         if (!result)
@@ -49,9 +53,27 @@ class CallExpression extends Expression {
         return result;
     }
     
+    becomeCast(returnType)
+    {
+        this._returnType = new TypeRef(this.origin, this.name, this._typeArguments);
+        this._returnType.type = returnType;
+        this._name = "operator cast";
+        this._isCast = true;
+        this._typeArguments = [];
+    }
+    
+    setCastData(returnType)
+    {
+        this._returnType = returnType;
+        this._isCast = true;
+    }
+    
     toString()
     {
-        return this.name + "<" + this.typeArguments + ">(" + this.argumentList + ")";
+        return (this.isCast ? "operator " + this.returnType : this.name) +
+            "<" + this.typeArguments + ">" +
+            (this.actualTypeArguments ? "<<" + this.actualTypeArguments + ">>" : "") +
+            "(" + this.argumentList + ")";
     }
 }
 

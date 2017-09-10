@@ -34,7 +34,6 @@ function isWildcardKind(kind)
 class NameContext {
     constructor(delegate)
     {
-        this._funcMap = new Map();
         this._map = new Map();
         this._set = new Set();
         this._defined = null;
@@ -51,9 +50,8 @@ class NameContext {
         case Value:
         case Type:
         case Protocol:
-            return this._map;
         case Func:
-            return this._funcMap;
+            return this._map;
         default:
             throw new Error("Bad kind: " + kind);
         }
@@ -72,9 +70,14 @@ class NameContext {
         
         if (thing.kind == Func) {
             this._set.add(thing);
-            let array = this._funcMap.get(thing.name);
-            if (!array)
-                this._funcMap.set(thing.name, array = []);
+            let array = this._map.get(thing.name);
+            if (!array) {
+                array = [];
+                array.kind = Func;
+                this._map.set(thing.name, array);
+            }
+            if (array.kind != Func)
+                throw new WTypeError(thing.origin.originString, "Cannot reuse type name for function: " + thing.name);
             array.push(thing);
             return;
         }
@@ -92,6 +95,15 @@ class NameContext {
         if (result && !isWildcardKind(kind) && result.kind != kind)
             return null;
         return result;
+    }
+    
+    resolveFuncOverload(name, typeArguments, argumentTypes, returnType)
+    {
+        let functions = this.get(Func, name);
+        if (!functions)
+            return {failures: []};
+        
+        return resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType);
     }
     
     get currentStatement()
@@ -165,11 +177,13 @@ class NameContext {
     
     *[Symbol.iterator]()
     {
-        for (let value of this._map.values())
+        for (let value of this._map.values()) {
+            if (value instanceof Array) {
+                for (let func of value)
+                    yield func;
+                continue;
+            }
             yield value;
-        for (let funcs of this._funcMap.values()) {
-            for (let func of funcs)
-                yield func;
         }
     }
 }

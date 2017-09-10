@@ -45,6 +45,7 @@ class Func extends Node {
     get parameters() { return this._parameters; }
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
     get isCast() { return this._isCast; }
+    get returnTypeForOverloadResolution() { return this.isCast ? this.returnType : null; }
     
     get kind() { return Func; }
     

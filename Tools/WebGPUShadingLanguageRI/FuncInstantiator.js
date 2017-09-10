@@ -38,6 +38,14 @@ class FuncInstantiator {
     // resolutions on the original Program.
     getUnique(func, typeArguments)
     {
+        class FindTypeVariable extends Visitor {
+            visitTypeVariable(node) {
+                throw new Error("Unexpected type variable: " + node);
+            }
+        }
+        for (let typeArgument of typeArguments)
+            typeArgument.visit(new FindTypeVariable());
+        
         let instances = this._instances.get(func);
         if (!instances)
             this._instances.set(func, instances = []);
@@ -64,7 +72,7 @@ class FuncInstantiator {
                 // We may have to re-resolve the function call, if it was a call to a protocol
                 // signature.
                 if (result.func instanceof ProtocolFuncDecl) {
-                    let overload = thisInstantiator._program.resolveFuncOverload(result.name, result.typeArguments, result.argumentTypes);
+                    let overload = resolveOverloadImpl(result.possibleOverloads, result.typeArguments, result.argumentTypes, result.returnTypeForOverloadResolution);
                     if (!overload.func)
                         throw new Error("Could not resolve protocol signature function call during instantiation: " + result.func + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
                     result.resolve(overload);

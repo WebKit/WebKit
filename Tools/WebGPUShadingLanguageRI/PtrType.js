@@ -31,6 +31,8 @@ class PtrType extends ReferenceType {
     {
         if (!(other instanceof PtrType))
             return false;
+        if (this.addressSpace != other.addressSpace)
+            return false;
         return this.elementType.unify(unificationContext, other.elementType);
     }
     
