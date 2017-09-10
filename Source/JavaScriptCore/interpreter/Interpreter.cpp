@@ -479,8 +479,9 @@ bool Interpreter::isOpcode(Opcode opcode)
 
 class GetStackTraceFunctor {
 public:
-    GetStackTraceFunctor(VM& vm, Vector<StackFrame>& results, size_t framesToSkip, size_t capacity)
+    GetStackTraceFunctor(VM& vm, JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t capacity)
         : m_vm(vm)
+        , m_owner(owner)
         , m_results(results)
         , m_framesToSkip(framesToSkip)
         , m_remainingCapacityForFrameCapture(capacity)
@@ -500,10 +501,10 @@ public:
                 m_results.append(StackFrame::wasm(visitor->wasmFunctionIndexOrName()));
             } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
                 m_results.append(
-                    StackFrame(m_vm, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
+                    StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeOffset()));
             } else {
                 m_results.append(
-                    StackFrame(m_vm, visitor->callee().asCell()));
+                    StackFrame(m_vm, m_owner, visitor->callee().asCell()));
             }
     
             m_remainingCapacityForFrameCapture--;
@@ -514,13 +515,15 @@ public:
 
 private:
     VM& m_vm;
+    JSCell* m_owner;
     Vector<StackFrame>& m_results;
     mutable size_t m_framesToSkip;
     mutable size_t m_remainingCapacityForFrameCapture;
 };
 
-void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize)
+void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size_t framesToSkip, size_t maxStackSize)
 {
+    DisallowGC disallowGC;
     VM& vm = m_vm;
     CallFrame* callFrame = vm.topCallFrame;
     if (!callFrame)
@@ -537,7 +540,7 @@ void Interpreter::getStackTrace(Vector<StackFrame>& results, size_t framesToSkip
     framesCount -= framesToSkip;
     framesCount = std::min(maxStackSize, framesCount);
 
-    GetStackTraceFunctor functor(vm, results, framesToSkip, framesCount);
+    GetStackTraceFunctor functor(vm, owner, results, framesToSkip, framesCount);
     StackVisitor::visit(callFrame, &vm, functor);
     ASSERT(results.size() == results.capacity());
 }

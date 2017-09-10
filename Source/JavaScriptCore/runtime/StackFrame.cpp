@@ -33,6 +33,19 @@
 
 namespace JSC {
 
+StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee)
+    : m_callee(vm, owner, callee)
+    , m_bytecodeOffset(UINT_MAX)
+{
+}
+
+StackFrame::StackFrame(VM& vm, JSCell* owner, JSCell* callee, CodeBlock* codeBlock, unsigned bytecodeOffset)
+    : m_callee(vm, owner, callee)
+    , m_codeBlock(vm, owner, codeBlock)
+    , m_bytecodeOffset(bytecodeOffset)
+{
+}
+
 intptr_t StackFrame::sourceID() const
 {
     if (!m_codeBlock)
@@ -125,6 +138,17 @@ String StackFrame::toString(VM& vm) const
         }
     }
     return traceBuild.toString().impl();
+}
+
+void StackFrame::visitChildren(SlotVisitor& visitor)
+{
+    // FIXME: We should do something here about Wasm::IndexOrName.
+    // https://bugs.webkit.org/show_bug.cgi?id=176644
+    
+    if (m_callee)
+        visitor.append(m_callee);
+    if (m_codeBlock)
+        visitor.append(m_codeBlock);
 }
 
 } // namespace JSC

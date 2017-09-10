@@ -1,3 +1,14 @@
+2017-09-09  Filip Pizlo  <fpizlo@apple.com>
+
+        Error should compute .stack and friends lazily
+        https://bugs.webkit.org/show_bug.cgi?id=176645
+
+        Reviewed by Saam Barati.
+
+        * ChakraCore.yaml: Skip test that was testing non-standard behavior of these fields.
+        * microbenchmarks/new-error.js: Added.
+        * microbenchmarks/throw.js: Added.
+
 2017-09-09  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Use JIT probes for DFG OSR exit.

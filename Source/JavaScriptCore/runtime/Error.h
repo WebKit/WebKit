@@ -74,10 +74,11 @@ JS_EXPORT_PRIVATE JSObject* createOutOfMemoryError(ExecState*);
 
 JS_EXPORT_PRIVATE JSObject* createError(ExecState*, ErrorType, const String&);
 
-
-bool addErrorInfoAndGetBytecodeOffset(ExecState*, VM&, JSObject*, bool, CallFrame*&, unsigned* = nullptr);
-
-JS_EXPORT_PRIVATE void addErrorInfo(ExecState*, JSObject*, bool); 
+std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState*, VM&, JSObject*, bool useCurrentFrame);
+void getBytecodeOffset(ExecState*, VM&, Vector<StackFrame>*, CallFrame*&, unsigned& bytecodeOffset);
+bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL);
+bool addErrorInfo(VM&, Vector<StackFrame>*, JSObject*);
+JS_EXPORT_PRIVATE void addErrorInfo(ExecState*, JSObject*, bool);
 JSObject* addErrorInfo(ExecState*, JSObject* error, int line, const SourceCode&);
 
 // Methods to throw Errors.

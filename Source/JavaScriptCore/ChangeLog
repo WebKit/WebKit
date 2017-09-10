@@ -1,3 +1,56 @@
+2017-09-08  Filip Pizlo  <fpizlo@apple.com>
+
+        Error should compute .stack and friends lazily
+        https://bugs.webkit.org/show_bug.cgi?id=176645
+
+        Reviewed by Saam Barati.
+        
+        Building the string portion of the stack trace after we walk the stack accounts for most of
+        the cost of computing the .stack property. So, this patch makes ErrorInstance hold onto the
+        Vector<StackFrame> so that it can build the string only once it's really needed.
+        
+        This is an enormous speed-up for programs that allocate and throw exceptions.
+        
+        It's a 5.6x speed-up for "new Error()" with a stack that is 4 functions deep.
+        
+        It's a 2.2x speed-up for throwing and catching an Error.
+        
+        It's a 1.17x speed-up for the WSL test suite (which throws a lot).
+        
+        It's a significant speed-up on many of our existing try-catch microbenchmarks. For example,
+        delta-blue-try-catch is 1.16x faster.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::GetStackTraceFunctor::GetStackTraceFunctor):
+        (JSC::GetStackTraceFunctor::operator() const):
+        (JSC::Interpreter::getStackTrace):
+        * interpreter/Interpreter.h:
+        * runtime/Error.cpp:
+        (JSC::getStackTrace):
+        (JSC::getBytecodeOffset):
+        (JSC::addErrorInfo):
+        (JSC::addErrorInfoAndGetBytecodeOffset): Deleted.
+        * runtime/Error.h:
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        (JSC::ErrorInstance::finishCreation):
+        (JSC::ErrorInstance::materializeErrorInfoIfNeeded):
+        (JSC::ErrorInstance::visitChildren):
+        (JSC::ErrorInstance::getOwnPropertySlot):
+        (JSC::ErrorInstance::getOwnNonIndexPropertyNames):
+        (JSC::ErrorInstance::defineOwnProperty):
+        (JSC::ErrorInstance::put):
+        (JSC::ErrorInstance::deleteProperty):
+        * runtime/ErrorInstance.h:
+        * runtime/Exception.cpp:
+        (JSC::Exception::visitChildren):
+        (JSC::Exception::finishCreation):
+        * runtime/Exception.h:
+        * runtime/StackFrame.cpp:
+        (JSC::StackFrame::visitChildren):
+        * runtime/StackFrame.h:
+        (JSC::StackFrame::StackFrame):
+
 2017-09-09  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Use JIT probes for DFG OSR exit.

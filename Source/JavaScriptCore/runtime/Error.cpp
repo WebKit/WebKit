@@ -38,11 +38,9 @@
 #include "NativeErrorConstructor.h"
 #include "SourceCode.h"
 #include "StackFrame.h"
+#include "SuperSampler.h"
 
 namespace JSC {
-
-static const char* linePropertyName = "line";
-static const char* sourceURLPropertyName = "sourceURL";
 
 JSObject* createError(ExecState* exec, const String& message, ErrorInstance::SourceAppender appender)
 {
@@ -160,48 +158,69 @@ private:
     mutable unsigned m_index;
 };
 
-bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bool useCurrentFrame, CallFrame*& callFrame, unsigned* bytecodeOffset)
+std::unique_ptr<Vector<StackFrame>> getStackTrace(ExecState* exec, VM& vm, JSObject* obj, bool useCurrentFrame)
 {
     JSGlobalObject* globalObject = obj->globalObject();
     ErrorConstructor* errorConstructor = globalObject->errorConstructor();
     if (!errorConstructor->stackTraceLimit())
-        return false;
+        return nullptr;
 
-    Vector<StackFrame> stackTrace = Vector<StackFrame>();
     size_t framesToSkip = useCurrentFrame ? 0 : 1;
-    vm.interpreter->getStackTrace(stackTrace, framesToSkip, errorConstructor->stackTraceLimit().value());
-    if (!stackTrace.isEmpty()) {
+    std::unique_ptr<Vector<StackFrame>> stackTrace = std::make_unique<Vector<StackFrame>>();
+    vm.interpreter->getStackTrace(obj, *stackTrace, framesToSkip, errorConstructor->stackTraceLimit().value());
+    if (!stackTrace->isEmpty())
+        ASSERT_UNUSED(exec, exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
+    return stackTrace;
+}
 
-        ASSERT(exec == vm.topCallFrame || exec == exec->lexicalGlobalObject()->globalExec() || exec == exec->vmEntryGlobalObject()->globalExec());
+void getBytecodeOffset(ExecState* exec, VM& vm, Vector<StackFrame>* stackTrace, CallFrame*& callFrame, unsigned& bytecodeOffset)
+{
+    FindFirstCallerFrameWithCodeblockFunctor functor(exec);
+    StackVisitor::visit(vm.topCallFrame, &vm, functor);
+    callFrame = functor.foundCallFrame();
+    unsigned stackIndex = functor.index();
+    bytecodeOffset = 0;
+    if (stackTrace && stackIndex < stackTrace->size() && stackTrace->at(stackIndex).hasBytecodeOffset())
+        bytecodeOffset = stackTrace->at(stackIndex).bytecodeOffset();
+}
 
-        StackFrame* firstFrameWithLineAndColumnInfo = nullptr;
-        for (unsigned i = 0 ; i < stackTrace.size(); ++i) {
-            firstFrameWithLineAndColumnInfo = &stackTrace.at(i);
-            if (firstFrameWithLineAndColumnInfo->hasLineAndColumnInfo())
-                break;
+bool getLineColumnAndSource(Vector<StackFrame>* stackTrace, unsigned& line, unsigned& column, String& sourceURL)
+{
+    line = 0;
+    column = 0;
+    sourceURL = String();
+    
+    if (!stackTrace)
+        return false;
+    
+    for (unsigned i = 0 ; i < stackTrace->size(); ++i) {
+        StackFrame& frame = stackTrace->at(i);
+        if (frame.hasLineAndColumnInfo()) {
+            frame.computeLineAndColumn(line, column);
+            sourceURL = frame.sourceURL();
+            return true;
         }
+    }
+    
+    return false;
+}
 
-        if (bytecodeOffset) {
-            FindFirstCallerFrameWithCodeblockFunctor functor(exec);
-            StackVisitor::visit(vm.topCallFrame, &vm, functor);
-            callFrame = functor.foundCallFrame();
-            unsigned stackIndex = functor.index();
-            *bytecodeOffset = 0;
-            if (stackIndex < stackTrace.size() && stackTrace.at(stackIndex).hasBytecodeOffset())
-                *bytecodeOffset = stackTrace.at(stackIndex).bytecodeOffset();
-        }
-        
+bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
+{
+    if (!stackTrace)
+        return false;
+    
+    if (!stackTrace->isEmpty()) {
         unsigned line;
         unsigned column;
-        firstFrameWithLineAndColumnInfo->computeLineAndColumn(line, column);
+        String sourceURL;
+        getLineColumnAndSource(stackTrace, line, column, sourceURL);
         obj->putDirect(vm, vm.propertyNames->line, jsNumber(line));
         obj->putDirect(vm, vm.propertyNames->column, jsNumber(column));
+        if (!sourceURL.isEmpty())
+            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, sourceURL));
 
-        String frameSourceURL = firstFrameWithLineAndColumnInfo->sourceURL();
-        if (!frameSourceURL.isEmpty())
-            obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, frameSourceURL));
-
-        obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, stackTrace), DontEnum);
+        obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, *stackTrace), DontEnum);
 
         return true;
     }
@@ -212,19 +231,33 @@ bool addErrorInfoAndGetBytecodeOffset(ExecState* exec, VM& vm, JSObject* obj, bo
 
 void addErrorInfo(ExecState* exec, JSObject* obj, bool useCurrentFrame)
 {
-    CallFrame* callFrame = nullptr;
-    addErrorInfoAndGetBytecodeOffset(exec, exec->vm(), obj, useCurrentFrame, callFrame);
+    VM& vm = exec->vm();
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, obj, useCurrentFrame);
+    addErrorInfo(vm, stackTrace.get(), obj);
 }
 
 JSObject* addErrorInfo(CallFrame* callFrame, JSObject* error, int line, const SourceCode& source)
 {
-    VM* vm = &callFrame->vm();
+    VM& vm = callFrame->vm();
     const String& sourceURL = source.provider()->url();
-
+    
+    // The putDirect() calls below should really be put() so that they trigger materialization of
+    // the line/sourceURL properties. Otherwise, what we set here will just be overwritten later.
+    // But calling put() would be bad because we'd rather not do effectful things here. Luckily, we
+    // know that this will get called on some kind of error - so we can just directly ask the
+    // ErrorInstance to materialize whatever it needs to. There's a chance that we get passed some
+    // other kind of object, which also has materializable properties. But this code is heuristic-ey
+    // enough that if we're wrong in such corner cases, it's not the end of the world.
+    if (ErrorInstance* errorInstance = jsDynamicCast<ErrorInstance*>(vm, error))
+        errorInstance->materializeErrorInfoIfNeeded(vm);
+    
+    // FIXME: This does not modify the column property, which confusingly continues to reflect
+    // the column at which the exception was thrown.
+    // https://bugs.webkit.org/show_bug.cgi?id=176673
     if (line != -1)
-        error->putDirect(*vm, Identifier::fromString(vm, linePropertyName), jsNumber(line));
+        error->putDirect(vm, vm.propertyNames->line, jsNumber(line));
     if (!sourceURL.isNull())
-        error->putDirect(*vm, Identifier::fromString(vm, sourceURLPropertyName), jsString(vm, sourceURL));
+        error->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, sourceURL));
     return error;
 }
 

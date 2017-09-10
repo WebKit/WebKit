@@ -1245,7 +1245,8 @@
 - path: ChakraCore/test/StackTrace/ErrorPrototype.js
   cmd: runChakra :baseline, "NoException", "ErrorPrototype.baseline-jsc", ["TrimStackTracePath.js"]
 - path: ChakraCore/test/StackTrace/ErrorDotStackAlreadyExists.js
-  cmd: runChakra :baseline, "NoException", "ErrorDotStackAlreadyExists.baseline-jsc", []
+  # Tests non-standard behavior.
+  cmd: runChakra :skip, "NoException", "ErrorDotStackAlreadyExists.baseline-jsc", []
 - path: ChakraCore/test/StackTrace/FunctionName.js
   cmd: runChakra :baseline, "NoException", "FunctionName.js.baseline-jsc", ["TrimStackTracePath.js"]
 - path: ChakraCore/test/StackTrace/x64StackWalk.js

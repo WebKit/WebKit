@@ -118,19 +118,36 @@ Ref<ScriptCallStack> createScriptCallStackForConsole(JSC::ExecState* exec, size_
     return ScriptCallStack::create(frames);
 }
 
-static void extractSourceInformationFromException(JSC::ExecState* exec, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
+static bool extractSourceInformationFromException(JSC::ExecState* exec, JSObject* exceptionObject, int* lineNumber, int* columnNumber, String* sourceURL)
 {
     VM& vm = exec->vm();
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     // FIXME: <http://webkit.org/b/115087> Web Inspector: Should not need to evaluate JavaScript handling exceptions
     JSValue lineValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "line"));
-    *lineNumber = lineValue && lineValue.isNumber() ? int(lineValue.toNumber(exec)) : 0;
     JSValue columnValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "column"));
-    *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
     JSValue sourceURLValue = exceptionObject->getDirect(vm, Identifier::fromString(exec, "sourceURL"));
-    *sourceURL = sourceURLValue && sourceURLValue.isString() ? sourceURLValue.toWTFString(exec) : ASCIILiteral("undefined");
+    
+    bool result = false;
+    if (lineValue && lineValue.isNumber()
+        && sourceURLValue && sourceURLValue.isString()) {
+        *lineNumber = int(lineValue.toNumber(exec));
+        *columnNumber = columnValue && columnValue.isNumber() ? int(columnValue.toNumber(exec)) : 0;
+        *sourceURL = sourceURLValue.toWTFString(exec);
+        result = true;
+    } else if (ErrorInstance* error = jsDynamicCast<ErrorInstance*>(vm, exceptionObject)) {
+        unsigned unsignedLine;
+        unsigned unsignedColumn;
+        result = getLineColumnAndSource(error->stackTrace(), unsignedLine, unsignedColumn, *sourceURL);
+        *lineNumber = static_cast<int>(unsignedLine);
+        *columnNumber = static_cast<int>(unsignedColumn);
+    }
+    
+    if (sourceURL->isEmpty())
+        *sourceURL = ASCIILiteral("undefined");
+    
     scope.clearException();
+    return result;
 }
 
 Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JSC::Exception* exception, size_t maxStackSize)
@@ -154,13 +171,18 @@ Ref<ScriptCallStack> createScriptCallStackFromException(JSC::ExecState* exec, JS
         int columnNumber;
         String exceptionSourceURL;
         if (!frames.size()) {
-            extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
-            frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineNumber, columnNumber));
+            if (extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
+                frames.append(ScriptCallFrame(String(), exceptionSourceURL, noSourceID, lineNumber, columnNumber));
         } else {
+            // FIXME: The typical stack trace will have a native frame at the top, and consumers of
+            // this code already know this (see JSDOMExceptionHandling.cpp's reportException, for
+            // example - it uses firstNonNativeCallFrame). This looks like it splats something else
+            // over it. That something else is probably already at stackTrace[1].
+            // https://bugs.webkit.org/show_bug.cgi?id=176663
             if (!stackTrace[0].hasLineAndColumnInfo() || stackTrace[0].sourceURL().isEmpty()) {
                 const ScriptCallFrame& firstCallFrame = frames.first();
-                extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL);
-                frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineNumber, columnNumber);
+                if (extractSourceInformationFromException(exec, exceptionObject, &lineNumber, &columnNumber, &exceptionSourceURL))
+                    frames[0] = ScriptCallFrame(firstCallFrame.functionName(), exceptionSourceURL, stackTrace[0].sourceID(), lineNumber, columnNumber);
             }
         }
     }

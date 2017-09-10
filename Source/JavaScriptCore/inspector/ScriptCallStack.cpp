@@ -33,6 +33,7 @@
 #include "ScriptCallStack.h"
 
 #include "InspectorValues.h"
+#include <wtf/DataLog.h>
 
 namespace Inspector {
 
