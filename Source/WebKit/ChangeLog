@@ -1,3 +1,41 @@
+2017-09-10  Brady Eidson  <beidson@apple.com>
+
+        Try to avoid creating the default WKWebsiteDataStore until its actually needed.
+        <rdar://problem/33164453> and https://bugs.webkit.org/show_bug.cgi?id=176551
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/APIHTTPCookieStore.cpp:
+        (API::HTTPCookieStore::cookies):
+        (API::HTTPCookieStore::setCookie):
+        (API::HTTPCookieStore::deleteCookie):
+
+        * UIProcess/API/APIWebsiteDataStore.cpp:
+        (API::WebsiteDataStore::defaultDataStore):
+        (API::WebsiteDataStore::defaultDataStoreExists):
+        * UIProcess/API/APIWebsiteDataStore.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetWebsiteDataStore):
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (+[WKWebsiteDataStore _defaultDataStoreExists]):
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h:
+
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::WebProcessPool):
+        (WebKit::m_hiddenPageThrottlingTimer):
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+        (WebKit::WebProcessPool::ensureStorageProcessAndWebsiteDataStore):
+        (WebKit::WebProcessPool::warmInitialProcess):
+        (WebKit::WebProcessPool::createNewWebProcessRespectingProcessCountLimit):
+        (WebKit::WebProcessPool::createWebPage):
+        (WebKit::WebProcessPool::pageAddedToProcess):
+        * UIProcess/WebProcessPool.h:
+
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::isAssociatedProcessPool const):
+
 2017-09-09  Mark Lam  <mark.lam@apple.com>
 
         Avoid duplicate computations of ExecState::vm().
