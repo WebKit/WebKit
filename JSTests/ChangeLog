@@ -1,3 +1,17 @@
+2017-09-09  Mark Lam  <mark.lam@apple.com>
+
+        [Re-landing] Use JIT probes for DFG OSR exit.
+        https://bugs.webkit.org/show_bug.cgi?id=175144
+        <rdar://problem/33437050>
+
+        Not reviewed.  Original patch reviewed by Saam Barati.
+
+        Disable these tests for debug builds because they run too slow with the new OSR exit.
+
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+
 2017-09-08  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] NewArrayWithSize(size)'s size does not care negative zero

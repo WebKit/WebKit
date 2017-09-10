@@ -45,14 +45,8 @@ struct CPUState {
     inline uintptr_t& spr(SPRegisterID);
     inline double& fpr(FPRegisterID);
 
-    template<typename T, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-    T gpr(RegisterID) const;
-    template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr>
-    T gpr(RegisterID) const;
-    template<typename T, typename std::enable_if<std::is_integral<T>::value>::type* = nullptr>
-    T spr(SPRegisterID) const;
-    template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type* = nullptr>
-    T spr(SPRegisterID) const;
+    template<typename T> T gpr(RegisterID) const;
+    template<typename T> T spr(SPRegisterID) const;
     template<typename T> T fpr(FPRegisterID) const;
 
     void*& pc();
@@ -85,32 +79,24 @@ inline double& CPUState::fpr(FPRegisterID id)
     return fprs[id];
 }
 
-template<typename T, typename std::enable_if<std::is_integral<T>::value>::type*>
+template<typename T>
 T CPUState::gpr(RegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return static_cast<T>(cpu->gpr(id));
+    auto& from = cpu->gpr(id);
+    typename std::remove_const<T>::type to { };
+    std::memcpy(&to, &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+    return to;
 }
 
-template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type*>
-T CPUState::gpr(RegisterID id) const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->gpr(id));
-}
-
-template<typename T, typename std::enable_if<std::is_integral<T>::value>::type*>
+template<typename T>
 T CPUState::spr(SPRegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return static_cast<T>(cpu->spr(id));
-}
-
-template<typename T, typename std::enable_if<std::is_pointer<T>::value>::type*>
-T CPUState::spr(SPRegisterID id) const
-{
-    CPUState* cpu = const_cast<CPUState*>(this);
-    return reinterpret_cast<T>(cpu->spr(id));
+    auto& from = cpu->spr(id);
+    typename std::remove_const<T>::type to { };
+    std::memcpy(&to, &from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+    return to;
 }
 
 template<typename T>
@@ -205,25 +191,31 @@ public:
     using FPRegisterID = MacroAssembler::FPRegisterID;
 
     Context(State* state)
-        : m_state(state)
-        , arg(state->arg)
-        , cpu(state->cpu)
+        : cpu(state->cpu)
+        , m_state(state)
     { }
 
-    uintptr_t& gpr(RegisterID id) { return m_state->cpu.gpr(id); }
-    uintptr_t& spr(SPRegisterID id) { return m_state->cpu.spr(id); }
-    double& fpr(FPRegisterID id) { return m_state->cpu.fpr(id); }
-    const char* gprName(RegisterID id) { return m_state->cpu.gprName(id); }
-    const char* sprName(SPRegisterID id) { return m_state->cpu.sprName(id); }
-    const char* fprName(FPRegisterID id) { return m_state->cpu.fprName(id); }
+    template<typename T>
+    T arg() { return reinterpret_cast<T>(m_state->arg); }
 
-    void*& pc() { return m_state->cpu.pc(); }
-    void*& fp() { return m_state->cpu.fp(); }
-    void*& sp() { return m_state->cpu.sp(); }
+    uintptr_t& gpr(RegisterID id) { return cpu.gpr(id); }
+    uintptr_t& spr(SPRegisterID id) { return cpu.spr(id); }
+    double& fpr(FPRegisterID id) { return cpu.fpr(id); }
+    const char* gprName(RegisterID id) { return cpu.gprName(id); }
+    const char* sprName(SPRegisterID id) { return cpu.sprName(id); }
+    const char* fprName(FPRegisterID id) { return cpu.fprName(id); }
 
-    template<typename T> T pc() { return m_state->cpu.pc<T>(); }
-    template<typename T> T fp() { return m_state->cpu.fp<T>(); }
-    template<typename T> T sp() { return m_state->cpu.sp<T>(); }
+    template<typename T> T gpr(RegisterID id) const { return cpu.gpr<T>(id); }
+    template<typename T> T spr(SPRegisterID id) const { return cpu.spr<T>(id); }
+    template<typename T> T fpr(FPRegisterID id) const { return cpu.fpr<T>(id); }
+
+    void*& pc() { return cpu.pc(); }
+    void*& fp() { return cpu.fp(); }
+    void*& sp() { return cpu.sp(); }
+
+    template<typename T> T pc() { return cpu.pc<T>(); }
+    template<typename T> T fp() { return cpu.fp<T>(); }
+    template<typename T> T sp() { return cpu.sp<T>(); }
 
     Stack& stack()
     {
@@ -234,13 +226,10 @@ public:
     bool hasWritesToFlush() { return m_stack.hasWritesToFlush(); }
     Stack* releaseStack() { return new Stack(WTFMove(m_stack)); }
 
-private:
-    State* m_state;
-public:
-    void* arg;
     CPUState& cpu;
 
 private:
+    State* m_state;
     Stack m_stack;
 
     friend JS_EXPORT_PRIVATE void* probeStateForContext(Context&); // Not for general use. This should only be for writing tests.

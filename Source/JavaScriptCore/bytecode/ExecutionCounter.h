@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@ enum CountingVariant {
 double applyMemoryUsageHeuristics(int32_t value, CodeBlock*);
 int32_t applyMemoryUsageHeuristicsAndConvertToInt(int32_t value, CodeBlock*);
 
+// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 inline int32_t formattedTotalExecutionCount(float value)
 {
     union {
@@ -57,11 +58,19 @@ public:
     ExecutionCounter();
     void forceSlowPathConcurrently(); // If you use this, checkIfThresholdCrossedAndSet() may still return false.
     bool checkIfThresholdCrossedAndSet(CodeBlock*);
+    bool hasCrossedThreshold() const { return m_counter >= 0; }
     void setNewThreshold(int32_t threshold, CodeBlock*);
     void deferIndefinitely();
     double count() const { return static_cast<double>(m_totalCount) + m_counter; }
     void dump(PrintStream&) const;
     
+    void setNewThresholdForOSRExit(uint32_t activeThreshold, double memoryUsageAdjustedThreshold)
+    {
+        m_activeThreshold = activeThreshold;
+        m_counter = static_cast<int32_t>(-memoryUsageAdjustedThreshold);
+        m_totalCount = memoryUsageAdjustedThreshold;
+    }
+
     static int32_t maximumExecutionCountsBetweenCheckpoints()
     {
         switch (countingVariant) {

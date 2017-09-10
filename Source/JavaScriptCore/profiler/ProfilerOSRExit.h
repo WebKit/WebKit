@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,7 +43,8 @@ public:
     
     uint64_t* counterAddress() { return &m_counter; }
     uint64_t count() const { return m_counter; }
-    
+    void incCount() { m_counter++; }
+
     JSValue toJS(ExecState*) const;
 
 private:

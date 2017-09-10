@@ -2444,6 +2444,7 @@
 		FE10AAEC1F44D545009DEDC5 /* ProbeStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */; };
 		FE10AAEE1F44D954009DEDC5 /* ProbeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAED1F44D946009DEDC5 /* ProbeContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE10AAF41F468396009DEDC5 /* ProbeContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */; };
+		FE10AAFF1F4E38E5009DEDC5 /* ProbeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = FE10AAFE1F4E38DA009DEDC5 /* ProbeFrame.h */; };
 		FE1220271BE7F58C0039E6F2 /* JITAddGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */; };
 		FE1220281BE7F5910039E6F2 /* JITAddGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */; };
 		FE187A011BFBE55E0038BBCA /* JITMulGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */; };
@@ -5138,6 +5139,7 @@
 		FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeStack.h; sourceTree = "<group>"; };
 		FE10AAED1F44D946009DEDC5 /* ProbeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeContext.h; sourceTree = "<group>"; };
 		FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProbeContext.cpp; sourceTree = "<group>"; };
+		FE10AAFE1F4E38DA009DEDC5 /* ProbeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProbeFrame.h; sourceTree = "<group>"; };
 		FE1220251BE7F5640039E6F2 /* JITAddGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITAddGenerator.cpp; sourceTree = "<group>"; };
 		FE1220261BE7F5640039E6F2 /* JITAddGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITAddGenerator.h; sourceTree = "<group>"; };
 		FE1879FF1BFBC73C0038BBCA /* JITMulGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITMulGenerator.cpp; sourceTree = "<group>"; };
@@ -7722,6 +7724,7 @@
 				FE63DD531EA9B60E00103A69 /* Printer.h */,
 				FE10AAF31F46826D009DEDC5 /* ProbeContext.cpp */,
 				FE10AAED1F44D946009DEDC5 /* ProbeContext.h */,
+				FE10AAFE1F4E38DA009DEDC5 /* ProbeFrame.h */,
 				FE10AAE91F44D510009DEDC5 /* ProbeStack.cpp */,
 				FE10AAEA1F44D512009DEDC5 /* ProbeStack.h */,
 				FE533CA01F217C310016A1FE /* testmasm.cpp */,
@@ -9689,6 +9692,7 @@
 				AD2FCC1D1DB59CB200B3E736 /* WebAssemblyModulePrototype.lut.h in Headers */,
 				AD4937C81DDD0AAE0077C807 /* WebAssemblyModuleRecord.h in Headers */,
 				AD2FCC2D1DB838FD00B3E736 /* WebAssemblyPrototype.h in Headers */,
+				FE10AAFF1F4E38E5009DEDC5 /* ProbeFrame.h in Headers */,
 				AD2FCBF91DB58DAD00B3E736 /* WebAssemblyRuntimeErrorConstructor.h in Headers */,
 				AD2FCC1E1DB59CB200B3E736 /* WebAssemblyRuntimeErrorConstructor.lut.h in Headers */,
 				AD2FCBFB1DB58DAD00B3E736 /* WebAssemblyRuntimeErrorPrototype.h in Headers */,
