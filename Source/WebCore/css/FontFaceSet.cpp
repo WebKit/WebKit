@@ -63,8 +63,9 @@ FontFaceSet::FontFaceSet(Document& document, CSSFontFaceSet& backing)
     , m_backing(backing)
     , m_readyPromise(*this, &FontFaceSet::readyPromiseResolve)
 {
-    m_readyPromise.resolve(*this);
     m_backing->addClient(*this);
+    if (m_backing->status() == CSSFontFaceSet::Status::Loaded)
+        m_readyPromise.resolve(*this);
 }
 
 FontFaceSet::~FontFaceSet()
