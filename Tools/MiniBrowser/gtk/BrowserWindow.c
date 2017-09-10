@@ -254,6 +254,29 @@ static void browserWindowUpdateNavigationActions(BrowserWindow *window, WebKitBa
     g_list_free(list);
 }
 
+static void browserWindowTryCloseCurrentWebView(BrowserWindow *window)
+{
+    int currentPage = gtk_notebook_get_current_page(GTK_NOTEBOOK(window->notebook));
+    BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), currentPage);
+    webkit_web_view_try_close(browser_tab_get_web_view(tab));
+}
+
+static void browserWindowTryClose(BrowserWindow *window)
+{
+    GSList *webViews = NULL;
+    int n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
+    int i;
+
+    for (i = 0; i < n; ++i) {
+        BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), i);
+        webViews = g_slist_prepend(webViews, browser_tab_get_web_view(tab));
+    }
+
+    GSList *link;
+    for (link = webViews; link; link = link->next)
+        webkit_web_view_try_close(link->data);
+}
+
 static void backForwardlistChanged(WebKitBackForwardList *backForwardlist, WebKitBackForwardListItem *itemAdded, GList *itemsRemoved, BrowserWindow *window)
 {
     browserWindowUpdateNavigationActions(window, backForwardlist);
@@ -933,9 +956,9 @@ static void browser_window_init(BrowserWindow *window)
 
     /* Quit */
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_Q, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
-        g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
+        g_cclosure_new_swap(G_CALLBACK(browserWindowTryClose), window, NULL));
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
-        g_cclosure_new_swap(G_CALLBACK(gtk_widget_destroy), window, NULL));
+        g_cclosure_new_swap(G_CALLBACK(browserWindowTryCloseCurrentWebView), window, NULL));
 
     /* Print */
     gtk_accel_group_connect(window->accelGroup, GDK_KEY_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE,
@@ -1043,22 +1066,6 @@ static void browserWindowSaveSession(BrowserWindow *window)
     webkit_web_view_session_state_unref(state);
     g_file_set_contents(window->sessionFile, g_bytes_get_data(bytes, NULL), g_bytes_get_size(bytes), NULL);
     g_bytes_unref(bytes);
-}
-
-static void browserWindowTryClose(BrowserWindow *window)
-{
-    GSList *webViews = NULL;
-    int n = gtk_notebook_get_n_pages(GTK_NOTEBOOK(window->notebook));
-    int i;
-
-    for (i = 0; i < n; ++i) {
-        BrowserTab *tab = (BrowserTab *)gtk_notebook_get_nth_page(GTK_NOTEBOOK(window->notebook), i);
-        webViews = g_slist_prepend(webViews, browser_tab_get_web_view(tab));
-    }
-
-    GSList *link;
-    for (link = webViews; link; link = link->next)
-        webkit_web_view_try_close(link->data);
 }
 
 static gboolean browserWindowDeleteEvent(GtkWidget *widget, GdkEventAny* event)
