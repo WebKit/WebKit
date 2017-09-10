@@ -256,8 +256,7 @@ static Ref<Inspector::Protocol::Network::Request> buildObjectForResourceRequest(
         .setHeaders(buildObjectForHeaders(request.httpHeaderFields()))
         .release();
     if (request.httpBody() && !request.httpBody()->isEmpty()) {
-        Vector<char> bytes;
-        request.httpBody()->flatten(bytes);
+        auto bytes = request.httpBody()->flatten();
         requestObject->setPostData(String::fromUTF8WithLatin1Fallback(bytes.data(), bytes.size()));
     }
     return requestObject;

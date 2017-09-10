@@ -22,29 +22,79 @@
 #include "FormDataList.h"
 
 #include "LineEnding.h"
-#include <wtf/text/StringView.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 
-FormDataList::FormDataList(const TextEncoding& c)
-    : m_encoding(c)
+FormDataList::FormDataList(const TextEncoding& encoding)
+    : m_encoding(encoding)
 {
 }
 
-void FormDataList::appendString(const String& s)
+CString FormDataList::normalizeString(const String& value) const
 {
-    CString cstr = m_encoding.encode(s, EntitiesForUnencodables);
-    m_items.append(normalizeLineEndingsToCRLF(cstr));
+    return normalizeLineEndingsToCRLF(m_encoding.encode(value, EntitiesForUnencodables));
 }
 
-void FormDataList::appendString(const CString& s)
+// https://xhr.spec.whatwg.org/#create-an-entry
+auto FormDataList::createFileEntry(const String& name, Ref<Blob>&& blob, const String& filename) -> Item
 {
-    m_items.append(s);
+    if (!blob->isFile())
+        return { name, File::create(blob.get(), filename.isNull() ? ASCIILiteral("blob") : filename) };
+    
+    if (!filename.isNull())
+        return { name, File::create(downcast<File>(blob.get()), filename) };
+
+    return { name, static_reference_cast<File>(WTFMove(blob)) };
 }
 
-void FormDataList::appendBlob(Ref<Blob>&& blob, const String& filename)
+void FormDataList::appendData(const String& name, const String& value)
 {
-    m_items.append(Item(WTFMove(blob), filename));
+    m_items.append({ name, value });
 }
 
-} // namespace
+void FormDataList::appendData(const String& name, int value)
+{
+    m_items.append({ name, String::number(value) });
+}
+
+void FormDataList::appendBlob(const String& name, Ref<Blob>&& blob, const String& filename)
+{
+    m_items.append(createFileEntry(name, WTFMove(blob), filename));
+}
+
+void FormDataList::set(const String& name, Item&& item)
+{
+    std::optional<size_t> initialMatchLocation;
+
+    // Find location of the first item with a matching name.
+    for (size_t i = 0; i < m_items.size(); ++i) {
+        if (name == m_items[i].name) {
+            initialMatchLocation = i;
+            break;
+        }
+    }
+
+    if (initialMatchLocation) {
+        m_items[*initialMatchLocation] = WTFMove(item);
+
+        m_items.removeAllMatching([&name] (const auto& item) {
+            return item.name == name;
+        }, *initialMatchLocation + 1);
+        return;
+    }
+
+    m_items.append(WTFMove(item));
+}
+
+void FormDataList::setData(const String& name, const String& value)
+{
+    set(name, { name, value });
+}
+
+void FormDataList::setBlob(const String& name, Ref<Blob>&& blob, const String& filename)
+{
+    set(name, createFileEntry(name, WTFMove(blob), filename));
+}
+
+}

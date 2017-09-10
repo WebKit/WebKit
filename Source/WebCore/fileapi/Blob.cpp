@@ -79,6 +79,14 @@ Blob::Blob()
     ThreadableBlobRegistry::registerBlobURL(m_internalURL, { },  { });
 }
 
+Blob::Blob(const Blob& blob)
+    : m_internalURL(BlobURL::createInternalURL())
+    , m_type(blob.type())
+    , m_size(blob.size())
+{
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
+}
+
 Blob::Blob(Vector<BlobPartVariant>&& blobPartVariants, const BlobPropertyBag& propertyBag)
     : m_internalURL(BlobURL::createInternalURL())
     , m_type(normalizedContentType(propertyBag.type))

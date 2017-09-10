@@ -1,3 +1,20 @@
+2017-09-09  Sam Weinig  <sam@webkit.org>
+
+        Finish off the FormData implementation
+        https://bugs.webkit.org/show_bug.cgi?id=176659
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/XMLHttpRequest/FormData-append-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-delete-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-foreach-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-get-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-has-expected.txt:
+        * web-platform-tests/XMLHttpRequest/formdata-set-expected.txt:
+        * web-platform-tests/XMLHttpRequest/interfaces-expected.txt:
+        
+            Update results.
+
 2017-09-08  Antti Koivisto  <antti@apple.com>
 
         Remove support for >> descendant combinator syntax

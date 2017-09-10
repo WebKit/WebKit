@@ -1,4 +1,6 @@
-CONSOLE MESSAGE: line 16: TypeError: fd.delete is not a function. (In 'fd.delete('n2')', 'fd.delete' is undefined)
 
-FAIL FormData: foreach TypeError: fd.delete is not a function. (In 'fd.delete('n2')', 'fd.delete' is undefined)
+PASS Iterator should return duplicate keys and non-deleted values 
+PASS Entries iterator should return duplicate keys and non-deleted values 
+PASS Keys iterator should return duplicates 
+PASS Values iterator should return non-deleted values 
 

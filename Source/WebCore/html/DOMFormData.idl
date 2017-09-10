@@ -28,6 +28,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (File or USVString) FormDataEntryValue;
+
+// FIXME: Should be Exposed=(Window,Worker) It is not currently possible to do this due to
+// Fetch and XMLHttpRequest expecting to have Document when processing DOMFormData to perform
+// file replacement (https://webkit.org/b/176674).
+
 [
     Constructor(optional HTMLFormElement? form),
     JSGenerateToNativeObject,
@@ -36,6 +42,13 @@
     ImplementationLacksVTable,
 ] interface DOMFormData {
     void append(USVString name, USVString value);
-    void append(USVString name, Blob value, optional USVString filename);
-};
+    void append(USVString name, Blob blobValue, optional USVString filename);
+    [ImplementedAs=remove] void delete(USVString name);
+    FormDataEntryValue? get(USVString name);
+    sequence<FormDataEntryValue> getAll(USVString name);
+    boolean has(USVString name);
+    void set(USVString name, USVString value);
+    void set(USVString name, Blob blobValue, optional USVString filename);
 
+    iterable<USVString, FormDataEntryValue>;
+};

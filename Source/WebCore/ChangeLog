@@ -1,3 +1,86 @@
+2017-09-09  Sam Weinig  <sam@webkit.org>
+
+        Finish off the FormData implementation
+        https://bugs.webkit.org/show_bug.cgi?id=176659
+
+        Reviewed by Darin Adler.
+
+        * fileapi/Blob.cpp:
+        * fileapi/Blob.h:
+        * fileapi/File.cpp:
+        * fileapi/File.h:
+
+            Add constructors / create functions for making File objects
+            from an existing Blob or File with an override name.
+
+        * html/DOMFormData.cpp:
+        * html/DOMFormData.h:
+
+            Add missing operations and iterator implementation
+            and bring append up to spec by no ignoring empty names.
+
+        * html/DOMFormData.idl:
+
+            Bring IDL up to spec. Leave its exposure to just the window for
+            now, as FormData currently depends on the Document/Page for replace
+            file generation and therefore cannot operate in a worker.
+
+        * html/FormDataList.cpp:
+        * html/FormDataList.h:
+
+            Changes FormDataList::Item to a String key and Variant<RefPtr<File>, String>
+            data, matching spec concepts more cleanly. Normalization / encoding has also
+            been made lazy, and now does not happen until creating a FormData from the
+            FormDataList.
+
+            Since we now store Files, rather than Blobs, we follow the spec's 'create an 
+            entry' algorithm to convert Blobs into Files with the same backing bytes. This
+            was previously done as part of FormData::appendKeyValuePairItems.
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::appendFormData):
+
+            Remove unnecessary conversion to utf8, the data is base64 encoded, allowing
+            us to remove an overload of appendData that took a CString.
+
+        * inspector/InspectorNetworkAgent.cpp:
+        (WebCore::buildObjectForResourceRequest):
+
+            Update for new signature of FormData::flatten() which now
+            returns a Vector, rather than takes one in.
+
+        * platform/network/FormData.h:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        (WebCore::FormData::create):
+        (WebCore::FormData::createMultiPart):
+        
+            Cleanup redundancy by using auto.
+        
+        (WebCore::FormData::appendKeyValuePairItems):
+        
+            Updated to handle new FormDataList item format (e.g. pairs of key / data) allowing
+            us to remove two-by-two iteration. Some complexity was removed around Blobs, as
+            FormDataList now always creates File. 
+
+            Since FormDataList no longer eagerly encodes / normalizes the keys and string data
+            values, we now perform those operations here.
+        
+        (WebCore::FormData::expandDataStore):
+        (WebCore::appendBlobResolved):
+        (WebCore::FormData::resolveBlobReferences):
+        (WebCore::FormData::generateFiles):
+        (WebCore::FormData::hasGeneratedFiles const):
+        (WebCore::FormData::hasOwnedGeneratedFiles const):
+        (WebCore::FormData::removeGeneratedFilesIfNeeded):
+
+            Adopt auto and modern for-in loops.
+
+        (WebCore::FormData::flatten const):
+        (WebCore::FormData::flattenToString const):
+
+            Update flatten to return a Vector, rather than take it in.
+
 2017-09-10  Darin Adler  <darin@apple.com>
 
         Refactor Document::updateTitleElement to use traits instead of function pointers

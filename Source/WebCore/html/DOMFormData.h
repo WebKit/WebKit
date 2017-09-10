@@ -32,6 +32,7 @@
 
 #include "FormDataList.h"
 #include <wtf/Forward.h>
+#include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,13 +41,33 @@ class Blob;
 class HTMLFormElement;
 class TextEncoding;
 
+// FIXME: Do we need to have separate DOMFormData and FormDataList classes?
 class DOMFormData : public FormDataList, public RefCounted<DOMFormData> {
 public:
     static Ref<DOMFormData> create(HTMLFormElement* form) { return adoptRef(*new DOMFormData(form)); }
     static Ref<DOMFormData> create(const TextEncoding& encoding) { return adoptRef(*new DOMFormData(encoding)); }
 
+    using FormDataEntryValue = Item::Data;
+
     void append(const String& name, const String& value);
-    void append(const String& name, Blob&, const String& filename = String());
+    void append(const String& name, Blob&, const String& filename = { });
+    void remove(const String& name);
+    std::optional<FormDataEntryValue> get(const String& name);
+    Vector<FormDataEntryValue> getAll(const String& name);
+    bool has(const String& name);
+    void set(const String& name, const String& value);
+    void set(const String& name, Blob&, const String& filename = { });
+
+    class Iterator {
+    public:
+        explicit Iterator(DOMFormData&);
+        std::optional<WTF::KeyValuePair<String, FormDataEntryValue>> next();
+
+    private:
+        Ref<DOMFormData> m_target;
+        size_t m_index { 0 };
+    };
+    Iterator createIterator() { return Iterator { *this }; }
 
 private:
     explicit DOMFormData(const TextEncoding&);

@@ -20,64 +20,38 @@
 
 #pragma once
 
-#include "Blob.h"
+#include "File.h"
 #include "TextEncoding.h"
 #include <wtf/Forward.h>
-#include <wtf/text/CString.h>
+#include <wtf/Variant.h>
 
 namespace WebCore {
 
 class FormDataList {
 public:
-    class Item {
-    public:
-        Item() { }
-        Item(const WTF::CString& data) : m_data(data) { }
-        Item(Ref<Blob>&& blob, const String& filename)
-            : m_blob(WTFMove(blob))
-            , m_filename(filename)
-        { }
+    struct Item {
+        using Data = Variant<RefPtr<File>, String>;
 
-        const WTF::CString& data() const { return m_data; }
-        Blob* blob() const { return m_blob.get(); }
-        const String& filename() const { return m_filename; }
-
-    private:
-        WTF::CString m_data;
-        RefPtr<Blob> m_blob;
-        String m_filename;
+        String name;
+        Data data;
     };
 
-    FormDataList(const TextEncoding&);
-
-    void appendData(const String& key, const String& value)
-    {
-        appendString(key);
-        appendString(value);
-    }
-    void appendData(const String& key, const CString& value)
-    {
-        appendString(key);
-        appendString(value);
-    }
-    void appendData(const String& key, int value)
-    {
-        appendString(key);
-        appendString(String::number(value));
-    }
-    void appendBlob(const String& key, Ref<Blob>&& blob, const String& filename = String())
-    {
-        appendString(key);
-        appendBlob(WTFMove(blob), filename);
-    }
+    void appendData(const String& name, const String& value);
+    void appendData(const String& name, int value);
+    void appendBlob(const String& name, Ref<Blob>&&, const String& filename = { });
+    void setData(const String& name, const String& value);
+    void setBlob(const String& name, Ref<Blob>&&, const String& filename = { });
 
     const Vector<Item>& items() const { return m_items; }
     const TextEncoding& encoding() const { return m_encoding; }
 
-private:
-    void appendString(const CString&);
-    void appendString(const String&);
-    void appendBlob(Ref<Blob>&&, const String& filename);
+    CString normalizeString(const String&) const;
+
+protected:
+    FormDataList(const TextEncoding&);
+
+    Item createFileEntry(const String& name, Ref<Blob>&&, const String& filename);
+    void set(const String& name, Item&&);
 
     TextEncoding m_encoding;
     Vector<Item> m_items;

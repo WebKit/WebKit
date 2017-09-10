@@ -222,7 +222,7 @@ public:
     WEBCORE_EXPORT void appendBlob(const URL& blobURL);
     char* expandDataStore(size_t);
 
-    void flatten(Vector<char>&) const; // omits files
+    Vector<char> flatten() const; // omits files
     String flattenToString() const; // omits files
 
     // Resolve all blob references so we only have file and data.

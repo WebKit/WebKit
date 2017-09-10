@@ -108,44 +108,44 @@ PASS FormData interface: existence and properties of interface prototype object
 PASS FormData interface: existence and properties of interface prototype object's "constructor" property 
 PASS FormData interface: operation append(USVString,Blob,USVString) 
 PASS FormData interface: operation append(USVString,USVString) 
-FAIL FormData interface: operation delete(USVString) assert_own_property: interface prototype object missing non-static operation expected property "delete" missing
-FAIL FormData interface: operation get(USVString) assert_own_property: interface prototype object missing non-static operation expected property "get" missing
-FAIL FormData interface: operation getAll(USVString) assert_own_property: interface prototype object missing non-static operation expected property "getAll" missing
-FAIL FormData interface: operation has(USVString) assert_own_property: interface prototype object missing non-static operation expected property "has" missing
-FAIL FormData interface: operation set(USVString,Blob,USVString) assert_own_property: interface prototype object missing non-static operation expected property "set" missing
-FAIL FormData interface: operation set(USVString,USVString) assert_own_property: interface prototype object missing non-static operation expected property "set" missing
+PASS FormData interface: operation delete(USVString) 
+PASS FormData interface: operation get(USVString) 
+PASS FormData interface: operation getAll(USVString) 
+PASS FormData interface: operation has(USVString) 
+PASS FormData interface: operation set(USVString,Blob,USVString) 
+PASS FormData interface: operation set(USVString,USVString) 
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (0) 
 PASS FormData interface: calling append(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError 
 PASS FormData interface: new FormData() must inherit property "append" with the proper type (1) 
 PASS FormData interface: calling append(USVString,USVString) on new FormData() with too few arguments must throw TypeError 
-FAIL FormData interface: new FormData() must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
-FAIL FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
-FAIL FormData interface: new FormData() must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain
-FAIL FormData interface: calling get(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "get" not found in prototype chain
-FAIL FormData interface: new FormData() must inherit property "getAll" with the proper type (4) assert_inherits: property "getAll" not found in prototype chain
-FAIL FormData interface: calling getAll(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "getAll" not found in prototype chain
-FAIL FormData interface: new FormData() must inherit property "has" with the proper type (5) assert_inherits: property "has" not found in prototype chain
-FAIL FormData interface: calling has(USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "has" not found in prototype chain
-FAIL FormData interface: new FormData() must inherit property "set" with the proper type (6) assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: calling set(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: new FormData() must inherit property "set" with the proper type (7) assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: calling set(USVString,USVString) on new FormData() with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
+PASS FormData interface: new FormData() must inherit property "delete" with the proper type (2) 
+PASS FormData interface: calling delete(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "get" with the proper type (3) 
+PASS FormData interface: calling get(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "getAll" with the proper type (4) 
+PASS FormData interface: calling getAll(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "has" with the proper type (5) 
+PASS FormData interface: calling has(USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "set" with the proper type (6) 
+PASS FormData interface: calling set(USVString,Blob,USVString) on new FormData() with too few arguments must throw TypeError 
+PASS FormData interface: new FormData() must inherit property "set" with the proper type (7) 
+PASS FormData interface: calling set(USVString,USVString) on new FormData() with too few arguments must throw TypeError 
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (0) 
 PASS FormData interface: calling append(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError 
 PASS FormData interface: new FormData(form) must inherit property "append" with the proper type (1) 
 PASS FormData interface: calling append(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError 
-FAIL FormData interface: new FormData(form) must inherit property "delete" with the proper type (2) assert_inherits: property "delete" not found in prototype chain
-FAIL FormData interface: calling delete(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "delete" not found in prototype chain
-FAIL FormData interface: new FormData(form) must inherit property "get" with the proper type (3) assert_inherits: property "get" not found in prototype chain
-FAIL FormData interface: calling get(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "get" not found in prototype chain
-FAIL FormData interface: new FormData(form) must inherit property "getAll" with the proper type (4) assert_inherits: property "getAll" not found in prototype chain
-FAIL FormData interface: calling getAll(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "getAll" not found in prototype chain
-FAIL FormData interface: new FormData(form) must inherit property "has" with the proper type (5) assert_inherits: property "has" not found in prototype chain
-FAIL FormData interface: calling has(USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "has" not found in prototype chain
-FAIL FormData interface: new FormData(form) must inherit property "set" with the proper type (6) assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: calling set(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: new FormData(form) must inherit property "set" with the proper type (7) assert_inherits: property "set" not found in prototype chain
-FAIL FormData interface: calling set(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError assert_inherits: property "set" not found in prototype chain
+PASS FormData interface: new FormData(form) must inherit property "delete" with the proper type (2) 
+PASS FormData interface: calling delete(USVString) on new FormData(form) with too few arguments must throw TypeError 
+PASS FormData interface: new FormData(form) must inherit property "get" with the proper type (3) 
+PASS FormData interface: calling get(USVString) on new FormData(form) with too few arguments must throw TypeError 
+PASS FormData interface: new FormData(form) must inherit property "getAll" with the proper type (4) 
+PASS FormData interface: calling getAll(USVString) on new FormData(form) with too few arguments must throw TypeError 
+PASS FormData interface: new FormData(form) must inherit property "has" with the proper type (5) 
+PASS FormData interface: calling has(USVString) on new FormData(form) with too few arguments must throw TypeError 
+PASS FormData interface: new FormData(form) must inherit property "set" with the proper type (6) 
+PASS FormData interface: calling set(USVString,Blob,USVString) on new FormData(form) with too few arguments must throw TypeError 
+PASS FormData interface: new FormData(form) must inherit property "set" with the proper type (7) 
+PASS FormData interface: calling set(USVString,USVString) on new FormData(form) with too few arguments must throw TypeError 
 PASS ProgressEvent interface: existence and properties of interface object 
 PASS ProgressEvent interface object length 
 PASS ProgressEvent interface object name 

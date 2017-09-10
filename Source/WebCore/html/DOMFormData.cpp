@@ -55,14 +55,76 @@ DOMFormData::DOMFormData(HTMLFormElement* form)
 
 void DOMFormData::append(const String& name, const String& value)
 {
-    if (!name.isEmpty())
-        appendData(name, value);
+    appendData(name, value);
 }
 
 void DOMFormData::append(const String& name, Blob& blob, const String& filename)
 {
-    if (!name.isEmpty())
-        appendBlob(name, blob, filename);
+    appendBlob(name, blob, filename);
+}
+
+void DOMFormData::remove(const String& name)
+{
+    m_items.removeAllMatching([&name] (const auto& item) {
+        return item.name == name;
+    });
+}
+
+auto DOMFormData::get(const String& name) -> std::optional<FormDataEntryValue>
+{
+    for (auto& item : m_items) {
+        if (item.name == name)
+            return item.data;
+    }
+
+    return std::nullopt;
+}
+
+auto DOMFormData::getAll(const String& name) -> Vector<FormDataEntryValue>
+{
+    Vector<FormDataEntryValue> result;
+
+    for (auto& item : m_items) {
+        if (item.name == name)
+            result.append(item.data);
+    }
+
+    return result;
+}
+
+bool DOMFormData::has(const String& name)
+{
+    for (auto& item : m_items) {
+        if (item.name == name)
+            return true;
+    }
+    
+    return false;
+}
+
+void DOMFormData::set(const String& name, const String& value)
+{
+    setData(name, value);
+}
+
+void DOMFormData::set(const String& name, Blob& blob, const String& filename)
+{
+    setBlob(name, blob, filename);
+}
+
+DOMFormData::Iterator::Iterator(DOMFormData& target)
+    : m_target(target)
+{
+}
+
+std::optional<WTF::KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
+{
+    auto& items = m_target->items();
+    if (m_index >= items.size())
+        return std::nullopt;
+
+    auto& item = items[m_index++];
+    return WTF::KeyValuePair<String, FormDataEntryValue> { item.name, item.data };
 }
 
 } // namespace WebCore

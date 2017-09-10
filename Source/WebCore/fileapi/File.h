@@ -65,6 +65,16 @@ public:
         return adoptRef(*new File(path, nameOverride));
     }
 
+    static Ref<File> create(const Blob& blob, const String& name)
+    {
+        return adoptRef(*new File(blob, name));
+    }
+
+    static Ref<File> create(const File& file, const String& name)
+    {
+        return adoptRef(*new File(file, name));
+    }
+
     static Ref<File> createWithRelativePath(const String& path, const String& relativePath);
 
     bool isFile() const override { return true; }
@@ -87,6 +97,8 @@ private:
     WEBCORE_EXPORT explicit File(const String& path);
     File(const String& path, const String& nameOverride);
     File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag&);
+    File(const Blob&, const String& name);
+    File(const File&, const String& name);
 
     File(DeserializationContructor, const String& path, const URL& srcURL, const String& type, const String& name);
 

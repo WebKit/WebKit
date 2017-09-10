@@ -123,7 +123,7 @@ bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
     String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), attributeWithoutSynchronization(challengeAttr), document().baseURL());
     if (value.isNull())
         return false;
-    encoded_values.appendData(name(), value.utf8());
+    encoded_values.appendData(name(), value);
     return true;
 }
 
