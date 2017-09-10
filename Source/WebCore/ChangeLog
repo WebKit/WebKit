@@ -1,3 +1,30 @@
+2017-09-10  Darin Adler  <darin@apple.com>
+
+        Refactor Document::updateTitleElement to use traits instead of function pointers
+        https://bugs.webkit.org/show_bug.cgi?id=176671
+
+        Reviewed by Sam Weinig.
+
+        This template implementation seems slightly more readable and
+        also likely to be slightly more efficient. Also takes a suggestion
+        from Antti of factoring out the "select a new title element" into a
+        function, which is a natural thing to do in this version.
+
+        * dom/Document.cpp:
+        (WebCore::TitleTraits<HTMLTitleElement>::isInEligibleLocation): Added.
+        (WebCore::TitleTraits<HTMLTitleElement>::findTitleElement): Added.
+        (WebCore::TitleTraits<SVGTitleElement>::isInEligibleLocation): Added.
+        (WebCore::TitleTraits<SVGTitleElement>::findTitleElement): Added.
+        (WebCore::selectNewTitleElement): Added.
+        (WebCore::findHTMLTitle): Deleted.
+        (WebCore::isHTMLTitle): Deleted.
+        (WebCore::isHTMLTitleEligible): Deleted.
+        (WebCore::findSVGTitle): Deleted.
+        (WebCore::isSVGTitle): Deleted.
+        (WebCore::isSVGTitleEligible): Deleted.
+        (WebCore::Document::updateTitleElement): Call selectNewTitleElement
+        instead of having the logic here.
+
 2017-09-07  Darin Adler  <darin@apple.com>
 
         Fix double resolve assertion in FontFaceSet seen while running tests

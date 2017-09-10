@@ -1542,63 +1542,47 @@ void Document::setTitle(const String& title)
         updateTitle({ title, LTR });
 }
 
-static Element* findHTMLTitle(Document& document)
-{
-    return descendantsOfType<HTMLTitleElement>(document).first();
+template<typename> struct TitleTraits;
+
+template<> struct TitleTraits<HTMLTitleElement> {
+    static bool isInEligibleLocation(HTMLTitleElement& element) { return element.isConnected() && !element.isInShadowTree(); }
+    static HTMLTitleElement* findTitleElement(Document& document) { return descendantsOfType<HTMLTitleElement>(document).first(); }
 };
 
-static bool isHTMLTitle(Element& element)
-{
-    return is<HTMLTitleElement>(element);
+template<> struct TitleTraits<SVGTitleElement> {
+    static bool isInEligibleLocation(SVGTitleElement& element) { return element.parentNode() == element.document().documentElement(); }
+    static SVGTitleElement* findTitleElement(Document& document) { return childrenOfType<SVGTitleElement>(*document.documentElement()).first(); }
 };
 
-static bool isHTMLTitleEligible(Element& element)
+template<typename TitleElement> Element* selectNewTitleElement(Document& document, Element* oldTitleElement, Element& changingTitleElement)
 {
-    return element.isConnected() && !element.isInShadowTree();
-};
+    using Traits = TitleTraits<TitleElement>;
 
-static Element* findSVGTitle(Document& document)
-{
-    return childrenOfType<SVGTitleElement>(*document.documentElement()).first();
-};
+    if (!is<TitleElement>(changingTitleElement)) {
+        ASSERT(oldTitleElement == Traits::findTitleElement(document));
+        return oldTitleElement;
+    }
 
-static bool isSVGTitle(Element& element)
-{
-    return is<SVGTitleElement>(element);
-};
+    if (oldTitleElement)
+        return Traits::findTitleElement(document);
 
-static bool isSVGTitleEligible(Element& element)
-{
-    return element.parentNode() == element.document().documentElement();
-};
+    // Optimized common case: We have no title element yet.
+    // We can figure out which title element should be used without searching.
+    bool isEligible = Traits::isInEligibleLocation(downcast<TitleElement>(changingTitleElement));
+    auto* newTitleElement = isEligible ? &changingTitleElement : nullptr;
+    ASSERT(newTitleElement == Traits::findTitleElement(document));
+    return newTitleElement;
+}
 
 void Document::updateTitleElement(Element& changingTitleElement)
 {
     // Most documents use HTML title rules.
     // Documents with SVG document elements use SVG title rules.
-    bool useSVGTitle = is<SVGSVGElement>(documentElement());
-    auto findTitle = useSVGTitle ? findSVGTitle : findHTMLTitle;
-    auto isTitle = useSVGTitle ? isSVGTitle : isHTMLTitle;
-    auto isTitleEligible = useSVGTitle ? isSVGTitleEligible : isHTMLTitleEligible;
-
-    if (!isTitle(changingTitleElement)) {
-        ASSERT(m_titleElement == findTitle(*this));
-        return;
-    }
-
-    Element* newTitleElement;
-    if (m_titleElement)
-        newTitleElement = findTitle(*this);
-    else {
-        // Optimized common case: We have no title element yet.
-        // We can figure out which title element should be used without searching.
-        newTitleElement = isTitleEligible(changingTitleElement) ? &changingTitleElement : nullptr;
-        ASSERT(newTitleElement == findTitle(*this));
-    }
-
+    auto selectTitleElement = is<SVGSVGElement>(documentElement())
+        ? selectNewTitleElement<SVGTitleElement> : selectNewTitleElement<HTMLTitleElement>;
+    auto newTitleElement = selectTitleElement(*this, m_titleElement.get(), changingTitleElement);
     if (m_titleElement == newTitleElement)
         return;
-
     m_titleElement = newTitleElement;
     updateTitleFromTitleElement();
 }
