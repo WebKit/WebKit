@@ -35,6 +35,7 @@ function prepare(origin, lineNumberOffset, text)
     checkLiteralTypes(program);
     checkReturns(program);
     checkUnreachableCode(program);
+    checkLoops(program);
     checkRecursion(program);
     inline(program);
     return program;

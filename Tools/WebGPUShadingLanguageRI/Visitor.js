@@ -215,11 +215,31 @@ class Visitor extends VisitorBase {
         if (node.elseBody)
             node.elseBody.visit(this);
     }
+    
+    visitWhileLoop(node)
+    {
+        node.conditional.visit(this);
+        node.body.visit(this);
+    }
+    
+    visitDoWhileLoop(node)
+    {
+        node.body.visit(this);
+        node.conditional.visit(this);
+    }
 
     visitReturn(node)
     {
         if (node.value)
             node.value.visit(this);
+    }
+
+    visitContinue(node)
+    {
+    }
+
+    visitBreak(node)
+    {
     }
     
     visitIntLiteral(node)

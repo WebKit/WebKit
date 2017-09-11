@@ -24,26 +24,22 @@
  */
 "use strict";
 
-class UnreachableCodeChecker extends Visitor {
-    constructor(program)
+class DoWhileLoop extends Node {
+    constructor(origin, body, conditional)
     {
         super();
-        this._returnChecker = new ReturnChecker(program);
+        this._origin = origin;
+        this._body = body;
+        this._conditional = conditional;
     }
-    
-    visitBlock(node)
+
+    get origin() { return this._origin; }
+    get body() { return this._body; }
+    get conditional() { return this._conditional; }
+
+    toString()
     {
-        super.visitBlock(node);
-        for (let i = 0; i < node.statements.length - 1; ++i) {
-            switch(node.statements[i].visit(this._returnChecker)) {
-            case this._returnChecker.returnStyle.DefinitelyReturns:
-            case this._returnChecker.returnStyle.DefinitelyDoesntReturn:
-                throw new WTypeError(
-                    node.statements[i + 1].origin.originString,
-                    "Unreachable code");
-            case this._returnChecker.returnStyle.HasntReturnedYet:
-                continue;
-            }
-        }
+        return "do " + this.body + " while (" + this.conditional + ");";
     }
-}
+};
+

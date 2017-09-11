@@ -178,6 +178,62 @@ class Intrinsics {
                     EPtr.box(left.loadValue() == right.loadValue());
             });
         
+        this._map.set(
+            "native bool operator<<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() < right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator<<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() < right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator<=<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() <= right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator<=<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() <= right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator><>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() > right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator><>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() > right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator>=<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() >= right.loadValue());
+            });
+        
+        this._map.set(
+            "native bool operator>=<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() >= right.loadValue());
+            });
+        
         let arrayElementPtr = func => {
             func.implementation = ([ref, index], node) => {
                 ref = ref.loadValue();

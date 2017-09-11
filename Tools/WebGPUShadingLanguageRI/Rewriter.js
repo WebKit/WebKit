@@ -200,6 +200,16 @@ class Rewriter extends VisitorBase {
         return new Return(node.origin, node.value ? node.value.visit(this) : null);
     }
     
+    visitContinue(node)
+    {
+        return new Continue(node.origin);
+    }
+    
+    visitBreak(node)
+    {
+        return new Break(node.origin);
+    }
+    
     visitIntLiteral(node)
     {
         let result = new IntLiteral(node.origin, node.value);
@@ -282,6 +292,16 @@ class Rewriter extends VisitorBase {
     visitIfStatement(node)
     {
         return new IfStatement(node.origin, node.conditional.visit(this), node.body.visit(this), node.elseBody ? node.elseBody.visit(this) : undefined);
+    }
+
+    visitWhileLoop(node)
+    {
+        return new WhileLoop(node.origin, node.conditional.visit(this), node.body.visit(this));
+    }
+
+    visitDoWhileLoop(node)
+    {
+        return new DoWhileLoop(node.origin, node.body.visit(this), node.conditional.visit(this));
     }
 }
 

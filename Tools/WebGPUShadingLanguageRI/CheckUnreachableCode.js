@@ -26,6 +26,6 @@
 
 function checkUnreachableCode(program)
 {
-    program.visit(new UnreachableCodeChecker());
+    program.visit(new UnreachableCodeChecker(program));
 }
 

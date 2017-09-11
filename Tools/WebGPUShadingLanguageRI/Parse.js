@@ -404,7 +404,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     
     function parsePossibleRelationalInequality()
     {
-        return parseLeftOperatorCall(["<", ">", "<=", "=>"], parsePossibleShift);
+        return parseLeftOperatorCall(["<", ">", "<=", ">="], parsePossibleShift);
     }
     
     function parsePossibleRelationalEquality()
@@ -535,6 +535,20 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         consume(";");
         return new Return(origin, expression);
     }
+    
+    function parseBreak()
+    {
+        let origin = consume("break");
+        consume(";");
+        return new Break(origin);
+    }
+    
+    function parseContinue()
+    {
+        let origin = consume("continue");
+        consume(";");
+        return new Continue(origin);
+    }
 
     function parseIfStatement()
     {
@@ -547,6 +561,27 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (tryConsume("else"))
             elseBody = parseStatement();
         return new IfStatement(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body, elseBody);
+    }
+
+    function parseWhile()
+    {
+        let origin = consume("while");
+        consume("(");
+        let conditional = parseExpression();
+        consume(")");
+        let body = parseStatement();
+        return new WhileLoop(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body);
+    }
+
+    function parseDo()
+    {
+        let origin = consume("do");
+        let body = parseStatement();
+        consume("while");
+        consume("(");
+        let conditional = parseExpression();
+        consume(")");
+        return new DoWhileLoop(origin, body, new CallExpression(conditional.origin, "bool", [], [conditional]));
     }
     
     function parseVariableDecls()

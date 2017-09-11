@@ -1334,6 +1334,29 @@ function TEST_returnIf()
             }
         `),
         (e) => e instanceof WTypeError);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int y = 6;
+            if (x == 7)
+                int y = 8;
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 6);
+}
+
+function TEST_simpleWhile()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            while (x < 13)
+                x = x * 2;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 16);
 }
 
 function TEST_protocolMonoPolySigDoublePolyDefExplicit()
@@ -1398,6 +1421,180 @@ function TEST_ambiguousOverloadTieBreak()
         void foo(int, int) { }
         void bar(int a, int b) { foo(a, b); }
     `);
+}
+
+function TEST_break()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            while (true) {
+                x = x * 2;
+                if (x >= 7)
+                    break;
+            }
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 10)]), 20);
+    program = doPrep(`
+        int foo(int x)
+        {
+            while (true) {
+                while (true) {
+                    x = x * 2;
+                    if (x >= 7)
+                        break;
+                }
+                x = x - 1;
+                break;
+            }
+            return x;
+            
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 10)]), 19);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                while (true) {
+                    {
+                        break;
+                    }
+                    x = x + 1;
+                }
+                return x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                break;
+                return x;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    program = doPrep(`
+            int foo(int x)
+            {
+                while (true) {
+                    if (x == 7) {
+                        break;
+                    }
+                    x = x + 1;
+                }
+                return x;
+            }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 7);
+    program = doPrep(`
+            int foo(int x)
+            {
+                while (true) {
+                    break;
+                }
+                return x;
+            }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 1);
+    program = doPrep(`
+            int foo()
+            {
+                while (true) {
+                    return 7;
+                }
+            }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 7);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                while(true) {
+                    break;
+                    return 7;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_continue()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            while (x < 10) {
+                if (x == 8) {
+                    x = x + 1;
+                    continue;
+                }
+                x = x * 2;
+            }
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 18);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                continue;
+                return x;
+                
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_doWhile()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int y = 7;
+            do {
+                y = 8;
+                break;
+            } while (x < 10);
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 11)]), 8);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int y = 7;
+            do {
+                y = 8;
+                break;
+            } while (y == 7);
+            return y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 8);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            do {
+                if (x == 11) {
+                    x = 15;
+                    continue;
+                }
+                sum = sum + x;
+                x = x + 1;
+            } while (x < 13);
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 19);
 }
 
 let filter = /.*/; // run everything by default

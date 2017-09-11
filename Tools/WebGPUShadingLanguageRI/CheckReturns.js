@@ -26,6 +26,6 @@
 
 function checkReturns(program)
 {
-    program.visit(new ReturnChecker());
+    program.visit(new ReturnChecker(program));
 }
 

@@ -159,6 +159,46 @@ class Evaluator extends Visitor {
         else if (node.elseBody)
             return node.elseBody.visit(this);
     }
+
+    visitWhileLoop(node)
+    {
+        while (node.conditional.visit(this).loadValue()) {
+            try {
+                node.body.visit(this);
+            } catch (e) {
+                if (e instanceof Break)
+                    break;
+                if (e instanceof Continue)
+                    continue;
+                throw e;
+            }
+        }
+    }
+
+    visitDoWhileLoop(node)
+    {
+        do {
+            try {
+                node.body.visit(this);
+            } catch (e) {
+                if (e instanceof Break)
+                    break;
+                if (e instanceof Continue)
+                    continue;
+                throw e;
+            }
+        } while (node.conditional.visit(this).loadValue());
+    }
+
+    visitBreak(node)
+    {
+        throw node;
+    }
+
+    visitContinue(node)
+    {
+        throw node;
+    }
     
     visitCallExpression(node)
     {

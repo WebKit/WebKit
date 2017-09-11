@@ -1,3 +1,95 @@
+2017-09-10  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL should support while loops
+        https://bugs.webkit.org/show_bug.cgi?id=176581
+
+        Reviewed by Filip Pizlo.
+
+        There are a few interesting pieces to this patch:
+        1. Because the evaluator is just a node-based descent through the tree, the implementation of break
+        and continue are just "throw".
+        2. The ReturnChecker now has to return a three-state enum because of nested blocks. The outer block
+        cares about if the inner block has "break" as opposed to it having no returns nor breaks/continues.
+        3. ReturnChecker will treat "while (true)" the same as { }, but will not descend deeper for things
+        like "while (3 == 3)".
+        4. This patch also adds a few more boolean conditional functions like operator<().
+        5. I added another pass which makes sure there are no bare break/return keywords outside of loops.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Break.js: Copied from Tools/WebGPUShadingLanguageRI/CheckUnreachableCode.js.
+        (Break):
+        (Break.prototype.get origin):
+        (Break.prototype.toString):
+        * WebGPUShadingLanguageRI/CheckLoops.js: Copied from Tools/WebGPUShadingLanguageRI/CheckReturns.js.
+        (checkLoops):
+        * WebGPUShadingLanguageRI/CheckReturns.js:
+        (checkReturns):
+        * WebGPUShadingLanguageRI/CheckUnreachableCode.js:
+        (checkUnreachableCode):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Continue.js: Copied from Tools/WebGPUShadingLanguageRI/CheckReturns.js.
+        (Continue):
+        (Continue.prototype.get origin):
+        (Continue.prototype.toString):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitWhileLoop):
+        (Evaluator.prototype.visitBreak):
+        (Evaluator.prototype.visitContinue):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/LoopChecker.js: Copied from Tools/WebGPUShadingLanguageRI/ReturnChecker.js.
+        (LoopChecker):
+        (LoopChecker.prototype.visitFuncDef):
+        (LoopChecker.prototype.visitWhileLoop):
+        (LoopChecker.prototype.visitBreak):
+        (LoopChecker.prototype.visitContinue):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitWhileLoop):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.visit):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parsePossibleRelationalInequality):
+        (parseBreak):
+        (parseContinue):
+        (parseWhile):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/ReturnChecker.js:
+        (ReturnChecker):
+        (ReturnChecker.prototype.visitFuncDef):
+        (ReturnChecker.prototype.visitBlock):
+        (ReturnChecker.prototype.visitIfStatement):
+        (ReturnChecker.prototype.visitWhileLoop):
+        (ReturnChecker.prototype.visitReturn):
+        (ReturnChecker.prototype.visitBreak):
+        (ReturnChecker.prototype.visitContinue):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitContinue):
+        (Rewriter.prototype.visitBreak):
+        (Rewriter.prototype.visitWhileLoop):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/StandardLibraryPrologue.js:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_returnIf):
+        (TEST_simpleWhile):
+        * WebGPUShadingLanguageRI/UnreachableCodeChecker.js:
+        (UnreachableCodeChecker):
+        (UnreachableCodeChecker.prototype.visitBlock):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitWhileLoop):
+        (Visitor.prototype.visitContinue):
+        (Visitor.prototype.visitBreak):
+        * WebGPUShadingLanguageRI/WhileLoop.js: Copied from Tools/WebGPUShadingLanguageRI/CheckReturns.js.
+        (WhileLoop):
+        (WhileLoop.prototype.get origin):
+        (WhileLoop.prototype.get conditional):
+        (WhileLoop.prototype.get body):
+        (WhileLoop.prototype.toString):
+
 2017-09-07  Filip Pizlo  <fpizlo@apple.com>
 
         WSL overload resolution should not be cascading

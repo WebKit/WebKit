@@ -25,31 +25,96 @@
 "use strict";
 
 class ReturnChecker extends Visitor {
+    constructor(program)
+    {
+        super();
+        this.returnStyle = {
+            DefinitelyReturns: "Definitely Returns",
+            DefinitelyDoesntReturn: "Definitely Doesn't Return",
+            HasntReturnedYet: "Hasn't Returned Yet"
+        };
+        this._program = program;
+    }
+
     visitFuncDef(node)
     {
         if (node.returnType.equals(node.program.intrinsics.void))
             return;
         
-        if (!node.body.visit(this))
+        let bodyValue = node.body.visit(this);
+        if (bodyValue == this.returnStyle.DefinitelyDoesntReturn || bodyValue == this.returnStyle.HasntReturnedYet)
             throw new WTypeError(node.origin.originString, "Function does not return");
     }
     
     visitBlock(node)
     {
-        // FIXME: This isn't right for break/continue.
-        // https://bugs.webkit.org/show_bug.cgi?id=176263
-        return node.statements.reduce((result, statement) => result || statement.visit(this), false);
+        for (let statement of node.statements) {
+            switch (statement.visit(this)) {
+            case this.returnStyle.DefinitelyReturns:
+                return this.returnStyle.DefinitelyReturns;
+            case this.returnStyle.DefinitelyDoesntReturn:
+                return this.returnStyle.DefinitelyDoesntReturn;
+            case this.returnStyle.HasntReturnedYet:
+                continue;
+            }
+        }
+        return this.returnStyle.HasntReturnedYet;
     }
 
     visitIfStatement(node)
     {
-        return node.elseBody && node.body.visit(this) && node.elseBody.visit(this);
+        if (node.elseBody) {
+            let bodyValue = node.body.visit(this);
+            let elseValue = node.elseBody.visit(this);
+            if (bodyValue == this.returnStyle.DefinitelyReturns && elseValue == this.returnStyle.DefinitelyReturns)
+                return this.returnStyle.DefinitelyReturns;
+            if (bodyValue == this.returnStyle.DefinitelyDoesntReturn && elseValue == this.returnStyle.DefinitelyDoesntReturn)
+                return this.returnStyle.DefinitelyDoesntReturn;
+        }
+        return this.returnStyle.HasntReturnedYet;
     }
 
-    // If a loop returns, then it counts only if the loop is guaranteed to run at least once.
+    visitWhileLoop(node)
+    {
+        if (node.conditional instanceof CallExpression && node.conditional.isCast && node.conditional.returnType instanceof TypeRef && node.conditional.returnType.equals(this._program.intrinsics.bool) && node.conditional.argumentList.length == 1 && node.conditional.argumentList[0].list.length == 1 && node.conditional.argumentList[0].list[0] instanceof BoolLiteral && node.conditional.argumentList[0].list[0].value) {
+            switch (node.body.visit(this)) {
+            case this.returnStyle.DefinitelyReturns:
+                return this.returnStyle.DefinitelyReturns;
+            case this.returnStyle.DefinitelyDoesntReturn:
+            case this.returnStyle.HasntReturnedYet:
+                return this.returnStyle.HasntReturnedYet;
+            }
+        } else
+            node.conditional.visit(this);
+        return this.returnStyle.HasntReturnedYet;
+    }
+
+    visitDoWhileLoop(node)
+    {
+        let result;
+        switch (node.body.visit(this)) {
+        case this.returnStyle.DefinitelyReturns:
+            result = this.returnStyle.DefinitelyReturns;
+        case this.returnStyle.DefinitelyDoesntReturn:
+        case this.returnStyle.HasntReturnedYet:
+            result = this.returnStyle.HasntReturnedYet;
+        }
+        node.conditional.visit(this);
+        return result;
+    }
     
     visitReturn(node)
     {
-        return true;
+        return this.returnStyle.DefinitelyReturns;
+    }
+
+    visitBreak(node)
+    {
+        return this.returnStyle.DefinitelyDoesntReturn;
+    }
+
+    visitContinue(node)
+    {
+        return this.returnStyle.DefinitelyDoesntReturn;
     }
 }

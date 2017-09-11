@@ -52,6 +52,14 @@ native uint operator/(uint, uint);
 native bool operator==(int, int);
 native bool operator==(uint, uint);
 native bool operator==(bool, bool);
+native bool operator<(int, int);
+native bool operator<(uint, uint);
+native bool operator<=(int, int);
+native bool operator<=(uint, uint);
+native bool operator>(int, int);
+native bool operator>(uint, uint);
+native bool operator>=(int, int);
+native bool operator>=(uint, uint);
 
 protocol Equatable {
     bool operator==(Equatable, Equatable);

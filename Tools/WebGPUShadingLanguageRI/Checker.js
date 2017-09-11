@@ -237,6 +237,26 @@ class Checker extends Visitor {
         if (node.elseBody)
             node.elseBody.visit(this);
     }
+
+    visitWhileLoop(node)
+    {
+        let conditionalResultType = node.conditional.visit(this);
+        if (!conditionalResultType)
+            throw new Error("While loop conditional has no type: " + node.conditional);
+        if (!conditionalResultType.equals(this._program.intrinsics.bool))
+            throw new WError("While loop conditional isn't a bool: " + node.conditional);
+        node.body.visit(this);
+    }
+
+    visitDoWhileLoop(node)
+    {
+        node.body.visit(this);
+        let conditionalResultType = node.conditional.visit(this);
+        if (!conditionalResultType)
+            throw new Error("Do-While loop conditional has no type: " + node.conditional);
+        if (!conditionalResultType.equals(this._program.intrinsics.bool))
+            throw new WError("Do-While loop conditional isn't a bool: " + node.conditional);
+    }
     
     visitCommaExpression(node)
     {
