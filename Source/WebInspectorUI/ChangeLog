@@ -1,3 +1,137 @@
+2017-09-10  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: change style of RecordingNavigationSidebarPanel
+        https://bugs.webkit.org/show_bug.cgi?id=175451
+        <rdar://problem/34040769>
+
+        Reviewed by Devin Rousso.
+
+        This patch adds UI polish to the Canvas recording navigation sidebar:
+         - New icons for Canvas2D operations
+         - Removed extraneous colors: zebra striping, frame element background color
+         - Visual action color changed to match details sidebar "changed" color
+         - Make tree item indent a convenient multiple of the base indent
+         - Move RecordingActionTreeElement styles to a separate file
+
+        * UserInterface/Images/Clip.svg: Added.
+        * UserInterface/Images/Composite.svg: Added.
+        * UserInterface/Images/Fill.svg: Added.
+        * UserInterface/Images/LineStyle.svg: Added.
+        * UserInterface/Images/Palette.svg: Added.
+        * UserInterface/Images/PathArc.svg: Added.
+        * UserInterface/Images/PathCurve.svg: Added.
+        * UserInterface/Images/PathEllipse.svg: Added.
+        * UserInterface/Images/PathLineTo.svg: Added.
+        * UserInterface/Images/PathMoveTo.svg: Added.
+        * UserInterface/Images/PathRect.svg: Added.
+        * UserInterface/Images/Pixels.svg: Added.
+        * UserInterface/Images/PointInPath.svg: Added.
+        * UserInterface/Images/PointInStroke.svg: Added.
+        * UserInterface/Images/Shadow.svg: Added.
+        * UserInterface/Images/Stroke.svg: Added.
+        * UserInterface/Images/Text.svg: Added.
+        * UserInterface/Images/Transform.svg: Added.
+        New icons for Canvas2D operations.
+
+        * UserInterface/Main.html:
+        New file.
+
+        * UserInterface/Views/GeneralTreeElement.js:
+        (WI.GeneralTreeElement.prototype.customTitleTooltip):
+        (WI.GeneralTreeElement.prototype._updateTitleTooltip):
+        Allow derived classes to supply a custom tooltip, when
+        simply getting the title element text is insufficient.
+
+        * UserInterface/Views/RecordingActionTreeElement.css: Added.
+        (.item.action.initial-state > .icon):
+        (.tree-outline:not(:focus, .force-focus) .item.action:not(.initial-state, .parent, .invalid) > .icon):
+        (.item.action:not(.initial-state)::before):
+        (body[dir=ltr] .item.action::before):
+        (body[dir=rtl] .item.action::before):
+        (.tree-outline:matches(:focus, .force-focus) .item.action.selected:not(.initial-state, .invalid) > .icon):
+        (body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,):
+        (.tree-outline[data-indent="1"] .item.action::before,):
+        (.tree-outline[data-indent="3"] .item.action::before):
+        (.tree-outline[data-indent="4"] .item.action::before):
+        (.tree-outline[data-indent="5"] .item.action::before):
+        (.tree-outline[data-indent="6"] .item.action::before):
+        (.tree-outline[data-indent="7"] .item.action::before):
+        (body[dir=ltr] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon):
+        (body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon):
+        (.item.action.visual:not(.selected, .invalid)):
+        (.item.action.attribute > .titles .parameters::before):
+        (.item.action:not(.attribute) > .titles .parameters::before):
+        (.item.action:not(.attribute) > .titles .parameters::after):
+        (.item.action > .titles .parameter:not(:last-child)::after):
+        (.item.action:not(.selected) > .titles .parameter.swizzled):
+        (.item.action.composite > .icon):
+        (.item.action.fill > .icon):
+        (.item.action.image > .icon):
+        (.item.action.line-style > .icon):
+        (.item.action.shadow > .icon):
+        (.item.action.stroke > .icon):
+        (.item.action.style > .icon):
+        (.item.action.text > .icon):
+        (.item.action.transform > .icon):
+        (.item.action.arc > .icon):
+        (.item.action.clip > .icon):
+        (.item.action.curve > .icon):
+        (.item.action.ellipse > .icon):
+        (.item.action.line-to > .icon):
+        (.item.action.move-to > .icon):
+        (.item.action.point-in-path > .icon):
+        (.item.action.point-in-stroke > .icon):
+        (.item.action.rect > .icon):
+        (.item.action.restore > .icon):
+        (.item.action.save > .icon):
+        (.item.action.invalid > .icon):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement):
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+        (WI.RecordingActionTreeElement._generateDOM):
+        (WI.RecordingActionTreeElement._getClassNames):
+        Broke out into its own helper, to simplify _generateDOM which had
+        too many responsibilities.
+
+        (WI.RecordingActionTreeElement._classNameForAction.classNameForActionName):
+        (WI.RecordingActionTreeElement._classNameForAction):
+        Get an icon for the action "type". Actions are grouped by similar
+        operations. For example, lineCap, lineDash, lineJoin, lineWidth, and
+        miterLimit are assigned the icon LineStyle.svg.
+
+        (WI.RecordingActionTreeElement.prototype.customTitleTooltip):
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.css:
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline .item.folder-icon > .icon):
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline:not(:empty)): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action, .selected).expanded): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before): Deleted.
+        (body[dir=ltr] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before): Deleted.
+        (body[dir=rtl] .sidebar > .panel.navigation.recording > .content > .tree-outline .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="2"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="3"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="4"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="5"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="6"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline[data-indent="7"] .item.action:not(.initial-state)::before): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.function > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.getter > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .tree-outline:matches(:focus, .force-focus) .action.attribute.getter.selected > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.boolean > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.number > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.object > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.attribute.string > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content > .tree-outline > .item.parent:not(.action) > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action:matches(.invalid, .missing) > .icon): Deleted.
+        (body[dir=ltr] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon): Deleted.
+        (body[dir=rtl] .sidebar > .panel.navigation.recording > .content .action:not(.initial-state) > .icon): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.visual:not(.selected, .invalid)): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action:not(.selected, .initial-state) > .titles .parameter.swizzled): Deleted.
+        (.sidebar > .panel.navigation.recording > .content .action.invalid:not(.selected, .initial-state) > .titles :matches(.name, .parameter.invalid)): Deleted.
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+
 2017-09-08  Joseph Pecoraro  <pecoraro@apple.com>
 
         Uncaught Exception: TypeError: this._heapSnapshot.addEventListener is not a function.

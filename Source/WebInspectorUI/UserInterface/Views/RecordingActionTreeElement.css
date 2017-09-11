@@ -1,0 +1,211 @@
+/*
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+.item.action.initial-state > .icon {
+    content: url("../Images/Source.svg");
+}
+
+.tree-outline:not(:focus, .force-focus) .item.action:not(.initial-state, .parent, .invalid) > .icon {
+    opacity: 0.7;
+}
+
+.item.action:not(.initial-state)::before {
+    position: relative;
+    top: 3px;
+    content: attr(data-index);
+    font-family: -apple-system, sans-serif;
+    font-size: 9px;
+    color: var(--text-color-gray-medium);
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+
+    --data-indent: calc(var(--tree-outline-icon-margin-start) - var(--tree-outline-icon-margin-end));
+}
+
+body[dir=ltr] .item.action::before {
+    float: left;
+    margin-right: var(--tree-outline-icon-margin-end);
+    margin-left: 0;
+}
+
+body[dir=rtl] .item.action::before {
+    float: right;
+    margin-right: 0;
+    margin-left: var(--tree-outline-icon-margin-end);
+}
+
+.tree-outline:matches(:focus, .force-focus) .item.action.selected:not(.initial-state, .invalid) > .icon {
+    filter: invert();
+    opacity: 1;
+}
+
+body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,
+body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected::before {
+    color: var(--selected-secondary-text-color);
+}
+
+.tree-outline[data-indent="1"] .item.action::before,
+.tree-outline[data-indent="2"] .item.action::before {
+    min-width: var(--data-indent);
+}
+
+.tree-outline[data-indent="3"] .item.action::before {
+    min-width: calc(var(--data-indent) * 1.5);
+}
+
+.tree-outline[data-indent="4"] .item.action::before {
+    min-width: calc(var(--data-indent) * 2);
+}
+
+.tree-outline[data-indent="5"] .item.action::before {
+    min-width: calc(var(--data-indent) * 2.5);
+}
+
+.tree-outline[data-indent="6"] .item.action::before {
+    min-width: calc(var(--data-indent) * 3);
+}
+
+.tree-outline[data-indent="7"] .item.action::before {
+    min-width: calc(var(--data-indent) * 3.5);
+}
+
+body[dir=ltr] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
+    margin-left: 0;
+}
+
+body[dir=rtl] .tree-outline:not(.hide-disclosure-buttons) .item.action:not(.initial-state, .parent) > .icon {
+    margin-right: 0;
+}
+
+.item.action.visual:not(.selected, .invalid) {
+    background-color: var(--value-changed-highlight);
+}
+
+.item.action.attribute > .titles .parameters::before {
+    content: " = ";
+}
+
+.item.action:not(.attribute) > .titles .parameters::before {
+    content: "(";
+}
+
+.item.action:not(.attribute) > .titles .parameters::after {
+    content: ")";
+}
+
+.item.action > .titles .parameter:not(:last-child)::after {
+    content: ", ";
+}
+
+.item.action:not(.selected) > .titles .parameter.swizzled {
+    color: var(--text-color-gray-medium);
+}
+
+.item.action.composite > .icon {
+    content: url(../Images/Composite.svg);
+}
+
+.item.action.fill > .icon {
+    content: url(../Images/Fill.svg);
+}
+
+.item.action.image > .icon {
+    content: url(../Images/Pixels.svg);
+}
+
+.item.action.line-style > .icon {
+    content: url(../Images/LineStyle.svg);
+}
+
+.item.action.shadow > .icon {
+    content: url(../Images/Shadow.svg);
+}
+
+.item.action.stroke > .icon {
+    content: url(../Images/Stroke.svg);
+}
+
+.item.action.style > .icon {
+    content: url(../Images/Palette.svg);
+}
+
+.item.action.text > .icon {
+    content: url(../Images/Text.svg);
+}
+
+.item.action.transform > .icon {
+    content: url(../Images/Transform.svg);
+}
+
+.item.action.arc > .icon {
+    content: url(../Images/PathArc.svg);
+}
+
+.item.action.clip > .icon {
+    content: url(../Images/Clip.svg);
+}
+
+.item.action.curve > .icon {
+    content: url(../Images/PathCurve.svg);
+}
+
+.item.action.ellipse > .icon {
+    content: url(../Images/PathEllipse.svg);
+}
+
+.item.action.line-to > .icon {
+    content: url(../Images/PathLineTo.svg);
+}
+
+.item.action.move-to > .icon {
+    content: url(../Images/PathMoveTo.svg);
+}
+
+.item.action.point-in-path > .icon {
+    content: url(../Images/PointInPath.svg);
+}
+
+.item.action.point-in-stroke > .icon {
+    content: url(../Images/PointInStroke.svg);
+}
+
+.item.action.rect > .icon {
+    content: url(../Images/PathRect.svg);
+}
+
+.item.action.restore > .icon {
+    content: url(../Images/StepOut.svg);
+}
+
+.item.action.save > .icon {
+    content: url(../Images/StepInto.svg);
+}
+
+.item.action.invalid > .icon {
+    top: 2px;
+    width: 16px;
+    height: 12px;
+    content: url(../Images/Error.svg);
+}

@@ -29,7 +29,8 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     {
         console.assert(representedObject instanceof WI.RecordingAction);
 
-        let {classNames, copyText, titleFragment} = WI.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
+        let {titleFragment, copyText} = WI.RecordingActionTreeElement._generateDOM(representedObject, recordingType);
+        let classNames = WI.RecordingActionTreeElement._getClassNames(representedObject);
 
         const subtitle = null;
         super(classNames, titleFragment, subtitle, representedObject);
@@ -42,19 +43,106 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
 
     static _generateDOM(recordingAction, recordingType)
     {
-        let classNames = ["action"];
+        function createParameterElement(parameter, swizzleType) {
+            let parameterElement = document.createElement("span");
+            parameterElement.classList.add("parameter");
+
+            switch (swizzleType) {
+            case WI.Recording.Swizzle.Number:
+                parameterElement.textContent = parameter.maxDecimals(2);
+                break;
+
+            case WI.Recording.Swizzle.Boolean:
+                parameterElement.textContent = parameter;
+                break;
+
+            case WI.Recording.Swizzle.String:
+                parameterElement.textContent = JSON.stringify(parameter);
+                break;
+
+            case WI.Recording.Swizzle.Array:
+                parameterElement.classList.add("swizzled");
+                parameterElement.textContent = JSON.stringify(parameter);
+                break;
+
+            case WI.Recording.Swizzle.TypedArray:
+            case WI.Recording.Swizzle.Image:
+            case WI.Recording.Swizzle.ImageData:
+            case WI.Recording.Swizzle.DOMMatrix:
+            case WI.Recording.Swizzle.Path2D:
+            case WI.Recording.Swizzle.CanvasGradient:
+            case WI.Recording.Swizzle.CanvasPattern:
+            case WI.Recording.Swizzle.WebGLBuffer:
+            case WI.Recording.Swizzle.WebGLFramebuffer:
+            case WI.Recording.Swizzle.WebGLRenderbuffer:
+            case WI.Recording.Swizzle.WebGLTexture:
+            case WI.Recording.Swizzle.WebGLShader:
+            case WI.Recording.Swizzle.WebGLProgram:
+            case WI.Recording.Swizzle.WebGLUniformLocation:
+                parameterElement.classList.add("swizzled");
+                parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
+                break;
+            }
+
+            if (!parameterElement.textContent) {
+                parameterElement.classList.add("invalid");
+                parameterElement.textContent = swizzleType === WI.Recording.Swizzle.None ? parameter : WI.Recording.displayNameForSwizzleType(swizzleType);
+            }
+
+            return parameterElement;
+        }
+
+        let titleFragment = document.createDocumentFragment();
         let copyText = recordingAction.name;
 
-        let isInitialState = recordingAction instanceof WI.RecordingInitialStateAction;
+        let nameContainer = titleFragment.appendChild(document.createElement("span"));
+        nameContainer.classList.add("name");
+        nameContainer.textContent = recordingAction.name;
+
+        if (!recordingAction.parameters.length)
+            return {titleFragment, copyText};
+
+        let parametersContainer = titleFragment.appendChild(document.createElement("span"));
+        parametersContainer.classList.add("parameters");
+
         if (recordingAction.isFunction)
-            classNames.push("function");
-        else if (!isInitialState) {
-            classNames.push("attribute");
-            if (recordingAction.isGetter)
-                classNames.push("getter");
-            else
-                classNames.push(typeof recordingAction.parameters[0]);
+            copyText += "(";
+        else
+            copyText += " = ";
+
+        for (let i = 0; i < recordingAction.parameters.length; ++i) {
+            let parameter = recordingAction.parameters[i];
+            let swizzleType = recordingAction.swizzleTypes[i];
+            let parameterElement = createParameterElement(parameter, swizzleType);
+            parametersContainer.appendChild(parameterElement);
+
+            if (i)
+                copyText += ", ";
+
+            copyText += parameterElement.textContent;
         }
+
+        if (recordingAction.isFunction)
+            copyText += ")";
+
+        return {titleFragment, copyText};
+    }
+
+    static _getClassNames(recordingAction)
+    {
+        let classNames = ["action"];
+
+        if (recordingAction instanceof WI.RecordingInitialStateAction) {
+            classNames.push("initial-state");
+            return classNames;
+        }
+
+        if (!recordingAction.isFunction)
+            classNames.push("attribute");
+
+        let actionClassName = WI.RecordingActionTreeElement._classNameForAction(recordingAction);
+        if (actionClassName.length)
+            classNames.push(actionClassName);
 
         if (recordingAction.isVisual)
             classNames.push("visual");
@@ -62,93 +150,136 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         if (!recordingAction.valid)
             classNames.push("invalid");
 
-        let titleFragment = document.createDocumentFragment();
+        return classNames;
+    }
 
-        let nameContainer = titleFragment.appendChild(document.createElement("span"));
-        nameContainer.classList.add("name");
-        nameContainer.textContent = recordingAction.name;
+    static _classNameForAction(recordingAction)
+    {
+        function classNameForActionName(name) {
+            switch (name) {
+            case "arc":
+            case "arcTo":
+                return "arc";
 
-        if (!recordingAction.isGetter && !isInitialState) {
-            if (recordingAction.isFunction) {
-                titleFragment.append("(");
-                copyText += "(";
-            } else {
-                titleFragment.append(" = ");
-                copyText = " = ";
+            case "globalAlpha":
+            case "globalCompositeOperation":
+            case "setAlpha":
+            case "setGlobalAlpha":
+            case "setCompositeOperation":
+            case "setGlobalCompositeOperation":
+                return "composite";
+
+            case "bezierCurveTo":
+            case "quadraticCurveTo":
+                return "curve";
+
+            case "clearRect":
+            case "fill":
+            case "fillRect":
+            case "fillText":
+                return "fill";
+
+            case "createImageData":
+            case "drawFocusIfNeeded":
+            case "drawImage":
+            case "drawImageFromRect":
+            case "filter":
+            case "getImageData":
+            case "imageSmoothingEnabled":
+            case "imageSmoothingQuality":
+            case "putImageData":
+            case "webkitGetImageDataHD":
+            case "webkitPutImageDataHD":
+            case "webkitImageSmoothingEnabled":
+                return "image";
+
+            case "getLineDash":
+            case "lineCap":
+            case "lineDashOffset":
+            case "lineJoin":
+            case "lineWidth":
+            case "miterLimit":
+            case "setLineCap":
+            case "setLineDash":
+            case "setLineJoin":
+            case "setLineWidth":
+            case "setMiterLimit":
+            case "webkitLineDash":
+            case "webkitLineDashOffset":
+                return "line-style";
+
+            case "closePath":
+            case "lineTo":
+                return "line-to";
+
+            case "beginPath":
+            case "moveTo":
+                return "move-to";
+
+            case "isPointInPath":
+                return "point-in-path";
+
+            case "isPointInStroke":
+                return "point-in-stroke";
+
+            case "clearShadow":
+            case "setShadow":
+            case "shadowBlur":
+            case "shadowColor":
+            case "shadowOffsetX":
+            case "shadowOffsetY":
+                return "shadow";
+
+            case "createLinearGradient":
+            case "createPattern":
+            case "createRadialGradient":
+            case "fillStyle":
+            case "setFillColor":
+            case "setStrokeColor":
+            case "strokeStyle":
+                return "style";
+
+            case "stroke":
+            case "strokeRect":
+            case "strokeText":
+                return "stroke";
+
+            case "direction":
+            case "font":
+            case "measureText":
+            case "textAlign":
+            case "textBaseline":
+                return "text";
+
+            case "getTransform":
+            case "resetTransform":
+            case "rotate":
+            case "scale":
+            case "setTransform":
+            case "transform":
+            case "translate":
+                return "transform";
+
+            case "clip":
+            case "ellipse":
+            case "rect":
+            case "restore":
+            case "save":
+                return name;
             }
 
-            for (let i = 0; i < recordingAction.parameters.length; ++i) {
-                let parameter = recordingAction.parameters[i];
-                let swizzleType = recordingAction.swizzleTypes[i];
+            console.warn("No class name for action " + name);
+            return "";
+        }
 
-                if (i) {
-                    titleFragment.append(", ");
-                    copyText += ", ";
-                }
+        const name = recordingAction.name;
+        let className = WI.RecordingActionTreeElement._memoizedActionClassNames.get(name);
+        if (!className) {
+            className = classNameForActionName(name);
+            WI.RecordingActionTreeElement._memoizedActionClassNames.set(name, className);
+        }
 
-                let parameterElement = titleFragment.appendChild(document.createElement("span"));
-                parameterElement.classList.add("parameter");
-
-                switch (swizzleType) {
-                case WI.Recording.Swizzle.Number:
-                    parameterElement.textContent = parameter.maxDecimals(2);
-                    break;
-
-                case WI.Recording.Swizzle.Boolean:
-                    parameterElement.textContent = parameter;
-                    break;
-
-                case WI.Recording.Swizzle.String:
-                    parameterElement.textContent = JSON.stringify(parameter);
-                    break;
-
-                case WI.Recording.Swizzle.Array:
-                    parameterElement.classList.add("swizzled");
-                    parameterElement.textContent = JSON.stringify(parameter);
-                    break;
-
-                case WI.Recording.Swizzle.TypedArray:
-                case WI.Recording.Swizzle.Image:
-                case WI.Recording.Swizzle.ImageData:
-                case WI.Recording.Swizzle.DOMMatrix:
-                case WI.Recording.Swizzle.Path2D:
-                case WI.Recording.Swizzle.CanvasGradient:
-                case WI.Recording.Swizzle.CanvasPattern:
-                case WI.Recording.Swizzle.WebGLBuffer:
-                case WI.Recording.Swizzle.WebGLFramebuffer:
-                case WI.Recording.Swizzle.WebGLRenderbuffer:
-                case WI.Recording.Swizzle.WebGLTexture:
-                case WI.Recording.Swizzle.WebGLShader:
-                case WI.Recording.Swizzle.WebGLProgram:
-                case WI.Recording.Swizzle.WebGLUniformLocation:
-                    parameterElement.classList.add("swizzled");
-                    parameterElement.textContent = WI.Recording.displayNameForSwizzleType(swizzleType);
-                    break;
-                }
-
-                if (!parameterElement.textContent) {
-                    parameterElement.classList.add("invalid");
-                    parameterElement.textContent = swizzleType === WI.Recording.Swizzle.None ? parameter : WI.Recording.displayNameForSwizzleType(swizzleType);
-                }
-
-                copyText += parameterElement.textContent;
-
-                if (!recordingAction.isFunction)
-                    break;
-            }
-
-            if (recordingAction.isFunction) {
-                titleFragment.append(")");
-                copyText += ")";
-            }
-        } else if (isInitialState)
-            classNames.push("initial-state");
-
-        return {
-            classNames,
-            copyText,
-            titleFragment,
-        };
+        return className;
     }
 
     // Public
@@ -173,6 +304,11 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
     }
 
     // Protected
+
+    customTitleTooltip()
+    {
+        return this._copyText;
+    }
 
     onattach()
     {
@@ -204,3 +340,5 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         super.populateContextMenu(contextMenu, event);
     }
 };
+
+WI.RecordingActionTreeElement._memoizedActionClassNames = new Map;

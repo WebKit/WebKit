@@ -237,6 +237,11 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         }
     }
 
+    customTitleTooltip()
+    {
+        // Implemented by subclasses.
+    }
+
     // Private
 
     _createElementsIfNeeded()
@@ -313,17 +318,22 @@ WI.GeneralTreeElement = class GeneralTreeElement extends WI.TreeElement
         if (!this._listItemNode)
             return;
 
-        // Get the textContent for the elements since they can contain other nodes,
-        // and the tool tip only cares about the text.
-        let mainTitleText = this._mainTitleElement.textContent;
-        let subtitleText = this._subtitleElement ? this._subtitleElement.textContent : "";
-        let large = this.treeOutline && this.treeOutline.large;
-        if (mainTitleText && subtitleText)
-            this._listItemNode.title = mainTitleText + (large ? "\n" : " \u2014 ") + subtitleText;
-        else if (mainTitleText)
-            this._listItemNode.title = mainTitleText;
-        else
-            this._listItemNode.title = subtitleText;
+        let tooltip = this.customTitleTooltip();
+        if (!tooltip) {
+            // Get the textContent for the elements since they can contain other nodes,
+            // and the tool tip only cares about the text.
+            let mainTitleText = this._mainTitleElement.textContent;
+            let subtitleText = this._subtitleElement ? this._subtitleElement.textContent : "";
+            let large = this.treeOutline && this.treeOutline.large;
+            if (mainTitleText && subtitleText)
+                tooltip = mainTitleText + (large ? "\n" : " \u2014 ") + subtitleText;
+            else if (mainTitleText)
+                tooltip = mainTitleText;
+            else
+                tooltip = subtitleText;
+        }
+
+        this._listItemNode.title = tooltip;
     }
 
     _updateStatusElement()
