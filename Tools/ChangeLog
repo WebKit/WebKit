@@ -1,3 +1,33 @@
+2017-09-11  Jonathan Bedard  <jbedard@apple.com>
+
+        Older versions should adopt newer version's expectations on mac
+        https://bugs.webkit.org/show_bug.cgi?id=176699
+        <rdar://problem/34367907>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Before:
+                mac-elcapitan-wk2
+                mac-elcapitan
+                mac-wk2
+                mac
+                wk2
+        After:
+                mac-elcapitan-wk2
+                mac-elcapitan
+                mac-sierra-wk2
+                mac-sierra
+                mac-wk2
+                mac
+                wk2
+
+        * Scripts/webkitpy/port/mac.py:
+        (MacPort.default_baseline_search_path): Use VERSION_FALLBACK_ORDER to have old
+        versions inherit expectations from newer versions.
+        * Scripts/webkitpy/port/mac_unittest.py:
+        (MacTest.test_layout_test_searchpath_with_apple_additions): Check new behavior
+        with older versions inheriting expectations from newer versions.
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip JSC test wsl-tests.yaml/Test.js

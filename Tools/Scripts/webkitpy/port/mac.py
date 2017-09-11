@@ -74,12 +74,20 @@ class MacPort(DarwinPort):
 
     @memoized
     def default_baseline_search_path(self):
+        mac_version = 'mac-{}'.format(self._os_version)
+        if mac_version.endswith(self.FUTURE_VERSION) or mac_version not in self.VERSION_FALLBACK_ORDER:
+            version_fallback = [self._os_version]
+        else:
+            version_fallback = self.VERSION_FALLBACK_ORDER[self.VERSION_FALLBACK_ORDER.index(mac_version):-1]
         wk_string = 'wk1'
         if self.get_option('webkit_test_runner'):
             wk_string = 'wk2'
-        fallback_names = [
-            '{}-{}-{}'.format(self.port_name, self._os_version, wk_string),
-            '{}-{}'.format(self.port_name, self._os_version),
+
+        fallback_names = []
+        for version in version_fallback:
+            fallback_names.append('{}-{}'.format(version, wk_string))
+            fallback_names.append(version)
+        fallback_names = fallback_names + [
             '{}-{}'.format(self.port_name, wk_string),
             self.port_name,
         ]

@@ -150,3 +150,5 @@ class MacTest(darwin_testcase.DarwinTest):
         self.assertEqual(search_path[1], '/mock-checkout/LayoutTests/platform/mac-lion-wk1')
         self.assertEqual(search_path[2], '/additional_testing_path/mac-add-lion')
         self.assertEqual(search_path[3], '/mock-checkout/LayoutTests/platform/mac-lion')
+        self.assertEqual(search_path[4], '/additional_testing_path/mac-add-mountainlion-wk1')
+        self.assertEqual(search_path[5], '/mock-checkout/LayoutTests/platform/mac-mountainlion-wk1')
