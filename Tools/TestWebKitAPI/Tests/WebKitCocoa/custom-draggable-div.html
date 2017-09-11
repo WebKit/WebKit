@@ -1,0 +1,55 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+    body, html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        font-family: -apple-system;
+    }
+
+    body {
+        margin: 0;
+    }
+
+    #source, #destination {
+        width: 200px;
+        height: 200px;
+        box-sizing: border-box;
+        border: 1px gray solid;
+    }
+
+    #item {
+        width: 100%;
+        height: 100%;
+        background-color: red;
+    }
+</style>
+
+<body>
+<div id="source">
+<div draggable="true" id="item"></div>
+</div>
+<div id="destination"></div>
+<div id="description">
+    <div>To manually test, drag and drop the red square in the top container into the bottom container.</div>
+    <div>Upon drop, the square should turn green and show "PASS" as text.</div>
+</div>
+</body>
+
+<script>
+item.addEventListener("dragstart", event => event.dataTransfer.setData("text/plain", item.id));
+destination.addEventListener("dragenter", event => event.preventDefault());
+destination.addEventListener("dragover", event => event.preventDefault());
+destination.addEventListener("drop", event => {
+    let identifier = event.dataTransfer.getData("text/plain");
+    let sourceItem = document.getElementById(identifier);
+    if (!sourceItem)
+        return;
+
+    sourceItem.style.backgroundColor = "green";
+    sourceItem.style.color = "white";
+    sourceItem.innerHTML = "<code>PASS</code>";
+    destination.appendChild(sourceItem);
+    event.preventDefault();
+});
+</script>

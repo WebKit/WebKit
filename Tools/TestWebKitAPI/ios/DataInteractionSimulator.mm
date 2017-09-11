@@ -30,9 +30,11 @@
 
 #import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
+#import "UIKitSPI.h"
 
 #import <UIKit/UIDragInteraction.h>
 #import <UIKit/UIDragItem.h>
+#import <UIKit/UIInteraction.h>
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <UIKit/UIDragSession.h>
@@ -58,13 +60,43 @@ SOFT_LINK(UIKit, UIApplicationInstantiateSingleton, void, (Class singletonClass)
 
 using namespace TestWebKitAPI;
 
-@interface MockDragDropSession : NSObject <UIDragDropSession> {
-@private
-    RetainPtr<NSArray> _mockItems;
-    RetainPtr<UIWindow> _window;
+@implementation WKWebView (DragAndDropTesting)
+
+- (UIView *)_dragDropInteractionView
+{
+    return [self valueForKey:@"_currentContentView"];
 }
-@property (nonatomic) CGPoint mockLocationInWindow;
-@property (nonatomic) BOOL allowMove;
+
+- (id <UIDropInteractionDelegate>)dropInteractionDelegate
+{
+    return (id <UIDropInteractionDelegate>)self._dragDropInteractionView;
+}
+
+- (id <UIDragInteractionDelegate>)dragInteractionDelegate
+{
+    return (id <UIDragInteractionDelegate>)self._dragDropInteractionView;
+}
+
+- (UIDropInteraction *)dropInteraction
+{
+    UIView *interactionView = self._dragDropInteractionView;
+    for (id <UIInteraction> interaction in interactionView.interactions) {
+        if ([interaction isKindOfClass:[UIDropInteraction class]])
+            return (UIDropInteraction *)interaction;
+    }
+    return nil;
+}
+
+- (UIDragInteraction *)dragInteraction
+{
+    UIView *interactionView = self._dragDropInteractionView;
+    for (id <UIInteraction> interaction in interactionView.interactions) {
+        if ([interaction isKindOfClass:[UIDragInteraction class]])
+            return (UIDragInteraction *)interaction;
+    }
+    return nil;
+}
+
 @end
 
 @implementation MockDragDropSession
@@ -157,11 +189,7 @@ NSString * const DataInteractionPerformOperationEventName = @"drop";
 NSString * const DataInteractionLeaveEventName = @"dragleave";
 NSString * const DataInteractionStartEventName = @"dragstart";
 
-@interface MockDataOperationSession : MockDragDropSession <UIDropSession>
-@property (nonatomic, strong) id localContext;
-@end
-
-@implementation MockDataOperationSession
+@implementation MockDropSession
 
 - (instancetype)initWithProviders:(NSArray<UIItemProvider *> *)providers location:(CGPoint)locationInWindow window:(UIWindow *)window allowMove:(BOOL)allowMove
 {
@@ -226,12 +254,7 @@ NSString * const DataInteractionStartEventName = @"dragstart";
 
 @end
 
-@interface MockDataInteractionSession : MockDragDropSession <UIDragSession>
-@property (nonatomic, strong) id localContext;
-@property (nonatomic, strong) id context;
-@end
-
-@implementation MockDataInteractionSession
+@implementation MockDragSession
 
 - (instancetype)initWithWindow:(UIWindow *)window allowMove:(BOOL)allowMove
 {
@@ -314,8 +337,8 @@ static NSArray *dataInteractionEventNames()
     _isDoneWithCurrentRun = false;
     _observedEventNames = adoptNS([[NSMutableArray alloc] init]);
     _finalSelectionRects = @[ ];
-    _dataInteractionSession = nil;
-    _dataOperationSession = nil;
+    _dragSession = nil;
+    _dropSession = nil;
     _shouldPerformOperation = NO;
     _lastKnownDragCaretRect = CGRectZero;
     _remainingAdditionalItemRequestLocationsByProgress = nil;
@@ -333,8 +356,8 @@ static NSArray *dataInteractionEventNames()
     _phase = DataInteractionCancelled;
     _currentProgress = 1;
     _isDoneWithCurrentRun = true;
-    if (_dataInteractionSession)
-        [_webView _simulateDataInteractionSessionDidEnd:_dataInteractionSession.get()];
+    if (_dragSession)
+        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] session:_dragSession.get() didEndWithOperation:UIDropOperationCopy];
 }
 
 - (void)runFrom:(CGPoint)startLocation to:(CGPoint)endLocation
@@ -367,13 +390,13 @@ static NSArray *dataInteractionEventNames()
     _endLocation = endLocation;
 
     if (self.externalItemProviders.count) {
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:self.externalItemProviders location:_startLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
+        _dropSession = adoptNS([[MockDropSession alloc] initWithProviders:self.externalItemProviders location:_startLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
         _phase = DataInteractionBegan;
         [self _advanceProgress];
     } else {
-        _dataInteractionSession = adoptNS([[MockDataInteractionSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
-        [_dataInteractionSession setMockLocationInWindow:_startLocation];
-        [_webView _simulatePrepareForDataInteractionSession:_dataInteractionSession.get() completion:^() {
+        _dragSession = adoptNS([[MockDragSession alloc] initWithWindow:[_webView window] allowMove:self.shouldAllowMoveOperation]);
+        [_dragSession setMockLocationInWindow:_startLocation];
+        [(id <UIDragInteractionDelegate_ForWebKitOnly>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] prepareForSession:_dragSession.get() completion:^() {
             DataInteractionSimulator *weakSelf = strongSelf.get();
             if (weakSelf->_phase == DataInteractionCancelled)
                 return;
@@ -399,17 +422,17 @@ static NSArray *dataInteractionEventNames()
 {
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
     if (_shouldPerformOperation) {
-        [_webView _simulateDataInteractionPerformOperation:_dataOperationSession.get()];
+        [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] performDrop:_dropSession.get()];
         _phase = DataInteractionPerforming;
     } else {
         _isDoneWithCurrentRun = YES;
         _phase = DataInteractionCancelled;
     }
 
-    [_webView _simulateDataInteractionEnded:_dataOperationSession.get()];
+    [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidEnd:_dropSession.get()];
 
-    if (_dataInteractionSession)
-        [_webView _simulateDataInteractionSessionDidEnd:_dataInteractionSession.get()];
+    if (_dragSession)
+        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] session:_dragSession.get() didEndWithOperation:UIDropOperationCopy];
 }
 
 - (void)_enqueuePendingAdditionalItemRequestLocations
@@ -436,7 +459,7 @@ static NSArray *dataInteractionEventNames()
     [_queuedAdditionalItemRequestLocations removeObjectAtIndex:0];
 
     auto requestLocation = [[_webView window] convertPoint:[requestLocationValue CGPointValue] toView:_webView.get()];
-    [_webView _simulateItemsForAddingToSession:_dataInteractionSession.get() atLocation:requestLocation completion:[dragSession = _dataInteractionSession, dropSession = _dataOperationSession] (NSArray *items) {
+    [(id <UIDragInteractionDelegate_Proposed_SPI_33146803>)[_webView dragInteractionDelegate] _dragInteraction:[_webView dragInteraction] itemsForAddingToSession:_dragSession.get() withTouchAtPoint:requestLocation completion:[dragSession = _dragSession, dropSession = _dropSession] (NSArray *items) {
         [dragSession addItems:items];
         [dropSession addItems:items];
     }];
@@ -454,8 +477,8 @@ static NSArray *dataInteractionEventNames()
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
     _currentProgress += progressIncrementStep;
     CGPoint locationInWindow = self._currentLocation;
-    [_dataInteractionSession setMockLocationInWindow:locationInWindow];
-    [_dataOperationSession setMockLocationInWindow:locationInWindow];
+    [_dragSession setMockLocationInWindow:locationInWindow];
+    [_dropSession setMockLocationInWindow:locationInWindow];
 
     if (_currentProgress >= 1) {
         _currentProgress = 1;
@@ -466,7 +489,7 @@ static NSArray *dataInteractionEventNames()
     switch (_phase) {
     case DataInteractionBeginning: {
         NSMutableArray<UIItemProvider *> *itemProviders = [NSMutableArray array];
-        NSArray *items = [_webView _simulatedItemsForSession:_dataInteractionSession.get()];
+        NSArray *items = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] itemsForBeginningSession:_dragSession.get()];
         if (!items.count) {
             _phase = DataInteractionCancelled;
             _currentProgress = 1;
@@ -474,11 +497,14 @@ static NSArray *dataInteractionEventNames()
             return;
         }
 
-        for (UIDragItem *item in items)
+        for (UIDragItem *item in items) {
             [itemProviders addObject:item.itemProvider];
+            UITargetedDragPreview *liftPreview = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] previewForLiftingItem:item session:_dragSession.get()];
+            EXPECT_TRUE(!!liftPreview);
+        }
 
-        _dataOperationSession = adoptNS([[MockDataOperationSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
-        [_dataInteractionSession setItems:items];
+        _dropSession = adoptNS([[MockDropSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
+        [_dragSession setItems:items];
         _sourceItemProviders = itemProviders;
         if (self.showCustomActionSheetBlock) {
             // Defer progress until the custom action sheet is dismissed.
@@ -487,7 +513,7 @@ static NSArray *dataInteractionEventNames()
             return;
         }
 
-        [_webView _simulateWillBeginDataInteractionWithSession:_dataInteractionSession.get()];
+        [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] sessionWillBegin:_dragSession.get()];
 
         RetainPtr<WKWebView> retainedWebView = _webView;
         dispatch_async(dispatch_get_main_queue(), ^() {
@@ -498,12 +524,12 @@ static NSArray *dataInteractionEventNames()
         break;
     }
     case DataInteractionBegan:
-        [_webView _simulateDataInteractionEntered:_dataOperationSession.get()];
+        [[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidEnter:_dropSession.get()];
         _phase = DataInteractionEntered;
         break;
     case DataInteractionEntered: {
-        auto operation = static_cast<UIDropOperation>([_webView _simulateDataInteractionUpdated:_dataOperationSession.get()]);
-        _shouldPerformOperation = operation == UIDropOperationCopy || ([_dataOperationSession allowsMoveOperation] && operation != UIDropOperationCancel);
+        auto operation = static_cast<UIDropOperation>([[_webView dropInteractionDelegate] dropInteraction:[_webView dropInteraction] sessionDidUpdate:_dropSession.get()].operation);
+        _shouldPerformOperation = operation == UIDropOperationCopy || ([_dropSession allowsMoveOperation] && operation != UIDropOperationCancel);
         break;
     }
     default:
@@ -589,7 +615,7 @@ static NSArray *dataInteractionEventNames()
     RetainPtr<DataInteractionSimulator> strongSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^() {
         DataInteractionSimulator *weakSelf = strongSelf.get();
-        [weakSelf->_webView _simulateWillBeginDataInteractionWithSession:weakSelf->_dataInteractionSession.get()];
+        [[weakSelf->_webView dragInteractionDelegate] dragInteraction:[weakSelf->_webView dragInteraction] sessionWillBegin:weakSelf->_dragSession.get()];
         weakSelf->_phase = DataInteractionBegan;
         [weakSelf _scheduleAdvanceProgress];
     });

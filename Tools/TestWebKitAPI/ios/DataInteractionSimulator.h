@@ -77,8 +77,26 @@
 #import <WebKit/_WKInputDelegate.h>
 #import <wtf/BlockPtr.h>
 
-@class MockDataOperationSession;
-@class MockDataInteractionSession;
+@class MockDropSession;
+@class MockDragSession;
+
+@interface MockDragDropSession : NSObject <UIDragDropSession> {
+@private
+    RetainPtr<NSArray> _mockItems;
+    RetainPtr<UIWindow> _window;
+}
+@property (nonatomic) CGPoint mockLocationInWindow;
+@property (nonatomic) BOOL allowMove;
+@end
+
+@interface MockDropSession : MockDragDropSession <UIDropSession>
+@property (nonatomic, strong) id localContext;
+@end
+
+@interface MockDragSession : MockDragDropSession <UIDragSession>
+@property (nonatomic, strong) id localContext;
+@property (nonatomic, strong) id context;
+@end
 
 extern NSString * const DataInteractionEnterEventName;
 extern NSString * const DataInteractionOverEventName;
@@ -96,11 +114,18 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
     DataInteractionPerforming = 4
 };
 
+@interface WKWebView (DragAndDropTesting)
+- (id <UIDropInteractionDelegate>)dropInteractionDelegate;
+- (id <UIDragInteractionDelegate>)dragInteractionDelegate;
+- (UIDropInteraction *)dropInteraction;
+- (UIDragInteraction *)dragInteraction;
+@end
+
 @interface DataInteractionSimulator : NSObject<WKUIDelegatePrivate, _WKInputDelegate> {
 @private
     RetainPtr<TestWKWebView> _webView;
-    RetainPtr<MockDataInteractionSession> _dataInteractionSession;
-    RetainPtr<MockDataOperationSession> _dataOperationSession;
+    RetainPtr<MockDragSession> _dragSession;
+    RetainPtr<MockDropSession> _dropSession;
     RetainPtr<NSMutableArray> _observedEventNames;
     RetainPtr<NSArray> _externalItemProviders;
     RetainPtr<NSArray *> _sourceItemProviders;

@@ -25,9 +25,16 @@
 
 #if PLATFORM(IOS)
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@protocol UIDragSession;
+@class UIDragInteraction;
+@class UIDragItem;
+#endif
+
 #if USE(APPLE_INTERNAL_SDK) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 
 #import <UIKit/UIApplication_Private.h>
+#import <UIKit/UIDragInteraction_Private.h>
 
 #else
 
@@ -37,6 +44,19 @@ void UIApplicationInitialize(void);
 
 WTF_EXTERN_C_END
 
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@protocol UIDragInteractionDelegate_ForWebKitOnly <UIDragInteractionDelegate>
+@optional
+- (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
+@end
+#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+
 #endif
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+@protocol UIDragInteractionDelegate_Proposed_SPI_33146803 <UIDragInteractionDelegate>
+- (void)_dragInteraction:(UIDragInteraction *)interaction itemsForAddingToSession:(id <UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(void(^)(NSArray<UIDragItem *> *))completion;
+@end
+#endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 
 #endif // PLATFORM(IOS)

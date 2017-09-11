@@ -1,3 +1,54 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Elements in the DOM with the `draggable` attribute should be draggable
+        https://bugs.webkit.org/show_bug.cgi?id=176664
+        <rdar://problem/32596156>
+
+        Reviewed by Tim Horton.
+
+        Makes a simple adjustment in DragDropInteractionState::previewForDragItem to respect the drag image supplied to
+        the UI process during a "DHTML"-defined drag (i.e. DragSourceActionDHTML).
+
+        Test: DataInteractionTests.CanStartDragOnDivWithDraggableAttribute
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _simulateDataInteractionEntered:]): Deleted.
+        (-[WKWebView _simulateDataInteractionUpdated:]): Deleted.
+        (-[WKWebView _simulateDataInteractionPerformOperation:]): Deleted.
+        (-[WKWebView _simulateDataInteractionEnded:]): Deleted.
+        (-[WKWebView _simulateDataInteractionSessionDidEnd:]): Deleted.
+        (-[WKWebView _simulateWillBeginDataInteractionWithSession:]): Deleted.
+        (-[WKWebView _simulatedItemsForSession:]): Deleted.
+        (-[WKWebView _simulateItemsForAddingToSession:atLocation:completion:]): Deleted.
+        (-[WKWebView _simulatePrepareForDataInteractionSession:completion:]): Deleted.
+
+        Remove all -_simulate*: testing helpers on WKWebView.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+        * UIProcess/ios/DragDropInteractionState.mm:
+        (WebKit::shouldUseDragImageToCreatePreviewForDragSource):
+        (WebKit::shouldUseTextIndicatorToCreatePreviewForDragSource):
+
+        Add shouldUseDragImageToCreatePreviewForDragSource, which returns YES when dragging an image or DHTML-defined
+        draggable element and the drag image exists. This is called from previewForDragItem when constructing the drag
+        preview for a given UIDragItem.
+
+        (WebKit::DragDropInteractionState::previewForDragItem const):
+        (WebKit::shouldUseTextIndicatorToCreatePreviewForDragAction): Deleted.
+        * UIProcess/ios/WKContentViewInteraction.h:
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView _simulateDataInteractionEntered:]): Deleted.
+        (-[WKContentView _simulateDataInteractionUpdated:]): Deleted.
+        (-[WKContentView _simulateDataInteractionEnded:]): Deleted.
+        (-[WKContentView _simulateDataInteractionPerformOperation:]): Deleted.
+        (-[WKContentView _simulateDataInteractionSessionDidEnd:]): Deleted.
+        (-[WKContentView _simulateWillBeginDataInteractionWithSession:]): Deleted.
+        (-[WKContentView _simulatedItemsForSession:]): Deleted.
+        (-[WKContentView _simulatePrepareForDataInteractionSession:completion:]): Deleted.
+        (-[WKContentView _simulateItemsForAddingToSession:atLocation:completion:]): Deleted.
+
+        Remove all -_simulate*: testing helpers on WKContentView.
+
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Modernize BoxExtent into RectEdges

@@ -94,13 +94,24 @@ static RetainPtr<UIImage> uiImageForImage(Image* image)
     return adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);
 }
 
-static bool shouldUseTextIndicatorToCreatePreviewForDragAction(DragSourceAction action)
+static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState& source)
 {
-    if (action & (DragSourceActionLink | DragSourceActionSelection))
+    if (!source.image)
+        return false;
+
+    return source.action & (DragSourceActionDHTML | DragSourceActionImage);
+}
+
+static bool shouldUseTextIndicatorToCreatePreviewForDragSource(const DragSourceState& source)
+{
+    if (!source.indicatorData)
+        return false;
+
+    if (source.action & (DragSourceActionLink | DragSourceActionSelection))
         return true;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
-    if (action & DragSourceActionAttachment)
+    if (source.action & DragSourceActionAttachment)
         return true;
 #endif
 
@@ -148,12 +159,12 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
         return nil;
 
     auto& source = foundSource.value();
-    if ((source.action & DragSourceActionImage) && source.image) {
+    if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
         Vector<FloatRect> emptyClippingRects;
         return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.elementBounds, emptyClippingRects, nil);
     }
 
-    if (shouldUseTextIndicatorToCreatePreviewForDragAction(source.action) && source.indicatorData) {
+    if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         auto indicator = source.indicatorData.value();
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
         return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, [UIColor colorWithCGColor:cachedCGColor(indicator.estimatedBackgroundColor)]);

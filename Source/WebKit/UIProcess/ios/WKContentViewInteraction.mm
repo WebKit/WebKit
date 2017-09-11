@@ -4823,54 +4823,11 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     _page->dragEnded(roundedIntPoint(client), roundedIntPoint(global), DragOperationNone);
 }
 
-#pragma mark - Unit testing support
-
-- (void)_simulateDataInteractionEntered:(id)session
-{
-    [self dropInteraction:_dropInteraction.get() sessionDidEnter:session];
-}
-
-- (NSUInteger)_simulateDataInteractionUpdated:(id)session
-{
-    return [self dropInteraction:_dropInteraction.get() sessionDidUpdate:session].operation;
-}
-
-- (void)_simulateDataInteractionEnded:(id)session
-{
-    [self dropInteraction:_dropInteraction.get() sessionDidEnd:session];
-}
-
-- (void)_simulateDataInteractionPerformOperation:(id)session
-{
-    [self dropInteraction:_dropInteraction.get() performDrop:session];
-}
-
-- (void)_simulateDataInteractionSessionDidEnd:(id)session
-{
-    [self dragInteraction:_dragInteraction.get() session:session didEndWithOperation:UIDropOperationCopy];
-}
-
-- (void)_simulateWillBeginDataInteractionWithSession:(id)session
-{
-    [self dragInteraction:_dragInteraction.get() sessionWillBegin:session];
-}
-
-- (NSArray *)_simulatedItemsForSession:(id)session
-{
-    return [self dragInteraction:_dragInteraction.get() itemsForBeginningSession:session];
-}
-
-- (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion
-{
-    [self _dragInteraction:_dragInteraction.get() prepareForSession:session completion:completion];
-}
-
-- (void)_simulateItemsForAddingToSession:(id)session atLocation:(CGPoint)location completion:(void(^)(NSArray *))completion
-{
-    [self _dragInteraction:_dragInteraction.get() itemsForAddingToSession:session withTouchAtPoint:location completion:completion];
-}
-
 #endif
+
+@end
+
+@implementation WKContentView (WKTesting)
 
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location
 {
@@ -4880,10 +4837,6 @@ static NSArray<UIItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
             [protectedSelf performSelector:action];
     } forRequest:InteractionInformationRequest(roundedIntPoint(location))];
 }
-
-@end
-
-@implementation WKContentView (WKTesting)
 
 - (void)selectFormAccessoryPickerRow:(NSInteger)rowIndex
 {

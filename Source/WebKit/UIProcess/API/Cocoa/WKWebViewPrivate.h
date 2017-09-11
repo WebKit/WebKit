@@ -378,16 +378,6 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 @property (nonatomic, readonly) NSNumber *_stableStateOverride WK_API_AVAILABLE(ios(10.3));
 
 - (NSDictionary *)_propertiesOfLayerWithID:(unsigned long long)layerID WK_API_AVAILABLE(ios(WK_IOS_TBA));
-
-- (void)_simulateDataInteractionEntered:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (NSUInteger)_simulateDataInteractionUpdated:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulateDataInteractionPerformOperation:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulateDataInteractionEnded:(id)info WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulateDataInteractionSessionDidEnd:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulateWillBeginDataInteractionWithSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (NSArray *)_simulatedItemsForSession:(id)session WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulateItemsForAddingToSession:(id)session atLocation:(CGPoint)location completion:(void(^)(NSArray *))completion WK_API_AVAILABLE(ios(WK_IOS_TBA));
-- (void)_simulatePrepareForDataInteractionSession:(id)session completion:(dispatch_block_t)completion WK_API_AVAILABLE(ios(WK_IOS_TBA));
 - (void)_simulateLongPressActionAtLocation:(CGPoint)location;
 
 @property (nonatomic, readonly) CGRect _dragCaretRect WK_API_AVAILABLE(ios(WK_IOS_TBA));

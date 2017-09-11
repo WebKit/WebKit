@@ -30,6 +30,7 @@
 #import "DataInteractionSimulator.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
+#import "UIKitSPI.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <UIKit/NSItemProvider+UIKitAdditions.h>
@@ -523,6 +524,17 @@ TEST(DataInteractionTests, EnterAndLeaveEvents)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionLeaveEventName]);
     EXPECT_FALSE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ ], [dataInteractionSimulator finalSelectionRects]);
+}
+
+TEST(DataInteractionTests, CanStartDragOnDivWithDraggableAttribute)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"custom-draggable-div"];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(250, 100)];
+
+    EXPECT_GT([dataInteractionSimulator sourceItemProviders].count, 0UL);
 }
 
 TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
@@ -1306,7 +1318,8 @@ TEST(DataInteractionTests, UnresponsivePageDoesNotHangUI)
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
     // The test passes if we can prepare for data interaction without timing out.
-    [webView _simulatePrepareForDataInteractionSession:nil completion:^() { }];
+    auto dragSession = adoptNS([[MockDragSession alloc] init]);
+    [(id <UIDragInteractionDelegate_ForWebKitOnly>)[webView dragInteractionDelegate] _dragInteraction:[webView dragInteraction] prepareForSession:dragSession.get() completion:^() { }];
 }
 
 TEST(DataInteractionTests, WebItemProviderPasteboardLoading)
