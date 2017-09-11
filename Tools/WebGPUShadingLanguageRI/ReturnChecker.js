@@ -74,24 +74,30 @@ class ReturnChecker extends Visitor {
         return this.returnStyle.HasntReturnedYet;
     }
 
+    _isBoolCastFromLiteralTrue(node)
+    {
+        return node.isCast && node.returnType instanceof TypeRef && node.returnType.equals(this._program.intrinsics.bool) && node.argumentList.length == 1 && node.argumentList[0].list.length == 1 && node.argumentList[0].list[0] instanceof BoolLiteral && node.argumentList[0].list[0].value;
+    }
+
     visitWhileLoop(node)
     {
-        if (node.conditional instanceof CallExpression && node.conditional.isCast && node.conditional.returnType instanceof TypeRef && node.conditional.returnType.equals(this._program.intrinsics.bool) && node.conditional.argumentList.length == 1 && node.conditional.argumentList[0].list.length == 1 && node.conditional.argumentList[0].list[0] instanceof BoolLiteral && node.conditional.argumentList[0].list[0].value) {
-            switch (node.body.visit(this)) {
+        node.conditional.visit(this);
+        let bodyReturn = node.body.visit(this);
+        if (node.conditional instanceof CallExpression && this._isBoolCastFromLiteralTrue(node.conditional)) {
+            switch (bodyReturn) {
             case this.returnStyle.DefinitelyReturns:
                 return this.returnStyle.DefinitelyReturns;
             case this.returnStyle.DefinitelyDoesntReturn:
             case this.returnStyle.HasntReturnedYet:
                 return this.returnStyle.HasntReturnedYet;
             }
-        } else
-            node.conditional.visit(this);
+        }
         return this.returnStyle.HasntReturnedYet;
     }
 
     visitDoWhileLoop(node)
     {
-        let result;
+        let result = this.returnStyle.HasntReturnedYet;
         switch (node.body.visit(this)) {
         case this.returnStyle.DefinitelyReturns:
             result = this.returnStyle.DefinitelyReturns;
@@ -101,6 +107,26 @@ class ReturnChecker extends Visitor {
         }
         node.conditional.visit(this);
         return result;
+    }
+
+    visitForLoop(node)
+    {
+        if (node.initialization)
+            node.initialization.visit(this);
+        if (node.condition)
+            node.condition.visit(this);
+        if (node.increment)
+            node.increment.visit(this);
+        let bodyReturn = node.body.visit(this);
+        if (node.condition === undefined || this._isBoolCastFromLiteralTrue(node.condition)) {
+            switch (bodyReturn) {
+            case this.returnStyle.DefinitelyReturns:
+                return this.returnStyle.DefinitelyReturns;
+            case this.returnStyle.DefinitelyDoesntReturn:
+            case this.returnStyle.HasntReturnedYet:
+                return this.returnStyle.HasntReturnedYet;
+            }
+        }
     }
     
     visitReturn(node)

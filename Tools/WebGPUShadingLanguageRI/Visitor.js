@@ -227,6 +227,17 @@ class Visitor extends VisitorBase {
         node.body.visit(this);
         node.conditional.visit(this);
     }
+    
+    visitForLoop(node)
+    {
+        if (node.initialization)
+            node.initialization.visit(this);
+        if (node.condition)
+            node.condition.visit(this);
+        if (node.increment)
+            node.increment.visit(this);
+        node.body.visit(this);
+    }
 
     visitReturn(node)
     {

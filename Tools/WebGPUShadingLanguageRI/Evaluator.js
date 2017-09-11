@@ -190,6 +190,23 @@ class Evaluator extends Visitor {
         } while (node.conditional.visit(this).loadValue());
     }
 
+    visitForLoop(node)
+    {
+        for (node.initialization ? node.initialization.visit(this) : true;
+            node.condition ? node.condition.visit(this).loadValue() : true;
+            node.increment ? node.increment.visit(this) : true) {
+            try {
+                node.body.visit(this);
+            } catch (e) {
+                if (e instanceof Break)
+                    break;
+                if (e instanceof Continue)
+                    continue;
+                throw e;
+            }
+        }
+    }
+
     visitBreak(node)
     {
         throw node;

@@ -304,5 +304,14 @@ class Rewriter extends VisitorBase {
     {
         return new DoWhileLoop(node.origin, node.body.visit(this), node.conditional.visit(this));
     }
+
+    visitForLoop(node)
+    {
+        return new ForLoop(node.origin,
+            node.initialization ? node.initialization.visit(this) : undefined,
+            node.condition ? node.condition.visit(this) : undefined,
+            node.increment ? node.increment.visit(this) : undefined,
+            node.body.visit(this));
+    }
 }
 

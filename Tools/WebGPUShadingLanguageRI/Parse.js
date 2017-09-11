@@ -573,6 +573,37 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return new WhileLoop(origin, new CallExpression(conditional.origin, "bool", [], [conditional]), body);
     }
 
+    function parseFor()
+    {
+        let origin = consume("for");
+        consume("(");
+        let initialization;
+        if (tryConsume(";"))
+            initialization = undefined;
+        else {
+            initialization = lexer.backtrackingScope(parseVariableDecls);
+            if (!initialization)
+                initialization = parseEffectfulStatement();
+        }
+        let condition = tryConsume(";");
+        if (condition)
+            condition = undefined;
+        else {
+            condition = parseExpression();
+            consume(";");
+            condition = new CallExpression(condition.origin, "bool", [], [condition]);
+        }
+        let increment;
+        if (tryConsume(")"))
+            increment = undefined;
+        else {
+            increment = parseExpression();
+            consume(")");
+        }
+        let body = parseStatement();
+        return new ForLoop(origin, initialization, condition, increment, body);
+    }
+
     function parseDo()
     {
         let origin = consume("do");

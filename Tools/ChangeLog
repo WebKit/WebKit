@@ -1,3 +1,44 @@
+2017-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL should support for loops
+        https://bugs.webkit.org/show_bug.cgi?id=176682
+
+        Reviewed by Filip Pizlo.
+
+        Follows the pattern of the existing infrastructure of while loops.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitForLoop):
+        * WebGPUShadingLanguageRI/ForLoop.js: Copied from Tools/WebGPUShadingLanguageRI/LoopChecker.js.
+        (ForLoop):
+        (ForLoop.prototype.get origin):
+        (ForLoop.prototype.get initialization):
+        (ForLoop.prototype.get condition):
+        (ForLoop.prototype.get increment):
+        (ForLoop.prototype.get body):
+        (ForLoop.prototype.toString):
+        * WebGPUShadingLanguageRI/LoopChecker.js:
+        (LoopChecker.prototype.visitForLoop):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitForLoop):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseFor):
+        * WebGPUShadingLanguageRI/ReturnChecker.js:
+        (ReturnChecker.prototype._isBoolCastFromLiteralTrue):
+        (ReturnChecker.prototype.visitWhileLoop):
+        (ReturnChecker.prototype.visitDoWhileLoop):
+        (ReturnChecker.prototype.visitForLoop):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitForLoop):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_forLoop):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitForLoop):
+
 2017-09-11  Robin Morisset  <rmorisset@apple.com>
 
         Just added myself to the contributors.json file as a committer

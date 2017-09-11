@@ -1663,6 +1663,185 @@ function TEST_doWhile()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 19);
 }
 
+function TEST_forLoop()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            int i;
+            for (i = 0; i < x; i = i + 1) {
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            for (int i = 0; i < x; i = i + 1) {
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            int i = 100;
+            for (int i = 0; i < x; i = i + 1) {
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            for (int i = 0; i < x; i = i + 1) {
+                if (i == 4)
+                    continue;
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 11);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            for (int i = 0; i < x; i = i + 1) {
+                if (i == 5)
+                    break;
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 10);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            for (int i = 0; ; i = i + 1) {
+                if (i >= x)
+                    break;
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            int i = 0;
+            for ( ; ; i = i + 1) {
+                if (i >= x)
+                    break;
+                sum = sum + i;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    program = doPrep(`
+        int foo(int x)
+        {
+            int sum = 0;
+            int i = 0;
+            for ( ; ; ) {
+                if (i >= x)
+                    break;
+                sum = sum + i;
+                i = i + 1;
+            }
+            return sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 3);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 10);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 15);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 21);
+    checkFail(
+        () => doPrep(`
+            void foo(int x)
+            {
+                for (int i = 0; ; i = i + 1) {
+                    break;
+                    x = i;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    program = doPrep(`
+        int foo(int x)
+        {
+            for ( ; ; ) {
+                return 7;
+            }
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
+    checkFail(
+        () => doPrep(`
+            int foo(int x)
+            {
+                for ( ; x < 10; ) {
+                    return 7;
+                }
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    program = doPrep(`
+        int foo(int x)
+        {
+            for ( ; true; ) {
+                return 7;
+            }
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 3)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 4)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 5)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 6)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

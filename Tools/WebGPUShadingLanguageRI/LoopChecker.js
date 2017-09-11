@@ -60,6 +60,22 @@ class LoopChecker extends Visitor {
         --this._loopDepth;
         node.conditional.visit(this);
     }
+
+    visitForLoop(node)
+    {
+        if (node.initialization)
+            node.initialization.visit(this);
+        if (node.condition)
+            node.condition.visit(this);
+        if (node.increment)
+            node.increment.visit(this);
+        ++this._loopDepth;
+        node.body.visit(this);
+        if (this._loopDepth == 0) {
+            throw new Error("The number of nested loops is negative!");
+        }
+        --this._loopDepth;
+    }
     
     visitBreak(node)
     {

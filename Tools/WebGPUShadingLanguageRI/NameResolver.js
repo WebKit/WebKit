@@ -114,6 +114,18 @@ class NameResolver extends Visitor {
         node.body.visit(new NameResolver(new NameContext(this._nameContext)));
         node.conditional.visit(this);
     }
+
+    visitForLoop(node)
+    {
+        let newResolver = new NameResolver(new NameContext(this._nameContext))
+        if (node.initialization)
+            node.initialization.visit(newResolver);
+        if (node.condition)
+            node.condition.visit(newResolver);
+        if (node.increment)
+            node.increment.visit(newResolver);
+        node.body.visit(newResolver);
+    }
     
     visitProtocolDecl(node)
     {

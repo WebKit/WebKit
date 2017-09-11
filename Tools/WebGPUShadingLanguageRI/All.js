@@ -64,6 +64,7 @@ load("EPtr.js");
 load("EvaluationCommon.js");
 load("Evaluator.js");
 load("Field.js");
+load("ForLoop.js");
 load("Func.js");
 load("FuncDef.js");
 load("FuncInstantiator.js");
