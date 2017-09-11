@@ -716,7 +716,7 @@ void ResourceHandleCurlDelegate::setupPOST()
 
     // Do not stream for simple POST data
     if (numElements == 1) {
-        m_firstRequest.httpBody()->flatten(m_postBytes);
+        m_postBytes = m_firstRequest.httpBody()->flatten();
         if (m_postBytes.size())
             m_curlHandle.setPostFields(m_postBytes.data(), m_postBytes.size());
         return;
