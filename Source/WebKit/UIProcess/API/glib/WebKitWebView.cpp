@@ -1633,7 +1633,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * the menu.
      * </para></listitem>
      * <listitem><para>
-     * a generic #GdkEvent of type %GDK_NOTHING when the #GtkWidget:popup-menu
+     * a generic #GdkEvent of type %GDK_NOTHING when the #GtkWidget::popup-menu
      * signal was used to show the context menu.
      * </para></listitem>
      * </itemizedlist>
@@ -1862,7 +1862,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      * Returns: %TRUE to stop other handlers from being invoked for the event.
      *   %FALSE to propagate the event further.
      *
-     * Since: 2.18.
+     * Since: 2.18
      */
     signals[SHOW_OPTION_MENU] = g_signal_new(
         "show-option-menu",

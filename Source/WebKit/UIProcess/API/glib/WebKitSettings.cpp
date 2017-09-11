@@ -849,7 +849,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      * Determines whether or not private browsing is enabled. Private browsing
      * will disable history, cache and form auto-fill for any pages visited.
      *
-     * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebContext:is-ephemeral instead.
+     * Deprecated: 2.16. Use #WebKitWebView:is-ephemeral or #WebKitWebsiteDataManager:is-ephemeral instead.
      */
     g_object_class_install_property(gObjectClass,
                                     PROP_ENABLE_PRIVATE_BROWSING,
