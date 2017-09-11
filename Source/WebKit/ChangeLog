@@ -1,3 +1,11 @@
+2017-09-11  JF Bastien  <jfbastien@apple.com>
+
+        cmake build fix
+
+        Unreviewed
+
+        * PlatformMac.cmake: one file was deleted, another renamed.
+
 2017-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION: [GTK] Generated HTML API documentation is missing descriptions

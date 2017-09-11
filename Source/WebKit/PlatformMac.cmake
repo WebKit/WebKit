@@ -287,7 +287,6 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/mac/CorrectionPanel.mm
     UIProcess/mac/LegacySessionStateCoding.cpp
-    UIProcess/mac/PageClientImpl.mm
     UIProcess/mac/RemoteWebInspectorProxyMac.mm
     UIProcess/mac/SecItemShimProxy.cpp
     UIProcess/mac/ServicesController.mm
@@ -473,8 +472,8 @@ set(WebKit2_FORWARDING_HEADERS_FILES
 list(APPEND WebKit2_MESSAGES_IN_FILES
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
+    UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
     UIProcess/Cocoa/ViewGestureController.messages.in
-    UIProcess/Cocoa/WebVideoFullscreenManagerProxy.messages.in
 
     UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy.messages.in
 
