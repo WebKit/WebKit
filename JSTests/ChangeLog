@@ -1,3 +1,13 @@
+2017-09-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize Object.keys by using careful array allocation
+        https://bugs.webkit.org/show_bug.cgi?id=176654
+
+        Reviewed by Darin Adler.
+
+        * microbenchmarks/object-keys.js: Added.
+        (test):
+
 2017-09-09  Filip Pizlo  <fpizlo@apple.com>
 
         Error should compute .stack and friends lazily

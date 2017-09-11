@@ -379,13 +379,14 @@ EncodedJSValue JSC_HOST_CALL objectConstructorValues(ExecState* exec)
     JSObject* target = targetValue.toObject(exec);
     RETURN_IF_EXCEPTION(scope, { });
 
-    JSArray* values = constructEmptyArray(exec, 0);
+    JSArray* values = constructEmptyArray(exec, nullptr);
     RETURN_IF_EXCEPTION(scope, { });
 
     PropertyNameArray properties(exec, PropertyNameMode::Strings);
     target->methodTable(vm)->getOwnPropertyNames(target, exec, properties, EnumerationMode(DontEnumPropertiesMode::Include));
     RETURN_IF_EXCEPTION(scope, { });
 
+    unsigned index = 0;
     auto addValue = [&] (PropertyName propertyName) {
         PropertySlot slot(target, PropertySlot::InternalMethodType::GetOwnProperty);
         bool hasProperty = target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);
@@ -402,7 +403,7 @@ EncodedJSValue JSC_HOST_CALL objectConstructorValues(ExecState* exec)
             value = target->get(exec, propertyName);
         RETURN_IF_EXCEPTION(scope, void());
 
-        values->push(exec, value);
+        values->putDirectIndex(exec, index++, value);
     };
 
     for (unsigned i = 0, numProperties = properties.size(); i < numProperties; i++) {
@@ -839,9 +840,6 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     object->methodTable(vm)->getOwnPropertyNames(object, exec, properties, EnumerationMode(dontEnumPropertiesMode));
     RETURN_IF_EXCEPTION(scope, nullptr);
 
-    JSArray* keys = constructEmptyArray(exec, 0);
-    RETURN_IF_EXCEPTION(scope, nullptr);
-
     // https://tc39.github.io/ecma262/#sec-enumerableownproperties
     // If {object} is a Proxy, an explicit and observable [[GetOwnProperty]] op is required to filter out non-enumerable properties.
     // In other cases, filtering has already been performed.
@@ -854,6 +852,28 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
         return object->getOwnPropertyDescriptor(exec, name, descriptor) && descriptor.enumerable();
     };
 
+    // If !mustFilterProperty and PropertyNameMode::Strings mode, we do not need to filter out any entries in PropertyNameArray.
+    // We can use fast allocation and initialization.
+    if (!mustFilterProperty && propertyNameMode == PropertyNameMode::Strings && properties.size() < MIN_SPARSE_ARRAY_INDEX) {
+        size_t numProperties = properties.size();
+        JSArray* keys = JSArray::create(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), numProperties);
+        WriteBarrier<Unknown>* buffer = keys->butterfly()->contiguous().data();
+        for (size_t i = 0; i < numProperties; i++) {
+            const auto& identifier = properties[i];
+            ASSERT(!identifier.isSymbol());
+            buffer[i].set(vm, keys, jsOwnedString(&vm, identifier.string()));
+        }
+        return keys;
+    }
+
+    JSArray* keys = constructEmptyArray(exec, nullptr);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+
+    unsigned index = 0;
+    auto pushDirect = [&] (ExecState* exec, JSArray* array, JSValue value) {
+        array->putDirectIndex(exec, index++, value);
+    };
+
     switch (propertyNameMode) {
     case PropertyNameMode::Strings: {
         size_t numProperties = properties.size();
@@ -863,7 +883,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             bool hasProperty = filterPropertyIfNeeded(identifier);
             EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
             if (hasProperty)
-                keys->push(exec, jsOwnedString(exec, identifier.string()));
+                pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         break;
@@ -878,7 +898,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
                 bool hasProperty = filterPropertyIfNeeded(identifier);
                 EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
                 if (hasProperty)
-                    keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+                    pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
@@ -896,7 +916,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
                 bool hasProperty = filterPropertyIfNeeded(identifier);
                 EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
                 if (hasProperty)
-                    keys->push(exec, jsOwnedString(exec, identifier.string()));
+                    pushDirect(exec, keys, jsOwnedString(exec, identifier.string()));
                 RETURN_IF_EXCEPTION(scope, nullptr);
             }
         }
@@ -906,7 +926,7 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
             bool hasProperty = filterPropertyIfNeeded(identifier);
             EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
             if (hasProperty)
-                keys->push(exec, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
+                pushDirect(exec, keys, Symbol::create(vm, static_cast<SymbolImpl&>(*identifier.impl())));
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
 

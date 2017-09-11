@@ -1,3 +1,43 @@
+2017-09-09  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Optimize Object.keys by using careful array allocation
+        https://bugs.webkit.org/show_bug.cgi?id=176654
+
+        Reviewed by Darin Adler.
+
+        SixSpeed object-assign.es6 stresses Object.keys. Object.keys is one of frequently used
+        function in JS apps. Luckily Object.keys has several good features.
+
+        1. Once PropertyNameArray is allocated, we know the length of the result array since
+        we do not need to filter out keys listed in PropertyNameArray. The execption is ProxyObject,
+        but it rarely appears. ProxyObject case goes to the generic path.
+
+        2. Object.keys does not need to access object after listing PropertyNameArray. It means
+        that we do not need to worry about enumeration attribute change by touching object.
+
+        This patch adds a fast path for Object.keys's array allocation. We allocate the JSArray
+        with the size and ArrayContiguous indexing shape.
+
+        This further improves SixSpeed object-assign.es5 by 13%.
+
+                                            baseline                  patched
+        Microbenchmarks:
+           object-keys-map-values       73.4324+-2.5397     ^     62.5933+-2.6677        ^ definitely 1.1732x faster
+           object-keys                  40.8828+-1.5851     ^     29.2066+-1.8944        ^ definitely 1.3998x faster
+
+                                            baseline                  patched
+        SixSpeed:
+           object-assign.es5           384.8719+-10.7204    ^    340.2734+-12.0947       ^ definitely 1.1311x faster
+
+        BTW, the further optimization of Object.keys can be considered: introducing own property keys
+        cache which is similar to the current enumeration cache. But this patch is orthogonal to
+        this optimization!
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorValues):
+        (JSC::ownPropertyKeys):
+        * runtime/ObjectConstructor.h:
+
 2017-09-10  Mark Lam  <mark.lam@apple.com>
 
         Fix all ExceptionScope verification failures in JavaScriptCore.
