@@ -571,13 +571,17 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
 
     JSValue property = JSValue::decode(encodedProperty);
 
-    if (property.isUInt32())
+    if (property.isUInt32()) {
+        scope.release();
         return getByVal(exec, base, property.asUInt32());
+    }
     if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
-        if (propertyAsUInt32 == propertyAsDouble)
+        if (propertyAsUInt32 == propertyAsDouble) {
+            scope.release();
             return getByVal(exec, base, propertyAsUInt32);
+        }
     } else if (property.isString()) {
         Structure& structure = *base->structure(vm);
         if (JSCell::canUseFastGetOwnProperty(structure)) {
@@ -590,6 +594,7 @@ EncodedJSValue JIT_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
 
     auto propertyName = property.toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
     return JSValue::encode(JSValue(base).get(exec, propertyName));
 }
 

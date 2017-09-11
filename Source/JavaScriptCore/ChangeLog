@@ -1,5 +1,14 @@
 2017-09-11  Mark Lam  <mark.lam@apple.com>
 
+        More exception check book-keeping needed found by 32-bit JSC test failures.
+        https://bugs.webkit.org/show_bug.cgi?id=176742
+
+        Reviewed by Michael Saboff and Keith Miller.
+
+        * dfg/DFGOperations.cpp:
+
+2017-09-11  Mark Lam  <mark.lam@apple.com>
+
         Make jsc dump the command line if JSC_dumpOption environment variable is set with a non-zero value.
         https://bugs.webkit.org/show_bug.cgi?id=176722
 
