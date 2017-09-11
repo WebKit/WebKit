@@ -1,3 +1,43 @@
+2017-09-10  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should be able to handle a simple constexpr type parameter
+        https://bugs.webkit.org/show_bug.cgi?id=176676
+
+        Reviewed by Myles Maxfield.
+        
+        This adds a test that uses a constexpr type parameter, and then fixed enough bugs to get this to work.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.resolve):
+        * WebGPUShadingLanguageRI/CheckWrapped.js: Added.
+        (checkWrapped):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitCallExpression):
+        (Evaluator):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.substituteToUnification):
+        (Node.prototype.clone):
+        (Node):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution):
+        (Substitution.prototype.visitVariableRef):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleConstexpr):
+        * WebGPUShadingLanguageRI/WrapChecker.js: Added.
+        (WrapChecker):
+        (WrapChecker.prototype.visitVariableRef):
+        (WrapChecker.prototype.visitTypeRef):
+        (WrapChecker.prototype.visitIntLiteral):
+        (WrapChecker.prototype._foundUnwrapped):
+        (WrapChecker.visitConstexprTypeParameter):
+        (WrapChecker.prototype.visitFuncParameter):
+        (WrapChecker.prototype.visitVariableDecl):
+        (WrapChecker.prototype.visitStructType):
+        (WrapChecker.prototype.visitNativeType):
+
 2017-09-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Bump freetype version to 2.8.0

@@ -103,6 +103,13 @@ class Node {
     
     substituteToUnification(parameters, unificationContext)
     {
-        return this.substitute(parameters, parameters.map(type => unificationContext.find(type)));
+        return this.substitute(
+            parameters,
+            parameters.map(type => unificationContext.find(type)));
+    }
+    
+    clone()
+    {
+        return this.visit(new Rewriter());
     }
 }

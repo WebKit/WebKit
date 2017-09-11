@@ -1423,6 +1423,21 @@ function TEST_ambiguousOverloadTieBreak()
     `);
 }
 
+function TEST_simpleConstexpr()
+{
+    let program = doPrep(`
+        int foo<int a>(int b)
+        {
+            return a + b;
+        }
+        int bar(int b)
+        {
+            return foo<42>(b);
+        }
+    `);
+    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 58)]), 58 + 42);
+}
+
 function TEST_break()
 {
     let program = doPrep(`

@@ -49,6 +49,7 @@ load("CheckLoops.js");
 load("CheckRecursion.js");
 load("CheckReturns.js");
 load("CheckUnreachableCode.js");
+load("CheckWrapped.js");
 load("Checker.js");
 load("CommaExpression.js");
 load("ConstexprTypeParameter.js");
@@ -127,3 +128,5 @@ load("WSyntaxError.js");
 load("WTrapError.js");
 load("WTypeError.js");
 load("WhileLoop.js");
+load("WrapChecker.js");
+

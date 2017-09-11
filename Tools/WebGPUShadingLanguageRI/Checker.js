@@ -268,8 +268,7 @@ class Checker extends Visitor {
 
     visitCallExpression(node)
     {
-        for (let typeArgument of node.typeArguments)
-            typeArgument.visit(this);
+        let typeArgumentTypes = node.typeArguments.map(typeArgument => typeArgument.visit(this));
         let argumentTypes = node.argumentList.map(argument => {
             let newArgument = argument.visit(this);
             if (!newArgument)
@@ -312,6 +311,14 @@ class Checker extends Visitor {
                     message += ", but considered:\n" + failures.join("\n")
                 throw new WTypeError(node.origin.originString, message);
             }
+        }
+        for (let i = 0; i < typeArgumentTypes.length; ++i) {
+            let typeArgumentType = typeArgumentTypes[i];
+            let typeParameter = overload.func.typeParameters[i];
+            if (!(typeParameter instanceof ConstexprTypeParameter))
+                continue;
+            if (!typeParameter.type.equalsWithCommit(typeArgumentType))
+                throw new Error("At " + node.origin.originString + " constexpr type argument and parameter types not equal: argument = " + typeArgumentType + ", parameter = " + typeParameter.type);
         }
         for (let i = 0; i < argumentTypes.length; ++i) {
             let argumentType = argumentTypes[i];

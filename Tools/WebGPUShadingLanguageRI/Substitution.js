@@ -31,8 +31,11 @@ class Substitution extends Rewriter {
         if (parameters.length != argumentList.length)
             throw new Error("Parameters and arguments are mismatched");
         this._map = new Map();
-        for (let i = 0; i < parameters.length; ++i)
+        for (let i = 0; i < parameters.length; ++i) {
+            if (argumentList[i] instanceof Value)
+                checkWrapped(argumentList[i]);
             this._map.set(parameters[i], argumentList[i]);
+        }
     }
     
     visitTypeRef(node)
@@ -41,6 +44,11 @@ class Substitution extends Rewriter {
         if (replacement) {
             if (node.typeArguments.length)
                 throw new Error("Unexpected type arguments on type variable");
+            // When we substitute types, we simply wrap them in a ref. We do this because when we work with
+            // types, we often point to types directly.
+            // FIXME: What if we end of wrapping something like PtrType(TypeVariable)? Won't that then prevent
+            // further substitution?
+            // https://bugs.webkit.org/show_bug.cgi?id=176677
             return TypeRef.wrap(replacement);
         }
         
@@ -51,8 +59,12 @@ class Substitution extends Rewriter {
     visitVariableRef(node)
     {
         let replacement = this._map.get(node.variable);
-        if (replacement)
-            return VariableRef.wrap(replacement);
+        if (replacement) {
+            // FIXME: What if we end up getting passed a ConstexprTypeParameter? Won't that prevent further
+            // substitution?
+            // https://bugs.webkit.org/show_bug.cgi?id=176677
+            return replacement.clone();
+        }
         
         return super.visitVariableRef(node);
     }

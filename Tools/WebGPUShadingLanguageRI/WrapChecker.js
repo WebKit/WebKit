@@ -24,52 +24,48 @@
  */
 "use strict";
 
-class IntLiteralType extends Type {
-    constructor(origin, value)
+class WrapChecker extends Visitor {
+    constructor(node)
     {
         super();
-        this._origin = origin;
-        this._value = value;
+        this._startNode = node;
     }
     
-    get origin() { return this._origin; }
-    get value() { return this._value; }
-    
-    get isPrimitive() { return true; }
-    get isUnifiable() { return true; }
-    
-    typeVariableUnify(unificationContext, other)
+    visitVariableRef(node)
     {
-        if (!(other instanceof Type))
-            return false;
-        
-        return this._typeVariableUnifyImpl(unificationContext, other);
     }
     
-    unifyImpl(unificationContext, other)
+    visitTypeRef(node)
     {
-        return this.typeVariableUnify(unificationContext, other);
     }
     
-    verifyAsArgument(unificationContext)
+    _foundUnwrapped(node)
     {
-        let realThis = unificationContext.find(this);
-        return realThis.isNumber && realThis.canRepresent(this.value);
+        throw new Error("Found unwrapped " + node.constructor.name + " at " + node.origin.originString + ": " + node + "\nWhile visiting " + this._startNode.constructor.name + " at " + this._startNode.origin.originString + ": " + this._startNode);
     }
     
-    verifyAsParameter(unificationContext)
+    visitConstexprTypeParameter(node)
     {
-        throw new Error("IntLiteralType should never be used as a type parameter");
+        this._foundUnwrapped(node);
     }
     
-    commitUnification(unificationContext)
+    visitFuncParameter(node)
     {
-        this.type = TypeRef.wrap(unificationContext.find(this));
+        this._foundUnwrapped(node);
     }
     
-    toString()
+    visitVariableDecl(node)
     {
-        return "intLiteralType<" + this.value + ">";
+        this._foundUnwrapped(node);
+    }
+    
+    visitStructType(node)
+    {
+        this._foundUnwrapped(node);
+    }
+    
+    visitNativeType(node)
+    {
+        this._foundUnwrapped(node);
     }
 }
-

@@ -209,7 +209,8 @@ class Evaluator extends Visitor {
             let type = node.nativeFuncInstance.parameterTypes[i];
             if (!type || !argument)
                 throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
-            callArguments.push(this._snapshot(type, argument.visit(this)));
+            let argumentValue = argument.visit(this);
+            callArguments.push(this._snapshot(type, argumentValue));
         }
         return node.func.implementation(callArguments, node);
     }
