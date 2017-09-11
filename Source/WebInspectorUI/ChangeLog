@@ -1,3 +1,13 @@
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Make Dashboard Timeline icon and Timeline tab icon more similar
+        https://bugs.webkit.org/show_bug.cgi?id=176582
+
+        Reviewed by Timothy Hatcher.
+
+        * UserInterface/Images/Time.svg:
+        Change the clock hands to match the time of Timelines.svg.
+
 2017-09-10  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: change style of RecordingNavigationSidebarPanel
