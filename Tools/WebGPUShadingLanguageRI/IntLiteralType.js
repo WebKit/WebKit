@@ -30,6 +30,7 @@ class IntLiteralType extends Type {
         super();
         this._origin = origin;
         this._value = value;
+        this.intType = new TypeRef(origin, "int", []);
     }
     
     get origin() { return this._origin; }
@@ -60,6 +61,14 @@ class IntLiteralType extends Type {
     verifyAsParameter(unificationContext)
     {
         throw new Error("IntLiteralType should never be used as a type parameter");
+    }
+    
+    conversionCost(unificationContext)
+    {
+        let realThis = unificationContext.find(this);
+        if (realThis.equals(this.intType))
+            return 0;
+        return 1;
     }
     
     commitUnification(unificationContext)

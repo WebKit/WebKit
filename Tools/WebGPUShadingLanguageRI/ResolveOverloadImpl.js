@@ -39,18 +39,19 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType
     if (!successes.length)
         return {failures: failures};
     
+    let minimumConversionCost = successes.reduce(
+        (result, overload) => Math.min(result, overload.unificationContext.conversionCost),
+        Infinity);
+    successes = successes.filter(
+        overload => overload.unificationContext.conversionCost == minimumConversionCost);
+    
     // If any of the signatures are restricted then we consider those first. This is an escape mechanism for
     // built-in things.
     // FIXME: It should be an error to declare a function that is at least as specific as a restricted function.
     // https://bugs.webkit.org/show_bug.cgi?id=176580
-    let hasRestricted = false;
-    for (let overload of successes) {
-        if (overload.func.isRestricted) {
-            hasRestricted = true;
-            break;
-        }
-    }
-    
+    let hasRestricted = successes.reduce(
+        (result, overload) => result || overload.func.isRestricted,
+        false);
     if (hasRestricted)
         successes = successes.filter(overload => overload.func.isRestricted);
     

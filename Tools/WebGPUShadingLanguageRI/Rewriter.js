@@ -221,6 +221,7 @@ class Rewriter extends VisitorBase {
     {
         let result = new IntLiteralType(node.origin, node.value);
         result.type = node.type ? node.type.visit(this) : null;
+        result.intType = node.intType.visit(this);
         return result;
     }
 

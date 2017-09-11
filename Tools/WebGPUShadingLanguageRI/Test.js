@@ -1423,6 +1423,57 @@ function TEST_ambiguousOverloadTieBreak()
     `);
 }
 
+function TEST_intOverloadResolution()
+{
+    let program = doPrep(`
+        int foo(int) { return 1; }
+        int foo(uint) { return 2; }
+        int foo(double) { return 3; }
+        int bar() { return foo(42); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 1);
+}
+
+function TEST_intOverloadResolutionReverseOrder()
+{
+    let program = doPrep(`
+        int foo(double) { return 3; }
+        int foo(uint) { return 2; }
+        int foo(int) { return 1; }
+        int bar() { return foo(42); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 1);
+}
+
+function TEST_intOverloadResolutionGeneric()
+{
+    let program = doPrep(`
+        int foo(int) { return 1; }
+        int foo<T>(T) { return 2; }
+        int bar() { return foo(42); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 1);
+}
+
+function TEST_intLiteralGeneric()
+{
+    checkFail(
+        () => doPrep(`
+            int foo<T>(T) { return 1; }
+            int bar() { return foo(42); }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_intLiteralGeneric()
+{
+    let program = doPrep(`
+        T foo<T>(T x) { return x; }
+        int bar() { return foo(int(42)); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 42);
+}
+
 function TEST_simpleConstexpr()
 {
     let program = doPrep(`

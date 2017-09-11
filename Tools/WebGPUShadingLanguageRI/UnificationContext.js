@@ -106,6 +106,14 @@ class UnificationContext {
         return argumentSet.size == numTypeVariableArguments;
     }
     
+    get conversionCost()
+    {
+        let result = 0;
+        for (let typeArgument of this.typeArguments())
+            result += typeArgument.conversionCost(this);
+        return result;
+    }
+    
     commit()
     {
         for (let typeArgument of this.typeArguments())

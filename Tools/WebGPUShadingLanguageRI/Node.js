@@ -79,6 +79,8 @@ class Node {
     
     get isNative() { return false; }
     
+    conversionCost(unificationContext) { return 0; }
+    
     equals(other)
     {
         let unificationContext = new UnificationContext();

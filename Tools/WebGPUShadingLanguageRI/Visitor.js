@@ -251,6 +251,7 @@ class Visitor extends VisitorBase {
     {
         if (node.type)
             node.type.visit(this);
+        node.intType.visit(this);
     }
     
     visitUintLiteral(node)

@@ -1,5 +1,36 @@
 2017-09-10  Filip Pizlo  <fpizlo@apple.com>
 
+        IntLiteral should prefer int32 during overload resolution
+        https://bugs.webkit.org/show_bug.cgi?id=176675
+
+        Reviewed by Myles Maxfield.
+        
+        This makes intLiteralType prefer to resolve to int over other types.
+        
+        This also adds tests that if you pass intLiteral to T, then you can make it work by saying
+        int(intLiteral).
+
+        * WebGPUShadingLanguageRI/IntLiteralType.js:
+        (IntLiteralType):
+        (IntLiteralType.prototype.conversionCost):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.conversionCost):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitIntLiteralType):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_intOverloadResolution):
+        (TEST_intOverloadResolutionReverseOrder):
+        (TEST_intOverloadResolutionGeneric):
+        (TEST_intLiteralGeneric):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext.prototype.get conversionCost):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitIntLiteralType):
+
+2017-09-10  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should be able to handle a simple constexpr type parameter
         https://bugs.webkit.org/show_bug.cgi?id=176676
 
