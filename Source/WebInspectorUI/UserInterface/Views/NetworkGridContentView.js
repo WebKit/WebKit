@@ -28,13 +28,13 @@ WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
     constructor(representedObject, extraArguments)
     {
         console.assert(extraArguments);
-        console.assert(extraArguments.networkSidebarPanel instanceof WI.NetworkSidebarPanel);
+        console.assert(extraArguments.legacyNetworkSidebarPanel instanceof WI.LegacyNetworkSidebarPanel);
 
         super(representedObject);
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
 
-        this._networkSidebarPanel = extraArguments.networkSidebarPanel;
+        this._networkSidebarPanel = extraArguments.legacyNetworkSidebarPanel;
 
         this._contentTreeOutline = this._networkSidebarPanel.contentTreeOutline;
         this._contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
@@ -371,7 +371,7 @@ WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
             this._startTime = this._endTime = resourceTimelineRecord.startTime;
 
         // FIXME: <https://webkit.org/b/153634> Web Inspector: some background tabs think they are the foreground tab and do unnecessary work
-        if (!(WI.tabBrowser.selectedTabContentView instanceof WI.NetworkTabContentView))
+        if (!(WI.tabBrowser.selectedTabContentView instanceof WI.LegacyNetworkTabContentView))
             return;
 
         this._startUpdatingCurrentTime();

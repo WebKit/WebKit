@@ -1,5 +1,27 @@
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Rename NetworkTab / NetworkSidebar to LegacyNetwork*
+        https://bugs.webkit.org/show_bug.cgi?id=176739
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Main.html:
+        * UserInterface/Views/LegacyNetworkSidebarPanel.css: Renamed from Source/WebInspectorUI/UserInterface/Views/NetworkSidebarPanel.css.
+        * UserInterface/Views/LegacyNetworkSidebarPanel.js: Renamed from Source/WebInspectorUI/UserInterface/Views/NetworkSidebarPanel.js.
+        * UserInterface/Views/LegacyNetworkTabContentView.js: Renamed from Source/WebInspectorUI/UserInterface/Views/NetworkTabContentView.js.
+        Rename resources.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WI.NetworkGridContentView):
+        (WI.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Update names at callsites.
+
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove unused parameter to UIString
         https://bugs.webkit.org/show_bug.cgi?id=176738
 

@@ -23,15 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NetworkTabContentView = class NetworkTabContentView extends WI.ContentBrowserTabContentView
+WI.LegacyNetworkTabContentView = class LegacyNetworkTabContentView extends WI.ContentBrowserTabContentView
 {
     constructor(identifier)
     {
-        let {image, title} = WI.NetworkTabContentView.tabInfo();
+        let {image, title} = WI.LegacyNetworkTabContentView.tabInfo();
         let tabBarItem = new WI.GeneralTabBarItem(image, title);
         let detailsSidebarPanelConstructors = [WI.ResourceDetailsSidebarPanel, WI.ProbeDetailsSidebarPanel];
 
-        super(identifier || "network", "network", tabBarItem, WI.NetworkSidebarPanel, detailsSidebarPanelConstructors);
+        super(identifier || "network", "network", tabBarItem, WI.LegacyNetworkSidebarPanel, detailsSidebarPanelConstructors);
     }
 
     static tabInfo()
@@ -51,7 +51,7 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.ContentBrowser
 
     get type()
     {
-        return WI.NetworkTabContentView.Type;
+        return WI.LegacyNetworkTabContentView.Type;
     }
 
     canShowRepresentedObject(representedObject)
@@ -70,4 +70,4 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.ContentBrowser
     }
 };
 
-WI.NetworkTabContentView.Type = "network";
+WI.LegacyNetworkTabContentView.Type = "network";

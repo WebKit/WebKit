@@ -438,7 +438,7 @@ WI.contentLoaded = function()
         WI.DebuggerTabContentView,
         WI.ElementsTabContentView,
         WI.LayersTabContentView,
-        WI.NetworkTabContentView,
+        WI.LegacyNetworkTabContentView,
         WI.NewTabContentView,
         WI.RecordingTabContentView,
         WI.ResourcesTabContentView,
@@ -1002,9 +1002,9 @@ WI.showStorageTab = function()
 
 WI.showNetworkTab = function()
 {
-    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.NetworkTabContentView);
+    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LegacyNetworkTabContentView);
     if (!tabContentView)
-        tabContentView = new WI.NetworkTabContentView;
+        tabContentView = new WI.LegacyNetworkTabContentView;
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 

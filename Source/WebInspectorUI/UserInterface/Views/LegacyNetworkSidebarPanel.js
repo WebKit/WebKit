@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarPanel
+WI.LegacyNetworkSidebarPanel = class LegacyNetworkSidebarPanel extends WI.NavigationSidebarPanel
 {
     constructor(contentBrowser)
     {
@@ -47,7 +47,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
     showDefaultContentView()
     {
         if (!this._networkGridView)
-            this._networkGridView = new WI.NetworkGridContentView(null, {networkSidebarPanel: this});
+            this._networkGridView = new WI.NetworkGridContentView(null, {legacyNetworkSidebarPanel: this});
 
         this.contentBrowser.showContentView(this._networkGridView);
     }
@@ -83,7 +83,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
         for (let key in WI.Resource.Type) {
             let value = WI.Resource.Type[key];
             let scopeBarItem = new WI.ScopeBarItem(scopeItemPrefix + value, WI.Resource.displayNameForType(value, true));
-            scopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol] = value;
+            scopeBarItem[WI.LegacyNetworkSidebarPanel.ResourceTypeSymbol] = value;
             scopeBarItems.push(scopeBarItem);
         }
 
@@ -102,7 +102,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
     {
         console.assert(cookie);
 
-        cookie[WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WI.NetworkGridContentView;
+        cookie[WI.LegacyNetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey] = this.contentBrowser.currentContentView instanceof WI.NetworkGridContentView;
 
         super.saveStateToCookie(cookie);
     }
@@ -113,7 +113,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
 
         // Don't call NavigationSidebarPanel.restoreStateFromCookie, because it tries to match based
         // on type selected tree element. This would cause the grid to be deselected.
-        if (cookie[WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey])
+        if (cookie[WI.LegacyNetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey])
             return;
 
         super.restoreStateFromCookie(cookie, relaxedMatchDelay);
@@ -138,13 +138,13 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
         function match()
         {
             if (treeElement instanceof WI.FrameTreeElement)
-                return selectedScopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Document;
+                return selectedScopeBarItem[WI.LegacyNetworkSidebarPanel.ResourceTypeSymbol] === WI.Resource.Type.Document;
 
             console.assert(treeElement instanceof WI.ResourceTreeElement, "Unknown treeElement", treeElement);
             if (!(treeElement instanceof WI.ResourceTreeElement))
                 return false;
 
-            return treeElement.resource.type === selectedScopeBarItem[WI.NetworkSidebarPanel.ResourceTypeSymbol];
+            return treeElement.resource.type === selectedScopeBarItem[WI.LegacyNetworkSidebarPanel.ResourceTypeSymbol];
         }
 
         var matched = match();
@@ -155,7 +155,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
 
     treeElementAddedOrChanged(treeElement)
     {
-        if (treeElement.status && treeElement.status[WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol] || !treeElement.treeOutline)
+        if (treeElement.status && treeElement.status[WI.LegacyNetworkSidebarPanel.TreeElementStatusButtonSymbol] || !treeElement.treeOutline)
             return;
 
         var fragment = document.createDocumentFragment();
@@ -166,12 +166,12 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
         fragment.appendChild(closeButton.element);
 
         let goToButton = new WI.TreeElementStatusButton(WI.createGoToArrowButton());
-        goToButton[WI.NetworkSidebarPanel.TreeElementSymbol] = treeElement;
+        goToButton[WI.LegacyNetworkSidebarPanel.TreeElementSymbol] = treeElement;
         goToButton.addEventListener(WI.TreeElementStatusButton.Event.Clicked, this._treeElementGoToArrowWasClicked, this);
         fragment.appendChild(goToButton.element);
 
         treeElement.status = fragment;
-        treeElement.status[WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol] = true;
+        treeElement.status[WI.LegacyNetworkSidebarPanel.TreeElementStatusButtonSymbol] = true;
     }
 
     // Private
@@ -202,7 +202,7 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
     {
         this._clickedTreeElementGoToArrow = true;
 
-        let treeElement = event.target[WI.NetworkSidebarPanel.TreeElementSymbol];
+        let treeElement = event.target[WI.LegacyNetworkSidebarPanel.TreeElementSymbol];
         console.assert(treeElement instanceof WI.TreeElement);
 
         treeElement.select(true, true);
@@ -227,8 +227,8 @@ WI.NetworkSidebarPanel = class NetworkSidebarPanel extends WI.NavigationSidebarP
     }
 };
 
-WI.NetworkSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
-WI.NetworkSidebarPanel.TreeElementSymbol = Symbol("tree-element");
-WI.NetworkSidebarPanel.TreeElementStatusButtonSymbol = Symbol("tree-element-status-button");
+WI.LegacyNetworkSidebarPanel.ResourceTypeSymbol = Symbol("resource-type");
+WI.LegacyNetworkSidebarPanel.TreeElementSymbol = Symbol("tree-element");
+WI.LegacyNetworkSidebarPanel.TreeElementStatusButtonSymbol = Symbol("tree-element-status-button");
 
-WI.NetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey = "network-sidebar-panel-showing-network-grid-content-view";
+WI.LegacyNetworkSidebarPanel.ShowingNetworkGridContentViewCookieKey = "network-sidebar-panel-showing-network-grid-content-view";
