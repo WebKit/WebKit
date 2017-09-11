@@ -28,13 +28,14 @@
 
 import argparse
 import bisect
+import json
 import math
 import os
-import requests
 import shutil
 import subprocess
 import sys
 import tempfile
+import urllib2
 import urlparse
 
 REST_API_URL = 'https://q1tzqfy48e.execute-api.us-west-2.amazonaws.com/v2/'
@@ -125,8 +126,10 @@ def get_sorted_revisions(revisions_dict):
 
 def get_s3_location_for_revision(url, revision):
     url = '/'.join([url, str(revision)])
-    r = requests.get(url)
-    for archive in r.json()['archive']:
+    r = urllib2.urlopen(url)
+    data = json.load(r)
+    
+    for archive in data['archive']:
         s3_url = archive['s3_url']
     return s3_url
 
@@ -216,8 +219,10 @@ def main(options):
     validate_options(options)
 
     url = get_api_url(options)
-    r = requests.get(url)
-    revision_list = get_sorted_revisions(r.json())
+    r = urllib2.urlopen(url)
+    data = json.load(r)
+    
+    revision_list = get_sorted_revisions(data)
     
     start_index, end_index = get_indices_from_revisions(revision_list, options.start, options.end)
     print('Bisecting between {} and {}'.format(revision_list[start_index], revision_list[end_index]))
