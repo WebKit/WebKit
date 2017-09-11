@@ -2975,6 +2975,22 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         return true;
     }
 
+    case JSWeakMapGetIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            return false;
+
+        insertChecks();
+        Node* map = get(virtualRegisterForArgument(0, registerOffset));
+        Node* key = get(virtualRegisterForArgument(1, registerOffset));
+        Node* hash = addToGraph(MapHash, key);
+        Node* result = addToGraph(WeakMapGet, OpInfo(), OpInfo(prediction), map, key, hash);
+        set(VirtualRegister(resultOperand), result);
+        return true;
+    }
+
     case HasOwnPropertyIntrinsic: {
         if (argumentCountIncludingThis != 2)
             return false;

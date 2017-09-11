@@ -1900,6 +1900,13 @@ private:
             break;
         }
 
+        case WeakMapGet: {
+            fixEdge<WeakMapObjectUse>(node->child1());
+            fixEdge<ObjectUse>(node->child2());
+            fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
         case DefineDataProperty: {
             fixEdge<CellUse>(m_graph.varArgChild(node, 0));
             Edge& propertyEdge = m_graph.varArgChild(node, 1);

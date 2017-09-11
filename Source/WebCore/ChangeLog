@@ -1,3 +1,13 @@
+2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Optimize WeakMap::get by adding intrinsic and fixup
+        https://bugs.webkit.org/show_bug.cgi?id=176010
+
+        Reviewed by Filip Pizlo.
+
+        * platform/network/curl/CurlJobManager.cpp:
+        (WebCore::CurlJobList::finishJobs):
+
 2017-09-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GStreamer] Drop libgcrypt initialization in webkit_media_clear_key_decrypt_init()

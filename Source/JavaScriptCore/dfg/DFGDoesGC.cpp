@@ -203,6 +203,7 @@ bool doesGC(Graph& graph, Node* node)
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
+    case WeakMapGet:
     case Unreachable:
     case ExtractCatchLocal:
     case ExtractOSREntryLocal:

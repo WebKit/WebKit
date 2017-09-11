@@ -106,7 +106,7 @@ public:
     MappedPeekType get(const KeyType&) const;
 
     // Same as get(), but aggressively inlined.
-    MappedPeekType fastGet(const KeyType&) const;
+    MappedPeekType inlineGet(const KeyType&) const;
 
     // Replaces the value but not the key if the key is already present.
     // Return value includes both an iterator to the key location,
@@ -144,6 +144,7 @@ public:
     template<typename HashTranslator, typename T> const_iterator find(const T&) const;
     template<typename HashTranslator, typename T> bool contains(const T&) const;
     template<typename HashTranslator, typename T> MappedPeekType get(const T&) const;
+    template<typename HashTranslator, typename T> MappedPeekType inlineGet(const T&) const;
 
     // An alternate version of add() that finds the object by hashing and comparing
     // with some other type, to avoid the cost of type conversion if the object is already
@@ -306,6 +307,16 @@ auto HashMap<T, U, V, W, X>::get(const TYPE& value) const -> MappedPeekType
 
 template<typename T, typename U, typename V, typename W, typename X>
 template<typename HashTranslator, typename TYPE>
+auto HashMap<T, U, V, W, X>::inlineGet(const TYPE& value) const -> MappedPeekType
+{
+    auto* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
+    if (!entry)
+        return MappedTraits::peek(MappedTraits::emptyValue());
+    return MappedTraits::peek(entry->value);
+}
+
+template<typename T, typename U, typename V, typename W, typename X>
+template<typename HashTranslator, typename TYPE>
 inline bool HashMap<T, U, V, W, X>::contains(const TYPE& value) const
 {
     return m_impl.template contains<HashMapTranslatorAdapter<KeyValuePairTraits, HashTranslator>>(value);
@@ -407,7 +418,7 @@ inline auto HashMap<T, U, V, W, MappedTraits>::get(const KeyType& key) const -> 
 }
 
 template<typename T, typename U, typename V, typename W, typename MappedTraits>
-ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits>::fastGet(const KeyType& key) const -> MappedPeekType
+ALWAYS_INLINE auto HashMap<T, U, V, W, MappedTraits>::inlineGet(const KeyType& key) const -> MappedPeekType
 {
     KeyValuePairType* entry = const_cast<HashTableType&>(m_impl).template inlineLookup<IdentityTranslatorType>(key);
     if (!entry)

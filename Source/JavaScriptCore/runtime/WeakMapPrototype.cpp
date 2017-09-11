@@ -46,25 +46,25 @@ void WeakMapPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     vm.prototypeMap.addPrototype(this);
 
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->deleteKeyword, protoFuncWeakMapDelete, DontEnum, 1);
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->get, protoFuncWeakMapGet, DontEnum, 1, JSWeakMapGetIntrinsic);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->has, protoFuncWeakMapHas, DontEnum, 1);
     JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->set, protoFuncWeakMapSet, DontEnum, 2);
 
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakMap"), DontEnum | ReadOnly);
 }
 
-static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
+ALWAYS_INLINE static JSWeakMap* getWeakMap(CallFrame* callFrame, JSValue value)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!value.isObject()) {
+    if (UNLIKELY(!value.isObject())) {
         throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on non-object"));
         return nullptr;
     }
 
-    if (JSWeakMap* weakMap = jsDynamicCast<JSWeakMap*>(vm, value))
-        return weakMap;
+    if (LIKELY(isJSWeakMap(asObject(value))))
+        return jsCast<JSWeakMap*>(value);
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakMap function on a non-WeakMap object"));
     return nullptr;
@@ -87,7 +87,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapGet(CallFrame* callFrame)
     JSValue key = callFrame->argument(0);
     if (!key.isObject())
         return JSValue::encode(jsUndefined());
-    return JSValue::encode(map->get(asObject(key)));
+    return JSValue::encode(map->inlineGet(asObject(key)));
 }
 
 EncodedJSValue JSC_HOST_CALL protoFuncWeakMapHas(CallFrame* callFrame)

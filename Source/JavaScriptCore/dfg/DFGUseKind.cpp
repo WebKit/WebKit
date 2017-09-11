@@ -109,6 +109,12 @@ void printInternal(PrintStream& out, UseKind useKind)
     case SetObjectUse:
         out.print("SetObjectUse");
         return;
+    case WeakMapObjectUse:
+        out.print("WeakMapObjectUse");
+        return;
+    case WeakSetObjectUse:
+        out.print("WeakSetObjectUse");
+        return;
     case ObjectOrOtherUse:
         out.print("ObjectOrOther");
         return;

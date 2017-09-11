@@ -35,6 +35,8 @@
 #include "JSFunction.h"
 #include "JSMap.h"
 #include "JSSet.h"
+#include "JSWeakMap.h"
+#include "JSWeakSet.h"
 #include "ProxyObject.h"
 #include "RegExpObject.h"
 #include "ScopedArguments.h"
@@ -177,6 +179,16 @@ void dumpSpeculation(PrintStream& outStream, SpeculatedType value)
 
             if (value & SpecSetObject)
                 strOut.print("SetObject");
+            else
+                isTop = false;
+
+            if (value & SpecWeakMapObject)
+                strOut.print("WeakMapObject");
+            else
+                isTop = false;
+
+            if (value & SpecWeakSetObject)
+                strOut.print("WeakSetObject");
             else
                 isTop = false;
 
@@ -402,6 +414,12 @@ SpeculatedType speculationFromClassInfo(const ClassInfo* classInfo)
     if (classInfo == JSSet::info())
         return SpecSetObject;
 
+    if (classInfo == JSWeakMap::info())
+        return SpecWeakMapObject;
+
+    if (classInfo == JSWeakSet::info())
+        return SpecWeakSetObject;
+
     if (classInfo == ProxyObject::info())
         return SpecProxyObject;
     
@@ -520,6 +538,10 @@ SpeculatedType speculationFromJSType(JSType type)
         return SpecMapObject;
     case JSSetType:
         return SpecSetObject;
+    case JSWeakMapType:
+        return SpecWeakMapObject;
+    case JSWeakSetType:
+        return SpecWeakSetObject;
     default:
         ASSERT_NOT_REACHED();
     }
@@ -701,6 +723,10 @@ SpeculatedType speculationFromString(const char* speculation)
         return SpecMapObject;
     if (!strncmp(speculation, "SpecSetObject", strlen("SpecSetObject")))
         return SpecSetObject;
+    if (!strncmp(speculation, "SpecWeakMapObject", strlen("SpecWeakMapObject")))
+        return SpecWeakMapObject;
+    if (!strncmp(speculation, "SpecWeakSetObject", strlen("SpecWeakSetObject")))
+        return SpecWeakSetObject;
     if (!strncmp(speculation, "SpecProxyObject", strlen("SpecProxyObject")))
         return SpecProxyObject;
     if (!strncmp(speculation, "SpecDerivedArray", strlen("SpecDerivedArray")))

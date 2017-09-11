@@ -8984,6 +8984,34 @@ void SpeculativeJIT::speculateSetObject(Edge edge)
     speculateSetObject(edge, operand.gpr());
 }
 
+void SpeculativeJIT::speculateWeakMapObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecWeakMapObject, JSWeakMapType);
+}
+
+void SpeculativeJIT::speculateWeakMapObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecWeakMapObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateWeakMapObject(edge, operand.gpr());
+}
+
+void SpeculativeJIT::speculateWeakSetObject(Edge edge, GPRReg cell)
+{
+    speculateCellType(edge, cell, SpecWeakSetObject, JSWeakSetType);
+}
+
+void SpeculativeJIT::speculateWeakSetObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecWeakSetObject))
+        return;
+
+    SpeculateCellOperand operand(this, edge);
+    speculateWeakSetObject(edge, operand.gpr());
+}
+
 void SpeculativeJIT::speculateObjectOrOther(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecObject | SpecOther))
@@ -9301,6 +9329,12 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case SetObjectUse:
         speculateSetObject(edge);
+        break;
+    case WeakMapObjectUse:
+        speculateWeakMapObject(edge);
+        break;
+    case WeakSetObjectUse:
+        speculateWeakSetObject(edge);
         break;
     case ObjectOrOtherUse:
         speculateObjectOrOther(edge);
@@ -10405,6 +10439,28 @@ void SpeculativeJIT::compileThrowStaticError(Node* node)
     m_jit.exceptionCheck();
     m_jit.breakpoint();
     noResult(node);
+}
+
+void SpeculativeJIT::compileWeakMapGet(Node* node)
+{
+    SpeculateCellOperand weakMap(this, node->child1());
+    SpeculateCellOperand object(this, node->child2());
+    SpeculateInt32Operand hash(this, node->child3());
+    JSValueRegsTemporary result(this);
+
+    GPRReg weakMapGPR = weakMap.gpr();
+    GPRReg objectGPR = object.gpr();
+    GPRReg hashGPR = hash.gpr();
+    JSValueRegs resultRegs = result.regs();
+
+    speculateWeakMapObject(node->child1(), weakMapGPR);
+    speculateObject(node->child2(), objectGPR);
+
+    flushRegisters();
+    callOperation(operationWeakMapGet, resultRegs, weakMapGPR, objectGPR, hashGPR);
+    m_jit.exceptionCheck();
+
+    jsValueResult(resultRegs, node);
 }
 
 } } // namespace JSC::DFG

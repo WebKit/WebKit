@@ -38,6 +38,8 @@ public:
 
     void set(VM&, JSObject*, JSValue);
     JSValue get(JSObject*);
+    JSValue inlineGet(JSObject*);
+    JSValue inlineGet(JSObject*, int32_t hash);
     bool remove(JSObject*);
     bool contains(JSObject*);
     void clear();
@@ -57,6 +59,19 @@ protected:
     WeakMapBase(VM&, Structure*);
     static void destroy(JSCell*);
 
+    using KeyWithHash = std::pair<JSObject*, unsigned>;
+    struct HashTranslator {
+        static inline unsigned hash(const KeyWithHash& keyWithHash)
+        {
+            return keyWithHash.second;
+        }
+
+        static inline bool equal(JSObject* key, const KeyWithHash& keyWithHash)
+        {
+            return key == keyWithHash.first;
+        }
+    };
+
     class DeadKeyCleaner : public UnconditionalFinalizer, public WeakReferenceHarvester {
     public:
         WeakMapBase* target();
@@ -69,5 +84,20 @@ protected:
     DeadKeyCleaner m_deadKeyCleaner;
     MapType m_map;
 };
+
+ALWAYS_INLINE JSValue WeakMapBase::inlineGet(JSObject* key)
+{
+    if (auto result = m_map.inlineGet(key))
+        return result.get();
+    return jsUndefined();
+}
+
+ALWAYS_INLINE JSValue WeakMapBase::inlineGet(JSObject* key, int32_t hash)
+{
+    KeyWithHash keyWithHash { key, hash };
+    if (auto result = m_map.inlineGet<HashTranslator>(keyWithHash))
+        return result.get();
+    return jsUndefined();
+}
 
 } // namespace JSC
