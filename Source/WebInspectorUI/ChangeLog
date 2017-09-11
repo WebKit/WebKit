@@ -1,5 +1,29 @@
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Cleanup and test MIMETypeUtilities
+        https://bugs.webkit.org/show_bug.cgi?id=176731
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/FileUtilities.js:
+        (WI.saveDataToFile):
+        * UserInterface/Models/SourceMapResource.js:
+        (WI.SourceMapResource):
+        Update callers to handle new return values.
+
+        * UserInterface/Base/MIMETypeUtilities.js:
+        (WI.fileExtensionForURL):
+        Return null in error cases.
+        Only provide the content after the last period.
+
+        (WI.fileExtensionForMIMEType):
+        Handle generic "+json" and "+xml" cases.
+
+        * UserInterface/Test.html:
+        Include MIMETypeUtilities for testing.
+
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Rename NetworkTab / NetworkSidebar to LegacyNetwork*
         https://bugs.webkit.org/show_bug.cgi?id=176739
 
