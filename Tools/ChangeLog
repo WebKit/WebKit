@@ -1,3 +1,9 @@
+2017-09-11  Robin Morisset  <rmorisset@apple.com>
+
+        Just added myself to the contributors.json file as a committer
+
+        Unreviewed
+
 2017-09-10  Filip Pizlo  <fpizlo@apple.com>
 
         IntLiteral should prefer int32 during overload resolution

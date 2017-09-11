@@ -4786,6 +4786,16 @@
       ],
       "status" : "committer"
    },
+   "Robin Morisset" : {
+      "emails" : [
+         "rmorisset@apple.com",
+         "robin.morisset@normalesup.org"
+      ],
+      "nicks" : [
+         "rmorisset"
+      ],
+      "status" : "committer"
+   },
    "Roger Fong" : {
       "emails" : [
          "roger_fong@apple.com"
