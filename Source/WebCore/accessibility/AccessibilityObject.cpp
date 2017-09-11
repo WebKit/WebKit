@@ -1680,7 +1680,7 @@ String AccessibilityObject::ariaReadOnlyValue() const
 
 bool AccessibilityObject::supportsARIAAutoComplete() const
 {
-    return isARIATextControl() && hasAttribute(aria_autocompleteAttr);
+    return (isComboBox() || isARIATextControl()) && hasAttribute(aria_autocompleteAttr);
 }
 
 String AccessibilityObject::ariaAutoCompleteValue() const
