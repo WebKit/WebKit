@@ -24,10 +24,5 @@
 - path: .
   tests:
     - Test.js
-  cmd: |
-    if $buildType == "debug"
-        skip
-    else
-        defaultRunNoisyTest unless parseRunCommands
-    end
+  cmd: skip
 

@@ -1,3 +1,12 @@
+2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Skip JSC test wsl-tests.yaml/Test.js
+        https://bugs.webkit.org/show_bug.cgi?id=176727
+
+        Unreviewed test gardening.
+
+        * WebGPUShadingLanguageRI/wsl-tests.yaml:
+
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's decidePolicyForGeolocationPermissionRequest
