@@ -1,3 +1,15 @@
+2017-09-11  Mark Lam  <mark.lam@apple.com>
+
+        Change test expectation for test262/test/language/statements/try/tco-catch.js
+        https://bugs.webkit.org/show_bug.cgi?id=176749
+
+        Rubber stamped by Keith Miller.
+
+        It's been failing since at least r221821.  I'm changing the test expectation to
+        fail to green the bots while I investigate some more.
+
+        * test262.yaml:
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221854.
