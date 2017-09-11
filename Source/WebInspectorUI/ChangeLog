@@ -1,5 +1,30 @@
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Include a DebugContentView for debugging
+        https://bugs.webkit.org/show_bug.cgi?id=176733
+
+        Reviewed by Matt Baker.
+
+        Provide a DebugContentView which can be used to debug lifecycle
+        events of a ContentView (shown, hidden, closed), and displays a
+        provided string. It can be created like so:
+
+            `new WI.DebugContentView("Name")`
+
+        * UserInterface/Debug/DebugContentView.css: Added.
+        (.content-view.debug):
+        * UserInterface/Debug/DebugContentView.js: Added.
+        (WI.DebugContentView):
+        (WI.DebugContentView.prototype.shown):
+        (WI.DebugContentView.prototype.hidden):
+        (WI.DebugContentView.prototype.closed):
+        Log events for debugging.
+
+        * UserInterface/Main.html:
+        Include new Debug resources.
+
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Make Dashboard Timeline icon and Timeline tab icon more similar
         https://bugs.webkit.org/show_bug.cgi?id=176582
 
