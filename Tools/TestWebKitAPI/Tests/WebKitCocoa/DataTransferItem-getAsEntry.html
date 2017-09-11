@@ -69,16 +69,16 @@ html, body {
 
     async function representationForFileSystemEntry(entry)
     {
-        let representation = "";
+        let lines = [];
         if (entry.isDirectory) {
-            representation += `DIR: ${entry.fullPath}\n`;
+            lines.push(`DIR: ${entry.fullPath}`);
             for (let child of await getChildEntries(entry))
-                representation += await representationForFileSystemEntry(child);
+                lines = lines.concat(await representationForFileSystemEntry(child));
         } else if (entry.isFile) {
             let file = await fileFromFileSystemFileEntry(entry);
-            representation += `FILE: ${entry.fullPath} ('${file.type}', ${file.size} bytes)\n`;
+            lines.push(`FILE: ${entry.fullPath} ('${file.type}', ${file.size} bytes)`);
         }
-        return representation;
+        return lines;
     }
 
     async function logItemAndFileEntryInformation(items)
@@ -89,7 +89,7 @@ html, body {
             output.value += `Found data transfer item (kind: '${item.kind}', type: '${item.type}')\n`;
             let entry = item.webkitGetAsEntry();
             if (entry)
-                output.value += await representationForFileSystemEntry(entry);
+                output.value += (await representationForFileSystemEntry(entry)).sort().join("\n");
         }
     }
 </script>

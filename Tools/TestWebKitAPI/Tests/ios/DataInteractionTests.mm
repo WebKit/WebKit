@@ -953,17 +953,18 @@ static RetainPtr<TestWKWebView> setUpTestWebViewForDataTransferItems()
 
 TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
 {
+    // The expected output is sorted by alphabetical order here for consistent behavior across different test environments.
+    // See DataTransferItem-getAsEntry.html for more details.
     NSArray<NSString *> *expectedOutput = @[
         @"Found data transfer item (kind: 'string', type: 'text/plain')",
         @"Found data transfer item (kind: 'file', type: '')",
         @"DIR: /somedirectory",
-        @"FILE: /somedirectory/icon.png ('image/png', 42130 bytes)",
         @"DIR: /somedirectory/subdirectory1",
-        @"FILE: /somedirectory/subdirectory1/text-file-1.txt ('text/plain', 43 bytes)",
-        @"FILE: /somedirectory/archive.zip ('application/zip', 988 bytes)",
         @"DIR: /somedirectory/subdirectory2",
-        @"FILE: /somedirectory/subdirectory2/text-file-2.txt ('text/plain', 44 bytes)",
-        @""
+        @"FILE: /somedirectory/archive.zip ('application/zip', 988 bytes)",
+        @"FILE: /somedirectory/icon.png ('image/png', 42130 bytes)",
+        @"FILE: /somedirectory/subdirectory1/text-file-1.txt ('text/plain', 43 bytes)",
+        @"FILE: /somedirectory/subdirectory2/text-file-2.txt ('text/plain', 44 bytes)"
     ];
 
     auto webView = setUpTestWebViewForDataTransferItems();
@@ -994,8 +995,7 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry
     NSArray<NSString *> *expectedOutput = @[
         @"Found data transfer item (kind: 'string', type: 'text/plain')",
         @"Found data transfer item (kind: 'file', type: 'text/plain')",
-        @"FILE: /foo.txt ('text/plain', 28 bytes)",
-        @""
+        @"FILE: /foo.txt ('text/plain', 28 bytes)"
     ];
 
     auto webView = setUpTestWebViewForDataTransferItems();

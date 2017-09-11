@@ -1,3 +1,18 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] ExternalSourceDataTransferItemGetAsEntry tests produce inconsistent results on test automation bots
+        https://bugs.webkit.org/show_bug.cgi?id=176736
+
+        Reviewed by Andy Estes and Megan Gardner.
+
+        The test output dumped when dropping a file in DataTransferItem-getAsEntry.html should adhere to some deterministic order.
+        Currently, this is not enforced, so on some systems, these tests fail due to expected test output being out of order. To
+        fix this, simply have the test harness alphabetically sort the output before writing to the textarea.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/DataTransferItem-getAsEntry.html:
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-09-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkitbot should recognize commands even when colon is omitted
