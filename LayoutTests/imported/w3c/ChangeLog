@@ -1,3 +1,14 @@
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Make the WPT entry point for LayoutTests/http/wpt more discoverable
+        https://bugs.webkit.org/show_bug.cgi?id=176494
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/WebKit/README.txt: Added.
+        Touch a file in a "WebKit" directory so that a "WebKit" link shows up
+        on the default <http://localhost:8800> listing page.
+
 2017-09-09  Sam Weinig  <sam@webkit.org>
 
         Finish off the FormData implementation

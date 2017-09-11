@@ -69,6 +69,7 @@ def run_server(options, args, stdout, stderr):
 
     if options.web_platform_test_server:
         print "Starting web-platform-tests server on <%s> and <%s>" % (web_platform_test_server.base_http_url(port), web_platform_test_server.base_https_url(port))
+        print "WebKit http/wpt tests are accessible at <%s>" % (web_platform_test_server.base_http_url(port) + "WebKit/")
         port.start_web_platform_test_server()
 
     if options.httpd_server:
