@@ -84,10 +84,8 @@ class IRCBot(ircbot.SingleServerIRCBot, MessagePumpDelegate):
         # Some IRC clients, like xchat-gnome, default to using a comma
         # when addressing someone.
         vocative_separator = request[len(connection.get_nickname())]
-        if vocative_separator == ':':
-            request = request.split(':', 1)
-        elif vocative_separator == ',':
-            request = request.split(',', 1)
+        if vocative_separator in [':', ',', ' ']:
+            request = request.split(vocative_separator, 1)
         else:
             return
 

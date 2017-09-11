@@ -1,3 +1,17 @@
+2017-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitbot should recognize commands even when colon is omitted
+        https://bugs.webkit.org/show_bug.cgi?id=176680
+        <rdar://problem/29933898>
+
+        Reviewed by Daniel Bates.
+
+        Recognize the IRC command even when : and , were not present.
+        Unfortunately, there is no unit test for this code at the moment.
+
+        * Scripts/webkitpy/common/net/irc/ircbot.py:
+        (IRCBot.on_pubmsg):
+
 2017-09-11  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds doesn't work due to missing requests module
