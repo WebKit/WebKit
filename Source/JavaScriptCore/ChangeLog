@@ -1,3 +1,15 @@
+2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221854.
+
+        The test added with this change fails on 32-bit JSC bots.
+
+        Reverted changeset:
+
+        "[DFG] Optimize WeakMap::get by adding intrinsic and fixup"
+        https://bugs.webkit.org/show_bug.cgi?id=176010
+        http://trac.webkit.org/changeset/221854
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Optimize WeakMap::get by adding intrinsic and fixup

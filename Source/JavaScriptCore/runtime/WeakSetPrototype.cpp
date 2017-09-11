@@ -51,18 +51,18 @@ void WeakSetPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "WeakSet"), DontEnum | ReadOnly);
 }
 
-ALWAYS_INLINE static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
+static JSWeakSet* getWeakSet(CallFrame* callFrame, JSValue value)
 {
     VM& vm = callFrame->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(!value.isObject())) {
+    if (!value.isObject()) {
         throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on non-object"));
         return nullptr;
     }
 
-    if (LIKELY(isJSWeakSet(asObject(value))))
-        return jsCast<JSWeakSet*>(value);
+    if (JSWeakSet* weakSet = jsDynamicCast<JSWeakSet*>(vm, value))
+        return weakSet;
 
     throwTypeError(callFrame, scope, WTF::ASCIILiteral("Called WeakSet function on a non-WeakSet object"));
     return nullptr;

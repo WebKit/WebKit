@@ -38,7 +38,7 @@ public:
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
     {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(JSWeakSetType, StructureFlags), info());
+        return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
     }
 
     static JSWeakSet* create(VM& vm, Structure* structure)
@@ -61,17 +61,5 @@ private:
 
     static String toStringName(const JSObject*, ExecState*);
 };
-
-inline bool isJSWeakSet(JSCell* from)
-{
-    static_assert(std::is_final<JSWeakSet>::value, "");
-    return from->type() == JSWeakSetType;
-}
-
-inline bool isJSWeakSet(JSValue from)
-{
-    static_assert(std::is_final<JSWeakSet>::value, "");
-    return from.isCell() && from.asCell()->type() == JSWeakSetType;
-}
 
 } // namespace JSC

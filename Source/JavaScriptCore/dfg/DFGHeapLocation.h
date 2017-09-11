@@ -68,7 +68,6 @@ enum LocationKind {
     MapBucketKeyLoc,
     MapBucketMapNextLoc,
     MapBucketSetNextLoc,
-    WeakMapGetLoc,
     DOMStateLoc,
 };
 

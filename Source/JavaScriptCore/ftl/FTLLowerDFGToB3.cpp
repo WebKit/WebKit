@@ -1028,9 +1028,6 @@ private:
         case LoadValueFromMapBucket:
             compileLoadValueFromMapBucket();
             break;
-        case WeakMapGet:
-            compileWeakMapGet();
-            break;
         case IsObject:
             compileIsObject();
             break;
@@ -8474,15 +8471,6 @@ private:
         setJSValue(m_out.load64(mapBucket, m_heaps.HashMapBucket_key));
     }
 
-    void compileWeakMapGet()
-    {
-        LValue weakMap = lowWeakMapObject(m_node->child1());
-        LValue object = lowObject(m_node->child2());
-        LValue hash = lowInt32(m_node->child3());
-
-        setJSValue(vmCall(Int64, m_out.operation(operationWeakMapGet), m_callFrame, weakMap, object, hash));
-    }
-
     void compileIsObjectOrNull()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
@@ -12964,20 +12952,6 @@ private:
         speculateSetObject(edge, result);
         return result;
     }
-
-    LValue lowWeakMapObject(Edge edge)
-    {
-        LValue result = lowCell(edge);
-        speculateWeakMapObject(edge, result);
-        return result;
-    }
-
-    LValue lowWeakSetObject(Edge edge)
-    {
-        LValue result = lowCell(edge);
-        speculateWeakSetObject(edge, result);
-        return result;
-    }
     
     LValue lowString(Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
     {
@@ -13431,12 +13405,6 @@ private:
         case SetObjectUse:
             speculateSetObject(edge);
             break;
-        case WeakMapObjectUse:
-            speculateWeakMapObject(edge);
-            break;
-        case WeakSetObjectUse:
-            speculateWeakSetObject(edge);
-            break;
         case StringUse:
             speculateString(edge);
             break;
@@ -13831,28 +13799,6 @@ private:
     void speculateSetObject(Edge edge)
     {
         speculateSetObject(edge, lowCell(edge));
-    }
-
-    void speculateWeakMapObject(Edge edge, LValue cell)
-    {
-        FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecWeakMapObject, isNotType(cell, JSWeakMapType));
-    }
-
-    void speculateWeakMapObject(Edge edge)
-    {
-        speculateWeakMapObject(edge, lowCell(edge));
-    }
-
-    void speculateWeakSetObject(Edge edge, LValue cell)
-    {
-        FTL_TYPE_CHECK(
-            jsValueValue(cell), edge, SpecWeakSetObject, isNotType(cell, JSWeakSetType));
-    }
-
-    void speculateWeakSetObject(Edge edge)
-    {
-        speculateWeakSetObject(edge, lowCell(edge));
     }
     
     void speculateString(Edge edge, LValue cell)

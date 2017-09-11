@@ -65,16 +65,19 @@ void WeakMapBase::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.reportExtraMemoryVisited(thisObj->m_map.capacity() * (sizeof(JSObject*) + sizeof(WriteBarrier<Unknown>)));
 }
 
-JSValue WeakMapBase::get(JSObject* key)
-{
-    return inlineGet(key);
-}
-
 void WeakMapBase::set(VM& vm, JSObject* key, JSValue value)
 {
     // Here we force the write barrier on the key.
     auto result = m_map.add(WriteBarrier<JSObject>(vm, this, key).get(), WriteBarrier<Unknown>());
     result.iterator->value.set(vm, this, value);
+}
+
+JSValue WeakMapBase::get(JSObject* key)
+{
+    auto iter = m_map.find(key);
+    if (iter == m_map.end())
+        return jsUndefined();
+    return iter->value.get();
 }
 
 bool WeakMapBase::remove(JSObject* key)

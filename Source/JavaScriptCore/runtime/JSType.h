@@ -94,8 +94,6 @@ enum JSType : uint8_t {
     ProxyObjectType,
     JSMapType,
     JSSetType,
-    JSWeakMapType,
-    JSWeakSetType,
 
     WebAssemblyFunctionType,
 

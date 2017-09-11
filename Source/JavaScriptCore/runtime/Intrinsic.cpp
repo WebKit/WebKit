@@ -153,8 +153,6 @@ const char* intrinsicName(Intrinsic intrinsic)
         return "JSSetBucketNextIntrinsic";
     case JSSetBucketKeyIntrinsic:
         return "JSSetBucketKeyIntrinsic";
-    case JSWeakMapGetIntrinsic:
-        return "JSWeakMapGetIntrinsic";
     case HasOwnPropertyIntrinsic:
         return "HasOwnPropertyIntrinsic";
     case AtomicsAddIntrinsic:

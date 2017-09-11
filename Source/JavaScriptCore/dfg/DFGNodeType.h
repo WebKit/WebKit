@@ -437,8 +437,6 @@ namespace JSC { namespace DFG {
     macro(GetMapBucketNext, NodeResultJS) \
     macro(LoadKeyFromMapBucket, NodeResultJS) \
     macro(LoadValueFromMapBucket, NodeResultJS) \
-    /* Nodes for JSWeakMap and JSWeakSet */ \
-    macro(WeakMapGet, NodeResultJS) \
     \
     macro(ToLowerCase, NodeResultJS) \
     /* Nodes for DOM JIT */\

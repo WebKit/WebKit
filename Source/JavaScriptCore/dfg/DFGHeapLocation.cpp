@@ -159,35 +159,24 @@ void printInternal(PrintStream& out, LocationKind kind)
     case RegExpObjectLastIndexLoc:
         out.print("RegExpObjectLastIndexLoc");
         return;
-
     case MapBucketLoc:
         out.print("MapBucketLoc");
         return;
-
     case MapBucketHeadLoc:
         out.print("MapBucketHeadLoc");
         return;
-
     case MapBucketKeyLoc:
         out.print("MapBucketKeyLoc");
         return;
-
     case MapBucketValueLoc:
         out.print("MapBucketValueLoc");
         return;
-
     case MapBucketMapNextLoc:
         out.print("MapBucketMapNextLoc");
         return;
-
     case MapBucketSetNextLoc:
         out.print("MapBucketSetNextLoc");
         return;
-
-    case WeakMapGetLoc:
-        out.print("WeakMapGetLoc");
-        return;
-
     case DOMStateLoc:
         out.print("DOMStateLoc");
         return;

@@ -152,10 +152,10 @@ public:
         return m_map.get(key);
     }
     
-    MappedPeekType inlineGet(const KeyType& key) const
+    MappedPeekType fastGet(const KeyType& key) const
     {
         find(key);
-        return m_map.inlineGet(key);
+        return m_map.fastGet(key);
     }
     
     template<typename PassedType>

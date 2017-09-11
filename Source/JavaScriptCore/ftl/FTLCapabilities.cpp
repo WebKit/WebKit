@@ -201,7 +201,6 @@ inline CapabilityLevel canCompile(Node* node)
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
-    case WeakMapGet:
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:
@@ -492,8 +491,6 @@ CapabilityLevel canCompile(Graph& graph)
                 case SymbolUse:
                 case MapObjectUse:
                 case SetObjectUse:
-                case WeakMapObjectUse:
-                case WeakSetObjectUse:
                 case FinalObjectUse:
                 case RegExpObjectUse:
                 case ProxyObjectUse:

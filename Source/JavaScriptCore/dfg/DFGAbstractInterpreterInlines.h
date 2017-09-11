@@ -1099,10 +1099,6 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
         break;
 
-    case WeakMapGet:
-        forNode(node).makeHeapTop();
-        break;
-
     case IsEmpty:
     case IsUndefined:
     case IsBoolean:

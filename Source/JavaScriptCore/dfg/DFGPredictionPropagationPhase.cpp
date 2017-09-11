@@ -722,8 +722,7 @@ private:
         case ToNumber:
         case GetArgument:
         case CallDOMGetter:
-        case GetDynamicVar:
-        case WeakMapGet: {
+        case GetDynamicVar: {
             setPrediction(m_currentNode->getHeapPrediction());
             break;
         }

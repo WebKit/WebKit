@@ -63,8 +63,6 @@ public:
         case DerivedArrayUse:
         case MapObjectUse:
         case SetObjectUse:
-        case WeakMapObjectUse:
-        case WeakSetObjectUse:
         case ObjectOrOtherUse:
         case StringIdentUse:
         case StringUse:
@@ -414,7 +412,6 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetMapBucketNext:
     case LoadKeyFromMapBucket:
     case LoadValueFromMapBucket:
-    case WeakMapGet:
     case AtomicsAdd:
     case AtomicsAnd:
     case AtomicsCompareExchange:

@@ -1547,7 +1547,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case MapHash:
         def(PureValue(node));
         return;
-
     case GetMapBucket: {
         read(MiscFields);
         Edge& mapEdge = node->child1();
@@ -1555,14 +1554,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(MapBucketLoc, MiscFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
-
     case GetMapBucketHead: {
         read(MiscFields);
         Edge& mapEdge = node->child1();
         def(HeapLocation(MapBucketHeadLoc, MiscFields, mapEdge), LazyNode(node));
         return;
     }
-
     case GetMapBucketNext: {
         read(MiscFields);
         LocationKind locationKind = MapBucketMapNextLoc;
@@ -1572,26 +1569,16 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(HeapLocation(locationKind, MiscFields, bucketEdge), LazyNode(node));
         return;
     }
-
     case LoadKeyFromMapBucket: {
         read(MiscFields);
         Edge& bucketEdge = node->child1();
         def(HeapLocation(MapBucketKeyLoc, MiscFields, bucketEdge), LazyNode(node));
         return;
     }
-
     case LoadValueFromMapBucket: {
         read(MiscFields);
         Edge& bucketEdge = node->child1();
         def(HeapLocation(MapBucketValueLoc, MiscFields, bucketEdge), LazyNode(node));
-        return;
-    }
-
-    case WeakMapGet: {
-        read(MiscFields);
-        Edge& mapEdge = node->child1();
-        Edge& keyEdge = node->child2();
-        def(HeapLocation(WeakMapGetLoc, MiscFields, mapEdge, keyEdge), LazyNode(node));
         return;
     }
 
