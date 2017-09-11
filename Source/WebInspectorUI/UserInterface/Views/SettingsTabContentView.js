@@ -61,6 +61,11 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
 
     get type() { return WI.SettingsTabContentView.Type; }
 
+    get supportsSplitContentBrowser()
+    {
+        return false;
+    }
+
     get selectedSettingsView()
     {
         return this._selectedSettingsView;

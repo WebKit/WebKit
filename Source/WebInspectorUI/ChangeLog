@@ -1,5 +1,15 @@
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Do not allow the split console in the Settings tab
+        https://bugs.webkit.org/show_bug.cgi?id=176726
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype.get supportsSplitContentBrowser):
+
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Include a DebugContentView for debugging
         https://bugs.webkit.org/show_bug.cgi?id=176733
 
