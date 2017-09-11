@@ -1,3 +1,22 @@
+2017-09-10  Frederic Wang  <fwang@igalia.coml>
+
+        Make RenderLayerCompositor always use isRootLayer()
+        https://bugs.webkit.org/show_bug.cgi?id=176591
+
+        Reviewed by Darin Adler.
+
+        RenderLayerCompositor contains a few comparisons of the form &layer == m_renderView.layer().
+        This patch replaces them with "layer.isRootLayer()" which simply verifies that "layer" is
+        associated to the one (and only one) RenderView of the RenderLayerCompositor. It makes things
+        more readable and more consistent with the rest of the file.
+
+        No new tests, behavior unchanged.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::repaintInCompositedAncestor):
+        (WebCore::RenderLayerCompositor::needsFixedRootBackgroundLayer const):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2017-09-09  Sam Weinig  <sam@webkit.org>
 
         Finish off the FormData implementation

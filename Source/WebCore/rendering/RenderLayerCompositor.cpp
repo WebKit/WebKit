@@ -1143,16 +1143,17 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer& layer)
 void RenderLayerCompositor::repaintInCompositedAncestor(RenderLayer& layer, const LayoutRect& rect)
 {
     RenderLayer* compositedAncestor = layer.enclosingCompositingLayerForRepaint(ExcludeSelf);
-    if (compositedAncestor) {
-        ASSERT(compositedAncestor->backing());
-        LayoutRect repaintRect = rect;
-        repaintRect.move(layer.offsetFromAncestor(compositedAncestor));
-        compositedAncestor->setBackingNeedsRepaintInRect(repaintRect);
-    }
+    if (!compositedAncestor)
+        return;
+
+    ASSERT(compositedAncestor->backing());
+    LayoutRect repaintRect = rect;
+    repaintRect.move(layer.offsetFromAncestor(compositedAncestor));
+    compositedAncestor->setBackingNeedsRepaintInRect(repaintRect);
 
     // The contents of this layer may be moving from a GraphicsLayer to the window,
     // so we need to make sure the window system synchronizes those changes on the screen.
-    if (compositedAncestor == m_renderView.layer())
+    if (compositedAncestor->isRootLayer())
         m_renderView.frameView().setNeedsOneShotDrawingSynchronization();
 }
 
@@ -2921,7 +2922,7 @@ bool RenderLayerCompositor::supportsFixedRootBackgroundCompositing() const
 
 bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer& layer) const
 {
-    if (&layer != m_renderView.layer())
+    if (!layer.isRootLayer())
         return false;
 
     if (m_renderView.settings().fixedBackgroundsPaintRelativeToDocument())
@@ -3892,7 +3893,7 @@ void RenderLayerCompositor::updateScrollCoordinatedLayer(RenderLayer& layer, Lay
     if (!scrollingCoordinator || !scrollingCoordinator->coordinatesScrollingForFrameView(m_renderView.frameView()))
         return;
 
-    bool isRootLayer = &layer == m_renderView.layer();
+    bool isRootLayer = layer.isRootLayer();
 
     if (!layer.parent() && !isRootLayer)
         return;
