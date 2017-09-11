@@ -103,6 +103,10 @@
 #include <unistd.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <crt_externs.h>
+#endif
+
 #if HAVE(READLINE)
 // readline/history.h has a Function typedef which conflicts with the WTF::Function template from WTF/Forward.h
 // We #define it to something else to avoid this conflict.
@@ -3595,6 +3599,20 @@ void CommandLine::parseArguments(int argc, char** argv)
 {
     Options::initialize();
     
+    if (Options::dumpOptions()) {
+        printf("Command line:");
+#if PLATFORM(COCOA)
+        for (char** envp = *_NSGetEnviron(); *envp; envp++) {
+            const char* env = *envp;
+            if (!strncmp("JSC_", env, 4))
+                printf(" %s", env);
+        }
+#endif // PLATFORM(COCOA)
+        for (int i = 0; i < argc; ++i)
+            printf(" %s", argv[i]);
+        printf("\n");
+    }
+
     int i = 1;
     JSC::Options::DumpLevel dumpOptionsLevel = JSC::Options::DumpLevel::None;
     bool needToExit = false;

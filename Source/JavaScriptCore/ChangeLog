@@ -1,3 +1,16 @@
+2017-09-11  Mark Lam  <mark.lam@apple.com>
+
+        Make jsc dump the command line if JSC_dumpOption environment variable is set with a non-zero value.
+        https://bugs.webkit.org/show_bug.cgi?id=176722
+
+        Reviewed by Saam Barati.
+
+        For PLATFORM(COCOA), I also dumped the JSC_* environmental variables that are
+        in effect when jsc is invoked.
+
+        * jsc.cpp:
+        (CommandLine::parseArguments):
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221854.
