@@ -1,3 +1,31 @@
+2017-09-11  Mark Lam  <mark.lam@apple.com>
+
+        Turn on exception scope verification for JSC tests.
+        https://bugs.webkit.org/show_bug.cgi?id=162351
+        <rdar://problem/29563911>
+
+        Reviewed by Saam Barati.
+
+        Added the option to --validateExceptionChecks=true option to BASE_OPTIONS in
+        run-jsc-stress-tests.  This turns on exception scope verification on JSC test
+        runs (which currently does not include testapi).
+
+        Some stats on time to run JSC stress and mozilla tests:
+        1. Release build w/o --validateExceptionChecks=true: real 16m22.544s, user 156m24.080s, sys 123m3.649s
+        2. Debug build w/o --validateExceptionChecks=true: real 78m34.206s, user 1661m57.008s, sys 73m21.177s
+        3. Debug build w/ --validateExceptionChecks=true: real 77m41.106s, user 1656m13.924s, sys 73m42.309s
+        4. Debug build w/ --validateExceptionChecks=true --dumpSimulatedThrows=true: real 92m56.918s, user 2012m56.441s, sys 75m14.174s
+
+        The stats shows that (2) and (3) has effectively no time difference.  Hence, the
+        cost of enabling --validateExceptionChecks=true is not significant.
+
+        It would be nice to enable --dumpSimulatedThrows=true as well, but (4) is about
+        21% slower than (3).  To avoid making debug test runs a lot slower, we'll leave
+        --dumpSimulatedThrows=true off.  We can manually add that when we see a regression
+        and need to debug the issue.  Otherwise, we wont pay the price for it.
+
+        * Scripts/run-jsc-stress-tests:
+
 2017-09-11  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WSL should support for loops
