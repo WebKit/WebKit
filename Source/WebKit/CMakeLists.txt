@@ -422,7 +422,6 @@ set(WebKit2_SOURCES
 
     UIProcess/Network/NetworkProcessProxy.cpp
 
-    UIProcess/Notifications/NotificationPermissionRequest.cpp
     UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp
     UIProcess/Notifications/WebNotification.cpp
     UIProcess/Notifications/WebNotificationManagerProxy.cpp

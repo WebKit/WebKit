@@ -41,28 +41,18 @@ NotificationPermissionRequestManagerProxy::NotificationPermissionRequestManagerP
 void NotificationPermissionRequestManagerProxy::invalidateRequests()
 {
     for (auto& request : m_pendingRequests.values())
-        request->invalidate();
+        request->deny();
 
     m_pendingRequests.clear();
 }
 
 Ref<NotificationPermissionRequest> NotificationPermissionRequestManagerProxy::createRequest(uint64_t notificationID)
 {
-    auto request = NotificationPermissionRequest::create(this, notificationID);
+    auto request = NotificationPermissionRequest::create([notificationID, page = makeRef(m_page)](bool allowed) {
+        page->process().send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allowed), page->pageID());
+    });
     m_pendingRequests.add(notificationID, request.ptr());
     return request;
-}
-
-void NotificationPermissionRequestManagerProxy::didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow)
-{
-    if (!m_page.isValid())
-        return;
-    
-    RefPtr<NotificationPermissionRequest> request = m_pendingRequests.take(notificationID);
-    if (!request)
-        return;
-    
-    m_page.process().send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allow), m_page.pageID());
 }
 
 } // namespace WebKit

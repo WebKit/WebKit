@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NotificationPermissionRequestManagerProxy_h
-#define NotificationPermissionRequestManagerProxy_h
+#pragma once
 
 #include "NotificationPermissionRequest.h"
 #include <wtf/HashMap.h>
@@ -37,20 +36,15 @@ class WebPageProxy;
 class NotificationPermissionRequestManagerProxy {
 public:
     explicit NotificationPermissionRequestManagerProxy(WebPageProxy&);
-    
+
     void invalidateRequests();
-    
+
     // Create a request to be presented to the user.
     Ref<NotificationPermissionRequest> createRequest(uint64_t notificationID);
-    
-    // Called by NotificationPermissionRequest when a decision is made by the user.
-    void didReceiveNotificationPermissionDecision(uint64_t notificationID, bool allow);
-    
+
 private:
     HashMap<uint64_t, RefPtr<NotificationPermissionRequest>> m_pendingRequests;
     WebPageProxy& m_page;
 };
 
 } // namespace WebKit
-
-#endif // NotificationPermissionRequestManagerProxy_h

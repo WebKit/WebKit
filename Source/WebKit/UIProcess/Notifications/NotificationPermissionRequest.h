@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NotificationPermissionRequest_h
-#define NotificationPermissionRequest_h
+#pragma once
 
 #include "APIObject.h"
+#include <wtf/Function.h>
 
 namespace WebKit {
 
@@ -34,20 +34,29 @@ class NotificationPermissionRequestManagerProxy;
 
 class NotificationPermissionRequest : public API::ObjectImpl<API::Object::Type::NotificationPermissionRequest> {
 public:
-    static Ref<NotificationPermissionRequest> create(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
+    static Ref<NotificationPermissionRequest> create(Function<void(bool)>&& completionHandler)
+    {
+        return adoptRef(*new NotificationPermissionRequest(WTFMove(completionHandler)));
+    }
+    
+    void allow()
+    {
+        if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+            completionHandler(true);
+    }
 
-    void allow();
-    void deny();
-
-    void invalidate();
+    void deny()
+    {
+        if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+            completionHandler(false);
+    }
 
 private:
-    NotificationPermissionRequest(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
-
-    NotificationPermissionRequestManagerProxy* m_manager;
-    uint64_t m_notificationID;    
+    NotificationPermissionRequest(Function<void(bool)>&& completionHandler)
+        : m_completionHandler(WTFMove(completionHandler))
+    { }
+    
+    Function<void(bool)> m_completionHandler;
 };
 
 } // namespace WebKit
-
-#endif // NotificationPermissionRequestProxy_h
