@@ -43,18 +43,6 @@ void InitWebCoreSystemInterface(void)
         INIT(DrawMediaUIPart);
         INIT(HitTestMediaUIPart);
         INIT(MeasureMediaUIPart);
-        INIT(QTIncludeOnlyModernMediaFileTypes);
-        INIT(QTMovieDisableComponent);
-        INIT(QTMovieGetType);
-        INIT(QTMovieHasClosedCaptions);
-        INIT(QTMovieMaxTimeLoaded);
-        INIT(QTMovieMaxTimeLoadedChangeNotification);
-        INIT(QTMovieResolvedURL);
-        INIT(QTMovieSelectPreferredAlternates);
-        INIT(QTMovieSetShowClosedCaptions);
-        INIT(QTGetSitesInMediaDownloadCache);
-        INIT(QTClearMediaDownloadCacheForSite);
-        INIT(QTClearMediaDownloadCache);
 #endif
         INIT(SetCONNECTProxyAuthorizationForStream);
         INIT(SetCONNECTProxyForStream);

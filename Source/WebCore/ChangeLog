@@ -1,3 +1,40 @@
+2017-09-11  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream QTKit-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176472
+
+        Reviewed by Eric Carlson.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::disableComponentsOnce):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovie):
+        (WebCore::MediaPlayerPrivateQTKit::hasClosedCaptions const):
+        (WebCore::MediaPlayerPrivateQTKit::setClosedCaptionsVisible):
+        (WebCore::selectPreferredAlternateTrackForMediaType):
+        (WebCore::selectPreferredAlternates):
+        (WebCore::MediaPlayerPrivateQTKit::updateStates):
+        (WebCore::mimeModernTypesCache):
+        (WebCore::MediaPlayerPrivateQTKit::originsInMediaCache):
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCache):
+        (WebCore::MediaPlayerPrivateQTKit::clearMediaCacheForOrigins):
+        (WebCore::MediaPlayerPrivateQTKit::hasSingleSecurityOrigin const):
+        (WebCore::MediaPlayerPrivateQTKit::movieLoadType const):
+        (WebCore::MediaPlayerPrivateQTKit::canSaveMediaData const):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (createMediaUIControl):
+        (createControlWithMediaUIControlType):
+        (createMediaUIBackgroundView):
+        (-[WebVideoFullscreenHUDWindowController windowDidLoad]):
+
+2017-09-08  Andy Estes  <aestes@apple.com>
+
+        Try to fix the Internal El Capitan build after r221773.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::mimeModernTypesCache):
+
 2017-09-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [WPE] Bump freetype version to 2.8.0

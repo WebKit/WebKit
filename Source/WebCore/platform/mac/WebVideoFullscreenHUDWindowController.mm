@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,37 @@
 #import <WebCore/HTMLVideoElement.h>
 #import <WebCoreSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/QTKitSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK(QTKit)
+
+SOFT_LINK_CLASS(QTKit, QTHUDBackgroundView)
+SOFT_LINK_CLASS(QTKit, QTHUDButton)
+SOFT_LINK_CLASS(QTKit, QTHUDSlider)
+SOFT_LINK_CLASS(QTKit, QTHUDTimeline)
+
+#define QTHUDBackgroundView getQTHUDBackgroundViewClass()
+#define QTHUDButton getQTHUDButtonClass()
+#define QTHUDSlider getQTHUDSliderClass()
+#define QTHUDTimeline getQTHUDTimelineClass()
 
 using namespace WebCore;
+
+namespace WebCore {
+
+enum class MediaUIControl {
+    Timeline,
+    Slider,
+    PlayPauseButton,
+    ExitFullscreenButton,
+    RewindButton,
+    FastForwardButton,
+    VolumeUpButton,
+    VolumeDownButton,
+};
+
+}
 
 @interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
 
@@ -265,10 +294,68 @@ static const NSTimeInterval HUDWindowFadeOutDelay = 3;
     [self setWindow:nil];
 }
 
-static NSControl *createControlWithMediaUIControlType(int controlType, NSRect frame)
+static NSControl *createMediaUIControl(MediaUIControl controlType)
 {
-    NSControl *control = wkCreateMediaUIControl(controlType);
-    [control setFrame:frame];
+    switch (controlType) {
+    case MediaUIControl::Timeline: {
+        NSSlider *slider = [[QTHUDTimeline alloc] init];
+        [[slider cell] setContinuous:YES];
+        return slider;
+    }
+    case MediaUIControl::Slider: {
+        NSButton *slider = [[QTHUDSlider alloc] init];
+        [[slider cell] setContinuous:YES];
+        return slider;
+    }
+    case MediaUIControl::PlayPauseButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSPlayTemplate"]];
+        [button setAlternateImage:[NSImage imageNamed:@"NSPauseQTPrivateTemplate"]];
+
+        [[button cell] setShowsStateBy:NSContentsCellMask];
+        [button setBordered:NO];
+        return button;
+    }
+    case MediaUIControl::ExitFullscreenButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSExitFullScreenTemplate"]];
+        [button setBordered:NO];
+        return button;
+    }
+    case MediaUIControl::RewindButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSRewindTemplate"]];
+        [button setBordered:NO];
+        return button;
+    }
+    case MediaUIControl::FastForwardButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSFastForwardTemplate"]];
+        [button setBordered:NO];
+        return button;
+    }
+    case MediaUIControl::VolumeUpButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSAudioOutputVolumeHighTemplate"]];
+        [button setBordered:NO];
+        return button;
+    }
+    case MediaUIControl::VolumeDownButton: {
+        NSButton *button = [[QTHUDButton alloc] init];
+        [button setImage:[NSImage imageNamed:@"NSAudioOutputVolumeLowTemplate"]];
+        [button setBordered:NO];
+        return button;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return nil;
+}
+
+static NSControl *createControlWithMediaUIControlType(MediaUIControl controlType, NSRect frame)
+{
+    NSControl *control = createMediaUIControl(controlType);
+    control.frame = frame;
     return control;
 }
 
@@ -283,6 +370,21 @@ static NSTextField *createTimeTextField(NSRect frame)
     [textField setEditable:NO];
     [textField setSelectable:NO];
     return textField;
+}
+
+static NSView *createMediaUIBackgroundView()
+{
+    id view = [[QTHUDBackgroundView alloc] init];
+
+    const CGFloat quickTimePlayerHUDHeight = 59;
+    const CGFloat quickTimePlayerHUDContentBorderPosition = 38;
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    [view setContentBorderPosition:quickTimePlayerHUDContentBorderPosition / quickTimePlayerHUDHeight];
+#pragma clang diagnostic pop
+
+    return view;
 }
 
 - (void)windowDidLoad
@@ -310,7 +412,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSWindow *window = [self window];
     ASSERT(window);
 
-    NSView *background = wkCreateMediaUIBackgroundView();
+    NSView *background = createMediaUIBackgroundView();
 
     [window setContentView:background];
     _area = [[NSTrackingArea alloc] initWithRect:[background bounds] options:NSTrackingMouseEnteredAndExited | NSTrackingActiveAlways owner:self userInfo:nil];
@@ -320,14 +422,14 @@ static NSTextField *createTimeTextField(NSRect frame)
     NSView *contentView = [window contentView];
 
     CGFloat center = CGFloor((windowWidth - playButtonWidth) / 2);
-    _playButton = (NSButton *)createControlWithMediaUIControlType(wkMediaUIControlPlayPauseButton, NSMakeRect(center, windowHeight - playButtonTopMargin - playButtonHeight, playButtonWidth, playButtonHeight));
+    _playButton = (NSButton *)createControlWithMediaUIControlType(MediaUIControl::PlayPauseButton, NSMakeRect(center, windowHeight - playButtonTopMargin - playButtonHeight, playButtonWidth, playButtonHeight));
     ASSERT([_playButton isKindOfClass:[NSButton class]]);
     [_playButton setTarget:self];
     [_playButton setAction:@selector(togglePlaying:)];
     [contentView addSubview:_playButton];
 
     CGFloat closeToRight = windowWidth - horizontalMargin - exitFullscreenButtonWidth;
-    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(wkMediaUIControlExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullscreenButtonTopMargin - exitFullscreenButtonHeight, exitFullscreenButtonWidth, exitFullscreenButtonHeight));
+    NSControl *exitFullscreenButton = createControlWithMediaUIControlType(MediaUIControl::ExitFullscreenButton, NSMakeRect(closeToRight, windowHeight - exitFullscreenButtonTopMargin - exitFullscreenButtonHeight, exitFullscreenButtonWidth, exitFullscreenButtonHeight));
     [exitFullscreenButton setAction:@selector(exitFullscreen:)];
     [exitFullscreenButton setTarget:self];
     [contentView addSubview:exitFullscreenButton];
@@ -335,27 +437,27 @@ static NSTextField *createTimeTextField(NSRect frame)
     
     CGFloat volumeControlsBottom = windowHeight - volumeControlsTopMargin - volumeButtonHeight;
     CGFloat left = horizontalMargin;
-    NSControl *volumeDownButton = createControlWithMediaUIControlType(wkMediaUIControlVolumeDownButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
+    NSControl *volumeDownButton = createControlWithMediaUIControlType(MediaUIControl::VolumeDownButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
     [contentView addSubview:volumeDownButton];
     [volumeDownButton setTarget:self];
     [volumeDownButton setAction:@selector(setVolumeToZero:)];
     [volumeDownButton release];
 
     left += volumeButtonWidth;
-    _volumeSlider = createControlWithMediaUIControlType(wkMediaUIControlSlider, NSMakeRect(left, volumeControlsBottom + CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
+    _volumeSlider = createControlWithMediaUIControlType(MediaUIControl::Slider, NSMakeRect(left, volumeControlsBottom + CGFloor((volumeButtonHeight - volumeSliderHeight) / 2), volumeSliderWidth, volumeSliderHeight));
     [_volumeSlider setValue:[NSNumber numberWithDouble:[self maxVolume]] forKey:@"maxValue"];
     [_volumeSlider setTarget:self];
     [_volumeSlider setAction:@selector(volumeChanged:)];
     [contentView addSubview:_volumeSlider];
 
     left += volumeSliderWidth + volumeUpButtonLeftMargin;
-    NSControl *volumeUpButton = createControlWithMediaUIControlType(wkMediaUIControlVolumeUpButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
+    NSControl *volumeUpButton = createControlWithMediaUIControlType(MediaUIControl::VolumeUpButton, NSMakeRect(left, volumeControlsBottom, volumeButtonWidth, volumeButtonHeight));
     [volumeUpButton setTarget:self];
     [volumeUpButton setAction:@selector(setVolumeToMaximum:)];
     [contentView addSubview:volumeUpButton];
     [volumeUpButton release];
 
-    _timeline = wkCreateMediaUIControl(wkMediaUIControlTimeline);
+    _timeline = createMediaUIControl(MediaUIControl::Timeline);
 
     [_timeline setTarget:self];
     [_timeline setAction:@selector(timelinePositionChanged:)];

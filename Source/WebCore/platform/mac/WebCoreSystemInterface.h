@@ -131,32 +131,7 @@ extern double (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response)
 extern BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 extern BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, CGRect *bounds, CGSize *naturalSize);
-extern NSView *(*wkCreateMediaUIBackgroundView)(void);
 
-typedef enum {
-    wkMediaUIControlTimeline,
-    wkMediaUIControlSlider,
-    wkMediaUIControlPlayPauseButton,
-    wkMediaUIControlExitFullscreenButton,
-    wkMediaUIControlRewindButton,
-    wkMediaUIControlFastForwardButton,
-    wkMediaUIControlVolumeUpButton,
-    wkMediaUIControlVolumeDownButton
-} wkMediaUIControlType;
-extern NSControl *(*wkCreateMediaUIControl)(int);
-
-extern unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
-extern void (*wkQTMovieDisableComponent)(uint32_t[5]);
-extern float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
-extern NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
-extern int (*wkQTMovieGetType)(QTMovie*);
-extern BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
-extern NSURL *(*wkQTMovieResolvedURL)(QTMovie*);
-extern void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
-extern void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
-extern NSArray *(*wkQTGetSitesInMediaDownloadCache)();
-extern void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
-extern void (*wkQTClearMediaDownloadCache)();
 extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 #endif
 extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
