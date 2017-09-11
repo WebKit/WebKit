@@ -71,8 +71,11 @@ void JSJobMicrotask::run(ExecState* exec)
     ASSERT(handlerCallType != CallType::None);
 
     MarkedArgumentBuffer handlerArguments;
-    for (unsigned index = 0, length = m_arguments->length(); index < length; ++index)
-        handlerArguments.append(m_arguments->JSArray::get(exec, index));
+    for (unsigned index = 0, length = m_arguments->length(); index < length; ++index) {
+        JSValue arg = m_arguments->JSArray::get(exec, index);
+        CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
+        handlerArguments.append(arg);
+    }
     profiledCall(exec, ProfilingReason::Microtask, m_job.get(), handlerCallType, handlerCallData, jsUndefined(), handlerArguments);
     scope.clearException();
 }

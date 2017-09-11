@@ -232,7 +232,7 @@ JSValue collectMatches(VM& vm, ExecState* exec, JSString* string, const String& 
             result = savedResult;
             do {
                 iterate();
-                ASSERT(!!scope.exception() == hasException);
+                EXCEPTION_ASSERT(!!scope.exception() == hasException);
                 if (UNLIKELY(hasException))
                     return { };
             } while (result);

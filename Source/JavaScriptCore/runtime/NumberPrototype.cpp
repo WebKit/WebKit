@@ -598,9 +598,11 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
         return throwVMTypeError(exec, scope);
 
     int32_t radix = extractRadixFromArgs(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (radix < 2 || radix > 36)
         return throwVMError(exec, scope, createRangeError(exec, ASCIILiteral("toString() radix argument must be between 2 and 36")));
 
+    scope.release();
     return JSValue::encode(numberToStringInternal(vm, doubleValue, radix));
 }
 

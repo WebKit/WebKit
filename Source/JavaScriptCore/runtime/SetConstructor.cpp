@@ -64,13 +64,17 @@ static EncodedJSValue JSC_HOST_CALL constructSet(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue iterable = exec->argument(0);
-    if (iterable.isUndefinedOrNull())
+    if (iterable.isUndefinedOrNull()) {
+        scope.release();
         return JSValue::encode(JSSet::create(exec, vm, setStructure));
+    }
 
     if (isJSSet(iterable)) {
         JSSet* iterableSet = jsCast<JSSet*>(iterable);
-        if (iterableSet->canCloneFastAndNonObservable(setStructure))
+        if (iterableSet->canCloneFastAndNonObservable(setStructure)) {
+            scope.release();
             return JSValue::encode(iterableSet->clone(exec, vm, setStructure));
+        }
     }
 
     JSSet* set = JSSet::create(exec, vm, setStructure);

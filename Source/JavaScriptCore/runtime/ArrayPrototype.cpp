@@ -160,7 +160,7 @@ static ALWAYS_INLINE JSValue getProperty(ExecState* exec, JSObject* object, unsi
     // somewhere in the prototype chain.
     PropertySlot slot(object, PropertySlot::InternalMethodType::HasProperty);
     bool hasProperty = object->getPropertySlot(exec, index, slot);
-    ASSERT(!scope.exception() || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (!hasProperty)
         return { };
     if (UNLIKELY(slot.isTaintedByOpaqueObject())) {
@@ -229,6 +229,7 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstru
         // Fast path in the normal case where the user has not set an own constructor and the Array.prototype.constructor is normal.
         // We need prototype check for subclasses of Array, which are Array objects but have a different prototype by default.
         bool isValid = speciesWatchpointIsValid(exec, thisObject);
+        scope.assertNoException();
         if (LIKELY(isValid))
             return std::make_pair(SpeciesConstructResult::FastPath, nullptr);
 
@@ -354,7 +355,7 @@ void unshift(ExecState* exec, JSObject* thisObj, unsigned header, unsigned curre
         JSArray* array = asArray(thisObj);
         if (array->length() == length) {
             bool handled = array->unshiftCount<shiftCountMode>(exec, header, count);
-            ASSERT(!scope.exception() || handled);
+            EXCEPTION_ASSERT(!scope.exception() || handled);
             if (handled)
                 return;
         }
@@ -419,7 +420,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToString(ExecState* exec)
     unsigned length = thisArray->length();
 
     StringRecursionChecker checker(exec, thisArray);
-    ASSERT(!scope.exception() || checker.earlyReturnValue());
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -452,7 +453,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncToLocaleString(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     StringRecursionChecker checker(exec, thisObject);
-    ASSERT(!scope.exception() || checker.earlyReturnValue());
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -665,12 +666,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncJoin(ExecState* exec)
 
     // 1. Let O be ? ToObject(this value).
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObject);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
 
     StringRecursionChecker checker(exec, thisObject);
-    ASSERT(!scope.exception() || checker.earlyReturnValue());
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -732,7 +733,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPop(ExecState* exec)
     }
 
     JSObject* thisObj = thisValue.toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
@@ -771,7 +772,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     }
     
     JSObject* thisObj = thisValue.toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
@@ -801,7 +802,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObject = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObject);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
 
@@ -893,7 +894,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncShift(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
@@ -920,7 +921,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return { };
     unsigned length = toLength(exec, thisObj);
@@ -935,7 +936,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSlice(ExecState* exec)
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, end - begin);
     // We can only get an exception if we call some user function.
-    ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
         return { };
 
@@ -976,7 +977,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
@@ -984,7 +985,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
 
     if (!exec->argumentCount()) {
         std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, 0);
-        ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+        EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
         if (UNLIKELY(speciesResult.first == SpeciesConstructResult::Exception))
             return encodedJSValue();
 
@@ -1019,7 +1020,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSplice(ExecState* exec)
     }
 
     std::pair<SpeciesConstructResult, JSObject*> speciesResult = speciesConstructArray(exec, thisObj, actualDeleteCount);
-    ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
+    EXCEPTION_ASSERT(!!scope.exception() == (speciesResult.first == SpeciesConstructResult::Exception));
     if (speciesResult.first == SpeciesConstructResult::Exception)
         return JSValue::encode(jsUndefined());
 
@@ -1074,7 +1075,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncUnShift(ExecState* exec)
     // 15.4.4.13
 
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     double doubleLength = toLength(exec, thisObj);
@@ -1105,13 +1106,14 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
 
     // 15.4.4.14
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     unsigned index = argumentClampedIndexFromStartOrEnd(exec, 1, length);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSValue searchElement = exec->argument(0);
     for (; index < length; ++index) {
         JSValue e = getProperty(exec, thisObj, index);
@@ -1133,7 +1135,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
 
     // 15.4.4.15
     JSObject* thisObj = exec->thisValue().toThis(exec, StrictMode).toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
     unsigned length = toLength(exec, thisObj);
@@ -1223,12 +1225,12 @@ static EncodedJSValue concatAppendOne(ExecState* exec, VM& vm, JSArray* first, J
     }
 
     bool success = result->appendMemcpy(exec, vm, 0, first);
-    ASSERT(!success || !scope.exception());
+    EXCEPTION_ASSERT(!scope.exception() || !success);
     if (!success) {
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         bool success = moveElements(exec, vm, result, 0, first, firstArraySize);
-        ASSERT(!scope.exception() == success);
+        EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return encodedJSValue();
     }
@@ -1256,6 +1258,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
 
     // We need to check the species constructor here since checking it in the JS wrapper is too expensive for the non-optimizing tiers.
     bool isValid = speciesWatchpointIsValid(exec, firstArray);
+    scope.assertNoException();
     if (UNLIKELY(!isValid))
         return JSValue::encode(jsNull());
 
@@ -1290,11 +1293,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncConcatMemcpy(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
         bool success = moveElements(exec, vm, result, 0, firstArray, firstArraySize);
-        ASSERT(!scope.exception() == success);
+        EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return encodedJSValue();
         success = moveElements(exec, vm, result, firstArraySize, secondArray, secondArraySize);
-        ASSERT(!scope.exception() == success);
+        EXCEPTION_ASSERT(!scope.exception() == success);
         if (UNLIKELY(!success))
             return encodedJSValue();
 
@@ -1351,11 +1354,12 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState* exec)
     ASSERT(startValue.isAnyInt() && startValue.asAnyInt() >= 0 && startValue.asAnyInt() <= std::numeric_limits<unsigned>::max());
     unsigned startIndex = static_cast<unsigned>(startValue.asAnyInt());
     bool success = resultArray->appendMemcpy(exec, vm, startIndex, otherArray);
-    ASSERT(!success || !scope.exception());
-    if (!success) {
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        moveElements(exec, vm, resultArray, startIndex, otherArray, otherArray->length());
-    }
+    EXCEPTION_ASSERT(!scope.exception() || !success);
+    if (success)
+        return JSValue::encode(jsUndefined());
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    scope.release();
+    moveElements(exec, vm, resultArray, startIndex, otherArray, otherArray->length());
     return JSValue::encode(jsUndefined());
 }
 

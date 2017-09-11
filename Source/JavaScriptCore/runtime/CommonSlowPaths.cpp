@@ -1044,11 +1044,13 @@ SLOW_PATH_DECL(slow_path_new_array_with_spread)
             for (unsigned i = 0; i < array->size(); i++) {
                 RELEASE_ASSERT(array->get(i));
                 result->putDirectIndex(exec, index, array->get(i));
+                CHECK_EXCEPTION();
                 ++index;
             }
         } else {
             // We are not spreading.
             result->putDirectIndex(exec, index, value);
+            CHECK_EXCEPTION();
             ++index;
         }
     }

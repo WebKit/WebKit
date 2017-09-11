@@ -76,7 +76,11 @@ public:
     {
         if (UNLIKELY(m_mappedArguments)) {
             VM& vm = exec->vm();
-            return get(exec, vm.propertyNames->length).toUInt32(exec);
+            auto scope = DECLARE_THROW_SCOPE(vm);
+            JSValue value = get(exec, vm.propertyNames->length);
+            RETURN_IF_EXCEPTION(scope, 0);
+            scope.release();
+            return value.toUInt32(exec);
         }
         return m_length;
     }

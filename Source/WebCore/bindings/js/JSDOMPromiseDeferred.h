@@ -274,7 +274,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state)
     promiseFunction(state, DeferredPromise::create(globalObject, *promiseDeferred));
 
     rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
-    ASSERT_UNUSED(scope, !scope.exception());
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
 }
 
@@ -294,7 +294,7 @@ inline JSC::JSValue callPromiseFunction(JSC::ExecState& state, PromiseFunctor fu
     functor(state, DeferredPromise::create(globalObject, *promiseDeferred));
 
     rejectPromiseWithExceptionIfAny(state, globalObject, *promiseDeferred);
-    ASSERT_UNUSED(scope, !scope.exception());
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception());
     return promiseDeferred->promise();
 }
 

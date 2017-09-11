@@ -413,6 +413,7 @@ private:
         if (!thisObject)
             return throwVMTypeError(exec, scope);
         bool shouldThrow = thisObject->get(exec, PropertyName(Identifier::fromString(exec, "shouldThrow"))).toBoolean(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (shouldThrow)
             return throwVMTypeError(exec, scope);
         return JSValue::encode(jsNumber(100));
@@ -1656,7 +1657,9 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     if (!directoryName)
         return rejectPromise(createError(exec, makeString("Could not resolve the referrer name '", String(referrer.impl()), "'.")));
 
-    return JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), jsUndefined());
+    auto result = JSC::importModule(exec, Identifier::fromString(&vm, resolvePath(directoryName.value(), ModuleName(moduleName))), jsUndefined());
+    scope.releaseAssertNoException();
+    return result;
 }
 
 JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, ExecState* exec, JSModuleLoader*, JSValue keyValue, JSValue referrerValue, JSValue)
@@ -1673,14 +1676,18 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
         return deferred->reject(exec, exception);
     }
 
-    if (key.isSymbol())
-        return deferred->resolve(exec, keyValue);
-
+    if (key.isSymbol()) {
+        auto result = deferred->resolve(exec, keyValue);
+        scope.releaseAssertNoException();
+        return result;
+    }
     if (referrerValue.isUndefined()) {
         auto directoryName = currentWorkingDirectory();
         if (!directoryName)
             return deferred->reject(exec, createError(exec, ASCIILiteral("Could not resolve the current working directory.")));
-        return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+        auto result = deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+        scope.releaseAssertNoException();
+        return result;
     }
 
     const Identifier referrer = referrerValue.toPropertyKey(exec);
@@ -1694,7 +1701,9 @@ JSInternalPromise* GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObjec
         auto directoryName = currentWorkingDirectory();
         if (!directoryName)
             return deferred->reject(exec, createError(exec, ASCIILiteral("Could not resolve the current working directory.")));
-        return deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+        auto result = deferred->resolve(exec, jsString(exec, resolvePath(directoryName.value(), ModuleName(key.impl()))));
+        scope.releaseAssertNoException();
+        return result;
     }
 
     // If the referrer exists, we assume that the referrer is the correct absolute path.
@@ -2712,6 +2721,7 @@ EncodedJSValue JSC_HOST_CALL functionDollarAgentReceiveBroadcast(ExecState* exec
     MarkedArgumentBuffer args;
     args.append(jsBuffer);
     args.append(jsNumber(message->index()));
+    scope.release();
     return JSValue::encode(call(exec, callback, callType, callData, jsNull(), args));
 }
 

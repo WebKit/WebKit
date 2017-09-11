@@ -161,7 +161,7 @@ JSValue eval(CallFrame* callFrame)
         VariableEnvironment variablesUnderTDZ;
         JSScope::collectClosureVariablesUnderTDZ(callerScopeChain, variablesUnderTDZ);
         eval = DirectEvalExecutable::create(callFrame, makeSource(programSource, callerCodeBlock->source()->sourceOrigin()), callerCodeBlock->isStrictMode(), derivedContextType, isArrowFunctionContext, evalContextType, &variablesUnderTDZ);
-        ASSERT(!!scope.exception() == !eval);
+        EXCEPTION_ASSERT(!!scope.exception() == !eval);
         if (!eval)
             return jsUndefined();
 
@@ -251,31 +251,40 @@ void loadVarargs(CallFrame* callFrame, VirtualRegister firstElementDest, JSValue
 {
     if (UNLIKELY(!arguments.isCell()) || !length)
         return;
-    
+
+    VM& vm = callFrame->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSCell* cell = arguments.asCell();
 
     switch (cell->type()) {
     case DirectArgumentsType:
+        scope.release();
         jsCast<DirectArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
     case ScopedArgumentsType:
+        scope.release();
         jsCast<ScopedArguments*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
     case JSFixedArrayType:
+        scope.release();
         jsCast<JSFixedArray*>(cell)->copyToArguments(callFrame, firstElementDest, offset, length);
         return;
     default: {
         ASSERT(arguments.isObject());
         JSObject* object = jsCast<JSObject*>(cell);
         if (isJSArray(object)) {
+            scope.release();
             jsCast<JSArray*>(object)->copyToArguments(callFrame, firstElementDest, offset, length);
             return;
         }
         unsigned i;
         for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
             callFrame->r(firstElementDest + i) = object->getIndexQuickly(i + offset);
-        for (; i < length; ++i)
-            callFrame->r(firstElementDest + i) = object->get(callFrame, i + offset);
+        for (; i < length; ++i) {
+            JSValue value = object->get(callFrame, i + offset);
+            RETURN_IF_EXCEPTION(scope, void());
+            callFrame->r(firstElementDest + i) = value;
+        }
         return;
     } }
 }
@@ -710,7 +719,7 @@ NEVER_INLINE HandlerInfo* Interpreter::unwind(VM& vm, CallFrame*& callFrame, Exc
     if (exceptionValue.isEmpty() || (exceptionValue.isCell() && !exceptionValue.asCell()))
         exceptionValue = jsNull();
 
-    ASSERT_UNUSED(scope, scope.exception() && (!Options::exceptionStackTraceLimit() || scope.exception()->stack().size()));
+    EXCEPTION_ASSERT_UNUSED(scope, scope.exception() && (!Options::exceptionStackTraceLimit() || scope.exception()->stack().size()));
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
     HandlerInfo* handler = nullptr;
@@ -767,7 +776,7 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     ProgramExecutable* program = ProgramExecutable::create(callFrame, source);
-    ASSERT(throwScope.exception() || program);
+    EXCEPTION_ASSERT(throwScope.exception() || program);
     RETURN_IF_EXCEPTION(throwScope, { });
 
     throwScope.assertNoException();
@@ -882,7 +891,7 @@ failedJSONP:
 
     // Compile source to bytecode if necessary:
     JSObject* error = program->initializeGlobalProperties(vm, callFrame, scope);
-    ASSERT(!throwScope.exception() || !error);
+    EXCEPTION_ASSERT(!throwScope.exception() || !error);
     if (UNLIKELY(error))
         return checkedReturn(throwException(callFrame, throwScope, error));
 
@@ -890,7 +899,7 @@ failedJSONP:
     {
         CodeBlock* tempCodeBlock;
         JSObject* error = program->prepareForExecution<ProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
         if (UNLIKELY(error))
             return checkedReturn(error);
         codeBlock = jsCast<ProgramCodeBlock*>(tempCodeBlock);
@@ -948,7 +957,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     if (isJSCall) {
         // Compile the callee:
         JSObject* compileError = callData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(function), scope, CodeForCall, newCodeBlock);
-        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
 
@@ -1015,7 +1024,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     if (isJSConstruct) {
         // Compile the callee:
         JSObject* compileError = constructData.js.functionExecutable->prepareForExecution<FunctionExecutable>(vm, jsCast<JSFunction*>(constructor), scope, CodeForConstruct, newCodeBlock);
-        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
 
@@ -1063,7 +1072,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* functionE
     // Compile the callee:
     CodeBlock* newCodeBlock;
     JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, function, scope, CodeForCall, newCodeBlock);
-    ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
+    EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(error));
     if (UNLIKELY(error))
         return CallFrameClosure();
     newCodeBlock->m_shouldAlwaysBeInlined = false;
@@ -1146,7 +1155,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     {
         CodeBlock* tempCodeBlock;
         JSObject* compileError = eval->prepareForExecution<EvalExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
         codeBlock = jsCast<EvalCodeBlock*>(tempCodeBlock);
@@ -1199,11 +1208,13 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
                 PutPropertySlot slot(variableObject);
                 // We need create this variables because it will be used to emits code by bytecode generator
                 variableObject->methodTable(vm)->put(variableObject, callFrame, function->name(), jsUndefined(), slot);
+                RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
             }
         } else {
             for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
                 FunctionExecutable* function = codeBlock->functionDecl(i);
                 JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, function->name());
+                RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                 if (resolvedScope.isUndefined())
                     return checkedReturn(throwSyntaxError(callFrame, throwScope, makeString("Can't create duplicate variable in eval: '", String(function->name().impl()), "'")));
                 PutPropertySlot slot(variableObject);
@@ -1215,8 +1226,11 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
             for (unsigned i = 0; i < numFunctionHoistingCandidates; ++i) {
                 const Identifier& ident = codeBlock->functionHoistingCandidate(i);
                 JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(callFrame, scope, ident);
+                RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
                 if (!resolvedScope.isUndefined()) {
-                    if (!variableObject->hasProperty(callFrame, ident)) {
+                    bool hasProperty = variableObject->hasProperty(callFrame, ident);
+                    RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
+                    if (!hasProperty) {
                         PutPropertySlot slot(variableObject);
                         variableObject->methodTable(vm)->put(variableObject, callFrame, ident, jsUndefined(), slot);
                         RETURN_IF_EXCEPTION(throwScope, checkedReturn(throwScope.exception()));
@@ -1264,7 +1278,7 @@ JSValue Interpreter::executeModuleProgram(ModuleProgramExecutable* executable, C
     {
         CodeBlock* tempCodeBlock;
         JSObject* compileError = executable->prepareForExecution<ModuleProgramExecutable>(vm, nullptr, scope, CodeForCall, tempCodeBlock);
-        ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
+        EXCEPTION_ASSERT(throwScope.exception() == reinterpret_cast<Exception*>(compileError));
         if (UNLIKELY(!!compileError))
             return checkedReturn(compileError);
         codeBlock = jsCast<ModuleProgramCodeBlock*>(tempCodeBlock);

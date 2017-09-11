@@ -97,6 +97,7 @@ ALWAYS_INLINE typename std::result_of<CallbackWhenNoException(bool, PropertySlot
     auto scope = DECLARE_THROW_SCOPE(vm);
     bool found = const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
     RETURN_IF_EXCEPTION(scope, { });
+    scope.release();
     return callback(found, slot);
 }
 
@@ -109,9 +110,10 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyN
     MethodTable::GetPrototypeFunctionPtr defaultGetPrototype = JSObject::getPrototype;
     while (true) {
         Structure* structure = structureIDTable.get(object->structureID());
-        if (structure->classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot))
-            return true;
+        bool hasSlot = structure->classInfo()->methodTable.getOwnPropertySlotByIndex(object, exec, propertyName, slot);
         RETURN_IF_EXCEPTION(scope, false);
+        if (hasSlot)
+            return true;
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
             prototype = structure->storedPrototype();
@@ -141,9 +143,10 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
             if (object->getOwnNonIndexPropertySlot(vm, structure, propertyName, slot))
                 return true;
         } else {
-            if (structure->classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot))
-                return true;
+            bool hasSlot = structure->classInfo()->methodTable.getOwnPropertySlot(object, exec, propertyName, slot);
             RETURN_IF_EXCEPTION(scope, false);
+            if (hasSlot)
+                return true;
         }
         JSValue prototype;
         if (LIKELY(structure->classInfo()->methodTable.getPrototype == defaultGetPrototype || slot.internalMethodType() == PropertySlot::InternalMethodType::VMInquiry))
@@ -203,13 +206,17 @@ ALWAYS_INLINE bool JSObject::putInlineForJSObject(JSCell* cell, ExecState* exec,
     ASSERT(value);
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(thisObject));
 
-    if (UNLIKELY(isThisValueAltered(slot, thisObject)))
+    if (UNLIKELY(isThisValueAltered(slot, thisObject))) {
+        scope.release();
         return ordinarySetSlow(exec, thisObject, propertyName, value, slot.thisValue(), slot.isStrictMode());
+    }
 
     // Try indexed put first. This is required for correctness, since loads on property names that appear like
     // valid indices will never look in the named property storage.
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        scope.release();
         return putByIndex(thisObject, exec, index.value(), value, slot.isStrictMode());
+    }
 
     if (thisObject->canPerformFastPutInline(vm, propertyName)) {
         ASSERT(!thisObject->structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName));

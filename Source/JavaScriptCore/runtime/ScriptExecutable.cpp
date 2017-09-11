@@ -188,7 +188,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = EvalCodeBlock::create(vm,
             executable, executable->m_unlinkedEvalCodeBlock.get(), scope,
             executable->source().provider());
-        ASSERT(throwScope.exception() || codeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -206,7 +206,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = ProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedProgramCodeBlock.get(), scope,
             executable->source().provider(), startColumn());
-        ASSERT(throwScope.exception() || codeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -224,7 +224,7 @@ CodeBlock* ScriptExecutable::newCodeBlockFor(
         auto codeBlock = ModuleProgramCodeBlock::create(vm,
             executable, executable->m_unlinkedModuleProgramCodeBlock.get(), scope,
             executable->source().provider(), startColumn());
-        ASSERT(throwScope.exception() || codeBlock);
+        EXCEPTION_ASSERT(throwScope.exception() || codeBlock);
         if (!codeBlock) {
             exception = throwException(
                 exec, throwScope,
@@ -338,7 +338,7 @@ JSObject* ScriptExecutable::prepareForExecutionImpl(
     JSObject* exception = nullptr;
     CodeBlock* codeBlock = newCodeBlockFor(kind, function, scope, exception);
     resultCodeBlock = codeBlock;
-    ASSERT(!!throwScope.exception() == !codeBlock);
+    EXCEPTION_ASSERT(!!throwScope.exception() == !codeBlock);
     if (UNLIKELY(!codeBlock))
         return exception;
     

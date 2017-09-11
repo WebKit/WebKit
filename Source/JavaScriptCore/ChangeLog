@@ -1,3 +1,256 @@
+2017-09-10  Mark Lam  <mark.lam@apple.com>
+
+        Fix all ExceptionScope verification failures in JavaScriptCore.
+        https://bugs.webkit.org/show_bug.cgi?id=176662
+        <rdar://problem/34352085>
+
+        Reviewed by Filip Pizlo.
+
+        1. Introduced EXCEPTION_ASSERT macros so that we can enable exception scope
+           verification for release builds too (though this requires manually setting
+           ENABLE_EXCEPTION_SCOPE_VERIFICATION to 1 in Platform.h).
+
+           This is useful because it allows us to run the tests more quickly to check
+           if any regressions have occurred.  Debug builds run so much slower and not
+           good for a quick turn around.  Debug builds are necessary though to get
+           trace information without inlining by the C++ compiler.  This is necessary to
+           diagnose where the missing exception check is.
+
+        2. Repurposed the JSC_dumpSimulatedThrows=true options to capture and dump the last
+           simulated throw when an exception scope verification fails.
+
+           Previously, this option dumps the stack trace on all simulated throws.  That
+           turned out to not be very useful, and slows down the debugging process.
+           Instead, the new implementation captures the stack trace and only dumps it
+           if we have a verification failure.
+
+        3. Fixed missing exception checks and book-keeping needed to allow the JSC tests
+           to pass with JSC_validateExceptionChecks=true.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finishCreation):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::executeOSRExit):
+        * dfg/DFGOperations.cpp:
+        * interpreter/Interpreter.cpp:
+        (JSC::eval):
+        (JSC::loadVarargs):
+        (JSC::Interpreter::unwind):
+        (JSC::Interpreter::executeProgram):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::prepareForRepeatCall):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeModuleProgram):
+        * jit/JITOperations.cpp:
+        (JSC::getByVal):
+        * jsc.cpp:
+        (WTF::CustomGetter::customGetterAcessor):
+        (GlobalObject::moduleLoaderImportModule):
+        (GlobalObject::moduleLoaderResolve):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        (JSC::LLInt::setUpCall):
+        * parser/Parser.h:
+        (JSC::Parser::popScopeInternal):
+        * runtime/AbstractModuleRecord.cpp:
+        (JSC::AbstractModuleRecord::hostResolveImportedModule):
+        (JSC::AbstractModuleRecord::resolveImport):
+        (JSC::AbstractModuleRecord::resolveExportImpl):
+        (JSC::getExportedNames):
+        (JSC::AbstractModuleRecord::getModuleNamespace):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::getProperty):
+        (JSC::unshift):
+        (JSC::arrayProtoFuncToString):
+        (JSC::arrayProtoFuncToLocaleString):
+        (JSC::arrayProtoFuncJoin):
+        (JSC::arrayProtoFuncPop):
+        (JSC::arrayProtoFuncPush):
+        (JSC::arrayProtoFuncReverse):
+        (JSC::arrayProtoFuncShift):
+        (JSC::arrayProtoFuncSlice):
+        (JSC::arrayProtoFuncSplice):
+        (JSC::arrayProtoFuncUnShift):
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        (JSC::concatAppendOne):
+        (JSC::arrayProtoPrivateFuncConcatMemcpy):
+        (JSC::arrayProtoPrivateFuncAppendMemcpy):
+        * runtime/CatchScope.h:
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncSetTime):
+        (JSC::setNewValueFromTimeArgs):
+        * runtime/DirectArguments.h:
+        (JSC::DirectArguments::length const):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::errorProtoFuncToString):
+        * runtime/ExceptionFuzz.cpp:
+        (JSC::doExceptionFuzzing):
+        * runtime/ExceptionScope.h:
+        (JSC::ExceptionScope::needExceptionCheck):
+        (JSC::ExceptionScope::assertNoException):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::defineOwnProperty):
+        * runtime/HashMapImpl.h:
+        (JSC::HashMapImpl::rehash):
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::formatToParts):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::defineOwnProperty):
+        (JSC::JSArray::put):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        (JSC::JSValue::putToPrimitiveByIndex):
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::toIndex const):
+        (JSC::JSValue::get const):
+        (JSC::JSValue::getPropertySlot const):
+        (JSC::JSValue::equalSlowCaseInline):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewFromIterator):
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::set):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::put):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::decode):
+        (JSC::globalFuncEval):
+        (JSC::globalFuncProtoGetter):
+        (JSC::globalFuncProtoSetter):
+        (JSC::globalFuncImportModule):
+        * runtime/JSInternalPromise.cpp:
+        (JSC::JSInternalPromise::then):
+        * runtime/JSInternalPromiseDeferred.cpp:
+        (JSC::JSInternalPromiseDeferred::create):
+        * runtime/JSJob.cpp:
+        (JSC::JSJobMicrotask::run):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::getOwnPropertySlot):
+        (JSC::JSModuleEnvironment::put):
+        (JSC::JSModuleEnvironment::deleteProperty):
+        * runtime/JSModuleLoader.cpp:
+        (JSC::JSModuleLoader::provide):
+        (JSC::JSModuleLoader::loadAndEvaluateModule):
+        (JSC::JSModuleLoader::loadModule):
+        (JSC::JSModuleLoader::linkAndEvaluateModule):
+        (JSC::JSModuleLoader::requestImportModule):
+        * runtime/JSModuleRecord.cpp:
+        (JSC::JSModuleRecord::link):
+        (JSC::JSModuleRecord::instantiateDeclarations):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::stringify):
+        (JSC::Stringifier::toJSON):
+        (JSC::JSONProtoFuncParse):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::calculatedClassName):
+        (JSC::ordinarySetSlow):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::ordinaryToPrimitive const):
+        (JSC::JSObject::toPrimitive const):
+        (JSC::JSObject::hasInstance):
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::toNumber const):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithoutAttributes):
+        (JSC::JSObject::putByIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::JSObject::putDirectIndexBeyondVectorLengthWithArrayStorage):
+        (JSC::validateAndApplyPropertyDescriptor):
+        (JSC::JSObject::defineOwnNonIndexProperty):
+        (JSC::JSObject::getGenericPropertyNames):
+        * runtime/JSObject.h:
+        (JSC::JSObject::get const):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::getPropertySlot const):
+        (JSC::JSObject::getPropertySlot):
+        (JSC::JSObject::getNonIndexPropertySlot):
+        (JSC::JSObject::putInlineForJSObject):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::constructPromise):
+        * runtime/JSPromiseDeferred.cpp:
+        (JSC::JSPromiseDeferred::create):
+        * runtime/JSScope.cpp:
+        (JSC::abstractAccess):
+        (JSC::JSScope::resolve):
+        (JSC::JSScope::resolveScopeForHoistingFuncDeclInEval):
+        (JSC::JSScope::abstractResolve):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser<CharType>::tryJSONPParse):
+        (JSC::LiteralParser<CharType>::parse):
+        * runtime/Lookup.h:
+        (JSC::putEntry):
+        * runtime/MapConstructor.cpp:
+        (JSC::constructMap):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToString):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorSetPrototypeOf):
+        (JSC::objectConstructorGetOwnPropertyDescriptor):
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorAssign):
+        (JSC::objectConstructorValues):
+        (JSC::toPropertyDescriptor):
+        (JSC::objectConstructorDefineProperty):
+        (JSC::defineProperties):
+        (JSC::objectConstructorDefineProperties):
+        (JSC::ownPropertyKeys):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::objectProtoFuncHasOwnProperty):
+        (JSC::objectProtoFuncIsPrototypeOf):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        (JSC::objectProtoFuncToLocaleString):
+        (JSC::objectProtoFuncToString):
+        * runtime/Options.h:
+        * runtime/ParseInt.h:
+        (JSC::toStringView):
+        * runtime/ProxyObject.cpp:
+        (JSC::performProxyGet):
+        (JSC::ProxyObject::performPut):
+        * runtime/ReflectObject.cpp:
+        (JSC::reflectObjectDefineProperty):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::toFlags):
+        (JSC::regExpCreate):
+        (JSC::constructRegExp):
+        * runtime/RegExpObject.cpp:
+        (JSC::collectMatches):
+        * runtime/RegExpObjectInlines.h:
+        (JSC::RegExpObject::execInline):
+        (JSC::RegExpObject::matchInline):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncTestFast):
+        (JSC::regExpProtoFuncExec):
+        (JSC::regExpProtoFuncMatchFast):
+        (JSC::regExpProtoFuncToString):
+        (JSC::regExpProtoFuncSplitFast):
+        * runtime/ScriptExecutable.cpp:
+        (JSC::ScriptExecutable::newCodeBlockFor):
+        (JSC::ScriptExecutable::prepareForExecutionImpl):
+        * runtime/SetConstructor.cpp:
+        (JSC::constructSet):
+        * runtime/ThrowScope.cpp:
+        (JSC::ThrowScope::simulateThrow):
+        * runtime/VM.cpp:
+        (JSC::VM::verifyExceptionCheckNeedIsSatisfied):
+        * runtime/VM.h:
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::protoFuncWeakMapSet):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::protoFuncWeakSetAdd):
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::createModule):
+        * wasm/js/WebAssemblyModuleRecord.cpp:
+        (JSC::WebAssemblyModuleRecord::link):
+        * wasm/js/WebAssemblyPrototype.cpp:
+        (JSC::reject):
+        (JSC::webAssemblyCompileFunc):
+        (JSC::resolve):
+        (JSC::webAssemblyInstantiateFunc):
+
 2017-09-08  Filip Pizlo  <fpizlo@apple.com>
 
         Error should compute .stack and friends lazily

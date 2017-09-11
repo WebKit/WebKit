@@ -344,7 +344,7 @@ void OSRExit::executeOSRExit(Context& context)
     OSRExit& exit = dfgJITCode->osrExit[exitIndex];
 
     ASSERT(!vm.callFrameForCatch || exit.m_kind == GenericUnwind);
-    ASSERT_UNUSED(scope, !exit.isExceptionHandler() || !!scope.exception());
+    EXCEPTION_ASSERT_UNUSED(scope, !!scope.exception() || !exit.isExceptionHandler());
 
     if (UNLIKELY(!exit.exitState)) {
         // We only need to execute this block once for each OSRExit record. The computed

@@ -97,7 +97,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
     auto propertyName = exec->argument(0).toPropertyKey(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSObject* thisObject = thisValue.toObject(exec);
-    ASSERT(!!scope.exception() == !thisObject);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (UNLIKELY(!thisObject))
         return encodedJSValue();
 
@@ -124,7 +124,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
     JSObject* thisObj = thisValue.toObject(exec);
-    ASSERT(!!scope.exception() == !thisObj);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObj);
     if (UNLIKELY(!thisObj))
         return encodedJSValue();
 
@@ -213,7 +213,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupGetter(ExecState* exec)
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = thisObject->getPropertySlot(exec, propertyName, slot);
-    ASSERT(!scope.exception() || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
@@ -243,7 +243,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 
     PropertySlot slot(thisObject, PropertySlot::InternalMethodType::GetOwnProperty);
     bool hasProperty = thisObject->getPropertySlot(exec, propertyName, slot);
-    ASSERT(!scope.exception() || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (hasProperty) {
         if (slot.isAccessor()) {
             GetterSetter* getterSetter = slot.getterSetter();
@@ -295,6 +295,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
     // Let toString be the O.[[Get]]("toString", V)
     PropertySlot slot(thisValue, PropertySlot::InternalMethodType::Get);
     bool hasProperty = object->getPropertySlot(exec, vm.propertyNames->toString, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     JSValue toString = hasProperty ? slot.getValue(exec, vm.propertyNames->toString) : jsUndefined();
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
@@ -318,7 +319,7 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
     if (thisValue.isUndefinedOrNull())
         return JSValue::encode(thisValue.isUndefined() ? vm.smallStrings.undefinedObjectString() : vm.smallStrings.nullObjectString());
     JSObject* thisObject = thisValue.toObject(exec);
-    ASSERT(!!scope.exception() == !thisObject);
+    EXCEPTION_ASSERT(!!scope.exception() == !thisObject);
     if (!thisObject)
         return JSValue::encode(jsUndefined());
 

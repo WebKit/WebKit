@@ -40,13 +40,18 @@ const ClassInfo JSInternalPromiseDeferred::s_info = { "JSInternalPromiseDeferred
 JSInternalPromiseDeferred* JSInternalPromiseDeferred::create(ExecState* exec, JSGlobalObject* globalObject)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue deferred = newPromiseCapability(exec, globalObject, globalObject->internalPromiseConstructor());
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSValue promise = deferred.get(exec, vm.propertyNames->builtinNames().promisePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
     ASSERT(promise.inherits(vm, JSInternalPromise::info()));
     JSValue resolve = deferred.get(exec, vm.propertyNames->builtinNames().resolvePrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
     JSValue reject = deferred.get(exec, vm.propertyNames->builtinNames().rejectPrivateName());
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     JSInternalPromiseDeferred* result = new (NotNull, allocateCell<JSInternalPromiseDeferred>(vm.heap)) JSInternalPromiseDeferred(vm);
     result->finishCreation(vm, jsCast<JSObject*>(promise), resolve, reject);

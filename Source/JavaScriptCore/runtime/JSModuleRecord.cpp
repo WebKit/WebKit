@@ -82,6 +82,7 @@ void JSModuleRecord::link(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     ModuleProgramExecutable* executable = ModuleProgramExecutable::create(exec, sourceCode());
+    EXCEPTION_ASSERT(!!scope.exception() == !executable);
     if (!executable) {
         throwSyntaxError(exec, scope);
         return;
@@ -110,6 +111,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         const ExportEntry& exportEntry = pair.value;
         if (exportEntry.type == JSModuleRecord::ExportEntry::Type::Indirect) {
             Resolution resolution = resolveExport(exec, exportEntry.exportName);
+            RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
                 throwSyntaxError(exec, scope, makeString("Indirectly exported binding name '", String(exportEntry.exportName.impl()), "' is not found."));
@@ -136,13 +138,16 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
     for (const auto& pair : importEntries()) {
         const ImportEntry& importEntry = pair.value;
         AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
+        RETURN_IF_EXCEPTION(scope, void());
         if (importEntry.isNamespace(vm)) {
             JSModuleNamespaceObject* namespaceObject = importedModule->getModuleNamespace(exec);
             RETURN_IF_EXCEPTION(scope, void());
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, importEntry.localName, namespaceObject, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+            RETURN_IF_EXCEPTION(scope, void());
         } else {
             Resolution resolution = importedModule->resolveExport(exec, importEntry.importName);
+            RETURN_IF_EXCEPTION(scope, void());
             switch (resolution.type) {
             case Resolution::Type::NotFound:
                 throwSyntaxError(exec, scope, makeString("Importing binding name '", String(importEntry.importName.impl()), "' is not found."));
@@ -173,6 +178,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
         if (!offset.isStack()) {
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromUid(exec, variable.key.get()), jsUndefined(), /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+            RETURN_IF_EXCEPTION(scope, void());
         }
     }
 
@@ -195,6 +201,7 @@ void JSModuleRecord::instantiateDeclarations(ExecState* exec, ModuleProgramExecu
             JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable->source()), moduleEnvironment);
             bool putResult = false;
             symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, unlinkedFunctionExecutable->name(), function, /* shouldThrowReadOnlyError */ false, /* ignoreReadOnlyErrors */ true, putResult);
+            RETURN_IF_EXCEPTION(scope, void());
         }
     }
 

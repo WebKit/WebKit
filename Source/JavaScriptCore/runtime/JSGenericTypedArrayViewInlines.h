@@ -252,7 +252,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
         
         RELEASE_ASSERT(other->canAccessRangeQuickly(objectOffset, length));
         bool success = validateRange(exec, offset, length);
-        ASSERT(!scope.exception() == success);
+        EXCEPTION_ASSERT(!scope.exception() == success);
         if (!success)
             return false;
 
@@ -300,7 +300,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
     case NotTypedArray:
     case TypeDataView: {
         bool success = validateRange(exec, offset, length);
-        ASSERT(!scope.exception() == success);
+        EXCEPTION_ASSERT(!scope.exception() == success);
         if (!success)
             return false;
 
@@ -309,7 +309,7 @@ bool JSGenericTypedArrayView<Adaptor>::set(
             JSValue value = object->get(exec, i + objectOffset);
             RETURN_IF_EXCEPTION(scope, false);
             bool success = setIndex(exec, offset + i, value);
-            ASSERT(!scope.exception() || !success);
+            EXCEPTION_ASSERT(!scope.exception() || !success);
             if (!success)
                 return false;
         }

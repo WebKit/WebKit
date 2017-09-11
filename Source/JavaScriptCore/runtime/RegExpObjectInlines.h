@@ -75,7 +75,7 @@ JSValue RegExpObject::execInline(ExecState* exec, JSGlobalObject* globalObject, 
     unsigned lastIndex;
     if (globalOrSticky) {
         lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
-        ASSERT(!scope.exception() || lastIndex == UINT_MAX);
+        EXCEPTION_ASSERT(!scope.exception() || lastIndex == UINT_MAX);
         if (lastIndex == UINT_MAX)
             return jsNull();
     } else
@@ -114,7 +114,7 @@ MatchResult RegExpObject::matchInline(
         return regExpConstructor->performMatch(vm, regExp, string, input, 0);
 
     unsigned lastIndex = getRegExpObjectLastIndexAsUnsigned(exec, this, input);
-    ASSERT(!scope.exception() || (lastIndex == UINT_MAX));
+    EXCEPTION_ASSERT(!scope.exception() || (lastIndex == UINT_MAX));
     if (lastIndex == UINT_MAX)
         return MatchResult::failed();
     

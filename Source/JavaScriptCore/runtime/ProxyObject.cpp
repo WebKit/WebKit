@@ -130,8 +130,12 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
     auto performDefaultGet = [&] {
         scope.release();
         PropertySlot slot(receiver, PropertySlot::InternalMethodType::Get);
-        if (target->getPropertySlot(exec, propertyName, slot))
+        bool hasProperty = target->getPropertySlot(exec, propertyName, slot);
+        EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+        if (hasProperty) {
+            scope.release();
             return slot.getValue(exec, propertyName);
+        }
         return jsUndefined();
     };
 
@@ -442,7 +446,9 @@ bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValu
         return false;
 
     PropertyDescriptor descriptor;
-    if (target->getOwnPropertyDescriptor(exec, propertyName, descriptor)) {
+    bool hasProperty = target->getOwnPropertyDescriptor(exec, propertyName, descriptor);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
         if (descriptor.isDataDescriptor() && !descriptor.configurable() && !descriptor.writable()) {
             if (!sameValue(exec, descriptor.value(), putValue)) {
                 throwVMTypeError(exec, scope, ASCIILiteral("Proxy handler's 'set' on a non-configurable and non-writable property on 'target' should either return false or be the same value already on the 'target'"));

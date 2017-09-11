@@ -165,8 +165,11 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // b. Let newLenDesc be a copy of Desc.
         // c. Let newLen be ToUint32(Desc.[[Value]]).
         unsigned newLen = descriptor.value().toUInt32(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         // d. If newLen is not equal to ToNumber( Desc.[[Value]]), throw a RangeError exception.
-        if (newLen != descriptor.value().toNumber(exec)) {
+        double valueAsNumber = descriptor.value().toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (newLen != valueAsNumber) {
             JSC::throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return false;
         }
@@ -198,7 +201,7 @@ bool JSArray::defineOwnProperty(JSObject* object, ExecState* exec, PropertyName 
         // l.ii. Let deleteSucceeded be the result of calling the [[Delete]] internal method of A passing ToString(oldLen) and false as arguments.
         // l.iii. If deleteSucceeded is false, then
         bool success = array->setLength(exec, newLen, throwException);
-        ASSERT(!scope.exception() || !success);
+        EXCEPTION_ASSERT(!scope.exception() || !success);
         if (!success) {
             // 1. Set newLenDesc.[[Value] to oldLen+1.
             // 2. If newWritable is false, set newLenDesc.[[Writable] to false.
@@ -272,7 +275,9 @@ bool JSArray::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSVa
             return false;
         unsigned newLength = value.toUInt32(exec);
         RETURN_IF_EXCEPTION(scope, false);
-        if (value.toNumber(exec) != static_cast<double>(newLength)) {
+        double valueAsNumber = value.toNumber(exec);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (valueAsNumber != static_cast<double>(newLength)) {
             throwException(exec, scope, createRangeError(exec, ASCIILiteral("Invalid array length")));
             return false;
         }

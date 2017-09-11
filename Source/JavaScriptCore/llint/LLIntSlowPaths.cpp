@@ -819,8 +819,10 @@ static ALWAYS_INLINE JSValue getByVal(VM& vm, ExecState* exec, JSValue baseValue
     
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
-        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i))
+        if (isJSString(baseValue) && asString(baseValue)->canGetIndex(i)) {
+            scope.release();
             return asString(baseValue)->getIndex(exec, i);
+        }
         scope.release();
         return baseValue.get(exec, i);
     }
@@ -1331,7 +1333,7 @@ inline SlowPathReturnType setUpCall(ExecState* execCallee, Instruction* pc, Code
 
         CodeBlock** codeBlockSlot = execCallee->addressOfCodeBlock();
         JSObject* error = functionExecutable->prepareForExecution<FunctionExecutable>(vm, callee, scope, kind, *codeBlockSlot);
-        ASSERT(throwScope.exception() == error);
+        EXCEPTION_ASSERT(throwScope.exception() == error);
         if (UNLIKELY(error))
             LLINT_CALL_THROW(exec, error);
         codeBlock = *codeBlockSlot;

@@ -290,6 +290,7 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
         bool isAccessor = entry->attributes() & CustomAccessor;
         JSValue updateThisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
         bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
+        RETURN_IF_EXCEPTION(scope, false);
         if (isAccessor)
             slot.setCustomAccessor(base, entry->propertyPutter());
         else

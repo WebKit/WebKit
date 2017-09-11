@@ -1176,7 +1176,7 @@ private:
 
     void popScopeInternal(ScopeRef& scope, bool shouldTrackClosedVariables)
     {
-        ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
+        EXCEPTION_ASSERT_UNUSED(scope, scope.index() == m_scopeStack.size() - 1);
         ASSERT(m_scopeStack.size() > 1);
         m_scopeStack[m_scopeStack.size() - 2].collectFreeVariables(&m_scopeStack.last(), shouldTrackClosedVariables);
         

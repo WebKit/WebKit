@@ -1045,7 +1045,7 @@ bool JSGlobalObject::put(JSCell* cell, ExecState* exec, PropertyName propertyNam
     bool ignoreReadOnlyErrors = false;
     bool putResult = false;
     bool done = symbolTablePutTouchWatchpointSet(thisObject, exec, propertyName, value, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
-    ASSERT((!!scope.exception() == (done && !putResult)) || !shouldThrowReadOnlyError);
+    EXCEPTION_ASSERT((!!scope.exception() == (done && !putResult)) || !shouldThrowReadOnlyError);
     if (done)
         return putResult;
     scope.release();

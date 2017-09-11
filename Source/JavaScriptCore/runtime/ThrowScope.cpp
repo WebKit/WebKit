@@ -100,12 +100,8 @@ void ThrowScope::simulateThrow()
     m_vm.m_simulatedThrowPointLocation = m_location;
     m_vm.m_simulatedThrowPointRecursionDepth = m_recursionDepth;
     m_vm.m_needExceptionCheck = true;
-
-    if (Options::dumpSimulatedThrows()) {
-        dataLog("Simulated throw from this scope: ", m_location, "\n");
-        dataLog("    (ExceptionScope::m_recursionDepth was ", m_recursionDepth, ")\n");
-        WTFReportBacktrace();
-    }
+    if (UNLIKELY(Options::dumpSimulatedThrows()))
+        m_vm.m_nativeStackTraceOfLastSimulatedThrow = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit());
 }
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)

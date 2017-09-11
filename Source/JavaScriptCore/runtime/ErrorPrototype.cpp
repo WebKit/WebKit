@@ -80,7 +80,7 @@ EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 
     // Guard against recursion!
     StringRecursionChecker checker(exec, thisObj);
-    ASSERT(!scope.exception() || checker.earlyReturnValue());
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 

@@ -183,6 +183,7 @@ JSValue WebAssemblyModuleConstructor::createModule(ExecState* exec, JSValue buff
     Vector<uint8_t> source = createSourceBufferFromValue(vm, exec, buffer);
     RETURN_IF_EXCEPTION(scope, { });
 
+    scope.release();
     return JSWebAssemblyModule::createStub(vm, exec, structure, Wasm::Module::validateSync(vm, WTFMove(source)));
 }
 

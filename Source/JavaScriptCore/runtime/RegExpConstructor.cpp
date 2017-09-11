@@ -213,7 +213,7 @@ inline RegExpFlags toFlags(ExecState* exec, JSValue flags)
     if (flags.isUndefined())
         return NoFlags;
     JSString* flagsString = flags.toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !flagsString);
+    EXCEPTION_ASSERT(!!scope.exception() == !flagsString);
     if (UNLIKELY(!flagsString))
         return InvalidFlags;
 
@@ -233,7 +233,7 @@ static JSObject* regExpCreate(ExecState* exec, JSGlobalObject* globalObject, JSV
     RETURN_IF_EXCEPTION(scope, nullptr);
 
     RegExpFlags flags = toFlags(exec, flagsArg);
-    ASSERT(!!scope.exception() == (flags == InvalidFlags));
+    EXCEPTION_ASSERT(!!scope.exception() == (flags == InvalidFlags));
     if (UNLIKELY(flags == InvalidFlags))
         return nullptr;
 
@@ -273,7 +273,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
 
         if (!flagsArg.isUndefined()) {
             RegExpFlags flags = toFlags(exec, flagsArg);
-            ASSERT(!!scope.exception() == (flags == InvalidFlags));
+            EXCEPTION_ASSERT(!!scope.exception() == (flags == InvalidFlags));
             if (flags == InvalidFlags)
                 return nullptr;
             regExp = RegExp::create(vm, regExp->pattern(), flags);

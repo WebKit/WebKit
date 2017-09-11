@@ -105,7 +105,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakMapSet(CallFrame* callFrame)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* map = getWeakMap(callFrame, callFrame->thisValue());
-    ASSERT(!!scope.exception() == !map);
+    EXCEPTION_ASSERT(!!scope.exception() == !map);
     if (!map)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);

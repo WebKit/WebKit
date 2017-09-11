@@ -73,6 +73,7 @@ static void reject(ExecState* exec, CatchScope& catchScope, JSPromiseDeferred* p
     ASSERT(exception);
     catchScope.clearException();
     promise->reject(exec, exception->value());
+    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, void());
 }
 
 static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
@@ -82,7 +83,7 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
     auto* globalObject = exec->lexicalGlobalObject();
 
     JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
+    CLEAR_AND_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     Vector<Strong<JSCell>> dependencies;
     dependencies.append(Strong<JSCell>(vm, globalObject));
@@ -98,12 +99,13 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyCompileFunc(ExecState* exec)
                 auto scope = DECLARE_CATCH_SCOPE(vm);
                 ExecState* exec = globalObject->globalExec();
                 JSValue module = JSWebAssemblyModule::createStub(vm, exec, globalObject->WebAssemblyModuleStructure(), WTFMove(result));
-                if (scope.exception()) {
+                if (UNLIKELY(scope.exception())) {
                     reject(exec, scope, promise);
                     return;
                 }
 
                 promise->resolve(exec, module);
+                CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
             });
         }));
     }
@@ -126,6 +128,7 @@ static void resolve(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAs
         result->putDirect(vm, Identifier::fromString(&vm, ASCIILiteral("instance")), instance);
         promise->resolve(exec, result);
     }
+    CLEAR_AND_RETURN_IF_EXCEPTION(scope, void());
 }
 
 static void instantiate(VM& vm, ExecState* exec, JSPromiseDeferred* promise, JSWebAssemblyModule* module, JSObject* importObject, Resolve resolveKind)
@@ -181,13 +184,14 @@ static EncodedJSValue JSC_HOST_CALL webAssemblyInstantiateFunc(ExecState* exec)
     auto scope = DECLARE_CATCH_SCOPE(vm);
 
     JSPromiseDeferred* promise = JSPromiseDeferred::create(exec, exec->lexicalGlobalObject());
-    RETURN_IF_EXCEPTION(scope, { });
+    CLEAR_AND_RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     JSValue importArgument = exec->argument(1);
     JSObject* importObject = importArgument.getObject();
     if (!importArgument.isUndefined() && !importObject) {
         promise->reject(exec, createTypeError(exec,
             ASCIILiteral("second argument to WebAssembly.instantiate must be undefined or an Object"), defaultSourceAppender, runtimeTypeForValue(importArgument)));
+        CLEAR_AND_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         return JSValue::encode(promise->promise());
     }
 

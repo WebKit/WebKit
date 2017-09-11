@@ -1019,6 +1019,7 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
             part->putDirect(vm, typePropertyName, literalString);
             part->putDirect(vm, vm.propertyNames->value, value);
             parts->push(&exec, part);
+            RETURN_IF_EXCEPTION(scope, { });
         }
         previousEndIndex = endIndex;
 
@@ -1029,6 +1030,7 @@ JSValue IntlDateTimeFormat::formatToParts(ExecState& exec, double value)
             part->putDirect(vm, typePropertyName, type);
             part->putDirect(vm, vm.propertyNames->value, value);
             parts->push(&exec, part);
+            RETURN_IF_EXCEPTION(scope, { });
         }
     }
 

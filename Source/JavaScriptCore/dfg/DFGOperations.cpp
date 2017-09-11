@@ -915,7 +915,7 @@ EncodedJSValue JIT_OPERATION operationRegExpExec(ExecState* exec, JSGlobalObject
     JSValue argument = JSValue::decode(encodedArgument);
 
     JSString* input = argument.toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !input);
+    EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return encodedJSValue();
     scope.release();
@@ -937,7 +937,7 @@ EncodedJSValue JIT_OPERATION operationRegExpExecGeneric(ExecState* exec, JSGloba
         return throwVMTypeError(exec, scope);
 
     JSString* input = argument.toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !input);
+    EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return JSValue::encode(jsUndefined());
     scope.release();
@@ -1032,7 +1032,7 @@ size_t JIT_OPERATION operationRegExpTestGeneric(ExecState* exec, JSGlobalObject*
     }
 
     JSString* input = argument.toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !input);
+    EXCEPTION_ASSERT(!!scope.exception() == !input);
     if (!input)
         return false;
     scope.release();
@@ -2193,11 +2193,13 @@ JSCell* JIT_OPERATION operationNewArrayWithSpreadSlow(ExecState* exec, void* buf
             // We are spreading.
             for (unsigned i = 0; i < array->size(); i++) {
                 result->putDirectIndex(exec, index, array->get(i));
+                RETURN_IF_EXCEPTION(scope, nullptr);
                 ++index;
             }
         } else {
             // We are not spreading.
             result->putDirectIndex(exec, index, value);
+            RETURN_IF_EXCEPTION(scope, nullptr);
             ++index;
         }
     }

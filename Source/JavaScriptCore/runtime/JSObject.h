@@ -1413,19 +1413,29 @@ ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, PropertyName prope
 
 inline JSValue JSObject::get(ExecState* exec, PropertyName propertyName) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
-    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
+    bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
+        scope.release();
         return slot.getValue(exec, propertyName);
-    
+    }
     return jsUndefined();
 }
 
 inline JSValue JSObject::get(ExecState* exec, unsigned propertyName) const
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     PropertySlot slot(this, PropertySlot::InternalMethodType::Get);
-    if (const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot))
+    bool hasProperty = const_cast<JSObject*>(this)->getPropertySlot(exec, propertyName, slot);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
+    if (hasProperty) {
+        scope.release();
         return slot.getValue(exec, propertyName);
-
+    }
     return jsUndefined();
 }
 

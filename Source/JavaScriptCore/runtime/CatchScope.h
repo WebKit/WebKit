@@ -68,4 +68,11 @@ public:
 
 #endif // ENABLE(EXCEPTION_SCOPE_VERIFICATION)
 
+#define CLEAR_AND_RETURN_IF_EXCEPTION(scope__, value__) do { \
+        if (UNLIKELY((scope__).exception())) { \
+            (scope__).clearException(); \
+            return value__; \
+        } \
+    } while (false)
+
 } // namespace JSC

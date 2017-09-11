@@ -146,13 +146,20 @@ static JSValue identifierToJSValue(ExecState* exec, const Identifier& identifier
 
 AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(ExecState* exec, const Identifier& moduleName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue moduleNameValue = identifierToJSValue(exec, moduleName);
     JSValue pair = m_dependenciesMap->JSMap::get(exec, moduleNameValue);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    scope.release();
     return jsCast<AbstractModuleRecord*>(pair.get(exec, Identifier::fromString(exec, "value")));
 }
 
 auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& localName) -> Resolution
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     std::optional<ImportEntry> optionalImportEntry = tryGetImportEntry(localName.impl());
     if (!optionalImportEntry)
         return Resolution::notFound();
@@ -162,6 +169,7 @@ auto AbstractModuleRecord::resolveImport(ExecState* exec, const Identifier& loca
         return Resolution::notFound();
 
     AbstractModuleRecord* importedModule = hostResolveImportedModule(exec, importEntry.moduleRequest);
+    RETURN_IF_EXCEPTION(scope, Resolution::error());
     return importedModule->resolveExport(exec, importEntry.importName);
 }
 
@@ -236,6 +244,9 @@ void AbstractModuleRecord::cacheResolution(UniquedStringImpl* exportName, const 
 
 auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery& root) -> Resolution
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     // http://www.ecma-international.org/ecma-262/6.0/#sec-resolveexport
 
     // How to avoid C++ recursion in this function:
@@ -496,6 +507,7 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
         // If the "default" name is not resolved in the current module, we need to throw an error and stop resolution immediately,
         // Rationale to this error: A default export cannot be provided by an export *.
         VM& vm = exec->vm();
+        auto scope = DECLARE_THROW_SCOPE(vm);
         if (query.exportName == vm.propertyNames->defaultKeyword.impl())
             return false;
 
@@ -514,6 +526,7 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
         for (auto iterator = query.moduleRecord->starExportEntries().rbegin(), end = query.moduleRecord->starExportEntries().rend(); iterator != end; ++iterator) {
             const RefPtr<UniquedStringImpl>& starModuleName = *iterator;
             AbstractModuleRecord* importedModuleRecord = query.moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(exec, starModuleName.get()));
+            RETURN_IF_EXCEPTION(scope, false);
             pendingTasks.append(Task { ResolveQuery(importedModuleRecord, query.exportName.get()), Type::Query });
         }
         return true;
@@ -576,7 +589,9 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
             if (!optionalExportEntry) {
                 // If there is no matched exported binding in the current module,
                 // we need to look into the stars.
-                if (!resolveNonLocal(task.query))
+                bool success = resolveNonLocal(task.query);
+                EXCEPTION_ASSERT(!scope.exception() || !success);
+                if (!success)
                     return Resolution::error();
                 continue;
             }
@@ -595,6 +610,7 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
 
             case ExportEntry::Type::Indirect: {
                 AbstractModuleRecord* importedModuleRecord = moduleRecord->hostResolveImportedModule(exec, exportEntry.moduleName);
+                RETURN_IF_EXCEPTION(scope, Resolution::error());
 
                 // When the imported module does not produce any resolved binding, we need to look into the stars in the *current*
                 // module. To do this, we append the `IndirectFallback` task to the task queue.
@@ -614,7 +630,9 @@ auto AbstractModuleRecord::resolveExportImpl(ExecState* exec, const ResolveQuery
             if (resolution.type == Resolution::Type::NotFound) {
                 // Indirect export entry does not produce any resolved binding.
                 // So we will investigate the stars.
-                if (!resolveNonLocal(task.query))
+                bool success = resolveNonLocal(task.query);
+                EXCEPTION_ASSERT(!scope.exception() || !success);
+                if (!success)
                     return Resolution::error();
                 continue;
             }
@@ -663,6 +681,8 @@ auto AbstractModuleRecord::resolveExport(ExecState* exec, const Identifier& expo
 static void getExportedNames(ExecState* exec, AbstractModuleRecord* root, IdentifierSet& exportedNames)
 {
     VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     HashSet<AbstractModuleRecord*> exportStarSet;
     Vector<AbstractModuleRecord*, 8> pendingModules;
 
@@ -682,6 +702,7 @@ static void getExportedNames(ExecState* exec, AbstractModuleRecord* root, Identi
 
         for (const auto& starModuleName : moduleRecord->starExportEntries()) {
             AbstractModuleRecord* requestedModuleRecord = moduleRecord->hostResolveImportedModule(exec, Identifier::fromUid(exec, starModuleName.get()));
+            RETURN_IF_EXCEPTION(scope, void());
             pendingModules.append(requestedModuleRecord);
         }
     }
@@ -699,11 +720,13 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
     JSGlobalObject* globalObject = exec->lexicalGlobalObject();
     IdentifierSet exportedNames;
     getExportedNames(exec, this, exportedNames);
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     Vector<std::pair<Identifier, Resolution>> resolutions;
     for (auto& name : exportedNames) {
         Identifier ident = Identifier::fromUid(exec, name.get());
         const Resolution resolution = resolveExport(exec, ident);
+        RETURN_IF_EXCEPTION(scope, nullptr);
         switch (resolution.type) {
         case Resolution::Type::NotFound:
             throwSyntaxError(exec, scope, makeString("Exported binding name '", String(name.get()), "' is not found."));
@@ -722,8 +745,10 @@ JSModuleNamespaceObject* AbstractModuleRecord::getModuleNamespace(ExecState* exe
         }
     }
 
-    m_moduleNamespaceObject.set(vm, this, JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions)));
-    return m_moduleNamespaceObject.get();
+    auto* moduleNamespaceObject = JSModuleNamespaceObject::create(exec, globalObject, globalObject->moduleNamespaceObjectStructure(), this, WTFMove(resolutions));
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    m_moduleNamespaceObject.set(vm, this, moduleNamespaceObject);
+    return moduleNamespaceObject;
 }
 
 static String printableName(const RefPtr<UniquedStringImpl>& uid)

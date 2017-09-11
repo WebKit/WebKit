@@ -231,6 +231,7 @@ static JSValue decode(ExecState* exec, const CharType* characters, int length, c
         k++;
         builder.append(c);
     }
+    scope.release();
     return builder.build(exec);
 }
 
@@ -486,22 +487,26 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
     String s = asString(x)->value(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
+    JSValue parsedObject;
     if (s.is8Bit()) {
         LiteralParser<LChar> preparser(exec, s.characters8(), s.length(), NonStrictJSON);
-        if (JSValue parsedObject = preparser.tryLiteralParse())
-            return JSValue::encode(parsedObject);
+        parsedObject = preparser.tryLiteralParse();
     } else {
         LiteralParser<UChar> preparser(exec, s.characters16(), s.length(), NonStrictJSON);
-        if (JSValue parsedObject = preparser.tryLiteralParse())
-            return JSValue::encode(parsedObject);
+        parsedObject = preparser.tryLiteralParse();
     }
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (parsedObject)
+        return JSValue::encode(parsedObject);
 
     SourceOrigin sourceOrigin = exec->callerSourceOrigin();
     JSGlobalObject* calleeGlobalObject = exec->jsCallee()->globalObject();
     EvalExecutable* eval = IndirectEvalExecutable::create(exec, makeSource(s, sourceOrigin), false, DerivedContextType::None, false, EvalContextType::None);
+    EXCEPTION_ASSERT(!!scope.exception() == !eval);
     if (!eval)
-        return JSValue::encode(jsUndefined());
+        return encodedJSValue();
 
+    scope.release();
     return JSValue::encode(vm.interpreter->execute(eval, exec, calleeGlobalObject->globalThis(), calleeGlobalObject->globalScope()));
 }
 
@@ -706,11 +711,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState* exec)
     JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue);
     if (!thisObject) {
         JSObject* prototype = exec->thisValue().synthesizePrototype(exec);
+        EXCEPTION_ASSERT(!!scope.exception() == !prototype);
         if (UNLIKELY(!prototype))
             return JSValue::encode(JSValue());
         return JSValue::encode(prototype);
     }
 
+    scope.release();
     return JSValue::encode(thisObject->getPrototype(vm, exec));
 }
 
@@ -735,6 +742,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState* exec)
     if (!value.isObject() && !value.isNull())
         return JSValue::encode(jsUndefined());
 
+    scope.release();
     bool shouldThrowIfCantSet = true;
     thisObject->setPrototype(vm, exec, value, shouldThrowIfCantSet);
     return JSValue::encode(jsUndefined());
@@ -777,7 +785,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
     auto* globalObject = exec->lexicalGlobalObject();
 
     auto* promise = JSPromiseDeferred::create(exec, globalObject);
-    RETURN_IF_EXCEPTION(catchScope, { });
+    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
 
     auto sourceOrigin = exec->callerSourceOrigin();
     RELEASE_ASSERT(exec->argumentCount() == 1);
@@ -785,6 +793,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
     if (Exception* exception = catchScope.exception()) {
         catchScope.clearException();
         promise->reject(exec, exception->value());
+        CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
         return JSValue::encode(promise->promise());
     }
 
@@ -792,9 +801,11 @@ EncodedJSValue JSC_HOST_CALL globalFuncImportModule(ExecState* exec)
     if (Exception* exception = catchScope.exception()) {
         catchScope.clearException();
         promise->reject(exec, exception->value());
+        CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
         return JSValue::encode(promise->promise());
     }
     promise->resolve(exec, internalPromise);
+    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, encodedJSValue());
 
     return JSValue::encode(promise->promise());
 }

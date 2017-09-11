@@ -107,7 +107,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncTestFast(ExecState* exec)
     if (!thisValue.inherits(vm, RegExpObject::info()))
         return throwVMTypeError(exec, scope);
     JSString* string = exec->argument(0).toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !string);
+    EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
     scope.release();
@@ -123,7 +123,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState* exec)
     if (!thisValue.inherits(vm, RegExpObject::info()))
         return throwVMTypeError(exec, scope, "Builtin RegExp exec can only be called on a RegExp object");
     JSString* string = exec->argument(0).toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !string);
+    EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return JSValue::encode(jsUndefined());
     scope.release();
@@ -139,7 +139,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncMatchFast(ExecState* exec)
     if (!thisValue.inherits(vm, RegExpObject::info()))
         return throwVMTypeError(exec, scope);
     JSString* string = exec->argument(0).toStringOrNull(exec);
-    ASSERT(!!scope.exception() == !string);
+    EXCEPTION_ASSERT(!!scope.exception() == !string);
     if (!string)
         return encodedJSValue();
     if (!asRegExpObject(thisValue)->regExp()->global()) {
@@ -243,7 +243,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
     JSObject* thisObject = asObject(thisValue);
 
     StringRecursionChecker checker(exec, thisObject);
-    ASSERT(!scope.exception() || checker.earlyReturnValue());
+    EXCEPTION_ASSERT(!scope.exception() || checker.earlyReturnValue());
     if (JSValue earlyReturnValue = checker.earlyReturnValue())
         return JSValue::encode(earlyReturnValue);
 
@@ -627,6 +627,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncSplitFast(ExecState* exec)
     // 13. If limit is undefined, let lim be 2^32-1; else let lim be ? ToUint32(limit).
     JSValue limitValue = exec->argument(1);
     unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 14. Let size be the number of elements in S.
     unsigned inputSize = input.length();

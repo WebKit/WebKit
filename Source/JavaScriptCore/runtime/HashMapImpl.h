@@ -636,7 +636,7 @@ private:
         HashMapBucketType** buffer = this->buffer();
         while (iter != end) {
             uint32_t index = jsMapHash(exec, vm, iter->key()) & mask;
-            ASSERT_WITH_MESSAGE(!scope.exception(), "All keys should already be hashed before, so this should not throw because it won't resolve ropes.");
+            EXCEPTION_ASSERT_WITH_MESSAGE(!scope.exception(), "All keys should already be hashed before, so this should not throw because it won't resolve ropes.");
             {
                 HashMapBucketType* bucket = buffer[index];
                 while (!isEmpty(bucket)) {

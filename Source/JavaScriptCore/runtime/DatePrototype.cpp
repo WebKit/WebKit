@@ -927,6 +927,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetTime(ExecState* exec)
     DateInstance* thisDateObj = asDateInstance(thisValue); 
 
     double milli = timeClip(exec->argument(0).toNumber(exec));
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     JSValue result = jsNumber(milli);
     thisDateObj->setInternalValue(vm, result);
     return JSValue::encode(result);
@@ -960,7 +961,9 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
 
     GregorianDateTime gregorianDateTime;
     gregorianDateTime.copyFrom(*other);
-    if (!fillStructuresUsingTimeArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
+    bool success = fillStructuresUsingTimeArgs(exec, numArgsToUse, &ms, &gregorianDateTime);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (!success) {
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);

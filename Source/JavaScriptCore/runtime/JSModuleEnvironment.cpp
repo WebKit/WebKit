@@ -83,6 +83,7 @@ bool JSModuleEnvironment::getOwnPropertySlot(JSObject* cell, ExecState* exec, Pr
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
+    RETURN_IF_EXCEPTION(scope, false);
     if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
         // When resolveImport resolves the resolution, the imported module environment must have the binding.
         JSModuleEnvironment* importedModuleEnvironment = resolution.moduleRecord->moduleEnvironment();
@@ -120,6 +121,7 @@ bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName proper
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     // All imported bindings are immutable.
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
+    RETURN_IF_EXCEPTION(scope, false);
     if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved) {
         throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
         return false;
@@ -129,9 +131,13 @@ bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName proper
 
 bool JSModuleEnvironment::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     JSModuleEnvironment* thisObject = jsCast<JSModuleEnvironment*>(cell);
     // All imported bindings are immutable.
     AbstractModuleRecord::Resolution resolution = thisObject->moduleRecord()->resolveImport(exec, Identifier::fromUid(exec, propertyName.uid()));
+    RETURN_IF_EXCEPTION(scope, false);
     if (resolution.type == AbstractModuleRecord::Resolution::Type::Resolved)
         return false;
     return Base::deleteProperty(thisObject, exec, propertyName);

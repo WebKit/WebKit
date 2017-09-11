@@ -970,6 +970,19 @@ void VM::verifyExceptionCheckNeedIsSatisfied(unsigned recursionDepth, ExceptionE
             "        (ExceptionScope::m_recursionDepth was ", recursionDepth, ")\n"
             "\n");
 
+        StringPrintStream out;
+        std::unique_ptr<StackTrace> currentTrace = StackTrace::captureStackTrace(Options::unexpectedExceptionStackTraceLimit());
+
+        if (Options::dumpSimulatedThrows()) {
+            out.println("The simulated exception was thrown at:");
+            m_nativeStackTraceOfLastSimulatedThrow->dump(out, "    ");
+            out.println();
+        }
+        out.println("Unchecked exception detected at:");
+        currentTrace->dump(out, "    ");
+        out.println();
+
+        dataLog(out.toCString());
         RELEASE_ASSERT(!m_needExceptionCheck);
     }
 }

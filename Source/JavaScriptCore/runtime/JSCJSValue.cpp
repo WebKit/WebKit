@@ -150,11 +150,14 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (std::optional<uint32_t> index = parseIndex(propertyName))
+    if (std::optional<uint32_t> index = parseIndex(propertyName)) {
+        scope.release();
         return putToPrimitiveByIndex(exec, index.value(), value, slot.isStrictMode());
+    }
 
     // Check if there are any setters or getters in the prototype chain
     JSObject* obj = synthesizePrototype(exec);
+    EXCEPTION_ASSERT(!!scope.exception() == !obj);
     if (UNLIKELY(!obj))
         return false;
     JSValue prototype;
@@ -176,8 +179,10 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
                 return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
             JSValue gs = obj->getDirect(offset);
-            if (gs.isGetterSetter())
+            if (gs.isGetterSetter()) {
+                scope.release();
                 return callSetter(exec, *this, gs, value, slot.isStrictMode() ? StrictMode : NotStrictMode);
+            }
 
             if (gs.isCustomGetterSetter())
                 return callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
@@ -207,11 +212,13 @@ bool JSValue::putToPrimitiveByIndex(ExecState* exec, unsigned propertyName, JSVa
     }
     
     JSObject* prototype = synthesizePrototype(exec);
-    ASSERT(!prototype == !!scope.exception());
+    EXCEPTION_ASSERT(!!scope.exception() == !prototype);
     if (UNLIKELY(!prototype))
         return false;
     bool putResult = false;
-    if (prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult))
+    bool success = prototype->attemptToInterceptPutByIndexOnHoleForPrototype(exec, *this, propertyName, value, shouldThrow, putResult);
+    RETURN_IF_EXCEPTION(scope, false);
+    if (success)
         return putResult;
     
     return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));

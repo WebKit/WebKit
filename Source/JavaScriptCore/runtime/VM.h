@@ -785,6 +785,7 @@ private:
     unsigned m_simulatedThrowPointRecursionDepth { 0 };
     mutable bool m_needExceptionCheck { false };
     std::unique_ptr<StackTrace> m_nativeStackTraceOfLastThrow;
+    std::unique_ptr<StackTrace> m_nativeStackTraceOfLastSimulatedThrow;
     ThreadIdentifier m_throwingThread;
 #endif
 

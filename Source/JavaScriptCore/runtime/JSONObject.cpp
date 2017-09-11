@@ -275,7 +275,7 @@ Local<Unknown> Stringifier::stringify(Handle<Unknown> value)
     StringBuilder result;
     Holder root(Holder::RootHolder, vm, object);
     auto stringifyResult = appendStringifiedValue(result, value.get(), root, emptyPropertyName);
-    ASSERT(!scope.exception() || (stringifyResult != StringifySucceeded));
+    EXCEPTION_ASSERT(!scope.exception() || (stringifyResult != StringifySucceeded));
     if (UNLIKELY(stringifyResult != StringifySucceeded))
         return Local<Unknown>(vm, jsUndefined());
 
@@ -294,7 +294,7 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue value, const PropertyNameForFu
     JSObject* object = asObject(value);
     PropertySlot slot(object, PropertySlot::InternalMethodType::Get);
     bool hasProperty = object->getPropertySlot(m_exec, vm.propertyNames->toJSON, slot);
-    ASSERT(!scope.exception() || !hasProperty);
+    EXCEPTION_ASSERT(!scope.exception() || !hasProperty);
     if (!hasProperty)
         return value;
 
@@ -794,7 +794,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     if (view.is8Bit()) {
         LiteralParser<LChar> jsonParser(exec, view.characters8(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
-        ASSERT(!scope.exception() || !unfiltered);
+        EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
             RETURN_IF_EXCEPTION(scope, { });
             return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));
@@ -802,7 +802,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     } else {
         LiteralParser<UChar> jsonParser(exec, view.characters16(), view.length(), StrictJSON);
         unfiltered = jsonParser.tryLiteralParse();
-        ASSERT(!scope.exception() || !unfiltered);
+        EXCEPTION_ASSERT(!scope.exception() || !unfiltered);
         if (!unfiltered) {
             RETURN_IF_EXCEPTION(scope, { });
             return throwVMError(exec, scope, createSyntaxError(exec, jsonParser.getErrorMessage()));

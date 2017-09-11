@@ -140,7 +140,7 @@ EncodedJSValue JSC_HOST_CALL reflectObjectDefineProperty(ExecState* exec)
 
     PropertyDescriptor descriptor;
     bool success = toPropertyDescriptor(exec, exec->argument(2), descriptor);
-    ASSERT(!scope.exception() == success);
+    EXCEPTION_ASSERT(!scope.exception() == success);
     if (UNLIKELY(!success))
         return encodedJSValue();
     ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));

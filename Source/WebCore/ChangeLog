@@ -1,3 +1,26 @@
+2017-09-10  Mark Lam  <mark.lam@apple.com>
+
+        Fix all ExceptionScope verification failures in JavaScriptCore.
+        https://bugs.webkit.org/show_bug.cgi?id=176662
+        <rdar://problem/34352085>
+
+        Reviewed by Filip Pizlo.
+
+        No new tests because this is covered by existing tests with the JSC_validateExceptionChecks=true enabled.
+
+        * bindings/js/JSCustomElementInterface.cpp:
+        (WebCore::JSCustomElementInterface::tryToConstructCustomElement):
+        * bindings/js/JSCustomElementRegistryCustom.cpp:
+        (WebCore::whenDefinedPromise):
+        * bindings/js/JSDOMConvertRecord.h:
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::createBackingMap):
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        (WebCore::DeferredPromise::callFunction):
+        (WebCore::DeferredPromise::reject):
+        * bindings/js/JSDOMPromiseDeferred.h:
+        (WebCore::callPromiseFunction):
+
 2017-09-10  Frederic Wang  <fwang@igalia.coml>
 
         Make RenderLayerCompositor always use isRootLayer()

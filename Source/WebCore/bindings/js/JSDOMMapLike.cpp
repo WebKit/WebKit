@@ -27,6 +27,7 @@
 #include "JSDOMMapLike.h"
 
 #include "WebCoreJSClientData.h"
+#include <runtime/CatchScope.h>
 
 namespace WebCore {
 
@@ -45,9 +46,11 @@ void initializeBackingMap(JSC::VM& vm, JSC::JSObject& mapLike, JSC::JSMap& backi
 JSC::JSMap& createBackingMap(JSC::ExecState& state, JSC::JSGlobalObject& globalObject, JSC::JSObject& mapLike)
 {
     auto& vm = state.vm();
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     ASSERT(mapLike.get(&state, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName()).isUndefined());
     auto backingMap = JSC::JSMap::create(&state, vm, globalObject.mapStructure());
+    scope.releaseAssertNoException();
     mapLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName(), backingMap, JSC::DontEnum);
     return *backingMap;
 }

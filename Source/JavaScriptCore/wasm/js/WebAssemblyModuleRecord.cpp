@@ -178,6 +178,7 @@ void WebAssemblyModuleRecord::link(ExecState* exec, JSWebAssemblyModule* module,
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
         symbolTablePutTouchWatchpointSet(moduleEnvironment, exec, Identifier::fromString(&vm, String::fromUTF8(exp.field)), exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+        scope.assertNoException();
         RELEASE_ASSERT(putResult);
     }
 

@@ -186,7 +186,7 @@ static JSValue whenDefinedPromise(ExecState& state, JSDOMGlobalObject& globalObj
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!validateCustomElementNameAndThrowIfNeeded(state, localName)) {
-        ASSERT(scope.exception());
+        EXCEPTION_ASSERT(scope.exception());
         return jsUndefined();
     }
 

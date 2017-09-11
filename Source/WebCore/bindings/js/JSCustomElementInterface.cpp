@@ -104,7 +104,7 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     ASSERT(&document == scriptExecutionContext());
     auto& state = *document.execState();
     auto element = constructCustomElementSynchronously(document, vm, state, m_constructor.get(), localName);
-    ASSERT(!!scope.exception() == !element);
+    EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
         scope.clearException();

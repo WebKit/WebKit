@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL protoFuncWeakSetAdd(CallFrame* callFrame)
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     auto* set = getWeakSet(callFrame, callFrame->thisValue());
-    ASSERT(!!scope.exception() == !set);
+    EXCEPTION_ASSERT(!!scope.exception() == !set);
     if (!set)
         return JSValue::encode(jsUndefined());
     JSValue key = callFrame->argument(0);

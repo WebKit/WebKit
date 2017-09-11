@@ -56,7 +56,7 @@ void doExceptionFuzzing(ExecState* exec, ThrowScope& scope, const char* where, v
         // exception). However, ExceptionFuzz works by intentionally throwing its own exception
         // even when one may already exist. This is ok for ExceptionFuzz testing, but we need
         // to placate the exception check verifier here.
-        ASSERT(scope.exception() || !scope.exception());
+        EXCEPTION_ASSERT(scope.exception() || !scope.exception());
 
         throwException(exec, scope, createError(exec, ASCIILiteral("Exception Fuzz")));
     }
