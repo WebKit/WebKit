@@ -24,10 +24,13 @@
  */
 "use strict";
 
-// FIXME: This doesn't work on Program, so we can't call it from prepare.
-// https://bugs.webkit.org/show_bug.cgi?id=176678
-
-function checkWrapped(node)
+function checkExpressionWrapped(node)
 {
     node.visit(new WrapChecker(node));
 }
+
+function checkProgramWrapped(node)
+{
+    node.visit(new ExpressionFinder(checkExpressionWrapped));
+}
+

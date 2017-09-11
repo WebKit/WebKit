@@ -1842,6 +1842,141 @@ function TEST_forLoop()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
 }
 
+function TEST_chainConstexpr()
+{
+    let program = doPrep(`
+        int foo<int a>(int b)
+        {
+            return a + b;
+        }
+        int bar<int a>(int b)
+        {
+            return foo<a>(b);
+        }
+        int baz(int b)
+        {
+            return bar<42>(b);
+        }
+    `);
+    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 58)]), 58 + 42);
+}
+
+function TEST_chainGeneric()
+{
+    let program = doPrep(`
+        T foo<T>(T x)
+        {
+            return x;
+        }
+        T bar<T>(thread T^ ptr)
+        {
+            return ^foo(ptr);
+        }
+        int baz(int x)
+        {
+            return bar(&x);
+        }
+    `);
+    checkInt(program, callFunction(program, "baz", [], [makeInt(program, 37)]), 37);
+}
+
+function TEST_chainStruct()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T f;
+        }
+        struct Bar<T> {
+            Foo<thread T^> f;
+        }
+        int foo(thread Bar<int>^ x)
+        {
+            return ^x->f.f;
+        }
+        int bar(int a)
+        {
+            Bar<int> x;
+            x.f.f = &a;
+            return foo(&x);
+        }
+    `);
+    checkInt(program, callFunction(program, "bar", [], [makeInt(program, 4657)]), 4657);
+}
+
+function TEST_chainStructInvalid()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo<T> {
+                T f;
+            }
+            struct Bar<T> {
+                Foo<device T^> f;
+            }
+            int foo(thread Bar<int>^ x)
+            {
+                return ^x->f.f;
+            }
+            int bar(device int^ a)
+            {
+                Bar<int> x;
+                x.f.f = a;
+                return foo(&x);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_chainStructDevice()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T f;
+        }
+        struct Bar<T:primitive> {
+            Foo<device T^> f;
+        }
+        int foo(thread Bar<int>^ x)
+        {
+            return ^x->f.f;
+        }
+        int bar(device int^ a)
+        {
+            Bar<int> x;
+            x.f.f = a;
+            return foo(&x);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 79201);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
+}
+
+function TEST_paramChainStructDevice()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T f;
+        }
+        struct Bar<T> {
+            Foo<T> f;
+        }
+        int foo(thread Bar<device int^>^ x)
+        {
+            return ^x->f.f;
+        }
+        int bar(device int^ a)
+        {
+            Bar<device int^> x;
+            x.f.f = a;
+            return foo(&x);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 79201);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

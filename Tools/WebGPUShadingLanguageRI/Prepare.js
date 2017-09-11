@@ -33,10 +33,12 @@ function prepare(origin, lineNumberOffset, text)
     resolveTypeDefs(program);
     check(program);
     checkLiteralTypes(program);
+    checkProgramWrapped(program);
     checkReturns(program);
     checkUnreachableCode(program);
     checkLoops(program);
     checkRecursion(program);
+    checkProgramWrapped(program);
     inline(program);
     return program;
 }

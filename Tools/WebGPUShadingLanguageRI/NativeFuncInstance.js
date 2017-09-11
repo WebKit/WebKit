@@ -28,6 +28,7 @@ class NativeFuncInstance extends Func {
     constructor(func, returnType, parameters, isCast)
     {
         super(func.origin, func.name, returnType, [], parameters, isCast);
+        this._func = func;
     }
     
     get func() { return this._func; }

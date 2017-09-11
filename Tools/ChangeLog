@@ -1,3 +1,72 @@
+2017-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL Substitution should probably wrap type variables of substituted types rather than just wrapping the whole type
+        https://bugs.webkit.org/show_bug.cgi?id=176677
+
+        Reviewed by Mylex Maxfield.
+        
+        This adds a checker that verifies that all type references and variable references are wrapped.
+        
+        Then this fixes errors found by that checker by making Substitution auto-wrap replacements rather than
+        manually wrapping the outer type (for types) and cloning (for values).
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/AutoWrapper.js: Added.
+        (AutoWrapper.prototype.visitVariableRef):
+        (AutoWrapper.prototype.visitTypeRef):
+        (AutoWrapper.prototype.visitConstexprTypeParameter):
+        (AutoWrapper.prototype.visitFuncParameter):
+        (AutoWrapper.prototype.visitVariableDecl):
+        (AutoWrapper.prototype.visitStructType):
+        (AutoWrapper.prototype.visitNativeType):
+        (AutoWrapper):
+        * WebGPUShadingLanguageRI/CheckWrapped.js:
+        (checkExpressionWrapped):
+        (checkProgramWrapped):
+        (checkWrapped): Deleted.
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/ExpressionFinder.js: Added.
+        (ExpressionFinder):
+        (ExpressionFinder.prototype.visitFunc):
+        (ExpressionFinder.prototype.visitFuncParameter):
+        (ExpressionFinder.prototype.visitConstexprTypeParameter):
+        (ExpressionFinder.prototype.visitAssignment):
+        (ExpressionFinder.prototype.visitCallExpression):
+        (ExpressionFinder.prototype.visitReturn):
+        (ExpressionFinder.prototype.visitWhileLoop):
+        (ExpressionFinder.prototype.visitDoWhileLoop):
+        (ExpressionFinder.prototype.visitIfStatement):
+        (ExpressionFinder.prototype.visitForLoop):
+        (ExpressionFinder.prototype.visitVariableDecl):
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.substituteToUnification):
+        (Node):
+        (Node.prototype.clone): Deleted.
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js:
+        (StructLayoutBuilder.prototype.visitReferenceType):
+        (StructLayoutBuilder.prototype.visitField):
+        (StructLayoutBuilder):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution):
+        (Substitution.prototype.visitTypeRef):
+        (Substitution.prototype.visitVariableRef):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_chainConstexpr):
+        (TEST_chainGeneric):
+        (TEST_chainStruct):
+        (TEST_chainStructInvalid):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitNativeTypeInstance):
+        * WebGPUShadingLanguageRI/WrapChecker.js:
+        (WrapChecker.prototype._foundUnwrapped.originString):
+        (WrapChecker.prototype._foundUnwrapped):
+        (WrapChecker):
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Fix multiple master.cfg unit test failures.

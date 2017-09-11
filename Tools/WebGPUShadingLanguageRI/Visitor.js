@@ -110,7 +110,7 @@ class Visitor extends VisitorBase {
     
     visitNativeTypeInstance(node)
     {
-        node.type.visit(node);
+        node.type.visit(this);
         for (let typeArgument of node.typeArguments)
             typeArgument.visit(this);
     }

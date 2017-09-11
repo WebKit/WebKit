@@ -24,61 +24,39 @@
  */
 "use strict";
 
-class WrapChecker extends Visitor {
-    constructor(node)
-    {
-        super();
-        this._startNode = node;
-    }
-    
+class AutoWrapper extends Rewriter {
     visitVariableRef(node)
     {
+        return node;
     }
     
     visitTypeRef(node)
     {
-    }
-    
-    _foundUnwrapped(node)
-    {
-        function originString(node)
-        {
-            let origin = node.origin;
-            if (!origin)
-                return "<null origin>";
-            return origin.originString;
-        }
-        
-        throw new Error("Found unwrapped " + node.constructor.name + " at " + originString(node) + ": " + node + "\nWhile visiting " + this._startNode.constructor.name + " at " + originString(this._startNode.origin) + ": " + this._startNode);
+        return node;
     }
     
     visitConstexprTypeParameter(node)
     {
-        this._foundUnwrapped(node);
+        return VariableRef.wrap(node);
     }
     
     visitFuncParameter(node)
     {
-        this._foundUnwrapped(node);
+        return VariableRef.wrap(node);
     }
     
     visitVariableDecl(node)
     {
-        this._foundUnwrapped(node);
+        return VariableRef.wrap(node);
     }
     
     visitStructType(node)
     {
-        this._foundUnwrapped(node);
+        return TypeRef.wrap(node);
     }
     
     visitNativeType(node)
     {
-        this._foundUnwrapped(node);
+        return TypeRef.wrap(node);
     }
-    
-    // NOTE: This does not know how to handle NativeTypeInstance, because this is never called on instantiated
-    // code. Once code is instantiated, you cannot instantiate it further.
-    
-    // NOTE: This needs to be kept in sync with AutoWrapper.
 }

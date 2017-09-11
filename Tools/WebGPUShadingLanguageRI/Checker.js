@@ -101,7 +101,7 @@ class Checker extends Visitor {
             return;
         
         if (!node.elementType.instantiatedType.isPrimitive)
-            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node.elementType);
+            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node.elementType + " (instantiated to " + node.elementType.instantiatedType + ")");
     }
     
     visitArrayType(node)
@@ -157,7 +157,7 @@ class Checker extends Visitor {
     {
         let structType = node.struct.visit(this).unifyNode;
         
-        node.structType = structType;
+        node.structType = TypeRef.wrap(structType);
         
         let underlyingStruct = structType;
         

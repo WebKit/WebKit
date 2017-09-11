@@ -31,6 +31,10 @@ class StructLayoutBuilder extends Visitor {
         this._offset = 0;
     }
     
+    visitReferenceType(node)
+    {
+    }
+    
     visitStructType(node)
     {
         if (node.size != null)
@@ -48,6 +52,7 @@ class StructLayoutBuilder extends Visitor {
     
     visitField(node)
     {
+        super.visitField(node);
         node.offset = this._offset;
         let size = node.type.size;
         if (size == null)

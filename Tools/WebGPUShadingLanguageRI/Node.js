@@ -109,9 +109,4 @@ class Node {
             parameters,
             parameters.map(type => unificationContext.find(type)));
     }
-    
-    clone()
-    {
-        return this.visit(new Rewriter());
-    }
 }
