@@ -38,8 +38,8 @@ class TestGroupResultsViewer extends ComponentBase {
         if (!this._testGroup || !this._analysisResults)
             return;
 
-        this._renderResultsTableLazily.evaluate(this._testGroup, this._expandedTests, ...this._analysisResults.highestTests());
-        this._renderCurrentMetricsLazily.evaluate(this._currentMetric);
+        this._renderResultsTableLazily.evaluate(this._testGroup, this._expandedTests,
+            ...this._analysisResults.topLevelTestsForTestGroup(this._testGroup));
     }
 
     _renderResultsTable(testGroup, expandedTests, ...tests)

@@ -4,7 +4,7 @@ class AnalysisResults {
     {
         this._metricToBuildMap = {};
         this._metricIds = [];
-        this._lazilyComputedHighestTests = new LazilyEvaluatedFunction(this._computeHighestTests);
+        this._lazilyComputedTopLevelTests = new LazilyEvaluatedFunction(this._computedTopLevelTests.bind(this));
     }
 
     findResult(buildId, metricId)
@@ -15,7 +15,26 @@ class AnalysisResults {
         return map[buildId];
     }
 
-    highestTests() { return this._lazilyComputedHighestTests.evaluate(this._metricIds); }
+    topLevelTestsForTestGroup(testGroup)
+    {
+        return this._lazilyComputedTopLevelTests.evaluate(testGroup, ...this._metricIds);
+    }
+
+    _computedTopLevelTests(testGroup, ...metricIds)
+    {
+        const metrics = metricIds.map((metricId) => Metric.findById(metricId));
+        const tests = new Set(metrics.map((metric) => metric.test()));
+        const topLevelMetrics = metrics.filter((metric) => !tests.has(metric.test().parentTest()));
+
+        const topLevelTests = new Set;
+        for (const request of testGroup.buildRequests()) {
+            for (const metric of topLevelMetrics) {
+                if (this.findResult(request.buildId(), metric.id()))
+                    topLevelTests.add(metric.test());
+            }
+        }
+        return topLevelTests;
+    }
 
     containsTest(test)
     {

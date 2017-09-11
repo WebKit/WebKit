@@ -1,3 +1,25 @@
+2017-09-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Analysis task page shows an empty results for an irrelevant top-level test
+        https://bugs.webkit.org/show_bug.cgi?id=175252
+
+        Reviewed by Antti Koivisto.
+
+        The bug was caused by TestGroupResultsViewer always listing every top-level test which has a result for the
+        entire analysis task. Since a custom analysis task (perf try bots) allows multiple tests to be tested in each
+        group, we have to only list the tests which contains results in a particular test group.
+
+        * public/v3/components/test-group-results-viewer.js:
+        (TestGroupResultsViewer.prototype.render): Find the tests that have results for the current test group instead
+        of for any test group in this analysis task.
+        any test 
+        * public/v3/models/analysis-results.js:
+        (AnalysisResults):
+        (AnalysisResults.prototype.topLevelTestsForTestGroup): Renamed from highestTests. Now takes a test group
+        as an argument.
+        (AnalysisResults.prototype._computedTopLevelTests): Renamed from _computeHighestTests. Filters the results
+        with the specified test group.
+
 2017-09-06  Aakash Jain  <aakash_jain@apple.com>
 
         Add initSyncers method in BuildbotTriggerable
