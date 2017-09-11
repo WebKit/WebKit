@@ -1,3 +1,17 @@
+2017-09-10  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer: Reduce duplication in react-redux test
+        https://bugs.webkit.org/show_bug.cgi?id=176227
+
+        Reviewed by Ryosuke Niwa.
+
+        Updating react-scripts to a modern version avoids an issue where the generated bundle included the same `Object.assign`
+        polyfill multiple times.
+
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/dist/*: Update dist per build instructions.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package-lock.json: Update dependencies.
+        * Speedometer/resources/todomvc/architecture-examples/react-redux/package.json: Update dependencies.
+
 2017-09-07  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Optimize the call to browserPrefix() in MotionMark
