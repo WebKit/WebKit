@@ -45,10 +45,6 @@ class MonotonicTime;
 class Seconds;
 }
 
-namespace PAL {
-class SessionID;
-}
-
 namespace WebCore {
 class AffineTransform;
 class AuthenticationChallenge;
@@ -103,7 +99,6 @@ struct GrammarDetail;
 struct MimeClassInfo;
 struct PasteboardImage;
 struct PasteboardURL;
-struct PasteboardWebContent;
 struct PluginInfo;
 struct RecentSearch;
 struct ResourceLoadStatistics;
@@ -113,70 +108,52 @@ struct TextIndicatorData;
 struct ViewportAttributes;
 struct WindowFeatures;
     
-template <typename> class BoxExtent;
-using FloatBoxExtent = BoxExtent<float>;
-}
+template <typename> class RectEdges;
+using FloatBoxExtent = RectEdges<float>;
 
 #if PLATFORM(COCOA)
-namespace WebCore {
 class MachSendRight;
 struct KeypressCommand;
-}
 #endif
 
 #if PLATFORM(IOS)
-namespace WebCore {
 class FloatQuad;
 class SelectionRect;
 struct Highlight;
 struct PasteboardImage;
 struct PasteboardWebContent;
 struct ViewportArguments;
-}
 #endif
 
 #if USE(SOUP)
-namespace WebCore {
 struct SoupNetworkProxySettings;
-}
 #endif
 
 #if PLATFORM(WPE)
-namespace WebCore {
-struct PasteboardWebContents;
-}
+struct PasteboardWebContent;
 #endif
 
 #if ENABLE(CONTENT_FILTERING)
-namespace WebCore {
 class ContentFilterUnblockHandler;
-}
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-namespace WebCore {
 class MediaPlaybackTargetContext;
-}
 #endif
 
 #if ENABLE(MEDIA_SESSION)
-namespace WebCore {
 class MediaSessionMetadata;
-}
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-namespace WebCore {
 class CaptureDevice;
 struct MediaConstraints;
-}
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
-namespace WebCore {
 using IDBKeyPath = Variant<String, Vector<String>>;
-}
 #endif
+}
 
 namespace IPC {
 

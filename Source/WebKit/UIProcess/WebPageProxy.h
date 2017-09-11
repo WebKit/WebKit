@@ -170,8 +170,8 @@ enum class HasInsecureContent;
 enum class NotificationDirection;
 enum class ShouldSample;
 
-template <typename> class BoxExtent;
-using FloatBoxExtent = BoxExtent<float>;
+template <typename> class RectEdges;
+using FloatBoxExtent = RectEdges<float>;
 }
 
 #if PLATFORM(GTK)

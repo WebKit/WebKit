@@ -292,7 +292,7 @@ def class_template_headers(template_string):
     template_string = template_string.strip()
 
     class_template_types = {
-        'WebCore::BoxExtent': {'headers': ['<WebCore/LengthBox.h>'], 'argument_coder_headers': ['"WebCoreArgumentCoders.h"']},
+        'WebCore::RectEdges': {'headers': ['<WebCore/RectEdges.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'HashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::optional': {'headers': ['<wtf/Optional.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'OptionSet': {'headers': ['<wtf/OptionSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},

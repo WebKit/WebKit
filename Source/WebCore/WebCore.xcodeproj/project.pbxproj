@@ -2730,6 +2730,7 @@
 		5CE5D9AC1DB89A0600CE7A8D /* JSTextEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5D9A91DB899FC00CE7A8D /* JSTextEncoder.cpp */; };
 		5CE5D9AD1DB89A0E00CE7A8D /* TextDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5D9A01DB897C300CE7A8D /* TextDecoder.cpp */; };
 		5CE5D9AE1DB89A1300CE7A8D /* TextEncoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CE5D9A31DB897C300CE7A8D /* TextEncoder.cpp */; };
+		5CEEE4361F5F8F210014A5F5 /* RectEdges.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C97A3361F5F7A6500105207 /* RectEdges.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CFC434E192406A900A0D3B5 /* PointerLockController.cpp */; };
 		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
 		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
@@ -10607,6 +10608,7 @@
 		5C6E653F1D5CEDC900F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
 		5C6E65401D5CEDC900F7862E /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLParser.h; sourceTree = "<group>"; };
 		5C7C88D71D0F1F2B009D2F6D /* SocketProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SocketProvider.h; sourceTree = "<group>"; };
+		5C97A3361F5F7A6500105207 /* RectEdges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectEdges.h; sourceTree = "<group>"; };
 		5C9B860B1C21E3C600110F36 /* NetworkLoadMetrics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkLoadMetrics.mm; sourceTree = "<group>"; };
 		5C9EF16F1DFF719900A452E3 /* XPathGrammar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XPathGrammar.cpp; sourceTree = "<group>"; };
 		5C9EF1701DFF719900A452E3 /* XPathGrammar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPathGrammar.h; sourceTree = "<group>"; };
@@ -24540,6 +24542,7 @@
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				0081FEFD16B0A244008AAA7A /* PublicSuffix.h */,
+				5C97A3361F5F7A6500105207 /* RectEdges.h */,
 				9831AE49154225A200FE2644 /* ReferrerPolicy.h */,
 				CDFC360318CA61C20026E56F /* RemoteCommandListener.cpp */,
 				CDFC360418CA61C20026E56F /* RemoteCommandListener.h */,
@@ -29520,6 +29523,7 @@
 				91B952241F58A58F00931DC2 /* RecordingSwizzleTypes.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
 				FD45A958175D414C00C21EC8 /* RectangleShape.h in Headers */,
+				5CEEE4361F5F8F210014A5F5 /* RectEdges.h in Headers */,
 				9831AE4A154225C900FE2644 /* ReferrerPolicy.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				6CDDE8D01770BB220016E072 /* RegionOversetState.h in Headers */,

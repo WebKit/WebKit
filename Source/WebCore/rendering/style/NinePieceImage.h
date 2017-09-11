@@ -76,26 +76,26 @@ inline bool isVerticalPiece(ImagePiece piece)
     return piece == LeftPiece || piece == RightPiece || piece == MiddlePiece;
 }
 
-inline PhysicalBoxSide imagePieceHorizontalSide(ImagePiece piece)
+inline std::optional<PhysicalBoxSide> imagePieceHorizontalSide(ImagePiece piece)
 {
     if (piece == TopLeftPiece || piece == TopPiece || piece == TopRightPiece)
-        return TopSide;
+        return PhysicalBoxSide::Top;
 
     if (piece == BottomLeftPiece || piece == BottomPiece || piece == BottomRightPiece)
-        return BottomSide;
+        return PhysicalBoxSide::Bottom;
 
-    return NilSide;
+    return std::nullopt;
 }
 
-inline PhysicalBoxSide imagePieceVerticalSide(ImagePiece piece)
+inline std::optional<PhysicalBoxSide> imagePieceVerticalSide(ImagePiece piece)
 {
     if (piece == TopLeftPiece || piece == LeftPiece || piece == BottomLeftPiece)
-        return LeftSide;
+        return PhysicalBoxSide::Left;
 
     if (piece == TopRightPiece || piece == RightPiece || piece == BottomRightPiece)
-        return RightSide;
+        return PhysicalBoxSide::Right;
 
-    return NilSide;
+    return std::nullopt;
 }
 
 class NinePieceImage {

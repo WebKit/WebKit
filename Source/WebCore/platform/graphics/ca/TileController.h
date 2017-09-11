@@ -219,7 +219,7 @@ private:
     // of those tiles will be equivalent to the width of the other tiles in the grid. m_marginRight and
     // m_marginLeft are the width in pixels of the right and left margin tiles, respectively. The height of
     // those tiles will be equivalent to the height of the other tiles in the grid.
-    BoxExtent<bool> m_marginEdges;
+    RectEdges<bool> m_marginEdges;
     
     bool m_isInWindow { false };
     bool m_scrollingPerformanceLoggingEnabled { false };

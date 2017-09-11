@@ -1720,7 +1720,7 @@ LayoutBoxExtent RenderStyle::getShadowInsetExtent(const ShadowData* shadow) cons
         left = std::max<LayoutUnit>(left, shadow->x() + extentAndSpread);
     }
 
-    return LayoutBoxExtent(top, right, bottom, left);
+    return LayoutBoxExtent(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left));
 }
 
 void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit &left, LayoutUnit &right) const

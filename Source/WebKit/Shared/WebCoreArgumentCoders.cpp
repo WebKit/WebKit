@@ -55,6 +55,7 @@
 #include <WebCore/Path.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
+#include <WebCore/RectEdges.h>
 #include <WebCore/Region.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoadStatistics.h>

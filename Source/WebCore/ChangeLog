@@ -1,3 +1,93 @@
+2017-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize BoxExtent into RectEdges
+        https://bugs.webkit.org/show_bug.cgi?id=176437
+
+        Reviewed by Simon Fraser.
+
+        And give it its own header.
+        No change in behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSProperty.cpp:
+        (WebCore::resolveToPhysicalProperty):
+        (WebCore::CSSProperty::resolveDirectionAwareProperty):
+        * platform/LengthBox.h:
+        (WebCore::LengthBox::LengthBox):
+        (WebCore::BoxExtent::BoxExtent): Deleted.
+        (WebCore::BoxExtent::at): Deleted.
+        (WebCore::BoxExtent::top): Deleted.
+        (WebCore::BoxExtent::right): Deleted.
+        (WebCore::BoxExtent::bottom): Deleted.
+        (WebCore::BoxExtent::left): Deleted.
+        (WebCore::BoxExtent::at const): Deleted.
+        (WebCore::BoxExtent::top const): Deleted.
+        (WebCore::BoxExtent::right const): Deleted.
+        (WebCore::BoxExtent::bottom const): Deleted.
+        (WebCore::BoxExtent::left const): Deleted.
+        (WebCore::BoxExtent::setAt): Deleted.
+        (WebCore::BoxExtent::setTop): Deleted.
+        (WebCore::BoxExtent::setRight): Deleted.
+        (WebCore::BoxExtent::setBottom): Deleted.
+        (WebCore::BoxExtent::setLeft): Deleted.
+        (WebCore::BoxExtent::before): Deleted.
+        (WebCore::BoxExtent::after): Deleted.
+        (WebCore::BoxExtent::start): Deleted.
+        (WebCore::BoxExtent::end): Deleted.
+        (WebCore::BoxExtent::before const): Deleted.
+        (WebCore::BoxExtent::after const): Deleted.
+        (WebCore::BoxExtent::start const): Deleted.
+        (WebCore::BoxExtent::end const): Deleted.
+        (WebCore::BoxExtent::setBefore): Deleted.
+        (WebCore::BoxExtent::setAfter): Deleted.
+        (WebCore::BoxExtent::setStart): Deleted.
+        (WebCore::BoxExtent::setEnd): Deleted.
+        (WebCore::BoxExtent::operator== const): Deleted.
+        (WebCore::BoxExtent::operator!= const): Deleted.
+        * platform/RectEdges.h: Added.
+        (WebCore::RectEdges::RectEdges):
+        (WebCore::RectEdges::at):
+        (WebCore::RectEdges::top):
+        (WebCore::RectEdges::right):
+        (WebCore::RectEdges::bottom):
+        (WebCore::RectEdges::left):
+        (WebCore::RectEdges::at const):
+        (WebCore::RectEdges::top const):
+        (WebCore::RectEdges::right const):
+        (WebCore::RectEdges::bottom const):
+        (WebCore::RectEdges::left const):
+        (WebCore::RectEdges::setAt):
+        (WebCore::RectEdges::setTop):
+        (WebCore::RectEdges::setRight):
+        (WebCore::RectEdges::setBottom):
+        (WebCore::RectEdges::setLeft):
+        (WebCore::RectEdges::before):
+        (WebCore::RectEdges::after):
+        (WebCore::RectEdges::start):
+        (WebCore::RectEdges::end):
+        (WebCore::RectEdges::before const):
+        (WebCore::RectEdges::after const):
+        (WebCore::RectEdges::start const):
+        (WebCore::RectEdges::end const):
+        (WebCore::RectEdges::setBefore):
+        (WebCore::RectEdges::setAfter):
+        (WebCore::RectEdges::setStart):
+        (WebCore::RectEdges::setEnd):
+        (WebCore::RectEdges::operator== const):
+        (WebCore::RectEdges::operator!= const):
+        * platform/graphics/ca/TileController.cpp:
+        (WebCore::TileController::setHasMargins):
+        * platform/graphics/ca/TileController.h:
+        * platform/text/WritingMode.h:
+        (WebCore::isHorizontalPhysicalSide):
+        * rendering/style/NinePieceImage.cpp:
+        (WebCore::NinePieceImage::isEmptyPieceRect):
+        * rendering/style/NinePieceImage.h:
+        (WebCore::imagePieceHorizontalSide):
+        (WebCore::imagePieceVerticalSide):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::getShadowInsetExtent const):
+
 2017-09-11  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [WinCairo] Fix the wincairo build after r221839

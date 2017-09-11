@@ -29,8 +29,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WritingMode_h
-#define WritingMode_h
+#pragma once
 
 namespace WebCore {
 
@@ -113,24 +112,23 @@ inline bool isFlippedLinesWritingMode(WritingMode writingMode)
     return isVerticalWritingMode(writingMode) != isFlippedWritingMode(writingMode);
 }
 
-enum LogicalBoxSide {
-    BeforeSide,
-    EndSide,
-    AfterSide,
-    StartSide
+enum class LogicalBoxSide : uint8_t {
+    Before,
+    End,
+    After,
+    Start
 };
 
-enum PhysicalBoxSide {
-    NilSide = -1,
-    TopSide,
-    RightSide,
-    BottomSide,
-    LeftSide
+enum class PhysicalBoxSide : uint8_t {
+    Top,
+    Right,
+    Bottom,
+    Left
 };
 
 inline bool isHorizontalPhysicalSide(PhysicalBoxSide physicalSide)
 {
-    return physicalSide == LeftSide || physicalSide == RightSide;
+    return physicalSide == PhysicalBoxSide::Left || physicalSide == PhysicalBoxSide::Right;
 }
 
 inline PhysicalBoxSide mirrorPhysicalSide(PhysicalBoxSide physicalSide)
@@ -168,5 +166,3 @@ inline PhysicalBoxSide mapLogicalSideToPhysicalSide(WritingMode writingMode, Log
 }
 
 } // namespace WebCore
-
-#endif // WritingMode_h

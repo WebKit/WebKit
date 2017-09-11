@@ -667,7 +667,7 @@ void TileController::setScrollingModeIndication(ScrollingModeIndication scrollin
 
 void TileController::setHasMargins(bool marginTop, bool marginBottom, bool marginLeft, bool marginRight)
 {
-    BoxExtent<bool> marginEdges(marginTop, marginRight, marginBottom, marginLeft);
+    RectEdges<bool> marginEdges(marginTop, marginRight, marginBottom, marginLeft);
     if (marginEdges == m_marginEdges)
         return;
     
