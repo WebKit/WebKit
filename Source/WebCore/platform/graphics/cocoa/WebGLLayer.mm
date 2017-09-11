@@ -62,14 +62,48 @@ using namespace WebCore;
 #if !PLATFORM(IOS)
 -(CGLPixelFormatObj)copyCGLPixelFormatForDisplayMask:(uint32_t)mask
 {
-    // FIXME: The mask param tells you which display (on a multi-display system)
-    // is to be used. But since we are now getting the pixel format from the
-    // Canvas CGL context, we don't use it. This seems to do the right thing on
-    // one multi-display system. But there may be cases where this is not the case.
-    // If needed we will have to set the display mask in the Canvas CGLContext and
-    // make sure it matches.
+    // We're basically copying the pixel format object from the existing
+    // WebGL context, so we don't need to use the display mask.
     UNUSED_PARAM(mask);
-    return CGLRetainPixelFormat(CGLGetPixelFormat(_context->platformGraphicsContext3D()));
+
+    CGLPixelFormatObj webglPixelFormat = CGLGetPixelFormat(_context->platformGraphicsContext3D());
+
+    Vector<CGLPixelFormatAttribute> attribs;
+    GLint value;
+
+    CGLDescribePixelFormat(webglPixelFormat, 0, kCGLPFAColorSize, &value);
+    attribs.append(kCGLPFAColorSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(value));
+
+    // We don't need to specify a depth size since we're only
+    // using this context as a 2d blit destination for the WebGL FBO.
+    attribs.append(kCGLPFADepthSize);
+    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
+
+    CGLDescribePixelFormat(webglPixelFormat, 0, kCGLPFAAllowOfflineRenderers, &value);
+    if (value)
+        attribs.append(kCGLPFAAllowOfflineRenderers);
+
+    CGLDescribePixelFormat(webglPixelFormat, 0, kCGLPFAAccelerated, &value);
+    if (value)
+        attribs.append(kCGLPFAAccelerated);
+
+    CGLDescribePixelFormat(webglPixelFormat, 0, kCGLPFAOpenGLProfile, &value);
+    if (value) {
+        attribs.append(kCGLPFAOpenGLProfile);
+        attribs.append(static_cast<CGLPixelFormatAttribute>(value));
+    }
+
+    attribs.append(static_cast<CGLPixelFormatAttribute>(0));
+
+    CGLPixelFormatObj pixelFormat;
+    GLint numPixelFormats = 0;
+    CGLChoosePixelFormat(attribs.data(), &pixelFormat, &numPixelFormats);
+
+    ASSERT(pixelFormat);
+    ASSERT(numPixelFormats);
+
+    return pixelFormat;
 }
 
 -(CGLContextObj)copyCGLContextForPixelFormat:(CGLPixelFormatObj)pixelFormat
