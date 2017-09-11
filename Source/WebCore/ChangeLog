@@ -1,3 +1,12 @@
+2017-09-11  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Add Modules/cache to list of forwarding headers folders.
+        https://bugs.webkit.org/show_bug.cgi?id=176737
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+
 2017-09-11  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] aria-autocomplete not exposed on comboboxes
