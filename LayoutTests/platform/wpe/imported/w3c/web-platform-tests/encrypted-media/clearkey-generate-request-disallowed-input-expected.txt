@@ -1,5 +1,5 @@
 
-FAIL org.w3.clearkey, temporary, keyids, initData longer than 64Kb characters assert_equals: expected "TypeError" but got "NotAllowedError"
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_equals: expected "TypeError" but got "NotAllowedError"
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_equals: expected "TypeError" but got "NotAllowedError"
+PASS org.w3.clearkey, temporary, keyids, initData longer than 64Kb characters 
+FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_equals: expected "TypeError" but got "NotSupportedError"
+FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_equals: expected "TypeError" but got "NotSupportedError"
 

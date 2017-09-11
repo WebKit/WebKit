@@ -34,6 +34,7 @@
 #include "CDMInstance.h"
 #include "CDMPrivate.h"
 #include "SharedBuffer.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -102,6 +103,7 @@ public:
     const Vector<Key>& keys() const { return m_keys; }
 
 private:
+    WeakPtrFactory<CDMInstanceClearKey> m_weakPtrFactory;
     Vector<Key> m_keys;
 };
 

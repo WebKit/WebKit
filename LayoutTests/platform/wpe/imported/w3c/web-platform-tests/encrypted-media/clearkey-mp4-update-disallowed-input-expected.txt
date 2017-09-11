@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-FAIL update() with invalid response (longer than 64Kb characters) should fail. assert_equals: expected "TypeError" but got "NotAllowedError"
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT update() with invalid response (longer than 64Kb characters) should fail. Test timed out
 

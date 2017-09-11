@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-FAIL Update with invalid Clear Key license assert_unreached: Error: NotAllowedError Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Update with invalid Clear Key license Test timed out
 

@@ -1,3 +1,37 @@
+2017-09-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] ClearKey: implement CDMInstanceClearKey state modifiers, callback dispatches
+        https://bugs.webkit.org/show_bug.cgi?id=176687
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the state modification methods on the CDMInstanceClearKey class.
+        Initialization method is a no-op, but returns Succeeded. Distinctive
+        identifier and persistent state setters return Succeeded if the passed-in
+        value is false. setServerCertificate() still returns Failed due to server
+        certificates not being supported in this ClearKey implementation.
+
+        The license and session operation methods are also implemented, but for
+        now the implementations simply schedule a main thread dispatch that
+        invokes the callback with failure-indicating values. This avoids various
+        tests timing out, instead preferring that the tests for now fail with an
+        exception (in most cases NotSupportedError).
+
+        No new tests -- relevant tests have baselines updated.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::CDMInstanceClearKey):
+        (WebCore::CDMInstanceClearKey::initializeWithConfiguration):
+        (WebCore::CDMInstanceClearKey::setDistinctiveIdentifiersAllowed):
+        (WebCore::CDMInstanceClearKey::setPersistentStateAllowed):
+        (WebCore::CDMInstanceClearKey::setServerCertificate):
+        (WebCore::CDMInstanceClearKey::requestLicense):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+        (WebCore::CDMInstanceClearKey::loadSession):
+        (WebCore::CDMInstanceClearKey::closeSession):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+        * platform/encryptedmedia/clearkey/CDMClearKey.h:
+
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Modernize BoxExtent into RectEdges

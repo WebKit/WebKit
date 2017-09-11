@@ -1,4 +1,4 @@
 
-FAIL org.w3.clearkey, setMediaKeys to multiple video elements assert_unreached: Error: assert_equals: expected "QuotaExceededError" but got "NotAllowedError" Reached unreachable code
+PASS org.w3.clearkey, setMediaKeys to multiple video elements 
 
 

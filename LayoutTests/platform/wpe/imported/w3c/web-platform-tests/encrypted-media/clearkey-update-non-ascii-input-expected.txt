@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-FAIL org.w3.clearkey test handling of non-ASCII responses for update() assert_unreached: Error: NotAllowedError Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT org.w3.clearkey test handling of non-ASCII responses for update() Test timed out
 

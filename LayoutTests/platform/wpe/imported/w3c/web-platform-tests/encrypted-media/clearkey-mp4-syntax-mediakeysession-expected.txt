@@ -1,9 +1,9 @@
 
-FAIL org.w3.clearkey test MediaKeySession generateRequest() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeySession load() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test if MediaKeySession generateRequest() resolves for various sessions promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeySession update() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeySession close() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeySession remove() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeySession attribute syntax. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
+PASS org.w3.clearkey test MediaKeySession generateRequest() exceptions. 
+PASS org.w3.clearkey test MediaKeySession load() exceptions. 
+FAIL org.w3.clearkey test if MediaKeySession generateRequest() resolves for various sessions promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL org.w3.clearkey test MediaKeySession update() exceptions. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS org.w3.clearkey test MediaKeySession close() exceptions. 
+PASS org.w3.clearkey test MediaKeySession remove() exceptions. 
+PASS org.w3.clearkey test MediaKeySession attribute syntax. 
 

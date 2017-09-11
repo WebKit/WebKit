@@ -1,5 +1,7 @@
 
-FAIL org.w3.clearkey test MediaKeys attribute syntax promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeys setServerCertificate() exceptions. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
-FAIL org.w3.clearkey test MediaKeys setServerCertificate() syntax with non-empty certificate. promise_test: Unhandled rejection with value: object "NotAllowedError: The request is not allowed by the user agent or the platform in the current context, possibly because the user denied permission."
+PASS org.w3.clearkey test MediaKeys attribute syntax 
+FAIL org.w3.clearkey test MediaKeys setServerCertificate() exceptions. assert_unreached: function "function (mk) {
+                return mk.setServerCertificate(new Uint8Array(0));
+            }" Reached unreachable code
+PASS org.w3.clearkey test MediaKeys setServerCertificate() syntax with non-empty certificate. 
 

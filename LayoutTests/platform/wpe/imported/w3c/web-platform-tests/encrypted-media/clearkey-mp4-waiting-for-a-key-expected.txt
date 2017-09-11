@@ -1,3 +1,5 @@
 
-FAIL Waiting for a key. assert_unreached: Error: NotAllowedError Reached unreachable code
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT Waiting for a key. Test timed out
 
