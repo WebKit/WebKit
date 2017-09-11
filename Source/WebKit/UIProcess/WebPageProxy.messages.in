@@ -52,16 +52,16 @@ messages -> WebPageProxy {
     SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)
     GetToolbarsAreVisible() -> (bool toolbarsAreVisible) Delayed
-    SetMenuBarIsVisible(bool menuBarIsVisible);
-    GetMenuBarIsVisible() -> (bool menuBarIsVisible);
+    SetMenuBarIsVisible(bool menuBarIsVisible)
+    GetMenuBarIsVisible() -> (bool menuBarIsVisible) Delayed
     SetStatusBarIsVisible(bool statusBarIsVisible)
-    GetStatusBarIsVisible() -> (bool statusBarIsVisible)
+    GetStatusBarIsVisible() -> (bool statusBarIsVisible) Delayed
     SetIsResizable(bool isResizable)
-    GetIsResizable() -> (bool isResizable)
+    GetIsResizable() -> (bool isResizable) Delayed
     SetWindowFrame(WebCore::FloatRect windowFrame)
-    GetWindowFrame() -> (WebCore::FloatRect windowFrame)
-    ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint)
-    RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame)
+    GetWindowFrame() -> (WebCore::FloatRect windowFrame) Delayed
+    ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Delayed
+    RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Delayed
 
 #if PLATFORM(COCOA)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message)

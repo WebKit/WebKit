@@ -68,7 +68,7 @@ class WebFrameProxy;
     NSTimer *_autodisplayResumeTimer;
 }
 
-- (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame view:(NSView *)wkView;
+- (id)initWithFrameProxy:(WebKit::WebFrameProxy&)frame view:(NSView *)wkView;
 
 @end
 

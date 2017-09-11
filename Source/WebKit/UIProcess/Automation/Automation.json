@@ -225,7 +225,8 @@
             "description": "Fetches information about all open browsing contexts (windows and tabs) in the automation session.",
             "returns": [
                 { "name": "contexts", "type": "array", "items": { "$ref": "BrowsingContext" }, "description": "All known browsing contexts available to the session." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "getBrowsingContext",
@@ -235,7 +236,8 @@
             ],
             "returns": [
                 { "name": "context", "$ref": "BrowsingContext", "description": "The browsing context available to the session." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "createBrowsingContext",
@@ -265,7 +267,8 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be resized." },
                 { "name": "size", "$ref": "Size", "description": "The new size for the browsing context's window." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "moveWindowOfBrowsingContext",
@@ -273,7 +276,8 @@
             "parameters": [
                 { "name": "handle", "$ref": "BrowsingContextHandle", "description": "The handle for the browsing context to be moved." },
                 { "name": "origin", "$ref": "Point", "description": "The new origin for the browsing context's window. The position is interpreted in screen coordinate space, relative to the upper left corner of the screen." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "navigateBrowsingContext",
@@ -365,7 +369,8 @@
             ],
             "returns": [
                 { "name": "position", "$ref": "Point", "description": "The updated position of the mouse cursor, specified in viewport coordinates." }
-            ]
+            ],
+            "async": true
         },
         {
             "name": "performKeyboardInteractions",

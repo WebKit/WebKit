@@ -1,3 +1,82 @@
+2017-09-11  Alex Christensen  <achristensen@webkit.org>
+
+        Modernize and make API::UIClient more asynchronous
+        https://bugs.webkit.org/show_bug.cgi?id=176583
+
+        Reviewed by Brian Burg.
+
+        API::UIClient calls that return values synchronously require synchronous APIs unnecessarily.
+        Having them call completion handlers with the results instead allows us to make asynchronous
+        APIs, and existing synchronous APIs can just call the completion handlers immediately.
+        
+        Unfortunately an assumption that API::UIClient::windowFrame returns synchronously had worked
+        its way into the WebAutomationSession, which calls WebPageProxy::getWindowFrame.  Making it
+        asynchronous required making some automation protocols asynchronous so they can send their
+        result once they have the resulting frames from the UIClient.
+        
+        No change in behaviour.
+
+        * UIProcess/API/APIUIClient.h:
+        (API::UIClient::setToolbarsAreVisible):
+        (API::UIClient::menuBarIsVisible):
+        (API::UIClient::setMenuBarIsVisible):
+        (API::UIClient::statusBarIsVisible):
+        (API::UIClient::setStatusBarIsVisible):
+        (API::UIClient::isResizable):
+        (API::UIClient::setIsResizable):
+        (API::UIClient::setWindowFrame):
+        (API::UIClient::windowFrame):
+        (API::UIClient::headerHeight):
+        (API::UIClient::footerHeight):
+        (API::UIClient::drawHeader):
+        (API::UIClient::drawFooter):
+        (API::UIClient::printFrame):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageUIClient):
+        * UIProcess/Automation/Automation.json:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::buildBrowsingContextForPage):
+        (WebKit::WebAutomationSession::getNextContext):
+        (WebKit::WebAutomationSession::getBrowsingContexts):
+        (WebKit::WebAutomationSession::getBrowsingContext):
+        (WebKit::WebAutomationSession::resizeWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::moveWindowOfBrowsingContext):
+        (WebKit::WebAutomationSession::performMouseInteraction):
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::UIClient::printFrame):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::printOperationWithPrintInfo):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runJavaScriptPrompt):
+        (WebKit::WebPageProxy::setToolbarsAreVisible):
+        (WebKit::WebPageProxy::setMenuBarIsVisible):
+        (WebKit::WebPageProxy::getMenuBarIsVisible):
+        (WebKit::WebPageProxy::setStatusBarIsVisible):
+        (WebKit::WebPageProxy::getStatusBarIsVisible):
+        (WebKit::WebPageProxy::setIsResizable):
+        (WebKit::WebPageProxy::getIsResizable):
+        (WebKit::WebPageProxy::setWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrame):
+        (WebKit::WebPageProxy::getWindowFrameWithCompletionHandler):
+        (WebKit::WebPageProxy::screenToRootView):
+        (WebKit::WebPageProxy::rootViewToScreen):
+        (WebKit::WebPageProxy::printFrame):
+        (WebKit::WebPageProxy::headerHeight):
+        (WebKit::WebPageProxy::footerHeight):
+        (WebKit::WebPageProxy::drawHeader):
+        (WebKit::WebPageProxy::drawFooter):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WKPrintingView.h:
+        * UIProcess/mac/WKPrintingView.mm:
+        (-[WKPrintingView initWithFrameProxy:view:]):
+        (-[WKPrintingView _adjustPrintingMarginsForHeaderAndFooter]):
+        (-[WKPrintingView drawPageBorderWithSize:]):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+
 2017-09-11  Stephan Szabo  <stephan.szabo@sony.com>
 
         [WinCairo] Add entry Web Process files for wincairo webkit

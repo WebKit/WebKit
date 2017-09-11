@@ -207,11 +207,8 @@ String WebAutomationSession::handleForWebFrameProxy(const WebFrameProxy& webFram
     return handleForWebFrameID(webFrameProxy.frameID());
 }
 
-RefPtr<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buildBrowsingContextForPage(WebPageProxy& page)
+Ref<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::buildBrowsingContextForPage(WebPageProxy& page, WebCore::FloatRect windowFrame)
 {
-    WebCore::FloatRect windowFrame;
-    page.getWindowFrame(windowFrame);
-
     auto originObject = Inspector::Protocol::Automation::Point::create()
         .setX(windowFrame.x())
         .setY(windowFrame.y())
@@ -235,28 +232,44 @@ RefPtr<Inspector::Protocol::Automation::BrowsingContext> WebAutomationSession::b
 
 // Platform-independent Commands.
 
-void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>>& contexts)
+void WebAutomationSession::getNextContext(Ref<WebAutomationSession>&& protectedThis, Vector<Ref<WebPageProxy>>&& pages, Ref<Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>> contexts, Ref<WebAutomationSession::GetBrowsingContextsCallback>&& callback)
 {
-    contexts = Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>::create();
-
+    if (pages.isEmpty()) {
+        callback->sendSuccess(WTFMove(contexts));
+        return;
+    }
+    auto page = pages.takeLast();
+    auto& webPageProxy = page.get();
+    webPageProxy.getWindowFrameWithCallback([this, protectedThis = WTFMove(protectedThis), callback = WTFMove(callback), pages = WTFMove(pages), contexts = WTFMove(contexts), page = WTFMove(page)](WebCore::FloatRect windowFrame) mutable {
+        contexts->addItem(protectedThis->buildBrowsingContextForPage(page.get(), windowFrame));
+        getNextContext(WTFMove(protectedThis), WTFMove(pages), WTFMove(contexts), WTFMove(callback));
+    });
+}
+    
+void WebAutomationSession::getBrowsingContexts(Inspector::ErrorString& errorString, Ref<GetBrowsingContextsCallback>&& callback)
+{
+    Vector<Ref<WebPageProxy>> pages;
     for (auto& process : m_processPool->processes()) {
         for (auto* page : process->pages()) {
             ASSERT(page);
             if (!page->isControlledByAutomation())
                 continue;
-
-            contexts->addItem(buildBrowsingContextForPage(*page));
+            pages.append(*page);
         }
     }
+    
+    getNextContext(makeRef(*this), WTFMove(pages), Inspector::Protocol::Array<Inspector::Protocol::Automation::BrowsingContext>::create(), WTFMove(callback));
 }
 
-void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorString, const String& handle, RefPtr<Inspector::Protocol::Automation::BrowsingContext>& context)
+void WebAutomationSession::getBrowsingContext(Inspector::ErrorString& errorString, const String& handle, Ref<GetBrowsingContextCallback>&& callback)
 {
     WebPageProxy* page = webPageProxyForHandle(handle);
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    context = buildBrowsingContextForPage(*page);
+    page->getWindowFrameWithCallback([protectedThis = makeRef(*this), page = makeRef(*page), callback = WTFMove(callback)](WebCore::FloatRect windowFrame) mutable {
+        callback->sendSuccess(protectedThis->buildBrowsingContextForPage(page.get(), windowFrame));
+    });
 }
 
 void WebAutomationSession::createBrowsingContext(Inspector::ErrorString& errorString, String* handle)
@@ -301,7 +314,7 @@ void WebAutomationSession::switchToBrowsingContext(Inspector::ErrorString& error
     page->process().send(Messages::WebAutomationSessionProxy::FocusFrame(page->pageID(), frameID.value()), 0);
 }
 
-void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& sizeObject)
+void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& sizeObject, Ref<ResizeWindowOfBrowsingContextCallback>&& callback)
 {
 #if PLATFORM(IOS)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -324,27 +337,30 @@ void WebAutomationSession::resizeWindowOfBrowsingContext(Inspector::ErrorString&
     if (!page)
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-    WebCore::FloatRect originalFrame;
-    page->getWindowFrame(originalFrame);
+    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), width, height](WebCore::FloatRect originalFrame) mutable {
+        WebCore::FloatRect newFrame = WebCore::FloatRect(originalFrame.location(), WebCore::FloatSize(width, height));
+        if (newFrame == originalFrame)
+            return callback->sendSuccess();
 
-    WebCore::FloatRect newFrame = WebCore::FloatRect(originalFrame.location(), WebCore::FloatSize(width, height));
-    if (newFrame == originalFrame)
-        return;
+        page->setWindowFrame(newFrame);
 
-    page->setWindowFrame(newFrame);
-
-#if !PLATFORM(GTK)
-    // If nothing changed at all, it's probably fair to report that something went wrong.
-    // (We can't assume that the requested frame size will be honored exactly, however.)
-    WebCore::FloatRect updatedFrame;
-    page->getWindowFrame(updatedFrame);
-    if (originalFrame == updatedFrame)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window size was expected to have changed, but did not.");
+#if PLATFORM(GTK)
+        callback->sendSuccess();
+#else
+        // If nothing changed at all, it's probably fair to report that something went wrong.
+        // (We can't assume that the requested frame size will be honored exactly, however.)
+        page->getWindowFrameWithCallback([callback = WTFMove(callback), originalFrame](WebCore::FloatRect updatedFrame) {
+            if (originalFrame == updatedFrame)
+                callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "The window size was expected to have changed, but did not."));
+            else
+                callback->sendSuccess();
+        });
 #endif
+    });
 #endif
 }
 
-void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& positionObject)
+void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& positionObject, Ref<MoveWindowOfBrowsingContextCallback>&& callback)
 {
 #if PLATFORM(IOS)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -368,22 +384,27 @@ void WebAutomationSession::moveWindowOfBrowsingContext(Inspector::ErrorString& e
         FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
     WebCore::FloatRect originalFrame;
-    page->getWindowFrame(originalFrame);
+    page->getWindowFrameWithCallback([callback = WTFMove(callback), page = makeRef(*page), x, y](WebCore::FloatRect originalFrame) mutable {
 
-    WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x, y), originalFrame.size());
-    if (newFrame == originalFrame)
-        return;
+        WebCore::FloatRect newFrame = WebCore::FloatRect(WebCore::FloatPoint(x, y), originalFrame.size());
+        if (newFrame == originalFrame)
+            return callback->sendSuccess();
 
-    page->setWindowFrame(newFrame);
+        page->setWindowFrame(newFrame);
 
-#if !PLATFORM(GTK)
-    // If nothing changed at all, it's probably fair to report that something went wrong.
-    // (We can't assume that the requested frame size will be honored exactly, however.)
-    WebCore::FloatRect updatedFrame;
-    page->getWindowFrame(updatedFrame);
-    if (originalFrame == updatedFrame)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InternalError, "The window position was expected to have changed, but did not.");
+#if PLATFORM(GTK)
+        callback->sendSuccess();
+#else
+        // If nothing changed at all, it's probably fair to report that something went wrong.
+        // (We can't assume that the requested frame size will be honored exactly, however.)
+        page->getWindowFrameWithCallback([callback = WTFMove(callback), originalFrame](WebCore::FloatRect updatedFrame) {
+            if (originalFrame == updatedFrame)
+                callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InternalError, "The window position was expected to have changed, but did not."));
+            else
+                callback->sendSuccess();
+        });
 #endif
+    });
 #endif
 }
 
@@ -1221,7 +1242,7 @@ static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protoco
 }
 #endif // USE(APPKIT)
 
-void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, RefPtr<Inspector::Protocol::Automation::Point>& updatedPositionObject)
+void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& errorString, const String& handle, const Inspector::InspectorObject& requestedPositionObject, const String& mouseButtonString, const String& mouseInteractionString, const Inspector::InspectorArray& keyModifierStrings, Ref<PerformMouseInteractionCallback>&& callback)
 {
 #if !USE(APPKIT) && !PLATFORM(GTK)
     FAIL_WITH_PREDEFINED_ERROR(NotImplemented);
@@ -1238,22 +1259,6 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
     if (!requestedPositionObject.getDouble(WTF::ASCIILiteral("y"), y))
         FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(MissingParameter, "The parameter 'y' was not found.");
 
-    WebCore::FloatRect windowFrame;
-    page->getWindowFrame(windowFrame);
-
-    x = std::min(std::max(0.0f, x), windowFrame.size().width());
-    y = std::min(std::max(0.0f, y + page->topContentInset()), windowFrame.size().height());
-
-    WebCore::IntPoint viewPosition = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
-
-    auto parsedInteraction = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseInteraction>(mouseInteractionString);
-    if (!parsedInteraction)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'interaction' is invalid.");
-
-    auto parsedButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(mouseButtonString);
-    if (!parsedButton)
-        FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'button' is invalid.");
-
     WebEvent::Modifiers keyModifiers = (WebEvent::Modifiers)0;
     for (auto it = keyModifierStrings.begin(); it != keyModifierStrings.end(); ++it) {
         String modifierString;
@@ -1266,13 +1271,29 @@ void WebAutomationSession::performMouseInteraction(Inspector::ErrorString& error
         WebEvent::Modifiers enumValue = protocolModifierToWebEventModifier(parsedModifier.value());
         keyModifiers = (WebEvent::Modifiers)(enumValue | keyModifiers);
     }
+    
+    page->getWindowFrameWithCallback([this, protectedThis = makeRef(*this), callback = WTFMove(callback), page = makeRef(*page), x, y, mouseInteractionString, mouseButtonString, keyModifiers](WebCore::FloatRect windowFrame) mutable {
 
-    platformSimulateMouseInteraction(*page, viewPosition, parsedInteraction.value(), parsedButton.value(), keyModifiers);
+        x = std::min(std::max(0.0f, x), windowFrame.size().width());
+        y = std::min(std::max(0.0f, y + page->topContentInset()), windowFrame.size().height());
 
-    updatedPositionObject = Inspector::Protocol::Automation::Point::create()
-        .setX(x)
-        .setY(y - page->topContentInset())
-        .release();
+        WebCore::IntPoint viewPosition = WebCore::IntPoint(static_cast<int>(x), static_cast<int>(y));
+
+        auto parsedInteraction = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseInteraction>(mouseInteractionString);
+        if (!parsedInteraction)
+            return callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InvalidParameter, "The parameter 'interaction' is invalid."));
+
+        auto parsedButton = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::MouseButton>(mouseButtonString);
+        if (!parsedButton)
+            return callback->sendFailure(STRING_FOR_PREDEFINED_ERROR_NAME_AND_DETAILS(InvalidParameter, "The parameter 'button' is invalid."));
+
+        platformSimulateMouseInteraction(page, viewPosition, parsedInteraction.value(), parsedButton.value(), keyModifiers);
+
+        callback->sendSuccess(Inspector::Protocol::Automation::Point::create()
+            .setX(x)
+            .setY(y - page->topContentInset())
+            .release());
+    });
 #endif // USE(APPKIT)
 }
 

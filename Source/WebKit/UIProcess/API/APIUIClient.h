@@ -99,16 +99,16 @@ public:
     virtual void didNotHandleWheelEvent(WebKit::WebPageProxy*, const WebKit::NativeWebWheelEvent&) { }
 
     virtual void toolbarsAreVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
-    virtual void setToolbarsAreVisible(WebKit::WebPageProxy*, bool) { }
-    virtual bool menuBarIsVisible(WebKit::WebPageProxy*) { return true; }
-    virtual void setMenuBarIsVisible(WebKit::WebPageProxy*, bool) { }
-    virtual bool statusBarIsVisible(WebKit::WebPageProxy*) { return true; }
-    virtual void setStatusBarIsVisible(WebKit::WebPageProxy*, bool) { }
-    virtual bool isResizable(WebKit::WebPageProxy*) { return true; }
-    virtual void setIsResizable(WebKit::WebPageProxy*, bool) { }
+    virtual void setToolbarsAreVisible(WebKit::WebPageProxy&, bool) { }
+    virtual void menuBarIsVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void setMenuBarIsVisible(WebKit::WebPageProxy&, bool) { }
+    virtual void statusBarIsVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void setStatusBarIsVisible(WebKit::WebPageProxy&, bool) { }
+    virtual void isResizable(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
+    virtual void setIsResizable(WebKit::WebPageProxy&, bool) { }
 
-    virtual void setWindowFrame(WebKit::WebPageProxy*, const WebCore::FloatRect&) { }
-    virtual WebCore::FloatRect windowFrame(WebKit::WebPageProxy*) { return WebCore::FloatRect(); }
+    virtual void setWindowFrame(WebKit::WebPageProxy&, const WebCore::FloatRect&) { }
+    virtual void windowFrame(WebKit::WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler) { completionHandler({ }); }
 
     virtual bool canRunBeforeUnloadConfirmPanel() const { return false; }
     virtual void runBeforeUnloadConfirmPanel(WebKit::WebPageProxy*, const WTF::String&, WebKit::WebFrameProxy*, const WebCore::SecurityOriginData&, Function<void (bool)>&& completionHandler) { completionHandler(true); }
@@ -132,11 +132,11 @@ public:
     virtual bool decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy*, SecurityOrigin*, WebKit::NotificationPermissionRequest*) { return false; }
 
     // Printing.
-    virtual float headerHeight(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { return 0; }
-    virtual float footerHeight(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { return 0; }
-    virtual void drawHeader(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::FloatRect&) { }
-    virtual void drawFooter(WebKit::WebPageProxy*, WebKit::WebFrameProxy*, const WebCore::FloatRect&) { }
-    virtual void printFrame(WebKit::WebPageProxy*, WebKit::WebFrameProxy*) { }
+    virtual float headerHeight(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { return 0; }
+    virtual float footerHeight(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { return 0; }
+    virtual void drawHeader(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebCore::FloatRect&&) { }
+    virtual void drawFooter(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, WebCore::FloatRect&&) { }
+    virtual void printFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { }
 
     virtual bool canRunModal() const { return false; }
     virtual void runModal(WebKit::WebPageProxy*) { }

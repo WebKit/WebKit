@@ -851,10 +851,8 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
     }).get()];
 }
 
-void UIDelegate::UIClient::printFrame(WebPageProxy*, WebFrameProxy* webFrameProxy)
+void UIDelegate::UIClient::printFrame(WebPageProxy&, WebFrameProxy& webFrameProxy)
 {
-    ASSERT_ARG(webFrameProxy, webFrameProxy);
-
     if (!m_uiDelegate.m_delegateMethods.webViewPrintFrame)
         return;
 
@@ -862,7 +860,7 @@ void UIDelegate::UIClient::printFrame(WebPageProxy*, WebFrameProxy* webFrameProx
     if (!delegate)
         return;
 
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy->frameID()))];
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView printFrame:wrapper(API::FrameHandle::create(webFrameProxy.frameID()))];
 }
 
 void UIDelegate::UIClient::close(WebPageProxy*)

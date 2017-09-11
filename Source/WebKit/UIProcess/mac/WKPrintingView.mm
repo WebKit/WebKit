@@ -51,13 +51,13 @@ static BOOL isForcingPreviewUpdate;
 
 @implementation WKPrintingView
 
-- (id)initWithFrameProxy:(WebKit::WebFrameProxy*)frame view:(NSView *)wkView
+- (id)initWithFrameProxy:(WebKit::WebFrameProxy&)frame view:(NSView *)wkView
 {
     self = [super init]; // No frame rect to pass to NSView.
     if (!self)
         return nil;
 
-    _webFrame = frame;
+    _webFrame = &frame;
     _wkView = wkView;
 
     return self;
@@ -151,8 +151,8 @@ static BOOL isForcingPreviewUpdate;
     }
     
     CGFloat scale = [info scalingFactor];
-    [info setTopMargin:originalTopMargin + _webFrame->page()->headerHeight(_webFrame.get()) * scale];
-    [info setBottomMargin:originalBottomMargin + _webFrame->page()->footerHeight(_webFrame.get()) * scale];
+    [info setTopMargin:originalTopMargin + _webFrame->page()->headerHeight(*_webFrame) * scale];
+    [info setBottomMargin:originalBottomMargin + _webFrame->page()->footerHeight(*_webFrame) * scale];
 }
 
 - (BOOL)_isPrintingPreview
@@ -637,18 +637,18 @@ static CFStringRef linkDestinationName(PDFDocument *document, PDFDestination *de
     NSSize paperSize = [printInfo paperSize];
     CGFloat headerFooterLeft = [printInfo leftMargin] / scale;
     CGFloat headerFooterWidth = (paperSize.width - ([printInfo leftMargin] + [printInfo rightMargin])) / scale;
-    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - _webFrame->page()->footerHeight(_webFrame.get()), headerFooterWidth, _webFrame->page()->footerHeight(_webFrame.get()));
-    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, _webFrame->page()->headerHeight(_webFrame.get()));
+    NSRect footerRect = NSMakeRect(headerFooterLeft, [printInfo bottomMargin] / scale - _webFrame->page()->footerHeight(*_webFrame), headerFooterWidth, _webFrame->page()->footerHeight(*_webFrame));
+    NSRect headerRect = NSMakeRect(headerFooterLeft, (paperSize.height - [printInfo topMargin]) / scale, headerFooterWidth, _webFrame->page()->headerHeight(*_webFrame));
 
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     [currentContext saveGraphicsState];
     NSRectClip(headerRect);
-    _webFrame->page()->drawHeader(_webFrame.get(), headerRect);
+    _webFrame->page()->drawHeader(*_webFrame, headerRect);
     [currentContext restoreGraphicsState];
 
     [currentContext saveGraphicsState];
     NSRectClip(footerRect);
-    _webFrame->page()->drawFooter(_webFrame.get(), footerRect);
+    _webFrame->page()->drawFooter(*_webFrame, footerRect);
     [currentContext restoreGraphicsState];
 }
 

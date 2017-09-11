@@ -1839,69 +1839,69 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             completionHandler(m_client.toolbarsAreVisible(toAPI(&page), m_client.base.clientInfo));
         }
 
-        void setToolbarsAreVisible(WebPageProxy* page, bool visible) final
+        void setToolbarsAreVisible(WebPageProxy& page, bool visible) final
         {
             if (!m_client.setToolbarsAreVisible)
                 return;
-            m_client.setToolbarsAreVisible(toAPI(page), visible, m_client.base.clientInfo);
+            m_client.setToolbarsAreVisible(toAPI(&page), visible, m_client.base.clientInfo);
         }
 
-        bool menuBarIsVisible(WebPageProxy* page) final
+        void menuBarIsVisible(WebPageProxy& page, Function<void(bool)>&& completionHandler) final
         {
             if (!m_client.menuBarIsVisible)
-                return true;
-            return m_client.menuBarIsVisible(toAPI(page), m_client.base.clientInfo);
+                return completionHandler(true);
+            completionHandler(m_client.menuBarIsVisible(toAPI(&page), m_client.base.clientInfo));
         }
 
-        void setMenuBarIsVisible(WebPageProxy* page, bool visible) final
+        void setMenuBarIsVisible(WebPageProxy& page, bool visible) final
         {
             if (!m_client.setMenuBarIsVisible)
                 return;
-            m_client.setMenuBarIsVisible(toAPI(page), visible, m_client.base.clientInfo);
+            m_client.setMenuBarIsVisible(toAPI(&page), visible, m_client.base.clientInfo);
         }
 
-        bool statusBarIsVisible(WebPageProxy* page) final
+        void statusBarIsVisible(WebPageProxy& page, Function<void(bool)>&& completionHandler) final
         {
             if (!m_client.statusBarIsVisible)
-                return true;
-            return m_client.statusBarIsVisible(toAPI(page), m_client.base.clientInfo);
+                return completionHandler(true);
+            completionHandler(m_client.statusBarIsVisible(toAPI(&page), m_client.base.clientInfo));
         }
 
-        void setStatusBarIsVisible(WebPageProxy* page, bool visible) final
+        void setStatusBarIsVisible(WebPageProxy& page, bool visible) final
         {
             if (!m_client.setStatusBarIsVisible)
                 return;
-            m_client.setStatusBarIsVisible(toAPI(page), visible, m_client.base.clientInfo);
+            m_client.setStatusBarIsVisible(toAPI(&page), visible, m_client.base.clientInfo);
         }
 
-        bool isResizable(WebPageProxy* page) final
+        void isResizable(WebPageProxy& page, Function<void(bool)>&& completionHandler) final
         {
             if (!m_client.isResizable)
-                return true;
-            return m_client.isResizable(toAPI(page), m_client.base.clientInfo);
+                return completionHandler(true);
+            completionHandler(m_client.isResizable(toAPI(&page), m_client.base.clientInfo));
         }
 
-        void setIsResizable(WebPageProxy* page, bool resizable) final
+        void setIsResizable(WebPageProxy& page, bool resizable) final
         {
             if (!m_client.setIsResizable)
                 return;
-            m_client.setIsResizable(toAPI(page), resizable, m_client.base.clientInfo);
+            m_client.setIsResizable(toAPI(&page), resizable, m_client.base.clientInfo);
         }
 
-        void setWindowFrame(WebPageProxy* page, const FloatRect& frame) final
+        void setWindowFrame(WebPageProxy& page, const FloatRect& frame) final
         {
             if (!m_client.setWindowFrame)
                 return;
 
-            m_client.setWindowFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
+            m_client.setWindowFrame(toAPI(&page), toAPI(frame), m_client.base.clientInfo);
         }
 
-        FloatRect windowFrame(WebPageProxy* page) final
+        void windowFrame(WebPageProxy& page, Function<void(WebCore::FloatRect)>&& completionHandler) final
         {
             if (!m_client.getWindowFrame)
-                return FloatRect();
+                return completionHandler({ });
 
-            return toFloatRect(m_client.getWindowFrame(toAPI(page), m_client.base.clientInfo));
+            completionHandler(toFloatRect(m_client.getWindowFrame(toAPI(&page), m_client.base.clientInfo)));
         }
 
         bool canRunBeforeUnloadConfirmPanel() const final
@@ -1989,44 +1989,44 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
         // Printing.
-        float headerHeight(WebPageProxy* page, WebFrameProxy* frame) final
+        float headerHeight(WebPageProxy& page, WebFrameProxy& frame) final
         {
             if (!m_client.headerHeight)
                 return 0;
 
-            return m_client.headerHeight(toAPI(page), toAPI(frame), m_client.base.clientInfo);
+            return m_client.headerHeight(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        float footerHeight(WebPageProxy* page, WebFrameProxy* frame) final
+        float footerHeight(WebPageProxy& page, WebFrameProxy& frame) final
         {
             if (!m_client.footerHeight)
                 return 0;
 
-            return m_client.footerHeight(toAPI(page), toAPI(frame), m_client.base.clientInfo);
+            return m_client.footerHeight(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
         }
 
-        void drawHeader(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect) final
+        void drawHeader(WebPageProxy& page, WebFrameProxy& frame, WebCore::FloatRect&& rect) final
         {
             if (!m_client.drawHeader)
                 return;
 
-            m_client.drawHeader(toAPI(page), toAPI(frame), toAPI(rect), m_client.base.clientInfo);
+            m_client.drawHeader(toAPI(&page), toAPI(&frame), toAPI(rect), m_client.base.clientInfo);
         }
 
-        void drawFooter(WebPageProxy* page, WebFrameProxy* frame, const WebCore::FloatRect& rect) final
+        void drawFooter(WebPageProxy& page, WebFrameProxy& frame, WebCore::FloatRect&& rect) final
         {
             if (!m_client.drawFooter)
                 return;
 
-            m_client.drawFooter(toAPI(page), toAPI(frame), toAPI(rect), m_client.base.clientInfo);
+            m_client.drawFooter(toAPI(&page), toAPI(&frame), toAPI(rect), m_client.base.clientInfo);
         }
 
-        void printFrame(WebPageProxy* page, WebFrameProxy* frame) final
+        void printFrame(WebPageProxy& page, WebFrameProxy& frame) final
         {
             if (!m_client.printFrame)
                 return;
 
-            m_client.printFrame(toAPI(page), toAPI(frame), m_client.base.clientInfo);
+            m_client.printFrame(toAPI(&page), toAPI(&frame), m_client.base.clientInfo);
         }
 
         bool canRunModal() const final
