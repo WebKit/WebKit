@@ -1,3 +1,15 @@
+2017-09-11  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [WinCairo] Add entry Web Process files for wincairo webkit
+        https://bugs.webkit.org/show_bug.cgi?id=176570
+
+        Reviewed by Alex Christensen.
+
+        * PlatformWin.cmake:
+        * WebProcess/EntryPoint/win/WebProcessMain.cpp: Added.
+        * WebProcess/win/WebProcessMainWin.cpp: Added.
+        * WebProcess/win/WebProcessMainWin.h: Added.
+
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's decidePolicyForGeolocationPermissionRequest

@@ -18,6 +18,8 @@ list(APPEND WebKit2_SOURCES
     NetworkProcess/win/SystemProxyWin.cpp
 
     StorageProcess/win/StorageProcessMainWin.cpp
+
+    WebProcess/win/WebProcessMainWin.cpp
 )
 
 # DerivedSources/JavaScriptCore/inspector/InspectorBackendCommands.js is
@@ -62,6 +64,7 @@ set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
 set(WebKit2CommonSystemIncludeDirectories ${WebKit2_SYSTEM_INCLUDE_DIRECTORIES})
 
 list(APPEND WebProcess_SOURCES
+    WebProcess/EntryPoint/win/WebProcessMain.cpp
 )
 
 list(APPEND NetworkProcess_SOURCES
