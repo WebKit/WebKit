@@ -1,3 +1,19 @@
+2017-09-11  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] DOM operations could behave unexpectedly with certain fonts or font sizes
+        https://bugs.webkit.org/show_bug.cgi?id=149703
+
+        Reviewed by Michael Catanzaro.
+
+        Before r221670 (FreeType rebase) this test case would fail due to
+        bug in FreeType where it was providing wrong font extents for specific
+        fonts and sizes. Before the rebase the selection was incorrectly
+        restored on the end of the first line. Adding this new test to catch
+        any possible regression in the FreeType.
+
+        * fast/dom/Document/CaretRangeFromPoint/restore-selection-from-point-expected.txt: Added.
+        * fast/dom/Document/CaretRangeFromPoint/restore-selection-from-point.html: Added.
+
 2017-09-08  Dean Jackson  <dino@apple.com>
 
         gl.detachShader breaks shader program
