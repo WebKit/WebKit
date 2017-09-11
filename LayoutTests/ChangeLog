@@ -1,3 +1,12 @@
+2017-09-11  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=176693
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-11  Tomas Popela  <tpopela@redhat.com>
 
         [GTK] DOM operations could behave unexpectedly with certain fonts or font sizes
