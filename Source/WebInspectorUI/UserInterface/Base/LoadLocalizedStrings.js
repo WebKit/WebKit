@@ -41,7 +41,7 @@ WI.unlocalizedString = function(string)
     return string;
 };
 
-WI.UIString = function(string, vararg)
+WI.UIString = function(string)
 {
     if (WI.dontLocalizeUserInterface)
         return string;

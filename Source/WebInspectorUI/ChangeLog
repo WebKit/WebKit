@@ -1,5 +1,16 @@
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Remove unused parameter to UIString
+        https://bugs.webkit.org/show_bug.cgi?id=176738
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/LoadLocalizedStrings.js:
+        (WI.UIString):
+        Remove unused parameter. We moved to String.format for this behavior a while ago.
+
+2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Do not allow the split console in the Settings tab
         https://bugs.webkit.org/show_bug.cgi?id=176726
 
