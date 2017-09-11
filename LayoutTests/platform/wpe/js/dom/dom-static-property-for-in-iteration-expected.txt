@@ -44,7 +44,7 @@ PASS a["innerText"] is nerget
 PASS a["contentEditable"] is inherit
 PASS a["isContentEditable"] is false
 PASS a["offsetParent"] is [object HTMLBodyElement]
-PASS a["offsetTop"] is 697
+PASS a["offsetTop"] is 699
 PASS a["offsetLeft"] is 8
 PASS a["offsetWidth"] is 39
 PASS a["offsetHeight"] is 17

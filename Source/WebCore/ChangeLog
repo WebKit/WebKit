@@ -1,3 +1,18 @@
+2017-09-11  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        [WPE] Bump freetype version to 2.8.0
+        https://bugs.webkit.org/show_bug.cgi?id=176501
+
+        Reviewed by Michael Catanzaro.
+
+        Enable back the changes done by r221670 that were disabled for WPE on r221719.
+
+        Covered by existing tests.
+
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::scaledFontWithoutMetricsHinting):
+        (WebCore::Font::platformInit):
+
 2017-09-03  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Optimize WeakMap::get by adding intrinsic and fixup

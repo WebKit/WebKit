@@ -54,8 +54,6 @@
 
 namespace WebCore {
 
-// FIXME: Remove this ifdef once WPE upgrades to Freetype 2.8 and removes the patch for 2.4.11.
-#if !PLATFORM(WPE)
 static RefPtr<cairo_scaled_font_t> scaledFontWithoutMetricsHinting(cairo_scaled_font_t* scaledFont)
 {
     CairoUniquePtr<cairo_font_options_t> fontOptions(cairo_font_options_create());
@@ -67,7 +65,6 @@ static RefPtr<cairo_scaled_font_t> scaledFontWithoutMetricsHinting(cairo_scaled_
     cairo_scaled_font_get_ctm(scaledFont, &fontCTM);
     return adoptRef(cairo_scaled_font_create(cairo_scaled_font_get_font_face(scaledFont), &fontMatrix, &fontCTM, fontOptions.get()));
 }
-#endif
 
 void Font::platformInit()
 {
@@ -75,18 +72,12 @@ void Font::platformInit()
         return;
 
     ASSERT(m_platformData.scaledFont());
-    // FIXME: Remove this ifdef once WPE upgrades to Freetype 2.8 and removes the patch for 2.4.11.
-#if PLATFORM(WPE)
-    cairo_font_extents_t fontExtents;
-    cairo_scaled_font_extents(m_platformData.scaledFont(), &fontExtents);
-#else
     // Temporarily create a clone that doesn't have metrics hinting in order to avoid incorrect
     // rounding resulting in incorrect baseline positioning since the sum of ascent and descent
     // becomes larger than the line height.
     auto fontWithoutMetricsHinting = scaledFontWithoutMetricsHinting(m_platformData.scaledFont());
     cairo_font_extents_t fontExtents;
     cairo_scaled_font_extents(fontWithoutMetricsHinting.get(), &fontExtents);
-#endif
 
     float ascent = narrowPrecisionToFloat(fontExtents.ascent);
     float descent = narrowPrecisionToFloat(fontExtents.descent);
