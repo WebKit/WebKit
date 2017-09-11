@@ -1,4 +1,14 @@
 ==================
+WebKitGTK+  2.18.0
+==================
+
+What's new in WebKitGTK+ 2.18.0?
+
+  - Fix the API documentation generation.
+  - Fix the build in ARM with NEON.
+  - Fix the build for Clang with libc++.
+
+==================
 WebKitGTK+ 2.17.92
 ==================
 
