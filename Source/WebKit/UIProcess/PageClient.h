@@ -143,7 +143,7 @@ public:
 
 #if PLATFORM(IOS)
     // FIXME: Adopt the WKUIDelegatePrivate callback on iOS and remove this.
-    virtual Function<void(bool)> decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, Function<void(bool)>&&) = 0;
+    virtual void decidePolicyForGeolocationPermissionRequest(WebFrameProxy&, API::SecurityOrigin&, Function<void(bool)>&) = 0;
 #endif
 
     virtual void didStartProvisionalLoadForMainFrame() { };

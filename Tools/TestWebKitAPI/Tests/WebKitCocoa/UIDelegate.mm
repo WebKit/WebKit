@@ -27,10 +27,14 @@
 
 #if WK_API_ENABLED
 
+#import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <WebKit/WKContext.h>
 #import <WebKit/WKContextPrivateMac.h>
+#import <WebKit/WKGeolocationManager.h>
+#import <WebKit/WKGeolocationPosition.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKUIDelegatePrivate.h>
@@ -71,6 +75,79 @@ TEST(WebKit, WKWebViewIsPlayingAudio)
     [webView evaluateJavaScript:@"playVideo()" completionHandler:nil];
     TestWebKitAPI::Util::run(&done);
 }
+
+@interface GeolocationDelegate : NSObject <WKUIDelegatePrivate> {
+    bool _allowGeolocation;
+}
+
+- (id)initWithAllowGeolocation:(bool)allowGeolocation;
+
+@end
+
+@implementation GeolocationDelegate
+
+- (id)initWithAllowGeolocation:(bool)allowGeolocation
+{
+    if (!(self = [super init]))
+        return nil;
+    _allowGeolocation = allowGeolocation;
+    return self;
+}
+
+- (void)_webView:(WKWebView *)webView requestGeolocationPermissionForFrame:(WKFrameInfo *)frame decisionHandler:(void (^)(BOOL allowed))decisionHandler
+{
+    EXPECT_TRUE(frame.isMainFrame);
+    EXPECT_STREQ(frame.request.URL.absoluteString.UTF8String, _allowGeolocation ? "https://example.org/" : "https://example.com/");
+    EXPECT_EQ(frame.securityOrigin.port, 0);
+    EXPECT_STREQ(frame.securityOrigin.protocol.UTF8String, "https");
+    EXPECT_STREQ(frame.securityOrigin.host.UTF8String, _allowGeolocation ? "example.org" : "example.com");
+    decisionHandler(_allowGeolocation);
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    if (_allowGeolocation)
+        EXPECT_STREQ(message.UTF8String, "position 50.644358 3.345453");
+    else
+        EXPECT_STREQ(message.UTF8String, "error 1 User denied Geolocation");
+    completionHandler();
+    done = true;
+}
+
+@end
+
+TEST(WebKit, GeolocationPermission)
+{
+    NSString *html = @"<script>navigator.geolocation.watchPosition("
+        "function(p) { alert('position ' + p.coords.latitude + ' ' + p.coords.longitude) },"
+        "function(e) { alert('error ' + e.code + ' ' + e.message) })"
+    "</script>";
+
+    auto pool = adoptNS([[WKProcessPool alloc] init]);
+    
+    WKGeolocationProviderV1 providerCallback;
+    memset(&providerCallback, 0, sizeof(WKGeolocationProviderV1));
+    providerCallback.base.version = 1;
+    providerCallback.startUpdating = [] (WKGeolocationManagerRef manager, const void*) {
+        WKGeolocationManagerProviderDidChangePosition(manager, adoptWK(WKGeolocationPositionCreate(0, 50.644358, 3.345453, 2.53)).get());
+    };
+    WKGeolocationManagerSetProvider(WKContextGetGeolocationManager((WKContextRef)pool.get()), &providerCallback.base);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get().processPool = pool.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
+    auto delegate1 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:false]);
+    [webView setUIDelegate:delegate1.get()];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    auto delegate2 = adoptNS([[GeolocationDelegate alloc] initWithAllowGeolocation:true]);
+    [webView setUIDelegate:delegate2.get()];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://example.org/"]];
+    TestWebKitAPI::Util::run(&done);
+}
+
 
 #if PLATFORM(MAC)
 

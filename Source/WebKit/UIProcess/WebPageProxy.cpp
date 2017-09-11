@@ -5822,10 +5822,10 @@ void WebPageProxy::requestGeolocationPermissionForFrame(uint64_t geolocationID, 
     // and make it one UIClient call that calls the completionHandler with false
     // if there is no delegate instead of returning the completionHandler
     // for other code paths to try.
-    completionHandler = m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), WTFMove(completionHandler));
+    m_uiClient->decidePolicyForGeolocationPermissionRequest(*this, *frame, origin.get(), completionHandler);
 #if PLATFORM(IOS)
     if (completionHandler)
-        completionHandler = m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), WTFMove(completionHandler));
+        m_pageClient.decidePolicyForGeolocationPermissionRequest(*frame, origin.get(), completionHandler);
 #endif
     if (completionHandler)
         completionHandler(false);
