@@ -1,3 +1,21 @@
+2017-09-10  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION: [GTK] Generated HTML API documentation is missing descriptions
+        https://bugs.webkit.org/show_bug.cgi?id=176667
+
+        Reviewed by Michael Catanzaro.
+
+        This is happening since we moved the implementation files to glib dirs. The generate-gtkdoc script assumes that
+        header and implementation files are always in the same directory. To reduce the input we pass to gtk-doc we
+        ignore cpp files for which there isn't a public header. The code to do this check doesn't consider cpp files in
+        a different directory than the header file. It also assumes that header and cpp files have the same filename
+        except for the extension, which is true in all cases but WebKitWebView that we have two files WebKitWebView.cpp
+        and WebKitWebViewGtk.cpp.
+
+        * gtk/generate-gtkdoc:
+        (files_to_ignore): Check also cpp files with the Gtk suffix.
+        (files_to_ignore.add_file_if_exists): Check if a file with the given name exists in any of the source dirs.
+
 2017-08-31  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Improve the way unit test are run and the results reported
