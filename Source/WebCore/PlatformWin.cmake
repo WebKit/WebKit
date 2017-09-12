@@ -170,6 +170,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     xml
 
     Modules/cache
+    Modules/fetch
     Modules/geolocation
     Modules/indexeddb
     Modules/mediastream
