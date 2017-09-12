@@ -1,3 +1,15 @@
+2017-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [WPE][GTK] Run tests with G_DEBUG=fatal-criticals
+        https://bugs.webkit.org/show_bug.cgi?id=176755
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Scripts/webkitpy/port/gtk.py:
+        (GtkPort.setup_environ_for_server):
+        * Scripts/webkitpy/port/wpe.py:
+        (WPEPort.setup_environ_for_server):
+
 2017-09-12  Alex Christensen  <achristensen@webkit.org>
 
         Fix build after r221922.
