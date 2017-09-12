@@ -163,6 +163,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseCreateWithMasterCloc
 #define CMTimebaseCreateWithMasterClock softLink_CoreMedia_CMTimebaseCreateWithMasterClock
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
 #define CMTimebaseGetTime softLink_CoreMedia_CMTimebaseGetTime
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseGetRate, Float64, (CMTimebaseRef timebase), (timebase))
+#define CMTimebaseGetRate softLink_CoreMedia_CMTimebaseGetRate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
 #define CMTimebaseSetRate softLink_CoreMedia_CMTimebaseSetRate
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
