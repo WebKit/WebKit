@@ -28,6 +28,7 @@
 
 #include "Logging.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/StringBuilder.h>
 
 #if PLATFORM(IOS)
 #include <OpenGLES/ES3/glext.h>
@@ -39,13 +40,17 @@ namespace WebCore {
 
 VideoTextureCopierCV::VideoTextureCopierCV(GraphicsContext3D& context)
     : m_context(context)
-    , m_readFramebuffer(context.createFramebuffer())
+    , m_framebuffer(context.createFramebuffer())
 {
 }
 
 VideoTextureCopierCV::~VideoTextureCopierCV()
 {
-    m_context->deleteFramebuffer(m_readFramebuffer);
+    if (m_vertexBuffer)
+        m_context->deleteProgram(m_vertexBuffer);
+    if (m_program)
+        m_context->deleteProgram(m_program);
+    m_context->deleteFramebuffer(m_framebuffer);
 }
 
 #if !LOG_DISABLED
@@ -152,60 +157,210 @@ static StringMap& enumToStringMap()
 
 #endif
 
-bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputTexture, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+bool VideoTextureCopierCV::initializeContextObjects()
 {
-    if (flipY || premultiplyAlpha)
-        return false;
+    StringBuilder vertexShaderSource;
+    vertexShaderSource.appendLiteral("attribute vec4 a_position;\n");
+    vertexShaderSource.appendLiteral("uniform int u_flipY;\n");
+    vertexShaderSource.appendLiteral("varying vec2 v_texturePosition;\n");
+    vertexShaderSource.appendLiteral("void main() {\n");
+    vertexShaderSource.appendLiteral("    v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);\n");
+    vertexShaderSource.appendLiteral("    if (u_flipY == 1) {\n");
+    vertexShaderSource.appendLiteral("        v_texturePosition.y = 1.0 - v_texturePosition.y;\n");
+    vertexShaderSource.appendLiteral("    }\n");
+    vertexShaderSource.appendLiteral("    gl_Position = a_position;\n");
+    vertexShaderSource.appendLiteral("}\n");
 
-    if (!inputTexture)
+    Platform3DObject vertexShader = m_context->createShader(GraphicsContext3D::VERTEX_SHADER);
+    m_context->shaderSource(vertexShader, vertexShaderSource.toString());
+    m_context->compileShaderDirect(vertexShader);
+
+    GC3Dint value = 0;
+    m_context->getShaderiv(vertexShader, GraphicsContext3D::COMPILE_STATUS, &value);
+    if (!value) {
+        LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Vertex shader failed to compile.", this);
+        m_context->deleteShader(vertexShader);
         return false;
+    }
+
+    StringBuilder fragmentShaderSource;
 
 #if PLATFORM(IOS)
-    Platform3DObject videoTextureName = CVOpenGLESTextureGetName(inputTexture);
-    GC3Denum videoTextureTarget = CVOpenGLESTextureGetTarget(inputTexture);
+    fragmentShaderSource.appendLiteral("precision mediump float;\n");
+    fragmentShaderSource.appendLiteral("uniform sampler2D u_texture;\n");
 #else
-    Platform3DObject videoTextureName = CVOpenGLTextureGetName(inputTexture);
-    GC3Denum videoTextureTarget = CVOpenGLTextureGetTarget(inputTexture);
+    fragmentShaderSource.appendLiteral("uniform sampler2DRect u_texture;\n");
 #endif
+    fragmentShaderSource.appendLiteral("varying vec2 v_texturePosition;\n");
+    fragmentShaderSource.appendLiteral("uniform int u_premultiply;\n");
+    fragmentShaderSource.appendLiteral("uniform vec2 u_textureDimensions;\n");
+    fragmentShaderSource.appendLiteral("void main() {\n");
+    fragmentShaderSource.appendLiteral("    vec2 texPos = vec2(v_texturePosition.x * u_textureDimensions.x, v_texturePosition.y * u_textureDimensions.y);\n");
+#if PLATFORM(IOS)
+    fragmentShaderSource.appendLiteral("    vec4 color = texture2D(u_texture, texPos);\n");
+#else
+    fragmentShaderSource.appendLiteral("    vec4 color = texture2DRect(u_texture, texPos);\n");
+#endif
+    fragmentShaderSource.appendLiteral("    if (u_premultiply == 1) {\n");
+    fragmentShaderSource.appendLiteral("        gl_FragColor = vec4(color.r * color.a, color.g * color.a, color.b * color.a, color.a);\n");
+    fragmentShaderSource.appendLiteral("    } else {\n");
+    fragmentShaderSource.appendLiteral("        gl_FragColor = color;\n");
+    fragmentShaderSource.appendLiteral("    }\n");
+    fragmentShaderSource.appendLiteral("}\n");
 
-    LOG(Media, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - internalFormat: %s, format: %s, type: %s", this, enumToStringMap()[internalFormat], enumToStringMap()[format], enumToStringMap()[type]);
+    Platform3DObject fragmentShader = m_context->createShader(GraphicsContext3D::FRAGMENT_SHADER);
+    m_context->shaderSource(fragmentShader, fragmentShaderSource.toString());
+    m_context->compileShaderDirect(fragmentShader);
 
-    // Save the origial bound texture & framebuffer names so we can re-bind them after copying the video texture.
-    GC3Dint boundTexture = 0;
-    GC3Dint boundReadFramebuffer = 0;
-    m_context->getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &boundTexture);
-    m_context->getIntegerv(GraphicsContext3D::READ_FRAMEBUFFER_BINDING, &boundReadFramebuffer);
+    m_context->getShaderiv(fragmentShader, GraphicsContext3D::COMPILE_STATUS, &value);
+    if (!value) {
+        LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Fragment shader failed to compile.", this);
+        m_context->deleteShader(vertexShader);
+        m_context->deleteShader(fragmentShader);
+        return false;
+    }
 
-    m_context->bindTexture(videoTextureTarget, videoTextureName);
-    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-    m_context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-    m_context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    m_program = m_context->createProgram();
+    m_context->attachShader(m_program, vertexShader);
+    m_context->attachShader(m_program, fragmentShader);
+    m_context->linkProgram(m_program);
 
-    // Make that framebuffer the read source from which drawing commands will read voxels.
-    m_context->bindFramebuffer(GraphicsContext3D::READ_FRAMEBUFFER, m_readFramebuffer);
+    m_context->getProgramiv(m_program, GraphicsContext3D::LINK_STATUS, &value);
+    if (!value) {
+        LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Program failed to link.", this);
+        m_context->deleteShader(vertexShader);
+        m_context->deleteShader(fragmentShader);
+        m_context->deleteProgram(m_program);
+        m_program = 0;
+        return false;
+    }
 
-    // Allocate uninitialized memory for the output texture.
-    m_context->bindTexture(outputTarget, outputTexture);
-    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-    m_context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-    m_context->texParameterf(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-    m_context->texImage2DDirect(outputTarget, level, internalFormat, width, height, 0, format, type, nullptr);
+    m_textureUniformLocation = m_context->getUniformLocation(m_program, ASCIILiteral("u_texture"));
+    m_textureDimensionsUniformLocation = m_context->getUniformLocation(m_program, ASCIILiteral("u_textureDimensions"));
+    m_flipYUniformLocation = m_context->getUniformLocation(m_program, ASCIILiteral("u_flipY"));
+    m_premultiplyUniformLocation = m_context->getUniformLocation(m_program, ASCIILiteral("u_premultiply"));
+    m_positionAttributeLocation = m_context->getAttribLocationDirect(m_program, ASCIILiteral("a_position"));
 
-    // Attach the video texture to the framebuffer.
-    m_context->framebufferTexture2D(GraphicsContext3D::READ_FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, videoTextureTarget, videoTextureName, level);
+    m_context->detachShader(m_program, vertexShader);
+    m_context->detachShader(m_program, fragmentShader);
+    m_context->deleteShader(vertexShader);
+    m_context->deleteShader(fragmentShader);
 
-    GC3Denum status = m_context->checkFramebufferStatus(GraphicsContext3D::READ_FRAMEBUFFER);
-    if (status != GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+    LOG(WebGL, "Uniform and Attribute locations: u_texture = %d, u_textureDimensions = %d, u_flipY = %d, u_premultiply = %d, a_position = %d", m_textureUniformLocation, m_textureDimensionsUniformLocation, m_flipYUniformLocation, m_premultiplyUniformLocation, m_positionAttributeLocation);
+    m_context->enableVertexAttribArray(m_positionAttributeLocation);
+
+    m_vertexBuffer = m_context->createBuffer();
+    float vertices[12] = { -1, -1, 1, -1, 1, 1, 1, 1, -1, 1, -1, -1 };
+
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexBuffer);
+    m_context->bufferData(GraphicsContext3D::ARRAY_BUFFER, sizeof(float) * 12, vertices, GraphicsContext3D::STATIC_DRAW);
+
+    return true;
+}
+
+bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVideoTexture, size_t width, size_t height, Platform3DObject outputTexture, GC3Denum outputTarget, GC3Dint level, GC3Denum internalFormat, GC3Denum format, GC3Denum type, bool premultiplyAlpha, bool flipY)
+{
+    if (!inputVideoTexture)
         return false;
 
-    // Copy texture from the read framebuffer (and thus the video texture) to the output texture.
-    m_context->copyTexImage2D(outputTarget, level, internalFormat, 0, 0, width, height, 0);
+    GC3DStateSaver stateSaver(&m_context.get());
 
-    // Restore the previous texture and framebuffer bindings.
-    m_context->bindTexture(outputTarget, boundTexture);
-    m_context->bindFramebuffer(GraphicsContext3D::READ_FRAMEBUFFER, boundReadFramebuffer);
+    if (!m_program) {
+        if (!initializeContextObjects()) {
+            LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to initialize OpenGL context objects.", this);
+            return false;
+        }
+    }
 
-    return !m_context->getError();
+    GLfloat lowerLeft[2] = { 0, 0 };
+    GLfloat lowerRight[2] = { 0, 0 };
+    GLfloat upperRight[2] = { 0, 0 };
+    GLfloat upperLeft[2] = { 0, 0 };
+#if PLATFORM(IOS)
+    Platform3DObject videoTextureName = CVOpenGLESTextureGetName(inputVideoTexture);
+    GC3Denum videoTextureTarget = CVOpenGLESTextureGetTarget(inputVideoTexture);
+    CVOpenGLESTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
+#else
+    Platform3DObject videoTextureName = CVOpenGLTextureGetName(inputVideoTexture);
+    GC3Denum videoTextureTarget = CVOpenGLTextureGetTarget(inputVideoTexture);
+    CVOpenGLTextureGetCleanTexCoords(inputVideoTexture, lowerLeft, lowerRight, upperRight, upperLeft);
+#endif
+
+    LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - internalFormat: %s, format: %s, type: %s flipY: %s, premultiplyAlpha: %s", this, enumToStringMap()[internalFormat], enumToStringMap()[format], enumToStringMap()[type], flipY ? "true" : "false", premultiplyAlpha ? "true" : "false");
+
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebuffer);
+    
+    // Allocate memory for the output texture.
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, outputTexture);
+    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+    m_context->texImage2DDirect(GraphicsContext3D::TEXTURE_2D, level, internalFormat, width, height, 0, format, type, nullptr);
+
+    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, outputTexture, level);
+    GC3Denum status = m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER);
+    if (status != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+        LOG(WebGL, "VideoTextureCopierCV::copyVideoTextureToPlatformTexture(%p) - Unable to create framebuffer for outputTexture.", this);
+        return false;
+    }
+
+    m_context->useProgram(m_program);
+    m_context->viewport(0, 0, width, height);
+
+    // Bind and set up the texture for the video source.
+    m_context->activeTexture(GraphicsContext3D::TEXTURE0);
+    m_context->bindTexture(videoTextureTarget, videoTextureName);
+    m_context->texParameteri(videoTextureTarget, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
+    m_context->texParameteri(videoTextureTarget, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
+    m_context->texParameteri(videoTextureTarget, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
+    m_context->texParameteri(videoTextureTarget, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
+
+    // Configure the drawing parameters.
+    m_context->uniform1i(m_textureUniformLocation, 0);
+#if PLATFORM(IOS)
+    m_context->uniform2f(m_textureDimensionsUniformLocation, 1, 1);
+#else
+    m_context->uniform2f(m_textureDimensionsUniformLocation, width, height);
+#endif
+
+    if (lowerLeft[1] < upperRight[1])
+        flipY = !flipY;
+
+    m_context->uniform1i(m_flipYUniformLocation, flipY);
+    m_context->uniform1i(m_premultiplyUniformLocation, premultiplyAlpha);
+
+    // Do the actual drawing.
+    m_context->enableVertexAttribArray(m_positionAttributeLocation);
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_vertexBuffer);
+    m_context->vertexAttribPointer(m_positionAttributeLocation, 2, GraphicsContext3D::FLOAT, false, 0, 0);
+    m_context->drawArrays(GraphicsContext3D::TRIANGLES, 0, 6);
+
+    // Clean-up.
+    m_context->bindTexture(videoTextureTarget, 0);
+    m_context->bindTexture(outputTarget, outputTexture);
+
+    return true;
+}
+
+VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver(GraphicsContext3D* context)
+    : m_context(context)
+{
+    ASSERT(context);
+    m_context->getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &m_texture);
+    m_context->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &m_framebuffer);
+    m_context->getIntegerv(GraphicsContext3D::CURRENT_PROGRAM, &m_program);
+    m_context->getIntegerv(GraphicsContext3D::ARRAY_BUFFER_BINDING, &m_arrayBuffer);
+    m_context->getIntegerv(GraphicsContext3D::VIEWPORT, m_viewport);
+}
+
+VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver()
+{
+    m_context->bindTexture(GraphicsContext3D::TEXTURE_BINDING_2D, m_texture);
+    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebuffer);
+    m_context->useProgram(m_program);
+    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_arrayBuffer);
+    m_context->viewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 }
 
 

@@ -1,0 +1,209 @@
+<style>
+canvas {
+    width: 300px;
+    height: 300px;
+}
+</style>
+</head>
+<script id="vertexShaderSource" type="text/glsl">
+attribute vec4 a_position;
+varying vec2 v_texturePosition;
+
+void main() {
+    v_texturePosition = vec2((a_position.x + 1.0) / 2.0, (a_position.y + 1.0) / 2.0);
+    gl_Position = a_position;
+}
+</script>
+<script id="fragmentShaderSource" type="text/glsl">
+precision mediump float;
+
+varying vec2 v_texturePosition;
+
+uniform sampler2D texture;
+
+void main() {
+  gl_FragColor = texture2D(texture, v_texturePosition);
+}
+</script>
+<script>
+
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const width = 300;
+const height = 300;
+let canvas;
+let gl;
+let animationFrame = null;
+let tested = false;
+let drawFunction = null;
+let video;
+
+function output(msg) {
+    const div = document.getElementById("output");
+    div.innerHTML += `${msg}<br>`;
+}
+
+function isMostlyRed(buffer, x, y) {
+    let offset = (y * width + x) * 4;
+    return buffer[offset] > 240 && buffer[offset+1] < 20 && buffer[offset+2] < 20 && buffer[offset+3] > 240;
+}
+
+function isMostlyBlue(buffer, x, y) {
+    let offset = (y * width + x) * 4;
+    return buffer[offset] < 20 && buffer[offset+1] < 20 && buffer[offset+2] > 240 && buffer[offset+3] > 240;
+}
+
+function runTest() {
+    output("Checking the canvas pixels.");
+
+    drawFunction();
+    let pixels = new Uint8Array(width * height * 4);
+    gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+
+    if (isMostlyRed(pixels, 2, 2))
+        output("PASS: Bottom edge is red.");
+    else
+        output("FAIL: Bottom edge is not red.");
+
+    if (isMostlyBlue(pixels, 2, height - 2))
+        output("PASS: Top edge is blue.");
+    else
+        output("FAIL: Top edge is not blue.");
+
+    cancelAnimationFrame(animationFrame);
+    video.pause();
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function init() {
+
+    canvas = document.querySelector("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    gl = canvas.getContext("webgl");
+
+    gl.clearColor(0, 0, 0, 1);
+
+    let vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertexShader, document.getElementById("vertexShaderSource").textContent);
+    gl.compileShader(vertexShader);
+    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(vertexShader));
+        return;
+    }
+
+    let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragmentShader, document.getElementById("fragmentShaderSource").textContent);
+    gl.compileShader(fragmentShader);
+    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment Shader failed to compile.");
+        console.log(gl.getShaderInfoLog(fragmentShader));
+        return;
+    }
+
+    let program = gl.createProgram();
+    gl.attachShader(program, vertexShader);
+    gl.attachShader(program, fragmentShader);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Unable to link shaders into program.");
+        return;
+    }
+
+    gl.useProgram(program);
+    let textureUniform = gl.getUniformLocation(program, "texture");
+    let positionAttribute = gl.getAttribLocation(program, "a_position");
+    gl.enableVertexAttribArray(positionAttribute);
+
+    let vertices = new Float32Array([
+       -1, -1,
+       1, -1,
+       1, 1,
+       1, 1,
+       -1, 1,
+       -1, -1
+    ]);
+
+    let buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    let updateTexture = function (texture, data) {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+
+    let texture = gl.createTexture();
+
+    video = document.createElement("video");
+    video.loop = true;
+    video.playsInline = true;
+
+    video.addEventListener("canplay", function () {
+        output("Video can play.");
+    }, false);
+
+    video.addEventListener("timeupdate", function () {
+        // If we've just started, jump forward to 3 seconds. If we've played a bit after
+        // that, check the pixels.
+        if (video.currentTime < 1) {
+            video.currentTime = 3;
+            return;
+        } else if (video.currentTime > 3.1) {
+            if (!tested)
+                runTest();
+            tested = true;
+        }
+    }, false);
+
+    /* Since the texImage2D call isn't flipping in Y, we'll load a
+       video that is already flipped. */
+    output("Setting video src.");
+    video.src = "resources/orientation-flipped.mp4";
+    video.load();
+    video.play();
+
+    drawFunction = function () {
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        if (video.currentTime > 0) {
+            updateTexture(texture, video);
+        }
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(textureUniform, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.vertexAttribPointer(positionAttribute, 2, gl.FLOAT, false, 0, 0);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        animationFrame = requestAnimationFrame(drawFunction);
+    };
+
+    drawFunction();
+}
+
+window.addEventListener("load", init, false);
+</script>
+<body>
+    <canvas></canvas>
+    <div id="output">
+    </div>
+</body>
