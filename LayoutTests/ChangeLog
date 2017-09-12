@@ -1,3 +1,16 @@
+2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r221762.
+
+        This change caused flakiness in a webgl LayoutTest.
+
+        Reverted changeset:
+
+        "[WebGL] accelerated texImage2D for video doesn't respect
+        flipY"
+        https://bugs.webkit.org/show_bug.cgi?id=176491
+        http://trac.webkit.org/changeset/221762
+
 2017-09-11  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed layout test gardening
