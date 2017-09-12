@@ -4,8 +4,8 @@ layer at (0,0) size 785x836
   RenderBlock {HTML} at (0,0) size 785x836
     RenderBody {BODY} at (8,8) size 769x820
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 82x17
-          text run at (0,0) width 82: "Text outside."
+        RenderText {#text} at (0,0) size 81x17
+          text run at (0,0) width 81: "Text outside."
 layer at (8,26) size 702x802 clip at (9,27) size 685x785 scrollHeight 1286
   RenderBlock {DIV} at (0,18) size 702x802 [border: (1px solid #000000)]
     RenderBlock {P} at (1,17) size 685x165

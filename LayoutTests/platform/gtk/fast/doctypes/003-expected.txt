@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {DIV} at (0,0) size 784x100
       RenderBlock (anonymous) at (0,100) size 784x18
-        RenderText {#text} at (0,0) size 488x17
+        RenderText {#text} at (0,0) size 487x17
           text run at (0,0) width 299: "This file has a doc type with an internal subset. "
-          text run at (299,0) width 189: "We should be in quirks mode."
+          text run at (299,0) width 188: "We should be in quirks mode."
       RenderBlock {UL} at (0,134) size 784x36
         RenderListItem {LI} at (40,0) size 744x36
           RenderBlock (anonymous) at (0,0) size 744x18

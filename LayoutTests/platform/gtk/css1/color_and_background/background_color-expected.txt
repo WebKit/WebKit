@@ -9,8 +9,11 @@ layer at (0,0) size 800x600
       RenderBlock {PRE} at (0,34) size 784x60
         RenderText {#text} at (0,0) size 296x60
           text run at (0,0) width 224: "P {background-color: green;}"
+          text run at (224,0) width 0: " "
           text run at (0,15) width 240: ".one {background-color: lime;}"
+          text run at (240,15) width 0: " "
           text run at (0,30) width 296: ".two {background-color: transparent;}"
+          text run at (296,30) width 0: " "
           text run at (0,45) width 0: " "
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#008000]
@@ -25,10 +28,10 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 75x17
           RenderText {#text} at (652,0) size 75x17
             text run at (652,0) width 75: "background"
-        RenderText {#text} at (727,0) size 779x53
+        RenderText {#text} at (727,0) size 778x53
           text run at (727,0) width 8: ". "
           text run at (735,0) width 42: "This is"
-          text run at (0,18) width 779: "because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word \"sentence,\""
+          text run at (0,18) width 778: "because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word \"sentence,\""
           text run at (0,36) width 109: "which was set to "
         RenderInline {CODE} at (0,0) size 88x15
           RenderText {#text} at (109,39) size 88x15
@@ -44,9 +47,9 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (1,1) size 782x190
           RenderTableRow {TR} at (0,0) size 782x26
             RenderTableCell {TD} at (0,0) size 782x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 782x164
             RenderTableCell {TD} at (0,95) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
@@ -64,9 +67,9 @@ layer at (0,0) size 800x600
                 RenderInline {SPAN} at (0,0) size 75x17
                   RenderText {#text} at (652,0) size 75x17
                     text run at (652,0) width 75: "background"
-                RenderText {#text} at (727,0) size 749x53
+                RenderText {#text} at (727,0) size 748x53
                   text run at (727,0) width 4: "."
-                  text run at (0,18) width 749: "This is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
+                  text run at (0,18) width 748: "This is because the background color of the parent element (the paragraph) should \"shine through\" the SPANned word"
                   text run at (0,36) width 185: "\"sentence,\" which was set to "
                 RenderInline {CODE} at (0,0) size 88x15
                   RenderText {#text} at (185,39) size 88x15

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,52) size 784x18
         RenderText {#text} at (0,0) size 110x17
           text run at (0,0) width 110: "(Some filler text) "
-        RenderInline {A} at (0,0) size 27x17 [color=#0000EE]
-          RenderText {#text} at (110,0) size 27x17
-            text run at (110,0) width 27: "Test"
+        RenderInline {A} at (0,0) size 26x17 [color=#0000EE]
+          RenderText {#text} at (110,0) size 26x17
+            text run at (110,0) width 26: "Test"
         RenderText {#text} at (0,0) size 0x0

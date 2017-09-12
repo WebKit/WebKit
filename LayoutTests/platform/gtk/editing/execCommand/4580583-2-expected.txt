@@ -4,10 +4,10 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 767x35
+        RenderText {#text} at (0,0) size 765x35
           text run at (0,0) width 474: "This tests to make sure that breaking a quoted list doesn't renumber the list. "
-          text run at (474,0) width 293: "You should see a list broken in two below, the"
-          text run at (0,18) width 668: "list items numbered 1, 2, 2, 3, 4. Two list items will be numbered '2' because the original item '2' was split."
+          text run at (474,0) width 291: "You should see a list broken in two below, the"
+          text run at (0,18) width 667: "list items numbered 1, 2, 2, 3, 4. Two list items will be numbered '2' because the original item '2' was split."
       RenderBlock {DIV} at (0,52) size 784x140
         RenderBlock {BLOCKQUOTE} at (2,0) size 742x36 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x36
@@ -17,16 +17,16 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 27: "One"
             RenderListItem {LI} at (40,18) size 700x18
               RenderListMarker at (-20,0) size 16x17: "2"
-              RenderText {#text} at (0,0) size 30x17
-                text run at (0,0) width 30: "Two"
+              RenderText {#text} at (0,0) size 29x17
+                text run at (0,0) width 29: "Two"
         RenderBlock (anonymous) at (0,52) size 784x18
           RenderBR {BR} at (0,0) size 0x17
         RenderBlock {BLOCKQUOTE} at (2,86) size 742x54 [color=#0000FF] [border: none (2px solid #0000FF)]
           RenderBlock {OL} at (2,0) size 740x54
             RenderListItem {LI} at (40,0) size 700x18
               RenderListMarker at (-20,0) size 16x17: "2"
-              RenderText {#text} at (0,0) size 30x17
-                text run at (0,0) width 30: "Two"
+              RenderText {#text} at (0,0) size 29x17
+                text run at (0,0) width 29: "Two"
             RenderListItem {LI} at (40,18) size 700x18
               RenderListMarker at (-20,0) size 16x17: "3"
               RenderText {#text} at (0,0) size 37x17

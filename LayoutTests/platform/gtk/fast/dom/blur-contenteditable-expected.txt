@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (3,3) size 122x17
           text run at (3,3) width 122: "contentEditable div"
       RenderBlock {DIV} at (0,42) size 784x18
-        RenderText {#text} at (0,0) size 78x17
-          text run at (0,0) width 78: "Test Passed."
+        RenderText {#text} at (0,0) size 77x17
+          text run at (0,0) width 77: "Test Passed."
       RenderBlock {DIV} at (0,60) size 784x0

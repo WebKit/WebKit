@@ -9,11 +9,17 @@ layer at (0,0) size 785x1550
       RenderBlock {PRE} at (0,34) size 769x90
         RenderText {#text} at (0,0) size 432x90
           text run at (0,0) width 416: ".zero {background-color: silver; padding-bottom: 0;}"
+          text run at (416,0) width 0: " "
           text run at (0,15) width 424: ".one {padding-bottom: 0.5in; background-color: aqua;}"
+          text run at (424,15) width 0: " "
           text run at (0,30) width 416: ".two {padding-bottom: 25px; background-color: aqua;}"
+          text run at (416,30) width 0: " "
           text run at (0,45) width 424: ".three {padding-bottom: 5em; background-color: aqua;}"
+          text run at (424,45) width 0: " "
           text run at (0,60) width 416: ".four {padding-bottom: 25%; background-color: aqua;}"
+          text run at (416,60) width 0: " "
           text run at (0,75) width 432: ".five {padding-bottom: -20px; background-color: aqua;}"
+          text run at (432,75) width 0: " "
       RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,155) size 769x18 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x17
@@ -50,9 +56,9 @@ layer at (0,0) size 785x1550
         RenderTableSection {TBODY} at (1,1) size 767x704
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x678
             RenderTableCell {TD} at (0,351) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18

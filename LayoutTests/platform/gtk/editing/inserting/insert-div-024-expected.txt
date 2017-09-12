@@ -44,9 +44,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x108
-        RenderText {#text} at (0,0) size 749x53
-          text run at (0,0) width 743: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\""
-          text run at (743,0) width 6: " "
+        RenderText {#text} at (0,0) size 747x53
+          text run at (0,0) width 741: "Test inserting paragraphs and managing typing style correctly: Only \"line 1\""
+          text run at (741,0) width 6: " "
           text run at (0,27) width 621: "should be bold. Other lines should be non-bold. Fix for this bug:"
           text run at (621,27) width 6: " "
         RenderInline {A} at (0,0) size 260x26 [color=#0000EE]

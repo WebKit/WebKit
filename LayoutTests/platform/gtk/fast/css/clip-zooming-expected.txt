@@ -8,8 +8,8 @@ layer at (0,0) size 800x126
           RenderText {#text} at (0,0) size 468x26
             text run at (0,0) width 468: "https://bugs.webkit.org/show_bug.cgi?id=24753"
       RenderBlock {P} at (0,51) size 800x27
-        RenderText {#text} at (0,0) size 613x26
-          text run at (0,0) width 613: "Test CSS clip with zooming. You should not see any red below"
+        RenderText {#text} at (0,0) size 609x26
+          text run at (0,0) width 609: "Test CSS clip with zooming. You should not see any red below"
 layer at (75,150) size 150x150
   RenderBlock (positioned) {DIV} at (75,150) size 150x150 [bgcolor=#FF0000]
 layer at (0,75) size 300x300 backgroundClip at (75,150) size 150x150 clip at (75,150) size 150x150

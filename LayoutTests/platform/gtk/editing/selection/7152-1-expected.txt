@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
           text run at (474,0) width 8: ". "
           text run at (482,0) width 297: "Adding visible candidates after tables, at [table,"
           text run at (779,0) width 4: " "
-          text run at (0,18) width 767: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside"
-          text run at (767,18) width 4: " "
+          text run at (0,18) width 766: "numberOfChildren], threw RenderView::setSelection for a loop because it assumed the end of a selection would be inside"
+          text run at (766,18) width 4: " "
           text run at (0,36) width 100: "an atomic node."
       RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,80) size 161x52 [border: (1px outset #808080)]

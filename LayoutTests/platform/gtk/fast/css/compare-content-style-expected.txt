@@ -5,29 +5,29 @@ layer at (0,0) size 800x236
     RenderBody {BODY} at (8,8) size 784x212
       RenderBlock {DIV} at (0,0) size 784x108
         RenderBlock {DIV} at (0,0) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
         RenderBlock {DIV} at (0,36) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
         RenderBlock {DIV} at (0,54) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
         RenderBlock {DIV} at (0,72) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
         RenderBlock {DIV} at (0,90) size 784x18
-          RenderInline (generated) at (0,0) size 39x17
-            RenderText at (0,0) size 39x17
-              text run at (0,0) width 39: "PASS"
+          RenderInline (generated) at (0,0) size 38x17
+            RenderText at (0,0) size 38x17
+              text run at (0,0) width 38: "PASS"
       RenderBlock {DIV} at (0,124) size 784x88
         RenderBlock {P} at (0,0) size 784x18
           RenderInline {A} at (0,0) size 671x17 [color=#0000EE]
@@ -36,13 +36,13 @@ layer at (0,0) size 800x236
         RenderBlock {OL} at (0,34) size 784x54
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (-20,0) size 16x17: "1"
-            RenderText {#text} at (0,0) size 345x17
-              text run at (0,0) width 345: "All lines above should be \"PASS\" on initial page load."
+            RenderText {#text} at (0,0) size 344x17
+              text run at (0,0) width 344: "All lines above should be \"PASS\" on initial page load."
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (-20,0) size 16x17: "2"
             RenderText {#text} at (0,0) size 140x17
               text run at (0,0) width 140: "Reload the page once."
           RenderListItem {LI} at (40,36) size 744x18
             RenderListMarker at (-20,0) size 16x17: "3"
-            RenderText {#text} at (0,0) size 247x17
-              text run at (0,0) width 247: "All lines above should still be \"PASS\"."
+            RenderText {#text} at (0,0) size 246x17
+              text run at (0,0) width 246: "All lines above should still be \"PASS\"."

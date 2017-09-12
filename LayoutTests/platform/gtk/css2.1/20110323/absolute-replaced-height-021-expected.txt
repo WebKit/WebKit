@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 303x17
-          text run at (0,0) width 303: "Test passes if there is no red visible on the page."
+        RenderText {#text} at (0,0) size 302x17
+          text run at (0,0) width 302: "Test passes if there is no red visible on the page."
 layer at (8,146) size 306x6
   RenderIFrame {IFRAME} at (0,96) size 306x6 [border: (3px solid #FF0000)]
     layer at (0,0) size 285x8

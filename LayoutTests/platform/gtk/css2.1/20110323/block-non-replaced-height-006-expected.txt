@@ -5,8 +5,8 @@ layer at (0,0) size 785x273
 layer at (8,8) size 769x257 clip at (8,8) size 754x242
   RenderBody {BODY} at (8,8) size 769x257
     RenderBlock {P} at (0,16) size 754x18
-      RenderText {#text} at (0,0) size 667x17
-        text run at (0,0) width 667: "Test passes if the blue and orange boxes below are the same height and there is no red visible on the page."
+      RenderText {#text} at (0,0) size 666x17
+        text run at (0,0) width 666: "Test passes if the blue and orange boxes below are the same height and there is no red visible on the page."
 layer at (8,58) size 754x192
   RenderBlock (relative positioned) {DIV} at (0,50) size 754x192
 layer at (8,58) size 192x192

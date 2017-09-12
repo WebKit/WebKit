@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 146x132 [border: (3px solid #008000)]
-        RenderText {#text} at (3,3) size 137x125
-          text run at (3,3) width 137: "Test float positioning."
+        RenderText {#text} at (3,3) size 136x125
+          text run at (3,3) width 136: "Test float positioning."
           text run at (3,21) width 132: "There should be four"
           text run at (3,39) width 93: "red boxes with"
           text run at (3,57) width 102: "numbers 1,2,3,4"

@@ -14,14 +14,14 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 631x26
             text run at (0,27) width 631: "Delete at the end of document when there is a BR following a P. "
           RenderBR {BR} at (631,48) size 0x0
-          RenderText {#text} at (0,54) size 442x26
-            text run at (0,54) width 442: "This is a test case for rdar://problem/4110366"
+          RenderText {#text} at (0,54) size 441x26
+            text run at (0,54) width 441: "This is a test case for rdar://problem/4110366"
         RenderBlock {DIV} at (14,111) size 756x108
           RenderText {#text} at (0,0) size 189x26
             text run at (0,0) width 189: "Expected Results: "

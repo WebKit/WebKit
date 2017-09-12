@@ -10,6 +10,6 @@ layer at (0,0) size 800x600
         RenderBlock {DT} at (0,18) size 784x18
           RenderText {#text} at (0,0) size 33x17
             text run at (0,0) width 33: "Line "
-          RenderInline {SPAN} at (0,0) size 30x17
-            RenderText {#text} at (33,0) size 30x17
-              text run at (33,0) width 30: "Two"
+          RenderInline {SPAN} at (0,0) size 29x17
+            RenderText {#text} at (33,0) size 29x17
+              text run at (33,0) width 29: "Two"

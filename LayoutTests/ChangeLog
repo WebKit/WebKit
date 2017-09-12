@@ -1,3 +1,7 @@
+2017-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline tests after r221909. Part 1.
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221762.

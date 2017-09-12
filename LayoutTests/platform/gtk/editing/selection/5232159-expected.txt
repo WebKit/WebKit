@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 755x35
-          text run at (0,0) width 755: "This tests for a bug where autoscroll code would prevent text from being selected. To run manually create a selection by"
+        RenderText {#text} at (0,0) size 754x35
+          text run at (0,0) width 754: "This tests for a bug where autoscroll code would prevent text from being selected. To run manually create a selection by"
           text run at (0,18) width 564: "clicking somewhere in the first sentence of the paragraph below and dragging downward."
 layer at (0,60) size 800x540
   RenderBlock (positioned) {DIV} at (0,60) size 800x540
@@ -22,6 +22,6 @@ layer at (0,60) size 800x90
         text run at (0,18) width 724: "neque a mi rutrum scelerisque. Nulla sed dui a massa sodales posuere. Nulla libero. Nulla posuere, felis id tincidunt"
         text run at (0,36) width 740: "tincidunt, ipsum metus tristique risus, et convallis turpis elit eget massa. Nunc consectetuer dolor vel nunc. Cum sociis"
         text run at (0,54) width 753: "natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque dapibus ante et nulla. Cras nec velit."
-        text run at (0,72) width 645: "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer ut tortor."
+        text run at (0,72) width 643: "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Integer ut tortor."
 selection start: position 3 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body
 selection end:   position 236 of child 2 {#text} of child 1 {DIV} of child 1 {DIV} of child 3 {DIV} of body

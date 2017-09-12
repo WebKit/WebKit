@@ -67,20 +67,20 @@ layer at (0,0) size 800x407
         RenderInline {STRONG} at (0,0) size 62x17
           RenderText {#text} at (29,0) size 62x17
             text run at (29,0) width 62: "first line"
-        RenderText {#text} at (91,0) size 402x17
-          text run at (91,0) width 222: " of this paragraph, and only that "
-          text run at (313,0) width 180: "one, should be displayed in "
+        RenderText {#text} at (91,0) size 398x17
+          text run at (91,0) width 219: " of this paragraph, and only that "
+          text run at (310,0) width 179: "one, should be displayed in "
         RenderInline {STRONG} at (0,0) size 72x17
-          RenderText {#text} at (493,0) size 72x17
-            text run at (493,0) width 72: "small-caps"
-        RenderText {#text} at (565,0) size 114x17
-          text run at (565,0) width 61: " style as "
-          text run at (626,0) width 53: "well as "
+          RenderText {#text} at (489,0) size 72x17
+            text run at (489,0) width 72: "small-caps"
+        RenderText {#text} at (561,0) size 114x17
+          text run at (561,0) width 61: " style as "
+          text run at (622,0) width 53: "well as "
         RenderInline {STRONG} at (0,0) size 39x17
-          RenderText {#text} at (679,0) size 39x17
-            text run at (679,0) width 39: "green"
-        RenderText {#text} at (718,0) size 784x107
-          text run at (718,0) width 58: ". Thus, if"
+          RenderText {#text} at (675,0) size 39x17
+            text run at (675,0) width 39: "green"
+        RenderText {#text} at (714,0) size 784x107
+          text run at (714,0) width 58: ". Thus, if"
           text run at (0,18) width 132: "the first line is not in "
           text run at (132,18) width 341: "small-caps style, or if the entire paragraph turns out in "
           text run at (473,18) width 311: "small-caps, then the user agent has failed this test."

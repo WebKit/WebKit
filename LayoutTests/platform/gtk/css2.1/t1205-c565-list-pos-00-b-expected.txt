@@ -12,11 +12,11 @@ layer at (0,0) size 800x96
           RenderInline {SPAN} at (0,0) size 12x17 [color=#000080]
             RenderText {#text} at (0,0) size 12x17
               text run at (0,0) width 12: "1."
-          RenderText {#text} at (12,0) size 31x17
-            text run at (12,0) width 31: " Test"
+          RenderText {#text} at (12,0) size 30x17
+            text run at (12,0) width 30: " Test"
       RenderBlock {OL} at (80,53) size 160x19 [color=#000080] [bgcolor=#000080]
         RenderListItem {LI} at (0,0) size 160x18
           RenderListMarker at (0,0) size 16x17: "1"
-          RenderInline {SPAN} at (0,0) size 27x17 [color=#FFFFFF]
-            RenderText {#text} at (16,0) size 27x17
-              text run at (16,0) width 27: "Test"
+          RenderInline {SPAN} at (0,0) size 26x17 [color=#FFFFFF]
+            RenderText {#text} at (16,0) size 26x17
+              text run at (16,0) width 26: "Test"

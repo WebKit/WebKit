@@ -13,11 +13,11 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,2) size 425x14
           text run at (0,2) width 425: "Please resize the browser window to see how your 100% CSS footer behaves."
       RenderBlock {P} at (10,70) size 780x102
-        RenderText {#text} at (0,2) size 771x86
+        RenderText {#text} at (0,2) size 770x86
           text run at (0,2) width 752: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Cras porttitor. Ut nonummy vestibulum arcu. Nulla eros eros, mattis et, dictum quis,"
           text run at (0,20) width 756: "convallis vel, mauris. Ut sed mauris vel metus pretium pretium. Curabitur tristique sem id justo. Nunc sit amet felis. Duis luctus pharetra urna."
           text run at (0,38) width 746: "Sed enim arcu, cursus a, posuere sed, sollicitudin in, justo. Pellentesque enim lacus, egestas ut, elementum eu, molestie vel, urna. Integer"
-          text run at (0,56) width 771: "quam. Phasellus tempor. Sed commodo porttitor justo. Vestibulum rhoncus lacinia pede. Aliquam lectus velit, auctor a, fermentum a, accumsan"
+          text run at (0,56) width 770: "quam. Phasellus tempor. Sed commodo porttitor justo. Vestibulum rhoncus lacinia pede. Aliquam lectus velit, auctor a, fermentum a, accumsan"
           text run at (0,74) width 54: "et, neque."
 layer at (0,562) size 620x38
   RenderBlock (positioned) {DIV} at (0,562) size 620x38 [bgcolor=#0066B2]

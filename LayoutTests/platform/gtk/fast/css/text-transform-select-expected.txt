@@ -30,9 +30,9 @@ layer at (0,0) size 800x526
         RenderListBox {SELECT} at (100,2) size 75x73 [bgcolor=#FFFFFF] [border: (1px inset #808080)]
         RenderText {#text} at (177,56) size 4x17
           text run at (177,56) width 4: " "
-        RenderInline {SPAN} at (0,0) size 103x17
-          RenderText {#text} at (181,56) size 103x17
-            text run at (181,56) width 103: "HeLLo WoRLd"
+        RenderInline {SPAN} at (0,0) size 102x17
+          RenderText {#text} at (181,56) size 102x17
+            text run at (181,56) width 102: "HeLLo WoRLd"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,182) size 784x82
         RenderMenuList {SELECT} at (2,50) size 75x30 [color=#2E3436] [bgcolor=#FFFFFF] [border: (1px solid #2E3436)]

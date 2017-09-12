@@ -12,16 +12,16 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (26,26) size 732x18
           RenderText {#text} at (0,0) size 99x17
             text run at (0,0) width 99: "Paragraph One."
-        RenderTable {TABLE} at (26,44) size 93x28 [border: (1px solid #BBBBBB)]
-          RenderTableSection {TBODY} at (1,1) size 91x26
-            RenderTableRow {TR} at (0,2) size 91x22 [border: (1px solid #BBBBBB)]
+        RenderTable {TABLE} at (26,44) size 92x28 [border: (1px solid #BBBBBB)]
+          RenderTableSection {TBODY} at (1,1) size 90x26
+            RenderTableRow {TR} at (0,2) size 90x22 [border: (1px solid #BBBBBB)]
               RenderTableCell {TD} at (2,2) size 8x22 [border: (1px solid #BBBBBB)] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 4x17
                   text run at (2,2) width 4: " "
-              RenderTableCell {TD} at (12,2) size 77x22 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 73x17
-                  text run at (2,2) width 73: "ToDo One."
+              RenderTableCell {TD} at (12,2) size 76x22 [border: (1px solid #BBBBBB)] [r=0 c=1 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 72x17
+                  text run at (2,2) width 72: "ToDo One."
         RenderBlock {DIV} at (26,72) size 732x18
-          RenderText {#text} at (0,0) size 102x17
-            text run at (0,0) width 102: "Paragraph Two."
+          RenderText {#text} at (0,0) size 101x17
+            text run at (0,0) width 101: "Paragraph Two."
 caret: position 14 of child 0 {#text} of child 5 {DIV} of child 3 {DIV} of body

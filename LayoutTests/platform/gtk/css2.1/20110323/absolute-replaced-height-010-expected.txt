@@ -4,8 +4,8 @@ layer at (0,0) size 800x61
   RenderBlock {HTML} at (0,0) size 800x61
     RenderBody {BODY} at (8,16) size 784x37
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 514x17
-          text run at (0,0) width 514: "Test passes if there is a single blue box below and it does not touch the black line."
+        RenderText {#text} at (0,0) size 513x17
+          text run at (0,0) width 513: "Test passes if there is a single blue box below and it does not touch the black line."
 layer at (8,50) size 784x3
   RenderBlock (relative positioned) {DIV} at (0,34) size 784x3 [border: (3px solid #000000) none]
 layer at (8,149) size 96x96

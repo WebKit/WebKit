@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 27x17
             text run at (0,0) width 27: "One"
         RenderBlock {DIV} at (0,18) size 784x18
-          RenderInline {SPAN} at (0,0) size 30x17
-            RenderText {#text} at (0,0) size 30x17
-              text run at (0,0) width 30: "Two"
-          RenderText {#text} at (30,0) size 4x17
-            text run at (30,0) width 4: " "
+          RenderInline {SPAN} at (0,0) size 29x17
+            RenderText {#text} at (0,0) size 29x17
+              text run at (0,0) width 29: "Two"
+          RenderText {#text} at (29,0) size 4x17
+            text run at (29,0) width 4: " "
           RenderInline {SPAN} at (0,0) size 37x17
-            RenderText {#text} at (34,0) size 37x17
-              text run at (34,0) width 37: "Three"
+            RenderText {#text} at (33,0) size 37x17
+              text run at (33,0) width 37: "Three"
         RenderBlock {DIV} at (0,36) size 784x18
           RenderText {#text} at (0,0) size 30x17
             text run at (0,0) width 30: "Four"

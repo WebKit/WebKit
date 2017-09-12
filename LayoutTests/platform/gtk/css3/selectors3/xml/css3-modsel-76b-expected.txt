@@ -6,8 +6,8 @@ layer at (0,0) size 800x384
       RenderText {#text} at (0,0) size 221x17
         text run at (0,0) width 221: "This paragraph should be unstyled."
     RenderBlock {address} at (0,50) size 800x18
-      RenderText {#text} at (0,0) size 205x17
-        text run at (0,0) width 205: "This address should be unstyled."
+      RenderText {#text} at (0,0) size 204x17
+        text run at (0,0) width 204: "This address should be unstyled."
     RenderBlock {p} at (0,84) size 800x18 [bgcolor=#00FF00]
       RenderText {#text} at (0,0) size 297x17
         text run at (0,0) width 297: "This paragraph should have green background."

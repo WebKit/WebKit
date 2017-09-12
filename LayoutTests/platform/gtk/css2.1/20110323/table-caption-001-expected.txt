@@ -4,12 +4,12 @@ layer at (0,0) size 800x172
   RenderBlock {HTML} at (0,0) size 800x172
     RenderBody {BODY} at (8,16) size 784x148
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 302x17
-          text run at (0,0) width 302: "Test passes if the \"Filler Text\" is above the box."
+        RenderText {#text} at (0,0) size 300x17
+          text run at (0,0) width 300: "Test passes if the \"Filler Text\" is above the box."
       RenderTable {DIV} at (0,34) size 96x114
         RenderBlock {DIV} at (0,0) size 96x18
-          RenderText {#text} at (0,0) size 66x17
-            text run at (0,0) width 66: "Filler Text"
+          RenderText {#text} at (0,0) size 65x17
+            text run at (0,0) width 65: "Filler Text"
         RenderTableSection (anonymous) at (0,18) size 96x96
           RenderTableRow {DIV} at (0,0) size 96x48
             RenderTableCell {DIV} at (0,0) size 48x0 [bgcolor=#000000] [r=0 c=0 rs=1 cs=1]

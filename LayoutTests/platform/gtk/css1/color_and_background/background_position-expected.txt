@@ -9,21 +9,37 @@ layer at (0,0) size 785x1458
       RenderBlock {PRE} at (0,34) size 769x255
         RenderText {#text} at (0,0) size 688x255
           text run at (0,0) width 648: "BODY {background-image: url(../resources/bg.gif); background-position: right top;"
+          text run at (648,0) width 0: " "
           text run at (0,15) width 288: "      background-repeat: no-repeat;}"
+          text run at (288,15) width 0: " "
           text run at (0,30) width 624: ".one {background-image: url(../resources/bg.gif); background-position: center;"
+          text run at (624,30) width 0: " "
           text run at (0,45) width 480: "      background-repeat: no-repeat; background-color: aqua;}"
+          text run at (480,45) width 0: " "
           text run at (0,60) width 632: ".two {background-image: url(../resources/bg.gif); background-position: 50% 50%;"
+          text run at (632,60) width 0: " "
           text run at (0,75) width 480: "      background-repeat: no-repeat; background-color: aqua;}"
+          text run at (480,75) width 0: " "
           text run at (0,90) width 688: ".three {background-image: url(../resources/bg.gif); background-position: bottom right;"
+          text run at (688,90) width 0: " "
           text run at (0,105) width 496: "        background-repeat: no-repeat; background-color: aqua;}"
+          text run at (496,105) width 0: " "
           text run at (0,120) width 656: ".four {background-image: url(../resources/bg.gif); background-position: 100% 100%;"
+          text run at (656,120) width 0: " "
           text run at (0,135) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
+          text run at (488,135) width 0: " "
           text run at (0,150) width 632: ".five {background-image: url(../resources/bg.gif); background-position: 0% 50%;"
+          text run at (632,150) width 0: " "
           text run at (0,165) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
+          text run at (488,165) width 0: " "
           text run at (0,180) width 632: ".six {background-image: url(../resources/bg.gif); background-position: 75% 25%;"
+          text run at (632,180) width 0: " "
           text run at (0,195) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
+          text run at (488,195) width 0: " "
           text run at (0,210) width 664: ".seven {background-image: url(../resources/bg.gif); background-position: 20px 20px;"
+          text run at (664,210) width 0: " "
           text run at (0,225) width 488: "       background-repeat: no-repeat; background-color: aqua;}"
+          text run at (488,225) width 0: " "
           text run at (0,240) width 0: " "
       RenderBlock {HR} at (0,302) size 769x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,320) size 769x18
@@ -75,9 +91,9 @@ layer at (0,0) size 785x1458
         RenderTableSection {TBODY} at (1,1) size 767x578
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x552
             RenderTableCell {TD} at (0,289) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17

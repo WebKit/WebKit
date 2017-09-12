@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x542
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 329x17
-          text run at (0,0) width 329: "You should see two green boxes below, with no red"
+        RenderText {#text} at (0,0) size 327x17
+          text run at (0,0) width 327: "You should see two green boxes below, with no red"
 layer at (58,76) size 120x120
   RenderBlock (relative positioned) {DIV} at (50,68) size 120x120 [border: (1px solid #000000)]
 layer at (69,87) size 100x100

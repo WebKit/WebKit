@@ -27,8 +27,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x220 [border: (4px solid #0000FF)]
         RenderBlock {DIV} at (20,20) size 744x69
-          RenderText {#text} at (0,0) size 67x26
-            text run at (0,0) width 67: "Tests: "
+          RenderText {#text} at (0,0) size 65x26
+            text run at (0,0) width 65: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 663x20
             text run at (0,27) width 663: "Our ability to \"edit around\" content the HTML editing code does not yet handle very well. "
@@ -36,8 +36,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x20
             RenderText {#text} at (0,48) size 99x20
               text run at (0,48) width 99: "For this test: "
-          RenderText {#text} at (99,48) size 178x20
-            text run at (99,48) width 178: "Test typing after a table."
+          RenderText {#text} at (99,48) size 177x20
+            text run at (99,48) width 177: "Test typing after a table."
         RenderBlock (anonymous) at (20,89) size 744x21
           RenderBR {BR} at (0,0) size 0x20
         RenderBlock {DIV} at (20,110) size 744x90
@@ -51,8 +51,8 @@ layer at (0,0) size 800x600
           RenderInline {I} at (0,0) size 99x20
             RenderText {#text} at (0,69) size 99x20
               text run at (0,69) width 99: "For this test: "
-          RenderText {#text} at (99,69) size 437x20
-            text run at (99,69) width 437: "Typed text should appear after (on the line below) the table."
+          RenderText {#text} at (99,69) size 436x20
+            text run at (99,69) width 436: "Typed text should appear after (on the line below) the table."
       RenderBlock {DIV} at (0,230) size 784x107 [border: (2px solid #008000)]
         RenderTable {TABLE} at (2,2) size 46x76 [border: (1px outset #808080)]
           RenderTableSection {TBODY} at (1,1) size 44x74

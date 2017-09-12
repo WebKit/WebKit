@@ -20,7 +20,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 782x35
           text run at (0,0) width 782: "This tests for a bug in createMarkup (markup for ancestors of the start of the selection wasn't being added to the pasteboard)."
-          text run at (0,18) width 338: "You should see the same thing in both regions below."
+          text run at (0,18) width 336: "You should see the same thing in both regions below."
       RenderBlock {P} at (0,52) size 784x18
         RenderInline {B} at (0,0) size 438x17
           RenderText {#text} at (0,0) size 438x17

@@ -31,9 +31,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 664x17
             text run at (0,0) width 491: "This test uses the eventSender to do a mouse click to focus the subframe. "
             text run at (491,0) width 173: "It won't run interactively."
-        RenderText {#text} at (664,0) size 723x35
+        RenderText {#text} at (664,0) size 722x35
           text run at (664,0) width 4: " "
-          text run at (668,0) width 55: "To run it"
+          text run at (668,0) width 54: "To run it"
           text run at (0,18) width 353: "manually, click on the iframe, Select All, then hit delete."
       RenderBlock (anonymous) at (0,240) size 784x54
         RenderText {#text} at (0,0) size 779x53
@@ -42,14 +42,14 @@ layer at (0,0) size 800x600
           text run at (217,18) width 423: "This test loads ../resources/select-all-iframe-src.html into an iframe. "
           text run at (640,18) width 139: "That file does a Select"
           text run at (0,36) width 86: "All + Delete. "
-          text run at (86,36) width 172: "Two things should happen:"
+          text run at (86,36) width 171: "Two things should happen:"
       RenderBlock {UL} at (0,310) size 784x54
         RenderListItem {LI} at (40,0) size 744x36
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 731x35
             text run at (0,0) width 451: "The Select All operation should not select the iframe, only it's contents. "
             text run at (451,0) width 280: "The results of the Select All will be apparent"
-            text run at (0,18) width 450: "from the delegate messages that DumpRenderTree receives and dumps."
+            text run at (0,18) width 449: "from the delegate messages that DumpRenderTree receives and dumps."
         RenderListItem {LI} at (40,36) size 744x18
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 336x17

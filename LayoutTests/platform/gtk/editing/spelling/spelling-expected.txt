@@ -23,8 +23,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 768x17
-          text run at (0,0) width 768: "You should see 'a' on the first line below, and 'zz a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
+        RenderText {#text} at (0,0) size 766x17
+          text run at (0,0) width 766: "You should see 'a' on the first line below, and 'zz a' on the second line. 'zz' (and only 'zz') should be marked as misspelled."
       RenderBlock {DIV} at (0,18) size 784x82 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x27
           RenderInline {SPAN} at (0,0) size 11x26

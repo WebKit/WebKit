@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 781: "Assuming the port-specific theme draws focus rings, this test can be used to ensure that a focus ring is drawn with an outline"
           text run at (0,18) width 97: "width of 10 px."
       RenderBlock (anonymous) at (0,52) size 784x18
-        RenderInline {A} at (0,0) size 27x17 [color=#0000EE]
-          RenderText {#text} at (0,0) size 27x17
-            text run at (0,0) width 27: "Test"
+        RenderInline {A} at (0,0) size 26x17 [color=#0000EE]
+          RenderText {#text} at (0,0) size 26x17
+            text run at (0,0) width 26: "Test"
         RenderText {#text} at (0,0) size 0x0
