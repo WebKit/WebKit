@@ -228,9 +228,11 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjec
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
 # See also bug #175578 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Failure ]
@@ -242,15 +244,19 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-con
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-duration.html [ Failure Crash ]
 # Crash in bug #176019
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-getvideoplaybackquality.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-is-type-supported.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-play-then-seek-back.html [ Failure Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-preload.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-remove.html [ Failure  Crash ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-seekable.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sequencemode-append-buffer.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode-timestamps.html [ Failure ]
@@ -647,7 +653,8 @@ webrtc/video-mediastreamtrack-stats.html [ Failure ]
 webrtc/video-mute.html [ Failure Timeout ]
 webrtc/video-remote-mute.html [ Failure ]
 webrtc/video-replace-muted-track.html [ Failure ]
-webrtc/video-replace-track.html [ Failure ]
+# Crash is bug #176801
+webrtc/video-replace-track.html [ Failure Crash ]
 webrtc/video-replace-track-to-null.html [ Failure ]
 webrtc/video-rotation.html [ Failure ]
 webrtc/video-stats.html [ Failure ]
@@ -696,7 +703,8 @@ webkit.org/b/79203 fast/mediastream/media-stream-track-source-failure.html [ Fai
 webkit.org/b/79203 webaudio/mediastreamaudiosourcenode.html [ Failure ]
 webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Timeout ]
 webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled-then-enabled.html [ Timeout ]
-webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure ]
+# Crash is bug #176801
+webkit.org/b/160996 fast/mediastream/MediaStream-video-element-video-tracks-disabled.html [ ImageOnlyFailure Crash ]
 webkit.org/b/161956 fast/mediastream/MediaStream-video-element-displays-buffer.html [ Failure ]
 webkit.org/b/168773 fast/mediastream/MediaStream-MediaElement-setObject-null.html [ Failure ]
 webkit.org/b/172269 fast/mediastream/media-devices-enumerate-devices.html [ Failure ]
@@ -1337,6 +1345,27 @@ webkit.org/b/175875 imported/w3c/web-platform-tests/service-workers/cache-storag
 
 webkit.org/b/175575 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/ready-states/autoplay-with-slow-text-tracks.html [ Crash Pass ]
 
+webkit.org/b/176796 accessibility/gtk/xml-roles-exposed.html [ Crash ]
+
+webkit.org/b/176797 accessibility/aria-listbox-no-selection.html [ Crash ]
+
+webkit.org/b/176798 accessibility/aria-tables.html [ Crash ]
+webkit.org/b/176798 accessibility/table-sections.html [ Crash ]
+
+webkit.org/b/176799 editing/deleting/delete-surrogatepair.html [ Crash ]
+
+webkit.org/b/176801 fast/mediastream/apply-constraints-audio.html [ Crash ]
+
+webkit.org/b/176803 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Crash ]
+
+webkit.org/b/176804 imported/w3c/web-platform-tests/media-source/mediasource-appendwindow.html [ Crash ]
+webkit.org/b/176804 imported/w3c/web-platform-tests/media-source/mediasource-detach.html [ Crash ]
+webkit.org/b/176804 imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Crash ]
+
+webkit.org/b/176805 media/media-higher-prio-audio-stream.html [ Crash ]
+
+webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1663,7 +1692,8 @@ webkit.org/b/133866 media/media-controls-cancel-events.html [ Timeout Failure Pa
 webkit.org/b/133867 webaudio/audioprocessingevent.html [ Failure Pass ]
 webkit.org/b/133869 media/video-seek-after-end.html [ Failure Pass ]
 
-webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass ]
+# Crash is webkit.org/b/176802
+webkit.org/b/36642 fast/replaced/border-radius-clip.html [ Failure Pass Crash ]
 
 webkit.org/b/134550 http/tests/cache/iframe-304-crash.html [ Failure Pass ]
 
@@ -3287,12 +3317,14 @@ webkit.org/b/170053 media/video-load-require-user-gesture.html [ Failure ]
 webkit.org/b/170335 canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
 
 webkit.org/b/171598 accessibility/gtk/menu-list-unfocused-notifications.html [ Failure ]
-
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html [ Failure Crash ]
 # Crash is bug #176020
 webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-removesourcebuffer.html [ Failure Crash ]
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure ]
-webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure ]
+# Crash is webkit.org/b/176804
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-beyond-duration.html [ Failure Crash ]
+# Crash is webkit.org/b/176804
+webkit.org/b/171726 imported/w3c/web-platform-tests/media-source/mediasource-seek-during-pending-seek.html [ Failure Crash ]
 webkit.org/b/171726 media/media-source/media-source-init-segment-duration.html [ Failure ]
 
 webkit.org/b/174459 fast/images/async-image-background-image-repeated.html [ ImageOnlyFailure ]
@@ -3372,7 +3404,8 @@ webkit.org/b/175134 fast/text/line-height-minimumFontSize-text-zoom.html [ Image
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-visual.html [ ImageOnlyFailure ]
 webkit.org/b/175134 fast/text/line-height-minimumFontSize-zoom.html [ ImageOnlyFailure ]
 
-webkit.org/b/175418 accessibility/add-children-pseudo-element.html [ Failure ]
+# Crash is webkit.org/b/176796
+webkit.org/b/175418 accessibility/add-children-pseudo-element.html [ Failure Crash ]
 
 webkit.org/b/175420 fullscreen/requestFullscreen-escape-key.html [ Failure ]
 

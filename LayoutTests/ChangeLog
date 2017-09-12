@@ -1,3 +1,9 @@
+2017-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [GTK] Unreviewed, update crash expectations after r221925
+
+        * platform/gtk/TestExpectations:
+
 2017-09-12  Dean Jackson  <dino@apple.com>
 
         [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state
