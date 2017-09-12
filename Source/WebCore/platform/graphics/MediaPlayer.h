@@ -44,6 +44,7 @@
 #include "SecurityOriginHash.h"
 #include "Timer.h"
 #include "VideoTrackPrivate.h"
+#include <pal/Logger.h>
 #include <runtime/Uint8Array.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -299,6 +300,11 @@ public:
     virtual bool mediaPlayerShouldDisableSleep() const { return false; }
     virtual const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     virtual bool mediaPlayerShouldCheckHardwareSupport() const { return false; }
+
+#if !RELEASE_LOG_DISABLED
+    virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
+    virtual const PAL::Logger& mediaPlayerLogger() = 0;
+#endif
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -625,6 +631,11 @@ public:
 
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     bool shouldCheckHardwareSupport() const;
+
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& mediaPlayerLogger();
+    const void* mediaPlayerLogIdentifier() { return client().mediaPlayerLogIdentifier(); }
+#endif
 
 private:
     MediaPlayer(MediaPlayerClient&);

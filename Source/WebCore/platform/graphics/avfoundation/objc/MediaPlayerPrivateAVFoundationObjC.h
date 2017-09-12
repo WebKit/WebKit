@@ -336,6 +336,10 @@ private:
 
     void setShouldDisableSleep(bool) override;
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "MediaPlayerPrivateAVFoundationObjC"; }
+#endif
+
     WeakPtrFactory<MediaPlayerPrivateAVFoundationObjC> m_weakPtrFactory;
 
     RetainPtr<AVURLAsset> m_avAsset;

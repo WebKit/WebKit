@@ -1,3 +1,97 @@
+2017-09-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch MediaPlayerPrivateAVFoundation to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176621
+        <rdar://problem/34335311>
+
+        Reviewed by Jer Noble.
+
+        * html/HTMLMediaElement.h:
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::nullLogger):
+        (WebCore::MediaPlayer::mediaPlayerLogger):
+        * platform/graphics/MediaPlayer.h:
+        (WebCore::MediaPlayerClient::mediaPlayerLogIdentifier):
+        (WebCore::MediaPlayerClient::mediaPlayerLogger):
+        (WebCore::MediaPlayer::mediaPlayerLogIdentifier):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::setUpVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::tearDownVideoRendering):
+        (WebCore::MediaPlayerPrivateAVFoundation::load):
+        (WebCore::MediaPlayerPrivateAVFoundation::playabilityKnown):
+        (WebCore::MediaPlayerPrivateAVFoundation::prepareToPlay):
+        (WebCore::MediaPlayerPrivateAVFoundation::play):
+        (WebCore::MediaPlayerPrivateAVFoundation::pause):
+        (WebCore::MediaPlayerPrivateAVFoundation::durationMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekWithTolerance):
+        (WebCore::MediaPlayerPrivateAVFoundation::setNaturalSize):
+        (WebCore::MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundation::minMediaTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundation::updateStates):
+        (WebCore::MediaPlayerPrivateAVFoundation::rateChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::timeChanged):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+        (WebCore::MediaPlayerPrivateAVFoundation::invalidateCachedDuration):
+        (WebCore::MediaPlayerPrivateAVFoundation::setPreload):
+        (WebCore::MediaPlayerPrivateAVFoundation::mainThreadCallback):
+        (WebCore::MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification):
+        (WebCore::MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks):
+        (WebCore::MediaPlayerPrivateAVFoundation::logChannel const):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::logClassName const):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCache):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::checkPlayability):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::beginLoadingMetadata):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMedia const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPlay):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformPause):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setMuted):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::assetStatus const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithImageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createImageForTimeInRect):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateAudioTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateVideoTracks):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::updateLastImage):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createOpenGLVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::destroyOpenGLVideoOutput):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::waitForVideoOutputMediaDataWillChange):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processMediaSelectionOptions):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::flushCues):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTextTrack):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::languageOfPrimaryAudioTrack const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::isCurrentPlaybackTargetWireless const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::wirelessVideoPlaybackDisabled const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessVideoPlaybackDisabled):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setWirelessPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldPlayToPlaybackTarget):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setShouldBufferData):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (WebCore::boolString): Deleted.
+
 2017-09-12  Daniel Bates  <dabates@apple.com>
 
         REGRESSION (r215784): The title of right-to-left pages are empty

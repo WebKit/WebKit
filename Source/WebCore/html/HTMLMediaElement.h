@@ -899,6 +899,9 @@ private:
     const char* logClassName() const final { return "HTMLMediaElement"; }
     const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
+
+    const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }
+    const PAL::Logger& mediaPlayerLogger() final { return logger(); }
 #endif
 
     bool willLog(WTFLogLevel) const;

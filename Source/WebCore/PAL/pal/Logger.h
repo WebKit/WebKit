@@ -39,6 +39,8 @@ template<typename T>
 struct LogArgument {
     template<typename U = T> static typename std::enable_if<std::is_same<U, bool>::value, String>::type toString(bool argument) { return argument ? ASCIILiteral("true") : ASCIILiteral("false"); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, int>::value, String>::type toString(int argument) { return String::number(argument); }
+    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned>::value, String>::type toString(unsigned argument) { return String::number(argument); }
+    template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned long>::value, String>::type toString(unsigned long argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, float>::value, String>::type toString(float argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, double>::value, String>::type toString(double argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, AtomicString>::value, String>::type toString(AtomicString argument) { return argument.string(); }

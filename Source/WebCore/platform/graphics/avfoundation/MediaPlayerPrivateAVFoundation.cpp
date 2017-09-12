@@ -41,6 +41,7 @@
 #include "URL.h"
 #include <CoreMedia/CoreMedia.h>
 #include <heap/HeapInlines.h>
+#include <pal/Logger.h>
 #include <runtime/DataView.h>
 #include <runtime/TypedArrayInlines.h>
 #include <runtime/Uint16Array.h>
@@ -60,6 +61,10 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_networkState(MediaPlayer::Empty)
     , m_readyState(MediaPlayer::HaveNothing)
     , m_preload(MediaPlayer::Auto)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(player->mediaPlayerLogger())
+    , m_logIdentifier(player->mediaPlayerLogIdentifier())
+#endif
     , m_cachedDuration(MediaTime::invalidTime())
     , m_reportedDuration(MediaTime::invalidTime())
     , m_maxTimeLoadedAtLastDidLoadingProgress(MediaTime::invalidTime())
@@ -81,12 +86,12 @@ MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* play
     , m_shouldMaintainAspectRatio(true)
     , m_seeking(false)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 }
 
 MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::~MediaPlayerPrivateAVFoundation(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
     setIgnoreLoadStateChanges(true);
 }
 
@@ -126,10 +131,7 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     if (currentMode == preferredMode && currentMode != MediaRenderingNone)
         return;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::setUpVideoRendering(%p) - current mode = %d, preferred mode = %d", 
-        this, static_cast<int>(currentMode), static_cast<int>(preferredMode));
-
-    if (currentMode != MediaRenderingNone)  
+    if (currentMode != MediaRenderingNone)
         tearDownVideoRendering();
 
     switch (preferredMode) {
@@ -144,15 +146,13 @@ void MediaPlayerPrivateAVFoundation::setUpVideoRendering()
     }
 
     // If using a movie layer, inform the client so the compositing tree is updated.
-    if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::setUpVideoRendering(%p) - calling mediaPlayerRenderingModeChanged()", this);
+    if (currentMode == MediaRenderingToLayer || preferredMode == MediaRenderingToLayer)
         m_player->client().mediaPlayerRenderingModeChanged(m_player);
-    }
 }
 
 void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::tearDownVideoRendering(%p)", this);
+    INFO_LOG(LOGIDENTIFIER);
 
     destroyContextVideoRenderer();
 
@@ -167,7 +167,7 @@ bool MediaPlayerPrivateAVFoundation::hasSetUpVideoRendering() const
 
 void MediaPlayerPrivateAVFoundation::load(const String& url)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::load(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     setNetworkState(m_preload == MediaPlayer::None ? MediaPlayer::Idle : MediaPlayer::Loading);
     setReadyState(MediaPlayer::HaveNothing);
@@ -191,16 +191,14 @@ void MediaPlayerPrivateAVFoundation::load(const String&, MediaSourcePrivateClien
 
 void MediaPlayerPrivateAVFoundation::playabilityKnown()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::playabilityKnown(%p)", this);
+    INFO_LOG(LOGIDENTIFIER, "metadata loaded = ", assetStatus() > MediaPlayerAVAssetStatusLoading);
 
     if (m_assetIsPlayable)
         return;
 
     // Nothing more to do if we already have all of the item's metadata.
-    if (assetStatus() > MediaPlayerAVAssetStatusLoading) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::playabilityKnown(%p) - all metadata loaded", this);
+    if (assetStatus() > MediaPlayerAVAssetStatusLoading)
         return;
-    }
 
     // At this point we are supposed to load metadata. It is OK to ask the asset to load the same 
     // information multiple times, because if it has already been loaded the completion handler 
@@ -211,28 +209,27 @@ void MediaPlayerPrivateAVFoundation::playabilityKnown()
 
 void MediaPlayerPrivateAVFoundation::prepareToPlay()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::prepareToPlay(%p)", this);
-
+    ALWAYS_LOG(LOGIDENTIFIER);
     setPreload(MediaPlayer::Auto);
 }
 
 void MediaPlayerPrivateAVFoundation::play()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::play(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
 
     // If the file has video, don't request playback until the first frame of video is ready to display
     // or the audio may start playing before we can render video.
     if (!m_cachedHasVideo || hasAvailableVideoFrame())
         platformPlay();
     else {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::play(%p) - waiting for first video frame", this);
+        INFO_LOG(LOGIDENTIFIER, "waiting for first video frame");
         m_playWhenFramesAvailable = true;
     }
 }
 
 void MediaPlayerPrivateAVFoundation::pause()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::pause(%p)", this);
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_playWhenFramesAvailable = false;
     platformPause();
 }
@@ -247,7 +244,7 @@ MediaTime MediaPlayerPrivateAVFoundation::durationMediaTime() const
         return MediaTime::zeroTime();
 
     m_cachedDuration = duration;
-    LOG(Media, "MediaPlayerPrivateAVFoundation::duration(%p) - caching %s", this, toString(m_cachedDuration).utf8().data());
+
     return m_cachedDuration;
 }
 
@@ -261,7 +258,7 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     MediaTime time = mediaTime;
 
     if (m_seeking) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::seekWithTolerance(%p) - save pending seek", this);
+        ALWAYS_LOG(LOGIDENTIFIER, "saving pending seek");
         m_pendingSeek = [this, time, negativeTolerance, positiveTolerance]() {
             seekWithTolerance(time, negativeTolerance, positiveTolerance);
         };
@@ -278,7 +275,7 @@ void MediaPlayerPrivateAVFoundation::seekWithTolerance(const MediaTime& mediaTim
     if (currentTextTrack())
         currentTextTrack()->beginSeeking();
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::seek(%p) - seeking to %s", this, toString(time).utf8().data());
+    ALWAYS_LOG(LOGIDENTIFIER, "seeking to  ", time);
 
     seekToTime(time, negativeTolerance, positiveTolerance);
 }
@@ -316,12 +313,12 @@ FloatSize MediaPlayerPrivateAVFoundation::naturalSize() const
 
 void MediaPlayerPrivateAVFoundation::setNaturalSize(FloatSize size)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation:setNaturalSize(%p) - size = %f x %f", this, size.width(), size.height());
-
     FloatSize oldSize = m_cachedNaturalSize;
     m_cachedNaturalSize = size;
-    if (oldSize != m_cachedNaturalSize)
+    if (oldSize != m_cachedNaturalSize) {
+        INFO_LOG(LOGIDENTIFIER, "was ", oldSize.width(), " x ", oldSize.height(), ", is ", size.width(), " x ", size.height());
         m_player->sizeChanged();
+    }
 }
 
 void MediaPlayerPrivateAVFoundation::setHasVideo(bool b)
@@ -403,11 +400,12 @@ MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
     if (!metaDataAvailable())
         return MediaTime::zeroTime();
 
-    if (!m_cachedMaxTimeSeekable)
+    if (!m_cachedMaxTimeSeekable) {
         m_cachedMaxTimeSeekable = platformMaxTimeSeekable();
+        INFO_LOG(LOGIDENTIFIER, "caching ", m_cachedMaxTimeSeekable);
+    }
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::maxTimeSeekable(%p) - returning %s", this, toString(m_cachedMaxTimeSeekable).utf8().data());
-    return m_cachedMaxTimeSeekable;   
+    return m_cachedMaxTimeSeekable;
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::minMediaTimeSeekable() const
@@ -415,10 +413,11 @@ MediaTime MediaPlayerPrivateAVFoundation::minMediaTimeSeekable() const
     if (!metaDataAvailable())
         return MediaTime::zeroTime();
 
-    if (!m_cachedMinTimeSeekable)
+    if (!m_cachedMinTimeSeekable) {
         m_cachedMinTimeSeekable = platformMinTimeSeekable();
+        INFO_LOG(LOGIDENTIFIER, "caching ", m_cachedMinTimeSeekable);
+    }
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::minTimeSeekable(%p) - returning %s", this, toString(m_cachedMinTimeSeekable).utf8().data());
     return m_cachedMinTimeSeekable;
 }
 
@@ -564,12 +563,10 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     } else if (!hasAvailableVideoFrame())
         m_haveReportedFirstVideoFrame = false;
 
-#if !LOG_DISABLED
-    if (m_networkState != newNetworkState || m_readyState != newReadyState) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - entered with networkState = %i, readyState = %i,  exiting with networkState = %i, readyState = %i",
-            this, static_cast<int>(m_networkState), static_cast<int>(m_readyState), static_cast<int>(newNetworkState), static_cast<int>(newReadyState));
-    }
-#endif
+    if (m_networkState != newNetworkState)
+        ALWAYS_LOG(LOGIDENTIFIER, "entered with networkState ", static_cast<int>(m_networkState), ", exiting with ", static_cast<int>(newNetworkState));
+    if (m_readyState != newReadyState)
+        ALWAYS_LOG(LOGIDENTIFIER, "entered with readyState ", static_cast<int>(m_readyState), ", exiting with ", static_cast<int>(newReadyState));
 
     setNetworkState(newNetworkState);
     setReadyState(newReadyState);
@@ -619,8 +616,8 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && PLATFORM(IOS)
-    LOG(Media, "MediaPlayerPrivateAVFoundation::rateChanged(%p) - rate = %f, requested rate = %f, item status = %i", this, rate(), requestedRate(), playerItemStatus());
     if (isCurrentPlaybackTargetWireless() && playerItemStatus() >= MediaPlayerAVPlayerItemStatusPlaybackBufferFull) {
         double rate = this->rate();
         if (rate != requestedRate()) {
@@ -648,14 +645,14 @@ void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 
 void MediaPlayerPrivateAVFoundation::timeChanged(const MediaTime& time)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::timeChanged(%p) - time = %s", this, toString(time).utf8().data());
     UNUSED_PARAM(time);
+    INFO_LOG(LOGIDENTIFIER, "- ", time);
 }
 
 void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     UNUSED_PARAM(finished);
+    ALWAYS_LOG(LOGIDENTIFIER, "finished = ", finished);
 
     m_seeking = false;
 
@@ -663,7 +660,7 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
     std::swap(pendingSeek, m_pendingSeek);
 
     if (pendingSeek) {
-        LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - issuing pending seek", this);
+        ALWAYS_LOG(LOGIDENTIFIER, "issuing pending seek");
         pendingSeek();
         return;
     }
@@ -695,6 +692,7 @@ void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
     // so report duration changed when the estimate is upated.
     MediaTime duration = this->durationMediaTime();
     if (duration != m_reportedDuration) {
+        INFO_LOG(LOGIDENTIFIER, "- ", m_cachedDuration);
         if (m_reportedDuration.isValid())
             m_player->durationChanged();
         m_reportedDuration = duration;
@@ -720,6 +718,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateAVFoundation::movieLoadType() const
 
 void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, " - ", static_cast<int>(preload));
     m_preload = preload;
     if (!m_assetURL.length())
         return;
@@ -754,8 +753,6 @@ void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
 
 void MediaPlayerPrivateAVFoundation::mainThreadCallback()
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundation::mainThreadCallback(%p)", this);
-
     clearMainThreadPendingFlag();
     dispatchNotification();
 }
@@ -776,26 +773,8 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
     scheduleMainThreadNotification(Notification(type, finished));
 }
 
-#if !LOG_DISABLED
-static const char* notificationName(MediaPlayerPrivateAVFoundation::Notification& notification)
-{
-#define DEFINE_TYPE_STRING_CASE(type) case MediaPlayerPrivateAVFoundation::Notification::type: return #type;
-    switch (notification.type()) {
-    FOR_EACH_MEDIAPLAYERPRIVATEAVFOUNDATION_NOTIFICATION_TYPE(DEFINE_TYPE_STRING_CASE)
-    case MediaPlayerPrivateAVFoundation::Notification::FunctionType: return "FunctionType";
-    default: ASSERT_NOT_REACHED(); return "";
-    }
-#undef DEFINE_TYPE_STRING_CASE
-}
-#endif // !LOG_DISABLED
-    
-
 void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification&& notification)
 {
-    auto notificationType = notification.type();
-    if (notificationType != Notification::FunctionType)
-        LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - notification %s", this, notificationName(notification));
-
     m_queueMutex.lock();
 
     // It is important to always process the properties in the order that we are notified,
@@ -820,11 +799,8 @@ void MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(Notification
 
     m_queueMutex.unlock();
 
-    if (delayDispatch) {
-        if (notificationType != Notification::FunctionType)
-            LOG(Media, "MediaPlayerPrivateAVFoundation::scheduleMainThreadNotification(%p) - early return", this);
+    if (delayDispatch)
         return;
-    }
 
     dispatchNotification();
 }
@@ -857,9 +833,6 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
         if (!notification.isValid())
             return;
     }
-
-    if (notification.type() != Notification::FunctionType)
-        LOG(Media, "MediaPlayerPrivateAVFoundation::dispatchNotification(%p) - dispatching %s", this, notificationName(notification));
 
     switch (notification.type()) {
     case Notification::ItemDidPlayToEndTime:
@@ -989,8 +962,9 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
         }
     }
 
+    unsigned trackCount = m_textTracks.size();
     unsigned inBandCount = 0;
-    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+    for (unsigned i = 0; i < trackCount; ++i) {
         RefPtr<InbandTextTrackPrivateAVF> track = m_textTracks[i];
 
 #if ENABLE(AVF_CAPTIONS)
@@ -1006,21 +980,20 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
         track->setHasBeenReported(true);
         player()->addTextTrack(*track);
     }
-    LOG(Media, "MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(%p) - found %lu text tracks", this, m_textTracks.size());
+
+    if (trackCount != m_textTracks.size())
+        INFO_LOG(LOGIDENTIFIER, "found ", m_textTracks.size(), " text tracks");
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-
 void MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged()
 {
     if (m_player)
         m_player->currentPlaybackTargetIsWirelessChanged();
 }
-
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-
 bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
 {
     // initData should have the following layout:
@@ -1070,7 +1043,6 @@ bool MediaPlayerPrivateAVFoundation::extractKeyURIKeyIDAndCertificateFromInitDat
 
     return true;
 }
-
 #endif
 
 URL MediaPlayerPrivateAVFoundation::resolvedURL() const
@@ -1121,6 +1093,13 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
 
     return false;
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 const HashSet<String, ASCIICaseInsensitiveHash>& MediaPlayerPrivateAVFoundation::staticMIMETypeList()
 {

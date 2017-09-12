@@ -1,3 +1,15 @@
+2017-09-12  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch MediaPlayerPrivateAVFoundation to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176621
+        <rdar://problem/34335311>
+
+        Reviewed by Jer Noble.
+
+        * pal/Logger.h:
+        (PAL::LogArgument::toString):
+        * pal/LoggerHelper.h:
+
 2017-09-11  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream QTKit-related WebKitSystemInterface functions

@@ -94,6 +94,14 @@ namespace WebCore {
 
 const PlatformMedia NoPlatformMedia = { PlatformMedia::None, {0} };
 
+#if !RELEASE_LOG_DISABLED
+static RefPtr<PAL::Logger>& nullLogger()
+{
+    static NeverDestroyed<RefPtr<PAL::Logger>> logger;
+    return logger;
+}
+#endif
+
 // a null player to make MediaPlayer logic simpler
 
 class NullMediaPlayerPrivate : public MediaPlayerPrivateInterface {
@@ -164,6 +172,21 @@ public:
     bool hasSingleSecurityOrigin() const override { return true; }
 };
 
+class NullMediaPlayerClient : public MediaPlayerClient {
+public:
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& mediaPlayerLogger() final
+    {
+        if (!nullLogger().get()) {
+            nullLogger() = PAL::Logger::create(this);
+            nullLogger()->setEnabled(this, false);
+        }
+
+        return *nullLogger().get();
+    }
+#endif
+};
+
 const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardwareSupport() const
 {
     static NeverDestroyed<Vector<ContentType>> contentTypes;
@@ -172,7 +195,7 @@ const Vector<ContentType>& MediaPlayerClient::mediaContentTypesRequiringHardware
 
 static MediaPlayerClient& nullMediaPlayerClient()
 {
-    static NeverDestroyed<MediaPlayerClient> client;
+    static NeverDestroyed<NullMediaPlayerClient> client;
     return client.get();
 }
 
@@ -1486,6 +1509,13 @@ bool MediaPlayer::shouldCheckHardwareSupport() const
 {
     return client().mediaPlayerShouldCheckHardwareSupport();
 }
+
+#if !RELEASE_LOG_DISABLED
+const PAL::Logger& MediaPlayer::mediaPlayerLogger()
+{
+    return client().mediaPlayerLogger();
+}
+#endif
 
 }
 

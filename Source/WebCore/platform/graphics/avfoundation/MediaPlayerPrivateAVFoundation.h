@@ -32,12 +32,17 @@
 #include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
+#include <pal/LoggerHelper.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
+
+namespace PAL {
+class Logger;
+}
 
 namespace WebCore {
 
@@ -46,6 +51,9 @@ class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
 class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface, public AVFInbandTrackParent
+#if !RELEASE_LOG_DISABLED
+    , private PAL::LoggerHelper
+#endif
 {
 public:
     virtual void repaint();
@@ -142,6 +150,13 @@ public:
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate);
+#endif
+
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const char* logClassName() const override { return "MediaPlayerPrivateAVFoundation"; }
+    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+    WTFLogChannel& logChannel() const final;
 #endif
 
 protected:
@@ -330,6 +345,11 @@ private:
 
     String m_assetURL;
     MediaPlayer::Preload m_preload;
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const PAL::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 
     FloatSize m_cachedNaturalSize;
     mutable MediaTime m_cachedMaxTimeLoaded;
