@@ -1,3 +1,44 @@
+2017-09-12  Antti Koivisto  <antti@apple.com>
+
+        AnimationBase should point to Element instead of RenderElement
+        https://bugs.webkit.org/show_bug.cgi?id=176807
+
+        Reviewed by Andreas Kling.
+
+        This is a step towards making animation system operate on elements and styles instead renderers.
+
+        No functional changes.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        (WebCore::AnimationBase::renderer const):
+        (WebCore::AnimationBase::compositedRenderer const):
+        (WebCore::AnimationBase::updateStateMachine):
+        (WebCore::AnimationBase::fireAnimationEventsIfNeeded):
+        (WebCore::AnimationBase::timeToNextService):
+        (WebCore::AnimationBase::freezeAtTime):
+        (WebCore::AnimationBase::getElapsedTime const):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::clear):
+        (WebCore::AnimationBase::renderer const): Deleted.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::shouldSendEventForListener const):
+        (WebCore::ImplicitAnimation::computeExtentOfTransformAnimation const):
+        (WebCore::ImplicitAnimation::startAnimation):
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::endAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::getAnimatedStyle):
+        (WebCore::KeyframeAnimation::computeExtentOfTransformAnimation const):
+        (WebCore::KeyframeAnimation::startAnimation):
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::shouldSendEventForListener const):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::resolveKeyframeStyles):
+
 2017-09-12  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Add Modules/fetch to list of forwarding headers folders.

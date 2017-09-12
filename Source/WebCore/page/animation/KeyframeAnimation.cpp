@@ -223,7 +223,7 @@ void KeyframeAnimation::getAnimatedStyle(std::unique_ptr<RenderStyle>& animatedS
         return;
 
     if (!animatedStyle)
-        animatedStyle = RenderStyle::clonePtr(m_object->style());
+        animatedStyle = RenderStyle::clonePtr(renderer()->style());
 
     for (auto propertyID : m_keyframes.properties()) {
         // Get the from/to styles and progress between
@@ -240,10 +240,10 @@ bool KeyframeAnimation::computeExtentOfTransformAnimation(LayoutRect& bounds) co
 {
     ASSERT(m_keyframes.containsProperty(CSSPropertyTransform));
 
-    if (!is<RenderBox>(m_object))
+    if (!is<RenderBox>(renderer()))
         return true; // Non-boxes don't get transformed;
 
-    RenderBox& box = downcast<RenderBox>(*m_object);
+    RenderBox& box = downcast<RenderBox>(*renderer());
     FloatRect rendererBox = snapRectToDevicePixels(box.borderBoxRect(), box.document().deviceScaleFactor());
 
     FloatRect cumulativeBounds = bounds;
@@ -277,40 +277,40 @@ bool KeyframeAnimation::hasAnimationForProperty(CSSPropertyID property) const
 
 bool KeyframeAnimation::startAnimation(double timeOffset)
 {
-    if (m_object && m_object->isComposited())
-        return downcast<RenderBoxModelObject>(*m_object).startAnimation(timeOffset, m_animation.ptr(), m_keyframes);
+    if (auto* renderer = compositedRenderer())
+        return renderer->startAnimation(timeOffset, m_animation.ptr(), m_keyframes);
     return false;
 }
 
 void KeyframeAnimation::pauseAnimation(double timeOffset)
 {
-    if (!m_object)
+    if (!m_element)
         return;
 
-    if (m_object->isComposited())
-        downcast<RenderBoxModelObject>(*m_object).animationPaused(timeOffset, m_keyframes.animationName());
+    if (auto* renderer = compositedRenderer())
+        renderer->animationPaused(timeOffset, m_keyframes.animationName());
 
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->element());
+        setNeedsStyleRecalc(m_element);
 }
 
 void KeyframeAnimation::endAnimation()
 {
-    if (!m_object)
+    if (!m_element)
         return;
 
-    if (m_object->isComposited())
-        downcast<RenderBoxModelObject>(*m_object).animationFinished(m_keyframes.animationName());
+    if (auto* renderer = compositedRenderer())
+        renderer->animationFinished(m_keyframes.animationName());
 
     // Restore the original (unanimated) style
     if (!paused())
-        setNeedsStyleRecalc(m_object->element());
+        setNeedsStyleRecalc(m_element);
 }
 
 bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listenerType) const
 {
-    return m_object->document().hasListenerType(listenerType);
+    return m_element->document().hasListenerType(listenerType);
 }
 
 void KeyframeAnimation::onAnimationStart(double elapsedTime)
@@ -349,7 +349,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
 
     if (shouldSendEventForListener(listenerType)) {
         // Dispatch the event
-        RefPtr<Element> element = m_object->element();
+        auto element = makeRefPtr(m_element);
 
         ASSERT(!element || element->document().pageCacheState() == Document::NotInPageCache);
         if (!element)
@@ -389,17 +389,16 @@ bool KeyframeAnimation::affectsProperty(CSSPropertyID property) const
 
 void KeyframeAnimation::resolveKeyframeStyles()
 {
-    if (!m_object || !m_object->element())
+    if (!m_element)
         return;
-    auto& element = *m_object->element();
 
-    if (auto* styleScope = Style::Scope::forOrdinal(element, m_animation->nameStyleScopeOrdinal()))
-        styleScope->resolver().keyframeStylesForAnimation(*m_object->element(), m_unanimatedStyle.get(), m_keyframes);
+    if (auto* styleScope = Style::Scope::forOrdinal(*m_element, m_animation->nameStyleScopeOrdinal()))
+        styleScope->resolver().keyframeStylesForAnimation(*m_element, m_unanimatedStyle.get(), m_keyframes);
 
     // Ensure resource loads for all the frames.
     for (auto& keyframe : m_keyframes.keyframes()) {
         if (auto* style = const_cast<RenderStyle*>(keyframe.style()))
-            Style::loadPendingResources(*style, element.document(), &element);
+            Style::loadPendingResources(*style, m_element->document(), m_element);
     }
 }
 

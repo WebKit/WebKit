@@ -38,6 +38,7 @@ class CompositeAnimation;
 class Element;
 class FloatRect;
 class LayoutRect;
+class RenderBoxModelObject;
 class RenderElement;
 class RenderStyle;
 class TimingFunction;
@@ -50,11 +51,12 @@ public:
     AnimationBase(const Animation& transition, RenderElement*, CompositeAnimation*);
     virtual ~AnimationBase() { }
 
-    RenderElement* renderer() const { return m_object; }
+    RenderElement* renderer() const;
+    RenderBoxModelObject* compositedRenderer() const;
     void clear()
     {
         endAnimation();
-        m_object = nullptr;
+        m_element = nullptr;
         m_compositeAnimation = nullptr;
     }
 
@@ -239,7 +241,7 @@ protected:
     bool computeTransformedExtentViaTransformList(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
     bool computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
 
-    RenderElement* m_object;
+    Element* m_element;
     CompositeAnimation* m_compositeAnimation; // Ideally this would be a reference, but it has to be cleared if an animation is destroyed inside an event callback.
     Ref<Animation> m_animation;
 

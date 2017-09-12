@@ -77,13 +77,27 @@ static inline double solveSpringFunction(double mass, double stiffness, double d
 }
 
 AnimationBase::AnimationBase(const Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation)
-    : m_object(renderer)
+    : m_element(renderer->element())
     , m_compositeAnimation(compositeAnimation)
     , m_animation(const_cast<Animation&>(animation))
 {
+    ASSERT(m_element);
     // Compute the total duration
     if (m_animation->iterationCount() > 0)
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
+}
+
+RenderElement* AnimationBase::renderer() const
+{
+    return m_element ? m_element->renderer() : nullptr;
+}
+
+RenderBoxModelObject* AnimationBase::compositedRenderer() const
+{
+    auto* renderer = this->renderer();
+    if (!renderer || !renderer->isComposited())
+        return nullptr;
+    return downcast<RenderBoxModelObject>(renderer);
 }
 
 void AnimationBase::setNeedsStyleRecalc(Element* element)
@@ -246,8 +260,8 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 m_compositeAnimation->animationController().addToAnimationsWaitingForStyle(this);
 
                 // Trigger a render so we can start the animation
-                if (m_object && m_object->element())
-                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
+                if (m_element)
+                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_element);
             } else {
                 ASSERT(!paused());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
@@ -313,8 +327,8 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 goIntoEndingOrLoopingState();
 
                 // Dispatch updateStyleIfNeeded so we can start the animation
-                if (m_object && m_object->element())
-                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
+                if (m_element)
+                    m_compositeAnimation->animationController().addElementChangeToDispatch(*m_element);
             } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
@@ -357,7 +371,7 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                 LOG(Animations, "%p AnimationState %s -> Done (time is %f)", this, nameForState(m_animationState), param);
                 m_animationState = AnimationState::Done;
                 
-                if (m_object) {
+                if (m_element) {
                     if (m_animation->fillsForwards()) {
                         LOG(Animations, "%p AnimationState %s -> FillingForwards", this, nameForState(m_animationState));
                         m_animationState = AnimationState::FillingForwards;
@@ -365,8 +379,8 @@ void AnimationBase::updateStateMachine(AnimationStateInput input, double param)
                         resumeOverriddenAnimations();
 
                     // Fire off another style change so we can set the final value
-                    if (m_object->element())
-                        m_compositeAnimation->animationController().addElementChangeToDispatch(*m_object->element());
+                    if (m_element)
+                        m_compositeAnimation->animationController().addElementChangeToDispatch(*m_element);
                 }
             } else {
                 // We are pausing while running. Cancel the animation and wait
@@ -491,7 +505,7 @@ void AnimationBase::fireAnimationEventsIfNeeded()
     if (m_animationState == AnimationState::StartWaitTimer) {
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
-            if (m_object) {
+            if (m_element) {
                 float offset = m_compositeAnimation->animationController().scrollPosition();
                 auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
                 if (offset > scrollTrigger.startValue().value())
@@ -574,8 +588,8 @@ std::optional<Seconds> AnimationBase::timeToNextService()
     if (m_animationState == AnimationState::StartWaitTimer) {
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
         if (m_animation->trigger()->isScrollAnimationTrigger()) {
-            if (m_object) {
-                float currentScrollPosition = m_object->view().frameView().scrollPositionForFixedPosition().y().toFloat();
+            if (m_element) {
+                float currentScrollPosition = m_element->document().view()->scrollPositionForFixedPosition().y().toFloat();
                 auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
                 if (currentScrollPosition >= scrollTrigger.startValue().value() && (!scrollTrigger.hasEndValue() || currentScrollPosition <= scrollTrigger.endValue().value()))
                     return 0_s;
@@ -726,8 +740,8 @@ void AnimationBase::freezeAtTime(double t)
     else
         m_pauseTime = m_startTime.value_or(0) + t - m_animation->delay();
 
-    if (m_object && m_object->isComposited())
-        downcast<RenderBoxModelObject>(*m_object).suspendAnimations(m_pauseTime.value());
+    if (auto* renderer = compositedRenderer())
+        renderer->suspendAnimations(m_pauseTime.value());
 }
 
 double AnimationBase::beginAnimationUpdateTime() const
@@ -743,7 +757,7 @@ double AnimationBase::getElapsedTime() const
 #if ENABLE(CSS_ANIMATIONS_LEVEL_2)
     if (m_animation->trigger() && m_animation->trigger()->isScrollAnimationTrigger()) {
         auto& scrollTrigger = downcast<ScrollAnimationTrigger>(*m_animation->trigger());
-        if (scrollTrigger.hasEndValue() && m_object) {
+        if (scrollTrigger.hasEndValue() && m_element) {
             float offset = m_compositeAnimation->animationController().scrollPosition();
             float startValue = scrollTrigger.startValue().value();
             if (offset < startValue)
