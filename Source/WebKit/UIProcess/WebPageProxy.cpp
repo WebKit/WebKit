@@ -5959,7 +5959,7 @@ void WebPageProxy::runModal()
     // See http://webkit.org/b/89590 for more discussion.
     m_process->connection()->wakeUpRunLoop();
 
-    m_uiClient->runModal(this);
+    m_uiClient->runModal(*this);
 }
 
 void WebPageProxy::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)

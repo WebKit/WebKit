@@ -2033,12 +2033,12 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             return m_client.runModal;
         }
 
-        void runModal(WebPageProxy* page) final
+        void runModal(WebPageProxy& page) final
         {
             if (!m_client.runModal)
                 return;
 
-            m_client.runModal(toAPI(page), m_client.base.clientInfo);
+            m_client.runModal(toAPI(&page), m_client.base.clientInfo);
         }
 
         void saveDataToFileInDownloadsFolder(WebPageProxy* page, const String& suggestedFilename, const String& mimeType, const WebCore::URL& originatingURL, API::Data& data) final

@@ -110,6 +110,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.focusWebView = [delegate respondsToSelector:@selector(_focusWebView:)];
     m_delegateMethods.unfocusWebView = [delegate respondsToSelector:@selector(_unfocusWebView:)];
     m_delegateMethods.webViewTakeFocus = [delegate respondsToSelector:@selector(_webView:takeFocus:)];
+    m_delegateMethods.webViewRunModal = [delegate respondsToSelector:@selector(_webViewRunModal:)];
     m_delegateMethods.webViewDidScroll = [delegate respondsToSelector:@selector(_webViewDidScroll:)];
     m_delegateMethods.webViewGetToolbarsAreVisibleWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:getToolbarsAreVisibleWithCompletionHandler:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
@@ -400,6 +401,23 @@ void UIDelegate::UIClient::takeFocus(WebPageProxy*, WKFocusDirection direction)
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView takeFocus:toWKFocusDirection(direction)];
+}
+
+bool UIDelegate::UIClient::canRunModal() const
+{
+    return m_uiDelegate.m_delegateMethods.webViewRunModal;
+}
+
+void UIDelegate::UIClient::runModal(WebPageProxy&)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRunModal)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+
+    [(id <WKUIDelegatePrivate>)delegate _webViewRunModal:m_uiDelegate.m_webView];
 }
 
 void UIDelegate::UIClient::pageDidScroll(WebPageProxy*)

@@ -137,7 +137,7 @@ public:
     virtual void printFrame(WebKit::WebPageProxy&, WebKit::WebFrameProxy&) { }
 
     virtual bool canRunModal() const { return false; }
-    virtual void runModal(WebKit::WebPageProxy*) { }
+    virtual void runModal(WebKit::WebPageProxy&) { }
 
     virtual void saveDataToFileInDownloadsFolder(WebKit::WebPageProxy*, const WTF::String&, const WTF::String&, const WebCore::URL&, Data&) { }
 

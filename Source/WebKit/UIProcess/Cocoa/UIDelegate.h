@@ -98,6 +98,8 @@ private:
         void takeFocus(WebPageProxy*, WKFocusDirection) final;
         void focus(WebPageProxy*) final;
         void unfocus(WebPageProxy*) final;
+        bool canRunModal() const final;
+        void runModal(WebPageProxy&) final;
         void pageDidScroll(WebPageProxy*) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, Function<void(bool)>&&) final;
@@ -152,6 +154,7 @@ private:
         bool showWebView : 1;
         bool focusWebView : 1;
         bool unfocusWebView : 1;
+        bool webViewRunModal : 1;
         bool webViewTakeFocus : 1;
         bool webViewDidScroll : 1;
         bool webViewDidNotHandleWheelEvent : 1;

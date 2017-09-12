@@ -210,7 +210,7 @@ private:
 
     bool canRunModal() const final { return true; }
 
-    void runModal(WebPageProxy*) final
+    void runModal(WebPageProxy&) final
     {
         webkitWebViewRunAsModal(m_webView);
     }

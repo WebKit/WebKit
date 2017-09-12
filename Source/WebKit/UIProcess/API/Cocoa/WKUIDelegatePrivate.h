@@ -154,6 +154,7 @@ struct UIEdgeInsets;
 - (void)_focusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_unfocusWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webViewDidScroll:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_webViewRunModal:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView takeFocus:(_WKFocusDirection)direction WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView didNotHandleWheelEvent:(NSEvent *)event WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 - (void)_webView:(WKWebView *)webView handleAutoplayEvent:(_WKAutoplayEvent)event withFlags:(_WKAutoplayEventFlags)flags WK_API_AVAILABLE(macosx(WK_MAC_TBA));
