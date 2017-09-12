@@ -1,3 +1,21 @@
+2017-09-12  Daniel Bates  <dabates@apple.com>
+
+        REGRESSION (r215784): The title of right-to-left pages are empty
+        https://bugs.webkit.org/show_bug.cgi?id=176746
+        <rdar://problem/34211419>
+
+        Reviewed by Brent Fulgham.
+
+        Left truncate a long right-to-left title.
+
+        Right-to-left text represents the visual ordering of text. Internally WebKit stores
+        right-to-left text identically to left-to-right text in memory. So, we can use the
+        same string operation to truncate right-to-left text as we do to truncate left-to-right
+        text.
+
+        * platform/text/StringWithDirection.h:
+        (WebCore::truncateFromEnd):
+
 2017-09-12  Chris Fleizach  <cfleizach@apple.com>
 
         AX: On generic container elements, WebKit should distinguish between tooltip (e.g. @title) and label (e.g. @aria-label) attributes
