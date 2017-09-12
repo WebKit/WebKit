@@ -1,3 +1,32 @@
+2017-09-12  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a RecordData for Cache to efficiently check whether it matches a corresponding request or not
+        https://bugs.webkit.org/show_bug.cgi?id=176579
+
+        Reviewed by Alex Christensen.
+
+        Introducing RecordData that splits its stored data in mandatory data,
+        used to check a record with a request and optional data that is
+        necessary to build a CacheStorageEngine::Record used by WebProcess.
+
+        The mandatory data contains the URL, Vary header information and identifiers.
+        Adding routines to go from a Record to RecordData and vice versa.
+        Storing in CacheStorage::Cache RecordData instead of Record.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::queryCache):
+        (WebKit::CacheStorage::updateVaryInformation):
+        (WebKit::CacheStorage::toRecord):
+        (WebKit::CacheStorage::toRecordData):
+        (WebKit::CacheStorage::Cache::retrieveRecords const):
+        (WebKit::CacheStorage::Cache::addRecord):
+        (WebKit::CacheStorage::Cache::recordsFromURL):
+        (WebKit::CacheStorage::Cache::recordsFromURL const):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::writeRecordToDisk):
+        (WebKit::CacheStorage::Cache::removeRecordFromDisk):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+
 2017-09-12  Dan Bernstein  <mitz@apple.com>
 
         Tried to fix the iOS 10 build after r221930.

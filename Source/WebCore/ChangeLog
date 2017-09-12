@@ -1,3 +1,21 @@
+2017-09-12  Youenn Fablet  <youenn@apple.com>
+
+        Introduce a RecordData for Cache to efficiently check whether it matches a corresponding request or not
+        https://bugs.webkit.org/show_bug.cgi?id=176579
+
+        Reviewed by Alex Christensen.
+
+        No change of behavior.
+
+        Introducing another version of queryCacheMatch used for the NetworkProcess implementation of the Cache.
+        Exporting the copy of a response body to be used also there.
+
+        * Modules/cache/DOMCacheEngine.cpp:
+        (WebCore::DOMCacheEngine::matchURLs):
+        (WebCore::DOMCacheEngine::queryCacheMatch):
+        (WebCore::DOMCacheEngine::copyResponseBody):
+        * Modules/cache/DOMCacheEngine.h:
+
 2017-09-12  Antti Koivisto  <antti@apple.com>
 
         AnimationBase should point to Element instead of RenderElement

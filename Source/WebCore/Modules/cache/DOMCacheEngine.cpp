@@ -49,18 +49,25 @@ Exception errorToException(Error error)
     }
 }
 
-bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)
+static inline bool matchURLs(const ResourceRequest& request, const URL& cachedURL, const CacheQueryOptions& options)
 {
     ASSERT(options.ignoreMethod || request.httpMethod() == "GET");
 
     URL requestURL = request.url();
-    URL cachedRequestURL = cachedRequest.url();
+    URL cachedRequestURL = cachedURL;
 
     if (options.ignoreSearch) {
-        requestURL.setQuery({ });
-        cachedRequestURL.setQuery({ });
+        if (requestURL.hasQuery())
+            requestURL.setQuery({ });
+        if (cachedRequestURL.hasQuery())
+            cachedRequestURL.setQuery({ });
     }
-    if (!equalIgnoringFragmentIdentifier(requestURL, cachedRequestURL))
+    return equalIgnoringFragmentIdentifier(requestURL, cachedRequestURL);
+}
+
+bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse& cachedResponse, const CacheQueryOptions& options)
+{
+    if (!matchURLs(request, cachedRequest.url(), options))
         return false;
 
     if (options.ignoreVary)
@@ -70,13 +77,35 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
     if (varyValue.isNull())
         return true;
 
-    // FIXME: This is inefficient, we should be able to split and trim whitespaces at the same time.
-    Vector<String> varyHeaderNames;
-    varyValue.split(',', false, varyHeaderNames);
-    for (auto& name : varyHeaderNames) {
-        if (stripLeadingAndTrailingHTTPSpaces(name) == "*")
-            return false;
-        if (cachedRequest.httpHeaderField(name) != request.httpHeaderField(name))
+    bool isVarying = false;
+    varyValue.split(',', false, [&](StringView view) {
+        if (isVarying)
+            return;
+        auto nameView = stripLeadingAndTrailingHTTPSpaces(view);
+        if (nameView == "*") {
+            isVarying = true;
+            return;
+        }
+        auto name = nameView.toString();
+        isVarying = cachedRequest.httpHeaderField(name) != request.httpHeaderField(name);
+    });
+
+    return !isVarying;
+}
+
+bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions& options)
+{
+    if (!matchURLs(request, url, options))
+        return false;
+
+    if (options.ignoreVary)
+        return true;
+
+    if (hasVaryStar)
+        return false;
+
+    for (const auto& pair : varyHeaders) {
+        if (pair.value != request.httpHeaderField(pair.key))
             return false;
     }
     return true;
@@ -93,7 +122,7 @@ ResponseBody isolatedResponseBody(const ResponseBody& body)
     });
 }
 
-static inline ResponseBody copyResponseBody(const DOMCacheEngine::ResponseBody& body)
+ResponseBody copyResponseBody(const ResponseBody& body)
 {
     return WTF::switchOn(body, [](const Ref<FormData>& formData) {
         return formData.copyRef();

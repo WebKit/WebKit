@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "NetworkCacheKey.h"
 #include <WebCore/DOMCacheEngine.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -34,6 +35,31 @@ namespace WebKit {
 namespace CacheStorage {
 
 class Caches;
+
+struct RecordData {
+    NetworkCache::Key key;
+    double insertionTime { 0 };
+
+    uint64_t identifier { 0 };
+    uint64_t updateResponseCounter { 0 };
+
+    WebCore::URL url;
+    bool hasVaryStar { false };
+    HashMap<String, String> varyHeaders;
+
+    struct Data {
+        WebCore::FetchHeaders::Guard requestHeadersGuard;
+        WebCore::ResourceRequest request;
+        WebCore::FetchOptions options;
+        String referrer;
+
+        WebCore::FetchHeaders::Guard responseHeadersGuard;
+        WebCore::ResourceResponse response;
+        WebCore::DOMCacheEngine::ResponseBody responseBody;
+    };
+
+    std::optional<Data> data;
+};
 
 class Cache {
 public:
@@ -56,22 +82,22 @@ public:
     void clearMemoryRepresentation();
  
 private:
-    Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&);
-    const Vector<WebCore::DOMCacheEngine::Record>* recordsFromURL(const WebCore::URL&) const;
-    WebCore::DOMCacheEngine::Record& addNewURLRecord(WebCore::DOMCacheEngine::Record&&);
+    Vector<RecordData>* recordsFromURL(const WebCore::URL&);
+    const Vector<RecordData>* recordsFromURL(const WebCore::URL&) const;
+    RecordData& addRecord(Vector<RecordData>*, WebCore::DOMCacheEngine::Record&&);
 
     void finishOpening(WebCore::DOMCacheEngine::CompletionCallback&&, std::optional<WebCore::DOMCacheEngine::Error>&&);
 
     void readRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);
     void writeRecordsList(WebCore::DOMCacheEngine::CompletionCallback&&);
-    void writeRecordToDisk(WebCore::DOMCacheEngine::Record&);
-    void removeRecordFromDisk(WebCore::DOMCacheEngine::Record&);
+    void writeRecordToDisk(RecordData&);
+    void removeRecordFromDisk(RecordData&);
 
     Caches& m_caches;
     State m_state;
     uint64_t m_identifier { 0 };
     String m_name;
-    HashMap<String, Vector<WebCore::DOMCacheEngine::Record>> m_records;
+    HashMap<String, Vector<RecordData>> m_records;
     uint64_t m_nextRecordIdentifier { 0 };
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingOpeningCallbacks;
 };

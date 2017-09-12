@@ -31,6 +31,7 @@
 #include "NetworkCacheKey.h"
 #include "NetworkProcess.h"
 #include <WebCore/CacheQueryOptions.h>
+#include <WebCore/HTTPParsers.h>
 #include <pal/SessionID.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
@@ -50,7 +51,7 @@ namespace WebKit {
 
 namespace CacheStorage {
 
-static inline Vector<uint64_t> queryCache(const Vector<Record>* records, const ResourceRequest& request, const CacheQueryOptions& options)
+static inline Vector<uint64_t> queryCache(const Vector<RecordData>* records, const ResourceRequest& request, const CacheQueryOptions& options)
 {
     if (!records)
         return { };
@@ -60,10 +61,46 @@ static inline Vector<uint64_t> queryCache(const Vector<Record>* records, const R
 
     Vector<uint64_t> results;
     for (const auto& record : *records) {
-        if (WebCore::DOMCacheEngine::queryCacheMatch(request, record.request, record.response, options))
+        if (WebCore::DOMCacheEngine::queryCacheMatch(request, record.url, record.hasVaryStar, record.varyHeaders, options))
             results.append(record.identifier);
     }
     return results;
+}
+
+static inline void updateVaryInformation(RecordData& recordData)
+{
+    auto varyValue = recordData.data->response.httpHeaderField(WebCore::HTTPHeaderName::Vary);
+    if (varyValue.isNull()) {
+        recordData.hasVaryStar = false;
+        recordData.varyHeaders = { };
+        return;
+    }
+
+    varyValue.split(',', false, [&](StringView view) {
+        if (!recordData.hasVaryStar && stripLeadingAndTrailingHTTPSpaces(view) == "*")
+            recordData.hasVaryStar = true;
+        String headerName = view.toString();
+        recordData.varyHeaders.add(headerName, recordData.data->request.httpHeaderField(headerName));
+    });
+
+    if (recordData.hasVaryStar)
+        recordData.varyHeaders = { };
+}
+
+static inline Record toRecord(const RecordData& record)
+{
+    return { record.identifier, record.updateResponseCounter, record.data->requestHeadersGuard, record.data->request, record.data->options, record.data->referrer, record.data->responseHeadersGuard, record.data->response, copyResponseBody(record.data->responseBody) };
+}
+
+static inline RecordData toRecordData(Record&& record)
+{
+    auto url = record.request.url();
+    RecordData::Data data = { record.requestHeadersGuard, WTFMove(record.request), WTFMove(record.options), WTFMove(record.referrer), WTFMove(record.responseHeadersGuard), WTFMove(record.response), WTFMove(record.responseBody) };
+    RecordData recordData = { { }, monotonicallyIncreasingTimeMS(), record.identifier, 0, url, false, { }, WTFMove(data) };
+
+    updateVaryInformation(recordData);
+
+    return recordData;
 }
 
 Cache::Cache(Caches& caches, uint64_t identifier, State state, String&& name)
@@ -131,7 +168,7 @@ Vector<Record> Cache::retrieveRecords(const URL& url) const
         Vector<Record> result;
         for (auto& records : m_records.values()) {
             for (auto& record : records)
-                result.append(record.copy());
+                result.append(toRecord(record));
         }
         std::sort(result.begin(), result.end(), [](const auto& a, const auto& b) {
             return a.identifier < b.identifier;
@@ -146,7 +183,7 @@ Vector<Record> Cache::retrieveRecords(const URL& url) const
     Vector<Record> result;
     result.reserveInitialCapacity(records->size());
     for (auto& record : *records)
-        result.uncheckedAppend(record.copy());
+        result.append(toRecord(record));
     return result;
 }
 
@@ -159,18 +196,18 @@ static inline String computeKeyURL(const URL& url)
     return keyURL;
 }
 
-Record& Cache::addNewURLRecord(Record&& record)
+RecordData& Cache::addRecord(Vector<RecordData>* records, Record&& record)
 {
-    auto key = computeKeyURL(record.request.url());
-    ASSERT(!m_records.contains(key));
-
-    Vector<Record> newRecords;
-    newRecords.reserveInitialCapacity(1);
-    newRecords.uncheckedAppend(WTFMove(record));
-    return m_records.set(key, WTFMove(newRecords)).iterator->value.last();
+    if (!records) {
+        auto key = computeKeyURL(record.request.url());
+        ASSERT(!m_records.contains(key));
+        records = &m_records.set(key, Vector<RecordData> { }).iterator->value;
+    }
+    records->append(toRecordData(WTFMove(record)));
+    return records->last();
 }
 
-Vector<Record>* Cache::recordsFromURL(const URL& url)
+Vector<RecordData>* Cache::recordsFromURL(const URL& url)
 {
     auto iterator = m_records.find(computeKeyURL(url));
     if (iterator == m_records.end())
@@ -178,7 +215,7 @@ Vector<Record>* Cache::recordsFromURL(const URL& url)
     return &iterator->value;
 }
 
-const Vector<Record>* Cache::recordsFromURL(const URL& url) const
+const Vector<RecordData>* Cache::recordsFromURL(const URL& url) const
 {
     auto iterator = m_records.find(computeKeyURL(url));
     if (iterator == m_records.end())
@@ -201,13 +238,8 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
             recordIdentifiers.uncheckedAppend(record.identifier);
 
             shouldWriteRecordList = true;
-            if (!sameURLRecords) {
-                auto& recordToWrite = addNewURLRecord(WTFMove(record));
-                writeRecordToDisk(recordToWrite);
-            } else {
-                sameURLRecords->append(WTFMove(record));
-                writeRecordToDisk(sameURLRecords->last());
-            }
+            auto& recordToWrite = addRecord(sameURLRecords, WTFMove(record));
+            writeRecordToDisk(recordToWrite);
         } else {
             auto identifier = matchingRecords[0];
             auto position = sameURLRecords->findMatching([&](const auto& item) { return item.identifier == identifier; });
@@ -215,11 +247,14 @@ void Cache::put(Vector<Record>&& records, RecordIdentifiersCallback&& callback)
             if (position != notFound) {
                 auto& existingRecord = (*sameURLRecords)[position];
                 recordIdentifiers.uncheckedAppend(identifier);
-                existingRecord.responseHeadersGuard = record.responseHeadersGuard;
-                existingRecord.response = WTFMove(record.response);
-                existingRecord.responseBody = WTFMove(record.responseBody);
                 ++existingRecord.updateResponseCounter;
 
+                // FIXME: Handle the case where data is null.
+                ASSERT(existingRecord.data);
+                existingRecord.data->responseHeadersGuard = record.responseHeadersGuard;
+                existingRecord.data->response = WTFMove(record.response);
+                existingRecord.data->responseBody = WTFMove(record.responseBody);
+                updateVaryInformation(existingRecord);
                 writeRecordToDisk(existingRecord);
             }
         }
@@ -275,12 +310,12 @@ void Cache::writeRecordsList(CompletionCallback&& callback)
     callback(std::nullopt);
 }
 
-void Cache::writeRecordToDisk(Record& record)
+void Cache::writeRecordToDisk(RecordData&)
 {
     // FIXME: Implement this.
 }
 
-void Cache::removeRecordFromDisk(Record& record)
+void Cache::removeRecordFromDisk(RecordData&)
 {
     // FIXME: Implement this.
 }

@@ -48,9 +48,11 @@ enum class Error {
 Exception errorToException(Error);
 
 WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cachedRequest, const ResourceResponse&, const CacheQueryOptions&);
+WEBCORE_EXPORT bool queryCacheMatch(const ResourceRequest& request, const URL& url, bool hasVaryStar, const HashMap<String, String>& varyHeaders, const CacheQueryOptions&);
 
 using ResponseBody = Variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
 ResponseBody isolatedResponseBody(const ResponseBody&);
+WEBCORE_EXPORT ResponseBody copyResponseBody(const ResponseBody&);
 
 struct Record {
     WEBCORE_EXPORT Record copy() const;
