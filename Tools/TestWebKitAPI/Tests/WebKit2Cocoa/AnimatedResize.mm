@@ -63,14 +63,14 @@ static bool didChangeSafeAreaShouldAffectObscuredInsets;
 
 static RetainPtr<AnimatedResizeWebView> createAnimatedResizeWebView()
 {
-    RetainPtr<_WKProcessPoolConfiguration> processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    auto processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
     [processPoolConfiguration setIgnoreSynchronousMessagingTimeoutsForTesting:YES];
-    RetainPtr<WKProcessPool> processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
 
-    RetainPtr<WKWebViewConfiguration> webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     [webViewConfiguration setProcessPool:processPool.get()];
 
-    RetainPtr<AnimatedResizeWebView> webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto webView = adoptNS([[AnimatedResizeWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     return webView;
 }
@@ -92,7 +92,7 @@ TEST(WebKit2, DISABLED_ResizeWithHiddenContentDoesNotHang)
 
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];
-    RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];
     [window setHidden:NO];
 
@@ -116,7 +116,7 @@ TEST(WebKit2, AnimatedResizeDoesNotHang)
 
     auto navigationDelegate = createFirstVisuallyNonEmptyWatchingNavigationDelegate();
     [webView setNavigationDelegate:navigationDelegate.get()];
-    RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];
     [window setHidden:NO];
 
@@ -181,7 +181,7 @@ TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
     [webView loadHTMLString:@"<head></head>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr<UIWindow> window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [window addSubview:webView.get()];
     [window setHidden:NO];
 
@@ -191,7 +191,7 @@ TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
 
     // Load a page that will change the state of viewport-fit,
     // in the middle of the resize.
-    [webView loadHTMLString:@"<head><meta name='viewport' content='viewport-fit=cover' /></head>" baseURL:nil];
+    [webView loadHTMLString:@"<head><meta name='viewport' content='viewport-fit=cover'></head>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
 
     didChangeSafeAreaShouldAffectObscuredInsets = false;
@@ -216,6 +216,37 @@ TEST(WebKit2, AnimatedResizeBlocksViewportFitChanges)
     TestWebKitAPI::Util::run(&didGetCommitAfterEndAnimatedResize);
 
     EXPECT_TRUE(didChangeSafeAreaShouldAffectObscuredInsets);
+}
+
+TEST(WebKit, OverrideLayoutSizeIsRestoredAfterProcessRelaunch)
+{
+    auto webView = createAnimatedResizeWebView();
+    [webView setUIDelegate:webView.get()];
+
+    [webView _overrideLayoutParametersWithMinimumLayoutSize:CGSizeMake(200, 50) maximumUnobscuredSizeOverride:CGSizeMake(200, 50)];
+
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [window addSubview:webView.get()];
+    [window setHidden:NO];
+
+    [webView _killWebContentProcessAndResetState];
+    [webView loadHTMLString:@"<head><meta name='viewport' content='initial-scale=1'></head>" baseURL:nil];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool didReadLayoutSize = false;
+    [webView evaluateJavaScript:@"[window.innerWidth, window.innerHeight]" completionHandler:^(id value, NSError *error) {
+        CGFloat innerWidth = [[value objectAtIndex:0] floatValue];
+        CGFloat innerHeight = [[value objectAtIndex:1] floatValue];
+
+        EXPECT_EQ(innerWidth, 200);
+        EXPECT_EQ(innerHeight, 50);
+
+        didReadLayoutSize = true;
+    }];
+    TestWebKitAPI::Util::run(&didReadLayoutSize);
 }
 
 #endif
