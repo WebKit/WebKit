@@ -312,7 +312,7 @@ WKWebView* fromWebPageProxy(WebKit::WebPageProxy& page)
     RetainPtr<WKTextFinderClient> _textFinderClient;
 #endif
 
-#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(IOS)
     _WKDragInteractionPolicy _dragInteractionPolicy;
 #endif
 }
@@ -604,7 +604,7 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 
     pageToViewMap().add(_page.get(), self);
 
-#if PLATFORM(IOS) && ENABLE(DRAG_SUPPORT)
+#if PLATFORM(IOS)
     _dragInteractionPolicy = _WKDragInteractionPolicyDefault;
 #endif
 }
@@ -1133,8 +1133,6 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
 
 #if PLATFORM(IOS)
 
-#if ENABLE(DRAG_SUPPORT)
-
 - (_WKDragInteractionPolicy)_dragInteractionPolicy
 {
     return _dragInteractionPolicy;
@@ -1146,10 +1144,10 @@ static NSDictionary *dictionaryRepresentationForEditorState(const WebKit::Editor
         return;
 
     _dragInteractionPolicy = policy;
+#if ENABLE(DRAG_SUPPORT)
     [_contentView _didChangeDragInteractionPolicy];
-}
-
 #endif
+}
 
 - (void)_populateArchivedSubviews:(NSMutableSet *)encodedViews
 {

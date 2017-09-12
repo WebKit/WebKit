@@ -1,5 +1,13 @@
 2017-09-12  Dan Bernstein  <mitz@apple.com>
 
+        Tried to fix the iOS 10 build after r221930.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        (-[WKWebView _setDragInteractionPolicy:]):
+
+2017-09-12  Dan Bernstein  <mitz@apple.com>
+
         Update availability annotations to match the macOS 10.13 and iOS 11.0 GM seed SDKs
         https://bugs.webkit.org/show_bug.cgi?id=176793
 
