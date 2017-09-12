@@ -92,8 +92,6 @@ public:
 
     bool hasOpacity() const { return opacity < 1; }
 
-    bool hasAnimationsOrTransitions() const { return animations || transitions; }
-
     float opacity;
 
     float aspectRatioDenominator;
