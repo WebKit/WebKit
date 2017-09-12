@@ -84,7 +84,7 @@ class Node {
     equals(other)
     {
         let unificationContext = new UnificationContext();
-        if (this.unify(unificationContext, other) && unificationContext.verify())
+        if (this.unify(unificationContext, other) && unificationContext.verify().result)
             return unificationContext;
         return false;
     }

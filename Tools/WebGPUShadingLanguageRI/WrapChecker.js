@@ -77,6 +77,11 @@ class WrapChecker extends Visitor {
         this._foundUnwrapped(node);
     }
     
+    visitTypeVariable(node)
+    {
+        this._foundUnwrapped(node);
+    }
+    
     // NOTE: This does not know how to handle NativeTypeInstance, because this is never called on instantiated
     // code. Once code is instantiated, you cannot instantiate it further.
     

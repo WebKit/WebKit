@@ -24,5 +24,10 @@
  */
 "use strict";
 
-class ProtocolFuncDecl extends Func { }
+class ProtocolFuncDecl extends Func {
+    get typeParametersForCallResolution()
+    {
+        return this.typeParameters.concat(this.protocolDecl.typeVariable);
+    }
+}
 

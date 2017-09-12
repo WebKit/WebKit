@@ -30,7 +30,7 @@ function inferTypesForCall(func, typeArguments, argumentTypes, returnType)
         return {failure: new OverloadResolutionFailure(func, "Wrong number of type arguments (passed " + typeArguments.length + ", require " + func.typeParameters.length + ")")};
     if (argumentTypes.length != func.parameters.length)
         return {failure: new OverloadResolutionFailure(func, "Wrong number of arguments (passed " + argumentTypes.length + ", require " + func.parameters.length + ")")};
-    let unificationContext = new UnificationContext(func.typeParameters);
+    let unificationContext = new UnificationContext(func.typeParametersForCallResolution);
     for (let i = 0; i < typeArguments.length; ++i) {
         let argument = typeArguments[i];
         let parameter = func.typeParameters[i];
@@ -45,8 +45,9 @@ function inferTypesForCall(func, typeArguments, argumentTypes, returnType)
     }
     if (returnType && !returnType.unify(unificationContext, func.returnType))
         return {failure: new OverloadResolutionFailure(func, "Return type " + func.returnType + " does not match " + returnType)};
-    if (!unificationContext.verify())
-        return {failure: new OverloadResolutionFailure(func, "Violates type variable constraints")};
+    let verificationResult = unificationContext.verify();
+    if (!verificationResult.result)
+        return {failure: new OverloadResolutionFailure(func, verificationResult.reason)};
     let shouldBuildTypeArguments = !typeArguments.length;
     if (shouldBuildTypeArguments)
         typeArguments = [];

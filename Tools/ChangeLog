@@ -1,3 +1,127 @@
+2017-09-11  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should allow you to say "protocol Foo : Bar { ... }"
+        https://bugs.webkit.org/show_bug.cgi?id=176238
+
+        Reviewed by Mylex Maxfield.
+        
+        This makes protocol "subtyping" work. It's not really subtyping. Protocol A inherits protocol B
+        if every signature in B can be resolved against some signature in A. Also, you can explicitly
+        subtype protocols using extends syntax ("protocol Foo : Bar, Baz { ... }").
+        
+        Also makes the diagnostics when type variable constraints fail a _lot_ better. This will even
+        tell you diagnostics about why a function didn't match when protocols are not inheriting, and
+        then it will tell you why the inheritance failed.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/AutoWrapper.js:
+        (AutoWrapper.prototype.visitTypeVariable):
+        (AutoWrapper):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProtocolDecl.set throw):
+        * WebGPUShadingLanguageRI/ConstexprTypeParameter.js:
+        (ConstexprTypeParameter.prototype.verifyAsArgument):
+        (ConstexprTypeParameter.prototype.verifyAsParameter):
+        * WebGPUShadingLanguageRI/FlattenProtocolExtends.js: Added.
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.get typeParametersForCallResolution):
+        * WebGPUShadingLanguageRI/InferTypesForCall.js:
+        (inferTypesForCall):
+        * WebGPUShadingLanguageRI/IntLiteralType.js:
+        (IntLiteralType.prototype.verifyAsArgument):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        (NameResolver.prototype.visitProtocolRef): Deleted.
+        (NameResolver.prototype.visitProtocolFuncDecl): Deleted.
+        (NameResolver.prototype.visitTypeDef): Deleted.
+        (NameResolver.prototype.visitStructType): Deleted.
+        (NameResolver.prototype._resolveTypeArguments): Deleted.
+        (NameResolver.prototype.visitTypeRef): Deleted.
+        (NameResolver.prototype.visitReferenceType): Deleted.
+        (NameResolver.prototype.visitVariableDecl): Deleted.
+        (NameResolver.prototype.visitVariableRef): Deleted.
+        (NameResolver.prototype.visitReturn): Deleted.
+        (NameResolver.prototype.visitCallExpression): Deleted.
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.equals):
+        * WebGPUShadingLanguageRI/NullType.js:
+        (NullType.prototype.verifyAsArgument):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseProtocolDecl):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        (ProtocolDecl): Deleted.
+        (ProtocolDecl.prototype.add): Deleted.
+        (ProtocolDecl.prototype.get signatures): Deleted.
+        (ProtocolDecl.prototype.signaturesByName): Deleted.
+        (ProtocolDecl.prototype.get typeVariable): Deleted.
+        (ProtocolDecl.prototype.signaturesByNameWithTypeVariable): Deleted.
+        (ProtocolDecl.prototype.inherits): Deleted.
+        (ProtocolDecl.prototype.hasHeir): Deleted.
+        (ProtocolDecl.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/ProtocolFuncDecl.js:
+        (ProtocolFuncDecl.prototype.get typeParametersForCallResolution):
+        (ProtocolFuncDecl):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_nullTypeVariableUnify):
+        (TEST_simpleProtocolExtends):
+        (TEST_protocolExtendsTwo):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.inherits):
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        (TypeDefResolver.prototype.visitTypeRef):
+        (TypeDefResolver):
+        * WebGPUShadingLanguageRI/TypeVariable.js:
+        (TypeVariable.prototype.inherits):
+        (TypeVariable.prototype.verifyAsArgument):
+        (TypeVariable.prototype.verifyAsParameter):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext.prototype.verify):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+        (Visitor.prototype.visitTypeRef): Deleted.
+        (Visitor.prototype.visitNativeType): Deleted.
+        (Visitor.prototype.visitNativeTypeInstance): Deleted.
+        (Visitor.prototype.visitTypeDef): Deleted.
+        (Visitor.prototype.visitStructType): Deleted.
+        (Visitor.prototype.visitTypeVariable): Deleted.
+        (Visitor.prototype.visitConstexprTypeParameter): Deleted.
+        (Visitor.prototype.visitField): Deleted.
+        (Visitor.prototype.visitElementalType): Deleted.
+        (Visitor.prototype.visitReferenceType): Deleted.
+        (Visitor.prototype.visitPtrType): Deleted.
+        (Visitor.prototype.visitArrayRefType): Deleted.
+        (Visitor.prototype.visitArrayType): Deleted.
+        (Visitor.prototype.visitVariableDecl): Deleted.
+        (Visitor.prototype.visitAssignment): Deleted.
+        (Visitor.prototype.visitDereferenceExpression): Deleted.
+        (Visitor.prototype.visitDotExpression): Deleted.
+        (Visitor.prototype.visitMakePtrExpression): Deleted.
+        (Visitor.prototype.visitVariableRef): Deleted.
+        (Visitor.prototype.visitIfStatement): Deleted.
+        (Visitor.prototype.visitWhileLoop): Deleted.
+        (Visitor.prototype.visitDoWhileLoop): Deleted.
+        (Visitor.prototype.visitForLoop): Deleted.
+        (Visitor.prototype.visitReturn): Deleted.
+        (Visitor.prototype.visitContinue): Deleted.
+        (Visitor.prototype.visitBreak): Deleted.
+        (Visitor.prototype.visitIntLiteral): Deleted.
+        (Visitor.prototype.visitIntLiteralType): Deleted.
+        (Visitor.prototype.visitUintLiteral): Deleted.
+        (Visitor.prototype.visitNullLiteral): Deleted.
+        (Visitor.prototype.visitBoolLiteral): Deleted.
+        (Visitor.prototype.visitNullType): Deleted.
+        (Visitor.prototype.visitCallExpression): Deleted.
+        (Visitor.prototype.visitLogicalNot): Deleted.
+        (Visitor.prototype.visitFunctionLikeBlock): Deleted.
+        * WebGPUShadingLanguageRI/WrapChecker.js:
+        (WrapChecker.prototype.visitTypeVariable):
+        (WrapChecker):
+
 2017-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Remove duplicated test results from LayoutTest platform directories

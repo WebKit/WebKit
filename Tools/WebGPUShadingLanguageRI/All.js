@@ -66,6 +66,7 @@ load("EvaluationCommon.js");
 load("Evaluator.js");
 load("ExpressionFinder.js");
 load("Field.js");
+load("FlattenProtocolExtends.js");
 load("ForLoop.js");
 load("Func.js");
 load("FuncDef.js");

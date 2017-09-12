@@ -90,6 +90,8 @@ class Visitor extends VisitorBase {
     
     visitProtocolDecl(node)
     {
+        for (let protocol of node.extends)
+            protocol.visit(this);
         for (let signature of node.signatures)
             signature.visit(this);
     }

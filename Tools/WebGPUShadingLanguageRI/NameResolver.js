@@ -129,6 +129,8 @@ class NameResolver extends Visitor {
     
     visitProtocolDecl(node)
     {
+        for (let parent of node.extends)
+            parent.visit(this);
         let nameContext = new NameContext(this._nameContext);
         nameContext.add(node.typeVariable);
         let checker = new NameResolver(nameContext);

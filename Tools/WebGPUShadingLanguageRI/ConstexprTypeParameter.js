@@ -56,12 +56,12 @@ class ConstexprTypeParameter extends Value {
     
     verifyAsArgument(unificationContext)
     {
-        return true;
+        return {result: true};
     }
     
     verifyAsParameter(unificationContext)
     {
-        return true;
+        return {result: true};
     }
     
     toString()

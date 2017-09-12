@@ -36,7 +36,7 @@ class Type extends Node {
     inherits(protocol)
     {
         if (!protocol)
-            return true;
+            return {result: true};
         return protocol.hasHeir(this);
     }
     

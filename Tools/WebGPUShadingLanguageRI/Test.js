@@ -972,7 +972,7 @@ function TEST_nullTypeVariableUnify()
                 if (!result)
                     throw new Error("In order " + order + " cannot unify " + left + " with " + right);
             }
-            if (!unificationContext.verify())
+            if (!unificationContext.verify().result)
                 throw new Error("In order " + order.map(value => "(" + value + ")") + " cannot verify");
         });
 }
@@ -1975,6 +1975,88 @@ function TEST_paramChainStructDevice()
     let buffer = new EBuffer(1);
     buffer.set(0, 79201);
     checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
+}
+
+function TEST_simpleProtocolExtends()
+{
+    let program = doPrep(`
+        protocol Foo {
+            void foo(thread Foo^);
+        }
+        protocol Bar : Foo {
+            void bar(thread Bar^);
+        }
+        void fuzz<T:Foo>(thread T^ p)
+        {
+            foo(p);
+        }
+        void buzz<T:Bar>(thread T^ p)
+        {
+            fuzz(p);
+            bar(p);
+        }
+        void foo(thread int^ p)
+        {
+            ^p = ^p + 743;
+        }
+        void bar(thread int^ p)
+        {
+            ^p = ^p + 91;
+        }
+        int thingy(int a)
+        {
+            buzz(&a);
+            return a;
+        }
+    `);
+    checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91);
+}
+
+function TEST_protocolExtendsTwo()
+{
+    let program = doPrep(`
+        protocol Foo {
+            void foo(thread Foo^);
+        }
+        protocol Bar {
+            void bar(thread Bar^);
+        }
+        protocol Baz : Foo, Bar {
+            void baz(thread Baz^);
+        }
+        void fuzz<T:Foo>(thread T^ p)
+        {
+            foo(p);
+        }
+        void buzz<T:Bar>(thread T^ p)
+        {
+            bar(p);
+        }
+        void xuzz<T:Baz>(thread T^ p)
+        {
+            fuzz(p);
+            buzz(p);
+            baz(p);
+        }
+        void foo(thread int^ p)
+        {
+            ^p = ^p + 743;
+        }
+        void bar(thread int^ p)
+        {
+            ^p = ^p + 91;
+        }
+        void baz(thread int^ p)
+        {
+            ^p = ^p + 39;
+        }
+        int thingy(int a)
+        {
+            xuzz(&a);
+            return a;
+        }
+    `);
+    checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91 + 39);
 }
 
 let filter = /.*/; // run everything by default

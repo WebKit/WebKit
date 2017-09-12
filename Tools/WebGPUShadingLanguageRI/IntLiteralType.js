@@ -55,7 +55,11 @@ class IntLiteralType extends Type {
     verifyAsArgument(unificationContext)
     {
         let realThis = unificationContext.find(this);
-        return realThis.isNumber && realThis.canRepresent(this.value);
+        if (!realThis.isNumber)
+            return {result: false, reason: "Cannot use int literal with non-number type " + realThis};
+        if (!realThis.canRepresent(this.value))
+            return {result: false, reason: "Int literal " + this.value + " too large to be represented by type " + realThis};
+        return {result: true};
     }
     
     verifyAsParameter(unificationContext)

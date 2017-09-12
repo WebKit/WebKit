@@ -47,9 +47,9 @@ class TypeVariable extends Type {
     inherits(protocol)
     {
         if (!protocol)
-            return true;
+            return {result: true};
         if (!this.protocol)
-            return false;
+            return {result: false, reason: "Type variable " + this + " does not have a protocol"};
         return this.protocol.inherits(protocol);
     }
     
@@ -73,19 +73,29 @@ class TypeVariable extends Type {
         // The thing we get unified with must be a type variable that accepts a broader set of
         // things than we do.
         if (!(realThis instanceof TypeVariable))
-            return false;
+            return {result: false, reason: "Type variable argument " + this + " cannot be passed to non-type-variable parameter type " + realThis};
         
-        if (!this.protocol)
-            return !realThis.protocol;
+        if (!this.protocol) {
+            if (realThis.protocol)
+                return {result: false, reason: "Type variable without protocol " + this + " cannot be passed to parameter type variable with protocol " + realThis.protocol};
+            return {result: true};
+        }
         
-        return this.protocol.inherits(realThis.protocol);
+        let result = this.protocol.inherits(realThis.protocol);
+        if (!result.result)
+            return {result: false, reason: "Protocol " + this.protocol + " does not subsume protocol " + realThis.protocol + " (passing type " + this + " to type " + realThis + "): " + result.reason};
+        return {result: true};
     }
     
     verifyAsParameter(unificationContext)
     {
         if (!this.protocol)
-            return true;
-        return unificationContext.find(this).inherits(this.protocol);
+            return {result: true};
+        let realThis = unificationContext.find(this);
+        let result = realThis.inherits(this.protocol);
+        if (!result.result)
+            return {result: false, reason: "Type " + realThis + " does not inherit protocol " + this.protocol + " (passing type " + realThis + " to type " + this + "): " + result.reason};
+        return {result: true};
     }
     
     toString()

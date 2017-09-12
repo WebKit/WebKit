@@ -28,10 +28,16 @@ class ProtocolDecl extends Protocol {
     constructor(origin, name)
     {
         super(origin, name);
+        this.extends = [];
         this._signatures = [];
         this._signatureMap = new Map();
         this._typeVariable = new TypeVariable(origin, name, null);
         this.isPrimitive = false;
+    }
+    
+    addExtends(protocol)
+    {
+        this.extends.push(protocol);
     }
     
     add(signature)
@@ -63,7 +69,7 @@ class ProtocolDecl extends Protocol {
     inherits(otherProtocol)
     {
         if (!otherProtocol)
-            return true;
+            return {result: true};
         
         if (otherProtocol instanceof ProtocolRef)
             otherProtocol = otherProtocol.protocolDecl;
@@ -71,17 +77,20 @@ class ProtocolDecl extends Protocol {
         for (let otherSignature of otherProtocol.signatures) {
             let signatures = this.signaturesByName(otherSignature.name);
             if (!signatures)
-                return false;
-            let overload = resolveOverloadImpl(signatures, [], otherSignature.parameterTypes, otherSignature.returnTypeForOverloadResolution);
+                return {result: false, reason: "Protocol " + this.name + " does not have a function named " + otherSignature.name + " (looking at signature " + otherSignature + ")"};
+            let overload = resolveOverloadImpl(
+                signatures, [],
+                otherSignature.parameterTypes,
+                otherSignature.returnTypeForOverloadResolution);
             if (!overload.func)
-                return false;
+                return {result: false, reason: "Did not find matching signature for " + otherSignature + " in " + this.name + (overload.failures.length ? " (tried: " + overload.failures.join("; ") + ")" : "")};
             let substitutedReturnType =
                 overload.func.returnType.substituteToUnification(
                     overload.func.typeParameters, overload.unificationContext);
             if (!substitutedReturnType.equals(otherSignature.returnType))
-                return false;
+                return {result: false, reason: "Return type mismatch between " + otherSignature.returnType + " and " + substitutedReturnType};
         }
-        return true;
+        return {result: true};
     }
     
     hasHeir(type)
@@ -92,14 +101,14 @@ class ProtocolDecl extends Protocol {
             signature = signature.visit(substitution);
             let overload = resolveOverloadImpl(signature.possibleOverloads, signature.typeParameters, signature.parameterTypes, signature.returnTyupeForOverloadResolution);
             if (!overload.func)
-                return false;
+                return {result: false, reason: "Did not find matching signature for " + signature + " with type " + type + (overload.failures.length ? " (tried: " + overload.failures.join("; ") + ")" : "")};
             
             let substitutedReturnType = overload.func.returnType.substituteToUnification(
                 overload.func.typeParameters, overload.unificationContext);
             if (!substitutedReturnType.equals(signature.returnType))
-                return false;
+                return {result: false, reason: "Return type mismatch between " + signature.returnType + " and " + substitutedReturnType};
         }
-        return true;
+        return {result: true};
     }
     
     toString()

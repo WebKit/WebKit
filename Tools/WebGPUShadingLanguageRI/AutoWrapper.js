@@ -59,4 +59,9 @@ class AutoWrapper extends Rewriter {
     {
         return TypeRef.wrap(node);
     }
+    
+    visitTypeVariable(node)
+    {
+        return TypeRef.wrap(node);
+    }
 }

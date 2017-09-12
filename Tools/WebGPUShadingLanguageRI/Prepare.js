@@ -31,6 +31,7 @@ function prepare(origin, lineNumberOffset, text)
     parse(program, origin, "user", lineNumberOffset, text);
     resolveNames(program);
     resolveTypeDefs(program);
+    flattenProtocolExtends(program);
     check(program);
     checkLiteralTypes(program);
     checkProgramWrapped(program);

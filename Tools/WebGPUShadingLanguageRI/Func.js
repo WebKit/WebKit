@@ -42,6 +42,7 @@ class Func extends Node {
     get name() { return this._name; }
     get returnType() { return this._returnType; }
     get typeParameters() { return this._typeParameters; }
+    get typeParametersForCallResolution() { return this.typeParameters; }
     get parameters() { return this._parameters; }
     get parameterTypes() { return this.parameters.map(parameter => parameter.type); }
     get isCast() { return this._isCast; }

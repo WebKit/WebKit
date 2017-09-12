@@ -67,7 +67,7 @@ class Checker extends Visitor {
                     throw WTypeError(typeParameter.origin.originString, "Type parameter to protocol signature not inferrable from value parameters");
             }
             if (!set.has(node.typeVariable))
-                throw new WTypeError(signature.origin.originString, "Protocol's type variable not mentioned in signature");
+                throw new WTypeError(signature.origin.originString, "Protocol's type variable (" + node.name + ") not mentioned in signature: " + signature);
         }
     }
     
@@ -77,8 +77,9 @@ class Checker extends Visitor {
             let argumentIsType = typeArguments[i] instanceof Type;
             let result = typeArguments[i].visit(this);
             if (argumentIsType) {
-                if (!typeArguments[i].inherits(typeParameters[i].protocol))
-                    throw new WTypeError(origin.originString, "Type argument does not inherit protocol");
+                let result = typeArguments[i].inherits(typeParameters[i].protocol);
+                if (!result.result)
+                    throw new WTypeError(origin.originString, "Type argument does not inherit protocol: " + result.reason);
             } else {
                 if (!result.equalsWithCommit(typeParameters[i].type))
                     throw new WTypeError(origin.originString, "Wrong type for constexpr");

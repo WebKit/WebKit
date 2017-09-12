@@ -747,10 +747,15 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     {
         let origin = consume("protocol");
         let name = consumeKind("identifier").text;
-        // FIXME: Support protocol inclusion
-        // https://bugs.webkit.org/show_bug.cgi?id=176238
-        consume("{");
         let result = new ProtocolDecl(origin, name);
+        if (tryConsume(":")) {
+            while (!test("{")) {
+                result.addExtends(parseProtocolRef());
+                if (!tryConsume(","))
+                    break;
+            }
+        }
+        consume("{");
         while (!tryConsume("}")) {
             result.add(parseProtocolFuncDecl());
             consume(";");

@@ -59,6 +59,7 @@ class Rewriter extends VisitorBase {
     visitTypeDef(node) { return node; }
     visitStructType(node) { return node; }
     visitConstexprTypeParameter(node) { return node; }
+    visitProtocolDecl(node) { return node; }
 
     // This is almost wrong. We instantiate Func in Substitution in ProtocolDecl. Then, we end up
     // not rewriting type variables. I think that just works because not rewriting them there is OK.

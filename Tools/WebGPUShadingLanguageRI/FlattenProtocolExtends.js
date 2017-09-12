@@ -24,31 +24,30 @@
  */
 "use strict";
 
-class TypeDefResolver extends Visitor {
-    constructor()
-    {
-        super();
-        this._visiting = new VisitingSet();
-    }
+function flattenProtocolExtends(program)
+{
+    let visiting = new VisitingSet();
     
-    visitTypeRef(node)
+    function flatten(protocol)
     {
-        this._visiting.doVisit(node, () => {
-            super.visitTypeRef(node);
-            if (node.type instanceof TypeDef) {
-                let unificationContext = new UnificationContext(node.type.typeParameters);
-                if (node.typeArguments.length != node.type.typeParameters.length)
-                    throw new Error("argument/parameter mismatch (should have been caught earlier)");
-                for (let i = 0; i < node.typeArguments.length; ++i)
-                    node.typeArguments[i].unify(unificationContext, node.type.typeParameters[i]);
-                let verificationResult = unificationContext.verify();
-                if (!verificationResult.result)
-                    throw new WTypeError(node.origin.originString, "Type reference to a type definition violates protocol constraints: " + verificationResult.reason);
-                
-                let newType = node.type.type.substituteToUnification(node.type.typeParameters, unificationContext);
-                newType.visit(this);
-                node.setTypeAndArguments(newType, []);
+        if (!protocol.extends.length)
+            return;
+        
+        visiting.doVisit(protocol, () => {
+            for (let parent of protocol.extends) {
+                parent = parent.protocolDecl;
+                flatten(parent);
+                for (let signature of parent.signatures) {
+                    let newSignature = signature.visit(
+                        new Substitution([parent.typeVariable], [protocol.typeVariable]));
+                    protocol.add(newSignature);
+                }
             }
+            protocol.extends = [];
         });
     }
+    
+    for (let protocol of program.protocols.values())
+        flatten(protocol);
 }
+

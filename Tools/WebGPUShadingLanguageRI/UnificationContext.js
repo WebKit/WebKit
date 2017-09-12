@@ -92,18 +92,22 @@ class UnificationContext {
     verify()
     {
         for (let typeParameter of this._typeParameters) {
-            if (!typeParameter.verifyAsParameter(this))
-                return false;
+            let result = typeParameter.verifyAsParameter(this);
+            if (!result.result)
+                return result;
         }
         let numTypeVariableArguments = 0;
         let argumentSet = new Set();
         for (let typeArgument of this.typeArguments()) {
-            if (!typeArgument.verifyAsArgument(this))
-                return false;
+            let result = typeArgument.verifyAsArgument(this);
+            if (!result.result)
+                return result;
             argumentSet.add(this.find(typeArgument));
             numTypeVariableArguments++;
         }
-        return argumentSet.size == numTypeVariableArguments;
+        if (argumentSet.size == numTypeVariableArguments)
+            return {result: true};
+        return {result: false, reason: "Type variables used as arguments got unified"};
     }
     
     get conversionCost()
