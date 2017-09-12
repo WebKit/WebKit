@@ -1,5 +1,5 @@
 
 PASS org.w3.clearkey, temporary, keyids, initData longer than 64Kb characters 
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_equals: expected "TypeError" but got "NotSupportedError"
-FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_equals: expected "TypeError" but got "NotSupportedError"
+FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too short key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
+FAIL org.w3.clearkey, temporary, keyids, invalid initdata (too long key ID) assert_unreached: generateRequest() succeeded unexpectedly Reached unreachable code
 

@@ -1,3 +1,3 @@
 
-FAIL org.w3.clearkey, successful playback, temporary, mp4, multiple keys, sequential assert_unreached: NotSupportedError: The operation is not supported. Reached unreachable code
+FAIL org.w3.clearkey, successful playback, temporary, mp4, multiple keys, sequential assert_unreached: TypeError: Type error Reached unreachable code
 

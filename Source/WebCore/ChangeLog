@@ -1,3 +1,25 @@
+2017-09-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement CDMInstanceClearKey::requestLicense()
+        https://bugs.webkit.org/show_bug.cgi?id=176773
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the requestLicense() method for CDMInstanceClearKey. Per
+        the specification, the session ID must be a 32-bit numerical value.
+        A session ID value counter is thus kept in a static uint32_ object
+        and incremented upon each call of requestLicense(). Init data and
+        the session ID value are then embedded in the asynchronous dispatch
+        that invokes the callback. That invocation now also passes along the
+        init data, the session ID in string format, and Succeeded to now
+        indicate the operation was completed successfully.
+
+        No new tests -- expectations for the relevant tests are updated
+        to reflect the introduced changes.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::requestLicense):
+
 2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Use transferred size over content size for automatic minimum size
