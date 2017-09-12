@@ -1,3 +1,57 @@
+2017-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add Experimental setting for new Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=176750
+
+        Reviewed by Matt Baker.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        New files and strings.
+
+        * UserInterface/Base/Setting.js:
+        New experimental setting.
+
+        * UserInterface/Views/LegacyNetworkTabContentView.js:
+        (WI.LegacyNetworkTabContentView.isTabAllowed):
+        Legacy tab availability depends on the setting.
+
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView):
+        (WI.NetworkTabContentView.isTabAllowed):
+        (WI.NetworkTabContentView.prototype.get contentBrowser):
+        (WI.NetworkTabContentView.prototype.get type):
+        (WI.NetworkTabContentView.prototype.canShowRepresentedObject):
+        (WI.NetworkTabContentView.prototype.get supportsSplitContentBrowser):
+        Modern network tab. Only difference right now is it allows the split console.
+
+        * UserInterface/Views/NetworkTableContentView.js: Added.
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.prototype.get selectionPathComponents):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.shown):
+        (WI.NetworkTableContentView.prototype.hidden):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype.handleClearShortcut):
+        (WI.NetworkTableContentView.prototype._resourceCachingDisabledSettingChanged):
+        (WI.NetworkTableContentView.prototype._toggleDisableResourceCache):
+        Add a stubbed out ContentView. This will be implemented next.
+
+        * UserInterface/Views/SettingsTabContentView.js:
+        (WI.SettingsTabContentView.prototype._createExperimentalSettingsView):
+        Add an experimental setting to toggle the new network tab. Only
+        show the experimental settings that relate to the debuggable target.
+        For JSContext targets, none of the settings are applicable, so don't
+        even show the experimental section.
+
+        * UserInterface/Views/TabBrowser.js:
+        (WI.TabBrowser.prototype.bestTabContentViewForRepresentedObject):
+        Treat all network tabs the same.
+
 2017-09-11  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas: improve recording controls and state management

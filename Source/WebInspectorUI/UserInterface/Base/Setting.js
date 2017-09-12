@@ -128,4 +128,5 @@ WI.settings = {
     experimentalShowCanvasContextsInResources: new WI.Setting("experimental-show-canvas-contexts-in-resources", false),
     experimentalSpreadsheetStyleEditor: new WI.Setting("experimental-spreadsheet-style-editor", false),
     experimentalEnableLayersTab: new WI.Setting("experimental-enable-layers-tab", false),
+    experimentalEnableNewNetworkTab: new WI.Setting("experimental-enable-new-network-tab", false),
 };

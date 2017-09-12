@@ -439,6 +439,7 @@ WI.contentLoaded = function()
         WI.ElementsTabContentView,
         WI.LayersTabContentView,
         WI.LegacyNetworkTabContentView,
+        WI.NetworkTabContentView,
         WI.NewTabContentView,
         WI.RecordingTabContentView,
         WI.ResourcesTabContentView,
@@ -1002,9 +1003,17 @@ WI.showStorageTab = function()
 
 WI.showNetworkTab = function()
 {
-    var tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LegacyNetworkTabContentView);
-    if (!tabContentView)
-        tabContentView = new WI.LegacyNetworkTabContentView;
+    let tabContentView;
+    if (WI.settings.experimentalEnableNewNetworkTab.value) {
+        tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.NetworkTabContentView);
+        if (!tabBrowser)
+            tabBrowser = new WI.NetworkTabContentView;
+    } else {
+        tabContentView = this.tabBrowser.bestTabContentViewForClass(WI.LegacyNetworkTabContentView);
+        if (!tabContentView)
+            tabContentView = new WI.LegacyNetworkTabContentView;
+    }
+
     this.tabBrowser.showTabForContentView(tabContentView);
 };
 
@@ -1892,7 +1901,7 @@ WI._focusedContentBrowser = function()
 {
     if (this.tabBrowser.element.isSelfOrAncestor(this.currentFocusElement) || document.activeElement === document.body) {
         var tabContentView = this.tabBrowser.selectedTabContentView;
-        if (tabContentView instanceof WI.ContentBrowserTabContentView)
+        if (tabContentView.contentBrowser)
             return tabContentView.contentBrowser;
         return null;
     }
@@ -1908,7 +1917,7 @@ WI._focusedContentView = function()
 {
     if (this.tabBrowser.element.isSelfOrAncestor(this.currentFocusElement) || document.activeElement === document.body) {
         var tabContentView = this.tabBrowser.selectedTabContentView;
-        if (tabContentView instanceof WI.ContentBrowserTabContentView)
+        if (tabContentView.contentBrowser)
             return tabContentView.contentBrowser.currentContentView;
         return tabContentView;
     }
@@ -1927,7 +1936,7 @@ WI._focusedOrVisibleContentBrowser = function()
         return focusedContentBrowser;
 
     var tabContentView = this.tabBrowser.selectedTabContentView;
-    if (tabContentView instanceof WI.ContentBrowserTabContentView)
+    if (tabContentView.contentBrowser)
         return tabContentView.contentBrowser;
 
     return null;
@@ -1940,7 +1949,7 @@ WI.focusedOrVisibleContentView = function()
         return focusedContentView;
 
     var tabContentView = this.tabBrowser.selectedTabContentView;
-    if (tabContentView instanceof WI.ContentBrowserTabContentView)
+    if (tabContentView.contentBrowser)
         return tabContentView.contentBrowser.currentContentView;
     return tabContentView;
 };
