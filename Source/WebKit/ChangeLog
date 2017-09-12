@@ -1,3 +1,22 @@
+2017-09-10  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r220568. rdar://problem/34142025
+
+    2017-08-10  John Wilander  <wilander@apple.com>
+
+            Resource Load Statistics: Add significant figures to telemetry calls
+            https://bugs.webkit.org/show_bug.cgi?id=175442
+            <rdar://problem/33834834>
+
+            Reviewed by Brent Fulgham.
+
+            With this change, logged values are allowed to have 3 significant figures
+            as opposed to today's 0 which is wrong.
+
+            * UIProcess/WebResourceLoadStatisticsTelemetry.cpp:
+            (WebKit::submitTopList):
+            (WebKit::WebResourceLoadStatisticsTelemetry::calculateAndSubmit):
+
 2017-09-05  Matthew Hanson  <matthew_hanson@apple.com>
 
         Cherry-pick r221444. rdar://problem/34215746
