@@ -1565,19 +1565,19 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
         }
 
     private:
-        RefPtr<WebPageProxy> createNewPage(WebPageProxy* page, API::FrameInfo& sourceFrameInfo, ResourceRequest&& resourceRequest, const WindowFeatures& windowFeatures, NavigationActionData&& navigationActionData) final
+        void createNewPage(WebPageProxy& page, Ref<API::FrameInfo>&& sourceFrameInfo, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler) final
         {
             if (m_client.createNewPage) {
-                auto configuration = page->configuration().copy();
-                configuration->setRelatedPage(page);
+                auto configuration = page.configuration().copy();
+                configuration->setRelatedPage(&page);
 
-                auto userInitiatedActivity = page->process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
-                bool shouldOpenAppLinks = !hostsAreEqual(sourceFrameInfo.request().url(), resourceRequest.url());
-                auto apiNavigationAction = API::NavigationAction::create(WTFMove(navigationActionData), &sourceFrameInfo, nullptr, WTFMove(resourceRequest), WebCore::URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
+                auto userInitiatedActivity = page.process().userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+                bool shouldOpenAppLinks = !hostsAreEqual(sourceFrameInfo->request().url(), resourceRequest.url());
+                auto apiNavigationAction = API::NavigationAction::create(WTFMove(navigationActionData), sourceFrameInfo.ptr(), nullptr, WTFMove(resourceRequest), WebCore::URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
 
                 auto apiWindowFeatures = API::WindowFeatures::create(windowFeatures);
 
-                return adoptRef(toImpl(m_client.createNewPage(toAPI(page), toAPI(configuration.ptr()), toAPI(apiNavigationAction.ptr()), toAPI(apiWindowFeatures.ptr()), m_client.base.clientInfo)));
+                return completionHandler(adoptRef(toImpl(m_client.createNewPage(toAPI(&page), toAPI(configuration.ptr()), toAPI(apiNavigationAction.ptr()), toAPI(apiWindowFeatures.ptr()), m_client.base.clientInfo))));
             }
         
             if (m_client.createNewPage_deprecatedForUseWithV1 || m_client.createNewPage_deprecatedForUseWithV0) {
@@ -1602,14 +1602,14 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
 
                 if (m_client.createNewPage_deprecatedForUseWithV1) {
                     Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
-                    return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV1(toAPI(page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                    return completionHandler(adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV1(toAPI(&page), toAPI(request.ptr()), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo))));
                 }
     
                 ASSERT(m_client.createNewPage_deprecatedForUseWithV0);
-                return adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo)));
+                return completionHandler(adoptRef(toImpl(m_client.createNewPage_deprecatedForUseWithV0(toAPI(&page), toAPI(featuresMap.ptr()), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), m_client.base.clientInfo))));
             }
 
-            return nullptr;
+            completionHandler(nullptr);
         }
 
         void showPage(WebPageProxy* page) final

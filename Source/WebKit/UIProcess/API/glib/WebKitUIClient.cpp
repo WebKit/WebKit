@@ -46,11 +46,11 @@ public:
     }
 
 private:
-    RefPtr<WebPageProxy> createNewPage(WebPageProxy*, API::FrameInfo&, WebCore::ResourceRequest&& resourceRequest, const WebCore::WindowFeatures& windowFeatures, NavigationActionData&& navigationActionData) override
+    void createNewPage(WebPageProxy&, Ref<API::FrameInfo>&&, WebCore::ResourceRequest&& resourceRequest, WebCore::WindowFeatures&& windowFeatures, NavigationActionData&& navigationActionData, WTF::Function<void(RefPtr<WebPageProxy>&&)>&& completionHandler)
     {
         GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(resourceRequest));
         WebKitNavigationAction navigationAction(request.get(), navigationActionData);
-        return webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction);
+        completionHandler(webkitWebViewCreateNewPage(m_webView, windowFeatures, &navigationAction));
     }
 
     void showPage(WebPageProxy*) final

@@ -1293,7 +1293,7 @@ private:
     void didUpdateHistoryTitle(const String& title, const String& url, uint64_t frameID);
 
     // UI client
-    void createNewPage(const FrameInfoData&, uint64_t originatingPageID, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, NavigationActionData&&, Ref<Messages::WebPageProxy::CreateNewPage::DelayedReply>&&);
+    void createNewPage(const FrameInfoData&, uint64_t originatingPageID, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, NavigationActionData&&, Ref<Messages::WebPageProxy::CreateNewPage::DelayedReply>&&);
     void showPage();
     void runJavaScriptAlert(uint64_t frameID, const WebCore::SecurityOriginData&, const String&, Ref<Messages::WebPageProxy::RunJavaScriptAlert::DelayedReply>&&);
     void runJavaScriptConfirm(uint64_t frameID, const WebCore::SecurityOriginData&, const String&, Ref<Messages::WebPageProxy::RunJavaScriptConfirm::DelayedReply>&&);

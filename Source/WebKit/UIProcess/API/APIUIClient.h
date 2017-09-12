@@ -71,9 +71,7 @@ class UIClient {
 public:
     virtual ~UIClient() { }
 
-    virtual RefPtr<WebKit::WebPageProxy> createNewPage(WebKit::WebPageProxy*, FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&) { return nullptr; }
-    virtual void createNewPageAsync(WebKit::WebPageProxy*, FrameInfo&, WebCore::ResourceRequest&&, const WebCore::WindowFeatures&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&& completionHandler) { }
-    virtual bool canCreateNewPageAsync() { return false; }
+    virtual void createNewPage(WebKit::WebPageProxy&, Ref<FrameInfo>&&, WebCore::ResourceRequest&&, WebCore::WindowFeatures&&, WebKit::NavigationActionData&&, WTF::Function<void(RefPtr<WebKit::WebPageProxy>&&)>&&) { }
     virtual void showPage(WebKit::WebPageProxy*) { }
     virtual void fullscreenMayReturnToInline(WebKit::WebPageProxy*) { }
     virtual void didEnterFullscreen(WebKit::WebPageProxy*) { }

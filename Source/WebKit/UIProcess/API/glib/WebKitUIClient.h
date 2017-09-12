@@ -17,11 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebKitUIClient_h
-#define WebKitUIClient_h
+#pragma once
 
 #include "WebKitWebView.h"
 
 void attachUIClientToView(WebKitWebView*);
-
-#endif
