@@ -52,16 +52,26 @@ public:
 private:
     class GC3DStateSaver {
     public:
-        GC3DStateSaver(GraphicsContext3D*);
+        GC3DStateSaver(GraphicsContext3D&);
         ~GC3DStateSaver();
 
+        void saveVertexAttribState(GC3Duint index);
+
     private:
-        GraphicsContext3D* m_context;
+        GraphicsContext3D& m_context;
         GC3Dint m_texture { 0 };
         GC3Dint m_framebuffer { 0 };
         GC3Dint m_program { 0 };
         GC3Dint m_arrayBuffer { 0 };
         GC3Dint m_viewport[4] { 0, 0, 0, 0 };
+
+        GC3Duint m_vertexAttribIndex { 0 };
+        GC3Dint m_vertexAttribEnabled { 0 };
+        GC3Dint m_vertexAttribSize { 0 };
+        GC3Dint m_vertexAttribType { 0 };
+        GC3Dint m_vertexAttribNormalized { 0 };
+        GC3Dint m_vertexAttribStride { 0 };
+        GC3Dsizeiptr m_vertexAttribPointer { 0 };
     };
 
     bool initializeContextObjects();
