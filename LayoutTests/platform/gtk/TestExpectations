@@ -1315,7 +1315,7 @@ webkit.org/b/167576 imported/w3c/IndexedDB-private-browsing/idbcursor_iterating_
 webkit.org/b/167576 storage/indexeddb/modern/index-3-private.html [ Crash ]
 
 webkit.org/b/169811 fast/mediastream/captureStream/canvas2d-heavy-drawing.html [ Crash Pass Failure ]
-webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash ]
+webkit.org/b/169811 fast/mediastream/captureStream/canvas2d.html [ Crash Timeout ]
 webkit.org/b/169811 fast/mediastream/captureStream/canvas3d.html [ Crash Timeout ]
 
 webkit.org/b/172281 accessibility/insert-children-assert.html [ Crash ]
@@ -1908,6 +1908,15 @@ webkit.org/b/176105 http/tests/security/video-cross-origin-accessfailure.html [ 
 webkit.org/b/176110 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Pass Failure ]
 
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
+
+webkit.org/b/176756 inspector/heap/getPreview.html [ Timeout Pass ]
+
+webkit.org/b/176757 fast/hidpi/filters-invert.html [ Pass ImageOnlyFailure ]
+webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/176758 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
+
+webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests

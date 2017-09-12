@@ -1902,8 +1902,6 @@ webkit.org/b/165344 [ Release ] http/tests/security/module-incorrect-mime-types.
 # Hover test does not apply
 fast/css/deferred-parsing/hover-test.html [ Skip ]
 
-webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-diffferent-options.html [ Pass Failure ]
-
 # Skipped because there is no key to show the context menu
 fast/events/context-activated-by-key-event.html [ Skip ]
 
