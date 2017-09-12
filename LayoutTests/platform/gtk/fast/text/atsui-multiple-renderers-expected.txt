@@ -6,12 +6,12 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 757x35
-          RenderText {#text} at (104,0) size 757x35
-            text run at (104,0) width 653: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6139 ATSUI code path should implement small caps,"
-            text run at (0,18) width 403: "synthetic bold and oblique and correct metrics for fallback fonts"
-        RenderText {#text} at (403,18) size 4x17
-          text run at (403,18) width 4: "."
+        RenderInline {I} at (0,0) size 755x35
+          RenderText {#text} at (104,0) size 755x35
+            text run at (104,0) width 651: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6139 ATSUI code path should implement small caps,"
+            text run at (0,18) width 402: "synthetic bold and oblique and correct metrics for fallback fonts"
+        RenderText {#text} at (402,18) size 4x17
+          text run at (402,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 600x17
@@ -57,11 +57,11 @@ layer at (0,0) size 800x600
                   text run at (59,2) width 48: "ipsu\x{308}m"
               RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (119,52) size 119x26 [border: (1px solid #008000)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 57x22
-                text run at (2,2) width 57: "Lorem "
+              RenderText {#text} at (2,2) size 56x22
+                text run at (2,2) width 56: "Lorem "
               RenderInline {SPAN} at (0,0) size 48x22
-                RenderText {#text} at (59,2) size 48x22
-                  text run at (59,2) width 48: "ipsum"
+                RenderText {#text} at (58,2) size 48x22
+                  text run at (58,2) width 48: "ipsum"
               RenderText {#text} at (0,0) size 0x0
           RenderTableRow {TR} at (0,78) size 238x26
             RenderTableCell {TD} at (0,78) size 119x26 [border: (1px solid #008000)] [r=3 c=0 rs=1 cs=1]

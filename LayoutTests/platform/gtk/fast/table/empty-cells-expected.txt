@@ -193,8 +193,8 @@ layer at (0,0) size 785x783
           RenderTableRow {TR} at (0,0) size 781x0
             RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
       RenderBlock (anonymous) at (0,761) size 785x18
-        RenderText {#text} at (0,0) size 109x17
-          text run at (0,0) width 109: "Two empty cells:"
+        RenderText {#text} at (0,0) size 108x17
+          text run at (0,0) width 108: "Two empty cells:"
       RenderTable {TABLE} at (0,779) size 785x4 [border: (2px solid #000000)]
         RenderTableSection {TBODY} at (2,2) size 781x0
           RenderTableRow {TR} at (0,0) size 781x0

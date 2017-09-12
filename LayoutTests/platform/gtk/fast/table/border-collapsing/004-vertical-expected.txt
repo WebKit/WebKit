@@ -4,8 +4,8 @@ layer at (0,0) size 785x884
   RenderBlock {HTML} at (0,0) size 785x884
     RenderBody {BODY} at (8,21) size 769x855
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 290x36
-          text run at (0,0) width 290: "Table Border Models"
+        RenderText {#text} at (0,0) size 287x36
+          text run at (0,0) width 287: "Table Border Models"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 117x17
           text run at (0,0) width 117: "This tests tests the "
@@ -18,17 +18,29 @@ layer at (0,0) size 785x884
       RenderBlock {PRE} at (0,92) size 769x181
         RenderText {#text} at (0,0) size 688x180
           text run at (0,0) width 408: "TABLE   { margin: 1em; border: medium solid blue; }"
+          text run at (408,0) width 0: " "
           text run at (0,15) width 376: "TD  { border: thin solid green; padding: 5px; }"
+          text run at (376,15) width 0: " "
           text run at (0,30) width 392: "TH { border: medium solid purple; padding: 5px; }"
+          text run at (392,30) width 0: " "
           text run at (0,45) width 360: "TABLE.one, TABLE.two { border-spacing: 1em; }"
+          text run at (360,45) width 0: " "
           text run at (0,60) width 320: "TABLE.one { border-collapse: collapse; }"
+          text run at (320,60) width 0: " "
           text run at (0,75) width 320: "TABLE.two { border-collapse: separate; }"
+          text run at (320,75) width 0: " "
           text run at (0,90) width 536: "TABLE.three { border-collapse: separate; border-spacing: 0 0.5em; }"
+          text run at (536,90) width 0: " "
           text run at (0,105) width 528: "TABLE.four { border-collapse: separate; border-spacing: 0.5em 0; }"
+          text run at (528,105) width 0: " "
           text run at (0,120) width 328: "TABLE.five { border-collapse: separate; }"
+          text run at (328,120) width 0: " "
           text run at (0,135) width 464: "TABLE.five, TABLE.five TD, TABLE.five TH { border: none; }"
+          text run at (464,135) width 0: " "
           text run at (0,150) width 688: "TABLE.five TR, TABLE.five COL, TABLE.five COLGROUP, TABLE.five TBODY, TABLE.five THEAD"
+          text run at (688,150) width 0: " "
           text run at (0,165) width 264: "    { border: medium solid red; }"
+          text run at (264,165) width 0: " "
       RenderBlock {DIV} at (0,285) size 1524x570
         RenderTable {TABLE} at (16,16) size 238x537 [border: (1px solid #0000FF)]
           RenderTableSection {TBODY} at (1,1) size 235x534
@@ -37,8 +49,8 @@ layer at (0,0) size 785x884
                 RenderText {#text} at (6,48) size 17x83
                   text run at (6,48) width 82: "Header One"
               RenderTableCell {TH} at (0,178) size 31x170 [border: (2px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (6,42) size 17x86
-                  text run at (6,42) width 85: "Header Two"
+                RenderText {#text} at (6,42) size 17x85
+                  text run at (6,42) width 84: "Header Two"
               RenderTableCell {TH} at (0,347) size 31x188 [border: (2px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (6,46) size 17x96
                   text run at (6,46) width 95: "Header Three"
@@ -97,8 +109,8 @@ layer at (0,0) size 785x884
                 RenderText {#text} at (8,16) size 17x83
                   text run at (8,16) width 82: "Header One"
               RenderTableCell {TH} at (16,146) size 34x135 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (8,24) size 17x86
-                  text run at (8,24) width 85: "Header Two"
+                RenderText {#text} at (8,25) size 17x85
+                  text run at (8,25) width 84: "Header Two"
               RenderTableCell {TH} at (16,296) size 34x220 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (8,61) size 17x96
                   text run at (8,61) width 95: "Header Three"
@@ -151,8 +163,8 @@ layer at (0,0) size 785x884
                 RenderText {#text} at (8,27) size 17x83
                   text run at (8,27) width 82: "Header One"
               RenderTableCell {TH} at (8,137) size 34x195 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (8,54) size 17x86
-                  text run at (8,54) width 85: "Header Two"
+                RenderText {#text} at (8,54) size 17x85
+                  text run at (8,54) width 84: "Header Two"
               RenderTableCell {TH} at (8,331) size 34x201 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (8,52) size 17x96
                   text run at (8,52) width 95: "Header Three"
@@ -221,8 +233,8 @@ layer at (0,0) size 785x884
                 RenderText {#text} at (8,30) size 17x83
                   text run at (8,30) width 82: "Header One"
               RenderTableCell {TH} at (0,159) size 34x148 [border: (3px solid #800080)] [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (8,30) size 17x86
-                  text run at (8,30) width 85: "Header Two"
+                RenderText {#text} at (8,31) size 17x85
+                  text run at (8,31) width 84: "Header Two"
               RenderTableCell {TH} at (0,314) size 34x210 [border: (3px solid #800080)] [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (8,56) size 17x96
                   text run at (8,56) width 95: "Header Three"
@@ -294,8 +306,8 @@ layer at (0,0) size 785x884
                   text run at (5,18) width 50: "Header"
                   text run at (23,29) width 28: "One"
               RenderTableCell {TH} at (2,100) size 46x215 [r=0 c=1 rs=1 cs=1]
-                RenderText {#text} at (14,64) size 17x86
-                  text run at (14,64) width 85: "Header Two"
+                RenderText {#text} at (14,65) size 17x85
+                  text run at (14,65) width 84: "Header Two"
               RenderTableCell {TH} at (2,334) size 46x193 [r=0 c=2 rs=1 cs=1]
                 RenderText {#text} at (14,48) size 17x96
                   text run at (14,48) width 95: "Header Three"

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 782x35
-          text run at (0,0) width 782: "Test that <ruby> rendered as inline-table (or somesuch) is not affected by ruby rendering. Both <div> below should look the"
+        RenderText {#text} at (0,0) size 781x35
+          text run at (0,0) width 781: "Test that <ruby> rendered as inline-table (or somesuch) is not affected by ruby rendering. Both <div> below should look the"
           text run at (0,18) width 40: "same. "
         RenderBR {BR} at (40,32) size 0x0
         RenderBR {BR} at (0,36) size 0x17

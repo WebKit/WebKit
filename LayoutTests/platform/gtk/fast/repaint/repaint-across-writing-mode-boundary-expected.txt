@@ -19,4 +19,4 @@ layer at (0,0) size 800x377
             RenderText {#text} at (20,1) size 22x181
               text run at (20,1) width 181: "\x{7B2C}\x{4E8C}\x{6BB5}\x{843D} paragraph 2"
 selection start: position 8 of child 0 {#text} of child 0 {P} of child 3 {DIV} of child 1 {DIV} of body
-selection end:   position 12 of child 0 {#text} of child 0 {P} of child 3 {DIV} of child 1 {DIV} of body
+selection end:   position 13 of child 0 {#text} of child 0 {P} of child 3 {DIV} of child 1 {DIV} of body

@@ -6,10 +6,10 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 758x35
           text run at (0,0) width 758: "This tests that fixed background images are ignored on a page with no fixed positioned elements. If the square (below) is"
-          text run at (0,18) width 187: "green, then the test PASSED."
+          text run at (0,18) width 186: "green, then the test PASSED."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 718x17
-          text run at (0,0) width 718: "Note, we expect this test to fail on all ports that have not compiled with FAST_MOBILE_SCROLLING enabled."
+        RenderText {#text} at (0,0) size 717x17
+          text run at (0,0) width 717: "Note, we expect this test to fail on all ports that have not compiled with FAST_MOBILE_SCROLLING enabled."
       RenderBlock {DIV} at (0,118) size 64x64 [bgcolor=#FF0000]
         RenderText {#text} at (0,0) size 4x17
           text run at (0,0) width 4: " "

@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 104x17
           text run at (0,0) width 104: "This is a test for "
-        RenderInline {I} at (0,0) size 749x35
-          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
-            RenderText {#text} at (104,0) size 348x17
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
-          RenderText {#text} at (452,0) size 749x35
-            text run at (452,0) width 4: " "
-            text run at (456,0) width 293: "http://bugzilla.opendarwin.org/show_bug.cgi?"
+        RenderInline {I} at (0,0) size 747x35
+          RenderInline {A} at (0,0) size 347x17 [color=#0000EE]
+            RenderText {#text} at (104,0) size 347x17
+              text run at (104,0) width 347: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9670"
+          RenderText {#text} at (451,0) size 747x35
+            text run at (451,0) width 4: " "
+            text run at (455,0) width 292: "http://bugzilla.opendarwin.org/show_bug.cgi?"
             text run at (0,18) width 55: "id=9670"
         RenderText {#text} at (55,18) size 4x17
           text run at (55,18) width 4: "."

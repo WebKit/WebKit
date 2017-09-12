@@ -4,8 +4,8 @@ layer at (0,0) size 785x866
   RenderBlock {HTML} at (0,0) size 785x866
     RenderBody {BODY} at (8,8) size 769x850
       RenderBlock (anonymous) at (0,0) size 769x18
-        RenderText {#text} at (0,0) size 89x17
-          text run at (0,0) width 89: "ROWSPANS"
+        RenderText {#text} at (0,0) size 88x17
+          text run at (0,0) width 88: "ROWSPANS"
       RenderTable {TABLE} at (0,18) size 135x60 [border: (5px outset #808080)]
         RenderTableSection {TBODY} at (5,5) size 125x50
           RenderTableRow {TR} at (0,2) size 125x22

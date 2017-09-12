@@ -3,8 +3,8 @@ layer at (0,0) size 785x1032
 layer at (0,0) size 785x1032
   RenderBlock {HTML} at (0,0) size 785x1032
     RenderBody {BODY} at (8,8) size 769x584
-      RenderBlock (floating) {DIV} at (4,0) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x509
+      RenderBlock (floating) {DIV} at (4,0) size 202x482 [border: (1px solid #ADD8E6)]
+        RenderText {#text} at (1,1) size 211x479
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 200: "rational, concupis" + hyphen string "\x{2010}"
@@ -20,13 +20,13 @@ layer at (0,0) size 785x1032
           text run at (1,301) width 200: "of thought are all"
           text run at (1,331) width 128: "of them "
           text run at (129,331) width 72: "to be"
-          text run at (1,361) width 200: "found in the"
-          text run at (1,391) width 200: "Republic, and"
-          text run at (1,421) width 200: "were probably"
-          text run at (1,451) width 200: "first invented by"
-          text run at (1,481) width 60: "Plato."
-      RenderBlock (floating) {DIV} at (214,0) size 202x512 [border: (1px solid #ADD8E6)]
-        RenderText {#text} at (1,1) size 200x509
+          text run at (1,361) width 211: "found in the Repub" + hyphen string "\x{2010}"
+          text run at (1,391) width 201: "lic, and were prob" + hyphen string "\x{2010}"
+          text run at (1,421) width 200: "ably first invented"
+          text run at (1,451) width 33: "by "
+          text run at (34,451) width 60: "Plato."
+      RenderBlock (floating) {DIV} at (214,0) size 202x482 [border: (1px solid #ADD8E6)]
+        RenderText {#text} at (1,1) size 211x479
           text run at (1,1) width 200: "also the division of"
           text run at (1,31) width 200: "the mind into the"
           text run at (1,61) width 200: "rational, concupis" + hyphen string "\x{2010}"
@@ -42,11 +42,11 @@ layer at (0,0) size 785x1032
           text run at (1,301) width 200: "of thought are all"
           text run at (1,331) width 128: "of them "
           text run at (129,331) width 72: "to be"
-          text run at (1,361) width 200: "found in the"
-          text run at (1,391) width 200: "Republic, and"
-          text run at (1,421) width 200: "were probably"
-          text run at (1,451) width 200: "first invented by"
-          text run at (1,481) width 60: "Plato."
+          text run at (1,361) width 211: "found in the Repub" + hyphen string "\x{2010}"
+          text run at (1,391) width 201: "lic, and were prob" + hyphen string "\x{2010}"
+          text run at (1,421) width 200: "ably first invented"
+          text run at (1,451) width 33: "by "
+          text run at (34,451) width 60: "Plato."
       RenderBlock (floating) {DIV} at (424,0) size 202x512 [border: (1px solid #ADD8E6)]
         RenderText {#text} at (1,1) size 200x509
           text run at (1,1) width 200: "also the division of"
@@ -58,7 +58,7 @@ layer at (0,0) size 785x1032
           text run at (1,151) width 200: "pleasures and de" + hyphen string "\x{2010}"
           text run at (1,181) width 200: "sires into neces" + hyphen string "\x{2010}"
           text run at (1,211) width 200: "sary and"
-          text run at (1,241) width 200: "unnecessary\x{2014}"
+          text run at (1,241) width 155: "unnecessary\x{2014}"
           text run at (1,271) width 200: "these and other"
           text run at (1,301) width 200: "great forms of"
           text run at (1,331) width 200: "thought are all of"
@@ -80,7 +80,7 @@ layer at (0,0) size 785x1032
           text run at (1,181) width 200: "sires into"
           text run at (1,211) width 165: "necessary and "
           text run at (166,211) width 35: "un" + hyphen string "\x{2010}"
-          text run at (1,241) width 200: "necessary\x{2014}these"
+          text run at (1,241) width 183: "necessary\x{2014}these"
           text run at (1,271) width 200: "and other great"
           text run at (1,301) width 200: "forms of thought"
           text run at (1,331) width 180: "are all of them "
@@ -100,7 +100,7 @@ layer at (0,0) size 785x1032
           text run at (1,151) width 200: "or of pleasures"
           text run at (1,181) width 200: "and desires into"
           text run at (1,211) width 200: "necessary and"
-          text run at (1,241) width 200: "unnecessary\x{2014}"
+          text run at (1,241) width 155: "unnecessary\x{2014}"
           text run at (1,271) width 200: "these and other"
           text run at (1,301) width 200: "great forms of"
           text run at (1,331) width 200: "thought are all of"

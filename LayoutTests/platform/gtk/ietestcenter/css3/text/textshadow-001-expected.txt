@@ -4,8 +4,8 @@ layer at (0,0) size 800x114
   RenderBlock {HTML} at (0,0) size 800x114
     RenderBody {BODY} at (8,16) size 784x73
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 434x17
-          text run at (0,0) width 434: "Test pasees if there is a black, blue and yellow rectangle on the page."
+        RenderText {#text} at (0,0) size 433x17
+          text run at (0,0) width 433: "Test pasees if there is a black, blue and yellow rectangle on the page."
       RenderBlock {DIV} at (25,43) size 734x30
         RenderText {#text} at (0,0) size 300x30
           text run at (0,0) width 300: "FillerText"

@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 29x17
-          text run at (0,0) width 29: "Text"
+        RenderText {#text} at (0,0) size 28x17
+          text run at (0,0) width 28: "Text"
       RenderTable {TABLE} at (0,18) size 784x100
         RenderTableSection {TBODY} at (0,0) size 784x100
           RenderTableRow {TR} at (0,0) size 784x100

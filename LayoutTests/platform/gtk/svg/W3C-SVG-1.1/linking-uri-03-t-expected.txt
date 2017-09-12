@@ -14,9 +14,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (25,161) size 77x14 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 77x14
           chunk 1 text run 1 at (25.00,172.00) startOffset 0 endOffset 18 width 77.00: "Link to local file"
-      RenderSVGText {text} at (25,171) size 81x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 81x14
-          chunk 1 text run 1 at (25.00,182.00) startOffset 0 endOffset 17 width 81.00: "linkingToc-t.svg."
+      RenderSVGText {text} at (25,171) size 80x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 80x14
+          chunk 1 text run 1 at (25.00,182.00) startOffset 0 endOffset 17 width 80.00: "linkingToc-t.svg."
       RenderSVGRect {rect} at (18,159) size 102x28 [stroke={[type=SOLID] [color=#000000]}] [x=19.00] [y=160.00] [width=100.00] [height=26.00]
       RenderSVGText {text} at (275,135) size 82x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 82x12
@@ -27,9 +27,9 @@ layer at (0,0) size 480x360
       RenderSVGText {text} at (275,157) size 107x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 107x12
           chunk 1 text run 1 at (275.00,166.00) startOffset 0 endOffset 25 width 107.00: "xlink:actuate=\"onRequest\""
-      RenderSVGText {text} at (275,168) size 120x12 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 120x12
-          chunk 1 text run 1 at (275.00,177.00) startOffset 0 endOffset 29 width 120.00: "xlink:href=\"linkingToc-t.svg\""
+      RenderSVGText {text} at (275,168) size 119x12 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 119x12
+          chunk 1 text run 1 at (275.00,177.00) startOffset 0 endOffset 29 width 119.00: "xlink:href=\"linkingToc-t.svg\""
       RenderSVGText {text} at (275,179) size 117x12 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 117x12
           chunk 1 text run 1 at (275.00,188.00) startOffset 0 endOffset 30 width 117.00: "xlink:role=\"figure-out-a-role\""

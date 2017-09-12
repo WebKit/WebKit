@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (0,0) size 800x600
-      RenderSVGText {text} at (10,5) size 313x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 313x19
-          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 312.00: "Test single line and multiline text selection."
+      RenderSVGText {text} at (10,5) size 311x19 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 311x19
+          chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 46 width 310.20: "Test single line and multiline text selection."
       RenderSVGContainer {g} at (41,83) size 622x365
         RenderSVGText {text} at (25,50) size 261x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 261x19

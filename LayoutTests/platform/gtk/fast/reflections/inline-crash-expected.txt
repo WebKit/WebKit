@@ -4,17 +4,17 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 53x17
-          text run at (0,0) width 53: "Test for "
-        RenderInline {I} at (0,0) size 654x17
-          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
-            RenderText {#text} at (53,0) size 307x17
-              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=19525"
-          RenderText {#text} at (360,0) size 347x17
-            text run at (360,0) width 4: " "
-            text run at (364,0) width 343: "-webkit-box-reflect in hyperlink causes webkit to crash"
-        RenderText {#text} at (707,0) size 4x17
-          text run at (707,0) width 4: "."
+        RenderText {#text} at (0,0) size 52x17
+          text run at (0,0) width 52: "Test for "
+        RenderInline {I} at (0,0) size 652x17
+          RenderInline {A} at (0,0) size 306x17 [color=#0000EE]
+            RenderText {#text} at (52,0) size 306x17
+              text run at (52,0) width 306: "https://bugs.webkit.org/show_bug.cgi?id=19525"
+          RenderText {#text} at (358,0) size 346x17
+            text run at (358,0) width 4: " "
+            text run at (362,0) width 342: "-webkit-box-reflect in hyperlink causes webkit to crash"
+        RenderText {#text} at (704,0) size 4x17
+          text run at (704,0) width 4: "."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 178x17
           text run at (0,0) width 178: "Because it is an inline flow, "

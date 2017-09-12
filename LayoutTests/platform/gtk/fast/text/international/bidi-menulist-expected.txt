@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x54
-        RenderText {#text} at (0,0) size 571x17
-          text run at (0,0) width 571: "This tests that bidirectional text is correctly rendered in popup controls."
-        RenderBR {BR} at (571,14) size 0x0
+        RenderText {#text} at (0,0) size 569x17
+          text run at (0,0) width 569: "This tests that bidirectional text is correctly rendered in popup controls."
+        RenderBR {BR} at (569,14) size 0x0
         RenderText {#text} at (0,18) size 780x35
           text run at (0,18) width 780: "The order of the text below each popup button should match the order of the select's option text,"
           text run at (0,36) width 359: "and the order of the text in the popup menu."

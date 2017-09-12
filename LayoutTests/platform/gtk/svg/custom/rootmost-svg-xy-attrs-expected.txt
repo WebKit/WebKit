@@ -4,8 +4,8 @@ layer at (0,0) size 800x302
   RenderBlock {html} at (0,0) size 800x302
     RenderBody {body} at (8,21) size 784x273
       RenderBlock {h1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 749x36
-          text run at (0,0) width 749: "Test case for x/y attributes on root-most <svg> element"
+        RenderText {#text} at (0,0) size 745x36
+          text run at (0,0) width 745: "Test case for x/y attributes on root-most <svg> element"
       RenderBlock {p} at (0,58) size 784x55
         RenderText {#text} at (0,0) size 29x17
           text run at (0,0) width 29: "The "

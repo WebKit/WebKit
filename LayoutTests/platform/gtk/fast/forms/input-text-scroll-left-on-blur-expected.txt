@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (400,2) size 191x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,44) size 784x36
-        RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 784: "Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and third"
+        RenderText {#text} at (0,0) size 783x35
+          text run at (0,0) width 783: "Tests scrolling back to the beginning when a text field blurs. The first field should be scrolled to the left, the second and third"
           text run at (0,18) width 125: "scrolled to the right."
 layer at (13,13) size 185x18 scrollWidth 398
   RenderBlock {DIV} at (3,3) size 185x18

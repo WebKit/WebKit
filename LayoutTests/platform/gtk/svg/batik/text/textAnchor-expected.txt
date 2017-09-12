@@ -42,7 +42,7 @@ layer at (0,0) size 450x500
                 chunk 1 text run 1 at (124.67,50.00) startOffset 0 endOffset 15 width 101.33: "same text chunk"
             RenderSVGInlineText {#text} at (156,20) size 4x18
               chunk 1 text run 1 at (226.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 116x18
+            RenderSVGTSpan {tspan} at (0,0) size 117x18
               RenderSVGInlineText {#text} at (250,0) size 116x18
                 chunk 1 text run 1 at (320.00,30.00) startOffset 0 endOffset 18 width 116.00: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -91,7 +91,7 @@ layer at (0,0) size 450x500
                 chunk 1 text run 1 at (124.67,50.00) startOffset 0 endOffset 15 width 101.33: "same text chunk"
             RenderSVGInlineText {#text} at (156,20) size 4x18
               chunk 1 text run 1 at (226.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 116x18
+            RenderSVGTSpan {tspan} at (0,0) size 117x18
               RenderSVGInlineText {#text} at (192,0) size 116x18
                 chunk 1 (middle anchor) text run 1 at (262.00,30.00) startOffset 0 endOffset 18 width 116.00: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0
@@ -140,7 +140,7 @@ layer at (0,0) size 450x500
                 chunk 1 text run 1 at (124.67,50.00) startOffset 0 endOffset 15 width 101.33: "same text chunk"
             RenderSVGInlineText {#text} at (156,20) size 4x18
               chunk 1 text run 1 at (226.00,50.00) startOffset 0 endOffset 1 width 4.00: " "
-            RenderSVGTSpan {tspan} at (0,0) size 116x18
+            RenderSVGTSpan {tspan} at (0,0) size 117x18
               RenderSVGInlineText {#text} at (134,0) size 116x18
                 chunk 1 (end anchor) text run 1 at (204.00,30.00) startOffset 0 endOffset 18 width 116.00: "another text chunk"
             RenderSVGInlineText {#text} at (0,0) size 0x0

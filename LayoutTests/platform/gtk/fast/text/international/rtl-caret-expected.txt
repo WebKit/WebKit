@@ -4,18 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 221x17
-          text run at (0,0) width 221: "This is a regression test for "
-        RenderInline {I} at (0,0) size 761x35
+        RenderText {#text} at (0,0) size 220x17
+          text run at (0,0) width 220: "This is a regression test for "
+        RenderInline {I} at (0,0) size 760x35
           RenderInline {A} at (0,0) size 426x17 [color=#0000EE]
-            RenderText {#text} at (221,0) size 426x17
-              text run at (221,0) width 426: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8866"
-          RenderText {#text} at (647,0) size 761x35
-            text run at (647,0) width 5: " "
-            text run at (652,0) width 109: "REGRESSION:"
-            text run at (0,18) width 277: "Incorrect caret position in RTL text"
-        RenderText {#text} at (277,18) size 5x17
-          text run at (277,18) width 5: "."
+            RenderText {#text} at (220,0) size 426x17
+              text run at (220,0) width 426: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8866"
+          RenderText {#text} at (646,0) size 760x35
+            text run at (646,0) width 5: " "
+            text run at (651,0) width 109: "REGRESSION:"
+            text run at (0,18) width 275: "Incorrect caret position in RTL text"
+        RenderText {#text} at (275,18) size 5x17
+          text run at (275,18) width 5: "."
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 437x17
           text run at (0,0) width 437: "The caret should be in the middle of the Hebrew word."

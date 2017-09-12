@@ -4,8 +4,8 @@ layer at (0,0) size 800x554
   RenderBlock {HTML} at (0,0) size 800x554
     RenderBody {BODY} at (8,21) size 784x517
       RenderBlock {H1} at (0,0) size 784x37
-        RenderText {#text} at (0,0) size 488x36
-          text run at (0,0) width 488: "Bidirectional Text Test 2 - CSS"
+        RenderText {#text} at (0,0) size 476x36
+          text run at (0,0) width 476: "Bidirectional Text Test 2 - CSS"
       RenderBlock {P} at (0,58) size 784x19
         RenderText {#text} at (0,0) size 167x17
           text run at (0,0) width 167: "This test is based on "
@@ -571,27 +571,27 @@ layer at (0,0) size 800x554
       RenderBlock {P} at (0,430) size 784x19
         RenderText {#text} at (0,0) size 71x17
           text run at (0,0) width 71: "(Back to "
-        RenderInline {A} at (0,0) size 193x17 [color=#0000EE]
-          RenderText {#text} at (71,0) size 193x17
-            text run at (71,0) width 193: "CSS Testing Information"
-        RenderText {#text} at (264,0) size 10x17
-          text run at (264,0) width 10: ", "
+        RenderInline {A} at (0,0) size 190x17 [color=#0000EE]
+          RenderText {#text} at (71,0) size 190x17
+            text run at (71,0) width 190: "CSS Testing Information"
+        RenderText {#text} at (261,0) size 10x17
+          text run at (261,0) width 10: ", "
         RenderInline {A} at (0,0) size 98x17 [color=#0000EE]
-          RenderText {#text} at (274,0) size 98x17
-            text run at (274,0) width 98: "David Baron"
-        RenderText {#text} at (372,0) size 6x17
-          text run at (372,0) width 6: ")"
+          RenderText {#text} at (271,0) size 98x17
+            text run at (271,0) width 98: "David Baron"
+        RenderText {#text} at (369,0) size 6x17
+          text run at (369,0) width 6: ")"
       RenderBlock {P} at (0,464) size 784x19
         RenderInline {A} at (0,0) size 32x17 [color=#0000EE]
           RenderText {#text} at (0,0) size 32x17
             text run at (0,0) width 32: "LDB"
         RenderText {#text} at (32,0) size 10x17
           text run at (32,0) width 10: ", "
-        RenderInline {A} at (0,0) size 162x17 [color=#0000EE]
-          RenderText {#text} at (42,0) size 162x17
-            text run at (42,0) width 162: "dbaron@dbaron.org"
-        RenderText {#text} at (204,0) size 102x17
-          text run at (204,0) width 102: ", 2001-06-05"
+        RenderInline {A} at (0,0) size 161x17 [color=#0000EE]
+          RenderText {#text} at (42,0) size 161x17
+            text run at (42,0) width 161: "dbaron@dbaron.org"
+        RenderText {#text} at (203,0) size 102x17
+          text run at (203,0) width 102: ", 2001-06-05"
       RenderBlock {P} at (0,498) size 784x19
         RenderText {#text} at (0,0) size 383x17
           text run at (0,0) width 383: "Modified and used with the author\x{2019}s permission."

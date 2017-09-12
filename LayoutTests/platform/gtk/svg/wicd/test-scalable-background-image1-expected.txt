@@ -7,8 +7,8 @@ layer at (0,0) size 800x316
         RenderText {#text} at (0,0) size 315x30
           text run at (0,0) width 315: "scalable CSS background"
       RenderBlock {h4} at (10,71) size 752x17
-        RenderText {#text} at (0,0) size 125x16
-          text run at (0,0) width 125: "WICD Core 1.0 #11"
+        RenderText {#text} at (0,0) size 124x16
+          text run at (0,0) width 124: "WICD Core 1.0 #11"
       RenderBlock {p} at (10,106) size 712x37
         RenderText {#text} at (10,10) size 468x15
           text run at (10,10) width 468: "This text paragraph, as well as all following, must have a SVG background image."

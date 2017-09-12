@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 191x17
-          text run at (0,0) width 191: "Tests of padding in table cells."
+        RenderText {#text} at (0,0) size 190x17
+          text run at (0,0) width 190: "Tests of padding in table cells."
       RenderTable {TABLE} at (0,34) size 392x126
         RenderTableSection {TBODY} at (0,0) size 392x126
           RenderTableRow {TR} at (0,2) size 392x122

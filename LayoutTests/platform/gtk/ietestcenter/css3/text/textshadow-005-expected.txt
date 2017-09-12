@@ -4,8 +4,8 @@ layer at (0,0) size 800x50
   RenderBlock {HTML} at (0,0) size 800x50
     RenderBody {BODY} at (8,16) size 784x18
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 555x17
-          text run at (0,0) width 555: "Test passes if there is a black shape completely contained in the orange box on the page."
+        RenderText {#text} at (0,0) size 554x17
+          text run at (0,0) width 554: "Test passes if there is a black shape completely contained in the orange box on the page."
       RenderBlock {DIV} at (0,34) size 784x0
 layer at (48,144) size 194x114
   RenderBlock (positioned) {DIV} at (48,144) size 194x114 [bgcolor=#FFFFFF] [border: (1px solid #FFA500)]

@@ -57,11 +57,11 @@ layer at (0,0) size 800x600
           RenderSVGInlineText {#text} at (0,20) size 379x13
             chunk 1 text run 1 at (220.00,232.00) startOffset 0 endOffset 23 width 125.44: "Note that one can also "
             chunk 1 text run 1 at (345.44,232.00) startOffset 0 endOffset 49 width 253.44: "transform the group containing the selection list"
-        RenderSVGTSpan {tspan} at (0,0) size 442x13
-          RenderSVGInlineText {#text} at (0,40) size 442x13
+        RenderSVGTSpan {tspan} at (0,0) size 441x13
+          RenderSVGInlineText {#text} at (0,40) size 441x13
             chunk 1 text run 1 at (220.00,252.00) startOffset 0 endOffset 5 width 26.88: "This "
-            chunk 1 text run 1 at (246.88,252.00) startOffset 0 endOffset 74 width 382.72: "selectionlist does not react on user input (functionToCall is a undefined "
-            chunk 1 text run 1 at (629.60,252.00) startOffset 0 endOffset 6 width 32.00: "value)"
+            chunk 1 text run 1 at (246.88,252.00) startOffset 0 endOffset 74 width 381.44: "selectionlist does not react on user input (functionToCall is a undefined "
+            chunk 1 text run 1 at (628.32,252.00) startOffset 0 endOffset 6 width 32.00: "value)"
         RenderSVGTSpan {tspan} at (0,0) size 470x13
           RenderSVGInlineText {#text} at (0,60) size 470x13
             chunk 1 text run 1 at (220.00,272.00) startOffset 0 endOffset 14 width 70.40: "Click on this "

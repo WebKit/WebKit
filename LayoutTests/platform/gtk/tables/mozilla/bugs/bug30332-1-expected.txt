@@ -17,8 +17,8 @@ layer at (0,0) size 800x600
                   text run at (2,2) width 27: "One"
             RenderTableRow {TR} at (0,26) size 774x22
               RenderTableCell {TD} at (2,26) size 770x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 30x17
-                  text run at (2,2) width 30: "Two"
+                RenderText {#text} at (2,2) size 29x17
+                  text run at (2,2) width 29: "Two"
       RenderBlock (anonymous) at (0,96) size 784x72
         RenderBR {BR} at (0,0) size 0x17
         RenderBR {BR} at (0,18) size 0x17
@@ -35,5 +35,5 @@ layer at (0,0) size 800x600
                   text run at (2,2) width 27: "One"
             RenderTableRow {TR} at (0,26) size 774x22
               RenderTableCell {TD} at (2,26) size 770x22 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 30x17
-                  text run at (2,2) width 30: "Two"
+                RenderText {#text} at (2,2) size 29x17
+                  text run at (2,2) width 29: "Two"

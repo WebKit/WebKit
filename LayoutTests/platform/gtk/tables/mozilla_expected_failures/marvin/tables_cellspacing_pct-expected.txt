@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 773x35
-          text run at (0,0) width 773: "CELLSPACING specifies the amount space between cells. The first table has a cellspacing value of 20%; the second table"
+        RenderText {#text} at (0,0) size 772x35
+          text run at (0,0) width 772: "CELLSPACING specifies the amount space between cells. The first table has a cellspacing value of 20%; the second table"
           text run at (0,18) width 165: "does not have cellspacing."
       RenderTable {TABLE} at (0,52) size 91x52 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 89x50

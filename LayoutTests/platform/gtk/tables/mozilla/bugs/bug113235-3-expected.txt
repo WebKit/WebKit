@@ -440,12 +440,12 @@ layer at (0,0) size 785x982
                                               RenderInline {FONT} at (0,0) size 0x0
                                                 RenderInline {FONT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,838) size 769x46
-        RenderTable {TABLE} at (0,0) size 61x28 [border: (1px outset #808080)]
-          RenderTableSection {TBODY} at (1,1) size 59x26
-            RenderTableRow {TR} at (0,2) size 59x22
-              RenderTableCell {TD} at (2,2) size 55x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 51x17
-                  text run at (2,2) width 51: "table-11"
+        RenderTable {TABLE} at (0,0) size 60x28 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 58x26
+            RenderTableRow {TR} at (0,2) size 58x22
+              RenderTableCell {TD} at (2,2) size 54x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderText {#text} at (2,2) size 50x17
+                  text run at (2,2) width 50: "table-11"
         RenderBlock {DIV} at (0,28) size 769x18
           RenderText {#text} at (0,0) size 86x17
             text run at (0,0) width 86: "div after table"

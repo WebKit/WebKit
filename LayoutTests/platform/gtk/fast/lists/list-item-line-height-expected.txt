@@ -15,9 +15,9 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 0x0
         RenderListItem {LI} at (40,30) size 744x30
           RenderListMarker at (-17,10) size 10x10
-          RenderInline {SPAN} at (0,0) size 30x17
-            RenderText {#text} at (0,6) size 30x17
-              text run at (0,6) width 30: "Two"
+          RenderInline {SPAN} at (0,0) size 29x17
+            RenderText {#text} at (0,6) size 29x17
+              text run at (0,6) width 29: "Two"
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {UL} at (0,110) size 784x60
         RenderListItem {LI} at (40,0) size 744x30

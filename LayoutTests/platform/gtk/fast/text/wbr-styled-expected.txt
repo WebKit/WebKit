@@ -19,8 +19,8 @@ layer at (0,0) size 800x600
         RenderInline {TT} at (0,0) size 64x15
           RenderText {#text} at (498,3) size 64x15
             text run at (498,3) width 64: "absolute"
-        RenderText {#text} at (562,0) size 152x17
-          text run at (562,0) width 152: " does not crash WebKit."
+        RenderText {#text} at (562,0) size 151x17
+          text run at (562,0) width 151: " does not crash WebKit."
       RenderBlock {P} at (0,34) size 784x18
         RenderText {#text} at (0,0) size 126x17
           text run at (0,0) width 126: "There should be no "

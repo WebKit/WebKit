@@ -4,12 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 784: "Results that match WinIE are two columns on the right that say \"after\" every time, except for the last row which should have"
+        RenderText {#text} at (0,0) size 783x35
+          text run at (0,0) width 783: "Results that match WinIE are two columns on the right that say \"after\" every time, except for the last row which should have"
           text run at (0,18) width 158: "nothing in either column."
       RenderBlock {P} at (0,52) size 784x18
-        RenderText {#text} at (0,0) size 713x17
-          text run at (0,0) width 713: "Results that match Gecko are like WinIE, but with \"before\" for the attribute in the first two rows and the last row."
+        RenderText {#text} at (0,0) size 712x17
+          text run at (0,0) width 712: "Results that match Gecko are like WinIE, but with \"before\" for the attribute in the first two rows and the last row."
       RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
       RenderBlock {FORM} at (0,96) size 784x475
         RenderTable {TABLE} at (0,0) size 784x475

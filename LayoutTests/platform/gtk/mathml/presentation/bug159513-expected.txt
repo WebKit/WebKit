@@ -4,8 +4,8 @@ layer at (0,0) size 800x115
   RenderBlock {HTML} at (0,0) size 800x115
     RenderBody {BODY} at (8,16) size 784x91
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 262x17
-          text run at (0,0) width 262: "Test passes if horizontal operators stretch."
+        RenderText {#text} at (0,0) size 261x17
+          text run at (0,0) width 261: "Test passes if horizontal operators stretch."
       RenderBlock (anonymous) at (0,34) size 784x57
         RenderMathMLMath {math} at (0,8) size 60x41
           RenderMathMLUnderOver {mover} at (0,0) size 60x41

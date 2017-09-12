@@ -11,11 +11,11 @@ layer at (0,0) size 800x600
                 RenderTableSection {TBODY} at (1,1) size 298x98
                   RenderTableRow {TR} at (0,2) size 298x94
                     RenderTableCell {TD} at (2,2) size 294x94 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-                      RenderText {#text} at (2,2) size 276x89
-                        text run at (2,2) width 248: "Welcome to PlanDepot.com, the fastest"
+                      RenderText {#text} at (2,2) size 275x89
+                        text run at (2,2) width 247: "Welcome to PlanDepot.com, the fastest"
                         text run at (2,20) width 136: "growing resource for "
                         text run at (138,20) width 135: "Construction Data on"
-                        text run at (2,38) width 276: "the Internet! We offer an extensive database"
+                        text run at (2,38) width 275: "the Internet! We offer an extensive database"
                         text run at (2,56) width 268: "of construction bid opportunities, currently"
                         text run at (2,74) width 59: "covering "
                         text run at (61,74) width 59: "13 states!"

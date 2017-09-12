@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x576
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 395x17
-          text run at (0,0) width 395: "Tests list item numbering when there are anonymous list items."
+        RenderText {#text} at (0,0) size 394x17
+          text run at (0,0) width 394: "Tests list item numbering when there are anonymous list items."
       RenderBlock {OL} at (0,34) size 784x18
         RenderListItem at (40,0) size 744x18
           RenderListMarker at (-20,0) size 16x17: "1"

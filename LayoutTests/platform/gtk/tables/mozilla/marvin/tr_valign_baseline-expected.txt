@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 176x17
-          text run at (0,0) width 176: "TR VALIGN=BASELINE"
+        RenderText {#text} at (0,0) size 174x17
+          text run at (0,0) width 174: "TR VALIGN=BASELINE"
       RenderTable {TABLE} at (0,18) size 784x217 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 782x215
           RenderTableRow {TR} at (0,2) size 782x211

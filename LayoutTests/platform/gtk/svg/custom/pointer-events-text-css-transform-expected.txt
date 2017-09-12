@@ -2,12 +2,12 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,5) size 532x579
-    RenderSVGText {text} at (110,5) size 107x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 107x18
-        chunk 1 text run 1 at (110.00,20.00) startOffset 0 endOffset 19 width 107.00: "Visibility: visible"
-    RenderSVGText {text} at (340,5) size 109x19 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 109x18
-        chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 109.00: "Visibility: hidden"
+    RenderSVGText {text} at (110,5) size 106x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 106x18
+        chunk 1 text run 1 at (110.00,20.00) startOffset 0 endOffset 19 width 106.00: "Visibility: visible"
+    RenderSVGText {text} at (340,5) size 108x19 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 108x18
+        chunk 1 text run 1 at (340.00,20.00) startOffset 0 endOffset 18 width 108.00: "Visibility: hidden"
     RenderSVGContainer {g} at (0,22) size 532x562
       RenderSVGText {text} at (0,45) size 27x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 27x18

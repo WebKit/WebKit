@@ -8,8 +8,8 @@ layer at (0,0) size 800x478
           RenderText {#text} at (0,0) size 286x17
             text run at (0,0) width 286: "The following two tables should be the same."
         RenderBlock {P} at (0,34) size 600x18
-          RenderText {#text} at (0,0) size 163x17
-            text run at (0,0) width 163: "Table 1: width in <COL>"
+          RenderText {#text} at (0,0) size 162x17
+            text run at (0,0) width 162: "Table 1: width in <COL>"
         RenderTable {TABLE} at (0,68) size 256x168
           RenderTableCol {COLGROUP} at (0,0) size 0x0
             RenderTableCol {COL} at (0,0) size 0x0
@@ -31,8 +31,8 @@ layer at (0,0) size 800x478
                 RenderText {#text} at (1,1) size 84x17
                   text run at (1,1) width 84: "Lorem ipsum"
         RenderBlock {P} at (0,252) size 600x18
-          RenderText {#text} at (0,0) size 152x17
-            text run at (0,0) width 152: "Table 2: width in <TD>"
+          RenderText {#text} at (0,0) size 151x17
+            text run at (0,0) width 151: "Table 2: width in <TD>"
         RenderTable {TABLE} at (0,286) size 260x168
           RenderTableSection {TBODY} at (0,0) size 260x168
             RenderTableRow {TR} at (0,2) size 260x164

@@ -94,8 +94,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 105x11
                 text run at (2,2) width 105: "table C, footer B row B"
             RenderTableCell {TD} at (119,17) size 70x15 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 66x11
-                text run at (2,2) width 66: "rowIndex = 11"
+              RenderText {#text} at (2,2) size 65x11
+                text run at (2,2) width 65: "rowIndex = 11"
         RenderTableSection {TBODY} at (1,71) size 191x34
           RenderTableRow {TR} at (0,0) size 191x15
             RenderTableCell {TD} at (2,0) size 115x15 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]

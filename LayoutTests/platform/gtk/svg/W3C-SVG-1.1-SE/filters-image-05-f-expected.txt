@@ -44,9 +44,9 @@ layer at (0,0) size 480x360
         RenderSVGResourceFilter {filter} [id="xMaxYMaxSlice"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
           [feImage image-size="100.00x100.00"]
       RenderSVGContainer {g} at (10,15) size 420x280 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-        RenderSVGText {text} at (63,-15) size 354x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 354x18
-            chunk 1 (middle anchor) text run 1 at (63.00,0.00) startOffset 0 endOffset 47 width 354.00: "Test preserveAspectRatio on an feImage element."
+        RenderSVGText {text} at (64,-15) size 352x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 352x18
+            chunk 1 (middle anchor) text run 1 at (64.00,0.00) startOffset 0 endOffset 47 width 352.00: "Test preserveAspectRatio on an feImage element."
         RenderSVGText {text} at (15,21) size 50x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 50x11
             chunk 1 (middle anchor) text run 1 at (15.00,30.00) startOffset 0 endOffset 13 width 50.00: "Raster to fit"
