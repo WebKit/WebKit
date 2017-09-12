@@ -45,7 +45,7 @@ sub defaultItemFactory
     return (
         'interfaceName' => 0,
         'conditional' => 0,
-        'runtimeConditional' => 0
+        'runtimeEnabled' => 0
     );
 }
 
@@ -95,7 +95,7 @@ sub generateImplementation()
 
     for my $eventName (sort keys %parsedEvents) {
         my $conditional = $parsedEvents{$eventName}{"conditional"};
-        my $runtimeConditional = $parsedEvents{$eventName}{"runtimeConditional"};
+        my $runtimeEnabled = $parsedEvents{$eventName}{"runtimeEnabled"};
         my $interfaceName = $InCompiler->interfaceForItem($eventName);
 
         # FIXME: This should pay attention to $runtimeConditional so it can support RuntimeEnabledFeatures.

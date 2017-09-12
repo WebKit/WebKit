@@ -1,25 +1,19 @@
+<!DOCTYPE html><!-- webkit-test-runner [ enableAttachmentElement=false ] -->
 <html>
-<head>
-<script src="../../resources/js-test-pre.js"></script>
-</head>
 <body>
 <p id="description"></p>
 <div id="console"></div>
 <div id="editable" contentEditable=true style="width:200px; height:200px"></div>
+<script src="../../resources/js-test-pre.js"></script>
 <script>
 description('If we drag files onto an editable area, then attachments should be inserted into the editable area.');
 
 var editable = document.getElementById("editable");
 if (window.eventSender) {
     dragFilesOntoEditable(['foo', 'bar', 'baz']);
-    var resultChildren = editable.children;
-    var fileNames = "";
-    for (var i = 0; i < resultChildren.length; i++) {
-        var attachment = resultChildren[i];
-        shouldBeEqualToString('attachment.nodeName', 'ATTACHMENT');
-        fileNames += attachment.file.name + " ";
-    }
-    shouldBeEqualToString('fileNames', 'foo bar baz ');
+    shouldBeUndefined('window.HTMLAttachmentElement');
+    shouldBeTrue('document.createElement("attachment") instanceof HTMLUnknownElement');
+    shouldBe('editable.querySelector("attachment")', 'null');
     editable.innerHTML = '';
 }
 

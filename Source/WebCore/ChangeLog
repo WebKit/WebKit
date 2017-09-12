@@ -1,3 +1,42 @@
+2017-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dragging & dropping a file creates an attachment element even when it's disabled
+        https://bugs.webkit.org/show_bug.cgi?id=176769
+
+        Reviewed by Tim Horton.
+
+        The bug that dropping a file always created an attachment element even when it's disabled by settings
+        was caused by WebContentReader::readFilenames always creating an attachment element. Fixed this by
+        checking the runtime flag. The fix is tested by drag-files-to-editable-element-as-URLs.html
+
+        To fix the bug that HTMLAttachmentElement is always exposed on the global object even when it's disabled
+        by settings, replaced the setting to enable attachment element by an equivalent runtime enabled flag,
+        and hid both the interface as well as the element behind it. Fixed various bugs in our code generator
+        to make this work.
+
+        Tests: editing/pasteboard/drag-files-to-editable-element-as-URLs.html
+               editing/pasteboard/drag-files-to-editable-element-as-attachment.html
+
+        * bindings/js/WebCoreBuiltinNames.h: Added symbols used in the generated code.
+        * dom/make_event_factory.pl:
+        (defaultItemFactory): Replaced "runtimeConditonal" option by "runtimeEnabled".
+        (generateImplementation):
+        * dom/make_names.pl:
+        (defaultTagPropertyHash):
+        (printConstructorInterior): Return a HTMLUnknownElement if the element is disabled by a runtime flag.
+        (printTypeHelpers): Make is<HTMLAttachmentElement>(~) returns false when the feature is disabled by
+        checking whether the given element is an instance of HTMLUnknownElement.
+        (printWrapperFunctions): Simplified this code by matching the code for settingsConditional.
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::WebContentReader::readFilenames): Fixed the bug that this code was always creating
+        an attachment element even when the feature is disabled.
+        * html/HTMLAttachmentElement.idl: Hide this behind a runtime flag.
+        * html/HTMLTagNames.in: 
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setAttachmentElementEnabled): Added.
+        (WebCore::RuntimeEnabledFeatures::attachmentElementEnabled const): Added.
+        * page/Settings.in: Removed attachmentElementEnabled.
+
 2017-09-12  Youenn Fablet  <youenn@apple.com>
 
         Introduce a RecordData for Cache to efficiently check whether it matches a corresponding request or not

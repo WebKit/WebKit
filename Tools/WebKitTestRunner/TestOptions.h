@@ -43,6 +43,7 @@ struct TestOptions {
     bool needsSiteSpecificQuirks { false };
     bool ignoresViewportScaleLimits { false };
     bool useCharacterSelectionGranularity { false };
+    bool enableAttachmentElement { false };
     bool enableIntersectionObserver { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };
@@ -66,6 +67,7 @@ struct TestOptions {
             || useMockScrollbars != options.useMockScrollbars
             || needsSiteSpecificQuirks != options.needsSiteSpecificQuirks
             || useCharacterSelectionGranularity != options.useCharacterSelectionGranularity
+            || enableAttachmentElement != options.enableAttachmentElement
             || enableIntersectionObserver != options.enableIntersectionObserver
             || enableModernMediaControls != options.enableModernMediaControls
             || enablePointerLock != options.enablePointerLock

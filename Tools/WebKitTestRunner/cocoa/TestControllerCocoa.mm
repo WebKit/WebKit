@@ -138,7 +138,12 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setIgnoresViewportScaleLimits:YES];
     if (options.useCharacterSelectionGranularity)
         [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
+    if (options.useCharacterSelectionGranularity)
+        [copiedConfiguration setSelectionGranularity:WKSelectionGranularityCharacter];
 #endif
+
+    if (options.enableAttachmentElement)
+        [copiedConfiguration _setAttachmentElementEnabled: YES];
 
     m_mainWebView = std::make_unique<PlatformWebView>(copiedConfiguration.get(), options);
 #else

@@ -35,6 +35,7 @@ namespace WebCore {
     macro(AnimationEffectReadOnly) \
     macro(AnimationTimeline) \
     macro(ApplePaySession) \
+    macro(AttachmentElement) \
     macro(Audio) \
     macro(Cache) \
     macro(CacheStorage) \
@@ -53,6 +54,7 @@ namespace WebCore {
     macro(Gamepad) \
     macro(GamepadButton) \
     macro(GamepadEvent) \
+    macro(HTMLAttachmentElement) \
     macro(HTMLAudioElement) \
     macro(HTMLSlotElement) \
     macro(Headers) \

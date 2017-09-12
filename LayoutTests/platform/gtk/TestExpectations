@@ -2803,7 +2803,8 @@ webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in
 webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
 
 # PasteBoard::plainText() does not support file names.
-webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]
+webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
+webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-URLs.html [ Skip ]
 http/tests/images/hidpi-srcset-copy.html [ Skip ]
 
 # Opera-submitted tests to W3C for <track>, a lot of failures still.

@@ -980,6 +980,7 @@ static void setWebPreferencesForTestOptions(const TestOptions& options)
 {
     WebPreferences *preferences = [WebPreferences standardPreferences];
 
+    preferences.attachmentElementEnabled = options.enableAttachmentElement;
     preferences.intersectionObserverEnabled = options.enableIntersectionObserver;
     preferences.modernMediaControlsEnabled = options.enableModernMediaControls;
     preferences.credentialManagementEnabled = options.enableCredentialManagement;

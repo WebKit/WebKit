@@ -29,6 +29,7 @@
 @class NSURL;
 
 struct TestOptions {
+    bool enableAttachmentElement { false };
     bool enableIntersectionObserver { false };
     bool enableModernMediaControls { true };
     bool enablePointerLock { false };

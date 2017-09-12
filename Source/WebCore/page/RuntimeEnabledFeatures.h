@@ -79,6 +79,11 @@ public:
     void setDataTransferItemsEnabled(bool areEnabled) { m_areDataTransferItemsEnabled = areEnabled; }
     bool dataTransferItemsEnabled() const { return m_areDataTransferItemsEnabled; }
 
+#if ENABLE(ATTACHMENT_ELEMENT)
+    void setAttachmentElementEnabled(bool areEnabled) { m_isAttachmentElementEnabled = areEnabled; }
+    bool attachmentElementEnabled() const { return m_isAttachmentElementEnabled; }
+#endif
+
     void setModernMediaControlsEnabled(bool areEnabled) { m_areModernMediaControlsEnabled = areEnabled; }
     bool modernMediaControlsEnabled() const { return m_areModernMediaControlsEnabled; }
 
@@ -237,6 +242,10 @@ private:
     bool m_isDirectoryUploadEnabled { false };
     bool m_areDataTransferItemsEnabled { false };
     bool m_inputEventsEnabled { true };
+
+#if ENABLE(ATTACHMENT_ELEMENT)
+    bool m_isAttachmentElementEnabled { false };
+#endif
 
 #if ENABLE(INDEXED_DATABASE_IN_WORKERS)
     bool m_isIndexedDBWorkersEnabled { true };

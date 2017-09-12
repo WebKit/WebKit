@@ -135,7 +135,8 @@ plugins/open-and-close-window-with-plugin.html
 editing/undo/undo-iframe-location-change.html
 
 # PasteBoard::plainText() does not support file names.
-editing/pasteboard/drag-files-to-editable-element.html
+editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
+editing/pasteboard/drag-files-to-editable-element-as-URLs.html [ Skip ]
 
 # Times out
 # https://bugs.webkit.org/show_bug.cgi?id=63806

@@ -910,6 +910,16 @@ bool WKPreferencesGetMockScrollbarsEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mockScrollbarsEnabled();
 }
 
+void WKPreferencesSetAttachmentElementEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAttachmentElementEnabled(flag);
+}
+
+bool WKPreferencesGetAttachmentElementEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->attachmentElementEnabled();
+}
+
 void WKPreferencesSetWebAudioEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setWebAudioEnabled(enabled);

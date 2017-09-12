@@ -1159,7 +1159,8 @@ editing/pasteboard/drop-file-svg.html [ Skip ]
 editing/pasteboard/file-drag-to-editable.html [ Skip ]
 editing/pasteboard/get-data-text-plain-drop.html [ Skip ]
 # TODO PasteBoard::plainText() does not support file names.
-editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
+editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
+editing/pasteboard/drag-files-to-editable-element-as-URLs.html [ Skip ]
 # TODO FileInputType::receiveDroppedFiles receive relative path
 webkit.org/b/90426 editing/pasteboard/file-input-files-access.html [ Failure ]
 webkit.org/b/90425 [ Release ] editing/pasteboard/dataTransfer-setData-getData.html [ Failure ]

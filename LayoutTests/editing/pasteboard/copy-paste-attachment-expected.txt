@@ -12,3 +12,4 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 This is a paragraph with an attachment  and some other text.
+

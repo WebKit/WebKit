@@ -12,7 +12,7 @@ applet
 area
 article interfaceName=HTMLElement
 aside interfaceName=HTMLElement
-attachment conditional=ATTACHMENT_ELEMENT, settingsConditional=attachmentElementEnabled
+attachment conditional=ATTACHMENT_ELEMENT, runtimeEnabled=attachmentElement
 audio wrapperOnlyIfMediaIsAvailable, conditional=VIDEO, constructorNeedsCreatedByParser, customTypeHelper
 b interfaceName=HTMLElement
 base

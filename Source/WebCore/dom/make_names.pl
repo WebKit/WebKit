@@ -200,7 +200,7 @@ sub defaultTagPropertyHash
         'wrapperOnlyIfMediaIsAvailable' => 0,
         'settingsConditional' => 0,
         'conditional' => 0,
-        'runtimeConditional' => 0,
+        'runtimeEnabled' => 0,
         'customTypeHelper' => 0,
     );
 }
@@ -420,19 +420,18 @@ END
 ;
     }
 
-    my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
-    if ($runtimeConditional) {
-        print F <<END
-    if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled())
-        return 0;
-END
-;
+    my $runtimeCondition;
+    my $settingsConditional = $enabledTags{$tagName}{settingsConditional};
+    my $runtimeEnabled = $enabledTags{$tagName}{runtimeEnabled};
+    if ($settingsConditional) {
+        $runtimeCondition = "document.settings().${settingsConditional}()";
+    } elsif ($runtimeEnabled) {
+        $runtimeCondition = "RuntimeEnabledFeatures::sharedFeatures().${runtimeEnabled}Enabled()";
     }
 
-    my $settingsConditional = $enabledTags{$tagName}{settingsConditional};
-    if ($settingsConditional) {
+    if ($runtimeCondition) {
         print F <<END
-    if (!document.settings().${settingsConditional}())
+    if (!$runtimeCondition)
         return $parameters{fallbackInterfaceName}::create($constructorTagName, document);
 END
 ;
@@ -669,7 +668,7 @@ public:
 private:
 END
        ;
-       if ($parameters{namespace} eq "HTML" && ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable} || $parsedTags{$name}{settingsConditional})) {
+       if ($parameters{namespace} eq "HTML" && ($parsedTags{$name}{wrapperOnlyIfMediaIsAvailable} || $parsedTags{$name}{settingsConditional} || $parsedTags{$name}{runtimeEnabled})) {
            print F <<END
     static bool checkTagName(const WebCore::HTMLElement& element) { return !element.isHTMLUnknownElement() && element.hasTagName(WebCore::$parameters{namespace}Names::${name}Tag); }
     static bool checkTagName(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && checkTagName(downcast<WebCore::HTMLElement>(node)); }
@@ -1187,16 +1186,13 @@ static JSDOMObject* create$enabledTags{$tagName}{interfaceName}Wrapper(JSDOMGlob
 
 END
             ;
-        } elsif ($enabledTags{$tagName}{runtimeConditional}) {
-            my $runtimeConditional = $enabledTags{$tagName}{runtimeConditional};
+        } elsif ($enabledTags{$tagName}{runtimeEnabled}) {
+            my $runtimeEnabled = $enabledTags{$tagName}{runtimeEnabled};
             print F <<END
 static JSDOMObject* create${JSInterfaceName}Wrapper(JSDOMGlobalObject* globalObject, Ref<$parameters{namespace}Element>&& element)
 {
-    if (!RuntimeEnabledFeatures::sharedFeatures().${runtimeConditional}Enabled()) {
-        ASSERT(element->is$parameters{fallbackInterfaceName}());
+    if (element->is$parameters{fallbackInterfaceName}())
         return createWrapper<$parameters{fallbackJSInterfaceName}>(globalObject, WTFMove(element));
-    }
-
     return createWrapper<${JSInterfaceName}>(globalObject, WTFMove(element));
 }
 END

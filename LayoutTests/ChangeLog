@@ -1,3 +1,55 @@
+2017-09-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dragging & dropping a file creates an attachment element even when it's disabled
+        https://bugs.webkit.org/show_bug.cgi?id=176769
+
+        Reviewed by Tim Horton.
+
+        Updated the existing attachment element tests to use the newly added webkitt-test-runner flag,
+        and added a new test (drag-files-to-editable-element-as-URLs.html) to make sure we don't create
+        an attachment element when dropping a file. 
+
+        * editing/pasteboard/copy-paste-attachment-expected.txt:
+        * editing/pasteboard/copy-paste-attachment.html:
+        * editing/pasteboard/drag-files-to-editable-element-as-URLs-expected.txt: Added.
+        * editing/pasteboard/drag-files-to-editable-element-as-URLs.html: Copied from
+        drag-files-to-editable-element.html.
+        * editing/pasteboard/drag-files-to-editable-element-as-attachment-expected.txt: Renamed from
+        drag-files-to-editable-element-expected.txt.
+        * editing/pasteboard/drag-files-to-editable-element-as-attachment.html: Renamed from
+        drag-files-to-editable-element.html.
+        * editing/pasteboard/drag-files-to-editable-element-expected.txt: Removed.
+        * editing/pasteboard/drag-files-to-editable-element.html: Removed.
+        * fast/attachment/attachment-action-expected.html:
+        * fast/attachment/attachment-action.html:
+        * fast/attachment/attachment-borderless-expected-mismatch.html:
+        * fast/attachment/attachment-borderless.html:
+        * fast/attachment/attachment-default-icon-expected.html:
+        * fast/attachment/attachment-default-icon.html:
+        * fast/attachment/attachment-dom.html:
+        * fast/attachment/attachment-folder-icon-expected.html:
+        * fast/attachment/attachment-folder-icon.html:
+        * fast/attachment/attachment-icon-from-file-extension-expected.html:
+        * fast/attachment/attachment-icon-from-file-extension.html:
+        * fast/attachment/attachment-label-highlight.html:
+        * fast/attachment/attachment-progress.html:
+        * fast/attachment/attachment-rendering.html:
+        * fast/attachment/attachment-respects-css-size.html:
+        * fast/attachment/attachment-select-on-click-inside-user-select-all.html:
+        * fast/attachment/attachment-select-on-click.html:
+        * fast/attachment/attachment-subtitle-resize.html:
+        * fast/attachment/attachment-subtitle.html:
+        * fast/attachment/attachment-title.html:
+        * fast/attachment/attachment-type-attribute-expected.html:
+        * fast/attachment/attachment-type-attribute.html:
+        * fast/attachment/attachment-uti-expected.html:
+        * fast/attachment/attachment-uti.html:
+        * fast/attachment/attachment-wrapping-action-expected-mismatch.html:
+        * fast/attachment/attachment-wrapping-action.html:
+        * platform/gtk/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2017-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Unreviewed, update crash expectations after r221925

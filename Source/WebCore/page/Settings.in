@@ -242,8 +242,6 @@ serviceControlsEnabled initial=false, conditional=SERVICE_CONTROLS
 
 appleMailPaginationQuirkEnabled initial=false
 
-attachmentElementEnabled initial=true, conditional=ATTACHMENT_ELEMENT
-
 deferredCSSParserEnabled initial=false
 
 repaintOutsideLayoutEnabled initial=false

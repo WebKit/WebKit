@@ -59,6 +59,7 @@
 #import "RenderBlock.h"
 #import "RenderImage.h"
 #import "RuntimeApplicationChecks.h"
+#import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "StyleProperties.h"
 #import "Text.h"
@@ -378,14 +379,16 @@ bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
 
     for (auto& text : paths) {
 #if ENABLE(ATTACHMENT_ELEMENT)
-        auto attachment = HTMLAttachmentElement::create(attachmentTag, document);
-        attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
-        fragment->appendChild(attachment);
-#else
+        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
+            auto attachment = HTMLAttachmentElement::create(attachmentTag, document);
+            attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
+            fragment->appendChild(attachment);
+            continue;
+        }
+#endif
         auto paragraph = createDefaultParagraphElement(document);
         paragraph->appendChild(document.createTextNode(frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text])));
         fragment->appendChild(paragraph);
-#endif
     }
 
     return true;

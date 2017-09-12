@@ -24,7 +24,8 @@
  */
 
 [
-    Conditional=ATTACHMENT_ELEMENT
+    Conditional=ATTACHMENT_ELEMENT,
+    EnabledAtRuntime=AttachmentElement,
 ] interface HTMLAttachmentElement : HTMLElement {
     attribute File? file;
 };
