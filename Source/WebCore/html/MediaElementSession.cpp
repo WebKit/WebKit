@@ -148,26 +148,6 @@ void MediaElementSession::removeBehaviorRestriction(BehaviorRestrictions restric
     m_restrictions &= ~restriction;
 }
 
-#if PLATFORM(MAC)
-static bool needsDocumentLevelMediaUserGestureQuirk(Document& document)
-{
-    if (!document.settings().needsSiteSpecificQuirks())
-        return false;
-
-    String host = document.topDocument().url().host();
-    if (equalLettersIgnoringASCIICase(host, "slate.com") || host.endsWithIgnoringASCIICase(".slate.com"))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "ign.com") || host.endsWithIgnoringASCIICase(".ign.com"))
-        return true;
-
-    if (equalLettersIgnoringASCIICase(host, "washingtonpost.com") || host.endsWithIgnoringASCIICase(".washingtonpost.com"))
-        return true;
-
-    return false;
-}
-#endif // PLATFORM(MAC)
-
 SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(const HTMLMediaElement& element) const
 {
     if (element.document().isMediaDocument() && !element.document().ownerElement())
@@ -194,7 +174,9 @@ SuccessOr<MediaPlaybackDenialReason> MediaElementSession::playbackPermitted(cons
 #endif
 
 #if PLATFORM(MAC)
-    if (element.document().topDocument().mediaState() & MediaProducer::HasUserInteractedWithMediaElement && needsDocumentLevelMediaUserGestureQuirk(element.document()))
+    // FIXME <https://webkit.org/b/175856>: Make this dependent on a runtime flag for desktop autoplay restrictions.
+    const auto& topDocument = element.document().topDocument();
+    if (topDocument.mediaState() & MediaProducer::HasUserInteractedWithMediaElement && topDocument.settings().needsSiteSpecificQuirks())
         return { };
 #endif
 
