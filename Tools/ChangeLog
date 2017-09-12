@@ -1,3 +1,15 @@
+2017-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Freetype] Doesn't support coloured fonts
+        https://bugs.webkit.org/show_bug.cgi?id=156579
+
+        Reviewed by Michael Catanzaro.
+
+        Bump webkitgtk-test-fonts to 0.0.6 version that includes the EmijoOne font.
+
+        * gtk/jhbuild.modules:
+        * wpe/jhbuild.modules:
+
 2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support DataTransfer.setDragImage when starting a drag on iOS

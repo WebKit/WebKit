@@ -275,7 +275,7 @@ private:
             return true;
         if (textRenderingMode == OptimizeSpeed)
             return false;
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(FREETYPE)
         return true;
 #else
         return false;
@@ -294,7 +294,7 @@ private:
 
     bool computeRequiresShaping() const
     {
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(FREETYPE)
         if (!m_fontDescription.variantSettings().isAllNormal())
             return true;
         if (m_fontDescription.featureSettings().size())

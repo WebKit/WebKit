@@ -1,3 +1,21 @@
+2017-09-12  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [Freetype] Doesn't support coloured fonts
+        https://bugs.webkit.org/show_bug.cgi?id=156579
+
+        Reviewed by Michael Catanzaro.
+
+        Covered by existing tests. This needs a large rebaseline that will be done in follow up commits.
+
+        * platform/graphics/FontCascade.h: Enable advance text rendering mode by default.
+        (WebCore::FontCascade::advancedTextRenderingMode const):
+        (WebCore::FontCascade::computeRequiresShaping const):
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::Font::platformInit): Do not get metrics from OS/2 table for non-scalable fonts.
+        * platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp:
+        (WebCore::harfBuzzGetGlyph): Use U8_APPEND_UNSAFE() instead of converting to a String and then encoding it with
+        UTF8Encoding().
+
 2017-09-12  Frederic Wang  <fwang@igalia.com>
 
         Remove unnecessary virtual keyword from JS test files
