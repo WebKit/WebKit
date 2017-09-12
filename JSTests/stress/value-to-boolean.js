@@ -1,3 +1,5 @@
+//@ if $buildType == "release" then runDefault else skip end
+
 function assert(b) {
     if (!b)
         throw new Error("Bad assertion")
