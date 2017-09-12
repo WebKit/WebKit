@@ -33,6 +33,7 @@ WI.CanvasManager = class CanvasManager extends WI.Object
 
         this._canvasIdentifierMap = new Map;
         this._shaderProgramIdentifierMap = new Map;
+        this._recordingCanvas = null;
 
         if (window.CanvasAgent)
             CanvasAgent.enable();
@@ -48,6 +49,42 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     get shaderPrograms()
     {
         return [...this._shaderProgramIdentifierMap.values()];
+    }
+
+    get recordingCanvas() { return this._recordingCanvas; }
+
+    startRecording(canvas, singleFrame)
+    {
+        console.assert(!this._recordingCanvas, "Recording already started.");
+        if (this._recordingCanvas)
+            return;
+
+        this._recordingCanvas = canvas;
+
+        CanvasAgent.requestRecording(canvas.identifier, singleFrame, (error) => {
+            if (!error)
+                return;
+
+            console.error(error);
+            this._recordingCanvas = null;
+
+            this.dispatchEventToListeners(WI.CanvasManager.Event.RecordingFinished, {canvas, recording: null});
+        });
+    }
+
+    stopRecording()
+    {
+        console.assert(this._recordingCanvas, "No recording started.");
+        if (!this._recordingCanvas)
+            return;
+
+        let canvasIdentifier = this._recordingCanvas.identifier;
+        this._recordingCanvas = null;
+
+        CanvasAgent.cancelRecording(canvasIdentifier, (error) => {
+            if (error)
+                console.error(error);
+        });
     }
 
     canvasAdded(canvasPayload)

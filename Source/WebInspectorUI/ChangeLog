@@ -1,3 +1,34 @@
+2017-09-11  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas: improve recording controls and state management
+        https://bugs.webkit.org/show_bug.cgi?id=176762
+        <rdar://problem/34382294>
+
+        Reviewed by Devin Rousso.
+
+        CanvasManager should be responsible for starting/stopping recordings
+        and tracking state. Fixing this layering issue lets CanvasContentView
+        better manage its recording UI.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager):
+        (WI.CanvasManager.prototype.get recordingCanvas):
+        (WI.CanvasManager.prototype.startRecording):
+        (WI.CanvasManager.prototype.stopRecording):
+
+        * UserInterface/Models/Canvas.js:
+        (WI.Canvas.prototype.get isRecording):
+        (WI.Canvas.prototype.toggleRecording): Deleted.
+
+        * UserInterface/Views/CanvasContentView.css:
+        (.navigation-bar > .item.canvas-record.disabled):
+
+        * UserInterface/Views/CanvasContentView.js:
+        (WI.CanvasContentView.prototype.shown):
+        (WI.CanvasContentView.prototype._toggleRecording):
+        (WI.CanvasContentView.prototype._recordingFinished):
+        (WI.CanvasContentView.prototype._updateRecordNavigationItem):
+
 2017-09-11  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Cleanup and test MIMETypeUtilities

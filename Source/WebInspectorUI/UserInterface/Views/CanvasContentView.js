@@ -77,6 +77,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
         super.shown();
 
         this._showPreview();
+        this._updateRecordNavigationItem();
 
         WI.settings.showImageGrid.addEventListener(WI.Setting.Event.Changed, this._updateImageGrid, this);
     }
@@ -99,22 +100,27 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
     _toggleRecording(event)
     {
-        let toggled = this._recordButtonNavigationItem.toggled;
-        let singleFrame = event.data.nativeEvent.shiftKey;
-        this.representedObject.toggleRecording(!toggled, singleFrame, (error) => {
-            console.assert(!error);
+        if (this.representedObject.isRecording)
+            WI.canvasManager.stopRecording();
+        else if (!WI.canvasManager.recordingCanvas) {
+            let singleFrame = event.data.nativeEvent.shiftKey;
+            WI.canvasManager.startRecording(this.representedObject, singleFrame);
+        }
 
-            this._recordButtonNavigationItem.toggled = !toggled;
-        });
+        this._updateRecordNavigationItem();
     }
 
     _recordingFinished(event)
     {
+        this._updateRecordNavigationItem();
+
         if (event.data.canvas !== this.representedObject)
             return;
 
-        if (this._recordButtonNavigationItem)
-            this._recordButtonNavigationItem.toggled = false;
+        if (!event.data.recording) {
+            console.error("Missing recording.");
+            return;
+        }
 
         WI.showRepresentedObject(event.data.recording);
     }
@@ -157,6 +163,15 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
 
             this._updateImageGrid();
         });
+    }
+
+    _updateRecordNavigationItem()
+    {
+        if (!this._recordButtonNavigationItem)
+            return;
+
+        this._recordButtonNavigationItem.enabled = this.representedObject.isRecording || !WI.canvasManager.recordingCanvas;
+        this._recordButtonNavigationItem.toggled = this.representedObject.isRecording;
     }
 
     _updateImageGrid()

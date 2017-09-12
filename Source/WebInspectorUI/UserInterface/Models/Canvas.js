@@ -108,6 +108,11 @@ WI.Canvas = class Canvas extends WI.Object
     get contextAttributes() { return this._contextAttributes; }
     get shaderProgramCollection() { return this._shaderProgramCollection; }
 
+    get isRecording()
+    {
+        return WI.canvasManager.recordingCanvas === this;
+    }
+
     get memoryCost()
     {
         return this._memoryCost;
@@ -196,14 +201,6 @@ WI.Canvas = class Canvas extends WI.Object
 
             callback(this._cssCanvasClientNodes);
         });
-    }
-
-    toggleRecording(flag, singleFrame, callback)
-    {
-        if (flag)
-            CanvasAgent.requestRecording(this._identifier, singleFrame, callback);
-        else
-            CanvasAgent.cancelRecording(this._identifier, callback);
     }
 
     saveIdentityToCookie(cookie)
