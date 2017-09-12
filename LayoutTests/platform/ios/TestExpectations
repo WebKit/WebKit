@@ -2572,6 +2572,7 @@ media/video-create-with-user-gesture.html
 media/video-fullscreen-restriction-removed.html
 media/video-playsinline.html
 media/video-remote-control-playpause.html
+media/video-user-gesture-tracking.html
 media/video-volume-slider-drag.html
 media/video-webkit-playsinline.html
 media/volume-bar-empty-when-muted.html
