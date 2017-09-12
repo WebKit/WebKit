@@ -1,3 +1,15 @@
+2017-09-12  Sam Weinig  <sam@webkit.org>
+
+        Gtk build fix for "Finish off the FormData implementation" - https://bugs.webkit.org/show_bug.cgi?id=176659
+
+        * fileapi/Blob.cpp:
+        (WebCore::Blob::Blob):
+        * fileapi/Blob.h:
+        * fileapi/File.cpp:
+        (WebCore::File::File):
+        
+            Replace copy constructor with a tagged constructor.
+
 2017-09-12  Dean Jackson  <dino@apple.com>
 
         [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state

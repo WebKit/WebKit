@@ -86,14 +86,14 @@ File::File(Vector<BlobPartVariant>&& blobPartVariants, const String& filename, c
 }
 
 File::File(const Blob& blob, const String& name)
-    : Blob(blob)
+    : Blob(referencingExistingBlobConstructor, blob)
     , m_name(name)
 {
     ASSERT(!blob.isFile());
 }
 
 File::File(const File& file, const String& name)
-    : Blob(file)
+    : Blob(referencingExistingBlobConstructor, file)
     , m_path(file.path())
     , m_relativePath(file.relativePath())
     , m_name(!name.isNull() ? name : file.name())

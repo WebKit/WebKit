@@ -98,9 +98,11 @@ public:
 
 protected:
     Blob();
-    Blob(const Blob&);
     Blob(Vector<BlobPartVariant>&&, const BlobPropertyBag&);
     Blob(Vector<uint8_t>&&, const String& contentType);
+
+    enum ReferencingExistingBlobConstructor { referencingExistingBlobConstructor };
+    Blob(ReferencingExistingBlobConstructor, const Blob&);
 
     enum UninitializedContructor { uninitializedContructor };
     Blob(UninitializedContructor);
