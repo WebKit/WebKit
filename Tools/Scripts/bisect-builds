@@ -135,13 +135,15 @@ def get_s3_location_for_revision(url, revision):
 
 
 def parse_args(args):
-    parser = argparse.ArgumentParser(description='Perform a bisection against existing WebKit archives.')
+    helptext = 'bisect-builds is designed to help pinpoint regressions to specific code changes. It does this by bisecting across archives produced by build.webkit.org. Full and "minified" archives are available. Minified archives are significantly smaller, as they have been stripped of dSYMs and other non-essential components.'
+    parser = argparse.ArgumentParser(description=helptext)
     parser.add_argument('-c', '--configuration', default='release', help='The configuration to query [release | debug]')
     parser.add_argument('-a', '--architecture', default='x86_64', help='The architecture to query [x86_64 | i386]')
     parser.add_argument('-p', '--platform', default='None', required=True, help='The platform to query [mac-sierra | gtk | ios-simulator | win]')
     parser.add_argument('-f', '--full', action='store_true', default=False, help='Use full archives containing debug symbols. These are significantly larger files!')
     parser.add_argument('-s', '--start', default=None, type=int, help='The starting revision to bisect.')
     parser.add_argument('-e', '--end', default=None, type=int, help='The ending revision to bisect')
+    parser.add_argument('-l', '--list', action='store_true', default=False, help='Display a list of platforms and revisions')
     return parser.parse_args(args)
 
 
@@ -190,7 +192,7 @@ def test_archive(options, revision):
 
 def minified_platforms():
     # FIXME: query this dynamically from API
-    return  ['mac-elcapitan', 'mac-sierra']
+    return  ['mac-elcapitan', 'mac-sierra', 'ios-simulator-10']
 
 
 def unminified_platforms():
@@ -214,6 +216,12 @@ def validate_options(options):
             print('INFO: pass --full to try against full archives')
         exit(1)
 
+def print_list_and_exit(revision_list, options):
+        print('Supported minified platforms: {}'.format(minified_platforms()))
+        print('Supported unminified platforms: {}'.format(unminified_platforms()))
+        print('{} revisions available for supplied platform: {}-{}-{}:'.format(len(revision_list), options.platform, options.architecture, options.configuration))
+        print(revision_list)
+        exit(0)
 
 def main(options):
     validate_options(options)
@@ -223,7 +231,10 @@ def main(options):
     data = json.load(r)
     
     revision_list = get_sorted_revisions(data)
-    
+
+    if options.list:
+        print_list_and_exit(revision_list, options)
+
     start_index, end_index = get_indices_from_revisions(revision_list, options.start, options.end)
     print('Bisecting between {} and {}'.format(revision_list[start_index], revision_list[end_index]))
     
