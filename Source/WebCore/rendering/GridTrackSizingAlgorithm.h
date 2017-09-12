@@ -153,6 +153,7 @@ private:
     void initializeTrackSizes();
     void resolveIntrinsicTrackSizes();
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
+    void stretchAutoTracks();
 
     // State machine.
     void advanceNextState();
@@ -171,6 +172,7 @@ private:
     Vector<GridTrack> m_rows;
     Vector<unsigned> m_contentSizedTracksIndex;
     Vector<unsigned> m_flexibleSizedTracksIndex;
+    Vector<unsigned> m_autoSizedTracksIndex;
 
     GridTrackSizingDirection m_direction;
     SizingOperation m_sizingOperation;
