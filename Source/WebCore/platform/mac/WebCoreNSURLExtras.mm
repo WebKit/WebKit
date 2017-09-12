@@ -58,6 +58,48 @@ static uint32_t IDNScriptWhiteList[(USCRIPT_CODE_LIMIT + 31) / 32];
 
 namespace WebCore {
 
+static bool isArmenianLookalikeCharacter(UChar32 codePoint)
+{
+    return codePoint == 0x0548 || codePoint == 0x054D || codePoint == 0x0578 || codePoint == 0x057D;
+}
+
+static bool isArmenianScriptCharacter(UChar32 codePoint)
+{
+    UErrorCode error = U_ZERO_ERROR;
+    UScriptCode script = uscript_getScript(codePoint, &error);
+    if (error != U_ZERO_ERROR) {
+        LOG_ERROR("got ICU error while trying to look at scripts: %d", error);
+        return false;
+    }
+
+    return script == USCRIPT_ARMENIAN;
+}
+
+
+template<typename CharacterType> inline bool isASCIIDigitOrValidHostCharacter(CharacterType charCode)
+{
+    if (!isASCIIDigitOrPunctuation(charCode))
+        return false;
+
+    // Things the URL Parser rejects:
+    switch (charCode) {
+    case '#':
+    case '%':
+    case '/':
+    case ':':
+    case '?':
+    case '@':
+    case '[':
+    case '\\':
+    case ']':
+        return false;
+    default:
+        return true;
+    }
+}
+
+
+
 static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar32 charCode)
 {
     // This function treats the following as unsafe, lookalike characters:
@@ -186,8 +228,19 @@ static BOOL isLookalikeCharacter(std::optional<UChar32> previousCodePoint, UChar
         case 0x0307: /* COMBINING DOT ABOVE */
             return previousCodePoint == 0x0237 /* LATIN SMALL LETTER DOTLESS J */
                 || previousCodePoint == 0x0131; /* LATIN SMALL LETTER DOTLESS I */
-        default:
+        case 0x0548: /* ARMENIAN CAPITAL LETTER VO */
+        case 0x054D: /* ARMENIAN CAPITAL LETTER SEH */
+        case 0x0578: /* ARMENIAN SMALL LETTER VO */
+        case 0x057D: /* ARMENIAN SMALL LETTER SEH */
+            return previousCodePoint
+                && !isASCIIDigitOrValidHostCharacter(previousCodePoint.value())
+                && !isArmenianScriptCharacter(previousCodePoint.value());
+        case '.':
             return NO;
+        default:
+            return previousCodePoint
+                && isArmenianLookalikeCharacter(previousCodePoint.value())
+                && !(isArmenianScriptCharacter(charCode) || isASCIIDigitOrValidHostCharacter(charCode));
     }
 }
 

@@ -1,3 +1,15 @@
+2017-09-12  Brent Fulgham  <bfulgham@apple.com>
+
+        Show punycode to user if a URL mixes Armenian Seh or Vo with other scripts
+        https://bugs.webkit.org/show_bug.cgi?id=176578
+        <rdar://problem/33906231>
+
+        Reviewed by Alex Christensen.
+
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIDigitOrPunctuation): Added helper function to recognize ASCII digits
+        and punctuation characters.
+
 2017-09-12  Sam Weinig  <sam@webkit.org>
 
         [Cleanup] Follow up cleanup for DOMFormData implementation
