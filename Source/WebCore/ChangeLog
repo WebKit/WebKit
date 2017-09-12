@@ -1,3 +1,16 @@
+2017-09-12  Ms2ger  <Ms2ger@igalia.com>
+
+        Disallow passing null data to uniform1uiv() and friends.
+        https://bugs.webkit.org/show_bug.cgi?id=176777
+
+        Reviewed by Sam Weinig.
+
+        This matches the specification as well as Gecko and Chromium.
+
+        Test: fast/canvas/webgl/webgl2/bindings.html
+
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2017-09-12  Sam Weinig  <sam@webkit.org>
 
         [Cleanup] Follow up cleanup for DOMFormData implementation

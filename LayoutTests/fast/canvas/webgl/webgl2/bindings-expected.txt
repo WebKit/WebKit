@@ -1,0 +1,12 @@
+
+PASS uniform1uiv with null data 
+PASS uniform2uiv with null data 
+PASS uniform3uiv with null data 
+PASS uniform4uiv with null data 
+PASS uniformMatrix2x3fv with null data 
+PASS uniformMatrix3x2fv with null data 
+PASS uniformMatrix2x4fv with null data 
+PASS uniformMatrix4x2fv with null data 
+PASS uniformMatrix3x4fv with null data 
+PASS uniformMatrix4x3fv with null data 
+

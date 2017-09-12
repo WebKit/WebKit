@@ -581,6 +581,7 @@ webkit.org/b/169917 webgl/1.0.3/conformance/extensions/webgl-draw-buffers.html [
 # WebGL 2.0 still not enabled
 webkit.org/b/166536 webgl/webgl2-rendering-context-defined.html [ Skip ]
 webkit.org/b/166536 webgl/webgl2-rendering-context-obtain.html [ Skip ]
+webkit.org/b/166536 fast/canvas/webgl/webgl2/ [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl2-buffer-targets.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl2-buffers.html [ Skip ]
 webkit.org/b/166536 fast/canvas/webgl/webgl2-context-creation.html [ Skip ]
