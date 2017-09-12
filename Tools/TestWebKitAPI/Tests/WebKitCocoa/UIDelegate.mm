@@ -148,38 +148,6 @@ TEST(WebKit, GeolocationPermission)
     TestWebKitAPI::Util::run(&done);
 }
 
-@interface ModalDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation ModalDelegate
-
-- (void)_webViewRunModal:(WKWebView *)webView
-{
-    EXPECT_EQ(webView, createdWebView.get());
-    done = true;
-}
-
-- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
-{
-    createdWebView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
-    [createdWebView setUIDelegate:self];
-    return createdWebView.get();
-}
-
-@end
-
-TEST(WebKit, RunModal)
-{
-    auto delegate = adoptNS([[ModalDelegate alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
-    [webView setUIDelegate:delegate.get()];
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-    NSString *html = [NSString stringWithFormat:@"%@%@%@", @"<script> function openModal() { window.showModalDialog('", url, @"'); } </script> <input type='button' value='Click to open modal' onclick='openModal();'>"];
-    [webView synchronouslyLoadHTMLString:html];
-    [webView sendClicksAtPoint:NSMakePoint(20, 600 - 20) numberOfClicks:1];
-    TestWebKitAPI::Util::run(&done);
-}
-
 #if PLATFORM(MAC)
 
 @class UITestDelegate;
@@ -231,6 +199,38 @@ TEST(WebKit, ShowWebView)
     TestWebKitAPI::Util::run(&done);
     
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
+}
+
+@interface ModalDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation ModalDelegate
+
+- (void)_webViewRunModal:(WKWebView *)webView
+{
+    EXPECT_EQ(webView, createdWebView.get());
+    done = true;
+}
+
+- (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
+{
+    createdWebView = [[[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration] autorelease];
+    [createdWebView setUIDelegate:self];
+    return createdWebView.get();
+}
+
+@end
+
+TEST(WebKit, RunModal)
+{
+    auto delegate = adoptNS([[ModalDelegate alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+    [webView setUIDelegate:delegate.get()];
+    NSURL *url = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    NSString *html = [NSString stringWithFormat:@"%@%@%@", @"<script> function openModal() { window.showModalDialog('", url, @"'); } </script> <input type='button' value='Click to open modal' onclick='openModal();'>"];
+    [webView synchronouslyLoadHTMLString:html];
+    [webView sendClicksAtPoint:NSMakePoint(20, 600 - 20) numberOfClicks:1];
+    TestWebKitAPI::Util::run(&done);
 }
 
 @interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {

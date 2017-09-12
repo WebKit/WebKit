@@ -1,5 +1,17 @@
 2017-09-12  Alex Christensen  <achristensen@webkit.org>
 
+        Fix build after r221922.
+        https://bugs.webkit.org/show_bug.cgi?id=176728
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[ModalDelegate _webViewRunModal:]):
+        (-[ModalDelegate webView:createWebViewWithConfiguration:forNavigationAction:windowFeatures:]):
+        (TEST):
+        svn-apply inserted the test too early in the file :(
+        Shift it down to where all the used static variables are declared.
+
+2017-09-12  Alex Christensen  <achristensen@webkit.org>
+
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's runModal
         https://bugs.webkit.org/show_bug.cgi?id=176728
         <rdar://problem/29270035>
