@@ -1,3 +1,19 @@
+2017-09-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove duplicated test results from LayoutTest platform directories
+        https://bugs.webkit.org/show_bug.cgi?id=176686
+
+        Reviewed by Michael Catanzaro.
+
+        After several rebaselines we might end up with the same result in the platform directory than the common result
+        without noticing it. This patch adds a script to detect those cases and remove all duplicated results from the
+        repository.
+
+        * Scripts/check-for-duplicated-platform-test-results: Added.
+        (check_duplicate):
+        (check_duplicate.sha1):
+        (platform_list):
+
 2017-09-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         The EWS build system is forcing a non UTF-8 locale and breaks meson.

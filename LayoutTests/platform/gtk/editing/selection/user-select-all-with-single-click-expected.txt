@@ -1,5 +1,0 @@
-This tests single-clicking on text inside user-select: all. WebKit should select the entire element.
-To manually test, single click on "click here" below. WebKit should select the entire bordered region.
-| <div>
-|   class="select-all"
-|   "<#selection-anchor>Click here<#selection-focus>"

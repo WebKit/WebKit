@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+#
+# Copyright (C) 2017 Igalia S.L.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Library General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Library General Public License for more details.
+#
+# You should have received a copy of the GNU Library General Public License
+# along with this library; see the file COPYING.LIB.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+# Boston, MA 02110-1301, USA.
+
+import hashlib
+import optparse
+import os
+from webkitpy.common.host import Host
+
+host = Host()
+host.initialize_scm()
+checkout_root = host.scm().checkout_root
+layout_tests_directory = os.path.join(checkout_root, 'LayoutTests')
+platform_directory = os.path.join(layout_tests_directory, 'platform')
+
+
+def check_duplicate(platform, baseline_search_path, platform_test_result):
+    def sha1(path):
+        with file(path, 'rb') as f:
+            return hashlib.sha1(f.read()).hexdigest()
+
+    prefix_len = len(os.path.join(platform_directory, platform)) + 1
+    test_result_filename = platform_test_result[prefix_len:]
+    platform_test_result_size = None
+    platform_test_result_sha1 = None
+
+    baseline_found = False
+    for baseline_path in baseline_search_path:
+        baseline_test_result = os.path.join(baseline_path, test_result_filename)
+        if not os.path.isfile(baseline_test_result):
+            continue
+
+        baseline_found = True
+        if platform_test_result_size is None:
+            platform_test_result_size = os.path.getsize(platform_test_result)
+        baseline_test_result_size = os.path.getsize(baseline_test_result)
+        if platform_test_result_size != baseline_test_result_size:
+            return False
+
+        if platform_test_result_sha1 is None:
+            platform_test_result_sha1 = sha1(platform_test_result)
+        baseline_test_result_sha1 = sha1(baseline_test_result)
+        if platform_test_result_sha1 != baseline_test_result_sha1:
+            return False
+
+    return baseline_found
+
+
+def platform_list(platform):
+    if platform == 'all':
+        return os.listdir(platform_directory)
+    if os.path.isdir(os.path.join(platform_directory, platform)):
+        return [platform]
+    return []
+
+
+option_parser = optparse.OptionParser(usage='usage: %prog [options]')
+option_parser.add_option('-p', '--platform',
+                         action='store', dest='platform', default='all',
+                         help='Platform to check for duplicated results. By the default all platform are checked')
+option_parser.add_option('-n', '--no-delete',
+                         action='store_true', dest='no_delete',
+                         help='Do not delete the duplicated results found from the repository, list them instead')
+options, args = option_parser.parse_args()
+
+total = 0
+baseline_search_paths_checked = set()
+for platform in platform_list(options.platform):
+    try:
+        port = host.port_factory.get(platform)
+        baseline_search_path = tuple([p for p in port.baseline_search_path() if os.path.isdir(p)] + [layout_tests_directory])
+    except:
+        continue
+
+    if baseline_search_path in baseline_search_paths_checked:
+        continue
+    baseline_search_paths_checked.add(baseline_search_path)
+
+    duplicates = []
+    for root, dirs, files in os.walk(baseline_search_path[0]):
+        for file_name in files:
+            platform_test_result = os.path.join(root, file_name)
+            if check_duplicate(baseline_search_path[0], baseline_search_path[1:], platform_test_result):
+                duplicates.append(platform_test_result)
+
+    if not duplicates:
+        continue
+    if options.no_delete:
+        print "\n".join(duplicates)
+    else:
+        host.scm().delete_list(duplicates)
+
+    duplicates_len = len(duplicates)
+    total += duplicates_len
+    print '%d found in %s -> generic' % (duplicates_len, ' -> '.join([os.path.basename(p) for p in baseline_search_path[:-1]]))
+
+if total:
+    if not options.no_delete:
+        print '%d files have been removed from the repository, check the status and commit if everything is correct' % (total)
+else:
+    print 'No duplicated results found'
+
