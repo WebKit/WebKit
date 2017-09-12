@@ -247,6 +247,10 @@ Bug(WPE) fast/url [ Pass ]
 fast/url/user-visible [ Skip ]
 
 Bug(WPE) fast/viewport [ Pass ]
+
+# This test relies on Mac-specific quirks
+media/document-level-media-user-gesture-quirk.html [ Skip ]
+
 Bug(WPE) fast/viewport/ios [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-handheldfriendly.html [ Failure ]
 Bug(WPE) fast/viewport/viewport-legacy-mobileoptimized-2.html [ Failure ]
