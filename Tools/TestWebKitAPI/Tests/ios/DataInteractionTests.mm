@@ -102,6 +102,14 @@ static NSValue *makeCGRectValue(CGFloat x, CGFloat y, CGFloat width, CGFloat hei
     return [NSValue valueWithCGRect:CGRectMake(x, y, width, height)];
 }
 
+static void checkCGRectIsEqualToCGRectWithLogging(CGRect expected, CGRect observed)
+{
+    BOOL isEqual = CGRectEqualToRect(expected, observed);
+    EXPECT_TRUE(isEqual);
+    if (!isEqual)
+        NSLog(@"Expected: %@ but observed: %@", NSStringFromCGRect(expected), NSStringFromCGRect(observed));
+}
+
 static void checkSelectionRectsWithLogging(NSArray *expected, NSArray *observed)
 {
     if (![expected isEqualToArray:observed])
@@ -1407,6 +1415,33 @@ TEST(DataInteractionTests, AdditionalLinkAndImageIntoContentEditable)
     EXPECT_WK_STREQ("ABCD A link", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!editor.querySelector('img')"]);
     EXPECT_WK_STREQ("https://www.apple.com/", [webView stringByEvaluatingJavaScript:@"editor.querySelector('a').href"]);
+}
+
+TEST(DataInteractionTests, DragLiftPreviewDataTransferSetDragImage)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"DataTransfer-setDragImage"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    // Use DataTransfer.setDragImage to specify an existing image element in the DOM.
+    [simulator runFrom:CGPointMake(100, 50) to:CGPointMake(250, 50)];
+    checkCGRectIsEqualToCGRectWithLogging({{100, 50}, {215, 174}}, [simulator liftPreviews][0].view.frame);
+
+    // Use DataTransfer.setDragImage to specify an existing image element in the DOM, with x and y offsets.
+    [simulator runFrom:CGPointMake(10, 150) to:CGPointMake(250, 150)];
+    checkCGRectIsEqualToCGRectWithLogging({{-90, 50}, {215, 174}}, [simulator liftPreviews][0].view.frame);
+
+    // Use DataTransfer.setDragImage to specify a newly created Image, disconnected from the DOM.
+    [simulator runFrom:CGPointMake(100, 250) to:CGPointMake(250, 250)];
+    checkCGRectIsEqualToCGRectWithLogging({{100, 250}, {215, 174}}, [simulator liftPreviews][0].view.frame);
+
+    // Don't use DataTransfer.setDragImage and fall back to snapshotting the dragged element.
+    [simulator runFrom:CGPointMake(50, 350) to:CGPointMake(250, 350)];
+    checkCGRectIsEqualToCGRectWithLogging({{0, 300}, {300, 100}}, [simulator liftPreviews][0].view.frame);
+
+    // Perform a normal drag on an image.
+    [simulator runFrom:CGPointMake(50, 450) to:CGPointMake(250, 450)];
+    checkCGRectIsEqualToCGRectWithLogging({{0, 400}, {215, 174}}, [simulator liftPreviews][0].view.frame);
 }
 
 } // namespace TestWebKitAPI

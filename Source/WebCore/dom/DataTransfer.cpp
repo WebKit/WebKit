@@ -303,6 +303,11 @@ void DataTransfer::updateDragImage()
     m_pasteboard->setDragImage(WTFMove(computedImage), computedHotSpot);
 }
 
+RefPtr<Element> DataTransfer::dragImageElement() const
+{
+    return m_dragImageElement;
+}
+
 #if !PLATFORM(MAC)
 
 DragImageRef DataTransfer::createDragImage(IntPoint& location) const

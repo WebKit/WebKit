@@ -92,6 +92,7 @@ public:
     void setDragHasStarted() { m_shouldUpdateDragImage = true; }
     DragImageRef createDragImage(IntPoint& dragLocation) const;
     void updateDragImage();
+    RefPtr<Element> dragImageElement() const;
 #endif
 
 private:

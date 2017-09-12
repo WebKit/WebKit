@@ -1,3 +1,32 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support DataTransfer.setDragImage when starting a drag on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176721
+        <rdar://problem/34373660>
+
+        Reviewed by Tim Horton.
+
+        In DataInteractionSimulator, ask the UIDragInteractionDelegate (WKContentView) for targeted drag previews after
+        retrieving UIDragItems during a lift. Remember these previews after the drag and drop simulation is complete, so
+        API tests (currently, just DragLiftPreviewDataTransferSetDragImage) can verify that the generated drag previews
+        are as expected.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/DataTransfer-setDragImage.html: Added.
+
+        Adds a new test harness containing 5 draggable elements, each generating a drag image using different codepaths.
+        DragLiftPreviewDataTransferSetDragImage uses this page to check that the frame of the targeted drag preview in
+        each scenario is as expected.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (checkCGRectIsEqualToCGRectWithLogging):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/ios/DataInteractionSimulator.h:
+        * TestWebKitAPI/ios/DataInteractionSimulator.mm:
+        (-[DataInteractionSimulator _resetSimulatedState]):
+        (-[DataInteractionSimulator _advanceProgress]):
+        (-[DataInteractionSimulator liftPreviews]):
+
 2017-09-11  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (r221272): WKWebView gets stuck zoomed in if the web process crashes

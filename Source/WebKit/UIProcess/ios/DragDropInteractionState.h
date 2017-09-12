@@ -46,7 +46,7 @@ namespace WebKit {
 struct DragSourceState {
     WebCore::DragSourceAction action { WebCore::DragSourceActionNone };
     CGPoint adjustedOrigin { CGPointZero };
-    CGRect elementBounds { CGRectZero };
+    CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
     RetainPtr<UIImage> image;
     std::optional<WebCore::TextIndicatorData> indicatorData;
     String linkTitle;

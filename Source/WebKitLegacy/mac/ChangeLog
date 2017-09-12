@@ -1,3 +1,20 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support DataTransfer.setDragImage when starting a drag on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176721
+        <rdar://problem/34373660>
+
+        Reviewed by Tim Horton.
+
+        Rename elementBounds => dragPreviewFrameInRootViewCoordinates. (Note: Unfortunately, _draggedElementBounds in
+        WebViewPrivate.h can't be renamed yet, due to binary and SDK compatibility with UIKit).
+
+        * WebView/WebView.mm:
+        (-[WebView _startDrag:]):
+        (-[WebView _draggedElementBounds]):
+        (-[WebView _endedDataInteraction:global:]):
+        * WebView/WebViewData.h:
+
 2017-09-11  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream QTKit-related WebKitSystemInterface functions

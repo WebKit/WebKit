@@ -1,5 +1,45 @@
 2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        [iOS DnD] Support DataTransfer.setDragImage when starting a drag on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=176721
+        <rdar://problem/34373660>
+
+        Reviewed by Tim Horton.
+
+        Adds support for setting the drag lift preview frame in the case where DataTransfer.setDragImage is being used
+        to override the default drag preview. Currently, the frame of the drag preview we supply in this case is the
+        same as the bounds of the source element in root view coordinates, but this means that any custom drag image
+        the page supplies will be stretched to fill the frame of the source element. Instead, when handling a DHTML drag,
+        position the lift and cancel drag previews relative to the event location, respecting any drag offset specified
+        in setDragImage. The size of this preview matches the size of the drag image source (since this is all in root
+        view coordinates, this means the drag preview will also enlarge if the user pinches to zoom in). If a
+        disconnected image source element was provided, then we just fall back to the image size.
+
+        Additionally, renames DragItem's elementBounds to dragPreviewFrameInRootViewCoordinates to better reflect the
+        purpose of this variable. This patch also introduces API test plumbing to grab targeted drag previews from the
+        drag interaction delegate (i.e. WKContentView), and uses this in a new API test that checks the frame of the
+        resulting UITargetedDragPreview after initiating a drag in various circumstances (see changes in Tools/ for more
+        detail).
+
+        Test: DataInteractionTests.DragLiftPreviewDataTransferSetDragImage
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::dragImageElement const):
+        * dom/DataTransfer.h:
+        * page/DragController.cpp:
+        (WebCore::dragLocForDHTMLDrag):
+
+        The logic to flip the y offset when computing the drag location is only relevant on Mac, but currently, this is
+        guarded by #if PLATFORM(COCOA), which causes the y offset to shift the drag image in the opposite direction on
+        iOS. To fix this, simply change the platform define to Mac.
+
+        (WebCore::DragController::doSystemDrag):
+        * platform/DragItem.h:
+        (WebCore::DragItem::encode const):
+        (WebCore::DragItem::decode):
+
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS WK2] Support tapping to add items to the current drag session in web content
         https://bugs.webkit.org/show_bug.cgi?id=176421
         <rdar://problem/31144674>

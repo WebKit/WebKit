@@ -689,6 +689,7 @@
 		F46A095B1ED8A6E600D4AA55 /* gif-and-file-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */; };
 		F47728991E4AE3C1007ABF6A /* full-page-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F47728981E4AE3AD007ABF6A /* full-page-contenteditable.html */; };
 		F4856CA31E649EA8009D7EE7 /* attachment-element.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4856CA21E6498A8009D7EE7 /* attachment-element.html */; };
+		F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */; };
 		F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */; };
 		F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */; };
 		F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */; };
@@ -820,6 +821,7 @@
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
 				290F4275172A221C00939FF0 /* custom-protocol-sync-xhr.html in Copy Resources */,
+				F486B1D01F67952300F34BDD /* DataTransfer-setDragImage.html in Copy Resources */,
 				F4512E131F60C44600BB369E /* DataTransferItem-getAsEntry.html in Copy Resources */,
 				C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */,
 				0799C34B1EBA3301003B7532 /* disableGetUserMedia.html in Copy Resources */,
@@ -1725,6 +1727,7 @@
 		F47D30EB1ED28619000482E1 /* apple.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = apple.gif; sourceTree = "<group>"; };
 		F47D30ED1ED28A6C000482E1 /* gif-and-file-input.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "gif-and-file-input.html"; sourceTree = "<group>"; };
 		F4856CA21E6498A8009D7EE7 /* attachment-element.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "attachment-element.html"; sourceTree = "<group>"; };
+		F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "DataTransfer-setDragImage.html"; sourceTree = "<group>"; };
 		F493247C1F44DF8D006F4336 /* UIKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
 		F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "dragstart-change-selection-offscreen.html"; sourceTree = "<group>"; };
 		F4A32ECA1F0642F40047C544 /* contenteditable-in-iframe.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "contenteditable-in-iframe.html"; sourceTree = "<group>"; };
@@ -2165,6 +2168,7 @@
 				A16F66B91C40EA2000BD4D24 /* ContentFiltering.html */,
 				5C2936941D5BFD1900DEAB1E /* CookieMessage.html */,
 				F4AB57891F65164B00DB0DA1 /* custom-draggable-div.html */,
+				F486B1CF1F6794FF00F34BDD /* DataTransfer-setDragImage.html */,
 				F4512E121F60C43400BB369E /* DataTransferItem-getAsEntry.html */,
 				0799C34A1EBA32F4003B7532 /* disableGetUserMedia.html */,
 				F41AB99E1EF4692C0083FA08 /* div-and-large-image.html */,

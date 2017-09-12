@@ -830,7 +830,7 @@ static void selectElement(Element& element)
 static IntPoint dragLocForDHTMLDrag(const IntPoint& mouseDraggedPoint, const IntPoint& dragOrigin, const IntPoint& dragImageOffset, bool isLinkImage)
 {
     // dragImageOffset is the cursor position relative to the lower-left corner of the image.
-#if PLATFORM(COCOA)
+#if PLATFORM(MAC)
     // We add in the Y dimension because we are a flipped view, so adding moves the image down.
     const int yOffset = dragImageOffset.y();
 #else
@@ -1228,12 +1228,31 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
     DragItem item;
     item.image = WTFMove(image);
     item.sourceAction = state.type;
-    item.eventPositionInContentCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(eventPos));
-    item.dragLocationInContentCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(dragLoc));
+
+    auto eventPositionInRootViewCoordinates = frame.view()->contentsToRootView(eventPos);
+    auto dragLocationInRootViewCoordinates = frame.view()->contentsToRootView(dragLoc);
+    item.eventPositionInContentCoordinates = viewProtector->rootViewToContents(eventPositionInRootViewCoordinates);
+    item.dragLocationInContentCoordinates = viewProtector->rootViewToContents(dragLocationInRootViewCoordinates);
     item.eventPositionInWindowCoordinates = frame.view()->contentsToWindow(item.eventPositionInContentCoordinates);
     item.dragLocationInWindowCoordinates = frame.view()->contentsToWindow(item.dragLocationInContentCoordinates);
     if (auto element = state.source) {
-        item.elementBounds = element->boundsInRootViewSpace();
+        auto dataTransferImageElement = state.dataTransfer->dragImageElement();
+        if (state.type == DragSourceActionDHTML) {
+            // If the drag image has been customized, fall back to positioning the preview relative to the drag event location.
+            IntSize dragPreviewSize;
+            if (dataTransferImageElement)
+                dragPreviewSize = dataTransferImageElement->boundsInRootViewSpace().size();
+            else {
+                dragPreviewSize = dragImageSize(item.image.get());
+                if (auto* page = frame.page())
+                    dragPreviewSize.scale(1 / page->deviceScaleFactor());
+            }
+            item.dragPreviewFrameInRootViewCoordinates = { dragLocationInRootViewCoordinates, WTFMove(dragPreviewSize) };
+        } else {
+            // We can position the preview using the bounds of the drag source element.
+            item.dragPreviewFrameInRootViewCoordinates = element->boundsInRootViewSpace();
+        }
+
         RefPtr<Element> link;
         if (element->isLink())
             link = element;

@@ -301,7 +301,7 @@ private:
 #if ENABLE(DATA_INTERACTION)
     RetainPtr<WebUITextIndicatorData> textIndicatorData;
     RetainPtr<WebUITextIndicatorData> dataOperationTextIndicator;
-    CGRect draggedElementBounds;
+    CGRect dragPreviewFrameInRootViewCoordinates;
     WebDragSourceAction dragSourceAction;
     RetainPtr<NSURL> draggedLinkURL;
     RetainPtr<NSString> draggedLinkTitle;

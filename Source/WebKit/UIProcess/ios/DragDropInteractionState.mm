@@ -159,10 +159,8 @@ UITargetedDragPreview *DragDropInteractionState::previewForDragItem(UIDragItem *
         return nil;
 
     auto& source = foundSource.value();
-    if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
-        Vector<FloatRect> emptyClippingRects;
-        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.elementBounds, emptyClippingRects, nil);
-    }
+    if (shouldUseDragImageToCreatePreviewForDragSource(source))
+        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil);
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
         auto indicator = source.indicatorData.value();
@@ -203,7 +201,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
     m_stagedDragSource = {{
         static_cast<DragSourceAction>(item.sourceAction),
         item.eventPositionInContentCoordinates,
-        item.elementBounds,
+        item.dragPreviewFrameInRootViewCoordinates,
         dragImage,
         item.image.indicatorData(),
         item.title.isEmpty() ? nil : (NSString *)item.title,

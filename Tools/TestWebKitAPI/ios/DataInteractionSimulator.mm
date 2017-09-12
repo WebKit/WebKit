@@ -343,6 +343,7 @@ static NSArray *dataInteractionEventNames()
     _lastKnownDragCaretRect = CGRectZero;
     _remainingAdditionalItemRequestLocationsByProgress = nil;
     _queuedAdditionalItemRequestLocations = adoptNS([[NSMutableArray alloc] init]);
+    _liftPreviews = adoptNS([[NSMutableArray alloc] init]);
 }
 
 - (NSArray *)observedEventNames
@@ -501,6 +502,8 @@ static NSArray *dataInteractionEventNames()
             [itemProviders addObject:item.itemProvider];
             UITargetedDragPreview *liftPreview = [[_webView dragInteractionDelegate] dragInteraction:[_webView dragInteraction] previewForLiftingItem:item session:_dragSession.get()];
             EXPECT_TRUE(!!liftPreview);
+            if (liftPreview)
+                [_liftPreviews addObject:liftPreview];
         }
 
         _dropSession = adoptNS([[MockDropSession alloc] initWithProviders:itemProviders location:self._currentLocation window:[_webView window] allowMove:self.shouldAllowMoveOperation]);
@@ -570,6 +573,11 @@ static NSArray *dataInteractionEventNames()
 - (DataInteractionPhase)phase
 {
     return _phase;
+}
+
+- (NSArray<UITargetedDragPreview *> *)liftPreviews
+{
+    return _liftPreviews.get();
 }
 
 - (CGRect)lastKnownDragCaretRect

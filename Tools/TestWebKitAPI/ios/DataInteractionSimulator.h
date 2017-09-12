@@ -136,6 +136,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 
     RetainPtr<NSMutableDictionary<NSNumber *, NSValue *>>_remainingAdditionalItemRequestLocationsByProgress;
     RetainPtr<NSMutableArray<NSValue *>>_queuedAdditionalItemRequestLocations;
+    RetainPtr<NSMutableArray<UITargetedDragPreview *>> _liftPreviews;
 
     bool _isDoneWaitingForInputSession;
     BOOL _shouldPerformOperation;
@@ -165,6 +166,7 @@ typedef NS_ENUM(NSInteger, DataInteractionPhase) {
 @property (nonatomic, readonly) NSArray *finalSelectionRects;
 @property (nonatomic, readonly) DataInteractionPhase phase;
 @property (nonatomic, readonly) CGRect lastKnownDragCaretRect;
+@property (nonatomic, readonly) NSArray<UITargetedDragPreview *> *liftPreviews;
 
 @end
 
