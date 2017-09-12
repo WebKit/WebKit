@@ -1452,7 +1452,7 @@ void AccessibilityNodeObject::helpText(Vector<AccessibilityText>& textOrder) con
     // type to HelpText.
     const AtomicString& title = getAttribute(titleAttr);
     if (!title.isEmpty()) {
-        if (!isMeter())
+        if (!isMeter() && !roleIgnoresTitle())
             textOrder.append(AccessibilityText(title, TitleTagText));
         else
             textOrder.append(AccessibilityText(title, HelpText));
@@ -1557,10 +1557,27 @@ String AccessibilityNodeObject::accessibilityDescription() const
     // Both are used to generate what a screen reader speaks.                                                           
     // If this point is reached (i.e. there's no accessibilityDescription) and there's no title(), we should fallback to using the title attribute.
     // The title attribute is normally used as help text (because it is a tooltip), but if there is nothing else available, this should be used (according to ARIA).
-    if (title().isEmpty())
+    // https://bugs.webkit.org/show_bug.cgi?id=170475: An exception is when the element is semantically unimportant. In those cases, title text should remain as help text.
+    if (title().isEmpty() && !roleIgnoresTitle())
         return getAttribute(titleAttr);
 
     return String();
+}
+
+// Returns whether the role was not intended to play a semantically meaningful part of the
+// accessibility hierarchy. This applies to generic groups like <div>'s with no role value set.
+bool AccessibilityNodeObject::roleIgnoresTitle() const
+{
+    if (ariaRoleAttribute() != UnknownRole)
+        return false;
+
+    switch (roleValue()) {
+    case DivRole:
+    case UnknownRole:
+        return true;
+    default:
+        return false;
+    }
 }
 
 String AccessibilityNodeObject::helpText() const
