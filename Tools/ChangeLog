@@ -1,3 +1,44 @@
+2017-09-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        The EWS build system is forcing a non UTF-8 locale and breaks meson.
+        https://bugs.webkit.org/show_bug.cgi?id=176761
+
+        Reviewed by Michael Catanzaro.
+
+        On 2011 in order to disable GCC smartquotes (UTF-8 pretty quotes)
+        that were causing trouble with the commit-queue server, the tooling
+        for the EWS bots started to force an LC_ALL=C locale.
+
+        This was needed back then apparently because the commit-queue server
+        was unable to handle properly UTF-8 text.
+
+        6 years forward and none of the ports that commit-queue tests before
+        landing a patch use GCC, but Clang. So this should not be an issue anymore.
+
+        Forcing a non UTF-8 locale breaks the Meson build system (that the
+        GTK/WPE ports use for some dependencies of its JHBuild dependencies
+        local build system).
+        It has also the potential to break things in subtle ways that are
+        hard to debug and detect. So better stop doing this.
+
+        This patch also changes TERM=none to TERM=dumb that is the proper
+        way to disable VT100 codes (see bug 127922).
+
+        * Scripts/webkitpy/common/system/environment.py:
+        (Environment.to_dictionary):
+        (Environment.disable_jhbuild_VT100_output):
+        * Scripts/webkitpy/common/system/environment_unittest.py:
+        (EnvironmentTest.test_disable_jhbuild_VT100_output):
+        * Scripts/webkitpy/port/base.py:
+        (Port._build_driver):
+        (Port._build_image_diff):
+        * Scripts/webkitpy/port/port_testcase.py:
+        (PortTestCase.test_build_driver):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.build):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2017-09-12  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [WPE][GTK] Run tests with G_DEBUG=fatal-criticals

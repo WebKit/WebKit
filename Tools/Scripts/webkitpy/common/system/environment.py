@@ -34,14 +34,8 @@ class Environment(object):
     def to_dictionary(self):
         return self.env
 
-    def disable_gcc_smartquotes(self):
-        # Technically we only need to set LC_CTYPE to disable current
-        # smartquote behavior: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=38363
-        # Apple's XCode sets LC_ALL instead, probably to be future-proof.
-        self.env['LC_ALL'] = 'C'
-
     def disable_jhbuild_VT100_output(self):
         # JHBuild generates VT100 escape sequences if TERM is xterm or rxvt,
         # which makes browsers set wrong MIME type (e.g. Safari, Chrome).
         # https://bugs.webkit.org/show_bug.cgi?id=127922
-        self.env['TERM'] = 'none'
+        self.env['TERM'] = 'dumb'

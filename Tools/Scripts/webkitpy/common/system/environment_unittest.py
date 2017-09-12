@@ -32,8 +32,8 @@ from .environment import Environment
 
 
 class EnvironmentTest(unittest.TestCase):
-    def test_disable_gcc_smartquotes(self):
+    def test_disable_jhbuild_VT100_output(self):
         environment = Environment({})
-        environment.disable_gcc_smartquotes()
+        environment.disable_jhbuild_VT100_output()
         env = environment.to_dictionary()
-        self.assertEqual(env['LC_ALL'], 'C')
+        self.assertEqual(env['TERM'], 'dumb')

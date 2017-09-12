@@ -184,7 +184,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--debug', '--qui
         tool._deprecated_port = DeprecatedPort()
         step = steps.Build(tool, mock_options)
         expected_logs = """Building WebKit
-MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'TERM': 'none', 'MOCK_ENVIRON_COPY': '1'}
+MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True'], cwd=/mock-checkout, env={'TERM': 'dumb', 'MOCK_ENVIRON_COPY': '1'}
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
 
@@ -200,7 +200,7 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True']
         tool._deprecated_port = DeprecatedPort()
         step = steps.Build(tool, mock_options)
         expected_logs = """Building WebKit
-MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'TERM': 'none', 'MOCK_ENVIRON_COPY': '1'}
+MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True'], cwd=/mock-checkout, env={'TERM': 'dumb', 'MOCK_ENVIRON_COPY': '1'}
 """
         OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)
 

@@ -164,7 +164,7 @@ MOCK run_command: ['ruby', '-I', '/mock-checkout/Websites/bugs.webkit.org/Pretty
 MOCK: user.open_url: file://...
 Was that diff correct?
 Building WebKit
-MOCK run_and_throw_if_fail: ['mock-build-webkit', 'ARCHS=MOCK ARCH'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'TERM': 'none', 'MOCK_ENVIRON_COPY': '1'}
+MOCK run_and_throw_if_fail: ['mock-build-webkit', 'ARCHS=MOCK ARCH'], cwd=/mock-checkout, env={'TERM': 'dumb', 'MOCK_ENVIRON_COPY': '1'}
 Running Python unit tests
 MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
