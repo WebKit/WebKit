@@ -40,6 +40,7 @@
 
 namespace API {
 class FrameInfo;
+class SecurityOrigin;
 }
 
 namespace WebKit {
@@ -99,6 +100,7 @@ private:
         void unfocus(WebPageProxy*) final;
         void pageDidScroll(WebPageProxy*) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
+        void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, Function<void(bool)>&&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
         void mouseDidMoveOverElement(WebPageProxy&, const WebHitTestResultData&, WebEvent::Modifiers, API::Object*);
@@ -161,6 +163,7 @@ private:
         bool webViewDidExceedBackgroundResourceLimitWhileInForeground : 1;
         bool webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL : 1;
         bool webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler : 1;
+        bool webViewRequestNotificationPermissionForSecurityOriginDecisionHandler : 1;
 #endif
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded : 1;

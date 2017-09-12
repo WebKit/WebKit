@@ -120,6 +120,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
     m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(webView:runOpenPanelWithParameters:initiatedByFrame:completionHandler:)];
+    m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler = [delegate respondsToSelector:@selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:)];
 #endif
     m_delegateMethods.webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler = [delegate respondsToSelector:@selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:)];
     m_delegateMethods.webViewDecideWebApplicationCacheQuotaForSecurityOriginCurrentQuotaTotalBytesNeeded = [delegate respondsToSelector:@selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:)];
@@ -340,7 +341,7 @@ void UIDelegate::UIClient::runBeforeUnloadConfirmPanel(WebPageProxy*, const WTF:
         return;
     }
 
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:runBeforeUnloadConfirmPanelWithMessage:initiatedByFrame:completionHandler:));
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView runBeforeUnloadConfirmPanelWithMessage:message initiatedByFrame:wrapper(API::FrameInfo::create(*webFrameProxy, securityOriginData.securityOrigin())) completionHandler:BlockPtr<void (BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](BOOL result) {
         if (checker->completionHandlerHasBeenCalled())
             return;
@@ -367,8 +368,8 @@ void UIDelegate::UIClient::exceededDatabaseQuota(WebPageProxy*, WebFrameProxy*, 
     }
 
     ASSERT(securityOrigin);
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:));
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideDatabaseQuotaForSecurityOrigin:wrapper(*securityOrigin) currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:BlockPtr<void (unsigned long long newQuota)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideDatabaseQuotaForSecurityOrigin:currentQuota:currentOriginUsage:currentDatabaseUsage:expectedUsage:decisionHandler:));
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideDatabaseQuotaForSecurityOrigin:wrapper(*securityOrigin) currentQuota:currentQuota currentOriginUsage:currentOriginUsage currentDatabaseUsage:currentUsage expectedUsage:expectedUsage decisionHandler:BlockPtr<void(unsigned long long newQuota)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
@@ -617,7 +618,25 @@ void UIDelegate::UIClient::saveDataToFileInDownloadsFolder(WebPageProxy*, const 
 
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView saveDataToFile:wrapper(data) suggestedFilename:suggestedFilename mimeType:mimeType originatingURL:originatingURL];
 }
+
+void UIDelegate::UIClient::decidePolicyForNotificationPermissionRequest(WebKit::WebPageProxy&, API::SecurityOrigin& securityOrigin, WTF::Function<void(bool)>&& completionHandler)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewRequestNotificationPermissionForSecurityOriginDecisionHandler)
+        return completionHandler(false);
     
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return completionHandler(false);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:));
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView requestNotificationPermissionForSecurityOrigin:wrapper(securityOrigin) decisionHandler:BlockPtr<void(BOOL)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](BOOL result) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(result);
+    }).get()];
+}
+
 bool UIDelegate::UIClient::runOpenPanel(WebPageProxy*, WebFrameProxy* webFrameProxy, const WebCore::SecurityOriginData& securityOriginData, API::OpenPanelParameters* openPanelParameters, WebOpenPanelResultListenerProxy* listener)
 {
     if (!m_uiDelegate.m_delegateMethods.webViewRunOpenPanelWithParametersInitiatedByFrameCompletionHandler)
@@ -810,10 +829,10 @@ void UIDelegate::UIClient::reachedApplicationCacheOriginQuota(WebPageProxy*, con
         return;
     }
 
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:));
-    RefPtr<API::SecurityOrigin> apiOrigin = API::SecurityOrigin::create(securityOrigin);
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:decideWebApplicationCacheQuotaForSecurityOrigin:currentQuota:totalBytesNeeded:decisionHandler:));
+    auto apiOrigin = API::SecurityOrigin::create(securityOrigin);
     
-    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(*apiOrigin) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:BlockPtr<void (unsigned long long)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView decideWebApplicationCacheQuotaForSecurityOrigin:wrapper(apiOrigin.get()) currentQuota:currentQuota totalBytesNeeded:totalBytesNeeded decisionHandler:BlockPtr<void(unsigned long long)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](unsigned long long newQuota) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();

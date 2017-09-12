@@ -202,6 +202,55 @@ TEST(WebKit, ShowWebView)
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
 }
 
+@interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {
+    bool _allowNotifications;
+}
+- (id)initWithAllowNotifications:(bool)allowNotifications;
+@end
+
+@implementation NotificationDelegate
+
+- (id)initWithAllowNotifications:(bool)allowNotifications
+{
+    if (!(self = [super init]))
+        return nil;
+    _allowNotifications = allowNotifications;
+    return self;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    if (_allowNotifications)
+        EXPECT_STREQ(message.UTF8String, "permission granted");
+    else
+        EXPECT_STREQ(message.UTF8String, "permission denied");
+    completionHandler();
+    done = true;
+}
+
+- (void)_webView:(WKWebView *)webView requestNotificationPermissionForSecurityOrigin:(WKSecurityOrigin *)securityOrigin decisionHandler:(void (^)(BOOL))decisionHandler
+{
+    if (_allowNotifications)
+        EXPECT_STREQ(securityOrigin.host.UTF8String, "example.org");
+    else
+        EXPECT_STREQ(securityOrigin.host.UTF8String, "example.com");
+    decisionHandler(_allowNotifications);
+}
+
+@end
+
+TEST(WebKit, NotificationPermission)
+{
+    NSString *html = @"<script>Notification.requestPermission(function(p){alert('permission '+p)})</script>";
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView setUIDelegate:[[[NotificationDelegate alloc] initWithAllowNotifications:YES] autorelease]];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.org"]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+    [webView setUIDelegate:[[[NotificationDelegate alloc] initWithAllowNotifications:NO] autorelease]];
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"http://example.com"]];
+    TestWebKitAPI::Util::run(&done);
+}
 
 @interface PlugInDelegate : NSObject <WKUIDelegatePrivate>
 @end

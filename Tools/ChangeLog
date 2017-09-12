@@ -1,3 +1,17 @@
+2017-09-12  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's decidePolicyForNotificationPermissionRequest
+        https://bugs.webkit.org/show_bug.cgi?id=176768
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[NotificationDelegate initWithAllowNotifications:]):
+        (-[NotificationDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (-[NotificationDelegate _webView:requestNotificationPermissionForSecurityOrigin:decisionHandler:]):
+        (TEST):
+
 2017-09-12 Brent Fulgham  <bfulgham@apple.com>
 
         Show punycode to user if a URL mixes Armenian Seh or Vo with other scripts
