@@ -868,7 +868,7 @@ static IntPoint dragLocForSelectionDrag(Frame& src)
     return IntPoint(xpos, ypos);
 }
 
-bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin)
+bool DragController::startDrag(Frame& src, const DragState& state, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData hasData)
 {
     if (!src.view() || !src.contentRenderer() || !state.source)
         return false;
@@ -933,14 +933,14 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
     ASSERT(state.source);
     Element& element = *state.source;
 
-    bool mustUseLegacyDragClient = dataTransfer.pasteboard().hasData() || m_client.useLegacyDragClient();
+    bool mustUseLegacyDragClient = hasData == HasNonDefaultPasteboardData::Yes || m_client.useLegacyDragClient();
 
     IntRect dragImageBounds;
     Image* image = getImage(element);
     if (state.type == DragSourceActionSelection) {
         PasteboardWriterData pasteboardWriterData;
 
-        if (!dataTransfer.pasteboard().hasData()) {
+        if (hasData == HasNonDefaultPasteboardData::No) {
             if (src.selection().selection().isNone()) {
                 // The page may have cleared out the selection in the dragstart handler, in which case we should bail
                 // out of the drag, since there is no content to write to the pasteboard.
@@ -1016,7 +1016,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
-        if (!dataTransfer.pasteboard().hasData()) {
+        if (hasData == HasNonDefaultPasteboardData::No) {
             m_draggingImageURL = imageURL;
             if (element.isContentRichlyEditable())
                 selectElement(element);
@@ -1040,7 +1040,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         String textContentWithSimplifiedWhiteSpace = hitTestResult.textContent().simplifyWhiteSpace();
 
-        if (!dataTransfer.pasteboard().hasData()) {
+        if (hasData == HasNonDefaultPasteboardData::No) {
             // Simplify whitespace so the title put on the dataTransfer resembles what the user sees
             // on the web page. This includes replacing newlines with spaces.
             if (mustUseLegacyDragClient)
@@ -1103,7 +1103,7 @@ bool DragController::startDrag(Frame& src, const DragState& state, DragOperation
 
         src.editor().setIgnoreSelectionChanges(true);
         auto previousSelection = src.selection().selection();
-        if (!dataTransfer.pasteboard().hasData()) {
+        if (hasData == HasNonDefaultPasteboardData::No) {
             selectElement(element);
             if (!attachmentURL.isEmpty()) {
                 // Use the attachment URL specified by the file attribute to populate the pasteboard.

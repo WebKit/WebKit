@@ -1,3 +1,18 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Support tapping to add items to the current drag session in web content
+        https://bugs.webkit.org/show_bug.cgi?id=176421
+        <rdar://problem/31144674>
+
+        Reviewed by Tim Horton.
+
+        Adds a new drag and drop test that begins a drag on a text selection, adds an image and a link, and then drops
+        into a contenteditable area. This verifies that the text, link and image are inserted into the editable area
+        upon drop.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-09-11  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds: add --list option

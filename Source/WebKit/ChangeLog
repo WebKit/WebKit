@@ -1,3 +1,25 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Support tapping to add items to the current drag session in web content
+        https://bugs.webkit.org/show_bug.cgi?id=176421
+        <rdar://problem/31144674>
+
+        Reviewed by Tim Horton.
+
+        To request additional drag items, end the current drag in the web page and try to begin a drag at the new
+        location. This process is transparent to the UI process, which still maintains the same UIDragSession with the
+        old drag source.
+
+        As opposed to firing a new event (for instance: `adddragitem`), this approach is taken to ensure that if the
+        page wants to preventDefault() on `dragstart`, it would also prevent the user from adding it as an additional
+        drag item. Using the new event approach, dealing with this case would either require the page to listen for a
+        new event and call preventDefault(), which would break compatibility with pages that only preventDefault() on
+        `dragstart`, or it would require the default behavior of this new event to be _not_ adding a drag item, in which
+        case this approach would require pages to adopt the new event in some form.
+
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
         Clean up API::UIClient

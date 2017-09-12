@@ -62,5 +62,8 @@ namespace WebCore {
         DragOperationDelete  = 32,
         DragOperationEvery   = UINT_MAX
     } DragOperation;
+
+    enum class MayExtendDragSession { No, Yes };
+    enum class HasNonDefaultPasteboardData { No, Yes };
     
 } // namespace WebCore

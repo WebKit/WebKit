@@ -606,7 +606,6 @@ bool EventHandler::tryToBeginDataInteractionAtPoint(const IntPoint& clientPositi
 
     SetForScope<bool> mousePressed(m_mousePressed, true);
     dragState().source = nullptr;
-    dragState().draggedContentRange = nullptr;
     m_mouseDownPos = protectedFrame->view()->windowToContents(syntheticMouseMoveEvent.position());
 
     return handleMouseDraggedEvent(hitTestedMouseEvent, DontCheckDragHysteresis);

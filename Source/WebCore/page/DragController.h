@@ -91,7 +91,7 @@ struct DragState;
         
         WEBCORE_EXPORT void placeDragCaret(const IntPoint&);
         
-        bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin);
+        bool startDrag(Frame& src, const DragState&, DragOperation srcOp, const PlatformMouseEvent& dragEvent, const IntPoint& dragOrigin, HasNonDefaultPasteboardData);
         static const IntSize& maxDragImageSize();
         
         static const int MaxOriginalImageArea;

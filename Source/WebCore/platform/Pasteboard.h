@@ -219,6 +219,7 @@ public:
 
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     const String& name() const { return m_pasteboardName; }
+    long changeCount() const;
 #endif
 
 #if PLATFORM(WIN)

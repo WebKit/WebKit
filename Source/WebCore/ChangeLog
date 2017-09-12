@@ -1,3 +1,82 @@
+2017-09-11  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Support tapping to add items to the current drag session in web content
+        https://bugs.webkit.org/show_bug.cgi?id=176421
+        <rdar://problem/31144674>
+
+        Reviewed by Tim Horton.
+
+        Refactors some drag initiation logic to handle starting a drag when data has already been written to the
+        pasteboard (in the case of iOS, WebItemProviderPasteboard). See annotated comments below for more detail.
+
+        Tests: DataInteractionTests.AdditionalLinkAndImageIntoContentEditable
+
+        * page/DragActions.h:
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
+        Add a HasNonDefaultPasteboardData argument here, and replace checks for !dataTransfer.pasteboard().hasData()
+        with checks for whether the argument is HasNonDefaultPasteboardData::No. These checks for Pasteboard::hasData()
+        currently prevent us from overwriting custom pasteboard data, in the case that the page has written pasteboard
+        data using the event's DataTransfer. However, in the case of adding additional drag items to the session, we
+        will already have pasteboard data, so these checks will prevent us from writing default data to the pasteboard.
+        See EventHandler::handleDrag for more detail.
+
+        * page/DragController.h:
+        * page/DragState.h:
+
+        Remove the draggedContentRange member from DragState. See below.
+
+        * page/EventHandler.cpp:
+        (WebCore::removeDraggedContentDocumentMarkersFromAllFramesInPage):
+
+        Simplify the handling of dragged content range markers. Instead of storing the DOM Range being dragged and
+        removing/repainting the range after dragging ends, just repaint the contentRenderer of the frame being dragged.
+        When the dragging session has completely ended, remove all dragged content ranges from the page's mainframe and
+        all of its subframes, and repaint everything.
+
+        (WebCore::EventHandler::dragCancelled):
+        (WebCore::EventHandler::didStartDrag):
+        (WebCore::EventHandler::dragSourceEndedAt):
+
+        Add a MayExtendDragSession argument, indicating whether or not the web process will attempt to continue the drag
+        session, in which case EventHandler::dragSourceEndedAt should not remove any existing dragged content range
+        document markers.
+
+        (WebCore::EventHandler::dispatchDragStartEvent):
+
+        Helper method to dispatch a `dragstart` event, return whether or not to proceed with the drag, and also compute
+        (as an outparam) whether or not custom pasteboard data was written during the event.
+
+        (WebCore::EventHandler::handleDrag):
+
+        If custom data was written during `dragstart`, pass along HasNonDefaultPasteboardData::Yes when calling
+        DragController::startDrag.
+
+        (WebCore::repaintContentsOfRange): Deleted.
+        * page/EventHandler.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tryToBeginDataInteractionAtPoint):
+        * platform/Pasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::changeCount const):
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard setItemProviders:]):
+
+        Stop clearing out the staged item provider registration list when setting item providers. After refactoring in
+        r221595, staged registration lists are now automatically cleared out when (1) the drag-and-drop interaction
+        state is cleared out in the UI process, or (2) when the registration list is taken by WKContentView (see
+        -takeRegistrationList) when generating an item provider.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::changeCount const):
+
+        Add a changeCount method to Pasteboard on Cocoa platforms (Mac, iOS) which support changeCount natively. In
+        theory, there's no reason Windows, GTK and WPE ports can't also implement a similar mechanism in
+        PlatformPasteboard, but this isn't needed for anything yet. Upon dragstart, it is safe to assume that the
+        pasteboard has been cleared on these platforms, so checking for Pasteboard::hasData (as we do for all platforms
+        currently) is sufficient.
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221762.

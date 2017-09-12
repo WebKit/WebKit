@@ -66,6 +66,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "Page.h"
 #include "PageOverlayController.h"
+#include "Pasteboard.h"
 #include "PlatformEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
@@ -3465,31 +3466,22 @@ void EventHandler::invalidateDataTransfer()
     dragState().dataTransfer = nullptr;
 }
 
-static void repaintContentsOfRange(RefPtr<Range> range)
+static void removeDraggedContentDocumentMarkersFromAllFramesInPage(Page& page)
 {
-    if (!range)
-        return;
-
-    auto* container = range->commonAncestorContainer();
-    if (!container)
-        return;
-
-    // This ensures that all nodes enclosed in this Range are repainted.
-    if (auto rendererToRepaint = container->renderer()) {
-        if (auto* containingRenderer = rendererToRepaint->container())
-            rendererToRepaint = containingRenderer;
-        rendererToRepaint->repaint();
+    for (Frame* frame = &page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+        if (auto* document = frame->document())
+            document->markers().removeMarkers(DocumentMarker::DraggedContent);
     }
+
+    if (auto* mainFrameRenderer = page.mainFrame().contentRenderer())
+        mainFrameRenderer->repaintRootContents();
 }
 
 void EventHandler::dragCancelled()
 {
 #if ENABLE(DATA_INTERACTION)
-    if (auto range = dragState().draggedContentRange) {
-        range->ownerDocument().markers().removeMarkers(DocumentMarker::DraggedContent);
-        repaintContentsOfRange(range);
-    }
-    dragState().draggedContentRange = nullptr;
+    if (auto* page = m_frame.page())
+        removeDraggedContentDocumentMarkersFromAllFramesInPage(*page);
 #endif
 }
 
@@ -3504,22 +3496,24 @@ void EventHandler::didStartDrag()
     if (!renderer)
         return;
 
+    RefPtr<Range> draggedContentRange;
     if (dragState().type & DragSourceActionSelection)
-        dragState().draggedContentRange = m_frame.selection().selection().toNormalizedRange();
+        draggedContentRange = m_frame.selection().selection().toNormalizedRange();
     else {
         Position startPosition(dragSource.get(), Position::PositionIsBeforeAnchor);
         Position endPosition(dragSource.get(), Position::PositionIsAfterAnchor);
-        dragState().draggedContentRange = Range::create(dragSource->document(), startPosition, endPosition);
+        draggedContentRange = Range::create(dragSource->document(), startPosition, endPosition);
     }
 
-    if (auto range = dragState().draggedContentRange) {
-        range->ownerDocument().markers().addDraggedContentMarker(range.get());
-        repaintContentsOfRange(range);
+    if (draggedContentRange) {
+        draggedContentRange->ownerDocument().markers().addDraggedContentMarker(draggedContentRange.get());
+        if (auto* renderer = m_frame.contentRenderer())
+            renderer->repaintRootContents();
     }
 #endif
 }
 
-void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation)
+void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperation operation, MayExtendDragSession mayExtendDragSession)
 {
     // Send a hit test request so that RenderLayer gets a chance to update the :hover and :active pseudoclasses.
     HitTestRequest request(HitTestRequest::Release | HitTestRequest::DisallowUserAgentShadowContent);
@@ -3532,9 +3526,9 @@ void EventHandler::dragSourceEndedAt(const PlatformMouseEvent& event, DragOperat
     }
     invalidateDataTransfer();
 
-    if (auto range = dragState().draggedContentRange) {
-        range->ownerDocument().markers().removeMarkers(DocumentMarker::DraggedContent);
-        repaintContentsOfRange(range);
+    if (mayExtendDragSession == MayExtendDragSession::No) {
+        if (auto* page = m_frame.page())
+            removeDraggedContentDocumentMarkersFromAllFramesInPage(*page);
     }
 
     dragState().source = nullptr;
@@ -3554,6 +3548,23 @@ void EventHandler::updateDragStateAfterEditDragIfNeeded(Element& rootEditableEle
 bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent& event)
 {
     return !dispatchDragEvent(eventType, *dragState().source, event, dragState().dataTransfer.get());
+}
+
+bool EventHandler::dispatchDragStartEvent(HasNonDefaultPasteboardData& hasNonDefaultPasteboardData)
+{
+#if PLATFORM(COCOA)
+    auto changeCountBeforeDragStart = dragState().dataTransfer->pasteboard().changeCount();
+#endif
+
+    bool mayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown);
+
+#if PLATFORM(COCOA)
+    hasNonDefaultPasteboardData = changeCountBeforeDragStart != dragState().dataTransfer->pasteboard().changeCount() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
+#else
+    hasNonDefaultPasteboardData = dragState().dataTransfer->pasteboard().hasData() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
+#endif
+
+    return mayStartDrag && !m_frame.selection().selection().isInPasswordField();
 }
     
 static bool ExactlyOneBitSet(DragSourceAction n)
@@ -3660,6 +3671,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     invalidateDataTransfer();
 
     dragState().dataTransfer = createDraggingDataTransfer();
+    HasNonDefaultPasteboardData hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {
         // Check to see if the is a DOM based drag. If it is, get the DOM specified drag image and offset.
@@ -3680,8 +3692,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
             }
         } 
 
-        m_mouseDownMayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown)
-            && !m_frame.selection().selection().isInPasswordField();
+        m_mouseDownMayStartDrag = dispatchDragStartEvent(hasNonDefaultPasteboardData);
 
         dragState().dataTransfer->makeInvalidForSecurity();
 
@@ -3698,7 +3709,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame.page();
-        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
+        m_didStartDrag = page && page->dragController().startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos, hasNonDefaultPasteboardData);
         // In WebKit2 we could re-enter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
         if (m_didStartDrag) {

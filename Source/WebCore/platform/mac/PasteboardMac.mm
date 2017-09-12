@@ -107,6 +107,11 @@ static Vector<String> writableTypesForImage()
     return types;
 }
 
+long Pasteboard::changeCount() const
+{
+    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
+}
+
 NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
 {
     return @[ (NSString *)NSFilesPromisePboardType, (NSString *)NSFilenamesPboardType ];

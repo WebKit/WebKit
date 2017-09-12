@@ -57,6 +57,7 @@
 #import <WebCore/DataDetection.h>
 #import <WebCore/DiagnosticLoggingClient.h>
 #import <WebCore/DiagnosticLoggingKeys.h>
+#import <WebCore/DragController.h>
 #import <WebCore/Editing.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Element.h>
@@ -633,9 +634,15 @@ void WebPage::requestStartDataInteraction(const IntPoint& clientPosition, const 
 
 void WebPage::requestAdditionalItemsForDragSession(const IntPoint& clientPosition, const IntPoint& globalPosition)
 {
-    notImplemented();
+    // To augment the platform drag session with additional items, end the current drag session and begin a new drag session with the new drag item.
+    // This process is opaque to the UI process, which still maintains the old drag item in its drag session. Similarly, this persistent drag session
+    // is opaque to the web process, which only sees that the current drag has ended, and that a new one is beginning.
+    PlatformMouseEvent event(clientPosition, globalPosition, LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, currentTime(), 0, NoTap);
+    m_page->dragController().dragEnded();
+    m_page->mainFrame().eventHandler().dragSourceEndedAt(event, DragOperationNone, MayExtendDragSession::Yes);
 
-    send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(false));
+    bool didHandleDrag = m_page->mainFrame().eventHandler().tryToBeginDataInteractionAtPoint(clientPosition, globalPosition);
+    send(Messages::WebPageProxy::DidHandleAdditionalDragItemsRequest(didHandleDrag));
 }
 
 void WebPage::didConcludeEditDataInteraction()

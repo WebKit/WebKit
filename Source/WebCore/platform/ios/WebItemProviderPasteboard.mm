@@ -277,7 +277,6 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     _itemProviders = itemProviders;
     _changeCount++;
     _cachedTypeIdentifiers = nil;
-    _stagedRegistrationInfoList = nil;
 
     NSMutableArray *typeToFileURLMaps = [NSMutableArray arrayWithCapacity:itemProviders.count];
     [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
