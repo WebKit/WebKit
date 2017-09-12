@@ -41,6 +41,7 @@ using namespace WebCore;
 namespace WebKit {
 
 const unsigned minimumPrevalentResourcesForTelemetry = 3;
+const unsigned significantFiguresForLoggedValues = 3;
 static bool notifyPagesWhenTelemetryWasCaptured = false;
 
 struct PrevalentResourceTelemetry {
@@ -170,15 +171,15 @@ static void submitTopList(unsigned numberOfResourcesFromTheTop, const Vector<Pre
     String descriptionPreamble = preambleBuilder.toString();
     
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "PrevalentResourcesWithUserInteraction",
-        topPrevalentResourcesWithUserInteraction, 0, ShouldSample::No);
+        topPrevalentResourcesWithUserInteraction, significantFiguresForLoggedValues, ShouldSample::No);
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "SubframeUnderTopFrameOrigins",
-        topSubframeUnderTopFrameOrigins, 0, ShouldSample::No);
+        topSubframeUnderTopFrameOrigins, significantFiguresForLoggedValues, ShouldSample::No);
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "SubresourceUnderTopFrameOrigins",
-        topSubresourceUnderTopFrameOrigins, 0, ShouldSample::No);
+        topSubresourceUnderTopFrameOrigins, significantFiguresForLoggedValues, ShouldSample::No);
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "SubresourceUniqueRedirectsTo",
-        topSubresourceUniqueRedirectsTo, 0, ShouldSample::No);
+        topSubresourceUniqueRedirectsTo, significantFiguresForLoggedValues, ShouldSample::No);
     webPageProxy.logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), descriptionPreamble + "NumberOfTimesDataRecordsRemoved",
-        topNumberOfTimesDataRecordsRemoved, 0, ShouldSample::No);
+        topNumberOfTimesDataRecordsRemoved, significantFiguresForLoggedValues, ShouldSample::No);
 }
     
 static void submitTopLists(const Vector<PrevalentResourceTelemetry>& sortedPrevalentResources, const Vector<PrevalentResourceTelemetry>& sortedPrevalentResourcesWithoutUserInteraction, WebPageProxy& webPageProxy)
@@ -257,13 +258,13 @@ void WebResourceLoadStatisticsTelemetry::calculateAndSubmit(const WebResourceLoa
         return;
     }
     
-    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResources"), sortedPrevalentResources.size(), 0, ShouldSample::No);
-    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResourcesWithUserInteraction"), prevalentResourcesDaysSinceUserInteraction.size(), 0, ShouldSample::No);
+    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResources"), sortedPrevalentResources.size(), significantFiguresForLoggedValues, ShouldSample::No);
+    webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("totalNumberOfPrevalentResourcesWithUserInteraction"), prevalentResourcesDaysSinceUserInteraction.size(), significantFiguresForLoggedValues, ShouldSample::No);
     
     if (prevalentResourcesDaysSinceUserInteraction.size() > 0)
-        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("topPrevalentResourceWithUserInteractionDaysSinceUserInteraction"), prevalentResourcesDaysSinceUserInteraction[0], 0, ShouldSample::No);
+        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("topPrevalentResourceWithUserInteractionDaysSinceUserInteraction"), prevalentResourcesDaysSinceUserInteraction[0], significantFiguresForLoggedValues, ShouldSample::No);
     if (prevalentResourcesDaysSinceUserInteraction.size() > 1)
-        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"), median(prevalentResourcesDaysSinceUserInteraction), 0, ShouldSample::No);
+        webPageProxy->logDiagnosticMessageWithValue(DiagnosticLoggingKeys::resourceLoadStatisticsTelemetryKey(), ASCIILiteral("medianPrevalentResourcesWithUserInteractionDaysSinceUserInteraction"), median(prevalentResourcesDaysSinceUserInteraction), significantFiguresForLoggedValues, ShouldSample::No);
     
     submitTopLists(sortedPrevalentResources, sortedPrevalentResourcesWithoutUserInteraction, *webPageProxy);
 }
