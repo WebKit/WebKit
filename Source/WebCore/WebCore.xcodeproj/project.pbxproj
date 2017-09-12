@@ -4755,8 +4755,6 @@
 		A81369E3097374F600D74463 /* HTMLLabelElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C7097374F500D74463 /* HTMLLabelElement.cpp */; };
 		A81369E4097374F600D74463 /* HTMLKeygenElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369C8097374F500D74463 /* HTMLKeygenElement.h */; };
 		A81369E5097374F600D74463 /* HTMLKeygenElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369C9097374F600D74463 /* HTMLKeygenElement.cpp */; };
-		A8136D380973A8E700D74463 /* FormDataList.h in Headers */ = {isa = PBXBuildFile; fileRef = A8136D360973A8E700D74463 /* FormDataList.h */; };
-		A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8136D370973A8E700D74463 /* FormDataList.cpp */; };
 		A8185F3909765766005826D9 /* DocumentType.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3109765765005826D9 /* DocumentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8185F3A09765766005826D9 /* DocumentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8185F3209765765005826D9 /* DocumentType.cpp */; };
 		A8185F3B09765766005826D9 /* DOMImplementation.h in Headers */ = {isa = PBXBuildFile; fileRef = A8185F3309765765005826D9 /* DOMImplementation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13214,8 +13212,6 @@
 		A81369C7097374F500D74463 /* HTMLLabelElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLLabelElement.cpp; sourceTree = "<group>"; };
 		A81369C8097374F500D74463 /* HTMLKeygenElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLKeygenElement.h; sourceTree = "<group>"; };
 		A81369C9097374F600D74463 /* HTMLKeygenElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLKeygenElement.cpp; sourceTree = "<group>"; };
-		A8136D360973A8E700D74463 /* FormDataList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FormDataList.h; sourceTree = "<group>"; };
-		A8136D370973A8E700D74463 /* FormDataList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = FormDataList.cpp; sourceTree = "<group>"; };
 		A8185F3109765765005826D9 /* DocumentType.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DocumentType.h; sourceTree = "<group>"; };
 		A8185F3209765765005826D9 /* DocumentType.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentType.cpp; sourceTree = "<group>"; };
 		A8185F3309765765005826D9 /* DOMImplementation.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMImplementation.h; sourceTree = "<group>"; };
@@ -20591,8 +20587,6 @@
 				4A0DA2FD129B241900AB61E1 /* FormAssociatedElement.h */,
 				F50664F5157F52DC00AC226F /* FormController.cpp */,
 				F50664F6157F52DC00AC226F /* FormController.h */,
-				A8136D370973A8E700D74463 /* FormDataList.cpp */,
-				A8136D360973A8E700D74463 /* FormDataList.h */,
 				9B50B1DC17CD4C0F0087F63C /* FormNamedItem.h */,
 				97205AAD123928CA00B17380 /* FTPDirectoryDocument.cpp */,
 				97205AAE123928CA00B17380 /* FTPDirectoryDocument.h */,
@@ -27788,7 +27782,6 @@
 				F50664F8157F52DC00AC226F /* FormController.h in Headers */,
 				514C76700CE923A1007EF3CD /* FormData.h in Headers */,
 				085B92BB0EFDE73D00E6123C /* FormDataBuilder.h in Headers */,
-				A8136D380973A8E700D74463 /* FormDataList.h in Headers */,
 				7EE6846712D26E3800E79415 /* FormDataStreamCFNet.h in Headers */,
 				514C764E0CE9234E007EF3CD /* FormDataStreamMac.h in Headers */,
 				9B50B1DE17CD4C0F0087F63C /* FormNamedItem.h in Headers */,
@@ -31828,7 +31821,6 @@
 				F50664F7157F52DC00AC226F /* FormController.cpp in Sources */,
 				514C766F0CE923A1007EF3CD /* FormData.cpp in Sources */,
 				085B92BA0EFDE73D00E6123C /* FormDataBuilder.cpp in Sources */,
-				A8136D390973A8E700D74463 /* FormDataList.cpp in Sources */,
 				7EE6846612D26E3800E79415 /* FormDataStreamCFNet.cpp in Sources */,
 				514C764F0CE9234E007EF3CD /* FormDataStreamMac.mm in Sources */,
 				656D373B0ADBA5DE00A4554D /* FormState.cpp in Sources */,

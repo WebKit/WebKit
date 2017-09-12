@@ -37,12 +37,12 @@
 namespace WebCore {
 
 DOMFormData::DOMFormData(const TextEncoding& encoding)
-    : FormDataList(encoding)
+    : m_encoding(encoding)
 {
 }
 
 DOMFormData::DOMFormData(HTMLFormElement* form)
-    : FormDataList(UTF8Encoding())
+    : m_encoding(UTF8Encoding())
 {
     if (!form)
         return;
@@ -53,14 +53,26 @@ DOMFormData::DOMFormData(HTMLFormElement* form)
     }
 }
 
+// https://xhr.spec.whatwg.org/#create-an-entry
+auto DOMFormData::createFileEntry(const String& name, Blob& blob, const String& filename) -> Item
+{
+    if (!blob.isFile())
+        return { name, File::create(blob, filename.isNull() ? ASCIILiteral("blob") : filename) };
+    
+    if (!filename.isNull())
+        return { name, File::create(downcast<File>(blob), filename) };
+
+    return { name, RefPtr<File> { &downcast<File>(blob) } };
+}
+
 void DOMFormData::append(const String& name, const String& value)
 {
-    appendData(name, value);
+    m_items.append({ name, value });
 }
 
 void DOMFormData::append(const String& name, Blob& blob, const String& filename)
 {
-    appendBlob(name, blob, filename);
+    m_items.append(createFileEntry(name, blob, filename));
 }
 
 void DOMFormData::remove(const String& name)
@@ -104,12 +116,36 @@ bool DOMFormData::has(const String& name)
 
 void DOMFormData::set(const String& name, const String& value)
 {
-    setData(name, value);
+    set(name, { name, value });
 }
 
 void DOMFormData::set(const String& name, Blob& blob, const String& filename)
 {
-    setBlob(name, blob, filename);
+    set(name, createFileEntry(name, blob, filename));
+}
+
+void DOMFormData::set(const String& name, Item&& item)
+{
+    std::optional<size_t> initialMatchLocation;
+
+    // Find location of the first item with a matching name.
+    for (size_t i = 0; i < m_items.size(); ++i) {
+        if (name == m_items[i].name) {
+            initialMatchLocation = i;
+            break;
+        }
+    }
+
+    if (initialMatchLocation) {
+        m_items[*initialMatchLocation] = WTFMove(item);
+
+        m_items.removeAllMatching([&name] (const auto& item) {
+            return item.name == name;
+        }, *initialMatchLocation + 1);
+        return;
+    }
+
+    m_items.append(WTFMove(item));
 }
 
 DOMFormData::Iterator::Iterator(DOMFormData& target)
@@ -117,14 +153,14 @@ DOMFormData::Iterator::Iterator(DOMFormData& target)
 {
 }
 
-std::optional<WTF::KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
+std::optional<KeyValuePair<String, DOMFormData::FormDataEntryValue>> DOMFormData::Iterator::next()
 {
     auto& items = m_target->items();
     if (m_index >= items.size())
         return std::nullopt;
 
     auto& item = items[m_index++];
-    return WTF::KeyValuePair<String, FormDataEntryValue> { item.name, item.data };
+    return makeKeyValuePair(item.name, item.data);
 }
 
 } // namespace WebCore

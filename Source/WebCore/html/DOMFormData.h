@@ -30,24 +30,32 @@
 
 #pragma once
 
-#include "FormDataList.h"
+#include "File.h"
+#include "TextEncoding.h"
 #include <wtf/Forward.h>
 #include <wtf/Optional.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Variant.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class Blob;
 class HTMLFormElement;
-class TextEncoding;
 
-// FIXME: Do we need to have separate DOMFormData and FormDataList classes?
-class DOMFormData : public FormDataList, public RefCounted<DOMFormData> {
+class DOMFormData : public RefCounted<DOMFormData> {
 public:
+    using FormDataEntryValue = Variant<RefPtr<File>, String>;
+
+    struct Item {
+        String name;
+        FormDataEntryValue data;
+    };
+
     static Ref<DOMFormData> create(HTMLFormElement* form) { return adoptRef(*new DOMFormData(form)); }
     static Ref<DOMFormData> create(const TextEncoding& encoding) { return adoptRef(*new DOMFormData(encoding)); }
 
-    using FormDataEntryValue = Item::Data;
+    const Vector<Item>& items() const { return m_items; }
+    const TextEncoding& encoding() const { return m_encoding; }
 
     void append(const String& name, const String& value);
     void append(const String& name, Blob&, const String& filename = { });
@@ -61,7 +69,7 @@ public:
     class Iterator {
     public:
         explicit Iterator(DOMFormData&);
-        std::optional<WTF::KeyValuePair<String, FormDataEntryValue>> next();
+        std::optional<KeyValuePair<String, FormDataEntryValue>> next();
 
     private:
         Ref<DOMFormData> m_target;
@@ -72,6 +80,12 @@ public:
 private:
     explicit DOMFormData(const TextEncoding&);
     explicit DOMFormData(HTMLFormElement*);
+
+    Item createFileEntry(const String& name, Blob&, const String& filename);
+    void set(const String& name, Item&&);
+
+    TextEncoding m_encoding;
+    Vector<Item> m_items;
 };
 
 } // namespace WebCore

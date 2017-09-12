@@ -32,8 +32,8 @@
 #include "config.h"
 #include "SubmitInputType.h"
 
+#include "DOMFormData.h"
 #include "Event.h"
-#include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
@@ -46,11 +46,11 @@ const AtomicString& SubmitInputType::formControlType() const
     return InputTypeNames::submit();
 }
 
-bool SubmitInputType::appendFormData(FormDataList& encoding, bool) const
+bool SubmitInputType::appendFormData(DOMFormData& formData, bool) const
 {
     if (!element().isActivatedSubmit())
         return false;
-    encoding.appendData(element().name(), element().valueWithDefault());
+    formData.append(element().name(), element().valueWithDefault());
     return true;
 }
 

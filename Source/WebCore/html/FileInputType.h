@@ -54,7 +54,7 @@ private:
     const AtomicString& formControlType() const final;
     FormControlState saveFormControlState() const final;
     void restoreFormControlState(const FormControlState&) final;
-    bool appendFormData(FormDataList&, bool) const final;
+    bool appendFormData(DOMFormData&, bool) const final;
     bool valueMissing(const String&) const final;
     String valueMissingText() const final;
     void handleDOMActivateEvent(Event&) final;

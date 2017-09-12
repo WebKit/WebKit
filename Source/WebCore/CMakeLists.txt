@@ -1796,7 +1796,6 @@ set(WebCore_SOURCES
     html/FileInputType.cpp
     html/FormAssociatedElement.cpp
     html/FormController.cpp
-    html/FormDataList.cpp
     html/GenericCachedHTMLCollection.cpp
     html/HTMLAllCollection.cpp
     html/HTMLAnchorElement.cpp

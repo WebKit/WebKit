@@ -47,11 +47,11 @@ namespace WebCore {
 
 class BeforeTextInsertedEvent;
 class Chrome;
+class DOMFormData;
 class DateComponents;
 class DragData;
 class Event;
 class FileList;
-class FormDataList;
 class HTMLElement;
 class HTMLFormElement;
 class HTMLInputElement;
@@ -60,8 +60,8 @@ class KeyboardEvent;
 class MouseEvent;
 class Node;
 class RenderStyle;
-class TouchEvent;
 class TextControlInnerTextElement;
+class TouchEvent;
 
 struct InputElementClickState;
 
@@ -120,7 +120,7 @@ public:
     virtual FormControlState saveFormControlState() const;
     virtual void restoreFormControlState(const FormControlState&);
     virtual bool isFormDataAppendable() const;
-    virtual bool appendFormData(FormDataList&, bool multipart) const;
+    virtual bool appendFormData(DOMFormData&, bool multipart) const;
 
     // DOM property functions.
 

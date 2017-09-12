@@ -35,9 +35,9 @@
 #include "BeforeTextInsertedEvent.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DOMFormData.h"
 #include "Editor.h"
 #include "EventNames.h"
-#include "FormDataList.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLInputElement.h"
@@ -511,12 +511,12 @@ void TextFieldInputType::updatePlaceholderText()
     m_placeholder->setInnerText(placeholderText);
 }
 
-bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) const
+bool TextFieldInputType::appendFormData(DOMFormData& formData, bool multipart) const
 {
-    InputType::appendFormData(list, multipart);
-    const AtomicString& dirnameAttrValue = element().attributeWithoutSynchronization(dirnameAttr);
+    InputType::appendFormData(formData, multipart);
+    auto& dirnameAttrValue = element().attributeWithoutSynchronization(dirnameAttr);
     if (!dirnameAttrValue.isNull())
-        list.appendData(dirnameAttrValue, element().directionForFormData());
+        formData.append(dirnameAttrValue, element().directionForFormData());
     return true;
 }
 

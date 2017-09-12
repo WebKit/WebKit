@@ -33,6 +33,7 @@
 #include "ButtonInputType.h"
 #include "CheckboxInputType.h"
 #include "ColorInputType.h"
+#include "DOMFormData.h"
 #include "DateComponents.h"
 #include "DateInputType.h"
 #include "DateTimeInputType.h"
@@ -42,7 +43,6 @@
 #include "FileInputType.h"
 #include "FileList.h"
 #include "FormController.h"
-#include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -211,10 +211,10 @@ bool InputType::isFormDataAppendable() const
     return !element().name().isEmpty();
 }
 
-bool InputType::appendFormData(FormDataList& encoding, bool) const
+bool InputType::appendFormData(DOMFormData& formData, bool) const
 {
     // Always successful.
-    encoding.appendData(element().name(), element().value());
+    formData.append(element().name(), element().value());
     return true;
 }
 

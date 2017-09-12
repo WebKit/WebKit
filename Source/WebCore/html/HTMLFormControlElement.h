@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class FormDataList;
+class DOMFormData;
 class HTMLFieldSetElement;
 class HTMLFormElement;
 class HTMLLegendElement;
@@ -85,7 +85,7 @@ public:
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
-    bool appendFormData(FormDataList&, bool) override { return false; }
+    bool appendFormData(DOMFormData&, bool) override { return false; }
 
     virtual bool isSuccessfulSubmitButton() const { return false; }
     virtual bool isActivatedSubmit() const { return false; }

@@ -48,7 +48,7 @@ FetchBody FetchBody::extract(ScriptExecutionContext& context, Init&& value, Stri
         return FetchBody(WTFMove(blob));
     }, [&](RefPtr<DOMFormData>& value) mutable {
         Ref<DOMFormData> domFormData = value.releaseNonNull();
-        auto formData = FormData::createMultiPart(domFormData.get(), domFormData->encoding(), &static_cast<Document&>(context));
+        auto formData = FormData::createMultiPart(domFormData.get(), &static_cast<Document&>(context));
         contentType = makeString("multipart/form-data; boundary=", formData->boundary().data());
         return FetchBody(WTFMove(formData));
     }, [&](RefPtr<URLSearchParams>& value) mutable {

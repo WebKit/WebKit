@@ -32,8 +32,8 @@
 #include "config.h"
 #include "HiddenInputType.h"
 
+#include "DOMFormData.h"
 #include "FormController.h"
-#include "FormDataList.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
@@ -97,13 +97,15 @@ bool HiddenInputType::isHiddenType() const
     return true;
 }
 
-bool HiddenInputType::appendFormData(FormDataList& encoding, bool isMultipartForm) const
+bool HiddenInputType::appendFormData(DOMFormData& formData, bool isMultipartForm) const
 {
-    if (equalIgnoringASCIICase(element().name(), "_charset_")) {
-        encoding.appendData(element().name(), String(encoding.encoding().name()));
+    auto name = element().name();
+
+    if (equalIgnoringASCIICase(name, "_charset_")) {
+        formData.append(name, String { formData.encoding().name() });
         return true;
     }
-    return InputType::appendFormData(encoding, isMultipartForm);
+    return InputType::appendFormData(formData, isMultipartForm);
 }
 
 bool HiddenInputType::shouldRespectHeightAndWidthAttributes()

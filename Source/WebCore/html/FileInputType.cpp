@@ -23,6 +23,7 @@
 #include "FileInputType.h"
 
 #include "Chrome.h"
+#include "DOMFormData.h"
 #include "DragData.h"
 #include "ElementChildIterator.h"
 #include "Event.h"
@@ -31,7 +32,6 @@
 #include "FileListCreator.h"
 #include "FileSystem.h"
 #include "FormController.h"
-#include "FormDataList.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
@@ -73,14 +73,14 @@ private:
 
 Ref<UploadButtonElement> UploadButtonElement::create(Document& document)
 {
-    Ref<UploadButtonElement> button = adoptRef(*new UploadButtonElement(document));
+    auto button = adoptRef(*new UploadButtonElement(document));
     button->setValue(fileButtonChooseFileLabel());
     return button;
 }
 
 Ref<UploadButtonElement> UploadButtonElement::createForMultiple(Document& document)
 {
-    Ref<UploadButtonElement> button = adoptRef(*new UploadButtonElement(document));
+    auto button = adoptRef(*new UploadButtonElement(document));
     button->setValue(fileButtonChooseMultipleFilesLabel());
     return button;
 }
@@ -147,9 +147,11 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
     filesChosen(filesFromFormControlState(state));
 }
 
-bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
+bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
 {
-    FileList* fileList = element().files();
+    auto name = element().name();
+
+    auto* fileList = element().files();
     unsigned numFiles = fileList->length();
     if (!multipart) {
         // Send only the basenames.
@@ -160,19 +162,19 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
         // submission of file inputs, and Firefox doesn't add "name=" query
         // parameter.
         for (unsigned i = 0; i < numFiles; ++i)
-            encoding.appendData(element().name(), fileList->item(i)->name());
+            formData.append(name, fileList->item(i)->name());
         return true;
     }
 
     // If no filename at all is entered, return successful but empty.
     // Null would be more logical, but Netscape posts an empty file. Argh.
     if (!numFiles) {
-        encoding.appendBlob(element().name(), File::create(emptyString()));
+        formData.append(name, File::create(emptyString()));
         return true;
     }
 
     for (unsigned i = 0; i < numFiles; ++i)
-        encoding.appendBlob(element().name(), *fileList->item(i));
+        formData.append(name, *fileList->item(i));
     return true;
 }
 

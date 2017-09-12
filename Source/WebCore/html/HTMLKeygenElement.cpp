@@ -26,9 +26,9 @@
 #include "HTMLKeygenElement.h"
 
 #include "Attribute.h"
+#include "DOMFormData.h"
 #include "Document.h"
 #include "ElementChildIterator.h"
-#include "FormDataList.h"
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "HTMLOptionElement.h"
@@ -115,15 +115,15 @@ String HTMLKeygenElement::keytype() const
     return isKeytypeRSA() ? ASCIILiteral("rsa") : emptyString();
 }
 
-bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)
+bool HTMLKeygenElement::appendFormData(DOMFormData& formData, bool)
 {
     // Only RSA is supported at this time.
     if (!isKeytypeRSA())
         return false;
-    String value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), attributeWithoutSynchronization(challengeAttr), document().baseURL());
+    auto value = signedPublicKeyAndChallengeString(shadowSelect()->selectedIndex(), attributeWithoutSynchronization(challengeAttr), document().baseURL());
     if (value.isNull())
         return false;
-    encoded_values.appendData(name(), value);
+    formData.append(name(), value);
     return true;
 }
 

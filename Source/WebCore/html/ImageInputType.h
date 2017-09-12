@@ -44,7 +44,7 @@ public:
 private:
     const AtomicString& formControlType() const override;
     bool isFormDataAppendable() const override;
-    bool appendFormData(FormDataList&, bool) const override;
+    bool appendFormData(DOMFormData&, bool) const override;
     bool supportsValidation() const override;
     RenderPtr<RenderElement> createInputRenderer(RenderStyle&&) override;
     void handleDOMActivateEvent(Event&) override;

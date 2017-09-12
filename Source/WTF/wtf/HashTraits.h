@@ -24,6 +24,7 @@
 #include <limits>
 #include <utility>
 #include <wtf/HashFunctions.h>
+#include <wtf/KeyValuePair.h>
 #include <wtf/Optional.h>
 #include <wtf/StdLibExtras.h>
 
@@ -278,32 +279,6 @@ struct TupleHashTraits : GenericHashTraits<std::tuple<typename FirstTrait::Trait
 
 template<typename... Traits>
 struct HashTraits<std::tuple<Traits...>> : public TupleHashTraits<HashTraits<Traits>...> { };
-
-template<typename KeyTypeArg, typename ValueTypeArg>
-struct KeyValuePair {
-    typedef KeyTypeArg KeyType;
-
-    KeyValuePair()
-    {
-    }
-
-    template<typename K, typename V>
-    KeyValuePair(K&& key, V&& value)
-        : key(std::forward<K>(key))
-        , value(std::forward<V>(value))
-    {
-    }
-
-    template <typename OtherKeyType, typename OtherValueType>
-    KeyValuePair(KeyValuePair<OtherKeyType, OtherValueType>&& other)
-        : key(std::forward<OtherKeyType>(other.key))
-        , value(std::forward<OtherValueType>(other.value))
-    {
-    }
-
-    KeyTypeArg key;
-    ValueTypeArg value { };
-};
 
 template<typename KeyTraitsArg, typename ValueTraitsArg>
 struct KeyValuePairHashTraits : GenericHashTraits<KeyValuePair<typename KeyTraitsArg::TraitType, typename ValueTraitsArg::TraitType>> {

@@ -27,8 +27,8 @@
 #include "Attribute.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
+#include "DOMFormData.h"
 #include "ElementIterator.h"
-#include "FormDataList.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -491,7 +491,7 @@ void HTMLObjectElement::didMoveToNewDocument(Document& oldDocument, Document& ne
     HTMLPlugInImageElement::didMoveToNewDocument(oldDocument, newDocument);
 }
 
-bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
+bool HTMLObjectElement::appendFormData(DOMFormData& formData, bool)
 {
     if (name().isEmpty())
         return false;
@@ -504,7 +504,7 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
     String value;
     if (!downcast<PluginViewBase>(*widget).getFormValue(value))
         return false;
-    encoding.appendData(name(), value);
+    formData.append(name(), value);
     return true;
 }
 

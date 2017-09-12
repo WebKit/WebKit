@@ -1,3 +1,104 @@
+2017-09-12  Sam Weinig  <sam@webkit.org>
+
+        [Cleanup] Follow up cleanup for DOMFormData implementation
+        https://bugs.webkit.org/show_bug.cgi?id=176740
+
+        Reviewed by Alex Christensen.
+
+        - Merges FormDataList into DOMFormData.
+        - Streamline / refactor FormData creation from DOMFormData.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/FormDataList.cpp: Removed.
+        * html/FormDataList.h: Removed.
+
+            Remove FormDataList.
+
+        * html/DOMFormData.cpp:
+        (WebCore::DOMFormData::DOMFormData):
+        (WebCore::DOMFormData::createFileEntry):
+        (WebCore::DOMFormData::append):
+        (WebCore::DOMFormData::set):
+        (WebCore::DOMFormData::Iterator::next):
+        * html/DOMFormData.h:
+        (WebCore::DOMFormData::items const):
+        (WebCore::DOMFormData::encoding const):
+
+            Merge FormDataList into DOMFormData. FormDataList's additional
+            appendData/appendBlob functions have been removed, and their
+            functionality inlined into DOMFormData's append functions. 
+
+            Adopted makeKeyValuePair in DOMFormData::Iterator::next().
+
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::create):
+        (WebCore::FormData::createMultiPart):
+        (WebCore::normalizeStringData):
+        (WebCore::FormData::appendMultiPartFileValue):
+        (WebCore::FormData::appendMultiPartStringValue):
+        (WebCore::FormData::appendMultiPartKeyValuePairItems):
+        (WebCore::FormData::appendNonMultiPartKeyValuePairItems):
+        (WebCore::FormData::appendKeyValuePairItems): Deleted.
+        * platform/network/FormData.h:
+
+            Split-up appendKeyValuePairItems into separate multipart and non-multipart
+            functions, as the two edges of the branch didn't share much in common. Further
+            split out multipart file and multipart string appending, since they too did not
+            share that much in common and makes the code easier to follow. 
+
+            String value normalization has been moved entirely here (previously it was a member 
+            function of FormDataList) as FormData is the only user.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * loader/FormSubmission.cpp:
+        (WebCore::FormSubmission::create):
+        * Modules/fetch/FetchBody.cpp:
+        (WebCore::FetchBody::extract):
+        
+            Update for new FormData create functions which don't need the
+            encoding passed explicitly, since it is part of the DOMFormData.
+        
+        * html/BaseButtonInputType.cpp:
+        * html/BaseButtonInputType.h:
+        * html/BaseCheckableInputType.cpp:
+        * html/BaseCheckableInputType.h:
+        * html/FileInputType.cpp:
+        * html/FileInputType.h:
+        * html/FormAssociatedElement.h:
+        * html/HTMLButtonElement.cpp:
+        * html/HTMLButtonElement.h:
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLKeygenElement.cpp:
+        * html/HTMLKeygenElement.h:
+        * html/HTMLMeterElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+        * html/HTMLSelectElement.cpp:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        * html/HTMLTextAreaElement.h:
+        * html/HiddenInputType.cpp:
+        * html/HiddenInputType.h:
+        * html/ImageInputType.cpp:
+        * html/ImageInputType.h:
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * html/SubmitInputType.cpp:
+        * html/SubmitInputType.h:
+        * html/TextFieldInputType.cpp:
+        * html/TextFieldInputType.h:
+
+            Update to use DOMFormData directly, rather than the FormDataList, which 
+            has been removed.
+
+        * page/csp/ContentSecurityPolicy.cpp:
+
+            Remove unnecessary #include of unused (and now removed) FormDataList.h
+
 2017-09-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Implement CDMInstanceClearKey::requestLicense()

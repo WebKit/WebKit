@@ -26,11 +26,12 @@
 #include "BlobURL.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DOMFormData.h"
 #include "Document.h"
 #include "File.h"
 #include "FileSystem.h"
 #include "FormDataBuilder.h"
-#include "FormDataList.h"
+#include "LineEnding.h"
 #include "Page.h"
 #include "TextEncoding.h"
 #include "ThreadableBlobRegistry.h"
@@ -92,17 +93,17 @@ Ref<FormData> FormData::create(const Vector<char>& vector)
     return result;
 }
 
-Ref<FormData> FormData::create(const FormDataList& list, const TextEncoding& encoding, EncodingType encodingType)
+Ref<FormData> FormData::create(const DOMFormData& formData, EncodingType encodingType)
 {
     auto result = create();
-    result->appendKeyValuePairItems(list, encoding, false, nullptr, encodingType);
+    result->appendNonMultiPartKeyValuePairItems(formData, encodingType);
     return result;
 }
 
-Ref<FormData> FormData::createMultiPart(const FormDataList& list, const TextEncoding& encoding, Document* document)
+Ref<FormData> FormData::createMultiPart(const DOMFormData& formData, Document* document)
 {
     auto result = create();
-    result->appendKeyValuePairItems(list, encoding, true, document);
+    result->appendMultiPartKeyValuePairItems(formData, document);
     return result;
 }
 
@@ -182,74 +183,94 @@ void FormData::appendBlob(const URL& blobURL)
     m_lengthInBytes = std::nullopt;
 }
 
-void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncoding& encoding, bool isMultiPartForm, Document* document, EncodingType encodingType)
+static CString normalizeStringData(TextEncoding& encoding, const String& value)
 {
-    if (isMultiPartForm)
-        m_boundary = FormDataBuilder::generateUniqueBoundaryString();
+    return normalizeLineEndingsToCRLF(encoding.encode(value, EntitiesForUnencodables));
+}
 
-    Vector<char> encodedData;
-    for (const auto& item : list.items()) {
-        auto normalizedName = list.normalizeString(item.name);
-    
-        if (isMultiPartForm) {
-            Vector<char> header;
-            FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), normalizedName);
+void FormData::appendMultiPartFileValue(const File& file, Vector<char>& header, TextEncoding& encoding, Document* document)
+{
+    auto name = file.name();
 
-            bool shouldGenerateFile = false;
-
-            if (WTF::holds_alternative<RefPtr<File>>(item.data)) {
-                // If the current type is a file, then we also need to include the filename
-                auto& file = *WTF::get<RefPtr<File>>(item.data);
-                auto name = file.name();
-
-                // Let the application specify a filename if it's going to generate a replacement file for the upload.
-                const auto& path = file.path();
-                if (!path.isEmpty()) {
-                    if (Page* page = document->page()) {
-                        String generatedFileName;
-                        shouldGenerateFile = page->chrome().client().shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
-                        if (shouldGenerateFile)
-                            name = generatedFileName;
-                    }
-                }
-
-                // We have to include the filename=".." part in the header, even if the filename is empty
-                FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
-
-                // Add the content type if available, or "application/octet-stream" otherwise (RFC 1867).
-                auto contentType = file.type();
-                if (contentType.isEmpty())
-                    contentType = "application/octet-stream";
-                ASSERT(Blob::isNormalizedContentType(contentType));
-                FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.ascii());
-            }
-
-            FormDataBuilder::finishMultiPartHeader(header);
-
-            appendData(header.data(), header.size());
-
-            if (WTF::holds_alternative<RefPtr<File>>(item.data)) {
-                auto& file = *WTF::get<RefPtr<File>>(item.data);
-                if (!file.path().isEmpty())
-                    appendFile(file.path(), shouldGenerateFile);
-                else
-                    appendBlob(file.url());
-            } else {
-                auto normalizedStringData = list.normalizeString(WTF::get<String>(item.data));
-                appendData(normalizedStringData.data(), normalizedStringData.length());
-            }
-
-            appendData("\r\n", 2);
-        } else {
-            ASSERT(WTF::holds_alternative<String>(item.data));
-
-            auto normalizedStringData = list.normalizeString(WTF::get<String>(item.data));
-            FormDataBuilder::addKeyValuePairAsFormData(encodedData, normalizedName, normalizedStringData, encodingType);
+    // Let the application specify a filename if it's going to generate a replacement file for the upload.
+    bool shouldGenerateFile = false;
+    auto& path = file.path();
+    if (!path.isEmpty()) {
+        if (Page* page = document->page()) {
+            String generatedFileName;
+            shouldGenerateFile = page->chrome().client().shouldReplaceWithGeneratedFileForUpload(path, generatedFileName);
+            if (shouldGenerateFile)
+                name = generatedFileName;
         }
     }
 
-    if (isMultiPartForm)
-        FormDataBuilder::addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
+    // We have to include the filename=".." part in the header, even if the filename is empty
+    FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
+
+    // Add the content type if available, or "application/octet-stream" otherwise (RFC 1867).
+    auto contentType = file.type();
+    if (contentType.isEmpty())
+        contentType = ASCIILiteral("application/octet-stream");
+    ASSERT(Blob::isNormalizedContentType(contentType));
+
+    FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.ascii());
+
+    FormDataBuilder::finishMultiPartHeader(header);
+    appendData(header.data(), header.size());
+
+    if (!file.path().isEmpty())
+        appendFile(file.path(), shouldGenerateFile);
+    else
+        appendBlob(file.url());
+}
+
+void FormData::appendMultiPartStringValue(const String& string, Vector<char>& header, TextEncoding& encoding)
+{
+    FormDataBuilder::finishMultiPartHeader(header);
+    appendData(header.data(), header.size());
+
+    auto normalizedStringData = normalizeStringData(encoding, string);
+    appendData(normalizedStringData.data(), normalizedStringData.length());
+}
+
+void FormData::appendMultiPartKeyValuePairItems(const DOMFormData& formData, Document* document)
+{
+    m_boundary = FormDataBuilder::generateUniqueBoundaryString();
+
+    auto encoding = formData.encoding();
+
+    Vector<char> encodedData;
+    for (auto& item : formData.items()) {
+        auto normalizedName = normalizeStringData(encoding, item.name);
+    
+        Vector<char> header;
+        FormDataBuilder::beginMultiPartHeader(header, m_boundary.data(), normalizedName);
+
+        if (WTF::holds_alternative<RefPtr<File>>(item.data))
+            appendMultiPartFileValue(*WTF::get<RefPtr<File>>(item.data), header, encoding, document);
+        else
+            appendMultiPartStringValue(WTF::get<String>(item.data), header, encoding);
+
+        appendData("\r\n", 2);
+    }
+    
+    FormDataBuilder::addBoundaryToMultiPartHeader(encodedData, m_boundary.data(), true);
+
+    appendData(encodedData.data(), encodedData.size());
+}
+
+void FormData::appendNonMultiPartKeyValuePairItems(const DOMFormData& formData, EncodingType encodingType)
+{
+    auto encoding = formData.encoding();
+
+    Vector<char> encodedData;
+    for (auto& item : formData.items()) {
+        ASSERT(WTF::holds_alternative<String>(item.data));
+
+        auto normalizedName = normalizeStringData(encoding, item.name);
+        auto normalizedStringData = normalizeStringData(encoding, WTF::get<String>(item.data));
+        FormDataBuilder::addKeyValuePairAsFormData(encodedData, normalizedName, normalizedStringData, encodingType);
+    }
 
     appendData(encodedData.data(), encodedData.size());
 }

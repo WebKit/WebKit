@@ -24,7 +24,7 @@
 #include "ImageInputType.h"
 
 #include "CachedImage.h"
-#include "FormDataList.h"
+#include "DOMFormData.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLInputElement.h"
@@ -54,24 +54,25 @@ bool ImageInputType::isFormDataAppendable() const
     return true;
 }
 
-bool ImageInputType::appendFormData(FormDataList& encoding, bool) const
+bool ImageInputType::appendFormData(DOMFormData& formData, bool) const
 {
     if (!element().isActivatedSubmit())
         return false;
-    const AtomicString& name = element().name();
+
+    auto& name = element().name();
     if (name.isEmpty()) {
-        encoding.appendData("x", m_clickLocation.x());
-        encoding.appendData("y", m_clickLocation.y());
+        formData.append(ASCIILiteral("x"), String::number(m_clickLocation.x()));
+        formData.append(ASCIILiteral("y"), String::number(m_clickLocation.y()));
         return true;
     }
 
-    static NeverDestroyed<String> dotXString(MAKE_STATIC_STRING_IMPL(".x"));
-    static NeverDestroyed<String> dotYString(MAKE_STATIC_STRING_IMPL(".y"));
-    encoding.appendData(name + dotXString.get(), m_clickLocation.x());
-    encoding.appendData(name + dotYString.get(), m_clickLocation.y());
+    formData.append(makeString(name, ".x"), String::number(m_clickLocation.x()));
+    formData.append(makeString(name, ".y"), String::number(m_clickLocation.y()));
 
-    if (!element().value().isEmpty())
-        encoding.appendData(name, element().value());
+    auto value = element().value();
+    if (!value.isEmpty())
+        formData.append(name, value);
+
     return true;
 }
 

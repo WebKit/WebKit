@@ -1,3 +1,19 @@
+2017-09-12  Sam Weinig  <sam@webkit.org>
+
+        [Cleanup] Follow up cleanup for DOMFormData implementation
+        https://bugs.webkit.org/show_bug.cgi?id=176740
+
+        Reviewed by Alex Christensen.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/HashTraits.h:
+        (WTF::KeyValuePair::KeyValuePair): Deleted.
+        * wtf/KeyValuePair.h: Added.
+        (WTF::KeyValuePair::KeyValuePair):
+        (WTF::makeKeyValuePair):
+
+            Move KeyValuePair to its own header and add a makeKeyValuePair helper.
+
 2017-09-11  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221854.

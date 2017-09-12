@@ -17,8 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef FormData_h
-#define FormData_h
+#pragma once
 
 #include "BlobData.h"
 #include "URL.h"
@@ -29,8 +28,9 @@
 
 namespace WebCore {
 
+class DOMFormData;
 class Document;
-class FormDataList;
+class File;
 class TextEncoding;
 
 class FormDataElement {
@@ -202,8 +202,8 @@ public:
     WEBCORE_EXPORT static Ref<FormData> create(const void*, size_t);
     static Ref<FormData> create(const CString&);
     static Ref<FormData> create(const Vector<char>&);
-    static Ref<FormData> create(const FormDataList&, const TextEncoding&, EncodingType = FormURLEncoded);
-    static Ref<FormData> createMultiPart(const FormDataList&, const TextEncoding&, Document*);
+    static Ref<FormData> create(const DOMFormData&, EncodingType = FormURLEncoded);
+    static Ref<FormData> createMultiPart(const DOMFormData&, Document*);
     WEBCORE_EXPORT ~FormData();
 
     // FIXME: Both these functions perform a deep copy of m_elements, but differ in handling of other data members.
@@ -262,7 +262,10 @@ private:
     FormData();
     FormData(const FormData&);
 
-    void appendKeyValuePairItems(const FormDataList&, const TextEncoding&, bool isMultiPartForm, Document*, EncodingType = FormURLEncoded);
+    void appendMultiPartFileValue(const File&, Vector<char>& header, TextEncoding&, Document*);
+    void appendMultiPartStringValue(const String&, Vector<char>& header, TextEncoding&);
+    void appendMultiPartKeyValuePairItems(const DOMFormData&, Document*);
+    void appendNonMultiPartKeyValuePairItems(const DOMFormData&, EncodingType);
 
     bool hasGeneratedFiles() const;
     bool hasOwnedGeneratedFiles() const;
@@ -317,4 +320,3 @@ RefPtr<FormData> FormData::decode(Decoder& decoder)
 
 } // namespace WebCore
 
-#endif

@@ -29,9 +29,9 @@
 namespace WebCore {
 
 class ContainerNode;
+class DOMFormData;
 class Document;
 class FormAttributeTargetObserver;
-class FormDataList;
 class HTMLElement;
 class HTMLFormElement;
 class Node;
@@ -59,7 +59,7 @@ public:
 
     // Override in derived classes to get the encoded name=value pair for submitting.
     // Return true for a successful control (see HTML4-17.13.2).
-    virtual bool appendFormData(FormDataList&, bool) { return false; }
+    virtual bool appendFormData(DOMFormData&, bool) { return false; }
 
     void formWillBeDestroyed();
 

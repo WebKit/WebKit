@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class FormDataList;
+class DOMFormData;
 class TextControlInnerTextElement;
 
 // The class represents types of which UI contain text fields.
@@ -86,7 +86,7 @@ private:
     bool shouldRespectListAttribute() override;
     HTMLElement* placeholderElement() const final;
     void updatePlaceholderText() final;
-    bool appendFormData(FormDataList&, bool multipart) const final;
+    bool appendFormData(DOMFormData&, bool multipart) const final;
     void subtreeHasChanged() final;
     void capsLockStateMayHaveChanged() final;
     void updateAutoFillButton() final;
