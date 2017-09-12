@@ -1,5 +1,20 @@
 2017-09-11  Alex Christensen  <achristensen@webkit.org>
 
+        Fix memory leak introduced in r221894.
+        https://bugs.webkit.org/show_bug.cgi?id=176753
+
+        * UIProcess/Notifications/NotificationPermissionRequestManagerProxy.cpp:
+        (WebKit::NotificationPermissionRequestManagerProxy::createRequest):
+        The NotificationPermissionRequestManagerProxy keeps track of pending requests
+        so they can be denied when invalidating the page.  We add them to a HashMap and in
+        r221894 I removed the code that removes them from that map once the request is complete.
+        This code adds the completed task removal back.
+        The NotificationPermissionRequestManagerProxy and WebPageProxy have the same lifetime,
+        so protecting the WebPageProxy (m_page) makes sure there is no use-after-free when the
+        completion handler is called.
+
+2017-09-11  Alex Christensen  <achristensen@webkit.org>
+
         Make NotificationPermissionRequest work with completion handlers
         https://bugs.webkit.org/show_bug.cgi?id=176753
 

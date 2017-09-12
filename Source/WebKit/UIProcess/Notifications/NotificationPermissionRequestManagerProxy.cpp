@@ -48,7 +48,8 @@ void NotificationPermissionRequestManagerProxy::invalidateRequests()
 
 Ref<NotificationPermissionRequest> NotificationPermissionRequestManagerProxy::createRequest(uint64_t notificationID)
 {
-    auto request = NotificationPermissionRequest::create([notificationID, page = makeRef(m_page)](bool allowed) {
+    auto request = NotificationPermissionRequest::create([this, notificationID, page = makeRef(m_page)](bool allowed) {
+        m_pendingRequests.take(notificationID);
         page->process().send(Messages::WebPage::DidReceiveNotificationPermissionDecision(notificationID, allowed), page->pageID());
     });
     m_pendingRequests.add(notificationID, request.ptr());
