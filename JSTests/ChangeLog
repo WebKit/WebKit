@@ -1,3 +1,23 @@
+2017-09-12  Mark Lam  <mark.lam@apple.com>
+
+        REGRESSION: 3 stress/op_mod (and op_div) tests timing out on Debug JSC bots.
+        https://bugs.webkit.org/show_bug.cgi?id=176630
+
+        Reviewed by JF Bastien.
+
+        Debug builds are just slow, and these tests do a lot.  They pass when I run them
+        locally on my MacBook Pro.  So, I'm bumping their timing multiplier to 2.0x as
+        a speculative fix for the bots that are seeing these fail.
+
+        I also undid the skipping of the op_mod tests for debug builds.
+
+        * stress/op_div-ConstVar.js:
+        * stress/op_div-VarConst.js:
+        * stress/op_div-VarVar.js:
+        * stress/op_mod-ConstVar.js:
+        * stress/op_mod-VarConst.js:
+        * stress/op_mod-VarVar.js:
+
 2017-09-12  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip stress/value-to-boolean.js on Debug bots.
