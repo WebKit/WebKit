@@ -1,3 +1,72 @@
+2017-09-12  Dan Bernstein  <mitz@apple.com>
+
+        Update availability annotations to match the macOS 10.13 and iOS 11.0 GM seed SDKs
+        https://bugs.webkit.org/show_bug.cgi?id=176793
+
+        Reviewed by Tim Horton.
+
+        Changed WK_MAC_TBA and WK_IOS_TBA to 10.13 and 11.0, respectively, in all declarations that
+        appear in the GM seed SDKs. Additional changes and exceptions are noted below.
+
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h: Added missing availability annotation to
+          -_webView:dataOwnerForDropSession: and -_webView:dataOwnerForDragSession:.
+
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h: Removed rednundant
+          __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000 guards.
+
+        * UIProcess/API/Cocoa/WKWebsiteDataStorePrivate.h: Added missing availability annotation to
+          -_setResourceLoadStatisticsTestingCallback:.
+
+        * UIProcess/API/Cocoa/_WKFullscreenDelegate.h: Added missing availability annotation.
+
+        * UIProcess/API/Cocoa/_WKLinkIconParameters.h: Added availability annotation that had been
+          missing since macOS 10.12.3 and iOS 10.3. Corrected annotation for _WKLinkIconParameters.
+
+        * UIProcess/API/Cocoa/_WKWebsiteDataStoreConfiguration.h: Added missing TBA annotation to
+          _resourceLoadStatisticsDirectory.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInNodeHandle.h: Removed iOS
+          availability from macOS-only declaration and vice versa.
+
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.mm:
+        (-[WKWebProcessPlugInRangeHandle detectDataWithTypes:context:]): Removed an availability
+          annotation from this method implementation.
+
+        * Shared/API/Cocoa/WKDragDestinationAction.h:
+        * UIProcess/API/Cocoa/WKContentRuleList.h:
+        * UIProcess/API/Cocoa/WKContentRuleListStore.h:
+        * UIProcess/API/Cocoa/WKError.h:
+        * UIProcess/API/Cocoa/WKFrameInfo.h:
+        * UIProcess/API/Cocoa/WKHTTPCookieStore.h:
+        * UIProcess/API/Cocoa/WKNavigationActionPrivate.h:
+        * UIProcess/API/Cocoa/WKNavigationDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        * UIProcess/API/Cocoa/WKProcessPoolPrivate.h:
+        * UIProcess/API/Cocoa/WKSnapshotConfiguration.h:
+        * UIProcess/API/Cocoa/WKURLSchemeHandler.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTask.h:
+        * UIProcess/API/Cocoa/WKURLSchemeTaskPrivate.h:
+        * UIProcess/API/Cocoa/WKUserContentController.h:
+        * UIProcess/API/Cocoa/WKWebView.h:
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.h:
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataRecordPrivate.h:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.h:
+        * UIProcess/API/Cocoa/WKWindowFeaturesPrivate.h:
+        * UIProcess/API/Cocoa/_WKActivatedElementInfo.h:
+        * UIProcess/API/Cocoa/_WKAutomationSessionDelegate.h:
+        * UIProcess/API/Cocoa/_WKDiagnosticLoggingDelegate.h:
+        * UIProcess/API/Cocoa/_WKGeolocationCoreLocationProvider.h:
+        * UIProcess/API/Cocoa/_WKGeolocationPosition.h:
+        * UIProcess/API/Cocoa/_WKProcessPoolConfiguration.h:
+        * UIProcess/API/Cocoa/_WKUserContentExtensionStorePrivate.h:
+        * UIProcess/API/Cocoa/_WKUserContentFilterPrivate.h:
+        * UIProcess/API/Cocoa/_WKWebsitePolicies.h:
+        * UIProcess/_WKWebViewPrintFormatter.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInEditingDelegate.h:
+        * WebProcess/InjectedBundle/API/Cocoa/WKWebProcessPlugInRangeHandle.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextControllerPrivate.h:
+
 2017-09-12  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's runModal

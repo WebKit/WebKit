@@ -56,7 +56,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 /*! @abstract The web view of the webpage that contains this frame.
  */
-@property (nonatomic, readonly, weak) WKWebView *webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, weak) WKWebView *webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

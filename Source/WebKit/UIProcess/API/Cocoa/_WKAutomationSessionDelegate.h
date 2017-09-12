@@ -38,12 +38,12 @@
 
 - (void)_automationSessionDidDisconnectFromRemote:(_WKAutomationSession *)automationSession;
 
-- (WKWebView *)_automationSessionDidRequestNewWebView:(_WKAutomationSession *)automationSession WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (WKWebView *)_automationSessionDidRequestNewWebView:(_WKAutomationSession *)automationSession WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (BOOL)_automationSession:(_WKAutomationSession *)automationSession isShowingJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_automationSession:(_WKAutomationSession *)automationSession dismissCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_automationSession:(_WKAutomationSession *)automationSession acceptCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (NSString *)_automationSession:(_WKAutomationSession *)automationSession messageOfCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_automationSession:(_WKAutomationSession *)automationSession setUserInput:(NSString *)value forCurrentJavaScriptDialogForWebView:(WKWebView *)webView WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 // FIXME: Objective-C delegate methods shouldn't use C API types like WKPageRef. We need to
 // migrate clients to use WKWebView, or expose the same behavior via a C SPI for those clients.

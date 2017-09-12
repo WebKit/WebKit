@@ -44,11 +44,11 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 - (WKWebProcessPlugInFrame *)htmlIFrameElementContentFrame;
 
 #if TARGET_OS_IPHONE
-- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_API_AVAILABLE(ios(9.0));
+- (UIImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width WK_API_AVAILABLE(ios(11.0));
 #else
-- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_API_AVAILABLE(macosx(10.11), ios(9.0));
-- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options WK_API_AVAILABLE(macosx(10.11));
+- (NSImage *)renderedImageWithOptions:(WKSnapshotOptions)options width:(NSNumber *)width WK_API_AVAILABLE(macosx(10.13));
 #endif
 
 @property (nonatomic, readonly) CGRect elementBounds;

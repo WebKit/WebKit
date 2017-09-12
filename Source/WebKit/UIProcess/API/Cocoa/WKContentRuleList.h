@@ -29,7 +29,7 @@
 
 #import <Foundation/Foundation.h>
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @interface WKContentRuleList : NSObject
 
 /*! @abstract A copy of the identifier of the content extension. */

@@ -31,14 +31,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @interface _WKWebsiteDataStoreConfiguration : NSObject
 
 @property (nonatomic, copy, setter=_setWebStorageDirectory:) NSURL *_webStorageDirectory;
 @property (nonatomic, copy, setter=_setIndexedDBDatabaseDirectory:) NSURL *_indexedDBDatabaseDirectory;
 @property (nonatomic, copy, setter=_setWebSQLDatabaseDirectory:) NSURL *_webSQLDatabaseDirectory;
 @property (nonatomic, copy, setter=_setCookieStorageFile:) NSURL *_cookieStorageFile;
-@property (nonatomic, copy, setter=_setResourceLoadStatisticsDirectory:) NSURL *_resourceLoadStatisticsDirectory;
+@property (nonatomic, copy, setter=_setResourceLoadStatisticsDirectory:) NSURL *_resourceLoadStatisticsDirectory WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @end
 

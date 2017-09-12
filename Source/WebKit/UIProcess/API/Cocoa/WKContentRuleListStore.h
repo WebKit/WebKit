@@ -31,7 +31,7 @@
 
 @class WKContentRuleList;
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @interface WKContentRuleListStore : NSObject
 
 + (instancetype)defaultStore;

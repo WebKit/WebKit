@@ -53,15 +53,15 @@
 - (void)_setObjectsForBundleParametersWithDictionary:(NSDictionary *)dictionary WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #if !TARGET_OS_IPHONE
-- (void)_resetPluginLoadClientPolicies:(NSDictionary *)policies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
-@property (nonatomic, readonly, copy) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)_resetPluginLoadClientPolicies:(NSDictionary *)policies WK_API_AVAILABLE(macosx(10.13));
+@property (nonatomic, readonly, copy) NSDictionary *_pluginLoadClientPolicies WK_API_AVAILABLE(macosx(10.13));
 #endif
 
 @property (nonatomic, weak, setter=_setDownloadDelegate:) id <_WKDownloadDelegate> _downloadDelegate;
 @property (nonatomic, weak, setter=_setAutomationDelegate:) id <_WKAutomationDelegate> _automationDelegate WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #if TARGET_OS_IPHONE
-@property (nonatomic, setter=_setCoreLocationProvider:) id <_WKGeolocationCoreLocationProvider> _coreLocationProvider WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setCoreLocationProvider:) id <_WKGeolocationCoreLocationProvider> _coreLocationProvider WK_API_AVAILABLE(ios(11.0));
 #endif
 
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
@@ -76,16 +76,16 @@
 - (void)_terminateNetworkProcess;
 
 // Test only.
-- (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (pid_t)_networkProcessIdentifier WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (pid_t)_storageProcessIdentifier WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 // Test only.
-- (size_t)_webProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (size_t)_webProcessCount WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 - (size_t)_pluginProcessCount WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_syncNetworkProcessCookies WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)_syncNetworkProcessCookies WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 // Test only. Should be called before any web content processes are launched.
-+ (void)_forceGameControllerFramework WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (void)_forceGameControllerFramework WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @property (nonatomic, getter=_isCookieStoragePartitioningEnabled, setter=_setCookieStoragePartitioningEnabled:) BOOL _cookieStoragePartitioningEnabled WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 

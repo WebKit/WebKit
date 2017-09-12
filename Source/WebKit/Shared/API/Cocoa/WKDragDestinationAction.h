@@ -35,6 +35,6 @@ typedef NS_OPTIONS(NSUInteger, WKDragDestinationAction) {
     WKDragDestinationActionEdit    = 2,
     WKDragDestinationActionLoad    = 4,
     WKDragDestinationActionAny     = NSUIntegerMax
-} WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 #endif

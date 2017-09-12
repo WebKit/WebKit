@@ -38,7 +38,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 
 @property (nonatomic) BOOL ignoreSynchronousMessagingTimeoutsForTesting WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
-@property (nonatomic, copy) NSArray<NSURL *> *additionalReadAccessAllowedURLs WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, copy) NSArray<NSURL *> *additionalReadAccessAllowedURLs WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 // Network Process properties
 // FIXME: These should be be per-session/data store when we support multiple non-persistent sessions/data stores.
@@ -49,14 +49,14 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 @property (nonatomic) BOOL diskCacheSpeculativeValidationEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 @property (nonatomic, nullable, copy) NSString *sourceApplicationBundleIdentifier WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 @property (nonatomic, nullable, copy) NSString *sourceApplicationSecondaryIdentifier WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
-@property (nonatomic) BOOL allowsCellularAccess WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic) BOOL shouldCaptureAudioInUIProcess WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) BOOL allowsCellularAccess WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nonatomic) BOOL shouldCaptureAudioInUIProcess WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 #if TARGET_OS_IPHONE
 @property (nonatomic, nullable, copy) NSString *CTDataConnectionServiceType WK_API_AVAILABLE(ios(10.3));
 @property (nonatomic) BOOL alwaysRunsAtBackgroundPriority WK_API_AVAILABLE(ios(10.3));
-@property (nonatomic) BOOL shouldTakeUIBackgroundAssertion WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic) BOOL shouldTakeUIBackgroundAssertion WK_API_AVAILABLE(ios(11.0));
 #endif
-@property (nonatomic) pid_t presentingApplicationPID WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic) pid_t presentingApplicationPID WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

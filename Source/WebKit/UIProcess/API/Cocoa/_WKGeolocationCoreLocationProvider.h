@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class _WKGeolocationPosition;
 
-WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macosx(10.13), ios(11.0))
 @protocol _WKGeolocationCoreLocationListener <NSObject>
 - (void)geolocationAuthorizationGranted;
 - (void)geolocationAuthorizationDenied;
@@ -42,7 +42,7 @@ WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
 - (void)resetGeolocation;
 @end
 
-WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_API_AVAILABLE(macosx(10.13), ios(11.0))
 @protocol _WKGeolocationCoreLocationProvider <NSObject>
 - (void)setListener:(id <_WKGeolocationCoreLocationListener>)listener;
 - (void)requestGeolocationAuthorization;

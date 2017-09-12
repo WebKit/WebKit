@@ -229,9 +229,9 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  device scale. The completionHandler is passed the image of the viewport contents or an error.
  */
 #if TARGET_OS_IPHONE
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(UIImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(ios(11.0));
 #else
-- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+- (void)takeSnapshotWithConfiguration:(nullable WKSnapshotConfiguration *)snapshotConfiguration completionHandler:(void (^)(NSImage * _Nullable snapshotImage, NSError * _Nullable error))completionHandler WK_API_AVAILABLE(macosx(10.13));
 #endif
 
 /*! @abstract A Boolean value indicating whether horizontal swipe gestures
@@ -282,7 +282,7 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
 /* @abstract Checks whether or not WKWebViews handle the given URL scheme by default.
  @param scheme The URL scheme to check.
  */
-+ (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
++ (BOOL)handlesURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

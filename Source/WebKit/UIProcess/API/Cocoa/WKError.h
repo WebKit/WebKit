@@ -52,10 +52,10 @@ typedef NS_ENUM(NSInteger, WKErrorCode) {
     WKErrorWebViewInvalidated,
     WKErrorJavaScriptExceptionOccurred,
     WKErrorJavaScriptResultTypeIsUnsupported WK_API_AVAILABLE(macosx(10.11), ios(9.0)),
-    WKErrorContentRuleListStoreCompileFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKErrorContentRuleListStoreLookUpFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKErrorContentRuleListStoreRemoveFailed WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
-    WKErrorContentRuleListStoreVersionMismatch WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    WKErrorContentRuleListStoreCompileFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreLookUpFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreRemoveFailed WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
+    WKErrorContentRuleListStoreVersionMismatch WK_API_AVAILABLE(macosx(10.13), ios(11.0)),
 } WK_API_AVAILABLE(macosx(10.10), ios(8.0));
 
 NS_ASSUME_NONNULL_END

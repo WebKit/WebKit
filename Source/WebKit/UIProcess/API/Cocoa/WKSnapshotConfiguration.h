@@ -31,7 +31,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macosx(10.13), ios(11.0))
 @interface WKSnapshotConfiguration : NSObject <NSCopying>
 
 /*! @abstract The rect to snapshot in view coordinates.

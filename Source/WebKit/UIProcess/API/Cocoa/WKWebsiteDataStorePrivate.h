@@ -40,41 +40,41 @@ typedef NS_OPTIONS(NSUInteger, _WKWebsiteDataStoreFetchOptions) {
 + (NSSet<NSString *> *)_allWebsiteDataTypesIncludingPrivate;
 + (BOOL)_defaultDataStoreExists;
 
-- (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (instancetype)_initWithConfiguration:(_WKWebsiteDataStoreConfiguration *)configuration WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 - (void)_fetchDataRecordsOfTypes:(NSSet<NSString *> *)dataTypes withOptions:(_WKWebsiteDataStoreFetchOptions)options completionHandler:(void (^)(NSArray<WKWebsiteDataRecord *> *))completionHandler;
 
 @property (nonatomic, setter=_setResourceLoadStatisticsEnabled:) BOOL _resourceLoadStatisticsEnabled WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 // ResourceLoadStatistics SPI for testing.
-- (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetIsPrevalentResource:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsHadUserInteraction:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetIsGrandfathered:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsIsGrandfathered:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetSubresourceUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetSubresourceUniqueRedirectTo:(NSString *)hostNameRedirectedTo forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetTimeToLiveUserInteraction:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetGrandfatheringTime:(double)seconds WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetMaxStatisticsEntries:(size_t)entries WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetPruneEntriesDownTo:(size_t)entries WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsUpdateCookiePartitioning WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSubmitTelemetry WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_resourceLoadStatisticsResetToConsistentState WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-- (void)_setResourceLoadStatisticsTestingCallback:(nullable void (^)(WKWebsiteDataStore *, NSString *))callback;
+- (void)_resourceLoadStatisticsSetLastSeen:(double)seconds forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetIsPrevalentResource:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsIsPrevalentResource:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetHadUserInteraction:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsHadUserInteraction:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetIsGrandfathered:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsIsGrandfathered:(NSString *)host completionHandler:(void (^)(BOOL))completionHandler WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetSubframeUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetSubresourceUnderTopFrameOrigin:(NSString *)topFrameHostName forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetSubresourceUniqueRedirectTo:(NSString *)hostNameRedirectedTo forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetTimeToLiveUserInteraction:(double)seconds WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetTimeToLiveCookiePartitionFree:(double)seconds WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetMinimumTimeBetweenDataRecordsRemoval:(double)seconds WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetGrandfatheringTime:(double)seconds WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetMaxStatisticsEntries:(size_t)entries WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetPruneEntriesDownTo:(size_t)entries WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsProcessStatisticsAndDataRecords WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsUpdateCookiePartitioning WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetShouldPartitionCookies:(BOOL)value forHost:(NSString *)host WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSubmitTelemetry WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetNotifyPagesWhenDataRecordsWereScanned:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetShouldClassifyResourcesBeforeDataRecordsRemoval:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetNotifyPagesWhenTelemetryWasCaptured:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsSetShouldSubmitTelemetry:(BOOL)value WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStore WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsClearInMemoryAndPersistentStoreModifiedSinceHours:(unsigned)hours WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_resourceLoadStatisticsResetToConsistentState WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+- (void)_setResourceLoadStatisticsTestingCallback:(nullable void (^)(WKWebsiteDataStore *, NSString *))callback WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

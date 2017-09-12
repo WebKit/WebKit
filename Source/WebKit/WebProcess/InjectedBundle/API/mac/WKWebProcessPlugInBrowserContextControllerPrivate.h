@@ -43,7 +43,7 @@
 @property (nonatomic, readonly) _WKRemoteObjectRegistry *_remoteObjectRegistry;
 
 @property (weak, setter=_setFormDelegate:) id <WKWebProcessPlugInFormDelegatePrivate> _formDelegate;
-@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (weak, setter=_setEditingDelegate:) id <WKWebProcessPlugInEditingDelegate> _editingDelegate WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
 
 @property (nonatomic, setter=_setDefersLoading:) BOOL _defersLoading;
 

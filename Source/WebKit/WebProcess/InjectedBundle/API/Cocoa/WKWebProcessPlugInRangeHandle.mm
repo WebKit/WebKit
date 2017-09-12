@@ -71,7 +71,7 @@ using namespace WebKit;
 }
 
 #if TARGET_OS_IPHONE
-- (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context WK_API_AVAILABLE(ios(WK_IOS_TBA))
+- (NSArray *)detectDataWithTypes:(WKDataDetectorTypes)types context:(NSDictionary *)context
 {
 #if ENABLE(DATA_DETECTION)
     RefPtr<WebCore::Range> coreRange = &_rangeHandle->coreRange();

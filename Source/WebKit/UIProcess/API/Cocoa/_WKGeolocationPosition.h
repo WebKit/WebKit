@@ -33,7 +33,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-WK_CLASS_AVAILABLE(ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(ios(11.0))
 @interface _WKGeolocationPosition : NSObject
 
 + (instancetype)positionWithLocation:(CLLocation *)location;

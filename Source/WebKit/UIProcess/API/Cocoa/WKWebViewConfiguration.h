@@ -188,12 +188,12 @@ WK_CLASS_AVAILABLE(macosx(10.10), ios(8.0))
  An exception will be thrown if you try to register a URL scheme handler for a URL scheme that WebKit handles internally.
  You can use +[WKWebView handlesURLScheme:] to check the availability of a given URL scheme.
  */
-- (void)setURLSchemeHandler:(nullable id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (void)setURLSchemeHandler:(nullable id <WKURLSchemeHandler>)urlSchemeHandler forURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 /* @abstract Returns the currently registered URL scheme handler object for the given URL scheme.
  @param scheme The URL scheme to lookup.
  */
-- (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+- (nullable id <WKURLSchemeHandler>)urlSchemeHandlerForURLScheme:(NSString *)urlScheme WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

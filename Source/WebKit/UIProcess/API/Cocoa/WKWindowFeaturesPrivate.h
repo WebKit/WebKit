@@ -31,10 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface WKWindowFeatures (WKPrivate)
 
-@property (nullable, nonatomic, readonly) NSNumber *_locationBarVisibility WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nullable, nonatomic, readonly) NSNumber *_scrollbarsVisibility WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nullable, nonatomic, readonly) NSNumber *_fullscreenDisplay WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nullable, nonatomic, readonly) NSNumber *_dialogDisplay WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nullable, nonatomic, readonly) NSNumber *_locationBarVisibility WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nullable, nonatomic, readonly) NSNumber *_scrollbarsVisibility WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nullable, nonatomic, readonly) NSNumber *_fullscreenDisplay WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nullable, nonatomic, readonly) NSNumber *_dialogDisplay WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 

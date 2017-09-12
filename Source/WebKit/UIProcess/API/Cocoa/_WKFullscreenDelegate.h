@@ -27,6 +27,7 @@
 
 #if WK_API_ENABLED
 
+WK_API_AVAILABLE(macosx(10.13))
 @protocol _WKFullscreenDelegate <NSObject>
 
 @optional

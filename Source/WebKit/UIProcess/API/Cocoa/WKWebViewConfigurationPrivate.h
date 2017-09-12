@@ -32,7 +32,7 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
     _WKDragLiftDelayShort = 0,
     _WKDragLiftDelayMedium,
     _WKDragLiftDelayLong
-} WK_API_AVAILABLE(ios(WK_IOS_TBA));
+} WK_API_AVAILABLE(ios(11.0));
 #endif
 
 @class WKWebView;
@@ -71,8 +71,8 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setAlwaysRunsAtForegroundPriority:) BOOL _alwaysRunsAtForegroundPriority WK_API_AVAILABLE(ios(9_0));
 @property (nonatomic, setter=_setInlineMediaPlaybackRequiresPlaysInlineAttribute:) BOOL _inlineMediaPlaybackRequiresPlaysInlineAttribute WK_API_AVAILABLE(ios(10.0));
 @property (nonatomic, setter=_setAllowsInlineMediaPlaybackAfterFullscreen:) BOOL _allowsInlineMediaPlaybackAfterFullscreen  WK_API_AVAILABLE(ios(10.0));
-@property (nonatomic, setter=_setAllowsBlockSelection:) BOOL _allowsBlockSelection WK_API_AVAILABLE(ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setDragLiftDelay:) _WKDragLiftDelay _dragLiftDelay WK_API_AVAILABLE(ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setAllowsBlockSelection:) BOOL _allowsBlockSelection WK_API_AVAILABLE(ios(11.0));
+@property (nonatomic, setter=_setDragLiftDelay:) _WKDragLiftDelay _dragLiftDelay WK_API_AVAILABLE(ios(11.0));
 #else
 @property (nonatomic, setter=_setShowsURLsInToolTips:) BOOL _showsURLsInToolTips WK_API_AVAILABLE(macosx(10.12));
 @property (nonatomic, setter=_setServiceControlsEnabled:) BOOL _serviceControlsEnabled WK_API_AVAILABLE(macosx(10.12));
@@ -85,9 +85,9 @@ typedef NS_ENUM(NSUInteger, _WKDragLiftDelay) {
 @property (nonatomic, setter=_setRequiresUserActionForVideoPlayback:) BOOL _requiresUserActionForVideoPlayback WK_API_DEPRECATED_WITH_REPLACEMENT("mediaTypesRequiringUserActionForPlayback", macosx(10.12, 10.12), ios(10.0, 10.0));
 
 @property (nonatomic, setter=_setOverrideContentSecurityPolicy:) NSString *_overrideContentSecurityPolicy WK_API_AVAILABLE(macosx(10.12.3), ios(10.3));
-@property (nonatomic, setter=_setMediaContentTypesRequiringHardwareSupport:) NSString *_mediaContentTypesRequiringHardwareSupport WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setLegacyEncryptedMediaAPIEnabled:) BOOL _legacyEncryptedMediaAPIEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
-@property (nonatomic, setter=_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:) BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback WK_API_AVAILABLE(macosx(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, setter=_setMediaContentTypesRequiringHardwareSupport:) NSString *_mediaContentTypesRequiringHardwareSupport WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nonatomic, setter=_setLegacyEncryptedMediaAPIEnabled:) BOOL _legacyEncryptedMediaAPIEnabled WK_API_AVAILABLE(macosx(10.13), ios(11.0));
+@property (nonatomic, setter=_setAllowMediaContentTypesRequiringHardwareSupportAsFallback:) BOOL _allowMediaContentTypesRequiringHardwareSupportAsFallback WK_API_AVAILABLE(macosx(10.13), ios(11.0));
 
 @end
 
