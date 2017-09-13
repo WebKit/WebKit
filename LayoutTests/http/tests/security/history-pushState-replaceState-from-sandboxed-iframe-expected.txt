@@ -1,0 +1,22 @@
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+Tests history.replaceState(), history.pushState() from a sandboxed iframe
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.history.replaceState(null, "New title", location.href) did not throw exception.
+PASS window.history.pushState(null, "New title", location.href) did not throw exception.
+PASS window.history.replaceState(null, "New title", completeURL("")) threw exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/. Paths and fragments must match for a sandboxed document..
+PASS window.history.pushState(null, "New title", completeURL("")) threw exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/. Paths and fragments must match for a sandboxed document..
+PASS window.history.replaceState(null, "New title", completeURL("dummy")) threw exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/dummy. Paths and fragments must match for a sandboxed document..
+PASS window.history.pushState(null, "New title", completeURL("dummy")) threw exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/dummy. Paths and fragments must match for a sandboxed document..
+PASS window.history.replaceState(null, "New title", completeURL("", "dummy")) threw exception SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/?dummy. Paths and fragments must match for a sandboxed document..
+PASS window.history.pushState(null, "New title", completeURL("", "dummy")) threw exception SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/?dummy. Paths and fragments must match for a sandboxed document..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
