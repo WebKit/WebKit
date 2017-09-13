@@ -28,6 +28,10 @@ else ()
         PRIVATE libdispatch${DEBUG_SUFFIX}
         PRIVATE libicuin${DEBUG_SUFFIX}
         PRIVATE libicuuc${DEBUG_SUFFIX}
+        PRIVATE ${LIBXML2_LIBRARIES}
+        PRIVATE ${LIBXSLT_LIBRARIES}
+        PRIVATE ${SQLITE_LIBRARIES}
+        PRIVATE ${ZLIB_LIBRARIES}
     )
 endif ()
 
