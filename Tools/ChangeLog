@@ -1,3 +1,25 @@
+2017-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support DataTransfer.getData and DataTransfer.setData when dragging or dropping
+        https://bugs.webkit.org/show_bug.cgi?id=176672
+        <rdar://problem/34353723>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds new tests and tweaks existing DataInteractionTests to cover the tweaks made in this patch.
+        SinglePlainTextURLTypeIdentifiers: Verify that inline presentation style is requested when dragging plaintext.
+        SinglePlainTextWordTypeIdentifiers: Verify that inline presentation style is requested when dragging a link.
+        ExternalSourceInlineTextToFileInput:
+                Verify that an item provider marked as preferring inline presentation does not trigger file uploads by
+                dragging a piece of inline text into a file input.
+        CanStartDragOnDivWithDraggableAttribute:
+                Verify that DataTransfer.setData and DataTransfer.getData work as expected by moving a draggable div.
+                The test harness writes the id of the draggable div via the DataTransfer, and upon drop, reads the id
+                back to figure out which element to append to the drop destination.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (TestWebKitAPI::TEST):
+
 2017-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dragging & dropping a file creates an attachment element even when it's disabled

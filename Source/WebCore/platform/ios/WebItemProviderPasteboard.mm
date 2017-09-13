@@ -107,6 +107,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     if (self = [super init]) {
         _representations = adoptNS([[NSMutableArray alloc] init]);
         _preferredPresentationSize = CGSizeZero;
+        _preferredPresentationStyle = WebPreferredPresentationStyleUnspecified;
     }
 
     return self;
@@ -148,6 +149,21 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
         block([self itemAtIndex:index], index);
 }
 
+static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPresentationStyle style)
+{
+    switch (style) {
+    case WebPreferredPresentationStyleUnspecified:
+        return UIPreferredPresentationStyleUnspecified;
+    case WebPreferredPresentationStyleInline:
+        return UIPreferredPresentationStyleInline;
+    case WebPreferredPresentationStyleAttachment:
+        return UIPreferredPresentationStyleAttachment;
+    default:
+        ASSERT_NOT_REACHED();
+        return UIPreferredPresentationStyleUnspecified;
+    }
+}
+
 - (UIItemProvider *)itemProvider
 {
     if (!self.numberOfItems)
@@ -171,6 +187,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
     }
     [itemProvider setPreferredPresentationSize:self.preferredPresentationSize];
     [itemProvider setSuggestedName:self.suggestedName];
+    [itemProvider setPreferredPresentationStyle:uiPreferredPresentationStyle(self.preferredPresentationStyle)];
     return itemProvider.autorelease();
 }
 
@@ -193,6 +210,60 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 @end
 
+@interface WebItemProviderLoadResult : NSObject
+
++ (instancetype)loadResultWithFileURLMap:(TypeToFileURLMap *)fileURLs presentationStyle:(UIPreferredPresentationStyle)presentationStyle;
++ (instancetype)emptyLoadResult;
+
+- (NSURL *)fileURLForType:(NSString *)type;
+@property (nonatomic, readonly) NSArray<NSURL *> *loadedFileURLs;
+@property (nonatomic, readonly) NSArray<NSString *> *loadedTypeIdentifiers;
+@property (nonatomic, readonly) BOOL canBeRepresentedAsFileUpload;
+
+@end
+
+@implementation WebItemProviderLoadResult {
+    RetainPtr<TypeToFileURLMap> _fileURLs;
+}
+
++ (instancetype)emptyLoadResult
+{
+    return [[[self alloc] initWithFileURLMap:@{ } presentationStyle:UIPreferredPresentationStyleUnspecified] autorelease];
+}
+
++ (instancetype)loadResultWithFileURLMap:(TypeToFileURLMap *)fileURLs presentationStyle:(UIPreferredPresentationStyle)presentationStyle
+{
+    return [[[self alloc] initWithFileURLMap:fileURLs presentationStyle:presentationStyle] autorelease];
+}
+
+- (instancetype)initWithFileURLMap:(TypeToFileURLMap *)fileURLs presentationStyle:(UIPreferredPresentationStyle)presentationStyle
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _fileURLs = fileURLs;
+    _canBeRepresentedAsFileUpload = presentationStyle != UIPreferredPresentationStyleInline;
+
+    return self;
+}
+
+- (NSURL *)fileURLForType:(NSString *)type
+{
+    return [_fileURLs objectForKey:type];
+}
+
+- (NSArray<NSURL *> *)loadedFileURLs
+{
+    return [_fileURLs allValues];
+}
+
+- (NSArray<NSString *> *)loadedTypeIdentifiers
+{
+    return [_fileURLs allKeys];
+}
+
+@end
+
 @interface WebItemProviderPasteboard ()
 
 @property (nonatomic) NSInteger numberOfItems;
@@ -204,10 +275,10 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 @implementation WebItemProviderPasteboard {
     // FIXME: These ivars should be refactored to be Vector<RetainPtr<Type>> instead of generic NSArrays.
     RetainPtr<NSArray> _itemProviders;
-    RetainPtr<NSArray> _cachedTypeIdentifiers;
-    RetainPtr<NSArray> _typeToFileURLMaps;
     RetainPtr<NSArray> _supportedTypeIdentifiers;
     RetainPtr<WebItemProviderRegistrationInfoList> _stagedRegistrationInfoList;
+
+    Vector<RetainPtr<WebItemProviderLoadResult>> _loadResults;
 }
 
 + (instancetype)sharedInstance
@@ -226,9 +297,9 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
         _itemProviders = adoptNS([[NSArray alloc] init]);
         _changeCount = 0;
         _pendingOperationCount = 0;
-        _typeToFileURLMaps = adoptNS([[NSArray alloc] init]);
         _supportedTypeIdentifiers = nil;
         _stagedRegistrationInfoList = nil;
+        _loadResults = { };
     }
     return self;
 }
@@ -245,9 +316,6 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 - (NSArray<NSString *> *)pasteboardTypes
 {
-    if (_cachedTypeIdentifiers)
-        return _cachedTypeIdentifiers.get();
-
     NSMutableSet<NSString *> *allTypes = [NSMutableSet set];
     NSMutableArray<NSString *> *allTypesInOrder = [NSMutableArray array];
     for (UIItemProvider *provider in _itemProviders.get()) {
@@ -259,8 +327,7 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
             [allTypesInOrder addObject:typeIdentifier];
         }
     }
-    _cachedTypeIdentifiers = allTypesInOrder;
-    return _cachedTypeIdentifiers.get();
+    return allTypesInOrder;
 }
 
 - (NSArray<__kindof NSItemProvider *> *)itemProviders
@@ -276,12 +343,6 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
     _itemProviders = itemProviders;
     _changeCount++;
-    _cachedTypeIdentifiers = nil;
-
-    NSMutableArray *typeToFileURLMaps = [NSMutableArray arrayWithCapacity:itemProviders.count];
-    [itemProviders enumerateObjectsUsingBlock:[typeToFileURLMaps] (UIItemProvider *, NSUInteger, BOOL *) {
-        [typeToFileURLMaps addObject:@{ }];
-    }];
 }
 
 - (NSInteger)numberOfItems
@@ -291,18 +352,18 @@ typedef NSDictionary<NSString *, NSURL *> TypeToFileURLMap;
 
 - (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
 {
-    if ([_typeToFileURLMaps count] != [_itemProviders count]) {
+    if (_loadResults.size() != [_itemProviders count]) {
         ASSERT_NOT_REACHED();
         return nil;
     }
 
-    TypeToFileURLMap *typeToFileURLMap = [_typeToFileURLMaps objectAtIndex:index];
-    for (NSString *loadedType in typeToFileURLMap) {
+    WebItemProviderLoadResult *loadResult = _loadResults[index].get();
+    for (NSString *loadedType in loadResult.loadedTypeIdentifiers) {
         if (!UTTypeConformsTo((CFStringRef)loadedType, (CFStringRef)typeIdentifier))
             continue;
 
         // We've already loaded data relevant for this UTI type onto disk, so there's no need to ask the UIItemProvider for the same data again.
-        if (NSData *result = [NSData dataWithContentsOfURL:typeToFileURLMap[loadedType] options:NSDataReadingMappedIfSafe error:nil])
+        if (NSData *result = [NSData dataWithContentsOfURL:[loadResult fileURLForType:loadedType] options:NSDataReadingMappedIfSafe error:nil])
             return result;
     }
     return nil;
@@ -379,11 +440,13 @@ static Class classForTypeIdentifier(NSString *typeIdentifier, NSString *&outType
     return _changeCount;
 }
 
-- (NSArray<NSURL *> *)fileURLsForDataInteraction
+- (NSArray<NSURL *> *)droppedFileURLs
 {
     NSMutableArray<NSURL *> *fileURLs = [NSMutableArray array];
-    for (TypeToFileURLMap *typeToFileURLMap in _typeToFileURLMaps.get())
-        [fileURLs addObjectsFromArray:[typeToFileURLMap allValues]];
+    for (auto loadResult : _loadResults) {
+        if ([loadResult canBeRepresentedAsFileUpload])
+            [fileURLs addObjectsFromArray:[loadResult loadedFileURLs]];
+    }
     return fileURLs;
 }
 
@@ -402,6 +465,9 @@ static BOOL typeConformsToTypes(NSString *type, NSArray *conformsToTypes)
     NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
     NSInteger numberOfFiles = 0;
     for (UIItemProvider *itemProvider in _itemProviders.get()) {
+        if (itemProvider.preferredPresentationStyle == UIPreferredPresentationStyleInline)
+            continue;
+
         for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
             if (!typeConformsToTypes(identifier, supportedFileTypes))
                 continue;
@@ -458,22 +524,24 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
 
 - (void)doAfterLoadingProvidedContentIntoFileURLs:(WebItemProviderFileLoadBlock)action synchronousTimeout:(NSTimeInterval)synchronousTimeout
 {
+    _loadResults.clear();
+
     auto changeCountBeforeLoading = _changeCount;
-    auto typeToFileURLMaps = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
+    auto loadResults = adoptNS([[NSMutableArray alloc] initWithCapacity:[_itemProviders count]]);
 
     // First, figure out which item providers we want to try and load files from.
     auto itemProvidersToLoad = adoptNS([[NSMutableArray alloc] init]);
     auto typeIdentifiersToLoad = adoptNS([[NSMutableArray alloc] init]);
     auto indicesOfitemProvidersToLoad = adoptNS([[NSMutableArray alloc] init]);
     RetainPtr<WebItemProviderPasteboard> protectedSelf = self;
-    [_itemProviders enumerateObjectsUsingBlock:[protectedSelf, itemProvidersToLoad, typeIdentifiersToLoad, indicesOfitemProvidersToLoad, typeToFileURLMaps] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
+    [_itemProviders enumerateObjectsUsingBlock:[protectedSelf, itemProvidersToLoad, typeIdentifiersToLoad, indicesOfitemProvidersToLoad, loadResults] (UIItemProvider *itemProvider, NSUInteger index, BOOL *) {
         NSString *typeIdentifierToLoad = [protectedSelf typeIdentifierToLoadForRegisteredTypeIdentfiers:itemProvider.registeredTypeIdentifiers];
         if (typeIdentifierToLoad) {
             [itemProvidersToLoad addObject:itemProvider];
             [typeIdentifiersToLoad addObject:typeIdentifierToLoad];
             [indicesOfitemProvidersToLoad addObject:@(index)];
         }
-        [typeToFileURLMaps addObject:@{ }];
+        [loadResults addObject:[WebItemProviderLoadResult emptyLoadResult]];
     }];
 
     if (![itemProvidersToLoad count]) {
@@ -489,15 +557,17 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
         RetainPtr<NSString> typeIdentifier = [typeIdentifiersToLoad objectAtIndex:index];
         NSUInteger indexInItemProviderArray = [[indicesOfitemProvidersToLoad objectAtIndex:index] unsignedIntegerValue];
         RetainPtr<NSString> suggestedName = [itemProvider suggestedName];
+        auto presentationStyle = [itemProvider preferredPresentationStyle];
         dispatch_group_enter(fileLoadingGroup.get());
         dispatch_group_enter(synchronousFileLoadingGroup.get());
-        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[synchronousFileLoadingGroup, setFileURLsLock, indexInItemProviderArray, suggestedName, typeIdentifier, typeToFileURLMaps, fileLoadingGroup] (NSURL *url, NSError *) {
+        [itemProvider loadFileRepresentationForTypeIdentifier:typeIdentifier.get() completionHandler:[synchronousFileLoadingGroup, setFileURLsLock, indexInItemProviderArray, suggestedName, typeIdentifier, loadResults, fileLoadingGroup, presentationStyle] (NSURL *url, NSError *) {
             // After executing this completion block, UIKit removes the file at the given URL. However, we need this data to persist longer for the web content process.
             // To address this, we hard link the given URL to a new temporary file in the temporary directory. This follows the same flow as regular file upload, in
             // WKFileUploadPanel.mm. The temporary files are cleaned up by the system at a later time.
             if (NSURL *destination = linkTemporaryItemProviderFilesToDropStagingDirectory(url, suggestedName.get(), typeIdentifier.get())) {
+                WebItemProviderLoadResult *loadResult = [WebItemProviderLoadResult loadResultWithFileURLMap:@{ typeIdentifier.get() : destination } presentationStyle:presentationStyle];
                 [setFileURLsLock lock];
-                [typeToFileURLMaps setObject:[NSDictionary dictionaryWithObject:destination forKey:typeIdentifier.get()] atIndexedSubscript:indexInItemProviderArray];
+                [loadResults setObject:loadResult atIndexedSubscript:indexInItemProviderArray];
                 [setFileURLsLock unlock];
             }
             dispatch_group_leave(fileLoadingGroup.get());
@@ -506,11 +576,13 @@ static NSURL *linkTemporaryItemProviderFilesToDropStagingDirectory(NSURL *url, N
     }
 
     RetainPtr<WebItemProviderPasteboard> retainedSelf = self;
-    auto itemLoadCompletion = [retainedSelf, synchronousFileLoadingGroup, fileLoadingGroup, typeToFileURLMaps, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
-        if (changeCountBeforeLoading == retainedSelf->_changeCount)
-            retainedSelf->_typeToFileURLMaps = typeToFileURLMaps;
+    auto itemLoadCompletion = [retainedSelf, synchronousFileLoadingGroup, fileLoadingGroup, loadResults, completionBlock = makeBlockPtr(action), changeCountBeforeLoading] {
+        if (changeCountBeforeLoading == retainedSelf->_changeCount) {
+            for (WebItemProviderLoadResult *loadResult in loadResults.get())
+                retainedSelf->_loadResults.append(loadResult);
+        }
 
-        completionBlock([retainedSelf fileURLsForDataInteraction]);
+        completionBlock([retainedSelf droppedFileURLs]);
     };
 
     if (synchronousTimeout > 0 && !dispatch_group_wait(synchronousFileLoadingGroup.get(), dispatch_time(DISPATCH_TIME_NOW, synchronousTimeout * NSEC_PER_SEC))) {

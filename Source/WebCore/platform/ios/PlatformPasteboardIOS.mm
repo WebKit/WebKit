@@ -97,11 +97,11 @@ int PlatformPasteboard::numberOfFiles()
 
 Vector<String> PlatformPasteboard::filenamesForDataInteraction()
 {
-    if (![m_pasteboard respondsToSelector:@selector(fileURLsForDataInteraction)])
+    if (![m_pasteboard respondsToSelector:@selector(droppedFileURLs)])
         return { };
 
     Vector<String> filenames;
-    for (NSURL *fileURL in [m_pasteboard fileURLsForDataInteraction])
+    for (NSURL *fileURL in [m_pasteboard droppedFileURLs])
         filenames.append(fileURL.path);
 
     return filenames;
@@ -344,6 +344,7 @@ void PlatformPasteboard::write(const String& pasteboardType, const String& text)
 {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
+    [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
     NSString *pasteboardTypeAsNSString = pasteboardType;
     if (!text.isEmpty() && pasteboardTypeAsNSString.length) {
@@ -381,6 +382,7 @@ void PlatformPasteboard::write(const PasteboardURL& url)
 {
 #if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
+    [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
     if (NSURL *nsURL = url.url) {
         if (!url.title.isEmpty())

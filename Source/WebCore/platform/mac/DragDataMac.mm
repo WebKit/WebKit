@@ -160,17 +160,7 @@ bool DragData::containsColor() const
 
 bool DragData::containsFiles() const
 {
-    NSArray *supportedFileTypes = Pasteboard::supportedFileUploadPasteboardTypes();
-    Vector<String> types;
-    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-    for (auto& type : types) {
-        auto cfType = type.createCFString();
-        for (NSString *fileType in supportedFileTypes) {
-            if (UTTypeConformsTo(cfType.get(), (CFStringRef)fileType))
-                return true;
-        }
-    }
-    return false;
+    return numberOfFiles();
 }
 
 unsigned DragData::numberOfFiles() const

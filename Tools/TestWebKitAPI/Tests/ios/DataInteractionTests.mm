@@ -411,10 +411,12 @@ TEST(DataInteractionTests, SinglePlainTextWordTypeIdentifiers)
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(1UL, registeredTypes.count);
     EXPECT_WK_STREQ([(NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.firstObject UTF8String]);
     EXPECT_EQ([webView stringByEvaluatingJavaScript:@"source.value"].length, 0UL);
+    EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
     EXPECT_WK_STREQ("pneumonoultramicroscopicsilicovolcanoconiosis", [webView editorValue].UTF8String);
 }
 
@@ -430,11 +432,13 @@ TEST(DataInteractionTests, SinglePlainTextURLTypeIdentifiers)
     [webView stringByEvaluatingJavaScript:@"source.selectionEnd = source.value.length"];
     [dataInteractionSimulator runFrom:CGPointMake(100, 50) to:CGPointMake(100, 300)];
 
-    NSArray *registeredTypes = [[dataInteractionSimulator sourceItemProviders].firstObject registeredTypeIdentifiers];
+    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    NSArray *registeredTypes = [itemProvider registeredTypeIdentifiers];
     EXPECT_EQ(2UL, registeredTypes.count);
     EXPECT_WK_STREQ([(NSString *)kUTTypeURL UTF8String], [registeredTypes.firstObject UTF8String]);
     EXPECT_WK_STREQ([(NSString *)kUTTypeUTF8PlainText UTF8String], [registeredTypes.lastObject UTF8String]);
     EXPECT_EQ(0UL, [webView stringByEvaluatingJavaScript:@"source.value"].length);
+    EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
     EXPECT_WK_STREQ("https://webkit.org/", [webView editorValue].UTF8String);
 }
 
@@ -540,9 +544,13 @@ TEST(DataInteractionTests, CanStartDragOnDivWithDraggableAttribute)
     [webView synchronouslyLoadTestPageNamed:@"custom-draggable-div"];
 
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
-    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(250, 100)];
+    [dataInteractionSimulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 250)];
 
     EXPECT_GT([dataInteractionSimulator sourceItemProviders].count, 0UL);
+    NSItemProvider *itemProvider = [dataInteractionSimulator sourceItemProviders].firstObject;
+    EXPECT_EQ(UIPreferredPresentationStyleInline, itemProvider.preferredPresentationStyle);
+    EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"!!destination.querySelector('#item')"]);
+    EXPECT_WK_STREQ(@"PASS", [webView stringByEvaluatingJavaScript:@"item.textContent"]);
 }
 
 TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
@@ -562,6 +570,22 @@ TEST(DataInteractionTests, ExternalSourcePlainTextToIFrame)
     auto containerWidth = [webView stringByEvaluatingJavaScript:@"container.getBoundingClientRect().width"].floatValue;
     auto containerHeight = [webView stringByEvaluatingJavaScript:@"container.getBoundingClientRect().height"].floatValue;
     checkDragCaretRectIsContainedInRect([simulator lastKnownDragCaretRect], CGRectMake(containerLeft, containerTop, containerWidth, containerHeight));
+}
+
+TEST(DataInteractionTests, ExternalSourceInlineTextToFileInput)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"file-uploading"];
+
+    auto simulatedItemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [simulatedItemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleInline];
+    [simulatedItemProvider registerObject:@"This item provider requested inline presentation style." visibility:NSItemProviderRepresentationVisibilityAll];
+
+    auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+    [dataInteractionSimulator setExternalItemProviders:@[ simulatedItemProvider.get() ]];
+    [dataInteractionSimulator runFrom:CGPointMake(200, 100) to:CGPointMake(100, 100)];
+
+    EXPECT_WK_STREQ("", [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
 
 TEST(DataInteractionTests, ExternalSourceJSONToFileInput)

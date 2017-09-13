@@ -331,7 +331,7 @@ static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
 {
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue.
     if (type == "text/plain")
-        return (NSString *)kUTTypeText;
+        return (NSString *)kUTTypePlainText;
 
     // Special case because UTI doesn't work with Cocoa's URL type.
     if (type == "text/uri-list")
@@ -423,7 +423,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     if (!cocoaType)
         return;
 
-    platformStrategies()->pasteboardStrategy()->writeToPasteboard(type, data, m_pasteboardName);
+    platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), data, m_pasteboardName);
 }
 
 Vector<String> Pasteboard::types()

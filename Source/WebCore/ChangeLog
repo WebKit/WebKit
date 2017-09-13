@@ -1,3 +1,112 @@
+2017-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS DnD] Support DataTransfer.getData and DataTransfer.setData when dragging or dropping
+        https://bugs.webkit.org/show_bug.cgi?id=176672
+        <rdar://problem/34353723>
+
+        Reviewed by Ryosuke Niwa.
+
+        Makes several tweaks to support DataTransfer.getData and DataTransfer.setData when dragging and dropping on iOS.
+        See per-method changes below for more details. This patch also renames some old variable and property names
+        along the way, so they no longer reference "data interaction", and instead refer to the feature by its post-WWDC
+        name.
+
+        New test: DataInteractionTests.ExternalSourceInlineTextToFileInput
+        Modified: DataInteractionTests.CanStartDragOnDivWithDraggableAttribute
+                  DataInteractionTests.SinglePlainTextURLTypeIdentifiers
+                  DataInteractionTests.SinglePlainTextWordTypeIdentifiers
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+
+        In cocoaTypeFromHTMLClipboardType, map the "text/plain" MIME type to the "public.plain-text" UTI. Previously,
+        this corresponded to "public.text", which is incorrect, since "public.text" also includes non-plain-text types
+        such as "public.html", thereby confusing NSItemProviders. Importantly, this makes it so that plain text strings
+        written via DataTransfer.setData() can actually be read back as a cocoa value, since "public.plain-text" is one
+        of the UTIs in +[NSString readableTypeIdentifiersForItemProvider].
+
+        (WebCore::Pasteboard::writeString):
+
+        Instead of writing { type : data } to the pasteboard, write { cocoaType : data }. It appears that this was
+        changed unintentionally in r156588 when upstreaming the iOS pasteboard implementation. This is made apparent by
+        how Pasteboard::readString() requests the cocoa UTI from the platform pasteboard, but Pasteboard::writeString()
+        sends the MIME type.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::filenamesForDataInteraction):
+        (WebCore::PlatformPasteboard::write):
+
+        When writing plain text or a URL, specify that the item wants inline style representation. This prevents odd and
+        unexpected behaviors (for instance, being able to drag plain text into the Files app as a file), but it also
+        makes getData() not bail and return the null string on drop, due to forFileDrag() being true in
+        DataTransfer::getData().
+
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList init]):
+        (uiPreferredPresentationStyle):
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+
+        Set the preferred presentation style when generating an item provider from a registration list.
+
+        (+[WebItemProviderLoadResult emptyLoadResult]):
+        (+[WebItemProviderLoadResult loadResultWithFileURLMap:presentationStyle:]):
+        (-[WebItemProviderLoadResult initWithFileURLMap:presentationStyle:]):
+        (-[WebItemProviderLoadResult fileURLForType:]):
+        (-[WebItemProviderLoadResult loadedFileURLs]):
+        (-[WebItemProviderLoadResult loadedTypeIdentifiers]):
+
+        Introduce WebItemProviderLoadResult, an object that encapsulates information needed to represent the contents of
+        an NSItemProvider dropped in web content. Previously, WebItemProviderPasteboard maintained an array of
+        dictionaries of UTI => file URL, where each dictionary represents where the dropped data for a given item
+        provider lives. Now that we additionally need to remember (for each item provider) whether we should consider
+        its data as a file upload, it's more helpful to have a separate object representing the "load results" of a
+        dropped item provider.
+
+        (-[WebItemProviderPasteboard init]):
+        (-[WebItemProviderPasteboard pasteboardTypes]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard _preLoadedDataConformingToType:forItemProviderAtIndex:]):
+        (-[WebItemProviderPasteboard droppedFileURLs]):
+
+        Respect item provider load results that should not be exposed as a file to the page.
+
+        (-[WebItemProviderPasteboard numberOfFiles]):
+
+        Respect item providers with UIPreferredPresentationStyleInline by not counting them towards the number of files.
+
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+
+        Adjust for the transition from an array of dictionaries representing loaded item providers to an array of
+        WebItemProviderLoadResults.
+
+        (-[WebItemProviderPasteboard fileURLsForDataInteraction]): Deleted.
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::containsFiles const):
+
+        DragData::containsFiles previously only considered whether or not particular UTIs appear in the pasteboard. In
+        the case of Mac, this is NSFilesPromisePboardType and NSFilenamesPboardType, but in the case of iOS, this is a
+        much broader category (anything conforming to "public.content"), since files are not exposed explicitly as
+        "promise" or "file" types in the list of registered UTIs. This caused us to always bail in
+        DataTransfer.getData() on drop on iOS, since we will always believe there's a file on the pasteboard if there's
+        anything conforming to "public.content" at all.
+
+        To fix this and simplify the code at the same time, we simply replace the currently implementation of
+        DragData::containsFiles to return true iff the number of files is nonzero. On Mac, DragData::numberOfFiles
+        checks the same UTIs as DragData::containsFiles (NSFilesPromisePboardType and NSFilenamesPboardType), but
+        additionally counts the number of file URLs corresponding to those UTIs.
+
+        On iOS, the implementation of numberOfFiles is new to iOS 11, and relevant only in the drag and drop flow.
+        Previously, we would consider an item provider to "contain" a file if it had a UTI conforming to one of the UTIs
+        acceptable for drag and drop (at the time of writing, these are ["public.content", "public.zip",
+        "public.folder"]). With this patch, anything conforming to these UTIs will continue to be represented as files,
+        but importantly, if an item provider indicates that it should be represented inline (i.e. a plain text
+        selection), then we don't consider that item provider as vending a file. This allows us to distinguish between
+        cases where we are dragging a plain text selection over a file input, and when we are dragging a plain text file.
+        In both cases, "public.plain-text" is offered as a registered UTI, but in the former, the item provider should
+        indicate that inline presentation style is preferred. Refer to <rdar://problem/32202542> for more details.
+
 2017-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         QualifiedName::init should assume AtomicStrings::init was already called
