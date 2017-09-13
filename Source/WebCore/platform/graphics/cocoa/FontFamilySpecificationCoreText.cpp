@@ -26,15 +26,11 @@
 #include "config.h"
 #include "FontFamilySpecificationCoreText.h"
 
+#include <pal/spi/cocoa/CoreTextSPI.h>
 #include "FontCache.h"
 #include "FontSelector.h"
-#include <CoreText/CoreText.h>
-#include <wtf/SoftLinking.h>
 
-#if USE_PLATFORM_SYSTEM_FALLBACK_LIST
-SOFT_LINK_FRAMEWORK(CoreText);
-SOFT_LINK_MAY_FAIL(CoreText, CTFontCopyPhysicalFont, CTFontRef, (CTFontRef font), (font));
-#endif
+#include <CoreText/CoreText.h>
 
 namespace WebCore {
 
@@ -55,10 +51,8 @@ FontRanges FontFamilySpecificationCoreText::fontRanges(const FontDescription& fo
 
     auto fontForSynthesisComputation = font;
 #if USE_PLATFORM_SYSTEM_FALLBACK_LIST
-    if (canLoadCTFontCopyPhysicalFont()) {
-        if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font.get())))
-            fontForSynthesisComputation = physicalFont;
-    }
+    if (auto physicalFont = adoptCF(CTFontCopyPhysicalFont(font.get())))
+        fontForSynthesisComputation = physicalFont;
 #endif
 
     font = preparePlatformFont(font.get(), fontDescription, nullptr, nullptr, { }, fontDescription.computedSize());

@@ -1,3 +1,12 @@
+2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Unskip fast/text/system-font-synthetic-italic.html
+        https://bugs.webkit.org/show_bug.cgi?id=175944
+
+        Reviewed by Jon Lee.
+
+        * pal/spi/cocoa/CoreTextSPI.h:
+
 2017-09-12  Eric Carlson  <eric.carlson@apple.com>
 
         Switch MediaPlayerPrivateAVFoundation to release logging
