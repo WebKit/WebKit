@@ -111,6 +111,10 @@ public:
 
     const T* operator->() const { return storagePointer(); }
 
+#if !ASSERT_DISABLED
+    bool isConstructed() const { return m_isConstructed; }
+#endif
+
 private:
     using PointerType = typename std::remove_const<T>::type*;
 

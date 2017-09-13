@@ -45,7 +45,7 @@ void QualifiedName::init()
     if (initialized)
         return;
 
-    AtomicString::init();
+    ASSERT_WITH_MESSAGE(WTF::nullAtomData.isConstructed(), "AtomicString::init should have been called");
     anyName.construct(nullAtom(), starAtom(), starAtom());
     initialized = true;
 }

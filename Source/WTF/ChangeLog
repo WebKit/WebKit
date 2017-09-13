@@ -1,3 +1,13 @@
+2017-09-12  Joseph Pecoraro  <pecoraro@apple.com>
+
+        QualifiedName::init should assume AtomicStrings::init was already called
+        https://bugs.webkit.org/show_bug.cgi?id=176639
+
+        Reviewed by Sam Weinig.
+
+        * wtf/NeverDestroyed.h:
+        (WTF::LazyNeverDestroyed::isConstructed const):
+
 2017-09-12  Brent Fulgham  <bfulgham@apple.com>
 
         Show punycode to user if a URL mixes Armenian Seh or Vo with other scripts
