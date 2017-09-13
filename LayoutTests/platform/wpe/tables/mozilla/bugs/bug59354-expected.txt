@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 462x151 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 460x149
-          RenderTableRow {TR} at (0,0) size 460x149
-            RenderTableCell {TD} at (0,0) size 460x149 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-              RenderTable {TABLE} at (1,1) size 458x147 [border: (1px outset #808080)]
-                RenderTableSection {TBODY} at (1,1) size 456x145
-                  RenderTableRow {TR} at (0,1) size 456x28
+      RenderTable {TABLE} at (0,0) size 461x151 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 459x149
+          RenderTableRow {TR} at (0,0) size 459x149
+            RenderTableCell {TD} at (0,0) size 459x149 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+              RenderTable {TABLE} at (1,1) size 457x147 [border: (1px outset #808080)]
+                RenderTableSection {TBODY} at (1,1) size 455x145
+                  RenderTableRow {TR} at (0,1) size 455x28
                     RenderTableCell {TD} at (1,1) size 137x28 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                       RenderText {#text} at (5,5) size 127x17
                         text run at (5,5) width 127: "General Preferences"
@@ -25,14 +25,14 @@ layer at (0,0) size 800x600
                       RenderInline {A} at (0,0) size 37x17 [color=#0000EE]
                         RenderText {#text} at (5,5) size 37x17
                           text run at (5,5) width 37: "Email"
-                    RenderTableCell {TD} at (404,1) size 51x28 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
-                      RenderText {#text} at (5,5) size 41x17
-                        text run at (5,5) width 41: "Views"
-                  RenderTableRow {TR} at (0,30) size 456x114
-                    RenderTableCell {TD} at (1,30) size 454x114 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
-                      RenderBlock (anonymous) at (5,5) size 444x18
-                        RenderBR {BR} at (222,0) size 0x17
-                      RenderTable {TABLE} at (67,23) size 320x86
+                    RenderTableCell {TD} at (404,1) size 50x28 [border: (1px inset #808080)] [r=0 c=4 rs=1 cs=1]
+                      RenderText {#text} at (5,5) size 40x17
+                        text run at (5,5) width 40: "Views"
+                  RenderTableRow {TR} at (0,30) size 455x114
+                    RenderTableCell {TD} at (1,30) size 453x114 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=5]
+                      RenderBlock (anonymous) at (5,5) size 443x18
+                        RenderBR {BR} at (221,0) size 1x17
+                      RenderTable {TABLE} at (66,23) size 321x86
                         RenderTableSection {TBODY} at (0,0) size 320x86
                           RenderTableRow {TR} at (0,2) size 320x82
                             RenderTableCell {TD} at (2,2) size 316x82 [r=0 c=0 rs=1 cs=1]

@@ -4,8 +4,8 @@ layer at (0,0) size 800x272
   RenderBlock {html} at (0,0) size 800x272
     RenderBody {body} at (8,16) size 784x248
       RenderBlock {p} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 167x17
-          text run at (0,0) width 167: "TH VALIGN=BOTTOM"
+        RenderText {#text} at (0,0) size 165x17
+          text run at (0,0) width 165: "TH VALIGN=BOTTOM"
       RenderTable {table} at (0,34) size 784x214 [border: (1px outset #808080)]
         RenderTableSection (anonymous) at (1,1) size 782x212
           RenderTableRow {tr} at (0,2) size 782x208

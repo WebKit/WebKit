@@ -4,8 +4,8 @@ layer at (0,0) size 800x18
   RenderBlock {HTML} at (0,0) size 800x18
     RenderBody {BODY} at (0,0) size 800x18
       RenderBlock {P} at (0,0) size 800x18
-        RenderText {#text} at (0,0) size 425x17
-          text run at (0,0) width 425: "Test passes the blue box is in the upper-left corner of the black box."
+        RenderText {#text} at (0,0) size 424x17
+          text run at (0,0) width 424: "Test passes the blue box is in the upper-left corner of the black box."
 layer at (0,18) size 198x198
   RenderBlock (positioned) {DIV} at (0,18) size 198x198 [border: (3px solid #000000)]
 layer at (3,21) size 96x48

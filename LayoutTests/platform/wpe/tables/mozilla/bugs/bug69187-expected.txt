@@ -32,5 +32,5 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 51x17
                   text run at (0,0) width 51: "Melanie"
               RenderBlock {P} at (2,70) size 51x18
-                RenderText {#text} at (0,0) size 48x17
-                  text run at (0,0) width 48: "Tamara"
+                RenderText {#text} at (0,0) size 47x17
+                  text run at (0,0) width 47: "Tamara"

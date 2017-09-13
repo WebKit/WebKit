@@ -147,8 +147,8 @@ layer at (0,0) size 785x964
                 text run at (2,2) width 22: "zap"
       RenderBlock (anonymous) at (0,684) size 769x36
         RenderBR {BR} at (0,0) size 0x17
-        RenderText {#text} at (0,18) size 231x17
-          text run at (0,18) width 231: "PERCENTAGE WIDTH TABLES"
+        RenderText {#text} at (0,18) size 229x17
+          text run at (0,18) width 229: "PERCENTAGE WIDTH TABLES"
       RenderTable {TABLE} at (0,720) size 769x82 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 767x80
           RenderTableRow {TR} at (0,2) size 767x76

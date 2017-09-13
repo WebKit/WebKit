@@ -42,8 +42,8 @@ layer at (0,0) size 800x348
           RenderText {#text} at (71,7) size 48x17
             text run at (71,7) width 48: "B 10 \x{21E8}"
         RenderBlock (floating) {P} at (4,204) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
-          RenderText {#text} at (7,7) size 49x17
-            text run at (7,7) width 49: "\x{21E6} A 11"
+          RenderText {#text} at (7,7) size 48x17
+            text run at (7,7) width 48: "\x{21E6} A 11"
         RenderBlock (floating) {P} at (190,204) size 126x32 [color=#FFFFFF] [bgcolor=#000080] [border: (3px solid #0000FF)]
           RenderText {#text} at (71,7) size 48x17
             text run at (71,7) width 48: "B 12 \x{21E8}"

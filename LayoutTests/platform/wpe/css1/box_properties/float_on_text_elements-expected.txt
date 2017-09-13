@@ -173,9 +173,9 @@ layer at (0,0) size 785x2714
         RenderTableSection {TBODY} at (1,1) size 767x1383
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x1357
             RenderTableCell {TD} at (0,691) size 12x27 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
@@ -338,7 +338,7 @@ layer at (0,0) size 785x2714
                     text run at (0,18) width 411: "background of the DIV element is blue and its width is 75%."
                     text run at (0,36) width 33: "This "
                     text run at (32,36) width 369: "text should all be inside the blue rectangle. The blue DIV "
-                    text run at (401,36) width 160: "element has another DIV"
+                    text run at (400,36) width 161: "element has another DIV"
                     text run at (0,54) width 218: "element as a child. It has a yellow "
                     text run at (217,54) width 344: "background color and is floated to the right. Since it is"
                     text run at (0,72) width 12: "a "

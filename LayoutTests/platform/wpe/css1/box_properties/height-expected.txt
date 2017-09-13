@@ -9,7 +9,9 @@ layer at (0,0) size 785x974
       RenderBlock {PRE} at (0,34) size 769x45
         RenderText {#text} at (0,0) size 168x45
           text run at (0,0) width 160: ".one {height: 50px;}"
+          text run at (160,0) width 0: " "
           text run at (0,15) width 168: ".two {height: 100px;}"
+          text run at (168,15) width 0: " "
           text run at (0,30) width 0: " "
       RenderBlock {HR} at (0,92) size 769x2 [border: (1px inset #000000)]
       RenderBlock (anonymous) at (0,102) size 769x50
@@ -40,9 +42,9 @@ layer at (0,0) size 785x974
         RenderTableSection {TBODY} at (1,1) size 767x436
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
-              RenderInline {STRONG} at (0,0) size 163x17
-                RenderText {#text} at (4,4) size 163x17
-                  text run at (4,4) width 163: "TABLE Testing Section"
+              RenderInline {STRONG} at (0,0) size 161x17
+                RenderText {#text} at (4,4) size 161x17
+                  text run at (4,4) width 161: "TABLE Testing Section"
           RenderTableRow {TR} at (0,26) size 767x410
             RenderTableCell {TD} at (0,218) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17

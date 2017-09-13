@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 386x40 [border: (1px inset #FF0000)] [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (2,2) size 366x35
                 text run at (2,2) width 366: "This is a table with a red dashed border to test the STYLE"
-                text run at (2,20) width 205: "attribute of the TABLE element."
+                text run at (2,20) width 204: "attribute of the TABLE element."
             RenderTableCell {TD} at (390,2) size 386x40 [border: (1px inset #FF0000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (2,2) size 366x35
                 text run at (2,2) width 366: "This is a table with a red dashed border to test the STYLE"
-                text run at (2,20) width 205: "attribute of the TABLE element."
+                text run at (2,20) width 204: "attribute of the TABLE element."

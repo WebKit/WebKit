@@ -12,7 +12,7 @@ layer at (8,8) size 769x1340
             RenderBlock {META} at (21,91) size 111x2 [border: (1px dotted #FFFFFF)]
             RenderBlock {TITLE} at (21,109) size 111x110 [border: (1px dotted #FFFFFF)]
               RenderText {#text} at (1,1) size 74x107
-                text run at (1,1) width 67: "Evil Tests:"
+                text run at (1,1) width 66: "Evil Tests:"
                 text run at (1,19) width 66: "Rendering"
                 text run at (1,37) width 74: "BODY and"
                 text run at (1,55) width 63: "HEAD as"
@@ -66,14 +66,13 @@ layer at (8,8) size 769x1340
               RenderInline {CODE} at (0,0) size 64x30
                 RenderText {#text} at (285,8) size 64x30
                   text run at (285,8) width 64: "HEAD"
-              RenderText {#text} at (349,1) size 506x73
-                text run at (349,1) width 158: " as children"
-                text run at (1,38) width 35: "of "
+              RenderText {#text} at (349,1) size 192x36
+                text run at (349,1) width 192: " as children of"
               RenderInline {CODE} at (0,0) size 64x30
-                RenderText {#text} at (36,45) size 64x30
-                  text run at (36,45) width 64: "HTML"
-              RenderText {#text} at (100,38) size 43x36
-                text run at (100,38) width 43: " - 2"
+                RenderText {#text} at (1,45) size 64x30
+                  text run at (1,45) width 64: "HTML"
+              RenderText {#text} at (65,38) size 43x36
+                text run at (65,38) width 43: " - 2"
             RenderBlock {P} at (21,161) size 542x38 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 383x17
                 text run at (1,1) width 383: "If you have any comments to make regarding this test, e-mail"
@@ -111,6 +110,7 @@ layer at (8,8) size 769x1340
             RenderBlock {PRE} at (21,510) size 542x17 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 40x15
                 text run at (1,1) width 40: "  ..."
+                text run at (41,1) width 0: " "
             RenderBlock {P} at (21,543) size 542x20 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 453x17
                 text run at (1,1) width 453: "The dotted borders and lines and the text in the left cell should be white."
@@ -139,7 +139,7 @@ layer at (8,8) size 769x1340
             RenderBlock {P} at (21,885) size 542x38 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 508x35
                 text run at (1,1) width 508: "There should also be some alternate stylesheets set up to allow you to display the"
-                text run at (1,19) width 311: "<META> content. This may help with diagnosis."
+                text run at (1,19) width 310: "<META> content. This may help with diagnosis."
             RenderBlock {H2} at (21,947) size 542x29 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 154x26
                 text run at (1,1) width 154: "Submit Results"
@@ -165,11 +165,11 @@ layer at (8,8) size 769x1340
                 RenderText {#text} at (0,0) size 0x0
             RenderBlock {HR} at (21,1120) size 542x2 [border: (1px dotted #FFFF00)]
             RenderBlock {P} at (21,1138) size 542x20 [border: (1px dotted #FFFF00)]
-              RenderInline {A} at (0,0) size 161x17 [color=#0000EE]
-                RenderText {#text} at (1,1) size 161x17
-                  text run at (1,1) width 161: "Up to the Evil Tests Page"
-              RenderText {#text} at (162,1) size 4x17
-                text run at (162,1) width 4: "."
+              RenderInline {A} at (0,0) size 160x17 [color=#0000EE]
+                RenderText {#text} at (1,1) size 160x17
+                  text run at (1,1) width 160: "Up to the Evil Tests Page"
+              RenderText {#text} at (161,1) size 4x17
+                text run at (161,1) width 4: "."
             RenderBlock {P} at (21,1174) size 542x20 [border: (1px dotted #FFFF00)]
               RenderText {#text} at (1,1) size 173x17
                 text run at (1,1) width 173: "This page is maintained by "

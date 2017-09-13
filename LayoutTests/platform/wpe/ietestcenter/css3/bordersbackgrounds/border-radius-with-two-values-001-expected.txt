@@ -4,7 +4,7 @@ layer at (0,0) size 800x288
   RenderBlock {HTML} at (0,0) size 800x288
     RenderBody {BODY} at (8,16) size 784x264
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 512x17
-          text run at (0,0) width 512: "Test passes if the box has rounded corners and there is no red visible on the page."
+        RenderText {#text} at (0,0) size 511x17
+          text run at (0,0) width 511: "Test passes if the box has rounded corners and there is no red visible on the page."
       RenderBlock {DIV} at (0,34) size 230x230 [border: (19px solid #FF0000)]
       RenderBlock {DIV} at (0,33) size 230x231 [border: (19px solid #008000)]

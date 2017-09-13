@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
         RenderText {#text} at (379,36) size 196x17
           text run at (379,36) width 196: " cell spans 4 columns of row 3."
       RenderBlock {P} at (0,70) size 784x36
-        RenderText {#text} at (0,0) size 764x35
-          text run at (0,0) width 764: "If the test succeeds then you should see no text inside the table. If you see the text 'FAIL' inside the table, then the test has"
+        RenderText {#text} at (0,0) size 763x35
+          text run at (0,0) width 763: "If the test succeeds then you should see no text inside the table. If you see the text 'FAIL' inside the table, then the test has"
           text run at (0,18) width 39: "failed."
       RenderTable {TABLE} at (0,122) size 102x76 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 100x74
@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 16: "    "
             RenderTableCell {TD} at (24,50) size 74x22 [bgcolor=#0000FF] [border: (1px inset #808080)] [r=1 c=1 rs=2 cs=2]
               RenderBlock {DIV} at (2,2) size 70x18 [color=#008000]
-                RenderText {#text} at (14,0) size 56x17
-                  text run at (14,0) width 56: "   FAIL  "
+                RenderText {#text} at (15,0) size 55x17
+                  text run at (15,0) width 55: "   FAIL  "
           RenderTableRow {TR} at (0,50) size 100x22
             RenderTableCell {TD} at (2,50) size 96x22 [bgcolor=#008000] [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=3]
               RenderBlock {DIV} at (2,2) size 92x18

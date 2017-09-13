@@ -4,8 +4,8 @@ layer at (0,0) size 800x282
   RenderBlock {HTML} at (0,0) size 800x282
     RenderBody {BODY} at (8,16) size 784x258
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 425x17
-          text run at (0,0) width 425: "Test passes if the blue and orange boxes below are the same height."
+        RenderText {#text} at (0,0) size 424x17
+          text run at (0,0) width 424: "Test passes if the blue and orange boxes below are the same height."
 layer at (8,130) size 784x144
   RenderBlock (relative positioned) {DIV} at (0,114) size 784x144
     RenderInline {SPAN} at (0,0) size 96x192 [color=#0000FF] [bgcolor=#0000FF]

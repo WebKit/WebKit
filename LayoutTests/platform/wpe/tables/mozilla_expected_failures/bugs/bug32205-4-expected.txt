@@ -14,10 +14,10 @@ layer at (0,0) size 800x600
           text run at (0,18) width 338: "attribute of 100%, and contains another table, table B."
       RenderBlock {P} at (0,86) size 784x36
         RenderText {#text} at (0,0) size 784x35
-          text run at (0,0) width 221: "Table B has two cells, B1 and B2. "
-          text run at (221,0) width 255: "B1 has a fixed pixel height of 30 pixels. "
-          text run at (476,0) width 164: "B2 has a height of 100%. "
-          text run at (640,0) width 130: "In IE, this causes B2"
+          text run at (0,0) width 220: "Table B has two cells, B1 and B2. "
+          text run at (220,0) width 255: "B1 has a fixed pixel height of 30 pixels. "
+          text run at (475,0) width 164: "B2 has a height of 100%. "
+          text run at (639,0) width 130: "In IE, this causes B2"
           text run at (0,18) width 784: "to stretch to fill the entire height of cell A2, while in Netscape 6 / Gecko, it seems to have no impact on the height of cell A2."
       RenderBlock {P} at (0,138) size 784x208
         RenderTable {TABLE} at (0,0) size 127x208 [border: (1px outset #808080)]

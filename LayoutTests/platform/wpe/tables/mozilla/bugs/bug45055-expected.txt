@@ -47,5 +47,5 @@ layer at (0,0) size 800x248
                 text run at (1,1) width 49: "Line 10"
           RenderTableRow {TR} at (0,211) size 53x20
             RenderTableCell {TD} at (1,211) size 51x20 [color=#0000FF] [bgcolor=#CCCCCC] [r=10 c=0 rs=1 cs=1]
-              RenderText {#text} at (1,1) size 49x17
-                text run at (1,1) width 49: "Line 11"
+              RenderText {#text} at (1,1) size 48x17
+                text run at (1,1) width 48: "Line 11"

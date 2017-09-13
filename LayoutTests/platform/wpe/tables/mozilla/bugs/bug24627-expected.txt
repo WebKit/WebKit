@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
               RenderText {#text} at (2,2) size 15x17
                 text run at (2,2) width 15: "all"
       RenderBlock {P} at (0,92) size 784x18
-        RenderText {#text} at (0,0) size 130x17
-          text run at (0,0) width 130: "Table nested in table"
+        RenderText {#text} at (0,0) size 129x17
+          text run at (0,0) width 129: "Table nested in table"
       RenderTable {TABLE} at (0,126) size 347x100
         RenderTableSection {TBODY} at (0,0) size 347x100
           RenderTableRow {TR} at (0,2) size 347x96
@@ -80,8 +80,8 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,226) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,260) size 784x18
-        RenderText {#text} at (0,0) size 114x17
-          text run at (0,0) width 114: "Table - no nesting"
+        RenderText {#text} at (0,0) size 113x17
+          text run at (0,0) width 113: "Table - no nesting"
       RenderTable {TABLE} at (0,294) size 706x76 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 704x74
           RenderTableRow {TR} at (0,2) size 704x22

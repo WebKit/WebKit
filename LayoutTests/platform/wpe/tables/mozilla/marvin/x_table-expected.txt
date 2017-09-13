@@ -9,8 +9,8 @@ layer at (0,0) size 800x326
       RenderBlock {ol} at (0,34) size 784x108
         RenderListItem {li} at (40,0) size 744x18
           RenderListMarker at (-20,0) size 16x17: "1"
-          RenderText {#text} at (0,0) size 120x17
-            text run at (0,0) width 120: "a caption 'TABLE'"
+          RenderText {#text} at (0,0) size 119x17
+            text run at (0,0) width 119: "a caption 'TABLE'"
         RenderListItem {li} at (40,18) size 744x18
           RenderListMarker at (-20,0) size 16x17: "2"
           RenderText {#text} at (0,0) size 61x17
@@ -36,8 +36,8 @@ layer at (0,0) size 800x326
         RenderBR {br} at (0,18) size 0x17
       RenderTable {table} at (0,194) size 188x108
         RenderBlock {caption} at (0,0) size 188x18
-          RenderText {#text} at (67,0) size 54x17
-            text run at (67,0) width 54: "TABLE"
+          RenderText {#text} at (68,0) size 52x17
+            text run at (68,0) width 52: "TABLE"
         RenderTableCol {colgroup} at (0,0) size 0x0
           RenderTableCol {col} at (0,0) size 0x0
         RenderTableCol {colgroup} at (0,0) size 0x0
