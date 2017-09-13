@@ -1,3 +1,11 @@
+2017-09-13  Matt Lewis  <jlewis3@apple.com>
+
+        Followup rebaseline after r221973.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+
 2017-09-13  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html as a flaky crash on Windows.
