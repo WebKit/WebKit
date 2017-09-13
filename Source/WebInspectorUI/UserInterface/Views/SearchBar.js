@@ -31,9 +31,6 @@ WI.SearchBar = class SearchBar extends WI.NavigationItem
 
         this._element.classList.add("search-bar");
 
-        this._keyboardShortcutEsc = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape);
-        this._keyboardShortcutEnter = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Enter);
-
         this._searchInput = this._element.appendChild(document.createElement("input"));
         this._searchInput.type = "search";
         this._searchInput.spellcheck = false;

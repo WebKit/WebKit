@@ -30,6 +30,7 @@ WI.QuickConsole = class QuickConsole extends WI.View
         super(element);
 
         this._toggleOrFocusKeyboardShortcut = new WI.KeyboardShortcut(null, WI.KeyboardShortcut.Key.Escape, this._toggleOrFocus.bind(this));
+        this._toggleOrFocusKeyboardShortcut.implicitlyPreventsDefault = false;
 
         this._mainExecutionContextPathComponent = this._createExecutionContextPathComponent(WI.mainTarget.executionContext);
 
@@ -330,10 +331,13 @@ WI.QuickConsole = class QuickConsole extends WI.View
 
     _toggleOrFocus(event)
     {
-        if (this.prompt.focused)
+        if (this.prompt.focused) {
             WI.toggleSplitConsole();
-        else if (!WI.isEditingAnyField() && !WI.isEventTargetAnEditableField(event))
+            event.preventDefault();
+        } else if (!WI.isEditingAnyField() && !WI.isEventTargetAnEditableField(event)) {
             this.prompt.focus();
+            event.preventDefault();
+        }
     }
 
     _updateStyles()
