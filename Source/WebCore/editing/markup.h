@@ -33,10 +33,12 @@
 
 namespace WebCore {
 
+class ArchiveResource;
 class ContainerNode;
 class Document;
 class DocumentFragment;
 class Element;
+class Frame;
 class HTMLElement;
 class URL;
 class Node;
@@ -51,6 +53,8 @@ WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromText(Range& context, cons
 WEBCORE_EXPORT Ref<DocumentFragment> createFragmentFromMarkup(Document&, const String& markup, const String& baseURL, ParserContentPolicy = AllowScriptingContent);
 ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element&, const String& markup, ParserContentPolicy);
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document&, const String& sourceString, const String& sourceMIMEType);
+Ref<DocumentFragment> createFragmentForImageAndURL(Document&, const String&);
+RefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(Frame&, Ref<ArchiveResource>&&);
 ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element&, const String& markup, ParserContentPolicy);
 
 bool isPlainTextMarkup(Node*);

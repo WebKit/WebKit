@@ -1,0 +1,179 @@
+/*
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#import "config.h"
+#import "WebContentReader.h"
+
+#import "ArchiveResource.h"
+#import "DOMURL.h"
+#import "Document.h"
+#import "DocumentFragment.h"
+#import "DocumentLoader.h"
+#import "Editor.h"
+#import "EditorClient.h"
+#import "FragmentScriptingPermission.h"
+#import "FrameLoader.h"
+#import "FrameLoaderClient.h"
+#import "HTMLAnchorElement.h"
+#import "HTMLNames.h"
+#import "LegacyWebArchive.h"
+#import "MIMETypeRegistry.h"
+#import "Text.h"
+#import "UTIUtilities.h"
+#import "WebNSAttributedStringExtras.h"
+#import "markup.h"
+#import <MobileCoreServices/MobileCoreServices.h>
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <wtf/unicode/CharacterNames.h>
+
+namespace WebCore {
+
+void WebContentReader::addFragment(RefPtr<DocumentFragment>&& newFragment)
+{
+    if (!newFragment)
+        return;
+
+    if (!fragment) {
+        fragment = WTFMove(newFragment);
+        return;
+    }
+
+    while (auto* firstChild = newFragment->firstChild()) {
+        if (fragment->appendChild(*firstChild).hasException())
+            break;
+    }
+}
+
+bool WebContentReader::readWebArchive(SharedBuffer* buffer)
+{
+    if (!frame.document())
+        return false;
+
+    if (!buffer)
+        return false;
+
+    auto archive = LegacyWebArchive::create(URL(), *buffer);
+    if (!archive)
+        return false;
+
+    auto* mainResource = archive->mainResource();
+    if (!mainResource)
+        return false;
+
+    auto& type = mainResource->mimeType();
+    if (!frame.loader().client().canShowMIMETypeAsHTML(type))
+        return false;
+
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (auto* loader = frame.loader().documentLoader())
+        loader->addAllArchiveResources(*archive);
+
+    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
+    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+    return true;
+}
+
+bool WebContentReader::readFilenames(const Vector<String>&)
+{
+    return false;
+}
+
+bool WebContentReader::readHTML(const String& string)
+{
+    if (!frame.document())
+        return false;
+
+    addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), DisallowScriptingAndPluginContent));
+    return true;
+}
+
+bool WebContentReader::readRTFD(SharedBuffer& buffer)
+{
+    addFragment(createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get()));
+    return fragment;
+}
+
+bool WebContentReader::readRTF(SharedBuffer& buffer)
+{
+    addFragment(createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get()));
+    return fragment;
+}
+
+bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
+{
+    RetainPtr<CFStringRef> stringType = type.createCFString();
+    RetainPtr<NSString> filenameExtension = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassFilenameExtension));
+    NSString *relativeURLPart = [@"image" stringByAppendingString:filenameExtension.get()];
+    String mimeType = MIMETypeFromUTI(type);
+
+    // FIXME: Use a blob URL instead.
+    auto archive = ArchiveResource::create(WTFMove(buffer), URL::fakeURLWithRelativePart(relativeURLPart), mimeType, emptyString(), emptyString());
+    ASSERT(archive);
+    addFragment(createFragmentForImageResourceAndAddResource(frame, *archive));
+    return fragment;
+}
+
+bool WebContentReader::readURL(const URL& url, const String& title)
+{
+    if (url.isEmpty())
+        return false;
+
+    // FIXME: This code shoudln't be accessing selection and changing the behavior.
+    if (!frame.editor().client()->hasRichlyEditableSelection()) {
+        if (readPlainText([(NSURL *)url absoluteString]))
+            return true;
+    }
+
+    if ([(NSURL *)url isFileURL])
+        return false;
+
+    auto anchor = HTMLAnchorElement::create(*frame.document());
+    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
+
+    String linkText = title.length() ? title : String([[(NSURL *)url absoluteString] precomposedStringWithCanonicalMapping]);
+    anchor->appendChild(frame.document()->createTextNode(linkText));
+
+    auto newFragment = frame.document()->createDocumentFragment();
+    if (fragment)
+        newFragment->appendChild(Text::create(*frame.document(), { &space, 1 }));
+    newFragment->appendChild(anchor);
+    addFragment(WTFMove(newFragment));
+    return true;
+}
+
+bool WebContentReader::readPlainText(const String& text)
+{
+    if (!allowPlainText)
+        return false;
+
+    addFragment(createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]));
+    if (!fragment)
+        return false;
+
+    madeFragmentFromPlainText = true;
+    return true;
+}
+
+}

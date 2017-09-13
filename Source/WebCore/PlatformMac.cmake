@@ -203,6 +203,7 @@ list(APPEND WebCore_SOURCES
     editing/cocoa/DataDetection.mm
     editing/cocoa/EditorCocoa.mm
     editing/cocoa/HTMLConverter.mm
+    editing/cocoa/WebContentReaderCocoa.mm
 
     editing/mac/AlternativeTextUIController.mm
     editing/mac/DictionaryLookup.mm
@@ -210,6 +211,7 @@ list(APPEND WebCore_SOURCES
     editing/mac/FrameSelectionMac.mm
     editing/mac/TextAlternativeWithRange.mm
     editing/mac/TextUndoInsertionMarkupMac.mm
+    editing/mac/WebContentReaderMac.mm
 
     fileapi/FileCocoa.mm
 

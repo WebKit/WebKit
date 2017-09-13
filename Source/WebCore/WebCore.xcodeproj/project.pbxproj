@@ -4278,6 +4278,7 @@
 		9A528E8417D7F52F00AA9518 /* FloatingObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A528E8217D7F52F00AA9518 /* FloatingObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9AB1F38018E2489A00534743 /* CSSToLengthConversionData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9AB1F37E18E2489A00534743 /* CSSToLengthConversionData.h */; };
 		9AB1F38118E2489A00534743 /* CSSToLengthConversionData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9AB1F37F18E2489A00534743 /* CSSToLengthConversionData.cpp */; };
+		9B0811241F67CDC00074BDE2 /* WebContentReaderIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B0811231F67CDC00074BDE2 /* WebContentReaderIOS.mm */; };
 		9B098BD81F3D60DC002DD562 /* DataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */; };
 		9B098BE21F3D68AF002DD562 /* JSDataTransferItemList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BDF1F3D673D002DD562 /* JSDataTransferItemList.cpp */; };
 		9B098BE41F3D68B3002DD562 /* JSDataTransferItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */; };
@@ -4302,10 +4303,13 @@
 		9B6C41531344949000085B62 /* StringWithDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6C41521344949000085B62 /* StringWithDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B714E201C91166900AC0E92 /* EventPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B714E1E1C91166900AC0E92 /* EventPath.cpp */; };
 		9B714E211C91166900AC0E92 /* EventPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B714E1F1C91166900AC0E92 /* EventPath.h */; };
+		9B9299AE1F67865B006723C2 /* WebContentReaderMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B9299AD1F67865B006723C2 /* WebContentReaderMac.mm */; };
+		9B9299B21F6796A4006723C2 /* WebContentReaderCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */; };
 		9BA273F4172206BB0097CE47 /* LogicalSelectionOffsetCaches.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */; };
 		9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAB6C6A12550631001626D4 /* EditingStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BAB6C6B12550631001626D4 /* EditingStyle.cpp */; };
 		9BAF3B2412C1A39800014BF1 /* WritingDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BAF3B2312C1A39800014BF1 /* WritingDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BF433761F67619B00E1FD71 /* WebContentReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BC5F9E01D5AAF6B002B749D /* JSCustomElementRegistryCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC5F9DF1D5AAF6A002B749D /* JSCustomElementRegistryCustom.cpp */; };
 		9BC6C21B13CCC97B008E0337 /* HTMLTextFormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BC6C21913CCC97B008E0337 /* HTMLTextFormControlElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */; };
@@ -12659,6 +12663,7 @@
 		9B03D8061BB3110D00B764DA /* JSDOMBindingInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMBindingInternalsBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E8 /* WritableStreamBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamBuiltins.h; sourceTree = "<group>"; };
 		9B03D8061BB3110D00B764E9 /* WritableStreamInternalsBuiltins.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WritableStreamInternalsBuiltins.h; sourceTree = "<group>"; };
+		9B0811231F67CDC00074BDE2 /* WebContentReaderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderIOS.mm; sourceTree = "<group>"; };
 		9B098BD51F3D6033002DD562 /* DataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataTransferItem.cpp; sourceTree = "<group>"; };
 		9B098BDD1F3D673D002DD562 /* JSDataTransferItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDataTransferItem.cpp; sourceTree = "<group>"; };
 		9B098BDE1F3D673D002DD562 /* JSDataTransferItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDataTransferItem.h; sourceTree = "<group>"; };
@@ -12693,6 +12698,8 @@
 		9B6C41521344949000085B62 /* StringWithDirection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringWithDirection.h; sourceTree = "<group>"; };
 		9B714E1E1C91166900AC0E92 /* EventPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventPath.cpp; sourceTree = "<group>"; };
 		9B714E1F1C91166900AC0E92 /* EventPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventPath.h; sourceTree = "<group>"; };
+		9B9299AD1F67865B006723C2 /* WebContentReaderMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebContentReaderMac.mm; sourceTree = "<group>"; };
+		9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentReaderCocoa.mm; sourceTree = "<group>"; };
 		9BA273F3172206BB0097CE47 /* LogicalSelectionOffsetCaches.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogicalSelectionOffsetCaches.h; sourceTree = "<group>"; };
 		9BA827781F06156500F71E75 /* NavigationDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationDisabler.h; sourceTree = "<group>"; };
 		9BAB6C6A12550631001626D4 /* EditingStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingStyle.h; sourceTree = "<group>"; };
@@ -12713,6 +12720,7 @@
 		9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionIndexCache.cpp; sourceTree = "<group>"; };
 		9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementRegistry.cpp; sourceTree = "<group>"; };
 		9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementRegistry.h; sourceTree = "<group>"; };
+		9BF433761F67619B00E1FD71 /* WebContentReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContentReader.h; sourceTree = "<group>"; };
 		9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormControlsCollection.h; sourceTree = "<group>"; };
 		9D63800F1AF16E160031A15C /* StyleSelfAlignmentData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StyleSelfAlignmentData.h; sourceTree = "<group>"; };
@@ -18246,6 +18254,7 @@
 				D0BD4F5A1408850F006839B6 /* DictationCommandIOS.cpp */,
 				D0BD4F5B1408850F006839B6 /* DictationCommandIOS.h */,
 				FED13D390CEA934600D89466 /* EditorIOS.mm */,
+				9B0811231F67CDC00074BDE2 /* WebContentReaderIOS.mm */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -20082,6 +20091,7 @@
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
 				7C3E510818DF8F3500C112F7 /* HTMLConverter.h */,
 				7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */,
+				9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */,
 			);
 			path = cocoa;
 			sourceTree = "<group>";
@@ -20457,6 +20467,7 @@
 				A883DF260F3D045D00F19BF6 /* VisibleSelection.h */,
 				93309DCE099E64910056E581 /* VisibleUnits.cpp */,
 				93309DCF099E64910056E581 /* VisibleUnits.h */,
+				9BF433761F67619B00E1FD71 /* WebContentReader.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
 				9BAF3B2312C1A39800014BF1 /* WritingDirection.h */,
@@ -25342,6 +25353,7 @@
 				CE7B2DB21586ABAD0098B3FA /* TextAlternativeWithRange.mm */,
 				29FAF4B5195AB08900A522DC /* TextUndoInsertionMarkupMac.h */,
 				29498681195341940072D2BD /* TextUndoInsertionMarkupMac.mm */,
+				9B9299AD1F67865B006723C2 /* WebContentReaderMac.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -30501,6 +30513,7 @@
 				07D637401BB0B11300256CE9 /* WebAudioSourceProviderAVFObjC.h in Headers */,
 				1F36EA9C1E21BA1700621E25 /* WebBackgroundTaskController.h in Headers */,
 				A56C5B9B189F34570082D13C /* WebConsoleAgent.h in Headers */,
+				9BBA2CAB1F679E0C00FD1C1E /* WebContentReader.h in Headers */,
 				419BE7591BC7F42B00E1C85B /* WebCoreBuiltinNames.h in Headers */,
 				2D3EF44A1917915C00034184 /* WebCoreCALayerExtras.h in Headers */,
 				515F79541CFCA3D500CCED93 /* WebCoreCrossThreadCopier.h in Headers */,
@@ -34262,6 +34275,9 @@
 				CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */,
 				1F36EA9D1E21BA1700621E25 /* WebBackgroundTaskController.mm in Sources */,
 				A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */,
+				9B9299B21F6796A4006723C2 /* WebContentReaderCocoa.mm in Sources */,
+				9B0811241F67CDC00074BDE2 /* WebContentReaderIOS.mm in Sources */,
+				9B9299AE1F67865B006723C2 /* WebContentReaderMac.mm in Sources */,
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				2D3EF44B1917915C00034184 /* WebCoreCALayerExtras.mm in Sources */,
 				515F79531CFCA3D000CCED93 /* WebCoreCrossThreadCopier.cpp in Sources */,

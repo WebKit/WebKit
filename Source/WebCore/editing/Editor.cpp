@@ -3818,15 +3818,4 @@ const Font* Editor::fontForSelection(bool& hasMultipleFonts) const
     return font;
 }
 
-Ref<DocumentFragment> Editor::createFragmentForImageAndURL(const String& url)
-{
-    auto imageElement = HTMLImageElement::create(*m_frame.document());
-    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
-
-    auto fragment = document().createDocumentFragment();
-    fragment->appendChild(imageElement);
-
-    return fragment;
-}
-
 } // namespace WebCore

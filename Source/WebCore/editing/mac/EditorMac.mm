@@ -29,29 +29,17 @@
 #import "Blob.h"
 #import "CSSPrimitiveValueMappings.h"
 #import "CSSValuePool.h"
-#import "DOMURL.h"
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
-#import "DocumentLoader.h"
 #import "Editing.h"
 #import "Editor.h"
 #import "EditorClient.h"
-#import "File.h"
-#import "FontCascade.h"
 #import "Frame.h"
-#import "FrameLoader.h"
-#import "FrameLoaderClient.h"
 #import "FrameView.h"
-#import "HTMLAnchorElement.h"
-#import "HTMLAttachmentElement.h"
 #import "HTMLConverter.h"
 #import "HTMLElement.h"
-#import "HTMLImageElement.h"
 #import "HTMLNames.h"
 #import "LegacyWebArchive.h"
-#import "MIMETypeRegistry.h"
-#import "NodeTraversal.h"
-#import "Page.h"
 #import "Pasteboard.h"
 #import "PasteboardStrategy.h"
 #import "PlatformStrategies.h"
@@ -60,12 +48,11 @@
 #import "RenderImage.h"
 #import "RuntimeApplicationChecks.h"
 #import "RuntimeEnabledFeatures.h"
-#import "Settings.h"
 #import "StyleProperties.h"
-#import "Text.h"
-#import "TypingCommand.h"
+#import "WebContentReader.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
+#import <AppKit/AppKit.h>
 #import <pal/system/Sound.h>
 
 namespace WebCore {
@@ -297,186 +284,6 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 
     pasteboard.write(pasteboardImage);
-}
-
-class Editor::WebContentReader final : public PasteboardWebContentReader {
-public:
-    Frame& frame;
-    Range& context;
-    const bool allowPlainText;
-
-    RefPtr<DocumentFragment> fragment;
-    bool madeFragmentFromPlainText;
-
-    WebContentReader(Frame& frame, Range& context, bool allowPlainText)
-        : frame(frame)
-        , context(context)
-        , allowPlainText(allowPlainText)
-        , madeFragmentFromPlainText(false)
-    {
-    }
-
-private:
-    bool readWebArchive(SharedBuffer*) override;
-    bool readFilenames(const Vector<String>&) override;
-    bool readHTML(const String&) override;
-    bool readRTFD(SharedBuffer&) override;
-    bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String& type) override;
-    bool readURL(const URL&, const String& title) override;
-    bool readPlainText(const String&) override;
-};
-
-bool Editor::WebContentReader::readWebArchive(SharedBuffer* buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    if (!frame.document())
-        return false;
-
-    if (!buffer)
-        return false;
-
-    auto archive = LegacyWebArchive::create(URL(), *buffer);
-    if (!archive)
-        return false;
-
-    RefPtr<ArchiveResource> mainResource = archive->mainResource();
-    if (!mainResource)
-        return false;
-
-    const String& type = mainResource->mimeType();
-
-    if (frame.loader().client().canShowMIMETypeAsHTML(type)) {
-        // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
-        if (DocumentLoader* loader = frame.loader().documentLoader())
-            loader->addAllArchiveResources(*archive);
-
-        String markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
-        fragment = createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
-        return true;
-    }
-
-    if (MIMETypeRegistry::isSupportedImageMIMEType(type)) {
-        fragment = frame.editor().createFragmentForImageResourceAndAddResource(WTFMove(mainResource));
-        return true;
-    }
-
-    return false;
-}
-
-bool Editor::WebContentReader::readFilenames(const Vector<String>& paths)
-{
-    if (paths.isEmpty())
-        return false;
-
-    if (!frame.document())
-        return false;
-    Document& document = *frame.document();
-
-    fragment = document.createDocumentFragment();
-
-    for (auto& text : paths) {
-#if ENABLE(ATTACHMENT_ELEMENT)
-        if (RuntimeEnabledFeatures::sharedFeatures().attachmentElementEnabled()) {
-            auto attachment = HTMLAttachmentElement::create(attachmentTag, document);
-            attachment->setFile(File::create([[NSURL fileURLWithPath:text] path]).ptr());
-            fragment->appendChild(attachment);
-            continue;
-        }
-#endif
-        auto paragraph = createDefaultParagraphElement(document);
-        paragraph->appendChild(document.createTextNode(frame.editor().client()->userVisibleString([NSURL fileURLWithPath:text])));
-        fragment->appendChild(paragraph);
-    }
-
-    return true;
-}
-
-bool Editor::WebContentReader::readHTML(const String& string)
-{
-    String stringOmittingMicrosoftPrefix = string;
-
-    // This code was added to make HTML paste from Microsoft Word on Mac work, back in 2004.
-    // It's a simple-minded way to ignore the CF_HTML clipboard format, just skipping over the
-    // description part and parsing the entire context plus fragment.
-    if (string.startsWith("Version:")) {
-        size_t location = string.findIgnoringCase("<html");
-        if (location != notFound)
-            stringOmittingMicrosoftPrefix = string.substring(location);
-    }
-
-    if (stringOmittingMicrosoftPrefix.isEmpty())
-        return false;
-
-    if (!frame.document())
-        return false;
-    Document& document = *frame.document();
-
-    fragment = createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent);
-    return fragment;
-}
-
-bool Editor::WebContentReader::readRTFD(SharedBuffer& buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    fragment = frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
-    return fragment;
-}
-
-bool Editor::WebContentReader::readRTF(SharedBuffer& buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    fragment = frame.editor().createFragmentAndAddResources(adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
-    return fragment;
-}
-
-bool Editor::WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
-{
-    ASSERT(type.contains('/'));
-    String typeAsFilenameWithExtension = type;
-    typeAsFilenameWithExtension.replace('/', '.');
-
-    Vector<uint8_t> data;
-    data.append(buffer->data(), buffer->size());
-    auto blob = Blob::create(WTFMove(data), type);
-    ASSERT(frame.document());
-    String blobURL = DOMURL::createObjectURL(*frame.document(), blob);
-
-    fragment = frame.editor().createFragmentForImageAndURL(blobURL);
-    return fragment;
-}
-
-bool Editor::WebContentReader::readURL(const URL& url, const String& title)
-{
-    if (url.string().isEmpty())
-        return false;
-
-    auto anchor = HTMLAnchorElement::create(*frame.document());
-    anchor->setAttributeWithoutSynchronization(HTMLNames::hrefAttr, url.string());
-    anchor->appendChild(frame.document()->createTextNode([title precomposedStringWithCanonicalMapping]));
-
-    fragment = frame.document()->createDocumentFragment();
-    fragment->appendChild(anchor);
-    return true;
-}
-
-bool Editor::WebContentReader::readPlainText(const String& text)
-{
-    if (!allowPlainText)
-        return false;
-
-    fragment = createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]);
-    if (!fragment)
-        return false;
-
-    madeFragmentFromPlainText = true;
-    return true;
 }
 
 // FIXME: Should give this function a name that makes it clear it adds resources to the document loader as a side effect.

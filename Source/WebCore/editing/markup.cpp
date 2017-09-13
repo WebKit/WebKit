@@ -29,24 +29,28 @@
 #include "config.h"
 #include "markup.h"
 
+#include "ArchiveResource.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValue.h"
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
 #include "DocumentFragment.h"
+#include "DocumentLoader.h"
 #include "DocumentType.h"
 #include "Editing.h"
 #include "Editor.h"
 #include "ElementIterator.h"
 #include "File.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
 #include "HTMLTextAreaElement.h"
@@ -916,6 +920,37 @@ RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDo
     // FIXME: Do we need to mess with URLs here?
     
     return fragment;
+}
+
+Ref<DocumentFragment> createFragmentForImageAndURL(Document& document, const String& url)
+{
+    auto imageElement = HTMLImageElement::create(document);
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, url);
+
+    auto fragment = document.createDocumentFragment();
+    fragment->appendChild(imageElement);
+
+    return fragment;
+}
+
+RefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(Frame& frame, Ref<ArchiveResource>&& resource)
+{
+    if (!frame.document())
+        return nullptr;
+
+    Ref<Document> document = *frame.document();
+    String resourceURL = resource->url().string();
+
+    if (DocumentLoader* loader = frame.loader().documentLoader())
+        loader->addArchiveResource(WTFMove(resource));
+
+    auto imageElement = HTMLImageElement::create(document.get());
+    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, resourceURL);
+
+    auto fragment = document->createDocumentFragment();
+    fragment->appendChild(imageElement);
+
+    return WTFMove(fragment);
 }
 
 static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNode& container)

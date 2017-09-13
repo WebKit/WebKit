@@ -65,7 +65,9 @@ static RefPtr<DocumentFragment> createFragmentFromPasteboardData(Pasteboard& pas
         }, &buffer);
         if (status == CAIRO_STATUS_SUCCESS) {
             auto blob = Blob::create(WTFMove(buffer), "image/png");
-            return frame.editor().createFragmentForImageAndURL(DOMURL::createObjectURL(*frame.document(), blob));
+            if (!frame.document())
+                return nullptr;
+            return createFragmentForImageAndURL(*frame.document(), DOMURL::createObjectURL(*frame.document(), blob));
         }
     }
 
