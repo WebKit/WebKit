@@ -78,11 +78,11 @@ float FontCascade::floatWidthForComplexText(const TextRun& run, HashSet<const Fo
     return 0;
 }
 
-int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool) const
+int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
     HarfBuzzShaper shaper(this, run);
     if (shaper.shape())
-        return shaper.offsetForPosition(x);
+        return shaper.offsetForPosition(x, includePartialGlyphs);
     LOG_ERROR("Shaper couldn't shape text run.");
     return 0;
 }

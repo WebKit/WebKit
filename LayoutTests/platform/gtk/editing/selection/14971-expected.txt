@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
           RenderText {#text} at (39,0) size 39x17
             text run at (39,0) width 39: "World"
 selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 2 {DIV} of body
-selection end:   position 3 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of body
+selection end:   position 2 of child 0 {#text} of child 2 {SPAN} of child 2 {DIV} of body

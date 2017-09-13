@@ -1,3 +1,60 @@
+2017-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [HarfBuzz] Wrong offset returned by HarfBuzzShaper::offsetForPosition in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=176848
+
+        Reviewed by Michael Catanzaro.
+
+        Rebaseline several tests where we are now getting results similar to the mac ones.
+
+        * platform/gtk/editing/execCommand/findString-2-expected.txt:
+        * platform/gtk/editing/selection/14971-expected.png:
+        * platform/gtk/editing/selection/14971-expected.txt:
+        * platform/gtk/editing/selection/4895428-2-expected.png:
+        * platform/gtk/editing/selection/4895428-2-expected.txt:
+        * platform/gtk/editing/selection/5232159-expected.png:
+        * platform/gtk/editing/selection/5232159-expected.txt:
+        * platform/gtk/editing/selection/collapse-selection-in-bidi-expected.txt:
+        * platform/gtk/editing/selection/drag-select-1-expected.png:
+        * platform/gtk/editing/selection/drag-select-1-expected.txt:
+        * platform/gtk/editing/selection/editable-links-expected.png:
+        * platform/gtk/editing/selection/editable-links-expected.txt:
+        * platform/gtk/editing/selection/fake-doubleclick-expected.txt:
+        * platform/gtk/editing/selection/fake-drag-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-1-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-2-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-3-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-4-expected.txt:
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.png:
+        * platform/gtk/editing/selection/select-across-readonly-input-5-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png:
+        * platform/gtk/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-center-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-left-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-left-expected.txt:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-right-expected.png:
+        * platform/gtk/fast/css/text-overflow-ellipsis-text-align-right-expected.txt:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.png:
+        * platform/gtk/fast/repaint/japanese-rl-selection-repaint-expected.txt:
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+        * platform/gtk/fast/repaint/selection-rl-expected.png:
+        * platform/gtk/fast/repaint/selection-rl-expected.txt:
+        * platform/gtk/fast/text/atsui-rtl-override-selection-expected.png:
+        * platform/gtk/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/gtk/fast/text/in-rendered-text-rtl-expected.txt:
+        * platform/gtk/svg/custom/foreignObject-crash-on-hover-expected.txt:
+        * platform/gtk/svg/text/select-text-svgfont-expected.txt: Removed.
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.png:
+        * platform/gtk/transitions/svg-text-shadow-transition-expected.txt:
+
 2017-09-13  Matt Lewis  <jlewis3@apple.com>
 
         Rebaseline of js/dom/global-constructors-attributes.html.

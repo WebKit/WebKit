@@ -57,7 +57,7 @@ public:
     bool shape(GlyphBuffer* = 0);
     FloatPoint adjustStartPoint(const FloatPoint&);
     float totalWidth() { return m_totalWidth; }
-    int offsetForPosition(float targetX);
+    int offsetForPosition(float targetX, bool includePartialGlyphs = true);
     FloatRect selectionRect(const FloatPoint&, int height, unsigned from, unsigned to);
 
 private:
@@ -69,7 +69,7 @@ private:
         void setGlyphAndPositions(unsigned index, uint16_t glyphId, float advance, float offsetX, float offsetY);
         void setWidth(float width) { m_width = width; }
 
-        unsigned characterIndexForXPosition(float targetX);
+        unsigned characterIndexForXPosition(float targetX, bool includePartialGlyphs);
         float xPositionForOffset(unsigned offset);
 
         const Font* fontData() { return m_fontData; }

@@ -1,3 +1,23 @@
+2017-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [HarfBuzz] Wrong offset returned by HarfBuzzShaper::offsetForPosition in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=176848
+
+        Reviewed by Michael Catanzaro.
+
+        This patch rewrites HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition() to make it simpler and ensure we
+        return the right offset in all the cases, also honoring now the includePartialGlyphs parameter that we were
+        ignoring in FontCascade::offsetForPositionForComplexText().
+
+        Fixes several tests that started to fail after r221909.
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::offsetForPositionForComplexText const):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition):
+        (WebCore::HarfBuzzShaper::offsetForPosition):
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+
 2017-09-13  Per Arne Vollan  <pvollan@apple.com>
 
         Initialize InternalSettings member variable.

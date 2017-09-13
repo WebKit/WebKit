@@ -25,4 +25,4 @@ layer at (0,0) size 800x600
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (0,0) size 50x17
             text run at (0,0) width 50: "Success"
-caret: position 5 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body
+caret: position 4 of child 0 {#text} of child 1 {TD} of child 0 {TR} of child 0 {TBODY} of child 0 {TABLE} of child 2 {DIV} of body

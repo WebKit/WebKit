@@ -101,37 +101,32 @@ void HarfBuzzShaper::HarfBuzzRun::setGlyphAndPositions(unsigned index, uint16_t 
     m_offsets[index] = FloatPoint(offsetX, offsetY);
 }
 
-unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX)
+unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX, bool includePartialGlyphs)
 {
     ASSERT(targetX <= m_width);
     float currentX = 0;
-    float currentAdvance = m_advances[0];
     unsigned glyphIndex = 0;
+    float characterWidth = 0;
+    unsigned characterIndex = 0;
+    do {
+        characterIndex = m_glyphToCharacterIndexes[glyphIndex];
+        characterWidth = m_advances[glyphIndex];
+        while (glyphIndex < m_numGlyphs - 1 && m_glyphToCharacterIndexes[glyphIndex + 1] == characterIndex)
+            characterWidth += m_advances[++glyphIndex];
 
-    // Sum up advances that belong to a character.
-    while (glyphIndex < m_numGlyphs - 1 && m_glyphToCharacterIndexes[glyphIndex] == m_glyphToCharacterIndexes[glyphIndex + 1])
-        currentAdvance += m_advances[++glyphIndex];
-    currentAdvance = currentAdvance / 2.0;
-    if (targetX <= currentAdvance)
-        return rtl() ? m_numCharacters : 0;
+        if ((includePartialGlyphs && (targetX < currentX + characterWidth / 2.0))
+            || (!includePartialGlyphs && (targetX < currentX + characterWidth)))
+            return rtl() ? std::min(m_numCharacters, characterIndex + 1) : characterIndex;
 
-    ++glyphIndex;
-    while (glyphIndex < m_numGlyphs) {
-        unsigned prevCharacterIndex = m_glyphToCharacterIndexes[glyphIndex - 1];
-        float prevAdvance = currentAdvance;
-        currentAdvance = m_advances[glyphIndex];
-        while (glyphIndex < m_numGlyphs - 1 && m_glyphToCharacterIndexes[glyphIndex] == m_glyphToCharacterIndexes[glyphIndex + 1])
-            currentAdvance += m_advances[++glyphIndex];
-        currentAdvance = currentAdvance / 2.0;
-        float nextX = currentX + prevAdvance + currentAdvance;
-        if (currentX <= targetX && targetX <= nextX)
-            return rtl() ? prevCharacterIndex : m_glyphToCharacterIndexes[glyphIndex];
-        currentX = nextX;
-        prevAdvance = currentAdvance;
+        if ((includePartialGlyphs && (targetX >= (currentX + characterWidth / 2.0) && targetX < currentX + characterWidth))
+            || (!includePartialGlyphs && (targetX >= currentX && targetX < currentX + characterWidth)))
+            break;
+
+        currentX += characterWidth;
         ++glyphIndex;
-    }
+    } while (glyphIndex < m_numGlyphs);
 
-    return rtl() ? 0 : m_numCharacters;
+    return rtl() ? characterIndex : std::min(m_numCharacters, characterIndex + 1);
 }
 
 float HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
@@ -581,7 +576,7 @@ bool HarfBuzzShaper::fillGlyphBuffer(GlyphBuffer* glyphBuffer)
     return glyphBuffer->size();
 }
 
-int HarfBuzzShaper::offsetForPosition(float targetX)
+int HarfBuzzShaper::offsetForPosition(float targetX, bool includePartialGlyphs)
 {
     int charactersSoFar = 0;
     float currentX = 0;
@@ -594,7 +589,7 @@ int HarfBuzzShaper::offsetForPosition(float targetX)
             float offsetForRun = targetX - currentX;
             if (offsetForRun >= 0 && offsetForRun <= m_harfBuzzRuns[i]->width()) {
                 // The x value in question is within this script run.
-                const unsigned index = m_harfBuzzRuns[i]->characterIndexForXPosition(offsetForRun);
+                const unsigned index = m_harfBuzzRuns[i]->characterIndexForXPosition(offsetForRun, includePartialGlyphs);
                 return charactersSoFar + index;
             }
             currentX = nextX;
@@ -604,7 +599,7 @@ int HarfBuzzShaper::offsetForPosition(float targetX)
             float nextX = currentX + m_harfBuzzRuns[i]->width();
             float offsetForRun = targetX - currentX;
             if (offsetForRun >= 0 && offsetForRun <= m_harfBuzzRuns[i]->width()) {
-                const unsigned index = m_harfBuzzRuns[i]->characterIndexForXPosition(offsetForRun);
+                const unsigned index = m_harfBuzzRuns[i]->characterIndexForXPosition(offsetForRun, includePartialGlyphs);
                 return charactersSoFar + index;
             }
             charactersSoFar += m_harfBuzzRuns[i]->numCharacters();

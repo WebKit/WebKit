@@ -3,7 +3,7 @@ This tests collapsing directionless selection on text in a block with the opposi
 PASS Selection is [anchorNode: [object Text](אבגדה) anchorOffset: 3 focusNode: [object Text](אבגדה) focusOffset: 3 isCollapsed: true]
 PASS Selection is [anchorNode: [object Text](אבגדה) anchorOffset: 1 focusNode: [object Text](אבגדה) focusOffset: 1 isCollapsed: true]
 PASS Selection is [anchorNode: [object Text](hello) anchorOffset: 2 focusNode: [object Text](hello) focusOffset: 2 isCollapsed: true]
-PASS Selection is [anchorNode: [object Text](hello) anchorOffset: 5 focusNode: [object Text](hello) focusOffset: 5 isCollapsed: true]
+PASS Selection is [anchorNode: [object Text](hello) anchorOffset: 4 focusNode: [object Text](hello) focusOffset: 4 isCollapsed: true]
 PASS successfullyParsed is true
 
 TEST COMPLETE
