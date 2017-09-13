@@ -267,7 +267,7 @@ void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
 }
 
 RenderLayer::RenderLayer(RenderLayerModelObject& rendererLayerModelObject)
-    : m_isRootLayer(rendererLayerModelObject.isRenderView())
+    : m_isRenderViewLayer(rendererLayerModelObject.isRenderView())
     , m_forcedStackingContext(rendererLayerModelObject.isMedia())
     , m_inResizeMode(false)
     , m_scrollDimensionsDirty(true)
@@ -1526,7 +1526,7 @@ bool RenderLayer::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 RenderLayer* RenderLayer::enclosingTransformedAncestor() const
 {
     RenderLayer* curr = parent();
-    while (curr && !curr->isRootLayer() && !curr->transform())
+    while (curr && !curr->isRenderViewLayer() && !curr->transform())
         curr = curr->parent();
 
     return curr;
@@ -1593,7 +1593,7 @@ RenderLayer* RenderLayer::enclosingFilterLayer(IncludeSelfOrNot includeSelf) con
 RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
 {
     for (const RenderLayer* curr = this; curr; curr = curr->parent()) {
-        if ((curr != this && curr->requiresFullLayerImageForFilters()) || compositedWithOwnBackingStore(*curr) || curr->isRootLayer())
+        if ((curr != this && curr->requiresFullLayerImageForFilters()) || compositedWithOwnBackingStore(*curr) || curr->isRenderViewLayer())
             return const_cast<RenderLayer*>(curr);
     }
     return nullptr;
@@ -1630,7 +1630,7 @@ void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect)
         return;        
     }
     
-    if (parentLayer->isRootLayer()) {
+    if (parentLayer->isRenderViewLayer()) {
         downcast<RenderView>(parentLayer->renderer()).repaintViewRectangle(parentLayerRect);
         return;
     }
@@ -1654,7 +1654,7 @@ RenderLayer* RenderLayer::clippingRootForPainting() const
 
     const RenderLayer* current = this;
     while (current) {
-        if (current->isRootLayer())
+        if (current->isRenderViewLayer())
             return const_cast<RenderLayer*>(current);
 
         current = compositingContainer(*current);
@@ -1823,7 +1823,7 @@ void RenderLayer::beginTransparencyLayers(GraphicsContext& context, const LayerP
         context.clip(pixelSnappedClipRect);
 
 #if ENABLE(CSS_COMPOSITING)
-        bool usesCompositeOperation = hasBlendMode() && !(renderer().isSVGRoot() && parent() && parent()->isRootLayer());
+        bool usesCompositeOperation = hasBlendMode() && !(renderer().isSVGRoot() && parent() && parent()->isRenderViewLayer());
         if (usesCompositeOperation)
             context.setCompositeOperation(context.compositeOperation(), blendMode());
 #endif
@@ -3940,7 +3940,7 @@ static inline bool shouldDoSoftwarePaint(const RenderLayer* layer, bool painting
     
 static inline bool shouldSuppressPaintingLayer(RenderLayer* layer)
 {
-    if (layer->renderer().style().isNotFinal() && !layer->isRootLayer() && !layer->renderer().isDocumentElementRenderer())
+    if (layer->renderer().style().isNotFinal() && !layer->isRenderViewLayer() && !layer->renderer().isDocumentElementRenderer())
         return true;
 
     // Avoid painting all layers if the document is in a state where visual updates aren't allowed.
@@ -4271,7 +4271,7 @@ static inline bool compareZIndex(RenderLayer* first, RenderLayer* second)
 // regions viewport.
 void RenderLayer::paintFixedLayersInNamedFlows(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
-    if (!isRootLayer())
+    if (!isRenderViewLayer())
         return;
 
     // Get the named flows for the view
@@ -4945,7 +4945,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
-        if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRootLayer()) {
+        if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRenderViewLayer()) {
             renderer().updateHitTestResult(result, downcast<RenderView>(renderer()).flipForWritingMode(hitTestLocation.point()));
             insideLayer = this;
         }
@@ -5073,7 +5073,7 @@ RenderLayer* RenderLayer::hitTestFixedLayersInNamedFlows(RenderLayer* /*rootLaye
     const HitTestingTransformState* unflattenedTransformState,
     bool depthSortDescendants)
 {
-    if (!isRootLayer())
+    if (!isRenderViewLayer())
         return nullptr;
 
     // Get the named flows for the view
@@ -5882,7 +5882,7 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     // Always examine the canvas and the root.
     // FIXME: Could eliminate the isDocumentElementRenderer() check if we fix background painting so that the RenderView
     // paints the root's background.
-    if (isRootLayer() || renderer().isDocumentElementRenderer())
+    if (isRenderViewLayer() || renderer().isDocumentElementRenderer())
         return true;
 
     if (damageRect.isInfinite())
@@ -6035,7 +6035,7 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
     if ((flags & ExcludeHiddenDescendants) && this != ancestorLayer && !hasVisibleContent() && !hasVisibleDescendant())
         return LayoutRect();
 
-    if (isRootLayer()) {
+    if (isRenderViewLayer()) {
         // The root layer is always just the size of the document.
         return renderer().view().unscaledDocumentRect();
     }
@@ -6585,7 +6585,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
-        || (renderer().style().specifiesColumns() && !isRootLayer())
+        || (renderer().style().specifiesColumns() && !isRenderViewLayer())
         || renderer().isInFlowRenderFlowThread();
 }
 

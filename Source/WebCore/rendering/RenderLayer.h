@@ -293,7 +293,7 @@ public:
     bool inResizeMode() const { return m_inResizeMode; }
     void setInResizeMode(bool b) { m_inResizeMode = b; }
 
-    bool isRootLayer() const { return m_isRootLayer; }
+    bool isRenderViewLayer() const { return m_isRenderViewLayer; }
 
     RenderLayerCompositor& compositor() const;
     
@@ -760,7 +760,7 @@ private:
 
     // Non-auto z-index always implies stacking context here, because StyleResolver::adjustRenderStyle already adjusts z-index
     // based on positioning and other criteria.
-    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || isRootLayer() || m_forcedStackingContext; }
+    bool isStackingContext(const RenderStyle* style) const { return !style->hasAutoZIndex() || isRenderViewLayer() || m_forcedStackingContext; }
 
     bool isDirtyStackingContainer() const { return m_zOrderListsDirty && isStackingContainer(); }
 
@@ -1046,7 +1046,7 @@ private:
 
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
 
-    const bool m_isRootLayer : 1;
+    const bool m_isRenderViewLayer : 1;
     const bool m_forcedStackingContext : 1;
 
     // Keeps track of whether the layer is currently resizing, so events can cause resizing to start and stop.

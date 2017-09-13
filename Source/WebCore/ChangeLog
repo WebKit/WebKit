@@ -1,3 +1,51 @@
+2017-09-12  Frederic Wang  <fwang@igalia.com>
+
+        Rename isRootLayer to isRenderViewLayer
+        https://bugs.webkit.org/show_bug.cgi?id=176684
+
+        Reviewed by Darin Adler.
+
+        This patch was generated with the help of do-webcore-rename with some coding style adjustment.
+
+        No new tests, behavior unchanged.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::enclosingTransformedAncestor const):
+        (WebCore::RenderLayer::enclosingFilterRepaintLayer const):
+        (WebCore::RenderLayer::setFilterBackendNeedsRepaintingInRect):
+        (WebCore::RenderLayer::clippingRootForPainting const):
+        (WebCore::RenderLayer::beginTransparencyLayers):
+        (WebCore::shouldSuppressPaintingLayer):
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::RenderLayerBacking):
+        (WebCore::RenderLayerBacking::updateConfiguration):
+        (WebCore::RenderLayerBacking::updateAfterDescendants):
+        (WebCore::RenderLayerBacking::paintsIntoWindow const):
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::logLayerInfo):
+        (WebCore::RenderLayerCompositor::needsCompositingUpdateForStyleChangeOnNonCompositedLayer const):
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::repaintInCompositedAncestor):
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::needsToBeComposited const):
+        (WebCore::RenderLayerCompositor::requiresOwnBackingStore const): Also move the IOS condition
+        up to avoid that check-webkit-style complains.
+        (WebCore::RenderLayerCompositor::reasonsForCompositing const):
+        (WebCore::RenderLayerCompositor::useCoordinatedScrollingForLayer const):
+        (WebCore::RenderLayerCompositor::needsFixedRootBackgroundLayer const):
+        (WebCore::RenderLayerCompositor::updateScrollCoordinatedLayer):
+
 2017-09-12  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS DnD] Support DataTransfer.getData and DataTransfer.setData when dragging or dropping
