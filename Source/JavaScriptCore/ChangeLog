@@ -1,3 +1,17 @@
+2017-09-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Fix Array allocation in Object.keys
+        https://bugs.webkit.org/show_bug.cgi?id=176826
+
+        Reviewed by Saam Barati.
+
+        When isHavingABadTime() is true, array allocation does not become ArrayWithContiguous.
+        We check isHavingABadTime() in ownPropertyKeys fast path.
+        And we also ensures that ownPropertyKeys uses putDirect operation instead of put by a test.
+
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ownPropertyKeys):
+
 2017-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Optimize WeakMap::get by adding intrinsic and fixup

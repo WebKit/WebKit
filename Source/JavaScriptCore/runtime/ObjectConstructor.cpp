@@ -855,15 +855,18 @@ JSArray* ownPropertyKeys(ExecState* exec, JSObject* object, PropertyNameMode pro
     // If !mustFilterProperty and PropertyNameMode::Strings mode, we do not need to filter out any entries in PropertyNameArray.
     // We can use fast allocation and initialization.
     if (!mustFilterProperty && propertyNameMode == PropertyNameMode::Strings && properties.size() < MIN_SPARSE_ARRAY_INDEX) {
-        size_t numProperties = properties.size();
-        JSArray* keys = JSArray::create(vm, exec->lexicalGlobalObject()->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), numProperties);
-        WriteBarrier<Unknown>* buffer = keys->butterfly()->contiguous().data();
-        for (size_t i = 0; i < numProperties; i++) {
-            const auto& identifier = properties[i];
-            ASSERT(!identifier.isSymbol());
-            buffer[i].set(vm, keys, jsOwnedString(&vm, identifier.string()));
+        auto* globalObject = exec->lexicalGlobalObject();
+        if (LIKELY(!globalObject->isHavingABadTime())) {
+            size_t numProperties = properties.size();
+            JSArray* keys = JSArray::create(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous), numProperties);
+            WriteBarrier<Unknown>* buffer = keys->butterfly()->contiguous().data();
+            for (size_t i = 0; i < numProperties; i++) {
+                const auto& identifier = properties[i];
+                ASSERT(!identifier.isSymbol());
+                buffer[i].set(vm, keys, jsOwnedString(&vm, identifier.string()));
+            }
+            return keys;
         }
-        return keys;
     }
 
     JSArray* keys = constructEmptyArray(exec, nullptr);
