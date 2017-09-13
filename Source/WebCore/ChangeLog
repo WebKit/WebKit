@@ -1,3 +1,43 @@
+2017-09-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Implement CDMInstanceClearKey::updateLicense()
+        https://bugs.webkit.org/show_bug.cgi?id=176791
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the updateLicense() method for CDMInstanceClearKey.
+        The response data is parsed as JSON, matching that agains either
+        'license' or 'license release acknowledgement' formats (depending
+        on either 'keys' or 'kids' object keys being present). If any
+        format is recognized, appropriate steps are taken.
+
+        In case of the 'license' format, the passed-in keys are matched
+        against existing ones. If some keys have changed or have been
+        newly introduced, the key information is sorted by key ID size
+        and data to enforce order. After that the KeyStatusVector object
+        is constructed, containing key ID and status information for all
+        the keys associated with this session. Finally callback is
+        dispatched, signalling a successful operation and passing the
+        KeyStatusVector, if any, back to the caller.
+
+        In case of the 'license release acknowledgement' format, the
+        session data for this session ID is removed from the ClearKey state
+        singleton. The callback is dispatched signalling the session closure
+        and successfull completion of the operation.
+
+        Finally, if no format is deduced, the callback is again dispatched,
+        but now signalling an operation failure.
+
+        No new tests -- expectations for the relevant tests are updated
+        to reflect the introduced changes.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::ClearKeyState::keys):
+        (WebCore::ClearKeyState::singleton):
+        (WebCore::parseLicenseFormat):
+        (WebCore::parseLicenseReleaseAcknowledgementFormat):
+        (WebCore::CDMInstanceClearKey::updateLicense):
+
 2017-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Refactor WebContentReader out of EditorMac and EditorIOS

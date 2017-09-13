@@ -37,10 +37,32 @@
 #include "SharedBuffer.h"
 #include <inspector/InspectorValues.h>
 #include <wtf/MainThread.h>
+#include <wtf/text/Base64.h>
 
 using namespace Inspector;
 
 namespace WebCore {
+
+class ClearKeyState {
+    using KeyStore = HashMap<String, Vector<CDMInstanceClearKey::Key>>;
+
+public:
+    static ClearKeyState& singleton();
+
+    KeyStore& keys() { return m_keys; }
+
+private:
+    ClearKeyState();
+    KeyStore m_keys;
+};
+
+ClearKeyState& ClearKeyState::singleton()
+{
+    static ClearKeyState s_state;
+    return s_state;
+}
+
+ClearKeyState::ClearKeyState() = default;
 
 RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
 {
@@ -57,6 +79,64 @@ RefPtr<InspectorObject> parseJSONObject(const SharedBuffer& buffer)
         return nullptr;
 
     return object;
+}
+
+std::optional<Vector<CDMInstanceClearKey::Key>> parseLicenseFormat(const InspectorObject& root)
+{
+    // If the 'keys' key is present in the root object, parse the JSON further
+    // according to the specified 'license' format.
+    auto it = root.find("keys");
+    if (it == root.end())
+        return std::nullopt;
+
+    // Retrieve the keys array.
+    RefPtr<InspectorArray> keysArray;
+    if (!it->value->asArray(keysArray))
+        return std::nullopt;
+
+    Vector<CDMInstanceClearKey::Key> decodedKeys;
+    bool validFormat = std::all_of(keysArray->begin(), keysArray->end(),
+        [&decodedKeys] (const auto& value) {
+            RefPtr<InspectorObject> keyObject;
+            if (!value->asObject(keyObject))
+                return false;
+
+            String keyType;
+            if (!keyObject->getString("kty", keyType) || !equalLettersIgnoringASCIICase(keyType, "oct"))
+                return false;
+
+            String keyID, keyValue;
+            if (!keyObject->getString("kid", keyID) || !keyObject->getString("k", keyValue))
+                return false;
+
+            Vector<char> keyIDData, keyValueData;
+            if (!WTF::base64URLDecode(keyID, { keyIDData }) || !WTF::base64URLDecode(keyValue, { keyValueData }))
+                return false;
+
+            decodedKeys.append({ CDMInstanceClearKey::KeyStatus::Usable, SharedBuffer::create(WTFMove(keyIDData)), SharedBuffer::create(WTFMove(keyValueData)) });
+            return true;
+        });
+    if (!validFormat)
+        return std::nullopt;
+
+    return decodedKeys;
+}
+
+bool parseLicenseReleaseAcknowledgementFormat(const InspectorObject& root)
+{
+    // If the 'kids' key is present in the root object, parse the JSON further
+    // according to the specified 'license release acknowledgement' format.
+    auto it = root.find("kids");
+    if (it == root.end())
+        return false;
+
+    // Retrieve the kids array.
+    RefPtr<InspectorArray> kidsArray;
+    if (!it->value->asArray(kidsArray))
+        return false;
+
+    // FIXME: Return the key IDs and validate them.
+    return true;
 }
 
 CDMFactoryClearKey& CDMFactoryClearKey::singleton()
@@ -252,15 +332,109 @@ void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString&, Ref<S
         });
 }
 
-void CDMInstanceClearKey::updateLicense(const String&, LicenseType, const SharedBuffer&, LicenseUpdateCallback callback)
+void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, const SharedBuffer& response, LicenseUpdateCallback callback)
 {
-    callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback)] {
-            if (!weakThis)
-                return;
+    // Use a helper functor that schedules the callback dispatch, avoiding
+    // duplicated callOnMainThread() calls.
+    auto dispatchCallback =
+        [this, &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
+            callOnMainThread(
+                [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
+                    if (!weakThis)
+                        return;
 
-            callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
-        });
+                    callback(sessionWasClosed, WTFMove(changedKeys), std::nullopt, std::nullopt, succeeded);
+                });
+        };
+
+    // Parse the response buffer as an JSON object.
+    RefPtr<InspectorObject> root = parseJSONObject(response);
+    if (!root) {
+        dispatchCallback(false, std::nullopt, SuccessValue::Failed);
+        return;
+    }
+
+    // Parse the response using 'license' formatting, if possible.
+    if (auto decodedKeys = parseLicenseFormat(*root)) {
+        // Retrieve the target Vector of Key objects for this session.
+        auto& keyVector = ClearKeyState::singleton().keys().ensure(sessionId, [] { return Vector<Key> { }; }).iterator->value;
+
+        // For each decoded key, find an existing item for the decoded key's ID. If none exist,
+        // the key is decoded. Otherwise, the key is updated in case there's a mismatch between
+        // the size or data of the existing and proposed key.
+        bool keysChanged = false;
+        for (auto& key : *decodedKeys) {
+            auto it = std::find_if(keyVector.begin(), keyVector.end(),
+                [&key] (const Key& containedKey) {
+                    return containedKey.keyIDData->size() == key.keyIDData->size()
+                        && !std::memcmp(containedKey.keyIDData->data(), key.keyIDData->data(), containedKey.keyIDData->size());
+                });
+            if (it != keyVector.end()) {
+                auto& existingKey = it->keyValueData;
+                auto& proposedKey = key.keyValueData;
+
+                // Update the existing Key if it differs from the proposed key in key value.
+                if (existingKey->size() != proposedKey->size() || std::memcmp(existingKey->data(), proposedKey->data(), existingKey->size())) {
+                    *it = WTFMove(key);
+                    keysChanged = true;
+                }
+            } else {
+                // In case a Key for this key ID doesn't exist yet, append the new one to keyVector.
+                keyVector.append(WTFMove(key));
+                keysChanged = true;
+            }
+        }
+
+        // In case of changed keys, we have to provide a KeyStatusVector of all the keys for
+        // this session.
+        std::optional<KeyStatusVector> changedKeys;
+        if (keysChanged) {
+            // First a helper Vector is constructed, cotaining pairs of SharedBuffer RefPtrs
+            // representint key ID data, and the corresponding key statuses.
+            // We can't use KeyStatusVector here because this Vector has to be sorted, which
+            // is not possible to do on Ref<> objects.
+            Vector<std::pair<RefPtr<SharedBuffer>, KeyStatus>> keys;
+            keys.reserveInitialCapacity(keyVector.size());
+            for (auto& it : keyVector)
+                keys.uncheckedAppend(std::pair<RefPtr<SharedBuffer>, KeyStatus> { it.keyIDData, it.status });
+
+            // Sort first by size, second by data.
+            std::sort(keys.begin(), keys.end(),
+                [] (const auto& a, const auto& b) {
+                    if (a.first->size() != b.first->size())
+                        return a.first->size() < b.first->size();
+
+                    return std::memcmp(a.first->data(), b.first->data(), a.first->size()) < 0;
+                });
+
+            // Finally construct the mirroring KeyStatusVector object and move it into the
+            // std::optional<> object that will be passed to the callback.
+            KeyStatusVector keyStatusVector;
+            keyStatusVector.reserveInitialCapacity(keys.size());
+            for (auto& it : keys)
+                keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *it.first, it.second });
+
+            changedKeys = WTFMove(keyStatusVector);
+        }
+
+        // Cache the key information Vector on CDMInstance for easier access from the pipeline.
+        m_keys = keyVector;
+
+        dispatchCallback(false, WTFMove(changedKeys), SuccessValue::Succeeded);
+        return;
+    }
+
+    // Parse the response using 'license release acknowledgement' formatting, if possible.
+    if (parseLicenseReleaseAcknowledgementFormat(*root)) {
+        // FIXME: Retrieve the key ID information and use it to validate the keys for this sessionId.
+        ClearKeyState::singleton().keys().remove(sessionId);
+        m_keys.clear();
+        dispatchCallback(true, std::nullopt, SuccessValue::Succeeded);
+        return;
+    }
+
+    // Bail in case no format was recognized.
+    dispatchCallback(false, std::nullopt, SuccessValue::Failed);
 }
 
 void CDMInstanceClearKey::loadSession(LicenseType, const String&, const String&, LoadSessionCallback callback)

@@ -1,3 +1,3 @@
 
-FAIL org.w3.clearkey, basic events assert_unreached: TypeError: Type error Reached unreachable code
+PASS org.w3.clearkey, basic events 
 
