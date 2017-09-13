@@ -1,5 +1,20 @@
 2017-09-12  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221917. rdar://problem/34404461
+
+    2017-09-12 Brent Fulgham  <bfulgham@apple.com>
+
+            Show punycode to user if a URL mixes Armenian Seh or Vo with other scripts
+            https://bugs.webkit.org/show_bug.cgi?id=176578
+            <rdar://problem/33906231>
+
+            Reviewed by Alex Christensen.
+
+            * TestWebKitAPI/Tests/WebCore/cocoa/URLExtras.mm:
+            (TestWebKitAPI::TEST):
+
+2017-09-12  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221906. rdar://problem/34404478
 
     2017-09-11  Tim Horton  <timothy_horton@apple.com>
