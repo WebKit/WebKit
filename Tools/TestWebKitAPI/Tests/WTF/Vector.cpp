@@ -651,4 +651,41 @@ TEST(WTF_Vector, RemoveAllMatching)
     EXPECT_EQ(0U, v.size());
 }
 
+TEST(WTF_Vector, MapLambda)
+{
+    Vector<int> vector { 2, 3, 4};
+
+    int counter = 0;
+    auto mapped = WTF::map(vector, [&] (int item) {
+        counter += 2;
+        return counter <= item;
+    });
+
+    EXPECT_EQ(3U, mapped.size());
+    EXPECT_TRUE(mapped[0]);
+    EXPECT_FALSE(mapped[1]);
+    EXPECT_FALSE(mapped[2]);
+}
+
+TEST(WTF_Vector, MapLambdaMove)
+{
+    Vector<MoveOnly> vector;
+
+    vector.reserveInitialCapacity(3);
+    for (unsigned i = 0; i < 3; ++i)
+        vector.uncheckedAppend(MoveOnly { i });
+
+
+    unsigned counter = 0;
+    auto mapped = WTF::map(WTFMove(vector), [&] (MoveOnly&& item) {
+        item = item.value() + ++counter;
+        return WTFMove(item);
+    });
+
+    EXPECT_EQ(3U, mapped.size());
+    EXPECT_EQ(1U, mapped[0].value());
+    EXPECT_EQ(3U, mapped[1].value());
+    EXPECT_EQ(5U, mapped[2].value());
+}
+
 } // namespace TestWebKitAPI

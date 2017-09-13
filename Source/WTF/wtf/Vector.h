@@ -1560,6 +1560,36 @@ size_t removeRepeatedElements(Vector<T, inlineCapacity, OverflowHandler, minCapa
     return removeRepeatedElements(vector, [] (T& a, T& b) { return a == b; });
 }
 
+template<typename Transformer, typename SourceType> struct Mapper {
+    using RealSourceType = typename std::remove_reference<SourceType>::type;
+    using SourceItemType = typename RealSourceType::ValueType;
+    using DestinationItemType = typename std::result_of<Transformer(SourceItemType&&)>::type;
+
+    static Vector<DestinationItemType> map(const RealSourceType& source, const Transformer& transformer)
+    {
+        Vector<DestinationItemType> result;
+        result.reserveInitialCapacity(source.size());
+        for (auto& item : source)
+            result.uncheckedAppend(transformer(item));
+        return result;
+    }
+
+    static Vector<DestinationItemType> map(RealSourceType&& source, const Transformer& transformer)
+    {
+        Vector<DestinationItemType> result;
+        result.reserveInitialCapacity(source.size());
+        for (auto& item : source)
+            result.uncheckedAppend(transformer(std::forward<SourceItemType>(item)));
+        return result;
+    }
+};
+
+template<typename Transformer, typename VectorType>
+Vector<typename Mapper<Transformer, VectorType>::DestinationItemType> map(VectorType&& source, const Transformer& transformer)
+{
+    return Mapper<Transformer, VectorType>::map(std::forward<VectorType>(source), transformer);
+}
+
 } // namespace WTF
 
 using WTF::Vector;

@@ -240,12 +240,9 @@ void Caches::readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, Error
             callback(makeUnexpected(result.error()));
             return;
         }
-        Vector<Cache> caches;
-        caches.reserveInitialCapacity(result.value().size());
-        for (auto& name : result.value())
-            caches.uncheckedAppend(Cache { *this, m_engine->nextCacheIdentifier(), Cache::State::Uninitialized, WTFMove(name) });
-
-        callback(WTFMove(caches));
+        callback(WTF::map(WTFMove(result.value()), [this] (String&& name) {
+            return Cache { *this, m_engine->nextCacheIdentifier(), Cache::State::Uninitialized, WTFMove(name) };
+        }));
     });
 }
 

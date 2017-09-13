@@ -1,3 +1,17 @@
+2017-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Add a lambda-based map for Vectors
+        https://bugs.webkit.org/show_bug.cgi?id=176487
+
+        Reviewed by Darin Adler.
+
+        This helper routine allows refactoring the reserveInitialCapacity/uncheckedAppend pattern, the mapper between source and destination item being a lambda.
+
+        * wtf/Vector.h:
+        (WTF::Mapper::transform):
+        (WTF::Mapper::map):
+        (WTF::map):
+
 2017-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Optimize WeakMap::get by adding intrinsic and fixup
