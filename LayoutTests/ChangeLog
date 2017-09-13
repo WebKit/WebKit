@@ -1,3 +1,15 @@
+2017-09-12  Michael Saboff  <msaboff@apple.com>
+
+        String.prototype.replace() puts extra '<' in result when a named capture reference is used without named captures in the RegExp
+        https://bugs.webkit.org/show_bug.cgi?id=176814
+
+        Reviewed by Mark Lam.
+
+        New regression test case.
+
+        * js/regexp-named-capture-groups-expected.txt:
+        * js/script-tests/regexp-named-capture-groups.js:
+
 2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         ASSERTION FAILED: !m_valueOrException under FontFaceSet::completedLoading loading a Serious Eats page

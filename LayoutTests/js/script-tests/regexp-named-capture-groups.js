@@ -77,6 +77,9 @@ shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\
 shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\d{4})/, "$<day>-$1-$<year>")', '"20-10-1930"');
 shouldBe('"10/20/1930".replace(/(?<month>\\d{2})\\\/(?<day>\\d{2})\\\/(?<year>\\d{4})/, "$<day>-$<month>-$3")', '"20-10-1930"');
 
+// Verify String.replace works correctly without named captures in the RegExp
+shouldBe('"Replace just THIS in this string".replace(/THIS/, "$<THAT>")', '"Replace just $<THAT> in this string"');
+
 // Verify that named back references for non-existing named group matches the k<groupName> for non-unicode patterns.
 shouldBe('"Give me a \\\'k\\\'!".match(/Give me a \\\'\\\k\\\'/)[0]', '"Give me a \\\'k\\\'"');
 shouldBe('"Give me \\\'k2\\\'!".match(/Give me \\\'\\\k2\\\'/)[0]', '"Give me \\\'k2\\\'"');

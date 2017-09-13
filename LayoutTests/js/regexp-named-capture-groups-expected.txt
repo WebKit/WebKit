@@ -45,6 +45,7 @@ PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<d
 PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$2-$<month>-$<year>") is "20-10-1930"
 PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$1-$<year>") is "20-10-1930"
 PASS "10/20/1930".replace(/(?<month>\d{2})\/(?<day>\d{2})\/(?<year>\d{4})/, "$<day>-$<month>-$3") is "20-10-1930"
+PASS "Replace just THIS in this string".replace(/THIS/, "$<THAT>") is "Replace just $<THAT> in this string"
 PASS "Give me a \'k\'!".match(/Give me a \'\k\'/)[0] is "Give me a \'k\'"
 PASS "Give me \'k2\'!".match(/Give me \'\k2\'/)[0] is "Give me \'k2\'"
 PASS "Give me a \'kat\'!".match(/Give me a \'\kat\'/)[0] is "Give me a \'kat\'"

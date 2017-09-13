@@ -213,7 +213,8 @@ static NEVER_INLINE String substituteBackreferencesSlow(StringView replacement, 
             // Named back reference
             if (!hasNamedCaptures) {
                 substitutedReplacement.append(replacement.substring(i, 2));
-                offset = i + 1;
+                offset = i + 2;
+                advance = 1;
                 continue;
             }
 
