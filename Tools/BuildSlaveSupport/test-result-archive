@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import optparse, os, shutil, subprocess, sys
+import gzip, optparse, os, shutil, subprocess, sys
 
 sourceRootDirectory = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 archiveFile = os.path.join(sourceRootDirectory, "layout-test-results.zip")
@@ -43,9 +43,22 @@ def main():
         parser.error("Action is required")
 
     layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory, "layout-test-results"))
-    return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)
+    return archive_test_results(options.configuration, options.platform, layoutTestResultsDir)
 
-def archiveTestResults(configuration, platform, layoutTestResultsDir):
+def gzip_file(root, name):
+    with open(os.path.join(root, name), 'rb') as f_in, gzip.open(os.path.join(root, name + '.gz'), 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+        os.remove(os.path.join(root, name))
+
+def compress_spindumps(layoutTestResultsDir):
+    file_patterns = ('-spindump.txt','-sample.txt')
+    for root, dirs, files in os.walk(layoutTestResultsDir):
+        for name in files:
+            for pattern in file_patterns:        
+                if pattern in name:
+                    gzip_file(root, name)
+
+def archive_test_results(configuration, platform, layoutTestResultsDir):
     assert platform in ('mac', 'win', 'gtk', 'wincairo', 'ios', 'wpe')
 
     try:
@@ -64,6 +77,7 @@ def archiveTestResults(configuration, platform, layoutTestResultsDir):
     open(os.path.join(layoutTestResultsDir, '.placeholder'), 'w').close()
 
     if platform in ('mac', 'ios'):
+        compress_spindumps(layoutTestResultsDir)
         if subprocess.call(["ditto", "-c", "-k", "--sequesterRsrc", "--zlibCompressionLevel", "2", layoutTestResultsDir, archiveFile]):
             return 1
     elif platform in ('win', 'gtk', 'wincairo', 'wpe'):
