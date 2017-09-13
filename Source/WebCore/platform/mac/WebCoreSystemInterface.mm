@@ -40,10 +40,6 @@ NSTimeInterval (*wkGetNSURLResponseCalculatedExpiration)(NSURLResponse *response
 BOOL (*wkGetNSURLResponseMustRevalidate)(NSURLResponse *response);
 void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selectedItem, NSFont*, NSControlSize controlSize, bool usesCustomAppearance);
 
-void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
-void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-
 void* wkGetHyphenationLocationBeforeIndex;
 
 bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
@@ -61,12 +57,6 @@ CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initial
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-bool (*wkIsPublicSuffix)(NSString *host);
-#endif
-
-CFStringRef (*wkCachePartitionKey)(void);
 
 int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

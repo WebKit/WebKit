@@ -194,6 +194,7 @@ void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef
 extern CFStringRef const kCFHTTPCookieLocalFileDomain;
 extern const CFStringRef kCFHTTPVersion1_1;
 extern const CFStringRef kCFURLRequestAllowAllPOSTCaching;
+extern const CFStringRef _kCFURLCachePartitionKey;
 extern const CFStringRef _kCFURLConnectionPropertyShouldSniff;
 extern const CFStringRef _kCFURLStorageSessionIsPrivate;
 
@@ -236,8 +237,21 @@ CFArrayRef CFHTTPCookieStorageCopyCookies(CFHTTPCookieStorageRef);
 void CFHTTPCookieStorageSetCookies(CFHTTPCookieStorageRef, CFArrayRef cookies, CFURLRef, CFURLRef mainDocumentURL);
 void CFHTTPCookieStorageDeleteCookie(CFHTTPCookieStorageRef, CFHTTPCookieRef);
 CFMutableURLRequestRef CFURLRequestCreateMutableCopy(CFAllocatorRef, CFURLRequestRef);
+CFStringRef _CFURLCacheCopyCacheDirectory(CFURLCacheRef);
+Boolean _CFHostIsDomainTopLevel(CFStringRef domain);
+void _CFURLRequestCreateArchiveList(CFAllocatorRef, CFURLRequestRef, CFIndex* version, CFTypeRef** objects, CFIndex* objectCount, CFDictionaryRef* protocolProperties);
+CFMutableURLRequestRef _CFURLRequestCreateFromArchiveList(CFAllocatorRef, CFIndex version, CFTypeRef* objects, CFIndex objectCount, CFDictionaryRef protocolProperties);
 
 #endif // !PLATFORM(WIN)
+
+CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxy;
+CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyHost;
+CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTProxyPort;
+CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTAdditionalHeaders;
+CFN_EXPORT const CFStringRef kCFStreamPropertyCONNECTResponse;
+
+CFN_EXPORT void _CFHTTPMessageSetResponseURL(CFHTTPMessageRef, CFURLRef);
+CFN_EXPORT void _CFHTTPMessageSetResponseProxyURL(CFHTTPMessageRef, CFURLRef);
 
 WTF_EXTERN_C_END
 

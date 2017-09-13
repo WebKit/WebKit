@@ -133,12 +133,6 @@ extern BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
 extern void (*wkMeasureMediaUIPart)(int part, CGRect *bounds, CGSize *naturalSize);
 
 extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
-#endif
-extern void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
-extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
-
-#if !PLATFORM(IOS)
 extern void* wkGetHyphenationLocationBeforeIndex;
 #endif
 
@@ -166,12 +160,6 @@ extern CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat 
 extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-extern bool (*wkIsPublicSuffix)(NSString *host);
-#endif
-
-extern CFStringRef (*wkCachePartitionKey)(void);
 
 typedef enum {
     wkExternalPlaybackTypeNone,

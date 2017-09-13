@@ -1,3 +1,12 @@
+2017-09-13  Andy Estes  <aestes@apple.com>
+
+        [CF] Upstream CFNetwork-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176729
+
+        Reviewed by Alex Christensen.
+
+        * pal/spi/cf/CFNetworkSPI.h:
+
 2017-09-12  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Unskip fast/text/system-font-synthetic-italic.html

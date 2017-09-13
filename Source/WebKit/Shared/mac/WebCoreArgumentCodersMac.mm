@@ -38,6 +38,7 @@
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/ResourceRequest.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 #if USE(CFURLCONNECTION)
 #import <CFNetwork/CFURLRequest.h>
@@ -56,6 +57,136 @@ SOFT_LINK_CLASS(AVFoundation, AVOutputContext)
 using namespace WebCore;
 
 namespace IPC {
+
+static RetainPtr<CFMutableDictionaryRef> createSerializableRepresentation(CFIndex version, CFTypeRef* objects, CFIndex objectCount, CFDictionaryRef protocolProperties, CFNumberRef expectedContentLength, CFStringRef mimeType, CFTypeRef tokenNull)
+{
+    auto archiveListArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks));
+
+    for (CFIndex i = 0; i < objectCount; ++i) {
+        CFTypeRef object = objects[i];
+        if (object) {
+            CFArrayAppendValue(archiveListArray.get(), object);
+            CFRelease(object);
+        } else {
+            // Append our token null representation.
+            CFArrayAppendValue(archiveListArray.get(), tokenNull);
+        }
+    }
+
+    auto dictionary = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    auto versionNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCFIndexType, &version));
+    CFDictionarySetValue(dictionary.get(), CFSTR("version"), versionNumber.get());
+    CFDictionarySetValue(dictionary.get(), CFSTR("archiveList"), archiveListArray.get());
+
+    if (protocolProperties) {
+        CFDictionarySetValue(dictionary.get(), CFSTR("protocolProperties"), protocolProperties);
+        CFRelease(protocolProperties);
+    }
+
+    if (expectedContentLength) {
+        CFDictionarySetValue(dictionary.get(), CFSTR("expectedContentLength"), expectedContentLength);
+        CFRelease(expectedContentLength);
+    }
+
+    if (mimeType) {
+        CFDictionarySetValue(dictionary.get(), CFSTR("mimeType"), mimeType);
+        CFRelease(mimeType);
+    }
+
+    CFAllocatorDeallocate(kCFAllocatorDefault, objects);
+
+    return dictionary;
+}
+
+static CFTypeRef dictionaryValueOfType(CFDictionaryRef dictionary, CFStringRef key, CFTypeID type)
+{
+    CFTypeRef value = CFDictionaryGetValue(dictionary, key);
+    if (value && CFGetTypeID(value) == type)
+        return value;
+    return nullptr;
+}
+
+static bool createArchiveList(CFDictionaryRef representation, CFTypeRef tokenNull, CFIndex* version, CFTypeRef** objects, CFIndex* objectCount, CFDictionaryRef* protocolProperties, CFNumberRef* expectedContentLength, CFStringRef* mimeType)
+{
+    CFNumberRef versionNumber = (CFNumberRef)dictionaryValueOfType(representation, CFSTR("version"), CFNumberGetTypeID());
+    if (!versionNumber)
+        return false;
+
+    if (!CFNumberGetValue(versionNumber, kCFNumberCFIndexType, version))
+        return false;
+
+    CFArrayRef archiveListArray = (CFArrayRef)dictionaryValueOfType(representation, CFSTR("archiveList"), CFArrayGetTypeID());
+    if (!archiveListArray)
+        return false;
+
+    *objectCount = CFArrayGetCount(archiveListArray);
+    *objects = (CFTypeRef*)malloc(sizeof(CFTypeRef) * *objectCount);
+    for (CFIndex i = 0; i < *objectCount; ++i) {
+        CFTypeRef object = CFArrayGetValueAtIndex(archiveListArray, i);
+        if (object == tokenNull)
+            (*objects)[i] = nullptr;
+        else
+            (*objects)[i] = object;
+    }
+
+    if (protocolProperties)
+        *protocolProperties = (CFDictionaryRef)dictionaryValueOfType(representation, CFSTR("protocolProperties"), CFDictionaryGetTypeID());
+
+    if (expectedContentLength)
+        *expectedContentLength = (CFNumberRef)dictionaryValueOfType(representation, CFSTR("expectedContentLength"), CFNumberGetTypeID());
+
+    if (mimeType)
+        *mimeType = (CFStringRef)dictionaryValueOfType(representation, CFSTR("mimeType"), CFStringGetTypeID());
+
+    return true;
+}
+
+static RetainPtr<CFDictionaryRef> createSerializableRepresentation(CFURLRequestRef cfRequest, CFTypeRef tokenNull)
+{
+    CFIndex version;
+    CFTypeRef* objects;
+    CFIndex objectCount;
+    CFDictionaryRef protocolProperties;
+
+    // FIXME (12889518): Do not serialize HTTP message body.
+    // 1. It can be large and thus costly to send across.
+    // 2. It is misleading to provide a body with some requests, while others use body streams, which cannot be serialized at all.
+
+    _CFURLRequestCreateArchiveList(kCFAllocatorDefault, cfRequest, &version, &objects, &objectCount, &protocolProperties);
+
+    // This will deallocate the passed in arguments.
+    return createSerializableRepresentation(version, objects, objectCount, protocolProperties, nullptr, nullptr, tokenNull);
+}
+
+static RetainPtr<CFURLRequestRef> createCFURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull)
+{
+    CFIndex version;
+    CFTypeRef* objects;
+    CFIndex objectCount;
+    CFDictionaryRef protocolProperties;
+
+    if (!createArchiveList(representation, tokenNull, &version, &objects, &objectCount, &protocolProperties, nullptr, nullptr))
+        return nullptr;
+
+    auto cfRequest = adoptCF(_CFURLRequestCreateFromArchiveList(kCFAllocatorDefault, version, objects, objectCount, protocolProperties));
+    free(objects);
+    return WTFMove(cfRequest);
+}
+
+static RetainPtr<CFDictionaryRef> createSerializableRepresentation(NSURLRequest *request, CFTypeRef tokenNull)
+{
+    return createSerializableRepresentation([request _CFURLRequest], tokenNull);
+}
+
+static RetainPtr<NSURLRequest> createNSURLRequestFromSerializableRepresentation(CFDictionaryRef representation, CFTypeRef tokenNull)
+{
+    auto cfRequest = createCFURLRequestFromSerializableRepresentation(representation, tokenNull);
+    if (!cfRequest)
+        return nullptr;
+
+    return adoptNS([[NSURLRequest alloc] _initWithCFURLRequest:cfRequest.get()]);
+}
 
 #if USE(CFURLCONNECTION)
 void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const ResourceRequest& resourceRequest)
@@ -79,7 +210,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const 
         CFURLRequestSetHTTPRequestBodyStream(mutableRequest, nil);
     }
 
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKCFURLRequestCreateSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef()));
+    RetainPtr<CFDictionaryRef> dictionary = createSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef());
     IPC::encode(encoder, dictionary.get());
 
     // The fallback array is part of CFURLRequest, but it is not encoded by WKCFURLRequestCreateSerializableRepresentation.
@@ -106,7 +237,7 @@ void ArgumentCoder<ResourceRequest>::encodePlatformData(Encoder& encoder, const 
         [(NSMutableURLRequest *)requestToSerialize setHTTPBodyStream:nil];
     }
 
-    RetainPtr<CFDictionaryRef> dictionary = adoptCF(WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef()));
+    RetainPtr<CFDictionaryRef> dictionary = createSerializableRepresentation(requestToSerialize.get(), IPC::tokenNullTypeRef());
     IPC::encode(encoder, dictionary.get());
 
     // The fallback array is part of NSURLRequest, but it is not encoded by WKNSURLRequestCreateSerializableRepresentation.
@@ -132,13 +263,13 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(Decoder& decoder, Resour
         return false;
 
 #if USE(CFURLCONNECTION)
-    RetainPtr<CFURLRequestRef> cfURLRequest = adoptCF(WKCreateCFURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef()));
+    RetainPtr<CFURLRequestRef> cfURLRequest = createCFURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
     if (!cfURLRequest)
         return false;
 
     resourceRequest = ResourceRequest(cfURLRequest.get());
 #else
-    RetainPtr<NSURLRequest> nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
+    RetainPtr<NSURLRequest> nsURLRequest = createNSURLRequestFromSerializableRepresentation(dictionary.get(), IPC::tokenNullTypeRef());
     if (!nsURLRequest)
         return false;
 

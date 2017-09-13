@@ -26,10 +26,10 @@
 #import "config.h"
 #import "PublicSuffix.h"
 
-#import "WebCoreSystemInterface.h"
-#import "WebCoreNSURLExtras.h"
-
 #if ENABLE(PUBLIC_SUFFIX_LIST)
+
+#import "WebCoreNSURLExtras.h"
+#import <pal/spi/cf/CFNetworkSPI.h>
 
 @interface NSString (WebCoreNSURLExtras)
 - (BOOL)_web_looksLikeIPAddress;
@@ -40,7 +40,7 @@ namespace WebCore {
 bool isPublicSuffix(const String& domain)
 {
     NSString *host = decodeHostName(domain);
-    return host && wkIsPublicSuffix(host);
+    return host && _CFHostIsDomainTopLevel((CFStringRef)host);
 }
 
 String topPrivatelyControlledDomain(const String& domain)

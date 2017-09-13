@@ -455,7 +455,7 @@ String WebProcessPool::legacyPlatformDefaultApplicationCacheDirectory()
 
 String WebProcessPool::legacyPlatformDefaultCacheStorageDirectory()
 {
-    RetainPtr<NSString> cacheStoragePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
+    RetainPtr<NSString> cacheStoragePath = adoptNS((NSString *)_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!cacheStoragePath)
         cacheStoragePath = @"~/Library/WebKit/CacheStorage";
 
@@ -464,7 +464,7 @@ String WebProcessPool::legacyPlatformDefaultCacheStorageDirectory()
 
 String WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory()
 {
-    RetainPtr<NSString> cachePath = adoptNS((NSString *)WKCopyFoundationCacheDirectory());
+    RetainPtr<NSString> cachePath = adoptNS((NSString *)_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!cachePath)
         cachePath = @"~/Library/Caches/com.apple.WebKit.WebProcess";
 

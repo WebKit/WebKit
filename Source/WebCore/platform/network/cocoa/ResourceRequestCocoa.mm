@@ -138,7 +138,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
     if (m_nsRequest) {
-        NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)wkCachePartitionKey() inRequest:m_nsRequest.get()];
+        NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)_kCFURLCachePartitionKey inRequest:m_nsRequest.get()];
         if (cachePartition)
             m_cachePartition = cachePartition;
     }
@@ -208,7 +208,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     String partition = cachePartition();
     if (!partition.isNull() && !partition.isEmpty()) {
         NSString *partitionValue = [NSString stringWithUTF8String:partition.utf8().data()];
-        [NSURLProtocol setProperty:partitionValue forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
+        [NSURLProtocol setProperty:partitionValue forKey:(NSString *)_kCFURLCachePartitionKey inRequest:nsRequest];
     }
 
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101200)

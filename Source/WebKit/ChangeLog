@@ -1,3 +1,24 @@
+2017-09-13  Andy Estes  <aestes@apple.com>
+
+        [CF] Upstream CFNetwork-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176729
+
+        Reviewed by Alex Christensen.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::createSerializableRepresentation):
+        (IPC::dictionaryValueOfType):
+        (IPC::createArchiveList):
+        (IPC::createCFURLRequestFromSerializableRepresentation):
+        (IPC::createNSURLRequestFromSerializableRepresentation):
+        (IPC::ArgumentCoder<ResourceRequest>::encodePlatformData):
+        (IPC::ArgumentCoder<ResourceRequest>::decodePlatformData):
+        * UIProcess/Cocoa/WebProcessPoolCocoa.mm:
+        (WebKit::WebProcessPool::legacyPlatformDefaultCacheStorageDirectory):
+        (WebKit::WebProcessPool::legacyPlatformDefaultNetworkCacheDirectory):
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-13  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's setIsResizable, getWindowFrame, and setWindowFrame

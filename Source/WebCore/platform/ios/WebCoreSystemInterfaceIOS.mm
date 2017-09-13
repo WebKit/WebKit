@@ -29,10 +29,7 @@
 WEBCORE_EXPORT void (*wkClearGlyphVector)(void* glyphs);
 WEBCORE_EXPORT OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);
 WEBCORE_EXPORT id (*wkCreateNSURLConnectionDelegateProxy)(void);
-WEBCORE_EXPORT void (*wkSetCONNECTProxyForStream)(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
-WEBCORE_EXPORT void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFStringRef proxyAuthorizationString);
 WEBCORE_EXPORT void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
-WEBCORE_EXPORT CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 WEBCORE_EXPORT void (*wkSetLayerContentsScale)(CALayer *);
 
 WEBCORE_EXPORT bool (*wkCaptionAppearanceHasUserPreferences)(void);
@@ -47,12 +44,6 @@ WEBCORE_EXPORT CGFontRef(*wkCaptionAppearanceCopyFontForStyle)(int);
 WEBCORE_EXPORT bool(*wkCaptionAppearanceGetRelativeCharacterSize)(CGFloat*);
 WEBCORE_EXPORT int(*wkCaptionAppearanceGetTextEdgeStyle)(void);
 WEBCORE_EXPORT CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(void);
-
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-WEBCORE_EXPORT bool (*wkIsPublicSuffix)(NSString *host);
-#endif
-
-WEBCORE_EXPORT CFStringRef (*wkCachePartitionKey)(void);
 
 WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
 WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);

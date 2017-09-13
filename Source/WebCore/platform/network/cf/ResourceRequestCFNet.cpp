@@ -180,7 +180,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     if (!partition.isNull() && !partition.isEmpty()) {
         CString utf8String = partition.utf8();
         RetainPtr<CFStringRef> partitionValue = adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
-        _CFURLRequestSetProtocolProperty(cfRequest, wkCachePartitionKey(), partitionValue.get());
+        _CFURLRequestSetProtocolProperty(cfRequest, kCFURLCachePartitionKey, partitionValue.get());
     }
 #endif
 
@@ -292,7 +292,7 @@ void ResourceRequest::doUpdateResourceRequest()
     }
 
 #if ENABLE(CACHE_PARTITIONING)
-    RetainPtr<CFStringRef> cachePartition = adoptCF(static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkCachePartitionKey())));
+    RetainPtr<CFStringRef> cachePartition = adoptCF(static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), kCFURLCachePartitionKey)));
     if (cachePartition)
         m_cachePartition = cachePartition.get();
 #endif

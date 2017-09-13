@@ -1,3 +1,30 @@
+2017-09-13  Andy Estes  <aestes@apple.com>
+
+        [CF] Upstream CFNetwork-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176729
+
+        Reviewed by Alex Christensen.
+
+        * platform/ios/WebCoreSystemInterfaceIOS.mm:
+        * platform/mac/PublicSuffixMac.mm:
+        (WebCore::isPublicSuffix):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/network/cf/ResourceRequestCFNet.cpp:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        * platform/network/cf/SocketStreamHandleImplCFNet.cpp:
+        (WebCore::setCONNECTProxyForStream):
+        (WebCore::SocketStreamHandleImpl::createStreams):
+        (WebCore::setCONNECTProxyAuthorizationForStream):
+        (WebCore::SocketStreamHandleImpl::addCONNECTCredentials):
+        (WebCore::copyCONNECTProxyResponse):
+        (WebCore::SocketStreamHandleImpl::readStreamCallback):
+        (WebCore::SocketStreamHandleImpl::writeStreamCallback):
+        * platform/network/cocoa/ResourceRequestCocoa.mm:
+        (WebCore::ResourceRequest::doUpdateResourceRequest):
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):
+
 2017-09-13  Antti Koivisto  <antti@apple.com>
 
         Make more of the CSS animation system internals element based

@@ -8573,7 +8573,7 @@ static WebFrameView *containingFrameView(NSView *view)
     if (s_didSetCacheModel && cacheModel == s_cacheModel)
         return;
 
-    NSString *nsurlCacheDirectory = CFBridgingRelease(WKCopyFoundationCacheDirectory());
+    NSString *nsurlCacheDirectory = CFBridgingRelease(_CFURLCacheCopyCacheDirectory([[NSURLCache sharedURLCache] _CFURLCache]));
     if (!nsurlCacheDirectory)
         nsurlCacheDirectory = NSHomeDirectory();
 

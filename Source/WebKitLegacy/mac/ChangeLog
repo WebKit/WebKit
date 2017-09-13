@@ -1,3 +1,15 @@
+2017-09-13  Andy Estes  <aestes@apple.com>
+
+        [CF] Upstream CFNetwork-related WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176729
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2017-09-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Refactor WebContentReader out of EditorMac and EditorIOS
