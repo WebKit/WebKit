@@ -369,7 +369,6 @@
     macro(IsSecureContextAttributeEnabled, isSecureContextAttributeEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "Secure Contexts API", "Enable Secure Contexts API") \
     macro(ServiceWorkersEnabled, serviceWorkersEnabled, Bool, bool, false, "ServiceWorkers", "Enable ServiceWorkers") \
     macro(CacheAPIEnabled, cacheAPIEnabled, Bool, bool, false, "Cache API", "Enable Cache API") \
-    macro(StorageAccessAPIEnabled, storageAccessAPIEnabled, Bool, bool, false, "Storage Access API", "Enable Storage Access API") \
     macro(SubresourceIntegrityEnabled, subresourceIntegrityEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubresourceIntegrity", "Enable SubresourceIntegrity") \
     macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, true, "Viewport Fit", "Enable viewport-fit viewport parameter") \
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \

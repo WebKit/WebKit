@@ -466,8 +466,6 @@ void Internals::resetToConsistentState(Page& page)
 #if USE(LIBWEBRTC)
     WebCore::useRealRTCPeerConnectionFactory();
 #endif
-
-    page.settings().setStorageAccessAPIEnabled(false);
 }
 
 Internals::Internals(Document& document)
@@ -3836,15 +3834,6 @@ String Internals::resourceLoadStatisticsForOrigin(const String& origin)
 void Internals::setResourceLoadStatisticsEnabled(bool enable)
 {
     Settings::setResourceLoadStatisticsEnabled(enable);
-}
-
-void Internals::setUserGrantsStorageAccess(bool value)
-{
-    Document* document = contextDocument();
-    if (!document)
-        return;
-
-    document->setUserGrantsStorageAccessOverride(value);
 }
 
 String Internals::composedTreeAsText(Node& node)

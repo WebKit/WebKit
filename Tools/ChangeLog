@@ -1,3 +1,16 @@
+2017-09-13  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r221976.
+
+        The test introduced was flaky from point of addition.
+
+        Reverted changeset:
+
+        "Introduce Storage Access API (document parts) as an
+        experimental feature"
+        https://bugs.webkit.org/show_bug.cgi?id=175759
+        http://trac.webkit.org/changeset/221976
+
 2017-09-13  Lucas Forschler  <lforschler@apple.com>
 
         Compress spindumps on client side before packaging into layout test results zip (mac & ios)

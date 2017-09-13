@@ -54,7 +54,6 @@ enum SandboxFlag {
     SandboxTopNavigationByUserActivation = 1 << 10,
     SandboxDocumentDomain       = 1 << 11,
     SandboxModals               = 1 << 12,
-    SandboxStorageAccessByUserActivation = 1 << 13,
     SandboxAll                  = -1 // Mask with all bits set to 1.
 };
 

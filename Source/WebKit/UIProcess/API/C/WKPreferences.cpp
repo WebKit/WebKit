@@ -1879,13 +1879,3 @@ bool WKPreferencesGetPaymentRequestEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->paymentRequestEnabled();
 }
-
-void WKPreferencesSetStorageAccessAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setStorageAccessAPIEnabled(flag);
-}
-
-bool WKPreferencesGetStorageAccessAPIEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->storageAccessAPIEnabled();
-}

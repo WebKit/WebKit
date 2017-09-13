@@ -85,7 +85,7 @@ void SecurityContext::enforceSandboxFlags(SandboxFlags mask)
 bool SecurityContext::isSupportedSandboxPolicy(StringView policy)
 {
     static const char* const supportedPolicies[] = {
-        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals", "allow-storage-access-by-user-activation"
+        "allow-forms", "allow-same-origin", "allow-scripts", "allow-top-navigation", "allow-pointer-lock", "allow-popups", "allow-popups-to-escape-sandbox", "allow-top-navigation-by-user-activation", "allow-modals"
     };
 
     for (auto* supportedPolicy : supportedPolicies) {
@@ -136,8 +136,6 @@ SandboxFlags SecurityContext::parseSandboxPolicy(const String& policy, String& i
             flags &= ~SandboxTopNavigationByUserActivation;
         else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-modals"))
             flags &= ~SandboxModals;
-        else if (equalLettersIgnoringASCIICase(sandboxToken, "allow-storage-access-by-user-activation"))
-            flags &= ~SandboxStorageAccessByUserActivation;
         else {
             if (numberOfTokenErrors)
                 tokenErrors.appendLiteral(", '");

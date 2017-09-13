@@ -45,7 +45,7 @@ using namespace WebCore;
 namespace WebKit {
 
 constexpr unsigned operatingDatesWindow { 30 };
-constexpr unsigned statisticsModelVersion { 10 };
+constexpr unsigned statisticsModelVersion { 9 };
 constexpr unsigned maxImportance { 3 };
 
 template<typename T> static inline String isolatedPrimaryDomain(const T& value)
