@@ -45,10 +45,10 @@
 
 namespace WebCore {
 
-KeyframeAnimation::KeyframeAnimation(const Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation, const RenderStyle* unanimatedStyle)
-    : AnimationBase(animation, renderer, compositeAnimation)
+KeyframeAnimation::KeyframeAnimation(const Animation& animation, Element& element, CompositeAnimation& compositeAnimation, const RenderStyle& unanimatedStyle)
+    : AnimationBase(animation, element, compositeAnimation)
     , m_keyframes(animation.name())
-    , m_unanimatedStyle(RenderStyle::clonePtr(*unanimatedStyle))
+    , m_unanimatedStyle(RenderStyle::clonePtr(unanimatedStyle))
 {
     resolveKeyframeStyles();
 
@@ -154,7 +154,7 @@ void KeyframeAnimation::fetchIntervalEndpointsForProperty(CSSPropertyID property
     prog = progress(scale, offset, prevKeyframe.timingFunction(name()));
 }
 
-bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, RenderElement*, const RenderStyle*, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
+bool KeyframeAnimation::animate(CompositeAnimation& compositeAnimation, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle)
 {
     // Fire the start timeout if needed
     fireAnimationEventsIfNeeded();

@@ -1104,7 +1104,8 @@ void RenderElement::willBeDestroyed()
     if (m_style.hasFixedBackgroundImage() && !settings().fixedBackgroundsPaintRelativeToDocument())
         view().frameView().removeSlowRepaintObject(this);
 
-    animation().cancelAnimations(*this);
+    if (element())
+        animation().cancelAnimations(*element());
 
     destroyLeftoverChildren();
 

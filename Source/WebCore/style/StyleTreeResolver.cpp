@@ -266,7 +266,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderSt
     }
 
     std::unique_ptr<RenderStyle> animatedStyle;
-    if (element.document().frame()->animation().updateAnimations(*renderer, *newStyle, animatedStyle))
+    if (element.document().frame()->animation().updateAnimations(element, *newStyle, animatedStyle))
         recompositeLayer = true;
 
     if (animatedStyle) {

@@ -39,12 +39,12 @@ class RenderStyle;
 // A KeyframeAnimation tracks the state of an explicit animation for a single RenderElement.
 class KeyframeAnimation final : public AnimationBase {
 public:
-    static Ref<KeyframeAnimation> create(const Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation, const RenderStyle* unanimatedStyle)
+    static Ref<KeyframeAnimation> create(const Animation& animation, Element& element, CompositeAnimation& compositeAnimation, const RenderStyle& unanimatedStyle)
     {
-        return adoptRef(*new KeyframeAnimation(animation, renderer, compositeAnimation, unanimatedStyle));
+        return adoptRef(*new KeyframeAnimation(animation, element, compositeAnimation, unanimatedStyle));
     }
 
-    bool animate(CompositeAnimation&, RenderElement*, const RenderStyle* currentStyle, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle) override;
+    bool animate(CompositeAnimation&, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& animatedStyle, bool& didBlendStyle);
     void getAnimatedStyle(std::unique_ptr<RenderStyle>&) override;
 
     bool computeExtentOfTransformAnimation(LayoutRect&) const override;
@@ -93,7 +93,7 @@ protected:
 #endif
 
 private:
-    KeyframeAnimation(const Animation&, RenderElement*, CompositeAnimation*, const RenderStyle* unanimatedStyle);
+    KeyframeAnimation(const Animation&, Element&, CompositeAnimation&, const RenderStyle& unanimatedStyle);
     virtual ~KeyframeAnimation();
     
     // Get the styles for the given property surrounding the current animation time and the progress between them.

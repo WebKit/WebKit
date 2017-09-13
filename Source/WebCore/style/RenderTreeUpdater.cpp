@@ -398,7 +398,7 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 
     auto& initialStyle = newRenderer->style();
     std::unique_ptr<RenderStyle> animatedStyle;
-    newRenderer->animation().updateAnimations(*newRenderer, initialStyle, animatedStyle);
+    newRenderer->animation().updateAnimations(element, initialStyle, animatedStyle);
     if (animatedStyle) {
         newRenderer->setStyleInternal(WTFMove(*animatedStyle));
         newRenderer->setHasInitialAnimatedStyle(true);

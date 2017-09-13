@@ -1,3 +1,72 @@
+2017-09-13  Antti Koivisto  <antti@apple.com>
+
+        Make more of the CSS animation system internals element based
+        https://bugs.webkit.org/show_bug.cgi?id=176832
+
+        Reviewed by Zalan Bujtas.
+
+        CSS animations animate element style. Continue moving away from renderers in the animation code.
+
+        Also do some general modernization.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computeRenderStyleForProperty):
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::AnimationBase):
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::ensureCompositeAnimation):
+        (WebCore::CSSAnimationControllerPrivate::clear):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimations):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimerForElement):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::isRunningAcceleratedAnimationOnRenderer const):
+        (WebCore::CSSAnimationControllerPrivate::pauseAnimationAtTime):
+        (WebCore::CSSAnimationControllerPrivate::pauseTransitionAtTime):
+        (WebCore::CSSAnimationControllerPrivate::animatedStyleForElement):
+        (WebCore::CSSAnimationControllerPrivate::computeExtentOfAnimation const):
+        (WebCore::CSSAnimationController::cancelAnimations):
+        (WebCore::CSSAnimationController::updateAnimations):
+        (WebCore::CSSAnimationController::animatedStyleForRenderer):
+        (WebCore::CSSAnimationController::computeExtentOfAnimation const):
+        (WebCore::CSSAnimationController::pauseAnimationAtTime):
+        (WebCore::CSSAnimationController::pauseTransitionAtTime):
+        (WebCore::CSSAnimationControllerPrivate::updateAnimationTimerForRenderer): Deleted.
+        (WebCore::CSSAnimationControllerPrivate::getAnimatedStyleForRenderer): Deleted.
+        (WebCore::CSSAnimationController::getAnimatedStyleForRenderer): Deleted.
+        * page/animation/CSSAnimationController.h:
+        * page/animation/CSSAnimationControllerPrivate.h:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::~CompositeAnimation):
+        (WebCore::CompositeAnimation::clearElement):
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        (WebCore::CompositeAnimation::animate):
+        (WebCore::CompositeAnimation::clearRenderer): Deleted.
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::animate):
+        * page/animation/ImplicitAnimation.h:
+        (WebCore::ImplicitAnimation::create):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::KeyframeAnimation):
+        (WebCore::KeyframeAnimation::animate):
+        * page/animation/KeyframeAnimation.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::currentTransform const):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+        * testing/Internals.cpp:
+        (WebCore::Internals::pauseAnimationAtTimeOnElement):
+        (WebCore::Internals::pauseAnimationAtTimeOnPseudoElement):
+        (WebCore::Internals::pauseTransitionAtTimeOnElement):
+        (WebCore::Internals::pauseTransitionAtTimeOnPseudoElement):
+
 2017-09-13  Daniel Bates  <dabates@apple.com>
 
         Make history.pushState()/replaceState() more closely aligned to the HTML standard

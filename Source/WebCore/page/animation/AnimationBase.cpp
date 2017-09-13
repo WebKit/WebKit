@@ -76,12 +76,11 @@ static inline double solveSpringFunction(double mass, double stiffness, double d
     return solver.solve(t * duration);
 }
 
-AnimationBase::AnimationBase(const Animation& animation, RenderElement* renderer, CompositeAnimation* compositeAnimation)
-    : m_element(renderer->element())
-    , m_compositeAnimation(compositeAnimation)
+AnimationBase::AnimationBase(const Animation& animation, Element& element, CompositeAnimation& compositeAnimation)
+    : m_element(&element)
+    , m_compositeAnimation(&compositeAnimation)
     , m_animation(const_cast<Animation&>(animation))
 {
-    ASSERT(m_element);
     // Compute the total duration
     if (m_animation->iterationCount() > 0)
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
