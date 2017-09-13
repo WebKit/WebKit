@@ -1,3 +1,33 @@
+2017-09-13  Ms2ger  <Ms2ger@igalia.com>
+
+        Disallow passing null values to various WebGL2 methods.
+        https://bugs.webkit.org/show_bug.cgi?id=176829
+
+        Reviewed by Yusuke Suzuki.
+
+        This matches the specification as well as Gecko and Chromium.
+
+        Test: fast/canvas/webgl/webgl2/bindings.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::beginQuery):
+        (WebCore::WebGL2RenderingContext::getQueryParameter):
+        (WebCore::WebGL2RenderingContext::samplerParameteri):
+        (WebCore::WebGL2RenderingContext::samplerParameterf):
+        (WebCore::WebGL2RenderingContext::getSamplerParameter):
+        (WebCore::WebGL2RenderingContext::clientWaitSync):
+        (WebCore::WebGL2RenderingContext::waitSync):
+        (WebCore::WebGL2RenderingContext::getSyncParameter):
+        (WebCore::WebGL2RenderingContext::transformFeedbackVaryings):
+        (WebCore::WebGL2RenderingContext::getTransformFeedbackVarying):
+        (WebCore::WebGL2RenderingContext::getUniformIndices):
+        (WebCore::WebGL2RenderingContext::getUniformBlockIndex):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockParameter):
+        (WebCore::WebGL2RenderingContext::getActiveUniformBlockName):
+        (WebCore::WebGL2RenderingContext::uniformBlockBinding):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2017-09-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Add IDLs and stubs

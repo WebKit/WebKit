@@ -770,7 +770,7 @@ GC3Dboolean WebGL2RenderingContext::isQuery(WebGLQuery*)
     return false;
 }
 
-void WebGL2RenderingContext::beginQuery(GC3Denum, WebGLQuery*)
+void WebGL2RenderingContext::beginQuery(GC3Denum, WebGLQuery&)
 {
 }
 
@@ -783,7 +783,7 @@ RefPtr<WebGLQuery> WebGL2RenderingContext::getQuery(GC3Denum, GC3Denum)
     return nullptr;
 }
 
-WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery*, GC3Denum)
+WebGLAny WebGL2RenderingContext::getQueryParameter(WebGLQuery&, GC3Denum)
 {
     return nullptr;
 }
@@ -806,15 +806,15 @@ void WebGL2RenderingContext::bindSampler(GC3Duint, WebGLSampler*)
 {
 }
 
-void WebGL2RenderingContext::samplerParameteri(WebGLSampler*, GC3Denum, GC3Dint)
+void WebGL2RenderingContext::samplerParameteri(WebGLSampler&, GC3Denum, GC3Dint)
 {
 }
 
-void WebGL2RenderingContext::samplerParameterf(WebGLSampler*, GC3Denum, GC3Dfloat)
+void WebGL2RenderingContext::samplerParameterf(WebGLSampler&, GC3Denum, GC3Dfloat)
 {
 }
 
-WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler*, GC3Denum)
+WebGLAny WebGL2RenderingContext::getSamplerParameter(WebGLSampler&, GC3Denum)
 {
     return nullptr;
 }
@@ -833,16 +833,16 @@ void WebGL2RenderingContext::deleteSync(WebGLSync*)
 {
 }
 
-GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync*, GC3Dbitfield, GC3Duint64)
+GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync&, GC3Dbitfield, GC3Duint64)
 {
     return 0;
 }
 
-void WebGL2RenderingContext::waitSync(WebGLSync*, GC3Dbitfield, GC3Duint64)
+void WebGL2RenderingContext::waitSync(WebGLSync&, GC3Dbitfield, GC3Duint64)
 {
 }
 
-WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync*, GC3Denum)
+WebGLAny WebGL2RenderingContext::getSyncParameter(WebGLSync&, GC3Denum)
 {
     return nullptr;
 }
@@ -873,11 +873,11 @@ void WebGL2RenderingContext::endTransformFeedback()
 {
 }
 
-void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram*, const Vector<String>&, GC3Denum)
+void WebGL2RenderingContext::transformFeedbackVaryings(WebGLProgram&, const Vector<String>&, GC3Denum)
 {
 }
 
-RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram*, GC3Duint)
+RefPtr<WebGLActiveInfo> WebGL2RenderingContext::getTransformFeedbackVarying(WebGLProgram&, GC3Duint)
 {
     return nullptr;
 }
@@ -915,7 +915,7 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
     }
 }
 
-Uint32Array* WebGL2RenderingContext::getUniformIndices(WebGLProgram*, const Vector<String>&)
+Uint32Array* WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
 {
     return nullptr;
 }
@@ -944,22 +944,22 @@ WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const 
     }
 }
 
-GC3Duint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram*, const String&)
+GC3Duint WebGL2RenderingContext::getUniformBlockIndex(WebGLProgram&, const String&)
 {
     return 0;
 }
 
-WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram*, GC3Duint, GC3Denum)
+WebGLAny WebGL2RenderingContext::getActiveUniformBlockParameter(WebGLProgram&, GC3Duint, GC3Denum)
 {
     return nullptr;
 }
 
-WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram*, GC3Duint)
+WebGLAny WebGL2RenderingContext::getActiveUniformBlockName(WebGLProgram&, GC3Duint)
 {
     return nullptr;
 }
 
-void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram*, GC3Duint, GC3Duint)
+void WebGL2RenderingContext::uniformBlockBinding(WebGLProgram&, GC3Duint, GC3Duint)
 {
 }
 
