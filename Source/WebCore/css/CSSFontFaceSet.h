@@ -73,6 +73,8 @@ public:
     enum class Status { Loading, Loaded };
     Status status() const { return m_status; }
 
+    bool hasActiveFontFaces() { return status() == Status::Loading; }
+
     ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> matchingFaces(const String& font, const String& text);
 
     // CSSFontFace::Client needs to be able to be held in a RefPtr.
