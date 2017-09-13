@@ -1,3 +1,22 @@
+2017-09-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221906. rdar://problem/34404478
+
+    2017-09-11  Tim Horton  <timothy_horton@apple.com>
+
+            REGRESSION (r221272): WKWebView gets stuck zoomed in if the web process crashes
+            https://bugs.webkit.org/show_bug.cgi?id=176767
+            <rdar://problem/34196874>
+
+            Reviewed by Dan Bernstein.
+
+            * UIProcess/API/Cocoa/WKWebView.mm:
+            (-[WKWebView _processDidExit]):
+            Reset the "last sent" layout parameters when the Web Content process exits.
+            They're no longer "last sent", and if we short-circuit from sending them
+            again (from under _didRelaunchProcess), we will never send the correct
+            layout width (until it changes).
+
 2017-09-10  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220568. rdar://problem/34142025
