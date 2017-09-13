@@ -68,7 +68,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         closeBrace.classList.add("close-brace");
         closeBrace.textContent = "}";
 
-        this._element.append(this._headerElement, openBrace);
+        this._element.append(this._createMediaHeader(), this._headerElement, openBrace);
         this.addSubview(this._propertiesEditor);
         this._propertiesEditor.needsLayout(WI.View.LayoutReason.Dirty);
         this._element.append(closeBrace);
@@ -223,6 +223,31 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
     get selectorEditable()
     {
         return this._style.editable && this._style.ownerRule;
+    }
+
+    // Private
+
+    _createMediaHeader()
+    {
+        if (!this._style.ownerRule)
+            return "";
+
+        console.assert(Array.isArray(this._style.ownerRule.mediaList));
+
+        let mediaList = this._style.ownerRule.mediaList;
+        let mediaText = mediaList.map((media) => media.text).join(", ");
+        if (!mediaText || mediaText === "all" || mediaText === "screen")
+            return "";
+
+        let mediaElement = document.createElement("div");
+        mediaElement.classList.add("header-media");
+
+        let mediaLabel = mediaElement.appendChild(document.createElement("div"));
+        mediaLabel.className = "media-label";
+        mediaLabel.append("@media ", mediaText);
+        mediaElement.append(mediaLabel);
+
+        return mediaElement;
     }
 };
 

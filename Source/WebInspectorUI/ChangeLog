@@ -1,5 +1,24 @@
 2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
+        Web Inspector: Styles Redesign: display @media section headers
+        https://bugs.webkit.org/show_bug.cgi?id=176289
+        <rdar://problem/34228389>
+
+        Reviewed by Devin Rousso.
+
+        Prepend CSS media query selectors to every matching rule.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        (.spreadsheet-css-declaration .media-label):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype._createMediaHeader):
+        Don't localize "@media" since it's CSS code.
+        Don't display "all" or "screen" media query selectors. One of the goals of the
+        Styles sidebar redesign is to fit more data.
+
+2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
         Web Inspector: Frontend should be made to expect and handle disabled properties
         https://bugs.webkit.org/show_bug.cgi?id=166787
         <rdar://problem/34379593>

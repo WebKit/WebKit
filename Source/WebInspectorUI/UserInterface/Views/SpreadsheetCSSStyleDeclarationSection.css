@@ -33,6 +33,10 @@
     -webkit-user-select: text;
 }
 
+.spreadsheet-css-declaration .media-label {
+    color: black;
+}
+
 .spreadsheet-css-declaration .origin {
     float: right;
     max-width: 100%;
