@@ -1,3 +1,35 @@
+2017-09-13  John Wilander  <wilander@apple.com>
+
+        Introduce Storage Access API (document parts) as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=175759
+        <rdar://problem/33666847>
+
+        Reviewed by Alex Christensen.
+
+        Storage Access API is an experimental feature which allows cross-origin,
+        sandboxed iframes to request access to their first-party storage (as
+        opposed to partitioned storage). This might be restricted to cookies or
+        might cover all stateful mechanisms.
+
+        It introduces the following three developer-facing things:
+        - A new readonly attribute, document.hasStorageAccess.
+        - A new function, document.requestStorageAccess().
+        - A new iframe sandbox token, allow-storage-access-by-user-activation.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::encode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+            Storage handling of the new type of data.
+        * Shared/WebPreferencesDefinitions.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetStorageAccessAPIEnabled):
+        (WKPreferencesGetStorageAccessAPIEnabled):
+        * UIProcess/API/C/WKPreferencesRefPrivate.h:
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+            Bumped the model version from 9 to 10.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-09-13  Sergio Villar Senin  <svillar@igalia.com>
 
         [WebVR] Add IDLs and stubs

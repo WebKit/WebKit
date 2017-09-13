@@ -1,3 +1,71 @@
+2017-09-13  John Wilander  <wilander@apple.com>
+
+        Introduce Storage Access API (document parts) as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=175759
+        <rdar://problem/33666847>
+
+        Reviewed by Alex Christensen.
+
+        Storage Access API is an experimental feature which allows cross-origin,
+        sandboxed iframes to request access to their first-party storage (as
+        opposed to partitioned storage). This might be restricted to cookies or
+        might cover all stateful mechanisms.
+
+        It introduces the following three developer-facing things:
+        - A new readonly attribute, document.hasStorageAccess.
+        - A new function, document.requestStorageAccess().
+        - A new iframe sandbox token, allow-storage-access-by-user-activation.
+
+        Tests: http/tests/loading/resourceLoadStatistics/request-and-deny-storage-access-cross-origin-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-and-deny-storage-access-cross-origin-sandboxed-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-and-grant-storage-access-cross-origin-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-and-grant-storage-access-cross-origin-sandboxed-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-same-origin-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-same-origin-sandboxed-iframe.html
+               http/tests/loading/resourceLoadStatistics/request-storage-access-top-frame.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestStorageAccess):
+        * dom/Document.h:
+        (WebCore::Document::hasStorageAccess const):
+        (WebCore::Document::setUserGrantsStorageAccessOverride):
+            See comments on WebCore::Internals below.
+        * dom/Document.idl:
+        * dom/SecurityContext.cpp:
+        (WebCore::SecurityContext::isSupportedSandboxPolicy):
+        (WebCore::SecurityContext::parseSandboxPolicy):
+            Support for allow-storage-access-by-user-activation.
+        * dom/SecurityContext.h:
+        * loader/ResourceLoadObserver.cpp:
+        (WebCore::ResourceLoadObserver::registerStorageAccess):
+            Newly granted storage access is reported to 
+            WebCore::ResourceLoadObserver.
+        * loader/ResourceLoadObserver.h:
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::encodeHashSet):
+        (WebCore::ResourceLoadStatistics::encode const):
+        (WebCore::decodeHashSet):
+        (WebCore::ResourceLoadStatistics::decode):
+        (WebCore::appendHashSet):
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::mergeHashSet):
+        (WebCore::ResourceLoadStatistics::merge):
+            Storage of the new type of data.
+        * loader/ResourceLoadStatistics.h:
+        * page/Settings.in:
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState):
+        (WebCore::Internals::setUserGrantsStorageAccess):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+            Added setUserGrantsStorageAccess(). It is used to
+            override the eventSender's keyboard input which
+            always results in a cancel action on the confirm()
+            dialog.
+
 2017-09-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [HarfBuzz] Wrong offset returned by HarfBuzzShaper::offsetForPosition in some cases

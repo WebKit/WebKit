@@ -300,3 +300,5 @@ viewportFitEnabled initial=false
 allowMediaContentTypesRequiringHardwareSupportAsFallback initial=false
 
 paymentRequestEnabled initial=false, conditional=PAYMENT_REQUEST
+
+storageAccessAPIEnabled initial=false
