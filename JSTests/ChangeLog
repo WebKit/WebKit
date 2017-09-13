@@ -1,3 +1,17 @@
+2017-09-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221711. rdar://problem/34404472
+
+    2017-09-06  Mark Lam  <mark.lam@apple.com>
+
+            constructGenericTypedArrayViewWithArguments() is missing an exception check.
+            https://bugs.webkit.org/show_bug.cgi?id=176485
+            <rdar://problem/33898874>
+
+            Reviewed by Keith Miller.
+
+            * stress/regress-176485.js: Added.
+
 2017-07-31  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220012. rdar://problem/33619526

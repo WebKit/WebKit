@@ -1,3 +1,18 @@
+2017-09-12  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221711. rdar://problem/34404472
+
+    2017-09-06  Mark Lam  <mark.lam@apple.com>
+
+            constructGenericTypedArrayViewWithArguments() is missing an exception check.
+            https://bugs.webkit.org/show_bug.cgi?id=176485
+            <rdar://problem/33898874>
+
+            Reviewed by Keith Miller.
+
+            * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+            (JSC::constructGenericTypedArrayViewWithArguments):
+
 2017-08-09  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r220473. rdar://problem/33810961
