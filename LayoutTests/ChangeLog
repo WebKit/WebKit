@@ -1,3 +1,11 @@
+2017-09-13  Matt Lewis  <jlewis3@apple.com>
+
+        Fixed expectations of imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac/TestExpectations:
+
 2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Frontend should be made to expect and handle disabled properties
