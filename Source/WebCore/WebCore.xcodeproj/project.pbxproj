@@ -5867,7 +5867,6 @@
 		BC6D6E2609AF943500F59759 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6D6E2509AF943500F59759 /* ScrollView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC74DA371013F3F7007987AD /* RGBColor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC74DA351013F3F7007987AD /* RGBColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC74DA381013F3F7007987AD /* RGBColor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC74DA361013F3F7007987AD /* RGBColor.cpp */; };
-		BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */; };
 		BC772B3C0C4EA91E0083285F /* CSSHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772B360C4EA91E0083285F /* CSSHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC772C460C4EB2C60083285F /* XMLHttpRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */; };
 		BC772C470C4EB2C60083285F /* XMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC772C450C4EB2C60083285F /* XMLHttpRequest.h */; };
@@ -14501,7 +14500,6 @@
 		BC6D6E2509AF943500F59759 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScrollView.h; sourceTree = "<group>"; };
 		BC74DA351013F3F7007987AD /* RGBColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RGBColor.h; sourceTree = "<group>"; };
 		BC74DA361013F3F7007987AD /* RGBColor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RGBColor.cpp; sourceTree = "<group>"; };
-		BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserUtilities.h; sourceTree = "<group>"; };
 		BC772B360C4EA91E0083285F /* CSSHelper.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSHelper.h; sourceTree = "<group>"; };
 		BC772C440C4EB2C60083285F /* XMLHttpRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequest.cpp; sourceTree = "<group>"; };
 		BC772C450C4EB2C60083285F /* XMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequest.h; sourceTree = "<group>"; };
@@ -23783,7 +23781,6 @@
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
 				7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */,
-				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */,
 				F544F78715CFB2A800AF33A8 /* PlatformLocale.h */,
 				379E371413736A6600B9E919 /* QuotedPrintable.cpp */,
@@ -29332,7 +29329,6 @@
 				A18890AF1AA13F250026C301 /* ParentalControlsContentFilter.h in Headers */,
 				CDCD41E81C3DDB0A00965D99 /* ParsedContentRange.h in Headers */,
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
-				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				536D5A23193E8E0C00CE4CAB /* ParsingUtilities.h in Headers */,
 				57B5F7ED1E57F1E300F34F90 /* PasswordCredential.h in Headers */,
 				77D5100C1ED5E29000DA4C87 /* PasswordCredentialData.h in Headers */,
