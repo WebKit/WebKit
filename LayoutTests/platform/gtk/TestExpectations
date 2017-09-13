@@ -632,7 +632,6 @@ webrtc/audio-replace-track.html [ Failure ]
 webrtc/audio-muted-stats.html [ Failure ]
 webrtc/audio-muted-stats2.html [ Failure ]
 webrtc/captureCanvas-webrtc.html [ Failure ]
-webrtc/clone-audio-track.html [ Failure ]
 webrtc/closing-peerconnection.html [ Timeout ]
 webrtc/connection-state.html [ Failure ]
 webrtc/datachannel [ Skip ]
@@ -1365,6 +1364,10 @@ webkit.org/b/176804 imported/w3c/web-platform-tests/media-source/mediasource-pla
 webkit.org/b/176805 media/media-higher-prio-audio-stream.html [ Crash ]
 
 webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash ]
+
+webkit.org/b/176856 fast/mediastream/apply-constraints-video.html [ Crash ]
+webkit.org/b/176850 webrtc/clone-audio-track.html [ Failure Crash ]
+webkit.org/b/176861 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
