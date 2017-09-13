@@ -46,7 +46,7 @@ set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
 )
 
-set(JavaScriptCore_OG_SOURCES
+set(JavaScriptCore_UNIFIABLE_SOURCES
     API/JSBase.cpp
     API/JSCTestRunnerUtils.cpp
     API/JSCallbackConstructor.cpp
@@ -1016,7 +1016,7 @@ set(JavaScriptCore_OG_SOURCES
     yarr/YarrSyntaxChecker.cpp
 )
 
-foreach (_sourceFile IN LISTS JavaScriptCore_OG_SOURCES)
+foreach (_sourceFile IN LISTS JavaScriptCore_UNIFIABLE_SOURCES)
     if (NOT (${_sourceFile} MATCHES "[.]c$"))
         set_source_files_properties(${_sourceFile} PROPERTIES HEADER_FILE_ONLY ON)
         list(APPEND JavaScriptCore_HEADERS ${_sourceFile})
@@ -1024,16 +1024,16 @@ foreach (_sourceFile IN LISTS JavaScriptCore_OG_SOURCES)
 endforeach ()
 
 execute_process(COMMAND ${RUBY_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../WTF/generate-unified-source-bundles.rb
-  "--derived-sources-path" ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} ${JavaScriptCore_OG_SOURCES}
+  "--derived-sources-path" ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} ${JavaScriptCore_UNIFIABLE_SOURCES}
   RESULT_VARIABLE generateUnifiedSourcesResult
   OUTPUT_VARIABLE generateUnifiedSourcesOutput
 )
 
 if (${generateUnifiedSourcesResult})
-    message(FATAL_ERROR "unified-source-bundler.rb exited with non-zero status not appending results")
-else ()
-    list(APPEND JavaScriptCore_SOURCES ${generateUnifiedSourcesOutput})
+    message(FATAL_ERROR "unified-source-bundler.rb exited with non-zero status, exiting")
 endif ()
+
+list(APPEND JavaScriptCore_SOURCES ${generateUnifiedSourcesOutput})
 
 # These are special files that we can't or don't want to unified source compile
 list(APPEND JavaScriptCore_SOURCES

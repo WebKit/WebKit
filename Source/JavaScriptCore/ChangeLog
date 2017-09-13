@@ -1,5 +1,17 @@
 2017-09-12  Keith Miller  <keith_miller@apple.com>
 
+        Rename JavaScriptCore CMake unifiable sources list
+        https://bugs.webkit.org/show_bug.cgi?id=176823
+
+        Reviewed by Joseph Pecoraro.
+
+        This patch also changes the error message when the unified source
+        bundler fails to be more accurate.
+
+        * CMakeLists.txt:
+
+2017-09-12  Keith Miller  <keith_miller@apple.com>
+
         Do unified source builds for JSC
         https://bugs.webkit.org/show_bug.cgi?id=176076
 
