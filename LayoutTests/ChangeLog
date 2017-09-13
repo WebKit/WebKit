@@ -1,5 +1,28 @@
 2017-09-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
+        [WPE] Rebaseline tests affected by r221909 (second part)
+        https://bugs.webkit.org/show_bug.cgi?id=176819
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations:
+        * platform/wpe/animations/lineheight-animation-expected.txt: Added.
+        * platform/wpe/animations/simultaneous-start-transform-expected.txt: Added.
+        * platform/wpe/animations/width-using-ems-expected.txt: Added.
+        * platform/wpe/css2.1/t1508-c527-font-04-b-expected.txt: Added.
+        * platform/wpe/css2.1/t1508-c527-font-05-b-expected.txt: Added.
+        * platform/wpe/css2.1/t1508-c527-font-07-b-expected.txt: Added.
+        * platform/wpe/css2.1/t1508-c527-font-10-c-expected.txt: Added.
+        * platform/wpe/fast/events/mouseover-mouseout-expected.txt: Added.
+        * platform/wpe/fast/events/nested-window-event-expected.txt: Added.
+        * platform/wpe/fast/events/window-events-bubble-expected.txt: Added.
+        * platform/wpe/fast/events/window-events-bubble2-expected.txt: Added.
+        * platform/wpe/fast/tokenizer/script_extra_close-expected.txt: Added.
+        * platform/wpe/tables/mozilla/bugs/bug149275-2-expected.txt: Added.
+        * platform/wpe/tables/mozilla_expected_failures/bugs/bug89315-expected.txt:
+
+2017-09-12  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
         [WPE] Rebaseline tests affected by r221909
         https://bugs.webkit.org/show_bug.cgi?id=176819
 

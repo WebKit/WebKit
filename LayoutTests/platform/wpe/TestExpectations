@@ -839,3 +839,5 @@ webkit.org/b/176358 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt
 
 # Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
 webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
+
+webkit.org/b/176820 fast/dom/Document/CaretRangeFromPoint/replace-element.html [ Failure ]
