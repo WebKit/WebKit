@@ -31,6 +31,7 @@
 
 #include "EditingDelegate.h"
 #include "FrameLoadDelegate.h"
+#include "GCController.h"
 #include "HistoryDelegate.h"
 #include "JavaScriptThreading.h"
 #include "PixelDumpSupport.h"
@@ -43,6 +44,7 @@
 #include "WorkQueue.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <JavaScriptCore/TestRunnerUtils.h>
 #include <WebCore/FileSystem.h>
 #include <WebKit/WebKit.h>
 #include <WebKit/WebKitCOMAPI.h>
@@ -95,7 +97,9 @@ static bool useTimeoutWatchdog = true;
 static bool forceComplexText = false;
 static bool dumpAllPixels;
 static bool useAcceleratedDrawing = true; // Not used
-static bool gcBetweenTests = false;
+// FIXME: gcBetweenTests should initially be false, but we currently set it to true, to make sure
+// deallocations are not performed in one of the following tests which might cause flakiness.
+static bool gcBetweenTests = true; 
 static bool printSeparators = false;
 static bool leakChecking = false;
 static bool printSupportedFeatures = false;
@@ -1274,6 +1278,12 @@ exit:
     removeFontFallbackIfPresent(fallbackPath);
     ::gTestRunner->cleanup();
     ::gTestRunner = nullptr;
+
+    if (gcBetweenTests) {
+        GCController gcController;
+        gcController.collect();
+    }
+    JSC::waitForVMDestruction();
 
     fputs("#EOF\n", stderr);
     fflush(stderr);
