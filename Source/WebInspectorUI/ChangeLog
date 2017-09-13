@@ -1,3 +1,36 @@
+2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Frontend should be made to expect and handle disabled properties
+        https://bugs.webkit.org/show_bug.cgi?id=166787
+        <rdar://problem/34379593>
+
+        Reviewed by Joseph Pecoraro.
+
+        This change introduces WI.CSSStyleDeclaration.prototype.allProperties getter,
+        that includes both enabled and disabled (commented out) CSS properties.
+
+        The existing WI.CSSStyleDeclaration.prototype.properties getter only includes enabled CSS properties,
+        same as before the backend change.
+
+        There is no behaviour change in the current styles sidebar. The new redesigned styles sidebar will
+        use disabled properties and display them as commented out.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.get attached):
+        Rename `enabled` to `attached`, as it didn't correspond to `_enabled` property. Attached means that the property
+        is enabled and has a ownerStyle with a set index (unless it's a computed style, where index is not applicable).
+
+        (WI.CSSProperty.prototype.get enabled):
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration.prototype.get allProperties):
+        Add allProperties getter that will be used in the new styles sidebar.
+
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._markOverriddenProperties):
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor.prototype.highlightProperty.propertiesMatch):
+        Rename "enabled" to "attached" without any behavior change.
+
 2017-09-13  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Escape in global search field should clear it

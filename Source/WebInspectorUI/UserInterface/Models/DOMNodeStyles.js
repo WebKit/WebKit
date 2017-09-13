@@ -901,7 +901,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
 
             for (var j = 0; j < properties.length; ++j) {
                 var property = properties[j];
-                if (!property.enabled || !property.valid) {
+                if (!property.attached || !property.valid) {
                     property.overridden = false;
                     continue;
                 }

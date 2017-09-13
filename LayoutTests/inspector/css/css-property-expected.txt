@@ -26,6 +26,20 @@ PASS: "background-repeat-x" has the value "repeat".
 PASS: "background-repeat-invalid" has the value "repeat".
 PASS: "background-repeat-y" has the value "repeat".
 
+-- Running test case: CSSProperty.prototype.get enabled
+PASS: "background-repeat" is enabled.
+PASS: "background-repeat-x" is enabled.
+PASS: "background-repeat-invalid" is enabled.
+PASS: "background-color" is disabled.
+PASS: "background-repeat-y" is enabled.
+
+-- Running test case: CSSProperty.prototype.get attached
+PASS: "background-repeat" is attached.
+PASS: "background-repeat-x" is attached.
+PASS: "background-repeat-invalid" is attached.
+PASS: "background-color" is detached.
+PASS: "background-repeat-y" is attached.
+
 -- Running test case: CSSProperty.prototype.get text
 PASS: "background-repeat" has the text "background-repeat: repeat;".
 PASS: "background-repeat" has the _text (private) "background-repeat: repeat;".

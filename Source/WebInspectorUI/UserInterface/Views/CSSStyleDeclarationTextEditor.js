@@ -189,7 +189,7 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
     {
         function propertiesMatch(cssProperty)
         {
-            if (cssProperty.enabled && !cssProperty.overridden) {
+            if (cssProperty.attached && !cssProperty.overridden) {
                 if (cssProperty.canonicalName === property.canonicalName || hasMatchingLonghandProperty(cssProperty))
                     return true;
             }
@@ -989,7 +989,7 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
         if (!this._codeMirror.getOption("readOnly")) {
             // Create a new checkbox element and marker.
 
-            console.assert(property.enabled);
+            console.assert(property.attached);
 
             var checkboxElement = document.createElement("input");
             checkboxElement.type = "checkbox";
@@ -1047,7 +1047,7 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
         else if (!property.valid && (!propertyNameIsValid || duplicatePropertyExistsBelow.call(this, property)))
             classNames.push("invalid");
 
-        if (!property.enabled)
+        if (!property.attached)
             classNames.push("disabled");
 
         if (property.__filterResultClassName && !property.__filterResultNeedlePosition)

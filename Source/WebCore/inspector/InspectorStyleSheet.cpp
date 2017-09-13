@@ -601,9 +601,6 @@ void InspectorStyle::populateAllProperties(Vector<InspectorStyleProperty>* resul
         ASSERT(!styleDeclarationOrException.hasException());
         String styleDeclaration = styleDeclarationOrException.hasException() ? emptyString() : styleDeclarationOrException.releaseReturnValue();
         for (auto& sourceData : *sourcePropertyData) {
-            // FIXME: <https://webkit.org/b/166787> Web Inspector: Frontend should be made to expect and handle disabled properties
-            if (sourceData.disabled)
-                continue;
             InspectorStyleProperty p(sourceData, true, sourceData.disabled);
             p.setRawTextFromStyleDeclaration(styleDeclaration);
             result->append(p);
@@ -663,17 +660,21 @@ Ref<Inspector::Protocol::CSS::CSSStyle> InspectorStyle::styleWithProperties() co
         // Default "priority" == "".
         if (propertyEntry.important)
             property->setPriority("important");
+
+        if (it->hasSource) {
+            // The property range is relative to the style body start.
+            // Should be converted into an absolute range (relative to the stylesheet start)
+            // for the proper conversion into line:column.
+            SourceRange absolutePropertyRange = propertyEntry.range;
+            absolutePropertyRange.start += ruleBodyRangeStart;
+            absolutePropertyRange.end += ruleBodyRangeStart;
+            property->setRange(buildSourceRangeObject(absolutePropertyRange, lineEndings.get()));
+        }
+
         if (!it->disabled) {
             if (it->hasSource) {
                 ASSERT(sourceData);
                 property->setImplicit(false);
-                // The property range is relative to the style body start.
-                // Should be converted into an absolute range (relative to the stylesheet start)
-                // for the proper conversion into line:column.
-                SourceRange absolutePropertyRange = propertyEntry.range;
-                absolutePropertyRange.start += ruleBodyRangeStart;
-                absolutePropertyRange.end += ruleBodyRangeStart;
-                property->setRange(buildSourceRangeObject(absolutePropertyRange, lineEndings.get()));
 
                 // Parsed property overrides any property with the same name. Non-parsed property overrides
                 // previous non-parsed property with the same name (if any).

@@ -154,10 +154,13 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     get priority() { return this._priority; }
 
-    get enabled()
+    get attached()
     {
         return this._enabled && this._ownerStyle && (!isNaN(this._index) || this._ownerStyle.type === WI.CSSStyleDeclaration.Type.Computed);
     }
+
+    // Only commented out properties are disabled.
+    get enabled() { return this._enabled; }
 
     get overridden() { return this._overridden; }
     set overridden(overridden)

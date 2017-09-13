@@ -111,6 +111,60 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "CSSProperty.prototype.get enabled",
+        description: "Ensure valid, invalid, and internal-only have correct enabled state.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.allProperties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                    case "background-repeat-x":
+                    case "background-repeat-y":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectThat(property.enabled, `"${property.name}" is enabled.`);
+                        break;
+                    case "background-color":
+                        InspectorTest.expectThat(!property.enabled, `"${property.name}" is disabled.`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "CSSProperty.prototype.get attached",
+        description: "Ensure valid, invalid, and internal-only have correct attached state.",
+        test(resolve, reject) {
+            for (let rule of nodeStyles.matchedRules) {
+                if (rule.selectorText !== "div#x")
+                    continue;
+
+                for (let property of rule.style.allProperties) {
+                    switch (property.name) {
+                    case "background-repeat":
+                    case "background-repeat-x":
+                    case "background-repeat-y":
+                    case "background-repeat-invalid":
+                        InspectorTest.expectThat(property.attached, `"${property.name}" is attached.`);
+                        break;
+                    case "background-color":
+                        InspectorTest.expectThat(!property.attached, `"${property.name}" is detached.`);
+                        break;
+                    }
+                }
+            }
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
         name: "CSSProperty.prototype.get text",
         description: "Ensure valid, invalid, and internal-only have correct text.",
         test(resolve, reject) {
@@ -177,6 +231,9 @@ function test() {
         background-repeat: repeat;
         background-repeat-x: repeat;
         background-repeat-invalid: repeat;
+        /* background-color: black; */
+        /* Not a CSS property */
+        /* foo:bar; foo:baz; */
     }
     </style>
     <div id="x"></div>

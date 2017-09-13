@@ -1,3 +1,20 @@
+2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Frontend should be made to expect and handle disabled properties
+        https://bugs.webkit.org/show_bug.cgi?id=166787
+        <rdar://problem/34379593>
+
+        Reviewed by Joseph Pecoraro.
+
+        Include disabled (commented out) CSS properties in the payload.
+
+        Tests: inspector/css/css-property.html
+               inspector/css/matched-style-properties.html
+
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyle::populateAllProperties const):
+        (WebCore::InspectorStyle::styleWithProperties const):
+
 2017-09-13  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Fails to build because 'Float32Array' has not been declared in AudioContext.h

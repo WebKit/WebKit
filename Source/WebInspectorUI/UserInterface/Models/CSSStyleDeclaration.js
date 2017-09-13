@@ -99,7 +99,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         var oldText = this._text;
 
         this._text = text;
-        this._properties = properties;
+        this._properties = properties.filter((property) => property.enabled);
+        this._allProperties = properties;
+
         this._styleSheetTextRange = styleSheetTextRange;
         this._propertyNameMap = {};
 
@@ -216,6 +218,8 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
     {
         return this._properties;
     }
+
+    get allProperties() { return this._allProperties; }
 
     get visibleProperties()
     {
