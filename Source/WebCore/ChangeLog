@@ -1,3 +1,15 @@
+2017-09-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Initialize InternalSettings member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=176838
+
+        Reviewed by Brent Fulgham.
+
+        Initialize the m_webVREnabled member in the constructor.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+
 2017-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         Make WebGLRenderingContextBase::TypedList::data() const-correct.

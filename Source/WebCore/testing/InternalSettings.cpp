@@ -110,6 +110,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if ENABLE(WEBGPU)
     , m_webGPUEnabled(RuntimeEnabledFeatures::sharedFeatures().webGPUEnabled())
 #endif
+    , m_webVREnabled(RuntimeEnabledFeatures::sharedFeatures().webVREnabled())
     , m_shouldMockBoldSystemFontForAccessibility(RenderTheme::singleton().shouldMockBoldSystemFontForAccessibility())
 #if USE(AUDIO_SESSION)
     , m_shouldManageAudioSessionCategory(Settings::shouldManageAudioSessionCategory())
