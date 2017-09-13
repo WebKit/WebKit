@@ -115,6 +115,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             this._dataGrid = new WI.DataGrid(columns, null, this._deleteCallback.bind(this));
             this._dataGrid.columnChooserEnabled = true;
             this._dataGrid.addEventListener(WI.DataGrid.Event.SortChanged, this._sortDataGrid, this);
+            this._dataGrid.sortColumnIdentifier = "name";
+            this._dataGrid.createSettings("cookie-storage-content-view");
 
             this.addSubview(this._dataGrid);
             this._dataGrid.updateLayout();
@@ -126,14 +128,14 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         for (var cookie of this._cookies) {
             const checkmark = "\u2713";
             var data = {
-                "name": cookie.name,
-                "value": cookie.value,
-                "domain": cookie.domain || "",
-                "path": cookie.path || "",
-                "expires": "",
-                "size": Number.bytesToString(cookie.size),
-                "http": cookie.httpOnly ? checkmark : "",
-                "secure": cookie.secure ? checkmark : "",
+                name: cookie.name,
+                value: cookie.value,
+                domain: cookie.domain || "",
+                path: cookie.path || "",
+                expires: "",
+                size: Number.bytesToString(cookie.size),
+                http: cookie.httpOnly ? checkmark : "",
+                secure: cookie.secure ? checkmark : "",
             };
 
             if (cookie.type !== WI.CookieType.Request)
@@ -144,9 +146,6 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
 
             this._dataGrid.appendChild(node);
         }
-
-        this._dataGrid.sortColumnIdentifier = "name";
-        this._dataGrid.createSettings("cookie-storage-content-view");
     }
 
     _filterCookies(cookies)

@@ -1284,10 +1284,16 @@ WI.DataGrid = class DataGrid extends WI.View
 
     sortNodes(comparator)
     {
+        // FIXME: This should use the layout loop and not its own requestAnimationFrame.
+        this._sortNodesComparator = comparator;
+
         if (this._sortNodesRequestId)
             return;
 
-        this._sortNodesRequestId = window.requestAnimationFrame(this._sortNodesCallback.bind(this, comparator));
+        this._sortNodesRequestId = window.requestAnimationFrame(() => {
+            if (this._sortNodesComparator)
+                this._sortNodesCallback(this._sortNodesComparator);
+        });
     }
 
     sortNodesImmediately(comparator)
@@ -1312,6 +1318,7 @@ WI.DataGrid = class DataGrid extends WI.View
         }
 
         this._sortNodesRequestId = undefined;
+        this._sortNodesComparator = null;
 
         if (this._editing) {
             this._sortAfterEditingCallback = this.sortNodes.bind(this, comparator);

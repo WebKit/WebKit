@@ -1,3 +1,31 @@
+2017-09-13  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Sort by size issues with Cookies and ApplicationCache DataGrids
+        https://bugs.webkit.org/show_bug.cgi?id=176879
+        <rdar://problem/34237096>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ApplicationCacheFrameContentView.js:
+        (WI.ApplicationCacheFrameContentView.prototype._sortDataGrid):
+        (WI.ApplicationCacheFrameContentView.prototype._populateDataGrid):
+        This uses very dumb DataGridNodes with a pure data object. In that
+        object `size` is a bytes string not a number. Include the number size
+        in this data object that can be used during sorting.
+
+        * UserInterface/Views/CookieStorageContentView.js:
+        (WI.CookieStorageContentView.prototype._rebuildTable):
+        Simplify creation. Also don't reset sort options. Note that here the
+        DataGridNodes have access to the Cookie object and can already sort size
+        using the cookie's size (a number) and not the data's size (string).
+
+        * UserInterface/Views/DataGrid.js:
+        (WI.DataGrid.prototype.sortNodes):
+        (WI.DataGrid.prototype._sortNodesCallback):
+        If sortNodes was called twice, it would defer the sort and actually
+        do the sort with the first comparator and not the latest, preferred
+        comparator. Make it use the latest comparator.
+
 2017-09-13  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: display @media section headers

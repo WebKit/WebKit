@@ -188,7 +188,7 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
         var comparator;
         switch (this._dataGrid.sortColumnIdentifier) {
             case "type": comparator = localeCompare.bind(this, "type"); break;
-            case "size": comparator = numberCompare.bind(this, "size"); break;
+            case "size": comparator = numberCompare.bind(this, "sizeNumber"); break;
             case "url":
             default: comparator = localeCompare.bind(this, "url"); break;
         }
@@ -204,7 +204,8 @@ WI.ApplicationCacheFrameContentView = class ApplicationCacheFrameContentView ext
             var data = {
                 url: resource.url,
                 type: resource.type,
-                size: Number.bytesToString(resource.size)
+                size: Number.bytesToString(resource.size),
+                sizeNumber: resource.size,
             };
             var node = new WI.DataGridNode(data);
             this._dataGrid.appendChild(node);
