@@ -268,6 +268,15 @@ static ALWAYS_INLINE uint32_t wangsInt64Hash(uint64_t key)
     return static_cast<unsigned>(key);
 }
 
+struct WeakMapHash {
+    static unsigned hash(JSObject* key)
+    {
+        return wangsInt64Hash(JSValue::encode(key));
+    }
+    static bool equal(JSObject* a, JSObject* b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+
 ALWAYS_INLINE uint32_t jsMapHash(ExecState* exec, VM& vm, JSValue value)
 {
     ASSERT_WITH_MESSAGE(normalizeMapKey(value) == value, "We expect normalized values flowing into this function.");

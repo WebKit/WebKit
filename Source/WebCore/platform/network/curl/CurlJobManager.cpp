@@ -65,7 +65,7 @@ public:
             if (!m_activeJobs.contains(ticket))
                 continue;
             removeHandle(ticket);
-            notifyResult(m_activeJobs.fastGet(ticket), result);
+            notifyResult(m_activeJobs.inlineGet(ticket), result);
             m_activeJobs.remove(ticket);
         }
     }

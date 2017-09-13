@@ -86,7 +86,7 @@ namespace JSC {
 
         DirectEvalExecutable* tryGet(const String& evalSource, CallSiteIndex callSiteIndex)
         {
-            return m_cacheMap.fastGet(CacheKey(evalSource, callSiteIndex)).get();
+            return m_cacheMap.inlineGet(CacheKey(evalSource, callSiteIndex)).get();
         }
         
         void set(ExecState* exec, JSCell* owner, const String& evalSource, CallSiteIndex callSiteIndex, DirectEvalExecutable* evalExecutable)

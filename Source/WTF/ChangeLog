@@ -1,3 +1,18 @@
+2017-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Optimize WeakMap::get by adding intrinsic and fixup
+        https://bugs.webkit.org/show_bug.cgi?id=176010
+
+        Reviewed by Filip Pizlo.
+
+        Add inlineGet method with HashTranslator.
+
+        * wtf/HashMap.h:
+        (WTF::X>::inlineGet const):
+        (WTF::MappedTraits>::inlineGet const):
+        (WTF::MappedTraits>::fastGet const): Deleted.
+        * wtf/LoggingHashMap.h:
+
 2017-09-12  Keith Miller  <keith_miller@apple.com>
 
         Do unified source builds for JSC

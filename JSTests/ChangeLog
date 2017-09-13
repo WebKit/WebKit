@@ -1,3 +1,15 @@
+2017-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Optimize WeakMap::get by adding intrinsic and fixup
+        https://bugs.webkit.org/show_bug.cgi?id=176010
+
+        Reviewed by Filip Pizlo.
+
+        * microbenchmarks/weak-map-key.js: Added.
+        (assert):
+        (objectKey):
+        (let.start.Date.now):
+
 2017-09-12  Mark Lam  <mark.lam@apple.com>
 
         REGRESSION: 3 stress/op_mod (and op_div) tests timing out on Debug JSC bots.

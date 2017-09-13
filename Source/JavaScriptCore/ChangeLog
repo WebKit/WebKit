@@ -1,3 +1,121 @@
+2017-09-12  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Optimize WeakMap::get by adding intrinsic and fixup
+        https://bugs.webkit.org/show_bug.cgi?id=176010
+
+        Reviewed by Filip Pizlo.
+
+        It reveals that Ember.js consumes 3.8% of execution time for WeakMap#get.
+        It is used for meta property for objects (see peekMeta function in Ember.js).
+
+        This patch optimizes WeakMap#get.
+
+        1. We use inlineGet to inline WeakMap#get operation in the native function.
+        Since this native function itself is very small, we should inline HashMap#get
+        entirely in this function.
+
+        2. We add JSWeakMapType and JSWeakSetType. This allows us to perform `isJSWeakMap()`
+        very fast. And this patch wires this to DFG and FTL to add WeakMapObjectUse and WeakSetObjectUse
+        to drop unnecessary type checking. We add fixup rules for WeakMapGet DFG node by using WeakMapObjectUse,
+        ObjectUse, and Int32Use.
+
+        3. We add intrinsic for WeakMap#get, and handle it in DFG and FTL. We use MapHash to
+        calculate hash value for the key's Object and use this hash value to look up value from
+        JSWeakMap's HashMap. Currently, we just call the operationWeakMapGet function in DFG and FTL.
+        It is worth considering that implementing this operation entirely in JIT, like GetMapBucket.
+        But anyway, the current one already optimizes the performance, so we leave this for the subsequent
+        patches.
+
+        We currently do not implement any other intrinsics (like, WeakMap#has, WeakSet) because they are
+        not used in Ember.js right now.
+
+        This patch optimizes WeakMap#get by 50%.
+
+                                 baseline                  patched
+
+        weak-map-key         88.6456+-3.9564     ^     59.1502+-2.2406        ^ definitely 1.4987x faster
+
+        * bytecode/DirectEvalCodeCache.h:
+        (JSC::DirectEvalCodeCache::tryGet):
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationFromClassInfo):
+        (JSC::speculationFromJSType):
+        (JSC::speculationFromString):
+        * bytecode/SpeculatedType.h:
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGHeapLocation.cpp:
+        (WTF::printInternal):
+        * dfg/DFGHeapLocation.h:
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::hasHeapPrediction):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::SafeToExecuteEdge::operator()):
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateWeakMapObject):
+        (JSC::DFG::SpeculativeJIT::speculateWeakSetObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        (JSC::DFG::SpeculativeJIT::compileWeakMapGet):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isCell):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileWeakMapGet):
+        (JSC::FTL::DFG::LowerDFGToB3::lowWeakMapObject):
+        (JSC::FTL::DFG::LowerDFGToB3::lowWeakSetObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculate):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateWeakMapObject):
+        (JSC::FTL::DFG::LowerDFGToB3::speculateWeakSetObject):
+        * jit/JITOperations.h:
+        * runtime/HashMapImpl.h:
+        (JSC::WeakMapHash::hash):
+        (JSC::WeakMapHash::equal):
+        * runtime/Intrinsic.cpp:
+        (JSC::intrinsicName):
+        * runtime/Intrinsic.h:
+        * runtime/JSType.h:
+        * runtime/JSWeakMap.h:
+        (JSC::isJSWeakMap):
+        * runtime/JSWeakSet.h:
+        (JSC::isJSWeakSet):
+        * runtime/WeakMapBase.cpp:
+        (JSC::WeakMapBase::get):
+        * runtime/WeakMapBase.h:
+        (JSC::WeakMapBase::HashTranslator::hash):
+        (JSC::WeakMapBase::HashTranslator::equal):
+        (JSC::WeakMapBase::inlineGet):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        (JSC::getWeakMap):
+        (JSC::protoFuncWeakMapGet):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::getWeakSet):
+
 2017-09-12  Keith Miller  <keith_miller@apple.com>
 
         Rename JavaScriptCore CMake unifiable sources list
