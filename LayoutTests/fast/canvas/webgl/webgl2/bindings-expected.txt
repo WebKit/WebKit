@@ -9,4 +9,5 @@ PASS uniformMatrix2x4fv with null data
 PASS uniformMatrix4x2fv with null data 
 PASS uniformMatrix3x4fv with null data 
 PASS uniformMatrix4x3fv with null data 
+PASS framebufferTextureLayer with integer texture 
 

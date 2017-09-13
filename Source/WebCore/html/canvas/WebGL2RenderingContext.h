@@ -53,7 +53,7 @@ public:
     // Framebuffer objects
     WebGLAny getFramebufferAttachmentParameter(GC3Denum target, GC3Denum attachment, GC3Denum pname) final;
     void blitFramebuffer(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
-    void framebufferTextureLayer(GC3Denum target, GC3Denum attachment, GC3Duint texture, GC3Dint level, GC3Dint layer);
+    void framebufferTextureLayer(GC3Denum target, GC3Denum attachment, WebGLTexture*, GC3Dint level, GC3Dint layer);
     WebGLAny getInternalformatParameter(GC3Denum target, GC3Denum internalformat, GC3Denum pname);
     void invalidateFramebuffer(GC3Denum target, const Vector<GC3Denum>& attachments);
     void invalidateSubFramebuffer(GC3Denum target, const Vector<GC3Denum>& attachments, GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsizei height);

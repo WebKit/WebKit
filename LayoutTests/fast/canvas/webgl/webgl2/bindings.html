@@ -20,6 +20,7 @@ setup(function() {
   for (let dim of ["2x3", "3x2", "2x4", "4x2", "3x4", "4x3"]) {
     error_methods.push([`uniformMatrix${dim}fv`, [null, false, null], `uniformMatrix${dim}fv with null data`]);
   }
+  error_methods.push(["framebufferTextureLayer", [0, 0, 0, 0, 0], "framebufferTextureLayer with integer texture"]);
 });
 
 for (var [method, args, name] of error_methods) {
