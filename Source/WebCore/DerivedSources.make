@@ -55,6 +55,7 @@ VPATH = \
     $(WebCore)/Modules/webdatabase \
     $(WebCore)/Modules/webdriver \
     $(WebCore)/Modules/websockets \
+    $(WebCore)/Modules/webvr \
     $(WebCore)/animation \
     $(WebCore)/bindings/js \
     $(WebCore)/crypto \
@@ -321,6 +322,20 @@ JS_BINDING_IDLS = \
     $(WebCore)/Modules/webdriver/NavigatorWebDriver.idl \
     $(WebCore)/Modules/websockets/CloseEvent.idl \
     $(WebCore)/Modules/websockets/WebSocket.idl \
+    $(WebCore)/Modules/webvr/DOMWindowWebVR.idl \
+    $(WebCore)/Modules/webvr/GamepadWebVR.idl \
+    $(WebCore)/Modules/webvr/NavigatorWebVR.idl \
+    $(WebCore)/Modules/webvr/VRDisplay.idl \
+    $(WebCore)/Modules/webvr/VRDisplayCapabilities.idl \
+    $(WebCore)/Modules/webvr/VRDisplayEvent.idl \
+    $(WebCore)/Modules/webvr/VRDisplayEventReason.idl \
+    $(WebCore)/Modules/webvr/VREye.idl \
+    $(WebCore)/Modules/webvr/VREyeParameters.idl \
+    $(WebCore)/Modules/webvr/VRFieldOfView.idl \
+    $(WebCore)/Modules/webvr/VRFrameData.idl \
+    $(WebCore)/Modules/webvr/VRLayerInit.idl \
+    $(WebCore)/Modules/webvr/VRPose.idl \
+    $(WebCore)/Modules/webvr/VRStageParameters.idl \
     $(WebCore)/animation/Animatable.idl \
     $(WebCore)/animation/AnimationEffect.idl \
     $(WebCore)/animation/AnimationTimeline.idl \

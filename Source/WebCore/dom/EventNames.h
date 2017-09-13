@@ -252,6 +252,13 @@ namespace WebCore {
     macro(versionchange) \
     macro(visibilitychange) \
     macro(volumechange) \
+    macro(vrdisplayactivate) \
+    macro(vrdisplayblur) \
+    macro(vrdisplayconnect) \
+    macro(vrdisplaydeactivate) \
+    macro(vrdisplaydisconnect) \
+    macro(vrdisplayfocus) \
+    macro(vrdisplaypresentchange) \
     macro(waiting) \
     macro(waitingforkey) \
     macro(webglcontextchanged) \

@@ -205,6 +205,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if ENABLE(WEBGPU)
     RuntimeEnabledFeatures::sharedFeatures().setWebGPUEnabled(m_webGPUEnabled);
 #endif
+    RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(m_webVREnabled);
 
 #if USE(AUDIO_SESSION)
     Settings::setShouldManageAudioSessionCategory(m_shouldManageAudioSessionCategory);
@@ -729,6 +730,11 @@ void InternalSettings::setWebGPUEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+}
+
+void InternalSettings::setWebVREnabled(bool enabled)
+{
+    RuntimeEnabledFeatures::sharedFeatures().setWebVREnabled(enabled);
 }
 
 ExceptionOr<String> InternalSettings::userInterfaceDirectionPolicy()

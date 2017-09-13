@@ -221,6 +221,9 @@ public:
     void setInspectorAdditionsEnabled(bool isEnabled) { m_inspectorAdditionsEnabled = isEnabled; }
     bool inspectorAdditionsEnabled() const { return m_inspectorAdditionsEnabled; }
 
+    void setWebVREnabled(bool isEnabled) { m_webVREnabled = isEnabled; }
+    bool webVREnabled() const { return m_webVREnabled; }
+
     WEBCORE_EXPORT static RuntimeEnabledFeatures& sharedFeatures();
 
 private:
@@ -340,6 +343,7 @@ private:
 #endif
 
     bool m_inspectorAdditionsEnabled { false };
+    bool m_webVREnabled { false };
 
     friend class WTF::NeverDestroyed<RuntimeEnabledFeatures>;
 };

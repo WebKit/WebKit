@@ -1,3 +1,142 @@
+2017-09-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add IDLs and stubs
+        https://bugs.webkit.org/show_bug.cgi?id=174202
+
+        Reviewed by Dean Jackson.
+
+        Adding the complete set of IDLs for the WebVR 1.1 spec including the interface stubs which
+        currently do nothing.
+
+        Tests: webvr/webvr-disabled.html
+               webvr/webvr-enabled.html
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/webvr/DOMWindowWebVR.idl: Added.
+        * Modules/webvr/GamepadWebVR.cpp: Added.
+        (WebCore::GamepadWebVR::GamepadWebVR):
+        (WebCore::GamepadWebVR::~GamepadWebVR):
+        (WebCore::GamepadWebVR::displayId):
+        * Modules/webvr/GamepadWebVR.h: Added.
+        * Modules/webvr/GamepadWebVR.idl: Added.
+        * Modules/webvr/NavigatorWebVR.cpp: Added.
+        (WebCore::NavigatorWebVR::getVRDisplays):
+        (WebCore::NavigatorWebVR::activeVRDisplays):
+        (WebCore::NavigatorWebVR::vrEnabled):
+        * Modules/webvr/NavigatorWebVR.h: Added.
+        * Modules/webvr/NavigatorWebVR.idl: Added.
+        * Modules/webvr/VRDisplay.cpp: Added.
+        (WebCore::VRDisplay::create):
+        (WebCore::VRDisplay::VRDisplay):
+        (WebCore::VRDisplay::isConnected const):
+        (WebCore::VRDisplay::isPresenting const):
+        (WebCore::VRDisplay::capabilities const):
+        (WebCore::VRDisplay::stageParameters const):
+        (WebCore::VRDisplay::getEyeParameters const):
+        (WebCore::VRDisplay::displayId const):
+        (WebCore::VRDisplay::displayName const):
+        (WebCore::VRDisplay::getFrameData const):
+        (WebCore::VRDisplay::getPose const):
+        (WebCore::VRDisplay::resetPose):
+        (WebCore::VRDisplay::depthNear const):
+        (WebCore::VRDisplay::setDepthNear):
+        (WebCore::VRDisplay::depthFar const):
+        (WebCore::VRDisplay::setDepthFar):
+        (WebCore::VRDisplay::requestAnimationFrame):
+        (WebCore::VRDisplay::cancelAnimationFrame):
+        (WebCore::VRDisplay::requestPresent):
+        (WebCore::VRDisplay::exitPresent):
+        (WebCore::VRDisplay::getLayers const):
+        (WebCore::VRDisplay::submitFrame):
+        (WebCore::VRDisplay::hasPendingActivity const):
+        (WebCore::VRDisplay::activeDOMObjectName const):
+        (WebCore::VRDisplay::canSuspendForDocumentSuspension const):
+        (WebCore::VRDisplay::stop):
+        * Modules/webvr/VRDisplay.h: Added.
+        * Modules/webvr/VRDisplay.idl: Added.
+        * Modules/webvr/VRDisplayCapabilities.cpp: Added.
+        (WebCore::VRDisplayCapabilities::hasPosition const):
+        (WebCore::VRDisplayCapabilities::hasOrientation const):
+        (WebCore::VRDisplayCapabilities::hasExternalDisplay const):
+        (WebCore::VRDisplayCapabilities::canPresent const):
+        (WebCore::VRDisplayCapabilities::maxLayer const):
+        * Modules/webvr/VRDisplayCapabilities.h: Added.
+        (WebCore::VRDisplayCapabilities::create):
+        * Modules/webvr/VRDisplayCapabilities.idl: Added.
+        * Modules/webvr/VRDisplayEvent.cpp: Added.
+        (WebCore::VRDisplayEvent::VRDisplayEvent):
+        (WebCore::VRDisplayEvent::display const):
+        (WebCore::VRDisplayEvent::reason const):
+        (WebCore::VRDisplayEvent::eventInterface const):
+        * Modules/webvr/VRDisplayEvent.h: Added.
+        * Modules/webvr/VRDisplayEvent.idl: Added.
+        * Modules/webvr/VRDisplayEventReason.h: Added.
+        * Modules/webvr/VRDisplayEventReason.idl: Added.
+        * Modules/webvr/VREye.h: Added.
+        * Modules/webvr/VREye.idl: Added.
+        * Modules/webvr/VREyeParameters.cpp: Added.
+        (WebCore::VREyeParameters::VREyeParameters):
+        (WebCore::VREyeParameters::offset const):
+        (WebCore::VREyeParameters::fieldOfView const):
+        (WebCore::VREyeParameters::renderWidth const):
+        (WebCore::VREyeParameters::renderHeight const):
+        * Modules/webvr/VREyeParameters.h: Added.
+        (WebCore::VREyeParameters::create):
+        * Modules/webvr/VREyeParameters.idl: Added.
+        * Modules/webvr/VRFieldOfView.cpp: Added.
+        (WebCore::VRFieldOfView::upDegrees const):
+        (WebCore::VRFieldOfView::rightDegrees const):
+        (WebCore::VRFieldOfView::downDegrees const):
+        (WebCore::VRFieldOfView::leftDegrees const):
+        * Modules/webvr/VRFieldOfView.h: Added.
+        (WebCore::VRFieldOfView::create):
+        * Modules/webvr/VRFieldOfView.idl: Added.
+        * Modules/webvr/VRFrameData.cpp: Added.
+        (WebCore::VRFrameData::VRFrameData):
+        (WebCore::VRFrameData::timestamp const):
+        (WebCore::VRFrameData::leftProjectionMatrix const):
+        (WebCore::VRFrameData::leftViewMatrix const):
+        (WebCore::VRFrameData::rightProjectionMatrix const):
+        (WebCore::VRFrameData::rightViewMatrix const):
+        (WebCore::VRFrameData::pose const):
+        * Modules/webvr/VRFrameData.h: Added.
+        (WebCore::VRFrameData::create):
+        * Modules/webvr/VRFrameData.idl: Added.
+        * Modules/webvr/VRLayerInit.h: Added.
+        * Modules/webvr/VRLayerInit.idl: Added.
+        * Modules/webvr/VRPose.cpp: Added.
+        (WebCore::VRPose::position const):
+        (WebCore::VRPose::linearVelocity const):
+        (WebCore::VRPose::linearAcceleration const):
+        (WebCore::VRPose::orientation const):
+        (WebCore::VRPose::angularVelocity const):
+        (WebCore::VRPose::angularAcceleration const):
+        * Modules/webvr/VRPose.h: Added.
+        (WebCore::VRPose::create):
+        * Modules/webvr/VRPose.idl: Added.
+        * Modules/webvr/VRStageParameters.cpp: Added.
+        (WebCore::VRStageParameters::sittingToStandingTransform const):
+        (WebCore::VRStageParameters::sizeX const):
+        (WebCore::VRStageParameters::sizeZ const):
+        * Modules/webvr/VRStageParameters.h: Added.
+        (WebCore::VRStageParameters::create):
+        * Modules/webvr/VRStageParameters.idl: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/WebCoreBuiltinNames.h:
+        * dom/EventNames.h:
+        * dom/EventNames.in:
+        * dom/EventTargetFactory.in:
+        * features.json:
+        * page/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::setWebVREnabled):
+        (WebCore::RuntimeEnabledFeatures::webVREnabled const):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setWebVREnabled):
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         Update the type of the texture argument to framebufferTextureLayer().

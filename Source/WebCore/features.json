@@ -628,6 +628,22 @@
             "twitter": "@jonathandavis",
             "email": "web-evangelist@apple.com"
         }
+    },
+    {
+        "name": "WebVR",
+        "status": {
+            "status": "In Development",
+            "enabled-by-default": false
+        },
+        "url": "https://w3c.github.io/webvr/spec/1.1/",
+        "keywords": ["WebVR, VR"],
+        "category": "html",
+        "description": "A JavaScript API providing access to VR devices to allow developers to build comfortable VR experiences.",
+        "contact": {
+            "name": "Sergio Villar Senin",
+            "twitter": "@svillarsenin",
+            "email": "svillar@igalia.com"
+        }
     }
     ],
 

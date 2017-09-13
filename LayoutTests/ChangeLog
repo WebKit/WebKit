@@ -1,3 +1,17 @@
+2017-09-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add IDLs and stubs
+        https://bugs.webkit.org/show_bug.cgi?id=174202
+
+        Reviewed by Dean Jackson.
+
+        New tests to verify that WebVR is properly enabled/disabled at runtime.
+
+        * webvr/webvr-disabled-expected.txt: Added.
+        * webvr/webvr-disabled.html: Added.
+        * webvr/webvr-enabled-expected.txt: Added.
+        * webvr/webvr-enabled.html: Added.
+
 2017-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         Update the type of the texture argument to framebufferTextureLayer().

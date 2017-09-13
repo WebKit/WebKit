@@ -38,6 +38,7 @@ SpeechSynthesisUtterance conditional=SPEECH_SYNTHESIS
 TextTrack conditional=VIDEO_TRACK
 TextTrackCue conditional=VIDEO_TRACK
 TextTrackList conditional=VIDEO_TRACK
+VRDisplay
 VideoTrackList conditional=VIDEO_TRACK
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
 WebKitNamedFlow

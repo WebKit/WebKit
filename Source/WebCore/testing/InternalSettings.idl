@@ -89,6 +89,7 @@ enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "Fully
     void setCSSGridLayoutEnabled(boolean enabled);
     void setWebGL2Enabled(boolean enabled);
     void setWebGPUEnabled(boolean enabled);
+    void setWebVREnabled(boolean enabled);
 
     [MayThrowException] DOMString userInterfaceDirectionPolicy();
     [MayThrowException] void setUserInterfaceDirectionPolicy(DOMString policy);

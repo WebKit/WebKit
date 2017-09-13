@@ -42,6 +42,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/Modules/webdriver"
     "${WEBCORE_DIR}/Modules/websockets"
+    "${WEBCORE_DIR}/Modules/webvr"
     "${WEBCORE_DIR}/accessibility"
     "${WEBCORE_DIR}/animation"
     "${WEBCORE_DIR}/bindings"
@@ -169,6 +170,7 @@ set(WebCore_IDL_INCLUDES
     Modules/webaudio
     Modules/webdatabase
     Modules/websockets
+    Modules/webvr
 
     bindings/js
 
@@ -374,6 +376,21 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/websockets/CloseEvent.idl
     Modules/websockets/WebSocket.idl
+
+    Modules/webvr/DOMWindowWebVR.idl
+    Modules/webvr/GamepadWebVR.idl
+    Modules/webvr/NavigatorWebVR.idl
+    Modules/webvr/VRDisplay.idl
+    Modules/webvr/VRDisplayCapabilities.idl
+    Modules/webvr/VRDisplayEvent.idl
+    Modules/webvr/VRDisplayEventReason.idl
+    Modules/webvr/VREye.idl
+    Modules/webvr/VREyeParameters.idl
+    Modules/webvr/VRFieldOfView.idl
+    Modules/webvr/VRFrameData.idl
+    Modules/webvr/VRLayerInit.idl
+    Modules/webvr/VRPose.idl
+    Modules/webvr/VRStageParameters.idl
 
     animation/Animatable.idl
     animation/AnimationEffect.idl
@@ -1172,6 +1189,17 @@ set(WebCore_SOURCES
     Modules/websockets/WebSocketFrame.cpp
     Modules/websockets/WebSocketHandshake.cpp
     Modules/websockets/WorkerThreadableWebSocketChannel.cpp
+
+    Modules/webvr/GamepadWebVR.cpp
+    Modules/webvr/NavigatorWebVR.cpp
+    Modules/webvr/VRDisplay.cpp
+    Modules/webvr/VRDisplayCapabilities.cpp
+    Modules/webvr/VRDisplayEvent.cpp
+    Modules/webvr/VREyeParameters.cpp
+    Modules/webvr/VRFieldOfView.cpp
+    Modules/webvr/VRFrameData.cpp
+    Modules/webvr/VRPose.cpp
+    Modules/webvr/VRStageParameters.cpp
 
     accessibility/AXObjectCache.cpp
     accessibility/AccessibilityARIAGrid.cpp

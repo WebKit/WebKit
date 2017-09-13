@@ -119,6 +119,7 @@ public:
     static void setCSSGridLayoutEnabled(bool);
     static void setWebGL2Enabled(bool);
     static void setWebGPUEnabled(bool);
+    static void setWebVREnabled(bool);
 
 private:
     explicit InternalSettings(Page*);
@@ -197,6 +198,7 @@ private:
         bool m_cssGridLayoutEnabled;
         bool m_webGL2Enabled;
         bool m_webGPUEnabled;
+        bool m_webVREnabled;
         
         bool m_shouldMockBoldSystemFontForAccessibility;
 #if USE(AUDIO_SESSION)

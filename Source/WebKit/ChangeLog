@@ -1,3 +1,14 @@
+2017-09-13  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WebVR] Add IDLs and stubs
+        https://bugs.webkit.org/show_bug.cgi?id=174202
+
+        Reviewed by Dean Jackson.
+
+        * Shared/WebPreferencesDefinitions.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2017-09-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dragging & dropping a file creates an attachment element even when it's disabled

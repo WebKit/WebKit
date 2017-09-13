@@ -126,6 +126,13 @@ namespace WebCore {
     macro(ServiceWorkerRegistration) \
     macro(ShadowRoot) \
     macro(StaticRange) \
+    macro(VRDisplay) \
+    macro(VRDisplayCapabilities) \
+    macro(VRDisplayEvent) \
+    macro(VREyeParameters) \
+    macro(VRFieldOfView) \
+    macro(VRFrameData) \
+    macro(VRStageParameters) \
     macro(WebGL2RenderingContext) \
     macro(WebGLVertexArrayObject) \
     macro(WebGPUBuffer) \
@@ -205,6 +212,13 @@ namespace WebCore {
     macro(makeThisTypeError) \
     macro(matchingElementInFlatTree) \
     macro(mediaStreamTrackConstraints) \
+    macro(onvrdisplayactivate) \
+    macro(onvrdisplayblur) \
+    macro(onvrdisplayconnect) \
+    macro(onvrdisplaydeactivate) \
+    macro(onvrdisplaydisconnect) \
+    macro(onvrdisplayfocus) \
+    macro(onvrdisplaypresentchange) \
     macro(opener) \
     macro(operations) \
     macro(ownerReadableStream) \
