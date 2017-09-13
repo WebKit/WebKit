@@ -100,6 +100,28 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeByPathToFrontend.bind(DOMAgent, path), callback);
     }
 
+    didAddEventListener(nodeId)
+    {
+        // Called from WI.DOMObserver.
+
+        let node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+
+        node.dispatchEventToListeners(WI.DOMNode.Event.EventListenersChanged);
+    }
+
+    willRemoveEventListener(nodeId)
+    {
+        // Called from WI.DOMObserver.
+
+        let node = this._idToDOMNode[nodeId];
+        if (!node)
+            return;
+
+        node.dispatchEventToListeners(WI.DOMNode.Event.EventListenersChanged);
+    }
+
     // Private
 
     _wrapClientCallback(callback)

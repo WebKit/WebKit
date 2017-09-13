@@ -36,6 +36,18 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         this._nodeRemoteObject = null;
     }
 
+    // Public
+
+    addEventListeners()
+    {
+        this.domNode.addEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
+    }
+
+    removeEventListeners()
+    {
+        this.domNode.removeEventListener(WI.DOMNode.Event.EventListenersChanged, this._eventListenersChanged, this);
+    }
+
     // Protected
 
     initialLayout()
@@ -735,6 +747,11 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
         }
 
         domNode.accessibilityProperties(accessibilityPropertiesCallback.bind(this));
+    }
+
+    _eventListenersChanged(event)
+    {
+        this._refreshEventListeners();
     }
 
     _attributesChanged(event)

@@ -593,6 +593,20 @@
                 { "name": "parentId", "$ref": "NodeId", "description": "Pseudo element's parent element id." },
                 { "name": "pseudoElementId", "$ref": "NodeId", "description": "The removed pseudo element id." }
             ]
+        },
+        {
+            "name": "didAddEventListener",
+            "description": "Called when an event listener is added to a node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId" }
+            ]
+        },
+        {
+            "name": "willRemoveEventListener",
+            "description": "Called after a request has been made to remove an event listener from a node.",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId" }
+            ]
         }
     ]
 }

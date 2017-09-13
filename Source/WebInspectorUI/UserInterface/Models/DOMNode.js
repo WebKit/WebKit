@@ -833,7 +833,8 @@ WI.DOMNode = class DOMNode extends WI.Object
 WI.DOMNode.Event = {
     EnabledPseudoClassesChanged: "dom-node-enabled-pseudo-classes-did-change",
     AttributeModified: "dom-node-attribute-modified",
-    AttributeRemoved: "dom-node-attribute-removed"
+    AttributeRemoved: "dom-node-attribute-removed",
+    EventListenersChanged: "dom-node-event-listeners-changed",
 };
 
 WI.DOMNode.PseudoElementType = {

@@ -2178,6 +2178,32 @@ void InspectorDOMAgent::pseudoElementDestroyed(PseudoElement& pseudoElement)
     m_frontendDispatcher->pseudoElementRemoved(parentId, pseudoElementId);
 }
 
+void InspectorDOMAgent::didAddEventListener(EventTarget& target)
+{
+    Node* node = target.toNode();
+    if (!node)
+        return;
+
+    int nodeId = boundNodeId(node);
+    if (!nodeId)
+        return;
+
+    m_frontendDispatcher->didAddEventListener(nodeId);
+}
+
+void InspectorDOMAgent::willRemoveEventListener(EventTarget& target)
+{
+    Node* node = target.toNode();
+    if (!node)
+        return;
+
+    int nodeId = boundNodeId(node);
+    if (!nodeId)
+        return;
+
+    m_frontendDispatcher->willRemoveEventListener(nodeId);
+}
+
 Node* InspectorDOMAgent::nodeForPath(const String& path)
 {
     // The path is of form "1,HTML,2,BODY,1,DIV"

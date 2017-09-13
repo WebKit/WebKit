@@ -139,7 +139,12 @@ bool EventTarget::setAttributeEventListener(const AtomicString& eventType, RefPt
         return false;
     }
     if (existingListener) {
+        InspectorInstrumentation::willRemoveEventListener(*this, eventType, *existingListener, false);
+
         eventTargetData()->eventListenerMap.replace(eventType, *existingListener, listener.releaseNonNull(), { });
+
+        InspectorInstrumentation::didAddEventListener(*this, eventType);
+
         return true;
     }
     return addEventListener(eventType, listener.releaseNonNull());

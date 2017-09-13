@@ -1,3 +1,16 @@
+2017-09-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Event Listeners section does not update when listeners are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=170570
+        <rdar://problem/31501645>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/protocol/DOM.json:
+        Add two new events: "didAddEventListener" and "willRemoveEventListener". These events do not
+        contain any information about the event listeners that were added/removed. They serve more
+        as indications that something has changed, and to refetch the data again via `getEventListenersForNode`.
+
 2017-09-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Fix Array allocation in Object.keys

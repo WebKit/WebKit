@@ -167,6 +167,8 @@ public:
     void frameDocumentUpdated(Frame&);
     void pseudoElementCreated(PseudoElement&);
     void pseudoElementDestroyed(PseudoElement&);
+    void didAddEventListener(EventTarget&);
+    void willRemoveEventListener(EventTarget&);
 
     // Callbacks that don't directly correspond to an instrumentation entry point.
     void setDocument(Document*);

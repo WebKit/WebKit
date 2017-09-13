@@ -1,3 +1,14 @@
+2017-09-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Event Listeners section does not update when listeners are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=170570
+        <rdar://problem/31501645>
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/dom/event-listener-add-remove-expected.txt: Added.
+        * inspector/dom/event-listener-add-remove.html: Added.
+
 2017-09-13  Per Arne Vollan  <pvollan@apple.com>
 
         Mark storage/indexeddb/modern/idbtransaction-objectstore-failures.html as flaky on Windows.

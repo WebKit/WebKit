@@ -101,4 +101,14 @@ WI.DOMObserver = class DOMObserver
     {
         WI.domTreeManager._pseudoElementRemoved(parentNodeId, pseudoElementId);
     }
+
+    didAddEventListener(nodeId)
+    {
+        WI.domTreeManager.didAddEventListener(nodeId);
+    }
+
+    willRemoveEventListener(nodeId)
+    {
+        WI.domTreeManager.willRemoveEventListener(nodeId);
+    }
 };

@@ -1,3 +1,29 @@
+2017-09-13  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Event Listeners section does not update when listeners are added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=170570
+        <rdar://problem/31501645>
+
+        Reviewed by Joseph Pecoraro.
+
+        Test: inspector/dom/event-listener-add-remove.html
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::setAttributeEventListener):
+        Fire willRemoveEventListener/didAddEventListener events when an attribute event listener is
+        replaced by another event listener.
+
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::didAddEventListener):
+        (WebCore::InspectorDOMAgent::willRemoveEventListener):
+        Dispatch an event to the inspector frontend whenever an event listener is added/removed.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didAddEventListenerImpl):
+        (WebCore::InspectorInstrumentation::willRemoveEventListenerImpl):
+        Tie into existing instrumentation points for adding/removing event listeners.
+
 2017-09-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Bug fix for synchronous transfer
