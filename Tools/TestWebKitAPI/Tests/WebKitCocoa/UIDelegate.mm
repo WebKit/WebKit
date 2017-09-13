@@ -201,6 +201,8 @@ TEST(WebKit, ShowWebView)
     ASSERT_EQ(webViewFromDelegateCallback, createdWebView);
 }
 
+static bool resizableSet;
+
 @interface ModalDelegate : NSObject <WKUIDelegatePrivate>
 @end
 
@@ -208,8 +210,15 @@ TEST(WebKit, ShowWebView)
 
 - (void)_webViewRunModal:(WKWebView *)webView
 {
+    EXPECT_TRUE(resizableSet);
     EXPECT_EQ(webView, createdWebView.get());
     done = true;
+}
+
+- (void)_webView:(WKWebView *)webView setResizable:(BOOL)isResizable
+{
+    EXPECT_FALSE(isResizable);
+    resizableSet = true;
 }
 
 - (nullable WKWebView *)webView:(WKWebView *)webView createWebViewWithConfiguration:(WKWebViewConfiguration *)configuration forNavigationAction:(WKNavigationAction *)navigationAction windowFeatures:(WKWindowFeatures *)windowFeatures
@@ -230,6 +239,46 @@ TEST(WebKit, RunModal)
     NSString *html = [NSString stringWithFormat:@"%@%@%@", @"<script> function openModal() { window.showModalDialog('", url, @"'); } </script> <input type='button' value='Click to open modal' onclick='openModal();'>"];
     [webView synchronouslyLoadHTMLString:html];
     [webView sendClicksAtPoint:NSMakePoint(20, 600 - 20) numberOfClicks:1];
+    TestWebKitAPI::Util::run(&done);
+}
+
+static bool receivedWindowFrame;
+
+@interface WindowFrameDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation WindowFrameDelegate
+
+- (void)_webView:(WKWebView *)webView setWindowFrame:(CGRect)frame
+{
+    EXPECT_EQ(frame.origin.x, 160);
+    EXPECT_EQ(frame.origin.y, 230);
+    EXPECT_EQ(frame.size.width, 350);
+    EXPECT_EQ(frame.size.height, 450);
+    receivedWindowFrame = true;
+}
+
+- (void)_webView:(WKWebView *)webView getWindowFrameWithCompletionHandler:(void (^)(CGRect))completionHandler
+{
+    completionHandler(CGRectMake(150, 250, 350, 450));
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    EXPECT_STREQ("350", message.UTF8String);
+    completionHandler();
+    done = true;
+}
+
+@end
+
+TEST(WebKit, WindowFrame)
+{
+    auto delegate = adoptNS([[WindowFrameDelegate alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<script>moveBy(10,20);alert(outerWidth);</script>" baseURL:nil];
+    TestWebKitAPI::Util::run(&receivedWindowFrame);
     TestWebKitAPI::Util::run(&done);
 }
 

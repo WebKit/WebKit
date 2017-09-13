@@ -1874,13 +1874,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             m_client.setStatusBarIsVisible(toAPI(&page), visible, m_client.base.clientInfo);
         }
 
-        void isResizable(WebPageProxy& page, Function<void(bool)>&& completionHandler) final
-        {
-            if (!m_client.isResizable)
-                return completionHandler(true);
-            completionHandler(m_client.isResizable(toAPI(&page), m_client.base.clientInfo));
-        }
-
         void setIsResizable(WebPageProxy& page, bool resizable) final
         {
             if (!m_client.setIsResizable)

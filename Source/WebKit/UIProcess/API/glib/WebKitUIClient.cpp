@@ -127,11 +127,6 @@ private:
         webkitWindowPropertiesSetStatusbarVisible(webkit_web_view_get_window_properties(m_webView), visible);
     }
 
-    void isResizable(WebPageProxy&, Function<void(bool)>&& completionHandler) final
-    {
-        completionHandler(webkit_window_properties_get_resizable(webkit_web_view_get_window_properties(m_webView)));
-    }
-
     void setIsResizable(WebPageProxy&, bool resizable) final
     {
         webkitWindowPropertiesSetResizable(webkit_web_view_get_window_properties(m_webView), resizable);

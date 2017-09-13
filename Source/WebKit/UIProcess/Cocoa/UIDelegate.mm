@@ -114,6 +114,9 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewDidScroll = [delegate respondsToSelector:@selector(_webViewDidScroll:)];
     m_delegateMethods.webViewGetToolbarsAreVisibleWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:getToolbarsAreVisibleWithCompletionHandler:)];
     m_delegateMethods.webViewDidNotHandleWheelEvent = [delegate respondsToSelector:@selector(_webView:didNotHandleWheelEvent:)];
+    m_delegateMethods.webViewSetResizable = [delegate respondsToSelector:@selector(_webView:setResizable:)];
+    m_delegateMethods.webViewGetWindowFrameWithCompletionHandler = [delegate respondsToSelector:@selector(_webView:getWindowFrameWithCompletionHandler:)];
+    m_delegateMethods.webViewSetWindowFrame = [delegate respondsToSelector:@selector(_webView:setWindowFrame:)];
     m_delegateMethods.webViewUnavailablePlugInButtonClicked = [delegate respondsToSelector:@selector(_webView:unavailablePlugInButtonClickedWithReason:plugInInfo:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAutoFillButtonWithUserInfo:)];
@@ -516,6 +519,47 @@ void UIDelegate::UIClient::didNotHandleWheelEvent(WebPageProxy*, const NativeWeb
         return;
     
     [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView didNotHandleWheelEvent:event.nativeEvent()];
+}
+
+void UIDelegate::UIClient::setIsResizable(WebKit::WebPageProxy&, bool resizable)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewSetResizable)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView setResizable:resizable];
+}
+
+void UIDelegate::UIClient::setWindowFrame(WebKit::WebPageProxy&, const WebCore::FloatRect& frame)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewSetWindowFrame)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView setWindowFrame:frame];
+}
+
+void UIDelegate::UIClient::windowFrame(WebKit::WebPageProxy&, Function<void(WebCore::FloatRect)>&& completionHandler)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewGetWindowFrameWithCompletionHandler)
+        return completionHandler({ });
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return completionHandler({ });
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView getWindowFrameWithCompletionHandler:BlockPtr<void(CGRect)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:getWindowFrameWithCompletionHandler:))](CGRect frame) {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(frame);
+    }).get()];
 }
 
 static NSEventModifierFlags toNSEventModifierFlags(WebEvent::Modifiers modifiers)

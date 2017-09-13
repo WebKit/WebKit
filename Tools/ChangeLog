@@ -1,3 +1,22 @@
+2017-09-13  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's setIsResizable, getWindowFrame, and setWindowFrame
+        https://bugs.webkit.org/show_bug.cgi?id=176857
+        <rdar://problem/29270035>
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (-[ModalDelegate _webViewRunModal:]):
+        (-[ModalDelegate _webView:setResizable:]):
+        (-[WindowFrameDelegate _webView:setWindowFrame:]):
+        (-[WindowFrameDelegate _webView:getWindowFrameWithCompletionHandler:]):
+        (-[WindowFrameDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+        (-[ResizableDelegate _webView:setResizable:]):
+        (-[ResizableDelegate _webView:getIsResizableWithCompletionHandler:]):
+        (-[ResizableDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+
 2017-09-13  Youenn Fablet  <youenn@apple.com>
 
         Add a lambda-based map for Vectors

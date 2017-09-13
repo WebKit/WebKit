@@ -1315,7 +1315,6 @@ private:
     void setStatusBarIsVisible(bool statusBarIsVisible);
     void getStatusBarIsVisible(Ref<Messages::WebPageProxy::GetStatusBarIsVisible::DelayedReply>&&);
     void setIsResizable(bool isResizable);
-    void getIsResizable(Ref<Messages::WebPageProxy::GetIsResizable::DelayedReply>&&);
     void screenToRootView(const WebCore::IntPoint& screenPoint, Ref<Messages::WebPageProxy::ScreenToRootView::DelayedReply>&&);
     void rootViewToScreen(const WebCore::IntRect& viewRect, Ref<Messages::WebPageProxy::RootViewToScreen::DelayedReply>&&);
 #if PLATFORM(IOS)

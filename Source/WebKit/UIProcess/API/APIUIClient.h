@@ -102,7 +102,6 @@ public:
     virtual void setMenuBarIsVisible(WebKit::WebPageProxy&, bool) { }
     virtual void statusBarIsVisible(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setStatusBarIsVisible(WebKit::WebPageProxy&, bool) { }
-    virtual void isResizable(WebKit::WebPageProxy&, Function<void(bool)>&& completionHandler) { completionHandler(true); }
     virtual void setIsResizable(WebKit::WebPageProxy&, bool) { }
 
     virtual void setWindowFrame(WebKit::WebPageProxy&, const WebCore::FloatRect&) { }

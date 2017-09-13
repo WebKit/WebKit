@@ -4092,13 +4092,6 @@ void WebPageProxy::setIsResizable(bool isResizable)
     m_uiClient->setIsResizable(*this, isResizable);
 }
 
-void WebPageProxy::getIsResizable(Ref<Messages::WebPageProxy::GetIsResizable::DelayedReply>&& reply)
-{
-    m_uiClient->isResizable(*this, [reply = WTFMove(reply)] (bool resizable) {
-        reply->send(resizable);
-    });
-}
-
 void WebPageProxy::setWindowFrame(const FloatRect& newWindowFrame)
 {
     m_uiClient->setWindowFrame(*this, m_pageClient.convertToDeviceSpace(newWindowFrame));

@@ -57,7 +57,6 @@ messages -> WebPageProxy {
     SetStatusBarIsVisible(bool statusBarIsVisible)
     GetStatusBarIsVisible() -> (bool statusBarIsVisible) Delayed
     SetIsResizable(bool isResizable)
-    GetIsResizable() -> (bool isResizable) Delayed
     SetWindowFrame(WebCore::FloatRect windowFrame)
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Delayed
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Delayed
