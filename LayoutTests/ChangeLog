@@ -1,3 +1,12 @@
+2017-09-13  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html as a flaky crash on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=176866
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-13  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/animations/smil-leak-dynamically-added-element-instances.svg as flaky on macOS WK1.
