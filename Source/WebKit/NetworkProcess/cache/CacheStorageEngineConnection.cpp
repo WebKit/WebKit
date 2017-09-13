@@ -127,9 +127,11 @@ void CacheStorageEngineConnection::dereference(PAL::SessionID sessionID, uint64_
     references.remove(referenceResult);
 }
 
-void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, const String& origin)
+void CacheStorageEngineConnection::clearMemoryRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier, const String& origin)
 {
-    Engine::from(sessionID).clearMemoryRepresentation(origin);
+    Engine::from(sessionID).clearMemoryRepresentation(origin, [protectedThis = makeRef(*this), this, sessionID, requestIdentifier] (std::optional<Error>&& error) {
+        m_connection.connection().send(Messages::WebCacheStorageConnection::ClearMemoryRepresentationCompleted(requestIdentifier, error), sessionID.sessionID());
+    });
 }
 
 void CacheStorageEngineConnection::engineRepresentation(PAL::SessionID sessionID, uint64_t requestIdentifier)

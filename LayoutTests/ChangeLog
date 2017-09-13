@@ -1,3 +1,15 @@
+2017-09-13  Youenn Fablet  <youenn@apple.com>
+
+        Internals clearCacheStorageMemoryRepresentation should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=176818
+
+        Reviewed by Alex Christensen.
+
+        Updating tests to interact with the caches after the clearCacheStorageMemoryRepresentation promise is completed.
+
+        * http/tests/cache-storage/cache-origins.https.html:
+        * http/tests/cache-storage/cache-persistency.https.html:
+
 2017-09-13  Matt Lewis  <jlewis3@apple.com>
 
         Fixed expectations of imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html.

@@ -77,7 +77,7 @@ public:
 
     void removeCaches(const String& origin);
 
-    void clearMemoryRepresentation(const String& origin);
+    void clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&&);
     String representation();
 
 private:

@@ -128,8 +128,15 @@ void WebCacheStorageConnection::putRecordsCompleted(uint64_t requestIdentifier, 
 
 void WebCacheStorageConnection::clearMemoryRepresentation(const String& origin, CompletionCallback&& callback)
 {
-    connection().send(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation(m_sessionID, origin), 0);
-    callback(std::nullopt);
+    uint64_t requestIdentifier = ++m_engineRepresentationNextIdentifier;
+    m_clearRepresentationCallbacks.set(requestIdentifier, WTFMove(callback));
+    connection().send(Messages::CacheStorageEngineConnection::ClearMemoryRepresentation(m_sessionID, requestIdentifier, origin), 0);
+}
+
+void WebCacheStorageConnection::clearMemoryRepresentationCompleted(uint64_t requestIdentifier, std::optional<Error>&& result)
+{
+    if (auto callback = m_clearRepresentationCallbacks.take(requestIdentifier))
+        callback(WTFMove(result));
 }
 
 void WebCacheStorageConnection::engineRepresentation(WTF::Function<void(const String&)>&& callback)

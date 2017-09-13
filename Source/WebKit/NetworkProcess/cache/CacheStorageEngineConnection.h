@@ -61,7 +61,7 @@ private:
     void reference(PAL::SessionID, uint64_t cacheIdentifier);
     void dereference(PAL::SessionID, uint64_t cacheIdentifier);
 
-    void clearMemoryRepresentation(PAL::SessionID, const String& origin);
+    void clearMemoryRepresentation(PAL::SessionID, uint64_t requestIdentifier, const String& origin);
     void engineRepresentation(PAL::SessionID, uint64_t requestIdentifier);
 
     NetworkConnectionToWebProcess& m_connection;

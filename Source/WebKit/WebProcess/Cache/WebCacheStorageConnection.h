@@ -75,11 +75,13 @@ private:
     void putRecordsCompleted(uint64_t requestIdentifier, WebCore::DOMCacheEngine::RecordIdentifiersOrError&&);
 
     void engineRepresentationCompleted(uint64_t requestIdentifier, const String& representation);
+    void clearMemoryRepresentationCompleted(uint64_t requestIdentifier, std::optional<WebCore::DOMCacheEngine::Error>&&);
 
     WebCacheStorageProvider& m_provider;
     PAL::SessionID m_sessionID;
     uint64_t m_engineRepresentationNextIdentifier { 0 };
     HashMap<uint64_t, WTF::Function<void(const String&)>> m_engineRepresentationCallbacks;
+    HashMap<uint64_t, WebCore::DOMCacheEngine::CompletionCallback> m_clearRepresentationCallbacks;
 };
 
 }

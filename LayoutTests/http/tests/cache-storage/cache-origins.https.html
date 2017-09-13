@@ -26,9 +26,10 @@
             window.addEventListener("message", test.step_func((event) => {
                 if (++counter <= 1)
                     return;
-                internals.clearCacheStorageMemoryRepresentation();
-                checkCaches("Caches from different origins should not mix");
-                resolve();
+                internals.clearCacheStorageMemoryRepresentation().then(() => {
+                    checkCaches("Caches from different origins should not mix");
+                    resolve();
+                });
             }));
         })
     }, "Create a cache storage and look at the representation");

@@ -296,12 +296,15 @@ void Engine::removeCaches(const String& origin)
     m_caches.remove(origin);
 }
 
-void Engine::clearMemoryRepresentation(const String& origin)
+void Engine::clearMemoryRepresentation(const String& origin, WebCore::DOMCacheEngine::CompletionCallback&& callback)
 {
-    readCachesFromDisk(origin, [](CachesOrError&& result) {
-        if (!result.hasValue())
+    readCachesFromDisk(origin, [callback = WTFMove(callback)](CachesOrError&& result) {
+        if (!result.hasValue()) {
+            callback(result.error());
             return;
+        }
         result.value().get().clearMemoryRepresentation();
+        callback(std::nullopt);
     });
 }
 

@@ -4143,7 +4143,7 @@ String Internals::audioSessionCategory() const
     return emptyString();
 }
 
-void Internals::clearCacheStorageMemoryRepresentation()
+void Internals::clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&& promise)
 {
     auto* document = contextDocument();
     if (!document)
@@ -4155,7 +4155,10 @@ void Internals::clearCacheStorageMemoryRepresentation()
         if (!m_cacheStorageConnection)
             return;
     }
-    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [](std::optional<DOMCacheEngine::Error>&&) { });
+    m_cacheStorageConnection->clearMemoryRepresentation(document->securityOrigin().toString(), [promise = WTFMove(promise)](std::optional<DOMCacheEngine::Error>&& result) mutable {
+        ASSERT_UNUSED(result, !result);
+        promise.resolve();
+    });
 }
 
 void Internals::cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&& promise)
