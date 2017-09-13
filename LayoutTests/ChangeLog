@@ -1,3 +1,13 @@
+2017-09-13  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Followup (r221805): Address comments and add more tests
+        https://bugs.webkit.org/show_bug.cgi?id=176732
+
+        Reviewed by Darin Adler.
+
+        * http/tests/images/decode-slow-load-static-image-expected.txt: Added.
+        * http/tests/images/decode-slow-load-static-image.html: Added.
+
 2017-09-13  Youenn Fablet  <youenn@apple.com>
 
         Internals clearCacheStorageMemoryRepresentation should return a Promise

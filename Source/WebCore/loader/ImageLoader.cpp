@@ -386,7 +386,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
     }
     
     AtomicString attr = element().imageSourceURL();
-    if (attr.isNull() || stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
+    if (stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
         decodeError("Missing source URL.");
         return;
     }
@@ -395,11 +395,11 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
         decode();
 }
 
-void ImageLoader::decodeError(String&& message)
+void ImageLoader::decodeError(const char* message)
 {
     ASSERT(hasPendingDecodePromises());
     for (auto& promise : m_decodingPromises)
-        promise->reject(Exception { EncodingError, WTFMove(message) });
+        promise->reject(Exception { EncodingError, message });
     m_decodingPromises.clear();
 }
 

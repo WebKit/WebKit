@@ -95,7 +95,7 @@ private:
     void clearFailedLoadURL();
 
     bool hasPendingDecodePromises() const { return !m_decodingPromises.isEmpty(); }
-    void decodeError(String&&);
+    void decodeError(const char*);
     void decode();
     
     void timerFired();

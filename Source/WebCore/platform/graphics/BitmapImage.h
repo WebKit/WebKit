@@ -213,7 +213,7 @@ private:
     RepetitionCount m_repetitionsComplete { RepetitionCountNone }; // How many repetitions we've finished.
     MonotonicTime m_desiredFrameStartTime; // The system time at which we hope to see the next call to startAnimation().
 
-    Vector<Function<void()>, 1> m_decodingCallbacks;
+    std::unique_ptr<Vector<Function<void()>, 1>> m_decodingCallbacks;
     Seconds m_frameDecodingDurationForTesting;
     MonotonicTime m_desiredFrameDecodeTimeForTesting;
 
