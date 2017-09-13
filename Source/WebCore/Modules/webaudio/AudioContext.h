@@ -36,6 +36,7 @@
 #include "PlatformMediaSession.h"
 #include "VisibilityChangeClient.h"
 #include <atomic>
+#include <runtime/Float32Array.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
