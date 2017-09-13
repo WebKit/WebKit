@@ -1,3 +1,17 @@
+2017-09-13  Sam Weinig  <sam@webkit.org>
+
+        Remove CanvasRenderingContext2D.commit(), it is a no-op and not part the standard
+        https://bugs.webkit.org/show_bug.cgi?id=176821
+
+        Reviewed by Darin Adler.
+
+        * fast/canvas/commit-expected.txt: Removed.
+        * fast/canvas/commit.html: Removed.
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-2d.html:
+        
+            Remove CanvasRenderingContext2D.commit() from test and update result.
+
 2017-09-13  Ms2ger  <Ms2ger@igalia.com>
 
         Disallow passing null values to various WebGL2 methods.

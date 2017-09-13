@@ -102,9 +102,6 @@ function performActions() {
             ctx.closePath();
         },
         () => {
-            ctx.commit();
-        },
-        () => {
             ignoreException(() => ctx.createImageData(imageData14));
             ignoreException(() => ctx.createImageData(2, 3));
         },

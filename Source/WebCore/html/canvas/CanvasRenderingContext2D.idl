@@ -32,10 +32,6 @@
     // back-reference to the canvas
     readonly attribute HTMLCanvasElement canvas;
 
-    // FIXME: This has been moved to OffscreenCanvasRenderingContext2D in the latest standard.
-    void commit();
-
-
     // Non-standard legacy aliases (Compositing).
     [ImplementedAs=setGlobalAlpha] void setAlpha(optional unrestricted float alpha = NaN);
     [ImplementedAs=setGlobalCompositeOperation] void setCompositeOperation(optional DOMString compositeOperation = "undefined"); // FIXME: Using "undefined" as default parameter value is wrong.

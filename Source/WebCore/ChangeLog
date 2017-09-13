@@ -1,3 +1,16 @@
+2017-09-13  Sam Weinig  <sam@webkit.org>
+
+        Remove CanvasRenderingContext2D.commit(), it is a no-op and not part the standard
+        https://bugs.webkit.org/show_bug.cgi?id=176821
+
+        Reviewed by Darin Adler.
+
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+        
+            Remove the commit operation. It is no longer part the standard (it was
+            moved to OffscreenCanvasRenderingContext2D) and it was a no-op.
+
 2017-09-12  Matt Rajca  <mrajca@apple.com>
 
         Ensure the user interacted with the page before setting m_userHasInteractedWithMediaElement
