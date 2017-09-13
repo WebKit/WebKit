@@ -43,7 +43,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGPhantomInsertionPhaseInternal {
+static const bool verbose = false;
+}
 
 class PhantomInsertionPhase : public Phase {
 public:
@@ -60,7 +62,7 @@ public:
         // SetLocals execute, which is inaccurate. That causes us to insert too few Phantoms.
         DFG_ASSERT(m_graph, nullptr, m_graph.m_refCountState == ExactRefCount);
         
-        if (verbose) {
+        if (DFGPhantomInsertionPhaseInternal::verbose) {
             dataLog("Graph before Phantom insertion:\n");
             m_graph.dump();
         }
@@ -70,7 +72,7 @@ public:
         for (BasicBlock* block : m_graph.blocksInNaturalOrder())
             handleBlock(block);
         
-        if (verbose) {
+        if (DFGPhantomInsertionPhaseInternal::verbose) {
             dataLog("Graph after Phantom insertion:\n");
             m_graph.dump();
         }
@@ -101,7 +103,7 @@ private:
         unsigned lastExitingIndex = 0;
         for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
             Node* node = block->at(nodeIndex);
-            if (verbose)
+            if (DFGPhantomInsertionPhaseInternal::verbose)
                 dataLog("Considering ", node, "\n");
             
             switch (node->op()) {
@@ -139,7 +141,7 @@ private:
             VirtualRegister alreadyKilled;
 
             auto processKilledOperand = [&] (VirtualRegister reg) {
-                if (verbose)
+                if (DFGPhantomInsertionPhaseInternal::verbose)
                     dataLog("    Killed operand: ", reg, "\n");
 
                 // Already handled from SetLocal.
@@ -155,7 +157,7 @@ private:
                 if (killedNode->epoch() == currentEpoch)
                     return;
                 
-                if (verbose) {
+                if (DFGPhantomInsertionPhaseInternal::verbose) {
                     dataLog(
                         "    Inserting Phantom on ", killedNode, " after ",
                         block->at(lastExitingIndex), "\n");

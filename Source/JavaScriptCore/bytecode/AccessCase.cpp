@@ -51,7 +51,9 @@
 
 namespace JSC {
 
+namespace AccessCaseInternal {
 static const bool verbose = false;
+}
 
 AccessCase::AccessCase(VM& vm, JSCell* owner, AccessType type, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet)
     : m_type(type)
@@ -408,7 +410,7 @@ void AccessCase::generate(AccessGenerationState& state)
 void AccessCase::generateImpl(AccessGenerationState& state)
 {
     SuperSamplerScope superSamplerScope(false);
-    if (verbose)
+    if (AccessCaseInternal::verbose)
         dataLog("\n\nGenerating code for: ", *this, "\n");
 
     ASSERT(m_state == Generated); // We rely on the callers setting this for us.
@@ -790,11 +792,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
 
     case Replace: {
         if (InferredType* type = structure()->inferredTypeFor(ident.impl())) {
-            if (verbose)
+            if (AccessCaseInternal::verbose)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
                 jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
-        } else if (verbose)
+        } else if (AccessCaseInternal::verbose)
             dataLog("Don't have type.\n");
 
         if (isInlineOffset(m_offset)) {
@@ -820,11 +822,11 @@ void AccessCase::generateImpl(AccessGenerationState& state)
         RELEASE_ASSERT(GPRInfo::numberOfRegisters >= 6 || !structure()->outOfLineCapacity() || structure()->outOfLineCapacity() == newStructure()->outOfLineCapacity());
 
         if (InferredType* type = newStructure()->inferredTypeFor(ident.impl())) {
-            if (verbose)
+            if (AccessCaseInternal::verbose)
                 dataLog("Have type: ", type->descriptor(), "\n");
             state.failAndRepatch.append(
                 jit.branchIfNotType(valueRegs, scratchGPR, type->descriptor()));
-        } else if (verbose)
+        } else if (AccessCaseInternal::verbose)
             dataLog("Don't have type.\n");
 
         // NOTE: This logic is duplicated in AccessCase::doesCalls(). It's important that doesCalls() knows

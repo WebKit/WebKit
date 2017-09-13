@@ -41,10 +41,9 @@
 
 namespace JSC { namespace FTL {
 
-using namespace DFG;
-
 void link(State& state)
 {
+    using namespace DFG;
     Graph& graph = state.graph;
     CodeBlock* codeBlock = graph.m_codeBlock;
     VM& vm = graph.m_vm;

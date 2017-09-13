@@ -43,7 +43,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGStoreBarrierInsertionPhaseInternal {
+static const bool verbose = false;
+}
 
 enum class PhaseMode {
     // Does only a local analysis for store barrier insertion and assumes that pointers live
@@ -75,7 +77,7 @@ public:
     
     bool run()
     {
-        if (verbose) {
+        if (DFGStoreBarrierInsertionPhaseInternal::verbose) {
             dataLog("Starting store barrier insertion:\n");
             m_graph.dump();
         }
@@ -167,7 +169,7 @@ public:
 private:
     bool handleBlock(BasicBlock* block)
     {
-        if (verbose) {
+        if (DFGStoreBarrierInsertionPhaseInternal::verbose) {
             dataLog("Dealing with block ", pointerDump(block), "\n");
             if (reallyInsertBarriers())
                 dataLog("    Really inserting barriers.\n");
@@ -206,7 +208,7 @@ private:
         for (m_nodeIndex = 0; m_nodeIndex < block->size(); ++m_nodeIndex) {
             m_node = block->at(m_nodeIndex);
             
-            if (verbose) {
+            if (DFGStoreBarrierInsertionPhaseInternal::verbose) {
                 dataLog(
                     "    ", m_currentEpoch, ": Looking at node ", m_node, " with children: ");
                 CommaPrinter comma;
@@ -348,7 +350,7 @@ private:
                 break;
             }
             
-            if (verbose) {
+            if (DFGStoreBarrierInsertionPhaseInternal::verbose) {
                 dataLog(
                     "    ", m_currentEpoch, ": Done with node ", m_node, " (", m_node->epoch(),
                     ") with children: ");
@@ -380,7 +382,7 @@ private:
     
     void considerBarrier(Edge base, Edge child)
     {
-        if (verbose)
+        if (DFGStoreBarrierInsertionPhaseInternal::verbose)
             dataLog("        Considering adding barrier ", base, " => ", child, "\n");
         
         // We don't need a store barrier if the child is guaranteed to not be a cell.
@@ -389,7 +391,7 @@ private:
             // Don't try too hard because it's too expensive to run AI.
             if (child->hasConstant()) {
                 if (!child->asJSValue().isCell()) {
-                    if (verbose)
+                    if (DFGStoreBarrierInsertionPhaseInternal::verbose)
                         dataLog("            Rejecting because of constant type.\n");
                     return;
                 }
@@ -400,7 +402,7 @@ private:
                 case NodeResultInt32:
                 case NodeResultInt52:
                 case NodeResultBoolean:
-                    if (verbose)
+                    if (DFGStoreBarrierInsertionPhaseInternal::verbose)
                         dataLog("            Rejecting because of result type.\n");
                     return;
                 default:
@@ -414,7 +416,7 @@ private:
             // Go into rage mode to eliminate any chance of a barrier with a non-cell child. We
             // can afford to keep around AI in Global mode.
             if (!m_interpreter->needsTypeCheck(child, ~SpecCell)) {
-                if (verbose)
+                if (DFGStoreBarrierInsertionPhaseInternal::verbose)
                     dataLog("            Rejecting because of AI type.\n");
                 return;
             }
@@ -426,7 +428,7 @@ private:
     
     void considerBarrier(Edge base)
     {
-        if (verbose)
+        if (DFGStoreBarrierInsertionPhaseInternal::verbose)
             dataLog("        Considering adding barrier on ", base, "\n");
         
         // We don't need a store barrier if the epoch of the base is identical to the current
@@ -434,12 +436,12 @@ private:
         // be in newgen, or we just ran a barrier on it so it's guaranteed to be remembered
         // already.
         if (base->epoch() == m_currentEpoch) {
-            if (verbose)
+            if (DFGStoreBarrierInsertionPhaseInternal::verbose)
                 dataLog("            Rejecting because it's in the current epoch.\n");
             return;
         }
         
-        if (verbose)
+        if (DFGStoreBarrierInsertionPhaseInternal::verbose)
             dataLog("            Inserting barrier.\n");
         insertBarrier(m_nodeIndex + 1, base);
     }

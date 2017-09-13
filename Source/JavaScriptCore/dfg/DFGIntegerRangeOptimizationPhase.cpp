@@ -42,7 +42,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-const bool verbose = false;
+namespace DFGIntegerRangeOptimizationPhaseInternal {
+static const bool verbose = false;
+}
 const unsigned giveUpThreshold = 50;
 
 int64_t clampedSumImpl() { return 0; }
@@ -1019,7 +1021,7 @@ public:
             m_insertionSet.execute(m_graph.block(0));
         }
         
-        if (verbose) {
+        if (DFGIntegerRangeOptimizationPhaseInternal::verbose) {
             dataLog("Graph before integer range optimization:\n");
             m_graph.dump();
         }
@@ -1110,7 +1112,7 @@ public:
                 m_relationships = m_relationshipsAtHead[block];
             
                 for (auto* node : *block) {
-                    if (verbose)
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                         dataLog("Analysis: at ", node, ": ", listDump(sortedRelationships()), "\n");
                     executeNode(node);
                 }
@@ -1195,11 +1197,11 @@ public:
                         RelationshipMap forTrue = m_relationships;
                         RelationshipMap forFalse = m_relationships;
                         
-                        if (verbose)
+                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                             dataLog("Dealing with true:\n");
                         setRelationship(forTrue, relationshipForTrue);
                         if (Relationship relationshipForFalse = relationshipForTrue.inverse()) {
-                            if (verbose)
+                            if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                                 dataLog("Dealing with false:\n");
                             setRelationship(forFalse, relationshipForFalse);
                         }
@@ -1223,7 +1225,7 @@ public:
             m_relationships = m_relationshipsAtHead[block];
             for (unsigned nodeIndex = 0; nodeIndex < block->size(); ++nodeIndex) {
                 Node* node = block->at(nodeIndex);
-                if (verbose)
+                if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                     dataLog("Transformation: at ", node, ": ", listDump(sortedRelationships()), "\n");
                 
                 // This ends up being pretty awkward to write because we need to decide if we
@@ -1287,14 +1289,14 @@ public:
                         maxValue = std::min(maxValue, relationship.maxValueOfLeft());
                     }
 
-                    if (verbose)
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                         dataLog("    minValue = ", minValue, ", maxValue = ", maxValue, "\n");
                     
                     if (sumOverflows<int>(minValue, node->child2()->asInt32()) ||
                         sumOverflows<int>(maxValue, node->child2()->asInt32()))
                         break;
 
-                    if (verbose)
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                         dataLog("    It's in bounds.\n");
                     
                     executeNode(block->at(nodeIndex));
@@ -1548,7 +1550,7 @@ private:
         if (!relationship)
             return;
         
-        if (verbose)
+        if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
             dataLog("    Setting: ", relationship, " (ttl = ", timeToLive, ")\n");
 
         auto result = relationshipMap.add(
@@ -1602,7 +1604,7 @@ private:
                     if (otherRelationship.vagueness() < relationship.vagueness()
                         && otherRelationship.right()->isInt32Constant()) {
                         Relationship newRelationship = relationship.filterConstant(otherRelationship);
-                        if (verbose && newRelationship != relationship)
+                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose && newRelationship != relationship)
                             dataLog("      Refined to: ", newRelationship, " based on ", otherRelationship, "\n");
                         relationship = newRelationship;
                     }
@@ -1616,7 +1618,7 @@ private:
                     if (otherRelationship.vagueness() > relationship.vagueness()
                         && otherRelationship.right()->isInt32Constant()) {
                         Relationship newRelationship = otherRelationship.filterConstant(relationship);
-                        if (verbose && newRelationship != otherRelationship)
+                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose && newRelationship != otherRelationship)
                             dataLog("      Refined ", otherRelationship, " to: ", newRelationship, "\n");
                         otherRelationship = newRelationship;
                     }
@@ -1639,7 +1641,7 @@ private:
             // @x == @c and @x != @d, where @d > @c, then we want to turn @x != @d into @x < @d.
             
             if (timeToLive && otherRelationship.kind() == Relationship::Equal) {
-                if (verbose)
+                if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                     dataLog("      Considering: ", otherRelationship, "\n");
                 
                 // We have:
@@ -1675,7 +1677,7 @@ private:
     
     bool mergeTo(RelationshipMap& relationshipMap, BasicBlock* target)
     {
-        if (verbose) {
+        if (DFGIntegerRangeOptimizationPhaseInternal::verbose) {
             dataLog("Merging to ", pointerDump(target), ":\n");
             dataLog("    Incoming: ", listDump(sortedRelationships(relationshipMap)), "\n");
             dataLog("    At head: ", listDump(sortedRelationships(m_relationshipsAtHead[target])), "\n");
@@ -1697,7 +1699,7 @@ private:
                 for (Relationship relationship : entry.value) {
                     ASSERT(relationship.left() == entry.key);
                     if (isLive(relationship.right())) {
-                        if (verbose)
+                        if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                             dataLog("  Propagating ", relationship, "\n");
                         values.append(relationship);
                     }
@@ -1734,12 +1736,12 @@ private:
             Vector<Relationship> mergedRelationships;
             for (Relationship targetRelationship : entry.value) {
                 for (Relationship sourceRelationship : iter->value) {
-                    if (verbose)
+                    if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                         dataLog("  Merging ", targetRelationship, " and ", sourceRelationship, ":\n");
                     targetRelationship.merge(
                         sourceRelationship,
                         [&] (Relationship newRelationship) {
-                            if (verbose)
+                            if (DFGIntegerRangeOptimizationPhaseInternal::verbose)
                                 dataLog("    Got ", newRelationship, "\n");
 
                             if (newRelationship.right()->isInt32Constant()) {

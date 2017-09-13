@@ -37,7 +37,9 @@ namespace JSC { namespace B3 { namespace Air {
 
 namespace {
 
-bool verbose = false;
+namespace AirEmitShuffleInternal {
+static const bool verbose = false;
+}
 
 template<typename Functor>
 Tmp findPossibleScratch(Code& code, Bank bank, const Functor& functor) {
@@ -125,7 +127,7 @@ Vector<Inst> emitShuffle(
     Code& code, Vector<ShufflePair> pairs, std::array<Arg, 2> scratches, Bank bank,
     Value* origin)
 {
-    if (verbose) {
+    if (AirEmitShuffleInternal::verbose) {
         dataLog(
             "Dealing with pairs: ", listDump(pairs), " and scratches ", scratches[0], ", ",
             scratches[1], "\n");
@@ -185,7 +187,7 @@ Vector<Inst> emitShuffle(
             ASSERT(currentPairs.isEmpty());
             Arg originalSrc = mapping.begin()->key;
             ASSERT(!shifts.contains(originalSrc));
-            if (verbose)
+            if (AirEmitShuffleInternal::verbose)
                 dataLog("Processing from ", originalSrc, "\n");
             
             GraphNodeWorklist<Arg> worklist;
@@ -195,7 +197,7 @@ Vector<Inst> emitShuffle(
                 if (iter == mapping.end()) {
                     // With a shift it's possible that we previously built the tail of this shift.
                     // See if that's the case now.
-                    if (verbose)
+                    if (AirEmitShuffleInternal::verbose)
                         dataLog("Trying to append shift at ", src, "\n");
                     currentPairs.appendVector(shifts.take(src));
                     continue;
@@ -213,7 +215,7 @@ Vector<Inst> emitShuffle(
             ASSERT(currentPairs.size());
             ASSERT(currentPairs[0].src() == originalSrc);
 
-            if (verbose)
+            if (AirEmitShuffleInternal::verbose)
                 dataLog("currentPairs = ", listDump(currentPairs), "\n");
 
             bool isRotate = false;
@@ -225,7 +227,7 @@ Vector<Inst> emitShuffle(
             }
 
             if (isRotate) {
-                if (verbose)
+                if (AirEmitShuffleInternal::verbose)
                     dataLog("It's a rotate.\n");
                 Rotate rotate;
 
@@ -277,14 +279,14 @@ Vector<Inst> emitShuffle(
                 rotates.append(WTFMove(rotate));
                 currentPairs.shrink(0);
             } else {
-                if (verbose)
+                if (AirEmitShuffleInternal::verbose)
                     dataLog("It's a shift.\n");
                 shifts.add(originalSrc, WTFMove(currentPairs));
             }
         }
     }
 
-    if (verbose) {
+    if (AirEmitShuffleInternal::verbose) {
         dataLog("Shifts:\n");
         for (auto& entry : shifts)
             dataLog("    ", entry.key, ": ", listDump(entry.value), "\n");

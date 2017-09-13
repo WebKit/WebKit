@@ -32,7 +32,9 @@
 
 namespace JSC {
 
+namespace PropertyConditionInternal {
 static bool verbose = false;
+}
 
 void PropertyCondition::dumpInContext(PrintStream& out, DumpContext* context) const
 {
@@ -65,20 +67,20 @@ void PropertyCondition::dump(PrintStream& out) const
 bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     Structure* structure, JSObject* base) const
 {
-    if (verbose) {
+    if (PropertyConditionInternal::verbose) {
         dataLog(
             "Determining validity of ", *this, " with structure ", pointerDump(structure), " and base ",
             JSValue(base), " assuming impure property watchpoints are set.\n");
     }
     
     if (!*this) {
-        if (verbose)
+        if (PropertyConditionInternal::verbose)
             dataLog("Invalid because unset.\n");
         return false;
     }
     
     if (!structure->propertyAccessesAreCacheable()) {
-        if (verbose)
+        if (PropertyConditionInternal::verbose)
             dataLog("Invalid because accesses are not cacheable.\n");
         return false;
     }
@@ -88,7 +90,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
         if (currentOffset != offset() || currentAttributes != attributes()) {
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because we need offset, attributes to be ", offset(), ", ", attributes(),
                     " but they are ", currentOffset, ", ", currentAttributes, "\n");
@@ -100,20 +102,20 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
     case Absence: {
         if (structure->isDictionary()) {
-            if (verbose)
+            if (PropertyConditionInternal::verbose)
                 dataLog("Invalid because it's a dictionary.\n");
             return false;
         }
 
         PropertyOffset currentOffset = structure->getConcurrently(uid());
         if (currentOffset != invalidOffset) {
-            if (verbose)
+            if (PropertyConditionInternal::verbose)
                 dataLog("Invalid because the property exists at offset: ", currentOffset, "\n");
             return false;
         }
         
         if (structure->storedPrototypeObject() != prototype()) {
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the prototype is ", structure->storedPrototype(), " even though "
                     "it should have been ", JSValue(prototype()), "\n");
@@ -126,7 +128,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
     
     case AbsenceOfSetEffect: {
         if (structure->isDictionary()) {
-            if (verbose)
+            if (PropertyConditionInternal::verbose)
                 dataLog("Invalid because it's a dictionary.\n");
             return false;
         }
@@ -135,7 +137,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
             if (currentAttributes & (ReadOnly | Accessor | CustomAccessor)) {
-                if (verbose) {
+                if (PropertyConditionInternal::verbose) {
                     dataLog(
                         "Invalid because we expected not to have a setter, but we have one at offset ",
                         currentOffset, " with attributes ", currentAttributes, "\n");
@@ -145,7 +147,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         }
         
         if (structure->storedPrototypeObject() != prototype()) {
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the prototype is ", structure->storedPrototype(), " even though "
                     "it should have been ", JSValue(prototype()), "\n");
@@ -160,7 +162,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         if (!base || base->structure() != structure) {
             // Conservatively return false, since we cannot verify this one without having the
             // object.
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because we don't have a base or the base has the wrong structure: ",
                     RawPointer(base), "\n");
@@ -173,7 +175,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         
         PropertyOffset currentOffset = structure->getConcurrently(uid());
         if (currentOffset == invalidOffset) {
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the base no long appears to have ", uid(), " on its structure: ",
                         RawPointer(base), "\n");
@@ -183,7 +185,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
 
         JSValue currentValue = base->getDirect(currentOffset);
         if (currentValue != requiredValue()) {
-            if (verbose) {
+            if (PropertyConditionInternal::verbose) {
                 dataLog(
                     "Invalid because the value is ", currentValue, " but we require ", requiredValue(),
                     "\n");

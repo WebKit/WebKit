@@ -41,7 +41,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-const bool verbose = false;
+namespace B3FoldPathConstantsInternal {
+static const bool verbose = false;
+}
 
 class FoldPathConstants {
 public:
@@ -55,7 +57,7 @@ public:
     {
         bool changed = false;
 
-        if (verbose)
+        if (B3FoldPathConstantsInternal::verbose)
             dataLog("B3 before folding path constants: \n", m_proc, "\n");
         
         // Find all of the values that are the subject of a branch or switch. For any successor
@@ -80,7 +82,7 @@ public:
                     ASSERT_UNUSED(otherOverride, otherOverride.block != override.block);
             }
 
-            if (verbose)
+            if (B3FoldPathConstantsInternal::verbose)
                 dataLog("Overriding ", *value, " from ", *from, ": ", override, "\n");
             
             forValue.append(override);
@@ -149,7 +151,7 @@ public:
                     result = override;
             }
 
-            if (verbose)
+            if (B3FoldPathConstantsInternal::verbose)
                 dataLog("In block ", *block, " getting override for ", *value, ": ", result, "\n");
 
             return result;

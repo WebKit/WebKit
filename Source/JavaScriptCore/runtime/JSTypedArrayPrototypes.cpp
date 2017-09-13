@@ -35,6 +35,7 @@ namespace JSC {
 const ClassInfo JSTypedArrayViewPrototype::s_info = {"Prototype", &JSTypedArrayViewPrototype::Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(JSTypedArrayViewPrototype)};
 
+#undef MAKE_S_INFO
 #define MAKE_S_INFO(type) \
     template<> const ClassInfo JS##type##Prototype::s_info = {#type "Prototype", &JS##type##Prototype::Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JS##type##Prototype)}
 

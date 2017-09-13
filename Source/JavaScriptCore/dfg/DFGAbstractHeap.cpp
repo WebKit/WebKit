@@ -62,7 +62,7 @@ void printInternal(PrintStream& out, AbstractHeapKind kind)
 {
     switch (kind) {
 #define ABSTRACT_HEAP_DUMP(name)            \
-    case name:                              \
+    case AbstractHeapKind::name:            \
         out.print(#name);                   \
         return;
     FOR_EACH_ABSTRACT_HEAP_KIND(ABSTRACT_HEAP_DUMP)

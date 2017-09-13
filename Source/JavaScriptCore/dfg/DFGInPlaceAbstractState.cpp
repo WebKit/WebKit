@@ -37,7 +37,9 @@
 
 namespace JSC { namespace DFG {
 
+namespace DFGInPlaceAbstractStateInternal {
 static const bool verbose = false;
+}
 
 InPlaceAbstractState::InPlaceAbstractState(Graph& graph)
     : m_graph(graph)
@@ -276,7 +278,7 @@ void InPlaceAbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
 
 bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 {
-    if (verbose)
+    if (DFGInPlaceAbstractStateInternal::verbose)
         dataLog("   Merging from ", pointerDump(from), " to ", pointerDump(to), "\n");
     ASSERT(from->variablesAtTail.numberOfArguments() == to->variablesAtHead.numberOfArguments());
     ASSERT(from->variablesAtTail.numberOfLocals() == to->variablesAtHead.numberOfLocals());
@@ -307,7 +309,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 
         for (NodeAbstractValuePair& entry : to->ssa->valuesAtHead) {
             NodeFlowProjection node = entry.node;
-            if (verbose)
+            if (DFGInPlaceAbstractStateInternal::verbose)
                 dataLog("      Merging for ", node, ": from ", forNode(node), " to ", entry.value, "\n");
 #ifndef NDEBUG
             unsigned valueCountInFromBlock = 0;
@@ -322,7 +324,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
 
             changed |= entry.value.merge(forNode(node));
 
-            if (verbose)
+            if (DFGInPlaceAbstractStateInternal::verbose)
                 dataLog("         Result: ", entry.value, "\n");
         }
         break;
@@ -336,7 +338,7 @@ bool InPlaceAbstractState::merge(BasicBlock* from, BasicBlock* to)
     if (!to->cfaHasVisited)
         changed = true;
     
-    if (verbose)
+    if (DFGInPlaceAbstractStateInternal::verbose)
         dataLog("      Will revisit: ", changed, "\n");
     to->cfaShouldRevisit |= changed;
     

@@ -1,3 +1,37 @@
+2017-09-12  Keith Miller  <keith_miller@apple.com>
+
+        Do unified source builds for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=176076
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a script that will automatically bundle source
+        files, which is currently only used by the CMake build. It's
+        important that we use the same script to generate the bundles
+        for the CMake build as the Xcode build. If we didn't do this then
+        it's likely that there would be build errors that occur in only
+        one build system. On the same note, we also need to be careful to
+        not bundle platform specific source files with platform
+        independent ones. There are a couple of things the script does not
+        currently handle but are not essential for the CMake build. First,
+        it does not handle the max bundle size restrictions that the Xcode
+        build will require. It also does not handle C files.
+
+        The unified source generator script works by collecting groups of
+        up to 8 files from the same directory. We don't bundle files from
+        across directories since I didn't see a speedup from doing
+        so. Additionally, splitting at the directory boundary means that
+        it is less likely that adding a new file will force a "clean"
+        build. This would happen because the new file will shift every
+        subsequent file into the next unified source bundle.
+
+        Using unified sources appears to be a roughly 3.5x build time
+        speed up for clean builds on my MBP and appears to have a
+        negligible effect in incremental builds.
+
+        * generate-unified-source-bundles.rb: Added.
+        * wtf/Assertions.h:
+
 2017-09-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         QualifiedName::init should assume AtomicStrings::init was already called

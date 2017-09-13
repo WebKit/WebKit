@@ -38,7 +38,9 @@
 
 namespace JSC {
 
+namespace GetterSetterAccessCaseInternal {
 static const bool verbose = false;
+}
 
 GetterSetterAccessCase::GetterSetterAccessCase(VM& vm, JSCell* owner, AccessType accessType, PropertyOffset offset, Structure* structure, const ObjectPropertyConditionSet& conditionSet, bool viaProxy, WatchpointSet* additionalSet, JSObject* customSlotBase)
     : Base(vm, owner, accessType, offset, structure, conditionSet, viaProxy, additionalSet)
@@ -185,7 +187,7 @@ void GetterSetterAccessCase::emitDOMJITGetter(AccessGenerationState& state, cons
     ScratchRegisterAllocator::PreservedState preservedState =
     allocator.preserveReusedRegistersByPushing(jit, ScratchRegisterAllocator::ExtraStackSpace::SpaceForCCall);
 
-    if (verbose) {
+    if (GetterSetterAccessCaseInternal::verbose) {
         dataLog("baseGPR = ", baseGPR, "\n");
         dataLog("valueRegs = ", valueRegs, "\n");
         dataLog("scratchGPR = ", scratchGPR, "\n");

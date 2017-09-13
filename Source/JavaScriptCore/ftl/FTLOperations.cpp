@@ -42,12 +42,11 @@
 
 namespace JSC { namespace FTL {
 
-using namespace JSC::DFG;
-
 extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
     ExecState* exec, ExitTimeObjectMaterialization* materialization,
     EncodedJSValue* encodedValue, EncodedJSValue* values)
 {
+    using namespace DFG;
     VM& vm = exec->vm();
     CodeBlock* codeBlock = exec->codeBlock();
 
@@ -120,6 +119,7 @@ extern "C" void JIT_OPERATION operationPopulateObjectInOSR(
 extern "C" JSCell* JIT_OPERATION operationMaterializeObjectInOSR(
     ExecState* exec, ExitTimeObjectMaterialization* materialization, EncodedJSValue* values)
 {
+    using namespace DFG;
     VM& vm = exec->vm();
 
     // We cannot GC. We've got pointers in evil places.

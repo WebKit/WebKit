@@ -32,6 +32,7 @@
 
 namespace JSC {
 
+#undef MAKE_S_INFO
 #define MAKE_S_INFO(type) \
     template<> const ClassInfo JS##type##Constructor::s_info = {"Function", &JS##type##Constructor::Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JS##type##Constructor)}
 

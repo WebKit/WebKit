@@ -39,7 +39,9 @@ namespace JSC { namespace B3 { namespace Air {
 
 namespace {
 
-bool verbose = false;
+namespace AirFixObviousSpillsInternal {
+static const bool verbose = false;
+}
 
 class FixObviousSpills {
 public:
@@ -51,7 +53,7 @@ public:
 
     void run()
     {
-        if (verbose)
+        if (AirFixObviousSpillsInternal::verbose)
             dataLog("Code before fixObviousSpills:\n", m_code);
         
         computeAliases();
@@ -73,7 +75,7 @@ private:
                 if (!m_state.wasVisited)
                     continue;
 
-                if (verbose)
+                if (AirFixObviousSpillsInternal::verbose)
                     dataLog("Executing block ", *m_block, ": ", m_state, "\n");
                 
                 for (m_instIndex = 0; m_instIndex < block->size(); ++m_instIndex)
@@ -169,13 +171,13 @@ private:
     {
         Inst& inst = m_block->at(m_instIndex);
 
-        if (verbose)
+        if (AirFixObviousSpillsInternal::verbose)
             dataLog("    Executing ", inst, ": ", m_state, "\n");
 
         Inst::forEachDefWithExtraClobberedRegs<Arg>(
             &inst, &inst,
             [&] (const Arg& arg, Arg::Role, Bank, Width) {
-                if (verbose)
+                if (AirFixObviousSpillsInternal::verbose)
                     dataLog("        Clobbering ", arg, "\n");
                 m_state.clobber(arg);
             });
@@ -190,7 +192,7 @@ private:
     {
         Inst& inst = m_block->at(m_instIndex);
 
-        if (verbose)
+        if (AirFixObviousSpillsInternal::verbose)
             dataLog("Fixing inst ", inst, ": ", m_state, "\n");
         
         // Check if alias analysis says that this is unnecessary.
@@ -267,13 +269,13 @@ private:
                 case Width64:
                     if (alias->mode != RegSlot::AllBits)
                         return;
-                    if (verbose)
+                    if (AirFixObviousSpillsInternal::verbose)
                         dataLog("    Replacing ", arg, " with ", alias->reg, "\n");
                     arg = Tmp(alias->reg);
                     didThings = true;
                     return;
                 case Width32:
-                    if (verbose)
+                    if (AirFixObviousSpillsInternal::verbose)
                         dataLog("    Replacing ", arg, " with ", alias->reg, " (subwidth case)\n");
                     arg = Tmp(alias->reg);
                     didThings = true;
@@ -285,7 +287,7 @@ private:
 
             // Revert to immediate if that didn't work.
             if (const SlotConst* alias = m_state.getSlotConst(arg.stackSlot())) {
-                if (verbose)
+                if (AirFixObviousSpillsInternal::verbose)
                     dataLog("    Replacing ", arg, " with constant ", alias->constant, "\n");
                 if (Arg::isValidImmForm(alias->constant))
                     arg = Arg::imm(alias->constant);

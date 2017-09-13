@@ -36,11 +36,13 @@
 
 namespace JSC { namespace B3 {
 
-using namespace Air;
+using Inst = Air::Inst;
+using Arg = Air::Arg;
+using GenerationContext = Air::GenerationContext;
 
 namespace {
 
-unsigned numB3Args(B3::Kind kind)
+unsigned numB3Args(Kind kind)
 {
     switch (kind.opcode()) {
     case CheckAdd:
@@ -108,6 +110,7 @@ Inst CheckSpecial::hiddenBranch(const Inst& inst) const
 
 void CheckSpecial::forEachArg(Inst& inst, const ScopedLambda<Inst::EachArgCallback>& callback)
 {
+    using namespace Air;
     std::optional<Width> optionalDefArgWidth;
     Inst hidden = hiddenBranch(inst);
     hidden.forEachArg(
@@ -156,6 +159,7 @@ std::optional<unsigned> CheckSpecial::shouldTryAliasingDef(Inst& inst)
 
 CCallHelpers::Jump CheckSpecial::generate(Inst& inst, CCallHelpers& jit, GenerationContext& context)
 {
+    using namespace Air;
     CCallHelpers::Jump fail = hiddenBranch(inst).generate(jit, context);
     ASSERT(fail.isSet());
 

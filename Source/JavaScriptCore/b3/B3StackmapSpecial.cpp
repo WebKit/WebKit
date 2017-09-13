@@ -34,7 +34,9 @@
 
 namespace JSC { namespace B3 {
 
-using namespace Air;
+using Arg = Air::Arg;
+using Inst = Air::Inst;
+using Tmp = Air::Tmp;
 
 StackmapSpecial::StackmapSpecial()
 {
@@ -210,8 +212,7 @@ bool StackmapSpecial::admitsStackImpl(
     return false;
 }
 
-Vector<ValueRep> StackmapSpecial::repsImpl(
-    GenerationContext& context, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Inst& inst)
+Vector<ValueRep> StackmapSpecial::repsImpl(Air::GenerationContext& context, unsigned numIgnoredB3Args, unsigned numIgnoredAirArgs, Inst& inst)
 {
     Vector<ValueRep> result;
     for (unsigned i = 0; i < inst.origin->numChildren() - numIgnoredB3Args; ++i)
@@ -267,7 +268,7 @@ bool StackmapSpecial::isArgValidForRep(Air::Code& code, const Air::Arg& arg, con
     }
 }
 
-ValueRep StackmapSpecial::repForArg(Code& code, const Arg& arg)
+ValueRep StackmapSpecial::repForArg(Air::Code& code, const Arg& arg)
 {
     switch (arg.kind()) {
     case Arg::Tmp:

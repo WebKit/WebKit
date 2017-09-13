@@ -47,7 +47,9 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmOMGPlanInternal {
 static const bool verbose = false;
+}
 
 OMGPlan::OMGPlan(Ref<Module> module, uint32_t functionIndex, MemoryMode mode, CompletionTask&& task)
     : Base(nullptr, makeRef(const_cast<ModuleInformation&>(module->moduleInformation())), WTFMove(task))
@@ -58,7 +60,7 @@ OMGPlan::OMGPlan(Ref<Module> module, uint32_t functionIndex, MemoryMode mode, Co
     setMode(mode);
     ASSERT(m_codeBlock->runnable());
     ASSERT(m_codeBlock.ptr() == m_module->codeBlockFor(m_mode));
-    dataLogLnIf(verbose, "Starting OMG plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
+    dataLogLnIf(WasmOMGPlanInternal::verbose, "Starting OMG plan for ", functionIndex, " of module: ", RawPointer(&m_module.get()));
 }
 
 void OMGPlan::work(CompilationEffort)
@@ -138,9 +140,9 @@ void OMGPlan::work(CompilationEffort)
 
         auto repatchCalls = [&] (const Vector<UnlinkedWasmToWasmCall>&  callsites) {
             for (auto& call : callsites) {
-                dataLogLnIf(verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
+                dataLogLnIf(WasmOMGPlanInternal::verbose, "Considering repatching call at: ", RawPointer(call.callLocation.dataLocation()), " that targets ", call.functionIndexSpace);
                 if (call.functionIndexSpace == functionIndexSpace) {
-                    dataLogLnIf(verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint));
+                    dataLogLnIf(WasmOMGPlanInternal::verbose, "Repatching call at: ", RawPointer(call.callLocation.dataLocation()), " to ", RawPointer(entrypoint));
                     MacroAssembler::repatchNearCall(call.callLocation, CodeLocationLabel(entrypoint));
                 }
             }
@@ -156,7 +158,7 @@ void OMGPlan::work(CompilationEffort)
         repatchCalls(unlinkedCalls);
     }
 
-    dataLogLnIf(verbose, "Finished with tier up count at: ", m_codeBlock->tierUpCount(m_functionIndex).count());
+    dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished with tier up count at: ", m_codeBlock->tierUpCount(m_functionIndex).count());
     complete(holdLock(m_lock));
 }
 

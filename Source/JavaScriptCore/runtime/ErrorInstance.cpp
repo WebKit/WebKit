@@ -108,41 +108,6 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
 
 }
 
-class FindFirstCallerFrameWithCodeblockFunctor {
-public:
-    FindFirstCallerFrameWithCodeblockFunctor(CallFrame* startCallFrame)
-        : m_startCallFrame(startCallFrame)
-        , m_foundCallFrame(nullptr)
-        , m_foundStartCallFrame(false)
-        , m_index(0)
-    { }
-
-    StackVisitor::Status operator()(StackVisitor& visitor)
-    {
-        if (!m_foundStartCallFrame && (visitor->callFrame() == m_startCallFrame))
-            m_foundStartCallFrame = true;
-
-        if (m_foundStartCallFrame) {
-            if (visitor->callFrame()->codeBlock()) {
-                m_foundCallFrame = visitor->callFrame();
-                return StackVisitor::Done;
-            }
-            m_index++;
-        }
-
-        return StackVisitor::Continue;
-    }
-
-    CallFrame* foundCallFrame() const { return m_foundCallFrame; }
-    unsigned index() const { return m_index; }
-
-private:
-    CallFrame* m_startCallFrame;
-    CallFrame* m_foundCallFrame;
-    bool m_foundStartCallFrame;
-    unsigned m_index;
-};
-
 void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& message, bool useCurrentFrame)
 {
     Base::finishCreation(vm);

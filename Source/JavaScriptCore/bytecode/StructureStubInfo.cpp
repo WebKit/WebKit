@@ -35,7 +35,9 @@ namespace JSC {
 
 #if ENABLE(JIT)
 
+namespace StructureStubInfoInternal {
 static const bool verbose = false;
+}
 
 StructureStubInfo::StructureStubInfo(AccessType accessType)
     : callSiteIndex(UINT_MAX)
@@ -115,7 +117,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
 {
     VM& vm = *codeBlock->vm();
     
-    if (verbose)
+    if (StructureStubInfoInternal::verbose)
         dataLog("Adding access case: ", accessCase, "\n");
     
     if (!accessCase)
@@ -126,7 +128,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     if (cacheType == CacheType::Stub) {
         result = u.stub->addCase(locker, vm, codeBlock, *this, ident, WTFMove(accessCase));
         
-        if (verbose)
+        if (StructureStubInfoInternal::verbose)
             dataLog("Had stub, result: ", result, "\n");
 
         if (!result.buffered()) {
@@ -147,7 +149,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
         
         result = access->addCases(locker, vm, codeBlock, *this, ident, WTFMove(accessCases));
         
-        if (verbose)
+        if (StructureStubInfoInternal::verbose)
             dataLog("Created stub, result: ", result, "\n");
 
         if (!result.buffered()) {
@@ -164,7 +166,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
     // subject to cool-down.
     if (!result.buffered()) {
-        if (verbose)
+        if (StructureStubInfoInternal::verbose)
             dataLog("Didn't buffer anything, bailing.\n");
         bufferedStructures.clear();
         return result;
@@ -172,7 +174,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     
     // The buffering countdown tells us if we should be repatching now.
     if (bufferingCountdown) {
-        if (verbose)
+        if (StructureStubInfoInternal::verbose)
             dataLog("Countdown is too high: ", bufferingCountdown, ".\n");
         return result;
     }
@@ -183,7 +185,7 @@ AccessGenerationResult StructureStubInfo::addAccessCase(
     
     result = u.stub->regenerate(locker, vm, codeBlock, *this, ident);
     
-    if (verbose)
+    if (StructureStubInfoInternal::verbose)
         dataLog("Regeneration result: ", result, "\n");
     
     RELEASE_ASSERT(!result.buffered());

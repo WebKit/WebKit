@@ -88,11 +88,13 @@ void IntlNumberFormat::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(thisObject->m_boundFormat);
 }
 
+namespace IntlNFInternal {
 static Vector<String> localeData(const String& locale, size_t keyIndex)
 {
     // 9.1 Internal slots of Service Constructors & 11.2.3 Internal slots (ECMA-402 2.0)
     ASSERT_UNUSED(keyIndex, !keyIndex); // The index of the extension key "nu" in relevantExtensionKeys is 0.
     return numberingSystemsForLocale(locale);
+}
 }
 
 static inline unsigned computeCurrencySortKey(const String& currency)
@@ -192,7 +194,7 @@ void IntlNumberFormat::initializeNumberFormat(ExecState& state, JSValue locales,
     // 11. Let localeData be %NumberFormat%.[[localeData]].
     // 12. Let r be ResolveLocale(%NumberFormat%.[[availableLocales]], requestedLocales, opt, %NumberFormat%.[[relevantExtensionKeys]], localeData).
     auto& availableLocales = state.jsCallee()->globalObject()->intlNumberFormatAvailableLocales();
-    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
+    auto result = resolveLocale(state, availableLocales, requestedLocales, opt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), IntlNFInternal::localeData);
 
     // 13. Set numberFormat.[[locale]] to the value of r.[[locale]].
     m_locale = result.get(ASCIILiteral("locale"));

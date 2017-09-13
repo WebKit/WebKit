@@ -41,7 +41,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
+namespace DFGIntegerCheckCombiningPhaseInternal {
 static const bool verbose = false;
+}
 
 enum RangeKind {
     InvalidRangeKind,
@@ -203,13 +205,13 @@ private:
         
         for (auto* node : *block) {
             RangeKeyAndAddend data = rangeKeyAndAddend(node);
-            if (verbose)
+            if (DFGIntegerCheckCombiningPhaseInternal::verbose)
                 dataLog("For ", node, ": ", data, "\n");
             if (!data)
                 continue;
             
             Range& range = m_map[data.m_key];
-            if (verbose)
+            if (DFGIntegerCheckCombiningPhaseInternal::verbose)
                 dataLog("    Range: ", range, "\n");
             if (range.m_count) {
                 if (data.m_addend > range.m_maxBound) {
@@ -226,7 +228,7 @@ private:
                 range.m_maxOrigin = node->origin.semantic;
             }
             range.m_count++;
-            if (verbose)
+            if (DFGIntegerCheckCombiningPhaseInternal::verbose)
                 dataLog("    New range: ", range, "\n");
         }
         

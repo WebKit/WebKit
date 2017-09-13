@@ -38,7 +38,9 @@ namespace JSC { namespace B3 { namespace Air {
 
 namespace {
 
-const bool verbose = false;
+namespace AirStackAllocationInternal {
+static const bool verbose = false;
+}
 
 template<typename Collection>
 void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collection)
@@ -54,7 +56,7 @@ void updateFrameSizeBasedOnStackSlotsImpl(Code& code, const Collection& collecti
 bool attemptAssignment(
     StackSlot* slot, intptr_t offsetFromFP, const Vector<StackSlot*>& otherSlots)
 {
-    if (verbose)
+    if (AirStackAllocationInternal::verbose)
         dataLog("Attempting to assign ", pointerDump(slot), " to ", offsetFromFP, " with interference ", pointerListDump(otherSlots), "\n");
 
     // Need to align it to the slot's desired alignment.
@@ -72,7 +74,7 @@ bool attemptAssignment(
             return false;
     }
 
-    if (verbose)
+    if (AirStackAllocationInternal::verbose)
         dataLog("Assigned ", pointerDump(slot), " to ", offsetFromFP, "\n");
     slot->setOffsetFromFP(offsetFromFP);
     return true;
@@ -80,7 +82,7 @@ bool attemptAssignment(
 
 void assign(StackSlot* slot, const Vector<StackSlot*>& otherSlots)
 {
-    if (verbose)
+    if (AirStackAllocationInternal::verbose)
         dataLog("Attempting to assign ", pointerDump(slot), " with interference ", pointerListDump(otherSlots), "\n");
     
     if (attemptAssignment(slot, -static_cast<intptr_t>(slot->byteSize()), otherSlots))

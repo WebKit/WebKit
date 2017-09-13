@@ -40,7 +40,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGVarargsForwardingPhaseInternal {
+static const bool verbose = false;
+}
 
 class VarargsForwardingPhase : public Phase {
 public:
@@ -53,7 +55,7 @@ public:
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form != SSA);
         
-        if (verbose) {
+        if (DFGVarargsForwardingPhaseInternal::verbose) {
             dataLog("Graph before varargs forwarding:\n");
             m_graph.dump();
         }
@@ -85,7 +87,7 @@ private:
         // We expect calls into this function to be rare. So, this is written in a simple O(n) manner.
         
         Node* candidate = block->at(candidateNodeIndex);
-        if (verbose)
+        if (DFGVarargsForwardingPhaseInternal::verbose)
             dataLog("Handling candidate ", candidate, "\n");
         
         // Find the index of the last node in this block to use the candidate, and look for escaping
@@ -121,7 +123,7 @@ private:
                         sawEscape = true;
                     });
                 if (sawEscape) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -138,7 +140,7 @@ private:
             case TailCallVarargs:
             case TailCallVarargsInlinedCaller:
                 if (node->child1() == candidate || node->child2() == candidate) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -148,7 +150,7 @@ private:
                 
             case SetLocal:
                 if (node->child1() == candidate && node->variableAccessData()->isLoadedFrom()) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -156,7 +158,7 @@ private:
                 
             default:
                 if (m_graph.uses(node, candidate)) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Escape at ", node, "\n");
                     return;
                 }
@@ -165,7 +167,7 @@ private:
             forAllKilledOperands(
                 m_graph, node, block->tryAt(nodeIndex + 1),
                 [&] (VirtualRegister reg) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Killing ", reg, " while we are interested in ", listDump(relevantLocals), "\n");
                     for (unsigned i = 0; i < relevantLocals.size(); ++i) {
                         if (relevantLocals[i] == reg) {
@@ -176,7 +178,7 @@ private:
                     }
                 });
         }
-        if (verbose)
+        if (DFGVarargsForwardingPhaseInternal::verbose)
             dataLog("Selected lastUserIndex = ", lastUserIndex, ", ", block->at(lastUserIndex), "\n");
         
         // We're still in business. Determine if between the candidate and the last user there is any
@@ -193,7 +195,7 @@ private:
             case ZombieHint:
             case KillStack:
                 if (argumentsInvolveStackSlot(candidate, node->unlinkedLocal())) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -201,7 +203,7 @@ private:
                 
             case PutStack:
                 if (argumentsInvolveStackSlot(candidate, node->stackAccessData()->local)) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -210,7 +212,7 @@ private:
             case SetLocal:
             case Flush:
                 if (argumentsInvolveStackSlot(candidate, node->local())) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -232,7 +234,7 @@ private:
                     },
                     NoOpClobberize());
                 if (doesInterfere) {
-                    if (verbose)
+                    if (DFGVarargsForwardingPhaseInternal::verbose)
                         dataLog("    Interference at ", node, "\n");
                     return;
                 }
@@ -240,7 +242,7 @@ private:
         }
         
         // We can make this work.
-        if (verbose)
+        if (DFGVarargsForwardingPhaseInternal::verbose)
             dataLog("    Will do forwarding!\n");
         m_changed = true;
         

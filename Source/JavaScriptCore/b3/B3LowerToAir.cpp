@@ -69,21 +69,26 @@
 
 namespace JSC { namespace B3 {
 
-using namespace Air;
-
 namespace {
 
-const bool verbose = false;
+namespace B3LowerToAirInternal {
+static const bool verbose = false;
+}
+
+using Arg = Air::Arg;
+using Inst = Air::Inst;
+using Code = Air::Code;
+using Tmp = Air::Tmp;
 
 // FIXME: We wouldn't need this if Air supported Width modifiers in Air::Kind.
 // https://bugs.webkit.org/show_bug.cgi?id=169247
 #define OPCODE_FOR_WIDTH(opcode, width) ( \
-    (width) == Width8 ? opcode ## 8 : \
-    (width) == Width16 ? opcode ## 16 : \
-    (width) == Width32 ? opcode ## 32 : \
-    opcode ## 64)
+    (width) == Width8 ? Air::opcode ## 8 : \
+    (width) == Width16 ? Air::opcode ## 16 :    \
+    (width) == Width32 ? Air::opcode ## 32 :    \
+    Air::opcode ## 64)
 #define OPCODE_FOR_CANONICAL_WIDTH(opcode, width) ( \
-    (width) == Width64 ? opcode ## 64 : opcode ## 32)
+    (width) == Width64 ? Air::opcode ## 64 : Air::opcode ## 32)
 
 class LowerToAir {
 public:
@@ -107,6 +112,7 @@ public:
 
     void run()
     {
+        using namespace Air;
         for (B3::BasicBlock* block : m_procedure)
             m_blockToBlock[block] = m_code.addBlock(block->frequency());
         
@@ -114,7 +120,7 @@ public:
             switch (value->opcode()) {
             case Phi: {
                 m_phiToTmp[value] = m_code.newTmp(value->resultBank());
-                if (verbose)
+                if (B3LowerToAirInternal::verbose)
                     dataLog("Phi tmp for ", *value, ": ", m_phiToTmp[value], "\n");
                 break;
             }
@@ -146,7 +152,7 @@ public:
 
             m_isRare = !m_fastWorklist.saw(block);
 
-            if (verbose)
+            if (B3LowerToAirInternal::verbose)
                 dataLog("Lowering Block ", *block, ":\n");
             
             // Make sure that the successors are set up correctly.
@@ -163,10 +169,10 @@ public:
                 if (m_locked.contains(m_value))
                     continue;
                 m_insts.append(Vector<Inst>());
-                if (verbose)
+                if (B3LowerToAirInternal::verbose)
                     dataLog("Lowering ", deepDump(m_procedure, m_value), ":\n");
                 lower();
-                if (verbose) {
+                if (B3LowerToAirInternal::verbose) {
                     for (Inst& inst : m_insts.last())
                         dataLog("    ", inst, "\n");
                 }
@@ -379,7 +385,7 @@ private:
                 realTmp = m_code.newTmp(value->resultBank());
                 if (m_procedure.isFastConstant(value->key()))
                     m_code.addFastTmp(realTmp);
-                if (verbose)
+                if (B3LowerToAirInternal::verbose)
                     dataLog("Tmp for ", *value, ": ", realTmp, "\n");
             }
             tmp = realTmp;
@@ -906,6 +912,7 @@ private:
     template<Air::Opcode opcode32, Air::Opcode opcode64>
     void appendShift(Value* value, Value* amount)
     {
+        using namespace Air;
         Air::Opcode opcode = opcodeForType(opcode32, opcode64, value->type());
         
         if (imm(amount)) {
@@ -1019,6 +1026,7 @@ private:
 
     Inst createStore(Air::Kind move, Value* value, const Arg& dest)
     {
+        using namespace Air;
         if (auto imm_value = imm(value)) {
             if (isARM64() && imm_value.value() == 0) {
                 switch (move.opcode) {
@@ -1043,6 +1051,7 @@ private:
     
     Air::Opcode storeOpcode(Width width, Bank bank)
     {
+        using namespace Air;
         switch (width) {
         case Width8:
             RELEASE_ASSERT(bank == GP);
@@ -1073,6 +1082,7 @@ private:
     
     void appendStore(Value* value, const Arg& dest)
     {
+        using namespace Air;
         MemoryValue* memory = value->as<MemoryValue>();
         RELEASE_ASSERT(memory->isStore());
 
@@ -1100,6 +1110,7 @@ private:
 
     Air::Opcode moveForType(Type type)
     {
+        using namespace Air;
         switch (type) {
         case Int32:
             return Move32;
@@ -1119,6 +1130,7 @@ private:
 
     Air::Opcode relaxedMoveForType(Type type)
     {
+        using namespace Air;
         switch (type) {
         case Int32:
         case Int64:
@@ -1162,8 +1174,8 @@ private:
     void print(Value* origin, Arguments&&... arguments)
     {
         auto printList = Printer::makePrintRecordList(arguments...);
-        auto printSpecial = static_cast<PrintSpecial*>(m_code.addSpecial(std::make_unique<PrintSpecial>(printList)));
-        Inst inst(Patch, origin, Arg::special(printSpecial));
+        auto printSpecial = static_cast<Air::PrintSpecial*>(m_code.addSpecial(std::make_unique<Air::PrintSpecial>(printList)));
+        Inst inst(Air::Patch, origin, Arg::special(printSpecial));
         Printer::appendAirArgs(inst, std::forward<Arguments>(arguments)...);
         append(WTFMove(inst));
     }
@@ -1762,6 +1774,7 @@ private:
 
     Inst createBranch(Value* value, bool inverted = false)
     {
+        using namespace Air;
         return createGenericCompare(
             value,
             [this] (
@@ -1845,6 +1858,7 @@ private:
 
     Inst createCompare(Value* value, bool inverted = false)
     {
+        using namespace Air;
         return createGenericCompare(
             value,
             [this] (
@@ -1924,6 +1938,7 @@ private:
     };
     Inst createSelect(const MoveConditionallyConfig& config)
     {
+        using namespace Air;
         auto createSelectInstruction = [&] (Air::Opcode opcode, const Arg& condition, ArgPromise& left, ArgPromise& right) -> Inst {
             if (isValidForm(opcode, condition.kind(), left.kind(), right.kind(), Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 Tmp result = tmp(m_value);
@@ -1987,6 +2002,7 @@ private:
     
     bool tryAppendLea()
     {
+        using namespace Air;
         Air::Opcode leaOpcode = tryOpcodeForType(Lea32, Lea64, m_value->type());
         if (!isValidForm(leaOpcode, Arg::Index, Arg::Tmp))
             return false;
@@ -2116,6 +2132,7 @@ private:
 
     void appendX86Div(B3::Opcode op)
     {
+        using namespace Air;
         Air::Opcode convertToDoubleWord;
         Air::Opcode div;
         switch (m_value->type()) {
@@ -2143,6 +2160,7 @@ private:
 
     void appendX86UDiv(B3::Opcode op)
     {
+        using namespace Air;
         Air::Opcode div = m_value->type() == Int32 ? X86UDiv32 : X86UDiv64;
 
         ASSERT(op == UDiv || op == UMod);
@@ -2178,6 +2196,7 @@ private:
     // generated. It assumes that you've consumed everything that needs to be consumed.
     void appendCAS(Value* atomicValue, bool invert)
     {
+        using namespace Air;
         AtomicValue* atomic = atomicValue->as<AtomicValue>();
         RELEASE_ASSERT(atomic);
         
@@ -2340,6 +2359,7 @@ private:
     
     void appendGeneralAtomic(Air::Opcode opcode, Commutativity commutativity = NotCommutative)
     {
+        using namespace Air;
         AtomicValue* atomic = m_value->as<AtomicValue>();
         
         Arg address = addr(m_value);
@@ -2424,6 +2444,7 @@ private:
     
     void lower()
     {
+        using namespace Air;
         switch (m_value->opcode()) {
         case B3::Nop: {
             // Yes, we will totally see Nop's because some phases will replaceWithNop() instead of

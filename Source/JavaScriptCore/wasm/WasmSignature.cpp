@@ -36,7 +36,9 @@
 namespace JSC { namespace Wasm {
 
 namespace {
-const bool verbose = false;
+namespace WasmSignatureInternal {
+static const bool verbose = false;
+}
 }
 
 String Signature::toString() const
@@ -103,7 +105,7 @@ std::pair<SignatureIndex, Ref<Signature>> SignatureInformation::adopt(Ref<Signat
         ++info.m_nextIndex;
         RELEASE_ASSERT(info.m_nextIndex > nextValue); // crash on overflow.
         ASSERT(nextValue == addResult.iterator->value);
-        if (verbose)
+        if (WasmSignatureInternal::verbose)
             dataLogLn("Adopt new signature ", signature.get(), " with index ", addResult.iterator->value, " hash: ", signature->hash());
 
         auto addResult = info.m_indexMap.add(nextValue, signature.copyRef());
@@ -111,7 +113,7 @@ std::pair<SignatureIndex, Ref<Signature>> SignatureInformation::adopt(Ref<Signat
         ASSERT(info.m_indexMap.size() == info.m_signatureMap.size());
         return std::make_pair(nextValue, WTFMove(signature));
     }
-    if (verbose)
+    if (WasmSignatureInternal::verbose)
         dataLogLn("Existing signature ", signature.get(), " with index ", addResult.iterator->value, " hash: ", signature->hash());
     ASSERT(addResult.iterator->value != Signature::invalidIndex);
     ASSERT(info.m_indexMap.contains(addResult.iterator->value));

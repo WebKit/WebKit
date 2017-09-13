@@ -1,3 +1,237 @@
+2017-09-12  Keith Miller  <keith_miller@apple.com>
+
+        Do unified source builds for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=176076
+
+        Reviewed by Geoffrey Garen.
+
+        This patch switches the CMake JavaScriptCore build to use unified sources.
+        The Xcode build will be upgraded in a follow up patch.
+
+        Most of the source changes in this patch are fixing static
+        variable/functions name collisions. The most common collisions
+        were from our use of "static const bool verbose" and "using
+        namespace ...". I fixed all the verbose cases and fixed the "using
+        namespace" issues that occurred under the current bundling
+        strategy. It's likely that more of the "using namespace" issues
+        will need to be resolved in the future, particularly in the FTL.
+
+        I don't expect either of these problems will apply to other parts
+        of the project nearly as much as in JSC. Using a verbose variable
+        is a JSC idiom and JSC tends use the same, canonical, class name
+        in multiple parts of the engine.
+
+        * CMakeLists.txt:
+        * b3/B3CheckSpecial.cpp:
+        (JSC::B3::CheckSpecial::forEachArg):
+        (JSC::B3::CheckSpecial::generate):
+        (JSC::B3::Air::numB3Args): Deleted.
+        * b3/B3DuplicateTails.cpp:
+        * b3/B3EliminateCommonSubexpressions.cpp:
+        * b3/B3FixSSA.cpp:
+        (JSC::B3::demoteValues):
+        * b3/B3FoldPathConstants.cpp:
+        * b3/B3InferSwitches.cpp:
+        * b3/B3LowerMacrosAfterOptimizations.cpp:
+        (): Deleted.
+        * b3/B3LowerToAir.cpp:
+        (JSC::B3::Air::LowerToAir::LowerToAir): Deleted.
+        (JSC::B3::Air::LowerToAir::run): Deleted.
+        (JSC::B3::Air::LowerToAir::shouldCopyPropagate): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::ArgPromise): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::swap): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::operator=): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::~ArgPromise): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::setTraps): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::tmp): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::operator bool const): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::kind const): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::peek const): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::consume): Deleted.
+        (JSC::B3::Air::LowerToAir::ArgPromise::inst): Deleted.
+        (JSC::B3::Air::LowerToAir::tmp): Deleted.
+        (JSC::B3::Air::LowerToAir::tmpPromise): Deleted.
+        (JSC::B3::Air::LowerToAir::canBeInternal): Deleted.
+        (JSC::B3::Air::LowerToAir::commitInternal): Deleted.
+        (JSC::B3::Air::LowerToAir::crossesInterference): Deleted.
+        (JSC::B3::Air::LowerToAir::scaleForShl): Deleted.
+        (JSC::B3::Air::LowerToAir::effectiveAddr): Deleted.
+        (JSC::B3::Air::LowerToAir::addr): Deleted.
+        (JSC::B3::Air::LowerToAir::trappingInst): Deleted.
+        (JSC::B3::Air::LowerToAir::loadPromiseAnyOpcode): Deleted.
+        (JSC::B3::Air::LowerToAir::loadPromise): Deleted.
+        (JSC::B3::Air::LowerToAir::imm): Deleted.
+        (JSC::B3::Air::LowerToAir::bitImm): Deleted.
+        (JSC::B3::Air::LowerToAir::bitImm64): Deleted.
+        (JSC::B3::Air::LowerToAir::immOrTmp): Deleted.
+        (JSC::B3::Air::LowerToAir::tryOpcodeForType): Deleted.
+        (JSC::B3::Air::LowerToAir::opcodeForType): Deleted.
+        (JSC::B3::Air::LowerToAir::appendUnOp): Deleted.
+        (JSC::B3::Air::LowerToAir::preferRightForResult): Deleted.
+        (JSC::B3::Air::LowerToAir::appendBinOp): Deleted.
+        (JSC::B3::Air::LowerToAir::appendShift): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAppendStoreUnOp): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAppendStoreBinOp): Deleted.
+        (JSC::B3::Air::LowerToAir::createStore): Deleted.
+        (JSC::B3::Air::LowerToAir::storeOpcode): Deleted.
+        (JSC::B3::Air::LowerToAir::appendStore): Deleted.
+        (JSC::B3::Air::LowerToAir::moveForType): Deleted.
+        (JSC::B3::Air::LowerToAir::relaxedMoveForType): Deleted.
+        (JSC::B3::Air::LowerToAir::print): Deleted.
+        (JSC::B3::Air::LowerToAir::append): Deleted.
+        (JSC::B3::Air::LowerToAir::appendTrapping): Deleted.
+        (JSC::B3::Air::LowerToAir::finishAppendingInstructions): Deleted.
+        (JSC::B3::Air::LowerToAir::newBlock): Deleted.
+        (JSC::B3::Air::LowerToAir::splitBlock): Deleted.
+        (JSC::B3::Air::LowerToAir::ensureSpecial): Deleted.
+        (JSC::B3::Air::LowerToAir::ensureCheckSpecial): Deleted.
+        (JSC::B3::Air::LowerToAir::fillStackmap): Deleted.
+        (JSC::B3::Air::LowerToAir::createGenericCompare): Deleted.
+        (JSC::B3::Air::LowerToAir::createBranch): Deleted.
+        (JSC::B3::Air::LowerToAir::createCompare): Deleted.
+        (JSC::B3::Air::LowerToAir::createSelect): Deleted.
+        (JSC::B3::Air::LowerToAir::tryAppendLea): Deleted.
+        (JSC::B3::Air::LowerToAir::appendX86Div): Deleted.
+        (JSC::B3::Air::LowerToAir::appendX86UDiv): Deleted.
+        (JSC::B3::Air::LowerToAir::loadLinkOpcode): Deleted.
+        (JSC::B3::Air::LowerToAir::storeCondOpcode): Deleted.
+        (JSC::B3::Air::LowerToAir::appendCAS): Deleted.
+        (JSC::B3::Air::LowerToAir::appendVoidAtomic): Deleted.
+        (JSC::B3::Air::LowerToAir::appendGeneralAtomic): Deleted.
+        (JSC::B3::Air::LowerToAir::lower): Deleted.
+        * b3/B3PatchpointSpecial.cpp:
+        (JSC::B3::PatchpointSpecial::generate):
+        * b3/B3ReduceDoubleToFloat.cpp:
+        (JSC::B3::reduceDoubleToFloat):
+        * b3/B3ReduceStrength.cpp:
+        * b3/B3StackmapGenerationParams.cpp:
+        * b3/B3StackmapSpecial.cpp:
+        (JSC::B3::StackmapSpecial::repsImpl):
+        (JSC::B3::StackmapSpecial::repForArg):
+        * b3/air/AirAllocateStackByGraphColoring.cpp:
+        (JSC::B3::Air::allocateStackByGraphColoring):
+        * b3/air/AirEmitShuffle.cpp:
+        (JSC::B3::Air::emitShuffle):
+        * b3/air/AirFixObviousSpills.cpp:
+        * b3/air/AirLowerAfterRegAlloc.cpp:
+        (JSC::B3::Air::lowerAfterRegAlloc):
+        * b3/air/AirStackAllocation.cpp:
+        (JSC::B3::Air::attemptAssignment):
+        (JSC::B3::Air::assign):
+        * bytecode/AccessCase.cpp:
+        (JSC::AccessCase::generateImpl):
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::computeDFGStatuses):
+        * bytecode/GetterSetterAccessCase.cpp:
+        (JSC::GetterSetterAccessCase::emitDOMJITGetter):
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        * bytecode/PolymorphicAccess.cpp:
+        (JSC::PolymorphicAccess::addCases):
+        (JSC::PolymorphicAccess::regenerate):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::addAccessCase):
+        * dfg/DFGArgumentsEliminationPhase.cpp:
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::DelayedSetLocal::DelayedSetLocal):
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        (JSC::DFG::ByteCodeParser::attemptToInlineCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::planLoad):
+        (JSC::DFG::ByteCodeParser::store):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::linkBlocks):
+        * dfg/DFGCSEPhase.cpp:
+        * dfg/DFGInPlaceAbstractState.cpp:
+        (JSC::DFG::InPlaceAbstractState::merge):
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::handleBlock):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGMovHintRemovalPhase.cpp:
+        * dfg/DFGObjectAllocationSinkingPhase.cpp:
+        * dfg/DFGPhantomInsertionPhase.cpp:
+        * dfg/DFGPutStackSinkingPhase.cpp:
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * dfg/DFGVarargsForwardingPhase.cpp:
+        * ftl/FTLAbstractHeap.cpp:
+        (JSC::FTL::AbstractHeap::compute):
+        * ftl/FTLAbstractHeapRepository.cpp:
+        (JSC::FTL::AbstractHeapRepository::decorateMemory):
+        (JSC::FTL::AbstractHeapRepository::decorateCCallRead):
+        (JSC::FTL::AbstractHeapRepository::decorateCCallWrite):
+        (JSC::FTL::AbstractHeapRepository::decoratePatchpointRead):
+        (JSC::FTL::AbstractHeapRepository::decoratePatchpointWrite):
+        (JSC::FTL::AbstractHeapRepository::decorateFenceRead):
+        (JSC::FTL::AbstractHeapRepository::decorateFenceWrite):
+        (JSC::FTL::AbstractHeapRepository::decorateFencedAccess):
+        (JSC::FTL::AbstractHeapRepository::computeRangesAndDecorateInstructions):
+        * ftl/FTLLink.cpp:
+        (JSC::FTL::link):
+        * heap/MarkingConstraintSet.cpp:
+        (JSC::MarkingConstraintSet::add):
+        * interpreter/ShadowChicken.cpp:
+        (JSC::ShadowChicken::update):
+        * jit/BinarySwitch.cpp:
+        (JSC::BinarySwitch::BinarySwitch):
+        (JSC::BinarySwitch::build):
+        * llint/LLIntData.cpp:
+        (JSC::LLInt::Data::loadStats):
+        (JSC::LLInt::Data::saveStats):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::tryInitializeSpeciesWatchpoint):
+        (JSC::ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire):
+        * runtime/ErrorInstance.cpp:
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::FindFirstCallerFrameWithCodeblockFunctor): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::operator()): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::foundCallFrame const): Deleted.
+        (JSC::FindFirstCallerFrameWithCodeblockFunctor::index const): Deleted.
+        * runtime/IntlDateTimeFormat.cpp:
+        (JSC::IntlDateTimeFormat::initializeDateTimeFormat):
+        * runtime/PromiseDeferredTimer.cpp:
+        (JSC::PromiseDeferredTimer::doWork):
+        (JSC::PromiseDeferredTimer::addPendingPromise):
+        (JSC::PromiseDeferredTimer::cancelPendingPromise):
+        * runtime/TypeProfiler.cpp:
+        (JSC::TypeProfiler::insertNewLocation):
+        * runtime/TypeProfilerLog.cpp:
+        (JSC::TypeProfilerLog::processLogEntries):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::protoFuncWeakMapDelete):
+        (JSC::protoFuncWeakMapGet):
+        (JSC::protoFuncWeakMapHas):
+        (JSC::protoFuncWeakMapSet):
+        (JSC::getWeakMapData): Deleted.
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::protoFuncWeakSetDelete):
+        (JSC::protoFuncWeakSetHas):
+        (JSC::protoFuncWeakSetAdd):
+        (JSC::getWeakMapData): Deleted.
+        * testRegExp.cpp:
+        (testOneRegExp):
+        (runFromFiles):
+        * wasm/WasmB3IRGenerator.cpp:
+        (JSC::Wasm::parseAndCompile):
+        * wasm/WasmBBQPlan.cpp:
+        (JSC::Wasm::BBQPlan::moveToState):
+        (JSC::Wasm::BBQPlan::parseAndValidateModule):
+        (JSC::Wasm::BBQPlan::prepare):
+        (JSC::Wasm::BBQPlan::compileFunctions):
+        (JSC::Wasm::BBQPlan::complete):
+        * wasm/WasmFaultSignalHandler.cpp:
+        (JSC::Wasm::trapHandler):
+        * wasm/WasmOMGPlan.cpp:
+        (JSC::Wasm::OMGPlan::OMGPlan):
+        (JSC::Wasm::OMGPlan::work):
+        * wasm/WasmPlan.cpp:
+        (JSC::Wasm::Plan::fail):
+        * wasm/WasmSignature.cpp:
+        (JSC::Wasm::SignatureInformation::adopt):
+        * wasm/WasmWorklist.cpp:
+        (JSC::Wasm::Worklist::enqueue):
+
 2017-09-12  Michael Saboff  <msaboff@apple.com>
 
         String.prototype.replace() puts extra '<' in result when a named capture reference is used without named captures in the RegExp

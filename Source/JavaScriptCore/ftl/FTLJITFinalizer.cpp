@@ -37,9 +37,7 @@
 
 namespace JSC { namespace FTL {
 
-using namespace DFG;
-
-JITFinalizer::JITFinalizer(Plan& plan)
+JITFinalizer::JITFinalizer(DFG::Plan& plan)
     : Finalizer(plan)
 {
 }

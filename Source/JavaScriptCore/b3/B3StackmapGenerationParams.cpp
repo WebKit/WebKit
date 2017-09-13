@@ -34,8 +34,6 @@
 
 namespace JSC { namespace B3 {
 
-using namespace Air;
-
 const RegisterSet& StackmapGenerationParams::usedRegisters() const
 {
     ASSERT(m_context.code->needsUsedRegisters());

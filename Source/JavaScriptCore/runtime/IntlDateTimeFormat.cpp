@@ -49,7 +49,10 @@ namespace JSC {
 
 const ClassInfo IntlDateTimeFormat::s_info = { "Object", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlDateTimeFormat) };
 
+namespace IntlDTFInternal {
 static const char* const relevantExtensionKeys[2] = { "ca", "nu" };
+}
+
 static const size_t indexOfExtensionKeyCa = 0;
 static const size_t indexOfExtensionKeyNu = 1;
 
@@ -189,6 +192,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
     return canonical;
 }
 
+namespace IntlDTFInternal {
 static Vector<String> localeData(const String& locale, size_t keyIndex)
 {
     Vector<String> keyLocaleData;
@@ -319,6 +323,7 @@ static JSObject* toDateTimeOptionsAnyDate(ExecState& exec, JSValue originalOptio
     // 9. Return options.
     return options;
 }
+}
 
 void IntlDateTimeFormat::setFormatsFromPattern(const StringView& pattern)
 {
@@ -433,7 +438,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     RETURN_IF_EXCEPTION(scope, void());
 
     // 5. Let options be ToDateTimeOptions(options, "any", "date").
-    JSObject* options = toDateTimeOptionsAnyDate(exec, originalOptions);
+    JSObject* options = IntlDTFInternal::toDateTimeOptionsAnyDate(exec, originalOptions);
     // 6. ReturnIfAbrupt(options).
     RETURN_IF_EXCEPTION(scope, void());
 
@@ -450,7 +455,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(ExecState& exec, JSValue local
     // 11. Let localeData be the value of %DateTimeFormat%.[[localeData]].
     // 12. Let r be ResolveLocale( %DateTimeFormat%.[[availableLocales]], requestedLocales, opt, %DateTimeFormat%.[[relevantExtensionKeys]], localeData).
     const HashSet<String> availableLocales = exec.jsCallee()->globalObject()->intlDateTimeFormatAvailableLocales();
-    HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, relevantExtensionKeys, WTF_ARRAY_LENGTH(relevantExtensionKeys), localeData);
+    HashMap<String, String> resolved = resolveLocale(exec, availableLocales, requestedLocales, localeOpt, IntlDTFInternal::relevantExtensionKeys, WTF_ARRAY_LENGTH(IntlDTFInternal::relevantExtensionKeys), IntlDTFInternal::localeData);
 
     // 13. Set dateTimeFormat.[[locale]] to the value of r.[[locale]].
     m_locale = resolved.get(vm.propertyNames->locale.string());

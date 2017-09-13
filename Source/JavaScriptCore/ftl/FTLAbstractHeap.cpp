@@ -38,8 +38,6 @@
 
 namespace JSC { namespace FTL {
 
-using namespace B3;
-
 AbstractHeap::AbstractHeap(AbstractHeap* parent, const char* heapName, ptrdiff_t offset)
     : m_offset(offset)
     , m_heapName(heapName)
@@ -77,7 +75,7 @@ void AbstractHeap::compute(unsigned begin)
 
     if (m_children.isEmpty()) {
         // Must special-case leaves so that they use just one slot on the number line.
-        m_range = HeapRange(begin);
+        m_range = B3::HeapRange(begin);
         return;
     }
 
@@ -87,7 +85,7 @@ void AbstractHeap::compute(unsigned begin)
         current = child->range().end();
     }
 
-    m_range = HeapRange(begin, current);
+    m_range = B3::HeapRange(begin, current);
 }
 
 void AbstractHeap::shallowDump(PrintStream& out) const

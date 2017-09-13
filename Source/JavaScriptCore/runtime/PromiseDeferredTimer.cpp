@@ -34,7 +34,9 @@
 
 namespace JSC {
 
+namespace PromiseDeferredTimerInternal {
 static const bool verbose = false;
+}
 
 PromiseDeferredTimer::PromiseDeferredTimer(VM& vm)
     : Base(&vm)
@@ -55,7 +57,7 @@ void PromiseDeferredTimer::doWork()
         JSPromiseDeferred* ticket;
         Task task;
         std::tie(ticket, task) = m_tasks.takeLast();
-        dataLogLnIf(verbose, "Doing work on promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Doing work on promise: ", RawPointer(ticket));
 
         // We may have already canceled these promises.
         if (m_pendingPromises.contains(ticket)) {
@@ -105,11 +107,11 @@ void PromiseDeferredTimer::addPendingPromise(JSPromiseDeferred* ticket, Vector<S
 
     auto result = m_pendingPromises.add(ticket, Vector<Strong<JSCell>>());
     if (result.isNewEntry) {
-        dataLogLnIf(verbose, "Adding new pending promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Adding new pending promise: ", RawPointer(ticket));
         dependencies.append(Strong<JSCell>(*m_vm, ticket));
         result.iterator->value = WTFMove(dependencies);
     } else {
-        dataLogLnIf(verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Adding new dependencies for promise: ", RawPointer(ticket));
         result.iterator->value.appendVector(dependencies);
     }
 
@@ -124,7 +126,7 @@ bool PromiseDeferredTimer::cancelPendingPromise(JSPromiseDeferred* ticket)
     bool result = m_pendingPromises.remove(ticket);
 
     if (result)
-        dataLogLnIf(verbose, "Canceling promise: ", RawPointer(ticket));
+        dataLogLnIf(PromiseDeferredTimerInternal::verbose, "Canceling promise: ", RawPointer(ticket));
 
     return result;
 }

@@ -49,7 +49,9 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmBBQPlanInternal {
 static const bool verbose = false;
+}
 
 BBQPlan::BBQPlan(VM* vm, Ref<ModuleInformation> info, AsyncWork work, CompletionTask&& task)
     : Base(vm, WTFMove(info), WTFMove(task))
@@ -86,7 +88,7 @@ const char* BBQPlan::stateString(State state)
 void BBQPlan::moveToState(State state)
 {
     ASSERT(state >= m_state);
-    dataLogLnIf(verbose && state != m_state, "moving to state: ", stateString(state), " from state: ", stateString(m_state));
+    dataLogLnIf(WasmBBQPlanInternal::verbose && state != m_state, "moving to state: ", stateString(state), " from state: ", stateString(m_state));
     m_state = state;
 }
 
@@ -95,9 +97,9 @@ bool BBQPlan::parseAndValidateModule()
     if (m_state != State::Initial)
         return true;
 
-    dataLogLnIf(verbose, "starting validation");
+    dataLogLnIf(WasmBBQPlanInternal::verbose, "starting validation");
     MonotonicTime startTime;
-    if (verbose || Options::reportCompileTimes())
+    if (WasmBBQPlanInternal::verbose || Options::reportCompileTimes())
         startTime = MonotonicTime::now();
 
     {
@@ -111,7 +113,7 @@ bool BBQPlan::parseAndValidateModule()
 
     const auto& functionLocations = m_moduleInformation->functionLocationInBinary;
     for (unsigned functionIndex = 0; functionIndex < functionLocations.size(); ++functionIndex) {
-        dataLogLnIf(verbose, "Processing function starting at: ", functionLocations[functionIndex].start, " and ending at: ", functionLocations[functionIndex].end);
+        dataLogLnIf(WasmBBQPlanInternal::verbose, "Processing function starting at: ", functionLocations[functionIndex].start, " and ending at: ", functionLocations[functionIndex].end);
         const uint8_t* functionStart = m_source + functionLocations[functionIndex].start;
         size_t functionLength = functionLocations[functionIndex].end - functionLocations[functionIndex].start;
         ASSERT(functionLength <= m_sourceLength);
@@ -120,7 +122,7 @@ bool BBQPlan::parseAndValidateModule()
 
         auto validationResult = validateFunction(functionStart, functionLength, signature, m_moduleInformation.get());
         if (!validationResult) {
-            if (verbose) {
+            if (WasmBBQPlanInternal::verbose) {
                 for (unsigned i = 0; i < functionLength; ++i)
                     dataLog(RawPointer(reinterpret_cast<void*>(functionStart[i])), ", ");
                 dataLogLn();
@@ -130,7 +132,7 @@ bool BBQPlan::parseAndValidateModule()
         }
     }
 
-    if (verbose || Options::reportCompileTimes())
+    if (WasmBBQPlanInternal::verbose || Options::reportCompileTimes())
         dataLogLn("Took ", (MonotonicTime::now() - startTime).microseconds(), " us to validate module");
 
     moveToState(State::Validated);
@@ -142,7 +144,7 @@ bool BBQPlan::parseAndValidateModule()
 void BBQPlan::prepare()
 {
     ASSERT(m_state == State::Validated);
-    dataLogLnIf(verbose, "Starting preparation");
+    dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting preparation");
 
     auto tryReserveCapacity = [this] (auto& vector, size_t size, const char* what) {
         if (UNLIKELY(!vector.tryReserveCapacity(size))) {
@@ -174,7 +176,7 @@ void BBQPlan::prepare()
         if (import->kind != ExternalKind::Function)
             continue;
         unsigned importFunctionIndex = m_wasmToWasmExitStubs.size();
-        dataLogLnIf(verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
+        dataLogLnIf(WasmBBQPlanInternal::verbose, "Processing import function number ", importFunctionIndex, ": ", makeString(import->module), ": ", makeString(import->field));
         auto binding = wasmToWasm(importFunctionIndex);
         if (UNLIKELY(!binding)) {
             switch (binding.error()) {
@@ -230,7 +232,7 @@ public:
 void BBQPlan::compileFunctions(CompilationEffort effort)
 {
     ASSERT(m_state >= State::Prepared);
-    dataLogLnIf(verbose, "Starting compilation");
+    dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting compilation");
 
     if (!hasWork())
         return;
@@ -294,7 +296,7 @@ void BBQPlan::compileFunctions(CompilationEffort effort)
 void BBQPlan::complete(const AbstractLocker& locker)
 {
     ASSERT(m_state != State::Compiled || m_currentIndex >= m_moduleInformation->functionLocationInBinary.size());
-    dataLogLnIf(verbose, "Starting Completion");
+    dataLogLnIf(WasmBBQPlanInternal::verbose, "Starting Completion");
 
     if (!failed() && m_state == State::Compiled) {
         for (uint32_t functionIndex = 0; functionIndex < m_moduleInformation->functionLocationInBinary.size(); functionIndex++) {

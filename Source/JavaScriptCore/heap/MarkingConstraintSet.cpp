@@ -27,6 +27,7 @@
 #include "MarkingConstraintSet.h"
 
 #include "Options.h"
+#include <wtf/Function.h>
 #include <wtf/TimeWithDynamicClockType.h>
 
 namespace JSC {
@@ -106,15 +107,15 @@ void MarkingConstraintSet::didStartMarking()
     m_iteration = 1;
 }
 
-void MarkingConstraintSet::add(CString abbreviatedName, CString name, Function<void(SlotVisitor&, const VisitingTimeout&)> function, ConstraintVolatility volatility)
+void MarkingConstraintSet::add(CString abbreviatedName, CString name, ::Function<void(SlotVisitor&, const VisitingTimeout&)> function, ConstraintVolatility volatility)
 {
     add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(function), volatility));
 }
 
 void MarkingConstraintSet::add(
     CString abbreviatedName, CString name,
-    Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
-    Function<double(SlotVisitor&)> quickWorkEstimateFunction,
+    ::Function<void(SlotVisitor&, const VisitingTimeout&)> executeFunction,
+    ::Function<double(SlotVisitor&)> quickWorkEstimateFunction,
     ConstraintVolatility volatility)
 {
     add(std::make_unique<MarkingConstraint>(WTFMove(abbreviatedName), WTFMove(name), WTFMove(executeFunction), WTFMove(quickWorkEstimateFunction), volatility));

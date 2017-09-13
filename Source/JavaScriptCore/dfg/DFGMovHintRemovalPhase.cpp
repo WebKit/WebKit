@@ -42,7 +42,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGMovHintRemovalPhaseInternal {
+static const bool verbose = false;
+}
 
 class MovHintRemovalPhase : public Phase {
 public:
@@ -55,7 +57,7 @@ public:
     
     bool run()
     {
-        if (verbose) {
+        if (DFGMovHintRemovalPhaseInternal::verbose) {
             dataLog("Graph before MovHint removal:\n");
             m_graph.dump();
         }
@@ -69,7 +71,7 @@ public:
 private:
     void handleBlock(BasicBlock* block)
     {
-        if (verbose)
+        if (DFGMovHintRemovalPhaseInternal::verbose)
             dataLog("Handing block ", pointerDump(block), "\n");
         
         // A MovHint is unnecessary if the local dies before it is used. We answer this question by
@@ -87,7 +89,7 @@ private:
                 m_state.operand(reg) = currentEpoch;
             });
         
-        if (verbose)
+        if (DFGMovHintRemovalPhaseInternal::verbose)
             dataLog("    Locals: ", m_state, "\n");
         
         // Assume that blocks after us exit.
@@ -98,7 +100,7 @@ private:
             
             if (node->op() == MovHint) {
                 Epoch localEpoch = m_state.operand(node->unlinkedLocal());
-                if (verbose)
+                if (DFGMovHintRemovalPhaseInternal::verbose)
                     dataLog("    At ", node, ": current = ", currentEpoch, ", local = ", localEpoch, "\n");
                 if (!localEpoch || localEpoch == currentEpoch) {
                     node->setOpAndDefaultFlags(ZombieHint);
@@ -120,7 +122,7 @@ private:
                         if (!!m_state.operand(reg))
                             return;
                         
-                        if (verbose)
+                        if (DFGMovHintRemovalPhaseInternal::verbose)
                             dataLog("    Killed operand at ", node, ": ", reg, "\n");
                         m_state.operand(reg) = currentEpoch;
                     });

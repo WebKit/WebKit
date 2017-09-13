@@ -44,7 +44,9 @@
 
 namespace JSC {
 
+namespace PolymorphicAccessInternal {
 static const bool verbose = false;
+}
 
 void AccessGenerationResult::dump(PrintStream& out) const
 {
@@ -247,7 +249,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
         casesToAdd.append(WTFMove(myCase));
     }
 
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog("casesToAdd: ", listDump(casesToAdd), "\n");
 
     // If there aren't any cases to add, then fail on the grounds that there's no point to generating a
@@ -263,7 +265,7 @@ AccessGenerationResult PolymorphicAccess::addCases(
         m_list.append(WTFMove(caseToAdd));
     }
     
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog("After addCases: m_list: ", listDump(m_list), "\n");
 
     return AccessGenerationResult::Buffered;
@@ -334,7 +336,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
 {
     SuperSamplerScope superSamplerScope(false);
     
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog("Regenerate with m_list: ", listDump(m_list), "\n");
     
     AccessGenerationState state(vm);
@@ -402,7 +404,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     }
     m_list.resize(dstIndex);
     
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog("Optimized cases: ", listDump(cases), "\n");
     
     // At this point we're convinced that 'cases' contains the cases that we want to JIT now and we
@@ -517,7 +519,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
 
     LinkBuffer linkBuffer(jit, codeBlock, JITCompilationCanFail);
     if (linkBuffer.didFailToAllocate()) {
-        if (verbose)
+        if (PolymorphicAccessInternal::verbose)
             dataLog("Did fail to allocate.\n");
         return AccessGenerationResult::GaveUp;
     }
@@ -528,7 +530,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
 
     linkBuffer.link(failure, stubInfo.slowPathStartLocation());
     
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog(FullCodeOrigin(codeBlock, stubInfo.codeOrigin), ": Generating polymorphic access stub for ", listDump(cases), "\n");
 
     MacroAssemblerCodeRef code = FINALIZE_CODE_FOR(
@@ -544,7 +546,7 @@ AccessGenerationResult PolymorphicAccess::regenerate(
     m_watchpoints = WTFMove(state.watchpoints);
     if (!state.weakReferences.isEmpty())
         m_weakReferences = std::make_unique<Vector<WriteBarrier<JSCell>>>(WTFMove(state.weakReferences));
-    if (verbose)
+    if (PolymorphicAccessInternal::verbose)
         dataLog("Returning: ", code.code(), "\n");
     
     m_list = WTFMove(cases);

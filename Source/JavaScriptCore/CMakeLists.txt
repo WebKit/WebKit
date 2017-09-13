@@ -46,7 +46,7 @@ set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
 )
 
-set(JavaScriptCore_SOURCES
+set(JavaScriptCore_OG_SOURCES
     API/JSBase.cpp
     API/JSCTestRunnerUtils.cpp
     API/JSCallbackConstructor.cpp
@@ -879,7 +879,6 @@ set(JavaScriptCore_SOURCES
     runtime/PropertyTable.cpp
     runtime/PrototypeMap.cpp
     runtime/ProxyConstructor.cpp
-    runtime/ProxyObject.cpp
     runtime/ProxyRevoke.cpp
     runtime/ReflectObject.cpp
     runtime/RegExp.cpp
@@ -1015,6 +1014,30 @@ set(JavaScriptCore_SOURCES
     yarr/YarrJIT.cpp
     yarr/YarrPattern.cpp
     yarr/YarrSyntaxChecker.cpp
+)
+
+foreach (_sourceFile IN LISTS JavaScriptCore_OG_SOURCES)
+    if (NOT (${_sourceFile} MATCHES "[.]c$"))
+        set_source_files_properties(${_sourceFile} PROPERTIES HEADER_FILE_ONLY ON)
+        list(APPEND JavaScriptCore_HEADERS ${_sourceFile})
+    endif ()
+endforeach ()
+
+execute_process(COMMAND ${RUBY_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/../WTF/generate-unified-source-bundles.rb
+  "--derived-sources-path" ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} ${JavaScriptCore_OG_SOURCES}
+  RESULT_VARIABLE generateUnifiedSourcesResult
+  OUTPUT_VARIABLE generateUnifiedSourcesOutput
+)
+
+if (${generateUnifiedSourcesResult})
+    message(FATAL_ERROR "unified-source-bundler.rb exited with non-zero status not appending results")
+else ()
+    list(APPEND JavaScriptCore_SOURCES ${generateUnifiedSourcesOutput})
+endif ()
+
+# These are special files that we can't or don't want to unified source compile
+list(APPEND JavaScriptCore_SOURCES
+    runtime/ProxyObject.cpp
 )
 
 # Extra flags for compile sources can go here.
@@ -1336,6 +1359,7 @@ add_custom_command(
     MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/create_regex_tables
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_regex_tables > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h
     VERBATIM)
+list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
 WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
 
 add_custom_command(
@@ -1356,6 +1380,7 @@ add_custom_command(
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table
     COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/KeywordLookupGenerator.py ${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
     VERBATIM)
+list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
 WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/parser/Lexer.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
 
 
@@ -1503,7 +1528,7 @@ add_custom_command(
     WORKING_DIRECTORY ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}
 )
 
-list(APPEND JavaScriptCore_SOURCES
+list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcode.h
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcodeGenerated.h
 )

@@ -47,7 +47,9 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmPlanInternal {
 static const bool verbose = false;
+}
 
 Plan::Plan(VM* vm, Ref<ModuleInformation> info, CompletionTask&& task)
     : m_moduleInformation(WTFMove(info))
@@ -128,7 +130,7 @@ bool Plan::tryRemoveVMAndCancelIfLast(VM& vm)
 
 void Plan::fail(const AbstractLocker& locker, String&& errorMessage)
 {
-    dataLogLnIf(verbose, "failing with message: ", errorMessage);
+    dataLogLnIf(WasmPlanInternal::verbose, "failing with message: ", errorMessage);
     m_errorMessage = WTFMove(errorMessage);
     complete(locker);
 }

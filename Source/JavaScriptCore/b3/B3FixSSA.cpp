@@ -48,7 +48,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-const bool verbose = false;
+namespace B3FixSSAInternal {
+static const bool verbose = false;
+}
 
 void killDeadVariables(Procedure& proc)
 {
@@ -157,7 +159,7 @@ void fixSSAGlobally(Procedure& proc)
                     return nullptr;
                 
                 Value* phi = proc.add<Value>(Phi, variable->type(), block->at(0)->origin());
-                if (verbose) {
+                if (B3FixSSAInternal::verbose) {
                     dataLog(
                         "Adding Phi for ", pointerDump(variable), " at ", *block, ": ",
                         deepDump(proc, phi), "\n");
@@ -231,7 +233,7 @@ void fixSSAGlobally(Procedure& proc)
                 Variable* variable = calcVarToVariable[calcVar->index()];
 
                 Value* mappedValue = ensureMapping(variable, upsilonInsertionPoint, upsilonOrigin);
-                if (verbose) {
+                if (B3FixSSAInternal::verbose) {
                     dataLog(
                         "Mapped value for ", *variable, " with successor Phi ", *phi,
                         " at end of ", *block, ": ", pointerDump(mappedValue), "\n");
@@ -245,7 +247,7 @@ void fixSSAGlobally(Procedure& proc)
         insertionSet.execute(block);
     }
 
-    if (verbose) {
+    if (B3FixSSAInternal::verbose) {
         dataLog("B3 after SSA conversion:\n");
         dataLog(proc);
     }
@@ -266,7 +268,7 @@ void demoteValues(Procedure& proc, const IndexSet<Value*>& values)
             phiMap.add(value, proc.addVariable(value->type()));
     }
 
-    if (verbose) {
+    if (B3FixSSAInternal::verbose) {
         dataLog("Demoting values as follows:\n");
         dataLog("   map = ");
         CommaPrinter comma;

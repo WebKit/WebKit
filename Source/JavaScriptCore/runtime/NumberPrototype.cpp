@@ -35,7 +35,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/dtoa/double-conversion.h>
 
-using namespace WTF::double_conversion;
+using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 
 // To avoid conflict with WTF::StringBuilder.
 typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;

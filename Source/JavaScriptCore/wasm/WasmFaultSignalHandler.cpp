@@ -42,7 +42,9 @@
 namespace JSC { namespace Wasm {
 
 namespace {
+namespace WasmFaultSignalHandlerInternal {
 static const bool verbose = false;
+}
 }
 
 static StaticLock codeLocationsLock;
@@ -55,33 +57,33 @@ static bool fastHandlerInstalled { false };
 static SignalAction trapHandler(Signal, SigInfo& sigInfo, PlatformRegisters& context)
 {
     void* faultingInstruction = MachineContext::instructionPointer(context);
-    dataLogLnIf(verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
+    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "starting handler for fault at: ", RawPointer(faultingInstruction));
 
-    dataLogLnIf(verbose, "JIT memory start: ", RawPointer(reinterpret_cast<void*>(startOfFixedExecutableMemoryPool)), " end: ", RawPointer(reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)));
+    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "JIT memory start: ", RawPointer(reinterpret_cast<void*>(startOfFixedExecutableMemoryPool)), " end: ", RawPointer(reinterpret_cast<void*>(endOfFixedExecutableMemoryPool)));
     // First we need to make sure we are in JIT code before we can aquire any locks. Otherwise,
     // we might have crashed in code that is already holding one of the locks we want to aquire.
     if (isJITPC(faultingInstruction)) {
         bool faultedInActiveFastMemory = false;
         {
             void* faultingAddress = sigInfo.faultingAddress;
-            dataLogLnIf(verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
+            dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "checking faulting address: ", RawPointer(faultingAddress), " is in an active fast memory");
             faultedInActiveFastMemory = Wasm::Memory::addressIsInActiveFastMemory(faultingAddress);
         }
         if (faultedInActiveFastMemory) {
-            dataLogLnIf(verbose, "found active fast memory for faulting address");
+            dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found active fast memory for faulting address");
             LockHolder locker(codeLocationsLock);
             for (auto range : codeLocations.get()) {
                 void* start;
                 void* end;
                 std::tie(start, end) = range;
-                dataLogLnIf(verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
+                dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "function start: ", RawPointer(start), " end: ", RawPointer(end));
                 if (start <= faultingInstruction && faultingInstruction < end) {
-                    dataLogLnIf(verbose, "found match");
+                    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found match");
                     MacroAssemblerCodeRef exceptionStub = Thunks::singleton().existingStub(throwExceptionFromWasmThunkGenerator);
                     // If for whatever reason we don't have a stub then we should just treat this like a regular crash.
                     if (!exceptionStub)
                         break;
-                    dataLogLnIf(verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
+                    dataLogLnIf(WasmFaultSignalHandlerInternal::verbose, "found stub: ", RawPointer(exceptionStub.code().executableAddress()));
                     MachineContext::argumentPointer<1>(context) = reinterpret_cast<void*>(ExceptionType::OutOfBoundsMemoryAccess);
                     MachineContext::instructionPointer(context) = exceptionStub.code().executableAddress();
                     return SignalAction::Handled;

@@ -1366,7 +1366,9 @@ EncodedJSValue JSC_HOST_CALL arrayProtoPrivateFuncAppendMemcpy(ExecState* exec)
 
 // -------------------- ArrayPrototype.constructor Watchpoint ------------------
 
+namespace ArrayPrototypeInternal {
 static bool verbose = false;
+}
 
 class ArrayPrototypeAdaptiveInferredPropertyWatchpoint : public AdaptiveInferredPropertyValueWatchpointBase {
 public:
@@ -1388,7 +1390,7 @@ void ArrayPrototype::tryInitializeSpeciesWatchpoint(ExecState* exec)
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (verbose)
+    if (ArrayPrototypeInternal::verbose)
         dataLog("Initializing Array species watchpoints for Array.prototype: ", pointerDump(this), " with structure: ", pointerDump(this->structure()), "\nand Array: ", pointerDump(this->globalObject()->arrayConstructor()), " with structure: ", pointerDump(this->globalObject()->arrayConstructor()->structure()), "\n");
     // First we need to make sure that the Array.prototype.constructor property points to Array
     // and that Array[Symbol.species] is the primordial GetterSetter.
@@ -1466,7 +1468,7 @@ void ArrayPrototypeAdaptiveInferredPropertyWatchpoint::handleFire(const FireDeta
 
     StringFireDetail stringDetail(out.toCString().data());
 
-    if (verbose)
+    if (ArrayPrototypeInternal::verbose)
         WTF::dataLog(stringDetail, "\n");
 
     JSGlobalObject* globalObject = m_arrayPrototype->globalObject();

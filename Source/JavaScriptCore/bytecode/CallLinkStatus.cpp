@@ -38,7 +38,9 @@
 
 namespace JSC {
 
+namespace CallLinkStatusInternal {
 static const bool verbose = false;
+}
 
 CallLinkStatus::CallLinkStatus(JSValue value)
     : m_couldTakeSlowPath(false)
@@ -289,7 +291,7 @@ void CallLinkStatus::computeDFGStatuses(
     UNUSED_PARAM(dfgCodeBlock);
 #endif // ENABLE(DFG_JIT)
     
-    if (verbose) {
+    if (CallLinkStatusInternal::verbose) {
         dataLog("Context map:\n");
         ContextMap::iterator iter = map.begin();
         ContextMap::iterator end = map.end();

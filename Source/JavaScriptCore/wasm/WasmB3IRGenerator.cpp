@@ -76,7 +76,9 @@ namespace JSC { namespace Wasm {
 using namespace B3;
 
 namespace {
-const bool verbose = false;
+namespace WasmB3IRGeneratorInternal {
+static const bool verbose = false;
+}
 }
 
 class B3IRGenerator {
@@ -1566,9 +1568,9 @@ Expected<std::unique_ptr<InternalFunction>, String> parseAndCompile(CompilationC
     if (!ASSERT_DISABLED)
         validate(procedure, "After parsing:\n");
 
-    dataLogIf(verbose, "Pre SSA: ", procedure);
+    dataLogIf(WasmB3IRGeneratorInternal::verbose, "Pre SSA: ", procedure);
     fixSSA(procedure);
-    dataLogIf(verbose, "Post SSA: ", procedure);
+    dataLogIf(WasmB3IRGeneratorInternal::verbose, "Post SSA: ", procedure);
     
     {
         B3::prepareForGeneration(procedure);

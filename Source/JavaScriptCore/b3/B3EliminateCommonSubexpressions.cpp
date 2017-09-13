@@ -53,7 +53,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-const bool verbose = false;
+namespace B3EliminateCommonSubexpressionsInternal {
+static const bool verbose = false;
+}
 
 // FIXME: We could treat Patchpoints with a non-empty set of reads as a "memory value" and somehow
 // eliminate redundant ones. We would need some way of determining if two patchpoints are replacable.
@@ -160,7 +162,7 @@ public:
 
     bool run()
     {
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog("B3 before CSE:\n", m_proc);
         
         m_proc.resetValueOwners();
@@ -188,7 +190,7 @@ public:
                     data.memoryValuesAtTail.add(memory);
             }
 
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("Block ", *block, ": ", data, "\n");
         }
 
@@ -196,7 +198,7 @@ public:
         Vector<BasicBlock*> postOrder = m_proc.blocksInPostOrder();
         for (unsigned i = postOrder.size(); i--;) {
             m_block = postOrder[i];
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("Looking at ", *m_block, ":\n");
 
             m_data = ImpureBlockData();
@@ -222,7 +224,7 @@ public:
             m_insertionSet.execute(block);
         }
 
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog("B3 after CSE:\n", m_proc);
 
         return m_changed;
@@ -487,7 +489,7 @@ private:
         // expensive, but in the overwhelming majority of cases it will almost immediately hit an 
         // operation that interferes.
 
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog(*m_value, ": looking forward for stores to ", *ptr, "...\n");
 
         // First search forward in this basic block.
@@ -557,7 +559,7 @@ private:
         if (matches.isEmpty())
             return false;
 
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog("Eliminating ", *m_value, " due to ", pointerListDump(matches), "\n");
         
         m_changed = true;
@@ -566,7 +568,7 @@ private:
             MemoryValue* dominatingMatch = matches[0];
             RELEASE_ASSERT(m_dominators.dominates(dominatingMatch->owner, m_block));
             
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("    Eliminating using ", *dominatingMatch, "\n");
             Vector<Value*> extraValues;
             if (Value* value = replace(dominatingMatch, extraValues)) {
@@ -590,7 +592,7 @@ private:
 
         VariableValue* get = m_insertionSet.insert<VariableValue>(
             m_index, Get, m_value->origin(), variable);
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog("    Inserting get of value: ", *get, "\n");
         m_value->replaceWithIdentity(get);
             
@@ -615,23 +617,23 @@ private:
     template<typename Filter>
     MemoryMatches findMemoryValue(Value* ptr, HeapRange range, const Filter& filter)
     {
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog(*m_value, ": looking backward for ", *ptr, "...\n");
         
         if (m_value->as<MemoryValue>()->hasFence()) {
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("    Giving up because fences.\n");
             return { };
         }
         
         if (MemoryValue* match = m_data.memoryValuesAtTail.find(ptr, filter)) {
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("    Found ", *match, " locally.\n");
             return { match };
         }
 
         if (m_data.writes.overlaps(range)) {
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("    Giving up because of writes.\n");
             return { };
         }
@@ -642,27 +644,27 @@ private:
         MemoryMatches matches;
 
         while (BasicBlock* block = worklist.pop()) {
-            if (verbose)
+            if (B3EliminateCommonSubexpressionsInternal::verbose)
                 dataLog("    Looking at ", *block, "\n");
 
             ImpureBlockData& data = m_impureBlockData[block];
 
             MemoryValue* match = data.memoryValuesAtTail.find(ptr, filter);
             if (match && match != m_value) {
-                if (verbose)
+                if (B3EliminateCommonSubexpressionsInternal::verbose)
                     dataLog("    Found match: ", *match, "\n");
                 matches.append(match);
                 continue;
             }
 
             if (data.writes.overlaps(range)) {
-                if (verbose)
+                if (B3EliminateCommonSubexpressionsInternal::verbose)
                     dataLog("    Giving up because of writes.\n");
                 return { };
             }
 
             if (!block->numPredecessors()) {
-                if (verbose)
+                if (B3EliminateCommonSubexpressionsInternal::verbose)
                     dataLog("    Giving up because it's live at root.\n");
                 // This essentially proves that this is live at the prologue. That means that we
                 // cannot reliably optimize this case.
@@ -672,7 +674,7 @@ private:
             worklist.pushAll(block->predecessors());
         }
 
-        if (verbose)
+        if (B3EliminateCommonSubexpressionsInternal::verbose)
             dataLog("    Got matches: ", pointerListDump(matches), "\n");
         return matches;
     }

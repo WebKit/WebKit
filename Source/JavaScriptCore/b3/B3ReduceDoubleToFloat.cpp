@@ -39,7 +39,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-bool verbose = false;
+namespace B3ReduceDoubleToFloatInternal {
+static const bool verbose = false;
+}
 bool printRemainingConversions = false;
 
 class DoubleToFloatReduction {
@@ -128,7 +130,7 @@ private:
             }
         } while (changedPhiState);
 
-        if (verbose) {
+        if (B3ReduceDoubleToFloatInternal::verbose) {
             dataLog("Conversion candidates:\n");
             for (BasicBlock* block : m_procedure) {
                 for (Value* value : *block) {
@@ -192,7 +194,7 @@ private:
             }
         } while (changedPhiState);
 
-        if (verbose) {
+        if (B3ReduceDoubleToFloatInternal::verbose) {
             dataLog("Phis containing float values:\n");
             for (BasicBlock* block : m_procedure) {
                 for (Value* value : *block) {
@@ -489,13 +491,13 @@ void reduceDoubleToFloat(Procedure& procedure)
 {
     PhaseScope phaseScope(procedure, "reduceDoubleToFloat");
 
-    if (verbose)
+    if (B3ReduceDoubleToFloatInternal::verbose)
         dataLog("Before DoubleToFloatReduction:\n", procedure, "\n");
 
     DoubleToFloatReduction doubleToFloatReduction(procedure);
     doubleToFloatReduction.run();
 
-    if (verbose)
+    if (B3ReduceDoubleToFloatInternal::verbose)
         dataLog("After DoubleToFloatReduction:\n", procedure, "\n");
 
     printGraphIfConverting(procedure);

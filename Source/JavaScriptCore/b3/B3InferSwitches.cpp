@@ -42,7 +42,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-const bool verbose = false;
+namespace B3InferSwitchesInternal {
+static const bool verbose = false;
+}
 
 class InferSwitches {
 public:
@@ -55,7 +57,7 @@ public:
     
     bool run()
     {
-        if (verbose)
+        if (B3InferSwitchesInternal::verbose)
             dataLog("B3 before inferSwitches:\n", m_proc);
         
         bool changed = true;
@@ -63,7 +65,7 @@ public:
         while (changed) {
             changed = false;
             
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("Performing fixpoint iteration:\n");
             
             for (BasicBlock* block : m_proc)
@@ -78,7 +80,7 @@ public:
             
             m_proc.deleteOrphans();
             
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("B3 after inferSwitches:\n", m_proc);
             return true;
         }
@@ -96,10 +98,10 @@ private:
             return false;
         
         SwitchDescription description = describe(block);
-        if (verbose)
+        if (B3InferSwitchesInternal::verbose)
             dataLog("Description of primary block ", *block, ": ", description, "\n");
         if (!description) {
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because not switch-like.\n");
             return false;
         }
@@ -115,17 +117,17 @@ private:
                 continue;
             if (value == description.branch)
                 continue;
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because of ", deepDump(m_proc, value), "\n");
             return false;
         }
         
         BasicBlock* predecessor = block->predecessor(0);
         SwitchDescription predecessorDescription = describe(predecessor);
-        if (verbose)
+        if (B3InferSwitchesInternal::verbose)
             dataLog("    Description of predecessor block ", *predecessor, ": ", predecessorDescription, "\n");
         if (!predecessorDescription) {
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because not switch-like.\n");
             return false;
         }
@@ -133,7 +135,7 @@ private:
         // Both us and the predecessor are switch-like, but that doesn't mean that we're compatible.
         // We may be switching on different values!
         if (description.source != predecessorDescription.source) {
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because sources don't match.\n");
             return false;
         }
@@ -143,7 +145,7 @@ private:
         // just totally redundant and we should be getting rid of it. But we don't handle that here,
         // yet.
         if (predecessorDescription.fallThrough.block() != block) {
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because fall-through of predecessor is not the primary block.\n");
             return false;
         }
@@ -151,14 +153,14 @@ private:
         // Make sure that there ain't no loops.
         if (description.fallThrough.block() == block
             || description.fallThrough.block() == predecessor) {
-            if (verbose)
+            if (B3InferSwitchesInternal::verbose)
                 dataLog("    Bailing because of fall-through loop.\n");
             return false;
         }
         for (SwitchCase switchCase : description.cases) {
             if (switchCase.targetBlock() == block
                 || switchCase.targetBlock() == predecessor) {
-                if (verbose)
+                if (B3InferSwitchesInternal::verbose)
                     dataLog("    Bailing because of loop in primary cases.\n");
                 return false;
             }
@@ -166,13 +168,13 @@ private:
         for (SwitchCase switchCase : predecessorDescription.cases) {
             if (switchCase.targetBlock() == block
                 || switchCase.targetBlock() == predecessor) {
-                if (verbose)
+                if (B3InferSwitchesInternal::verbose)
                     dataLog("    Bailing because of loop in predecessor cases.\n");
                 return false;
             }
         }
         
-        if (verbose)
+        if (B3InferSwitchesInternal::verbose)
             dataLog("    Doing it!\n");
         // We're committed to doing the thing.
         

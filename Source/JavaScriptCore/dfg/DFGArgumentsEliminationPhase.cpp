@@ -50,7 +50,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGArgumentsEliminationPhaseInternal {
+static const bool verbose = false;
+}
 
 class ArgumentsEliminationPhase : public Phase {
 public:
@@ -65,7 +67,7 @@ public:
         // version over LoadStore.
         DFG_ASSERT(m_graph, nullptr, m_graph.m_form == SSA);
         
-        if (verbose) {
+        if (DFGArgumentsEliminationPhaseInternal::verbose) {
             dataLog("Graph before arguments elimination:\n");
             m_graph.dump();
         }
@@ -157,7 +159,7 @@ private:
             }
         }
         
-        if (verbose)
+        if (DFGArgumentsEliminationPhaseInternal::verbose)
             dataLog("Candidates: ", listDump(m_candidates), "\n");
     }
 
@@ -210,7 +212,7 @@ private:
     void transitivelyRemoveCandidate(Node* node, Node* source = nullptr)
     {
         bool removed = m_candidates.remove(node);
-        if (removed && verbose && source)
+        if (removed && DFGArgumentsEliminationPhaseInternal::verbose && source)
             dataLog("eliminating candidate: ", node, " because it escapes from: ", source, "\n");
 
         if (removed)
@@ -418,7 +420,7 @@ private:
             }
         }
 
-        if (verbose)
+        if (DFGArgumentsEliminationPhaseInternal::verbose)
             dataLog("After escape analysis: ", listDump(m_candidates), "\n");
     }
 
@@ -519,7 +521,7 @@ private:
                     // for this arguments allocation, and we'd have to examine every node in the block,
                     // then we can just eliminate the candidate.
                     if (nodeIndex == block->size() && candidate->owner != block) {
-                        if (verbose)
+                        if (DFGArgumentsEliminationPhaseInternal::verbose)
                             dataLog("eliminating candidate: ", candidate, " because it is clobbered by: ", block->at(nodeIndex), "\n");
                         transitivelyRemoveCandidate(candidate);
                         return;
@@ -546,7 +548,7 @@ private:
                             NoOpClobberize());
                         
                         if (found) {
-                            if (verbose)
+                            if (DFGArgumentsEliminationPhaseInternal::verbose)
                                 dataLog("eliminating candidate: ", candidate, " because it is clobbered by ", block->at(nodeIndex), "\n");
                             transitivelyRemoveCandidate(candidate);
                             return;
@@ -568,7 +570,7 @@ private:
         // since those availabilities speak of the stack before the optimizing compiler stack frame is
         // torn down.
 
-        if (verbose)
+        if (DFGArgumentsEliminationPhaseInternal::verbose)
             dataLog("After interference analysis: ", listDump(m_candidates), "\n");
     }
     

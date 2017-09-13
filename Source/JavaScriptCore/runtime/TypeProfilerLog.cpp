@@ -37,7 +37,9 @@
 
 namespace JSC {
 
+namespace TypeProfilerLogInternal {
 static const bool verbose = false;
+}
 
 void TypeProfilerLog::initializeLog()
 {
@@ -56,7 +58,7 @@ TypeProfilerLog::~TypeProfilerLog()
 void TypeProfilerLog::processLogEntries(const String& reason)
 {
     double before = 0;
-    if (verbose) {
+    if (TypeProfilerLogInternal::verbose) {
         dataLog("Process caller:'", reason, "'");
         before = currentTimeMS();
     }
@@ -95,7 +97,7 @@ void TypeProfilerLog::processLogEntries(const String& reason)
     // pauses and causes the collector to mark the log.
     m_currentLogEntryPtr = m_logStartPtr;
 
-    if (verbose) {
+    if (TypeProfilerLogInternal::verbose) {
         double after = currentTimeMS();
         dataLogF(" Processing the log took: '%f' ms\n", after - before);
     }

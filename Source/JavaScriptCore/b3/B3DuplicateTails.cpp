@@ -44,7 +44,9 @@ namespace JSC { namespace B3 {
 
 namespace {
 
-const bool verbose = false;
+namespace B3DuplicateTailsInternal {
+static const bool verbose = false;
+}
 
 class DuplicateTails {
 public:
@@ -94,7 +96,7 @@ public:
             }
         }
         demoteValues(m_proc, valuesToDemote);
-        if (verbose) {
+        if (B3DuplicateTailsInternal::verbose) {
             dataLog("Procedure after value demotion:\n");
             dataLog(m_proc);
         }
@@ -116,7 +118,7 @@ public:
             // point.
             candidates.remove(block);
 
-            if (verbose)
+            if (B3DuplicateTailsInternal::verbose)
                 dataLog("Duplicating ", *tail, " into ", *block, "\n");
 
             block->removeLast(m_proc);

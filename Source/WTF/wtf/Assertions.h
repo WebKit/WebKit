@@ -535,18 +535,22 @@ inline void compilerFenceForCrash()
 #endif
 }
 
-#ifndef CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
+#ifndef CRASH_WITH_INFO
 // This is useful if you are going to stuff data into registers before crashing. Like the crashWithInfo functions below...
 // GCC doesn't like the ##__VA_ARGS__ here since this macro is called from another macro so we just CRASH instead there.
 #if COMPILER(CLANG) || COMPILER(MSVC)
-#define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) do { \
+#define CRASH_WITH_INFO(...) do { \
         WTF::isIntegralType(__VA_ARGS__); \
         compilerFenceForCrash(); \
         WTFCrashWithInfo(__LINE__, __FILE__, WTF_PRETTY_FUNCTION, __COUNTER__, ##__VA_ARGS__); \
     } while (false)
 #else
-#define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO(...) CRASH()
+#define CRASH_WITH_INFO(...) CRASH()
 #endif
+#endif // CRASH_WITH_INFO
+
+#ifndef CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
+#define CRASH_WITH_SECURITY_IMPLICATION_AND_INFO CRASH_WITH_INFO
 #endif // CRASH_WITH_SECURITY_IMPLICATION_AND_INFO
 
 #endif // __cplusplus

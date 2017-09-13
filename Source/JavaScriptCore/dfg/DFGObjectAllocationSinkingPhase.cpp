@@ -48,7 +48,9 @@ namespace JSC { namespace DFG {
 
 namespace {
 
-bool verbose = false;
+namespace DFGObjectAllocationSinkingPhaseInternal {
+static const bool verbose = false;
+}
 
 // In order to sink object cycles, we use a points-to analysis coupled
 // with an escape analysis. This analysis is actually similar to an
@@ -717,7 +719,7 @@ public:
         if (!performSinking())
             return false;
 
-        if (verbose) {
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose) {
             dataLog("Graph after elimination:\n");
             m_graph.dump();
         }
@@ -742,7 +744,7 @@ private:
             graphBeforeSinking = out.toCString();
         }
 
-        if (verbose) {
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose) {
             dataLog("Graph before elimination:\n");
             m_graph.dump();
         }
@@ -752,7 +754,7 @@ private:
         if (!determineSinkCandidates())
             return false;
 
-        if (verbose) {
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose) {
             for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
                 dataLog("Heap at head of ", *block, ": \n", m_heapAtHead[block]);
                 dataLog("Heap at tail of ", *block, ": \n", m_heapAtTail[block]);
@@ -773,7 +775,7 @@ private:
 
         bool changed;
         do {
-            if (verbose)
+            if (DFGObjectAllocationSinkingPhaseInternal::verbose)
                 dataLog("Doing iteration of escape analysis.\n");
             changed = false;
 
@@ -1198,7 +1200,7 @@ private:
         if (m_sinkCandidates.isEmpty())
             return hasUnescapedReads;
 
-        if (verbose)
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose)
             dataLog("Candidates: ", listDump(m_sinkCandidates), "\n");
 
         // Create the materialization nodes
@@ -1765,7 +1767,7 @@ private:
                 }
             }
 
-            if (verbose) {
+            if (DFGObjectAllocationSinkingPhaseInternal::verbose) {
                 dataLog("Local mapping at ", pointerDump(block), ": ", mapDump(m_localMapping), "\n");
                 dataLog("Local materializations at ", pointerDump(block), ": ", mapDump(m_escapeeToMaterialization), "\n");
             }
@@ -1781,7 +1783,7 @@ private:
                     m_localMapping.set(location, m_bottom);
 
                     if (m_sinkCandidates.contains(node)) {
-                        if (verbose)
+                        if (DFGObjectAllocationSinkingPhaseInternal::verbose)
                             dataLog("For sink candidate ", node, " found location ", location, "\n");
                         m_insertionSet.insert(
                             nodeIndex + 1,
@@ -1796,7 +1798,7 @@ private:
                     populateMaterialization(block, materialization, escapee);
                     m_escapeeToMaterialization.set(escapee, materialization);
                     m_insertionSet.insert(nodeIndex, materialization);
-                    if (verbose)
+                    if (DFGObjectAllocationSinkingPhaseInternal::verbose)
                         dataLog("Materializing ", escapee, " => ", materialization, " at ", node, "\n");
                 }
 
@@ -1851,7 +1853,7 @@ private:
 
                         doLower = true;
 
-                        if (verbose)
+                        if (DFGObjectAllocationSinkingPhaseInternal::verbose)
                             dataLog("Creating hint with value ", nodeValue, " before ", node, "\n");
                         m_insertionSet.insert(
                             nodeIndex + 1,
@@ -1994,7 +1996,7 @@ private:
 
     void insertOSRHintsForUpdate(unsigned nodeIndex, NodeOrigin origin, bool& canExit, AvailabilityMap& availability, Node* escapee, Node* materialization)
     {
-        if (verbose) {
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose) {
             dataLog("Inserting OSR hints at ", origin, ":\n");
             dataLog("    Escapee: ", escapee, "\n");
             dataLog("    Materialization: ", materialization, "\n");
@@ -2167,7 +2169,7 @@ private:
 
     Node* createRecovery(BasicBlock* block, PromotedHeapLocation location, Node* where, bool& canExit)
     {
-        if (verbose)
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose)
             dataLog("Recovering ", location, " at ", where, "\n");
         ASSERT(location.base()->isPhantomAllocation());
         Node* base = getMaterialization(block, location.base());
@@ -2175,7 +2177,7 @@ private:
 
         NodeOrigin origin = where->origin.withSemantic(base->origin.semantic);
 
-        if (verbose)
+        if (DFGObjectAllocationSinkingPhaseInternal::verbose)
             dataLog("Base is ", base, " and value is ", value, "\n");
 
         if (base->isPhantomAllocation()) {

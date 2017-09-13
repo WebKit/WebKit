@@ -33,7 +33,9 @@
 
 namespace JSC { namespace Wasm {
 
+namespace WasmWorklistInternal {
 static const bool verbose = false;
+}
 
 const char* Worklist::priorityString(Priority priority)
 {
@@ -144,7 +146,7 @@ void Worklist::enqueue(Ref<Plan> plan)
             ASSERT_UNUSED(element, element.plan.get() != &plan.get());
     }
 
-    dataLogLnIf(verbose, "Enqueuing plan");
+    dataLogLnIf(WasmWorklistInternal::verbose, "Enqueuing plan");
     m_queue.enqueue({ Priority::Preparation, nextTicket(),  WTFMove(plan) });
     m_planEnqueued->notifyOne(locker);
 }

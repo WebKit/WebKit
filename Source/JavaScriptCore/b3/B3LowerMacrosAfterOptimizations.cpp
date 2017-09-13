@@ -28,6 +28,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "AirArg.h"
 #include "B3BasicBlockInlines.h"
 #include "B3BlockInsertionSet.h"
 #include "B3CCallValue.h"
@@ -39,11 +40,15 @@
 
 namespace JSC { namespace B3 {
 
+using Arg = Air::Arg;
+using Code = Air::Code;
+using Tmp = Air::Tmp;
+
 namespace {
 
-class LowerMacros {
+class LowerMacrosAfterOptimizations {
 public:
-    LowerMacros(Procedure& proc)
+    LowerMacrosAfterOptimizations(Procedure& proc)
         : m_proc(proc)
         , m_blockInsertionSet(proc)
         , m_insertionSet(proc)
@@ -183,7 +188,7 @@ private:
 
 bool lowerMacrosImpl(Procedure& proc)
 {
-    LowerMacros lowerMacros(proc);
+    LowerMacrosAfterOptimizations lowerMacros(proc);
     return lowerMacros.run();
 }
 
