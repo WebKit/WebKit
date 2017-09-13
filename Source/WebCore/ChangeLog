@@ -1,3 +1,23 @@
+2017-09-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Bug fix for synchronous transfer
+        https://bugs.webkit.org/show_bug.cgi?id=176552
+
+        Reviewed by Alex Christensen.
+
+        ResourceHandleInternal::m_delegate is null when transfer is synchronous. It should be set ResourceHandleCurlDelegate.
+        Also the callback functions called when transfer is completed is wrong.
+
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::dispatchSynchronousJob):
+        (WebCore::ResourceHandleCurlDelegate::notifyFinish):
+        (WebCore::ResourceHandleCurlDelegate::notifyFail):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveData):
+        (WebCore::ResourceHandleCurlDelegate::willSendData):
+
 2017-09-13  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r221976.

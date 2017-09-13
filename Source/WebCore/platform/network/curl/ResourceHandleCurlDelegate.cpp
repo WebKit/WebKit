@@ -171,18 +171,10 @@ void ResourceHandleCurlDelegate::dispatchSynchronousJob()
     m_curlHandle.getTimes(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
     setWebTimings(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
 
-    if (m_handle->client()) {
-        if (ret != CURLE_OK) {
-            String domain = CurlContext::errorDomain;
-            int errorCode = m_curlHandle.errorCode();
-            URL failingURL = m_curlHandle.getEffectiveURL();
-            String errorDescription = m_curlHandle.errorDescription();
-            unsigned sslErrors = m_curlHandle.getSslErrors();
-
-            m_handle->client()->didFail(m_handle, ResourceError(domain, errorCode, failingURL, errorDescription, sslErrors));
-        } else
-            m_handle->client()->didReceiveResponse(m_handle, ResourceResponse(response()));
-    }
+    if (ret != CURLE_OK)
+        notifyFail();
+    else
+        notifyFinish();
 }
 
 void ResourceHandleCurlDelegate::retain()
@@ -291,11 +283,15 @@ void ResourceHandleCurlDelegate::notifyFinish()
 
     m_curlHandle.getTimes(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
 
-    callOnMainThread([protectedThis = makeRef(*this), pretransferTime, dnsLookupTime, connectTime, appConnectTime] {
-        if (!protectedThis->m_handle)
-            return;
-        protectedThis->didFinish(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
-    });
+    if (isMainThread())
+        didFinish(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+    else {
+        callOnMainThread([protectedThis = makeRef(*this), pretransferTime, dnsLookupTime, connectTime, appConnectTime] {
+            if (!protectedThis->m_handle)
+                return;
+            protectedThis->didFinish(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+        });
+    }
 }
 
 void ResourceHandleCurlDelegate::notifyFail()
@@ -306,11 +302,15 @@ void ResourceHandleCurlDelegate::notifyFail()
     String errorDescription = m_curlHandle.errorDescription();
     unsigned sslErrors = m_curlHandle.getSslErrors();
 
-    callOnMainThread([protectedThis = makeRef(*this), domain = domain.isolatedCopy(), errorCode, failingURL = failingURL.isolatedCopy(), errorDescription = errorDescription.isolatedCopy(), sslErrors] {
-        if (!protectedThis->m_handle)
-            return;
-        protectedThis->didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
-    });
+    if (isMainThread())
+        didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
+    else {
+        callOnMainThread([protectedThis = makeRef(*this), domain = domain.isolatedCopy(), errorCode, failingURL = failingURL.isolatedCopy(), errorDescription = errorDescription.isolatedCopy(), sslErrors] {
+            if (!protectedThis->m_handle)
+                return;
+            protectedThis->didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
+        });
+    }
 }
 
 ResourceResponse& ResourceHandleCurlDelegate::response()
@@ -868,17 +868,25 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
         long long contentLength = 0;
         m_curlHandle.getContentLenghtDownload(contentLength);
 
-        callOnMainThread([protectedThis = makeRef(*this), httpCode, contentLength] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->didReceiveAllHeaders(httpCode, contentLength);
-        });
+        if (isMainThread())
+            didReceiveAllHeaders(httpCode, contentLength);
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), httpCode, contentLength] {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->didReceiveAllHeaders(httpCode, contentLength);
+            });
+        }
     } else {
-        callOnMainThread([protectedThis = makeRef(*this), header = header.isolatedCopy() ] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->didReceiveHeaderLine(header);
-        });
+        if (isMainThread())
+            didReceiveHeaderLine(header);
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), header = header.isolatedCopy() ] {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->didReceiveHeaderLine(header);
+            });
+        }
     }
 
     return header.length();
@@ -904,11 +912,15 @@ size_t ResourceHandleCurlDelegate::didReceiveData(ThreadSafeDataBuffer data)
     if (!data.size())
         return 0;
 
-    callOnMainThread([protectedThis = makeRef(*this), data] {
-        if (!protectedThis->m_handle)
-            return;
-        protectedThis->didReceiveContentData(data);
-    });
+    if (isMainThread())
+        didReceiveContentData(data);
+    else {
+        callOnMainThread([protectedThis = makeRef(*this), data] {
+            if (!protectedThis->m_handle)
+                return;
+            protectedThis->didReceiveContentData(data);
+        });
+    }
 
     return data.size();
 }
@@ -935,15 +947,19 @@ size_t ResourceHandleCurlDelegate::willSendData(char* buffer, size_t blockSize, 
 
         m_sendBytes = 0;
 
-        callOnMainThread([protectedThis = makeRef(*this), buffer, blockSize, numberOfBlocks] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->prepareSendData(buffer, blockSize, numberOfBlocks);
-        });
+        if (isMainThread())
+            prepareSendData(buffer, blockSize, numberOfBlocks);
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), buffer, blockSize, numberOfBlocks] {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->prepareSendData(buffer, blockSize, numberOfBlocks);
+            });
 
-        m_workerThreadConditionVariable.wait(lock, [this] {
-            return m_sendBytes;
-        });
+            m_workerThreadConditionVariable.wait(lock, [this] {
+                return m_sendBytes;
+            });
+        }
     }
 
     return m_sendBytes;

@@ -230,8 +230,6 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-// sync loader
-
 void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(isMainThread());
@@ -239,6 +237,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     SynchronousLoaderClient client;
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false, false));
 
+    handle->d->m_delegate = adoptRef(new ResourceHandleCurlDelegate(handle.get()));
     handle->d->m_delegate->dispatchSynchronousJob();
 
     error = client.error();
