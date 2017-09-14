@@ -4328,6 +4328,7 @@
 		9B532EA41BA928570038A827 /* SlotAssignment.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B532EA21BA928570038A827 /* SlotAssignment.h */; };
 		9B55EEE91B3E8898005342BC /* EditorCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9B55EEE81B3E8898005342BC /* EditorCocoa.mm */; };
 		9B56C9AA1C89329A00C456DF /* CustomElementReactionQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */; };
+		9B61164A1F6A593300E923B8 /* WebContentReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B6116491F6A593300E923B8 /* WebContentReader.cpp */; };
 		9B69D3B41B98FFE900E3512B /* HTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */; };
 		9B69D3B51B98FFE900E3512B /* HTMLSlotElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */; };
 		9B69D3B81B99100700E3512B /* JSHTMLSlotElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B69D3B61B99100700E3512B /* JSHTMLSlotElement.cpp */; };
@@ -12779,6 +12780,7 @@
 		9B55EEE81B3E8898005342BC /* EditorCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EditorCocoa.mm; sourceTree = "<group>"; };
 		9B56C9A81C89312800C456DF /* CustomElementReactionQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomElementReactionQueue.h; sourceTree = "<group>"; };
 		9B56C9A91C89329A00C456DF /* CustomElementReactionQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementReactionQueue.cpp; sourceTree = "<group>"; };
+		9B6116491F6A593300E923B8 /* WebContentReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebContentReader.cpp; sourceTree = "<group>"; };
 		9B69D3B11B98FF0A00E3512B /* HTMLSlotElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLSlotElement.idl; sourceTree = "<group>"; };
 		9B69D3B21B98FFE900E3512B /* HTMLSlotElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLSlotElement.cpp; sourceTree = "<group>"; };
 		9B69D3B31B98FFE900E3512B /* HTMLSlotElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLSlotElement.h; sourceTree = "<group>"; };
@@ -20632,6 +20634,7 @@
 				A883DF260F3D045D00F19BF6 /* VisibleSelection.h */,
 				93309DCE099E64910056E581 /* VisibleUnits.cpp */,
 				93309DCF099E64910056E581 /* VisibleUnits.h */,
+				9B6116491F6A593300E923B8 /* WebContentReader.cpp */,
 				9BF433761F67619B00E1FD71 /* WebContentReader.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
@@ -34473,6 +34476,7 @@
 				CDA29A311CBF74DA00901CCF /* WebAVPlayerController.mm in Sources */,
 				1F36EA9D1E21BA1700621E25 /* WebBackgroundTaskController.mm in Sources */,
 				A56C5B9A189F34570082D13C /* WebConsoleAgent.cpp in Sources */,
+				9B61164A1F6A593300E923B8 /* WebContentReader.cpp in Sources */,
 				9B9299B21F6796A4006723C2 /* WebContentReaderCocoa.mm in Sources */,
 				9B0811241F67CDC00074BDE2 /* WebContentReaderIOS.mm in Sources */,
 				9B9299AE1F67865B006723C2 /* WebContentReaderMac.mm in Sources */,

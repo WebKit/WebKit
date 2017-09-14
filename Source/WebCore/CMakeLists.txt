@@ -1781,6 +1781,7 @@ set(WebCore_SOURCES
     editing/VisiblePosition.cpp
     editing/VisibleSelection.cpp
     editing/VisibleUnits.cpp
+    editing/WebContentReader.cpp
     editing/WrapContentsInDummySpanCommand.cpp
     editing/markup.cpp
 

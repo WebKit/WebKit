@@ -23,55 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebContentReader.h"
 
-#include "Frame.h"
-#include "Pasteboard.h"
-#include "Range.h"
+#include "DocumentFragment.h"
 
 namespace WebCore {
 
-class ArchiveResource;
-
-class WebContentReader final : public PasteboardWebContentReader {
-public:
-    Frame& frame;
-    Range& context;
-    const bool allowPlainText;
-
-    RefPtr<DocumentFragment> fragment;
-    bool madeFragmentFromPlainText;
-
-    WebContentReader(Frame& frame, Range& context, bool allowPlainText)
-        : frame(frame)
-        , context(context)
-        , allowPlainText(allowPlainText)
-        , madeFragmentFromPlainText(false)
-    {
-    }
-
-    void addFragment(Ref<DocumentFragment>&&);
-
-private:
-#if PLATFORM(COCOA)
-    bool readWebArchive(SharedBuffer*) override;
-    bool readFilenames(const Vector<String>&) override;
-    bool readHTML(const String&) override;
-    bool readRTFD(SharedBuffer&) override;
-    bool readRTF(SharedBuffer&) override;
-    bool readImage(Ref<SharedBuffer>&&, const String& type) override;
-    bool readURL(const URL&, const String& title) override;
-#endif
-    bool readPlainText(const String&) override;
-};
-
-#if PLATFORM(COCOA) && defined(__OBJC__)
-struct FragmentAndResources {
-    RefPtr<DocumentFragment> fragment;
-    Vector<Ref<ArchiveResource>> resources;
-};
-
-RefPtr<DocumentFragment> createFragmentAndAddResources(Frame&, NSAttributedString*);
-#endif
+void WebContentReader::addFragment(Ref<DocumentFragment>&& newFragment)
+{
+    if (!fragment)
+        fragment = WTFMove(newFragment);
+    else
+        fragment->appendChild(newFragment.get());
+}
 
 }
+

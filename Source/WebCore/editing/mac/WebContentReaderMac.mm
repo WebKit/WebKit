@@ -43,49 +43,9 @@
 #import "RuntimeEnabledFeatures.h"
 #import "Settings.h"
 #import "Text.h"
-#import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 
 namespace WebCore {
-
-bool WebContentReader::readWebArchive(SharedBuffer* buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    if (!frame.document())
-        return false;
-
-    if (!buffer)
-        return false;
-
-    auto archive = LegacyWebArchive::create(URL(), *buffer);
-    if (!archive)
-        return false;
-
-    RefPtr<ArchiveResource> mainResource = archive->mainResource();
-    if (!mainResource)
-        return false;
-
-    const String& type = mainResource->mimeType();
-
-    if (frame.loader().client().canShowMIMETypeAsHTML(type)) {
-        // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
-        if (DocumentLoader* loader = frame.loader().documentLoader())
-            loader->addAllArchiveResources(*archive);
-
-        String markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
-        fragment = createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
-        return true;
-    }
-
-    if (MIMETypeRegistry::isSupportedImageMIMEType(type)) {
-        fragment = createFragmentForImageResourceAndAddResource(frame, mainResource.releaseNonNull());
-        return true;
-    }
-
-    return false;
-}
 
 bool WebContentReader::readFilenames(const Vector<String>& paths)
 {
@@ -140,24 +100,6 @@ bool WebContentReader::readHTML(const String& string)
     return fragment;
 }
 
-bool WebContentReader::readRTFD(SharedBuffer& buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
-    return fragment;
-}
-
-bool WebContentReader::readRTF(SharedBuffer& buffer)
-{
-    if (frame.settings().preferMIMETypeForImages())
-        return false;
-
-    fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
-    return fragment;
-}
-
 bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
 {
     ASSERT(type.contains('/'));
@@ -189,17 +131,4 @@ bool WebContentReader::readURL(const URL& url, const String& title)
     return true;
 }
 
-bool WebContentReader::readPlainText(const String& text)
-{
-    if (!allowPlainText)
-        return false;
-
-    fragment = createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]);
-    if (!fragment)
-        return false;
-
-    madeFragmentFromPlainText = true;
-    return true;
-}
-    
 }

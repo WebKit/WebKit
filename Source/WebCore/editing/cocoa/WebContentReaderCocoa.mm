@@ -33,8 +33,14 @@
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "HTMLImageElement.h"
+#include "LegacyWebArchive.h"
 #include "Page.h"
+#include "Settings.h"
+#include "WebNSAttributedStringExtras.h"
+#include "markup.h"
+#include <pal/spi/cocoa/NSAttributedStringSPI.h>
 #include <wtf/SoftLinking.h>
 
 #if PLATFORM(IOS)
@@ -63,33 +69,101 @@ RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttribute
 {
     if (!frame.page() || !frame.document())
         return nullptr;
-    
+
     auto& document = *frame.document();
     if (!document.isHTMLDocument() || !string)
         return nullptr;
-    
+
     bool wasDeferringCallbacks = frame.page()->defersLoading();
     if (!wasDeferringCallbacks)
         frame.page()->setDefersLoading(true);
-    
+
     auto& cachedResourceLoader = document.cachedResourceLoader();
     bool wasImagesEnabled = cachedResourceLoader.imagesEnabled();
     if (wasImagesEnabled)
         cachedResourceLoader.setImagesEnabled(false);
-    
+
     auto fragmentAndResources = createFragment(frame, string);
-    
     if (auto* loader = frame.loader().documentLoader()) {
         for (auto& resource : fragmentAndResources.resources)
             loader->addArchiveResource(WTFMove(resource));
     }
-    
+
     if (wasImagesEnabled)
         cachedResourceLoader.setImagesEnabled(true);
     if (!wasDeferringCallbacks)
         frame.page()->setDefersLoading(false);
-    
+
     return WTFMove(fragmentAndResources.fragment);
+}
+
+bool WebContentReader::readWebArchive(SharedBuffer* buffer)
+{
+    if (frame.settings().preferMIMETypeForImages())
+        return false;
+
+    if (!frame.document())
+        return false;
+
+    if (!buffer)
+        return false;
+
+    auto archive = LegacyWebArchive::create(URL(), *buffer);
+    if (!archive)
+        return false;
+
+    RefPtr<ArchiveResource> mainResource = archive->mainResource();
+    if (!mainResource)
+        return false;
+
+    auto type = mainResource->mimeType();
+    if (!frame.loader().client().canShowMIMETypeAsHTML(type))
+        return false;
+
+    // FIXME: The code in createFragmentAndAddResources calls setDefersLoading(true). Don't we need that here?
+    if (DocumentLoader* loader = frame.loader().documentLoader())
+        loader->addAllArchiveResources(*archive);
+
+    auto markupString = String::fromUTF8(mainResource->data().data(), mainResource->data().size());
+    addFragment(createFragmentFromMarkup(*frame.document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent));
+    return true;
+}
+
+bool WebContentReader::readRTFD(SharedBuffer& buffer)
+{
+    if (frame.settings().preferMIMETypeForImages())
+        return false;
+
+    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTFD:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    if (!fragment)
+        return false;
+    addFragment(fragment.releaseNonNull());
+
+    return true;
+}
+
+bool WebContentReader::readRTF(SharedBuffer& buffer)
+{
+    if (frame.settings().preferMIMETypeForImages())
+        return false;
+
+    auto fragment = createFragmentAndAddResources(frame, adoptNS([[NSAttributedString alloc] initWithRTF:buffer.createNSData().get() documentAttributes:nullptr]).get());
+    if (!fragment)
+        return false;
+    addFragment(fragment.releaseNonNull());
+
+    return true;
+}
+
+bool WebContentReader::readPlainText(const String& text)
+{
+    if (!allowPlainText)
+        return false;
+
+    addFragment(createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]));
+
+    madeFragmentFromPlainText = true;
+    return true;
 }
 
 }

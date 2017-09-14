@@ -233,8 +233,7 @@ void Editor::pasteWithPasteboard(Pasteboard* pasteboard, bool allowPlainText, Ma
         RefPtr<DocumentFragment> fragment = client()->documentFragmentFromDelegate(i);
         if (!fragment)
             continue;
-
-        reader.addFragment(WTFMove(fragment));
+        reader.addFragment(fragment.releaseNonNull());
     }
 
     RefPtr<DocumentFragment> fragment = reader.fragment;
