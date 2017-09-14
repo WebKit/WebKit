@@ -1,3 +1,56 @@
+2017-09-14  Antti Koivisto  <antti@apple.com>
+
+        Computing animated style should not require renderers
+        https://bugs.webkit.org/show_bug.cgi?id=171926
+        <rdar://problem/34428035>
+
+        Reviewed by Sam Weinig.
+
+        CSS animation system is now element rather than renderer based. This allows cleaning up
+        style resolution and render tree update code.
+
+        This also fixes bug animation doesn't run if display property is animated from one rendered type
+        to another. Added a test case for this.
+
+        Test: transitions/transition-display-property-2.html
+
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationController::updateAnimations):
+
+            Pass in the old style instead of getting it from the renderer.
+            Factor to return the animated style as a return value.
+
+        * page/animation/CSSAnimationController.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::RenderElement):
+        (WebCore::RenderElement::willBeDestroyed):
+
+            Animation are now canceled by RenderTreeUpdater::tearDownRenderers.
+
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::hasInitialAnimatedStyle const): Deleted.
+        (WebCore::RenderElement::setHasInitialAnimatedStyle): Deleted.
+
+            We no longer need to this concept.
+
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::RenderTreeUpdater::createRenderer):
+
+            We now get correct animated style from style resolution in all cases so we don't need to compute
+            it separately for new renderers.
+
+        (WebCore::RenderTreeUpdater::tearDownRenderers):
+
+            Cancel animations when render tree is fully torn down. Keep them when updating style.
+
+        * style/RenderTreeUpdater.h:
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::createAnimatedElementUpdate):
+
+            We can now compute animated style without renderer. Special cases dealing with rendererless case
+            can be removed.
+
 2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Timeline should show when events preventDefault() was called on an event or not

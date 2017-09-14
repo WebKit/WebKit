@@ -30,6 +30,7 @@
 
 #include "AnimationBase.h"
 #include "CSSPropertyNames.h"
+#include "RenderStyle.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -40,7 +41,18 @@ class Element;
 class Frame;
 class LayoutRect;
 class RenderElement;
-class RenderStyle;
+
+struct AnimationUpdate {
+#if !COMPILER_SUPPORTS(NSDMI_FOR_AGGREGATES)
+    AnimationUpdate() = default;
+    AnimationUpdate(std::unique_ptr<RenderStyle> style, bool stateChanged)
+        : style(WTFMove(style))
+        , stateChanged(stateChanged)
+    { }
+#endif
+    std::unique_ptr<RenderStyle> style;
+    bool stateChanged { false };
+};
 
 class CSSAnimationController {
     WTF_MAKE_FAST_ALLOCATED;
@@ -49,7 +61,7 @@ public:
     ~CSSAnimationController();
 
     void cancelAnimations(Element&);
-    bool updateAnimations(Element&, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle);
+    AnimationUpdate updateAnimations(Element&, const RenderStyle& newStyle, const RenderStyle* oldStyle);
     std::unique_ptr<RenderStyle> animatedStyleForRenderer(RenderElement&);
 
     // If possible, compute the visual extent of any transform animation on the given renderer

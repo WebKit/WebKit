@@ -1,0 +1,22 @@
+<style>
+test {
+    transition: 5s;
+    display: block;
+    height: 100px;
+    border: 2px solid green;
+    transition-timing-function: steps(2, start);
+}
+.animate { display:inline-block; height:10px; width:10px; }
+</style>
+<test></test>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    requestAnimationFrame(() => {
+        testRunner.notifyDone();
+    });
+}
+const test = document.querySelector("test");
+test.offsetWidth;
+test.className = "animate";
+</script>

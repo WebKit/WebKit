@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "CSSAnimationController.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
 #include <wtf/HashMap.h>
@@ -54,7 +55,7 @@ public:
     
     void clearElement();
 
-    bool animate(Element&, const RenderStyle* currentStyle, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& blendedStyle);
+    AnimationUpdate animate(Element&, const RenderStyle* currentStyle, const RenderStyle& targetStyle);
     std::unique_ptr<RenderStyle> getAnimatedStyle() const;
     bool computeExtentOfTransformAnimation(LayoutRect&) const;
 
