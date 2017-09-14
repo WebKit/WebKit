@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<script>
+function loaded() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    area1.setRangeText("foo");
+    area1.name = "foo";
+    area2.autofocus = true;
+    form.insertBefore(area2, form.firstChild);
+    form.submit();
+}
+
+function changed() {
+    for (let i = 0; i < 100; i++)
+        form.appendChild(document.createElement("input"));
+}
+</script>
+
+<body onload=loaded()>
+<form id="form" onchange=changed()>
+    <textarea id="area1">a</textarea>
+    <object></object>
+    <textarea id="area2">b</textarea>
+</form>
+<p>To manually test, load this page. The web process should not crash.</p>
+</body>
+</html>
