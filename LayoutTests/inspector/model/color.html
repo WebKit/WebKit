@@ -115,46 +115,34 @@ function test()
         name: "WI.Color properties",
         description: "Test different color properties.",
         test(resolve, reject) {
-            function shallowEqual(arr1, arr2) {
-                if (arr1.length !== arr2.length)
-                    return false;
-
-                for (let i = 0; i < arr1.length; ++i) {
-                    if (arr1[i] !== arr2[i])
-                        return false;
-                }
-
-                return true;
-            }
-
             let color;
 
             color = WI.Color.fromString("red");
             InspectorTest.expectThat(color.alpha === 1, "'red' should have alpha of 1.");
             InspectorTest.expectThat(color.simple === true, "'red' should be simple.");
             InspectorTest.expectThat(color.isKeyword() === true, "'red' should be a keyword.");
-            InspectorTest.expectThat(shallowEqual(color.rgb, [255, 0, 0]), "'red' has rgb of [255, 0, 0].");
-            InspectorTest.expectThat(shallowEqual(color.rgba, [255, 0, 0, 1]), "'red' has rgba of [255, 0, 0, 1].");
-            InspectorTest.expectThat(shallowEqual(color.hsl, [0, 100, 50]), "'red' has hsl of [0, 100, 50].");
-            InspectorTest.expectThat(shallowEqual(color.hsla, [0, 100, 50, 1]), "'red' has hsla of [0, 100, 50, 1].");
+            InspectorTest.expectShallowEqual(color.rgb, [255, 0, 0], "'red' has rgb of [255, 0, 0].");
+            InspectorTest.expectShallowEqual(color.rgba, [255, 0, 0, 1], "'red' has rgba of [255, 0, 0, 1].");
+            InspectorTest.expectShallowEqual(color.hsl, [0, 100, 50], "'red' has hsl of [0, 100, 50].");
+            InspectorTest.expectShallowEqual(color.hsla, [0, 100, 50, 1], "'red' has hsla of [0, 100, 50, 1].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'red' should be serializable as a short Hex");
 
             color = WI.Color.fromString("transparent");
             InspectorTest.expectThat(color.alpha === 0, "'transparent' should have alpha of 0.");
             InspectorTest.expectThat(color.simple === false, "'transparent' should not be simple.");
             InspectorTest.expectThat(color.isKeyword() === true, "'transparent' should be a keyword.");
-            InspectorTest.expectThat(shallowEqual(color.rgb, [0, 0, 0]), "'transparent' has rgb of [0, 0, 0].");
-            InspectorTest.expectThat(shallowEqual(color.rgba, [0, 0, 0, 0]), "'transparent' has rgba of [0, 0, 0, 0].");
-            InspectorTest.expectThat(shallowEqual(color.hsl, [0, 0, 0]), "'transparent' has hsl of [0, 0, 0].");
-            InspectorTest.expectThat(shallowEqual(color.hsla, [0, 0, 0, 0]), "'transparent' has hsla of [0, 0, 0, 0].");
+            InspectorTest.expectShallowEqual(color.rgb, [0, 0, 0], "'transparent' has rgb of [0, 0, 0].");
+            InspectorTest.expectShallowEqual(color.rgba, [0, 0, 0, 0], "'transparent' has rgba of [0, 0, 0, 0].");
+            InspectorTest.expectShallowEqual(color.hsl, [0, 0, 0], "'transparent' has hsl of [0, 0, 0].");
+            InspectorTest.expectShallowEqual(color.hsla, [0, 0, 0, 0], "'transparent' has hsla of [0, 0, 0, 0].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === true, "'transparent' should be serializable as a short Hex");
 
             color = WI.Color.fromString("#11122233");
             InspectorTest.expectThat(color.alpha !== 0, "'#11122233' should not have alpha of 0.");
             InspectorTest.expectThat(color.simple === false, "'#11122233' should be not be simple.");
             InspectorTest.expectThat(color.isKeyword() === false, "'#11122233' should not be a keyword.");
-            InspectorTest.expectThat(shallowEqual(color.rgba, [17, 18, 34, 0.2]), "'#11122233' has rgba of [17, 18, 34, 0.2].");
-            InspectorTest.expectThat(shallowEqual(color.hsla, [236, 33, 10, 0.2]), "'#11122233' has hsla of [236, 33, 10, 0.2].");
+            InspectorTest.expectShallowEqual(color.rgba, [17, 18, 34, 0.2], "'#11122233' has rgba of [17, 18, 34, 0.2].");
+            InspectorTest.expectShallowEqual(color.hsla, [236, 33, 10, 0.2], "'#11122233' has hsla of [236, 33, 10, 0.2].");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11122233' should not be serializable as a short Hex");
 
             color = WI.Color.fromString("#11223344");
@@ -162,6 +150,50 @@ function test()
 
             color = WI.Color.fromString("#11223345");
             InspectorTest.expectThat(color.canBeSerializedAsShortHEX() === false, "'#11223345' should not be serializable as a short Hex");
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color from components",
+        description: "Test different three- and four-component colors.",
+        test(resolve, reject) {
+            function test(color, components) {
+                InspectorTest.log(`Check components for color '${color.toString()}'.`);
+                for (let key in components) {
+                    let value = components[key];
+                    InspectorTest.expectShallowEqual(color[key], value, `Should have ${key} of ${JSON.stringify(value)}.`);
+                }
+            }
+
+            test(new WI.Color(WI.Color.Format.RGB, [255, 0, 0]), {
+                rgb: [255, 0, 0],
+                rgba: [255, 0, 0, 1],
+                hsl: [0, 100, 50],
+                hsla: [0, 100, 50, 1],
+            });
+
+            test(new WI.Color(WI.Color.Format.RGBA, [128, 128, 128, 0.5]), {
+                rgb: [128, 128, 128],
+                rgba: [128, 128, 128, 0.5],
+                hsl: [0, 0, 50],
+                hsla: [0, 0, 50, 0.5],
+            });
+
+            test(new WI.Color(WI.Color.Format.HSL, [0, 0, 50]), {
+                rgb: [128, 128, 128],
+                rgba: [128, 128, 128, 1],
+                hsl: [0, 0, 50],
+                hsla: [0, 0, 50, 1],
+            });
+
+            test(new WI.Color(WI.Color.Format.HSLA, [0, 0, 50, 0.5]), {
+                rgb: [128, 128, 128],
+                rgba: [128, 128, 128, 0.5],
+                hsl: [0, 0, 50],
+                hsla: [0, 0, 50, 0.5],
+            });
 
             resolve();
         }

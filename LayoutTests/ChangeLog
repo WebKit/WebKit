@@ -1,3 +1,17 @@
+2017-09-14  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Color created from an RGB/HSL triplet returns bad component arrays
+        https://bugs.webkit.org/show_bug.cgi?id=176811
+        <rdar://problem/34397529>
+
+        Reviewed by Joseph Pecoraro.
+
+        Add tests for Colors constructed from a format and component array.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+        Drive-by cleanup: use InspectorTest.expectShallowEqual.
+
 2017-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark imported/w3c/web-platform-tests/streams/piping/error-propagation-forward.dedicatedworker.html as flaky.

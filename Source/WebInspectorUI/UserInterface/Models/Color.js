@@ -33,6 +33,9 @@ WI.Color = class Color
     {
         this.format = format;
 
+        if (components.length === 3)
+            components.push(1);
+
         if (format === WI.Color.Format.HSL || format === WI.Color.Format.HSLA)
             this._hsla = components;
         else

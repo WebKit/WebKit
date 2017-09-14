@@ -103,6 +103,28 @@ PASS: '#11122233' should not be serializable as a short Hex
 PASS: '#11223344' should be serializable as a short Hex
 PASS: '#11223345' should not be serializable as a short Hex
 
+-- Running test case: WI.Color from components
+Check components for color 'rgb(255, 0, 0)'.
+PASS: Should have rgb of [255,0,0].
+PASS: Should have rgba of [255,0,0,1].
+PASS: Should have hsl of [0,100,50].
+PASS: Should have hsla of [0,100,50,1].
+Check components for color 'rgba(128, 128, 128, 0.5)'.
+PASS: Should have rgb of [128,128,128].
+PASS: Should have rgba of [128,128,128,0.5].
+PASS: Should have hsl of [0,0,50].
+PASS: Should have hsla of [0,0,50,0.5].
+Check components for color 'hsl(0, 0%, 50%)'.
+PASS: Should have rgb of [128,128,128].
+PASS: Should have rgba of [128,128,128,1].
+PASS: Should have hsl of [0,0,50].
+PASS: Should have hsla of [0,0,50,1].
+Check components for color 'hsla(0, 0%, 50%, 0.5)'.
+PASS: Should have rgb of [128,128,128].
+PASS: Should have rgba of [128,128,128,0.5].
+PASS: Should have hsl of [0,0,50].
+PASS: Should have hsla of [0,0,50,0.5].
+
 -- Running test case: WI.Color.prototype.nextFormat
 PASS: All format phases of 'transparent' should be as expected.
 PASS: All format phases of 'red' should be as expected.
