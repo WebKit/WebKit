@@ -224,7 +224,7 @@ Stringifier::Stringifier(ExecState* exec, const Local<Unknown>& replacer, const 
     : m_exec(exec)
     , m_replacer(replacer)
     , m_usingArrayReplacer(false)
-    , m_arrayReplacerPropertyNames(exec, PropertyNameMode::Strings)
+    , m_arrayReplacerPropertyNames(&exec->vm(), PropertyNameMode::Strings, PrivateSymbolMode::Exclude)
     , m_replacerCallType(CallType::None)
 {
     VM& vm = exec->vm();
@@ -484,7 +484,7 @@ bool Stringifier::Holder::appendNextProperty(Stringifier& stringifier, StringBui
             if (stringifier.m_usingArrayReplacer)
                 m_propertyNames = stringifier.m_arrayReplacerPropertyNames.data();
             else {
-                PropertyNameArray objectPropertyNames(exec, PropertyNameMode::Strings);
+                PropertyNameArray objectPropertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
                 m_object->methodTable(vm)->getOwnPropertyNames(m_object.get(), exec, objectPropertyNames, EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, false);
                 m_propertyNames = objectPropertyNames.releaseData();
@@ -705,7 +705,7 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
                 JSObject* object = asObject(inValue);
                 objectStack.push(object);
                 indexStack.append(0);
-                propertyStack.append(PropertyNameArray(m_exec, PropertyNameMode::Strings));
+                propertyStack.append(PropertyNameArray(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude));
                 object->methodTable(vm)->getOwnPropertyNames(object, m_exec, propertyStack.last(), EnumerationMode());
                 RETURN_IF_EXCEPTION(scope, { });
             }

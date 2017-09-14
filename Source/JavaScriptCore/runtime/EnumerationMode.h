@@ -33,6 +33,11 @@ enum class PropertyNameMode {
     StringsAndSymbols = Symbols | Strings,
 };
 
+enum class PrivateSymbolMode {
+    Include,
+    Exclude
+};
+
 enum class DontEnumPropertiesMode {
     Include,
     Exclude

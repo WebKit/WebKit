@@ -1,3 +1,59 @@
+2017-09-14  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Add PrivateSymbolMode::{Include,Exclude} for PropertyNameArray
+        https://bugs.webkit.org/show_bug.cgi?id=176867
+
+        Reviewed by Sam Weinig.
+
+        We rarely require private symbols when enumerating property names.
+        This patch adds PrivateSymbolMode::{Include,Exclude}. If PrivateSymbolMode::Exclude
+        is specified, PropertyNameArray does not include private symbols.
+        This removes many ad-hoc `Identifier::isPrivateName()` in enumeration operations.
+
+        One additional good thing is that we do not need to filter private symbols out from PropertyNameArray.
+        It allows us to use Object.keys()'s fast path for Object.getOwnPropertySymbols.
+
+        object-get-own-property-symbols                48.6275+-1.0021     ^     38.1846+-1.7934        ^ definitely 1.2735x faster
+
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+        * bindings/ScriptValue.cpp:
+        (Inspector::jsToInspectorValue):
+        * bytecode/ObjectAllocationProfile.h:
+        (JSC::ObjectAllocationProfile::possibleDefaultPropertyCount):
+        * runtime/EnumerationMode.h:
+        * runtime/IntlObject.cpp:
+        (JSC::supportedLocales):
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::Stringifier):
+        (JSC::Stringifier::Holder::appendNextProperty):
+        (JSC::Walker::walk):
+        * runtime/JSPropertyNameEnumerator.cpp:
+        (JSC::JSPropertyNameEnumerator::create):
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::objectConstructorGetOwnPropertyDescriptors):
+        (JSC::objectConstructorAssign):
+        (JSC::objectConstructorValues):
+        (JSC::defineProperties):
+        (JSC::setIntegrityLevel):
+        (JSC::testIntegrityLevel):
+        (JSC::ownPropertyKeys):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::propertyNameMode const):
+        (JSC::PropertyNameArray::privateSymbolMode const):
+        (JSC::PropertyNameArray::addUncheckedInternal):
+        (JSC::PropertyNameArray::addUnchecked):
+        (JSC::PropertyNameArray::add):
+        (JSC::PropertyNameArray::isUidMatchedToTypeMode):
+        (JSC::PropertyNameArray::includeSymbolProperties const):
+        (JSC::PropertyNameArray::includeStringProperties const):
+        (JSC::PropertyNameArray::mode const): Deleted.
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performGetOwnPropertyNames):
+
 2017-09-13  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r221832: Regresses Speedometer by ~4% and Dromaeo CSS YUI by ~20%.

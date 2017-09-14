@@ -911,7 +911,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     JSValue arrayLikeObject = call(exec, ownKeysMethod, callType, callData, handler, arguments);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameMode propertyNameMode = trapResult.mode();
+    PropertyNameMode propertyNameMode = trapResult.propertyNameMode();
     RuntimeTypeMask resultFilter = 0;
     switch (propertyNameMode) {
     case PropertyNameMode::Symbols:
@@ -949,7 +949,7 @@ void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray&
     bool targetIsExensible = target->isExtensible(exec);
     RETURN_IF_EXCEPTION(scope, void());
 
-    PropertyNameArray targetKeys(&vm, propertyNameMode);
+    PropertyNameArray targetKeys(&vm, propertyNameMode, trapResult.privateSymbolMode());
     target->methodTable(vm)->getOwnPropertyNames(target, exec, targetKeys, enumerationMode);
     RETURN_IF_EXCEPTION(scope, void());
     Vector<UniquedStringImpl*> targetConfigurableKeys;

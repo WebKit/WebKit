@@ -484,7 +484,7 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
         auto scope = DECLARE_CATCH_SCOPE(vm);
 
         ExecState* exec = globalObject->globalExec();
-        PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
+        PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
 
         obj->imp->methodTable(vm)->getPropertyNames(obj->imp, exec, propertyNames, EnumerationMode());
         unsigned size = static_cast<unsigned>(propertyNames.size());

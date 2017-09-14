@@ -85,7 +85,7 @@ template<typename K, typename V> struct Converter<IDLRecord<K, V>> : DefaultConv
         ReturnType result;
     
         // 4. Let keys be ? O.[[OwnPropertyKeys]]().
-        JSC::PropertyNameArray keys(&vm, JSC::PropertyNameMode::Strings);
+        JSC::PropertyNameArray keys(&vm, JSC::PropertyNameMode::Strings, JSC::PrivateSymbolMode::Exclude);
         object->methodTable(vm)->getOwnPropertyNames(object, &state, keys, JSC::EnumerationMode());
 
         RETURN_IF_EXCEPTION(scope, { });

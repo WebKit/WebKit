@@ -1276,7 +1276,7 @@ bool NetscapePluginInstanceProxy::enumerate(uint32_t objectID, data_t& resultDat
 
     ExecState* exec = frame->script().globalObject(pluginWorld())->globalExec();
  
-    PropertyNameArray propertyNames(exec, PropertyNameMode::Strings);
+    PropertyNameArray propertyNames(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     object->methodTable(vm)->getPropertyNames(object, exec, propertyNames, EnumerationMode());
 
     RetainPtr<NSMutableArray*> array = adoptNS([[NSMutableArray alloc] init]);

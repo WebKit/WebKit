@@ -830,7 +830,7 @@ JSValue supportedLocales(ExecState& state, const HashSet<String>& availableLocal
         : lookupSupportedLocales(state, availableLocales, requestedLocales);
     RETURN_IF_EXCEPTION(scope, JSValue());
 
-    PropertyNameArray keys(&state, PropertyNameMode::Strings);
+    PropertyNameArray keys(&vm, PropertyNameMode::Strings, PrivateSymbolMode::Exclude);
     supportedLocales->getOwnPropertyNames(supportedLocales, &state, keys, EnumerationMode());
     RETURN_IF_EXCEPTION(scope, JSValue());
 

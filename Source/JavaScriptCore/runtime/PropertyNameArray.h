@@ -47,15 +47,11 @@ private:
 // FIXME: Rename to PropertyNameArrayBuilder.
 class PropertyNameArray {
 public:
-    PropertyNameArray(VM* vm, PropertyNameMode mode)
+    PropertyNameArray(VM* vm, PropertyNameMode propertyNameMode, PrivateSymbolMode privateSymbolMode)
         : m_data(PropertyNameArrayData::create())
         , m_vm(vm)
-        , m_mode(mode)
-    {
-    }
-
-    PropertyNameArray(ExecState* exec, PropertyNameMode mode)
-        : PropertyNameArray(&exec->vm(), mode)
+        , m_propertyNameMode(propertyNameMode)
+        , m_privateSymbolMode(privateSymbolMode)
     {
     }
 
@@ -83,17 +79,21 @@ public:
     const_iterator begin() const { return m_data->propertyNameVector().begin(); }
     const_iterator end() const { return m_data->propertyNameVector().end(); }
 
-    PropertyNameMode mode() const { return m_mode; }
     bool includeSymbolProperties() const;
     bool includeStringProperties() const;
 
+    PropertyNameMode propertyNameMode() const { return m_propertyNameMode; }
+    PrivateSymbolMode privateSymbolMode() const { return m_privateSymbolMode; }
+
 private:
+    void addUncheckedInternal(UniquedStringImpl*);
     bool isUidMatchedToTypeMode(UniquedStringImpl* identifier);
 
     RefPtr<PropertyNameArrayData> m_data;
     HashSet<UniquedStringImpl*> m_set;
     VM* m_vm;
-    PropertyNameMode m_mode;
+    PropertyNameMode m_propertyNameMode;
+    PrivateSymbolMode m_privateSymbolMode;
 };
 
 ALWAYS_INLINE void PropertyNameArray::add(const Identifier& identifier)
@@ -101,11 +101,16 @@ ALWAYS_INLINE void PropertyNameArray::add(const Identifier& identifier)
     add(identifier.impl());
 }
 
+ALWAYS_INLINE void PropertyNameArray::addUncheckedInternal(UniquedStringImpl* identifier)
+{
+    m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
+}
+
 ALWAYS_INLINE void PropertyNameArray::addUnchecked(UniquedStringImpl* identifier)
 {
     if (!isUidMatchedToTypeMode(identifier))
         return;
-    m_data->propertyNameVector().append(Identifier::fromUid(m_vm, identifier));
+    addUncheckedInternal(identifier);
 }
 
 ALWAYS_INLINE void PropertyNameArray::add(UniquedStringImpl* identifier)
@@ -129,24 +134,29 @@ ALWAYS_INLINE void PropertyNameArray::add(UniquedStringImpl* identifier)
             return;
     }
 
-    addUnchecked(identifier);
+    addUncheckedInternal(identifier);
 }
 
 ALWAYS_INLINE bool PropertyNameArray::isUidMatchedToTypeMode(UniquedStringImpl* identifier)
 {
-    if (identifier->isSymbol())
-        return includeSymbolProperties();
+    if (identifier->isSymbol()) {
+        if (!includeSymbolProperties())
+            return false;
+        if (UNLIKELY(m_privateSymbolMode == PrivateSymbolMode::Include))
+            return true;
+        return !static_cast<SymbolImpl*>(identifier)->isPrivate();
+    }
     return includeStringProperties();
 }
 
 ALWAYS_INLINE bool PropertyNameArray::includeSymbolProperties() const
 {
-    return static_cast<std::underlying_type<PropertyNameMode>::type>(m_mode) & static_cast<std::underlying_type<PropertyNameMode>::type>(PropertyNameMode::Symbols);
+    return static_cast<std::underlying_type<PropertyNameMode>::type>(m_propertyNameMode) & static_cast<std::underlying_type<PropertyNameMode>::type>(PropertyNameMode::Symbols);
 }
 
 ALWAYS_INLINE bool PropertyNameArray::includeStringProperties() const
 {
-    return static_cast<std::underlying_type<PropertyNameMode>::type>(m_mode) & static_cast<std::underlying_type<PropertyNameMode>::type>(PropertyNameMode::Strings);
+    return static_cast<std::underlying_type<PropertyNameMode>::type>(m_propertyNameMode) & static_cast<std::underlying_type<PropertyNameMode>::type>(PropertyNameMode::Strings);
 }
 
 } // namespace JSC
