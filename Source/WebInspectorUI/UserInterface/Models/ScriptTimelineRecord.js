@@ -25,7 +25,7 @@
 
 WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload)
+    constructor(eventType, startTime, endTime, callFrames, sourceCodeLocation, details, profilePayload, extraDetails)
     {
         super(WI.TimelineRecord.Type.Script, startTime, endTime, callFrames, sourceCodeLocation);
 
@@ -38,6 +38,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         this._details = details || "";
         this._profilePayload = profilePayload || null;
         this._profile = null;
+        this._extraDetails = extraDetails || null;
 
         // COMPATIBILITY(iOS 9): Before the ScriptProfilerAgent we did not have sample data. Return NaN to match old behavior.
         if (!window.ScriptProfilerAgent)
@@ -50,25 +51,15 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     // Public
 
-    get eventType()
-    {
-        return this._eventType;
-    }
-
-    get details()
-    {
-        return this._details;
-    }
+    get eventType() { return this._eventType; }
+    get details() { return this._details; }
+    get extraDetails() { return this._extraDetails; }
+    get callCountOrSamples() { return this._callCountOrSamples; }
 
     get profile()
     {
         this._initializeProfileFromPayload();
         return this._profile;
-    }
-
-    get callCountOrSamples()
-    {
-        return this._callCountOrSamples;
     }
 
     isGarbageCollection()
