@@ -308,7 +308,7 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 
     // Draw underline.
     CGContextRef context = platformContext();
-    CGContextSaveGState(context);
+    CGContextStateSaver stateSaver { context };
 
 #if PLATFORM(IOS)
     WKSetPattern(context, dotPattern, YES, YES);
@@ -319,11 +319,19 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
     CGRect destinationRect = CGRectMake(offsetPoint.x(), offsetPoint.y(), width, patternHeight);
 #if !PLATFORM(IOS)
     if (image) {
+        CGContextClipToRect(context, destinationRect);
+
+        // We explicitly flip coordinates so as to ensure we paint the image right-side up. We do this because
+        // -[NSImage CGImageForProposedRect:context:hints:] does not guarantee that the returned image will respect
+        // any transforms applied to the context or any specified hints.
+        CGContextTranslateCTM(context, 0, patternHeight);
+        CGContextScaleCTM(context, 1, -1);
+
+        NSRect dotRect = NSMakeRect(offsetPoint.x(), patternHeight - offsetPoint.y(), patternWidth, patternHeight); // Adjust y position as we flipped coordinates.
+
         // FIXME: Rather than getting the NSImage and then picking the CGImage from it, we should do what iOS does and
         // just load the CGImage in the first place.
-        NSRect dotRect = NSMakeRect(offsetPoint.x(), offsetPoint.y(), patternWidth, patternHeight);
-        CGImageRef cgImage = [image CGImageForProposedRect:&dotRect context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:YES] hints:nullptr];
-        CGContextClipToRect(context, destinationRect);
+        CGImageRef cgImage = [image CGImageForProposedRect:&dotRect context:[NSGraphicsContext graphicsContextWithGraphicsPort:context flipped:NO] hints:nullptr];
         CGContextDrawTiledImage(context, NSRectToCGRect(dotRect), cgImage);
     } else {
         CGContextSetFillColorWithColor(context, [fallbackColor CGColor]);
@@ -332,8 +340,6 @@ void GraphicsContext::drawLineForDocumentMarker(const FloatPoint& point, float w
 #else
     WKRectFillUsingOperation(context, destinationRect, kCGCompositeSover);
 #endif
-    
-    CGContextRestoreGState(context);
 }
 
 CGColorSpaceRef linearRGBColorSpaceRef()

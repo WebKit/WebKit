@@ -1,3 +1,21 @@
+2017-09-14  Daniel Bates  <dabates@apple.com>
+
+        [Mac] Spelling, grammar and correction dots are painted upside down
+        https://bugs.webkit.org/show_bug.cgi?id=176949
+        <rdar://problem/34441098>
+
+        Reviewed by Simon Fraser.
+
+        Painting occurs in a vertically flipped context. Vertically flip the context ("unflip" it)
+        before painting the document markers on macOS so that they are painted right-side. This makes
+        the appearance of spelling, grammar and correction dots in WebKit match the AppKit appearance
+        of these dots.
+
+        * platform/graphics/cocoa/GraphicsContextCocoa.mm:
+        (WebCore::GraphicsContext::drawLineForDocumentMarker): Flip the context as described above.
+        Also make use of RAII object CGContextStateSaver instead of manually saving and restoring
+        the state of the context.
+
 2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r222036.
