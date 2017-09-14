@@ -31,31 +31,55 @@
 # HARFBUZZ_LIBRARIES - containg the HarfBuzz library
 
 include(FindPkgConfig)
+pkg_check_modules(PC_HARFBUZZ QUIET harfbuzz)
 
-pkg_check_modules(PC_HARFBUZZ harfbuzz>=0.9.7)
-
-find_path(HARFBUZZ_INCLUDE_DIRS NAMES hb.h
-    HINTS ${PC_HARFBUZZ_INCLUDE_DIRS} ${PC_HARFBUZZ_INCLUDEDIR}
+find_path(HARFBUZZ_INCLUDE_DIRS
+    NAMES hb.h
+    HINTS ${PC_HARFBUZZ_INCLUDEDIR}
+          ${PC_HARFBUZZ_INCLUDE_DIRS}
+    PATH_SUFFIXES harfbuzz
 )
 
 find_library(HARFBUZZ_LIBRARIES NAMES harfbuzz
-    HINTS ${PC_HARFBUZZ_LIBRARY_DIRS} ${PC_HARFBUZZ_LIBDIR}
+    HINTS ${PC_HARFBUZZ_LIBDIR}
+          ${PC_HARFBUZZ_LIBRARY_DIRS}
 )
 
+if (HARFBUZZ_INCLUDE_DIRS)
+    if (EXISTS "${HARFBUZZ_INCLUDE_DIRS}/hb-version.h")
+        file(READ "${HARFBUZZ_INCLUDE_DIRS}/hb-version.h" _harfbuzz_version_content)
+
+        string(REGEX MATCH "#define +HB_VERSION_STRING +\"([0-9]+\.[0-9]+\.[0-9]+)\"" _dummy "${_harfbuzz_version_content}")
+        set(HARFBUZZ_VERSION "${CMAKE_MATCH_1}")
+    endif ()
+endif ()
+
+if ("${Harfbuzz_FIND_VERSION}" VERSION_GREATER "${HARFBUZZ_VERSION}")
+    message(FATAL_ERROR "Required version (" ${Harfbuzz_FIND_VERSION} ") is higher than found version (" ${CAIRO_VERSION} ")")
+endif ()
+
 # HarfBuzz 0.9.18 split ICU support into a separate harfbuzz-icu library.
-if ("${PC_HARFBUZZ_VERSION}" VERSION_GREATER "0.9.17")
-    pkg_check_modules(PC_HARFBUZZ_ICU harfbuzz-icu>=0.9.18 REQUIRED)
-    find_library(HARFBUZZ_ICU_LIBRARIES NAMES harfbuzz-icu
-        HINTS ${PC_HARFBUZZ_ICU_LIBRARY_DIRS} ${PC_HARFBUZZ_ICU_LIBDIR}
+if ("${HARFBUZZ_VERSION}" VERSION_GREATER "0.9.17")
+    pkg_check_modules(PC_HARFBUZZ_ICU QUIET harfbuzz-icu)
+
+    find_library(HARFBUZZ_ICU_LIBRARIES harfbuzz-icu
+        HINTS ${PC_HARFBUZZ_ICU_LIBDIR}
+              ${PC_HARFBUZZ_ICU_LIBRARY_DIRS}
     )
+
+    if (NOT HARFBUZZ_ICU_LIBRARIES)
+        message(FATAL_ERROR "harfbuzz-icu library not found")
+    endif ()
+
     list(APPEND HARFBUZZ_LIBRARIES "${HARFBUZZ_ICU_LIBRARIES}")
 endif ()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(HarfBuzz DEFAULT_MSG HARFBUZZ_INCLUDE_DIRS HARFBUZZ_LIBRARIES)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Harfbuzz REQUIRED_VARS HARFBUZZ_INCLUDE_DIRS HARFBUZZ_LIBRARIES
+                                           VERSION_VAR HARFBUZZ_VERSION)
 
 mark_as_advanced(
-    HARFBUZZ_ICU_LIBRARIES
     HARFBUZZ_INCLUDE_DIRS
     HARFBUZZ_LIBRARIES
+    HARFBUZZ_ICU_LIBRARIES
 )
