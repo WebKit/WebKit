@@ -60,8 +60,7 @@ public:
     static Ref<Inspector::InspectorObject> createAnimationFrameData(int callbackId);
     static Ref<Inspector::InspectorObject> createPaintData(const FloatQuad&);
 
-    static void appendLayoutRoot(Inspector::InspectorObject& data, const FloatQuad&);
-    static void appendDidDispatchEventData(Inspector::InspectorObject& data, bool defaultPrevented);
+    static void appendLayoutRoot(Inspector::InspectorObject* data, const FloatQuad&);
 
 private:
     TimelineRecordFactory() { }

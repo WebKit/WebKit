@@ -119,7 +119,7 @@ public:
     void willCallFunction(const String& scriptName, int scriptLine, Frame*);
     void didCallFunction(Frame*);
     void willDispatchEvent(const Event&, Frame*);
-    void didDispatchEvent(bool defaultPrevented);
+    void didDispatchEvent();
     void willEvaluateScript(const String&, int, Frame&);
     void didEvaluateScript(Frame&);
     void didInvalidateLayout(Frame&);
