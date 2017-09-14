@@ -1,3 +1,24 @@
+2017-09-14  Saam Barati  <sbarati@apple.com>
+
+        It should be valid to exit before each set when doing arity fixup when inlining
+        https://bugs.webkit.org/show_bug.cgi?id=176948
+
+        Reviewed by Keith Miller.
+
+        This patch makes it so that we can exit before each SetLocal when doing arity
+        fixup during inlining. This is OK because if we exit at any of these SetLocals,
+        we will simply exit to the beginning of the call instruction.
+        
+        Not doing this led to a bug where FixupPhase would insert a ValueRep of
+        a node before the actual node. This is obviously invalid IR. I've added
+        a new validation rule to catch this malformed IR.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inliningCost):
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        * dfg/DFGValidate.cpp:
+        * runtime/Options.h:
+
 2017-09-14  Mark Lam  <mark.lam@apple.com>
 
         AddressSanitizer: stack-buffer-underflow in JSC::Probe::Page::Page

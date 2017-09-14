@@ -425,6 +425,18 @@ private:
                     VALIDATE((node, edge), m_acceptableNodes.contains(edge.node()));
                 }
             }
+
+            {
+                HashSet<Node*> seenNodes;
+                for (size_t i = 0; i < block->size(); ++i) {
+                    Node* node = block->at(i);
+                    m_graph.doToChildren(node, [&] (const Edge& edge) {
+                        Node* child = edge.node();
+                        VALIDATE((node), block->isInPhis(child) || seenNodes.contains(child));
+                    });
+                    seenNodes.add(node);
+                }
+            }
             
             for (size_t i = 0; i < block->phis.size(); ++i) {
                 Node* node = block->phis[i];

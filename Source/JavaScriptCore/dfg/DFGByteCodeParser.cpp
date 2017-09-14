@@ -1456,7 +1456,6 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountInclu
         return UINT_MAX;
     }
 
-
     if (!Options::useArityFixupInlining()) {
         if (codeBlock->numParameters() > argumentCountIncludingThis) {
             if (DFGByteCodeParserInternal::verbose)
@@ -1582,8 +1581,12 @@ void ByteCodeParser::inlineCall(Node* callTargetNode, int resultOperand, CallVar
     if (arityFixupCount) {
         Node* undefined = addToGraph(JSConstant, OpInfo(m_constantUndefined));
         auto fill = [&] (VirtualRegister reg, Node* value) {
-            Node* result = set(reg, value, ImmediateNakedSet);
-            result->variableAccessData()->mergeShouldNeverUnbox(true); // We cannot exit after starting arity fixup.
+            // It's valid to exit here since we'll exit to the top of the
+            // call and re-setup the arguments.
+            m_exitOK = true;
+            addToGraph(ExitOK);
+
+            set(reg, value, ImmediateNakedSet);
         };
 
         // The stack needs to be aligned due to ABIs. Thus, we have a hole if the count of arguments is not aligned.
