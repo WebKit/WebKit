@@ -1,5 +1,13 @@
 2017-09-14  Matt Lewis  <jlewis3@apple.com>
 
+        Fixed typo in expectations.
+
+        Unreviewed test expectations.
+
+        * platform/mac/TestExpectations:
+
+2017-09-14  Matt Lewis  <jlewis3@apple.com>
+
         Follow up expectations to r222008.
 
         Unreviewed test gardening.
