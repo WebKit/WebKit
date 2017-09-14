@@ -349,6 +349,11 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
     }
 }
 
+- (NSWindow *)hostWindow
+{
+    return _hostWindow.get();
+}
+
 - (void)typeCharacter:(char)character {
     NSString *characterAsString = [NSString stringWithFormat:@"%c" , character];
     NSEventType keyDownEventType = NSEventTypeKeyDown;

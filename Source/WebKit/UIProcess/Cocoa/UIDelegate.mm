@@ -120,6 +120,10 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
     m_delegateMethods.webViewUnavailablePlugInButtonClicked = [delegate respondsToSelector:@selector(_webView:unavailablePlugInButtonClickedWithReason:plugInInfo:)];
     m_delegateMethods.webViewHandleAutoplayEventWithFlags = [delegate respondsToSelector:@selector(_webView:handleAutoplayEvent:withFlags:)];
     m_delegateMethods.webViewDidClickAutoFillButtonWithUserInfo = [delegate respondsToSelector:@selector(_webView:didClickAutoFillButtonWithUserInfo:)];
+    m_delegateMethods.webViewDrawHeaderInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawHeaderInRect:forPageWithTitle:URL:)];
+    m_delegateMethods.webViewDrawFooterInRectForPageWithTitleURL = [delegate respondsToSelector:@selector(_webView:drawFooterInRect:forPageWithTitle:URL:)];
+    m_delegateMethods.webViewHeaderHeight = [delegate respondsToSelector:@selector(_webViewHeaderHeight:)];
+    m_delegateMethods.webViewFooterHeight = [delegate respondsToSelector:@selector(_webViewFooterHeight:)];
     m_delegateMethods.webViewMouseDidMoveOverElementWithFlagsUserInfo = [delegate respondsToSelector:@selector(_webView:mouseDidMoveOverElement:withFlags:userInfo:)];
     m_delegateMethods.webViewDidExceedBackgroundResourceLimitWhileInForeground = [delegate respondsToSelector:@selector(_webView:didExceedBackgroundResourceLimitWhileInForeground:)];
     m_delegateMethods.webViewSaveDataToFileSuggestedFilenameMimeTypeOriginatingURL = [delegate respondsToSelector:@selector(_webView:saveDataToFile:suggestedFilename:mimeType:originatingURL:)];
@@ -421,6 +425,54 @@ void UIDelegate::UIClient::runModal(WebPageProxy&)
         return;
 
     [(id <WKUIDelegatePrivate>)delegate _webViewRunModal:m_uiDelegate.m_webView];
+}
+
+float UIDelegate::UIClient::headerHeight(WebPageProxy&, WebFrameProxy& webFrameProxy)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewHeaderHeight)
+        return 0;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return 0;
+    
+    return [(id <WKUIDelegatePrivate>)delegate _webViewHeaderHeight:m_uiDelegate.m_webView];
+}
+
+float UIDelegate::UIClient::footerHeight(WebPageProxy&, WebFrameProxy&)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewFooterHeight)
+        return 0;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return 0;
+    
+    return [(id <WKUIDelegatePrivate>)delegate _webViewFooterHeight:m_uiDelegate.m_webView];
+}
+
+void UIDelegate::UIClient::drawHeader(WebPageProxy&, WebFrameProxy& frame, WebCore::FloatRect&& rect)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDrawHeaderInRectForPageWithTitleURL)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView drawHeaderInRect:rect forPageWithTitle:frame.title() URL:frame.url()];
+}
+
+void UIDelegate::UIClient::drawFooter(WebPageProxy&, WebFrameProxy& frame, WebCore::FloatRect&& rect)
+{
+    if (!m_uiDelegate.m_delegateMethods.webViewDrawFooterInRectForPageWithTitleURL)
+        return;
+    
+    auto delegate = m_uiDelegate.m_delegate.get();
+    if (!delegate)
+        return;
+    
+    [(id <WKUIDelegatePrivate>)delegate _webView:m_uiDelegate.m_webView drawFooterInRect:rect forPageWithTitle:frame.title() URL:frame.url()];
 }
 
 void UIDelegate::UIClient::pageDidScroll(WebPageProxy*)

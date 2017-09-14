@@ -132,7 +132,7 @@ messages -> WebPage LegacyReceiver {
     GoToBackForwardItem(uint64_t navigationID, uint64_t backForwardItemID)
     TryRestoreScrollPosition()
 
-    LoadURLInFrame(String url, uint64_t frameID)
+    LoadURLInFrame(WebCore::URL url, uint64_t frameID)
     LoadRequest(struct WebKit::LoadParameters loadParameters)
     LoadData(struct WebKit::LoadParameters loadParameters)
     LoadString(struct WebKit::LoadParameters loadParameters)

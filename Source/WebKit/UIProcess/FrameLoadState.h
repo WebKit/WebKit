@@ -23,16 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef FrameLoadState_h
-#define FrameLoadState_h
+#pragma once
 
-#include <wtf/text/WTFString.h>
+#include <WebCore/URL.h>
 
 namespace WebKit {
 
 class FrameLoadState {
 public:
-    FrameLoadState();
     ~FrameLoadState();
 
     enum class State {
@@ -41,31 +39,29 @@ public:
         Finished
     };
 
-    void didStartProvisionalLoad(const String& url);
-    void didReceiveServerRedirectForProvisionalLoad(const String& url);
+    void didStartProvisionalLoad(const WebCore::URL&);
+    void didReceiveServerRedirectForProvisionalLoad(const WebCore::URL&);
     void didFailProvisionalLoad();
 
     void didCommitLoad();
     void didFinishLoad();
     void didFailLoad();
 
-    void didSameDocumentNotification(const String&);
+    void didSameDocumentNotification(const WebCore::URL&);
 
     State state() const { return m_state; }
-    const String& url() const { return m_url; }
-    const String& provisionalURL() const { return m_provisionalURL; }
+    const WebCore::URL& url() const { return m_url; }
+    const WebCore::URL& provisionalURL() const { return m_provisionalURL; }
 
-    void setUnreachableURL(const String&);
-    const String& unreachableURL() const { return m_unreachableURL; }
+    void setUnreachableURL(const WebCore::URL&);
+    const WebCore::URL& unreachableURL() const { return m_unreachableURL; }
 
 private:
-    State m_state;
-    String m_url;
-    String m_provisionalURL;
-    String m_unreachableURL;
-    String m_lastUnreachableURL;
+    State m_state { State::Finished };
+    WebCore::URL m_url;
+    WebCore::URL m_provisionalURL;
+    WebCore::URL m_unreachableURL;
+    WebCore::URL m_lastUnreachableURL;
 };
 
 } // namespace WebKit
-
-#endif // FrameLoadState_h

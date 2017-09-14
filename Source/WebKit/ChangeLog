@@ -1,3 +1,73 @@
+2017-09-14  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKUIDelegatePrivate equivalent of WKPageUIClient's drawHeader, drawFooter, headerHeight, and footerHeight
+        https://bugs.webkit.org/show_bug.cgi?id=176889
+        <rdar://problem/29270035>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageLoadAlternateHTMLString):
+        (WKPageLoadAlternateHTMLStringWithUserData):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        (-[WKBrowsingContextController loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        * UIProcess/API/Cocoa/WKUIDelegatePrivate.h:
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        * UIProcess/Cocoa/UIDelegate.h:
+        * UIProcess/Cocoa/UIDelegate.mm:
+        (WebKit::UIDelegate::setDelegate):
+        (WebKit::UIDelegate::UIClient::headerHeight):
+        (WebKit::UIDelegate::UIClient::footerHeight):
+        (WebKit::UIDelegate::UIClient::drawHeader):
+        (WebKit::UIDelegate::UIClient::drawFooter):
+        * UIProcess/Cocoa/WKReloadFrameErrorRecoveryAttempter.mm:
+        (-[WKReloadFrameErrorRecoveryAttempter attemptRecovery]):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::printOperationWithPrintInfo):
+        * UIProcess/FrameLoadState.cpp:
+        (WebKit::FrameLoadState::didStartProvisionalLoad):
+        (WebKit::FrameLoadState::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::FrameLoadState::didFailProvisionalLoad):
+        (WebKit::FrameLoadState::didCommitLoad):
+        (WebKit::FrameLoadState::didSameDocumentNotification):
+        (WebKit::FrameLoadState::setUnreachableURL):
+        (WebKit::FrameLoadState::FrameLoadState): Deleted.
+        * UIProcess/FrameLoadState.h:
+        (WebKit::FrameLoadState::url const):
+        (WebKit::FrameLoadState::provisionalURL const):
+        (WebKit::FrameLoadState::unreachableURL const):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::loadURL):
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameProxy::didSameDocumentNavigation):
+        (WebKit::WebFrameProxy::setUnreachableURL):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::url const):
+        (WebKit::WebFrameProxy::provisionalURL const):
+        (WebKit::WebFrameProxy::unreachableURL const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::loadAlternateHTMLString):
+        (WebKit::WebPageProxy::didStartProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::didChangeProvisionalURLForFrame):
+        (WebKit::WebPageProxy::didSameDocumentNavigationForFrame):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeProvisionalURL):
+        (WebKit::WebFrameLoaderClient::dispatchDidChangeLocationWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPushStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidReplaceStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidPopStateWithinPage):
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::loadURLInFrame):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-09-14  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream SpeechSynthesis-related WebKitSystemInterface functions

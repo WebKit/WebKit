@@ -28,16 +28,11 @@
 
 namespace WebKit {
 
-FrameLoadState::FrameLoadState()
-    : m_state(State::Finished)
-{
-}
-
 FrameLoadState::~FrameLoadState()
 {
 }
 
-void FrameLoadState::didStartProvisionalLoad(const String& url)
+void FrameLoadState::didStartProvisionalLoad(const WebCore::URL& url)
 {
     ASSERT(m_provisionalURL.isEmpty());
 
@@ -45,7 +40,7 @@ void FrameLoadState::didStartProvisionalLoad(const String& url)
     m_provisionalURL = url;
 }
 
-void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const String& url)
+void FrameLoadState::didReceiveServerRedirectForProvisionalLoad(const WebCore::URL& url)
 {
     ASSERT(m_state == State::Provisional);
 
@@ -57,7 +52,7 @@ void FrameLoadState::didFailProvisionalLoad()
     ASSERT(m_state == State::Provisional);
 
     m_state = State::Finished;
-    m_provisionalURL = String();
+    m_provisionalURL = { };
     m_unreachableURL = m_lastUnreachableURL;
 }
 
@@ -67,7 +62,7 @@ void FrameLoadState::didCommitLoad()
 
     m_state = State::Committed;
     m_url = m_provisionalURL;
-    m_provisionalURL = String();
+    m_provisionalURL = { };
 }
 
 void FrameLoadState::didFinishLoad()
@@ -86,12 +81,12 @@ void FrameLoadState::didFailLoad()
     m_state = State::Finished;
 }
 
-void FrameLoadState::didSameDocumentNotification(const String& url)
+void FrameLoadState::didSameDocumentNotification(const WebCore::URL& url)
 {
     m_url = url;
 }
 
-void FrameLoadState::setUnreachableURL(const String& unreachableURL)
+void FrameLoadState::setUnreachableURL(const WebCore::URL& unreachableURL)
 {
     m_lastUnreachableURL = m_unreachableURL;
     m_unreachableURL = unreachableURL;
