@@ -168,13 +168,15 @@ unsigned DragData::numberOfFiles() const
     return platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName);
 }
 
-void DragData::asFilenames(Vector<String>& result) const
+Vector<String> DragData::asFilenames() const
 {
 #if PLATFORM(MAC)
-    platformStrategies()->pasteboardStrategy()->getPathnamesForType(result, String(NSFilenamesPboardType), m_pasteboardName);
+    Vector<String> results;
+    platformStrategies()->pasteboardStrategy()->getPathnamesForType(results, String(NSFilenamesPboardType), m_pasteboardName);
+    if (!results.isEmpty())
+        return results;
 #endif
-    if (!result.size())
-        result = fileNames();
+    return fileNames();
 }
 
 bool DragData::containsPlainText() const

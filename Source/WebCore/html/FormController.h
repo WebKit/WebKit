@@ -37,8 +37,23 @@ class SavedFormState;
 
 class FormControlState {
 public:
-    FormControlState() : m_type(TypeSkip) { }
-    explicit FormControlState(const String& value) : m_type(TypeRestore) { m_values.append(value); }
+    FormControlState()
+        : m_type(TypeSkip)
+    {
+    }
+
+    explicit FormControlState(const String& value)
+        : m_type(TypeRestore)
+    {
+        m_values.append(value);
+    }
+
+    explicit FormControlState(Vector<String>&& values)
+        : m_type(TypeSkip)
+        , m_values(WTFMove(values))
+    {
+    }
+
     static FormControlState deserialize(const Vector<String>& stateVector, size_t& index);
     FormControlState(const FormControlState& another) : m_type(another.m_type), m_values(another.m_values) { }
     FormControlState& operator=(const FormControlState&);

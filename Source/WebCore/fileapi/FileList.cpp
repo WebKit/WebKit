@@ -26,27 +26,21 @@
 #include "config.h"
 #include "FileList.h"
 
-#include "File.h"
-
 namespace WebCore {
-
-FileList::FileList()
-{
-}
 
 File* FileList::item(unsigned index) const
 {
     if (index >= m_files.size())
-        return 0;
-    return m_files[index].get();
+        return nullptr;
+    return m_files[index].ptr();
 }
 
 Vector<String> FileList::paths() const
 {
     Vector<String> paths;
-    for (unsigned i = 0; i < m_files.size(); ++i)
-        paths.append(m_files[i]->path());
-
+    paths.reserveInitialCapacity(m_files.size());
+    for (auto& file : m_files)
+        paths.uncheckedAppend(file->path());
     return paths;
 }
 

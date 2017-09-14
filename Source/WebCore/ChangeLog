@@ -1,3 +1,84 @@
+2017-09-14  Sam Weinig  <sam@webkit.org>
+
+        [Cleanup] Cleanup uses of the FileList class
+        https://bugs.webkit.org/show_bug.cgi?id=176800
+
+        Reviewed by Alex Christensen.
+
+        * fileapi/FileList.cpp:
+        * fileapi/FileList.h:
+
+            Store list of files as Refs, rather than RefPtrs.
+            Add direct accessor to the underlying Vector for faster iteration.
+            Add file(unsigned) function to allow direct indexing, rather than using
+            the DOM exposed item function which always does a length check.
+
+        * Modules/entriesapi/HTMLInputElementEntriesAPI.cpp:
+        
+            Remove unused RuntimeEnabledFeatures.h #include.
+            Use modern for loop and the new direct file vector access. 
+        
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneSerializer::dumpIfTerminal):
+        (WebCore::CloneSerializer::write):
+        (WebCore::CloneDeserializer::readFile):
+        (WebCore::CloneDeserializer::readTerminal):
+        
+            Remove unnecessary #includes, adopt auto, and use modern for-loop
+            for FileList.
+        
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::files const):
+        (WebCore::DataTransfer::hasFileOfType):
+        
+            Use auto.
+        
+        (WebCore::DataTransfer::createForInputEvent):
+        
+            Use initializer list for the typeToStringMap.
+        
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::ensureItems const):
+        
+            Use auto and modern for-loop for FileList.
+        
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::filesFromFormControlState):
+        (WebCore::FileInputType::saveFormControlState const):
+        (WebCore::FileInputType::appendFormData const):
+        (WebCore::FileInputType::handleDOMActivateEvent):
+        (WebCore::FileInputType::getTypeSpecificValue):
+        (WebCore::FileInputType::disabledAttributeChanged):
+        (WebCore::FileInputType::multipleAttributeChanged):
+        (WebCore::FileInputType::setFiles):
+        (WebCore::FileInputType::receiveDroppedFiles):
+        (WebCore::FileInputType::defaultToolTip const):
+
+            Adopt auto, brace-initialization, and modern for-loops.
+
+        * html/FileListCreator.cpp:
+        (WebCore::appendDirectoryFiles):
+        (WebCore::FileListCreator::createFileList):
+        
+            Update to work in terms of Vector<Ref<File>>.
+
+        * html/FormController.h:
+        (WebCore::FormControlState::FormControlState):
+        
+            Re-format existing constructors and add one that takes an r-value
+            Vector<String> to allow construction from a pre-created list (used 
+            in FileInputType::saveFormControlState)
+        
+        * platform/DragData.h:
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::asFilenames const):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::asFilenames const):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::asFilenames const):
+        
+            Convert asFilenames to return, rather than take, a Vector<String>.
+
 2017-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Harfbuzz] Wrong offset returned by HarfBuzzShaper::offsetForPosition() when target point is at the middle of a character

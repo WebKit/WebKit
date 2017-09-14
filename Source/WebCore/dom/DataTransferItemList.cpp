@@ -124,18 +124,16 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
         return *m_items;
 
     Vector<Ref<DataTransferItem>> items;
-    for (String& type : m_dataTransfer.types()) {
-        String lowercasedType = type.convertToASCIILowercase();
+    for (auto& type : m_dataTransfer.types()) {
+        auto lowercasedType = type.convertToASCIILowercase();
         if (isSupportedType(lowercasedType))
             items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), lowercasedType));
     }
 
-    FileList& files = m_dataTransfer.files();
-    for (unsigned i = 0, length = files.length(); i < length; ++i) {
-        File& file = *files.item(i);
-        String type = File::contentTypeForFile(file.path()).convertToASCIILowercase();
-        if (isSupportedType(type) || file.isDirectory())
-            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), type, file));
+    for (auto& file : m_dataTransfer.files().files()) {
+        auto type = File::contentTypeForFile(file->path()).convertToASCIILowercase();
+        if (isSupportedType(type) || file->isDirectory())
+            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), type, file.copyRef()));
     }
 
     m_items = WTFMove(items);

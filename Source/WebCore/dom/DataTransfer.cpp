@@ -193,7 +193,7 @@ FileList& DataTransfer::files() const
 #endif
 
     if (newlyCreatedFileList) {
-        for (const String& filename : m_pasteboard->readFilenames())
+        for (auto& filename : m_pasteboard->readFilenames())
             m_fileList->append(File::create(filename));
     }
     return *m_fileList;
@@ -203,7 +203,7 @@ bool DataTransfer::hasFileOfType(const String& type)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
 
-    for (const String& path : m_pasteboard->readFilenames()) {
+    for (auto& path : m_pasteboard->readFilenames()) {
         if (equalIgnoringASCIICase(File::contentTypeForFile(path), type))
             return true;
     }
@@ -220,9 +220,7 @@ bool DataTransfer::hasStringOfType(const String& type)
 
 Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
 {
-    TypeToStringMap typeToStringMap;
-    typeToStringMap.set(ASCIILiteral("text/plain"), plainText);
-    typeToStringMap.set(ASCIILiteral("text/html"), htmlText);
+    TypeToStringMap typeToStringMap { { ASCIILiteral("text/plain"), plainText }, { ASCIILiteral("text/html"), htmlText } };
     return adoptRef(*new DataTransfer(StoreMode::Readonly, StaticPasteboard::create(WTFMove(typeToStringMap)), Type::InputEvent));
 }
 

@@ -115,9 +115,9 @@ Vector<FileChooserFileInfo> FileInputType::filesFromFormControlState(const FormC
     Vector<FileChooserFileInfo> files;
     for (size_t i = 0; i < state.valueSize(); i += 2) {
         if (!state[i + 1].isEmpty())
-            files.append(FileChooserFileInfo(state[i], state[i + 1]));
+            files.append({ state[i], state[i + 1] });
         else
-            files.append(FileChooserFileInfo(state[i]));
+            files.append({ state[i] });
     }
     return files;
 }
@@ -130,14 +130,17 @@ const AtomicString& FileInputType::formControlType() const
 FormControlState FileInputType::saveFormControlState() const
 {
     if (m_fileList->isEmpty())
-        return FormControlState();
-    FormControlState state;
-    unsigned numFiles = m_fileList->length();
-    for (unsigned i = 0; i < numFiles; ++i) {
-        state.append(m_fileList->item(i)->path());
-        state.append(m_fileList->item(i)->name());
+        return { };
+
+    auto length = Checked<size_t>(m_fileList->files().size()) * Checked<size_t>(2);
+
+    Vector<String> stateVector;
+    stateVector.reserveInitialCapacity(length.unsafeGet());
+    for (auto& file : m_fileList->files()) {
+        stateVector.uncheckedAppend(file->path());
+        stateVector.uncheckedAppend(file->name());
     }
-    return state;
+    return FormControlState { WTFMove(stateVector) };
 }
 
 void FileInputType::restoreFormControlState(const FormControlState& state)
@@ -149,10 +152,11 @@ void FileInputType::restoreFormControlState(const FormControlState& state)
 
 bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
 {
+    auto* fileList = element().files();
+    ASSERT(fileList);
+
     auto name = element().name();
 
-    auto* fileList = element().files();
-    unsigned numFiles = fileList->length();
     if (!multipart) {
         // Send only the basenames.
         // 4.10.16.4 and 4.10.16.6 sections in HTML5.
@@ -161,20 +165,21 @@ bool FileInputType::appendFormData(DOMFormData& formData, bool multipart) const
         // fileList because Netscape doesn't support for non-multipart
         // submission of file inputs, and Firefox doesn't add "name=" query
         // parameter.
-        for (unsigned i = 0; i < numFiles; ++i)
-            formData.append(name, fileList->item(i)->name());
+        for (auto& file : fileList->files())
+            formData.append(name, file->name());
         return true;
     }
 
     // If no filename at all is entered, return successful but empty.
     // Null would be more logical, but Netscape posts an empty file. Argh.
-    if (!numFiles) {
+    if (fileList->isEmpty()) {
         formData.append(name, File::create(emptyString()));
         return true;
     }
 
-    for (unsigned i = 0; i < numFiles; ++i)
-        formData.append(name, *fileList->item(i));
+
+    for (auto& file : fileList->files())
+        formData.append(name, file.get());
     return true;
 }
 
@@ -190,7 +195,9 @@ String FileInputType::valueMissingText() const
 
 void FileInputType::handleDOMActivateEvent(Event& event)
 {
-    if (element().isDisabledFormControl())
+    auto& input = element();
+
+    if (input.isDisabledFormControl())
         return;
 
     if (!ScriptController::processingUserGesture())
@@ -198,7 +205,6 @@ void FileInputType::handleDOMActivateEvent(Event& event)
 
     if (auto* chrome = this->chrome()) {
         FileChooserSettings settings;
-        HTMLInputElement& input = element();
         settings.allowsDirectories = allowsDirectories();
         settings.allowsMultipleFiles = input.hasAttributeWithoutSynchronization(multipleAttr);
         settings.acceptMIMETypes = input.acceptMIMETypes();
@@ -241,7 +247,7 @@ bool FileInputType::canSetValue(const String& value)
 bool FileInputType::getTypeSpecificValue(String& value)
 {
     if (m_fileList->isEmpty()) {
-        value = String();
+        value = { };
         return true;
     }
 
@@ -251,7 +257,7 @@ bool FileInputType::getTypeSpecificValue(String& value)
     // decided to try to parse the value by looking for backslashes
     // (because that's what Windows file paths use). To be compatible
     // with that code, we make up a fake path for the file.
-    value = "C:\\fakepath\\" + m_fileList->item(0)->name();
+    value = makeString("C:\\fakepath\\", m_fileList->file(0).name());
     return true;
 }
 
@@ -278,7 +284,7 @@ void FileInputType::disabledAttributeChanged()
 {
     ASSERT(element().shadowRoot());
 
-    ShadowRoot* root = element().userAgentShadowRoot();
+    auto* root = element().userAgentShadowRoot();
     if (!root)
         return;
     
@@ -290,7 +296,7 @@ void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element().shadowRoot());
 
-    ShadowRoot* root = element().userAgentShadowRoot();
+    auto* root = element().userAgentShadowRoot();
     if (!root)
         return;
 
@@ -354,7 +360,7 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
         pathsChanged = true;
     else {
         for (unsigned i = 0; i < length; ++i) {
-            if (files->item(i)->path() != m_fileList->item(i)->path()) {
+            if (files->file(i).path() != m_fileList->file(i).path()) {
                 pathsChanged = true;
                 break;
             }
@@ -369,8 +375,8 @@ void FileInputType::setFiles(RefPtr<FileList>&& files, RequestIcon shouldRequest
     if (shouldRequestIcon == RequestIcon::Yes) {
         Vector<String> paths;
         paths.reserveInitialCapacity(length);
-        for (unsigned i = 0; i < length; ++i)
-            paths.uncheckedAppend(m_fileList->item(i)->path());
+        for (auto& file : m_fileList->files())
+            paths.uncheckedAppend(file->path());
         requestIcon(paths);
     }
 
@@ -422,24 +428,20 @@ void FileInputType::iconLoaded(RefPtr<Icon>&& icon)
 #if ENABLE(DRAG_SUPPORT)
 bool FileInputType::receiveDroppedFiles(const DragData& dragData)
 {
-    Vector<String> paths;
-    dragData.asFilenames(paths);
+    auto paths = dragData.asFilenames();
     if (paths.isEmpty())
         return false;
 
-    HTMLInputElement* input = &element();
+    if (element().hasAttributeWithoutSynchronization(multipleAttr)) {
+        Vector<FileChooserFileInfo> files;
+        files.reserveInitialCapacity(paths.size());
+        for (auto& path : paths)
+            files.uncheckedAppend({ path });
 
-    Vector<FileChooserFileInfo> files;
-    for (auto& path : paths)
-        files.append(FileChooserFileInfo(path));
-
-    if (input->hasAttributeWithoutSynchronization(multipleAttr))
         filesChosen(files);
-    else {
-        Vector<FileChooserFileInfo> firstFileOnly;
-        firstFileOnly.append(files[0]);
-        filesChosen(firstFileOnly);
-    }
+    } else
+        filesChosen({ FileChooserFileInfo { paths[0] } });
+
     return true;
 }
 #endif // ENABLE(DRAG_SUPPORT)
@@ -460,7 +462,7 @@ String FileInputType::defaultToolTip() const
 
     StringBuilder names;
     for (unsigned i = 0; i < listSize; ++i) {
-        names.append(m_fileList->item(i)->name());
+        names.append(m_fileList->file(i).name());
         if (i != listSize - 1)
             names.append('\n');
     }

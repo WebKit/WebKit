@@ -27,7 +27,6 @@
 #include "config.h"
 #include "SerializedScriptValue.h"
 
-#include "Blob.h"
 #include "BlobRegistry.h"
 #include "CryptoKeyAES.h"
 #include "CryptoKeyEC.h"
@@ -35,10 +34,7 @@
 #include "CryptoKeyRSA.h"
 #include "CryptoKeyRSAComponents.h"
 #include "CryptoKeyRaw.h"
-#include "File.h"
-#include "FileList.h"
 #include "IDBValue.h"
-#include "ImageData.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
 #include "JSDOMBinding.h"
@@ -929,7 +925,7 @@ private:
             return false;
 
         if (value.isObject()) {
-            JSObject* obj = asObject(value);
+            auto* obj = asObject(value);
             if (obj->inherits(vm, BooleanObject::info())) {
                 if (!startObjectInternal(obj)) // handle duplicates
                     return true;
@@ -951,20 +947,19 @@ private:
                 write(obj->internalValue().asNumber());
                 return true;
             }
-            if (File* file = JSFile::toWrapped(vm, obj)) {
+            if (auto* file = JSFile::toWrapped(vm, obj)) {
                 write(FileTag);
-                write(file);
+                write(*file);
                 return true;
             }
-            if (FileList* list = JSFileList::toWrapped(vm, obj)) {
+            if (auto* list = JSFileList::toWrapped(vm, obj)) {
                 write(FileListTag);
-                unsigned length = list->length();
-                write(length);
-                for (unsigned i = 0; i < length; i++)
-                    write(list->item(i));
+                write(list->length());
+                for (auto& file : list->files())
+                    write(file.get());
                 return true;
             }
-            if (Blob* blob = JSBlob::toWrapped(vm, obj)) {
+            if (auto* blob = JSBlob::toWrapped(vm, obj)) {
                 write(BlobTag);
                 m_blobURLs.append(blob->url());
                 write(blob->url());
@@ -972,7 +967,7 @@ private:
                 write(blob->size());
                 return true;
             }
-            if (ImageData* data = JSImageData::toWrapped(vm, obj)) {
+            if (auto* data = JSImageData::toWrapped(vm, obj)) {
                 write(ImageDataTag);
                 write(data->width());
                 write(data->height());
@@ -981,7 +976,7 @@ private:
                 return true;
             }
             if (obj->inherits(vm, RegExpObject::info())) {
-                RegExpObject* regExp = asRegExpObject(obj);
+                auto* regExp = asRegExpObject(obj);
                 char flags[3];
                 int flagCount = 0;
                 if (regExp->regExp()->global())
@@ -996,7 +991,7 @@ private:
                 return true;
             }
             if (obj->inherits(vm, JSMessagePort::info())) {
-                ObjectPool::iterator index = m_transferredMessagePorts.find(obj);
+                auto index = m_transferredMessagePorts.find(obj);
                 if (index != m_transferredMessagePorts.end()) {
                     write(MessagePortReferenceTag);
                     write(index->value);
@@ -1006,12 +1001,12 @@ private:
                 code = SerializationReturnCode::ValidationError;
                 return true;
             }
-            if (ArrayBuffer* arrayBuffer = toPossiblySharedArrayBuffer(vm, obj)) {
+            if (auto* arrayBuffer = toPossiblySharedArrayBuffer(vm, obj)) {
                 if (arrayBuffer->isNeutered()) {
                     code = SerializationReturnCode::ValidationError;
                     return true;
                 }
-                ObjectPool::iterator index = m_transferredArrayBuffers.find(obj);
+                auto index = m_transferredArrayBuffers.find(obj);
                 if (index != m_transferredArrayBuffers.end()) {
                     write(ArrayBufferTransferTag);
                     write(index->value);
@@ -1020,8 +1015,7 @@ private:
                 if (!startObjectInternal(obj)) // handle duplicates
                     return true;
                 
-                if (arrayBuffer->isShared()
-                    && m_context == SerializationContext::WorkerPostMessage) {
+                if (arrayBuffer->isShared() && m_context == SerializationContext::WorkerPostMessage) {
                     uint32_t index = m_sharedBuffers.size();
                     ArrayBufferContents contents;
                     if (arrayBuffer->shareWith(contents)) {
@@ -1045,7 +1039,7 @@ private:
                 return success;
             }
 #if ENABLE(SUBTLE_CRYPTO)
-            if (CryptoKey* key = JSCryptoKey::toWrapped(vm, obj)) {
+            if (auto* key = JSCryptoKey::toWrapped(vm, obj)) {
                 write(CryptoKeyTag);
                 Vector<uint8_t> serializedKey;
                 Vector<String> dummyBlobURLs;
@@ -1241,13 +1235,13 @@ private:
         writeLittleEndian(m_buffer, vector.data(), size);
     }
 
-    void write(const File* file)
+    void write(const File& file)
     {
-        m_blobURLs.append(file->url());
-        write(file->path());
-        write(file->url());
-        write(file->type());
-        write(file->name());
+        m_blobURLs.append(file.url());
+        write(file.path());
+        write(file.url());
+        write(file.type());
+        write(file.name());
     }
 
 #if ENABLE(SUBTLE_CRYPTO)
@@ -2033,16 +2027,16 @@ private:
     {
         CachedStringRef path;
         if (!readStringData(path))
-            return 0;
+            return false;
         CachedStringRef url;
         if (!readStringData(url))
-            return 0;
+            return false;
         CachedStringRef type;
         if (!readStringData(type))
-            return 0;
+            return false;
         CachedStringRef name;
         if (!readStringData(name))
-            return 0;
+            return false;
 
         // If the blob URL for this file has an associated blob file path, prefer that one over the "built-in" path.
         String filePath = blobFilePathForBlobURL(url->string());
@@ -2697,13 +2691,13 @@ private:
             unsigned length = 0;
             if (!read(length))
                 return JSValue();
-            Vector<RefPtr<File>> files;
+            Vector<Ref<File>> files;
             for (unsigned i = 0; i < length; i++) {
                 RefPtr<File> file;
                 if (!readFile(file))
                     return JSValue();
                 if (m_isDOMGlobalObject)
-                    files.append(WTFMove(file));
+                    files.append(file.releaseNonNull());
             }
             if (!m_isDOMGlobalObject)
                 return jsNull();

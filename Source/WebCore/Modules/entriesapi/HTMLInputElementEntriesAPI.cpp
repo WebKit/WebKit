@@ -29,7 +29,6 @@
 #include "DOMFileSystem.h"
 #include "FileList.h"
 #include "HTMLInputElement.h"
-#include "RuntimeEnabledFeatures.h"
 
 namespace WebCore {
 
@@ -42,15 +41,14 @@ Vector<Ref<FileSystemEntry>> HTMLInputElementEntriesAPI::webkitEntries(ScriptExe
     if (input.hasAttributeWithoutSynchronization(webkitdirectoryAttr))
         return { };
 
-    auto* files = input.files();
-    if (!files)
+    auto* fileList = input.files();
+    if (!fileList)
         return { };
 
-    unsigned length = files->length();
     Vector<Ref<FileSystemEntry>> entries;
-    entries.reserveInitialCapacity(length);
-    for (unsigned i = 0; i < length; ++i)
-        entries.uncheckedAppend(DOMFileSystem::createEntryForFile(context, *files->item(i)));
+    entries.reserveInitialCapacity(fileList->files().size());
+    for (auto& file : fileList->files())
+        entries.uncheckedAppend(DOMFileSystem::createEntryForFile(context, file.copyRef()));
     return entries;
 }
 

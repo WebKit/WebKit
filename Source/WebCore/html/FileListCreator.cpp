@@ -39,7 +39,7 @@ FileListCreator::~FileListCreator()
     ASSERT(!m_completionHander);
 }
 
-static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<RefPtr<File>>& fileObjects)
+static void appendDirectoryFiles(const String& directory, const String& relativePath, Vector<Ref<File>>& fileObjects)
 {
     for (auto& childPath : listDirectory(directory, "*")) {
         auto metadata = fileMetadata(childPath);
@@ -78,7 +78,7 @@ FileListCreator::FileListCreator(const Vector<FileChooserFileInfo>& paths, Shoul
 template<FileListCreator::ShouldResolveDirectories shouldResolveDirectories>
 Ref<FileList> FileListCreator::createFileList(const Vector<FileChooserFileInfo>& paths)
 {
-    Vector<RefPtr<File>> fileObjects;
+    Vector<Ref<File>> fileObjects;
     for (auto& info : paths) {
         if (shouldResolveDirectories == ShouldResolveDirectories::Yes && fileIsDirectory(info.path, ShouldFollowSymbolicLinks::No))
             appendDirectoryFiles(info.path, pathGetFileName(info.path), fileObjects);
