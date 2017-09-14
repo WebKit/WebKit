@@ -3608,6 +3608,9 @@ void Document::noteUserInteractionWithMediaElement()
     if (m_userHasInteractedWithMediaElement)
         return;
 
+    if (!topDocument().userDidInteractWithPage())
+        return;
+
     m_userHasInteractedWithMediaElement = true;
     updateIsPlayingMedia();
 }
