@@ -582,7 +582,7 @@ crypto/workers/subtle/ [ Skip ]
 webkit.org/b/136224 fast/speechsynthesis [ Skip ]
 
 # Test is Posix-specific.
-editing/pasteboard/enties-api/datatransfer-items-drop-hidden-file.html [ Skip ]
+editing/pasteboard/entries-api/datatransfer-items-drop-hidden-file.html [ Skip ]
 
 # TODO Impossible to test text-only-zoom from DRT on Windows
 webkit.org/b/35013 svg/zoom/text/ [ Skip ]
