@@ -32,5 +32,6 @@ WI.RecordingInitialStateAction = class RecordingInitialStateAction extends WI.Re
         this._name = WI.UIString("Initial State");
 
         this._valid = false;
+        this._swizzledPromise = Promise.resolve();
     }
 };

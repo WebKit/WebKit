@@ -1,3 +1,16 @@
+2017-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: make recording swizzle async
+        https://bugs.webkit.org/show_bug.cgi?id=176936
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/InspectorCanvas.cpp:
+        (WebCore::InspectorCanvas::buildArrayForCanvasPattern):
+        (WebCore::InspectorCanvas::buildAction):
+        For objects that are not able to be stringified (e.g. elements), send a deduplicated string
+        with the name of the object as a placeholder value (e.g. "Element").
+
 2017-09-14  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream SpeechSynthesis-related WebKitSystemInterface functions

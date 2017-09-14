@@ -1,3 +1,12 @@
+2017-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: make recording swizzle async
+        https://bugs.webkit.org/show_bug.cgi?id=176936
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/canvas/recording-2d-expected.txt:
+
 2017-09-14  Matt Lewis  <jlewis3@apple.com>
 
         Marked svg/animations/smil-leak-element-instances.svg

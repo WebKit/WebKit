@@ -68,21 +68,26 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
 
     updateActionIndex(index, context, options = {})
     {
-        console.assert(!this._recording || (index >= 0 && index < this._recording.actions.length));
-        if (!this._recording || index < 0 || index > this._recording.actions.length || index === this._index)
+        if (!this._recording)
             return;
 
-        this._index = index;
+        this._recording.actions.then((actions) => {
+            console.assert(index >= 0 && index < actions.length);
+            if (index < 0 || index > actions.length || index === this._index)
+                return;
 
-        if (this._recording.type === WI.Recording.Type.Canvas2D)
-            this._generateDetailsCanvas2D(context, options);
+            this._index = index;
 
-        this.updateLayoutIfNeeded();
+            if (this._recording.type === WI.Recording.Type.Canvas2D)
+                this._generateDetailsCanvas2D(context, actions, options);
+
+            this.updateLayoutIfNeeded();
+        });
     }
 
     // Private
 
-    _generateDetailsCanvas2D(context, options = {})
+    _generateDetailsCanvas2D(context, actions, options = {})
     {
         if (!this._dataGrid) {
             this._dataGrid = new WI.DataGrid({
@@ -130,7 +135,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         state.webkitLineDash = context.webkitLineDash;
         state.webkitLineDashOffset = context.webkitLineDashOffset;
 
-        let action = this._recording.actions[this._index];
+        let action = actions[this._index];
         for (let name in state) {
             let value = state[name];
             if (typeof value === "object") {

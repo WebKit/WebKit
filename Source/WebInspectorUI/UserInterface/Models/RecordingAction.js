@@ -39,6 +39,7 @@ WI.RecordingAction = class RecordingAction
         this._snapshot = "";
 
         this._valid = true;
+        this._swizzledPromise = null;
 
         this._isFunction = false;
         this._isGetter = false;
@@ -99,31 +100,58 @@ WI.RecordingAction = class RecordingAction
 
     swizzle(recording)
     {
-        this._name = recording.swizzle(this._payloadName, WI.Recording.Swizzle.String);
+        if (!this._swizzledPromise)
+            this._swizzledPromise = this._swizzle(recording);
+        return this._swizzledPromise;
+    }
 
-        this._parameters = this._payloadParameters.map((item, i) => {
-            let swizzledItem = recording.swizzle(item, this._payloadSwizzleTypes[i]);
-            if (this._payloadSwizzleTypes[i] === WI.Recording.Swizzle.None || swizzledItem === undefined)
-                this._valid = false;
-
-            return swizzledItem;
-        });
-
-        for (let item of this._payloadTrace) {
-            try {
-                let array = recording.swizzle(item, WI.Recording.Swizzle.None);
-                let callFrame = WI.CallFrame.fromPayload(WI.mainTarget, {
-                    functionName: recording.swizzle(array[0], WI.Recording.Swizzle.String),
-                    url: recording.swizzle(array[1], WI.Recording.Swizzle.String),
-                    lineNumber: array[2],
-                    columnNumber: array[3],
-                });
-                this._trace.push(callFrame);
-            } catch { }
-        }
-
+    toJSON()
+    {
+        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
         if (this._payloadSnapshot >= 0)
-            this._snapshot = recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String);
+            json.push(this._payloadSnapshot);
+        return json;
+    }
+
+    // Private
+
+    async _swizzle(recording)
+    {
+        let swizzleParameter = (item, index) => {
+            return recording.swizzle(item, this._payloadSwizzleTypes[index]);
+        };
+
+        let swizzleCallFrame = async (item, index) => {
+            let array = await recording.swizzle(item, WI.Recording.Swizzle.None);
+            let [functionName, url] = await Promise.all([
+                recording.swizzle(array[0], WI.Recording.Swizzle.String),
+                recording.swizzle(array[1], WI.Recording.Swizzle.String),
+            ]);
+            return WI.CallFrame.fromPayload(WI.mainTarget, {
+                functionName,
+                url,
+                lineNumber: array[2],
+                columnNumber: array[3],
+            });
+        };
+
+        let swizzlePromises = [
+            recording.swizzle(this._payloadName, WI.Recording.Swizzle.String),
+            Promise.all(this._payloadParameters.map(swizzleParameter)),
+            Promise.all(this._payloadTrace.map(swizzleCallFrame)),
+        ];
+        if (this._payloadSnapshot >= 0)
+            swizzlePromises.push(recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String));
+
+        let [name, parameters, callFrames, snapshot] = await Promise.all(swizzlePromises);
+        this._name = name;
+        this._parameters = parameters;
+        this._trace = callFrames;
+        if (this._payloadSnapshot >= 0)
+            this._snapshot = snapshot;
+
+        if (this._valid)
+            this._valid = this._parameters.every((parameter) => parameter !== undefined) && this._payloadSwizzleTypes.every((swizzleType) => swizzleType !== WI.Recording.Swizzle.None);
 
         this._isFunction = WI.RecordingAction.isFunctionForType(recording.type, this._name);
         this._isGetter = !this._isFunction && !this._parameters.length;
@@ -138,14 +166,6 @@ WI.RecordingAction = class RecordingAction
             for (let item of modifiedByAction)
                 this._stateModifiers.add(item);
         }
-    }
-
-    toJSON()
-    {
-        let json = [this._payloadName, this._payloadParameters, this._payloadSwizzleTypes, this._payloadTrace];
-        if (this._payloadSnapshot >= 0)
-            json.push(this._payloadSnapshot);
-        return json;
     }
 };
 

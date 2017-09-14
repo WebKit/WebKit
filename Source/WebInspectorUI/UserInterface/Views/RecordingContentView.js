@@ -101,16 +101,21 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     updateActionIndex(index, options = {})
     {
-        console.assert(!this.representedObject || (index >= 0 && index < this.representedObject.actions.length));
-        if (!this.representedObject || index < 0 || index >= this.representedObject.actions.length || index === this._index)
+        if (!this.representedObject)
             return;
 
-        this._index = index;
+        this.representedObject.actions.then((actions) => {
+            console.assert(index >= 0 && index < actions.length);
+            if (index < 0 || index >= actions.length || index === this._index)
+                return;
 
-        if (this.representedObject.type === WI.Recording.Type.Canvas2D)
-            this._generateContentCanvas2D(index, options);
-        else if (this.representedObject.type === WI.Recording.Type.CanvasWebGL)
-            this._generateContentCanvasWebGL(index, options);
+            this._index = index;
+
+            if (this.representedObject.type === WI.Recording.Type.Canvas2D)
+                this._generateContentCanvas2D(index, actions, options);
+            else if (this.representedObject.type === WI.Recording.Type.CanvasWebGL)
+                this._generateContentCanvasWebGL(index, actions, options);
+        });
     }
 
     // Protected
@@ -152,14 +157,14 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     // Private
 
-    _generateContentCanvas2D(index, options = {})
+    async _generateContentCanvas2D(index, actions, options = {})
     {
         let imageLoad = (event) => {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
-            this._generateContentCanvas2D(index, options);
+            this._generateContentCanvas2D(index, actions, options);
         };
 
         let initialState = this.representedObject.initialState;
@@ -176,7 +181,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         let showCanvasPath = WI.RecordingContentView.supportsCanvasPathDebugging() && WI.settings.showCanvasPath.value;
         let indexOfLastBeginPathAction = Infinity;
 
-        let actions = this.representedObject.actions;
         let applyActions = (from, to, callback) => {
             let saveCount = 0;
             snapshot.context.save();
@@ -302,19 +306,19 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
                     switch (key) {
                     case "setTransform":
-                        value = [this.representedObject.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
+                        value = [await this.representedObject.swizzle(value, WI.Recording.Swizzle.DOMMatrix)];
                         break;
 
                     case "fillStyle":
                     case "strokeStyle":
                         if (Array.isArray(value)) {
-                            let canvasStyle = this.swizzle(value[0], WI.Recording.Swizzle.String);
+                            let canvasStyle = await this.representedObject.swizzle(value[0], WI.Recording.Swizzle.String);
                             if (canvasStyle.includes("gradient"))
-                                value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasGradient);
+                                value = await this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasGradient);
                             else if (canvasStyle === "pattern")
-                                value = this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasPattern);
+                                value = await this.representedObject.swizzle(value, WI.Recording.Swizzle.CanvasPattern);
                         } else
-                            value = this.representedObject.swizzle(value, WI.Recording.Swizzle.String);
+                            value = await this.representedObject.swizzle(value, WI.Recording.Swizzle.String);
                         break;
 
                     case "direction":
@@ -327,11 +331,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                     case "shadowColor":
                     case "textAlign":
                     case "textBaseline":
-                        value = this.representedObject.swizzle(value, WI.Recording.Swizzle.String);
+                        value = await this.representedObject.swizzle(value, WI.Recording.Swizzle.String);
                         break;
 
                     case "setPath":
-                        value = [this.representedObject.swizzle(value[0], WI.Recording.Swizzle.Path2D)];
+                        value = [await this.representedObject.swizzle(value[0], WI.Recording.Swizzle.Path2D)];
                         break;
                     }
 
@@ -401,14 +405,14 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         this._updateImageGrid();
     }
 
-    _generateContentCanvasWebGL(index, options = {})
+    async _generateContentCanvasWebGL(index, actions, options = {})
     {
         let imageLoad = (event) => {
             // Loading took too long and the current action index has already changed.
             if (index !== this._index)
                 return;
 
-            this._generateContentCanvasWebGL(index, options);
+            this._generateContentCanvasWebGL(index, actions, options);
         };
 
         let initialState = this.representedObject.initialState;
@@ -418,8 +422,6 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._initialContent.addEventListener("load", imageLoad);
             return;
         }
-
-        let actions = this.representedObject.actions;
 
         let visualIndex = index;
         while (!actions[visualIndex].isVisual && !(actions[visualIndex] instanceof WI.RecordingInitialStateAction))
@@ -474,8 +476,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     _updateCanvasPath()
     {
         let activated = WI.settings.showCanvasPath.value;
-        if (this._showPathButtonNavigationItem.activated !== activated)
-            this._generateContentCanvas2D(this._index);
+        if (this._showPathButtonNavigationItem.activated !== activated) {
+            this.representedObject.actions.then((actions) => {
+                this._generateContentCanvas2D(this._index, actions);
+            });
+        }
 
         this._showPathButtonNavigationItem.activated = activated;
     }

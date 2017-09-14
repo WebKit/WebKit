@@ -86,21 +86,22 @@ WI.RecordingTabContentView = class RecordingTabContentView extends WI.ContentBro
         super.showRepresentedObject(representedObject, cookie);
 
         this._recording = representedObject;
+        this._recording.actions.then((actions) => {
+            this._visualActionIndexes = [];
+            actions.forEach((action, i) => {
+                if (action.isVisual)
+                    this._visualActionIndexes.push(i);
+            });
 
-        this._visualActionIndexes = [];
-        representedObject.actions.forEach((action, i) => {
-            if (action.isVisual)
-                this._visualActionIndexes.push(i);
+            this._scrubberNavigationItem.value = 0;
+            this._scrubberNavigationItem.min = 0;
+            this._scrubberNavigationItem.max = actions.length - 1;
+            this._scrubberNavigationItem.disabled = false;
+
+            this.navigationSidebarPanel.recording = this._recording;
+
+            this._updateActionIndex(this._scrubberNavigationItem.value);
         });
-
-        this._scrubberNavigationItem.value = 0;
-        this._scrubberNavigationItem.min = 0;
-        this._scrubberNavigationItem.max = representedObject.actions.length - 1;
-        this._scrubberNavigationItem.disabled = false;
-
-        this.navigationSidebarPanel.recording = representedObject;
-
-        this._updateActionIndex(this._scrubberNavigationItem.value);
     }
 
     // Protected

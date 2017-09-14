@@ -65,27 +65,32 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
 
     updateActionIndex(index, context, options = {})
     {
-        console.assert(!this._recording || (index >= 0 && index < this._recording.actions.length));
-        if (!this._recording || index < 0 || index > this._recording.actions.length || index === this._index)
+        if (!this._recording)
             return;
 
-        this._index = index;
+        this._recording.actions.then((actions) => {
+            console.assert(index >= 0 && index < actions.length);
+            if (index < 0 || index > actions.length || index === this._index)
+                return;
 
-        this.contentView.element.removeChildren();
+            this._index = index;
 
-        let trace = this._recording.actions[this._index].trace;
-        if (!trace.length) {
-            let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
-            noTraceDataElement.classList.add("no-trace-data");
+            this.contentView.element.removeChildren();
 
-            let noTraceDataMessageElement = noTraceDataElement.appendChild(document.createElement("div"));
-            noTraceDataMessageElement.classList.add("message");
-            noTraceDataMessageElement.textContent = WI.UIString("No Trace Data");
-            return;
-        }
+            let trace = actions[this._index].trace;
+            if (!trace.length) {
+                let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
+                noTraceDataElement.classList.add("no-trace-data");
 
-        const showFunctionName = true;
-        for (let callFrame of trace)
-            this.contentView.element.appendChild(new WI.CallFrameView(callFrame, showFunctionName));
+                let noTraceDataMessageElement = noTraceDataElement.appendChild(document.createElement("div"));
+                noTraceDataMessageElement.classList.add("message");
+                noTraceDataMessageElement.textContent = WI.UIString("No Trace Data");
+                return;
+            }
+
+            const showFunctionName = true;
+            for (let callFrame of trace)
+                this.contentView.element.appendChild(new WI.CallFrameView(callFrame, showFunctionName));
+        });
     }
 };

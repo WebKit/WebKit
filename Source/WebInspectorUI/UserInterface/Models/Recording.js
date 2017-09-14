@@ -33,13 +33,14 @@ WI.Recording = class Recording
         this._frames = frames;
         this._data = data;
 
-        this._actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
         this._swizzle = [];
         this._source = null;
 
-        for (let frame of this._frames) {
-            for (let action of frame.actions) {
-                action.swizzle(this);
+        let actions = [new WI.RecordingInitialStateAction].concat(...this._frames.map((frame) => frame.actions));
+        this._actions = Promise.all(actions.map((action) => action.swizzle(this))).then(() => {
+            for (let action of actions) {
+                if (!action.valid)
+                    continue;
 
                 let prototype = null;
                 if (this._type === WI.Recording.Type.Canvas2D)
@@ -57,7 +58,9 @@ WI.Recording = class Recording
                     }
                 }
             }
-        }
+
+            return actions;
+        });
     }
 
     // Static
@@ -172,7 +175,7 @@ WI.Recording = class Recording
     get source() { return this._source; }
     set source(source) { this._source = source; }
 
-    swizzle(index, type)
+    async swizzle(index, type)
     {
         if (typeof this._swizzle[index] !== "object")
             this._swizzle[index] = {};
@@ -189,6 +192,18 @@ WI.Recording = class Recording
         if (type === WI.Recording.Swizzle.DOMMatrix)
             return new DOMMatrix(index);
 
+        // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
+        if (type === WI.Recording.Swizzle.TypedArray
+            || type === WI.Recording.Swizzle.WebGLBuffer
+            || type === WI.Recording.Swizzle.WebGLFramebuffer
+            || type === WI.Recording.Swizzle.WebGLRenderbuffer
+            || type === WI.Recording.Swizzle.WebGLTexture
+            || type === WI.Recording.Swizzle.WebGLShader
+            || type === WI.Recording.Swizzle.WebGLProgram
+            || type === WI.Recording.Swizzle.WebGLUniformLocation) {
+            return index;
+        }
+
         if (!(type in this._swizzle[index])) {
             try {
                 let data = this._data[index];
@@ -202,8 +217,13 @@ WI.Recording = class Recording
                     break;
 
                 case WI.Recording.Swizzle.Image:
-                    this._swizzle[index][type] = new Image;
-                    this._swizzle[index][type].src = data;
+                    this._swizzle[index][type] = await new Promise((resolve, reject) => {
+                        let image = new Image;
+                        let resolveWithImage = () => { resolve(image); };
+                        image.addEventListener("load", resolveWithImage);
+                        image.addEventListener("error", resolveWithImage);
+                        image.src = data;
+                    });
                     break;
 
                 case WI.Recording.Swizzle.ImageData:
@@ -215,32 +235,25 @@ WI.Recording = class Recording
                     break;
 
                 case WI.Recording.Swizzle.CanvasGradient:
+                    var gradientType = await this.swizzle(data[0], WI.Recording.Swizzle.String);
+
                     var context = document.createElement("canvas").getContext("2d");
-                    var gradientType = this.swizzle(data[0], WI.Recording.Swizzle.String);
                     this._swizzle[index][type] = gradientType === "radial-gradient" ? context.createRadialGradient(...data[1]) : context.createLinearGradient(...data[1]);
+
                     for (let stop of data[2]) {
-                        let color = this.swizzle(stop[1], WI.Recording.Swizzle.String);
+                        let color = await this.swizzle(stop[1], WI.Recording.Swizzle.String);
                         this._swizzle[index][type].addColorStop(stop[0], color);
                     }
                     break;
 
                 case WI.Recording.Swizzle.CanvasPattern:
-                    var context = document.createElement("canvas").getContext("2d");
-                    var image = this.swizzle(data[1], WI.Recording.Swizzle.Image);
-                    var repeat = this.swizzle(data[2], WI.Recording.Swizzle.String);
-                    this._swizzle[index][type] = context.createPattern(image, repeat);
-                    break;
+                    var [image, repeat] = await Promise.all([
+                        this.swizzle(data[0], WI.Recording.Swizzle.Image),
+                        this.swizzle(data[1], WI.Recording.Swizzle.String),
+                    ]);
 
-                // FIXME: <https://webkit.org/b/176009> Web Inspector: send data for WebGL objects during a recording instead of a placeholder string
-                case WI.Recording.Swizzle.TypedArray:
-                case WI.Recording.Swizzle.WebGLBuffer:
-                case WI.Recording.Swizzle.WebGLFramebuffer:
-                case WI.Recording.Swizzle.WebGLRenderbuffer:
-                case WI.Recording.Swizzle.WebGLTexture:
-                case WI.Recording.Swizzle.WebGLShader:
-                case WI.Recording.Swizzle.WebGLProgram:
-                case WI.Recording.Swizzle.WebGLUniformLocation:
-                    this._swizzle[index][type] = String(data);
+                    var context = document.createElement("canvas").getContext("2d");
+                    this._swizzle[index][type] = context.createPattern(image, repeat);
                     break;
                 }
             } catch { }

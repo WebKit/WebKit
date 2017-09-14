@@ -1,3 +1,61 @@
+2017-09-14  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: make recording swizzle async
+        https://bugs.webkit.org/show_bug.cgi?id=176936
+
+        Reviewed by Joseph Pecoraro.
+
+        Move all swizzle functions, and all logic that depends on swizzled values, to async
+        functions so that await can be used to pause execution while objects load. This was
+        necessary primarily for swizzling Image values, as the Image is not able to be used (such as
+        for creating a CanvasPattern) until its "load" event has fired. Any callers of a Recording's
+        actions getter must now adapt to working with a promise that will resolve once all swizzling
+        has finished across all actions within that recording.
+
+        * .eslintrc:
+
+        * UserInterface/Models/Recording.js:
+        (WI.Recording):
+        (WI.Recording.prototype.async swizzle):
+        (WI.Recording.prototype.swizzle): Deleted.
+        Drive-by: currently, no data is added to the JSON for WebGL objects, so don't try to swizzle
+        them and return the placeholder value (0) instead.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.prototype.swizzle):
+        (WI.RecordingAction.prototype.toJSON):
+        (WI.RecordingAction.prototype.async _swizzle.swizzleParameter):
+        (WI.RecordingAction.prototype.async _swizzle.async swizzleCallFrame):
+        (WI.RecordingAction.prototype.async _swizzle):
+
+        * UserInterface/Models/RecordingInitialStateAction.js:
+        (WI.RecordingInitialStateAction):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype.updateActionIndex):
+        (WI.RecordingContentView.prototype.async _generateContentCanvas2D):
+        (WI.RecordingContentView.prototype.async _generateContentCanvasWebGL):
+        (WI.RecordingContentView.prototype._updateCanvasPath):
+        (WI.RecordingContentView.prototype._generateContentCanvas2D): Deleted.
+        (WI.RecordingContentView.prototype._generateContentCanvasWebGL): Deleted.
+
+        * UserInterface/Views/RecordingNavigationSidebarPanel.js:
+        (WI.RecordingNavigationSidebarPanel.prototype.set recording):
+        (WI.RecordingNavigationSidebarPanel.prototype.updateActionIndex):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.updateActionIndex):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+
+        * UserInterface/Views/RecordingTabContentView.js:
+        (WI.RecordingTabContentView.prototype.showRepresentedObject):
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateActionIndex):
+
 2017-09-14  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Color created from an RGB/HSL triplet returns bad component arrays

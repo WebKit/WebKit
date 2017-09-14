@@ -27,8 +27,8 @@
     "extends": "eslint:recommended",
     "env": {
         "browser": true,
-        "es6": true,
         "worker": true,
+        "ecmaVersion": 2017,
     },
     "globals": {
         // Agents

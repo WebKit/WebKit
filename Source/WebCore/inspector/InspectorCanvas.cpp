@@ -512,7 +512,7 @@ RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> InspectorCanvas::b
             [&] (const Element*) {
                 // Elements are not serializable, so add a string as a placeholder since the actual
                 // element cannot be reconstructed in the frontend.
-                addParameter(0, RecordingSwizzleTypes::None);
+                addParameter(indexForData("Element"), RecordingSwizzleTypes::None);
             },
             [&] (HTMLImageElement* value) { addParameter(indexForData(value), RecordingSwizzleTypes::Image); },
             [&] (ImageData* value) { addParameter(indexForData(value), RecordingSwizzleTypes::ImageData); },
@@ -629,7 +629,6 @@ RefPtr<Inspector::Protocol::Array<InspectorValue>> InspectorCanvas::buildArrayFo
         repeat = ASCIILiteral("no-repeat");
 
     RefPtr<Inspector::Protocol::Array<Inspector::InspectorValue>> array = Inspector::Protocol::Array<Inspector::InspectorValue>::create();
-    array->addItem(indexForData("pattern"));
     array->addItem(indexForData(imageBuffer->toDataURL("image/png")));
     array->addItem(indexForData(repeat));
     return array;

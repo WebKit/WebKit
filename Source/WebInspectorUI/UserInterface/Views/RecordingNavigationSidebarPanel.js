@@ -57,26 +57,28 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
         this._recording = recording;
 
         if (this._recording) {
-            this.contentTreeOutline.element.dataset.indent = Number.countDigits(this._recording.actions.length);
+            this._recording.actions.then((actions) => {
+                this.contentTreeOutline.element.dataset.indent = Number.countDigits(actions.length);
 
-            if (this._recording.actions[0] instanceof WI.RecordingInitialStateAction)
-                this.contentTreeOutline.appendChild(new WI.RecordingActionTreeElement(this._recording.actions[0], 0, this._recording.type));
+                if (actions[0] instanceof WI.RecordingInitialStateAction)
+                    this.contentTreeOutline.appendChild(new WI.RecordingActionTreeElement(actions[0], 0, this._recording.type));
 
-            let cumulativeActionIndex = 1;
-            this._recording.frames.forEach((frame, frameIndex) => {
-                let folder = new WI.FolderTreeElement(WI.UIString("Frame %d").format((frameIndex + 1).toLocaleString()));
-                this.contentTreeOutline.appendChild(folder);
+                let cumulativeActionIndex = 1;
+                this._recording.frames.forEach((frame, frameIndex) => {
+                    let folder = new WI.FolderTreeElement(WI.UIString("Frame %d").format((frameIndex + 1).toLocaleString()));
+                    this.contentTreeOutline.appendChild(folder);
 
-                for (let i = 0; i < frame.actions.length; ++i)
-                    folder.appendChild(new WI.RecordingActionTreeElement(frame.actions[i], cumulativeActionIndex + i, this._recording.type));
+                    for (let i = 0; i < frame.actions.length; ++i)
+                        folder.appendChild(new WI.RecordingActionTreeElement(frame.actions[i], cumulativeActionIndex + i, this._recording.type));
 
-                if (frame.incomplete)
-                    folder.subtitle = WI.UIString("Incomplete");
+                    if (frame.incomplete)
+                        folder.subtitle = WI.UIString("Incomplete");
 
-                if (this._recording.frames.length === 1)
-                    folder.expand();
+                    if (this._recording.frames.length === 1)
+                        folder.expand();
 
-                cumulativeActionIndex += frame.actions.length;
+                    cumulativeActionIndex += frame.actions.length;
+                });
             });
         }
 
@@ -88,31 +90,36 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
 
     updateActionIndex(index, options = {})
     {
-        console.assert(!this._recording || (index >= 0 && index < this._recording.actions.length));
-        if (!this._recording || index < 0 || index >= this._recording.actions.length)
+        if (!this._recording)
             return;
 
-        let treeOutline = this.contentTreeOutline;
-        if (!(this._recording.actions[0] instanceof WI.RecordingInitialStateAction) || index) {
-            treeOutline = treeOutline.children[0];
-            while (index > treeOutline.children.length) {
-                index -= treeOutline.children.length;
-                treeOutline = treeOutline.nextSibling;
+        this._recording.actions.then((actions) => {
+            console.assert(index >= 0 && index < actions.length);
+            if (index < 0 || index >= actions.length)
+                return;
+
+            let treeOutline = this.contentTreeOutline;
+            if (!(actions[0] instanceof WI.RecordingInitialStateAction) || index) {
+                treeOutline = treeOutline.children[0];
+                while (index > treeOutline.children.length) {
+                    index -= treeOutline.children.length;
+                    treeOutline = treeOutline.nextSibling;
+                }
+
+                // Must subtract one from the final result since the initial state is considered index 0.
+                --index;
             }
 
-            // Must subtract one from the final result since the initial state is considered index 0.
-            --index;
-        }
+            let treeElementToSelect = treeOutline.children[index];
+            if (treeElementToSelect.parent && !treeElementToSelect.parent.expanded)
+                treeElementToSelect = treeElementToSelect.parent;
 
-        let treeElementToSelect = treeOutline.children[index];
-        if (treeElementToSelect.parent && !treeElementToSelect.parent.expanded)
-            treeElementToSelect = treeElementToSelect.parent;
-
-        const omitFocus = false;
-        const selectedByUser = false;
-        let suppressOnSelect = !(treeElementToSelect instanceof WI.FolderTreeElement);
-        const suppressOnDeselect = true;
-        treeElementToSelect.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
+            const omitFocus = false;
+            const selectedByUser = false;
+            let suppressOnSelect = !(treeElementToSelect instanceof WI.FolderTreeElement);
+            const suppressOnDeselect = true;
+            treeElementToSelect.revealAndSelect(omitFocus, selectedByUser, suppressOnSelect, suppressOnDeselect);
+        });
     }
 
     // Protected
