@@ -1585,9 +1585,9 @@ template<typename Transformer, typename SourceType> struct Mapper {
 };
 
 template<typename Transformer, typename VectorType>
-Vector<typename Mapper<Transformer, VectorType>::DestinationItemType> map(VectorType&& source, const Transformer& transformer)
+Vector<typename Mapper<Transformer, VectorType>::DestinationItemType> map(VectorType&& source, Transformer&& transformer)
 {
-    return Mapper<Transformer, VectorType>::map(std::forward<VectorType>(source), transformer);
+    return Mapper<Transformer, VectorType>::map(std::forward<VectorType>(source), std::forward<Transformer>(transformer));
 }
 
 } // namespace WTF

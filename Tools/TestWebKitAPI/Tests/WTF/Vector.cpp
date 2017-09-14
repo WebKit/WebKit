@@ -651,9 +651,47 @@ TEST(WTF_Vector, RemoveAllMatching)
     EXPECT_EQ(0U, v.size());
 }
 
+static int multiplyByTwo(int value)
+{
+    return 2 * value;
+}
+
+TEST(WTF_Vector, MapStaticFunction)
+{
+    Vector<int> vector { 2, 3, 4 };
+
+    auto mapped = WTF::map(vector, multiplyByTwo);
+
+    EXPECT_EQ(3U, mapped.size());
+    EXPECT_EQ(4, mapped[0]);
+    EXPECT_EQ(6, mapped[1]);
+    EXPECT_EQ(8, mapped[2]);
+}
+
+static MoveOnly multiplyByTwoMoveOnly(const MoveOnly& value)
+{
+    return MoveOnly(2 * value.value());
+}
+
+TEST(WTF_Vector, MapStaticFunctionMoveOnly)
+{
+    Vector<MoveOnly> vector;
+
+    vector.reserveInitialCapacity(3);
+    for (unsigned i = 0; i < 3; ++i)
+        vector.uncheckedAppend(MoveOnly { i });
+
+    auto mapped = WTF::map(vector, multiplyByTwoMoveOnly);
+
+    EXPECT_EQ(3U, mapped.size());
+    EXPECT_EQ(0U, mapped[0].value());
+    EXPECT_EQ(2U, mapped[1].value());
+    EXPECT_EQ(4U, mapped[2].value());
+}
+
 TEST(WTF_Vector, MapLambda)
 {
-    Vector<int> vector { 2, 3, 4};
+    Vector<int> vector { 2, 3, 4 };
 
     int counter = 0;
     auto mapped = WTF::map(vector, [&] (int item) {
