@@ -16,6 +16,7 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ProxyServerCurl.cpp
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceHandleCurlDelegate.cpp
+    platform/network/curl/ResourceResponseCurl.cpp
     platform/network/curl/SSLHandle.cpp
     platform/network/curl/SocketStreamHandleImplCurl.cpp
     platform/network/curl/SynchronousLoaderClientCurl.cpp

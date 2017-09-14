@@ -1,3 +1,31 @@
+2017-09-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Move response related features into ResourceResponse
+        https://bugs.webkit.org/show_bug.cgi?id=174654
+
+        Reviewed by Alex Christensen.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::didReceiveAllHeaders):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader):
+        (WebCore::isHttpRedirect): Deleted.
+        (WebCore::isHttpAuthentication): Deleted.
+        (WebCore::isHttpNotModified): Deleted.
+        (WebCore::isAppendableHeader): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeaderLine): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::platformSuggestedFilename const): Deleted.
+        * platform/network/curl/ResourceResponseCurl.cpp: Added.
+        (WebCore::ResourceResponse::isAppendableHeader):
+        (WebCore::ResourceResponse::appendHTTPHeaderField):
+        (WebCore::ResourceResponse::setStatusLine):
+        (WebCore::ResourceResponse::platformSuggestedFilename const):
+        (WebCore::ResourceResponse::isRedirection const):
+        (WebCore::ResourceResponse::isNotModified const):
+        (WebCore::ResourceResponse::isUnauthorized const):
+
 2017-09-13  Zalan Bujtas  <zalan@apple.com>
 
         Switch multicolumn's spanner map from raw over to weak pointers.

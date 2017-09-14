@@ -34,6 +34,7 @@
 
 #include "CredentialStorage.h"
 #include "CurlCacheManager.h"
+#include "HTTPParsers.h"
 #include "MIMETypeRegistry.h"
 #include "MultipartHandle.h"
 #include "ResourceHandle.h"
@@ -402,98 +403,6 @@ inline static bool isHttpInfo(int statusCode)
     return 100 <= statusCode && statusCode < 200;
 }
 
-inline static bool isHttpRedirect(int statusCode)
-{
-    return 300 <= statusCode && statusCode < 400 && statusCode != 304;
-}
-
-inline static bool isHttpAuthentication(int statusCode)
-{
-    return statusCode == 401;
-}
-
-inline static bool isHttpNotModified(int statusCode)
-{
-    return statusCode == 304;
-}
-
-static bool isAppendableHeader(const String &key)
-{
-    static const char* appendableHeaders[] = {
-        "access-control-allow-headers",
-        "access-control-allow-methods",
-        "access-control-allow-origin",
-        "access-control-expose-headers",
-        "allow",
-        "cache-control",
-        "connection",
-        "content-encoding",
-        "content-language",
-        "if-match",
-        "if-none-match",
-        "keep-alive",
-        "pragma",
-        "proxy-authenticate",
-        "public",
-        "server",
-        "set-cookie",
-        "te",
-        "trailer",
-        "transfer-encoding",
-        "upgrade",
-        "user-agent",
-        "vary",
-        "via",
-        "warning",
-        "www-authenticate"
-    };
-
-    // Custom headers start with 'X-', and need no further checking.
-    if (key.startsWith("x-", /* caseSensitive */ false))
-        return true;
-
-    for (auto& header : appendableHeaders) {
-        if (equalIgnoringASCIICase(key, header))
-            return true;
-    }
-
-    return false;
-}
-
-void ResourceHandleCurlDelegate::didReceiveHeaderLine(const String& header)
-{
-    ASSERT(isMainThread());
-
-    auto splitPosition = header.find(":");
-    if (splitPosition != notFound) {
-        String key = header.left(splitPosition).stripWhiteSpace();
-        String value = header.substring(splitPosition + 1).stripWhiteSpace();
-
-        if (isAppendableHeader(key))
-            response().addHTTPHeaderField(key, value);
-        else
-            response().setHTTPHeaderField(key, value);
-    } else if (header.startsWith("HTTP", false)) {
-        // This is the first line of the response.
-        // Extract the http status text from this.
-        //
-        // If the FOLLOWLOCATION option is enabled for the curl handle then
-        // curl will follow the redirections internally. Thus this header callback
-        // will be called more than one time with the line starting "HTTP" for one job.
-        long httpCode = 0;
-        m_curlHandle.getResponseCode(httpCode);
-
-        String httpCodeString = String::number(httpCode);
-        int statusCodePos = header.find(httpCodeString);
-
-        if (statusCodePos != notFound) {
-            // The status text is after the status code.
-            String status = header.substring(statusCodePos + httpCodeString.length());
-            response().setHTTPStatusText(status.stripWhiteSpace());
-        }
-    }
-}
-
 void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long contentLength)
 {
     ASSERT(isMainThread());
@@ -512,7 +421,7 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
     }
 
     // HTTP redirection
-    if (isHttpRedirect(httpCode)) {
+    if (response().isRedirection()) {
         String location = response().httpHeaderField(HTTPHeaderName::Location);
         if (!location.isEmpty()) {
             URL newURL = URL(m_firstRequest.url(), location);
@@ -527,7 +436,7 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
 
             return;
         }
-    } else if (isHttpAuthentication(httpCode)) {
+    } else if (response().isUnauthorized()) {
         ProtectionSpace protectionSpace;
         if (getProtectionSpace(response(), protectionSpace)) {
             Credential credential;
@@ -542,7 +451,7 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
     response().setResponseFired(true);
 
     if (m_handle->client()) {
-        if (isHttpNotModified(httpCode)) {
+        if (response().isNotModified()) {
             const String& url = m_firstRequest.url().string();
             if (CurlCacheManager::getInstance().getCachedResponse(url, response())) {
                 if (m_addedCacheValidationHeaders) {
@@ -878,13 +787,17 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
             });
         }
     } else {
+        // If the FOLLOWLOCATION option is enabled for the curl handle then
+        // curl will follow the redirections internally. Thus this header callback
+        // will be called more than one time with the line starting "HTTP" for one job.
         if (isMainThread())
-            didReceiveHeaderLine(header);
+            response().appendHTTPHeaderField(header);
         else {
-            callOnMainThread([protectedThis = makeRef(*this), header = header.isolatedCopy() ] {
+            callOnMainThread([protectedThis = makeRef(*this), copyHeader = header.isolatedCopy() ] {
                 if (!protectedThis->m_handle)
                     return;
-                protectedThis->didReceiveHeaderLine(header);
+
+                protectedThis->response().appendHTTPHeaderField(copyHeader);
             });
         }
     }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 NAVER Corp. All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,7 +75,6 @@ private:
     void setupAuthentication();
     bool getProtectionSpace(const ResourceResponse&, ProtectionSpace&);
 
-    void didReceiveHeaderLine(const String&);
     void didReceiveAllHeaders(long httpCode, long long contentLength);
     void didReceiveContentData(ThreadSafeDataBuffer);
     void handleLocalReceiveResponse();

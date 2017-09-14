@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,9 +26,6 @@
 
 #pragma once
 
-#include "HTTPHeaderNames.h"
-#include "HTTPParsers.h"
-
 #include "ResourceResponseBase.h"
 
 typedef struct _CFURLResponse* CFURLResponseRef;
@@ -50,16 +48,22 @@ public:
     void setResponseFired(bool fired) { m_responseFired = fired; }
     bool responseFired() { return m_responseFired; }
 
+    void appendHTTPHeaderField(const String&);
+
+    bool isRedirection() const;
+    bool isNotModified() const;
+    bool isUnauthorized() const;
+
     // Needed for compatibility.
     CFURLResponseRef cfURLResponse() const { return 0; }
 
 private:
     friend class ResourceResponseBase;
 
-    String platformSuggestedFilename() const
-    {
-        return filenameFromHTTPContentDisposition(httpHeaderField(HTTPHeaderName::ContentDisposition));
-    }
+    static bool isAppendableHeader(const String &key);
+    String platformSuggestedFilename() const;
+
+    void setStatusLine(const String&);
 
     bool m_responseFired;
 };
