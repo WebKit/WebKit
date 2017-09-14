@@ -1,3 +1,16 @@
+2017-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Fail to build using internal jhbuild if libgtk3-dev is not installed in the system
+        https://bugs.webkit.org/show_bug.cgi?id=176778
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        We are building gtk+ in the jhbuild with introspection disabled, but Gtk-3.gir is required to build the
+        WebKitGTK+ introspection. Also, if wayland-protocols is not installed, gtk+ is built without the wayland backend
+        and it's no possible to enable the wayland target in WebKitGTK+ either.
+
+        * gtk/jhbuild.modules: Do not disable introspection when building gtk+ and add wayland-protocols as a dependency.
+
 2017-09-14  Maureen Daum  <mdaum@apple.com>
 
         Introduce the option to mark an HTML element as having AutoFill available.

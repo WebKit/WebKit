@@ -169,8 +169,7 @@
             hash="sha256:d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"/>
   </autotools>
 
-  <autotools id="gtk+" autogen-sh="configure"
-             autogenargs="--disable-introspection">
+  <autotools id="gtk+" autogen-sh="configure">
     <if condition-set="macos">
       <autogenargs value="--enable-x11-backend=no --enable-quartz-backend" />
       <makeargs value="-j1" />
@@ -182,6 +181,7 @@
       <if condition-set="linux">
         <dep package="at-spi2-atk"/>
         <dep package="wayland"/>
+        <dep package="wayland-protocols"/>
       </if>
       <dep package="gdk-pixbuf"/>
       <dep package="pango"/>
