@@ -10,6 +10,7 @@ function loaded() {
     area2.autofocus = true;
     form.insertBefore(area2, form.firstChild);
     form.submit();
+    document.write("<code>PASS</code>");
 }
 
 function changed() {
@@ -24,6 +25,6 @@ function changed() {
     <object></object>
     <textarea id="area2">b</textarea>
 </form>
-<p>To manually test, load this page. The web process should not crash.</p>
+<p>To manually test, load this page. The document should show <code>PASS</code> after loading.</p>
 </body>
 </html>
