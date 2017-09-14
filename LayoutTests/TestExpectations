@@ -1460,3 +1460,7 @@ webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 webkit.org/b/176183 fast/block/inside-inlines/opacity-on-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/166025 http/tests/fetch/fetching-same-resource-with-different-options.html [ Pass Failure ]
+
+imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-pseudo-4/first-letter-003.html [ ImageOnlyFailure ]

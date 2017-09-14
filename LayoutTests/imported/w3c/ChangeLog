@@ -1,3 +1,31 @@
+2017-09-14  Daniel Bates  <dabates@apple.com>
+
+        Import CSS Pseudo Elements 4 Web Platform Tests
+        https://bugs.webkit.org/show_bug.cgi?id=176253
+
+        Reviewed by Zalan Bujtas.
+
+        I upstreamed our CSS Pseudo Elements 4 tests to the Web Platform Tests repository.
+        Remove our version of the tests and import the ones from the Web Platform Tests repository.
+
+        * resources/import-expectations.json:
+        * web-platform-tests/css/css-pseudo-4/OWNERS: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-001-expected.html: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-001.html: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-002-expected.html: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-002.html: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-003-expected.html: Added.
+        * web-platform-tests/css/css-pseudo-4/first-letter-003.html: Added.
+        * web-platform-tests/css/css-pseudo-4/marker-and-other-pseudo-elements-expected.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-and-other-pseudo-elements-expected.html.
+        * web-platform-tests/css/css-pseudo-4/marker-and-other-pseudo-elements.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-and-other-pseudo-elements.html.
+        * web-platform-tests/css/css-pseudo-4/marker-color-expected.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-color-expected.html.
+        * web-platform-tests/css/css-pseudo-4/marker-color.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-color.html.
+        * web-platform-tests/css/css-pseudo-4/marker-font-properties-expected.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-font-properties-expected.html.
+        * web-platform-tests/css/css-pseudo-4/marker-font-properties.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-font-properties.html.
+        * web-platform-tests/css/css-pseudo-4/marker-inherit-values-expected.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-inherit-values-expected.html.
+        * web-platform-tests/css/css-pseudo-4/marker-inherit-values.html: Renamed from LayoutTests/http/wpt/css/css-pseudo-4/marker-inherit-values.html.
+        * web-platform-tests/css/css-pseudo-4/w3c-import.log: Added.
+
 2017-09-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Stretching auto tracks should be done as part of the track sizing algorithm

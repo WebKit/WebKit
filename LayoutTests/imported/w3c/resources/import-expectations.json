@@ -62,6 +62,7 @@
     "web-platform-tests/css/css-align-3": "import", 
     "web-platform-tests/css/css-display-3": "import", 
     "web-platform-tests/css/css-grid-1": "import", 
+    "web-platform-tests/css/css-pseudo-4": "import", 
     "web-platform-tests/css/css-scoping-1": "import", 
     "web-platform-tests/css/css-shapes-1": "import", 
     "web-platform-tests/css/css-ui-3": "import", 
