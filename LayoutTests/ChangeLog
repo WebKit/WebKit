@@ -1,3 +1,74 @@
+2017-09-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-enable tests under editing/pasteboard in iOS WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=176890
+
+        Reviewed by Wenson Hsieh.
+
+        These tests were disabled because we used to run multiple layout tests tests in parallel within
+        a single instance of iOS simulator, and that caused tests that read from and write to UIPasteboard
+        with interfere with one another. This is no longer an issue since we launch a simulator per worker.
+
+        Re-enabled these pasteboard tests under iOS simulator in WebKit2 and rebaselined the tests.
+        We're going to triage failures and crashes in WebKit1 separately.
+
+        * platform/ios-simulator-wk1/TestExpectations:
+        * platform/ios-simulator/editing/pasteboard/3976872-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/4076267-2-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/4076267-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/4242293-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/4631972-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/4641033-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/8145-2-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/8145-3-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/bad-placeholder-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/image-in-iframe-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-004-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-008-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-009-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-013-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-014-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-016-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-019-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/paste-text-at-tabspan-003-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/pasting-object-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/pasting-tabs-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/quirks-mode-br-1-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/smart-drag-drop-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/smart-paste-007-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/smart-paste-008-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/styled-element-markup-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/undoable-fragment-removes-expected.png: Added.
+        * platform/ios-simulator/editing/pasteboard/unrendered-br-expected.png: Added.
+        * platform/ios-wk2/editing/pasteboard/3976872-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4076267-2-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4076267-3-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4076267-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4242293-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4631972-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/4641033-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/8145-2-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/8145-3-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/bad-placeholder-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-004-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-008-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-009-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-013-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-014-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-016-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-019-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-text-at-tabspan-003-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/paste-xml-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/pasting-object-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/pasting-tabs-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/quirks-mode-br-1-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/smart-drag-drop-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/styled-element-markup-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/undoable-fragment-removes-expected.txt:
+        * platform/ios-wk2/editing/pasteboard/unrendered-br-expected.txt:
+        * platform/ios/TestExpectations:
+        * platform/ios/editing/pasteboard/image-in-iframe-expected.txt: Added.
+
 2017-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline js/dom/global-constructors-attributes.html for El Capitan.
