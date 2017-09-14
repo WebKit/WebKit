@@ -1,3 +1,77 @@
+2017-09-14  Mark Lam  <mark.lam@apple.com>
+
+        AddressSanitizer: stack-buffer-underflow in JSC::Probe::Page::Page
+        https://bugs.webkit.org/show_bug.cgi?id=176874
+        <rdar://problem/34436415>
+
+        Reviewed by Saam Barati.
+
+        1. Make Probe::Stack play nice with ASan by:
+
+           a. using a local memcpy implementation that suppresses ASan on ASan builds.
+              We don't want to use std:memcpy() which validates stack memory because
+              we are intentionally copying stack memory beyond the current frame.
+
+           b. changing Stack::s_chunkSize to equal sizeof(uintptr_t) on ASan builds.
+              This ensures that Page::flushWrites() only writes stack memory that was
+              modified by a probe.  The probes should only modify stack memory that
+              belongs to JSC stack data structures.  We don't want to inadvertently
+              modify adjacent words that may belong to ASan (which may happen if
+              s_chunkSize is larger than sizeof(uintptr_t)).
+
+           c. fixing a bug in Page dirtyBits management for when the size of the value to
+              write is greater than s_chunkSize.  The fix in generic, but in practice,
+              this currently only manifests on 32-bit ASan builds because
+              sizeof(uintptr_t) and s_chunkSize are 32-bit, and we may write 64-bit
+              values.
+
+           d. making Page::m_dirtyBits 64 bits always.  This maximizes the number of
+              s_chunksPerPage we can have even on ASan builds.
+
+        2. Fixed the bottom most Probe::Context and Probe::Stack get/set methods to use
+           std::memcpy to avoid strict aliasing issues.
+
+        3. Optimized the implementation of Page::physicalAddressFor().
+
+        4. Optimized the implementation of Stack::set() in the recording of the low
+           watermark.  We just record the lowest raw pointer now, and only compute the
+           alignment to its chuck boundary later when the low watermark is requested.
+
+        5. Changed a value in testmasm to make the test less vulnerable to rounding issues.
+
+        No new test needed because this is already covered by testmasm with ASan enabled.
+
+        * assembler/ProbeContext.h:
+        (JSC::Probe::CPUState::gpr const):
+        (JSC::Probe::CPUState::spr const):
+        (JSC::Probe::Context::gpr):
+        (JSC::Probe::Context::spr):
+        (JSC::Probe::Context::fpr):
+        (JSC::Probe::Context::gprName):
+        (JSC::Probe::Context::sprName):
+        (JSC::Probe::Context::fprName):
+        (JSC::Probe::Context::gpr const):
+        (JSC::Probe::Context::spr const):
+        (JSC::Probe::Context::fpr const):
+        (JSC::Probe::Context::pc):
+        (JSC::Probe::Context::fp):
+        (JSC::Probe::Context::sp):
+        (JSC::Probe:: const): Deleted.
+        * assembler/ProbeStack.cpp:
+        (JSC::Probe::copyStackPage):
+        (JSC::Probe::Page::Page):
+        (JSC::Probe::Page::flushWrites):
+        * assembler/ProbeStack.h:
+        (JSC::Probe::Page::get):
+        (JSC::Probe::Page::set):
+        (JSC::Probe::Page::dirtyBitFor):
+        (JSC::Probe::Page::physicalAddressFor):
+        (JSC::Probe::Stack::lowWatermark):
+        (JSC::Probe::Stack::get):
+        (JSC::Probe::Stack::set):
+        * assembler/testmasm.cpp:
+        (JSC::testProbeModifiesStackValues):
+
 2017-09-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Disable Arity Fixup Inlining until crash in facebook.com is fixed

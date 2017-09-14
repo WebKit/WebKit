@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CPU.h"
 #include <wtf/HashMap.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Threading.h>
@@ -56,14 +57,35 @@ public:
     template<typename T>
     T get(void* logicalAddress)
     {
-        return *physicalAddressFor<T*>(logicalAddress);
+        void* from = physicalAddressFor(logicalAddress);
+        typename std::remove_const<T>::type to { };
+        std::memcpy(&to, from, sizeof(to)); // Use std::memcpy to avoid strict aliasing issues.
+        return to;
+    }
+    template<typename T>
+    T get(void* logicalBaseAddress, ptrdiff_t offset)
+    {
+        return get<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset);
     }
 
     template<typename T>
     void set(void* logicalAddress, T value)
     {
-        m_dirtyBits |= dirtyBitFor(logicalAddress);
-        *physicalAddressFor<T*>(logicalAddress) = value;
+        if (sizeof(T) <= s_chunkSize)
+            m_dirtyBits |= dirtyBitFor(logicalAddress);
+        else {
+            size_t numberOfChunks = roundUpToMultipleOf<sizeof(T)>(s_chunkSize) / s_chunkSize;
+            uint8_t* dirtyAddress = reinterpret_cast<uint8_t*>(logicalAddress);
+            for (size_t i = 0; i < numberOfChunks; ++i, dirtyAddress += s_chunkSize)
+                m_dirtyBits |= dirtyBitFor(dirtyAddress);
+        }
+        void* to = physicalAddressFor(logicalAddress);
+        std::memcpy(to, &value, sizeof(T)); // Use std::memcpy to avoid strict aliasing issues.
+    }
+    template<typename T>
+    void set(void* logicalBaseAddress, ptrdiff_t offset, T value)
+    {
+        set<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset, value);
     }
 
     bool hasWritesToFlush() const { return !!m_dirtyBits; }
@@ -74,38 +96,47 @@ public:
     }
 
 private:
-    uintptr_t dirtyBitFor(void* logicalAddress)
+    uint64_t dirtyBitFor(void* logicalAddress)
     {
         uintptr_t offset = reinterpret_cast<uintptr_t>(logicalAddress) & s_pageMask;
-        return static_cast<uintptr_t>(1) << (offset >> s_chunkSizeShift);
+        return static_cast<uint64_t>(1) << (offset >> s_chunkSizeShift);
     }
 
-    template<typename T, typename = typename std::enable_if<std::is_pointer<T>::value>::type>
-    T physicalAddressFor(void* logicalAddress)
+    void* physicalAddressFor(void* logicalAddress)
     {
-        uintptr_t offset = reinterpret_cast<uintptr_t>(logicalAddress) & s_pageMask;
-        void* physicalAddress = reinterpret_cast<uint8_t*>(&m_buffer) + offset;
-        return reinterpret_cast<T>(physicalAddress);
+        return reinterpret_cast<uint8_t*>(logicalAddress) + m_physicalAddressOffset;
     }
 
     void flushWrites();
 
     void* m_baseLogicalAddress { nullptr };
-    uintptr_t m_dirtyBits { 0 };
+    ptrdiff_t m_physicalAddressOffset;
+    uint64_t m_dirtyBits { 0 };
 
+#if ASAN_ENABLED
+    // The ASan stack may contain poisoned words that may be manipulated at ASan's discretion.
+    // We would never touch those words anyway, but let's ensure that the page size is set
+    // such that the chunk size is guaranteed to be exactly sizeof(uintptr_t) so that we won't
+    // inadvertently overwrite one of ASan's words on the stack when we copy back the dirty
+    // chunks.
+    // FIXME: we should consider using the same page size for both ASan and non-ASan builds.
+    // https://bugs.webkit.org/show_bug.cgi?id=176961
+    static constexpr size_t s_pageSize = 64 * sizeof(uintptr_t); // because there are 64 bits in m_dirtyBits.
+#else // not ASAN_ENABLED
     static constexpr size_t s_pageSize = 1024;
+#endif // ASAN_ENABLED
     static constexpr uintptr_t s_pageMask = s_pageSize - 1;
-    static constexpr size_t s_chunksPerPage = sizeof(uintptr_t) * 8; // sizeof(m_dirtyBits) in bits.
+    static constexpr size_t s_chunksPerPage = sizeof(uint64_t) * 8; // number of bits in m_dirtyBits.
     static constexpr size_t s_chunkSize = s_pageSize / s_chunksPerPage;
     static constexpr uintptr_t s_chunkMask = s_chunkSize - 1;
-#if USE(JSVALUE64)
+#if ASAN_ENABLED
+    static_assert(s_chunkSize == sizeof(uintptr_t), "bad chunkSizeShift");
+    static constexpr size_t s_chunkSizeShift = is64Bit() ? 3 : 2;
+#else // no ASAN_ENABLED
     static constexpr size_t s_chunkSizeShift = 4;
-#else
-    static constexpr size_t s_chunkSizeShift = 5;
-#endif
+#endif // ASAN_ENABLED
     static_assert(s_pageSize > s_chunkSize, "bad pageSize or chunkSize");
     static_assert(s_chunkSize == (1 << s_chunkSizeShift), "bad chunkSizeShift");
-
 
     typedef typename std::aligned_storage<s_pageSize, std::alignment_of<uintptr_t>::value>::type Buffer;
     Buffer m_buffer;
@@ -120,40 +151,40 @@ public:
     { }
     Stack(Stack&& other);
 
-    void* lowWatermark() { return m_lowWatermark; }
+    void* lowWatermark()
+    {
+        // We use the chunkAddress for the low watermark because we'll be doing write backs
+        // to the stack in increments of chunks. Hence, we'll treat the lowest address of
+        // the chunk as the low watermark of any given set address.
+        return Page::chunkAddressFor(m_lowWatermark);
+    }
 
     template<typename T>
-    typename std::enable_if<!std::is_same<double, typename std::remove_cv<T>::type>::value, T>::type get(void* address)
+    T get(void* address)
     {
         Page* page = pageFor(address);
         return page->get<T>(address);
     }
+    template<typename T>
+    T get(void* logicalBaseAddress, ptrdiff_t offset)
+    {
+        return get<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset);
+    }
 
-    template<typename T, typename = typename std::enable_if<!std::is_same<double, typename std::remove_cv<T>::type>::value>::type>
+    template<typename T>
     void set(void* address, T value)
     {
         Page* page = pageFor(address);
         page->set<T>(address, value);
 
-        // We use the chunkAddress for the low watermark because we'll be doing write backs
-        // to the stack in increments of chunks. Hence, we'll treat the lowest address of
-        // the chunk as the low watermark of any given set address.
-        void* chunkAddress = Page::chunkAddressFor(address);
-        if (chunkAddress < m_lowWatermark)
-            m_lowWatermark = chunkAddress;
+        if (address < m_lowWatermark)
+            m_lowWatermark = address;
     }
 
     template<typename T>
-    typename std::enable_if<std::is_same<double, typename std::remove_cv<T>::type>::value, T>::type get(void* address)
+    void set(void* logicalBaseAddress, ptrdiff_t offset, T value)
     {
-        Page* page = pageFor(address);
-        return bitwise_cast<double>(page->get<uint64_t>(address));
-    }
-
-    template<typename T, typename = typename std::enable_if<std::is_same<double, typename std::remove_cv<T>::type>::value>::type>
-    void set(void* address, double value)
-    {
-        set<uint64_t>(address, bitwise_cast<uint64_t>(value));
+        set<T>(reinterpret_cast<uint8_t*>(logicalBaseAddress) + offset, value);
     }
 
     JS_EXPORT_PRIVATE Page* ensurePageFor(void* address);

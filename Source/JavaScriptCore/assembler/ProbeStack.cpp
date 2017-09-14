@@ -27,21 +27,41 @@
 #include "ProbeStack.h"
 
 #include <memory>
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(MASM_PROBE)
 
 namespace JSC {
 namespace Probe {
 
+#if ASAN_ENABLED
+// FIXME: we should consider using the copy function for both ASan and non-ASan builds.
+// https://bugs.webkit.org/show_bug.cgi?id=176961
+SUPPRESS_ASAN
+static void copyStackPage(void* dst, void* src, size_t size)
+{
+    ASSERT(roundUpToMultipleOf<sizeof(uintptr_t)>(dst) == dst);
+    ASSERT(roundUpToMultipleOf<sizeof(uintptr_t)>(src) == src);
+    
+    uintptr_t* dstPointer = reinterpret_cast<uintptr_t*>(dst);
+    uintptr_t* srcPointer = reinterpret_cast<uintptr_t*>(src);
+    for (; size; size -= sizeof(uintptr_t))
+        *dstPointer++ = *srcPointer++;
+}
+#else
+#define copyStackPage(dst, src, size) std::memcpy(dst, src, size);
+#endif
+
 Page::Page(void* baseAddress)
     : m_baseLogicalAddress(baseAddress)
+    , m_physicalAddressOffset(reinterpret_cast<uint8_t*>(&m_buffer) - reinterpret_cast<uint8_t*>(baseAddress))
 {
-    memcpy(&m_buffer, baseAddress, s_pageSize);
+    copyStackPage(&m_buffer, baseAddress, s_pageSize);
 }
 
 void Page::flushWrites()
 {
-    uintptr_t dirtyBits = m_dirtyBits;
+    uint64_t dirtyBits = m_dirtyBits;
     size_t offset = 0;
     while (dirtyBits) {
         // Find start.
@@ -56,7 +76,7 @@ void Page::flushWrites()
             size_t size = offset - startOffset;
             uint8_t* src = reinterpret_cast<uint8_t*>(&m_buffer) + startOffset;
             uint8_t* dst = reinterpret_cast<uint8_t*>(m_baseLogicalAddress) + startOffset;
-            memcpy(dst, src, size);
+            copyStackPage(dst, src, size);
         }
         dirtyBits = dirtyBits >> 1;
         offset += s_chunkSize;

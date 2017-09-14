@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2016 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2017 Apple Inc. All Rights Reserved.
  * Copyright (C) 2013 Patrick Gansterer <paroga@paroga.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -202,6 +202,12 @@ template<size_t divisor> inline constexpr size_t roundUpToMultipleOf(size_t x)
 {
     static_assert(divisor && !(divisor & (divisor - 1)), "divisor must be a power of two!");
     return roundUpToMultipleOfImpl(divisor, x);
+}
+
+template<size_t divisor, typename T> inline T* roundUpToMultipleOf(T* x)
+{
+    static_assert(sizeof(T*) == sizeof(size_t), "");
+    return reinterpret_cast<T*>(roundUpToMultipleOf<divisor>(reinterpret_cast<size_t>(x)));
 }
 
 enum BinarySearchMode {

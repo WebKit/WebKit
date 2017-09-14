@@ -600,7 +600,7 @@ void testProbeModifiesStackValues()
             // Fill the stack with values.
             uintptr_t* p = reinterpret_cast<uintptr_t*>(newSP);
             int count = 0;
-            stack.set<double>(p++, 1.23456789);
+            stack.set<double>(p++, 1.234567);
             if (is32Bit())
                 p++; // On 32-bit targets, a double takes up 2 uintptr_t.
             while (p < reinterpret_cast<uintptr_t*>(originalSP))
@@ -631,7 +631,7 @@ void testProbeModifiesStackValues()
             // Validate the stack values.
             uintptr_t* p = reinterpret_cast<uintptr_t*>(newSP);
             int count = 0;
-            CHECK_EQ(stack.get<double>(p++), 1.23456789);
+            CHECK_EQ(stack.get<double>(p++), 1.234567);
             if (is32Bit())
                 p++; // On 32-bit targets, a double takes up 2 uintptr_t.
             while (p < reinterpret_cast<uintptr_t*>(originalSP))
