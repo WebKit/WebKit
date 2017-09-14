@@ -27,6 +27,7 @@
 
 #include "URL.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -68,7 +69,10 @@ struct ResourceLoadStatistics {
     // Timestamp. Default value is negative, 0 means it was reset.
     WallTime mostRecentUserInteractionTime { WallTime::fromRawSeconds(-1) };
     bool grandfathered { false };
-    
+
+    // Storage access
+    HashSet<String> storageAccessUnderTopFrameOrigins;
+
     // Subframe stats
     HashCountedSet<String> subframeUnderTopFrameOrigins;
     

@@ -741,6 +741,8 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
     WKPreferencesSetPaymentRequestEnabled(preferences, true);
 #endif
 
+    WKPreferencesSetStorageAccessAPIEnabled(preferences, true);
+
     platformResetPreferencesToConsistentValues();
 }
 

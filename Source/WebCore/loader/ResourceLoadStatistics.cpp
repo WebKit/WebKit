@@ -46,6 +46,16 @@ static void encodeHashCountedSet(KeyedEncoder& encoder, const String& label, con
     });
 }
 
+static void encodeHashSet(KeyedEncoder& encoder, const String& label, const HashSet<String>& hashSet)
+{
+    if (hashSet.isEmpty())
+        return;
+    
+    encoder.encodeObjects(label, hashSet.begin(), hashSet.end(), [](KeyedEncoder& encoderInner, const String& origin) {
+        encoderInner.encodeString("origin", origin);
+    });
+}
+
 void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
 {
     encoder.encodeString("PrevalentResourceOrigin", highLevelDomain);
@@ -56,7 +66,10 @@ void ResourceLoadStatistics::encode(KeyedEncoder& encoder) const
     encoder.encodeBool("hadUserInteraction", hadUserInteraction);
     encoder.encodeDouble("mostRecentUserInteraction", mostRecentUserInteractionTime.secondsSinceEpoch().value());
     encoder.encodeBool("grandfathered", grandfathered);
-    
+
+    // Storage access
+    encodeHashSet(encoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+
     // Subframe stats
     encodeHashCountedSet(encoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
     
@@ -85,6 +98,18 @@ static void decodeHashCountedSet(KeyedDecoder& decoder, const String& label, Has
     });
 }
 
+static void decodeHashSet(KeyedDecoder& decoder, const String& label, HashSet<String>& hashSet)
+{
+    Vector<String> ignore;
+    decoder.decodeObjects(label, ignore, [&hashSet](KeyedDecoder& decoderInner, String& origin) {
+        if (!decoderInner.decodeString("origin", origin))
+            return false;
+        
+        hashSet.add(origin);
+        return true;
+    });
+}
+
 bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
 {
     if (!decoder.decodeString("PrevalentResourceOrigin", highLevelDomain))
@@ -93,7 +118,10 @@ bool ResourceLoadStatistics::decode(KeyedDecoder& decoder)
     // User interaction
     if (!decoder.decodeBool("hadUserInteraction", hadUserInteraction))
         return false;
-    
+
+    // Storage access
+    decodeHashSet(decoder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+
     // Subframe stats
     decodeHashCountedSet(decoder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
     
@@ -150,6 +178,22 @@ static void appendHashCountedSet(StringBuilder& builder, const String& label, co
     }
 }
 
+static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<String>& hashSet)
+{
+    if (hashSet.isEmpty())
+        return;
+    
+    builder.appendLiteral("    ");
+    builder.append(label);
+    builder.appendLiteral(":\n");
+    
+    for (auto& entry : hashSet) {
+        builder.appendLiteral("        ");
+        builder.append(entry);
+        builder.append('\n');
+    }
+}
+
 String ResourceLoadStatistics::toString() const
 {
     StringBuilder builder;
@@ -166,7 +210,10 @@ String ResourceLoadStatistics::toString() const
     builder.append('\n');
     appendBoolean(builder, "    grandfathered", grandfathered);
     builder.append('\n');
-    
+
+    // Storage access
+    appendHashSet(builder, "storageAccessUnderTopFrameOrigins", storageAccessUnderTopFrameOrigins);
+
     // Subframe stats
     appendHashCountedSet(builder, "subframeUnderTopFrameOrigins", subframeUnderTopFrameOrigins);
     
@@ -196,6 +243,13 @@ static void mergeHashCountedSet(HashCountedSet<T>& to, const HashCountedSet<T>& 
         to.add(entry.key, entry.value);
 }
 
+template <typename T>
+static void mergeHashSet(HashSet<T>& to, const HashSet<T>& from)
+{
+    for (auto& entry : from)
+        to.add(entry);
+}
+
 void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
 {
     ASSERT(other.highLevelDomain == highLevelDomain);
@@ -216,7 +270,10 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
             mostRecentUserInteractionTime = other.mostRecentUserInteractionTime;
     }
     grandfathered |= other.grandfathered;
-    
+
+    // Storage access
+    mergeHashSet(storageAccessUnderTopFrameOrigins, other.storageAccessUnderTopFrameOrigins);
+
     // Subframe stats
     mergeHashCountedSet(subframeUnderTopFrameOrigins, other.subframeUnderTopFrameOrigins);
     

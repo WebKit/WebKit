@@ -1,3 +1,51 @@
+2017-09-13  John Wilander  <wilander@apple.com>
+
+        Introduce Storage Access API (document parts) as an experimental feature
+        https://bugs.webkit.org/show_bug.cgi?id=175759
+        <rdar://problem/34414107>
+
+        Reviewed by Alex Christensen.
+
+        Storage Access API is an experimental feature which allows cross-origin,
+        sandboxed iframes to request access to their first-party storage (as
+        opposed to partitioned storage). This might be restricted to cookies or
+        might cover all stateful mechanisms.
+
+        It introduces the following three developer-facing things:
+        - A new readonly attribute, document.hasStorageAccess.
+        - A new function, document.requestStorageAccess().
+        - A new iframe sandbox token, allow-storage-access-by-user-activation.
+
+        * TestExpectations:
+        * http/tests/storageAccess: Added.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-iframe.html: Added.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-and-deny-storage-access-cross-origin-sandboxed-iframe.html: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-iframe.html: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-iframe.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-with-unique-origin.html: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-without-allow-token.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-iframe.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html: Added.
+        * http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html: Added.
+        * http/tests/storageAccess/request-storage-access-top-frame-expected.txt: Added.
+        * http/tests/storageAccess/request-storage-access-top-frame.html: Added.
+        * http/tests/storageAccess/resources: Added.
+        * http/tests/storageAccess/resources/request-storage-access-iframe.html: Added.
+        * platform/mac-wk2/TestExpectations:
+            New test cases that require a user gesture marked as [ Pass ].
+            Also removed reference to (now closed) https://bugs.webkit.org/show_bug.cgi?id=175170.
+        * platform/wk2/TestExpectations:
+            New test case request-storage-access-top-frame.html marked as [ Pass ].
+
 2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Submitting a form can cause HTMLFormElement's associated elements vector to be mutated during iteration

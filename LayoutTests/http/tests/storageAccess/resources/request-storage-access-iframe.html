@@ -1,0 +1,82 @@
+<html>
+<head>
+    <script>
+        const hashArguments = document.location.hash.substring(1).split(",");
+        const userShouldGrantAccess = hashArguments[0] === "userShouldGrantAccess";
+        const userShouldBeConsulted = hashArguments[1] === "userShouldBeConsulted";
+        const policyShouldGrantAccess = hashArguments[2] === "policyShouldGrantAccess";
+        const isSameOriginIframe = hashArguments[3] === "isSameOriginIframe";
+
+        if (internals && userShouldGrantAccess)
+                internals.setUserGrantsStorageAccess(true);
+
+        function storageAccessShouldBeFalse() {
+            if (document.hasStorageAccess)
+                console.log("FAIL document.hasStorageAccess was true when it was not supposed to.");
+            if (requestStorageAccessReturnValue)
+                console.log("FAIL requestStorageAccessReturnValue was true when it was not supposed to.");
+        }
+
+        function storageAccessShouldBeTrue() {
+            if (!document.hasStorageAccess)
+                console.log("FAIL document.hasStorageAccess was false when it was not supposed to.");
+            if (!requestStorageAccessReturnValue)
+                console.log("FAIL requestStorageAccessReturnValue was false when it was not supposed to.");
+        }
+
+        var requestStorageAccessReturnValue;
+
+        function makeRequestWithoutUserGesture() {
+            storageAccessShouldBeFalse();
+
+            var promise = document.requestStorageAccess();
+            promise.then(function (hasAccess) {
+                requestStorageAccessReturnValue = hasAccess;
+                continueAfterRequestWithoutUserGesture();
+            });
+        }
+
+        function continueAfterRequestWithoutUserGesture() {
+            if (isSameOriginIframe && policyShouldGrantAccess)
+                storageAccessShouldBeTrue();
+            else
+                storageAccessShouldBeFalse();
+        }
+
+        function makeRequestWithUserGesture() {
+            if (isSameOriginIframe && policyShouldGrantAccess)
+                storageAccessShouldBeTrue();
+            else
+                storageAccessShouldBeFalse();
+
+            var promise = document.requestStorageAccess();
+            promise.then(function (hasAccess) {
+                requestStorageAccessReturnValue = hasAccess;
+                continueAfterRequestWithUserGesture();
+            });
+        }
+
+        function continueAfterRequestWithUserGesture() {
+            if (requestStorageAccessReturnValue
+                && document.hasStorageAccess
+                && (userShouldGrantAccess || !userShouldBeConsulted)
+                && policyShouldGrantAccess)
+                console.log("PASS document.hasStorageAccess was granted.");
+            else if (!document.hasStorageAccess
+                    && !requestStorageAccessReturnValue
+                    && ((!userShouldGrantAccess && userShouldBeConsulted) || !policyShouldGrantAccess))
+                console.log("PASS document.hasStorageAccess was denied.");
+            else
+                console.log("FAIL document.hasStorageAccess was " +
+                    (document.hasStorageAccess ? "" : "not ") +
+                    "granted and requestStorageAccessReturnValue was " +
+                    (requestStorageAccessReturnValue ? "" : "not ") +
+                    "granted but should " +
+                    (userShouldGrantAccess && policyShouldGrantAccess ? "" : "not ") +
+                    "have been granted.");
+        }
+    </script>
+</head>
+<body onload="makeRequestWithoutUserGesture()" onclick="makeRequestWithUserGesture()">
+</body>
+</html>

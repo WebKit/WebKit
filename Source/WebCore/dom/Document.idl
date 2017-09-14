@@ -192,6 +192,9 @@ typedef (
     // Non standard (https://developer.apple.com/reference/webkitjs/document/1633863-webkitgetnamedflows).
     [Conditional=CSS_REGIONS] DOMNamedFlowCollection webkitGetNamedFlows();
 
+    // Non standard, to bring up with standards working group.
+    [EnabledBySetting=StorageAccessAPI] readonly attribute boolean hasStorageAccess;
+    [EnabledBySetting=StorageAccessAPI] Promise<boolean> requestStorageAccess();
 
     // Obsolete features from https://html.spec.whatwg.org/multipage/obsolete.html
 

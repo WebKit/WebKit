@@ -3386,6 +3386,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings.setPaymentRequestEnabled(store.getBoolValueForKey(WebPreferencesKey::paymentRequestEnabledKey()));
 #endif
 
+    settings.setStorageAccessAPIEnabled(store.getBoolValueForKey(WebPreferencesKey::storageAccessAPIEnabledKey()));
+    
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

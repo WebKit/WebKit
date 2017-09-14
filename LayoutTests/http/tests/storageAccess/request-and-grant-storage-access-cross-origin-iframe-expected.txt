@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 68: PASS document.hasStorageAccess was denied.
+Tests that cross-origin iframe storage access is denied if the iframe is not sandboxed.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
