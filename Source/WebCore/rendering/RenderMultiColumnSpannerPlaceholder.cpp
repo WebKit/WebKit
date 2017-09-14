@@ -47,6 +47,7 @@ RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder(RenderM
     : RenderBox(flowThread->document(), WTFMove(style), RenderBoxModelObjectFlag)
     , m_spanner(&spanner)
     , m_flowThread(flowThread)
+    , m_weakPtrFactory(this)
 {
 }
 
