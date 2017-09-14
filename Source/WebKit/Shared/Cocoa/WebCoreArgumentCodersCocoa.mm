@@ -332,6 +332,7 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::encode(Encoder
     encoder << contactFields.phone;
     encoder << contactFields.email;
     encoder << contactFields.name;
+    encoder << contactFields.phoneticName;
 }
 
 bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::ContactFields& contactFields)
@@ -343,6 +344,8 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest::ContactFields>::decode(Decoder
     if (!decoder.decode(contactFields.email))
         return false;
     if (!decoder.decode(contactFields.name))
+        return false;
+    if (!decoder.decode(contactFields.phoneticName))
         return false;
 
     return true;
