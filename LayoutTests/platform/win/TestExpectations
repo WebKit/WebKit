@@ -3946,6 +3946,7 @@ webkit.org/b/176866 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-fo
 webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
 webkit.org/b/176880 storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
 webkit.org/b/176660 svg/animations/animations-paused-in-background-page-iframe.html [ Pass Timeout ]
+webkit.org/b/176901 svg/as-image/svg-image-with-data-uri-use-data-uri.svg [ Pass ImageOnlyFailure ]
 
 # DatatransferItem tests are timing out.
 webkit.org/b/176423 editing/pasteboard/datatransfer-items-copy-plaintext.html [ Skip ]

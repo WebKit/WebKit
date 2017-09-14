@@ -1,5 +1,14 @@
 2017-09-14  Per Arne Vollan  <pvollan@apple.com>
 
+        Mark svg/as-image/svg-image-with-data-uri-use-data-uri.svg as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=176901
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2017-09-14  Per Arne Vollan  <pvollan@apple.com>
+
         Fix typo in entries-api test names.
 
         Unreviewed test gardening.
