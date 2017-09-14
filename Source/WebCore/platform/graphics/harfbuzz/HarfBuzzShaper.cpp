@@ -114,11 +114,11 @@ unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX, 
         while (glyphIndex < m_numGlyphs - 1 && m_glyphToCharacterIndexes[glyphIndex + 1] == characterIndex)
             characterWidth += m_advances[++glyphIndex];
 
-        if ((includePartialGlyphs && (targetX < currentX + characterWidth / 2.0))
+        if ((includePartialGlyphs && (targetX <= currentX + characterWidth / 2.0))
             || (!includePartialGlyphs && (targetX < currentX + characterWidth)))
             return rtl() ? std::min(m_numCharacters, characterIndex + 1) : characterIndex;
 
-        if ((includePartialGlyphs && (targetX >= (currentX + characterWidth / 2.0) && targetX < currentX + characterWidth))
+        if ((includePartialGlyphs && (targetX > (currentX + characterWidth / 2.0) && targetX < currentX + characterWidth))
             || (!includePartialGlyphs && (targetX >= currentX && targetX < currentX + characterWidth)))
             break;
 

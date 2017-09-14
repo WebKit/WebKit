@@ -1,3 +1,18 @@
+2017-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Wrong offset returned by HarfBuzzShaper::offsetForPosition() when target point is at the middle of a character
+        https://bugs.webkit.org/show_bug.cgi?id=176897
+
+        Reviewed by Michael Catanzaro.
+
+        We should include the character when the point is greater than the center of the character.
+
+        Fixes: fast/multicol/hit-test-end-of-column-with-line-height.html
+               fast/multicol/newmulticol/compare-with-old-impl/hit-test-end-of-column-with-line-height.html
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition):
+
 2017-09-14  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Add PrivateSymbolMode::{Include,Exclude} for PropertyNameArray
