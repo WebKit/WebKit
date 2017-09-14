@@ -35,7 +35,6 @@ namespace Probe {
 
 Page::Page(void* baseAddress)
     : m_baseLogicalAddress(baseAddress)
-    , m_physicalAddressOffset(reinterpret_cast<uint8_t*>(&m_buffer) - reinterpret_cast<uint8_t*>(baseAddress))
 {
     memcpy(&m_buffer, baseAddress, s_pageSize);
 }

@@ -50,7 +50,6 @@ ExecutableBase* AssemblyHelpers::executableFor(const CodeOrigin& codeOrigin)
     return codeOrigin.inlineCallFrame->baselineCodeBlock->ownerExecutable();
 }
 
-// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 Vector<BytecodeAndMachineOffset>& AssemblyHelpers::decodedCodeMapFor(CodeBlock* codeBlock)
 {
     ASSERT(codeBlock == codeBlock->baselineVersion());
@@ -820,6 +819,61 @@ bool AssemblyHelpers::storeWasmContextNeedsMacroScratchRegister()
 }
 
 #endif // ENABLE(WEBASSEMBLY)
+
+void AssemblyHelpers::debugCall(VM& vm, V_DebugOperation_EPP function, void* argument)
+{
+    size_t scratchSize = sizeof(EncodedJSValue) * (GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters);
+    ScratchBuffer* scratchBuffer = vm.scratchBufferForSize(scratchSize);
+    EncodedJSValue* buffer = static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer());
+
+    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
+#if USE(JSVALUE64)
+        store64(GPRInfo::toRegister(i), buffer + i);
+#else
+        store32(GPRInfo::toRegister(i), buffer + i);
+#endif
+    }
+
+    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
+        move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+        storeDouble(FPRInfo::toRegister(i), GPRInfo::regT0);
+    }
+
+    // Tell GC mark phase how much of the scratch buffer is active during call.
+    move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
+    storePtr(TrustedImmPtr(scratchSize), GPRInfo::regT0);
+
+#if CPU(X86_64) || CPU(ARM) || CPU(ARM64) || CPU(MIPS)
+    move(TrustedImmPtr(buffer), GPRInfo::argumentGPR2);
+    move(TrustedImmPtr(argument), GPRInfo::argumentGPR1);
+    move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+    GPRReg scratch = selectScratchGPR(GPRInfo::argumentGPR0, GPRInfo::argumentGPR1, GPRInfo::argumentGPR2);
+#elif CPU(X86)
+    poke(GPRInfo::callFrameRegister, 0);
+    poke(TrustedImmPtr(argument), 1);
+    poke(TrustedImmPtr(buffer), 2);
+    GPRReg scratch = GPRInfo::regT0;
+#else
+#error "JIT not supported on this platform."
+#endif
+    move(TrustedImmPtr(reinterpret_cast<void*>(function)), scratch);
+    call(scratch);
+
+    move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), GPRInfo::regT0);
+    storePtr(TrustedImmPtr(0), GPRInfo::regT0);
+
+    for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
+        move(TrustedImmPtr(buffer + GPRInfo::numberOfRegisters + i), GPRInfo::regT0);
+        loadDouble(GPRInfo::regT0, FPRInfo::toRegister(i));
+    }
+    for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
+#if USE(JSVALUE64)
+        load64(buffer + i, GPRInfo::toRegister(i));
+#else
+        load32(buffer + i, GPRInfo::toRegister(i));
+#endif
+    }
+}
 
 void AssemblyHelpers::copyCalleeSavesToVMEntryFrameCalleeSavesBufferImpl(GPRReg calleeSavesBuffer)
 {

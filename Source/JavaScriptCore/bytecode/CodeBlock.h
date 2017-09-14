@@ -77,10 +77,6 @@
 
 namespace JSC {
 
-namespace DFG {
-struct OSRExitState;
-} // namespace DFG
-
 class BytecodeLivenessAnalysis;
 class CodeBlockSet;
 class ExecState;
@@ -766,10 +762,8 @@ public:
 
     void countOSRExit() { m_osrExitCounter++; }
 
-    enum class OptimizeAction { None, ReoptimizeNow };
-    OptimizeAction updateOSRExitCounterAndCheckIfNeedToReoptimize(DFG::OSRExitState&);
+    uint32_t* addressOfOSRExitCounter() { return &m_osrExitCounter; }
 
-    // FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
     static ptrdiff_t offsetOfOSRExitCounter() { return OBJECT_OFFSETOF(CodeBlock, m_osrExitCounter); }
 
     uint32_t adjustedExitCountThreshold(uint32_t desiredThreshold);

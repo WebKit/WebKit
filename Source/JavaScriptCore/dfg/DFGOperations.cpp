@@ -1487,6 +1487,62 @@ JSCell* JIT_OPERATION operationCreateClonedArguments(ExecState* exec, Structure*
         exec, structure, argumentStart, length, callee);
 }
 
+JSCell* JIT_OPERATION operationCreateDirectArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, int32_t argumentCount)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer target(&vm, exec);
+    
+    DeferGCForAWhile deferGC(vm.heap);
+    
+    CodeBlock* codeBlock;
+    if (inlineCallFrame)
+        codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+    else
+        codeBlock = exec->codeBlock();
+    
+    unsigned length = argumentCount - 1;
+    unsigned capacity = std::max(length, static_cast<unsigned>(codeBlock->numParameters() - 1));
+    DirectArguments* result = DirectArguments::create(
+        vm, codeBlock->globalObject()->directArgumentsStructure(), length, capacity);
+    
+    result->callee().set(vm, result, callee);
+    
+    Register* arguments =
+        exec->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
+        CallFrame::argumentOffset(0);
+    for (unsigned i = length; i--;)
+        result->setIndexQuickly(vm, i, arguments[i].jsValue());
+    
+    return result;
+}
+
+JSCell* JIT_OPERATION operationCreateClonedArgumentsDuringExit(ExecState* exec, InlineCallFrame* inlineCallFrame, JSFunction* callee, int32_t argumentCount)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer target(&vm, exec);
+    
+    DeferGCForAWhile deferGC(vm.heap);
+    
+    CodeBlock* codeBlock;
+    if (inlineCallFrame)
+        codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+    else
+        codeBlock = exec->codeBlock();
+    
+    unsigned length = argumentCount - 1;
+    ClonedArguments* result = ClonedArguments::createEmpty(
+        vm, codeBlock->globalObject()->clonedArgumentsStructure(), callee, length);
+    
+    Register* arguments =
+        exec->registers() + (inlineCallFrame ? inlineCallFrame->stackOffset : 0) +
+        CallFrame::argumentOffset(0);
+    for (unsigned i = length; i--;)
+        result->putDirectIndex(exec, i, arguments[i].jsValue());
+
+    
+    return result;
+}
+
 JSCell* JIT_OPERATION operationCreateRest(ExecState* exec, Register* argumentStart, unsigned numberOfParamsToSkip, unsigned arraySize)
 {
     VM* vm = &exec->vm();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -211,8 +211,6 @@ public:
 #if ENABLE(JIT)    
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble) if it sees a
     // double. Sets NonNumber if it sees a non-number.
-    // FIXME: This is being supplanted by observeResult(). Remove this one
-    // https://bugs.webkit.org/show_bug.cgi?id=175145 has been fixed.
     void emitObserveResult(CCallHelpers&, JSValueRegs, TagRegistersMode = HaveTagRegisters);
     
     // Sets (Int32Overflow | Int52Overflow | NonNegZeroDouble | NegZeroDouble).

@@ -448,7 +448,6 @@ char* JIT_OPERATION operationReallocateButterflyToHavePropertyStorageWithInitial
 char* JIT_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*, JSObject*, size_t newSize) WTF_INTERNAL;
 
 void JIT_OPERATION operationWriteBarrierSlowPath(ExecState*, JSCell*);
-// FIXME: remove this when we fix https://bugs.webkit.org/show_bug.cgi?id=175145.
 void JIT_OPERATION operationOSRWriteBarrier(ExecState*, JSCell*);
 
 void JIT_OPERATION operationExceptionFuzz(ExecState*);

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2007, 2008, 2009, 2012, 2015 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -344,9 +344,12 @@ public:
     uint32_t tag() const;
     int32_t payload() const;
 
-    // This should only be used by the LLInt C Loop interpreter and OSRExit code who needs
-    // synthesize JSValue from its "register"s holding tag and payload values.
+#if !ENABLE(JIT)
+    // This should only be used by the LLInt C Loop interpreter who needs
+    // synthesize JSValue from its "register"s holding tag and payload
+    // values.
     explicit JSValue(int32_t tag, int32_t payload);
+#endif
 
 #elif USE(JSVALUE64)
     /*

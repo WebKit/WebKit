@@ -571,6 +571,7 @@ public:
     void* targetMachinePCForThrow;
     Instruction* targetInterpreterPCForThrow;
     uint32_t osrExitIndex;
+    void* osrExitJumpDestination;
     bool isExecutingInRegExpJIT { false };
 
     // The threading protocol here is as follows:

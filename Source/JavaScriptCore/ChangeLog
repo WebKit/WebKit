@@ -1,3 +1,109 @@
+2017-09-13  Mark Lam  <mark.lam@apple.com>
+
+        Rolling out r221832: Regresses Speedometer by ~4% and Dromaeo CSS YUI by ~20%.
+        https://bugs.webkit.org/show_bug.cgi?id=176888
+        <rdar://problem/34381832>
+
+        Not reviewed.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * assembler/MacroAssembler.cpp:
+        (JSC::stdFunctionCallback):
+        * assembler/MacroAssemblerPrinter.cpp:
+        (JSC::Printer::printCallback):
+        * assembler/ProbeContext.h:
+        (JSC::Probe:: const):
+        (JSC::Probe::Context::Context):
+        (JSC::Probe::Context::gpr):
+        (JSC::Probe::Context::spr):
+        (JSC::Probe::Context::fpr):
+        (JSC::Probe::Context::gprName):
+        (JSC::Probe::Context::sprName):
+        (JSC::Probe::Context::fprName):
+        (JSC::Probe::Context::pc):
+        (JSC::Probe::Context::fp):
+        (JSC::Probe::Context::sp):
+        (JSC::Probe::CPUState::gpr const): Deleted.
+        (JSC::Probe::CPUState::spr const): Deleted.
+        (JSC::Probe::Context::arg): Deleted.
+        (JSC::Probe::Context::gpr const): Deleted.
+        (JSC::Probe::Context::spr const): Deleted.
+        (JSC::Probe::Context::fpr const): Deleted.
+        * assembler/ProbeFrame.h: Removed.
+        * assembler/ProbeStack.cpp:
+        (JSC::Probe::Page::Page):
+        * assembler/ProbeStack.h:
+        (JSC::Probe::Page::get):
+        (JSC::Probe::Page::set):
+        (JSC::Probe::Page::physicalAddressFor):
+        (JSC::Probe::Stack::lowWatermark):
+        (JSC::Probe::Stack::get):
+        (JSC::Probe::Stack::set):
+        * bytecode/ArithProfile.cpp:
+        * bytecode/ArithProfile.h:
+        * bytecode/ArrayProfile.h:
+        (JSC::ArrayProfile::observeArrayMode): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateOSRExitCounterAndCheckIfNeedToReoptimize): Deleted.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addressOfOSRExitCounter):
+        * bytecode/ExecutionCounter.h:
+        (JSC::ExecutionCounter::hasCrossedThreshold const): Deleted.
+        (JSC::ExecutionCounter::setNewThresholdForOSRExit): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.cpp:
+        (JSC::MethodOfGettingAValueProfile::reportValue): Deleted.
+        * bytecode/MethodOfGettingAValueProfile.h:
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compileImpl):
+        * dfg/DFGJITCode.cpp:
+        (JSC::DFG::JITCode::findPC):
+        * dfg/DFGJITCode.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::linkOSRExits):
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::setPatchableCodeOffset):
+        (JSC::DFG::OSRExit::getPatchableCodeOffsetAsJump const):
+        (JSC::DFG::OSRExit::codeLocationForRepatch const):
+        (JSC::DFG::OSRExit::correctJump):
+        (JSC::DFG::OSRExit::emitRestoreArguments):
+        (JSC::DFG::OSRExit::compileOSRExit):
+        (JSC::DFG::OSRExit::compileExit):
+        (JSC::DFG::OSRExit::debugOperationPrintSpeculationFailure):
+        (JSC::DFG::jsValueFor): Deleted.
+        (JSC::DFG::restoreCalleeSavesFor): Deleted.
+        (JSC::DFG::saveCalleeSavesFor): Deleted.
+        (JSC::DFG::restoreCalleeSavesFromVMEntryFrameCalleeSavesBuffer): Deleted.
+        (JSC::DFG::copyCalleeSavesToVMEntryFrameCalleeSavesBuffer): Deleted.
+        (JSC::DFG::saveOrCopyCalleeSavesFor): Deleted.
+        (JSC::DFG::createDirectArgumentsDuringExit): Deleted.
+        (JSC::DFG::createClonedArgumentsDuringExit): Deleted.
+        (JSC::DFG::emitRestoreArguments): Deleted.
+        (JSC::DFG::OSRExit::executeOSRExit): Deleted.
+        (JSC::DFG::reifyInlinedCallFrames): Deleted.
+        (JSC::DFG::adjustAndJumpToTarget): Deleted.
+        (JSC::DFG::printOSRExit): Deleted.
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExitState::OSRExitState): Deleted.
+        * dfg/DFGOSRExitCompilerCommon.cpp:
+        * dfg/DFGOSRExitCompilerCommon.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGThunks.cpp:
+        (JSC::DFG::osrExitGenerationThunkGenerator):
+        (JSC::DFG::osrExitThunkGenerator): Deleted.
+        * dfg/DFGThunks.h:
+        * jit/AssemblyHelpers.cpp:
+        (JSC::AssemblyHelpers::debugCall):
+        * jit/AssemblyHelpers.h:
+        * jit/JITOperations.cpp:
+        * jit/JITOperations.h:
+        * profiler/ProfilerOSRExit.h:
+        (JSC::Profiler::OSRExit::incCount): Deleted.
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        * runtime/VM.h:
+
 2017-09-13  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Move class/struct used in other class' member out of anonymous namespace
