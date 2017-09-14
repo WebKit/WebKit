@@ -237,6 +237,9 @@ public:
     AutoFillButtonType autoFillButtonType() const { return (AutoFillButtonType)m_autoFillButtonType; }
     WEBCORE_EXPORT void setShowAutoFillButton(AutoFillButtonType);
 
+    bool isAutoFillAvailable() const { return m_isAutoFillAvailable; }
+    void setAutoFillAvailable(bool autoFillAvailable) { m_isAutoFillAvailable = autoFillAvailable; }
+
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&);
 
@@ -447,6 +450,7 @@ private:
     unsigned m_autocomplete : 2; // AutoCompleteSetting
     bool m_isAutoFilled : 1;
     unsigned m_autoFillButtonType : 2; // AutoFillButtonType;
+    bool m_isAutoFillAvailable : 1;
 #if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1;
 #endif

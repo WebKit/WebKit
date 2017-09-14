@@ -70,6 +70,8 @@ public:
     void setHTMLInputElementAutoFilled(bool);
     bool isHTMLInputElementAutoFillButtonEnabled() const;
     void setHTMLInputElementAutoFillButtonEnabled(WebCore::AutoFillButtonType);
+    bool isAutoFillAvailable() const;
+    void setAutoFillAvailable(bool);
     WebCore::IntRect htmlInputElementAutoFillButtonBounds();
     bool htmlInputElementLastChangeWasUserEdit();
     bool htmlTextAreaElementLastChangeWasUserEdit();

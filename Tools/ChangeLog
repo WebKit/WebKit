@@ -1,3 +1,25 @@
+2017-09-14  Maureen Daum  <mdaum@apple.com>
+
+        Introduce the option to mark an HTML element as having AutoFill available.
+        https://bugs.webkit.org/show_bug.cgi?id=176710
+
+        Reviewed by Alex Christensen.
+
+        Add an API test that verifies after we mark a field as having AutoFill available,
+        Accessibility also considers it to have AutoFill available.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Add AutoFillAvailable.mm
+        * TestWebKitAPI/Tests/WebKitCocoa/AutoFillAvailable.mm: Added.
+        Create an input element, mark it as having AutoFill available, then focus it so that
+        we can get the accessibility information for it. Ask accessibility whether it considers
+        the field to have AutoFill available, and pick the alert message based on that.
+        (-[AutoFillAvailable webProcessPlugIn:didCreateBrowserContextController:]):
+        * TestWebKitAPI/Tests/WebKitCocoa/UIDelegate.mm:
+        (TEST):
+        (-[AutoFillAvailableDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        Verify that we get the alert message indicating that accessibility indeed considers
+        the input element as having AutoFill available after we explicitly marked it as so.
+
 2017-09-13  John Wilander  <wilander@apple.com>
 
         Introduce Storage Access API (document parts) as an experimental feature

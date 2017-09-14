@@ -455,6 +455,30 @@ TEST(WebKit, ClickAutoFillButton)
     TestWebKitAPI::Util::run(&done);
 }
 
+@interface AutoFillAvailableDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation AutoFillAvailableDelegate
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)())completionHandler
+{
+    completionHandler();
+    ASSERT_STREQ(message.UTF8String, "autofill available");
+    done = true;
+}
+
+@end
+
+TEST(WebKit, AutoFillAvailable)
+{
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AutoFillAvailable"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    auto delegate = adoptNS([[AutoFillAvailableDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    TestWebKitAPI::Util::run(&done);
+}
+
 @interface PinnedStateObserver : NSObject
 @end
 

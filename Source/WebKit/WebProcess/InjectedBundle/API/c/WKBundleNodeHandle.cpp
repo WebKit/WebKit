@@ -120,6 +120,16 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabledWithButtonType(WK
     toImpl(htmlInputElementHandleRef)->setHTMLInputElementAutoFillButtonEnabled(toAutoFillButtonType(autoFillButtonType));
 }
 
+bool WKBundleNodeHandleGetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef htmlInputElementHandleRef)
+{
+    return toImpl(htmlInputElementHandleRef)->isAutoFillAvailable();
+}
+
+void WKBundleNodeHandleSetHTMLInputElementAutoFillAvailable(WKBundleNodeHandleRef htmlInputElementHandleRef, bool autoFillAvailable)
+{
+    toImpl(htmlInputElementHandleRef)->setAutoFillAvailable(autoFillAvailable);
+}
+
 WKRect WKBundleNodeHandleGetHTMLInputElementAutoFillButtonBounds(WKBundleNodeHandleRef htmlInputElementHandleRef)
 {
     return toAPI(toImpl(htmlInputElementHandleRef)->htmlInputElementAutoFillButtonBounds());

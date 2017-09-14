@@ -1,3 +1,23 @@
+2017-09-14  Maureen Daum  <mdaum@apple.com>
+
+        Introduce the option to mark an HTML element as having AutoFill available.
+        https://bugs.webkit.org/show_bug.cgi?id=176710
+
+        Reviewed by Alex Christensen.
+
+        Introduce the option to mark an HTML element as having AutoFill available. Accessibility
+        can use this property when deciding whether to announce that the focused field offers
+        AutoFill.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isValueAutofillAvailable const):
+        Check if the field is explicitly marked as having AutoFill available.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::isAutoFillAvailable const):
+        (WebCore::HTMLInputElement::setAutoFillAvailable):
+
 2017-09-13  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Move response related features into ResourceResponse
