@@ -210,11 +210,10 @@ void AcceleratedDrawingAreaProxy::waitForAndDispatchDidUpdateBackingStoreState()
         return;
     if (!m_webPageProxy.isViewVisible())
         return;
-
 #if PLATFORM(WAYLAND) && USE(EGL)
     // Never block the UI process in Wayland when waiting for DidUpdateBackingStoreState after a resize,
     // because the nested compositor needs to handle the web process requests that happens while resizing.
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && WaylandCompositor::singleton().isRunning())
+    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland && isInAcceleratedCompositingMode())
         return;
 #endif
 
