@@ -1,3 +1,35 @@
+2017-09-13  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Move class/struct used in other class' member out of anonymous namespace
+        https://bugs.webkit.org/show_bug.cgi?id=176876
+
+        Reviewed by Saam Barati.
+
+        GCC warns if a class has a base or field whose type uses the anonymous namespace
+        and it is defined in an included file. This is because this possibly violates
+        one definition rule (ODR): if an included file has the anonymous namespace, each
+        translation unit creates its private anonymous namespace. Thus, each type
+        inside the anonymous namespace becomes different in each translation unit if
+        the file is included in multiple translation units.
+
+        While the current use in JSC is not violating ODR since these cpp files are included
+        only once for unified sources, specifying `-Wno-subobject-linkage` could miss
+        the actual bugs. So, in this patch, we just move related classes/structs out of
+        the anonymous namespace.
+
+        * dfg/DFGIntegerCheckCombiningPhase.cpp:
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::addition):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::arrayBounds):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::operator! const):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::hash const):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::operator== const):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKey::dump const):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKeyAndAddend::RangeKeyAndAddend):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKeyAndAddend::operator! const):
+        (JSC::DFG::IntegerCheckCombiningPhase::RangeKeyAndAddend::dump const):
+        (JSC::DFG::IntegerCheckCombiningPhase::Range::dump const):
+        * dfg/DFGLICMPhase.cpp:
+
 2017-09-13  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Event Listeners section does not update when listeners are added/removed

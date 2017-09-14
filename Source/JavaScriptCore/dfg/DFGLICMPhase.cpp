@@ -45,24 +45,15 @@
 
 namespace JSC { namespace DFG {
 
-namespace {
-
-using NaturalLoop = SSANaturalLoop;
-
-struct LoopData {
-    LoopData()
-        : preHeader(nullptr)
-    {
-    }
-    
-    ClobberSet writes;
-    BasicBlock* preHeader;
-};
-
-} // anonymous namespace
-
 class LICMPhase : public Phase {
     static const bool verbose = false;
+
+    using NaturalLoop = SSANaturalLoop;
+
+    struct LoopData {
+        ClobberSet writes;
+        BasicBlock* preHeader { nullptr };
+    };
     
 public:
     LICMPhase(Graph& graph)

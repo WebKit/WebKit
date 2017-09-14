@@ -39,140 +39,119 @@
 
 namespace JSC { namespace DFG {
 
-namespace {
-
 namespace DFGIntegerCheckCombiningPhaseInternal {
 static const bool verbose = false;
 }
 
-enum RangeKind {
-    InvalidRangeKind,
-    
-    // This means we did ArithAdd with CheckOverflow.
-    Addition,
-    
-    // This means we did CheckInBounds on some length.
-    ArrayBounds
-};
-
-struct RangeKey {
-    RangeKey()
-        : m_kind(InvalidRangeKind)
-        , m_key(nullptr)
-    {
-    }
-    
-    static RangeKey addition(Edge edge)
-    {
-        RangeKey result;
-        result.m_kind = Addition;
-        result.m_source = edge.sanitized();
-        result.m_key = 0;
-        return result;
-    }
-    
-    static RangeKey arrayBounds(Edge edge, Node* key)
-    {
-        RangeKey result;
-        result.m_kind = ArrayBounds;
-        result.m_source = edge.sanitized();
-        result.m_key = key;
-        return result;
-    }
-    
-    bool operator!() const { return m_kind == InvalidRangeKind; }
-    
-    unsigned hash() const
-    {
-        return m_kind + m_source.hash() + PtrHash<Node*>::hash(m_key);
-    }
-    
-    bool operator==(const RangeKey& other) const
-    {
-        return m_kind == other.m_kind
-            && m_source == other.m_source
-            && m_key == other.m_key;
-    }
-    
-    void dump(PrintStream& out) const
-    {
-        switch (m_kind) {
-        case InvalidRangeKind:
-            out.print("InvalidRangeKind(");
-            break;
-        case Addition:
-            out.print("Addition(");
-            break;
-        case ArrayBounds:
-            out.print("ArrayBounds(");
-            break;
-        }
-        if (m_source)
-            out.print(m_source);
-        else
-            out.print("null");
-        out.print(", ");
-        if (m_key)
-            out.print(m_key);
-        else
-            out.print("null");
-        out.print(")");
-    }
-    
-    RangeKind m_kind;
-    Edge m_source;
-    Node* m_key;
-};
-
-struct RangeKeyAndAddend {
-    RangeKeyAndAddend()
-        : m_addend(0)
-    {
-    }
-    
-    RangeKeyAndAddend(RangeKey key, int32_t addend)
-        : m_key(key)
-        , m_addend(addend)
-    {
-    }
-    
-    bool operator!() const { return !m_key && !m_addend; }
-    
-    void dump(PrintStream& out) const
-    {
-        out.print(m_key, " + ", m_addend);
-    }
-    
-    RangeKey m_key;
-    int32_t m_addend;
-};
-
-struct Range {
-    Range()
-        : m_minBound(0)
-        , m_maxBound(0)
-        , m_count(0)
-        , m_hoisted(false)
-    {
-    }
-    
-    void dump(PrintStream& out) const
-    {
-        out.print("(", m_minBound, " @", m_minOrigin, ") .. (", m_maxBound, " @", m_maxOrigin, "), count = ", m_count, ", hoisted = ", m_hoisted);
-    }
-    
-    int32_t m_minBound;
-    CodeOrigin m_minOrigin;
-    int32_t m_maxBound;
-    CodeOrigin m_maxOrigin;
-    unsigned m_count; // If this is zero then the bounds won't necessarily make sense.
-    bool m_hoisted;
-};
-
-} // anonymous namespace
-
 class IntegerCheckCombiningPhase : public Phase {
 public:
+    enum RangeKind {
+        InvalidRangeKind,
+        
+        // This means we did ArithAdd with CheckOverflow.
+        Addition,
+        
+        // This means we did CheckInBounds on some length.
+        ArrayBounds
+    };
+
+    struct RangeKey {
+        static RangeKey addition(Edge edge)
+        {
+            RangeKey result;
+            result.m_kind = Addition;
+            result.m_source = edge.sanitized();
+            result.m_key = 0;
+            return result;
+        }
+        
+        static RangeKey arrayBounds(Edge edge, Node* key)
+        {
+            RangeKey result;
+            result.m_kind = ArrayBounds;
+            result.m_source = edge.sanitized();
+            result.m_key = key;
+            return result;
+        }
+        
+        bool operator!() const { return m_kind == InvalidRangeKind; }
+        
+        unsigned hash() const
+        {
+            return m_kind + m_source.hash() + PtrHash<Node*>::hash(m_key);
+        }
+        
+        bool operator==(const RangeKey& other) const
+        {
+            return m_kind == other.m_kind
+                && m_source == other.m_source
+                && m_key == other.m_key;
+        }
+        
+        void dump(PrintStream& out) const
+        {
+            switch (m_kind) {
+            case InvalidRangeKind:
+                out.print("InvalidRangeKind(");
+                break;
+            case Addition:
+                out.print("Addition(");
+                break;
+            case ArrayBounds:
+                out.print("ArrayBounds(");
+                break;
+            }
+            if (m_source)
+                out.print(m_source);
+            else
+                out.print("null");
+            out.print(", ");
+            if (m_key)
+                out.print(m_key);
+            else
+                out.print("null");
+            out.print(")");
+        }
+        
+        RangeKind m_kind { InvalidRangeKind };
+        Edge m_source;
+        Node* m_key { nullptr };
+    };
+
+    struct RangeKeyAndAddend {
+        RangeKeyAndAddend() = default;
+        
+        RangeKeyAndAddend(RangeKey key, int32_t addend)
+            : m_key(key)
+            , m_addend(addend)
+        {
+        }
+        
+        bool operator!() const { return !m_key && !m_addend; }
+        
+        void dump(PrintStream& out) const
+        {
+            out.print(m_key, " + ", m_addend);
+        }
+        
+        RangeKey m_key;
+        int32_t m_addend { 0 };
+    };
+
+    struct Range {
+        void dump(PrintStream& out) const
+        {
+            out.print("(", m_minBound, " @", m_minOrigin, ") .. (", m_maxBound, " @", m_maxOrigin, "), count = ", m_count, ", hoisted = ", m_hoisted);
+        }
+        
+        int32_t m_minBound { 0 };
+        CodeOrigin m_minOrigin;
+        int32_t m_maxBound { 0 };
+        CodeOrigin m_maxOrigin;
+        unsigned m_count { 0 }; // If this is zero then the bounds won't necessarily make sense.
+        bool m_hoisted { false };
+    };
+
     IntegerCheckCombiningPhase(Graph& graph)
         : Phase(graph, "integer check combining")
         , m_insertionSet(graph)
