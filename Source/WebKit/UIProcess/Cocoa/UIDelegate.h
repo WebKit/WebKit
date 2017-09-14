@@ -105,10 +105,6 @@ private:
         void setWindowFrame(WebPageProxy&, const WebCore::FloatRect&) final;
         void windowFrame(WebPageProxy&, Function<void(WebCore::FloatRect)>&&) final;
         void didNotHandleWheelEvent(WebPageProxy*, const NativeWebWheelEvent&) final;
-        float headerHeight(WebPageProxy&, WebFrameProxy&) final;
-        float footerHeight(WebPageProxy&, WebFrameProxy&) final;
-        void drawHeader(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
-        void drawFooter(WebPageProxy&, WebFrameProxy&, WebCore::FloatRect&&) final;
         void decidePolicyForNotificationPermissionRequest(WebPageProxy&, API::SecurityOrigin&, Function<void(bool)>&&) final;
         void handleAutoplayEvent(WebPageProxy&, WebCore::AutoplayEvent, OptionSet<WebCore::AutoplayEventFlags>) final;
         void unavailablePluginButtonClicked(WebPageProxy&, WKPluginUnavailabilityReason, API::Dictionary&) final;
@@ -164,16 +160,12 @@ private:
         bool webViewRunModal : 1;
         bool webViewTakeFocus : 1;
         bool webViewDidScroll : 1;
-        bool webViewHeaderHeight : 1;
-        bool webViewFooterHeight : 1;
         bool webViewSetResizable : 1;
         bool webViewSetWindowFrame : 1;
         bool webViewDidNotHandleWheelEvent : 1;
         bool webViewHandleAutoplayEventWithFlags : 1;
         bool webViewUnavailablePlugInButtonClicked : 1;
         bool webViewDidClickAutoFillButtonWithUserInfo : 1;
-        bool webViewDrawHeaderInRectForPageWithTitleURL : 1;
-        bool webViewDrawFooterInRectForPageWithTitleURL : 1;
         bool webViewGetWindowFrameWithCompletionHandler : 1;
         bool webViewMouseDidMoveOverElementWithFlagsUserInfo : 1;
         bool webViewGetToolbarsAreVisibleWithCompletionHandler : 1;

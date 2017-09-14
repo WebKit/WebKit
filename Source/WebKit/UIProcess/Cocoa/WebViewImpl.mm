@@ -1624,7 +1624,7 @@ bool WebViewImpl::canChangeFrameLayout(WebFrameProxy& frame)
 
 NSPrintOperation *WebViewImpl::printOperationWithPrintInfo(NSPrintInfo *printInfo, WebFrameProxy& frame)
 {
-    LOG(Printing, "Creating an NSPrintOperation for frame '%s'", frame.url().string().utf8().data());
+    LOG(Printing, "Creating an NSPrintOperation for frame '%s'", frame.url().utf8().data());
 
     // FIXME: If the frame cannot be printed (e.g. if it contains an encrypted PDF that disallows
     // printing), this function should return nil.

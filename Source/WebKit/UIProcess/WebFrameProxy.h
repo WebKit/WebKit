@@ -77,14 +77,14 @@ public:
 
     FrameLoadState& frameLoadState() { return m_frameLoadState; }
 
-    void loadURL(const WebCore::URL&);
+    void loadURL(const String&);
     void stopLoading() const;
 
-    const WebCore::URL& url() const { return m_frameLoadState.url(); }
-    const WebCore::URL& provisionalURL() const { return m_frameLoadState.provisionalURL(); }
+    const String& url() const { return m_frameLoadState.url(); }
+    const String& provisionalURL() const { return m_frameLoadState.provisionalURL(); }
 
-    void setUnreachableURL(const WebCore::URL&);
-    const WebCore::URL& unreachableURL() const { return m_frameLoadState.unreachableURL(); }
+    void setUnreachableURL(const String&);
+    const String& unreachableURL() const { return m_frameLoadState.unreachableURL(); }
 
     const String& mimeType() const { return m_MIMEType; }
     bool containsPluginDocument() const { return m_containsPluginDocument; }
@@ -105,13 +105,13 @@ public:
     void getMainResourceData(Function<void (API::Data*, CallbackBase::Error)>&&);
     void getResourceData(API::URL*, Function<void (API::Data*, CallbackBase::Error)>&&);
 
-    void didStartProvisionalLoad(const WebCore::URL&);
-    void didReceiveServerRedirectForProvisionalLoad(const WebCore::URL&);
+    void didStartProvisionalLoad(const String& url);
+    void didReceiveServerRedirectForProvisionalLoad(const String& url);
     void didFailProvisionalLoad();
     void didCommitLoad(const String& contentType, WebCertificateInfo&, bool containsPluginDocument);
     void didFinishLoad();
     void didFailLoad();
-    void didSameDocumentNavigation(const WebCore::URL&); // eg. anchor navigation, session state change.
+    void didSameDocumentNavigation(const String&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
     // Policy operations.
