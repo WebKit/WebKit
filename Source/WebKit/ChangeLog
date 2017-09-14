@@ -1,5 +1,22 @@
 2017-09-14  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221647. rdar://problem/34439121
+
+    2017-09-05  Brent Fulgham  <bfulgham@apple.com>
+
+            Relax keychain access to permit users to permanently allow client certificates
+            https://bugs.webkit.org/show_bug.cgi?id=175857
+            <rdar://problem/32293867>
+
+            Reviewed by Alex Christensen.
+
+            Further relax the write permissions on the user's Keychain directory to support local certificates.
+
+            * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+            * WebProcess/com.apple.WebProcess.sb.in:
+
+2017-09-14  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221061. rdar://problem/34439121
 
     2017-08-22  Brent Fulgham  <bfulgham@apple.com>
