@@ -524,43 +524,43 @@ void WebGL2RenderingContext::uniform4ui(WebGLUniformLocation*, GC3Duint, GC3Duin
 {
 }
 
-void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::uniform1uiv(WebGLUniformLocation*, Uint32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::uniform2uiv(WebGLUniformLocation*, Uint32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::uniform3uiv(WebGLUniformLocation*, Uint32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation*, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::uniform4uiv(WebGLUniformLocation*, Uint32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
-void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean, Float32List&&)
 {
 }
 
@@ -568,7 +568,7 @@ void WebGL2RenderingContext::vertexAttribI4i(GC3Duint, GC3Dint, GC3Dint, GC3Dint
 {
 }
 
-void WebGL2RenderingContext::vertexAttribI4iv(GC3Duint, RefPtr<Int32Array>&&)
+void WebGL2RenderingContext::vertexAttribI4iv(GC3Duint, Int32List&&)
 {
 }
 
@@ -576,7 +576,7 @@ void WebGL2RenderingContext::vertexAttribI4ui(GC3Duint, GC3Duint, GC3Duint, GC3D
 {
 }
 
-void WebGL2RenderingContext::vertexAttribI4uiv(GC3Duint, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::vertexAttribI4uiv(GC3Duint, Uint32List&&)
 {
 }
 
@@ -668,7 +668,7 @@ void WebGL2RenderingContext::drawBuffers(const Vector<GC3Denum>& buffers)
     }
 }
 
-void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Int32Array>&&)
+void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, Int32List&&)
 {
     switch (buffer) {
     case GraphicsContext3D::COLOR:
@@ -693,7 +693,7 @@ void WebGL2RenderingContext::clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, 
     }
 }
 
-void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Uint32Array>&&)
+void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, Uint32List&&)
 {
     switch (buffer) {
     case GraphicsContext3D::COLOR:
@@ -712,7 +712,7 @@ void WebGL2RenderingContext::clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer,
     }
 }
 
-void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, RefPtr<Float32Array>&&)
+void WebGL2RenderingContext::clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, Float32List&&)
 {
     switch (buffer) {
     case GraphicsContext3D::COLOR:

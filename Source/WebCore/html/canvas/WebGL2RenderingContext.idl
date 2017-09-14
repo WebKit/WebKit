@@ -40,6 +40,9 @@ typedef unsigned long long GLuint64;
 typedef unrestricted float GLfloat;
 typedef unrestricted float GLclampf;
 typedef (ArrayBuffer or ArrayBufferView) BufferDataSource;
+typedef (Float32Array or sequence<GLfloat>) Float32List;
+typedef (Int32Array or sequence<GLint>) Int32List;
+typedef (Uint32Array or sequence<GLuint>) Uint32List;
 
 // FIXME: Should allow ImageBitmap too.
 typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement) TexImageSource;
@@ -377,20 +380,20 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void uniform2ui(WebGLUniformLocation? location, GLuint v0, GLuint v1);
     void uniform3ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2);
     void uniform4ui(WebGLUniformLocation? location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
-    void uniform1uiv(WebGLUniformLocation? location, Uint32Array value);
-    void uniform2uiv(WebGLUniformLocation? location, Uint32Array value);
-    void uniform3uiv(WebGLUniformLocation? location, Uint32Array value);
-    void uniform4uiv(WebGLUniformLocation? location, Uint32Array value);
-    void uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    void uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    void uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    void uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    void uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
-    void uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32Array value);
+    void uniform1uiv(WebGLUniformLocation? location, Uint32List data);
+    void uniform2uiv(WebGLUniformLocation? location, Uint32List data);
+    void uniform3uiv(WebGLUniformLocation? location, Uint32List data);
+    void uniform4uiv(WebGLUniformLocation? location, Uint32List data);
+    void uniformMatrix2x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
+    void uniformMatrix3x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
+    void uniformMatrix2x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
+    void uniformMatrix4x2fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
+    void uniformMatrix3x4fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
+    void uniformMatrix4x3fv(WebGLUniformLocation? location, GLboolean transpose, Float32List data);
     void vertexAttribI4i(GLuint index, GLint x, GLint y, GLint z, GLint w);
-    void vertexAttribI4iv(GLuint index, Int32Array v);
+    void vertexAttribI4iv(GLuint index, Int32List values);
     void vertexAttribI4ui(GLuint index, GLuint x, GLuint y, GLuint z, GLuint w);
-    void vertexAttribI4uiv(GLuint index, Uint32Array v);
+    void vertexAttribI4uiv(GLuint index, Uint32List values);
     void vertexAttribIPointer(GLuint index, GLint size, GLenum type, GLsizei stride, GLintptr offset);
 
     /* Writing to the drawing buffer */
@@ -401,9 +404,9 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
 
     /* Multiple Render Targets */
     void drawBuffers(sequence<GLenum> buffers);
-    void clearBufferiv(GLenum buffer, GLint drawbuffer, Int32Array values);
-    void clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32Array values);
-    void clearBufferfv(GLenum buffer, GLint drawbuffer, Float32Array values);
+    void clearBufferiv(GLenum buffer, GLint drawbuffer, Int32List values);
+    void clearBufferuiv(GLenum buffer, GLint drawbuffer, Uint32List values);
+    void clearBufferfv(GLenum buffer, GLint drawbuffer, Float32List values);
     void clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 
     /* Query Objects */
