@@ -1,5 +1,20 @@
 2017-09-14  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222008. rdar://problem/34426473
+
+    2017-09-13  Zalan Bujtas  <zalan@apple.com>
+
+            Switch multicolumn's spanner map from raw over to weak pointers.
+            https://bugs.webkit.org/show_bug.cgi?id=176367
+            <rdar://problem/34254896>
+
+            Reviewed by Antti Koivisto.
+
+            * fast/multicol/spanner-crash-when-adding-summary-expected.txt: Added.
+            * fast/multicol/spanner-crash-when-adding-summary.html: Added.
+
+2017-09-14  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222005. rdar://problem/34426487
 
     2017-09-13  Wenson Hsieh  <wenson_hsieh@apple.com>
