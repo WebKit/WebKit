@@ -1422,7 +1422,7 @@ void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountI
         addToGraph(Phantom, get(virtualRegisterForArgument(i, registerOffset)));
 }
 
-unsigned ByteCodeParser::inliningCost(CallVariant callee, int, InlineCallFrame::Kind kind)
+unsigned ByteCodeParser::inliningCost(CallVariant callee, int argumentCountIncludingThis, InlineCallFrame::Kind kind)
 {
     CallMode callMode = InlineCallFrame::callModeFor(kind);
     CodeSpecializationKind specializationKind = specializationKindFor(callMode);
@@ -1454,6 +1454,15 @@ unsigned ByteCodeParser::inliningCost(CallVariant callee, int, InlineCallFrame::
         if (DFGByteCodeParserInternal::verbose)
             dataLog("    Failing because no code block available.\n");
         return UINT_MAX;
+    }
+
+
+    if (!Options::useArityFixupInlining()) {
+        if (codeBlock->numParameters() > argumentCountIncludingThis) {
+            if (DFGByteCodeParserInternal::verbose)
+                dataLog("    Failing because of arity mismatch.\n");
+            return UINT_MAX;
+        }
     }
 
     CapabilityLevel capabilityLevel = inlineFunctionForCapabilityLevel(
