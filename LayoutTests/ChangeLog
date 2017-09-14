@@ -1,3 +1,11 @@
+2017-09-14  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline js/dom/global-constructors-attributes.html for El Capitan.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+
 2017-09-14  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         fast/forms/append-children-during-form-submission.html fails due to a text diff on iOS

@@ -2378,6 +2378,11 @@ PASS Object.getOwnPropertyDescriptor(global, 'UserMessageHandlersNamespace').has
 PASS Object.getOwnPropertyDescriptor(global, 'UserMessageHandlersNamespace').hasOwnProperty('set') is false
 PASS Object.getOwnPropertyDescriptor(global, 'UserMessageHandlersNamespace').enumerable is false
 PASS Object.getOwnPropertyDescriptor(global, 'UserMessageHandlersNamespace').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'VRPose').value is VRPose
+PASS Object.getOwnPropertyDescriptor(global, 'VRPose').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VRPose').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'VRPose').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'VRPose').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').value is VTTCue
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'VTTCue').hasOwnProperty('set') is false
