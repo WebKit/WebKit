@@ -165,7 +165,7 @@
 
 ;; FIXME: This should be removed when <rdar://problem/10479685> is fixed.
 ;; Restrict AppSandboxed processes from creating /Library/Keychains, but allow access to the contents of /Library/Keychains:
-(allow file-read-data file-read-metadata file-write-data
+(allow file-read-data file-read-metadata file-write-create file-write-data
     (subpath "/Library/Keychains")
     (home-subpath "/Library/Keychains"))
 
