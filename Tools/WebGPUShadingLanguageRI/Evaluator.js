@@ -126,12 +126,7 @@ class Evaluator extends Visitor {
         return node.variable.ePtr;
     }
     
-    visitIntLiteral(node)
-    {
-        return EPtr.box(node.value);
-    }
-    
-    visitUintLiteral(node)
+    visitGenericLiteral(node)
     {
         return EPtr.box(node.value);
     }

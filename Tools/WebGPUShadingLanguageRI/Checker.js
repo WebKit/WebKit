@@ -197,14 +197,9 @@ class Checker extends Visitor {
             throw new WTypeError(node.origin.originString, "Non-void function must return a value");
     }
     
-    visitIntLiteral(node)
+    visitGenericLiteral(node)
     {
         return node.type;
-    }
-    
-    visitUintLiteral(node)
-    {
-        return this._program.intrinsics.uint32;
     }
     
     visitNullLiteral(node)

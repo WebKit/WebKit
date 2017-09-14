@@ -72,10 +72,12 @@ class Node {
     }
     
     // Most type variables don't care about this.
-    commitUnification(unificatoinContext) { }
+    prepareToVerify(unificationContext) { }
+    commitUnification(unificationContext) { }
     
     get unifyNode() { return this; }
     get isUnifiable() { return false; }
+    get isLiteral() { return false; }
     
     get isNative() { return false; }
     

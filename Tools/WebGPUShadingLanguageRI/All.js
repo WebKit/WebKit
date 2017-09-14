@@ -32,6 +32,8 @@ load("Expression.js");
 load("VisitorBase.js");
 load("Rewriter.js");
 load("Visitor.js");
+load("CreateLiteral.js");
+load("CreateLiteralType.js");
 
 load("AddressSpace.js");
 load("ArrayRefType.js");
@@ -123,6 +125,7 @@ load("TypeRef.js");
 load("TypeVariable.js");
 load("TypedValue.js");
 load("UintLiteral.js");
+load("UintLiteralType.js");
 load("UnificationContext.js");
 load("UnreachableCodeChecker.js");
 load("VariableDecl.js");

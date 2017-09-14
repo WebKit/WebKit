@@ -24,16 +24,18 @@
  */
 "use strict";
 
-let IntLiteralType = createLiteralType({
-    preferredTypeName: "int",
+let UintLiteralType = createLiteralType({
+    preferredTypeName: "uint",
     
     verifyAsArgument(unificationContext)
     {
         let realThis = unificationContext.find(this);
-        if (!realThis.isNumber)
-            return {result: false, reason: "Cannot use int literal with non-number type " + realThis};
+        if (!realThis.isInt)
+            return {result: false, reason: "Cannot use uint literal with non-integer type " + realThis};
+        if (realThis.isSigned)
+            return {result: false, reason: "Cannot use uint literal with signed type " + realThis};
         if (!realThis.canRepresent(this.value))
-            return {result: false, reason: "Int literal " + this.value + " too large to be represented by type " + realThis};
+            return {result: false, reason: "Uint literal " + this.value + " too large to be represented by type " + realThis};
         return {result: true};
     }
 });

@@ -39,6 +39,7 @@ class NullType extends Type {
     
     get isPrimitive() { return true; }
     get isUnifiable() { return true; }
+    get isLiteral() { return true; }
     
     typeVariableUnify(unificationContext, other)
     {
@@ -73,7 +74,7 @@ class NullType extends Type {
     
     toString()
     {
-        return "null";
+        return "nullType";
     }
 }
 

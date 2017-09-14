@@ -39,7 +39,7 @@ class LiteralTypeChecker extends Visitor {
             throw new Error("Null at " + node.origin.originString + " does not have type");
     }
     
-    visitIntLiteralType(node)
+    visitGenericLiteralType(node)
     {
         if (!node.type)
             throw new Error(node + " at " + node.origin.originString + " does not have type");

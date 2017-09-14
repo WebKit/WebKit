@@ -24,19 +24,12 @@
  */
 "use strict";
 
-class UintLiteral extends Expression {
-    constructor(origin, value)
-    {
-        super(origin);
-        this._value = value;
-    }
+let UintLiteral = createLiteral({
+    preferredTypeName: "uint",
     
-    get value() { return this._value; }
-    get isConstexpr() { return true; }
-    
-    toString()
+    createType(origin, value)
     {
-        return "" + this._value + "u";
+        return new UintLiteralType(origin, value);
     }
-}
+});
 

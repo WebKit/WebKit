@@ -178,7 +178,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return new IntLiteral(token, intVersion);
         }
         if (token = tryConsumeKind("uintLiteral")) {
-            let uintVersion = token.text >>> 0;
+            let uintVersion = token.text.substr(0, token.text.length - 1) >>> 0;
             if (uintVersion + "u" !== token.text)
                 lexer.fail("Integer literal is not 32-bit unsigned integer");
             return new UintLiteral(token, uintVersion);

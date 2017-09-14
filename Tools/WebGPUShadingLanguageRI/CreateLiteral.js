@@ -24,16 +24,25 @@
  */
 "use strict";
 
-let IntLiteralType = createLiteralType({
-    preferredTypeName: "int",
-    
-    verifyAsArgument(unificationContext)
-    {
-        let realThis = unificationContext.find(this);
-        if (!realThis.isNumber)
-            return {result: false, reason: "Cannot use int literal with non-number type " + realThis};
-        if (!realThis.canRepresent(this.value))
-            return {result: false, reason: "Int literal " + this.value + " too large to be represented by type " + realThis};
-        return {result: true};
+function createLiteral(config)
+{
+    class GenericLiteral extends Expression {
+        constructor(origin, value)
+        {
+            super(origin);
+            this._value = value;
+            this.type = config.createType.call(this, origin, value);
+        }
+        
+        get value() { return this._value; }
+        get isConstexpr() { return true; }
+        
+        toString()
+        {
+            return config.preferredTypeName + "Literal<" + this.value + ">";
+        }
     }
-});
+    
+    return GenericLiteral;
+}
+

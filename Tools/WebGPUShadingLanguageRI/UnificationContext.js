@@ -91,6 +91,19 @@ class UnificationContext {
     
     verify()
     {
+        // We do a two-phase pre-verification. This gives literals a chance to select a more specific type.
+        let preparations = [];
+        for (let node of this.nodes) {
+            let preparation = node.prepareToVerify(this);
+            if (preparation)
+                preparations.push(preparation);
+        }
+        for (let preparation of preparations) {
+            let result = preparation();
+            if (!result.result)
+                return result;
+        }
+        
         for (let typeParameter of this._typeParameters) {
             let result = typeParameter.verifyAsParameter(this);
             if (!result.result)
@@ -102,12 +115,14 @@ class UnificationContext {
             let result = typeArgument.verifyAsArgument(this);
             if (!result.result)
                 return result;
+            if (typeArgument.isLiteral)
+                continue;
             argumentSet.add(this.find(typeArgument));
             numTypeVariableArguments++;
         }
         if (argumentSet.size == numTypeVariableArguments)
             return {result: true};
-        return {result: false, reason: "Type variables used as arguments got unified"};
+        return {result: false, reason: "Type variables used as arguments got unified with each other"};
     }
     
     get conversionCost()

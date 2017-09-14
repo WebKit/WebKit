@@ -65,7 +65,7 @@ function checkNumber(program, result, expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
-function makeUInt(program, value)
+function makeUint(program, value)
 {
     return TypedValue.box(program.intrinsics.uint32, value);
 }
@@ -82,7 +82,7 @@ function checkInt(program, result, expected)
     checkNumber(program, result, expected);
 }
 
-function checkUInt(program, result, expected)
+function checkUint(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.uint32))
         throw new Error("Wrong result type: " + result.type);
@@ -149,20 +149,20 @@ function TEST_intSimpleMath() {
 
 function TEST_uintSimpleMath() {
     let program = doPrep("uint foo(uint x, uint y) { return x + y; }");
-    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 12);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 12);
     program = doPrep("uint foo(uint x, uint y) { return x - y; }");
-    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 2);
-    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 5), makeUInt(program, 7)]), 4294967294);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 2);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 5), makeUint(program, 7)]), 4294967294);
     program = doPrep("uint foo(uint x, uint y) { return x * y; }");
-    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), 35);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 35);
     program = doPrep("uint foo(uint x, uint y) { return x / y; }");
-    checkUInt(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 2)]), 3);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 2)]), 3);
 }
 
 function TEST_equality() {
     let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), false);
-    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 7)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), true);
     program = doPrep("bool foo(int x, int y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), true);
@@ -182,8 +182,8 @@ function TEST_logicalNegation()
 
 function TEST_notEquality() {
     let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
-    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 5)]), true);
-    checkBool(program, callFunction(program, "foo", [], [makeUInt(program, 7), makeUInt(program, 7)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), false);
     program = doPrep("bool foo(int x, int y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), false);
@@ -1457,12 +1457,44 @@ function TEST_intOverloadResolutionGeneric()
 
 function TEST_intLiteralGeneric()
 {
-    checkFail(
-        () => doPrep(`
-            int foo<T>(T) { return 1; }
-            int bar() { return foo(42); }
-        `),
-        (e) => e instanceof WTypeError);
+    let program = doPrep(`
+        int foo<T>(T x) { return 3478; }
+        int bar() { return foo(42); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 3478);
+}
+
+function TEST_intLiteralGenericWithProtocols()
+{
+    let program = doPrep(`
+        protocol ConvertibleToInt {
+            operator int(ConvertibleToInt);
+        }
+        int foo<T:ConvertibleToInt>(T x) { return int(x); }
+        int bar() { return foo(42); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 42);
+}
+
+function TEST_uintLiteralGeneric()
+{
+    let program = doPrep(`
+        int foo<T>(T x) { return 3478; }
+        int bar() { return foo(42u); }
+    `);
+    checkInt(program, callFunction(program, "bar", [], []), 3478);
+}
+
+function TEST_uintLiteralGenericWithProtocols()
+{
+    let program = doPrep(`
+        protocol ConvertibleToUint {
+            operator uint(ConvertibleToUint);
+        }
+        uint foo<T:ConvertibleToUint>(T x) { return uint(x); }
+        uint bar() { return foo(42u); }
+    `);
+    checkUint(program, callFunction(program, "bar", [], []), 42);
 }
 
 function TEST_intLiteralGenericSpecific()
@@ -2057,6 +2089,89 @@ function TEST_protocolExtendsTwo()
         }
     `);
     checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91 + 39);
+}
+
+function TEST_twoIntLiterals()
+{
+    let program = doPrep(`
+        bool foo()
+        {
+            return 42 == 42;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], []), true);
+}
+
+function TEST_unifyDifferentLiterals()
+{
+    checkFail(
+        () => doPrep(`
+            void bar<T>(T, T)
+            {
+            }
+            void foo()
+            {
+                bar(42, 42u);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_unifyDifferentLiteralsBackwards()
+{
+    checkFail(
+        () => doPrep(`
+            void bar<T>(T, T)
+            {
+            }
+            void foo()
+            {
+                bar(42u, 42);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_unifyVeryDifferentLiterals()
+{
+    checkFail(
+        () => doPrep(`
+            void bar<T>(T, T)
+            {
+            }
+            void foo()
+            {
+                bar(42, null);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_unifyVeryDifferentLiteralsBackwards()
+{
+    checkFail(
+        () => doPrep(`
+            void bar<T>(T, T)
+            {
+            }
+            void foo()
+            {
+                bar(null, 42);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_assignUintToInt()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                int x = 42u;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Type mismatch in variable initialization") != -1);
 }
 
 let filter = /.*/; // run everything by default

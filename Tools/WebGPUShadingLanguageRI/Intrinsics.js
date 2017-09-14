@@ -66,6 +66,7 @@ class Intrinsics {
                 this.int32 = type;
                 type.isInt = true;
                 type.isNumber = true;
+                type.isSigned = true;
                 type.canRepresent = value => isBitwiseEquivalent(value | 0, value);
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
@@ -77,6 +78,7 @@ class Intrinsics {
                 this.uint32 = type;
                 type.isInt = true;
                 type.isNumber = true;
+                type.isSigned = false;
                 type.canRepresent = value => isBitwiseEquivalent(value >>> 0, value);
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);

@@ -1,3 +1,152 @@
+2017-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL IntLiteralType should become int32 if unified with a type variable
+        https://bugs.webkit.org/show_bug.cgi?id=176707
+
+        Reviewed by Myles Maxfield.
+        
+        This makes it so that this works:
+        
+            T foo<T>(T x) { return x; }
+            foo(42); // T becomes int32
+        
+        Previously, it did not work because IntLiteralType did not recognize TypeVariable as a number. Also,
+        TypeVariable would try to evaluate protocol inheritance of IntLiteralType, which would not go well. One
+        of the tests that this patch adds didn't just fail; it gave such an absurd 7-line type error that I felt
+        like I was using SML.
+        
+        This fixes the problem by introducing what I think is a super deterministic way of handling literals and
+        type variables:
+        
+        Before verifying a unification context, we now give all literals a chance to perform an extra 
+        unification step. This is a two-phase process. This ensures that the unification performed by one 
+        literal does not throw off the logic of some other literal. For example, if we do:
+        
+            void foo<T>(T, T) { }
+            foo(42, 42u);
+        
+        Then we want to always fail to compile, rather than sometimes succeeding. So, we first ask each literal
+        if it thinks that it needs to do extra unification. Both of the literals will report that they want to
+        in this case, because they will notice that they got unified with either at type variable or a literal,
+        which isn't specific enough. Then after they all register to do extra unification, they will both try to
+        unify with their preferred types (int32 for 42, uint32 for 42u). The first one will succeed, and the
+        second will give an error.
+        
+        Without the special two-phase arrangement, it was possible to either get a type error or not depending 
+        on the order - for example foo(42, 42u) might fail while foo(42u, 42) succeeds. It was definitely not
+        decidable, at least not unless you mandate the unification order as part of the type system spec. I 
+        think that would have been nuts.
+        
+        Both IntLiteral and UintLiteral are now "flexible"; the uint one will reject non-int or signed int
+        types and will prefer uint, but otherwise it's the same logic. This means that this will be valid:
+        
+            uint8 x = 5u;
+        
+        But this is still wrong:
+        
+            int x = 5u;
+        
+        To make this easy, I turned IntLiteral and UintLiteral (and IntLiteralType and UintLiteralType) into
+        factory-built generic types (see createLiteral() and createLiteralType()). Because visitors use the
+        constructor's declared name (GenericLiteral and GenericLiteralType in this case), it means that we can
+        share a ton of code between the different literals. I love that ES6 lets you do that.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/CreateLiteral.js: Added.
+        (createLiteral.GenericLiteral):
+        (createLiteral.GenericLiteral.prototype.get value):
+        (createLiteral.GenericLiteral.prototype.get isConstexpr):
+        (createLiteral.GenericLiteral.prototype.toString):
+        (createLiteral):
+        * WebGPUShadingLanguageRI/CreateLiteralType.js: Added.
+        (createLiteralType.GenericLiteralType):
+        (createLiteralType.GenericLiteralType.prototype.get origin):
+        (createLiteralType.GenericLiteralType.prototype.get value):
+        (createLiteralType.GenericLiteralType.prototype.get isPrimitive):
+        (createLiteralType.GenericLiteralType.prototype.get isUnifiable):
+        (createLiteralType.GenericLiteralType.prototype.get isLiteral):
+        (createLiteralType.GenericLiteralType.prototype.typeVariableUnify):
+        (createLiteralType.GenericLiteralType.prototype.unifyImpl):
+        (createLiteralType.GenericLiteralType.prototype.prepareToVerify):
+        (createLiteralType.GenericLiteralType.prototype.verifyAsArgument):
+        (createLiteralType.GenericLiteralType.prototype.verifyAsParameter):
+        (createLiteralType.GenericLiteralType.prototype.conversionCost):
+        (createLiteralType.GenericLiteralType.prototype.commitUnification):
+        (createLiteralType.GenericLiteralType.prototype.toString):
+        (createLiteralType):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitIntLiteral): Deleted.
+        (Evaluator.prototype.visitUintLiteral): Deleted.
+        * WebGPUShadingLanguageRI/IntLiteral.js:
+        (let.IntLiteral.createLiteral.createType):
+        (IntLiteral): Deleted.
+        (IntLiteral.prototype.get value): Deleted.
+        (IntLiteral.prototype.get isConstexpr): Deleted.
+        (IntLiteral.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/IntLiteralType.js:
+        (IntLiteralType): Deleted.
+        (IntLiteralType.prototype.get origin): Deleted.
+        (IntLiteralType.prototype.get value): Deleted.
+        (IntLiteralType.prototype.get isPrimitive): Deleted.
+        (IntLiteralType.prototype.get isUnifiable): Deleted.
+        (IntLiteralType.prototype.typeVariableUnify): Deleted.
+        (IntLiteralType.prototype.unifyImpl): Deleted.
+        (IntLiteralType.prototype.verifyAsArgument): Deleted.
+        (IntLiteralType.prototype.verifyAsParameter): Deleted.
+        (IntLiteralType.prototype.conversionCost): Deleted.
+        (IntLiteralType.prototype.commitUnification): Deleted.
+        (IntLiteralType.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LiteralTypeChecker.js:
+        (LiteralTypeChecker.prototype.visitIntLiteralType): Deleted.
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.prepareToVerify):
+        (Node.prototype.commitUnification):
+        (Node.prototype.get isLiteral):
+        * WebGPUShadingLanguageRI/NullType.js:
+        (NullType.prototype.get isLiteral):
+        (NullType.prototype.toString):
+        (NullType):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitGenericLiteralType):
+        (Rewriter.prototype.visitIntLiteral): Deleted.
+        (Rewriter.prototype.visitIntLiteralType): Deleted.
+        (Rewriter.prototype.visitUintLiteral): Deleted.
+        (Rewriter.prototype.visitBoolLiteral): Deleted.
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeUint):
+        (checkUint):
+        (TEST_uintSimpleMath):
+        (TEST_equality):
+        (TEST_notEquality):
+        (TEST_intLiteralGeneric):
+        (TEST_intLiteralGenericWithProtocols):
+        (TEST_uintLiteralGeneric):
+        (TEST_uintLiteralGenericWithProtocols):
+        (TEST_intLiteralGenericSpecific):
+        (TEST_twoIntLiterals):
+        (TEST_unifyDifferentLiterals):
+        (makeUInt): Deleted.
+        (checkUInt): Deleted.
+        * WebGPUShadingLanguageRI/Type.js:
+        * WebGPUShadingLanguageRI/UintLiteral.js:
+        (let.UintLiteral.createLiteral.createType):
+        (UintLiteral): Deleted.
+        (UintLiteral.prototype.get value): Deleted.
+        (UintLiteral.prototype.get isConstexpr): Deleted.
+        (UintLiteral.prototype.toString): Deleted.
+        * WebGPUShadingLanguageRI/UintLiteralType.js: Added.
+        (let.UintLiteralType.createLiteralType.verifyAsArgument):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext.prototype.verify):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+
 2017-09-14  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r221868.

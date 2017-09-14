@@ -211,24 +211,19 @@ class Rewriter extends VisitorBase {
         return new Break(node.origin);
     }
     
-    visitIntLiteral(node)
+    visitGenericLiteral(node)
     {
         let result = new IntLiteral(node.origin, node.value);
         result.type = node.type.visit(this);
         return result;
     }
     
-    visitIntLiteralType(node)
+    visitGenericLiteralType(node)
     {
-        let result = new IntLiteralType(node.origin, node.value);
+        let result = new node.constructor(node.origin, node.value);
         result.type = node.type ? node.type.visit(this) : null;
-        result.intType = node.intType.visit(this);
+        result.preferredType = node.preferredType.visit(this);
         return result;
-    }
-
-    visitUintLiteral(node)
-    {
-        return node;
     }
 
     visitBoolLiteral(node)

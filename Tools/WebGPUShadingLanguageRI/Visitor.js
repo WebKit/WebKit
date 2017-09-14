@@ -255,20 +255,16 @@ class Visitor extends VisitorBase {
     {
     }
     
-    visitIntLiteral(node)
+    visitGenericLiteral(node)
     {
         node.type.visit(this);
     }
     
-    visitIntLiteralType(node)
+    visitGenericLiteralType(node)
     {
         if (node.type)
             node.type.visit(this);
-        node.intType.visit(this);
-    }
-    
-    visitUintLiteral(node)
-    {
+        node.preferredType.visit(this);
     }
     
     visitNullLiteral(node)
