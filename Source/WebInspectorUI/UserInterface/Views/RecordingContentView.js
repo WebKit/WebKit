@@ -136,6 +136,20 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         return supplementalRepresentedObjects;
     }
 
+    get supportsSave()
+    {
+        return true;
+    }
+
+    get saveData()
+    {
+        return {
+            url: "web-inspector:///Recording.json",
+            content: JSON.stringify(this.representedObject.toJSON()),
+            forceSaveAs: true,
+        };
+    }
+
     // Private
 
     _generateContentCanvas2D(index, options = {})

@@ -185,14 +185,11 @@ WI.RecordingNavigationSidebarPanel = class RecordingNavigationSidebarPanel exten
 
     _exportNavigationItemClicked(event)
     {
-        if (!this._recording)
+        if (!this._recording || !this.contentBrowser || !this.contentBrowser.currentContentView || !this.contentBrowser.currentContentView.supportsSave)
             return;
 
         const forceSaveAs = true;
-        WI.saveDataToFile({
-            url: "web-inspector:///Recording.json",
-            content: JSON.stringify(this._recording.toJSON()),
-        }, forceSaveAs);
+        WI.saveDataToFile(this.contentBrowser.currentContentView.saveData, forceSaveAs);
     }
 };
 
