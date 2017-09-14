@@ -48,10 +48,6 @@ CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
 NSCursor *(*wkCursor)(const char*);
 
-NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
-NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
-
-
 #if !PLATFORM(IOS)
 CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);

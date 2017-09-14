@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,36 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WebSystemInterface.h"
+#pragma once
 
-#import <WebCore/WebCoreSystemInterface.h>
-#import <WebKitSystemInterface.h>
+#if USE(APPLE_INTERNAL_SDK)
 
-#define INIT(function) wk##function = WK##function
+#include <SpeechSynthesis/SpeechSynthesisPriv.h>
 
-void InitWebCoreSystemInterface(void)
-{
-    static dispatch_once_t initOnce;
-    
-    dispatch_once(&initOnce, ^{
-#if !PLATFORM(IOS)
-        INIT(DrawBezeledTextArea);
-        INIT(DrawMediaSliderTrack);
-        INIT(DrawMediaUIPart);
-        INIT(HitTestMediaUIPart);
-        INIT(MeasureMediaUIPart);
-        INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
-        INIT(CopyDefaultSearchProviderDisplayName);
-        INIT(Cursor);
-        INIT(NSElasticDeltaForTimeDelta);
-        INIT(NSElasticDeltaForReboundDelta);
-        INIT(NSReboundDeltaForElasticDelta);
 #endif
 
-        INIT(ExernalDeviceTypeForPlayer);
-        INIT(ExernalDeviceDisplayNameForPlayer);
+WTF_EXTERN_C_BEGIN
 
-        INIT(QueryDecoderAvailability);
-    });
-}
+CFArrayRef CopySpeechSynthesisVoicesForMode(CFTypeRef mode);
+CFStringRef GetIdentifierStringForPreferredVoiceInListWithLocale(CFArrayRef voices, CFLocaleRef);
+
+WTF_EXTERN_C_END

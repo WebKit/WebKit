@@ -54,8 +54,6 @@ void InitWebCoreSystemInterface(void)
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
     INIT(CopyDefaultSearchProviderDisplayName);
     INIT(Cursor);
-    INIT(SpeechSynthesisGetVoiceIdentifiers);
-    INIT(SpeechSynthesisGetDefaultVoiceIdentifierForLocale);
 #endif
 
 #if !PLATFORM(IOS)

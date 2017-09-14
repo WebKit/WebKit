@@ -143,11 +143,6 @@ extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 
 extern NSCursor *(*wkCursor)(const char*);
 #endif // !PLATFORM(IOS)
-    
-#if !PLATFORM(IOS)
-extern NSArray *(*wkSpeechSynthesisGetVoiceIdentifiers)(void);
-extern NSString *(*wkSpeechSynthesisGetDefaultVoiceIdentifierForLocale)(NSLocale *);
-#endif // !PLATFORM(IOS)
 
 #if PLATFORM(IOS)
 extern void (*wkSetLayerContentsScale)(CALayer *);
