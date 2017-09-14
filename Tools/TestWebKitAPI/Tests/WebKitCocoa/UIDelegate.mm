@@ -41,6 +41,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKHitTestResult.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 #if PLATFORM(MAC)
 #import <Carbon/Carbon.h>
@@ -280,6 +281,93 @@ TEST(WebKit, WindowFrame)
     [webView loadHTMLString:@"<script>moveBy(10,20);alert(outerWidth);</script>" baseURL:nil];
     TestWebKitAPI::Util::run(&receivedWindowFrame);
     TestWebKitAPI::Util::run(&done);
+}
+
+enum class Callback {
+    HeaderHeight,
+    FooterHeight,
+    DrawHeader,
+    DrawFooter,
+};
+
+static Vector<Callback> callbacks;
+
+@interface PrintDelegate : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation PrintDelegate
+
+- (void)_webView:(WKWebView *)webView printFrame:(_WKFrameHandle *)frame
+{
+    done = true;
+}
+
+- (CGFloat)_webViewHeaderHeight:(WKWebView *)webView
+{
+    callbacks.append(Callback::HeaderHeight);
+    return 3.14159;
+}
+
+- (CGFloat)_webViewFooterHeight:(WKWebView *)webView
+{
+    callbacks.append(Callback::FooterHeight);
+    return 2.71828;
+}
+
+- (void)_webView:(WKWebView *)webView drawHeaderInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url
+{
+    EXPECT_EQ(rect.origin.x, 72);
+    EXPECT_TRUE(fabs(rect.origin.y - 698.858398) < .00001);
+    EXPECT_TRUE(fabs(rect.size.height - 3.141590) < .00001);
+    EXPECT_EQ(rect.size.width, 468.000000);
+    EXPECT_STREQ(title.UTF8String, "test_title");
+    EXPECT_STREQ(url.absoluteString.UTF8String, "http://example.com/");
+    callbacks.append(Callback::DrawHeader);
+}
+
+- (void)_webView:(WKWebView *)webView drawFooterInRect:(CGRect)rect forPageWithTitle:(NSString *)title URL:(NSURL *)url
+{
+    EXPECT_EQ(rect.origin.x, 72);
+    EXPECT_EQ(rect.origin.y, 90);
+    EXPECT_TRUE(fabs(rect.size.height - 2.718280) < .00001);
+    EXPECT_EQ(rect.size.width, 468.000000);
+    EXPECT_STREQ(url.absoluteString.UTF8String, "http://example.com/");
+    callbacks.append(Callback::DrawFooter);
+    const size_t expectedFinalCallbackSize = 39;
+    if (callbacks.size() == expectedFinalCallbackSize)
+        done = true;
+}
+
+@end
+
+bool callbacksEqual(const Vector<Callback> a, const Vector<Callback> b)
+{
+    if (a.size() != b.size())
+        return false;
+    for (size_t i = 0; i < a.size(); ++i) {
+        if (a[i] != b[i])
+            return false;
+    }
+    return true;
+}
+
+TEST(WebKit, PrintFrame)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto delegate = adoptNS([[PrintDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:@"<head><title>test_title</title></head><body onload='print()'>hello world!</body>" baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    NSPrintOperation *operation = [webView _printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]];
+    EXPECT_TRUE(operation.canSpawnSeparateThread);
+    EXPECT_STREQ(operation.jobTitle.UTF8String, "test_title");
+
+    [operation runOperationModalForWindow:[webView hostWindow] delegate:nil didRunSelector:nil contextInfo:nil];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE(callbacksEqual(callbacks, { Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::DrawHeader, Callback::DrawFooter, Callback::HeaderHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::DrawHeader, Callback::DrawFooter, Callback::HeaderHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::FooterHeight, Callback::HeaderHeight, Callback::DrawHeader, Callback::DrawFooter }));
 }
 
 @interface NotificationDelegate : NSObject <WKUIDelegatePrivate> {

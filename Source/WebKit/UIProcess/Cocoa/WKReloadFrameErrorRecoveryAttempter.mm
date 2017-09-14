@@ -69,7 +69,7 @@
     if (!webFrameProxy)
         return NO;
 
-    webFrameProxy->loadURL(_urlString);
+    webFrameProxy->loadURL(WebCore::URL(WebCore::URL(), _urlString));
     return YES;
 }
 
