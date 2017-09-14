@@ -1,3 +1,21 @@
+2017-09-14  Youenn Fablet  <youenn@apple.com>
+
+        RTCDataChannel connectivity issues in Safari 11
+        https://bugs.webkit.org/show_bug.cgi?id=173052
+        <rdar://problem/32712143>
+
+        Reviewed by Alex Christensen.
+
+        Covered by updated test.
+
+        Before the patch, when sending an ArrayBufferView, RTCDataChannel was sending the whole ArrayBuffer backing the ArrayBufferView.
+        With this patch, RTCDataChannel will now send only the bytes the ArrayBufferView is exposing.
+
+        * Modules/mediastream/RTCDataChannel.cpp:
+        (WebCore::RTCDataChannel::send): Correctly handling sending of ArrayBufferView.
+        (WebCore::RTCDataChannel::sendRawData): Helper routine for raw data sending.
+        * Modules/mediastream/RTCDataChannel.h:
+
 2017-09-14  Antti Koivisto  <antti@apple.com>
 
         Computing animated style should not require renderers

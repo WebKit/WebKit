@@ -88,6 +88,8 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
+    ExceptionOr<void> sendRawData(const char* data, size_t length);
+
     // ActiveDOMObject API
     void stop() final;
     const char* activeDOMObjectName() const final { return "RTCDataChannel"; }
