@@ -42,6 +42,7 @@ WI.loaded = function()
     InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
     InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
     InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
+    InspectorBackend.registerMemoryDispatcher(new WI.MemoryObserver);
     InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
     InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
     InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);

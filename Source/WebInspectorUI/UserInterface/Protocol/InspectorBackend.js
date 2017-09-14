@@ -286,12 +286,12 @@ InspectorBackend.Agent = class InspectorBackendAgent
     dispatchEvent(eventName, eventArguments)
     {
         if (!this._dispatcher) {
-            console.error("No domain dispatcher registered for domain '" + this._domainName + "'");
+            console.error(`No domain dispatcher registered for domain '${this._domainName}', for event '${this._domainName}.${eventName}'`);
             return false;
         }
 
         if (!(eventName in this._dispatcher)) {
-            console.error("Protocol Error: Attempted to dispatch an unimplemented method '" + this._domainName + "." + eventName + "'");
+            console.error(`Protocol Error: Attempted to dispatch an unimplemented method '${this._domainName}.${eventName}'`);
             return false;
         }
 
