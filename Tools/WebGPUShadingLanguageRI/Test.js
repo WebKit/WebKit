@@ -1465,7 +1465,7 @@ function TEST_intLiteralGeneric()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_intLiteralGeneric()
+function TEST_intLiteralGenericSpecific()
 {
     let program = doPrep(`
         T foo<T>(T x) { return x; }
