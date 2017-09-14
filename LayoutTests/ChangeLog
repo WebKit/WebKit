@@ -1,3 +1,34 @@
+2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline should show when events preventDefault() was called on an event or not
+        https://bugs.webkit.org/show_bug.cgi?id=176824
+        <rdar://problem/34290931>
+
+        Reviewed by Devin Rousso.
+
+        * inspector/timeline/resources/timeline-event-utilities.js: Added.
+        (TestPage.registerInitializer.window.captureTimelineWithScript):
+        (TestPage.registerInitializer):
+        (finishRecording):
+        Helper code for creating a recording from a function.
+
+        * inspector/timeline/timeline-event-CancelAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-CancelAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-EventDispatch-expected.txt: Added.
+        * inspector/timeline/timeline-event-EventDispatch.html: Added.
+        * inspector/timeline/timeline-event-FireAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-FireAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-RequestAnimationFrame-expected.txt: Added.
+        * inspector/timeline/timeline-event-RequestAnimationFrame.html: Added.
+        * inspector/timeline/timeline-event-TimerFire-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerFire.html: Added.
+        * inspector/timeline/timeline-event-TimerInstall-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerInstall.html: Added.
+        * inspector/timeline/timeline-event-TimerRemove-expected.txt: Added.
+        * inspector/timeline/timeline-event-TimerRemove.html: Added.
+        Tests for different, specific, Timeline domain EventTypes.
+        This includes EventDispatch with its new "defaultPrevented" details data.
+
 2017-09-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline a test after r222005.

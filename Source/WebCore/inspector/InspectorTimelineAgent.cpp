@@ -311,8 +311,12 @@ void InspectorTimelineAgent::willDispatchEvent(const Event& event, Frame* frame)
     pushCurrentRecord(TimelineRecordFactory::createEventDispatchData(event), TimelineRecordType::EventDispatch, false, frame);
 }
 
-void InspectorTimelineAgent::didDispatchEvent()
+void InspectorTimelineAgent::didDispatchEvent(bool defaultPrevented)
 {
+    TimelineRecordEntry& entry = m_recordStack.last();
+    ASSERT(entry.type == TimelineRecordType::EventDispatch);
+    TimelineRecordFactory::appendDidDispatchEventData(*entry.data.get(), defaultPrevented);
+
     didCompleteCurrentRecord(TimelineRecordType::EventDispatch);
 }
 
@@ -335,9 +339,10 @@ void InspectorTimelineAgent::didLayout(RenderObject& root)
     Vector<FloatQuad> quads;
     root.absoluteQuads(quads);
     if (quads.size() >= 1)
-        TimelineRecordFactory::appendLayoutRoot(entry.data.get(), quads[0]);
+        TimelineRecordFactory::appendLayoutRoot(*entry.data.get(), quads[0]);
     else
         ASSERT_NOT_REACHED();
+
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }
 
@@ -382,6 +387,7 @@ void InspectorTimelineAgent::didPaint(RenderObject& renderer, const LayoutRect& 
     FloatQuad quad;
     localToPageQuad(renderer, clipRect, &quad);
     entry.data = TimelineRecordFactory::createPaintData(quad);
+
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 

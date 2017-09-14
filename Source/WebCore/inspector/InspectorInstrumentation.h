@@ -147,11 +147,11 @@ public:
     static void didAddEventListener(EventTarget&, const AtomicString& eventType);
     static void willRemoveEventListener(EventTarget&, const AtomicString& eventType, EventListener&, bool capture);
     static InspectorInstrumentationCookie willDispatchEvent(Document&, const Event&, bool hasEventListeners);
-    static void didDispatchEvent(const InspectorInstrumentationCookie&);
+    static void didDispatchEvent(const InspectorInstrumentationCookie&, bool defaultPrevented);
     static void willHandleEvent(ScriptExecutionContext&, const Event&, const RegisteredEventListener&);
     static void didHandleEvent(ScriptExecutionContext&);
     static InspectorInstrumentationCookie willDispatchEventOnWindow(Frame*, const Event&, DOMWindow&);
-    static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&);
+    static void didDispatchEventOnWindow(const InspectorInstrumentationCookie&, bool defaultPrevented);
     static InspectorInstrumentationCookie willEvaluateScript(Frame&, const String& url, int lineNumber);
     static void didEvaluateScript(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext&, int timerId);
@@ -321,9 +321,9 @@ private:
     static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&, bool hasEventListeners);
     static void willHandleEventImpl(InstrumentingAgents&, const Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&);
-    static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
+    static void didDispatchEventImpl(const InspectorInstrumentationCookie&, bool defaultPrevented);
     static InspectorInstrumentationCookie willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, DOMWindow&);
-    static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&);
+    static void didDispatchEventOnWindowImpl(const InspectorInstrumentationCookie&, bool defaultPrevented);
     static InspectorInstrumentationCookie willEvaluateScriptImpl(InstrumentingAgents&, Frame&, const String& url, int lineNumber);
     static void didEvaluateScriptImpl(const InspectorInstrumentationCookie&, Frame&);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
@@ -733,11 +733,11 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didDispatchEvent(const InspectorInstrumentationCookie& cookie, bool defaultPrevented)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.isValid())
-        didDispatchEventImpl(cookie);
+        didDispatchEventImpl(cookie, defaultPrevented);
 }
 
 inline void InspectorInstrumentation::willHandleEvent(ScriptExecutionContext& context, const Event& event, const RegisteredEventListener& listener)
@@ -762,11 +762,11 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorInstrumentationCookie& cookie)
+inline void InspectorInstrumentation::didDispatchEventOnWindow(const InspectorInstrumentationCookie& cookie, bool defaultPrevented)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.isValid())
-        didDispatchEventOnWindowImpl(cookie);
+        didDispatchEventOnWindowImpl(cookie, defaultPrevented);
 }
 
 inline InspectorInstrumentationCookie InspectorInstrumentation::willEvaluateScript(Frame& frame, const String& url, int lineNumber)

@@ -1,3 +1,44 @@
+2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Timeline should show when events preventDefault() was called on an event or not
+        https://bugs.webkit.org/show_bug.cgi?id=176824
+        <rdar://problem/34290931>
+
+        Reviewed by Devin Rousso.
+
+        Tests: inspector/timeline/timeline-event-CancelAnimationFrame.html
+               inspector/timeline/timeline-event-EventDispatch.html
+               inspector/timeline/timeline-event-FireAnimationFrame.html
+               inspector/timeline/timeline-event-RequestAnimationFrame.html
+               inspector/timeline/timeline-event-TimerFire.html
+               inspector/timeline/timeline-event-TimerInstall.html
+               inspector/timeline/timeline-event-TimerRemove.html
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::fireEventListeners):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchEvent):
+        Include defaultPrevented when notifying inspector.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didDispatchEventImpl):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindowImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didDispatchEvent):
+        (WebCore::InspectorInstrumentation::didDispatchEventOnWindow):
+        Pass defaultPrevented on to agent.
+
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::didDispatchEvent):
+        (WebCore::InspectorTimelineAgent::didLayout):
+        (WebCore::InspectorTimelineAgent::didPaint):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::appendLayoutRoot):
+        (WebCore::TimelineRecordFactory::appendDidDispatchEventData):
+        * inspector/TimelineRecordFactory.h:
+        Append a boolean defaultPrevented property on the EventDispatch timeline record's data.
+
 2017-09-14  Maureen Daum  <mdaum@apple.com>
 
         Introduce the option to mark an HTML element as having AutoFill available.

@@ -38,11 +38,12 @@ WI.loaded = function()
     InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
     InspectorBackend.registerPageDispatcher(new WI.PageObserver);
     InspectorBackend.registerConsoleDispatcher(new WI.ConsoleObserver);
-    InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
     InspectorBackend.registerNetworkDispatcher(new WI.NetworkObserver);
+    InspectorBackend.registerDOMDispatcher(new WI.DOMObserver);
     InspectorBackend.registerDebuggerDispatcher(new WI.DebuggerObserver);
     InspectorBackend.registerHeapDispatcher(new WI.HeapObserver);
     InspectorBackend.registerDOMStorageDispatcher(new WI.DOMStorageObserver);
+    InspectorBackend.registerScriptProfilerDispatcher(new WI.ScriptProfilerObserver);
     InspectorBackend.registerTimelineDispatcher(new WI.TimelineObserver);
     InspectorBackend.registerCSSDispatcher(new WI.CSSObserver);
     InspectorBackend.registerRuntimeDispatcher(new WI.RuntimeObserver);
