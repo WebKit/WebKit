@@ -1,3 +1,33 @@
+2017-09-14  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r221968. rdar://problem/34169683
+
+    2017-09-12  Matt Rajca  <mrajca@apple.com>
+
+            Ensure the user interacted with the page before setting m_userHasInteractedWithMediaElement
+            https://bugs.webkit.org/show_bug.cgi?id=176816
+
+            Reviewed by Eric Carlson.
+
+            Currently, when the user presses a keyboard shortcut in the client to reload a page, that may
+            get registered as a user gesture on the reloaded page. Before setting the
+            m_userHasInteractedWithMediaElement flag, we should check if a user gesture was actually handled
+            by checking the userDidInteractWithPage flag. In case of key events that aren't handled by the
+            page, this will be set to false by EventHandler:
+
+                // If the key event was not handled, do not treat it as user interaction with the page.
+                if (topDocument && !wasHandled)
+                    topDocument->setUserDidInteractWithPage(savedUserDidInteractWithPage);
+
+            We need to revisit this in the future in webkit.org/b/176817 and ensure user gesture tokens
+            don't carry over across reloads of the page.
+
+            Tests: I wasn't able to trigger the pathological scenario this aims to fix with a test that calls
+            window.location.reload() from a synthetic keyDown event.
+
+            * dom/Document.cpp:
+            (WebCore::Document::noteUserInteractionWithMediaElement):
+
 2017-09-12  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221917. rdar://problem/34404461
