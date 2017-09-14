@@ -43,6 +43,7 @@ static const char *sessionFile;
 static char *geometry;
 static gboolean privateMode;
 static gboolean automationMode;
+static gboolean fullScreen;
 
 typedef enum {
     MINI_BROWSER_ERROR_INVALID_ABOUT_PATH
@@ -96,6 +97,7 @@ static const GOptionEntry commandLineOptions[] =
     { "editor-mode", 'e', 0, G_OPTION_ARG_NONE, &editorMode, "Run in editor mode", NULL },
     { "session-file", 's', 0, G_OPTION_ARG_FILENAME, &sessionFile, "Session file", "FILE" },
     { "geometry", 'g', 0, G_OPTION_ARG_STRING, &geometry, "Set the size and position of the window (WIDTHxHEIGHT+X+Y)", "GEOMETRY" },
+    { "full-screen", 'f', 0, G_OPTION_ARG_NONE, &fullScreen, "Set the window to full-screen mode", NULL },
     { "private", 'p', 0, G_OPTION_ARG_NONE, &privateMode, "Run in private browsing mode", NULL },
     { "automation", 0, 0, G_OPTION_ARG_NONE, &automationMode, "Run in automation mode", NULL },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, 0, "[URL…]" },
@@ -513,7 +515,9 @@ int main(int argc, char *argv[])
     g_signal_connect(webContext, "automation-started", G_CALLBACK(automationStartedCallback), NULL);
 
     BrowserWindow *mainWindow = BROWSER_WINDOW(browser_window_new(NULL, webContext));
-    if (geometry)
+    if (fullScreen)
+        gtk_window_fullscreen(GTK_WINDOW(mainWindow));
+    else if (geometry)
         gtk_window_parse_geometry(GTK_WINDOW(mainWindow), geometry);
 
     GtkWidget *firstTab = NULL;
