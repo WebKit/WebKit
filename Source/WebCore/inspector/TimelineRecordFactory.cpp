@@ -146,14 +146,9 @@ Ref<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQuad& qua
     return data;
 }
 
-void TimelineRecordFactory::appendLayoutRoot(InspectorObject& data, const FloatQuad& quad)
+void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
 {
-    data.setArray(ASCIILiteral("root"), createQuad(quad));
-}
-
-void TimelineRecordFactory::appendDidDispatchEventData(InspectorObject& data, bool defaultPrevented)
-{
-    data.setBoolean(ASCIILiteral("defaultPrevented"), defaultPrevented);
+    data->setArray(ASCIILiteral("root"), createQuad(quad));
 }
 
 } // namespace WebCore

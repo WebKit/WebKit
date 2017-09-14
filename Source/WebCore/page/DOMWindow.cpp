@@ -2002,7 +2002,7 @@ bool DOMWindow::dispatchEvent(Event& event, EventTarget* target)
 
     bool result = fireEventListeners(event);
 
-    InspectorInstrumentation::didDispatchEventOnWindow(cookie, event.defaultPrevented());
+    InspectorInstrumentation::didDispatchEventOnWindow(cookie);
 
     return result;
 }

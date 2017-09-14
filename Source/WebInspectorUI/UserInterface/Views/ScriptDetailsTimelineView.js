@@ -34,7 +34,7 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         let columns = {name: {}, location: {}, callCount: {}, startTime: {}, totalTime: {}, selfTime: {}, averageTime: {}};
 
         columns.name.title = WI.UIString("Name");
-        columns.name.width = "30%";
+        columns.name.width = "10%";
         columns.name.icon = true;
         columns.name.disclosure = true;
         columns.name.locked = true;
@@ -69,7 +69,7 @@ WI.ScriptDetailsTimelineView = class ScriptDetailsTimelineView extends WI.Timeli
         columns.averageTime.width = "10%";
         columns.averageTime.aligned = "right";
 
-        for (let column in columns)
+        for (var column in columns)
             columns[column].sortable = true;
 
         this._dataGrid = new WI.ScriptTimelineDataGrid(columns);

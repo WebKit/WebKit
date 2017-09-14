@@ -971,7 +971,6 @@ localizedStrings["Z-Index"] = "Z-Index";
 localizedStrings["Zoom:"] = "Zoom:";
 localizedStrings["computed"] = "computed";
 localizedStrings["default"] = "default";
-localizedStrings["default prevented"] = "default prevented";
 localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["key"] = "key";
 localizedStrings["line "] = "line ";

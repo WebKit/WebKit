@@ -299,7 +299,7 @@ void EventTarget::fireEventListeners(Event& event, EventListenerVector listeners
     }
 
     if (contextIsDocument)
-        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie, event.defaultPrevented());
+        InspectorInstrumentation::didDispatchEvent(willDispatchEventCookie);
 }
 
 const EventListenerVector& EventTarget::eventListeners(const AtomicString& eventType)

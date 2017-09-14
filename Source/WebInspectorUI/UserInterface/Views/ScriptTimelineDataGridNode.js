@@ -100,9 +100,6 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
                 this._subtitle = WI.UIString("%s interval").format(timeoutString);
             else
                 this._subtitle = WI.UIString("%s delay").format(timeoutString);
-        } else if (this._record.eventType === WI.ScriptTimelineRecord.EventType.EventDispatched) {
-            if (this._record.extraDetails && this._record.extraDetails.defaultPrevented)
-                this._subtitle = WI.UIString("default prevented");
         }
 
         return this._subtitle;
