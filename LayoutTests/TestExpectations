@@ -139,8 +139,6 @@ fast/text/font-lookup-dot-prefix-case-sensitive.html [ Skip ]
 # Payment Request is only enabled on Cocoa platforms.
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 
-webkit.org/b/175269 imported/w3c/web-platform-tests/eventsource/event-data.html [ Skip ]
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////
