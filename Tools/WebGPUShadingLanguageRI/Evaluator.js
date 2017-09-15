@@ -212,6 +212,12 @@ class Evaluator extends Visitor {
         throw node;
     }
     
+    visitLetExpression(node)
+    {
+        node.ePtr.copyFrom(node.argument.visit(this), node.type.size);
+        return node.body.visit(this);
+    }
+    
     visitCallExpression(node)
     {
         // We evaluate inlined ASTs, so this can only be a native call.

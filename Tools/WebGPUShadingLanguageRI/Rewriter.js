@@ -276,6 +276,7 @@ class Rewriter extends VisitorBase {
     {
         return new FunctionLikeBlock(
             node.origin,
+            node.returnType ? node.returnType.visit(this) : null,
             node.argumentList.map(argument => argument.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this));
@@ -308,6 +309,18 @@ class Rewriter extends VisitorBase {
             node.condition ? node.condition.visit(this) : undefined,
             node.increment ? node.increment.visit(this) : undefined,
             node.body.visit(this));
+    }
+    
+    visitLetExpression(node)
+    {
+        let result = new LetExpression(node.origin);
+        result.index = node.index;
+        result.type = node.type ? node.type.visit(this) : null;
+        result.argument = node.argument.visit(this);
+        this._mapNode(node, result);
+        result.body = node.body.visit(this);
+        result.ePtr = node.ePtr;
+        return result;
     }
 }
 

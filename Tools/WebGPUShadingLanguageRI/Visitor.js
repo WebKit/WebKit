@@ -206,8 +206,6 @@ class Visitor extends VisitorBase {
     
     visitVariableRef(node)
     {
-        if (node.variable)
-            node.variable.visit(this);
     }
     
     visitIfStatement(node)
@@ -304,10 +302,18 @@ class Visitor extends VisitorBase {
     
     visitFunctionLikeBlock(node)
     {
+        if (node.returnType)
+            node.returnType.visit(this);
         for (let argument of node.argumentList)
             argument.visit(this);
         for (let parameter of node.parameters)
             parameter.visit(this);
+        node.body.visit(this);
+    }
+    
+    visitLetExpression(node)
+    {
+        node.argument.visit(this);
         node.body.visit(this);
     }
 }

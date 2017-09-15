@@ -43,6 +43,10 @@ native primitive typedef double;
 
 native int operator+(int, int);
 native uint operator+(uint, uint);
+int operator++(int value) { return value + 1; }
+uint operator++(uint value) { return value + 1; }
+int operator--(int value) { return value - 1; }
+uint operator--(uint value) { return value - 1; }
 native int operator-(int, int);
 native uint operator-(uint, uint);
 native int operator*(int, int);

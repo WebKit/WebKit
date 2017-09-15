@@ -177,8 +177,18 @@ class Checker extends Visitor {
         return field.type;
     }
     
+    visitLetExpression(node)
+    {
+        node.type = node.argument.visit(this);
+        if (!node.type)
+            throw new Error("Did not get type for node: " + node.argument);
+        return node.body.visit(this);
+    }
+    
     visitVariableRef(node)
     {
+        if (!node.variable.type)
+            throw new Error("Variable has no type: " + node.variable);
         return node.variable.type;
     }
     

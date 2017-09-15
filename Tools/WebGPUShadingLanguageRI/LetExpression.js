@@ -24,46 +24,24 @@
  */
 "use strict";
 
-class EBufferBuilder extends Visitor {
-    constructor(program)
+let letExpressionCount = 0;
+
+class LetExpression extends Value {
+    constructor(origin)
     {
         super();
-        this._program = program;
+        this._origin = origin;
+        this.index = letExpressionCount++;
+        this.argument = null;
+        this.body = null;
     }
     
-    _createEPtr(type)
-    {
-        let buffer = new EBuffer(type.size);
-        if (!type.populateDefaultValue)
-            throw new Error("Cannot populateDefaultValue with: " + type);
-        type.populateDefaultValue(buffer, 0);
-        return new EPtr(buffer, 0);
-    }
+    get origin() { return this._origin; }
+    get name() { return "let<" + this.index + ">"; }
     
-    _createEPtrForNode(node)
+    toString()
     {
-        if (!node.type)
-            throw new Error("node has no type: " + node);
-        node.ePtr = this._createEPtr(node.type);
-    }
-    
-    visitFuncParameter(node)
-    {
-        this._createEPtrForNode(node);
-    }
-    
-    visitVariableDecl(node)
-    {
-        this._createEPtrForNode(node);
-        if (node.initializer)
-            node.initializer.visit(this);
-    }
-    
-    visitLetExpression(node)
-    {
-        this._createEPtrForNode(node);
-        node.argument.visit(this);
-        node.body.visit(this);
+        return this.name + "(" + this.argument + ", " + this.body + ")";
     }
 }
 

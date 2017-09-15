@@ -202,12 +202,15 @@ class NameResolver extends Visitor {
     {
         this._resolveTypeArguments(node.typeArguments);
         
-        let type = this._nameContext.get(Type, node.name);
-        if (!type)
-            throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
-        if (!this._nameContext.isDefined(type))
-            throw new WTypeError(node.origin.originString, "Illegal forward use of type named " + node.name);
-        node.type = type;
+        let type = node.type;
+        if (!type) {
+            type = this._nameContext.get(Type, node.name);
+            if (!type)
+                throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
+            if (!this._nameContext.isDefined(type))
+                throw new WTypeError(node.origin.originString, "Illegal forward use of type named " + node.name);
+            node.type = type;
+        }
         
         if (type.typeParameters.length != node.typeArguments.length)
             throw new WTypeError(node.origin.originString, "Wrong number of type arguments (passed " + node.typeArguments.length + ", expected " + type.typeParameters.length + ")");
@@ -241,6 +244,8 @@ class NameResolver extends Visitor {
     
     visitVariableRef(node)
     {
+        if (node.variable)
+            return;
         let result = this._nameContext.get(Value, node.name);
         if (!result)
             throw new WTypeError(node.origin.originString, "Could not find variable named " + node.name);
@@ -263,7 +268,7 @@ class NameResolver extends Visitor {
         else {
             let type = this._nameContext.get(Type, node.name);
             if (!type)
-                throw new WTypeError(node.origin.originString, "Cannot find any function or type named " + node.name);
+                throw new WTypeError(node.origin.originString, "Cannot find any function or type named \"" + node.name + "\"");
             node.becomeCast(type);
             node.possibleOverloads = this._nameContext.get(Func, "operator cast");
             if (!node.possibleOverloads)

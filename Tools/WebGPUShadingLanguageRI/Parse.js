@@ -328,16 +328,54 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return new CallExpression(name, name.text, typeArguments, argumentList);
     }
     
-    function parsePossibleSuffix()
+    function isCallExpression()
     {
-        // First check if this is a call expression.
-        let isCallExpression = lexer.testScope(() => {
+        return lexer.testScope(() => {
             consumeKind("identifier");
             parseTypeArguments();
             consume("(");
         });
+    }
+    
+    function emitIncrement(token, ptr, extraArg)
+    {
+        let args = [new DereferenceExpression(token, VariableRef.wrap(ptr))];
+        if (extraArg)
+            args.push(extraArg);
         
-        if (isCallExpression)
+        let name = "operator" + token.text;
+        if (/=$/.test(name))
+            name = RegExp.leftContext;
+        
+        if (name == "operator")
+            throw new Error("Invalid name: " + name);
+        
+        return new Assignment(
+            token,
+            new DereferenceExpression(token, VariableRef.wrap(ptr)),
+            new CallExpression(token, name, [], args));
+    }
+    
+    function finishParsingPostIncrement(token, left)
+    {
+        let ptr = new LetExpression(token);
+        ptr.argument = new MakePtrExpression(token, left);
+        
+        let oldValue = new LetExpression(token);
+        oldValue.argument = new DereferenceExpression(token, VariableRef.wrap(ptr));
+        
+        ptr.body = oldValue;
+        
+        oldValue.body = new CommaExpression(token, [
+            emitIncrement(token, ptr),
+            VariableRef.wrap(oldValue)
+        ]);
+        return ptr;
+    }
+    
+    function parsePossibleSuffix()
+    {
+        if (isCallExpression())
             return parseCallExpression();
         
         let left = parseTerm();
@@ -346,7 +384,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             switch (token.text) {
             case "++":
             case "--":
-                left = new SuffixCallAssignment(token, "operator" + token.text, left);
+                left = finishParsingPostIncrement(token, left);
                 break;
             case ".":
             case "->":
@@ -369,11 +407,31 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return left;
     }
     
+    function finishParsingPreIncrement(token, left, extraArg)
+    {
+        let ptr = new LetExpression(token);
+        ptr.argument = new MakePtrExpression(token, left);
+        ptr.body = new CommaExpression(token, [
+            emitIncrement(token, ptr, extraArg),
+            new DereferenceExpression(token, VariableRef.wrap(ptr))
+        ]);
+        return ptr;
+    }
+    
+    function parsePreIncrement()
+    {
+        let token = consume("++", "--");
+        let left = parsePossiblePrefix();
+        return finishParsingPreIncrement(token, left);
+    }
+    
     function parsePossiblePrefix()
     {
         let token;
-        if (token = tryConsume("++", "--", "+", "-", "~"))
-            return new CallAssignment(token, "operator" + token.text, parsePossiblePrefix());
+        if (test("++", "--"))
+            return parsePreIncrement();
+        if (token = tryConsume("+", "-", "~"))
+            return new CallExpression(token, "operator" + token.text, [], [parsePossiblePrefix()]);
         if (token = tryConsume("^"))
             return new DereferenceExpression(token, parsePossiblePrefix());
         if (token = tryConsume("&"))
@@ -471,8 +529,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         }
         if (operator.text == "=")
             return new Assignment(operator, lhs, parsePossibleAssignment());
-        let name = "operator" + operator.text.substring(0, operator.text.length - 1);
-        return new CallAssignment(operator, name, lhs, parsePossibleAssignment());
+        return finishParsingPreIncrement(operator, lhs, parsePossibleAssignment());
     }
     
     function parseAssignment()
@@ -480,12 +537,24 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return parsePossibleAssignment("required");
     }
     
+    function parsePostIncrement()
+    {
+        let left = parseTerm();
+        let token = consume("++", "--");
+        return finishParsingPostIncrement(token, left);
+    }
+    
     function parseEffectfulExpression()
     {
-        let assignment = lexer.backtrackingScope(parseAssignment);
-        if (assignment)
-            return assignment;
-        return parseCallExpression();
+        if (isCallExpression())
+            return parseCallExpression();
+        let preIncrement = lexer.backtrackingScope(parsePreIncrement);
+        if (preIncrement)
+            return preIncrement;
+        let postIncrement = lexer.backtrackingScope(parsePostIncrement);
+        if (postIncrement)
+            return postIncrement;
+        return parseAssignment();
     }
     
     function genericParseCommaExpression(finalExpressionParser)

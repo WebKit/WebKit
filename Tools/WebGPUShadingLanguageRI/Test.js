@@ -2091,6 +2091,190 @@ function TEST_protocolExtendsTwo()
     checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91 + 39);
 }
 
+function TEST_prefixPlusPlus()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            ++x;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+}
+
+function TEST_prefixPlusPlusResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return ++x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+}
+
+function TEST_postfixPlusPlus()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x++;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
+}
+
+function TEST_postfixPlusPlusResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x++;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
+}
+
+function TEST_prefixMinusMinus()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            --x;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+}
+
+function TEST_prefixMinusMinusResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return --x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+}
+
+function TEST_postfixMinusMinus()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x--;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
+}
+
+function TEST_postfixMinusMinusResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x--;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
+}
+
+function TEST_plusEquals()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x += 42;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
+}
+
+function TEST_plusEqualsResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x += 42;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
+}
+
+function TEST_minusEquals()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x -= 42;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
+}
+
+function TEST_minusEqualsResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x -= 42;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
+}
+
+function TEST_timesEquals()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x *= 42;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
+}
+
+function TEST_timesEqualsResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x *= 42;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
+}
+
+function TEST_divideEquals()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            x /= 42;
+            return x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
+}
+
+function TEST_divideEqualsResult()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            return x /= 42;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
+}
+
 function TEST_twoIntLiterals()
 {
     let program = doPrep(`

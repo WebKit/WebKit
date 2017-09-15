@@ -1,3 +1,70 @@
+2017-09-14  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should support ++, --, +=, and all of those things
+        https://bugs.webkit.org/show_bug.cgi?id=176975
+
+        Reviewed by Myles Maxfield.
+        
+        This adds an internal AST construct called LetExpression, that allows us to anonymously capture
+        a value. This change uses LetExpression to implement prefix and suffix ++/-- and all of the
+        +=/-=/etc.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype.visitVariableDecl):
+        (EBufferBuilder.prototype.visitLetExpression):
+        (EBufferBuilder):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitLetExpression):
+        * WebGPUShadingLanguageRI/LetExpression.js: Added.
+        (LetExpression):
+        (LetExpression.prototype.get origin):
+        (LetExpression.prototype.get name):
+        (LetExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (isCallExpression):
+        (finishParsingPostIncrement):
+        (parsePossibleSuffix):
+        (finishParsingPreIncrement):
+        (parsePreIncrement):
+        (parsePossiblePrefix):
+        (parsePossibleAssignment):
+        (parsePostIncrement):
+        (parseEffectfulExpression):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitFunctionLikeBlock):
+        (Rewriter.prototype.visitLetExpression):
+        (Rewriter):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (int.operator):
+        (uint.operator):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_prefixPlusPlus):
+        (TEST_prefixPlusPlusResult):
+        (TEST_postfixPlusPlus):
+        (TEST_postfixPlusPlusResult):
+        (TEST_prefixMinusMinus):
+        (TEST_prefixMinusMinusResult):
+        (TEST_postfixMinusMinus):
+        (TEST_postfixMinusMinusResult):
+        (TEST_plusEquals):
+        (TEST_plusEqualsResult):
+        (TEST_minusEquals):
+        (TEST_minusEqualsResult):
+        (TEST_timesEquals):
+        (TEST_timesEqualsResult):
+        (TEST_divideEquals):
+        (TEST_divideEqualsResult):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+
 2017-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         Provide mechanism to immediately end tests
