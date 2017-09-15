@@ -35,8 +35,9 @@
 #include "SlotVisitorInlines.h"
 #include "StructureInlines.h"
 #include "VMInlines.h"
+#include <wtf/NoTailCalls.h>
 
-// Note that this file is compile with -fno-optimize-sibling-calls because we rely on the machine stack
+// Note that we use NO_TAIL_CALLS() throughout this file because we rely on the machine stack
 // growing larger for throwing OOM errors for when we have an effectively cyclic prototype chain.
 
 namespace JSC {
@@ -118,6 +119,8 @@ static const char* s_proxyAlreadyRevokedErrorMessage = "Proxy has already been r
 
 static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValue receiver, PropertyName propertyName)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -180,6 +183,8 @@ static JSValue performProxyGet(ExecState* exec, ProxyObject* proxyObject, JSValu
 
 bool ProxyObject::performGet(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue result = performProxyGet(exec, this, slot.thisValue(), propertyName);
@@ -191,6 +196,8 @@ bool ProxyObject::performGet(ExecState* exec, PropertyName propertyName, Propert
 
 bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -296,6 +303,8 @@ bool ProxyObject::performInternalMethodGetOwnProperty(ExecState* exec, PropertyN
 
 bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName, PropertySlot& slot)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -404,6 +413,8 @@ bool ProxyObject::getOwnPropertySlotByIndex(JSObject* object, ExecState* exec, u
 template <typename PerformDefaultPutFunction>
 bool ProxyObject::performPut(ExecState* exec, JSValue putValue, JSValue thisValue, PropertyName propertyName, PerformDefaultPutFunction performDefaultPut)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -499,6 +510,8 @@ bool ProxyObject::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyNam
 
 static EncodedJSValue JSC_HOST_CALL performProxyCall(ExecState* exec)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -549,6 +562,8 @@ CallType ProxyObject::getCallData(JSCell* cell, CallData& callData)
 
 static EncodedJSValue JSC_HOST_CALL performProxyConstruct(ExecState* exec)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -603,6 +618,8 @@ ConstructType ProxyObject::getConstructData(JSCell* cell, ConstructData& constru
 template <typename DefaultDeleteFunction>
 bool ProxyObject::performDelete(ExecState* exec, PropertyName propertyName, DefaultDeleteFunction performDefaultDelete)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -680,6 +697,8 @@ bool ProxyObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned 
 
 bool ProxyObject::performPreventExtensions(ExecState* exec)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -731,6 +750,8 @@ bool ProxyObject::preventExtensions(JSObject* object, ExecState* exec)
 
 bool ProxyObject::performIsExtensible(ExecState* exec)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -788,6 +809,8 @@ bool ProxyObject::isExtensible(JSObject* object, ExecState* exec)
 
 bool ProxyObject::performDefineOwnProperty(ExecState* exec, PropertyName propertyName, const PropertyDescriptor& descriptor, bool shouldThrow)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -882,6 +905,8 @@ bool ProxyObject::defineOwnProperty(JSObject* object, ExecState* exec, PropertyN
 
 void ProxyObject::performGetOwnPropertyNames(ExecState* exec, PropertyNameArray& trapResult, EnumerationMode enumerationMode)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
@@ -1005,6 +1030,7 @@ void ProxyObject::getOwnPropertyNames(JSObject* object, ExecState* exec, Propert
 
 void ProxyObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNameArray, EnumerationMode enumerationMode)
 {
+    NO_TAIL_CALLS();
     JSObject::getPropertyNames(object, exec, propertyNameArray, enumerationMode);
 }
 
@@ -1026,6 +1052,8 @@ void ProxyObject::getGenericPropertyNames(JSObject*, ExecState*, PropertyNameArr
 
 bool ProxyObject::performSetPrototype(ExecState* exec, JSValue prototype, bool shouldThrowIfCantSet)
 {
+    NO_TAIL_CALLS();
+
     ASSERT(prototype.isObject() || prototype.isNull());
 
     VM& vm = exec->vm();
@@ -1090,6 +1118,8 @@ bool ProxyObject::setPrototype(JSObject* object, ExecState* exec, JSValue protot
 
 JSValue ProxyObject::performGetPrototype(ExecState* exec)
 {
+    NO_TAIL_CALLS();
+
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     if (UNLIKELY(!vm.isSafeToRecurseSoft())) {

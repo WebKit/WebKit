@@ -1,3 +1,32 @@
+2017-09-14  Saam Barati  <sbarati@apple.com>
+
+        We should have a way of preventing a caller from making a tail call and we should use it for ProxyObject instead of using build flags
+        https://bugs.webkit.org/show_bug.cgi?id=176863
+
+        Reviewed by Keith Miller.
+
+        This patch adds a way for a particular function to mark
+        that none of its calls should be tail calls.
+        
+        It's useful in the following example if you don't want foo
+        to do a tail call to bar or baz:
+        
+        int foo(bool b)
+        {
+            NO_TAIL_CALLS();
+            if (b)
+                return baz();
+            return bar();
+        }
+        
+        Note that we're not saying that bar/baz should not be tail callable. bar/baz
+        may have other callers that are allowed to tail call it. This macro just says
+        that foo itself will not perform any tail calls.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/NoTailCalls.h: Added.
+        (WTF::NoTailCalls::~NoTailCalls):
+
 2017-09-14  Mark Lam  <mark.lam@apple.com>
 
         AddressSanitizer: stack-buffer-underflow in JSC::Probe::Page::Page

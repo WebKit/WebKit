@@ -879,6 +879,7 @@ set(JavaScriptCore_UNIFIABLE_SOURCES
     runtime/PropertyTable.cpp
     runtime/PrototypeMap.cpp
     runtime/ProxyConstructor.cpp
+    runtime/ProxyObject.cpp
     runtime/ProxyRevoke.cpp
     runtime/ReflectObject.cpp
     runtime/RegExp.cpp
@@ -1034,18 +1035,6 @@ if (${generateUnifiedSourcesResult})
 endif ()
 
 list(APPEND JavaScriptCore_SOURCES ${generateUnifiedSourcesOutput})
-
-# These are special files that we can't or don't want to unified source compile
-list(APPEND JavaScriptCore_SOURCES
-    runtime/ProxyObject.cpp
-)
-
-# Extra flags for compile sources can go here.
-if (NOT MSVC)
-    set_source_files_properties(runtime/ProxyObject.cpp PROPERTIES COMPILE_FLAGS -fno-optimize-sibling-calls)
-else ()
-    # FIXME: Investigate if we need to set a similar flag on Windows.
-endif ()
 
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp
