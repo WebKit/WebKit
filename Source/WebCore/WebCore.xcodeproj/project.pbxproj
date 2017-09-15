@@ -146,6 +146,7 @@
 		073B87671E4385AC0071C0EC /* AudioSampleBufferList.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87631E43859D0071C0EC /* AudioSampleBufferList.h */; };
 		073B87681E4385AC0071C0EC /* AudioSampleDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = 073B87641E43859D0071C0EC /* AudioSampleDataSource.mm */; };
 		073B87691E4385AC0071C0EC /* AudioSampleDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 073B87651E43859D0071C0EC /* AudioSampleDataSource.h */; };
+		073BDC051F68436100EE34ED /* TrackPrivateBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */; };
 		073BE34017D17E01002BD431 /* JSNavigatorUserMedia.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 073BE33E17D17E01002BD431 /* JSNavigatorUserMedia.cpp */; };
 		073BE34117D17E01002BD431 /* JSNavigatorUserMedia.h in Headers */ = {isa = PBXBuildFile; fileRef = 073BE33F17D17E01002BD431 /* JSNavigatorUserMedia.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		073BE34E17D180B2002BD431 /* RTCSessionDescriptionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07221BAB17CF0AD400848E51 /* RTCSessionDescriptionDescriptor.cpp */; };
@@ -7720,6 +7721,7 @@
 		07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaSessionManagerIOS.mm; sourceTree = "<group>"; };
 		076970841463AD8700F502CF /* TextTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackList.cpp; sourceTree = "<group>"; };
 		076970851463AD8700F502CF /* TextTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackList.h; sourceTree = "<group>"; };
+		076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackPrivateBase.cpp; sourceTree = "<group>"; };
 		076EC1321E44F2CB00E5D813 /* AudioTrackPrivateMediaStreamCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateMediaStreamCocoa.cpp; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
@@ -23921,6 +23923,7 @@
 				CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */,
 				CDD1E525167BA56400CE820B /* TextTrackRepresentation.h */,
 				1AF89A411518FDEA00E547B5 /* TiledBacking.h */,
+				076E11BE1F683E0D00177395 /* TrackPrivateBase.cpp */,
 				BE913D7F181EF8E500DCB09E /* TrackPrivateBase.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */,
@@ -32111,6 +32114,7 @@
 				E12DE7171E4B749C00F9ACCF /* GridTrackSizingAlgorithm.cpp in Sources */,
 				414C25D71E9EFEDE00BEE141 /* H264VideoToolBoxEncoder.mm in Sources */,
 				F55B3DBF1251F12D003EF269 /* HiddenInputType.cpp in Sources */,
+				073BDC051F68436100EE34ED /* TrackPrivateBase.cpp in Sources */,
 				515BE19B1D54F6C100DD7C68 /* HIDGamepad.cpp in Sources */,
 				515BE19D1D54F6C100DD7C68 /* HIDGamepadProvider.cpp in Sources */,
 				BC94D1530C275C8B006BC617 /* History.cpp in Sources */,

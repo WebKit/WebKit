@@ -188,6 +188,18 @@ JSValue DataCue::valueOrNull() const
     return jsNull();
 }
 
+String DataCue::toString() const
+{
+    StringBuilder builder;
+
+    builder.append(TextTrackCue::toString());
+
+    builder.appendLiteral(", type = ");
+    builder.append(m_type);
+
+    return builder.toString();
+}
+
 } // namespace WebCore
 
 #endif

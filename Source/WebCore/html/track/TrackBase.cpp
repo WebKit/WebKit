@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrackBase.h"
 
+#include "Logging.h"
 #include <wtf/Language.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -37,6 +38,20 @@ namespace WebCore {
 
 static int s_uniqueId = 0;
 
+#if !RELEASE_LOG_DISABLED
+static const void* nextLogIdentifier()
+{
+    static uint64_t logIdentifier = cryptographicallyRandomNumber();
+    return reinterpret_cast<const void*>(++logIdentifier);
+}
+
+static RefPtr<PAL::Logger>& nullLogger()
+{
+    static NeverDestroyed<RefPtr<PAL::Logger>> logger;
+    return logger;
+}
+#endif
+
 TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     : m_uniqueId(++s_uniqueId)
     , m_id(id)
@@ -46,15 +61,33 @@ TrackBase::TrackBase(Type type, const AtomicString& id, const AtomicString& labe
 {
     ASSERT(type != BaseTrack);
     m_type = type;
-}
 
-TrackBase::~TrackBase()
-{
+#if !RELEASE_LOG_DISABLED
+    if (!nullLogger().get()) {
+        nullLogger() = PAL::Logger::create(this);
+        nullLogger()->setEnabled(this, false);
+    }
+
+    m_logger = nullLogger().get();
+    m_logIdentifier = nextLogIdentifier();
+#endif
 }
 
 Element* TrackBase::element()
 {
     return m_mediaElement;
+}
+
+void TrackBase::setMediaElement(HTMLMediaElement* element)
+{
+    m_mediaElement = element;
+
+#if !RELEASE_LOG_DISABLED
+    if (element) {
+        m_logger = &element->logger();
+        m_logIdentifier = element->logIdentifier();
+    }
+#endif
 }
 
 // See: https://tools.ietf.org/html/bcp47#section-2.1
@@ -133,6 +166,13 @@ AtomicString TrackBase::validBCP47Language() const
 {
     return m_validBCP47Language;
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& TrackBase::logChannel() const
+{
+    return LogMedia;
+}
+#endif
 
 MediaTrackBase::MediaTrackBase(Type type, const AtomicString& id, const AtomicString& label, const AtomicString& language)
     : TrackBase(type, id, label, language)

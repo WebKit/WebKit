@@ -86,6 +86,11 @@ protected:
     void processNativeSamples(CFArrayRef, const MediaTime&);
     void removeCompletedCues();
 
+private:
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "InbandTextTrackPrivateAVF"; }
+#endif
+
     MediaTime m_currentCueStartTime;
     MediaTime m_currentCueEndTime;
 

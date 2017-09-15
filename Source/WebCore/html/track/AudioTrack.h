@@ -65,6 +65,7 @@ public:
     size_t inbandTrackIndex() const;
 
     void setPrivate(AudioTrackPrivate&);
+    void setMediaElement(HTMLMediaElement*) override;
 
 private:
     AudioTrack(AudioTrackClient&, AudioTrackPrivate&);
@@ -82,10 +83,13 @@ private:
 
     void updateKindFromPrivate();
 
-    bool m_enabled;
-    AudioTrackClient* m_client;
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "AudioTrack"; }
+#endif
 
+    AudioTrackClient* m_client { nullptr };
     Ref<AudioTrackPrivate> m_private;
+    bool m_enabled { false };
 };
 
 } // namespace WebCore

@@ -41,10 +41,12 @@ struct LogArgument {
     template<typename U = T> static typename std::enable_if<std::is_same<U, int>::value, String>::type toString(int argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned>::value, String>::type toString(unsigned argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, unsigned long>::value, String>::type toString(unsigned long argument) { return String::number(argument); }
+    template<typename U = T> static typename std::enable_if<std::is_same<U, long>::value, String>::type toString(long argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, float>::value, String>::type toString(float argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, double>::value, String>::type toString(double argument) { return String::number(argument); }
     template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, AtomicString>::value, String>::type toString(AtomicString argument) { return argument.string(); }
     template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, String>::value, String>::type toString(String argument) { return argument; }
+    template<typename U = T> static typename std::enable_if<std::is_same<typename std::remove_reference<U>::type, StringBuilder*>::value, String>::type toString(StringBuilder* argument) { return argument->toString(); }
     template<typename U = T> static typename std::enable_if<std::is_same<U, const char*>::value, String>::type toString(const char* argument) { return String(argument); }
     template<size_t length> static String toString(const char (&argument)[length]) { return String(argument); }
 };

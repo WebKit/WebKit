@@ -60,6 +60,10 @@ public:
 private:
     InbandMetadataTextTrackPrivateAVF(Kind, CueFormat, const AtomicString&);
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "InbandMetadataTextTrackPrivateAVF"; }
+#endif
+
     Kind m_kind;
     AtomicString m_id;
     AtomicString m_inBandMetadataTrackDispatchType;

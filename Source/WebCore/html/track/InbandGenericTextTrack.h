@@ -74,6 +74,10 @@ private:
     void newRegionsParsed() final;
     void fileFailedToParse() final;
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "InbandGenericTextTrack"; }
+#endif
+
     GenericTextTrackCueMap m_cueMap;
     std::unique_ptr<WebVTTParser> m_webVTTParser;
 };

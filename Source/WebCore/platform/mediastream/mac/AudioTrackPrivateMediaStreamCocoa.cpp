@@ -31,6 +31,7 @@
 #include "AudioSession.h"
 #include "CAAudioStreamDescription.h"
 #include "Logging.h"
+#include <pal/Logger.h>
 
 #include "CoreMediaSoftLink.h"
 
@@ -114,13 +115,13 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
     AudioComponent ioComponent = AudioComponentFindNext(nullptr, &ioUnitDescription);
     ASSERT(ioComponent);
     if (!ioComponent) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to find remote IO unit component", this);
+        ERROR_LOG(LOGIDENTIFIER, "unable to find remote IO unit component");
         return nullptr;
     }
 
     OSStatus err = AudioComponentInstanceNew(ioComponent, &remoteIOUnit);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to open vpio unit, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "unable to open vpio unit, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 
@@ -128,7 +129,7 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
     UInt32 param = 1;
     err = AudioUnitSetProperty(remoteIOUnit, kAudioOutputUnitProperty_EnableIO, kAudioUnitScope_Output, 0, &param, sizeof(param));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to enable vpio unit output, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "unable to enable vpio unit output, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 #endif
@@ -136,14 +137,14 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
     AURenderCallbackStruct callback = { inputProc, this };
     err = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_SetRenderCallback, kAudioUnitScope_Global, 0, &callback, sizeof(callback));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnit(%p) unable to set vpio unit speaker proc, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "unable to set vpio unit speaker proc, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 
     UInt32 size = sizeof(outputDescription.streamDescription());
     err  = AudioUnitGetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), &size);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) unable to get input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "unable to get input stream format, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 
@@ -151,13 +152,13 @@ AudioComponentInstance AudioTrackPrivateMediaStreamCocoa::createAudioUnit(CAAudi
 
     err = AudioUnitSetProperty(remoteIOUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, &outputDescription.streamDescription(), sizeof(outputDescription.streamDescription()));
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) unable to set input stream format, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "unable to set input stream format, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 
     err = AudioUnitInitialize(remoteIOUnit);
     if (err) {
-        LOG(Media, "AudioTrackPrivateMediaStreamCocoa::createAudioUnits(%p) AudioUnitInitialize() failed, error %d (%.4s)", this, (int)err, (char*)&err);
+        ERROR_LOG(LOGIDENTIFIER, "AudioUnitInitialize() failed, error = ", err, " (", (const char*)&err, ")");
         return nullptr;
     }
 

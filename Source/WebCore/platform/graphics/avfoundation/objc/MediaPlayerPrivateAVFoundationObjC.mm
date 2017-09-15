@@ -3342,6 +3342,7 @@ NSArray* playerKVOProperties()
 
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
     bool shouldLogValue = true;
+    bool shouldLog = true;
     WTF::Function<void ()> function;
 
     if (context == MediaPlayerAVFoundationObservationContextAVPlayerLayer) {
@@ -3378,10 +3379,10 @@ NSArray* playerKVOProperties()
             shouldLogValue = false;
         } else if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
-            shouldLogValue = false;
+            shouldLog = false;
         } else if ([keyPath isEqualToString:@"seekableTimeRanges"]) {
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
-            shouldLogValue = false;
+            shouldLog = false;
         } else if ([keyPath isEqualToString:@"tracks"]) {
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::tracksDidChange, m_callback, RetainPtr<NSArray>(newValue));
             shouldLogValue = false;
@@ -3419,7 +3420,7 @@ NSArray* playerKVOProperties()
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug)) {
+    if (shouldLog && m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug)) {
 
         if (willChange)
             m_callback->logger().debug(m_callback->logChannel(), PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier()), "will change '", [keyPath UTF8String], "'");

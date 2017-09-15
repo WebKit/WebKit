@@ -1,3 +1,113 @@
+2017-09-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch text tracks to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176809
+        <rdar://problem/34397605>
+
+        Reviewed by Jer Noble.
+
+        Make all track objects use the same logger and log identifier as the media element they
+        "belong" to. Convert all track logging from debug-only to release logging.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::updateActiveTextTrackCues):
+        * html/HTMLMediaElement.h:
+        * html/track/AudioTrack.cpp:
+        (WebCore::AudioTrack::AudioTrack):
+        (WebCore::AudioTrack::setPrivate):
+        (WebCore::AudioTrack::setMediaElement):
+        * html/track/AudioTrack.h:
+        * html/track/DataCue.cpp:
+        (WebCore::DataCue::toString const):
+        * html/track/DataCue.h:
+        (PAL::LogArgument<WebCore::DataCue>::toString):
+        * html/track/InbandDataTextTrack.cpp:
+        (WebCore::InbandDataTextTrack::addDataCue):
+        (WebCore::InbandDataTextTrack::updateDataCue):
+        (WebCore::InbandDataTextTrack::removeDataCue):
+        * html/track/InbandDataTextTrack.h:
+        * html/track/InbandGenericTextTrack.cpp:
+        (WebCore::InbandGenericTextTrack::addGenericCue):
+        (WebCore::InbandGenericTextTrack::removeGenericCue):
+        (WebCore::InbandGenericTextTrack::newCuesParsed):
+        (WebCore::InbandGenericTextTrack::fileFailedToParse):
+        * html/track/InbandGenericTextTrack.h:
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::InbandTextTrack):
+        (WebCore::InbandTextTrack::setMediaElement):
+        * html/track/InbandTextTrack.h:
+        * html/track/InbandWebVTTTextTrack.cpp:
+        (WebCore::InbandWebVTTTextTrack::newCuesParsed):
+        (WebCore::InbandWebVTTTextTrack::fileFailedToParse):
+        * html/track/InbandWebVTTTextTrack.h:
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::newCuesAvailable):
+        (WebCore::LoadableTextTrack::cueLoadingCompleted):
+        * html/track/LoadableTextTrack.h:
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue):
+        (WebCore::TextTrack::removeCue):
+        (WebCore::TextTrack::setLanguage):
+        * html/track/TextTrack.h:
+        * html/track/TextTrackCue.cpp:
+        (WebCore::TextTrackCue::toString const):
+        * html/track/TextTrackCue.h:
+        (PAL::LogArgument<WebCore::TextTrackCue>::toString):
+        * html/track/TextTrackCueGeneric.cpp:
+        (WebCore::TextTrackCueGeneric::setFontSize):
+        (WebCore::TextTrackCueGeneric::toString const):
+        * html/track/TextTrackCueGeneric.h:
+        (PAL::LogArgument<WebCore::TextTrackCueGeneric>::toString):
+        * html/track/TrackBase.cpp:
+        (WebCore::nextLogIdentifier):
+        (WebCore::nullLogger):
+        (WebCore::TrackBase::TrackBase):
+        (WebCore::TrackBase::setMediaElement):
+        (WebCore::TrackBase::logChannel const):
+        (WebCore::TrackBase::~TrackBase): Deleted.
+        * html/track/TrackBase.h:
+        (WebCore::TrackBase::setMediaElement): Deleted.
+        * html/track/VTTCue.cpp:
+        (WebCore::VTTCue::setFontSize):
+        (WebCore::VTTCue::toString const):
+        * html/track/VTTCue.h:
+        (PAL::LogArgument<WebCore::VTTCue>::toString):
+        * html/track/VideoTrack.cpp:
+        (WebCore::VideoTrack::VideoTrack):
+        (WebCore::VideoTrack::setPrivate):
+        (WebCore::VideoTrack::setMediaElement):
+        * html/track/VideoTrack.h:
+        * platform/graphics/AudioTrackPrivate.h:
+        * platform/graphics/InbandTextTrackPrivate.h:
+        (WebCore::InbandTextTrackPrivate::setClient):
+        * platform/graphics/InbandTextTrackPrivateClient.h:
+        (WebCore::GenericCueData::toString const):
+        (PAL::LogArgument<WebCore::GenericCueData>::toString):
+        * platform/graphics/TrackPrivateBase.cpp: Added.
+        (WebCore::TrackPrivateBase::setLogger):
+        (WebCore::TrackPrivateBase::logChannel const):
+        * platform/graphics/TrackPrivateBase.h:
+        * platform/graphics/VideoTrackPrivate.h:
+        * platform/graphics/avfoundation/AVTrackPrivateAVFObjCImpl.mm:
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp:
+        (WebCore::InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes):
+        (WebCore::InbandMetadataTextTrackPrivateAVF::flushPartialCues):
+        * platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::processAttributedStrings):
+        (WebCore::InbandTextTrackPrivateAVF::removeCompletedCues):
+        (WebCore::InbandTextTrackPrivateAVF::resetCueValues):
+        (WebCore::InbandTextTrackPrivateAVF::processNativeSamples):
+        (WebCore::InbandTextTrackPrivateAVF::readNativeSampleBuffer):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+        * platform/graphics/avfoundation/objc/AudioTrackPrivateAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.cpp:
+        (WebCore::AudioTrackPrivateMediaStreamCocoa::createAudioUnit):
+        * platform/mediastream/mac/AudioTrackPrivateMediaStreamCocoa.h:
+
 2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Harfbuzz] Material icons not rendered correctly when using the web font

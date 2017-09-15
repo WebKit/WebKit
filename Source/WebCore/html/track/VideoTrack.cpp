@@ -82,10 +82,13 @@ const AtomicString& VideoTrack::commentaryKeyword()
 
 VideoTrack::VideoTrack(VideoTrackClient& client, VideoTrackPrivate& trackPrivate)
     : MediaTrackBase(MediaTrackBase::VideoTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
-    , m_selected(trackPrivate.selected())
     , m_client(&client)
     , m_private(trackPrivate)
+    , m_selected(trackPrivate.selected())
 {
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
     m_private->setClient(this);
     updateKindFromPrivate();
 }
@@ -103,6 +106,9 @@ void VideoTrack::setPrivate(VideoTrackPrivate& trackPrivate)
     m_private->setClient(nullptr);
     m_private = trackPrivate;
     m_private->setClient(this);
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
 
     m_private->setSelected(m_selected);
     updateKindFromPrivate();
@@ -235,6 +241,14 @@ void VideoTrack::updateKindFromPrivate()
         return;
     }
     ASSERT_NOT_REACHED();
+}
+
+void VideoTrack::setMediaElement(HTMLMediaElement* element)
+{
+    TrackBase::setMediaElement(element);
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
 }
 
 } // namespace WebCore

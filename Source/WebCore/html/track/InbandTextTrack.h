@@ -48,6 +48,7 @@ public:
     AtomicString inBandMetadataTrackDispatchType() const override;
 
     void setPrivate(InbandTextTrackPrivate&);
+    void setMediaElement(HTMLMediaElement*) override;
 
 protected:
     InbandTextTrack(ScriptExecutionContext&, TextTrackClient&, InbandTextTrackPrivate&);

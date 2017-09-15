@@ -3426,6 +3426,7 @@ if (ENABLE_VIDEO_TRACK)
         loader/cache/CachedTextTrack.cpp
 
         platform/graphics/TextTrackRepresentation.cpp
+        platform/graphics/TrackPrivateBase.cpp
     )
 endif ()
 

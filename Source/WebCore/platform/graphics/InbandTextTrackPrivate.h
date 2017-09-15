@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "InbandTextTrackPrivateClient.h"
+#include <pal/Logger.h>
 
 namespace WebCore {
 
@@ -42,8 +43,8 @@ public:
     static RefPtr<InbandTextTrackPrivate> create(CueFormat format) { return adoptRef(new InbandTextTrackPrivate(format)); }
     virtual ~InbandTextTrackPrivate() { }
 
-    void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
     InbandTextTrackPrivateClient* client() const override { return m_client; }
+    void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
 
     enum Mode {
         Disabled,
@@ -77,6 +78,10 @@ public:
     virtual int textTrackIndex() const { return 0; }
 
     CueFormat cueFormat() const { return m_format; }
+
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "InbandTextTrackPrivate"; }
+#endif
 
 protected:
     InbandTextTrackPrivate(CueFormat format)

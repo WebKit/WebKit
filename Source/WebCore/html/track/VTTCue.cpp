@@ -1156,8 +1156,6 @@ void VTTCue::setFontSize(int fontSize, const IntSize&, bool important)
 {
     if (!hasDisplayTree() || !fontSize)
         return;
-    
-    LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
 
     m_displayTreeShouldChange = true;
     displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSPrimitiveValue::CSS_PX, important);
@@ -1172,6 +1170,18 @@ const VTTCue* toVTTCue(const TextTrackCue* cue)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(cue->isRenderable());
     return static_cast<const VTTCue*>(cue);
+}
+
+String VTTCue::toString() const
+{
+    StringBuilder builder;
+
+    builder.append(TextTrackCue::toString());
+
+    builder.appendLiteral(", content = ");
+    builder.append(text());
+
+    return builder.toString();
 }
 
 } // namespace WebCore

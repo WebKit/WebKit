@@ -87,6 +87,8 @@ public:
     bool cueContentsMatch(const TextTrackCue&) const override;
     bool doesExtendCue(const TextTrackCue&) const override;
 
+    String toString() const override;
+
 private:
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, ArrayBuffer&, const String&);
     DataCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const void*, unsigned);
@@ -105,5 +107,20 @@ DataCue* toDataCue(TextTrackCue*);
 const DataCue* toDataCue(const TextTrackCue*);
 
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::DataCue> {
+    static String toString(const WebCore::DataCue& cue)
+    {
+        return cue.toString();
+    }
+};
+
+}
 
 #endif

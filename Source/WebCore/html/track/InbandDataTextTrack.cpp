@@ -32,7 +32,6 @@
 #include "DataCue.h"
 #include "HTMLMediaElement.h"
 #include "InbandTextTrackPrivate.h"
-#include "Logging.h"
 
 namespace WebCore {
 
@@ -64,7 +63,7 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
 
     auto cue = DataCue::create(*scriptExecutionContext(), start, end, platformValue.copyRef(), type);
     if (hasCue(cue.ptr(), TextTrackCue::IgnoreDuration)) {
-        LOG(Media, "InbandDataTextTrack::addDataCue ignoring already added cue: start=%s, end=%s\n", toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data());
+        INFO_LOG(LOGIDENTIFIER, "ignoring already added cue: ", cue.get());
         return;
     }
 
@@ -72,6 +71,8 @@ void InbandDataTextTrack::addDataCue(const MediaTime& start, const MediaTime& en
         cue->setEndTime(mediaElement()->durationMediaTime());
         m_incompleteCueMap.add(WTFMove(platformValue), cue.copyRef());
     }
+
+    INFO_LOG(LOGIDENTIFIER, cue.get());
 
     addCue(WTFMove(cue));
 }
@@ -90,7 +91,7 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
     else
         m_incompleteCueMap.remove(&platformValue);
 
-    LOG(Media, "InbandDataTextTrack::updateDataCue: was start=%s, end=%s, will be start=%s, end=%s\n", toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data(), toString(start).utf8().data(), toString(end).utf8().data());
+    INFO_LOG(LOGIDENTIFIER, "was start = ", cue->startMediaTime(), ", end = ", cue->endMediaTime(), ", will be start = ", start, ", end = ", end);
 
     cue->setStartTime(start);
     cue->setEndTime(end);
@@ -101,7 +102,7 @@ void InbandDataTextTrack::updateDataCue(const MediaTime& start, const MediaTime&
 void InbandDataTextTrack::removeDataCue(const MediaTime&, const MediaTime&, SerializedPlatformRepresentation& platformValue)
 {
     if (auto cue = m_incompleteCueMap.take(&platformValue)) {
-        LOG(Media, "InbandDataTextTrack::removeDataCue removing cue: start=%s, end=%s\n", toString(cue->startTime()).utf8().data(), toString(cue->endTime()).utf8().data());
+        INFO_LOG(LOGIDENTIFIER, "removing: ", *cue);
         InbandTextTrack::removeCue(*cue);
     }
 }

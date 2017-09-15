@@ -31,6 +31,7 @@
 
 #include "HTMLTrackElement.h"
 #include "TextTrackCueList.h"
+#include "VTTCue.h"
 #include "VTTRegionList.h"
 
 namespace WebCore {
@@ -97,6 +98,7 @@ void LoadableTextTrack::newCuesAvailable(TextTrackLoader* loader)
 
     for (auto& newCue : newCues) {
         newCue->setTrack(this);
+        DEBUG_LOG(LOGIDENTIFIER, *toVTTCue(newCue.get()));
         m_cues->add(newCue.releaseNonNull());
     }
 
@@ -110,6 +112,8 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
     if (!m_trackElement)
         return;
+
+    INFO_LOG(LOGIDENTIFIER);
 
     m_trackElement->didCompleteLoad(loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }

@@ -93,6 +93,8 @@ public:
 
     bool doesExtendCueData(const GenericCueData&) const;
 
+    String toString() const;
+
 private:
     GenericCueData() = default;
 
@@ -112,6 +114,102 @@ private:
     Color m_highlightColor;
     Status m_status { Uninitialized };
 };
+
+inline String GenericCueData::toString() const
+{
+    StringBuilder builder;
+
+    builder.appendLiteral("start = ");
+    builder.append(m_startTime.toString());
+
+    builder.appendLiteral(", end = ");
+    builder.append(m_endTime.toString());
+
+    const char* status;
+    switch (m_status) {
+    case GenericCueData::Uninitialized:
+        status = "Uninitialized";
+        break;
+    case GenericCueData::Partial:
+        status = "Partial";
+        break;
+    case GenericCueData::Complete:
+        status = "Complete";
+        break;
+    }
+    builder.appendLiteral(", status = ");
+    builder.append(status);
+
+    builder.appendLiteral(", id = ");
+    builder.append(m_id);
+
+    if (m_line > 0) {
+        builder.appendLiteral(", line = ");
+        builder.appendNumber(m_line);
+    }
+
+    if (m_size > 0) {
+        builder.appendLiteral(", size = ");
+        builder.appendNumber(m_size);
+    }
+
+    if (m_position > 0) {
+        builder.appendLiteral(", position = ");
+        builder.appendNumber(m_position);
+    }
+
+    if (m_align != None) {
+        const char* align;
+        switch (m_align) {
+        case GenericCueData::Start:
+            align = "Start";
+            break;
+        case GenericCueData::Middle:
+            align = "Middle";
+            break;
+        case GenericCueData::End:
+            align = "End";
+            break;
+        case GenericCueData::None:
+            align = "None";
+            break;
+        }
+        builder.appendLiteral(", align = ");
+        builder.append(align);
+    }
+
+    if (m_foregroundColor.isValid()) {
+        builder.appendLiteral(", foreground color = ");
+        builder.append(m_foregroundColor.serialized());
+    }
+
+    if (m_backgroundColor.isValid()) {
+        builder.appendLiteral(", background color = ");
+        builder.append(m_backgroundColor.serialized());
+    }
+
+    if (m_highlightColor.isValid()) {
+        builder.appendLiteral(", hilight color = ");
+        builder.append(m_highlightColor.serialized());
+    }
+
+    if (m_baseFontSize) {
+        builder.appendLiteral(", base font size = ");
+        builder.appendNumber(m_baseFontSize);
+    }
+
+    if (m_relativeFontSize) {
+        builder.appendLiteral(", relative font size = ");
+        builder.appendNumber(m_relativeFontSize);
+    }
+
+    if (!m_fontName.isEmpty()) {
+        builder.appendLiteral(", font = ");
+        builder.append(m_fontName);
+    }
+
+    return builder.toString();
+}
 
 inline bool GenericCueData::doesExtendCueData(const GenericCueData& other) const
 {
@@ -165,5 +263,20 @@ public:
 };
 
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::GenericCueData> {
+    static String toString(const WebCore::GenericCueData& cue)
+    {
+        return cue.toString();
+    }
+};
+
+}
 
 #endif

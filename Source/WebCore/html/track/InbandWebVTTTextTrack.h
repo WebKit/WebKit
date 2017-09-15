@@ -49,6 +49,10 @@ private:
     void newRegionsParsed() final;
     void fileFailedToParse() final;
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "InbandWebVTTTextTrack"; }
+#endif
+
     std::unique_ptr<WebVTTParser> m_webVTTParser;
 };
 

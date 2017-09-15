@@ -71,6 +71,11 @@ private:
     void zeroBufferList(AudioBufferList&, size_t);
     void playInternal();
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "AudioTrackPrivateMediaStreamCocoa"; }
+#endif
+
+
     AudioComponentInstance m_remoteIOUnit { nullptr };
     std::unique_ptr<CAAudioStreamDescription> m_inputDescription;
     std::unique_ptr<CAAudioStreamDescription> m_outputDescription;

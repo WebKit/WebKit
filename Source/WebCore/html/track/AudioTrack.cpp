@@ -77,11 +77,14 @@ const AtomicString& AudioTrack::commentaryKeyword()
 
 AudioTrack::AudioTrack(AudioTrackClient& client, AudioTrackPrivate& trackPrivate)
     : MediaTrackBase(MediaTrackBase::AudioTrack, trackPrivate.id(), trackPrivate.label(), trackPrivate.language())
-    , m_enabled(trackPrivate.enabled())
     , m_client(&client)
     , m_private(trackPrivate)
+    , m_enabled(trackPrivate.enabled())
 {
     m_private->setClient(this);
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
     updateKindFromPrivate();
 }
 
@@ -99,6 +102,9 @@ void AudioTrack::setPrivate(AudioTrackPrivate& trackPrivate)
     m_private = trackPrivate;
     m_private->setEnabled(m_enabled);
     m_private->setClient(this);
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
 
     updateKindFromPrivate();
 }
@@ -185,6 +191,14 @@ void AudioTrack::updateKindFromPrivate()
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+void AudioTrack::setMediaElement(HTMLMediaElement* element)
+{
+    TrackBase::setMediaElement(element);
+#if !RELEASE_LOG_DISABLED
+    m_private->setLogger(logger(), logIdentifier());
+#endif
 }
 
 } // namespace WebCore

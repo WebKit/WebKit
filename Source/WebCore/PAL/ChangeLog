@@ -1,3 +1,15 @@
+2017-09-15  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch text tracks to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=176809
+        <rdar://problem/34397605>
+
+        Reviewed by Jer Noble.
+
+        * pal/Logger.h:
+        (PAL::LogArgument::toString):
+        (PAL::Logger::willLog const):
+
 2017-09-14  Dan Bernstein  <mitz@apple.com>
 
         Fixed building with the Apple internal macOS 10.12 SDK.

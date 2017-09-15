@@ -54,6 +54,10 @@ public:
     enum Kind { Alternative, Captions, Main, Sign, Subtitles, Commentary, None };
     virtual Kind kind() const { return None; }
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "VideoTrackPrivate"; }
+#endif
+
 protected:
     VideoTrackPrivate() = default;
 

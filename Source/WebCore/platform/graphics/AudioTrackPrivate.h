@@ -62,6 +62,10 @@ public:
     enum Kind { Alternative, Description, Main, MainDesc, Translation, Commentary, None };
     virtual Kind kind() const { return None; }
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "AudioTrackPrivate"; }
+#endif
+
 protected:
     AudioTrackPrivate() = default;
 

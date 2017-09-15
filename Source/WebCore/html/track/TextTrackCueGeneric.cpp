@@ -189,8 +189,6 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
     displayTreeInternal().setInlineStyleProperty(CSSPropertyFontSize, lround(size), CSSPrimitiveValue::CSS_PX);
-
-    LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }
 
 bool TextTrackCueGeneric::cueContentsMatch(const TextTrackCue& cue) const
@@ -267,7 +265,46 @@ bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
     
     return VTTCue::isOrderedBefore(that);
 }
-    
+
+String TextTrackCueGeneric::toString() const
+{
+    StringBuilder builder;
+
+    builder.append(VTTCue::toString());
+
+    if (m_foregroundColor.isValid()) {
+        builder.appendLiteral(", foreground color = ");
+        builder.append(m_foregroundColor.serialized());
+    }
+
+    if (m_backgroundColor.isValid()) {
+        builder.appendLiteral(", background color = ");
+        builder.append(m_backgroundColor.serialized());
+    }
+
+    if (m_highlightColor.isValid()) {
+        builder.appendLiteral(", hilight color = ");
+        builder.append(m_highlightColor.serialized());
+    }
+
+    if (m_baseFontSizeRelativeToVideoHeight) {
+        builder.appendLiteral(", base font size relative to video height = ");
+        builder.appendNumber(m_baseFontSizeRelativeToVideoHeight);
+    }
+
+    if (m_fontSizeMultiplier) {
+        builder.appendLiteral(", font size multiplier = ");
+        builder.appendNumber(m_fontSizeMultiplier);
+    }
+
+    if (!m_fontName.isEmpty()) {
+        builder.appendLiteral(", font = ");
+        builder.append(m_fontName);
+    }
+
+    return builder.toString();
+}
+
 } // namespace WebCore
 
 #endif

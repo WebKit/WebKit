@@ -29,6 +29,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 
+#include <pal/Logger.h>
+#include <pal/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/AtomicString.h>
@@ -44,7 +46,12 @@ public:
     virtual void willRemove() = 0;
 };
 
-class TrackPrivateBase : public ThreadSafeRefCounted<TrackPrivateBase> {
+class TrackPrivateBase
+    : public ThreadSafeRefCounted<TrackPrivateBase>
+#if !RELEASE_LOG_DISABLED
+    , private PAL::LoggerHelper
+#endif
+{
     WTF_MAKE_NONCOPYABLE(TrackPrivateBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -66,8 +73,20 @@ public:
             client->willRemove();
     }
 
+#if !RELEASE_LOG_DISABLED
+    void setLogger(const PAL::Logger&, const void*);
+    const PAL::Logger& logger() const final { ASSERT(m_logger); return *m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 protected:
     TrackPrivateBase() = default;
+
+#if !RELEASE_LOG_DISABLED
+    RefPtr<const PAL::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebCore

@@ -73,6 +73,7 @@ public:
     const MediaDescription& description() const;
 
     void setPrivate(VideoTrackPrivate&);
+    void setMediaElement(HTMLMediaElement*) override;
 
 private:
     VideoTrack(VideoTrackClient&, VideoTrackPrivate&);
@@ -92,10 +93,13 @@ private:
 
     void updateKindFromPrivate();
 
-    bool m_selected;
-    VideoTrackClient* m_client;
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "VideoTrack"; }
+#endif
 
+    VideoTrackClient* m_client { nullptr };
     Ref<VideoTrackPrivate> m_private;
+    bool m_selected { false };
 };
 
 } // namespace WebCore

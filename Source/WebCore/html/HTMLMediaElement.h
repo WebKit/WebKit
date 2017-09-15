@@ -36,6 +36,7 @@
 #include "MediaCanStartListener.h"
 #include "MediaControllerInterface.h"
 #include "MediaElementSession.h"
+#include "MediaPlayer.h"
 #include "MediaProducer.h"
 #include "VisibilityChangeClient.h"
 #include <pal/LoggerHelper.h>
@@ -87,7 +88,6 @@ class MediaControlsHost;
 class MediaElementAudioSourceNode;
 class MediaError;
 class MediaKeys;
-class MediaPlayer;
 class MediaResourceLoader;
 class MediaSession;
 class MediaSource;
@@ -141,7 +141,7 @@ class HTMLMediaElement
     , private CDMClient
 #endif
 #if !RELEASE_LOG_DISABLED
-    , private PAL::LoggerHelper
+    , public PAL::LoggerHelper
 #endif
 {
 public:
@@ -538,6 +538,11 @@ public:
 
     bool supportsSeeking() const override;
 
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& logger() const final { return *m_logger.get(); }
+    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
+#endif
+
 protected:
     HTMLMediaElement(const QualifiedName&, Document&, bool createdByParser);
     virtual ~HTMLMediaElement();
@@ -895,9 +900,7 @@ private:
     void seekToPlaybackPositionEndedTimerFired();
 
 #if !RELEASE_LOG_DISABLED
-    const PAL::Logger& logger() const final { return *m_logger.get(); }
     const char* logClassName() const final { return "HTMLMediaElement"; }
-    const void* logIdentifier() const final { return reinterpret_cast<const void*>(m_logIdentifier); }
     WTFLogChannel& logChannel() const final;
 
     const void* mediaPlayerLogIdentifier() final { return logIdentifier(); }

@@ -74,9 +74,12 @@ void InbandWebVTTTextTrack::newCuesParsed()
     for (auto& cueData : cues) {
         auto vttCue = VTTCue::create(*scriptExecutionContext(), *cueData);
         if (hasCue(vttCue.ptr(), TextTrackCue::IgnoreDuration)) {
-            LOG(Media, "InbandWebVTTTextTrack::newCuesParsed ignoring already added cue: start=%.2f, end=%.2f, content=\"%s\"\n", vttCue->startTime(), vttCue->endTime(), vttCue->text().utf8().data());
+            DEBUG_LOG(LOGIDENTIFIER, "ignoring already added cue: ", vttCue.get());
             return;
         }
+
+        DEBUG_LOG(LOGIDENTIFIER, vttCue.get());
+
         addCue(WTFMove(vttCue));
     }
 }
@@ -93,7 +96,7 @@ void InbandWebVTTTextTrack::newRegionsParsed()
 
 void InbandWebVTTTextTrack::fileFailedToParse()
 {
-    LOG(Media, "Error parsing WebVTT stream.");
+    ERROR_LOG(LOGIDENTIFIER, "Error parsing WebVTT stream.");
 }
 
 } // namespace WebCore

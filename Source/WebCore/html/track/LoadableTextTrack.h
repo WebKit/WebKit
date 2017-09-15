@@ -63,6 +63,10 @@ private:
 
     void loadTimerFired();
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const override { return "LoadableTextTrack"; }
+#endif
+
     HTMLTrackElement* m_trackElement;
     Timer m_loadTimer;
     std::unique_ptr<TextTrackLoader> m_loader;

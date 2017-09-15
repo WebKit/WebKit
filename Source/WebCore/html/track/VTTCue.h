@@ -167,6 +167,8 @@ public:
 
     void didChange() override;
 
+    String toString() const override;
+
 protected:
     VTTCue(ScriptExecutionContext&, const MediaTime& start, const MediaTime& end, const String& content);
     VTTCue(ScriptExecutionContext&, const WebVTTCueData&);
@@ -226,5 +228,20 @@ VTTCue* toVTTCue(TextTrackCue*);
 const VTTCue* toVTTCue(const TextTrackCue*);
 
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::VTTCue> {
+    static String toString(const WebCore::VTTCue& cue)
+    {
+        return cue.toString();
+    }
+};
+
+}
 
 #endif

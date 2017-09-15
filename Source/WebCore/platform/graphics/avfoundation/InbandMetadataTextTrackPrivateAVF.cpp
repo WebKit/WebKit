@@ -30,6 +30,7 @@
 
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
+#include "MediaPlayer.h"
 #include <CoreMedia/CoreMedia.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -76,12 +77,12 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
     if (time >= m_currentCueStartTime) {
         if (client()) {
             for (auto& partialCue : m_incompleteCues) {
-                LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(%p) - updating cue: start=%s, end=%s", this, toString(partialCue.startTime).utf8().data(), toString(time).utf8().data());
+                INFO_LOG(LOGIDENTIFIER, "updating cue: start = ", partialCue.startTime, ", end = ", time);
                 client()->updateDataCue(partialCue.startTime, time, *partialCue.cueData);
             }
         }
     } else
-        LOG(Media, "InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes negative length cue(s) ignored: start=%s, end=%s\n", toString(m_currentCueStartTime).utf8().data(), toString(time).utf8().data());
+        WARNING_LOG(LOGIDENTIFIER, "negative length cue(s) ignored: start = ", m_currentCueStartTime, ", end = ", time);
 
     m_incompleteCues.shrink(0);
     m_currentCueStartTime = MediaTime::zeroTime();
@@ -92,7 +93,7 @@ void InbandMetadataTextTrackPrivateAVF::updatePendingCueEndTimes(const MediaTime
 void InbandMetadataTextTrackPrivateAVF::flushPartialCues()
 {
     if (m_currentCueStartTime && m_incompleteCues.size())
-        LOG(Media, "InbandMetadataTextTrackPrivateAVF::resetCueValues flushing incomplete data for cues: start=%s\n", toString(m_currentCueStartTime).utf8().data());
+        INFO_LOG(LOGIDENTIFIER, "flushing incomplete data for cues: start = ", m_currentCueStartTime);
 
     if (client()) {
         for (auto& partialCue : m_incompleteCues)

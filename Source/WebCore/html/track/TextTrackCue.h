@@ -84,6 +84,8 @@ public:
     void willChange();
     virtual void didChange();
 
+    virtual String toString() const;
+
     using RefCounted::ref;
     using RefCounted::deref;
 
@@ -118,5 +120,21 @@ private:
 };
 
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::TextTrackCue> {
+    static String toString(const WebCore::TextTrackCue& cue)
+    {
+        return cue.toString();
+    }
+};
+
+
+}
 
 #endif
