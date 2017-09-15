@@ -30,8 +30,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 16x17
                   text run at (2,2) width 16: "**"
               RenderTableCell {TD} at (99,26) size 530x40 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,2) size 477x35
-                  text run at (2,2) width 477: "UNIX and Windows 2000 integration toolkit : a complete guide for systems"
+                RenderText {#text} at (2,2) size 478x35
+                  text run at (2,2) width 478: "UNIX and Windows 2000 integration toolkit : a complete guide for systems"
                   text run at (2,20) width 178: "administrators / Rawn Shah."
               RenderTableCell {TD} at (630,35) size 111x22 [border: (1px inset #808080)] [r=1 c=3 rs=1 cs=1]
                 RenderText {#text} at (2,2) size 82x17
@@ -45,8 +45,8 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 678x24
                     RenderTableRow {TR} at (0,2) size 678x20
                       RenderTableCell {TD} at (2,2) size 674x20 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 166x17
-                          text run at (1,1) width 166: "Title has multiple holdings"
+                        RenderText {#text} at (1,1) size 167x17
+                          text run at (1,1) width 167: "Title has multiple holdings"
             RenderTableRow {TR} at (0,98) size 782x40
               RenderTableCell {TD} at (2,122) size 20x22 [border: (1px inset #808080)] [r=3 c=0 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 16x17
@@ -70,8 +70,8 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 678x24
                     RenderTableRow {TR} at (0,2) size 678x20
                       RenderTableCell {TD} at (2,2) size 674x20 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 166x17
-                          text run at (1,1) width 166: "Title has multiple holdings"
+                        RenderText {#text} at (1,1) size 167x17
+                          text run at (1,1) width 167: "Title has multiple holdings"
             RenderTableRow {TR} at (0,170) size 782x40
               RenderTableCell {TD} at (2,194) size 20x22 [border: (1px inset #808080)] [r=5 c=0 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 16x17
@@ -95,8 +95,8 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 678x24
                     RenderTableRow {TR} at (0,2) size 678x20
                       RenderTableCell {TD} at (2,2) size 674x20 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 166x17
-                          text run at (1,1) width 166: "Title has multiple holdings"
+                        RenderText {#text} at (1,1) size 167x17
+                          text run at (1,1) width 167: "Title has multiple holdings"
             RenderTableRow {TR} at (0,242) size 782x22
               RenderTableCell {TD} at (2,257) size 20x22 [border: (1px inset #808080)] [r=7 c=0 rs=2 cs=1]
                 RenderText {#text} at (2,2) size 16x17
@@ -119,5 +119,5 @@ layer at (0,0) size 800x600
                   RenderTableSection {TBODY} at (0,0) size 678x24
                     RenderTableRow {TR} at (0,2) size 678x20
                       RenderTableCell {TD} at (2,2) size 674x20 [r=0 c=0 rs=1 cs=1]
-                        RenderText {#text} at (1,1) size 166x17
-                          text run at (1,1) width 166: "Title has multiple holdings"
+                        RenderText {#text} at (1,1) size 167x17
+                          text run at (1,1) width 167: "Title has multiple holdings"

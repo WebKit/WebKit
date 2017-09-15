@@ -9,28 +9,28 @@ layer at (0,0) size 800x600
       RenderTable {TABLE} at (0,34) size 675x59
         RenderTableSection {TBODY} at (0,0) size 675x59
           RenderTableRow {TR} at (0,0) size 675x59 [bgcolor=#9999CC]
-            RenderTableCell {TD} at (0,17) size 632x25 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 152x20
-                RenderInline {B} at (0,0) size 152x20
-                  RenderText {#text} at (2,2) size 152x20
-                    text run at (2,2) width 152: "Technology News"
+            RenderTableCell {TD} at (0,17) size 631x25 [r=0 c=0 rs=1 cs=1]
+              RenderInline {FONT} at (0,0) size 153x20
+                RenderInline {B} at (0,0) size 153x20
+                  RenderText {#text} at (2,2) size 153x20
+                    text run at (2,2) width 153: "Technology News"
               RenderInline {FONT} at (0,0) size 182x15
-                RenderText {#text} at (154,6) size 182x15
-                  text run at (154,6) width 62: " - updated "
-                  text run at (216,6) width 120: "12:15 PM ET Oct 24"
+                RenderText {#text} at (155,6) size 182x15
+                  text run at (155,6) width 62: " - updated "
+                  text run at (217,6) width 120: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (632,0) size 43x59 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 39x55
-                RenderTableSection {TBODY} at (0,0) size 39x55
-                  RenderTableRow {TR} at (0,0) size 39x55
-                    RenderTableCell {TD} at (0,0) size 39x55 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (631,0) size 44x59 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 40x55
+                RenderTableSection {TBODY} at (0,0) size 40x55
+                  RenderTableRow {TR} at (0,0) size 40x55
+                    RenderTableCell {TD} at (0,0) size 40x55 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 16x16
-                      RenderInline {FONT} at (0,0) size 33x33
-                        RenderInline {A} at (0,0) size 33x33 [color=#0000EE]
-                          RenderText {#text} at (3,19) size 33x33
+                      RenderInline {FONT} at (0,0) size 34x33
+                        RenderInline {A} at (0,0) size 34x33 [color=#0000EE]
+                          RenderText {#text} at (3,19) size 34x33
                             text run at (3,19) width 31: "Add to"
                             text run at (3,30) width 13: "My"
-                            text run at (3,41) width 33: "Yahoo!"
+                            text run at (3,41) width 34: "Yahoo!"
                       RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,109) size 784x18
         RenderText {#text} at (0,0) size 471x17
@@ -39,23 +39,23 @@ layer at (0,0) size 800x600
         RenderTableSection {TBODY} at (0,0) size 675x26
           RenderTableRow {TR} at (0,0) size 675x26 [bgcolor=#9999CC]
             RenderTableCell {TD} at (0,0) size 507x26 [r=0 c=0 rs=1 cs=1]
-              RenderInline {FONT} at (0,0) size 152x20
-                RenderInline {B} at (0,0) size 152x20
-                  RenderText {#text} at (2,1) size 152x22
-                    text run at (2,2) width 152: "Technology News"
+              RenderInline {FONT} at (0,0) size 153x20
+                RenderInline {B} at (0,0) size 153x20
+                  RenderText {#text} at (2,1) size 153x22
+                    text run at (2,2) width 153: "Technology News"
               RenderInline {FONT} at (0,0) size 182x15
-                RenderText {#text} at (154,5) size 182x17
-                  text run at (154,6) width 62: " - updated "
-                  text run at (216,6) width 120: "12:15 PM ET Oct 24"
+                RenderText {#text} at (155,5) size 182x17
+                  text run at (155,6) width 62: " - updated "
+                  text run at (217,6) width 120: "12:15 PM ET Oct 24"
               RenderText {#text} at (0,0) size 0x0
-            RenderTableCell {TD} at (507,0) size 168x26 [r=0 c=1 rs=1 cs=1]
-              RenderTable {TABLE} at (2,2) size 108x22
-                RenderTableSection {TBODY} at (0,0) size 108x22
-                  RenderTableRow {TR} at (0,0) size 108x22
-                    RenderTableCell {TD} at (0,0) size 108x22 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
+            RenderTableCell {TD} at (506,0) size 169x26 [r=0 c=1 rs=1 cs=1]
+              RenderTable {TABLE} at (2,2) size 109x22
+                RenderTableSection {TBODY} at (0,0) size 109x22
+                  RenderTableRow {TR} at (0,0) size 109x22
+                    RenderTableCell {TD} at (0,0) size 109x22 [bgcolor=#CCCCFF] [r=0 c=0 rs=1 cs=1]
                       RenderImage {IMG} at (3,3) size 16x16
-                      RenderInline {FONT} at (0,0) size 83x11
-                        RenderInline {A} at (0,0) size 83x11 [color=#0000EE]
-                          RenderText {#text} at (22,3) size 83x11
-                            text run at (22,3) width 83: "Add to My Yahoo!"
+                      RenderInline {FONT} at (0,0) size 84x11
+                        RenderInline {A} at (0,0) size 84x11 [color=#0000EE]
+                          RenderText {#text} at (22,3) size 84x11
+                            text run at (22,3) width 84: "Add to My Yahoo!"
                       RenderText {#text} at (0,0) size 0x0

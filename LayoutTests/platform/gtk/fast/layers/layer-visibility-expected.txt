@@ -131,8 +131,8 @@ layer at (548,134) size 126x30
   RenderBlock (positioned) {DIV} at (2,2) size 126x30 [border: (2px solid #008000)]
 layer at (10,218) size 130x36
   RenderBlock (relative positioned) {DIV} at (2,2) size 130x36
-    RenderText {#text} at (0,0) size 114x35
-      text run at (0,0) width 114: "11 green box with"
+    RenderText {#text} at (0,0) size 115x35
+      text run at (0,0) width 115: "11 green box with"
       text run at (0,18) width 57: "word ok:"
     RenderText {#text} at (0,0) size 0x0
 layer at (10,254) size 130x34

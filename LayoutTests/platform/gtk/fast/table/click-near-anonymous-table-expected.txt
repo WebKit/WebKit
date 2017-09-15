@@ -6,13 +6,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 172x17
           text run at (0,0) width 172: "This is a regression test for "
-        RenderInline {I} at (0,0) size 743x35
-          RenderInline {A} at (0,0) size 347x17 [color=#0000EE]
-            RenderText {#text} at (172,0) size 347x17
-              text run at (172,0) width 347: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9879"
-          RenderText {#text} at (519,0) size 743x35
-            text run at (519,0) width 4: " "
-            text run at (523,0) width 220: "REGRESSION: Repro crash when"
+        RenderInline {I} at (0,0) size 745x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (172,0) size 348x17
+              text run at (172,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9879"
+          RenderText {#text} at (520,0) size 745x35
+            text run at (520,0) width 4: " "
+            text run at (524,0) width 221: "REGRESSION: Repro crash when"
             text run at (0,18) width 265: "clicking to the side of an anonymous table"
         RenderText {#text} at (265,18) size 4x17
           text run at (265,18) width 4: "."

@@ -4,9 +4,9 @@ layer at (0,0) size 800x102
   RenderBlock {HTML} at (0,0) size 800x102
     RenderBody {BODY} at (8,16) size 784x70
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 753x35
-          text run at (0,0) width 753: "The three boxes should be the same. The order in each box should be: Roman letters, Hebrew"
-          text run at (0,18) width 358: "letters, digits, Hebrew letters, Roman letters."
+        RenderText {#text} at (0,0) size 755x35
+          text run at (0,0) width 755: "The three boxes should be the same. The order in each box should be: Roman letters, Hebrew"
+          text run at (0,18) width 359: "letters, digits, Hebrew letters, Roman letters."
       RenderBlock {P} at (0,52) size 784x18
         RenderInline {SPAN} at (0,0) size 158x19 [border: (1px solid #008000)]
           RenderText {#text} at (1,0) size 156x17

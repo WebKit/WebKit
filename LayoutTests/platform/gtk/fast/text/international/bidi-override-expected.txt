@@ -4,14 +4,14 @@ layer at (0,0) size 800x338
   RenderBlock {HTML} at (0,0) size 800x338
     RenderBody {BODY} at (8,16) size 784x314
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 391x17
-          text run at (0,0) width 391: "All rows should be identical to the reference row."
+        RenderText {#text} at (0,0) size 392x17
+          text run at (0,0) width 392: "All rows should be identical to the reference row."
       RenderTable {TABLE} at (0,34) size 647x109 [border: none]
         RenderTableSection {TBODY} at (0,0) size 646x108
           RenderTableRow {TR} at (0,0) size 646x27
             RenderTableCell {TD} at (0,0) size 114x27 [border: (1px solid #008000)] [r=0 c=0 rs=1 cs=1]
-              RenderText {#text} at (28,5) size 82x17
-                text run at (28,5) width 82: "Reference"
+              RenderText {#text} at (27,5) size 83x17
+                text run at (27,5) width 83: "Reference"
             RenderTableCell {TD} at (114,0) size 266x27 [border: (1px solid #008000)] [r=0 c=1 rs=1 cs=1]
               RenderText {#text} at (5,5) size 257x17
                 text run at (5,5) width 55: "abcdef"
@@ -125,8 +125,8 @@ layer at (0,0) size 800x338
                 text run at (168,5) width 77 RTL override: "\x{202E}ihg\x{5D0}\x{5D1}\x{5D2}fed"
                 text run at (245,5) width 17: "\x{202C}jkl"
       RenderBlock {P} at (0,159) size 784x18
-        RenderText {#text} at (0,0) size 488x17
-          text run at (0,0) width 488: "The CSS column should be identical to the reference column."
+        RenderText {#text} at (0,0) size 489x17
+          text run at (0,0) width 489: "The CSS column should be identical to the reference column."
       RenderTable {TABLE} at (0,193) size 277x121 [border: none]
         RenderTableSection {TBODY} at (0,0) size 276x120
           RenderTableRow {TR} at (0,0) size 276x27

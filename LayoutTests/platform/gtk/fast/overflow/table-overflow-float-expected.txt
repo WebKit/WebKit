@@ -13,8 +13,8 @@ layer at (0,0) size 800x600
           text run at (0,18) width 367: "are floating (float: left) span tags with content inside (text)."
         RenderBR {BR} at (367,32) size 0x0
         RenderBR {BR} at (0,36) size 0x17
-        RenderText {#text} at (0,54) size 744x35
-          text run at (0,54) width 744: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
+        RenderText {#text} at (0,54) size 746x35
+          text run at (0,54) width 746: "You would expect that the table would expand to fit the defined width of the div tag. But in Safari and Shiira, the table"
           text run at (0,72) width 195: "expands to fit the height of the "
         RenderInline {I} at (0,0) size 133x17
           RenderText {#text} at (195,72) size 133x17

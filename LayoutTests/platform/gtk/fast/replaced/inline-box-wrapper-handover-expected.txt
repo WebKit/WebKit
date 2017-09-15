@@ -6,16 +6,16 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 253x17
           text run at (0,0) width 253: "This test checks for a regression against "
-        RenderInline {I} at (0,0) size 742x35
-          RenderInline {A} at (0,0) size 347x17 [color=#0000EE]
-            RenderText {#text} at (253,0) size 347x17
-              text run at (253,0) width 347: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
-          RenderText {#text} at (600,0) size 742x35
-            text run at (600,0) width 4: " "
-            text run at (604,0) width 138: "Image thumbnails are"
-            text run at (0,18) width 194: "misplaced on forum.2ostrov.ru"
-        RenderText {#text} at (194,18) size 4x17
-          text run at (194,18) width 4: "."
+        RenderInline {I} at (0,0) size 744x35
+          RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
+            RenderText {#text} at (253,0) size 348x17
+              text run at (253,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
+          RenderText {#text} at (601,0) size 744x35
+            text run at (601,0) width 4: " "
+            text run at (605,0) width 139: "Image thumbnails are"
+            text run at (0,18) width 195: "misplaced on forum.2ostrov.ru"
+        RenderText {#text} at (195,18) size 4x17
+          text run at (195,18) width 4: "."
       RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,70) size 784x18
         RenderText {#text} at (0,0) size 232x17

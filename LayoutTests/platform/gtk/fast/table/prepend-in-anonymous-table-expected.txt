@@ -4,14 +4,14 @@ layer at (0,0) size 785x1490
   RenderBlock {HTML} at (0,0) size 785x1490
     RenderBody {BODY} at (8,8) size 769x1474
       RenderBlock {P} at (0,0) size 769x36
-        RenderText {#text} at (0,0) size 52x17
-          text run at (0,0) width 52: "Test for "
-        RenderInline {I} at (0,0) size 708x35
-          RenderInline {A} at (0,0) size 306x17 [color=#0000EE]
-            RenderText {#text} at (52,0) size 306x17
-              text run at (52,0) width 306: "https://bugs.webkit.org/show_bug.cgi?id=19519"
-          RenderText {#text} at (358,0) size 708x35
-            text run at (358,0) width 350: " DOM modification causes stack exhaustion (BUTTON"
+        RenderText {#text} at (0,0) size 53x17
+          text run at (0,0) width 53: "Test for "
+        RenderInline {I} at (0,0) size 710x35
+          RenderInline {A} at (0,0) size 307x17 [color=#0000EE]
+            RenderText {#text} at (53,0) size 307x17
+              text run at (53,0) width 307: "https://bugs.webkit.org/show_bug.cgi?id=19519"
+          RenderText {#text} at (360,0) size 710x35
+            text run at (360,0) width 350: " DOM modification causes stack exhaustion (BUTTON"
             text run at (0,18) width 156: "OBJECT COLGROUP)"
         RenderText {#text} at (156,18) size 4x17
           text run at (156,18) width 4: "."

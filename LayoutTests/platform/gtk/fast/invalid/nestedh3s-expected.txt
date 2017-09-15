@@ -14,9 +14,9 @@ layer at (0,0) size 800x600
         RenderBlock (anonymous) at (4,47) size 776x227
           RenderBlock {H3} at (0,0) size 776x226 [border: (2px solid #FF0000)]
             RenderBlock (anonymous) at (4,4) size 768x26
-              RenderInline {I} at (0,0) size 38x25
-                RenderText {#text} at (0,0) size 38x25
-                  text run at (0,0) width 38: "Two"
+              RenderInline {I} at (0,0) size 39x25
+                RenderText {#text} at (0,0) size 39x25
+                  text run at (0,0) width 39: "Two"
             RenderBlock (anonymous) at (4,55) size 768x141
               RenderBlock {H3} at (0,0) size 768x140 [border: (2px solid #FF0000)]
                 RenderBlock (anonymous) at (4,4) size 760x30

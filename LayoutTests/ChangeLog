@@ -1,5 +1,9 @@
 2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed GTK+ gardening. Rebaseline tests after r222077. Part 2.
+
+2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Unreviewed GTK+ gardening. Rebaseline tests after r222077. Part 1.
 
 2017-09-14  Youenn Fablet  <youenn@apple.com>

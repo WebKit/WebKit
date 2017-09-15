@@ -16,8 +16,8 @@ layer at (20,66) size 200x444
       text run at (0,54) width 100: "eget lobortis at, "
       text run at (100,54) width 72: "convallis ut"
       text run at (0,72) width 44: "lectus. "
-    RenderText {#text} at (100,72) size 192x131
-      text run at (100,72) width 62: " vulputate"
+    RenderText {#text} at (101,72) size 192x131
+      text run at (101,72) width 62: " vulputate"
       text run at (0,90) width 147: "tincidunt leo, eu varius "
       text run at (147,90) width 31: "nunc"
       text run at (0,108) width 176: "ullamcorper vel. Integer nec"
@@ -44,10 +44,10 @@ layer at (20,66) size 200x444
       text run at (70,408) width 75: "interdum et,"
     RenderText {#text} at (52,426) size 60x17
       text run at (52,426) width 60: " ut lorem."
-layer at (20,66) size 56x17
-  RenderInline (relative positioned) {SPAN} at (0,0) size 56x17 [bgcolor=#FFFF00]
-    RenderText {#text} at (44,72) size 56x17
-      text run at (44,72) width 56: "Vivamus"
+layer at (20,66) size 57x17
+  RenderInline (relative positioned) {SPAN} at (0,0) size 57x17 [bgcolor=#FFFF00]
+    RenderText {#text} at (44,72) size 57x17
+      text run at (44,72) width 57: "Vivamus"
 layer at (20,66) size 44x17
   RenderInline (relative positioned) {SPAN} at (0,0) size 44x17 [bgcolor=#FFFF00]
     RenderText {#text} at (0,204) size 44x17

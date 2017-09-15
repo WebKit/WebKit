@@ -32,11 +32,11 @@ layer at (0,0) size 800x350
         RenderBlock {P} at (0,86) size 471x36
           RenderText {#text} at (0,0) size 450x17
             text run at (0,0) width 450: "This bug only occurs on pages with a standards-compliant DOCTYPE."
-          RenderInline {A} at (0,0) size 259x17 [color=#0000EE]
-            RenderText {#text} at (0,18) size 259x17
-              text run at (0,18) width 259: "View this test case without a DOCTYPE"
-          RenderText {#text} at (259,18) size 4x17
-            text run at (259,18) width 4: "."
+          RenderInline {A} at (0,0) size 260x17 [color=#0000EE]
+            RenderText {#text} at (0,18) size 260x17
+              text run at (0,18) width 260: "View this test case without a DOCTYPE"
+          RenderText {#text} at (260,18) size 4x17
+            text run at (260,18) width 4: "."
         RenderBlock {OL} at (0,138) size 471x180
           RenderListItem {LI} at (40,0) size 431x36
             RenderListMarker at (-20,0) size 16x17: "1"
@@ -96,12 +96,12 @@ layer at (0,0) size 800x350
                 text run at (161,0) width 41: "iPhoto"
             RenderText {#text} at (202,0) size 8x17
               text run at (202,0) width 8: ", "
-            RenderInline {A} at (0,0) size 42x17 [color=#0000EE]
-              RenderText {#text} at (210,0) size 42x17
-                text run at (210,0) width 42: "iTunes"
-            RenderText {#text} at (252,0) size 170x17
-              text run at (252,0) width 8: ". "
-              text run at (260,0) width 162: "Bundled into a box called"
+            RenderInline {A} at (0,0) size 43x17 [color=#0000EE]
+              RenderText {#text} at (210,0) size 43x17
+                text run at (210,0) width 43: "iTunes"
+            RenderText {#text} at (253,0) size 170x17
+              text run at (253,0) width 8: ". "
+              text run at (261,0) width 162: "Bundled into a box called"
             RenderInline {A} at (0,0) size 30x17 [color=#0000EE]
               RenderText {#text} at (0,18) size 30x17
                 text run at (0,18) width 30: "iLife"
@@ -173,9 +173,9 @@ layer at (0,0) size 800x350
         RenderBlock {UL} at (0,194) size 784x108
           RenderListItem {LI} at (40,0) size 744x18
             RenderListMarker at (413,0) size 8x17: bullet
-            RenderInline {A} at (0,0) size 90x17 [color=#0000EE]
-              RenderText {#text} at (654,0) size 90x17
-                text run at (654,0) width 90: "RSS Validator"
+            RenderInline {A} at (0,0) size 92x17 [color=#0000EE]
+              RenderText {#text} at (652,0) size 92x17
+                text run at (652,0) width 92: "RSS Validator"
           RenderListItem {LI} at (40,18) size 744x18
             RenderListMarker at (413,0) size 8x17: bullet
             RenderInline {A} at (0,0) size 145x17 [color=#0000EE]

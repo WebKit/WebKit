@@ -6,9 +6,9 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 108x17
           text run at (0,0) width 108: "This tests for "
-        RenderInline {I} at (0,0) size 731x35
-          RenderText {#text} at (108,0) size 731x35
-            text run at (108,0) width 623: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6014 Bidi algorithm: incorrect"
+        RenderInline {I} at (0,0) size 732x35
+          RenderText {#text} at (108,0) size 732x35
+            text run at (108,0) width 624: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6014 Bidi algorithm: incorrect"
             text run at (0,18) width 410: "resolved levels for neutrals between R and ET ON L"
         RenderText {#text} at (410,18) size 5x17
           text run at (410,18) width 5: "."

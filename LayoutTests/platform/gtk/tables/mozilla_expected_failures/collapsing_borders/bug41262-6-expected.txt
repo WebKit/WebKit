@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,1) size 27x17
                   text run at (2,1) width 27: "4am"
               RenderTableCell {TD} at (66,0) size 39x20 [border: none none none (1px solid #808080)] [r=0 c=2 rs=1 cs=1]
-                RenderText {#text} at (2,1) size 35x17
-                  text run at (2,1) width 35: "11pm"
+                RenderText {#text} at (2,1) size 36x17
+                  text run at (2,1) width 36: "11pm"
         RenderBlock {P} at (0,98) size 784x62
           RenderButton {BUTTON} at (233,2) size 96x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 79x18
@@ -65,19 +65,19 @@ layer at (0,0) size 800x600
                 text run at (0,0) width 23: "All "
                 text run at (23,0) width 54: "borders"
           RenderBR {BR} at (552,20) size 1x0
-          RenderButton {BUTTON} at (188,33) size 131x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderButton {BUTTON} at (187,33) size 131x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 114x18
               RenderText {#text} at (0,0) size 114x17
                 text run at (0,0) width 60: "Column "
                 text run at (60,0) width 54: "borders"
-          RenderButton {BUTTON} at (322,33) size 127x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+          RenderButton {BUTTON} at (321,33) size 127x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
             RenderBlock (anonymous) at (8,4) size 110x18
               RenderText {#text} at (0,0) size 110x17
                 text run at (0,0) width 56: "Groups "
                 text run at (56,0) width 54: "borders"
-          RenderButton {BUTTON} at (452,33) size 144x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
-            RenderBlock (anonymous) at (8,4) size 127x18
-              RenderText {#text} at (0,0) size 127x17
-                text run at (0,0) width 43: "Table "
-                text run at (43,0) width 84: "row borders"
+          RenderButton {BUTTON} at (451,33) size 146x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+            RenderBlock (anonymous) at (8,4) size 129x18
+              RenderText {#text} at (0,0) size 129x17
+                text run at (0,0) width 45: "Table "
+                text run at (45,0) width 84: "row borders"
           RenderText {#text} at (0,0) size 0x0

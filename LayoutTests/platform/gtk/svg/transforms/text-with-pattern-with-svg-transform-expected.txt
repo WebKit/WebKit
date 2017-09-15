@@ -16,8 +16,8 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (0,7) size 4x12 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (0,11) size 11x12 [fill={[type=SOLID] [color=#FFFF00]}] [x=10.00] [y=10.00] [width=10.00] [height=10.00]
       RenderSVGRect {rect} at (0,82) size 287x224 [stroke={[type=PATTERN] [id="pat2"] [stroke width=20.00]}] [x=35.00] [y=110.00] [width=410.00] [height=40.00]
-      RenderSVGText {text} at (25,164) size 318x14 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 318x14
+      RenderSVGText {text} at (25,164) size 319x14 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 319x14
           chunk 1 text run 1 at (25.00,175.00) startOffset 0 endOffset 59 width 318.00: "Pattern of 4 rectangles applied to a stroke of a rectangle."
       RenderSVGResourcePattern {pattern} [id="pat3"] [patternUnits=objectBoundingBox] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (0,0) size 8x12 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]

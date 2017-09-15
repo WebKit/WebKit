@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
-        RenderText {#text} at (0,0) size 722x17
-          text run at (0,0) width 722: "This tests that bidirectional text is correctly rendered when using ATSUI in list box controls."
-        RenderBR {BR} at (722,14) size 0x0
+        RenderText {#text} at (0,0) size 725x17
+          text run at (0,0) width 725: "This tests that bidirectional text is correctly rendered when using ATSUI in list box controls."
+        RenderBR {BR} at (725,14) size 0x0
         RenderText {#text} at (0,18) size 729x17
           text run at (0,18) width 729: "The order of the text below each list box should match the order of the select's option text."
       RenderBlock (anonymous) at (0,52) size 784x95

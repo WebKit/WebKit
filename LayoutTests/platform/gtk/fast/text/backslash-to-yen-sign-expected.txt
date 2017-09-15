@@ -37,8 +37,8 @@ layer at (0,0) size 800x250
         RenderText {#text} at (0,0) size 335x17
           text run at (0,0) width 335: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
       RenderBlock {DIV} at (0,198) size 784x18
-        RenderText {#text} at (0,0) size 313x17
-          text run at (0,0) width 313: "Using font \"Times\". expected: backslash, actual: \\"
+        RenderText {#text} at (0,0) size 314x17
+          text run at (0,0) width 314: "Using font \"Times\". expected: backslash, actual: \\"
       RenderBlock {DIV} at (0,216) size 784x18
         RenderText {#text} at (0,0) size 316x17
           text run at (0,0) width 316: "Using font \"foobar\". expected: backslash, actual: \\"

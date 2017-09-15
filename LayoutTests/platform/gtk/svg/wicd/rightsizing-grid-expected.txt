@@ -5,8 +5,8 @@ layer at (0,0) size 785x1435
     RenderBody {body} at (8,8) size 769x0
       RenderBlock (floating) {div} at (0,0) size 769x1428
         RenderBlock {h1} at (0,21) size 769x38
-          RenderText {#text} at (0,0) size 443x36
-            text run at (0,0) width 443: "SVG grid with percentage width"
+          RenderText {#text} at (0,0) size 444x36
+            text run at (0,0) width 444: "SVG grid with percentage width"
         RenderBlock {h4} at (0,79) size 769x19
           RenderText {#text} at (0,0) size 149x17
             text run at (0,0) width 149: "WICD Core 1.0 #20-3"
@@ -277,7 +277,7 @@ layer at (0,0) size 785x1435
             text run at (640,54) width 116: "sticked together to"
             text run at (640,72) width 121: "build one rectangle"
             text run at (0,542) width 33: "grid. "
-            text run at (33,542) width 716: "You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should"
+            text run at (33,542) width 718: "You should be able to resize your browser window and the grid rendering should adjust to it. The outcome should"
             text run at (0,560) width 239: "look like in these sample screenshots: "
           RenderInline {a} at (0,0) size 33x17 [color=#0000EE]
             RenderText {#text} at (239,560) size 33x17
