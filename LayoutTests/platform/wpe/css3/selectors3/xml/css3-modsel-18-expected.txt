@@ -18,18 +18,18 @@ layer at (0,0) size 800x266
       RenderText {#text} at (187,18) size 4x17
         text run at (187,18) width 4: ":"
     RenderBlock {address} at (0,68) size 800x18
-      RenderText {#text} at (0,0) size 160x17
-        text run at (0,0) width 160: "The background color of "
+      RenderText {#text} at (0,0) size 161x17
+        text run at (0,0) width 161: "The background color of "
       RenderInline {a} at (0,0) size 114x17 [color=#0000EE]
-        RenderText {#text} at (160,0) size 80x17
-          text run at (160,0) width 80: "this anchor ("
+        RenderText {#text} at (161,0) size 80x17
+          text run at (161,0) width 80: "this anchor ("
         RenderInline {strong} at (0,0) size 29x17
-          RenderText {#text} at (240,0) size 29x17
-            text run at (240,0) width 29: "here"
-        RenderText {#text} at (269,0) size 5x17
-          text run at (269,0) width 5: ")"
-      RenderText {#text} at (274,0) size 386x17
-        text run at (274,0) width 386: " should turn to green when the pointing device hovers over it."
+          RenderText {#text} at (241,0) size 29x17
+            text run at (241,0) width 29: "here"
+        RenderText {#text} at (270,0) size 5x17
+          text run at (270,0) width 5: ")"
+      RenderText {#text} at (275,0) size 387x17
+        text run at (275,0) width 387: " should turn to green when the pointing device hovers over it."
     RenderTable {table} at (0,86) size 278x180
       RenderTableSection {tbody} at (0,0) size 278x180
         RenderTableRow {tr} at (0,5) size 278x20

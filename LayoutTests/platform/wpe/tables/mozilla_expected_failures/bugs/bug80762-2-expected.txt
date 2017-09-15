@@ -61,17 +61,17 @@ layer at (0,0) size 785x734
                         text run at (2,470) width 166: "decision a few years prior."
                       RenderBR {BR} at (168,484) size 0x0
                       RenderBR {BR} at (2,488) size 0x17
-                      RenderText {#text} at (2,506) size 754x53
+                      RenderText {#text} at (2,506) size 755x53
                         text run at (2,506) width 725: "The concept of punitive damages is designed to act as civil penalty imposed on a wrong doer, which has conducted"
-                        text run at (2,524) width 754: "itself in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally the"
+                        text run at (2,524) width 755: "itself in a vindictive manner, which offends one's sense of propriety - high handed shocking behaviour. Traditionally the"
                         text run at (2,542) width 729: "financial abilities of the wrong doer are a factor - the deeper the pockets the more substantial the sum to be awarded."
                       RenderBR {BR} at (731,556) size 0x0
                       RenderBR {BR} at (2,560) size 0x17
-                      RenderText {#text} at (2,578) size 744x89
+                      RenderText {#text} at (2,578) size 745x89
                         text run at (2,578) width 742: "Canadian courts have been reluctant to embrace the concept - awards such as Hill are rare. It is worthy of note that the"
                         text run at (2,596) width 696: "dissenting reasons of Justice Laskin in Whiten were much in favour of maintaining the trial award - a lucid and"
                         text run at (2,614) width 741: "powerful dissent written by a much respected jurist. Much attention will be given to this decision. Oral argument is set"
-                        text run at (2,632) width 744: "for the week of December 11th. A decision will likely be forthcoming in March to June time period. This decision will"
+                        text run at (2,632) width 745: "for the week of December 11th. A decision will likely be forthcoming in March to June time period. This decision will"
                         text run at (2,650) width 499: "be no doubt a much quoted decision for many years, regardless of the outcome."
                       RenderBR {BR} at (501,664) size 0x0
                       RenderBR {BR} at (2,668) size 0x17

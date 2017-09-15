@@ -27,9 +27,9 @@ layer at (0,0) size 800x600
                               RenderEmbeddedObject {APPLET} at (2,2) size 440x27
                               RenderText {#text} at (0,0) size 0x0
                       RenderBlock {P} at (2,57) size 760x36
-                        RenderText {#text} at (0,0) size 724x35
-                          text run at (0,0) width 422: "The Porto Elounda Mare is built on the sea front, on a 110,000 m2 "
-                          text run at (422,0) width 302: "plot of land with a 150 meter long private sandy"
+                        RenderText {#text} at (0,0) size 725x35
+                          text run at (0,0) width 423: "The Porto Elounda Mare is built on the sea front, on a 110,000 m2 "
+                          text run at (423,0) width 302: "plot of land with a 150 meter long private sandy"
                           text run at (0,18) width 143: "beach. The view from "
                           text run at (143,18) width 381: "decorated with antique and contemporary furniture and rugs."
                   RenderTableRow {TR} at (0,99) size 768x54
@@ -63,9 +63,9 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,255) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderBlock {P} at (0,289) size 784x18
-        RenderText {#text} at (0,0) size 536x17
+        RenderText {#text} at (0,0) size 537x17
           text run at (0,0) width 416: "This table repeats the previous table, but removes the 'bad applet'. "
-          text run at (416,0) width 120: "Table lays out OK."
+          text run at (416,0) width 121: "Table lays out OK."
       RenderBlock (anonymous) at (0,323) size 784x18
         RenderBR {BR} at (0,0) size 0x17
       RenderTable {TABLE} at (0,341) size 780x158 [border: (1px outset #808080)]
@@ -83,9 +83,9 @@ layer at (0,0) size 800x600
                               RenderText {#text} at (2,2) size 98x17
                                 text run at (2,2) width 98: "applet was here"
                       RenderBlock {P} at (2,48) size 760x36
-                        RenderText {#text} at (0,0) size 724x35
-                          text run at (0,0) width 422: "The Porto Elounda Mare is built on the sea front, on a 110,000 m2 "
-                          text run at (422,0) width 302: "plot of land with a 150 meter long private sandy"
+                        RenderText {#text} at (0,0) size 725x35
+                          text run at (0,0) width 423: "The Porto Elounda Mare is built on the sea front, on a 110,000 m2 "
+                          text run at (423,0) width 302: "plot of land with a 150 meter long private sandy"
                           text run at (0,18) width 143: "beach. The view from "
                           text run at (143,18) width 381: "decorated with antique and contemporary furniture and rugs."
                   RenderTableRow {TR} at (0,90) size 768x54

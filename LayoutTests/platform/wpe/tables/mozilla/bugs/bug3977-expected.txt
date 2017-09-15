@@ -22,8 +22,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 452x18
-                RenderText {#text} at (0,0) size 161x17
-                  text run at (0,0) width 161: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 162x17
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 452x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
@@ -62,8 +62,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 446x18
-                RenderText {#text} at (0,0) size 161x17
-                  text run at (0,0) width 161: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 162x17
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 446x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
@@ -102,8 +102,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 455x18
-                RenderText {#text} at (0,0) size 161x17
-                  text run at (0,0) width 161: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 162x17
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 455x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."
@@ -131,8 +131,8 @@ layer at (0,0) size 785x929
                 RenderText {#text} at (0,0) size 223x17
                   text run at (0,0) width 223: "HP Peripherals Developer Program"
               RenderBlock {P} at (2,36) size 446x18
-                RenderText {#text} at (0,0) size 161x17
-                  text run at (0,0) width 161: "PROGRAM SERVICES"
+                RenderText {#text} at (0,0) size 162x17
+                  text run at (0,0) width 162: "PROGRAM SERVICES"
               RenderBlock {P} at (2,70) size 446x18
                 RenderText {#text} at (0,0) size 68x17
                   text run at (0,0) width 68: "etc., etc. ..."

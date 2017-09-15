@@ -13,11 +13,11 @@ layer at (0,0) size 800x600
               RenderText {#text} at (40,2) size 33x17
                 text run at (40,2) width 33: "Mon"
             RenderTableCell {TH} at (223,0) size 113x21 [border: (1px solid #005A8C)] [r=0 c=2 rs=1 cs=1]
-              RenderText {#text} at (43,2) size 27x17
-                text run at (43,2) width 27: "Tue"
+              RenderText {#text} at (42,2) size 28x17
+                text run at (42,2) width 28: "Tue"
             RenderTableCell {TH} at (335,0) size 113x21 [border: (1px solid #005A8C)] [r=0 c=3 rs=1 cs=1]
-              RenderText {#text} at (40,2) size 32x17
-                text run at (40,2) width 32: "Wed"
+              RenderText {#text} at (40,2) size 33x17
+                text run at (40,2) width 33: "Wed"
             RenderTableCell {TH} at (447,0) size 113x21 [border: (1px solid #005A8C)] [r=0 c=4 rs=1 cs=1]
               RenderText {#text} at (41,2) size 30x17
                 text run at (41,2) width 30: "Thu"
@@ -50,11 +50,11 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 8x17
                   text run at (0,0) width 8: "3"
               RenderBlock (anonymous) at (2,20) size 109x54
-                RenderText {#text} at (0,0) size 66x17
-                  text run at (0,0) width 66: "CHORTle"
-                RenderBR {BR} at (66,14) size 0x0
+                RenderText {#text} at (0,0) size 67x17
+                  text run at (0,0) width 67: "CHORTle"
+                RenderBR {BR} at (67,14) size 0x0
                 RenderText {#text} at (0,18) size 67x35
-                  text run at (0,18) width 61: "Avondale"
+                  text run at (0,18) width 62: "Avondale"
                   text run at (0,36) width 67: "graduation"
             RenderTableCell {TD} at (111,60) size 113x39 [border: (1px solid #005A8C)] [r=2 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 109x18
@@ -83,9 +83,9 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (0,0) size 8x17
                   text run at (0,0) width 8: "7"
               RenderBlock (anonymous) at (2,20) size 109x54
-                RenderText {#text} at (0,0) size 99x53
+                RenderText {#text} at (0,0) size 100x53
                   text run at (0,0) width 94: "Castle Hill and"
-                  text run at (0,18) width 99: "Mountain View"
+                  text run at (0,18) width 100: "Mountain View"
                   text run at (0,36) width 88: "Speech nights"
             RenderTableCell {TD} at (559,60) size 113x39 [border: (1px solid #005A8C)] [r=2 c=5 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 109x18
@@ -112,8 +112,8 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (99,14) size 0x0
             RenderTableCell {TD} at (111,135) size 113x39 [border: (1px solid #005A8C)] [r=3 c=1 rs=1 cs=1]
               RenderBlock {DIV} at (2,2) size 109x18
-                RenderText {#text} at (0,0) size 15x17
-                  text run at (0,0) width 15: "11"
+                RenderText {#text} at (0,0) size 16x17
+                  text run at (0,0) width 16: "11"
               RenderBlock (anonymous) at (2,20) size 109x18
                 RenderBR {BR} at (0,0) size 0x17
             RenderTableCell {TD} at (223,135) size 113x39 [border: (1px solid #005A8C)] [r=3 c=2 rs=1 cs=1]

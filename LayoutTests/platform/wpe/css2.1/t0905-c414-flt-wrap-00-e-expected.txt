@@ -11,8 +11,8 @@ layer at (0,0) size 800x192
           RenderText {#text} at (0,0) size 44x17
             text run at (0,0) width 44: "TEST:"
         RenderBlock (floating) {P} at (0,18) size 240x19 [color=#00FFFF] [bgcolor=#008080]
-          RenderText {#text} at (100,0) size 39x17
-            text run at (100,0) width 39: "PASS"
+          RenderText {#text} at (100,0) size 40x17
+            text run at (100,0) width 40: "PASS"
         RenderText {#text} at (43,0) size 236x125
           text run at (43,0) width 189: "fail fail fail fail fail fail fail fail"
           text run at (0,36) width 48: "fail fail "
