@@ -131,6 +131,10 @@ Boolean MRMediaRemoteSetCanBeNowPlayingApplication(Boolean);
 void MRMediaRemoteSetNowPlayingApplicationPlaybackStateForOrigin(MROriginRef, MRPlaybackState, dispatch_queue_t replyQ, void(^completion)(MRMediaRemoteError));
 void MRMediaRemoteSetNowPlayingInfo(CFDictionaryRef);
 
+#pragma mark - MRAVRouting
+
+CFArrayRef MRMediaRemoteCopyPickableRoutes();
+
 WTF_EXTERN_C_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

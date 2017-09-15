@@ -100,6 +100,18 @@ NS_ASSUME_NONNULL_END
 
 #endif // PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 
+#if PLATFORM(IOS)
+typedef NS_ENUM(NSInteger, AVPlayerExternalPlaybackType) {
+    AVPlayerExternalPlaybackTypeNone,
+    AVPlayerExternalPlaybackTypeAirPlay,
+    AVPlayerExternalPlaybackTypeTVOut,
+};
+
+@interface AVPlayer (AVPlayerExternalPlaybackSupportPrivate)
+@property (nonatomic, readonly) AVPlayerExternalPlaybackType externalPlaybackType;
+@end
+#endif
+
 #if !PLATFORM(IOS)
 
 #pragma mark -

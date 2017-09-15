@@ -1,3 +1,13 @@
+2017-09-15  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Upstream MediaRemote and VideoToolbox WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176953
+
+        Reviewed by Eric Carlson.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: WebKitTestRunner hits an assertion in editing/pasteboard/datatransfer-items-copy-plaintext.html

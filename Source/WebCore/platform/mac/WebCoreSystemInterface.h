@@ -156,14 +156,4 @@ extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
 
-typedef enum {
-    wkExternalPlaybackTypeNone,
-    wkExternalPlaybackTypeAirPlay,
-    wkExternalPlaybackTypeTVOut,
-} wkExternalPlaybackType;
-extern int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
-extern NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
-
-extern bool (*wkQueryDecoderAvailability)(void);
-
 }

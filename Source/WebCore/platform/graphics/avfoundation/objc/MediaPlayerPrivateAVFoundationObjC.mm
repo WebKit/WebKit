@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -105,6 +105,7 @@
 #if PLATFORM(IOS)
 #import "WAKAppKitStubs.h"
 #import <CoreImage/CoreImage.h>
+#import <UIKit/UIDevice.h>
 #import <mach/mach_port.h>
 #else
 #import <Foundation/NSGeometry.h>
@@ -121,6 +122,7 @@
 #endif
 
 #import "CoreVideoSoftLink.h"
+#import "MediaRemoteSoftLink.h"
 
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
@@ -292,6 +294,20 @@ SOFT_LINK_POINTER(AVFoundation, AVURLAssetBoundNetworkInterfaceName, NSString *)
 
 SOFT_LINK_FRAMEWORK(MediaToolbox)
 SOFT_LINK_OPTIONAL(MediaToolbox, MTEnableCaption2015Behavior, Boolean, (), ())
+
+#if PLATFORM(IOS)
+SOFT_LINK_PRIVATE_FRAMEWORK(Celestial)
+SOFT_LINK_POINTER(Celestial, AVController_RouteDescriptionKey_RouteCurrentlyPicked, NSString *)
+SOFT_LINK_POINTER(Celestial, AVController_RouteDescriptionKey_RouteName, NSString *)
+SOFT_LINK_POINTER(Celestial, AVController_RouteDescriptionKey_AVAudioRouteName, NSString *)
+#define AVController_RouteDescriptionKey_RouteCurrentlyPicked getAVController_RouteDescriptionKey_RouteCurrentlyPicked()
+#define AVController_RouteDescriptionKey_RouteName getAVController_RouteDescriptionKey_RouteName()
+#define AVController_RouteDescriptionKey_AVAudioRouteName getAVController_RouteDescriptionKey_AVAudioRouteName()
+
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIDevice)
+#define UIDevice getUIDeviceClass()
+#endif
 
 using namespace WebCore;
 
@@ -2849,12 +2865,15 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
         return MediaPlayer::TargetTypeNone;
 
 #if PLATFORM(IOS)
-    switch (wkExernalDeviceTypeForPlayer(m_avPlayer.get())) {
-    case wkExternalPlaybackTypeNone:
+    if (!AVFoundationLibrary())
         return MediaPlayer::TargetTypeNone;
-    case wkExternalPlaybackTypeAirPlay:
+
+    switch ([m_avPlayer externalPlaybackType]) {
+    case AVPlayerExternalPlaybackTypeNone:
+        return MediaPlayer::TargetTypeNone;
+    case AVPlayerExternalPlaybackTypeAirPlay:
         return MediaPlayer::TargetTypeAirPlay;
-    case wkExternalPlaybackTypeTVOut:
+    case AVPlayerExternalPlaybackTypeTVOut:
         return MediaPlayer::TargetTypeTVOut;
     }
 
@@ -2865,6 +2884,58 @@ MediaPlayer::WirelessPlaybackTargetType MediaPlayerPrivateAVFoundationObjC::wire
     return MediaPlayer::TargetTypeAirPlay;
 #endif
 }
+    
+#if PLATFORM(IOS)
+static NSString *exernalDeviceDisplayNameForPlayer(AVPlayerType *player)
+{
+    NSString *displayName = nil;
+
+    if (!AVFoundationLibrary())
+        return nil;
+
+    if (player.externalPlaybackType != AVPlayerExternalPlaybackTypeAirPlay)
+        return nil;
+
+    NSArray *pickableRoutes = CFBridgingRelease(MRMediaRemoteCopyPickableRoutes());
+    if (!pickableRoutes.count)
+        return nil;
+
+    for (NSDictionary *pickableRoute in pickableRoutes) {
+        if (![pickableRoute[AVController_RouteDescriptionKey_RouteCurrentlyPicked] boolValue])
+            continue;
+
+        displayName = pickableRoute[AVController_RouteDescriptionKey_RouteName];
+
+        NSString *routeName = pickableRoute[AVController_RouteDescriptionKey_AVAudioRouteName];
+        if (![routeName isEqualToString:@"Speaker"] && ![routeName isEqualToString:@"HDMIOutput"])
+            break;
+
+        // The route is a speaker or HDMI out, override the name to be the localized device model.
+        NSString *localizedDeviceModel = [[UIDevice currentDevice] localizedModel];
+
+        // In cases where a route with that name already exists, prefix the name with the model.
+        BOOL includeLocalizedDeviceModelName = NO;
+        for (NSDictionary *otherRoute in pickableRoutes) {
+            if (otherRoute == pickableRoute)
+                continue;
+
+            if ([otherRoute[AVController_RouteDescriptionKey_RouteName] rangeOfString:displayName].location != NSNotFound) {
+                includeLocalizedDeviceModelName = YES;
+                break;
+            }
+        }
+
+        if (includeLocalizedDeviceModelName)
+            displayName =  [NSString stringWithFormat:@"%@ %@", localizedDeviceModel, displayName];
+        else
+            displayName = localizedDeviceModel;
+
+        break;
+    }
+
+    return displayName;
+}
+#endif
 
 String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
 {
@@ -2876,7 +2947,7 @@ String MediaPlayerPrivateAVFoundationObjC::wirelessPlaybackTargetName() const
     if (m_playbackTarget)
         wirelessTargetName = m_playbackTarget->deviceName();
 #else
-    wirelessTargetName = wkExernalDeviceDisplayNameForPlayer(m_avPlayer.get());
+    wirelessTargetName = exernalDeviceDisplayNameForPlayer(m_avPlayer.get());
 #endif
 
     return wirelessTargetName;

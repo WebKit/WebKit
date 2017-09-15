@@ -53,8 +53,3 @@ CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initial
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
-
-int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
-NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
-
-bool (*wkQueryDecoderAvailability)(void);

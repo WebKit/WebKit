@@ -49,10 +49,5 @@ void InitWebCoreSystemInterface(void)
         INIT(NSElasticDeltaForReboundDelta);
         INIT(NSReboundDeltaForElasticDelta);
 #endif
-
-        INIT(ExernalDeviceTypeForPlayer);
-        INIT(ExernalDeviceDisplayNameForPlayer);
-
-        INIT(QueryDecoderAvailability);
     });
 }

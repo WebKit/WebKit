@@ -1,3 +1,13 @@
+2017-09-15  Andy Estes  <aestes@apple.com>
+
+        [Cocoa] Upstream MediaRemote and VideoToolbox WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=176953
+
+        Reviewed by Eric Carlson.
+
+        * pal/spi/mac/AVFoundationSPI.h:
+        * pal/spi/mac/MediaRemoteSPI.h:
+
 2017-09-15  Eric Carlson  <eric.carlson@apple.com>
 
         Switch text tracks to release logging

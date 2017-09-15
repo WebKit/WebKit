@@ -44,8 +44,3 @@ WEBCORE_EXPORT CGFontRef(*wkCaptionAppearanceCopyFontForStyle)(int);
 WEBCORE_EXPORT bool(*wkCaptionAppearanceGetRelativeCharacterSize)(CGFloat*);
 WEBCORE_EXPORT int(*wkCaptionAppearanceGetTextEdgeStyle)(void);
 WEBCORE_EXPORT CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(void);
-
-WEBCORE_EXPORT int (*wkExernalDeviceTypeForPlayer)(AVPlayer *);
-WEBCORE_EXPORT NSString *(*wkExernalDeviceDisplayNameForPlayer)(AVPlayer *);
-
-WEBCORE_EXPORT bool (*wkQueryDecoderAvailability)(void);

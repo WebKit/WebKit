@@ -25,12 +25,13 @@
 
 #pragma once
 
-#if USE(MEDIAREMOTE)
-
 #include <pal/spi/mac/MediaRemoteSPI.h>
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(WebCore, MediaRemote)
+
+#if USE(MEDIAREMOTE)
+
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteGetLocalOrigin, MROriginRef, (), ())
 #define MRMediaRemoteGetLocalOrigin softLink_MediaRemote_MRMediaRemoteGetLocalOrigin
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteAddAsyncCommandHandlerBlock, void*, (MRMediaRemoteAsyncCommandHandlerBlock block), (block))
@@ -69,3 +70,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, MediaRemote, kMRMediaRemoteOptionPlayback
 #define kMRMediaRemoteOptionPlaybackPosition get_MediaRemote_kMRMediaRemoteOptionPlaybackPosition()
 
 #endif // USE(MEDIAREMOTE)
+
+#if PLATFORM(IOS)
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, MediaRemote, MRMediaRemoteCopyPickableRoutes, CFArrayRef, (), ())
+#define MRMediaRemoteCopyPickableRoutes softLink_MediaRemote_MRMediaRemoteCopyPickableRoutes
+#endif
