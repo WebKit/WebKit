@@ -86,6 +86,10 @@ AnimationBase::AnimationBase(const Animation& animation, Element& element, Compo
         m_totalDuration = m_animation->duration() * m_animation->iterationCount();
 }
 
+AnimationBase::~AnimationBase()
+{
+}
+
 RenderElement* AnimationBase::renderer() const
 {
     return m_element ? m_element->renderer() : nullptr;
@@ -97,6 +101,13 @@ RenderBoxModelObject* AnimationBase::compositedRenderer() const
     if (!renderer || !renderer->isComposited())
         return nullptr;
     return downcast<RenderBoxModelObject>(renderer);
+}
+
+void AnimationBase::clear()
+{
+    endAnimation();
+    m_element = nullptr;
+    m_compositeAnimation = nullptr;
 }
 
 void AnimationBase::setNeedsStyleRecalc(Element* element)

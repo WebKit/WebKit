@@ -49,16 +49,12 @@ class AnimationBase : public RefCounted<AnimationBase> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationBase(const Animation& transition, Element&, CompositeAnimation&);
-    virtual ~AnimationBase() { }
+    virtual ~AnimationBase();
 
+    Element* element() const { return m_element.get(); }
     RenderElement* renderer() const;
     RenderBoxModelObject* compositedRenderer() const;
-    void clear()
-    {
-        endAnimation();
-        m_element = nullptr;
-        m_compositeAnimation = nullptr;
-    }
+    void clear();
 
     double duration() const;
 
@@ -239,7 +235,10 @@ protected:
     bool computeTransformedExtentViaTransformList(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
     bool computeTransformedExtentViaMatrix(const FloatRect& rendererBox, const RenderStyle&, LayoutRect& bounds) const;
 
-    Element* m_element;
+private:
+    RefPtr<Element> m_element;
+
+protected:
     CompositeAnimation* m_compositeAnimation; // Ideally this would be a reference, but it has to be cleared if an animation is destroyed inside an event callback.
     Ref<Animation> m_animation;
 

@@ -1,3 +1,31 @@
+2017-09-15  Antti Koivisto  <antti@apple.com>
+
+        AnimationBase should ref the element
+        https://bugs.webkit.org/show_bug.cgi?id=176993
+
+        Reviewed by Simon Fraser.
+
+        We now longer have renderer pointer. Element can be reffed for safety.
+
+        This doesn't create reference cycle as the element pointer is cleared when render tree is
+        torn down. This happens at the latest when the element is removed from the tree.
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::~AnimationBase):
+        (WebCore::AnimationBase::clear):
+        * page/animation/AnimationBase.h:
+        (WebCore::AnimationBase::~AnimationBase): Deleted.
+        (WebCore::AnimationBase::clear): Deleted.
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::pauseAnimation):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::reset):
+        * page/animation/KeyframeAnimation.cpp:
+        (WebCore::KeyframeAnimation::pauseAnimation):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::sendAnimationEvent):
+        (WebCore::KeyframeAnimation::resolveKeyframeStyles):
+
 2017-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         Make DocumentLoader a FrameDestructionObserver
