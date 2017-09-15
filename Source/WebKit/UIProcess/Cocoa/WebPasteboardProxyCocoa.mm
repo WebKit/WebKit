@@ -181,6 +181,8 @@ void WebPasteboardProxy::readBufferFromPasteboard(uint64_t index, const String& 
     if (!buffer)
         return;
     size = buffer->size();
+    if (!size)
+        return;
     RefPtr<SharedMemory> sharedMemoryBuffer = SharedMemory::allocate(size);
     if (!sharedMemoryBuffer)
         return;

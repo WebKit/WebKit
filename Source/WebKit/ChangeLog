@@ -1,3 +1,16 @@
+2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: WebKitTestRunner hits an assertion in editing/pasteboard/datatransfer-items-copy-plaintext.html
+        https://bugs.webkit.org/show_bug.cgi?id=176968
+
+        Reviewed by Wenson Hsieh.
+
+        Don't allocate a SharedMemory of size zero (content was empty) as this would result in a crash inside
+        a WebContent process in release builds and an assertion failure in debug builds.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::readBufferFromPasteboard):
+
 2017-09-14  Youenn Fablet  <youenn@apple.com>
 
         Add Cache API support of records persistency

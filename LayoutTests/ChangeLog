@@ -1,3 +1,15 @@
+2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: WebKitTestRunner hits an assertion in editing/pasteboard/datatransfer-items-copy-plaintext.html
+        https://bugs.webkit.org/show_bug.cgi?id=176968
+        <rdar://problem/34454843>
+
+        Reviewed by Wenson Hsieh.
+
+        Unskip the test which used to crash/hit assertions.
+
+        * platform/ios/TestExpectations:
+
 2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed GTK+ gardening. Rebaseline tests after r222077. Part 2.
