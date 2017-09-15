@@ -18,8 +18,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x233 [border: (2px solid #0000FF)]
         RenderBlock {DIV} at (14,14) size 756x81
-          RenderText {#text} at (0,0) size 65x26
-            text run at (0,0) width 65: "Tests: "
+          RenderText {#text} at (0,0) size 67x26
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
           RenderText {#text} at (0,27) size 735x53
             text run at (0,27) width 735: "Pasting and matching style when there is nothing typed, but the typing style"

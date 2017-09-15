@@ -16,7 +16,7 @@ layer at (0,0) size 800x158
         RenderText {#text} at (0,0) size 556x107
           text run at (0,0) width 528: "The first element is floated to the right. The second element clears the right float and"
           text run at (0,18) width 556: "also floats right. The third element is floated to the left, but is forced below the bottom of"
-          text run at (0,36) width 523: "the first element. Yet, somehow this paragraph comes at the end of the markup, and"
+          text run at (0,36) width 525: "the first element. Yet, somehow this paragraph comes at the end of the markup, and"
           text run at (219,54) width 238: "manages to rise to the top of the page."
           text run at (219,72) width 261: "This behavior is present in Firefox, Safari"
           text run at (219,90) width 74: "and Opera. "

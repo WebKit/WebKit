@@ -48,8 +48,8 @@ layer at (0,0) size 800x600
             RenderText {#text} at (0,0) size 170x33
               text run at (0,0) width 170: "There is a tide"
           RenderBlock {DIV} at (14,48) size 756x62 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 244x33
-              text run at (14,14) width 244: "In the affairs of men"
+            RenderText {#text} at (14,14) size 245x33
+              text run at (14,14) width 245: "In the affairs of men"
           RenderBlock (anonymous) at (14,110) size 756x34
             RenderText {#text} at (0,0) size 295x33
               text run at (0,0) width 295: "Which taken at the flood"

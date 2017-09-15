@@ -17,15 +17,15 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"
               RenderBlock (anonymous) at (1,207) size 240x19
-                RenderText {#text} at (0,0) size 92x17
-                  text run at (0,0) width 92: "Text color first"
+                RenderText {#text} at (0,0) size 93x17
+                  text run at (0,0) width 93: "Text color first"
               RenderBlock {DIV} at (17,241) size 98x99 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"
             RenderTableCell {TD} at (246,2) size 242x357 [r=0 c=1 rs=1 cs=1]
               RenderBlock {H1} at (1,1) size 240x37
-                RenderText {#text} at (0,0) size 163x36
-                  text run at (0,0) width 163: "Blue-on-red"
+                RenderText {#text} at (0,0) size 164x36
+                  text run at (0,0) width 164: "Blue-on-red"
               RenderBlock (anonymous) at (1,59) size 240x19
                 RenderText {#text} at (0,0) size 142x17
                   text run at (0,0) width 142: "Background color first"
@@ -33,8 +33,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"
               RenderBlock (anonymous) at (1,207) size 240x19
-                RenderText {#text} at (0,0) size 92x17
-                  text run at (0,0) width 92: "Text color first"
+                RenderText {#text} at (0,0) size 93x17
+                  text run at (0,0) width 93: "Text color first"
               RenderBlock {DIV} at (17,241) size 98x99 [color=#0000FF] [bgcolor=#FF0000] [border: (1px solid #000000)]
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"
@@ -49,8 +49,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"
               RenderBlock (anonymous) at (1,207) size 240x19
-                RenderText {#text} at (0,0) size 92x17
-                  text run at (0,0) width 92: "Text color first"
+                RenderText {#text} at (0,0) size 93x17
+                  text run at (0,0) width 93: "Text color first"
               RenderBlock {DIV} at (17,241) size 98x99 [color=#0000FF] [bgcolor=#0000FF] [border: (1px solid #000000)]
                 RenderText {#text} at (21,2) size 56x53
                   text run at (21,2) width 56: "Az"

@@ -33,8 +33,8 @@ layer at (0,0) size 800x282
         RenderListItem {LI} at (40,90) size 744x126 [border: none (3px solid #FFFF00)]
           RenderListMarker at (-17,0) size 7x17: bullet
           RenderText {#text} at (3,0) size 705x125
-            text run at (3,0) width 331: "Yellow yellow yellow yellow yellow yellow yellow "
-            text run at (334,0) width 372: "yellow yellow yellow yellow yellow yellow yellow yellow"
+            text run at (3,0) width 333: "Yellow yellow yellow yellow yellow yellow yellow "
+            text run at (336,0) width 372: "yellow yellow yellow yellow yellow yellow yellow yellow"
             text run at (3,18) width 47: "yellow "
             text run at (50,18) width 423: "yellow yellow yellow yellow yellow yellow yellow yellow yellow "
             text run at (473,18) width 231: "yellow yellow yellow yellow yellow"

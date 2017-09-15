@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x72
         RenderText {#text} at (0,0) size 784x71
-          text run at (0,0) width 448: "You should see a black box below that is the width of the content area. "
-          text run at (448,0) width 256: "It contains alternating struts and springs. "
-          text run at (704,0) width 62: "The struts"
+          text run at (0,0) width 450: "You should see a black box below that is the width of the content area. "
+          text run at (450,0) width 256: "It contains alternating struts and springs. "
+          text run at (706,0) width 62: "The struts"
           text run at (0,18) width 255: "are bordered in green and are inflexible. "
           text run at (255,18) width 515: "The springs are bordered in purple and should grow and shrink as you resize your"
           text run at (0,36) width 115: "browser window. "

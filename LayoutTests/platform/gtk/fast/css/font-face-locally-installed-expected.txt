@@ -17,17 +17,17 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,52) size 784x18
         RenderText {#text} at (0,0) size 218x17
           text run at (0,0) width 218: "This should be Lucida Grande "
-        RenderInline {I} at (0,0) size 196x17
-          RenderText {#text} at (218,0) size 196x17
-            text run at (218,0) width 196: "and this should be Times Italic."
+        RenderInline {I} at (0,0) size 197x17
+          RenderText {#text} at (218,0) size 197x17
+            text run at (218,0) width 197: "and this should be Times Italic."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,86) size 784x18
-        RenderText {#text} at (0,0) size 139x17
-          text run at (0,0) width 139: "This should be Times "
+        RenderText {#text} at (0,0) size 140x17
+          text run at (0,0) width 140: "This should be Times "
         RenderInline {B} at (0,0) size 229x17
-          RenderText {#text} at (139,0) size 229x17
-            text run at (139,0) width 229: "and this should be Helvetica Bold."
+          RenderText {#text} at (140,0) size 229x17
+            text run at (140,0) width 229: "and this should be Helvetica Bold."
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,120) size 784x18
-        RenderText {#text} at (0,0) size 478x17
-          text run at (0,0) width 478: "UPPERCASE SHOULD BE MONACO and lowercase should be times."
+        RenderText {#text} at (0,0) size 479x17
+          text run at (0,0) width 479: "UPPERCASE SHOULD BE MONACO and lowercase should be times."

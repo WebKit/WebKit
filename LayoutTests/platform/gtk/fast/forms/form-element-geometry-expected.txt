@@ -4,8 +4,8 @@ layer at (0,0) size 785x757
   RenderBlock {HTML} at (0,0) size 785x757
     RenderBody {BODY} at (8,8) size 769x741
       RenderBlock {H1} at (0,0) size 769x37
-        RenderText {#text} at (0,0) size 419x36
-          text run at (0,0) width 419: "Form Element Geometry Tests"
+        RenderText {#text} at (0,0) size 422x36
+          text run at (0,0) width 422: "Form Element Geometry Tests"
       RenderBlock {P} at (0,58) size 769x19
         RenderText {#text} at (0,0) size 540x17
           text run at (0,0) width 540: "These tests help us tune the widget classes in KWQ to have all the right fudge factors."

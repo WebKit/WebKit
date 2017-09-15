@@ -30,9 +30,9 @@ layer at (0,0) size 785x678
   RenderBlock {HTML} at (0,0) size 785x678
     RenderBody {BODY} at (8,8) size 769x646
       RenderBlock (anonymous) at (0,0) size 769x81
-        RenderText {#text} at (0,0) size 764x53
-          text run at (0,0) width 758: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line"
-          text run at (758,0) width 6: " "
+        RenderText {#text} at (0,0) size 766x53
+          text run at (0,0) width 760: "Test inserting paragraphs and managing typing style correctly: \"x\" under \"line"
+          text run at (760,0) width 6: " "
           text run at (0,27) width 344: "2\" should be bold. Fix for this bug: "
         RenderInline {A} at (0,0) size 260x26 [color=#0000EE]
           RenderText {#text} at (344,27) size 260x26

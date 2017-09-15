@@ -16,9 +16,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x568
       RenderBlock (anonymous) at (0,0) size 784x108
-        RenderText {#text} at (0,0) size 763x80
-          text run at (0,0) width 757: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with"
-          text run at (757,0) width 6: " "
+        RenderText {#text} at (0,0) size 765x80
+          text run at (0,0) width 759: "Test inserting paragraphs: should see \"foo\" in a blue box, then a blue box with"
+          text run at (759,0) width 6: " "
           text run at (0,27) width 754: "with two lines in it: First line a bold \"x\"; second line a non-bold \"bar\". Fix for"
           text run at (754,27) width 6: " "
           text run at (0,54) width 90: "this bug: "
