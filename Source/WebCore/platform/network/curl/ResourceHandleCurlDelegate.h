@@ -80,7 +80,7 @@ private:
     void handleLocalReceiveResponse();
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
 
-    void didFinish(double, double, double, double);
+    void didFinish(NetworkLoadMetrics);
     void didFail(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, unsigned sslErrors);
 
     void handleDataURL();
@@ -91,7 +91,7 @@ private:
     size_t getFormElementsCount();
     void setupFormData(bool);
     void applyAuthentication();
-    void setWebTimings(double, double, double, double);
+    NetworkLoadMetrics getNetworkLoadMetrics();
 
     size_t didReceiveHeader(String&&);
     size_t didReceiveData(ThreadSafeDataBuffer);

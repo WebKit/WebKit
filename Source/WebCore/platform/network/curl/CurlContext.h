@@ -201,6 +201,7 @@ private:
 // CurlHandle -------------------------------------------------
 
 class HTTPHeaderMap;
+class NetworkLoadMetrics;
 
 class CurlHandle {
     WTF_MAKE_NONCOPYABLE(CurlHandle);
@@ -286,12 +287,12 @@ public:
     void setSslCtxCallbackFunction(curl_ssl_ctx_callback, void*);
 
     // Status
-    URL getEffectiveURL() const;
-    CURLcode getPrimaryPort(long&);
-    CURLcode getResponseCode(long&);
-    CURLcode getContentLenghtDownload(long long&);
-    CURLcode getHttpAuthAvail(long&);
-    CURLcode getTimes(double&, double&, double&, double&);
+    URL getEffectiveURL();
+    std::optional<uint16_t> getPrimaryPort();
+    std::optional<long> getResponseCode();
+    std::optional<long long> getContentLenghtDownload();
+    std::optional<long> getHttpAuthAvail();
+    std::optional<NetworkLoadMetrics> getTimes();
 
     static long long maxCurlOffT();
 

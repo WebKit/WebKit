@@ -164,14 +164,6 @@ void ResourceHandleCurlDelegate::dispatchSynchronousJob()
     // curl_easy_perform blocks until the transfer is finished.
     CURLcode ret = m_curlHandle.perform();
 
-    double pretransferTime = 0;
-    double dnsLookupTime = 0;
-    double connectTime = 0;
-    double appConnectTime = 0;
-
-    m_curlHandle.getTimes(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
-    setWebTimings(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
-
     if (ret != CURLE_OK)
         notifyFail();
     else
@@ -277,20 +269,15 @@ void ResourceHandleCurlDelegate::setupRequest()
 
 void ResourceHandleCurlDelegate::notifyFinish()
 {
-    double pretransferTime = 0;
-    double dnsLookupTime = 0;
-    double connectTime = 0;
-    double appConnectTime = 0;
-
-    m_curlHandle.getTimes(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+    NetworkLoadMetrics networkLoadMetrics = getNetworkLoadMetrics();
 
     if (isMainThread())
-        didFinish(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+        didFinish(networkLoadMetrics);
     else {
-        callOnMainThread([protectedThis = makeRef(*this), pretransferTime, dnsLookupTime, connectTime, appConnectTime] {
+        callOnMainThread([protectedThis = makeRef(*this), metrics = networkLoadMetrics.isolatedCopy()] {
             if (!protectedThis->m_handle)
                 return;
-            protectedThis->didFinish(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+            protectedThis->didFinish(metrics);
         });
     }
 }
@@ -348,19 +335,15 @@ static void removeLeadingAndTrailingQuotes(String& value)
 
 bool ResourceHandleCurlDelegate::getProtectionSpace(const ResourceResponse& response, ProtectionSpace& protectionSpace)
 {
-    CURLcode err;
-
-    long port = 0;
-    err = m_curlHandle.getPrimaryPort(port);
-    if (err != CURLE_OK)
+    auto port = m_curlHandle.getPrimaryPort();
+    if (!port)
         return false;
 
-    long availableAuth = CURLAUTH_NONE;
-    err = m_curlHandle.getHttpAuthAvail(availableAuth);
-    if (err != CURLE_OK)
+    auto availableAuth = m_curlHandle.getHttpAuthAvail();
+    if (!availableAuth)
         return false;
 
-    URL url = m_curlHandle.getEffectiveURL();
+    auto url = m_curlHandle.getEffectiveURL();
     if (!url.isValid())
         return false;
 
@@ -384,16 +367,16 @@ bool ResourceHandleCurlDelegate::getProtectionSpace(const ResourceResponse& resp
 
     ProtectionSpaceAuthenticationScheme authScheme = ProtectionSpaceAuthenticationSchemeUnknown;
 
-    if (availableAuth & CURLAUTH_BASIC)
+    if (*availableAuth & CURLAUTH_BASIC)
         authScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-    if (availableAuth & CURLAUTH_DIGEST)
+    if (*availableAuth & CURLAUTH_DIGEST)
         authScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
-    if (availableAuth & CURLAUTH_GSSNEGOTIATE)
+    if (*availableAuth & CURLAUTH_GSSNEGOTIATE)
         authScheme = ProtectionSpaceAuthenticationSchemeNegotiate;
-    if (availableAuth & CURLAUTH_NTLM)
+    if (*availableAuth & CURLAUTH_NTLM)
         authScheme = ProtectionSpaceAuthenticationSchemeNTLM;
 
-    protectionSpace = ProtectionSpace(host, port, serverType, realm, authScheme);
+    protectionSpace = ProtectionSpace(host, *port, serverType, realm, authScheme);
 
     return true;
 }
@@ -407,8 +390,9 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
 {
     ASSERT(isMainThread());
 
-    response().setExpectedContentLength(contentLength);
     response().setURL(m_curlHandle.getEffectiveURL());
+
+    response().setExpectedContentLength(contentLength);
     response().setHTTPStatusCode(httpCode);
     response().setMimeType(extractMIMETypeFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
     response().setTextEncodingName(extractCharsetFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType)));
@@ -492,9 +476,7 @@ void ResourceHandleCurlDelegate::handleLocalReceiveResponse()
     // which means the ResourceLoader's response does not contain the URL.
     // Run the code here for local files to resolve the issue.
     // TODO: See if there is a better approach for handling this.
-    URL url = m_curlHandle.getEffectiveURL();
-    ASSERT(url.isValid());
-    response().setURL(url);
+    response().setURL(m_curlHandle.getEffectiveURL());
     response().setResponseFired(true);
     if (m_handle->client())
         m_handle->client()->didReceiveResponse(m_handle, ResourceResponse(response()));
@@ -521,9 +503,9 @@ void ResourceHandleCurlDelegate::prepareSendData(char* buffer, size_t blockSize,
     m_workerThreadConditionVariable.notifyOne();
 }
 
-void ResourceHandleCurlDelegate::didFinish(double pretransferTime, double dnsLookupTime, double connectTime, double appConnectTime)
+void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics)
 {
-    setWebTimings(pretransferTime, dnsLookupTime, connectTime, appConnectTime);
+    response().setDeprecatedNetworkLoadMetrics(networkLoadMetrics);
 
     if (!m_handle)
         return;
@@ -721,19 +703,13 @@ void ResourceHandleCurlDelegate::applyAuthentication()
     m_curlHandle.setHttpAuthUserPass(user, password);
 }
 
-void ResourceHandleCurlDelegate::setWebTimings(double pretransferTime, double dnsLookupTime, double connectTime, double appConnectTime)
+NetworkLoadMetrics ResourceHandleCurlDelegate::getNetworkLoadMetrics()
 {
-    response().deprecatedNetworkLoadMetrics().domainLookupStart = Seconds(0);
-    response().deprecatedNetworkLoadMetrics().domainLookupEnd = Seconds(dnsLookupTime);
+    NetworkLoadMetrics networkLoadMetrics;
+    if (auto metrics = m_curlHandle.getTimes())
+        networkLoadMetrics = *metrics;
 
-    response().deprecatedNetworkLoadMetrics().connectStart = Seconds(dnsLookupTime);
-    response().deprecatedNetworkLoadMetrics().connectEnd = Seconds(connectTime);
-
-    response().deprecatedNetworkLoadMetrics().requestStart = Seconds(connectTime);
-    response().deprecatedNetworkLoadMetrics().responseStart = Seconds(pretransferTime);
-
-    if (appConnectTime)
-        response().deprecatedNetworkLoadMetrics().secureConnectionStart = Seconds(connectTime);
+    return networkLoadMetrics;
 }
 
 /*
@@ -762,7 +738,8 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
     */
     if (header == AtomicString("\r\n") || header == AtomicString("\n")) {
         long httpCode = 0;
-        m_curlHandle.getResponseCode(httpCode);
+        if (auto code = m_curlHandle.getResponseCode())
+            httpCode = *code;
 
         if (!httpCode) {
             // Comes here when receiving 200 Connection Established. Just return.
@@ -775,7 +752,8 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
         }
 
         long long contentLength = 0;
-        m_curlHandle.getContentLenghtDownload(contentLength);
+        if (auto length = m_curlHandle.getContentLenghtDownload())
+            contentLength = *length;
 
         if (isMainThread())
             didReceiveAllHeaders(httpCode, contentLength);
@@ -817,10 +795,10 @@ size_t ResourceHandleCurlDelegate::didReceiveData(ThreadSafeDataBuffer data)
     // this shouldn't be necessary but apparently is. CURL writes the data
     // of html page even if it is a redirect that was handled internally
     // can be observed e.g. on gmail.com
-    long httpCode = 0;
-    CURLcode errCd = m_curlHandle.getResponseCode(httpCode);
-    if (CURLE_OK == errCd && httpCode >= 300 && httpCode < 400)
-        return data.size();
+    if (auto httpCode = m_curlHandle.getResponseCode()) {
+        if (*httpCode >= 300 && *httpCode < 400)
+            return data.size();
+    }
 
     if (!data.size())
         return 0;

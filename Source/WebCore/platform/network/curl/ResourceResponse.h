@@ -50,6 +50,8 @@ public:
 
     void appendHTTPHeaderField(const String&);
 
+    void setDeprecatedNetworkLoadMetrics(const NetworkLoadMetrics& networkLoadMetrics) { m_networkLoadMetrics = networkLoadMetrics; }
+
     bool isRedirection() const;
     bool isNotModified() const;
     bool isUnauthorized() const;
