@@ -27,7 +27,9 @@
 #include "WebContentReader.h"
 
 #include "ArchiveResource.h"
+#include "Blob.h"
 #include "CachedResourceLoader.h"
+#include "DOMURL.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -163,6 +165,18 @@ bool WebContentReader::readPlainText(const String& text)
     addFragment(createFragmentFromText(context, [text precomposedStringWithCanonicalMapping]));
 
     madeFragmentFromPlainText = true;
+    return true;
+}
+
+bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
+{
+    Vector<uint8_t> data;
+    data.append(buffer->data(), buffer->size());
+    auto blob = Blob::create(WTFMove(data), type);
+    ASSERT(frame.document());
+    auto& document = *frame.document();
+    String blobURL = DOMURL::createObjectURL(document, blob);
+    addFragment(createFragmentForImageAndURL(document, blobURL));
     return true;
 }
 

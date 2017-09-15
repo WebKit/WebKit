@@ -933,26 +933,6 @@ Ref<DocumentFragment> createFragmentForImageAndURL(Document& document, const Str
     return fragment;
 }
 
-RefPtr<DocumentFragment> createFragmentForImageResourceAndAddResource(Frame& frame, Ref<ArchiveResource>&& resource)
-{
-    if (!frame.document())
-        return nullptr;
-
-    Ref<Document> document = *frame.document();
-    String resourceURL = resource->url().string();
-
-    if (DocumentLoader* loader = frame.loader().documentLoader())
-        loader->addArchiveResource(WTFMove(resource));
-
-    auto imageElement = HTMLImageElement::create(document.get());
-    imageElement->setAttributeWithoutSynchronization(HTMLNames::srcAttr, resourceURL);
-
-    auto fragment = document->createDocumentFragment();
-    fragment->appendChild(imageElement);
-
-    return WTFMove(fragment);
-}
-
 static Vector<Ref<HTMLElement>> collectElementsToRemoveFromFragment(ContainerNode& container)
 {
     Vector<Ref<HTMLElement>> toRemove;

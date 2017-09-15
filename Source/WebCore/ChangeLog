@@ -1,3 +1,31 @@
+2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Use blob URL instead of a WebKit fake URL when pasting an image
+        https://bugs.webkit.org/show_bug.cgi?id=176986
+        <rdar://problem/34455052>
+
+        Reviewed by Wenson Hsieh.
+
+        Fixed the bug that pasting an image on iOS resulted in an img element with src attribute
+        set to a WebKit fake URL so that the Web content could never save it.
+
+        Like r208451 on Mac, use a Blob URL instead.
+
+        This patch also removes createFragmentForImageResourceAndAddResource since it's no longer used.
+
+        Tests: LayoutTests/editing/pasteboard/paste-image-as-blob-url.html
+
+        * editing/cocoa/WebContentReaderCocoa.mm:
+        (WebCore::WebContentReader::readImage): Moved the code here from WebContentReaderMac.mm.
+        * editing/ios/WebContentReaderIOS.mm:
+        (WebCore::WebContentReader::readImage): Deleted. This is the code 
+        * editing/mac/WebContentReaderMac.mm:
+        (WebCore::WebContentReader::readImage): Moved to WebContentReaderCocoa.mm. Note that
+        typeAsFilenameWithExtension was dead code after r208451
+        * editing/markup.cpp:
+        (WebCore::createFragmentForImageResourceAndAddResource): Deleted.
+        * editing/markup.h:
+
 2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Avoid style recomputation when forwarding a focus event to an text field's input type

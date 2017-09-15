@@ -27,7 +27,6 @@
 #import "WebContentReader.h"
 
 #import "ArchiveResource.h"
-#import "DOMURL.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -59,23 +58,6 @@ bool WebContentReader::readHTML(const String& string)
         return false;
 
     addFragment(createFragmentFromMarkup(*frame.document(), string, emptyString(), DisallowScriptingAndPluginContent));
-    return true;
-}
-
-bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
-{
-    RetainPtr<CFStringRef> stringType = type.createCFString();
-    RetainPtr<NSString> filenameExtension = adoptNS((NSString *)UTTypeCopyPreferredTagWithClass(stringType.get(), kUTTagClassFilenameExtension));
-    NSString *relativeURLPart = [@"image" stringByAppendingString:filenameExtension.get()];
-    String mimeType = MIMETypeFromUTI(type);
-
-    // FIXME: Use a blob URL instead.
-    auto archive = ArchiveResource::create(WTFMove(buffer), URL::fakeURLWithRelativePart(relativeURLPart), mimeType, emptyString(), emptyString());
-    ASSERT(archive);
-    auto fragment = createFragmentForImageResourceAndAddResource(frame, *archive);
-    if (!fragment)
-        return false;
-    addFragment(fragment.releaseNonNull());
     return true;
 }
 

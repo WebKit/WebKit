@@ -1,3 +1,15 @@
+2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        iOS: Use blob URL instead of a WebKit fake URL when pasting an image
+        https://bugs.webkit.org/show_bug.cgi?id=176986
+        <rdar://problem/34455052>
+
+        Reviewed by Wenson Hsieh.
+
+        Removed the failing expectation on the test added by r208451 now that it passes on iOS.
+
+        * platform/ios/TestExpectations:
+
 2017-09-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Follow up to r222111, rebaseline tests for Sierra.

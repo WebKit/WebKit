@@ -27,7 +27,6 @@
 #import "WebContentReader.h"
 
 #import "ArchiveResource.h"
-#import "DOMURL.h"
 #import "Document.h"
 #import "DocumentFragment.h"
 #import "DocumentLoader.h"
@@ -97,23 +96,6 @@ bool WebContentReader::readHTML(const String& string)
     Document& document = *frame.document();
 
     fragment = createFragmentFromMarkup(document, stringOmittingMicrosoftPrefix, emptyString(), DisallowScriptingAndPluginContent);
-    return fragment;
-}
-
-bool WebContentReader::readImage(Ref<SharedBuffer>&& buffer, const String& type)
-{
-    ASSERT(type.contains('/'));
-    String typeAsFilenameWithExtension = type;
-    typeAsFilenameWithExtension.replace('/', '.');
-
-    Vector<uint8_t> data;
-    data.append(buffer->data(), buffer->size());
-    auto blob = Blob::create(WTFMove(data), type);
-    ASSERT(frame.document());
-    Document& document = *frame.document();
-    String blobURL = DOMURL::createObjectURL(document, blob);
-
-    fragment = createFragmentForImageAndURL(document, blobURL);
     return fragment;
 }
 
