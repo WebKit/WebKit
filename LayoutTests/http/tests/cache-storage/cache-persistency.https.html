@@ -42,11 +42,11 @@
     promise_test(test => {
         if (window.testRunner)
             testRunner.setPrivateBrowsingEnabled(false);
-        var clearPromise;
-        if (window.internals)
-            clearPromise =internals.clearCacheStorageMemoryRepresentation();
 
-        return Promise.resolve(clearPromise).then(() => {
+        return Promise.resolve().then(() => {
+            if (window.internals)
+                return internals.clearCacheStorageMemoryRepresentation();
+        }).then(() => {
             return self.caches.keys();
         }).then(keys => {
             var pending = [];

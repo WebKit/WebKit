@@ -52,16 +52,22 @@ public:
     Cache* find(uint64_t identifier);
     void appendRepresentation(StringBuilder&) const;
 
+    void readRecordsList(Cache&, NetworkCache::Storage::TraverseHandler&&);
+    void readRecord(const NetworkCache::Key&, WTF::Function<void(Expected<WebCore::DOMCacheEngine::Record, WebCore::DOMCacheEngine::Error>&&)>&&);
+    void writeRecord(const Cache&, const RecordInformation&, WebCore::DOMCacheEngine::Record&&, WebCore::DOMCacheEngine::CompletionCallback&&);
+    void removeRecord(const NetworkCache::Key&);
+
+    const NetworkCache::Salt& salt() const;
+
+    bool shouldPersist() const { return !m_rootPath.isNull(); }
+
 private:
     Caches(Engine&, String&& origin);
 
     void readCachesFromDisk(WTF::Function<void(Expected<Vector<Cache>, WebCore::DOMCacheEngine::Error>&&)>&&);
     void writeCachesToDisk(WebCore::DOMCacheEngine::CompletionCallback&&);
 
-
     Cache* find(const String& name);
-
-    bool shouldPersist() const { return !m_rootPath.isNull(); }
 
     void makeDirty() { ++m_updateCounter; }
     bool isDirty(uint64_t updateCounter) const;
@@ -74,6 +80,8 @@ private:
     Vector<Cache> m_caches;
     Vector<Cache> m_removedCaches;
     RefPtr<NetworkCache::Storage> m_storage;
+    HashMap<NetworkCache::Key, WebCore::DOMCacheEngine::Record> m_volatileStorage;
+    mutable std::optional<NetworkCache::Salt> m_volatileSalt;
     Vector<WebCore::DOMCacheEngine::CompletionCallback> m_pendingInitializationCallbacks;
 };
 

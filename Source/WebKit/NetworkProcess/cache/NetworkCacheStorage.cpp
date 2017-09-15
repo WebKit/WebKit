@@ -846,10 +846,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler)
     if (!isInitialWrite)
         return;
 
-    // Delay the start of writes a bit to avoid affecting early page load.
-    // Completing writes will dispatch more writes without delay.
-    static const Seconds initialWriteDelay = 1_s;
-    m_writeOperationDispatchTimer.startOneShot(initialWriteDelay);
+    m_writeOperationDispatchTimer.startOneShot(m_initialWriteDelay);
 }
 
 void Storage::traverse(const String& type, TraverseFlags flags, TraverseHandler&& traverseHandler)

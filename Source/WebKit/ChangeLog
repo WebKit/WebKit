@@ -1,3 +1,103 @@
+2017-09-14  Youenn Fablet  <youenn@apple.com>
+
+        Add Cache API support of records persistency
+        https://bugs.webkit.org/show_bug.cgi?id=176845
+
+        Reviewed by Alex Christensen.
+
+        Introducing asynchronous opening of Cache objects.
+        When opening, Cache objects will read the list of records from the disk.
+        They keep in memory the necessary information to make any match or remove request without reading further information from the disk.
+        Cache objects thus keep during the opening time a list of callbacks to call when being opened.
+        Persistent storage is implemented through NetworkCache::Storage.
+
+        A Cache object is added a unique name so that records from a Cache cannot be mixed with records from another Cache.
+        This unique name is stored persistenly in addition to the Cache name.
+        This unique name is used as the key type given to the storage.
+
+        Request, response and responsebody data are no longer kept by the Cache object.
+        For regular sessions, this information is kept on the disk through NetworkCache::Storage.
+        Insertion time is also stored persistently so as to keep the ordering of the records consistent.
+        For private browsing sessions, this information is kept in a map owned by the Caches object.
+        RecordData is renamed to RecordInformation as it now only contains the information used to handle the different Cache actions.
+
+        For every record retrieval action, a ReadRecordTaskCounter is used.
+        Its purpose is to allow retrieving the record data on the disk in parallel,
+        and then send back the information when everything is read.
+        In case some records cannot be correctly read, they are removed automatically at that point.
+        The current implementation loads all information in memory including response bodies.
+        Further improvements might consider streaming the response bodies progressively.
+
+        For every stored record, an AsynchronousPutTaskCounter is used.
+        Its purpose is also to wait for all put actions to be completed before executing the completion callback.
+        In some cases, a record needs to be overriden.
+        In that case, as per the specification, only the data related to the response is to be modified.
+        This requires reading the record request data on disk before actually writing the whole record again.
+        This is implemented in updateRecordToDisk.
+
+        The Cache object is delegating all record writing/reading tasks to its Caches object.
+        The Caches object is responsible to handle persistent/private sessions.
+
+        * NetworkProcess/cache/CacheStorageEngine.cpp:
+        (WebKit::CacheStorage::Engine::retrieveRecords): Making sure Cache object is opened.
+        (WebKit::CacheStorage::Engine::readCache): Ditto.
+        (WebKit::CacheStorage::Engine::unlock): Disposing the cache without going through initializing it.
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::computeKeyURL):
+        (WebKit::CacheStorage::queryCache):
+        (WebKit::CacheStorage::updateVaryInformation):
+        (WebKit::CacheStorage::Cache::toRecordInformation):
+        (WebKit::CacheStorage::Cache::Cache):
+        (WebKit::CacheStorage::Cache::open):
+        (WebKit::CacheStorage::Cache::finishOpening):
+        (WebKit::CacheStorage::ReadRecordTaskCounter::create):
+        (WebKit::CacheStorage::ReadRecordTaskCounter::~ReadRecordTaskCounter):
+        (WebKit::CacheStorage::ReadRecordTaskCounter::appendRecord):
+        (WebKit::CacheStorage::ReadRecordTaskCounter::ReadRecordTaskCounter):
+        (WebKit::CacheStorage::Cache::retrieveRecord):
+        (WebKit::CacheStorage::Cache::retrieveRecords):
+        (WebKit::CacheStorage::Cache::addRecord):
+        (WebKit::CacheStorage::Cache::recordsFromURL):
+        (WebKit::CacheStorage::Cache::recordsFromURL const):
+        (WebKit::CacheStorage::AsynchronousPutTaskCounter::create):
+        (WebKit::CacheStorage::AsynchronousPutTaskCounter::~AsynchronousPutTaskCounter):
+        (WebKit::CacheStorage::AsynchronousPutTaskCounter::onCompletion):
+        (WebKit::CacheStorage::AsynchronousPutTaskCounter::setError):
+        (WebKit::CacheStorage::Cache::put):
+        (WebKit::CacheStorage::Cache::remove):
+        (WebKit::CacheStorage::Cache::removeFromRecordList):
+        (WebKit::CacheStorage::Cache::writeRecordToDisk):
+        (WebKit::CacheStorage::Cache::updateRecordToDisk):
+        (WebKit::CacheStorage::Cache::readRecordFromDisk):
+        (WebKit::CacheStorage::Cache::removeRecordFromDisk):
+        (WebKit::CacheStorage::Cache::encode):
+        (WebKit::CacheStorage::decodeRecordHeader):
+        (WebKit::CacheStorage::Cache::decode):
+        (WebKit::CacheStorage::Cache::keys const):
+        * NetworkProcess/cache/CacheStorageEngineCache.h:
+        (WebKit::CacheStorage::Cache::isOpened const):
+        (WebKit::CacheStorage::Cache::uniqueName const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.cpp:
+        (WebKit::CacheStorage::Caches::initialize):
+        (WebKit::CacheStorage::Caches::open):
+        (WebKit::CacheStorage::Caches::remove):
+        (WebKit::CacheStorage::Caches::dispose):
+        (WebKit::CacheStorage::encodeCacheNames):
+        (WebKit::CacheStorage::decodeCachesNames):
+        (WebKit::CacheStorage::Caches::readCachesFromDisk):
+        (WebKit::CacheStorage::Caches::readRecordsList):
+        (WebKit::CacheStorage::Caches::writeRecord):
+        (WebKit::CacheStorage::Caches::readRecord):
+        (WebKit::CacheStorage::Caches::removeRecord):
+        (WebKit::CacheStorage::Caches::clearMemoryRepresentation):
+        (WebKit::CacheStorage::Caches::salt const):
+        * NetworkProcess/cache/CacheStorageEngineCaches.h:
+        (WebKit::CacheStorage::Caches::shouldPersist const):
+        * NetworkProcess/cache/NetworkCacheStorage.cpp:
+        (WebKit::NetworkCache::Storage::store):
+        * NetworkProcess/cache/NetworkCacheStorage.h:
+        (WebKit::NetworkCache::Storage::writeWithoutWaiting):
+
 2017-09-14  Alex Christensen  <achristensen@webkit.org>
 
         Add WKUIDelegatePrivate equivalent of WKPageUIClient's drawHeader, drawFooter, headerHeight, and footerHeight
