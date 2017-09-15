@@ -2990,7 +2990,7 @@ crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publi
 
 webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
 
-webkit.org/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
+webkit.org/b/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
 
 webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Crash ]
 
