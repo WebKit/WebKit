@@ -3969,3 +3969,12 @@ webkit.org/b/176632 http/tests/websocket/tests/hybi/websocket-pending-activity.h
 
 # Web platform tests are very slow on Windows.
 webkit.org/b/176657 imported/w3c/web-platform-tests/ [ Skip ]
+
+# These tests only fail on one of the EWS machines
+webkit.org/b/176998 fast/animation/css-animation-resuming-when-visible-with-style-change2.html [ Failure ]
+webkit.org/b/176998 fast/dom/Window/Plug-ins.html [ Failure ]
+webkit.org/b/176998 fast/harness/snapshot-captures-compositing.html [ ImageOnlyFailure ]
+webkit.org/b/176998 fast/images/composited-animated-gif-outside-viewport.html [ Timeout Pass ]
+webkit.org/b/176998 pageoverlay/overlay-small-frame-mouse-events.html [ Failure ]
+webkit.org/b/176998 pageoverlay/overlay-small-frame-paints.html [ Failure ]
+webkit.org/b/176998 storage/indexeddb/modern/idbcursor-continue-primary-key-1.html [ Timeout ]

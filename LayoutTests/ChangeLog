@@ -1,3 +1,12 @@
+2017-09-15  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Update test expectations for failures on one of the EWS machines.
+        https://bugs.webkit.org/show_bug.cgi?id=176998
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Rebaseline after r221966.
