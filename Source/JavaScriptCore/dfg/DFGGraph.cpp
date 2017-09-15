@@ -390,8 +390,7 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         if (node->origin.semantic != node->origin.forExit && node->origin.forExit.isSet())
             out.print(comma, "exit: ", node->origin.forExit);
     }
-    if (!node->origin.exitOK)
-        out.print(comma, "ExitInvalid");
+    out.print(comma, node->origin.exitOK ? "ExitValid" : "ExitInvalid");
     if (node->origin.wasHoisted)
         out.print(comma, "WasHoisted");
     out.print(")");
