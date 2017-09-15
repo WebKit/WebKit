@@ -1,3 +1,16 @@
+2017-09-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [FreeType] Complex text is enabled too often after r221909
+        https://bugs.webkit.org/show_bug.cgi?id=176907
+
+        Reviewed by Sergio Villar Senin.
+
+        In r221909 we enabled complex text by default following the same cocoa ifdefs, but I forgot another ifdef in the
+        cpp file.
+
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::codePath const):
+
 2017-09-14  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r221932 and r221933.
