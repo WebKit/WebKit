@@ -186,7 +186,9 @@ class Rewriter extends VisitorBase {
     
     visitMakePtrExpression(node)
     {
-        return new MakePtrExpression(node.origin, node.lValue.visit(this));
+        let result = new MakePtrExpression(node.origin, node.lValue.visit(this));
+        result.ePtr = node.ePtr;
+        return result;
     }
     
     visitMakeArrayRefExpression(node)
@@ -194,12 +196,15 @@ class Rewriter extends VisitorBase {
         let result = new MakeArrayRefExpression(node.origin, node.lValue.visit(this));
         if (node.numElements)
             result.numElements = node.numElements.visit(this);
+        result.ePtr = node.ePtr;
         return result;
     }
     
     visitConvertPtrToArrayRefExpression(node)
     {
-        return new ConvertPtrToArrayRefExpression(node.origin, node.lValue.visit(this));
+        let result = new ConvertPtrToArrayRefExpression(node.origin, node.lValue.visit(this));
+        result.ePtr = node.ePtr;
+        return result;
     }
     
     visitVariableRef(node)
@@ -228,6 +233,7 @@ class Rewriter extends VisitorBase {
     {
         let result = new IntLiteral(node.origin, node.value);
         result.type = node.type.visit(this);
+        result.ePtr = node.ePtr;
         return result;
     }
     
@@ -248,6 +254,7 @@ class Rewriter extends VisitorBase {
     {
         let result = new NullLiteral(node.origin);
         result.type = node.type.visit(this);
+        result.ePtr = node.ePtr;
         return result;
     }
     
@@ -273,6 +280,8 @@ class Rewriter extends VisitorBase {
         result.possibleOverloads = node.possibleOverloads;
         if (node.isCast)
             result.setCastData(node.returnType.visit(this));
+        result.resultType = node.resultType ? node.resultType.visit(this) : null;
+        result.resultEPtr = node.resultEPtr;
         return result;
     }
 
@@ -287,17 +296,21 @@ class Rewriter extends VisitorBase {
     
     visitFunctionLikeBlock(node)
     {
-        return new FunctionLikeBlock(
+        let result = new FunctionLikeBlock(
             node.origin,
             node.returnType ? node.returnType.visit(this) : null,
             node.argumentList.map(argument => argument.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this));
+        result.returnEPtr = node.returnEPtr;
+        return result;
     }
     
     visitLogicalNot(node)
     {
-        return new LogicalNot(node.origin, node.operand.visit(this));
+        let result = new LogicalNot(node.origin, node.operand.visit(this));
+        result.ePtr = node.ePtr;
+        return result;
     }
 
     visitIfStatement(node)

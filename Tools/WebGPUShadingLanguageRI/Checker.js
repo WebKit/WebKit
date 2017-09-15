@@ -193,7 +193,7 @@ class Checker extends Visitor {
     {
         let structType = node.struct.visit(this).unifyNode;
         
-        node.structType = TypeRef.wrap(structType);
+        node.structType = structType.visit(new AutoWrapper());
         
         let underlyingStruct = structType;
         
@@ -330,7 +330,7 @@ class Checker extends Visitor {
             let newArgument = argument.visit(this);
             if (!newArgument)
                 throw new Error("visitor returned null for " + argument);
-            return TypeRef.wrap(newArgument);
+            return newArgument.visit(new AutoWrapper());
         });
         
         // Here we need to handle the cases where operator&[] is called with a type that isn't sufficiently

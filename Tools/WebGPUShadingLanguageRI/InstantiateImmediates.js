@@ -28,7 +28,7 @@ class InstantiateImmediates extends Rewriter {
     visitTypeRef(node)
     {
         node = super.visitTypeRef(node);
-        let result = TypeRef.wrap(node.instantiatedType);
+        let result = node.instantiatedType.visit(new AutoWrapper());
         return result;
     }
     

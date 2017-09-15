@@ -25,12 +25,36 @@
 "use strict";
 
 let eBufferCount = 0;
+let canAllocateEBuffers = true;
 
 class EBuffer {
     constructor(size)
     {
+        if (!canAllocateEBuffers)
+            throw new Error("Trying to allocate EBuffer while allocation is disallowed");
         this._index = eBufferCount++;
         this._array = new Array(size);
+    }
+    
+    static setCanAllocateEBuffers(value, callback)
+    {
+        let oldCanAllocateEBuffers = canAllocateEBuffers;
+        canAllocateEBuffers = value;
+        try {
+            return callback();
+        } finally {
+            canAllocateEBuffers = oldCanAllocateEBuffers;
+        }
+    }
+    
+    static disallowAllocation(callback)
+    {
+        return EBuffer.setCanAllocateEBuffers(false, callback);
+    }
+    
+    static allowAllocation(callback)
+    {
+        return EBuffer.setCanAllocateEBuffers(true, callback);
     }
     
     get(index)

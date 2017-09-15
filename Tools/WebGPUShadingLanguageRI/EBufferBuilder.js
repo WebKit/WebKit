@@ -59,11 +59,68 @@ class EBufferBuilder extends Visitor {
             node.initializer.visit(this);
     }
     
+    visitFuncDef(node)
+    {
+        node.returnEPtr = this._createEPtr(node.returnType);
+        super.visitFuncDef(node);
+    }
+    
+    visitFunctionLikeBlock(node)
+    {
+        node.returnEPtr = this._createEPtr(node.returnType);
+        super.visitFunctionLikeBlock(node);
+    }
+    
+    visitCallExpression(node)
+    {
+        node.resultEPtr = this._createEPtr(node.resultType);
+        super.visitCallExpression(node);
+    }
+    
+    visitMakePtrExpression(node)
+    {
+        node.ePtr = EPtr.box();
+        super.visitMakePtrExpression(node);
+    }
+    
+    visitGenericLiteral(node)
+    {
+        node.ePtr = EPtr.box();
+    }
+    
+    visitNullLiteral(node)
+    {
+        node.ePtr = EPtr.box();
+    }
+    
+    visitBoolLiteral(node)
+    {
+        node.ePtr = EPtr.box();
+    }
+    
+    visitLogicalNot(node)
+    {
+        node.ePtr = EPtr.box();
+        super.visitLogicalNot(node);
+    }
+    
     visitLetExpression(node)
     {
         this._createEPtrForNode(node);
         node.argument.visit(this);
         node.body.visit(this);
+    }
+    
+    visitMakeArrayRefExpression(node)
+    {
+        node.ePtr = EPtr.box();
+        super.visitMakeArrayRefExpression(node);
+    }
+    
+    visitConvertPtrToArrayRefExpression(node)
+    {
+        node.ePtr = EPtr.box();
+        super.visitConvertPtrToArrayRefExpression(node);
     }
 }
 

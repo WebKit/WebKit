@@ -35,18 +35,27 @@ class Evaluator extends Visitor {
     // You must snapshot if you use a value in rvalue context. For example, a call expression will
     // snapshot all of its arguments immedaitely upon executing them. In general, it should not be
     // possible for a pointer returned from a visit method in rvalue context to live across any effects.
-    _snapshot(type, ptr)
+    _snapshot(type, dstPtr, srcPtr)
     {
         let size = type.size;
         if (!size)
             throw new Error("Cannot get size of type: " + type);
-        let result = new EPtr(new EBuffer(size), 0);
-        result.copyFrom(ptr, size);
-        return result;
+        if (!dstPtr)
+            dstPtr = new EPtr(new EBuffer(size), 0);
+        dstPtr.copyFrom(srcPtr, size);
+        return dstPtr;
     }
     
-    runBody(type, block)
+    runFunc(func)
     {
+        return EBuffer.disallowAllocation(
+            () => this._runBody(func.returnType, func.returnEPtr, func.body));
+    }
+    
+    _runBody(type, ptr, block)
+    {
+        if (!ptr)
+            throw new Error("Null ptr");
         try {
             block.visit(this);
             // FIXME: We should have a check that there is no way to drop out of a function without
@@ -56,7 +65,7 @@ class Evaluator extends Visitor {
             if (e == BreakException || e == ContinueException)
                 throw new Error("Should not see break/continue at function scope");
             if (e instanceof ReturnException)
-                return this._snapshot(type, e.value);
+                return this._snapshot(type, ptr, e.value);
             throw e;
         }
     }
@@ -68,7 +77,7 @@ class Evaluator extends Visitor {
                 node.argumentList[i].visit(this),
                 node.parameters[i].type.size);
         }
-        return this.runBody(node.returnType, node.body);
+        return this._runBody(node.returnType, node.returnEPtr, node.body);
     }
     
     visitReturn(node)
@@ -103,17 +112,17 @@ class Evaluator extends Visitor {
     
     visitMakePtrExpression(node)
     {
-        return EPtr.box(node.lValue.visit(this));
+        return node.ePtr.box(node.lValue.visit(this));
     }
     
     visitMakeArrayRefExpression(node)
     {
-        return EPtr.box(new EArrayRef(node.lValue.visit(this), node.numElements.visit(this).loadValue()));
+        return node.ePtr.box(new EArrayRef(node.lValue.visit(this), node.numElements.visit(this).loadValue()));
     }
     
     visitConvertPtrToArrayRefExpression(node)
     {
-        return EPtr.box(new EArrayRef(node.lValue.visit(this).loadValue(), 1));
+        return node.ePtr.box(new EArrayRef(node.lValue.visit(this).loadValue(), 1));
     }
     
     visitDotExpression(node)
@@ -138,23 +147,23 @@ class Evaluator extends Visitor {
     
     visitGenericLiteral(node)
     {
-        return EPtr.box(node.value);
+        return node.ePtr.box(node.value);
     }
     
     visitNullLiteral(node)
     {
-        return EPtr.box(null);
+        return node.ePtr.box(null);
     }
     
     visitBoolLiteral(node)
     {
-        return EPtr.box(node.value);
+        return node.ePtr.box(node.value);
     }
 
     visitLogicalNot(node)
     {
         let result = !node.operand.visit(this).loadValue();
-        return EPtr.box(result);
+        return node.ePtr.box(result);
     }
 
     visitIfStatement(node)
@@ -238,9 +247,16 @@ class Evaluator extends Visitor {
             if (!type || !argument)
                 throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
             let argumentValue = argument.visit(this);
-            callArguments.push(this._snapshot(type, argumentValue));
+            callArguments.push(() => this._snapshot(type, null, argumentValue));
         }
-        return node.func.implementation(callArguments, node);
+        
+        // For simplicity, we allow intrinsics to just allocate new buffers, and we allocate new
+        // buffers when snapshotting their arguments. This is not observable to the user, so it's OK.
+        let result = EBuffer.allowAllocation(
+            () => node.func.implementation(callArguments.map(thunk => thunk()), node));
+        
+        result = this._snapshot(node.nativeFuncInstance.returnType, node.resultEPtr, result);
+        return result;
     }
 }
 

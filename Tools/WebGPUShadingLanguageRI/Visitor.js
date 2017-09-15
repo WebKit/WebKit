@@ -305,6 +305,8 @@ class Visitor extends VisitorBase {
         }
         if (node.returnType)
             node.returnType.visit(this);
+        if (node.resultType)
+            node.resultType.visit(this);
     }
     
     visitLogicalNot(node)
@@ -321,6 +323,8 @@ class Visitor extends VisitorBase {
         for (let parameter of node.parameters)
             parameter.visit(this);
         node.body.visit(this);
+        if (node.resultType)
+            node.resultType.visit(this);
     }
     
     visitLetExpression(node)

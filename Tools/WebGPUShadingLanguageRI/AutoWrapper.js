@@ -64,4 +64,14 @@ class AutoWrapper extends Rewriter {
     {
         return TypeRef.wrap(node);
     }
+    
+    visitGenericLiteralType(node)
+    {
+        return node;
+    }
+
+    visitNullType(node)
+    {
+        return node;
+    }
 }

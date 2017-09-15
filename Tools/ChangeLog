@@ -1,3 +1,96 @@
+2017-09-15  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL Evaluator should only allocate EBuffers when dealing with intrinsics
+        https://bugs.webkit.org/show_bug.cgi?id=176973
+
+        Reviewed by Myles Maxfield.
+        
+        Whether or not two temporary values share the same EBuffer is ultimately observable in WSL,
+        because you can do this:
+        
+            thread int^ operator&[](thread int^ ptr, uint index)
+            {
+                g_ptr = ptr;
+                return ptr;
+            }
+        
+        And then this is a thing:
+        
+            42[0];
+            // g_ptr now points to 42's location
+        
+        Normally this would have a lot of bad implications. But in WSL, if you did choose to do this,
+        you'd get a pointer to something well-defined: the EBuffer of 42's GenericLiteral. Each static
+        occurrence of a literal gets its own location, and the semantics of the language call for
+        42 to be stored into this location when `42` "executes". So, while the programmer could do all
+        kinds of strange things, at least the strangeness they would see is something we can spec.
+        
+        But to do this, the interpreter needs to allocate EBuffers in the same way a compiler would.
+        It cannot allocate them during execution, except when interacting with intrinsics, which won't
+        know the difference.
+        
+        In the process, I found places that needed to use AutoWrapper instead of TypeRef.wrap.
+
+        * WebGPUShadingLanguageRI/AutoWrapper.js:
+        (AutoWrapper.prototype.visitGenericLiteralType):
+        (AutoWrapper.prototype.visitNullType):
+        (AutoWrapper):
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.prototype.resolve):
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/CreateLiteralType.js:
+        (createLiteralType.GenericLiteralType.prototype.commitUnification):
+        * WebGPUShadingLanguageRI/EBuffer.js:
+        (EBuffer):
+        (EBuffer.setCanAllocateEBuffers):
+        (EBuffer.disallowAllocation):
+        (EBuffer.allowAllocation):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype.visitVariableDecl):
+        (EBufferBuilder.prototype.visitFuncDef):
+        (EBufferBuilder.prototype.visitFunctionLikeBlock):
+        (EBufferBuilder.prototype.visitCallExpression):
+        (EBufferBuilder.prototype.visitMakePtrExpression):
+        (EBufferBuilder.prototype.visitGenericLiteral):
+        (EBufferBuilder.prototype.visitNullLiteral):
+        (EBufferBuilder.prototype.visitBoolLiteral):
+        (EBufferBuilder.prototype.visitLogicalNot):
+        (EBufferBuilder):
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr.box):
+        (EPtr.prototype.box):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype._snapshot):
+        (Evaluator.prototype.runFunc):
+        (Evaluator.prototype._runBody):
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype.visitMakePtrExpression):
+        (Evaluator.prototype.visitGenericLiteral):
+        (Evaluator.prototype.visitNullLiteral):
+        (Evaluator.prototype.visitBoolLiteral):
+        (Evaluator.prototype.visitLogicalNot):
+        (Evaluator.prototype.visitCallExpression):
+        (Evaluator):
+        (Evaluator.prototype.runBody): Deleted.
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        * WebGPUShadingLanguageRI/InstantiateImmediates.js:
+        (InstantiateImmediates.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitMakePtrExpression):
+        (Rewriter.prototype.visitGenericLiteral):
+        (Rewriter.prototype.visitNullLiteral):
+        (Rewriter.prototype.processDerivedCallData):
+        (Rewriter.prototype.visitFunctionLikeBlock):
+        (Rewriter.prototype.visitLogicalNot):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.prototype.toString):
+        (TypeRef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+
 2017-09-14  Filip Pizlo  <fpizlo@apple.com>
 
         Rationalize how WSL's operator&[] works

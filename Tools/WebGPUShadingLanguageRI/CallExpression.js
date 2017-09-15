@@ -45,9 +45,10 @@ class CallExpression extends Expression {
     resolve(overload)
     {
         this.func = overload.func;
-        this.actualTypeArguments = overload.typeArguments.map(typeArgument => typeArgument instanceof Type ? TypeRef.wrap(typeArgument) : typeArgument);
+        this.actualTypeArguments = overload.typeArguments.map(typeArgument => typeArgument instanceof Type ? typeArgument.visit(new AutoWrapper()) : typeArgument);
         let result = overload.func.returnType.substituteToUnification(
             overload.func.typeParameters, overload.unificationContext);
+        this.resultType = result.visit(new AutoWrapper());
         if (!result)
             throw new Error("Null return type");
         return result;

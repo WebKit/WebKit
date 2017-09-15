@@ -39,7 +39,7 @@ function callFunction(program, name, typeArguments, argumentList)
         type.visit(new StructLayoutBuilder());
         func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, type.size);
     }
-    let result = new Evaluator(program).runBody(func.returnType, func.body);
+    let result = new Evaluator(program).runFunc(func);
     return new TypedValue(func.returnType.unifyNode, result);
 }
 

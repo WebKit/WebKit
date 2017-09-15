@@ -87,7 +87,7 @@ function createLiteralType(config)
         
         commitUnification(unificationContext)
         {
-            this.type = TypeRef.wrap(unificationContext.find(this));
+            this.type = unificationContext.find(this).visit(new AutoWrapper());
         }
         
         toString()

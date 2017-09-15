@@ -51,8 +51,10 @@ class Inliner extends Rewriter {
                 return result;
             }
             _inlineFunction(this._program, func, this._visiting);
-            return new FunctionLikeBlock(
+            let resultingBlock = new FunctionLikeBlock(
                 result.origin, func.returnType, result.argumentList, func.parameters, func.body);
+            resultingBlock.returnEPtr = result.resultEPtr;
+            return resultingBlock;
         });
     }
 
