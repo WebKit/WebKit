@@ -1,3 +1,15 @@
+2017-09-15  Ms2ger  <Ms2ger@igalia.com>
+
+        Disallow passing a null program to getFragDataLocation.
+        https://bugs.webkit.org/show_bug.cgi?id=176895
+
+        Reviewed by Sam Weinig.
+
+        This matches the specification as well as Gecko and Chromium.
+
+        * fast/canvas/webgl/webgl2/bindings-expected.txt:
+        * fast/canvas/webgl/webgl2/bindings.html:
+
 2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: WebKitTestRunner hits an assertion in editing/pasteboard/datatransfer-items-copy-plaintext.html

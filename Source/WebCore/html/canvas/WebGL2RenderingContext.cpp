@@ -503,7 +503,7 @@ void WebGL2RenderingContext::compressedTexSubImage3D(GC3Denum, GC3Dint, GC3Dint,
 {
 }
 
-GC3Dint WebGL2RenderingContext::getFragDataLocation(WebGLProgram*, const String&)
+GC3Dint WebGL2RenderingContext::getFragDataLocation(WebGLProgram&, const String&)
 {
     return 0;
 }

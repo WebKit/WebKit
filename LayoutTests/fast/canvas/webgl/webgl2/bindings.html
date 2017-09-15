@@ -43,6 +43,7 @@ setup(function() {
   error_methods.push(["getActiveUniformBlockParameter", [null, 0, 0], "getActiveUniformBlockParameter with null program"]);
   error_methods.push(["getActiveUniformBlockName", [null, 0], "getActiveUniformBlockName with null program"]);
   error_methods.push(["uniformBlockBinding", [null, 0, 0], "uniformBlockBinding with null program"]);
+  error_methods.push(["getFragDataLocation", [null, ""], "getFragDataLocation with null program"]);
 });
 
 for (var [method, args, name] of error_methods) {

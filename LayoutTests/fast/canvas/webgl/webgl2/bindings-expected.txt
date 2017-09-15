@@ -30,4 +30,5 @@ PASS getUniformBlockIndex with null program
 PASS getActiveUniformBlockParameter with null program 
 PASS getActiveUniformBlockName with null program 
 PASS uniformBlockBinding with null program 
+PASS getFragDataLocation with null program 
 

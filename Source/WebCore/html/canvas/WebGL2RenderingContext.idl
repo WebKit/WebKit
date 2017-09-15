@@ -373,7 +373,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void compressedTexSubImage3D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint zoffset, GLsizei width, GLsizei height, GLsizei depth, GLenum format, GLsizei imageSize, ArrayBufferView? data);
 
     /* Programs and shaders */
-    GLint getFragDataLocation(WebGLProgram? program, DOMString name);
+    GLint getFragDataLocation(WebGLProgram program, DOMString name);
 
     /* Uniforms and attributes */
     void uniform1ui(WebGLUniformLocation? location, GLuint v0);

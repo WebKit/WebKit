@@ -76,7 +76,7 @@ public:
     void compressedTexSubImage3D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dint zoffset, GC3Dsizei width, GC3Dsizei height, GC3Dsizei depth, GC3Denum format, GC3Dsizei imageSize, RefPtr<ArrayBufferView>&& data);
     
     // Programs and shaders
-    GC3Dint getFragDataLocation(WebGLProgram*, const String& name);
+    GC3Dint getFragDataLocation(WebGLProgram&, const String& name);
 
     // Uniforms and attributes
     using Uint32List = TypedList<Uint32Array, uint32_t>;
