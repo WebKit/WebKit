@@ -423,9 +423,7 @@ void DOMCache::retrieveRecords(const URL& url, WTF::Function<void(std::optional<
     setPendingActivity(this);
 
     URL retrieveURL = url;
-    if (retrieveURL.hasQuery())
-        retrieveURL.setQuery({ });
-    retrieveURL.removeFragmentIdentifier();
+    retrieveURL.removeQueryAndFragmentIdentifier();
 
     m_connection->retrieveRecords(m_identifier, retrieveURL, [this, callback = WTFMove(callback)](RecordsOrError&& result) {
         if (!m_isStopped) {

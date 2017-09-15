@@ -71,13 +71,14 @@ TEST_F(URLTest, URLConstructorConstChar)
     EXPECT_EQ(String("fragment"), kurl.fragmentIdentifier());
 }
 
+static URL createURL(const char* urlAsString)
+{
+    URLParser parser(urlAsString);
+    return parser.result();
+};
+
 TEST_F(URLTest, URLProtocolHostAndPort)
 {
-    auto createURL = [](const char* urlAsString) {
-        URLParser parser(urlAsString);
-        return parser.result();
-    };
-
     auto url = createURL("http://username:password@www.example.com:8080/index.html?var=val#fragment");
     EXPECT_EQ(String("http://www.example.com:8080"), url.protocolHostAndPort());
 
@@ -125,6 +126,91 @@ TEST_F(URLTest, URLDataURIStringSharing)
 
     URL url(baseURL, threeApples);
     EXPECT_EQ(threeApples.impl(), url.string().impl());
+}
+
+TEST_F(URLTest, URLSetQuery)
+{
+    URL url = createURL("http://www.webkit.org/?test");
+    URL url1 = createURL("http://www.webkit.org/");
+    URL url2 = createURL("http://www.webkit.org/?");
+    URL url3 = createURL("http://www.webkit.org/?test");
+    URL url4 = createURL("http://www.webkit.org/?test1");
+
+    url1.setQuery("test");
+    url2.setQuery("test");
+    url3.setQuery("test");
+    url4.setQuery("test");
+
+    EXPECT_EQ(url.string(), url1.string());
+    EXPECT_EQ(url.string(), url2.string());
+    EXPECT_EQ(url.string(), url3.string());
+    EXPECT_EQ(url.string(), url4.string());
+
+    URL urlWithFragmentIdentifier = createURL("http://www.webkit.org/?test%C3%83%C2%A5#newFragment");
+    URL urlWithFragmentIdentifier1 = createURL("http://www.webkit.org/#newFragment");
+    URL urlWithFragmentIdentifier2 = createURL("http://www.webkit.org/?#newFragment");
+    URL urlWithFragmentIdentifier3 = createURL("http://www.webkit.org/?test1#newFragment");
+
+    urlWithFragmentIdentifier1.setQuery("test\xc3\xa5");
+    urlWithFragmentIdentifier2.setQuery("test\xc3\xa5");
+    urlWithFragmentIdentifier3.setQuery("test\xc3\xa5");
+
+    EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier1.string());
+    EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier2.string());
+    EXPECT_EQ(urlWithFragmentIdentifier.string(), urlWithFragmentIdentifier3.string());
+}
+
+TEST_F(URLTest, URLSetFragmentIdentifier)
+{
+    URL url = createURL("http://www.webkit.org/#newFragment%C3%83%C2%A5");
+    URL url1 = createURL("http://www.webkit.org/");
+    URL url2 = createURL("http://www.webkit.org/#test2");
+    URL url3 = createURL("http://www.webkit.org/#");
+
+    url1.setFragmentIdentifier("newFragment\xc3\xa5");
+    url2.setFragmentIdentifier("newFragment\xc3\xa5");
+    url3.setFragmentIdentifier("newFragment\xc3\xa5");
+
+    EXPECT_EQ(url.string(), url1.string());
+    EXPECT_EQ(url.string(), url2.string());
+    EXPECT_EQ(url.string(), url3.string());
+
+    URL urlWithQuery = createURL("http://www.webkit.org/?test1#newFragment");
+    URL urlWithQuery1 = createURL("http://www.webkit.org/?test1");
+    URL urlWithQuery2 = createURL("http://www.webkit.org/?test1#");
+    URL urlWithQuery3 = createURL("http://www.webkit.org/?test1#test2");
+
+    urlWithQuery1.setFragmentIdentifier("newFragment");
+    urlWithQuery2.setFragmentIdentifier("newFragment");
+    urlWithQuery3.setFragmentIdentifier("newFragment");
+
+    EXPECT_EQ(urlWithQuery.string(), urlWithQuery1.string());
+    EXPECT_EQ(urlWithQuery.string(), urlWithQuery2.string());
+    EXPECT_EQ(urlWithQuery.string(), urlWithQuery3.string());
+}
+
+TEST_F(URLTest, URLRemoveQueryAndFragmentIdentifier)
+{
+    URL url = createURL("http://www.webkit.org/");
+    URL url1 = createURL("http://www.webkit.org/?");
+    URL url2 = createURL("http://www.webkit.org/?test1");
+    URL url3 = createURL("http://www.webkit.org/?test1#test2");
+    URL url4 = createURL("http://www.webkit.org/#test2");
+    URL url5 = createURL("http://www.webkit.org/#");
+
+    url.removeQueryAndFragmentIdentifier();
+    url1.removeQueryAndFragmentIdentifier();
+    url2.removeQueryAndFragmentIdentifier();
+    url3.removeQueryAndFragmentIdentifier();
+    url4.removeQueryAndFragmentIdentifier();
+    url5.removeQueryAndFragmentIdentifier();
+
+    EXPECT_EQ(url.string(), url.string());
+    EXPECT_EQ(url.string(), url1.string());
+    EXPECT_EQ(url.string(), url2.string());
+    EXPECT_EQ(url.string(), url3.string());
+    EXPECT_EQ(url.string(), url4.string());
+    EXPECT_EQ(url.string(), url5.string());
 }
 
 } // namespace TestWebKitAPI

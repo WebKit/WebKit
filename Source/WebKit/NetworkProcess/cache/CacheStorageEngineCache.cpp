@@ -56,11 +56,9 @@ static std::optional<std::pair<Record, double>> decodeRecordHeader(const Storage
 
 static inline String computeKeyURL(const URL& url)
 {
-    URL keyURL = url;
-    if (keyURL.hasQuery())
-        keyURL.setQuery({ });
-    keyURL.removeFragmentIdentifier();
-    return keyURL;
+    URL keyURL { url };
+    keyURL.removeQueryAndFragmentIdentifier();
+    return keyURL.string();
 }
 
 static inline Vector<uint64_t> queryCache(const Vector<RecordInformation>* records, const ResourceRequest& request, const CacheQueryOptions& options)

@@ -1,3 +1,16 @@
+2017-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Add an URL method to remove both query string and fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=176911
+
+        Reviewed by Alex Christensen.
+
+        Adding unit test for new URL method as well as modified setQuery and setFragmentIdentifier.
+
+        * TestWebKitAPI/Tests/WebCore/URL.cpp:
+        (TestWebKitAPI::createURL):
+        (TestWebKitAPI::TEST_F):
+
 2017-09-14  Yousuke Kimoto  <yousuke.kimoto@sony.com>
 
         [WinCairo] Add an option to build WebKitLegacy and WebKit

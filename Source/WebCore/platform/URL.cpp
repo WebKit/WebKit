@@ -870,7 +870,16 @@ void URL::removeFragmentIdentifier()
     if (m_isValid && m_string.length() > m_queryEnd)
         m_string = m_string.left(m_queryEnd);
 }
-    
+
+void URL::removeQueryAndFragmentIdentifier()
+{
+    if (!m_isValid)
+        return;
+
+    m_string = m_string.left(m_pathEnd);
+    m_queryEnd = m_pathEnd;
+}
+
 void URL::setQuery(const String& query)
 {
     if (!m_isValid)

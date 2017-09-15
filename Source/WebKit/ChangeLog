@@ -1,3 +1,13 @@
+2017-09-15  Youenn Fablet  <youenn@apple.com>
+
+        Add an URL method to remove both query string and fragment identifier
+        https://bugs.webkit.org/show_bug.cgi?id=176911
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/cache/CacheStorageEngineCache.cpp:
+        (WebKit::CacheStorage::computeKeyURL):
+
 2017-09-15  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream MediaRemote and VideoToolbox WebKitSystemInterface functions
