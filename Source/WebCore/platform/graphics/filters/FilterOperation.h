@@ -75,13 +75,6 @@ public:
 
     virtual RefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, bool /*blendToPassthrough*/ = false)
     {
-        ASSERT(!blendingNeedsRendererSize());
-        return nullptr;
-    }
-
-    virtual RefPtr<FilterOperation> blend(const FilterOperation* /*from*/, double /*progress*/, const LayoutSize&, bool /*blendToPassthrough*/ = false)
-    {
-        ASSERT(blendingNeedsRendererSize());
         return nullptr;
     }
 
@@ -105,8 +98,6 @@ public:
     virtual bool movesPixels() const { return false; }
     // True if the filter should not be allowed to work on content that is not available from this security origin.
     virtual bool shouldBeRestrictedBySecurityOrigin() const { return false; }
-    // True if the filter needs the size of the box in order to calculate the animations.
-    virtual bool blendingNeedsRendererSize() const { return false; }
 
 protected:
     FilterOperation(OperationType type)

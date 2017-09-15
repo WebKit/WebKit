@@ -26,10 +26,8 @@
 
 namespace WebCore {
 
-static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize& size, bool blendToPassthrough = false)
+static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
 {
-    if (toOp.blendingNeedsRendererSize())
-        return toOp.blend(fromOp, progress, LayoutSize(size), blendToPassthrough);
     return toOp.blend(fromOp, progress, blendToPassthrough);
 }
 
