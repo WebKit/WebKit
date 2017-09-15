@@ -411,3 +411,4 @@ webkit.org/b/176920 imported/w3c/web-platform-tests/streams/piping/error-propaga
 
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
+webkit.org/b/177020 fast/events/beforeunload-dom-manipulation-crash.html [ Skip ]

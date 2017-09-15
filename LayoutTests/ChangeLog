@@ -1,3 +1,9 @@
+2017-09-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Unreviewed test maintenance.
+
+        * platform/mac-wk1/TestExpectations: Skip test under WK1 due to a bug.
+
 2017-09-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, correct a typo in a TestExpectations file.
