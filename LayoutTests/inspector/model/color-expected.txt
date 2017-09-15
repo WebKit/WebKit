@@ -153,3 +153,29 @@ PASS: Color as 'RGBA' should be 'rgba(100, 200, 255, 0.5)'
 PASS: Color as 'HSL' should be 'hsla(201, 100%, 70%, 0.5)'
 PASS: Color as 'HSLA' should be 'hsla(201, 100%, 70%, 0.5)'
 
+-- Running test case: WI.Color.rgb2hsv
+PASS: Should convert [0,0,0] to [0,0,0].
+PASS: Should convert [255,255,255] to [0,0,1].
+PASS: Should convert [255,0,0] to [0,1,1].
+PASS: Should convert [0,255,0] to [120,1,1].
+PASS: Should convert [0,0,255] to [240,1,1].
+PASS: Should convert [-1,-1,-1] to [0,0,0].
+PASS: Should convert [256,256,256] to [0,0,1].
+PASS: Should convert [254.9,0,0] to [0,1,1].
+
+-- Running test case: WI.Color.cmyk2rgb
+PASS: Should convert [0,0,0,1] to [0,0,0].
+PASS: Should convert [1,0,0,0] to [0,255,255].
+PASS: Should convert [0,1,0,0] to [255,0,255].
+PASS: Should convert [0,0,1,0] to [255,255,0].
+PASS: Should convert [0,0,0,0] to [255,255,255].
+PASS: Should convert [2,0,0,0] to [0,255,255].
+PASS: Should convert [-1,0,0,0] to [255,255,255].
+
+-- Running test case: WI.Color.normalized2rgb
+PASS: Should convert [0,0,0] to [0,0,0].
+PASS: Should convert [1,1,1] to [255,255,255].
+PASS: Should convert [0.24,0.25,0.26] to [61,64,66].
+PASS: Should convert [2,0,0] to [255,0,0].
+PASS: Should convert [-1,0,0] to [0,0,0].
+

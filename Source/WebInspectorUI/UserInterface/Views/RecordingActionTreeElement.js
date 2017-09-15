@@ -125,7 +125,58 @@ WI.RecordingActionTreeElement = class RecordingActionTreeElement extends WI.Gene
         if (recordingAction.isFunction)
             copyText += ")";
 
+        let colorParameters = recordingAction.getColorParameters();
+        if (colorParameters.length) {
+            let swatch = WI.RecordingActionTreeElement._createSwatchForColorParameters(colorParameters);
+            let insertionIndex = recordingAction.parameters.indexOf(colorParameters[0]);
+            let parameterElement = parametersContainer.children[insertionIndex];
+            parametersContainer.insertBefore(swatch.element, parameterElement);
+
+            if (recordingAction.swizzleTypes[insertionIndex] === WI.Recording.Swizzle.String) {
+                parameterElement.textContent = swatch.value.toString();
+                parameterElement.classList.add("color");
+            }
+        }
+
         return {titleFragment, copyText};
+    }
+
+    static _createSwatchForColorParameters(parameters)
+    {
+        let rgb = [];
+        let color = null;
+
+        switch (parameters.length) {
+        case 1:
+        case 2:
+            if (typeof parameters[0] === "string")
+                color = WI.Color.fromString(parameters[0]);
+            else
+                rgb = WI.Color.normalized2rgb(parameters[0], parameters[0], parameters[0]);
+            break;
+
+        case 4:
+            rgb = WI.Color.normalized2rgb(parameters[0], parameters[1], parameters[2]);
+            break;
+
+        case 5:
+            rgb = WI.Color.cmyk2rgb(...parameters);
+            break;
+
+        default:
+            console.error("Unexpected number of color parameters.");
+            return null;
+        }
+
+        if (!color) {
+            let alpha = parameters.length === 1 ? 1 : parameters.lastValue;
+            color = new WI.Color(WI.Color.Format.RGBA, [...rgb, alpha]);
+            if (!color)
+                return null;
+        }
+
+        const readOnly = true;
+        return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
     }
 
     static _getClassNames(recordingAction)

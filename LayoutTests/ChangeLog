@@ -1,3 +1,16 @@
+2017-09-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas: recording parameters that include colors should show an InlineSwatch (2D canvas)
+        https://bugs.webkit.org/show_bug.cgi?id=176822
+        <rdar://problem/34402170>
+
+        Reviewed by Devin Rousso.
+
+        Add tests for color space conversions.
+
+        * inspector/model/color-expected.txt:
+        * inspector/model/color.html:
+
 2017-09-15  Brent Fulgham  <bfulgham@apple.com>
 
         Unreviewed test maintenance.

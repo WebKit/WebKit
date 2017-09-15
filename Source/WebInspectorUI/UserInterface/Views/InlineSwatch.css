@@ -84,7 +84,7 @@
     pointer-events: none;
 }
 
-.inline-swatch:hover > span {
+.inline-swatch:not(.read-only):hover > span {
     border-color: hsla(0, 0%, 25%, 0.8);
 }
 

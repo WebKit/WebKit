@@ -135,6 +135,19 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         state.webkitLineDash = context.webkitLineDash;
         state.webkitLineDashOffset = context.webkitLineDashOffset;
 
+        function isColorProperty(name) {
+            return name === "fillStyle" || name === "strokeStyle" || name === "shadowColor";
+        }
+
+        function createInlineSwatch(value) {
+            let color = WI.Color.fromString(value);
+            if (!color)
+                return null;
+
+            const readOnly = true;
+            return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
+        }
+
         let action = actions[this._index];
         for (let name in state) {
             let value = state[name];
@@ -154,6 +167,11 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
 
                     value = JSON.stringify(value);
                 }
+            } else if (isColorProperty(name)) {
+                let swatch = createInlineSwatch(value);
+                let label = swatch.value.toString();
+                value = document.createElement("span");
+                value.append(swatch.element, label);
             }
 
             let classNames = [];

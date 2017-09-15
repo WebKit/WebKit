@@ -167,6 +167,29 @@ WI.RecordingAction = class RecordingAction
                 this._stateModifiers.add(item);
         }
     }
+
+    getColorParameters()
+    {
+        switch (this._name) {
+        // 2D
+        case "fillStyle":
+        case "strokeStyle":
+        case "shadowColor":
+        // 2D (non-standard, legacy)
+        case "setFillColor":
+        case "setStrokeColor":
+        // WebGL
+        case "blendColor":
+        case "clearColor":
+            return this._parameters;
+
+        // 2D (non-standard, legacy)
+        case "setShadow":
+            return this._parameters.slice(3);
+        }
+
+        return [];
+    }
 };
 
 WI.RecordingAction._functionNames = {

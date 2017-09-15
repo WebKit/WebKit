@@ -35,29 +35,32 @@ WI.InlineSwatch = class InlineSwatch extends WI.Object
         this._swatchElement = document.createElement("span");
         this._swatchElement.classList.add("inline-swatch", this._type.split("-").lastValue);
 
-        switch (this._type) {
-        case WI.InlineSwatch.Type.Color:
-            this._swatchElement.title = WI.UIString("Click to select a color. Shift-click to switch color formats.");
-            break;
-        case WI.InlineSwatch.Type.Gradient:
-            this._swatchElement.title = WI.UIString("Edit custom gradient");
-            break;
-        case WI.InlineSwatch.Type.Bezier:
-            this._swatchElement.title = WI.UIString("Edit “cubic-bezier“ function");
-            break;
-        case WI.InlineSwatch.Type.Spring:
-            this._swatchElement.title = WI.UIString("Edit “spring“ function");
-            break;
-        case WI.InlineSwatch.Type.Variable:
-            this._swatchElement.title = WI.UIString("View variable value");
-            break;
-        default:
-            WI.reportInternalError(`Unknown InlineSwatch type "${type}"`);
-            break;
-        }
-
         this._boundSwatchElementClicked = null;
-        if (!readOnly) {
+
+        if (readOnly)
+            this._swatchElement.classList.add("read-only");
+        else {
+            switch (this._type) {
+            case WI.InlineSwatch.Type.Color:
+                this._swatchElement.title = WI.UIString("Click to select a color. Shift-click to switch color formats.");
+                break;
+            case WI.InlineSwatch.Type.Gradient:
+                this._swatchElement.title = WI.UIString("Edit custom gradient");
+                break;
+            case WI.InlineSwatch.Type.Bezier:
+                this._swatchElement.title = WI.UIString("Edit “cubic-bezier“ function");
+                break;
+            case WI.InlineSwatch.Type.Spring:
+                this._swatchElement.title = WI.UIString("Edit “spring“ function");
+                break;
+            case WI.InlineSwatch.Type.Variable:
+                this._swatchElement.title = WI.UIString("View variable value");
+                break;
+            default:
+                WI.reportInternalError(`Unknown InlineSwatch type "${type}"`);
+                break;
+            }
+
             this._boundSwatchElementClicked = this._swatchElementClicked.bind(this);
             this._swatchElement.addEventListener("click", this._boundSwatchElementClicked);
             if (this._type === WI.InlineSwatch.Type.Color)

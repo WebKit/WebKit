@@ -298,6 +298,64 @@ function test()
         }
     });
 
+    function testColorConversion(func, value, expected) {
+        let actual = func(...value);
+        InspectorTest.expectShallowEqual(actual, expected, `Should convert ${JSON.stringify(value)} to ${JSON.stringify(expected)}.`);
+    }
+
+    suite.addTestCase({
+        name: "WI.Color.rgb2hsv",
+        description: "Test conversion from RGB to HSV.",
+        test(resolve, reject) {
+            testColorConversion(WI.Color.rgb2hsv, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.rgb2hsv, [255, 255, 255], [0, 0, 1]);
+            testColorConversion(WI.Color.rgb2hsv, [255, 0, 0], [0, 1, 1]);
+            testColorConversion(WI.Color.rgb2hsv, [0, 255, 0], [120, 1, 1]);
+            testColorConversion(WI.Color.rgb2hsv, [0, 0, 255], [240, 1, 1]);
+
+            // Out-of-bounds and floating point inputs.
+            testColorConversion(WI.Color.rgb2hsv, [-1, -1, -1], [0, 0, 0]);
+            testColorConversion(WI.Color.rgb2hsv, [256, 256, 256], [0, 0, 1]);
+            testColorConversion(WI.Color.rgb2hsv, [254.9, 0, 0], [0, 1, 1]);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.cmyk2rgb",
+        description: "Test conversion from CMYK to RGB.",
+        test(resolve, reject) {
+            testColorConversion(WI.Color.cmyk2rgb, [0, 0, 0, 1], [0, 0, 0]);
+            testColorConversion(WI.Color.cmyk2rgb, [1, 0, 0, 0], [0, 255, 255]);
+            testColorConversion(WI.Color.cmyk2rgb, [0, 1, 0, 0], [255, 0, 255]);
+            testColorConversion(WI.Color.cmyk2rgb, [0, 0, 1, 0], [255, 255, 0]);
+            testColorConversion(WI.Color.cmyk2rgb, [0, 0, 0, 0], [255, 255, 255]);
+
+            // Out-of-bounds inputs.
+            testColorConversion(WI.Color.cmyk2rgb, [2, 0, 0, 0], [0, 255, 255]);
+            testColorConversion(WI.Color.cmyk2rgb, [-1, 0, 0, 0], [255, 255, 255]);
+
+            resolve();
+        }
+    });
+
+    suite.addTestCase({
+        name: "WI.Color.normalized2rgb",
+        description: "Test conversion from normalized RGB to RGB.",
+        test(resolve, reject) {
+            testColorConversion(WI.Color.normalized2rgb, [0, 0, 0], [0, 0, 0]);
+            testColorConversion(WI.Color.normalized2rgb, [1, 1, 1], [255, 255, 255]);
+            testColorConversion(WI.Color.normalized2rgb, [0.24, 0.25, 0.26], [61, 64, 66]); // Values chosen to test round up/down behavior.
+
+            // Out-of-bounds inputs.
+            testColorConversion(WI.Color.normalized2rgb, [2, 0, 0], [255, 0, 0]);
+            testColorConversion(WI.Color.normalized2rgb, [-1, 0, 0], [0, 0, 0]);
+
+            resolve();
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

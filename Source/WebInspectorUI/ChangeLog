@@ -1,3 +1,60 @@
+2017-09-15  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Canvas: recording parameters that include colors should show an InlineSwatch (2D canvas)
+        https://bugs.webkit.org/show_bug.cgi?id=176822
+        <rdar://problem/34402170>
+
+        Reviewed by Devin Rousso.
+
+        Show inline swatches in the canvas recording action and state sidebars.
+
+        * UserInterface/Models/Color.js:
+        Added helpers for dealing with CMYK and normalized RGB. The latter is
+        for RGB components scaled to the range [0, 1]. Also improved handling
+        for 8-bit channel values.
+        (WI.Color.rgb2hsv):
+        (WI.Color.cmyk2rgb):
+        (WI.Color.normalized2rgb):
+        (WI.Color._eightBitChannel):
+        (WI.Color.prototype._toRGBString):
+        (WI.Color.prototype._toRGBAString):
+        (WI.Color.prototype._componentToHexValue):
+        (WI.Color.prototype._rgbToHSL):
+        (WI.Color.prototype._componentToNumber): Deleted.
+        Replaced by _eightBitChannel.
+
+        * UserInterface/Models/RecordingAction.js:
+        (WI.RecordingAction):
+        (WI.RecordingAction.prototype.getColorParameters):
+        Get a subset of parameters that describe a color. This can be an array
+        containing one value (e.g. fillStyle), or multiple values, as is the
+        case with non-standard API functions that describe color using multiple
+        parameters (e.g. setFillColor).
+
+        * UserInterface/Views/InlineSwatch.css:
+        (.inline-swatch:not(.read-only):hover > span):
+        (.inline-swatch:hover > span): Deleted.
+        * UserInterface/Views/InlineSwatch.js:
+        (WI.InlineSwatch):
+        Read-only colors shouldn't show a context menu or hover effects.
+
+        * UserInterface/Views/RecordingActionTreeElement.css:
+        (.tree-outline:matches(:focus, .force-focus) .item.action > .titles .parameters > .inline-swatch):
+
+        * UserInterface/Views/RecordingActionTreeElement.js:
+        (WI.RecordingActionTreeElement._generateDOM.createParameterElement):
+        (WI.RecordingActionTreeElement._generateDOM):
+        (WI.RecordingActionTreeElement._createSwatchForColorParameters):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.css:
+        (.sidebar > .panel.details.recording-state > .content > .data-grid .inline-swatch):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D.isColorProperty):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D.createInlineSwatch):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        (WI.RecordingStateDetailsSidebarPanel):
+
 2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r222036.

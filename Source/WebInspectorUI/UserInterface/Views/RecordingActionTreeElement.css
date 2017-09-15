@@ -61,9 +61,17 @@ body[dir=rtl] .item.action::before {
     opacity: 1;
 }
 
+body:not(.window-inactive, .window-docked-inactive) .item.action > .titles .parameter.swizzled {
+    color: var(--text-color-gray-medium);
+}
+
 body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected > .titles .parameter.swizzled,
 body:not(.window-inactive, .window-docked-inactive) :matches(:focus, .force-focus) .item.action.selected::before {
-    color: var(--selected-secondary-text-color);
+    color: var(--console-secondary-text-color);
+}
+
+.tree-outline:matches(:focus, .force-focus) .item.action > .titles .parameters > .inline-swatch {
+    vertical-align: -1px;
 }
 
 .tree-outline[data-indent="1"] .item.action::before,

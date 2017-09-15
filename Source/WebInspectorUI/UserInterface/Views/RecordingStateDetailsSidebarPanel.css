@@ -38,3 +38,7 @@
 .sidebar > .panel.details.recording-state > .content > .data-grid tr:not(.selected) .unavailable {
     color: grey;
 }
+
+.sidebar > .panel.details.recording-state > .content > .data-grid .inline-swatch {
+    vertical-align: -1px;
+}
