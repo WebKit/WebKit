@@ -1,3 +1,87 @@
+2017-09-15  JF Bastien  <jfbastien@apple.com>
+
+        WTF: use Forward.h when appropriate instead of Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=176984
+
+        Reviewed by Saam Barati.
+
+        There's no need to include Vector.h when Forward.h will suffice. All we need is to move the template default parameters from Vector, and then the forward declaration can be used in so many new places: if a header only takes Vector by reference, rvalue reference, pointer, returns any of these, or has them as members then the header doesn't need to see the definition because the declaration will suffice.
+
+        * Modules/entriesapi/FileSystemEntriesCallback.h:
+        * Modules/indexeddb/IDBEventDispatcher.h:
+        * Modules/indexeddb/IDBFactory.h:
+        * Modules/indexeddb/client/IDBConnectionProxy.h:
+        * Modules/indexeddb/server/IDBConnectionToClientDelegate.h:
+        * Modules/webdatabase/DatabaseTask.h:
+        * Modules/websockets/WebSocketChannelClient.h:
+        * contentextensions/CombinedURLFilters.h:
+        * crypto/SerializedCryptoKeyWrap.h:
+        * css/InspectorCSSOMWrappers.h:
+        * css/PageRuleCollector.h:
+        * css/parser/CSSParserTokenRange.h:
+        * dom/DocumentTouch.h:
+        * dom/MutationCallback.h:
+        * editing/EditingStyle.h:
+        * editing/SpellChecker.h:
+        * editing/markup.h:
+        * fileapi/ThreadableBlobRegistry.h:
+        * html/FileListCreator.h:
+        * inspector/WebHeapAgent.h:
+        * loader/ContentFilter.cpp:
+        (WebCore::ContentFilter::ContentFilter):
+        * loader/ContentFilter.h:
+        * loader/CookieJar.h:
+        * loader/FrameLoaderClient.h:
+        * loader/LoaderStrategy.h:
+        * loader/SubframeLoader.h:
+        * page/ChromeClient.h:
+        * page/FrameSnapshotting.h:
+        * page/IntersectionObserverCallback.h:
+        * page/PageSerializer.h:
+        * page/UserContentURLPattern.h:
+        * page/scrolling/AxisScrollSnapOffsets.h:
+        * page/win/FrameWin.h:
+        * platform/CookiesStrategy.h:
+        * platform/KeyedCoding.h:
+        * platform/PasteboardStrategy.h:
+        * platform/SSLKeyGenerator.h:
+        * platform/ScrollableArea.h:
+        * platform/encryptedmedia/CDMFactory.h:
+        * platform/gamepad/EmptyGamepadProvider.cpp:
+        * platform/gamepad/GamepadProvider.h:
+        * platform/gamepad/GamepadProviderClient.h:
+        * platform/gamepad/PlatformGamepad.h:
+        * platform/graphics/GeometryUtilities.cpp:
+        * platform/graphics/GeometryUtilities.h:
+        * platform/graphics/Icon.h:
+        * platform/graphics/LayoutRect.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/WOFFFileFormat.h:
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/objc/AVAssetTrackUtilities.h:
+        * platform/graphics/ca/PlatformCAAnimation.h:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.h:
+        * platform/graphics/opentype/OpenTypeMathData.h:
+        * platform/image-encoders/JPEGImageEncoder.h:
+        * platform/image-encoders/PNGImageEncoder.h:
+        * platform/network/BlobRegistry.h:
+        * platform/network/HTTPParsers.h:
+        * platform/network/PlatformCookieJar.h:
+        * platform/network/cf/DownloadBundle.h:
+        * platform/network/curl/CurlCacheEntry.h:
+        * platform/network/curl/DownloadBundle.h:
+        * platform/text/LineEnding.h:
+        * platform/text/QuotedPrintable.cpp:
+        * platform/text/QuotedPrintable.h:
+        * rendering/FlexibleBoxAlgorithm.h:
+        * rendering/style/QuotesData.h:
+        * rendering/svg/SVGSubpathData.h:
+        * storage/StorageEventDispatcher.h:
+        * style/StyleInvalidator.h:
+        * style/StyleRelations.h:
+        * svg/SVGAltGlyphDefElement.h:
+        * svg/SVGAltGlyphItemElement.h:
+
 2017-09-15  Youenn Fablet  <youenn@apple.com>
 
         ASSERTION FAILED: writtenAudioDuration >= readAudioDuration in com.apple.WebCore:WebCore::RealtimeOutgoingAudioSource::isReachingBufferedAudioDataHighLimit() + 222

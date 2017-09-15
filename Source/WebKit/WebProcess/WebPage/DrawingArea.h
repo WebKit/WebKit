@@ -38,7 +38,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/Vector.h>
 
 namespace IPC {
 class Connection;

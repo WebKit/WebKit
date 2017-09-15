@@ -32,11 +32,11 @@
 #include "TransactionOperation.h"
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

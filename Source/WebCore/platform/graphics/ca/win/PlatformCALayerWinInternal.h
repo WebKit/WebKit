@@ -27,8 +27,8 @@
 #define PlatformCALayerWinInternal_h
 
 #include <CoreGraphics/CGGeometry.h>
+#include <wtf/Forward.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
 typedef struct _CACFLayer *CACFLayerRef;
 typedef struct CGContext *CGContextRef;
@@ -41,7 +41,7 @@ class PlatformCALayer;
 class TileController;
 class TiledBacking;
 
-typedef Vector<RefPtr<PlatformCALayer> > PlatformCALayerList;
+typedef Vector<RefPtr<PlatformCALayer>> PlatformCALayerList;
 
 class PlatformCALayerWinInternal {
 public:

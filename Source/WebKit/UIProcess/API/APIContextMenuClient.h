@@ -31,8 +31,8 @@
 #include "WebContextMenuListenerProxy.h"
 #include "WebHitTestResultData.h"
 #include <WebKit/WKBase.h>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 OBJC_CLASS NSMenu;
 

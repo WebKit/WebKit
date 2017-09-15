@@ -26,7 +26,7 @@
 #pragma once
 
 #include "CodeLocation.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace JSC {
 

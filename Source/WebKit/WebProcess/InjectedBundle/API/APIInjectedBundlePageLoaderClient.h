@@ -28,7 +28,6 @@
 #include "SameDocumentNavigationType.h"
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

@@ -28,6 +28,9 @@ template<typename T> class optional;
 
 namespace WTF {
 
+struct FastMalloc;
+class CrashOnOverflow;
+
 template<typename T> class Function;
 template<typename T> class LazyNeverDestroyed;
 template<typename T> class NeverDestroyed;
@@ -37,7 +40,7 @@ template<typename T> class RefPtr;
 template<typename T> class StringBuffer;
 
 template<typename... T> class Variant;
-template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc> class Vector;
+template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename Malloc = FastMalloc> class Vector;
 
 class AtomicString;
 class AtomicStringImpl;

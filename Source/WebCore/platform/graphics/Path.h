@@ -33,7 +33,6 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 #if USE(CG)
 

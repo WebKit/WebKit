@@ -81,7 +81,7 @@ std::unique_ptr<ContentFilter> ContentFilter::create(DocumentLoader& documentLoa
     return std::make_unique<ContentFilter>(WTFMove(filters), documentLoader);
 }
 
-ContentFilter::ContentFilter(Container contentFilters, DocumentLoader& documentLoader)
+ContentFilter::ContentFilter(Container&& contentFilters, DocumentLoader& documentLoader)
     : m_contentFilters { WTFMove(contentFilters) }
     , m_documentLoader { documentLoader }
 {

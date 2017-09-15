@@ -27,8 +27,8 @@
 
 #if ENABLE(GAMEPAD)
 
+#include <wtf/Forward.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

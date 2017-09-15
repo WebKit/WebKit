@@ -30,7 +30,7 @@
 #pragma once
 
 #include "CSSParserToken.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

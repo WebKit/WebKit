@@ -30,8 +30,8 @@
 
 #include "ExceptionOr.h"
 #include <wtf/Condition.h>
+#include <wtf/Forward.h>
 #include <wtf/Lock.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

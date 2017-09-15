@@ -28,8 +28,8 @@
 #include "ResourceHandleTypes.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
+#include <wtf/Forward.h>
 #include <wtf/SHA1.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

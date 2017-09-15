@@ -29,7 +29,6 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLInterchange.h"
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

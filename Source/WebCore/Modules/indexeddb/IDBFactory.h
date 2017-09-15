@@ -32,7 +32,6 @@
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Vector.h>
 
 namespace JSC {
 class ExecState;

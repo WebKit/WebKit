@@ -28,7 +28,6 @@
 #include <WebCore/EditorInsertAction.h>
 #include <WebCore/TextAffinity.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 class CSSStyleDeclaration;

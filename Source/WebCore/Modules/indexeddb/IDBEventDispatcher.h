@@ -30,7 +30,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

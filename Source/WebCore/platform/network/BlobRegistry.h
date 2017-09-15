@@ -34,7 +34,6 @@
 #include <functional>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

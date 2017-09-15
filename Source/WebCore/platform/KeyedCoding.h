@@ -28,7 +28,6 @@
 #include <functional>
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

@@ -30,7 +30,6 @@
 #include "APINotificationProvider.h"
 #include "WKNotificationProvider.h"
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace API {
 template<> struct ClientTraits<WKNotificationProviderBase> {

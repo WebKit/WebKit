@@ -32,9 +32,9 @@
 
 #include "ActiveDOMCallback.h"
 #include "CallbackResult.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

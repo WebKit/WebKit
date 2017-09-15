@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 #include <wtf/win/GDIObject.h>
 
 namespace WebCore {

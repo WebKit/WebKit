@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "ContentType.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 OBJC_CLASS AVAssetTrack;
 

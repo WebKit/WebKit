@@ -29,7 +29,7 @@
 
 #include "RTCNetwork.h"
 #include <WebCore/LibWebRTCProvider.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace IPC {
 class Connection;

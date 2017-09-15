@@ -31,7 +31,7 @@
 #include "PlatformContentFilter.h"
 #include "ResourceError.h"
 #include <functional>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
@@ -75,7 +75,7 @@ private:
 
     using Container = Vector<std::unique_ptr<PlatformContentFilter>>;
     friend std::unique_ptr<ContentFilter> std::make_unique<ContentFilter>(Container&&, DocumentLoader&);
-    ContentFilter(Container, DocumentLoader&);
+    ContentFilter(Container&&, DocumentLoader&);
 
     template <typename Function> void forEachContentFilterUntilBlocked(Function&&);
     void didDecide(State);

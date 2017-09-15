@@ -28,9 +28,9 @@
 #include "APIObject.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include <WebCore/Cookie.h>
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 class URL;

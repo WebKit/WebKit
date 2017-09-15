@@ -27,9 +27,10 @@
 #pragma once
 
 #include "Glyph.h"
+#include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include <wtf/RefPtr.h>
 
 #if !ENABLE(OPENTYPE_MATH) && USE(HARFBUZZ)
 #include <hb-ot.h>

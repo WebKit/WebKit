@@ -30,9 +30,9 @@
 #include "FilterOperation.h"
 #include "FloatPoint3D.h"
 #include "TransformationMatrix.h"
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

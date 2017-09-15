@@ -27,7 +27,6 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebKit {

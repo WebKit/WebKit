@@ -23,7 +23,7 @@
 
 #include "DocumentRuleSets.h"
 #include "StyleResolver.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

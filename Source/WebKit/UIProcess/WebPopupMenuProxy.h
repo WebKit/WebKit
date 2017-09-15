@@ -27,8 +27,8 @@
 #define WebPopupMenuProxy_h
 
 #include <WebCore/WritingMode.h>
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
     class IntRect;

@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "DataReference.h"
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace IPC {
 class Decoder;

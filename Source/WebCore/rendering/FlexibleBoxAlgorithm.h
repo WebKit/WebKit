@@ -32,8 +32,8 @@
 
 #include "LayoutUnit.h"
 #include "RenderStyle.h"
+#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

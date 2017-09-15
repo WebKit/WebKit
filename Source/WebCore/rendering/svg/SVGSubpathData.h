@@ -20,7 +20,7 @@
 #pragma once
 
 #include "Path.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

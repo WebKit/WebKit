@@ -30,7 +30,6 @@
 #include "APIInjectedBundlePageLoaderClient.h"
 #include "WKBundlePageLoaderClient.h"
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace API {
 class Object;

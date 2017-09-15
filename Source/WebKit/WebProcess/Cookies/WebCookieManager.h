@@ -36,7 +36,6 @@
 #include <stdint.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/Vector.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"

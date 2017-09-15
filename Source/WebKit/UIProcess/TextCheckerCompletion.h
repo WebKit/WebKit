@@ -27,7 +27,7 @@
 
 #include "WebPageProxy.h"
 #include <WebCore/TextChecking.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebKit {
 

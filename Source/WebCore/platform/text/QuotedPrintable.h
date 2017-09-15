@@ -31,7 +31,7 @@
 #ifndef QuotedPrintable_h
 #define QuotedPrintable_h
 
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

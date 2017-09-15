@@ -28,7 +28,7 @@
 #if USE(LIBWEBRTC)
 
 #include "RTCNetwork.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace IPC {
 class Connection;

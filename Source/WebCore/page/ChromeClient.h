@@ -44,7 +44,6 @@
 #include <runtime/ConsoleTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Seconds.h>
-#include <wtf/Vector.h>
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 #include "MediaPlaybackTargetContext.h"

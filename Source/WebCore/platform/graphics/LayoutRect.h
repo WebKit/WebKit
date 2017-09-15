@@ -34,7 +34,7 @@
 #include "IntRect.h"
 #include "LayoutPoint.h"
 #include "LengthBox.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WTF {
 class TextStream;

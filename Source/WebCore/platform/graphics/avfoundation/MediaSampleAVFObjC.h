@@ -29,7 +29,7 @@
 #include "MediaTimeAVFoundation.h"
 
 #include <runtime/Uint8ClampedArray.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
     

@@ -28,6 +28,7 @@
 #include <utility>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
@@ -575,7 +576,8 @@ struct UnsafeVectorOverflow {
     }
 };
 
-template<typename T, size_t inlineCapacity = 0, typename OverflowHandler = CrashOnOverflow, size_t minCapacity = 16, typename Malloc = FastMalloc>
+// Template default values are in Forward.h.
+template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 class Vector : private VectorBuffer<T, inlineCapacity, Malloc> {
     WTF_MAKE_FAST_ALLOCATED;
 private:

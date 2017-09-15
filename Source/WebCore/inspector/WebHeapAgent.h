@@ -26,7 +26,7 @@
 #pragma once
 
 #include <inspector/agents/InspectorHeapAgent.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

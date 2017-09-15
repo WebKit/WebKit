@@ -32,9 +32,9 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 

@@ -22,7 +22,7 @@
 #if ENABLE(SVG_FONTS)
 
 #include "SVGElement.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

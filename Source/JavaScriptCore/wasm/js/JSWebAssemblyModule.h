@@ -32,7 +32,7 @@
 #include "UnconditionalFinalizer.h"
 #include "WasmModule.h"
 #include <wtf/Bag.h>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace JSC {
 

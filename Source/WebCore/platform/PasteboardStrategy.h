@@ -27,7 +27,6 @@
 #define PasteboardStrategy_h
 
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

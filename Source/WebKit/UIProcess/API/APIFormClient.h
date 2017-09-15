@@ -28,7 +28,6 @@
 
 #include "WebFormSubmissionListenerProxy.h"
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebKit {
 class WebFrameProxy;

@@ -27,7 +27,7 @@
 
 #include "ScrollSnapOffsetsInfo.h"
 #include "Scrollbar.h"
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

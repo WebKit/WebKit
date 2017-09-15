@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "GeometryUtilities.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 

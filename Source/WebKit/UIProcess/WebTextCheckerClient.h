@@ -30,7 +30,6 @@
 #include "WKTextChecker.h"
 #include <WebCore/TextCheckerClient.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace API {
 template<> struct ClientTraits<WKTextCheckerClientBase> {

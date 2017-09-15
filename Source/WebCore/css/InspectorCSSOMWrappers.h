@@ -26,7 +26,6 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

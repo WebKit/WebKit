@@ -25,7 +25,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Vector.h>
 
 #if PLATFORM(IOS)
 #include "NativeImage.h"

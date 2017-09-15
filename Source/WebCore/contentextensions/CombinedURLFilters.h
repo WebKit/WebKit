@@ -32,7 +32,6 @@
 #include "NFA.h"
 #include <wtf/Function.h>
 #include <wtf/Forward.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

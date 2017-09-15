@@ -25,10 +25,10 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/WorkQueue.h>
 
 namespace WebCore {

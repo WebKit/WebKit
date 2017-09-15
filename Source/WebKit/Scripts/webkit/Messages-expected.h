@@ -33,9 +33,9 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
 #include <utility>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace IPC {

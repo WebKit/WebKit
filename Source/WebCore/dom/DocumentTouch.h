@@ -30,7 +30,7 @@
 #elif ENABLE(TOUCH_EVENTS)
 
 #include <functional>
-#include <wtf/Vector.h>
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

@@ -32,9 +32,9 @@
 
 #include "URLHash.h"
 #include "SharedBuffer.h"
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

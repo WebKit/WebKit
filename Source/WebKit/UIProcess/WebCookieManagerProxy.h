@@ -31,8 +31,8 @@
 #include "WebContextSupplement.h"
 #include "WebCookieManagerProxyClient.h"
 #include <pal/SessionID.h>
+#include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 #if USE(SOUP)
 #include "SoupCookiePersistentStorageType.h"

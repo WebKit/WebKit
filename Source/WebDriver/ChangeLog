@@ -1,3 +1,14 @@
+2017-09-15  JF Bastien  <jfbastien@apple.com>
+
+        WTF: use Forward.h when appropriate instead of Vector.h
+        https://bugs.webkit.org/show_bug.cgi?id=176984
+
+        Reviewed by Saam Barati.
+
+        There's no need to include Vector.h when Forward.h will suffice. All we need is to move the template default parameters from Vector, and then the forward declaration can be used in so many new places: if a header only takes Vector by reference, rvalue reference, pointer, returns any of these, or has them as members then the header doesn't need to see the definition because the declaration will suffice.
+
+        * Session.h:
+
 2017-09-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: ensure we close all windows handles when closing the session
