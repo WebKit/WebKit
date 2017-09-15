@@ -54,7 +54,7 @@ public:
     HarfBuzzShaper(const FontCascade*, const TextRun&);
     virtual ~HarfBuzzShaper();
 
-    bool shape(GlyphBuffer* = 0);
+    bool shape(GlyphBuffer* = nullptr, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt);
     FloatPoint adjustStartPoint(const FloatPoint&);
     float totalWidth() { return m_totalWidth; }
     int offsetForPosition(float targetX, bool includePartialGlyphs = true);
@@ -113,8 +113,8 @@ private:
 
     bool collectHarfBuzzRuns();
     bool shapeHarfBuzzRuns(bool shouldSetDirection);
-    bool fillGlyphBuffer(GlyphBuffer*);
-    void fillGlyphBufferFromHarfBuzzRun(GlyphBuffer*, HarfBuzzRun*, FloatPoint& firstOffsetOfNextRun);
+    bool fillGlyphBuffer(GlyphBuffer*, unsigned from, unsigned to);
+    void fillGlyphBufferFromHarfBuzzRun(GlyphBuffer*, unsigned from, unsigned to, HarfBuzzRun*, const FloatPoint& firstOffsetOfNextRun);
     void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, hb_buffer_t*);
 
     GlyphBufferAdvance createGlyphBufferAdvance(float, float);

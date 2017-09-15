@@ -1,3 +1,23 @@
+2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Fix incorrect font rendering when selecting texts in pages which specifies text-rendering: optimizeLegibility
+        https://bugs.webkit.org/show_bug.cgi?id=148220
+
+        Reviewed by Michael Catanzaro.
+
+        Add support for shaping a range of characters and return the advance to the first glyph in the range.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::getGlyphsAndAdvancesForComplexText const): Pass "from" and "to" parameters to
+        HarfBuzzShaper::shape and return the x position of the selection rect.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::shape): Forward "from" and "to" parameters to fillGlyphBuffer().
+        (WebCore::HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun): Only add glyphs for the given character range.
+        (WebCore::HarfBuzzShaper::fillGlyphBuffer): Only consider runs in the given character range.
+        * platform/graphics/harfbuzz/HarfBuzzShaper.h:
+
 2017-09-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] ClearKey: list 'persistent-license' sessions as supported

@@ -40,16 +40,18 @@
 
 namespace WebCore {
 
-float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned, unsigned, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
+float FontCascade::getGlyphsAndAdvancesForComplexText(const TextRun& run, unsigned from, unsigned to, GlyphBuffer& glyphBuffer, ForTextEmphasisOrNot /* forTextEmphasis */) const
 {
     HarfBuzzShaper shaper(this, run);
-    if (!shaper.shape(&glyphBuffer)) {
+    if (!shaper.shape(&glyphBuffer, from, to)) {
         LOG_ERROR("Shaper couldn't shape glyphBuffer.");
         return 0;
     }
 
-    // FIXME: Mac returns an initial advance here.
-    return 0;
+    if (glyphBuffer.isEmpty())
+        return 0;
+
+    return shaper.selectionRect({ }, 0, from, to).x();
 }
 
 bool FontCascade::canReturnFallbackFontsForComplexText()
