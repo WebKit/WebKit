@@ -33,7 +33,7 @@ namespace WebCore {
 
 class ContentType {
 public:
-    static ContentType create(const String& type) { return ContentType(type); }
+    explicit ContentType(String&& type);
     explicit ContentType(const String& type);
     ContentType() = default;
 

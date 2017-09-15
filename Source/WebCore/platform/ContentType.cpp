@@ -32,6 +32,11 @@
 
 namespace WebCore {
 
+ContentType::ContentType(String&& contentType)
+    : m_type(WTFMove(contentType))
+{
+}
+
 ContentType::ContentType(const String& contentType)
     : m_type(contentType)
 {
@@ -90,19 +95,22 @@ String ContentType::containerType() const
     return strippedType;
 }
 
-static String stripHTMLWhiteSpace(const String& string)
+static inline Vector<String> splitParameters(StringView parametersView)
 {
-    return string.stripWhiteSpace(isHTMLSpace);
+    Vector<String> result;
+    for (auto view : parametersView.split(','))
+        result.append(view.stripLeadingAndTrailingMatchedCharacters(isHTMLSpace<UChar>).toString());
+    return result;
 }
 
 Vector<String> ContentType::codecs() const
 {
-    return parameter(codecsParameter()).split(',').map(stripHTMLWhiteSpace);
+    return splitParameters(parameter(codecsParameter()));
 }
 
 Vector<String> ContentType::profiles() const
 {
-    return parameter(profilesParameter()).split(',').map(stripHTMLWhiteSpace);
+    return splitParameters(parameter(profilesParameter()));
 }
 
 } // namespace WebCore

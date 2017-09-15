@@ -191,8 +191,8 @@ Ref<FormSubmission> FormSubmission::create(HTMLFormElement& form, const Attribut
     StringPairVector formValues;
 
     bool containsPasswordData = false;
-    auto protectedAssociatedElements = form.associatedElements().map([] (FormAssociatedElement* rawElement) -> Ref<FormAssociatedElement> {
-        return *rawElement;
+    auto protectedAssociatedElements = WTF::map(form.associatedElements(), [] (auto* rawElement) {
+        return Ref<FormAssociatedElement>(*rawElement);
     });
 
     for (auto& control : protectedAssociatedElements) {

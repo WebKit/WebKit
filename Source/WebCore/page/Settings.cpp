@@ -798,7 +798,9 @@ const String& Settings::defaultMediaContentTypesRequiringHardwareSupport()
 
 void Settings::setMediaContentTypesRequiringHardwareSupport(const String& contentTypes)
 {
-    m_mediaContentTypesRequiringHardwareSupport = contentTypes.split(":").map(ContentType::create);
+    m_mediaContentTypesRequiringHardwareSupport.shrink(0);
+    for (auto type : StringView(contentTypes).split(':'))
+        m_mediaContentTypesRequiringHardwareSupport.append(ContentType { type.toString() });
 }
 
 void Settings::setMediaContentTypesRequiringHardwareSupport(const Vector<ContentType>& contentTypes)

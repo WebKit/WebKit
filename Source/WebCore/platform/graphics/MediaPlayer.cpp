@@ -425,7 +425,7 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
                 String extension = lastPathComponent.substring(pos + 1);
                 String mediaType = MIMETypeRegistry::getMediaMIMETypeForExtension(extension);
                 if (!mediaType.isEmpty()) {
-                    m_contentType = ContentType(mediaType);
+                    m_contentType = ContentType { WTFMove(mediaType) };
                     m_contentMIMETypeWasInferredFromExtension = true;
                 }
             }
