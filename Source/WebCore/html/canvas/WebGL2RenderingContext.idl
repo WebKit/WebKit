@@ -410,16 +410,16 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void clearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
 
     /* Query Objects */
-    WebGLQuery createQuery();
+    WebGLQuery? createQuery();
     void deleteQuery(WebGLQuery? query);
     GLboolean isQuery(WebGLQuery? query);
     void beginQuery(GLenum target, WebGLQuery query);
     void endQuery(GLenum target);
-    WebGLQuery getQuery(GLenum target, GLenum pname);
+    WebGLQuery? getQuery(GLenum target, GLenum pname);
     [OverrideIDLType=IDLWebGLAny] any getQueryParameter(WebGLQuery query, GLenum pname);
 
     /* Sampler Objects */
-    WebGLSampler createSampler();
+    WebGLSampler? createSampler();
     void deleteSampler(WebGLSampler? sampler);
     GLboolean isSampler(WebGLSampler? sampler);
     void bindSampler(GLuint unit, WebGLSampler? sampler);
@@ -428,7 +428,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     [OverrideIDLType=IDLWebGLAny] any getSamplerParameter(WebGLSampler sampler, GLenum pname);
 
     /* Sync objects */
-    WebGLSync fenceSync(GLenum condition, GLbitfield flags);
+    WebGLSync? fenceSync(GLenum condition, GLbitfield flags);
     GLboolean isSync(WebGLSync? sync);
     void deleteSync(WebGLSync? sync);
     GLenum clientWaitSync(WebGLSync sync, GLbitfield flags, GLuint64 timeout);
@@ -436,14 +436,14 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     [OverrideIDLType=IDLWebGLAny] any getSyncParameter(WebGLSync sync, GLenum pname);
 
     /* Transform Feedback */
-    WebGLTransformFeedback createTransformFeedback();
+    WebGLTransformFeedback? createTransformFeedback();
     void deleteTransformFeedback(WebGLTransformFeedback? id);
     GLboolean isTransformFeedback(WebGLTransformFeedback? id);
     void bindTransformFeedback(GLenum target, WebGLTransformFeedback? id);
     void beginTransformFeedback(GLenum primitiveMode);
     void endTransformFeedback();
     void transformFeedbackVaryings(WebGLProgram program, sequence<DOMString> varyings, GLenum bufferMode);
-    WebGLActiveInfo getTransformFeedbackVarying(WebGLProgram program, GLuint index);
+    WebGLActiveInfo? getTransformFeedbackVarying(WebGLProgram program, GLuint index);
     void pauseTransformFeedback();
     void resumeTransformFeedback();
 
@@ -451,15 +451,15 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     void bindBufferBase(GLenum target, GLuint index, WebGLBuffer? buffer);
     void bindBufferRange(GLenum target, GLuint index, WebGLBuffer? buffer, GLintptr offset, GLsizeiptr size);
     [OverrideIDLType=IDLWebGLAny] any getIndexedParameter(GLenum target, GLuint index);
-    Uint32Array getUniformIndices(WebGLProgram program, sequence<DOMString> uniformNames);
+    sequence<GLuint>? getUniformIndices(WebGLProgram program, sequence<DOMString> uniformNames);
     [OverrideIDLType=IDLWebGLAny] any getActiveUniforms(WebGLProgram program, sequence<GLuint> uniformIndices, GLenum pname);
     GLuint getUniformBlockIndex(WebGLProgram program, DOMString uniformBlockName);
     [OverrideIDLType=IDLWebGLAny] any getActiveUniformBlockParameter(WebGLProgram program, GLuint uniformBlockIndex, GLenum pname);
-    [OverrideIDLType=IDLWebGLAny] any getActiveUniformBlockName(WebGLProgram program, GLuint uniformBlockIndex);
+    [OverrideIDLType=IDLWebGLAny] DOMString? getActiveUniformBlockName(WebGLProgram program, GLuint uniformBlockIndex);
     void uniformBlockBinding(WebGLProgram program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
 
     /* Vertex Array Objects */
-    WebGLVertexArrayObject createVertexArray();
+    WebGLVertexArrayObject? createVertexArray();
     void deleteVertexArray(WebGLVertexArrayObject? vertexArray);
     GLboolean isVertexArray(WebGLVertexArrayObject? vertexArray);
     void bindVertexArray(WebGLVertexArrayObject? vertexArray);

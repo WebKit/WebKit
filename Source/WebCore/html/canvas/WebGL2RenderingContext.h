@@ -157,7 +157,7 @@ public:
     void bindBufferBase(GC3Denum target, GC3Duint index, WebGLBuffer*);
     void bindBufferRange(GC3Denum target, GC3Duint index, WebGLBuffer*, GC3Dint64 offset, GC3Dint64 size);
     WebGLAny getIndexedParameter(GC3Denum target, GC3Duint index);
-    Uint32Array* getUniformIndices(WebGLProgram&, const Vector<String>& uniformNames);
+    std::optional<Vector<GC3Duint>> getUniformIndices(WebGLProgram&, const Vector<String>& uniformNames);
     WebGLAny getActiveUniforms(WebGLProgram&, const Vector<GC3Duint>& uniformIndices, GC3Denum pname);
     GC3Duint getUniformBlockIndex(WebGLProgram&, const String& uniformBlockName);
     WebGLAny getActiveUniformBlockParameter(WebGLProgram&, GC3Duint uniformBlockIndex, GC3Denum pname);

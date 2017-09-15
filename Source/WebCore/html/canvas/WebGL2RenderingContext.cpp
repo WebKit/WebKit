@@ -915,9 +915,9 @@ WebGLAny WebGL2RenderingContext::getIndexedParameter(GC3Denum target, GC3Duint)
     }
 }
 
-Uint32Array* WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
+std::optional<Vector<GC3Duint>> WebGL2RenderingContext::getUniformIndices(WebGLProgram&, const Vector<String>&)
 {
-    return nullptr;
+    return std::nullopt;
 }
 
 WebGLAny WebGL2RenderingContext::getActiveUniforms(WebGLProgram& program, const Vector<GC3Duint>& uniformIndices, GC3Denum pname)
