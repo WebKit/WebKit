@@ -5,6 +5,7 @@ list(APPEND PAL_SOURCES
 
     system/mac/SoundMac.mm
     system/mac/SystemSleepListenerMac.mm
+    system/mac/WebPanel.mm
 
     text/mac/KillRingMac.mm
 )

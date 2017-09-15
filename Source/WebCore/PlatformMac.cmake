@@ -14,6 +14,7 @@ find_library(AUDIOUNIT_LIBRARY AudioUnit)
 find_library(CARBON_LIBRARY Carbon)
 find_library(COCOA_LIBRARY Cocoa)
 find_library(COREAUDIO_LIBRARY CoreAudio)
+find_library(CORESERVICES_LIBRARY CoreServices)
 find_library(DISKARBITRATION_LIBRARY DiskArbitration)
 find_library(IOKIT_LIBRARY IOKit)
 find_library(IOSURFACE_LIBRARY IOSurface)
@@ -35,6 +36,7 @@ list(APPEND WebCore_LIBRARIES
     ${CARBON_LIBRARY}
     ${COCOA_LIBRARY}
     ${COREAUDIO_LIBRARY}
+    ${CORESERVICES_LIBRARY}
     ${DISKARBITRATION_LIBRARY}
     ${IOKIT_LIBRARY}
     ${IOSURFACE_LIBRARY}
@@ -43,15 +45,17 @@ list(APPEND WebCore_LIBRARIES
     ${QUARTZ_LIBRARY}
     ${QUARTZCORE_LIBRARY}
     ${SECURITY_LIBRARY}
-    ${SQLITE3_LIBRARY}
+    ${SQLITE_LIBRARIES}
     ${SYSTEMCONFIGURATION_LIBRARY}
     ${WEBKITSYSTEMINTERFACE_LIBRARY}
     ${XML2_LIBRARY}
+    ${ZLIB_LIBRARY}
 )
 
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${AVFOUNDATION_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${CARBON_LIBRARY}/Versions/Current/Frameworks)
+add_definitions(-iframework ${CORESERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 
 find_library(DATADETECTORSCORE_FRAMEWORK DataDetectorsCore HINTS /System/Library/PrivateFrameworks)
@@ -606,6 +610,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     workers
 
     Modules/applepay
+    Modules/cache
     Modules/geolocation
     Modules/indexeddb
     Modules/mediastream
@@ -690,6 +695,10 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     svg/graphics
     svg/properties
+
+    workers/service
+
+    workers/service/server
 
     xml
 )

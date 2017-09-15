@@ -128,6 +128,7 @@ list(APPEND WebKit2_SOURCES
     Shared/RemoteLayerTree/RemoteScrollingCoordinatorTransaction.cpp
 
     Shared/cf/ArgumentCodersCF.cpp
+    Shared/cf/CookieStorageUtilsCF.mm
 
     Shared/cg/ShareableBitmapCG.cpp
 
@@ -220,6 +221,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/API/Cocoa/WKWindowFeatures.mm
     UIProcess/API/Cocoa/_WKActivatedElementInfo.mm
     UIProcess/API/Cocoa/_WKAutomationSession.mm
+    UIProcess/API/Cocoa/_WKAutomationSessionConfiguration.mm
     UIProcess/API/Cocoa/_WKContextMenuElementInfo.mm
     UIProcess/API/Cocoa/_WKDownload.mm
     UIProcess/API/Cocoa/_WKElementAction.mm
@@ -287,6 +289,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/mac/CorrectionPanel.mm
     UIProcess/mac/LegacySessionStateCoding.cpp
+    UIProcess/mac/PageClientImplMac.mm
     UIProcess/mac/RemoteWebInspectorProxyMac.mm
     UIProcess/mac/SecItemShimProxy.cpp
     UIProcess/mac/ServicesController.mm
@@ -523,7 +526,7 @@ file(GLOB ObjCHeaders UIProcess/API/Cocoa/*.h)
 foreach (_file ${ObjCHeaders})
     get_filename_component(_name ${_file} NAME)
     if (NOT EXISTS ${FORWARDING_HEADERS_DIR}/WebKit/${_name})
-        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_name} "#import <WebKit2/UIProcess/API/Cocoa/${_name}>")
+        file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_name} "#import <WebKit/UIProcess/API/Cocoa/${_name}>")
     endif ()
 endforeach ()
 
@@ -735,7 +738,7 @@ list(APPEND WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 )
 
 # FIXME: These should not be necessary.
-file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit2/Shared/API/c/cg/WKImageCG.h>")
+file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
 

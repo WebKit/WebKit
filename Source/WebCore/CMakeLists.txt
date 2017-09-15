@@ -34,6 +34,7 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
     "${WEBCORE_DIR}/Modules/notifications"
+    "${WEBCORE_DIR}/Modules/paymentrequest"
     "${WEBCORE_DIR}/Modules/plugins"
     "${WEBCORE_DIR}/Modules/quota"
     "${WEBCORE_DIR}/Modules/speech"
@@ -164,6 +165,7 @@ set(WebCore_IDL_INCLUDES
     Modules/mediasession
     Modules/mediastream
     Modules/notifications
+    Modules/paymentrequest
     Modules/quota
     Modules/speech
     Modules/streams
@@ -313,6 +315,23 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/notifications/Notification.idl
     Modules/notifications/NotificationPermission.idl
     Modules/notifications/NotificationPermissionCallback.idl
+
+    Modules/paymentrequest/PaymentAddress.idl
+    Modules/paymentrequest/PaymentComplete.idl
+    Modules/paymentrequest/PaymentCurrencyAmount.idl
+    Modules/paymentrequest/PaymentDetailsBase.idl
+    Modules/paymentrequest/PaymentDetailsInit.idl
+    Modules/paymentrequest/PaymentDetailsModifier.idl
+    Modules/paymentrequest/PaymentDetailsUpdate.idl
+    Modules/paymentrequest/PaymentItem.idl
+    Modules/paymentrequest/PaymentMethodData.idl
+    Modules/paymentrequest/PaymentOptions.idl
+    Modules/paymentrequest/PaymentRequest.idl
+    Modules/paymentrequest/PaymentRequestUpdateEvent.idl
+    Modules/paymentrequest/PaymentRequestUpdateEventInit.idl
+    Modules/paymentrequest/PaymentResponse.idl
+    Modules/paymentrequest/PaymentShippingOption.idl
+    Modules/paymentrequest/PaymentShippingType.idl
 
     Modules/speech/DOMWindowSpeechSynthesis.idl
     Modules/speech/SpeechSynthesis.idl
@@ -1104,6 +1123,10 @@ set(WebCore_SOURCES
 
     Modules/notifications/Notification.cpp
     Modules/notifications/NotificationController.cpp
+
+    Modules/paymentrequest/PaymentRequest.cpp
+    Modules/paymentrequest/PaymentRequestUpdateEvent.cpp
+    Modules/paymentrequest/PaymentResponse.cpp
 
     Modules/speech/DOMWindowSpeechSynthesis.cpp
     Modules/speech/SpeechSynthesis.cpp
