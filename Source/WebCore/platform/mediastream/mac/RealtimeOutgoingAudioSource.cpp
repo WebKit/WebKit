@@ -134,6 +134,15 @@ bool RealtimeOutgoingAudioSource::isReachingBufferedAudioDataLowLimit()
     return writtenAudioDuration < readAudioDuration + 0.1;
 }
 
+bool RealtimeOutgoingAudioSource::hasBufferedEngouhData()
+{
+    auto writtenAudioDuration = m_writeCount / m_inputStreamDescription.sampleRate();
+    auto readAudioDuration = m_readCount / m_outputStreamDescription.sampleRate();
+
+    ASSERT(writtenAudioDuration >= readAudioDuration);
+    return writtenAudioDuration >= readAudioDuration + 0.01;
+}
+
 void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const PlatformAudioData& audioData, const AudioStreamDescription& streamDescription, size_t sampleCount)
 {
     if (m_inputStreamDescription != streamDescription) {
@@ -160,6 +169,9 @@ void RealtimeOutgoingAudioSource::audioSamplesAvailable(const MediaTime&, const 
     // FIXME: We should update m_writeCount to be valid according the new sampleRate.
     m_sampleConverter->pushSamples(MediaTime(m_writeCount, static_cast<uint32_t>(m_inputStreamDescription.sampleRate())), audioData, sampleCount);
     m_writeCount += sampleCount;
+
+    if (!hasBufferedEngouhData())
+        return;
 
     LibWebRTCProvider::callOnWebRTCSignalingThread([protectedThis = makeRef(*this)] {
         protectedThis->pullAudioData();

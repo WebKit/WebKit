@@ -73,6 +73,7 @@ private:
 
     bool isReachingBufferedAudioDataHighLimit();
     bool isReachingBufferedAudioDataLowLimit();
+    bool hasBufferedEngouhData();
 
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }

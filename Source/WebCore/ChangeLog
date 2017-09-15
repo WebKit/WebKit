@@ -1,5 +1,20 @@
 2017-09-15  Youenn Fablet  <youenn@apple.com>
 
+        ASSERTION FAILED: writtenAudioDuration >= readAudioDuration in com.apple.WebCore:WebCore::RealtimeOutgoingAudioSource::isReachingBufferedAudioDataHighLimit() + 222
+        https://bugs.webkit.org/show_bug.cgi?id=175164
+        <rdar://problem/33712305>
+
+        Reviewed by Eric Carlson.
+
+        No observable change of behavior.
+
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.cpp:
+        (WebCore::RealtimeOutgoingAudioSource::hasBufferedEngouhData):
+        (WebCore::RealtimeOutgoingAudioSource::audioSamplesAvailable): Calling pullData only if there is at least 0.01 seconds of available data.
+        * platform/mediastream/mac/RealtimeOutgoingAudioSource.h:
+
+2017-09-15  Youenn Fablet  <youenn@apple.com>
+
         Move code using Vector::map to WTF:map
         https://bugs.webkit.org/show_bug.cgi?id=176860
 
