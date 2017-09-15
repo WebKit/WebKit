@@ -241,25 +241,52 @@ const RenderStyle* TreeResolver::parentBoxStyle() const
 
 ElementUpdate TreeResolver::createAnimatedElementUpdate(std::unique_ptr<RenderStyle> newStyle, Element& element, Change parentChange)
 {
-    auto& animationController = element.document().frame()->animation();
-
-    auto* oldStyle = renderOrDisplayContentsStyle(element);
-    auto animationUpdate = animationController.updateAnimations(element, *newStyle, oldStyle);
-
-    if (animationUpdate.style)
-        newStyle = WTFMove(animationUpdate.style);
-
-    auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Detach;
-
     auto validity = element.styleValidity();
-    if (validity >= Validity::SubtreeInvalid)
-        change = std::max(change, validity == Validity::SubtreeAndRenderersInvalid ? Detach : Force);
-    if (parentChange >= Force)
-        change = std::max(change, parentChange);
+    bool recompositeLayer = element.styleResolutionShouldRecompositeLayer();
 
-    bool shouldRecompositeLayer = element.styleResolutionShouldRecompositeLayer() || animationUpdate.stateChanged;
+    auto makeUpdate = [&] (std::unique_ptr<RenderStyle> style, Change change) {
+        if (validity >= Validity::SubtreeInvalid)
+            change = std::max(change, validity == Validity::SubtreeAndRenderersInvalid ? Detach : Force);
+        if (parentChange >= Force)
+            change = std::max(change, parentChange);
+        return ElementUpdate { WTFMove(style), change, recompositeLayer };
+    };
 
-    return { WTFMove(newStyle), change, shouldRecompositeLayer };
+    auto* renderer = element.renderer();
+
+    bool shouldReconstruct = validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Detach;
+    if (shouldReconstruct)
+        return makeUpdate(WTFMove(newStyle), Detach);
+
+    if (!renderer) {
+        auto change = Detach;
+        if (auto* oldStyle = renderOrDisplayContentsStyle(element))
+            change = determineChange(*oldStyle, *newStyle);
+        return makeUpdate(WTFMove(newStyle), change);
+    }
+
+    std::unique_ptr<RenderStyle> animatedStyle;
+    if (element.document().frame()->animation().updateAnimations(element, *newStyle, animatedStyle))
+        recompositeLayer = true;
+
+    if (animatedStyle) {
+        auto change = determineChange(renderer->style(), *animatedStyle);
+        if (renderer->hasInitialAnimatedStyle()) {
+            renderer->setHasInitialAnimatedStyle(false);
+            // When we initialize a newly created renderer with initial animated style we don't inherit it to descendants.
+            // The first animation frame needs to correct this.
+            // FIXME: We should compute animated style correctly during initial style resolution when we don't have renderers yet.
+            //        https://bugs.webkit.org/show_bug.cgi?id=171926
+            change = std::max(change, Inherit);
+        }
+        // If animation forces render tree reconstruction pass the original style. The animation will be applied on renderer construction.
+        // FIXME: We should always use the animated style here.
+        auto style = change == Detach ? WTFMove(newStyle) : WTFMove(animatedStyle);
+        return makeUpdate(WTFMove(style), change);
+    }
+
+    auto change = determineChange(renderer->style(), *newStyle);
+    return makeUpdate(WTFMove(newStyle), change);
 }
 
 void TreeResolver::pushParent(Element& element, const RenderStyle& style, Change change)

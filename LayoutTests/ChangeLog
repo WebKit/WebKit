@@ -1,3 +1,16 @@
+2017-09-15  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r222040.
+
+        The LayoutTest added with this change is a flaky image failure
+        on mac-wk1 debug bots.
+
+        Reverted changeset:
+
+        "Computing animated style should not require renderers"
+        https://bugs.webkit.org/show_bug.cgi?id=171926
+        http://trac.webkit.org/changeset/222040
+
 2017-09-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas: recording parameters that include colors should show an InlineSwatch (2D canvas)

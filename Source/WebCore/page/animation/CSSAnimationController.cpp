@@ -637,18 +637,19 @@ void CSSAnimationController::cancelAnimations(Element& element)
     element.invalidateStyleAndLayerComposition();
 }
 
-AnimationUpdate CSSAnimationController::updateAnimations(Element& element, const RenderStyle& newStyle, const RenderStyle* oldStyle)
+bool CSSAnimationController::updateAnimations(Element& element, const RenderStyle& newStyle, std::unique_ptr<RenderStyle>& animatedStyle)
 {
-    bool hasOrHadAnimations = (oldStyle && oldStyle->hasAnimationsOrTransitions()) || newStyle.hasAnimationsOrTransitions();
-    if (!hasOrHadAnimations)
-        return { };
+    auto* renderer = element.renderer();
+    auto* oldStyle = (renderer && renderer->hasInitializedStyle()) ? &renderer->style() : nullptr;
+    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle.animations() && !newStyle.transitions()))
+        return false;
 
     if (element.document().pageCacheState() != Document::NotInPageCache)
-        return { };
+        return false;
 
     // Don't run transitions when printing.
     if (element.document().renderView()->printing())
-        return { };
+        return false;
 
     // Fetch our current set of implicit animations from a hashtable. We then compare them
     // against the animations in the style and make sure we're in sync. If destination values
@@ -656,9 +657,8 @@ AnimationUpdate CSSAnimationController::updateAnimations(Element& element, const
     // a new style.
 
     CompositeAnimation& compositeAnimation = m_data->ensureCompositeAnimation(element);
-    auto update = compositeAnimation.animate(element, oldStyle, newStyle);
+    bool animationStateChanged = compositeAnimation.animate(element, oldStyle, newStyle, animatedStyle);
 
-    auto* renderer = element.renderer();
     if ((renderer && renderer->parent()) || newStyle.animations() || (oldStyle && oldStyle->animations())) {
         auto& frameView = *element.document().view();
         if (compositeAnimation.hasAnimationThatDependsOnLayout())
@@ -667,7 +667,7 @@ AnimationUpdate CSSAnimationController::updateAnimations(Element& element, const
         frameView.scheduleAnimation();
     }
 
-    return update;
+    return animationStateChanged;
 }
 
 std::unique_ptr<RenderStyle> CSSAnimationController::animatedStyleForRenderer(RenderElement& renderer)

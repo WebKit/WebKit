@@ -287,7 +287,7 @@ void CompositeAnimation::updateKeyframeAnimations(Element& element, const Render
     std::swap(newAnimations, m_keyframeAnimations);
 }
 
-AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle* currentStyle, const RenderStyle& targetStyle)
+bool CompositeAnimation::animate(Element& element, const RenderStyle* currentStyle, const RenderStyle& targetStyle, std::unique_ptr<RenderStyle>& blendedStyle)
 {
     // We don't do any transitions if we don't have a currentStyle (on startup).
     updateTransitions(element, currentStyle, targetStyle);
@@ -297,32 +297,30 @@ AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle*
     bool animationStateChanged = false;
     bool forceStackingContext = false;
 
-    std::unique_ptr<RenderStyle> animatedStyle;
-
     if (currentStyle) {
         // Now that we have transition objects ready, let them know about the new goal state.  We want them
         // to fill in a RenderStyle*& only if needed.
         bool checkForStackingContext = false;
         for (auto& transition : m_transitions.values()) {
             bool didBlendStyle = false;
-            if (transition->animate(*this, targetStyle, animatedStyle, didBlendStyle))
+            if (transition->animate(*this, targetStyle, blendedStyle, didBlendStyle))
                 animationStateChanged = true;
 
             if (didBlendStyle)
                 checkForStackingContext |= WillChangeData::propertyCreatesStackingContext(transition->animatingProperty());
         }
 
-        if (animatedStyle && checkForStackingContext) {
+        if (blendedStyle && checkForStackingContext) {
             // Note that this is similar to code in StyleResolver::adjustRenderStyle() but only needs to consult
             // animatable properties that can trigger stacking context.
-            if (animatedStyle->opacity() < 1.0f
-                || animatedStyle->hasTransformRelatedProperty()
-                || animatedStyle->hasMask()
-                || animatedStyle->clipPath()
-                || animatedStyle->boxReflect()
-                || animatedStyle->hasFilter()
+            if (blendedStyle->opacity() < 1.0f
+                || blendedStyle->hasTransformRelatedProperty()
+                || blendedStyle->hasMask()
+                || blendedStyle->clipPath()
+                || blendedStyle->boxReflect()
+                || blendedStyle->hasFilter()
 #if ENABLE(FILTERS_LEVEL_2)
-                || animatedStyle->hasBackdropFilter()
+                || blendedStyle->hasBackdropFilter()
 #endif
                 )
             forceStackingContext = true;
@@ -335,7 +333,7 @@ AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle*
         RefPtr<KeyframeAnimation> keyframeAnim = m_keyframeAnimations.get(name);
         if (keyframeAnim) {
             bool didBlendStyle = false;
-            if (keyframeAnim->animate(*this, targetStyle, animatedStyle, didBlendStyle))
+            if (keyframeAnim->animate(*this, targetStyle, blendedStyle, didBlendStyle))
                 animationStateChanged = true;
 
             forceStackingContext |= didBlendStyle && keyframeAnim->triggersStackingContext();
@@ -347,12 +345,12 @@ AnimationUpdate CompositeAnimation::animate(Element& element, const RenderStyle*
     // While an animation is applied but has not finished, or has finished but has an animation-fill-mode of forwards or both,
     // the user agent must act as if the will-change property ([css-will-change-1]) on the element additionally
     // includes all the properties animated by the animation.
-    if (forceStackingContext && animatedStyle) {
-        if (animatedStyle->hasAutoZIndex())
-            animatedStyle->setZIndex(0);
+    if (forceStackingContext && blendedStyle) {
+        if (blendedStyle->hasAutoZIndex())
+            blendedStyle->setZIndex(0);
     }
 
-    return { WTFMove(animatedStyle), animationStateChanged };
+    return animationStateChanged;
 }
 
 std::unique_ptr<RenderStyle> CompositeAnimation::getAnimatedStyle() const

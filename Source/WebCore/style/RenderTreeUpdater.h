@@ -47,7 +47,8 @@ public:
 
     void commit(std::unique_ptr<const Style::Update>);
 
-    static void tearDownRenderers(Element&);
+    enum class TeardownType { Normal, KeepHoverAndActive };
+    static void tearDownRenderers(Element&, TeardownType = TeardownType::Normal);
     static void tearDownRenderer(Text&);
 
     class FirstLetter;
@@ -81,9 +82,6 @@ private:
     void pushParent(Element&, Style::Change);
     void popParent();
     void popParentsToDepth(unsigned depth);
-
-    enum class TeardownType { Full, RendererUpdate, RendererUpdateCancelingAnimations };
-    static void tearDownRenderers(Element&, TeardownType);
 
     RenderView& renderView();
 

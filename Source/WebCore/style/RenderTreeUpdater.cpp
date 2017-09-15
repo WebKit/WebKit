@@ -307,10 +307,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
             // We may be tearing down a descendant renderer cached in renderTreePosition.
             renderTreePosition().invalidateNextSibling();
         }
-
-        // display:none cancels animations.
-        auto teardownType = update.style->display() == NONE ? TeardownType::RendererUpdateCancelingAnimations : TeardownType::RendererUpdate;
-        tearDownRenderers(element, teardownType);
+        tearDownRenderers(element, TeardownType::KeepHoverAndActive);
     }
 
     bool hasDisplayContents = update.style->display() == CONTENTS;
@@ -398,6 +395,14 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
     newRenderer->setFlowThreadState(insertionPosition.parent().flowThreadState());
 
     element.setRenderer(newRenderer);
+
+    auto& initialStyle = newRenderer->style();
+    std::unique_ptr<RenderStyle> animatedStyle;
+    newRenderer->animation().updateAnimations(element, initialStyle, animatedStyle);
+    if (animatedStyle) {
+        newRenderer->setStyleInternal(WTFMove(*animatedStyle));
+        newRenderer->setHasInitialAnimatedStyle(true);
+    }
 
     newRenderer->initializeStyle();
 
@@ -520,11 +525,6 @@ void RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(
     }
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root)
-{
-    tearDownRenderers(root, TeardownType::Full);
-}
-
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
 {
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
@@ -537,18 +537,12 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
         teardownStack.append(&element);
     };
 
-    auto& animationController = root.document().frame()->animation();
-
     auto pop = [&] (unsigned depth) {
         while (teardownStack.size() > depth) {
             auto& element = *teardownStack.takeLast();
 
-            if (teardownType == TeardownType::Full || teardownType == TeardownType::RendererUpdateCancelingAnimations)
-                animationController.cancelAnimations(element);
-
-            if (teardownType == TeardownType::Full)
+            if (teardownType != TeardownType::KeepHoverAndActive)
                 element.clearHoverAndActiveStatusBeforeDetachingRenderer();
-
             element.clearStyleDerivedDataBeforeDetachingRenderer();
 
             if (auto* renderer = element.renderer()) {
