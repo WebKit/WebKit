@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script>
+jsTestIsAsync = true;
+
+function runTest() {
+    window.onbeforeunload = nextStep;
+
+    iframe.name = "foo";
+    iframe.src = "data:text/html,foo";
+
+    location.href = "data:text/html,FAIL";
+}
+
+function nextStep() {
+    document.head.appendChild(del);
+    if (window.testRunner)
+        testRunner.forceImmediateCompletion();
+}
+</script>
+</head>
+<body onload="runTest()">
+    <p>This test passes if it does not crash.</p>
+    <del id="del">
+    <iframe id="iframe"></iframe>
+</body>

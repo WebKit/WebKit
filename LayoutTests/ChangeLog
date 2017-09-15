@@ -1,3 +1,14 @@
+2017-09-15  Brent Fulgham  <bfulgham@apple.com>
+
+        Make DocumentLoader a FrameDestructionObserver
+        https://bugs.webkit.org/show_bug.cgi?id=176364
+        <rdar://problem/34254780>
+
+        Reviewed by Alex Christensen.
+
+        * fast/events/beforeunload-dom-manipulation-crash-expected.txt: Added.
+        * fast/events/beforeunload-dom-manipulation-crash.html: Added.
+
 2017-09-15  Youenn Fablet  <youenn@apple.com>
 
         WPT harness errors on leaks and iOS-sim EWS bots
