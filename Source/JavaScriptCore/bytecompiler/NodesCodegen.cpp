@@ -1026,9 +1026,9 @@ RegisterID* BytecodeIntrinsicNode::emit_intrinsic_toString(BytecodeGenerator& ge
 
 RegisterID* BytecodeIntrinsicNode::emit_intrinsic_idWithProfile(BytecodeGenerator& generator, RegisterID* dst)
 {
-
     ArgumentListNode* node = m_args->m_listNode;
-    RefPtr<RegisterID> idValue = generator.emitNode(node);
+    RefPtr<RegisterID> idValue = generator.newTemporary();
+    generator.emitNode(idValue.get(), node);
     SpeculatedType speculation = SpecNone;
     while (node->m_next) {
         node = node->m_next;

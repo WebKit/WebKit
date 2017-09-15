@@ -1,3 +1,41 @@
+2017-09-15  Saam Barati  <sbarati@apple.com>
+
+        Arity fixup during inlining should do a 2 phase commit so it properly recovers the frame in case of exit
+        https://bugs.webkit.org/show_bug.cgi?id=176981
+
+        Reviewed by Yusuke Suzuki.
+
+        This patch makes inline arity fixup happen in two phases:
+        1. We get all the values we need and MovHint them to the expected locals.
+        2. We SetLocal them inside the callee's CodeOrigin. This way, if we exit, the callee's
+           frame is already set up. If any SetLocal exits, we have a valid exit state.
+           This is required because if we didn't do this in two phases, we may exit in
+           the middle of arity fixup from the caller's CodeOrigin. This is unsound because if
+           we did the SetLocals in the caller's frame, the memcpy may clobber needed parts
+           of the frame right before exiting. For example, consider if we need to pad two args:
+           [arg3][arg2][arg1][arg0]
+           [fix ][fix ][arg3][arg2][arg1][arg0]
+           We memcpy starting from arg0 in the direction of arg3. If we were to exit at a type check
+           for arg3's SetLocal in the caller's CodeOrigin, we'd exit with a frame like so:
+           [arg3][arg2][arg1][arg2][arg1][arg0]
+           And the caller would then just end up thinking its argument are:
+           [arg3][arg2][arg1][arg2]
+           which is incorrect.
+       
+       
+        This patch also fixes a couple of bugs in IdentitiyWithProfile:
+        1. The bytecode generator for this bytecode intrinsic was written incorrectly.
+           It needed to store the result of evaluating its argument in a temporary that
+           it creates. Otherwise, it might try to simply overwrite a constant
+           or a register that it didn't own.
+        2. We weren't eliminating this node in CSE inside the DFG.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BytecodeIntrinsicNode::emit_intrinsic_idWithProfile):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::inlineCall):
+        * dfg/DFGCSEPhase.cpp:
+
 2017-09-15  JF Bastien  <jfbastien@apple.com>
 
         WTF: use Forward.h when appropriate instead of Vector.h

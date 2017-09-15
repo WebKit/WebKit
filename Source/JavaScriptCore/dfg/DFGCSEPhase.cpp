@@ -448,7 +448,7 @@ private:
                 m_node = block->at(nodeIndex);
                 m_graph.performSubstitution(m_node);
             
-                if (m_node->op() == Identity) {
+                if (m_node->op() == Identity || m_node->op() == IdentityWithProfile) {
                     m_node->replaceWith(m_node->child1().node());
                     m_changed = true;
                 } else {
@@ -651,7 +651,7 @@ public:
                 
                 m_graph.performSubstitution(m_node);
                 
-                if (m_node->op() == Identity) {
+                if (m_node->op() == Identity || m_node->op() == IdentityWithProfile) {
                     m_node->replaceWith(m_node->child1().node());
                     m_changed = true;
                 } else
