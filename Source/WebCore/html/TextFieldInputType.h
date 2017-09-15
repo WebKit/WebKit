@@ -90,6 +90,7 @@ private:
     void subtreeHasChanged() final;
     void capsLockStateMayHaveChanged() final;
     void updateAutoFillButton() final;
+    void elementDidBlur() final;
 
     // SpinButtonElement::SpinButtonOwner functions.
     void focusAndSelectSpinButtonOwner() final;

@@ -213,6 +213,8 @@ public:
     void willDispatchEvent(Event&, InputElementClickState&);
     void didDispatchClickEvent(Event&, const InputElementClickState&);
 
+    void didBlur();
+
     int maxResults() const { return m_maxResults; }
 
     WEBCORE_EXPORT String defaultValue() const;

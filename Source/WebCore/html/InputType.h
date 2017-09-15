@@ -203,6 +203,8 @@ public:
     virtual void subtreeHasChanged();
     virtual void blur();
 
+    virtual void elementDidBlur() { }
+
 #if ENABLE(TOUCH_EVENTS)
     virtual bool hasTouchEventHandler() const;
 #endif
