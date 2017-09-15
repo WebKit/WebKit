@@ -80,9 +80,9 @@ layer at (209,330) size 140x13
       text run at (0,0) width 17: "foo"
 layer at (24,353) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (0,0) size 17x13
-      text run at (0,0) width 17: "\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (0,0) size 16x13
+      text run at (0,0) width 16: "\x{2022}\x{2022}\x{2022}"
 layer at (238,353) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13 [color=#545454]
-    RenderText {#text} at (0,0) size 17x13
-      text run at (0,0) width 17: "\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (0,0) size 16x13
+      text run at (0,0) width 16: "\x{2022}\x{2022}\x{2022}"

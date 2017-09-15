@@ -208,8 +208,8 @@ layer at (409,134) size 140x13
       text run at (0,0) width 34: "before"
 layer at (409,161) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (0,0) size 34x13
-      text run at (0,0) width 34: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
+    RenderText {#text} at (0,0) size 31x13
+      text run at (0,0) width 31: "\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}\x{2022}"
 layer at (409,302) size 140x13
   RenderBlock {DIV} at (3,3) size 140x13
     RenderText {#text} at (0,0) size 25x13

@@ -42,25 +42,25 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
 layer at (30,76) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"
 layer at (203,76) size 140x13
   RenderBlock {DIV} at (3,16) size 140x13
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"
 layer at (30,125) size 140x13
   RenderBlock {DIV} at (0,0) size 140x13
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"
 layer at (203,125) size 140x13
   RenderBlock {DIV} at (3,1) size 140x14
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"
 layer at (30,163) size 140x6 scrollHeight 13
   RenderBlock {DIV} at (0,0) size 140x6
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"
 layer at (203,163) size 140x6 scrollHeight 13
   RenderBlock {DIV} at (3,3) size 140x6
-    RenderText {#text} at (0,0) size 23x13
-      text run at (0,0) width 23: "Text"
+    RenderText {#text} at (0,0) size 22x13
+      text run at (0,0) width 22: "Text"

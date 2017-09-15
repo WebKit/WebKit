@@ -510,9 +510,9 @@ layer at (0,0) size 785x7165
             RenderText {#text} at (0,1750) size 20x25
               text run at (0,1750) width 20: "ffff"
             RenderBR {BR} at (19,1768) size 1x0
-            RenderText {#text} at (0,1775) size 34x25
-              text run at (0,1775) width 34: "gggg"
-            RenderBR {BR} at (33,1793) size 1x0
+            RenderText {#text} at (0,1775) size 30x25
+              text run at (0,1775) width 30: "gggg"
+            RenderBR {BR} at (29,1793) size 1x0
             RenderText {#text} at (0,1800) size 39x25
               text run at (0,1800) width 39: "hhhh"
             RenderBR {BR} at (38,1818) size 1x0

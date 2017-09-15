@@ -60,8 +60,8 @@ example-vcf.vcf has MIME type text/directory
 example-vfw.vfw has MIME type video/avi
 example-vrml.vrml has MIME type model/vrml
 example-war.war has MIME type application/java-archive
-example-wav.wav has MIME type audio/wav
-example-wave.wave has MIME type audio/wav
+example-wav.wav has MIME type audio/vnd.wave
+example-wave.wave has MIME type audio/vnd.wave
 example-wax.wax has MIME type video/x-ms-wax
 example-wbmp.wbmp has MIME type image/vnd.wap.wbmp
 example-wbxml.wbxml has MIME type application/vnd.wap.wbxml
@@ -92,7 +92,7 @@ example-xltm.xltm has MIME type application/vnd.ms-excel.template.macroenabled.1
 example-xltx.xltx has MIME type application/vnd.openxmlformats-officedocument.spreadsheetml.template
 example-xml.xml has MIME type application/xml
 example-xpm.xpm has MIME type image/x-xpixmap
-example-xsl.xsl has MIME type text/xml
+example-xsl.xsl has MIME type xslt+xml
 example-xwd.xwd has MIME type image/x-xwindowdump
 example-xyz.xyz has MIME type chemical/x-xyz
 example-y.y has MIME type text/plain

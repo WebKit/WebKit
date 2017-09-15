@@ -412,3 +412,22 @@ webkit.org/b/176920 imported/w3c/web-platform-tests/streams/piping/error-propaga
 webkit.org/b/175886 svg/animations/smil-leak-element-instances.svg [ Pass Failure ]
 
 webkit.org/b/177020 fast/events/beforeunload-dom-manipulation-crash.html [ Skip ]
+
+# <rdar://problem/29201698> DumpRenderTree crashed in com.apple.CoreGraphics: CGDataProviderCopyData + 377
+[ HighSierra+ ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-potentially-subsampled-image.html [ Crash ]
+
+# <rdar://problem/29031509> REGRESSION? (FontParser-195): svg/W3C-SVG-1.1/fonts-elem-* and svg/W3C-SVG-1.1/text-intro-* tests failing
+[ HighSierra+ ] svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ Failure ]
+
+# <rdar://problem/31893714> REGRESSION: LayoutTest fast/text/multiple-codeunit-vertical-upright.html is failing on WK1
+[ HighSierra+ ] fast/text/multiple-codeunit-vertical-upright.html [ ImageOnlyFailure ]
+
+# <rdar://problem/31895192> DumpRenderTree crashed in com.apple.ImageIO.framework: IIODictionary::getBoolForKey + 0
+[ HighSierra+ ] http/tests/misc/slow-loading-animated-image.html [ Skip ]
+
+# <rdar://problem/33522420> Crash: Multiple Layout test in fast/events and fast/forms and fast/text are crashing
+[ HighSierra+ ] fast/events/keyboardevent-code.html [ Crash ]
+[ HighSierra+ ] fast/events/keyboardevent-key.html [ Crash ]
+[ HighSierra+ ] fast/events/keydown-leftright-keys.html [ Crash ]
+[ HighSierra+ ] fast/forms/textarea-maxlength.html [ Crash ]
+[ HighSierra+ ] fast/text/system-font-fallback-emoji.html [ Crash ]

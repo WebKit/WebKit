@@ -1,6 +1,6 @@
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 12 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 13 of #text > DIV > #document-fragment to 13 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > #document-fragment to 12 of #text > DIV > #document-fragment toDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 13 of #text > DIV > #document-fragment to 13 of #text > DIV > #document-fragment toDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 12 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment toDOMRange:range from 0 of #text > DIV > #document-fragment to 17 of #text > DIV > #document-fragment affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -45,7 +45,7 @@ layer at (0,0) size 800x600
           text run at (0,54) width 39: "tellus."
 layer at (40,180) size 298x28
   RenderBlock {DIV} at (12,12) size 299x28
-    RenderText {#text} at (0,0) size 199x28
-      text run at (0,0) width 199: "Lorem ipsum dolor"
+    RenderText {#text} at (0,0) size 192x28
+      text run at (0,0) width 192: "Lorem ipsum dolor"
 selection start: position 12 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
 selection end:   position 17 of child 0 {#text} of child 0 {DIV} of {#document-fragment} of child 7 {INPUT} of body
