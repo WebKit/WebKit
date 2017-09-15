@@ -249,7 +249,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if PLATFORM(MAC) && (!USE(APPLE_INTERNAL_SDK) || __MAC_OS_X_VERSION_MAX_ALLOWED < 101204)
+#if PLATFORM(MAC) && !USE(APPLE_INTERNAL_SDK)
 typedef NS_ENUM(NSInteger, PKPaymentButtonStyle) {
     PKPaymentButtonStyleWhite = 0,
     PKPaymentButtonStyleWhiteOutline,
