@@ -394,7 +394,11 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoSample(MediaStreamTrackPr
 
 void MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData()
 {
+    auto weakThis = createWeakPtr();
     [m_sampleBufferDisplayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
+        if (!weakThis)
+            return;
+
         [m_sampleBufferDisplayLayer stopRequestingMediaData];
 
         while (!m_pendingVideoSampleQueue.isEmpty()) {

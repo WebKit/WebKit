@@ -1,3 +1,15 @@
+2017-09-15  Youenn Fablet  <youenn@apple.com>
+
+        MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData should enqueue data if still useful
+        https://bugs.webkit.org/show_bug.cgi?id=177016
+
+        Reviewed by Jer Noble.
+
+        No change of behavior.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::requestNotificationWhenReadyForVideoData): exciting early in block to prevent enqueueing.
+
 2017-09-15  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rolling out r222040.
