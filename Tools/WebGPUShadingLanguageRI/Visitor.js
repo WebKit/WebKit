@@ -204,6 +204,18 @@ class Visitor extends VisitorBase {
         node.lValue.visit(this);
     }
     
+    visitMakeArrayRefExpression(node)
+    {
+        node.lValue.visit(this);
+        if (node.numElements)
+            node.numElements.visit(this);
+    }
+    
+    visitConvertPtrToArrayRefExpression(node)
+    {
+        node.lValue.visit(this);
+    }
+    
     visitVariableRef(node)
     {
     }

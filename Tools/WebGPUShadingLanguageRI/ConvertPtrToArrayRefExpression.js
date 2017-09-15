@@ -24,54 +24,18 @@
  */
 "use strict";
 
-class ArrayType extends Type {
-    constructor(origin, elementType, numElements)
+class ConvertPtrToArrayRefExpression extends Expression {
+    constructor(origin, lValue)
     {
-        if (!numElements)
-            throw new Error("null numElements");
-        super();
-        this._origin = origin;
-        this._elementType = elementType;
-        this._numElements = numElements;
+        super(origin);
+        this._lValue = lValue;
     }
     
-    get origin() { return this._origin; }
-    get elementType() { return this._elementType; }
-    get numElements() { return this._numElements; }
-    get isPrimitive() { return this.elementType.isPrimitive; }
+    get lValue() { return this._lValue; }
     
-    get numElementsValue()
-    {
-        if (!(this.numElements.isLiteral))
-            throw new Error("numElements is not a literal: " + this.numElements);
-        return this.numElements.value;
-    }
-
     toString()
     {
-        return this.elementType + "[" + this.numElements + "]";
-    }
-    
-    get size()
-    {
-        return this.elementType.size * this.numElementsValue;
-    }
-    
-    populateDefaultValue(buffer, offset)
-    {
-        for (let i = 0; i < this.numElementsValue; ++i)
-            this.elementType.populateDefaultValue(buffer, offset + i * this.elementType.size);
-    }
-    
-    unifyImpl(unificationContext, other)
-    {
-        if (!(other instanceof ArrayType))
-            return false;
-        
-        if (!this.numElements.unify(unificationContext, other.numElements))
-            return false;
-        
-        return this.elementType.unify(unificationContext, other.elementType);
+        return "@(" + this.lValue + ")";
     }
 }
 

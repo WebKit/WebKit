@@ -104,6 +104,18 @@ class Intrinsics {
             });
         
         this._map.set(
+            "native operator int32<>(uint32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
+            });
+        
+        this._map.set(
+            "native operator uint32<>(int32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+            });
+        
+        this._map.set(
             "native int operator+<>(int,int)",
             func => {
                 func.implementation = ([left, right]) =>
@@ -249,16 +261,16 @@ class Intrinsics {
         };
         
         this._map.set(
-            "native thread T^ operator&[]<T>(thread T[],uint)",
+            "native T^ thread operator&[]<T>(T[] thread,uint)",
             arrayElementPtr);
         this._map.set(
-            "native threadgroup T^ operator&[]<T:primitive>(threadgroup T[],uint)",
+            "native T^ threadgroup operator&[]<T:primitive>(T[] threadgroup,uint)",
             arrayElementPtr);
         this._map.set(
-            "native device T^ operator&[]<T:primitive>(device T[],uint)",
+            "native T^ device operator&[]<T:primitive>(T[] device,uint)",
             arrayElementPtr);
         this._map.set(
-            "native constant T^ operator&[]<T:primitive>(constant T[],uint)",
+            "native T^ constant operator&[]<T:primitive>(T[] constant,uint)",
             arrayElementPtr);
     }
     

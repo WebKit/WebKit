@@ -107,8 +107,15 @@ class Checker extends Visitor {
     
     visitArrayType(node)
     {
+        node.elementType.visit(this);
+        
         if (!node.numElements.isConstexpr)
             throw new WTypeError(node.origin.originString, "Array length must be constexpr");
+        
+        let type = node.numElements.visit(this);
+        
+        if (!type.equalsWithCommit(this._program.intrinsics.uint32))
+            throw new WTypeError(node.origin.originString, "Array length must be a uint32");
     }
     
     visitVariableDecl(node)
@@ -147,11 +154,39 @@ class Checker extends Visitor {
     visitMakePtrExpression(node)
     {
         if (!node.lValue.isLValue)
-            throw new WTypeError(node.origin.originString, "Operand to \\ is not an LValue: " + node.lValue);
+            throw new WTypeError(node.origin.originString, "Operand to & is not an LValue: " + node.lValue);
         
         let elementType = node.lValue.visit(this).unifyNode;
         
         return new PtrType(node.origin, node.lValue.addressSpace, elementType);
+    }
+    
+    visitMakeArrayRefExpression(node)
+    {
+        let elementType = node.lValue.visit(this).unifyNode;
+        if (elementType instanceof PtrType) {
+            node.becomeConvertPtrToArrayRefExpression();
+            return new ArrayRefType(node.origin, elementType.addressSpace, elementType.elementType);
+        }
+        
+        if (!node.lValue.isLValue)
+            throw new WTypeError(node.origin.originString, "Operand to @ is not an LValue: " + node.lValue);
+        
+        if (elementType instanceof ArrayRefType)
+            throw new WTypeError(node.origin.originStrimg, "Operand to @ is an array reference: " + elementType);
+        
+        if (elementType instanceof ArrayType) {
+            node.numElements = elementType.numElements;
+            elementType = elementType.elementType;
+        } else
+            node.numElements = UintLiteral.withType(node.origin, 1, this._program.intrinsics.uint32);
+            
+        return new ArrayRefType(node.origin, node.lValue.addressSpace, elementType);
+    }
+    
+    visitConvertToArrayRefExpression(node)
+    {
+        throw new Error("Should not exist yet.");
     }
     
     visitDotExpression(node)
@@ -297,6 +332,24 @@ class Checker extends Visitor {
                 throw new Error("visitor returned null for " + argument);
             return TypeRef.wrap(newArgument);
         });
+        
+        // Here we need to handle the cases where operator&[] is called with a type that isn't sufficiently
+        // referencey.
+        if (node.name == "operator&[]") {
+            let argType = argumentTypes[0].unifyNode;
+            if (argType instanceof PtrType)
+                throw new WTypeError(node.origin.originString, "Pointer subscript is not valid");
+            
+            if (argType instanceof ArrayType) {
+                node.argumentList[0] = new MakeArrayRefExpression(node.origin, node.argumentList[0]);
+                node.argumentList[0].numElements = argType.numElements;
+                argumentTypes[0] = new ArrayRefType(node.origin, "thread", argType.elementType);
+            } else if (!(argType instanceof ArrayRefType)) {
+                node.argumentList[0] = new MakePtrExpression(node.origin, node.argumentList[0]);
+                argumentTypes[0] = new PtrType(node.origin, "thread", argumentTypes[0]);
+            }
+        }
+        
         node.argumentTypes = argumentTypes;
         if (node.returnType)
             node.returnType.visit(this);

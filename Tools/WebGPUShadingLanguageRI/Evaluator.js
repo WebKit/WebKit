@@ -106,6 +106,16 @@ class Evaluator extends Visitor {
         return EPtr.box(node.lValue.visit(this));
     }
     
+    visitMakeArrayRefExpression(node)
+    {
+        return EPtr.box(new EArrayRef(node.lValue.visit(this), node.numElements.visit(this).loadValue()));
+    }
+    
+    visitConvertPtrToArrayRefExpression(node)
+    {
+        return EPtr.box(new EArrayRef(node.lValue.visit(this).loadValue(), 1));
+    }
+    
     visitDotExpression(node)
     {
         let structPtr = node.struct.visit(this);

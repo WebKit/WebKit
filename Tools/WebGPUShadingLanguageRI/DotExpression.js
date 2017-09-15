@@ -35,6 +35,7 @@ class DotExpression extends Expression {
     get struct() { return this._struct; }
     get fieldName() { return this._fieldName; }
     get isLValue() { return this.struct.isLValue; }
+    get addressSpace() { return this.struct.addressSpace; }
     
     toString()
     {

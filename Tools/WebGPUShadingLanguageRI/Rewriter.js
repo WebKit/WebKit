@@ -157,7 +157,7 @@ class Rewriter extends VisitorBase {
     
     visitArrayType(node)
     {
-        return new ArrayType(node.origin, node.elementType.visit(this));
+        return new ArrayType(node.origin, node.elementType.visit(this), node.numElements.visit(this));
     }
     
     visitAssignment(node)
@@ -187,6 +187,19 @@ class Rewriter extends VisitorBase {
     visitMakePtrExpression(node)
     {
         return new MakePtrExpression(node.origin, node.lValue.visit(this));
+    }
+    
+    visitMakeArrayRefExpression(node)
+    {
+        let result = new MakeArrayRefExpression(node.origin, node.lValue.visit(this));
+        if (node.numElements)
+            result.numElements = node.numElements.visit(this);
+        return result;
+    }
+    
+    visitConvertPtrToArrayRefExpression(node)
+    {
+        return new ConvertPtrToArrayRefExpression(node.origin, node.lValue.visit(this));
     }
     
     visitVariableRef(node)

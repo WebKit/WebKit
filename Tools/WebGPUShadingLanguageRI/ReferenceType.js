@@ -27,6 +27,8 @@
 class ReferenceType extends Type {
     constructor(origin, addressSpace, elementType)
     {
+        if (!elementType)
+            throw new Error("Null elementType");
         super();
         validateAddressSpace(addressSpace);
         this._origin = origin;

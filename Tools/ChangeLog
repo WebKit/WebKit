@@ -1,5 +1,95 @@
 2017-09-14  Filip Pizlo  <fpizlo@apple.com>
 
+        Rationalize how WSL's operator&[] works
+        https://bugs.webkit.org/show_bug.cgi?id=176958
+
+        Reviewed by Myles Maxfield.
+        
+        This makes operator&[] work with non-array-ref types. The way this works is that if you do base[index]
+        then we pattern match base's type and proceed accordingly:
+        
+            If base's type is T^:
+                => Reject
+            
+            If base's type is T[]:
+                => Accept
+            
+            If base's type is T[c]:
+                => Wrap it with a MakeArrayRefExpression and accept.
+            
+            All other cases:
+                => Wrap it with a MakePtrExpression and accept.
+        
+        This makes it possible for operator&[] to work with lvalues. It also means that operator&[] gets to
+        "see" the temporary values we create via snapshot() in the interpreter. We'll have to fix that, and I've
+        filed bug 176973 for that. Once that's fixed, this will have well-defined behavior, though with the very
+        peculiar caveat that an expression like this:
+        
+             totallyNotAnLValue()[42]
+        
+        Could be used to get a pointer to a non-lvalue. But we can be extremely precise about what that means
+        and prohibit dangling pointers, which is kinda crazy.
+        
+        In order to do this, I had to make MakeArrayRefExpression work, so I did that and added tests for it.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/ArrayRefType.js:
+        (ArrayRefType.prototype.unifyImpl):
+        (ArrayRefType.prototype.toString):
+        (ArrayRefType):
+        * WebGPUShadingLanguageRI/ArrayType.js:
+        (ArrayType):
+        (ArrayType.prototype.get numElementsValue):
+        (ArrayType.prototype.get size):
+        (ArrayType.prototype.populateDefaultValue):
+        (ArrayType.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/ConvertPtrToArrayRefExpression.js: Added.
+        (ConvertPtrToArrayRefExpression):
+        (ConvertPtrToArrayRefExpression.prototype.get lValue):
+        (ConvertPtrToArrayRefExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/CreateLiteral.js:
+        (createLiteral.GenericLiteral.withType):
+        (createLiteral.GenericLiteral.prototype.get isLiteral):
+        (createLiteral.GenericLiteral.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/DotExpression.js:
+        (DotExpression.prototype.get addressSpace):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitMakeArrayRefExpression):
+        (Evaluator.prototype.visitConvertPtrToArrayRefExpression):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/MakeArrayRefExpression.js: Added.
+        (MakeArrayRefExpression):
+        (MakeArrayRefExpression.prototype.get lValue):
+        (MakeArrayRefExpression.prototype.becomeConvertPtrToArrayRefExpression):
+        (MakeArrayRefExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/MakePtrExpression.js:
+        (MakePtrExpression.prototype.toString):
+        (MakePtrExpression):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.toString):
+        (PtrType):
+        * WebGPUShadingLanguageRI/ReferenceType.js:
+        (ReferenceType):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitArrayType):
+        (Rewriter.prototype.visitMakeArrayRefExpression):
+        (Rewriter.prototype.visitConvertPtrToArrayRefExpression):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_buildArrayThenSumItUsingArrayReference):
+        (TEST_overrideSubscriptStruct):
+        (TEST_overrideSubscriptStructAndUsePointers):
+        (TEST_overrideSubscriptStructAndUsePointersIncorrectly):
+        (TEST_makeArrayRefFromPointer):
+        (TEST_makeArrayRefFromArrayRef):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+
+2017-09-14  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should support ++, --, +=, and all of those things
         https://bugs.webkit.org/show_bug.cgi?id=176975
 

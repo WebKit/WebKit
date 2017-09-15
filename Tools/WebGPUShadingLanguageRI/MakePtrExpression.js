@@ -35,6 +35,6 @@ class MakePtrExpression extends Expression {
     
     toString()
     {
-        return "&(" + this.ptr + ")";
+        return "&(" + this.lValue + ")";
     }
 }

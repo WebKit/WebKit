@@ -29,15 +29,12 @@
 class ArrayRefType extends ReferenceType {
     unifyImpl(unificationContext, other)
     {
-        if (other instanceof ArrayRefType) {
-            if (this.addressSpace != other.addressSpace)
-                return false;
-        } else {
-            if (!(other instanceof ArrayType))
-                return false;
-            if (this.addressSpace != "thread")
-                return false;
-        }
+        if (!(other instanceof ArrayRefType))
+            return false;
+        
+        if (this.addressSpace != other.addressSpace)
+            return false;
+        
         return this.elementType.unify(unificationContext, other.elementType);
     }
     
@@ -45,7 +42,7 @@ class ArrayRefType extends ReferenceType {
 
     toString()
     {
-        return this.addressSpace + " " + this.elementType + "[]";
+        return this.elementType + "[] " + this.addressSpace;
     }
 }
 

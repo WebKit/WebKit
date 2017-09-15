@@ -2358,6 +2358,214 @@ function TEST_assignUintToInt()
         (e) => e instanceof WTypeError && e.message.indexOf("Type mismatch in variable initialization") != -1);
 }
 
+function TEST_buildArrayThenSumIt()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int[42] array;
+            for (uint i = 0; i < 42; i = i + 1)
+                array[i] = int(i + 5);
+            int result;
+            for (uint i = 0; i < 42; i = i + 1)
+                result = result + array[i];
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
+}
+
+function TEST_buildArrayThenSumItUsingArrayReference()
+{
+    let program = doPrep(`
+        int bar(thread int[] array)
+        {
+            for (uint i = 0; i < 42; i = i + 1)
+                array[i] = int(i + 5);
+            int result;
+            for (uint i = 0; i < 42; i = i + 1)
+                result = result + array[i];
+            return result;
+        }
+        int foo()
+        {
+            int[42] array;
+            return bar(@array);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
+}
+
+function TEST_overrideSubscriptStruct()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+            int y;
+        }
+        thread int^ operator&[](thread Foo^ foo, uint index)
+        {
+            if (index == 0)
+                return &foo->x;
+            if (index == 1)
+                return &foo->y;
+            return null;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 498;
+            foo.y = 19;
+            return foo[0] + foo[1] * 3;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 498 + 19 * 3);
+}
+
+function TEST_overrideSubscriptStructAndDoStores()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+            int y;
+        }
+        thread int^ operator&[](thread Foo^ foo, uint index)
+        {
+            if (index == 0)
+                return &foo->x;
+            if (index == 1)
+                return &foo->y;
+            return null;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo[0] = 498;
+            foo[1] = 19;
+            return foo.x + foo.y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
+}
+
+function TEST_overrideSubscriptStructAndUsePointers()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+            int y;
+        }
+        thread int^ operator&[](thread Foo^ foo, uint index)
+        {
+            if (index == 0)
+                return &foo->x;
+            if (index == 1)
+                return &foo->y;
+            return null;
+        }
+        int bar(thread Foo^ foo)
+        {
+            return (^foo)[0] + (^foo)[1];
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 498;
+            foo.y = 19;
+            return bar(&foo);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
+}
+
+function TEST_overrideSubscriptStructAndUsePointersIncorrectly()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+                int y;
+            }
+            thread int^ operator&[](thread Foo^ foo, uint index)
+            {
+                if (index == 0)
+                    return &foo->x;
+                if (index == 1)
+                    return &foo->y;
+                return null;
+            }
+            int bar(thread Foo^ foo)
+            {
+                return foo[0] + foo[1];
+            }
+            int foo()
+            {
+                Foo foo;
+                foo.x = 498;
+                foo.y = 19;
+                return bar(&foo);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_makeArrayRefFromLocal()
+{
+    let program = doPrep(`
+        int bar(thread int[] ref)
+        {
+            return ref[0];
+        }
+        int foo()
+        {
+            int x = 48;
+            return bar(@x);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 48);
+}
+
+function TEST_makeArrayRefFromPointer()
+{
+    let program = doPrep(`
+        int bar(thread int[] ref)
+        {
+            return ref[0];
+        }
+        int baz(thread int^ ptr)
+        {
+            return bar(@ptr);
+        }
+        int foo()
+        {
+            int x = 48;
+            return baz(&x);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 48);
+}
+
+function TEST_makeArrayRefFromArrayRef()
+{
+    checkFail(
+        () => doPrep(`
+            int bar(thread int[] ref)
+            {
+                return ref[0];
+            }
+            int baz(thread int[] ptr)
+            {
+                return bar(@ptr);
+            }
+            int foo()
+            {
+                int x = 48;
+                return baz(@x);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

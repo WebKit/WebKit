@@ -38,7 +38,7 @@ class PtrType extends ReferenceType {
     
     toString()
     {
-        return this.addressSpace + " " + this.elementType + "^";
+        return this.elementType + "^ " + this.addressSpace;
     }
 }
 

@@ -41,6 +41,9 @@ typedef uint = uint32;
 
 native primitive typedef double;
 
+native operator int32(uint32);
+native operator uint32(int32);
+
 native int operator+(int, int);
 native uint operator+(uint, uint);
 int operator++(int value) { return value + 1; }

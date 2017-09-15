@@ -34,8 +34,23 @@ function createLiteral(config)
             this.type = config.createType.call(this, origin, value);
         }
         
+        static withType(origin, value, type)
+        {
+            let result = new GenericLiteral(origin, value);
+            result.type = TypeRef.wrap(type);
+            return result;
+        }
+        
         get value() { return this._value; }
         get isConstexpr() { return true; }
+        get isLiteral() { return true; }
+        
+        unifyImpl(unificationContext, other)
+        {
+            if (!(other instanceof GenericLiteral))
+                return false;
+            return this.value == other.value;
+        }
         
         toString()
         {
