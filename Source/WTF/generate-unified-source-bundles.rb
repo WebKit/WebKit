@@ -87,9 +87,12 @@ class BundleManager
         @bundleCount += 1
         bundleFile = "UnifiedSource#{@bundleCount}#{extension}"
         bundleFile = $derivedSourcesPath + bundleFile
-        log("writing bundle #{bundleFile} with: \n#{@currentBundleText}")
-        IO::write(bundleFile, @currentBundleText)
         $generatedSources << bundleFile
+
+        if (!bundleFile.exist? || IO::read(bundleFile) != @currentBundleText)
+            log("writing bundle #{bundleFile} with: \n#{@currentBundleText}")
+            IO::write(bundleFile, @currentBundleText)
+        end
 
         @currentBundleText = ""
         @fileCount = 0
