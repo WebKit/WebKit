@@ -1,3 +1,23 @@
+2017-09-14  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r221932 and r221933.
+        https://bugs.webkit.org/show_bug.cgi?id=176969
+
+        This change did not fix the webgl test flakiness. (Requested
+        by ryanhaddad on #webkit).
+
+        Reverted changesets:
+
+        "[WebGL] accelerated texImage2D for video doesn't respect
+        flipY"
+        https://bugs.webkit.org/show_bug.cgi?id=176491
+        http://trac.webkit.org/changeset/221932
+
+        "[WebGL] VideoTextureCopierCV doesn't correctly restore vertex
+        attribute state"
+        https://bugs.webkit.org/show_bug.cgi?id=176771
+        http://trac.webkit.org/changeset/221933
+
 2017-09-14  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed rollout r222036.
