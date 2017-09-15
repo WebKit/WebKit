@@ -755,6 +755,7 @@ http/tests/storageAccess/request-storage-access-cross-origin-sandboxed-iframe-wi
 http/tests/storageAccess/request-storage-access-same-origin-iframe.html [ Pass ]
 http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe-without-allow-token.html [ Pass ]
 http/tests/storageAccess/request-storage-access-same-origin-sandboxed-iframe.html [ Pass ]
+http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe.html [ Pass ]
 
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Pass Timeout ]
 webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Pass Timeout ]

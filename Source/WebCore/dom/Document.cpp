@@ -7314,9 +7314,16 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
         promise->resolve<IDLBoolean>(false);
         return;
     }
-    
+
+    // The iframe has to be a direct child of the top document.
+    auto& topDocument = this->topDocument();
+    if (&topDocument != parentDocument()) {
+        promise->resolve<IDLBoolean>(false);
+        return;
+    }
+
     auto& securityOrigin = this->securityOrigin();
-    auto& topSecurityOrigin = topDocument().securityOrigin();
+    auto& topSecurityOrigin = topDocument.securityOrigin();
     if (securityOrigin.equal(&topSecurityOrigin)) {
         m_hasStorageAccess = true;
         promise->resolve<IDLBoolean>(true);

@@ -1,3 +1,16 @@
+2017-09-15  John Wilander  <wilander@apple.com>
+
+        Storage Access API: Deny access to nested iframes
+        https://bugs.webkit.org/show_bug.cgi?id=176939
+        <rdar://problem/34439609>
+
+        Reviewed by Brent Fulgham.
+
+        Test: http/tests/storageAccess/request-and-grant-storage-access-cross-origin-sandboxed-nested-iframe.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::requestStorageAccess):
+
 2017-09-15  Antti Koivisto  <antti@apple.com>
 
         AnimationBase should ref the element
