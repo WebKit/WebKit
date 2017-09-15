@@ -173,12 +173,23 @@ bool CDMPrivateClearKey::supportsInitDataType(const AtomicString& initDataType) 
     return equalLettersIgnoringASCIICase(initDataType, "keyids");
 }
 
+bool containsPersistentLicenseType(const Vector<CDMSessionType>& types)
+{
+    return std::any_of(types.begin(), types.end(),
+        [] (auto& sessionType) { return sessionType == CDMSessionType::PersistentLicense; });
+}
+
 bool CDMPrivateClearKey::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
-    // Reject any configuration that marks distinctive identifier or persistent state as required.
-    if (configuration.distinctiveIdentifier == CDMRequirement::Required
-        || configuration.persistentState == CDMRequirement::Required)
+    // Reject any configuration that marks distinctive identifier as required.
+    if (configuration.distinctiveIdentifier == CDMRequirement::Required)
         return false;
+
+    // Reject any configuration that marks persistent state as required, unless
+    // the 'persistent-license' session type has to be supported.
+    if (configuration.persistentState == CDMRequirement::Required && !containsPersistentLicenseType(configuration.sessionTypes))
+        return false;
+
     return true;
 }
 
@@ -190,9 +201,14 @@ bool CDMPrivateClearKey::supportsConfigurationWithRestrictions(const CDMKeySyste
         || configuration.distinctiveIdentifier == CDMRequirement::Required)
         return false;
 
-    // Ditto for persistent state.
-    if ((configuration.persistentState == CDMRequirement::Optional && restrictions.persistentStateDenied)
-        || configuration.persistentState == CDMRequirement::Required)
+    // Reject any configuration that marks persistent state as optional even when
+    // restrictions mark it as denied.
+    if (configuration.persistentState == CDMRequirement::Optional && restrictions.persistentStateDenied)
+        return false;
+
+    // Reject any configuration that marks persistent state as required, unless
+    // the 'persistent-license' session type has to be supported.
+    if (configuration.persistentState == CDMRequirement::Required && !containsPersistentLicenseType(configuration.sessionTypes))
         return false;
 
     return true;
@@ -200,8 +216,8 @@ bool CDMPrivateClearKey::supportsConfigurationWithRestrictions(const CDMKeySyste
 
 bool CDMPrivateClearKey::supportsSessionTypeWithConfiguration(CDMSessionType& sessionType, const CDMKeySystemConfiguration& configuration) const
 {
-    // Only support the temporary session type.
-    if (sessionType != CDMSessionType::Temporary)
+    // Only support the 'temporary' and 'persistent-license' session types.
+    if (sessionType != CDMSessionType::Temporary && sessionType != CDMSessionType::PersistentLicense)
         return false;
     return supportsConfiguration(configuration);
 }

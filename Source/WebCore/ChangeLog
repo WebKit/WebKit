@@ -1,3 +1,27 @@
+2017-09-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] ClearKey: list 'persistent-license' sessions as supported
+        https://bugs.webkit.org/show_bug.cgi?id=176985
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        The ClearKey implementation should support the 'persistent-license'
+        session type for testing purposes. Methods in the CDMPrivateClearKey
+        class have been updated to handle that session type as supported:
+        - supportsSessionTypeWithConfiguration() returns true for the
+          'persistent-license' session type values,
+        - supportsConfiguration() allows persistent state as required in
+          case of the configured session type being 'persistent-license',
+        - supportsConfigurationWithRestrictions() as well allows persistent
+        state as required for 'persistent-license' session types.
+
+        No new tests -- affected tests have their baselines updated.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMPrivateClearKey::supportsConfiguration const):
+        (WebCore::CDMPrivateClearKey::supportsConfigurationWithRestrictions const):
+        (WebCore::CDMPrivateClearKey::supportsSessionTypeWithConfiguration const):
+
 2017-09-15  Ms2ger  <Ms2ger@igalia.com>
 
         Disallow passing a null program to getFragDataLocation.

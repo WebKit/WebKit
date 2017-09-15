@@ -1,3 +1,16 @@
+2017-09-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] ClearKey: list 'persistent-license' sessions as supported
+        https://bugs.webkit.org/show_bug.cgi?id=176985
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update WPE test baselines for EME ClearKey tests.
+
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license-expected.txt:
+
 2017-09-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WPE] Rebaseline test expectations after r222077.
