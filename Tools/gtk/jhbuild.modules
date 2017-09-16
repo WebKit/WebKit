@@ -246,22 +246,9 @@
       <dep package="freetype6"/>
       <dep package="libxml2"/>
     </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.11.1.tar.gz" version="2.11.1"
+    <branch module="software/fontconfig/release/fontconfig-2.12.4.tar.bz2" version="2.12.4"
             repo="freedesktop.org"
-            hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
-            md5sum="e75e303b4f7756c2b16203a57ac87eba">
-      <patch file="fontconfig-fix-osx-cache.diff" strip="1"/>
-
-      <!-- These will be in the next release after 2.12.1
-           https://cgit.freedesktop.org/fontconfig/commit/?id=1ab5258f7c2abfafcd63a760ca08bf93591912da
-           https://cgit.freedesktop.org/fontconfig/commit/?id=9878b306f6c673d3d6cd9db487f67eb426cc03df -->
-      <patch file="fontconfig-Avoid-conflicts-with-integer-width-macros-from-TS-18661-1-2014.patch" strip="1"/>
-      <patch file="fontconfig-Fix-the-build-issue-with-gperf-3.1.patch" strip="1"/>
-
-      <!-- The previous patch modifies "configure.ac", and tarballs don't
-           include the "autogen.sh" script, so let's re-add it here. -->
-      <patch file="fontconfig-2.11.1-add-autogen.patch" strip="0"/>
-    </branch>
+            hash="sha256:668293fcc4b3c59765cdee5cee05941091c0879edcc24dfec5455ef83912e45c"/>
   </autotools>
 
   <autotools id="adwaita-icon-theme" autogen-sh="configure">
