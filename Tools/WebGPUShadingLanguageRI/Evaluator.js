@@ -180,9 +180,9 @@ class Evaluator extends Visitor {
             try {
                 node.body.visit(this);
             } catch (e) {
-                if (e instanceof Break)
+                if (e == BreakException)
                     break;
-                if (e instanceof Continue)
+                if (e == ContinueException)
                     continue;
                 throw e;
             }
@@ -195,9 +195,9 @@ class Evaluator extends Visitor {
             try {
                 node.body.visit(this);
             } catch (e) {
-                if (e instanceof Break)
+                if (e == BreakException)
                     break;
-                if (e instanceof Continue)
+                if (e == ContinueException)
                     continue;
                 throw e;
             }
@@ -212,9 +212,9 @@ class Evaluator extends Visitor {
             try {
                 node.body.visit(this);
             } catch (e) {
-                if (e instanceof Break)
+                if (e == BreakException)
                     break;
-                if (e instanceof Continue)
+                if (e == ContinueException)
                     continue;
                 throw e;
             }
@@ -223,12 +223,12 @@ class Evaluator extends Visitor {
 
     visitBreak(node)
     {
-        throw node;
+        throw BreakException;
     }
 
     visitContinue(node)
     {
-        throw node;
+        throw ContinueException;
     }
     
     visitLetExpression(node)

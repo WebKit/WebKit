@@ -1,3 +1,21 @@
+2017-09-15  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WSL] Small cleanup in Evaluator
+        https://bugs.webkit.org/show_bug.cgi?id=176971
+
+        Reviewed by Filip Pizlo.
+
+        Use the symbols for break and continue instead of the objects themselves.
+
+        No tests because there is no behavior change.
+
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitWhileLoop):
+        (Evaluator.prototype.visitDoWhileLoop):
+        (Evaluator.prototype.visitForLoop):
+        (Evaluator.prototype.visitBreak):
+        (Evaluator.prototype.visitContinue):
+
 2017-09-15  Filip Pizlo  <fpizlo@apple.com>
 
         WSL Evaluator should only allocate EBuffers when dealing with intrinsics
