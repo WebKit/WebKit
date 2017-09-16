@@ -259,23 +259,26 @@ class SummaryPageConfigurationGroup {
         this._isFetching = false;
         this._smallerIsBetter = metrics.length ? metrics[0].isSmallerBetter() : null;
 
-        for (var platform of platforms) {
+        for (const platform of platforms) {
             console.assert(platform instanceof Platform);
-            var foundInSomeMetric = false;
-            for (var metric of metrics) {
+            let foundInSomeMetric = false;
+            let excludedMerticCount = 0;
+            for (const metric of metrics) {
                 console.assert(metric instanceof Metric);
                 console.assert(this._smallerIsBetter == metric.isSmallerBetter());
                 metric.isSmallerBetter();
 
-                if (excludedConfigurations && platform.id() in excludedConfigurations && excludedConfigurations[platform.id()].includes(+metric.id()))
+                if (excludedConfigurations && platform.id() in excludedConfigurations && excludedConfigurations[platform.id()].includes(+metric.id())) {
+                    excludedMerticCount += 1;
                     continue;
+                }
                 if (!platform.hasMetric(metric))
                     continue;
                 foundInSomeMetric = true;
                 this._measurementSets.push(MeasurementSet.findSet(platform.id(), metric.id(), platform.lastModified(metric)));
                 this._configurationList.push([platform.id(), metric.id()]);
             }
-            if (!foundInSomeMetric)
+            if (!foundInSomeMetric && excludedMerticCount < metrics.length)
                 this._missingPlatforms.add(platform);
         }
     }
