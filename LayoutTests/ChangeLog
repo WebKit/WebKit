@@ -1,3 +1,22 @@
+2017-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed GTK+ gardening. Rebaseline tests after r222090.
+
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/gtk/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.png:
+        * platform/gtk/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt:
+        * platform/gtk/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/gtk/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-02-t-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.png:
+        * platform/gtk/svg/custom/glyph-selection-arabic-forms-expected.txt:
+        * platform/gtk/svg/text/bidi-tspans-expected.png:
+        * platform/gtk/svg/text/bidi-tspans-expected.txt:
+
 2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Use blob URL instead of a WebKit fake URL when pasting an image
