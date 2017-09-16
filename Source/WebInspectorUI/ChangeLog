@@ -1,3 +1,36 @@
+2017-09-15  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: REGRESSION(r222057): recording state doesn't update when changing actions
+        https://bugs.webkit.org/show_bug.cgi?id=176988
+
+        Reviewed by Matt Baker.
+
+        Replace `updateActionIndex` with `updateAction`, where the currently selected RecordingAction
+        is passed to the DetailsSidebarPanel. Also remove the call to `this._recording.actions` in
+        order to ensure that all logic performed by both DetailsSidebarPanel is synchronous.
+
+        * Localizations/en.lproj/localizedStrings.js:
+
+        * UserInterface/Views/RecordingTabContentView.js:
+        (WI.RecordingTabContentView.prototype._updateActionIndex):
+
+        * UserInterface/Views/RecordingContentView.js:
+        (WI.RecordingContentView.prototype.async._generateContentCanvas2D):
+        (WI.RecordingContentView.prototype.async._generateContentCanvasWebGL):
+
+        * UserInterface/Views/RecordingStateDetailsSidebarPanel.js:
+        (WI.RecordingStateDetailsSidebarPanel):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.set recording):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.updateAction):
+        (WI.RecordingStateDetailsSidebarPanel.prototype._generateDetailsCanvas2D):
+        (WI.RecordingStateDetailsSidebarPanel.prototype.updateActionIndex): Deleted.
+
+        * UserInterface/Views/RecordingTraceDetailsSidebarPanel.js:
+        (WI.RecordingTraceDetailsSidebarPanel):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.set recording):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateAction):
+        (WI.RecordingTraceDetailsSidebarPanel.prototype.updateActionIndex): Deleted.
+
 2017-09-15  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Canvas: recording parameters that include colors should show an InlineSwatch (2D canvas)

@@ -30,7 +30,7 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
         super("recording-state", WI.UIString("State"));
 
         this._recording = null;
-        this._index = NaN;
+        this._action = null;
 
         this._dataGrid = null;
     }
@@ -60,34 +60,28 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             return;
 
         this._recording = recording;
-        this._index = NaN;
+        this._action = null;
 
         for (let subview of this.contentView.subviews)
             this.contentView.removeSubview(subview);
     }
 
-    updateActionIndex(index, context, options = {})
+    updateAction(action, context, options = {})
     {
-        if (!this._recording)
+        if (!this._recording || action === this._action)
             return;
 
-        this._recording.actions.then((actions) => {
-            console.assert(index >= 0 && index < actions.length);
-            if (index < 0 || index > actions.length || index === this._index)
-                return;
+        this._action = action;
 
-            this._index = index;
+        if (this._recording.type === WI.Recording.Type.Canvas2D)
+            this._generateDetailsCanvas2D(action, context, options);
 
-            if (this._recording.type === WI.Recording.Type.Canvas2D)
-                this._generateDetailsCanvas2D(context, actions, options);
-
-            this.updateLayoutIfNeeded();
-        });
+        this.updateLayoutIfNeeded();
     }
 
     // Private
 
-    _generateDetailsCanvas2D(context, actions, options = {})
+    _generateDetailsCanvas2D(action, context, options = {})
     {
         if (!this._dataGrid) {
             this._dataGrid = new WI.DataGrid({
@@ -148,7 +142,6 @@ WI.RecordingStateDetailsSidebarPanel = class RecordingStateDetailsSidebarPanel e
             return new WI.InlineSwatch(WI.InlineSwatch.Type.Color, color, readOnly);
         }
 
-        let action = actions[this._index];
         for (let name in state) {
             let value = state[name];
             if (typeof value === "object") {

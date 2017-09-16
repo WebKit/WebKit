@@ -398,7 +398,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         applyActions(snapshot.index, this._index, () => {
             if (options.actionCompletedCallback)
-                options.actionCompletedCallback(snapshot.context);
+                options.actionCompletedCallback(actions[this._index], snapshot.context);
         });
 
         this._previewContainer.appendChild(snapshot.element);
@@ -448,7 +448,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         }
 
         if (options.actionCompletedCallback)
-            options.actionCompletedCallback();
+            options.actionCompletedCallback(actions[this._index]);
     }
 
     _applyAction(context, action, options = {})

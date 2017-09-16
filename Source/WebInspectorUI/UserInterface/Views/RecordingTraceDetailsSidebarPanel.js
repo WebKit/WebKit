@@ -30,7 +30,7 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
         super("recording-trace", WI.UIString("Trace"));
 
         this._recording = null;
-        this._index = NaN;
+        this._action = null;
     }
 
     // Static
@@ -58,39 +58,33 @@ WI.RecordingTraceDetailsSidebarPanel = class RecordingTraceDetailsSidebarPanel e
             return;
 
         this._recording = recording;
-        this._index = NaN;
+        this._action = null;
 
         this.contentView.element.removeChildren();
     }
 
-    updateActionIndex(index, context, options = {})
+    updateAction(action, context, options = {})
     {
-        if (!this._recording)
+        if (!this._recording || action === this._action)
             return;
 
-        this._recording.actions.then((actions) => {
-            console.assert(index >= 0 && index < actions.length);
-            if (index < 0 || index > actions.length || index === this._index)
-                return;
+        this._action = action;
 
-            this._index = index;
+        this.contentView.element.removeChildren();
 
-            this.contentView.element.removeChildren();
+        let trace = this._action.trace;
+        if (!trace.length) {
+            let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
+            noTraceDataElement.classList.add("no-trace-data");
 
-            let trace = actions[this._index].trace;
-            if (!trace.length) {
-                let noTraceDataElement = this.contentView.element.appendChild(document.createElement("div"));
-                noTraceDataElement.classList.add("no-trace-data");
+            let noTraceDataMessageElement = noTraceDataElement.appendChild(document.createElement("div"));
+            noTraceDataMessageElement.classList.add("message");
+            noTraceDataMessageElement.textContent = WI.UIString("Call Stack Unavailable");
+            return;
+        }
 
-                let noTraceDataMessageElement = noTraceDataElement.appendChild(document.createElement("div"));
-                noTraceDataMessageElement.classList.add("message");
-                noTraceDataMessageElement.textContent = WI.UIString("No Trace Data");
-                return;
-            }
-
-            const showFunctionName = true;
-            for (let callFrame of trace)
-                this.contentView.element.appendChild(new WI.CallFrameView(callFrame, showFunctionName));
-        });
+        const showFunctionName = true;
+        for (let callFrame of trace)
+            this.contentView.element.appendChild(new WI.CallFrameView(callFrame, showFunctionName));
     }
 };
