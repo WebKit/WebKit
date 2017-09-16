@@ -1,5 +1,13 @@
 2017-09-15  Lucas Forschler  <lforschler@apple.com>
 
+        Move run-webkit-archive from Tools/Scripts to Tools/BuildSlaveSupport
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/run-webkit-archive: Removed.
+
+2017-09-15  Lucas Forschler  <lforschler@apple.com>
+
         teach build.webkit.org to include run-webkit-archive in the root folder of uploaded macOS archives.
         https://bugs.webkit.org/show_bug.cgi?id=176965
 
