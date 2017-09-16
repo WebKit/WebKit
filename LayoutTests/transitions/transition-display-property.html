@@ -5,18 +5,10 @@ test { transition:0.1s; display:block; height:100px; border: 2px solid green; }
 <test></test>
 <script>
 var test = document.querySelector("test");
-var count = 0;
-function testUntilComplete()
-{
-    if (test.offsetWidth == 10 || ++count == 10)
-        testRunner.notifyDone();
-    else
-        setTimeout(testUntilComplete, 0.1);
-}
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
-    testUntilComplete();
+    test.ontransitionend = () => testRunner.notifyDone();
 }
 test.offsetWidth;
 test.className = "animate";
