@@ -1,3 +1,14 @@
+2017-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+        Avoid calling String::format() in PlatformCAFilters::setFiltersOnLayer()
+        https://bugs.webkit.org/show_bug.cgi?id=177028
+
+        Reviewed by Tim Horton.
+
+        String::format() is a bigger hammer for what we need to do in this function.
+
+        * platform/graphics/ca/cocoa/PlatformCAFiltersCocoa.mm:
+
 2017-09-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         iOS: Use blob URL instead of a WebKit fake URL when pasting an image

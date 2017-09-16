@@ -68,9 +68,10 @@ void PlatformCAFilters::setFiltersOnLayer(PlatformLayer* layer, const FilterOper
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     RetainPtr<NSMutableArray> array = adoptNS([[NSMutableArray alloc] init]);
-    
+    static NeverDestroyed<String> filterNamePrefix(MAKE_STATIC_STRING_IMPL("filter_"));
+
     for (unsigned i = 0; i < filters.size(); ++i) {
-        String filterName = String::format("filter_%d", i);
+        String filterName = filterNamePrefix.get() + String::number(i);
         const FilterOperation& filterOperation = *filters.at(i);
         switch (filterOperation.type()) {
         case FilterOperation::DEFAULT:
