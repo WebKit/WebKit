@@ -1,3 +1,13 @@
+2017-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Tools build with CMake on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=177030
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        Add a workaround identical to what the gtest CMakeLists has.
+
 2017-09-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump fontconfig version to 2.12.4

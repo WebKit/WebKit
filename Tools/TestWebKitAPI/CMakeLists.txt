@@ -205,6 +205,12 @@ if (COMPILER_IS_GCC_OR_CLANG)
                                         -Wno-unused-parameter)
 endif ()
 
+# FIXME: This works around compatibility problems in the old version of the third-pary
+# googletest source code checkout. It should be removed once we upgrade to a newer version.
+if (COMPILER_IS_CLANG)
+    add_definitions(-DGTEST_HAS_TR1_TUPLE=0)
+endif ()
+
 if (ENABLE_WEBKIT)
     add_library(TestWebKitAPIBase
         ${test_main_SOURCES}

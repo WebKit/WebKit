@@ -543,6 +543,7 @@ set(WebKitLegacyForwardingHeaders
     WebCoreStatistics.h
     WebDOMOperations.h
     WebDOMOperationsPrivate.h
+    WebDatabaseManagerPrivate.h
     WebDataSource.h
     WebDataSourcePrivate.h
     WebDefaultPolicyDelegate.h
@@ -578,6 +579,7 @@ set(WebKitLegacyForwardingHeaders
     WebQuotaManager.h
     WebScriptWorld.h
     WebSecurityOriginPrivate.h
+    WebStorageManagerPrivate.h
     WebTypesInternal.h
     WebUIDelegate.h
     WebUIDelegatePrivate.h
@@ -739,8 +741,6 @@ list(APPEND WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 
 # FIXME: These should not be necessary.
 file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/API/c/cg/WKImageCG.h>")
-file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebStorageManagerPrivate.h "#import <WebKit/mac/Storage/WebStorageManagerPrivate.h>")
-file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WebDatabaseManagerPrivate.h "#import <WebKit/mac/Storage/WebDatabaseManagerPrivate.h>")
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 

@@ -325,6 +325,7 @@ set(WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES
     mac/Misc
     mac/Panels
     mac/Plugins
+    mac/Storage
     mac/WebCoreSupport
     mac/WebInspector
     mac/WebView
@@ -341,6 +342,8 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
     mac/Panels/WebPanelAuthenticationHandler.h
 
     mac/Plugins/WebBasePluginPackage.h
+
+    mac/Storage/WebDatabaseManagerPrivate.h
 
     mac/WebCoreSupport/WebKeyGenerator.h
 

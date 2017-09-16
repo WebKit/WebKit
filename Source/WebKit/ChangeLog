@@ -1,3 +1,13 @@
+2017-09-16  Tim Horton  <timothy_horton@apple.com>
+
+        Fix the Tools build with CMake on macOS
+        https://bugs.webkit.org/show_bug.cgi?id=177030
+
+        Reviewed by Geoffrey Garen.
+
+        * PlatformMac.cmake:
+        Add some WebKitLegacy headers to forward (for use by the tools).
+
 2017-09-15  JF Bastien  <jfbastien@apple.com>
 
         WTF: use Forward.h when appropriate instead of Vector.h
