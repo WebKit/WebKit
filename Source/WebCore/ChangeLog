@@ -1,3 +1,15 @@
+2017-09-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harbuzz] Test fast/text/international/harfbuzz-runs-with-no-glyph.html is crashing
+        https://bugs.webkit.org/show_bug.cgi?id=177005
+
+        Reviewed by Michael Catanzaro.
+
+        Fixes: fast/text/international/harfbuzz-runs-with-no-glyph.html
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::xPositionForOffset): Return early if there aren't glyphs.
+
 2017-09-15  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Avoid calling String::format() in PlatformCAFilters::setFiltersOnLayer()
