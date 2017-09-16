@@ -36,6 +36,7 @@ _configurationBuildDirectory = None
 _topLevelBuildDirectory = None
 _hostBuildDirectory = None
 
+PATH_TO_LAUNCHER = './Tools/BuildSlaveSupport/run-webkit-archive'
 
 def main():
     parser = optparse.OptionParser("usage: %prog [options] [action]")
@@ -136,6 +137,9 @@ def createZipManually(directoryToZip, archiveFile):
 
     archiveZip.close()
 
+def addLauncherToArchive(archiveFile):
+    command = ['/usr/bin/zip', '-j', archiveFile, PATH_TO_LAUNCHER]
+    return subprocess.call(command)
 
 def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=False, minify=False):
     archiveDir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "WebKitBuild"))
@@ -154,7 +158,7 @@ def createZip(directoryToZip, configuration, embedParentDirectoryNameOnDarwin=Fa
         if embedParentDirectoryNameOnDarwin:
             command += ['--keepParent']
         command += [directoryToZip, archiveFile]
-        return subprocess.call(command)
+        return subprocess.call(command) or addLauncherToArchive(archiveFile)
     elif sys.platform == 'cygwin':
         return subprocess.call(["zip", "-r", archiveFile, "bin32"], cwd=directoryToZip)
     elif sys.platform == 'win32':
