@@ -29,20 +29,20 @@
 
 #include "Connection.h"
 #include "ProcessExecutablePath.h"
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/FileSystem.h>
-#include <WebCore/NetworkingContext.h>
-#include <WebCore/ResourceHandle.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <glib.h>
-#include <locale.h>
 #include <wtf/RunLoop.h>
 #include <wtf/UniStdExtras.h>
 #include <wtf/glib/GLibUtilities.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(WPE)
+#include <wpe/renderer-host.h>
+#endif
 
 using namespace WebCore;
 
@@ -60,8 +60,12 @@ void ProcessLauncher::launchProcess()
 
     IPC::Connection::SocketPair socketPair = IPC::Connection::createPlatformConnection(IPC::Connection::ConnectionOptions::SetCloexecOnServer);
 
-    String executablePath, pluginPath;
-    CString realExecutablePath, realPluginPath;
+    String executablePath;
+    CString realExecutablePath;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    String pluginPath;
+    CString realPluginPath;
+#endif
     switch (m_launchOptions.processType) {
     case ProcessLauncher::ProcessType::Web:
         executablePath = executablePathOfWebProcess();
@@ -90,17 +94,24 @@ void ProcessLauncher::launchProcess()
     }
 
     realExecutablePath = fileSystemRepresentation(executablePath);
-    GUniquePtr<gchar> socket(g_strdup_printf("%d", socketPair.client));
+    GUniquePtr<gchar> webkitSocket(g_strdup_printf("%d", socketPair.client));
+    unsigned nargs = 3; // size of the argv array for g_spawn_async()
 
-    unsigned nargs = 4; // size of the argv array for g_spawn_async()
+#if PLATFORM(WPE)
+    GUniquePtr<gchar> wpeSocket;
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
+        wpeSocket = GUniquePtr<gchar>(g_strdup_printf("%d", wpe_renderer_host_create_client()));
+        nargs++;
+    }
+#endif
 
 #if ENABLE(DEVELOPER_MODE)
     Vector<CString> prefixArgs;
     if (!m_launchOptions.processCmdPrefix.isNull()) {
         Vector<String> splitArgs;
         m_launchOptions.processCmdPrefix.split(' ', splitArgs);
-        for (auto it = splitArgs.begin(); it != splitArgs.end(); it++)
-            prefixArgs.append(it->utf8());
+        for (auto& arg : splitArgs)
+            prefixArgs.append(arg.utf8());
         nargs += prefixArgs.size();
     }
 #endif
@@ -109,19 +120,25 @@ void ProcessLauncher::launchProcess()
     unsigned i = 0;
 #if ENABLE(DEVELOPER_MODE)
     // If there's a prefix command, put it before the rest of the args.
-    for (auto it = prefixArgs.begin(); it != prefixArgs.end(); it++)
-        argv[i++] = const_cast<char*>(it->data());
+    for (auto& arg : prefixArgs)
+        argv[i++] = const_cast<char*>(arg.data());
 #endif
     argv[i++] = const_cast<char*>(realExecutablePath.data());
-    argv[i++] = socket.get();
+    argv[i++] = webkitSocket.get();
+#if PLATFORM(WPE)
+    if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web)
+        argv[i++] = wpeSocket.get();
+#endif
+#if ENABLE(NETSCAPE_PLUGIN_API)
     argv[i++] = const_cast<char*>(realPluginPath.data());
-    argv[i++] = 0;
+#else
+    argv[i++] = nullptr;
+#endif
+    argv[i++] = nullptr;
 
     GUniqueOutPtr<GError> error;
-    if (!g_spawn_async(0, argv, 0, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(socketPair.server), &pid, &error.outPtr())) {
-        g_printerr("Unable to fork a new WebProcess: %s.\n", error->message);
-        ASSERT_NOT_REACHED();
-    }
+    if (!g_spawn_async(nullptr, argv, nullptr, G_SPAWN_LEAVE_DESCRIPTORS_OPEN, childSetupFunction, GINT_TO_POINTER(socketPair.server), &pid, &error.outPtr()))
+        g_error("Unable to fork a new child process: %s", error->message);
 
     // Don't expose the parent socket to potential future children.
     if (!setCloseOnExec(socketPair.client))
@@ -131,10 +148,8 @@ void ProcessLauncher::launchProcess()
     m_processIdentifier = pid;
 
     // We've finished launching the process, message back to the main run loop.
-    RefPtr<ProcessLauncher> protector(this);
-    IPC::Connection::Identifier serverSocket = socketPair.server;
-    RunLoop::main().dispatch([protector, pid, serverSocket] {
-        protector->didFinishLaunchingProcess(pid, serverSocket);
+    RunLoop::main().dispatch([protectedThis = makeRef(*this), this, serverSocket = socketPair.server] {
+        didFinishLaunchingProcess(m_processIdentifier, serverSocket);
     });
 }
 

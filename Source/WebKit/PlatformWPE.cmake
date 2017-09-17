@@ -199,7 +199,7 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/Automation/cairo/WebAutomationSessionCairo.cpp
 
-    UIProcess/Launcher/wpe/ProcessLauncherWPE.cpp
+    UIProcess/Launcher/glib/ProcessLauncherGLib.cpp
 
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp
     UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp
