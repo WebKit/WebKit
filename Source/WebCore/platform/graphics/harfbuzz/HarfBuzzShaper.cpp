@@ -577,10 +577,16 @@ void HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun(GlyphBuffer* glyphBuffer, un
 
     for (unsigned i = 0; i < numGlyphs; ++i) {
         uint16_t currentCharacterIndex = currentRun->startIndex() + glyphToCharacterIndexes[i];
-        if (currentCharacterIndex < from)
+        if (currentCharacterIndex < from) {
+            if (m_run.rtl())
+                break;
             continue;
-        if (currentCharacterIndex >= to)
+        }
+        if (currentCharacterIndex >= to) {
+            if (m_run.rtl())
+                continue;
             break;
+        }
         const FloatPoint& currentOffset = offsets[i];
         const FloatPoint& nextOffset = (i == numGlyphs - 1) ? firstOffsetOfNextRun : offsets[i + 1];
         float glyphAdvanceX = advances[i] + nextOffset.x() - currentOffset.x();

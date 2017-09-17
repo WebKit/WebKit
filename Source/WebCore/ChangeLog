@@ -1,3 +1,20 @@
+2017-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] Test fast/text/complex-text-selection.html is failing since r222090
+        https://bugs.webkit.org/show_bug.cgi?id=177035
+
+        Reviewed by Michael Catanzaro.
+
+        The problem was not actually introduced in r222090, but revelaed by that change. The bug was added in r222086,
+        when adding the support for shaping a range of characters. We are not correctly filtering the characters in case
+        of rtl in some cases.
+
+        Fixes: fast/text/complex-text-selection.html
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::fillGlyphBufferFromHarfBuzzRun): When checking if the current character is inside
+        the given range, continue or break the loop depending on whether text is rtl or not.
+
 2017-09-16  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [GTK] Build failure with enchant-2.1.1
