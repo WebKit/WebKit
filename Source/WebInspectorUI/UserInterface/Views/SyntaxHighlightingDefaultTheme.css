@@ -35,7 +35,7 @@
 
 .cm-s-default .cm-comment,
 .syntax-highlighted :matches(.css-comment, .javascript-comment, .html-comment) {
-    color: hsl(119, 100%, 22%);
+    color: var(--syntax-highlight-comment-color);
 }
 
 .cm-s-default :matches(.cm-tag, .cm-bracket, .cm-atom, .cm-keyword, .cm-m-javascript.cm-builtin),

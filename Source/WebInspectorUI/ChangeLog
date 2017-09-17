@@ -1,3 +1,61 @@
+2017-09-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: support toggling properties
+        https://bugs.webkit.org/show_bug.cgi?id=176643
+
+        Reviewed by Matt Baker.
+
+        Add checkboxes to toggle (comment/uncomment) CSS properties.
+
+        * UserInterface/Base/Utilities.js:
+        (String.prototype.get lineCount):
+        (String.prototype.get lastLine):
+        Add string methods that are used by WI.CSSProperty.prototype._updateOwnerStyleText.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.commentOut):
+        (WI.CSSProperty.prototype.set text):
+        (WI.CSSProperty.prototype.get editable):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        Add methods necessary for property toggling.
+
+        * UserInterface/Models/CSSStyleDeclaration.js:
+        (WI.CSSStyleDeclaration):
+        (WI.CSSStyleDeclaration.prototype.get allVisibleProperties):
+        Add a getter that is used by SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesToRender.
+
+        (WI.CSSStyleDeclaration.prototype.get visibleProperties):
+        * UserInterface/Models/TextRange.js:
+        (WI.TextRange.prototype.clone):
+        (WI.TextRange.prototype.cloneAndModify):
+        (WI.TextRange.prototype.relativeTo):
+        Add methods that are used by WI.CSSProperty.prototype._updateOwnerStyleText.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor):
+        (.spreadsheet-style-declaration-editor .property-toggle):
+        (.spreadsheet-css-declaration:matches(:hover, :focus) .property-toggle,):
+        (.spreadsheet-style-declaration-editor .property.disabled,):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.layout):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set style):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.get _propertiesToRender):
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype.get element):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.css:
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationSection.js:
+        (WI.SpreadsheetCSSStyleDeclarationSection.prototype.initialLayout):
+        * UserInterface/Views/SpreadsheetRulesStyleDetailsPanel.js:
+        (WI.SpreadsheetRulesStyleDetailsPanel.prototype.refresh):
+        (WI.SpreadsheetRulesStyleDetailsPanel):
+        * UserInterface/Views/SyntaxHighlightingDefaultTheme.css:
+        (.cm-s-default .cm-comment,):
+        * UserInterface/Views/Variables.css:
+        (:root):
+        Make comment color a CSS variable.
+
 2017-09-15  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: REGRESSION(r222057): recording state doesn't update when changing actions

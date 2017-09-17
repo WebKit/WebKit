@@ -53,6 +53,31 @@ function test()
         }
     });
 
+
+    suite.addTestCase({
+        name: "String.prototype.get lineCount",
+        test() {
+            InspectorTest.expectEqual("1\n2\n3".lineCount, 3, "A string with two line breaks should have three lines.");
+            InspectorTest.expectEqual("1\n\n3".lineCount, 3, "A string with two consecutive line breaks should have three lines.");
+            InspectorTest.expectEqual("1\n".lineCount, 2, "A string with a traling line breaks should have two lines.");
+            InspectorTest.expectEqual("".lineCount, 1, "An empty string is one line.");
+
+            return true;
+        }
+    });
+
+    suite.addTestCase({
+        name: "String.prototype.get lastLine",
+        test() {
+            InspectorTest.expectEqual("single line".lastLine, "single line", "Last line of one line string is the same string.");
+            InspectorTest.expectEqual("1\n2\n3".lastLine, "3", "Last line of a three line string should be the third line.");
+            InspectorTest.expectEqual("1\n".lastLine, "", "Last line of a string with a traling line break should be empty.");
+            InspectorTest.expectEqual("".lastLine, "", "Last line of an empty string is the same empty string.");
+
+            return true;
+        }
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>

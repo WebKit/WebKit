@@ -116,7 +116,7 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 this._inspectorSection = section;
 
             this.addSubview(section);
-            section.needsLayout(WI.View.LayoutReason.Dirty);
+            section.needsLayout();
 
             previousStyle = style;
         }

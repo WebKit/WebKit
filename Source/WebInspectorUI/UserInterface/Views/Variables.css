@@ -80,6 +80,7 @@
     --syntax-highlight-string-color: hsl(1, 79%, 42%);
     --syntax-highlight-regexp-color: hsl(20, 100%, 44%);
     --syntax-highlight-symbol-color: hsl(172, 45%, 45%);
+    --syntax-highlight-comment-color: hsl(119, 100%, 22%);
 
     --syntax-highlight-regex-group-color: var(--text-color-gray-medium);
 

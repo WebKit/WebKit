@@ -1,3 +1,15 @@
+2017-09-17  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: support toggling properties
+        https://bugs.webkit.org/show_bug.cgi?id=176643
+
+        Reviewed by Matt Baker.
+
+        Add tests for String.prototype.lineCount and String.prototype.lastLine.
+
+        * inspector/unit-tests/string-utilities-expected.txt:
+        * inspector/unit-tests/string-utilities.html:
+
 2017-09-16  Antti Koivisto  <antti@apple.com>
 
         Computing animated style should not require renderers

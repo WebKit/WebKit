@@ -46,6 +46,9 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._initialText = text;
         this._hasModifiedInitialText = false;
 
+        this._allProperties = [];
+        this._allVisibleProperties = null;
+
         this.update(text, properties, styleSheetTextRange, true);
     }
 
@@ -106,14 +109,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
         this._propertyNameMap = {};
 
         delete this._visibleProperties;
+        this._allVisibleProperties = null;
 
         var editable = this.editable;
 
-        for (var i = 0; i < this._properties.length; ++i) {
-            var property = this._properties[i];
+        for (let property of this._allProperties) {
             property.ownerStyle = this;
 
-            // Store the property in a map if we arn't editable. This
+            // Store the property in a map if we aren't editable. This
             // allows for quick lookup for computed style. Editable
             // styles don't use the map since they need to account for
             // overridden properties.
@@ -221,14 +224,18 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     get allProperties() { return this._allProperties; }
 
+    get allVisibleProperties()
+    {
+        if (!this._allVisibleProperties)
+            this._allVisibleProperties = this._allProperties.filter((property) => !!property.styleDeclarationTextRange);
+
+        return this._allVisibleProperties;
+    }
+
     get visibleProperties()
     {
-        if (this._visibleProperties)
-            return this._visibleProperties;
-
-        this._visibleProperties = this._properties.filter(function(property) {
-            return !!property.styleDeclarationTextRange;
-        });
+        if (!this._visibleProperties)
+            this._visibleProperties = this._properties.filter((property) => !!property.styleDeclarationTextRange);
 
         return this._visibleProperties;
     }

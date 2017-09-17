@@ -34,3 +34,15 @@ PASS: "a10" > "a2"
 PASS: "a1" < "a10"
 PASS: "a10" > "a1"
 
+-- Running test case: String.prototype.get lineCount
+PASS: A string with two line breaks should have three lines.
+PASS: A string with two consecutive line breaks should have three lines.
+PASS: A string with a traling line breaks should have two lines.
+PASS: An empty string is one line.
+
+-- Running test case: String.prototype.get lastLine
+PASS: Last line of one line string is the same string.
+PASS: Last line of a three line string should be the third line.
+PASS: Last line of a string with a traling line break should be empty.
+PASS: Last line of an empty string is the same empty string.
+

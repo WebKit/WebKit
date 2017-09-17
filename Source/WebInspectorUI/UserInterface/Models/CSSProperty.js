@@ -118,6 +118,20 @@ WI.CSSProperty = class CSSProperty extends WI.Object
             this.dispatchEventToListeners(WI.CSSProperty.Event.Changed);
     }
 
+    commentOut(disabled)
+    {
+        console.assert(this._enabled === disabled, "CSS property is already " + (disabled ? "disabled" : "enabled"));
+        if (this._enabled === !disabled)
+            return;
+
+        this._enabled = !disabled;
+
+        if (disabled)
+            this.text = "/* " + this._text + " */";
+        else
+            this.text = this._text.slice(2, -2).trim();
+    }
+
     get synthesizedText()
     {
         var name = this.name;
@@ -131,6 +145,15 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get text()
     {
         return this._text || this.synthesizedText;
+    }
+
+    set text(newText)
+    {
+        if (this._text === newText)
+            return;
+
+        this._updateOwnerStyleText(this._text, newText);
+        this._text = newText;
     }
 
     get name() { return this._name; }
@@ -199,6 +222,11 @@ WI.CSSProperty = class CSSProperty extends WI.Object
     get variable() { return this._variable; }
     get styleSheetTextRange() { return this._styleSheetTextRange; }
 
+    get editable()
+    {
+        return this._styleSheetTextRange && this._ownerStyle && this._ownerStyle.styleSheetTextRange;
+    }
+
     get styleDeclarationTextRange()
     {
         if ("_styleDeclarationTextRange" in this)
@@ -253,6 +281,22 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._hasOtherVendorNameOrKeyword = WI.cssStyleManager.propertyNameHasOtherVendorPrefix(this.name) || WI.cssStyleManager.propertyValueHasOtherVendorKeyword(this.value);
 
         return this._hasOtherVendorNameOrKeyword;
+    }
+
+    // Private
+
+    _updateOwnerStyleText(oldText, newText)
+    {
+        let styleText = this._ownerStyle.text || "";
+
+        // _styleSheetTextRange is the position of the property within the stylesheet.
+        // range is the position of the property within the rule.
+        let range = this._styleSheetTextRange.relativeTo(this._ownerStyle.styleSheetTextRange.startLine, this._ownerStyle.styleSheetTextRange.startColumn);
+        range.resolveOffsets(styleText);
+
+        let newStyleText = styleText.slice(0, range.startOffset) + newText + styleText.slice(range.endOffset);
+        this._styleSheetTextRange = this._styleSheetTextRange.cloneAndModify(0, 0, newText.lineCount - oldText.lineCount, newText.lastLine.length - oldText.lastLine.length);
+        this._ownerStyle.text = newStyleText;
     }
 };
 

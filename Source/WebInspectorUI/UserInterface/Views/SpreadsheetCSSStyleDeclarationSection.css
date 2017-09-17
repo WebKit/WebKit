@@ -83,10 +83,6 @@
     color: black;
 }
 
-.spreadsheet-css-declaration .properties {
-    margin-left: 1.4em;
-}
-
 .spreadsheet-css-declaration.locked {
     background-color: hsl(0, 0%, 97%)
 }

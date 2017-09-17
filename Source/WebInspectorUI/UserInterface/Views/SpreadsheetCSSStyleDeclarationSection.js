@@ -70,7 +70,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
         this._element.append(this._createMediaHeader(), this._headerElement, openBrace);
         this.addSubview(this._propertiesEditor);
-        this._propertiesEditor.needsLayout(WI.View.LayoutReason.Dirty);
+        this._propertiesEditor.needsLayout();
         this._element.append(closeBrace);
 
         if (!this._style.editable)

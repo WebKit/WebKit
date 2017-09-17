@@ -759,6 +759,39 @@ Object.defineProperty(String, "tokenizeFormatString",
     }
 });
 
+Object.defineProperty(String.prototype, "lineCount",
+{
+    get()
+    {
+        "use strict";
+
+        let lineCount = 1;
+        let index = 0;
+        while (true) {
+            index = this.indexOf("\n", index);
+            if (index === -1)
+                return lineCount;
+
+            index += "\n".length;
+            lineCount++;
+        }
+    }
+});
+
+Object.defineProperty(String.prototype, "lastLine",
+{
+    get()
+    {
+        "use strict";
+
+        let index = this.lastIndexOf("\n");
+        if (index === -1)
+            return this;
+
+        return this.slice(index + "\n".length);
+    }
+});
+
 Object.defineProperty(String.prototype, "hash",
 {
     get()

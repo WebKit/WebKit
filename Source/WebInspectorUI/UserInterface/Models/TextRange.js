@@ -108,4 +108,30 @@ WI.TextRange = class TextRange
 
         return true;
     }
+
+    clone()
+    {
+        console.assert(!isNaN(this._startLine), "TextRange needs line/column data.");
+        return new WI.TextRange(this._startLine, this._startColumn, this._endLine, this._endColumn);
+    }
+
+    cloneAndModify(deltaStartLine, deltaStartColumn, deltaEndLine, deltaEndColumn)
+    {
+        console.assert(!isNaN(this._startLine), "TextRange needs line/column data.");
+        return new WI.TextRange(this._startLine + deltaStartLine, this._startColumn + deltaStartColumn, this._endLine + deltaEndLine, this._endColumn + deltaEndColumn);
+    }
+
+    relativeTo(line, column)
+    {
+        let deltaStartColumn = 0;
+        if (this._startLine === line)
+            deltaStartColumn = -column;
+
+        let deltaEndColumn = 0;
+        if (this._endLine === line)
+            deltaEndColumn = -column;
+
+        return this.cloneAndModify(-line, deltaStartColumn, -line, deltaEndColumn);
+    }
+
 };
