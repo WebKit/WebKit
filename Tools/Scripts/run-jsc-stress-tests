@@ -117,7 +117,7 @@ $architecture = nil
 $hostOS = nil
 $filter = nil
 $envVars = []
-$quickMode = false
+$mode = "full"
 $buildType = "release"
 $forceCollectContinuously = false
 
@@ -157,6 +157,10 @@ def usage
     puts "                            e.g. \"foo=bar x=y\" (no quotes). Note, if you pass DYLD_FRAMEWORK_PATH"
     puts "                            it will override the default value."
     puts "--quick              (-q)   Only run with the default and no-cjit-validate modes."
+    puts "--basic                     Run with default and these additional modes: no-llint,"
+    puts "                            no-cjit-validate-phases, no-cjit-collect-continuously, dfg-eager"
+    puts "                            and for FTL platforms: no-ftl, ftl-eager-no-cjit and"
+    puts "                            ftl-no-cjit-small-pool."
     exit 1
 end
 
@@ -186,7 +190,8 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--env-vars', GetoptLong::REQUIRED_ARGUMENT],
                ['--debug', GetoptLong::NO_ARGUMENT],
                ['--release', GetoptLong::NO_ARGUMENT],
-               ['--quick', '-q', GetoptLong::NO_ARGUMENT]).each {
+               ['--quick', '-q', GetoptLong::NO_ARGUMENT],
+               ['--basic', GetoptLong::NO_ARGUMENT]).each {
     | opt, arg |
     case opt
     when '--help'
@@ -240,7 +245,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--env-vars'
         $envVars = arg.gsub(/\s+/, ' ').split(' ')
     when '--quick'
-        $quickMode = true
+        $mode = "quick"
+    when '--basic'
+        $mode = "basic"
     when '--debug'
         $buildType = "debug"
     when '--release'
@@ -689,7 +696,7 @@ def runShadowChicken(*optionalTestSpecificOptions)
 end
 
 def defaultRun
-    if $quickMode
+    if $mode == "quick"
         defaultQuickRun
     else
         runDefault
@@ -698,26 +705,31 @@ def defaultRun
             runNoCJITValidatePhases
             runNoCJITCollectContinuously if shouldCollectContinuously?
             runDFGEager
-            runDFGEagerNoCJITValidate
-            runDFGMaximalFlushPhase
+            if $mode != "basic"
+                runDFGEagerNoCJITValidate
+                runDFGMaximalFlushPhase
+            end
 
             return if !$isFTLPlatform
 
             runNoFTL
+            runFTLEager
+            runFTLEagerNoCJITValidate
+            runFTLNoCJITSmallPool
+
+            return if $mode == "basic"
+
             runFTLNoCJITValidate
             runFTLNoCJITB3O1
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
-            runFTLEager
-            runFTLEagerNoCJITValidate
             runFTLEagerNoCJITB3O1
-            runFTLNoCJITSmallPool
         end
     end
 end
 
 def defaultNoNoLLIntRun
-    if $quickMode
+    if $mode == "quick"
         defaultQuickRun
     else
         runDefault
@@ -725,19 +737,24 @@ def defaultNoNoLLIntRun
             runNoCJITValidatePhases
             runNoCJITCollectContinuously if shouldCollectContinuously?
             runDFGEager
-            runDFGEagerNoCJITValidate
-            runDFGMaximalFlushPhase
+            if $mode != "basic"
+                runDFGEagerNoCJITValidate
+                runDFGMaximalFlushPhase
+            end
 
             return if !$isFTLPlatform
 
             runNoFTL
             runFTLNoCJITValidate
+            runFTLNoCJITSmallPool
+
+            return if $mode == "basic"
+
             runFTLNoCJITB3O1
             runFTLNoCJITNoPutStackValidate
             runFTLNoCJITNoInlineValidate
             runFTLEager
             runFTLEagerNoCJITValidate
-            runFTLNoCJITSmallPool
         end
     end
 end
@@ -747,7 +764,7 @@ def defaultQuickRun
     if $jitTests
         runNoCJITValidate
 
-        return if $isFTLPlatform
+        return if !$isFTLPlatform
 
         runNoFTL
         runFTLNoCJITValidate
@@ -784,6 +801,9 @@ def defaultNoEagerRun
 
         runNoFTL
         runFTLNoCJITValidate
+
+        return if $mode == "basic"
+
         runFTLNoCJITNoInlineValidate
         runFTLNoCJITB3O1
     end
@@ -961,7 +981,7 @@ def runWebAssembly
     prepareExtraAbsoluteFiles(WASMTESTS_PATH, ["wasm.json"])
     prepareExtraRelativeFiles(modules.map { |f| "../" + f }, $collection)
     run("default-wasm", "-m", *FTL_OPTIONS)
-    if !$quickMode
+    if $mode != "quick"
         run("wasm-no-cjit-yes-tls-context", "-m", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager-jettison", "-m", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
         run("wasm-no-call-ic", "-m", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
@@ -980,7 +1000,7 @@ def runWebAssemblyEmscripten(mode)
     wasm = $benchmark.to_s.sub! '.js', '.wasm'
     prepareExtraRelativeFiles([Pathname('..') + wasm], $collection)
     run("default-wasm", *FTL_OPTIONS)
-    if !$quickMode
+    if $mode != "quick"
         run("wasm-no-cjit-yes-tls-context", "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
         run("wasm-eager-jettison", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
         run("wasm-no-call-ic", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
@@ -1004,7 +1024,7 @@ def runWebAssemblySpecTest(mode)
     prepareExtraRelativeFiles(harness.map { |f| "../../spec-harness/" + f }, $collection)
 
     runWithOutputHandler("default-wasm", noisyOutputHandler, "../spec-harness.js", *FTL_OPTIONS)
-    if !$quickMode
+    if $mode != "quick"
       runWithOutputHandler("wasm-no-cjit-yes-tls-context", noisyOutputHandler, "../spec-harness.js",  "--useFastTLSForWasmContext=true", *(FTL_OPTIONS + NO_CJIT_OPTIONS))
       runWithOutputHandler("wasm-eager-jettison", noisyOutputHandler, "../spec-harness.js", "--forceCodeBlockToJettisonDueToOldAge=true", *FTL_OPTIONS)
       runWithOutputHandler("wasm-no-call-ic", noisyOutputHandler, "../spec-harness.js", "--useCallICsForWebAssemblyToJSCalls=false", *FTL_OPTIONS)
@@ -1134,7 +1154,7 @@ def defaultQuickRunLayoutTest
 end
 
 def defaultRunLayoutTest
-    if $quickMode
+    if $mode == "quick"
         defaultQuickRunLayoutTest
     else
         runLayoutTestDefault
@@ -1266,7 +1286,7 @@ def defaultQuickRunMozillaTest(mode, *extraFiles)
 end
 
 def defaultRunMozillaTest(mode, *extraFiles)
-    if $quickMode
+    if $mode == "quick"
         defaultQuickRunMozillaTest(mode, *extraFiles)
     else
         runMozillaTestNoFTL(mode, *extraFiles)
