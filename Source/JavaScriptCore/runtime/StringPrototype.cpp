@@ -863,7 +863,7 @@ static inline bool checkObjectCoercible(JSValue thisValue)
     if (thisValue.isUndefinedOrNull())
         return false;
 
-    if (thisValue.isObject() && asObject(thisValue)->isEnvironmentRecord())
+    if (thisValue.isObject() && asObject(thisValue)->isEnvironment())
         return false;
 
     return true;

@@ -43,8 +43,8 @@ const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment", &Base::s_
 JSModuleEnvironment* JSModuleEnvironment::create(
     VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)
 {
-    // JSLexicalEnvironment (precisely, JSEnvironmentRecord) has the storage to store the variable slots after the its class storage.
-    // Because the offset of the variable slots are fixed in the JSEnvironmentRecord, inheritting these class and adding new member field is not allowed,
+    // JSLexicalEnvironment has the storage to store the variable slots after the its class storage.
+    // Because the offset of the variable slots are fixed in the JSLexicalEnvironment, inheritting these class and adding new member field is not allowed,
     // the new member will overlap the variable slots.
     // To keep the JSModuleEnvironment compatible to the JSLexicalEnvironment but add the new member to store the AbstractModuleRecord, we additionally allocate
     // the storage after the variable slots.

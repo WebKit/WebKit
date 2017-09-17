@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSLexicalEnvironment.h"
 
+#include "HeapSnapshotBuilder.h"
 #include "Interpreter.h"
 #include "JSFunction.h"
 #include "JSCInlines.h"
@@ -38,6 +39,34 @@ using namespace std;
 namespace JSC {
 
 const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
+
+void JSLexicalEnvironment::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    auto* thisObject = jsCast<JSLexicalEnvironment*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, info());
+    Base::visitChildren(thisObject, visitor);
+    visitor.appendValuesHidden(thisObject->variables(), thisObject->symbolTable()->scopeSize());
+}
+
+void JSLexicalEnvironment::heapSnapshot(JSCell* cell, HeapSnapshotBuilder& builder)
+{
+    auto* thisObject = jsCast<JSLexicalEnvironment*>(cell);
+    Base::heapSnapshot(cell, builder);
+
+    ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
+    SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
+    for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
+        SymbolTableEntry::Fast entry = it->value;
+        ASSERT(!entry.isNull());
+        ScopeOffset offset = entry.scopeOffset();
+        if (!thisObject->isValidScopeOffset(offset))
+            continue;
+
+        JSValue toValue = thisObject->variableAt(offset).get();
+        if (toValue && toValue.isCell())
+            builder.appendVariableNameEdge(thisObject, toValue.asCell(), it->key.get());
+    }
+}
 
 void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
@@ -56,7 +85,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
             propertyNames.add(Identifier::fromUid(exec, it->key.get()));
         }
     }
-    // Skip the JSEnvironmentRecord implementation of getOwnNonIndexPropertyNames
+    // Skip the JSSymbolTableObject's implementation of getOwnNonIndexPropertyNames
     JSObject::getOwnNonIndexPropertyNames(thisObject, exec, propertyNames, mode);
 }
 

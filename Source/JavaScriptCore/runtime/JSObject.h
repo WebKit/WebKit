@@ -718,7 +718,7 @@ public:
 
     JS_EXPORT_PRIVATE static bool defineOwnProperty(JSObject*, ExecState*, PropertyName, const PropertyDescriptor&, bool shouldThrow);
 
-    bool isEnvironmentRecord() const;
+    bool isEnvironment() const;
     bool isGlobalObject() const;
     bool isJSLexicalEnvironment() const;
     bool isGlobalLexicalEnvironment() const;
@@ -1216,7 +1216,7 @@ inline bool JSObject::isStrictEvalActivation() const
     return type() == StrictEvalActivationType;
 }
 
-inline bool JSObject::isEnvironmentRecord() const
+inline bool JSObject::isEnvironment() const
 {
     bool result = GlobalObjectType <= type() && type() <= StrictEvalActivationType;
     ASSERT((isGlobalObject() || isJSLexicalEnvironment() || isGlobalLexicalEnvironment() || isStrictEvalActivation()) == result);

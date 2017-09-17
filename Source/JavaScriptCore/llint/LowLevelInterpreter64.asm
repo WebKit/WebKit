@@ -2167,7 +2167,7 @@ end
 
 macro getClosureVar()
     loadisFromInstruction(6, t1)
-    loadq JSEnvironmentRecord_variables[t0, t1, 8], t0
+    loadq JSLexicalEnvironment_variables[t0, t1, 8], t0
     valueProfile(t0, 7, t1)
     loadisFromInstruction(1, t1)
     storeq t0, [cfr, t1, 8]
@@ -2256,7 +2256,7 @@ macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2)
     loadisFromInstruction(6, t1)
-    storeq t2, JSEnvironmentRecord_variables[t0, t1, 8]
+    storeq t2, JSLexicalEnvironment_variables[t0, t1, 8]
 end
 
 macro putLocalClosureVar()
@@ -2267,7 +2267,7 @@ macro putLocalClosureVar()
     notifyWrite(t3, .pDynamic)
 .noVariableWatchpointSet:
     loadisFromInstruction(6, t1)
-    storeq t2, JSEnvironmentRecord_variables[t0, t1, 8]
+    storeq t2, JSLexicalEnvironment_variables[t0, t1, 8]
 end
 
 macro checkTDZInGlobalPutToScopeIfNecessary()

@@ -793,7 +793,6 @@ set(JavaScriptCore_UNIFIABLE_SOURCES
     runtime/JSDataViewPrototype.cpp
     runtime/JSDateMath.cpp
     runtime/JSDestructibleObjectSubspace.cpp
-    runtime/JSEnvironmentRecord.cpp
     runtime/JSFixedArray.cpp
     runtime/JSFunction.cpp
     runtime/JSGeneratorFunction.cpp

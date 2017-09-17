@@ -35,8 +35,8 @@
 #include "InterpreterInlines.h"
 #include "JITInlines.h"
 #include "JSArray.h"
-#include "JSEnvironmentRecord.h"
 #include "JSFunction.h"
+#include "JSLexicalEnvironment.h"
 #include "LinkBuffer.h"
 #include "ResultType.h"
 #include "ScopedArguments.h"
@@ -891,7 +891,7 @@ void JIT::emitGetVarFromIndirectPointer(JSValue** operand, GPRReg reg)
 void JIT::emitGetClosureVar(int scope, uintptr_t operand)
 {
     emitGetVirtualRegister(scope, regT0);
-    loadPtr(Address(regT0, JSEnvironmentRecord::offsetOfVariables() + operand * sizeof(Register)), regT0);
+    loadPtr(Address(regT0, JSLexicalEnvironment::offsetOfVariables() + operand * sizeof(Register)), regT0);
 }
 
 void JIT::emit_op_get_from_scope(Instruction* currentInstruction)
@@ -1041,7 +1041,7 @@ void JIT::emitPutClosureVar(int scope, uintptr_t operand, int value, WatchpointS
     emitGetVirtualRegister(value, regT1);
     emitGetVirtualRegister(scope, regT0);
     emitNotifyWrite(set);
-    storePtr(regT1, Address(regT0, JSEnvironmentRecord::offsetOfVariables() + operand * sizeof(Register)));
+    storePtr(regT1, Address(regT0, JSLexicalEnvironment::offsetOfVariables() + operand * sizeof(Register)));
 }
 
 void JIT::emit_op_put_to_scope(Instruction* currentInstruction)
@@ -1547,7 +1547,7 @@ JIT::JumpList JIT::emitScopedArgumentsGetByVal(Instruction*, PatchableJump& badT
     cage(ScopedArgumentsTable::ArgumentsPtr::kind, scratch);
     load32(BaseIndex(scratch, property, TimesFour), scratch);
     slowCases.append(branch32(Equal, scratch, TrustedImm32(ScopeOffset::invalidOffset)));
-    loadValue(BaseIndex(scratch2, scratch, TimesEight, JSEnvironmentRecord::offsetOfVariables()), result);
+    loadValue(BaseIndex(scratch2, scratch, TimesEight, JSLexicalEnvironment::offsetOfVariables()), result);
     Jump done = jump();
     overflowCase.link(this);
     sub32(property, scratch2);

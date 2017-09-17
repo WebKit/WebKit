@@ -2206,8 +2206,8 @@ end
 
 macro getClosureVar()
     loadisFromInstruction(6, t3)
-    loadp JSEnvironmentRecord_variables + TagOffset[t0, t3, 8], t1
-    loadp JSEnvironmentRecord_variables + PayloadOffset[t0, t3, 8], t2
+    loadp JSLexicalEnvironment_variables + TagOffset[t0, t3, 8], t1
+    loadp JSLexicalEnvironment_variables + PayloadOffset[t0, t3, 8], t2
     valueProfile(t1, t2, 28, t0)
     loadisFromInstruction(1, t0)
     storei t1, TagOffset[cfr, t0, 8]
@@ -2298,8 +2298,8 @@ macro putClosureVar()
     loadisFromInstruction(3, t1)
     loadConstantOrVariable(t1, t2, t3)
     loadisFromInstruction(6, t1)
-    storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]
-    storei t3, JSEnvironmentRecord_variables + PayloadOffset[t0, t1, 8]
+    storei t2, JSLexicalEnvironment_variables + TagOffset[t0, t1, 8]
+    storei t3, JSLexicalEnvironment_variables + PayloadOffset[t0, t1, 8]
 end
 
 macro putLocalClosureVar()
@@ -2310,8 +2310,8 @@ macro putLocalClosureVar()
     notifyWrite(t5, .pDynamic)
 .noVariableWatchpointSet:
     loadisFromInstruction(6, t1)
-    storei t2, JSEnvironmentRecord_variables + TagOffset[t0, t1, 8]
-    storei t3, JSEnvironmentRecord_variables + PayloadOffset[t0, t1, 8]
+    storei t2, JSLexicalEnvironment_variables + TagOffset[t0, t1, 8]
+    storei t3, JSLexicalEnvironment_variables + PayloadOffset[t0, t1, 8]
 end
 
 

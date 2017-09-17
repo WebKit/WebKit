@@ -1,3 +1,65 @@
+2017-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Merge JSLexicalEnvironment and JSEnvironmentRecord
+        https://bugs.webkit.org/show_bug.cgi?id=175492
+
+        Reviewed by Saam Barati.
+
+        JSEnvironmentRecord is only inherited by JSLexicalEnvironment.
+        We can merge JSEnvironmentRecord and JSLexicalEnvironment.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetByValOnScopedArguments):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLAbstractHeapRepository.h:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetByVal):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCreateActivation):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetClosureVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compilePutClosureVar):
+        (JSC::FTL::DFG::LowerDFGToB3::compileMaterializeCreateActivation):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        (JSC::JIT::emitScopedArgumentsGetByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emitGetClosureVar):
+        (JSC::JIT::emitPutClosureVar):
+        * llint/LLIntOffsetsExtractor.cpp:
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/JSEnvironmentRecord.cpp: Removed.
+        * runtime/JSEnvironmentRecord.h: Removed.
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::visitChildren):
+        (JSC::JSLexicalEnvironment::heapSnapshot):
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSLexicalEnvironment.h:
+        (JSC::JSLexicalEnvironment::subspaceFor):
+        (JSC::JSLexicalEnvironment::variables):
+        (JSC::JSLexicalEnvironment::isValidScopeOffset):
+        (JSC::JSLexicalEnvironment::variableAt):
+        (JSC::JSLexicalEnvironment::offsetOfVariables):
+        (JSC::JSLexicalEnvironment::offsetOfVariable):
+        (JSC::JSLexicalEnvironment::allocationSizeForScopeSize):
+        (JSC::JSLexicalEnvironment::allocationSize):
+        (JSC::JSLexicalEnvironment::finishCreationUninitialized):
+        (JSC::JSLexicalEnvironment::finishCreation):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::create):
+        * runtime/JSObject.h:
+        (JSC::JSObject::isEnvironment const):
+        (JSC::JSObject::isEnvironmentRecord const): Deleted.
+        * runtime/JSSegmentedVariableObject.h:
+        * runtime/StringPrototype.cpp:
+        (JSC::checkObjectCoercible):
+
 2017-09-15  Saam Barati  <sbarati@apple.com>
 
         Arity fixup during inlining should do a 2 phase commit so it properly recovers the frame in case of exit

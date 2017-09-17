@@ -1224,7 +1224,6 @@
 		147F39D4107EC37600427A48 /* JSObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22A3980E16E14800AF21C8 /* JSObject.cpp */; };
 		147F39D5107EC37600427A48 /* JSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC02E9B60E1842FA000F9297 /* JSString.cpp */; };
 		147F39D6107EC37600427A48 /* JSCJSValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8870255597D01FF60F7 /* JSCJSValue.cpp */; };
-		147F39D7107EC37600427A48 /* JSEnvironmentRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22A39A0E16E14800AF21C8 /* JSEnvironmentRecord.cpp */; };
 		14815F5F991C46BEB98D0016 /* JSScriptFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11C197C2624848EDA84CED7F /* JSScriptFetcher.cpp */; };
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
@@ -2232,7 +2231,6 @@
 		BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB454099C2A0F00E2A24F /* JSType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42B0E16F5CD00B34460 /* JSCJSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 14ABB36E099C076400E2A24F /* JSCJSValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B6EA0A4300B300517CFC /* JSValueRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		BC18C42D0E16F5CD00B34460 /* JSEnvironmentRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F252560D08DD8D004ECFFF /* JSEnvironmentRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4310E16F5CD00B34460 /* Lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8660255597D01FF60F7 /* Lexer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4370E16F5CD00B34460 /* Lookup.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8690255597D01FF60F7 /* Lookup.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3847,7 +3845,6 @@
 		14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakSet.cpp; sourceTree = "<group>"; };
 		14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakSet.h; sourceTree = "<group>"; };
 		14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakImpl.h; sourceTree = "<group>"; };
-		14F252560D08DD8D004ECFFF /* JSEnvironmentRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEnvironmentRecord.h; sourceTree = "<group>"; };
 		14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WeakHandleOwner.cpp; sourceTree = "<group>"; };
 		14F7256414EE265E00B1652B /* WeakHandleOwner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHandleOwner.h; sourceTree = "<group>"; };
 		169948EDE68D4054B01EF797 /* DefinePropertyAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefinePropertyAttributes.h; sourceTree = "<group>"; };
@@ -4879,7 +4876,6 @@
 		BC18C52D0E16FCE100B34460 /* Lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.lut.h; sourceTree = "<group>"; };
 		BC22A3980E16E14800AF21C8 /* JSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
 		BC22A3990E16E14800AF21C8 /* JSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
-		BC22A39A0E16E14800AF21C8 /* JSEnvironmentRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEnvironmentRecord.cpp; sourceTree = "<group>"; };
 		BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionConstructor.cpp; sourceTree = "<group>"; };
 		BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionConstructor.h; sourceTree = "<group>"; };
 		BC2680C20E16D4E900A06E92 /* NumberConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberConstructor.cpp; sourceTree = "<group>"; };
@@ -6883,8 +6879,6 @@
 				C2A7F687160432D400F76B98 /* JSDestructibleObject.h */,
 				0F7DF1391E29710E0095951B /* JSDestructibleObjectSubspace.cpp */,
 				0F7DF13A1E29710E0095951B /* JSDestructibleObjectSubspace.h */,
-				BC22A39A0E16E14800AF21C8 /* JSEnvironmentRecord.cpp */,
-				14F252560D08DD8D004ECFFF /* JSEnvironmentRecord.h */,
 				A7B4ACAE1484C9CE00B38A36 /* JSExportMacros.h */,
 				798937761DCAB57300F8D4FB /* JSFixedArray.cpp */,
 				798937771DCAB57300F8D4FB /* JSFixedArray.h */,
@@ -9134,7 +9128,6 @@
 				0F7DF13C1E2971130095951B /* JSDestructibleObjectSubspace.h in Headers */,
 				FE384EE61ADDB7AD0055DE2C /* JSDollarVM.h in Headers */,
 				FE384EE81ADDB7AD0055DE2C /* JSDollarVMPrototype.h in Headers */,
-				BC18C42D0E16F5CD00B34460 /* JSEnvironmentRecord.h in Headers */,
 				86E3C614167BABD7006D760A /* JSExport.h in Headers */,
 				A7B4ACAF1484C9CE00B38A36 /* JSExportMacros.h in Headers */,
 				798937791DCAB57300F8D4FB /* JSFixedArray.h in Headers */,
@@ -10802,7 +10795,6 @@
 				0F7DF13B1E2971110095951B /* JSDestructibleObjectSubspace.cpp in Sources */,
 				FE384EE51ADDB7AD0055DE2C /* JSDollarVM.cpp in Sources */,
 				FE384EE71ADDB7AD0055DE2C /* JSDollarVMPrototype.cpp in Sources */,
-				147F39D7107EC37600427A48 /* JSEnvironmentRecord.cpp in Sources */,
 				798937781DCAB57300F8D4FB /* JSFixedArray.cpp in Sources */,
 				140566D6107EC271005DBC8D /* JSFunction.cpp in Sources */,
 				70B7919B1C024A46002481E2 /* JSGeneratorFunction.cpp in Sources */,
