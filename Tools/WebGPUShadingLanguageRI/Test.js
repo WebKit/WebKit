@@ -3635,6 +3635,19 @@ function TEST_booleanMath()
     checkBool(program, callFunction(program, "foo8", [], []), false);
 }
 
+function TEST_typedefArray()
+{
+    let program = doPrep(`
+        typedef ArrayTypedef = int[2];
+        int foo()
+        {
+            ArrayTypedef arrayTypedef;
+            return arrayTypedef[0];
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 0);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

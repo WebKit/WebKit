@@ -1,3 +1,17 @@
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL cannot use typedefs of arrays
+        https://bugs.webkit.org/show_bug.cgi?id=177061
+
+        Reviewed by Saam Barati.
+        
+        This test case didn't work before because of a missing visit call in Checker.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_typedefArray):
+
 2017-09-18  Youenn Fablet  <youenn@apple.com>
 
         Allow WTF::map to use any class that is iterable and has a size getter

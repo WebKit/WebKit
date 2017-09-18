@@ -99,6 +99,7 @@ class Checker extends Visitor {
     {
         if (!node.type)
             throw new Error("Type reference without a type in checker: " + node + " at " + node.origin);
+        node.type.visit(this);
         this._checkTypeArguments(node.origin, node.type.typeParameters, node.typeArguments);
     }
     
