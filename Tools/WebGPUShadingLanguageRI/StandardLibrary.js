@@ -150,6 +150,192 @@ operator<T:Equatable> bool(T x)
     return x != T();
 }
 
+struct vec2<T> {
+    T x;
+    T y;
+}
+
+typedef int2 = vec2<int>;
+typedef uint2 = vec2<uint>;
+typedef float2 = vec2<float>;
+typedef double2 = vec2<double>;
+
+operator<T> vec2<T>(T x, T y)
+{
+    vec2<T> result;
+    result.x = x;
+    result.y = y;
+    return result;
+}
+
+bool operator==<T:Equatable>(vec2<T> a, vec2<T> b)
+{
+    return a.x == b.x && a.y == b.y;
+}
+
+thread T^ operator&[]<T>(thread vec2<T>^ foo, uint index)
+{
+    if (index == 0)
+        return &foo->x;
+    if (index == 1)
+        return &foo->y;
+    return null;
+}
+
+struct vec3<T> {
+    T x;
+    T y;
+    T z;
+}
+
+typedef int3 = vec3<int>;
+typedef uint3 = vec3<uint>;
+typedef float3 = vec3<float>;
+typedef double3 = vec3<double>;
+
+operator<T> vec3<T>(T x, T y, T z)
+{
+    vec3<T> result;
+    result.x = x;
+    result.y = y;
+    result.z = z;
+    return result;
+}
+
+operator<T> vec3<T>(vec2<T> v2, T z)
+{
+    vec3<T> result;
+    result.x = v2.x;
+    result.y = v2.y;
+    result.z = z;
+    return result;
+}
+
+operator<T> vec3<T>(T x, vec2<T> v2)
+{
+    vec3<T> result;
+    result.x = x;
+    result.y = v2.x;
+    result.z = v2.y;
+    return result;
+}
+
+bool operator==<T:Equatable>(vec3<T> a, vec3<T> b)
+{
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+
+thread T^ operator&[]<T>(thread vec3<T>^ foo, uint index)
+{
+    if (index == 0)
+        return &foo->x;
+    if (index == 1)
+        return &foo->y;
+    if (index == 2)
+        return &foo->z;
+    return null;
+}
+
+struct vec4<T> {
+    T x;
+    T y;
+    T z;
+    T w;
+}
+
+typedef int4 = vec4<int>;
+typedef uint4 = vec4<uint>;
+typedef float4 = vec4<float>;
+typedef double4 = vec4<double>;
+
+operator<T> vec4<T>(T x, T y, T z, T w)
+{
+    vec4<T> result;
+    result.x = x;
+    result.y = y;
+    result.z = z;
+    result.w = w;
+    return result;
+}
+
+operator<T> vec4<T>(vec2<T> v2, T z, T w)
+{
+    vec4<T> result;
+    result.x = v2.x;
+    result.y = v2.y;
+    result.z = z;
+    result.w = w;
+    return result;
+}
+
+operator<T> vec4<T>(T x, vec2<T> v2, T w)
+{
+    vec4<T> result;
+    result.x = x;
+    result.y = v2.x;
+    result.z = v2.y;
+    result.w = w;
+    return result;
+}
+
+operator<T> vec4<T>(T x, T y, vec2<T> v2)
+{
+    vec4<T> result;
+    result.x = x;
+    result.y = y;
+    result.z = v2.x;
+    result.w = v2.y;
+    return result;
+}
+
+operator<T> vec4<T>(vec2<T> v2a, vec2<T> v2b)
+{
+    vec4<T> result;
+    result.x = v2a.x;
+    result.y = v2a.y;
+    result.z = v2b.x;
+    result.w = v2b.y;
+    return result;
+}
+
+operator<T> vec4<T>(vec3<T> v3, T w)
+{
+    vec4<T> result;
+    result.x = v3.x;
+    result.y = v3.y;
+    result.z = v3.z;
+    result.w = w;
+    return result;
+}
+
+operator<T> vec4<T>(T x, vec3<T> v3)
+{
+    vec4<T> result;
+    result.x = x;
+    result.y = v3.x;
+    result.z = v3.y;
+    result.w = v3.z;
+    return result;
+}
+
+bool operator==<T:Equatable>(vec4<T> a, vec4<T> b)
+{
+    return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+}
+
+thread T^ operator&[]<T>(thread vec4<T>^ foo, uint index)
+{
+    if (index == 0)
+        return &foo->x;
+    if (index == 1)
+        return &foo->y;
+    if (index == 2)
+        return &foo->z;
+    if (index == 3)
+        return &foo->w;
+    return null;
+}
+
 native thread T^ operator&[]<T>(thread T[], uint);
 native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
 native device T^ operator&[]<T:primitive>(device T[], uint);

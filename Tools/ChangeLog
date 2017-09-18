@@ -1,5 +1,28 @@
 2017-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Fill out vector types in WSL's standard library
+        https://bugs.webkit.org/show_bug.cgi?id=177063
+
+        Reviewed by Filip Pizlo.
+
+        Now that we have struct types, operator&[], and operator==, fill out a few of the builtin vector types in the
+        standard library. This patch creates three new types: vec2, vec3, and vec4, each of which takes a type
+        argument, so you can say vec4<float>. This patch also adds typedefs of int4, uint4, float4, and double4 (along
+        with their 2- and 3- length siblings).
+
+        This patch does not include the swizzling operators, so you can't say float4.yzw.
+
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (operator.T.vec2.T):
+        (bool.operator.T.Equatable):
+        (thread.T.operator.T):
+        (operator.T.vec3.T):
+        (operator.T.vec4.T):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_builtinVectors):
+
+2017-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
         WSL needs to annotate vertex shaders and fragment shaders
         https://bugs.webkit.org/show_bug.cgi?id=177066
 

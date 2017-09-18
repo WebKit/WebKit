@@ -3712,6 +3712,188 @@ function TEST_shaderTypes()
         (e) => e instanceof WTypeError);
 }
 
+function TEST_builtinVectors()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int2 a = int2(3, 4);
+            return a[0];
+        }
+        int foo2()
+        {
+            int2 a = int2(3, 4);
+            int3 b = int3(a, 5);
+            return b[1];
+        }
+        int foo3()
+        {
+            int3 a = int3(3, 4, 5);
+            int4 b = int4(6, a);
+            return b[1];
+        }
+        int foo4()
+        {
+            int2 a = int2(3, 4);
+            int2 b = int2(5, 6);
+            int4 c = int4(a, b);
+            return c[2];
+        }
+        bool foo5()
+        {
+            int4 a = int4(3, 4, 5, 6);
+            int2 b = int2(4, 5);
+            int4 c = int4(3, b, 6);
+            return a == c;
+        }
+        bool foo6()
+        {
+            int2 a = int2(4, 5);
+            int3 b = int3(3, a);
+            int3 c = int3(3, 4, 6);
+            return b == c;
+        }
+        uint foou()
+        {
+            uint2 a = uint2(3, 4);
+            return a[0];
+        }
+        uint foou2()
+        {
+            uint2 a = uint2(3, 4);
+            uint3 b = uint3(a, 5);
+            return b[1];
+        }
+        uint foou3()
+        {
+            uint3 a = uint3(3, 4, 5);
+            uint4 b = uint4(6, a);
+            return b[1];
+        }
+        uint foou4()
+        {
+            uint2 a = uint2(3, 4);
+            uint2 b = uint2(5, 6);
+            uint4 c = uint4(a, b);
+            return c[2];
+        }
+        bool foou5()
+        {
+            uint4 a = uint4(3, 4, 5, 6);
+            uint2 b = uint2(4, 5);
+            uint4 c = uint4(3, b, 6);
+            return a == c;
+        }
+        bool foou6()
+        {
+            uint2 a = uint2(4, 5);
+            uint3 b = uint3(3, a);
+            uint3 c = uint3(3, 4, 6);
+            return b == c;
+        }
+        float foof()
+        {
+            float2 a = float2(3., 4.);
+            return a[0];
+        }
+        float foof2()
+        {
+            float2 a = float2(3., 4.);
+            float3 b = float3(a, 5.);
+            return b[1];
+        }
+        float foof3()
+        {
+            float3 a = float3(3., 4., 5.);
+            float4 b = float4(6., a);
+            return b[1];
+        }
+        float foof4()
+        {
+            float2 a = float2(3., 4.);
+            float2 b = float2(5., 6.);
+            float4 c = float4(a, b);
+            return c[2];
+        }
+        bool foof5()
+        {
+            float4 a = float4(3., 4., 5., 6.);
+            float2 b = float2(4., 5.);
+            float4 c = float4(3., b, 6.);
+            return a == c;
+        }
+        bool foof6()
+        {
+            float2 a = float2(4., 5.);
+            float3 b = float3(3., a);
+            float3 c = float3(3., 4., 6.);
+            return b == c;
+        }
+        double food()
+        {
+            double2 a = double2(3., 4.);
+            return a[0];
+        }
+        double food2()
+        {
+            double2 a = double2(3., 4.);
+            double3 b = double3(a, 5.);
+            return b[1];
+        }
+        double food3()
+        {
+            double3 a = double3(3., 4., 5.);
+            double4 b = double4(6., a);
+            return b[1];
+        }
+        double food4()
+        {
+            double2 a = double2(3., 4.);
+            double2 b = double2(5., 6.);
+            double4 c = double4(a, b);
+            return c[2];
+        }
+        bool food5()
+        {
+            double4 a = double4(3., 4., 5., 6.);
+            double2 b = double2(4., 5.);
+            double4 c = double4(3., b, 6.);
+            return a == c;
+        }
+        bool food6()
+        {
+            double2 a = double2(4., 5.);
+            double3 b = double3(3., a);
+            double3 c = double3(3., 4., 6.);
+            return b == c;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 3);
+    checkInt(program, callFunction(program, "foo2", [], []), 4);
+    checkInt(program, callFunction(program, "foo3", [], []), 3);
+    checkInt(program, callFunction(program, "foo4", [], []), 5);
+    checkBool(program, callFunction(program, "foo5", [], []), true);
+    checkBool(program, callFunction(program, "foo6", [], []), false);
+    checkUint(program, callFunction(program, "foou", [], []), 3);
+    checkUint(program, callFunction(program, "foou2", [], []), 4);
+    checkUint(program, callFunction(program, "foou3", [], []), 3);
+    checkUint(program, callFunction(program, "foou4", [], []), 5);
+    checkBool(program, callFunction(program, "foou5", [], []), true);
+    checkBool(program, callFunction(program, "foou6", [], []), false);
+    checkFloat(program, callFunction(program, "foof", [], []), 3);
+    checkFloat(program, callFunction(program, "foof2", [], []), 4);
+    checkFloat(program, callFunction(program, "foof3", [], []), 3);
+    checkFloat(program, callFunction(program, "foof4", [], []), 5);
+    checkBool(program, callFunction(program, "foof5", [], []), true);
+    checkBool(program, callFunction(program, "foof6", [], []), false);
+    checkDouble(program, callFunction(program, "food", [], []), 3);
+    checkDouble(program, callFunction(program, "food2", [], []), 4);
+    checkDouble(program, callFunction(program, "food3", [], []), 3);
+    checkDouble(program, callFunction(program, "food4", [], []), 5);
+    checkBool(program, callFunction(program, "food5", [], []), true);
+    checkBool(program, callFunction(program, "food6", [], []), false);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {
