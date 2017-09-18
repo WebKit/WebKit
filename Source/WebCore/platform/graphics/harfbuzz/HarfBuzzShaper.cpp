@@ -108,6 +108,8 @@ unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX, 
     unsigned glyphIndex = 0;
     float characterWidth = 0;
     unsigned characterIndex = 0;
+    unsigned previousCharacterIndex = m_numCharacters;
+
     do {
         characterIndex = m_glyphToCharacterIndexes[glyphIndex];
         characterWidth = m_advances[glyphIndex];
@@ -116,7 +118,7 @@ unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX, 
 
         if ((includePartialGlyphs && (targetX <= currentX + characterWidth / 2.0))
             || (!includePartialGlyphs && (targetX < currentX + characterWidth)))
-            return rtl() ? std::min(m_numCharacters, characterIndex + 1) : characterIndex;
+            return rtl() ? previousCharacterIndex : characterIndex;
 
         if ((includePartialGlyphs && (targetX > (currentX + characterWidth / 2.0) && targetX < currentX + characterWidth))
             || (!includePartialGlyphs && (targetX >= currentX && targetX < currentX + characterWidth)))
@@ -124,9 +126,10 @@ unsigned HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition(float targetX, 
 
         currentX += characterWidth;
         ++glyphIndex;
+        previousCharacterIndex = characterIndex;
     } while (glyphIndex < m_numGlyphs);
 
-    return rtl() ? characterIndex : std::min(m_numCharacters, characterIndex + 1);
+    return rtl() ? characterIndex : glyphIndex < m_numGlyphs - 1 ? m_glyphToCharacterIndexes[glyphIndex + 1] : m_numCharacters;
 }
 
 float HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
