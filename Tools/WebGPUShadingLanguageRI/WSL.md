@@ -281,7 +281,7 @@ WSL supports overloading very similarly to how C++ does it. For example:
     int x;
     foo(x); // calls 1
     
-    int y;
+    double y;
     foo(y); // calls 2
 
 WSL automatically selects the most specific overload if given multiple choices. For example:

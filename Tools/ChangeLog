@@ -1,5 +1,11 @@
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, fix typo.
+
+        * WebGPUShadingLanguageRI/WSL.md:
+
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
         WSL cannot use typedefs of arrays
         https://bugs.webkit.org/show_bug.cgi?id=177061
 
