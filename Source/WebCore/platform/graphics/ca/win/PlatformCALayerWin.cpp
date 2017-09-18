@@ -37,7 +37,6 @@
 #include "PlatformCALayerWinInternal.h"
 #include "TextRun.h"
 #include "TileController.h"
-#include "WebCoreHeaderDetection.h"
 #include "WebTiledBackingLayerWin.h"
 #include <QuartzCore/CoreAnimationCF.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>

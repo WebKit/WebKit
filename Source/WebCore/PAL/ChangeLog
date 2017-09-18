@@ -1,3 +1,17 @@
+2017-09-18  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [Win][PAL] Move WebCoreHeaderDetection.h to PAL
+        https://bugs.webkit.org/show_bug.cgi?id=176990
+
+        Reviewed by Alex Christensen.
+
+        * AVFoundationSupport.py: Renamed from Source/WebCore/AVFoundationSupport.py.
+        (lookFor):
+        (fileContains):
+
+        * pal/PlatformWin.cmake:
+        Add a custom target PAL_PreBuild to generate PALHeaderDetection.h
+
 2017-09-15  Tim Horton  <timothy_horton@apple.com>
 
         Fix the macOS CMake build

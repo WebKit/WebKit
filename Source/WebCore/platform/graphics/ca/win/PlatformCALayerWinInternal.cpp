@@ -34,7 +34,6 @@
 #include "PlatformCALayer.h"
 #include "TileController.h"
 #include "TiledBacking.h"
-#include "WebCoreHeaderDetection.h"
 #include <QuartzCore/CACFLayer.h>
 #include <wtf/MainThread.h>
 

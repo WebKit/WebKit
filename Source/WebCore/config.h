@@ -30,7 +30,7 @@
 #endif
 
 #if PLATFORM(WIN)
-#include "WebCoreHeaderDetection.h"
+#include <PALHeaderDetection.h>
 #endif
 
 #include "PlatformExportMacros.h"

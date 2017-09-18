@@ -29,3 +29,12 @@ foreach (_directory ${PAL_FORWARDING_HEADERS_DIRECTORIES})
         file(COPY ${_file} DESTINATION ${FORWARDING_HEADERS_DIR}/WebCore/pal/${_directory})
     endforeach ()
 endforeach ()
+
+# Generate PALHeaderDetection.h by PAL_PreBuild
+add_custom_target(PAL_PreBuild SOURCES "${DERIVED_SOURCES_PAL_DIR}/PALHeaderDetection.h")
+add_custom_command(
+    OUTPUT "${DERIVED_SOURCES_PAL_DIR}/PALHeaderDetection.h"
+    WORKING_DIRECTORY "${DERIVED_SOURCES_PAL_DIR}"
+    COMMAND ${PYTHON_EXECUTABLE} ${PAL_DIR}/AVFoundationSupport.py ${WEBKIT_LIBRARIES_DIR} > PALHeaderDetection.h
+    VERBATIM)
+add_dependencies(PAL PAL_PreBuild)
