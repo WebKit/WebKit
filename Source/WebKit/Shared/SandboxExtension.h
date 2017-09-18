@@ -32,20 +32,18 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(SANDBOX_EXTENSIONS)
-typedef struct __WKSandboxExtension* WKSandboxExtensionRef;
-#endif
-
 namespace IPC {
 class Encoder;
 class Decoder;
 }
 
 namespace WebKit {
+    
+class SandboxExtensionImpl;
 
 class SandboxExtension : public RefCounted<SandboxExtension> {
 public:
-    enum Type {
+    enum class Type {
         ReadOnly,
         ReadWrite,
         Generic,
@@ -55,7 +53,11 @@ public:
         WTF_MAKE_NONCOPYABLE(Handle);
     public:
         Handle();
+#if ENABLE(SANDBOX_EXTENSIONS)
+        Handle(Handle&&);
+#else
         Handle(Handle&&) = default;
+#endif
         ~Handle();
 
         void encode(IPC::Encoder&) const;
@@ -64,7 +66,7 @@ public:
     private:
         friend class SandboxExtension;
 #if ENABLE(SANDBOX_EXTENSIONS)
-        mutable WKSandboxExtensionRef m_sandboxExtension;
+        mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
 #endif
     };
 
@@ -108,7 +110,7 @@ private:
     explicit SandboxExtension(const Handle&);
                      
 #if ENABLE(SANDBOX_EXTENSIONS)
-    mutable WKSandboxExtensionRef m_sandboxExtension;
+    mutable std::unique_ptr<SandboxExtensionImpl> m_sandboxExtension;
     size_t m_useCount;
 #endif
 };

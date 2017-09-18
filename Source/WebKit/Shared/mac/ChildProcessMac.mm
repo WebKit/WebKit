@@ -30,9 +30,11 @@
 
 #import "CodeSigning.h"
 #import "CookieStorageUtilsCF.h"
+#import "QuarantineSPI.h"
 #import "SandboxInitializationParameters.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/ScopeGuard.h>
 #import <WebCore/SystemVersion.h>
 #import <mach/mach.h>
 #import <mach/task.h>
@@ -77,6 +79,25 @@ void ChildProcess::platformInitialize()
 {
     initializeTimerCoalescingPolicy();
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
+}
+
+static OSStatus enableSandboxStyleFileQuarantine()
+{
+    int error;
+    qtn_proc_t quarantineProperties = qtn_proc_alloc();
+    ScopeGuard quarantinePropertiesDeleter([quarantineProperties]() {
+        qtn_proc_free(quarantineProperties);
+    });
+
+    if ((error = qtn_proc_init_with_self(quarantineProperties)))
+        return error;
+
+    if ((error = qtn_proc_set_flags(quarantineProperties, QTN_FLAG_SANDBOX)))
+        return error;
+
+    // QTN_FLAG_SANDBOX is silently ignored if security.mac.qtn.sandbox_enforce sysctl is 0.
+    // In that case, quarantine falls back to advisory QTN_FLAG_DOWNLOAD.
+    return qtn_proc_apply_to_self(quarantineProperties);
 }
 
 void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)
@@ -171,7 +192,7 @@ void ChildProcess::initializeSandbox(const ChildProcessInitializationParameters&
     }
 
     // This will override LSFileQuarantineEnabled from Info.plist unless sandbox quarantine is globally disabled.
-    OSStatus error = WKEnableSandboxStyleFileQuarantine();
+    OSStatus error = enableSandboxStyleFileQuarantine();
     if (error) {
         WTFLogAlways("%s: Couldn't enable sandbox style file quarantine: %ld\n", getprogname(), static_cast<long>(error));
         exit(EX_NOPERM);

@@ -61,7 +61,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
             const FormDataElement& element = elements[i];
             if (element.m_type == FormDataElement::Type::EncodedFile) {
                 const String& path = element.m_shouldGenerateFile ? element.m_generatedFilename : element.m_filename;
-                SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
+                SandboxExtension::createHandle(path, SandboxExtension::Type::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
             }
         }
         encoder << requestBodySandboxExtensions;
@@ -69,7 +69,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
 
     if (request.url().isLocalFile()) {
         SandboxExtension::Handle requestSandboxExtension;
-        SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::ReadOnly, requestSandboxExtension);
+        SandboxExtension::createHandle(request.url().fileSystemPath(), SandboxExtension::Type::ReadOnly, requestSandboxExtension);
         encoder << requestSandboxExtension;
     }
 

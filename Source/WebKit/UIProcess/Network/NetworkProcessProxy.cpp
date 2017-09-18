@@ -296,7 +296,7 @@ void NetworkProcessProxy::grantSandboxExtensionsToStorageProcessForBlobs(uint64_
     extensions.allocate(paths.size());
     for (size_t i = 0; i < paths.size(); ++i) {
         // ReadWrite is required for creating hard links as well as deleting the temporary file, which the StorageProcess will do.
-        SandboxExtension::createHandle(paths[i], SandboxExtension::ReadWrite, extensions[i]);
+        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
     }
 
     m_processPool.sendToStorageProcessRelaunchingIfNecessary(Messages::StorageProcess::GrantSandboxExtensionsForBlobs(paths, extensions));

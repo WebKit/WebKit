@@ -34,23 +34,86 @@
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
 #import <sys/stat.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 #import <wtf/text/CString.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
+class SandboxExtensionImpl {
+public:
+    static std::unique_ptr<SandboxExtensionImpl> create(const char* path, SandboxExtension::Type type)
+    {
+        std::unique_ptr<SandboxExtensionImpl> impl { new SandboxExtensionImpl(path, type) };
+        if (!impl->m_token)
+            return nullptr;
+        return impl;
+    }
+
+    SandboxExtensionImpl(const char* serializedFormat, size_t length)
+        : m_token { strndup(serializedFormat, length) }
+    {
+    }
+
+    ~SandboxExtensionImpl()
+    {
+        free(m_token);
+    }
+
+    bool consume() WARN_UNUSED_RETURN
+    {
+        m_handle = sandbox_extension_consume(m_token);
+#if PLATFORM(IOS_SIMULATOR)
+        return !sandbox_check(getpid(), 0, SANDBOX_FILTER_NONE);
+#else
+        return m_handle;
+#endif
+    }
+
+    bool invalidate()
+    {
+        return !sandbox_extension_release(std::exchange(m_handle, 0));
+    }
+
+    const char* getSerializedFormat(size_t& length) WARN_UNUSED_RETURN
+    {
+        length = strlen(m_token);
+        return m_token;
+    }
+
+private:
+    char* sandboxExtensionForType(const char* path, SandboxExtension::Type type)
+    {
+        switch (type) {
+        case SandboxExtension::Type::ReadOnly:
+            return sandbox_extension_issue_file(APP_SANDBOX_READ, path, 0);
+        case SandboxExtension::Type::ReadWrite:
+            return sandbox_extension_issue_file(APP_SANDBOX_READ_WRITE, path, 0);
+        case SandboxExtension::Type::Generic:
+            return sandbox_extension_issue_generic(path, 0);
+        }
+    }
+
+    SandboxExtensionImpl(const char* path, SandboxExtension::Type type)
+        : m_token { sandboxExtensionForType(path, type) }
+    {
+    }
+
+    char* m_token;
+    int64_t m_handle { 0 };
+};
+
 SandboxExtension::Handle::Handle()
-    : m_sandboxExtension(0)
 {
 }
-    
+
+SandboxExtension::Handle::Handle(Handle&&) = default;
+
 SandboxExtension::Handle::~Handle()
 {
-    if (m_sandboxExtension) {
-        WKSandboxExtensionInvalidate(m_sandboxExtension);
-        WKSandboxExtensionDestroy(m_sandboxExtension);
-    }
+    if (m_sandboxExtension)
+        m_sandboxExtension->invalidate();
 }
 
 void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
@@ -61,13 +124,12 @@ void SandboxExtension::Handle::encode(IPC::Encoder& encoder) const
     }
 
     size_t length = 0;
-    const char *serializedFormat = WKSandboxExtensionGetSerializedFormat(m_sandboxExtension, &length);
+    const char* serializedFormat = m_sandboxExtension->getSerializedFormat(length);
     ASSERT(serializedFormat);
 
     encoder << IPC::DataReference(reinterpret_cast<const uint8_t*>(serializedFormat), length);
 
     // Encoding will destroy the sandbox extension locally.
-    WKSandboxExtensionDestroy(m_sandboxExtension);
     m_sandboxExtension = 0;
 }
 
@@ -82,7 +144,7 @@ bool SandboxExtension::Handle::decode(IPC::Decoder& decoder, Handle& result)
     if (dataReference.isEmpty())
         return true;
 
-    result.m_sandboxExtension = WKSandboxExtensionCreateFromSerializedFormat(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
+    result.m_sandboxExtension = std::make_unique<SandboxExtensionImpl>(reinterpret_cast<const char*>(dataReference.data()), dataReference.size());
     return true;
 }
 
@@ -150,21 +212,6 @@ RefPtr<SandboxExtension> SandboxExtension::create(const Handle& handle)
         return nullptr;
 
     return adoptRef(new SandboxExtension(handle));
-}
-
-static WKSandboxExtensionType wkSandboxExtensionType(SandboxExtension::Type type)
-{
-    switch (type) {
-    case SandboxExtension::ReadOnly:
-        return WKSandboxExtensionTypeReadOnly;
-    case SandboxExtension::ReadWrite:
-        return WKSandboxExtensionTypeReadWrite;
-    case SandboxExtension::Generic:
-        return WKSandboxExtensionTypeGeneric;
-
-    }
-
-    CRASH();
 }
 
 static CString resolveSymlinksInPath(const CString& path)
@@ -245,7 +292,7 @@ bool SandboxExtension::createHandleWithoutResolvingPath(const String& path, Type
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = WKSandboxExtensionCreate(path.utf8().data(), wkSandboxExtensionType(type));
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(path.utf8().data(), type);
     if (!handle.m_sandboxExtension) {
         LOG_ERROR("Could not create a sandbox extension for '%s'", path.utf8().data());
         return false;
@@ -266,7 +313,7 @@ bool SandboxExtension::createHandleForReadWriteDirectory(const String& path, San
     if (resolvedPath.isNull())
         return false;
 
-    return SandboxExtension::createHandleWithoutResolvingPath(resolvedPath, SandboxExtension::ReadWrite, handle);
+    return SandboxExtension::createHandleWithoutResolvingPath(resolvedPath, SandboxExtension::Type::ReadWrite, handle);
 }
 
 String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type type, Handle& handle)
@@ -289,7 +336,7 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
     path.append(prefix.utf8().data(), prefix.length());
     path.append('\0');
     
-    handle.m_sandboxExtension = WKSandboxExtensionCreate(fileSystemRepresentation(path.data()).data(), wkSandboxExtensionType(type));
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(fileSystemRepresentation(path.data()).data(), type);
 
     if (!handle.m_sandboxExtension) {
         WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", path.data());
@@ -302,7 +349,7 @@ bool SandboxExtension::createHandleForGenericExtension(const String& extensionCl
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    handle.m_sandboxExtension = WKSandboxExtensionCreate(extensionClass.utf8().data(), wkSandboxExtensionType(Type::Generic));
+    handle.m_sandboxExtension = SandboxExtensionImpl::create(extensionClass.utf8().data(), Type::Generic);
     if (!handle.m_sandboxExtension) {
         WTFLogAlways("Could not create a '%s' sandbox extension", extensionClass.utf8().data());
         return false;
@@ -312,10 +359,9 @@ bool SandboxExtension::createHandleForGenericExtension(const String& extensionCl
 }
 
 SandboxExtension::SandboxExtension(const Handle& handle)
-    : m_sandboxExtension(handle.m_sandboxExtension)
+    : m_sandboxExtension(WTFMove(handle.m_sandboxExtension))
     , m_useCount(0)
 {
-    handle.m_sandboxExtension = 0;
 }
 
 SandboxExtension::~SandboxExtension()
@@ -324,7 +370,6 @@ SandboxExtension::~SandboxExtension()
         return;
 
     ASSERT(!m_useCount);
-    WKSandboxExtensionDestroy(m_sandboxExtension);
 }
 
 bool SandboxExtension::revoke()
@@ -335,7 +380,7 @@ bool SandboxExtension::revoke()
     if (--m_useCount)
         return true;
 
-    return WKSandboxExtensionInvalidate(m_sandboxExtension);
+    return m_sandboxExtension->invalidate();
 }
 
 bool SandboxExtension::consume()
@@ -345,18 +390,17 @@ bool SandboxExtension::consume()
     if (m_useCount++)
         return true;
 
-    return WKSandboxExtensionConsume(m_sandboxExtension);
+    return m_sandboxExtension->consume();
 }
 
 bool SandboxExtension::consumePermanently()
 {
     ASSERT(m_sandboxExtension);
 
-    bool result = WKSandboxExtensionConsume(m_sandboxExtension);
+    bool result = m_sandboxExtension->consume();
 
     // Destroy the extension without invalidating it.
-    WKSandboxExtensionDestroy(m_sandboxExtension);
-    m_sandboxExtension = 0;
+    m_sandboxExtension = nullptr;
 
     return result;
 }
@@ -366,11 +410,10 @@ bool SandboxExtension::consumePermanently(const Handle& handle)
     if (!handle.m_sandboxExtension)
         return false;
 
-    bool result = WKSandboxExtensionConsume(handle.m_sandboxExtension);
+    bool result = handle.m_sandboxExtension->consume();
     
     // Destroy the extension without invalidating it.
-    WKSandboxExtensionDestroy(handle.m_sandboxExtension);
-    handle.m_sandboxExtension = 0;
+    handle.m_sandboxExtension = nullptr;
 
     return result;
 }

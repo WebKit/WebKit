@@ -198,7 +198,7 @@ void StorageProcessProxy::getSandboxExtensionsForBlobFiles(uint64_t requestID, c
     extensions.allocate(paths.size());
     for (size_t i = 0; i < paths.size(); ++i) {
         // ReadWrite is required for creating hard links, which is something that might be done with these extensions.
-        SandboxExtension::createHandle(paths[i], SandboxExtension::ReadWrite, extensions[i]);
+        SandboxExtension::createHandle(paths[i], SandboxExtension::Type::ReadWrite, extensions[i]);
     }
 
     send(Messages::StorageProcess::DidGetSandboxExtensionsForBlobFiles(requestID, extensions), 0);

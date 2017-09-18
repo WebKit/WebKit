@@ -42,7 +42,7 @@ void BlobRegistryProxy::registerFileBlobURL(const WebCore::URL& url, Ref<BlobDat
 
     // File path can be empty when submitting a form file input without a file, see bug 111778.
     if (!file->path().isEmpty())
-        SandboxExtension::createHandle(file->path(), SandboxExtension::ReadOnly, extensionHandle);
+        SandboxExtension::createHandle(file->path(), SandboxExtension::Type::ReadOnly, extensionHandle);
 
     WebProcess::singleton().networkConnection().connection().send(Messages::NetworkConnectionToWebProcess::RegisterFileBlobURL(url, file->path(), extensionHandle, contentType), 0);
 }
