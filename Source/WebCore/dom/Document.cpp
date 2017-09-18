@@ -3840,14 +3840,8 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
                 view()->setFocus(false);
         }
 
-        if (is<HTMLInputElement>(oldFocusedElement.get())) {
-            // HTMLInputElement::didBlur just scrolls text fields back to the beginning.
-            // FIXME: This could be done asynchronusly.
-            // Updating style may dispatch events due to PostResolutionCallback
-            if (eventsMode == FocusRemovalEventsMode::Dispatch)
-                updateStyleIfNeeded();
+        if (is<HTMLInputElement>(oldFocusedElement.get()))
             downcast<HTMLInputElement>(*oldFocusedElement).didBlur();
-        }
     }
 
     if (newFocusedElement && newFocusedElement->isFocusable()) {
@@ -3921,10 +3915,7 @@ bool Document::setFocusedElement(Element* element, FocusDirection direction, Foc
         page()->chrome().focusedElementChanged(m_focusedElement.get());
 
 SetFocusedNodeDone:
-    // Updating style may dispatch events due to PostResolutionCallback
-    // FIXME: Why is synchronous style update needed here at all?
-    if (eventsMode == FocusRemovalEventsMode::Dispatch)
-        updateStyleIfNeeded();
+    updateStyleIfNeeded();
     return !focusChangeBlocked;
 }
 
