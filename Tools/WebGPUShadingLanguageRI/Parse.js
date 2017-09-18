@@ -816,6 +816,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let name;
         let typeParameters;
         let isCast;
+        let shaderType;
         let operatorToken = tryConsume("operator");
         if (operatorToken) {
             origin = operatorToken;
@@ -824,27 +825,32 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             name = "operator cast";
             isCast = true;
         } else {
+            shaderType = tryConsume("vertex", "fragment");
             returnType = parseType();
-            origin = returnType.origin;
+            if (shaderType) {
+                origin = shaderType;
+                shaderType = shaderType.text;
+            } else
+                origin = returnType.origin;
             name = parseFuncName();
             typeParameters = parseTypeParameters();
             isCast = false;
         }
         let parameters = parseParameters();
-        return new Func(origin, name, returnType, typeParameters, parameters, isCast);
+        return new Func(origin, name, returnType, typeParameters, parameters, isCast, shaderType);
     }
 
     function parseProtocolFuncDecl()
     {
         let func = parseFuncDecl();
-        return new ProtocolFuncDecl(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
+        return new ProtocolFuncDecl(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast, func.shaderType);
     }
     
     function parseFuncDef()
     {
         let func = parseFuncDecl();
         let body = parseBlock();
-        return new FuncDef(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, body, func.isCast);
+        return new FuncDef(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, body, func.isCast, func.shaderType);
     }
     
     function parseProtocolDecl()
@@ -891,7 +897,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     {
         let func = parseFuncDecl();
         consume(";");
-        return new NativeFunc(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast);
+        return new NativeFunc(func.origin, func.name, func.returnType, func.typeParameters, func.parameters, func.isCast, func.shaderType);
     }
     
     function parseNative()

@@ -1,3 +1,29 @@
+2017-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL needs to annotate vertex shaders and fragment shaders
+        https://bugs.webkit.org/show_bug.cgi?id=177066
+
+        Reviewed by Filip Pizlo.
+
+        Metal Shading Language requires annotating vertex and fragment shaders, so this information needs to be in
+        the source WSL file.
+
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        (Func.prototype.get shaderType):
+        * WebGPUShadingLanguageRI/FuncDef.js:
+        (FuncDef):
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseFuncDecl):
+        (parseProtocolFuncDecl):
+        (parseFuncDef):
+        (parseNativeFunc):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/Test.js:
+
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should know that constexpr parameters are not lvalues

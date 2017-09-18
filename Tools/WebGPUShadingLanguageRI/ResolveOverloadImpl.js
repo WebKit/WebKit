@@ -32,6 +32,10 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType
     let failures = [];
     let successes = [];
     for (let func of functions) {
+        if (func.shaderType) {
+            failures.push(new OverloadResolutionFailure(func, "Function is a " + func.shaderType + " shader, so it cannot be called from within an existing shader."))
+            continue;
+        }
         let overload = inferTypesForCall(func, typeArguments, argumentTypes, returnType);
         if (overload.failure)
             failures.push(overload.failure);

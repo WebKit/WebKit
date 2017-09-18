@@ -112,6 +112,7 @@ class FuncInstantiator {
                     func.returnType.visit(substitution).visit(instantiateImmediates),
                     func.parameters.map(parameter => parameter.visit(substitution).visit(instantiateImmediates)),
                     func.isCast,
+                    func.shaderType,
                     func.instantiateImplementation(substitution));
             }
         }

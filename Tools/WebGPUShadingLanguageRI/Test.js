@@ -3697,6 +3697,21 @@ function TEST_typedefArray()
     checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
+function TEST_shaderTypes()
+{
+    checkFail(
+        () => doPrep(`
+            vertex float4 bar()
+            {
+                return float4();
+            }
+            float4 foo() {
+                return bar();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

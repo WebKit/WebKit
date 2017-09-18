@@ -73,7 +73,8 @@ class Rewriter {
             node.returnType.visit(this),
             node.typeParameters.map(parameter => parameter.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)),
-            node.isCast);
+            node.isCast,
+            node.shaderType);
         result.protocolDecl = node.protocolDecl;
         result.possibleOverloads = node.possibleOverloads;
         return result;

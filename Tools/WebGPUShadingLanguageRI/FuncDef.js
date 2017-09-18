@@ -25,9 +25,9 @@
 "use strict";
 
 class FuncDef extends Func {
-    constructor(origin, name, returnType, typeParameters, parameters, body, isCast)
+    constructor(origin, name, returnType, typeParameters, parameters, body, isCast, shaderType)
     {
-        super(origin, name, returnType, typeParameters, parameters, isCast);
+        super(origin, name, returnType, typeParameters, parameters, isCast, shaderType);
         this._body = body;
         this.isRestricted = false;
     }
