@@ -1,3 +1,12 @@
+2017-09-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Move baseline for editing/mac/attributed-string/font-style-variant-effect.html to mac-sierra.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Renamed from LayoutTests/platform/mac-elcapitan/editing/mac/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/win/TestExpectations: Drive by fix for an accidental commit.
+
 2017-09-18  Per Arne Vollan  <pvollan@apple.com>
 
         Mark http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl as a failure on Windows.

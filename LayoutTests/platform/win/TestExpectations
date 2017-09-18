@@ -3984,6 +3984,4 @@ webkit.org/b/176998 storage/indexeddb/modern/idbcursor-continue-primary-key-1.ht
 
 webkit.org/b/177071 fast/events/beforeunload-dom-manipulation-crash.html [ Crash ]
 
-webkit.org/b/177071 fast/events/beforeunload-dom-manipulation-crash.html is failing. [ Crash ]
-
 webkit.org/b/177072 http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl [ Failure ]
