@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +26,13 @@
 
 #pragma once
 
-#include "CurlContext.h"
 #include "ResourceErrorBase.h"
 
 namespace WebCore {
 
 class ResourceError : public ResourceErrorBase {
     friend class ResourceErrorBase;
+
 public:
     ResourceError(Type type = Type::Null)
         : ResourceErrorBase(type)
@@ -43,17 +44,19 @@ public:
     {
     }
 
-    ResourceError(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, unsigned sslErrors, Type type = Type::General)
-        : ResourceErrorBase(domain, errorCode, failingURL, localizedDescription, type)
-        , m_sslErrors(sslErrors)
-    {
-    }
+    static ResourceError httpError(int errorCode, const URL& failingURL);
+    static ResourceError sslError(int errorCode, unsigned sslErrors, const URL& failingURL);
 
     unsigned sslErrors() const { return m_sslErrors; }
-    bool hasSSLConnectError() const { return errorCode() == CURLE_SSL_CONNECT_ERROR; }
+    void setSslErrors(unsigned sslErrors) { m_sslErrors = sslErrors; }
+    bool hasSSLConnectError() const;
+
+    static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
 private:
-    void doPlatformIsolatedCopy(const ResourceError&) { }
+    void doPlatformIsolatedCopy(const ResourceError&);
+
+    static const char* const curlErrorDomain;
 
     unsigned m_sslErrors { 0 };
 };

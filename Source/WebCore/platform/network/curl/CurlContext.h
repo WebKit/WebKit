@@ -104,8 +104,6 @@ public:
         const String url() const;
     };
 
-    static const char* const errorDomain;
-
     static CurlContext& singleton()
     {
         static CurlContext shared;
@@ -229,6 +227,7 @@ public:
     CURLcode errorCode() const { return m_errorCode; }
     void setErrorCode(CURLcode errorCode) { m_errorCode = errorCode; }
 
+    static const String errorDescription(CURLcode);
     const String errorDescription() const;
 
     void enableShareHandle();

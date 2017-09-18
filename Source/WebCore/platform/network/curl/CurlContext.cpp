@@ -77,8 +77,6 @@ static CString cookieJarPath()
 
 // CurlContext -------------------------------------------------------------------
 
-const char* const CurlContext::errorDomain = "CurlErrorDomain";
-
 CurlContext::CurlContext()
 : m_cookieJarFileName { cookieJarPath() }
 , m_cookieJar { std::make_unique<CookieJarCurlFileSystem>() }
@@ -265,9 +263,14 @@ CurlHandle::~CurlHandle()
     curl_easy_cleanup(m_handle);
 }
 
+const String CurlHandle::errorDescription(CURLcode errorCode)
+{
+    return String(curl_easy_strerror(errorCode));
+}
+
 const String CurlHandle::errorDescription() const
 {
-    return String(curl_easy_strerror(m_errorCode));
+    return errorDescription(m_errorCode);
 }
 
 void CurlHandle::initialize()

@@ -81,7 +81,7 @@ private:
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
 
     void didFinish(NetworkLoadMetrics);
-    void didFail(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, unsigned sslErrors);
+    void didFail(const ResourceError&);
 
     void handleDataURL();
 

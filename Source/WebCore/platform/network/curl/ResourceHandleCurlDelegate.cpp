@@ -284,19 +284,17 @@ void ResourceHandleCurlDelegate::notifyFinish()
 
 void ResourceHandleCurlDelegate::notifyFail()
 {
-    String domain = CurlContext::errorDomain;
-    int errorCode = m_curlHandle.errorCode();
-    URL failingURL = m_curlHandle.getEffectiveURL();
-    String errorDescription = m_curlHandle.errorDescription();
-    unsigned sslErrors = m_sslVerifier.sslErrors();
+    ResourceError resourceError = ResourceError::httpError(m_curlHandle.errorCode(), m_firstRequest.url());
+    if (m_sslVerifier.sslErrors())
+        resourceError.setSslErrors(m_sslVerifier.sslErrors());
 
     if (isMainThread())
-        didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
+        didFail(resourceError);
     else {
-        callOnMainThread([protectedThis = makeRef(*this), domain = domain.isolatedCopy(), errorCode, failingURL = failingURL.isolatedCopy(), errorDescription = errorDescription.isolatedCopy(), sslErrors] {
+        callOnMainThread([protectedThis = makeRef(*this), error = resourceError.isolatedCopy()] {
             if (!protectedThis->m_handle)
                 return;
-            protectedThis->didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
+            protectedThis->didFail(error);
         });
     }
 }
@@ -525,14 +523,14 @@ void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics
     }
 }
 
-void ResourceHandleCurlDelegate::didFail(const String& domain, int errorCode, const URL& failingURL, const String& localizedDescription, unsigned sslErrors)
+void ResourceHandleCurlDelegate::didFail(const ResourceError& resourceError)
 {
     if (!m_handle)
         return;
 
     if (m_handle->client()) {
         CurlCacheManager::getInstance().didFail(*m_handle);
-        m_handle->client()->didFail(m_handle, ResourceError(domain, errorCode, failingURL, localizedDescription, sslErrors));
+        m_handle->client()->didFail(m_handle, resourceError);
     }
 }
 
