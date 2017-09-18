@@ -39,7 +39,6 @@
 #include "MultipartHandle.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
-#include "SSLHandle.h"
 #include "TextEncoding.h"
 #include "ThreadSafeDataBuffer.h"
 #include "URL.h"
@@ -77,8 +76,6 @@ ResourceHandleCurlDelegate::ResourceHandleCurlDelegate(ResourceHandle* handle)
             m_addedCacheValidationHeaders = true;
         }
     }
-
-    m_sslClientCertificate = getSSLClientCertificate(url.host());
 
     setupAuthentication();
 }
@@ -214,6 +211,8 @@ void ResourceHandleCurlDelegate::setupRequest()
     m_curlHandle.enableStdErrIfUsed();
 #endif
 
+    auto& sslHandle = CurlContext::singleton().sslHandle();
+
     m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
     m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
     m_curlHandle.setPrivateData(this);
@@ -226,18 +225,19 @@ void ResourceHandleCurlDelegate::setupRequest()
     m_curlHandle.enableTimeout();
     m_curlHandle.enableAllowedProtocols();
 
-    if (m_sslClientCertificate) {
-        m_curlHandle.setSslCert((*m_sslClientCertificate).first.utf8().data());
+    auto sslClientCertificate = sslHandle.getSSLClientCertificate(url.host());
+    if (sslClientCertificate) {
+        m_curlHandle.setSslCert(sslClientCertificate->first.utf8().data());
         m_curlHandle.setSslCertType("P12");
-        m_curlHandle.setSslKeyPassword((*m_sslClientCertificate).second.utf8().data());
+        m_curlHandle.setSslKeyPassword(sslClientCertificate->second.utf8().data());
     }
 
-    if (CurlContext::singleton().shouldIgnoreSSLErrors())
+    if (sslHandle.shouldIgnoreSSLErrors())
         m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
     else
-        setSSLVerifyOptions(m_curlHandle);
+        m_curlHandle.setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
 
-    m_curlHandle.enableCAInfoIfExists();
+    m_curlHandle.setCACertPath(sslHandle.getCACertPath());
 
     m_curlHandle.enableAcceptEncoding();
     m_curlHandle.setUrl(urlString);
@@ -288,7 +288,7 @@ void ResourceHandleCurlDelegate::notifyFail()
     int errorCode = m_curlHandle.errorCode();
     URL failingURL = m_curlHandle.getEffectiveURL();
     String errorDescription = m_curlHandle.errorDescription();
-    unsigned sslErrors = m_curlHandle.getSslErrors();
+    unsigned sslErrors = m_sslVerifier.sslErrors();
 
     if (isMainThread())
         didFail(domain, errorCode, failingURL, errorDescription, sslErrors);
@@ -712,6 +712,15 @@ NetworkLoadMetrics ResourceHandleCurlDelegate::getNetworkLoadMetrics()
     return networkLoadMetrics;
 }
 
+CURLcode ResourceHandleCurlDelegate::willSetupSslCtx(void* sslCtx)
+{
+    m_sslVerifier.setCurlHandle(&m_curlHandle);
+    m_sslVerifier.setHostName(m_firstRequest.url().host());
+    m_sslVerifier.setSslCtx(sslCtx);
+
+    return CURLE_OK;
+}
+
 /*
 * This is being called for each HTTP header in the response. This includes '\r\n'
 * for the last line of the header.
@@ -854,6 +863,11 @@ size_t ResourceHandleCurlDelegate::willSendData(char* buffer, size_t blockSize, 
     }
 
     return m_sendBytes;
+}
+
+CURLcode ResourceHandleCurlDelegate::willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData)
+{
+    return static_cast<ResourceHandleCurlDelegate*>(userData)->willSetupSslCtx(sslCtx);
 }
 
 size_t ResourceHandleCurlDelegate::didReceiveHeaderCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data)

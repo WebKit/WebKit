@@ -31,10 +31,10 @@
 #include "Credential.h"
 #include "CurlContext.h"
 #include "CurlJobManager.h"
+#include "CurlSSLVerifier.h"
 #include "FormDataStreamCurl.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
-#include "SSLHandle.h"
 #include <wtf/Condition.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -93,10 +93,12 @@ private:
     void applyAuthentication();
     NetworkLoadMetrics getNetworkLoadMetrics();
 
+    CURLcode willSetupSslCtx(void*);
     size_t didReceiveHeader(String&&);
     size_t didReceiveData(ThreadSafeDataBuffer);
     size_t willSendData(char*, size_t blockSize, size_t numberOfBlocks);
 
+    static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
     static size_t didReceiveHeaderCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
     static size_t didReceiveDataCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
     static size_t willSendDataCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
@@ -114,11 +116,11 @@ private:
     String m_user;
     String m_pass;
     Credential m_initialCredential;
-    std::optional<ClientCertificate> m_sslClientCertificate;
     bool m_defersLoading;
     bool m_addedCacheValidationHeaders { false };
     Vector<char> m_postBytes;
     CurlHandle m_curlHandle;
+    CurlSSLVerifier m_sslVerifier;
     // Used by both threads.
     Condition m_workerThreadConditionVariable;
     Lock m_workerThreadMutex;

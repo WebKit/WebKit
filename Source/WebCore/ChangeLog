@@ -1,3 +1,56 @@
+2017-09-18  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Create classes dedicated to handle SSL related tasks
+        and separate verifier and certificate management.
+        https://bugs.webkit.org/show_bug.cgi?id=176910
+
+        Reviewed by Alex Christensen.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlContext::CurlContext):
+        (WebCore::CurlHandle::setCACertPath):
+        (WebCore::certificatePath): Deleted.
+        (WebCore::CurlHandle::enableCAInfoIfExists): Deleted.
+        (WebCore::CurlHandle::setSslErrors): Deleted.
+        (WebCore::CurlHandle::getSslErrors): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlContext::sslHandle):
+        (WebCore::CurlContext::getCertificatePath const): Deleted.
+        (WebCore::CurlContext::shouldIgnoreSSLErrors const): Deleted.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::setupRequest):
+        * platform/network/curl/CurlSSLHandle.cpp: Added.
+        (WebCore::CurlSSLHandle::CurlSSLHandle):
+        (WebCore::CurlSSLHandle::getCACertPathEnv):
+        (WebCore::CurlSSLHandle::setHostAllowsAnyHTTPSCertificate):
+        (WebCore::CurlSSLHandle::isAllowedHTTPSCertificateHost):
+        (WebCore::CurlSSLHandle::canIgnoredHTTPSCertificate):
+        (WebCore::CurlSSLHandle::setClientCertificateInfo):
+        (WebCore::CurlSSLHandle::getSSLClientCertificate):
+        * platform/network/curl/CurlSSLHandle.h: Renamed from Source/WebCore/platform/network/curl/SSLHandle.h.
+        (WebCore::CurlSSLHandle::shouldIgnoreSSLErrors const):
+        (WebCore::CurlSSLHandle::getCACertPath const):
+        * platform/network/curl/CurlSSLVerifier.cpp: Renamed from Source/WebCore/platform/network/curl/SSLHandle.cpp.
+        (WebCore::CurlSSLVerifier::setSslCtx):
+        (WebCore::CurlSSLVerifier::certVerifyCallback):
+        (WebCore::CurlSSLVerifier::getPemDataFromCtx):
+        (WebCore::CurlSSLVerifier::convertToSSLCertificateFlags):
+        * platform/network/curl/CurlSSLVerifier.h: Added.
+        (WebCore::CurlSSLVerifier::setCurlHandle):
+        (WebCore::CurlSSLVerifier::setHostName):
+        (WebCore::CurlSSLVerifier::sslErrors):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::setHostAllowsAnyHTTPSCertificate):
+        (WebCore::ResourceHandle::setClientCertificateInfo):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::ResourceHandleCurlDelegate):
+        (WebCore::ResourceHandleCurlDelegate::setupRequest):
+        (WebCore::ResourceHandleCurlDelegate::notifyFail):
+        (WebCore::ResourceHandleCurlDelegate::willSetupSslCtx):
+        (WebCore::ResourceHandleCurlDelegate::willSetupSslCtxCallback):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2017-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         REGRESSION(r221974): [Harfbuzz] Test fast/text/international/hebrew-selection.html is failing since r221974

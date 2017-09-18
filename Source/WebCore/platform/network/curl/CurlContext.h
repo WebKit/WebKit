@@ -27,6 +27,7 @@
 #pragma once
 
 #include "CookieJarCurl.h"
+#include "CurlSSLHandle.h"
 #include "URL.h"
 
 #include <wtf/Lock.h>
@@ -120,14 +121,13 @@ public:
     void setCookieJarFileName(const char* cookieJarFileName) { m_cookieJarFileName = CString(cookieJarFileName); }
     CookieJarCurl& cookieJar() { return *m_cookieJar; }
 
-    // Certificate
-    const char* getCertificatePath() const { return m_certificatePath.data(); }
-    bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
-
     // Proxy
     const ProxyInfo& proxyInfo() const { return m_proxy; }
     void setProxyInfo(const ProxyInfo& info) { m_proxy = info;  }
     void setProxyInfo(const String& host = emptyString(), unsigned long port = 0, CurlProxyType = CurlProxyType::HTTP, const String& username = emptyString(), const String& password = emptyString());
+
+    // SSL
+    CurlSSLHandle& sslHandle() { return m_sslHandle; }
 
 #ifndef NDEBUG
     FILE* getLogFile() const { return m_logFile; }
@@ -137,10 +137,9 @@ public:
 private:
     ProxyInfo m_proxy;
     CString m_cookieJarFileName;
-    CString m_certificatePath;
     CurlShareHandle m_shareHandle;
     std::unique_ptr<CookieJarCurl> m_cookieJar;
-    bool m_ignoreSSLErrors { false };
+    CurlSSLHandle m_sslHandle;
 
     CurlContext();
     void initCookieSession();
@@ -263,14 +262,12 @@ public:
     void enableHttpAuthentication(long);
     void setHttpAuthUserPass(const String&, const String&);
 
-    void enableCAInfoIfExists();
+    void setCACertPath(const char*);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);
     void setSslCert(const char*);
     void setSslCertType(const char*);
     void setSslKeyPassword(const char*);
-    void setSslErrors(unsigned);
-    unsigned getSslErrors();
 
     void enableCookieJarIfExists();
     void setCookieList(const char*);
@@ -309,7 +306,6 @@ private:
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
     CURLcode m_errorCode;
-    unsigned m_sslErrors { 0 };
 
     char* m_url { nullptr };
     void* m_privateData { nullptr };

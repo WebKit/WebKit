@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 University of Szeged
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +24,49 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SSLHandle_h
-#define SSLHandle_h
+#pragma once
 
-#include "ResourceHandle.h"
+#if OS(WINDOWS)
+#include <winsock2.h>
+#endif
 
-#include <wtf/text/WTFString.h>
+#include <openssl/ssl.h>
+#include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
-class CurlHandle;
+class CurlSSLHandle {
+    WTF_MAKE_NONCOPYABLE(CurlSSLHandle);
+    friend NeverDestroyed<CurlSSLHandle>;
 
-typedef enum {
-    SSL_CERTIFICATE_UNKNOWN_CA = (1 << 0), // The signing certificate authority is not known.
-    SSL_CERTIFICATE_BAD_IDENTITY = (1 << 1), // The certificate does not match the expected identity of the site that it was retrieved from.
-    SSL_CERTIFICATE_NOT_ACTIVATED = (1 << 2), // The certificate's activation time is still in the future
-    SSL_CERTIFICATE_EXPIRED = (1 << 3), // The certificate has expired
-    SSL_CERTIFICATE_REVOKED = (1 << 4), // The certificate has been revoked
-    SSL_CERTIFICATE_INSECURE = (1 << 5), // The certificate's algorithm is considered insecure.
-    SSL_CERTIFICATE_GENERIC_ERROR = (1 << 6) // Some other error occurred validating the certificate
-} SSLCertificateFlags;
+public:
+    CurlSSLHandle();
 
-typedef std::pair<String, String> ClientCertificate;
+    using ClientCertificate = std::pair<String, String>;
 
-void addAllowedClientCertificate(const String&, const String&, const String&);
-void allowsAnyHTTPSCertificateHosts(const String&);
-bool sslIgnoreHTTPSCertificate(const String&, const String&);
-std::optional<ClientCertificate> getSSLClientCertificate(const String&);
-void setSSLVerifyOptions(CurlHandle&);
+    bool shouldIgnoreSSLErrors() const { return m_ignoreSSLErrors; }
+    const char* getCACertPath() const { return m_caCertPath.data(); }
+
+    void setHostAllowsAnyHTTPSCertificate(const String&);
+    bool isAllowedHTTPSCertificateHost(const String&);
+    bool canIgnoredHTTPSCertificate(const String&, const ListHashSet<String>&);
+
+    void setClientCertificateInfo(const String&, const String&, const String&);
+    std::optional<ClientCertificate> getSSLClientCertificate(const String&);
+
+private:
+    CString getCACertPathEnv();
+
+    bool m_ignoreSSLErrors { false };
+    CString m_caCertPath;
+
+    Lock m_mutex;
+    HashMap<String, ListHashSet<String>, ASCIICaseInsensitiveHash> m_allowedHosts;
+    HashMap<String, ClientCertificate, ASCIICaseInsensitiveHash> m_allowedClientHosts;
+};
+
 
 }
-
-#endif

@@ -39,34 +39,9 @@
 #include <shlwapi.h>
 #endif
 
-#if USE(CF)
-#include <wtf/RetainPtr.h>
-#endif
-
 using namespace WebCore;
 
 namespace WebCore {
-
-static CString certificatePath()
-{
-    char* envPath = getenv("CURL_CA_BUNDLE_PATH");
-    if (envPath)
-        return envPath;
-
-#if USE(CF)
-    CFBundleRef webKitBundleRef = webKitBundle();
-    if (webKitBundleRef) {
-        RetainPtr<CFURLRef> certURLRef = adoptCF(CFBundleCopyResourceURL(webKitBundleRef, CFSTR("cacert"), CFSTR("pem"), CFSTR("certificates")));
-        if (certURLRef) {
-            char path[MAX_PATH];
-            CFURLGetFileSystemRepresentation(certURLRef.get(), false, reinterpret_cast<UInt8*>(path), MAX_PATH);
-            return path;
-        }
-    }
-#endif
-
-    return CString();
-}
 
 static CString cookieJarPath()
 {
@@ -106,12 +81,9 @@ const char* const CurlContext::errorDomain = "CurlErrorDomain";
 
 CurlContext::CurlContext()
 : m_cookieJarFileName { cookieJarPath() }
-, m_certificatePath { certificatePath() }
 , m_cookieJar { std::make_unique<CookieJarCurlFileSystem>() }
 {
     initCookieSession();
-
-    m_ignoreSSLErrors = getenv("WEBKIT_IGNORE_SSL_ERRORS");
 
 #ifndef NDEBUG
     m_verbose = getenv("DEBUG_CURL");
@@ -469,11 +441,10 @@ void CurlHandle::setHttpAuthUserPass(const String& user, const String& password)
     curl_easy_setopt(m_handle, CURLOPT_USERPWD, userpass.utf8().data());
 }
 
-void CurlHandle::enableCAInfoIfExists()
+void CurlHandle::setCACertPath(const char* path)
 {
-    const char* certPath = CurlContext::singleton().getCertificatePath();
-    if (certPath)
-        curl_easy_setopt(m_handle, CURLOPT_CAINFO, certPath);
+    if (path)
+        curl_easy_setopt(m_handle, CURLOPT_CAINFO, path);
 }
 
 void CurlHandle::setSslVerifyPeer(VerifyPeer verifyPeer)
@@ -499,16 +470,6 @@ void CurlHandle::setSslCertType(const char* type)
 void CurlHandle::setSslKeyPassword(const char* password)
 {
     curl_easy_setopt(m_handle, CURLOPT_KEYPASSWD, password);
-}
-
-void CurlHandle::setSslErrors(unsigned sslErrors)
-{
-    m_sslErrors = sslErrors;
-}
-
-unsigned CurlHandle::getSslErrors()
-{
-    return m_sslErrors;
 }
 
 void CurlHandle::enableCookieJarIfExists()

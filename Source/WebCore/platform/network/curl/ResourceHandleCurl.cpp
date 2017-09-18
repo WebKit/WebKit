@@ -37,12 +37,12 @@
 #include "CurlCacheManager.h"
 #include "CurlContext.h"
 #include "CurlJobManager.h"
+#include "CurlSSLHandle.h"
 #include "FileSystem.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "NetworkingContext.h"
 #include "ResourceHandleInternal.h"
-#include "SSLHandle.h"
 #include "SynchronousLoaderClient.h"
 #include <wtf/text/Base64.h>
 
@@ -87,7 +87,7 @@ void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     ASSERT(isMainThread());
 
-    allowsAnyHTTPSCertificateHosts(host);
+    CurlContext::singleton().sslHandle().setHostAllowsAnyHTTPSCertificate(host);
 }
 
 void ResourceHandle::setClientCertificateInfo(const String& host, const String& certificate, const String& key)
@@ -95,7 +95,7 @@ void ResourceHandle::setClientCertificateInfo(const String& host, const String& 
     ASSERT(isMainThread());
 
     if (fileExists(certificate))
-        addAllowedClientCertificate(host, certificate, key);
+        CurlContext::singleton().sslHandle().setClientCertificateInfo(host, certificate, key);
     else
         LOG(Network, "Invalid client certificate file: %s!\n", certificate.latin1().data());
 }

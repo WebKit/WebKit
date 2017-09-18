@@ -10,6 +10,8 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CurlContext.cpp
     platform/network/curl/CurlDownload.cpp
     platform/network/curl/CurlJobManager.cpp
+    platform/network/curl/CurlSSLHandle.cpp
+    platform/network/curl/CurlSSLVerifier.cpp
     platform/network/curl/DNSCurl.cpp
     platform/network/curl/FormDataStreamCurl.cpp
     platform/network/curl/MultipartHandle.cpp
@@ -17,7 +19,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceHandleCurlDelegate.cpp
     platform/network/curl/ResourceResponseCurl.cpp
-    platform/network/curl/SSLHandle.cpp
     platform/network/curl/SocketStreamHandleImplCurl.cpp
     platform/network/curl/SynchronousLoaderClientCurl.cpp
 )

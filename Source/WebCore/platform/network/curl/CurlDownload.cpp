@@ -31,6 +31,7 @@
 #if USE(CURL)
 
 #include "CurlContext.h"
+#include "CurlSSLHandle.h"
 #include "HTTPHeaderNames.h"
 #include "HTTPParsers.h"
 #include "ResourceRequest.h"
@@ -119,7 +120,8 @@ void CurlDownload::setupRequest()
     m_curlHandle.setWriteCallbackFunction(writeCallback, this);
     m_curlHandle.enableFollowLocation();
     m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
-    m_curlHandle.enableCAInfoIfExists();
+    m_curlHandle.setCACertPath(CurlContext::singleton().sslHandle().getCACertPath());
+
 }
 
 void CurlDownload::notifyFinish()
