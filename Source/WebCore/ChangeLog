@@ -1,3 +1,18 @@
+2017-09-17  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        REGRESSION(r221974): [Harfbuzz] Test fast/text/international/hebrew-selection.html is failing since r221974
+        https://bugs.webkit.org/show_bug.cgi?id=177036
+
+        Reviewed by Michael Catanzaro.
+
+        In r221974 I rewrote the characterIndexForXPosition implementation without taking into account that there can be
+        multiple glyphs for the same character, so we can't simply do index++ and index-- to get the next and previous
+        character index.
+
+        * platform/graphics/harfbuzz/HarfBuzzShaper.cpp:
+        (WebCore::HarfBuzzShaper::HarfBuzzRun::characterIndexForXPosition): Always get the character index from
+        m_glyphToCharacterIndexes array.
+
 2017-09-18  Jer Noble  <jer.noble@apple.com>
 
         Virtualize ImageDecoder
