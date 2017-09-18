@@ -404,26 +404,18 @@ WI.BoxModelDetailsSectionRow = class BoxModelDetailsSectionRow extends WI.Detail
             userInput = userValuePx + "px";
         }
 
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function toggleInlineStyleProperty(property, value)
-            {
+        WI.RemoteObject.resolveNode(this._nodeStyles.node).then((object) => {
+            function inspectedPage_node_toggleInlineStyleProperty(property, value) {
                 this.style.setProperty(property, value, "important");
             }
 
-            function didToggle()
-            {
+            let didToggle = () => {
                 this._nodeStyles.refresh();
-            }
+            };
 
-            object.callFunction(toggleInlineStyleProperty, [styleProperty, userInput], false, didToggle.bind(this));
+            object.callFunction(inspectedPage_node_toggleInlineStyleProperty, [styleProperty, userInput], false, didToggle);
             object.release();
-        }
-
-        WI.RemoteObject.resolveNode(this._nodeStyles.node, "", resolvedNode.bind(this));
+        });
     }
 
     _editingCommitted(element, userInput, previousContent, context)

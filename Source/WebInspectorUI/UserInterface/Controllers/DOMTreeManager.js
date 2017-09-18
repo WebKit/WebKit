@@ -371,11 +371,9 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
 
             // Re-resolve the node in the console's object group when adding to the console.
             let domNode = this.nodeForId(nodeId);
-            WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup, function(remoteObject) {
-                if (!remoteObject)
-                    return;
-                let specialLogStyles = true;
-                let shouldRevealConsole = false;
+            WI.RemoteObject.resolveNode(domNode, WI.RuntimeManager.ConsoleObjectGroup).then((remoteObject) => {
+                const specialLogStyles = true;
+                const shouldRevealConsole = false;
                 WI.consoleLogViewController.appendImmediateExecutionWithResult(WI.UIString("Selected Element"), remoteObject, specialLogStyles, shouldRevealConsole);
             });
         }
@@ -700,16 +698,8 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
 
     getNodeContentFlowInfo(domNode, resultReadyCallback)
     {
-        DOMAgent.resolveNode(domNode.id, domNodeResolved.bind(this));
-
-        function domNodeResolved(error, remoteObject)
-        {
-            if (error) {
-                resultReadyCallback(error);
-                return;
-            }
-
-            var evalParameters = {
+        WI.RemoteObject.resolveNode(domNode).then((remoteObject) => {
+            let evalParameters = {
                 objectId: remoteObject.objectId,
                 functionDeclaration: appendWebInspectorSourceURL(inspectedPage_node_getFlowInfo.toString()),
                 doNotPauseOnExceptionsAndMuteConsole: true,
@@ -717,7 +707,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
                 generatePreview: false
             };
             RuntimeAgent.callFunctionOn.invoke(evalParameters, regionNodesAvailable.bind(this));
-        }
+        }).catch(resultReadyCallback);
 
         function regionNodesAvailable(error, remoteObject, wasThrown)
         {

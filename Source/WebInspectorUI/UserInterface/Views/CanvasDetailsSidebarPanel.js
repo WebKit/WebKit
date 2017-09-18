@@ -198,10 +198,7 @@ WI.CanvasDetailsSidebarPanel = class CanvasDetailsSidebarPanel extends WI.Detail
                 // attributes, we need to invoke the getter for each to get the actual value.
                 //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-width
                 //  - https://html.spec.whatwg.org/multipage/canvas.html#attr-canvas-height
-                WI.RemoteObject.resolveNode(node, "", (remoteObject) => {
-                    if (!remoteObject)
-                        return;
-
+                WI.RemoteObject.resolveNode(node).then((remoteObject) => {
                     function setRowValueToPropertyValue(row, property) {
                         remoteObject.getProperty(property, (error, result, wasThrown) => {
                             if (!error && result.type === "number")

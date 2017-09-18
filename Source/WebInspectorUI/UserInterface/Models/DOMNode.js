@@ -441,40 +441,26 @@ WI.DOMNode = class DOMNode extends WI.Object
         if (this.nodeType() !== Node.ELEMENT_NODE)
             return;
 
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function inspectedPage_node_toggleClass(className, flag)
-            {
+        WI.RemoteObject.resolveNode(this).then((object) => {
+            function inspectedPage_node_toggleClass(className, flag) {
                 this.classList.toggle(className, flag);
             }
 
             object.callFunction(inspectedPage_node_toggleClass, [className, flag]);
             object.release();
-        }
-
-        WI.RemoteObject.resolveNode(this, "", resolvedNode);
+        });
     }
 
     scrollIntoView()
     {
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function inspectedPage_node_scrollIntoView()
-            {
+        WI.RemoteObject.resolveNode(this).then((object) => {
+            function inspectedPage_node_scrollIntoView() {
                 this.scrollIntoViewIfNeeded(true);
             }
 
             object.callFunction(inspectedPage_node_scrollIntoView);
             object.release();
-        }
-
-        WI.RemoteObject.resolveNode(this, "", resolvedNode);
+        });
     }
 
     getChildNodes(callback)

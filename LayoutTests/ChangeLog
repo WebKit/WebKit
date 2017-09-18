@@ -1,3 +1,14 @@
+2017-09-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: RemoteObject.resolveNode should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=177042
+
+        Reviewed by Joseph Pecoraro.
+
+        Updated tests to use promises instead of callbacks.
+
+        * inspector/dom/highlightNode.html:
+
 2017-09-18  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: make Canvas recording tests more human readable

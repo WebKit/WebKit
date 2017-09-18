@@ -505,30 +505,23 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
         if (effectiveNode.nodeType() !== Node.ELEMENT_NODE)
             return;
 
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function injectStyleAndToggleClass()
-            {
-                var hideElementStyleSheetIdOrClassName = "__WebInspectorHideElement__";
-                var styleElement = document.getElementById(hideElementStyleSheetIdOrClassName);
-                if (!styleElement) {
-                    styleElement = document.createElement("style");
-                    styleElement.id = hideElementStyleSheetIdOrClassName;
-                    styleElement.textContent = "." + hideElementStyleSheetIdOrClassName + " { visibility: hidden !important; }";
-                    document.head.appendChild(styleElement);
-                }
-
-                this.classList.toggle(hideElementStyleSheetIdOrClassName);
+        function inspectedPage_node_injectStyleAndToggleClass() {
+            let hideElementStyleSheetIdOrClassName = "__WebInspectorHideElement__";
+            let styleElement = document.getElementById(hideElementStyleSheetIdOrClassName);
+            if (!styleElement) {
+                styleElement = document.createElement("style");
+                styleElement.id = hideElementStyleSheetIdOrClassName;
+                styleElement.textContent = "." + hideElementStyleSheetIdOrClassName + " { visibility: hidden !important; }";
+                document.head.appendChild(styleElement);
             }
 
-            object.callFunction(injectStyleAndToggleClass, undefined, false, function(){});
-            object.release();
+            this.classList.toggle(hideElementStyleSheetIdOrClassName);
         }
 
-        WI.RemoteObject.resolveNode(effectiveNode, "", resolvedNode);
+        WI.RemoteObject.resolveNode(effectiveNode).then((object) => {
+            object.callFunction(inspectedPage_node_injectStyleAndToggleClass, undefined, false, () => { });
+            object.release();
+        });
     }
 };
 

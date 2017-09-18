@@ -82,12 +82,13 @@ function test()
         name: "MainFrameNodeViaObjectId",
         description: "Should highlight a node in the main frame using object id.",
         test(resolve, reject) {
-            WI.RemoteObject.resolveNode(mainFrameTargetNode, "test", (remoteObject) => {
+            WI.RemoteObject.resolveNode(mainFrameTargetNode, "test").then((remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
                 });
-            });
+            })
+            .catch(reject);
         }
     });
 
@@ -95,12 +96,13 @@ function test()
         name: "ChildFrameNodeViaObjectId",
         description: "Should highlight a node in the child frame using object id.",
         test(resolve, reject) {
-            WI.RemoteObject.resolveNode(childFrameTargetNode, "test", (remoteObject) => {
+            WI.RemoteObject.resolveNode(childFrameTargetNode, "test").then((remoteObject) => {
                 DOMAgent.highlightNode(highlightConfig, undefined, remoteObject.objectId, (error) => {
                     InspectorTest.assert(!error, "Should not have an error.");
                     dumpHighlight(resolve);
                 });
-            });
+            })
+            .catch(reject);
         }
     });
 

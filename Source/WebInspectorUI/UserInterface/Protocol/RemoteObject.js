@@ -125,17 +125,10 @@ WI.RemoteObject = class RemoteObject
         return {value: valueOrObject};
     }
 
-    static resolveNode(node, objectGroup, callback)
+    static resolveNode(node, objectGroup)
     {
-        DOMAgent.resolveNode(node.id, objectGroup, function(error, object) {
-            if (!callback)
-                return;
-
-            if (error || !object)
-                callback(null);
-            else
-                callback(WI.RemoteObject.fromPayload(object, WI.mainTarget));
-        });
+        return DOMAgent.resolveNode(node.id, objectGroup)
+            .then(({object}) => WI.RemoteObject.fromPayload(object, WI.mainTarget));
     }
 
     static resolveWebSocket(webSocketResource, objectGroup, callback)

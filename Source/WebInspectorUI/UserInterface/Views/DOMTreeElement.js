@@ -309,20 +309,14 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
             }
         }
 
-        function resolvedNode(object)
-        {
-            if (!object)
-                return;
-
-            function dimensions()
-            {
+        WI.RemoteObject.resolveNode(node).then((object) => {
+            function inspectedPage_node_dimensions() {
                 return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
             }
 
-            object.callFunction(dimensions, undefined, false, setTooltip.bind(this));
+            object.callFunction(inspectedPage_node_dimensions, undefined, false, setTooltip.bind(this));
             object.release();
-        }
-        WI.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));
+        });
     }
 
     updateSelectionArea()

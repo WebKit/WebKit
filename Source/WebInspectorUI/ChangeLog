@@ -1,3 +1,60 @@
+2017-09-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: RemoteObject.resolveNode should return a Promise
+        https://bugs.webkit.org/show_bug.cgi?id=177042
+
+        Reviewed by Joseph Pecoraro.
+
+        Update RemoteObject.resolveNode to return a promise instead of taking a
+        callback. If the promise is fulfilled, `remoteObject` will be non-null.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager.prototype.inspectNodeObject.nodeAvailable):
+        (WI.DOMTreeManager.prototype.inspectNodeObject):
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo.domNodeResolved): Deleted.
+
+        * UserInterface/Models/DOMNode.js:
+        (WI.DOMNode.prototype.toggleClass.WI.RemoteObject.resolveNode.then):
+        (WI.DOMNode.prototype.toggleClass):
+        (WI.DOMNode.prototype.scrollIntoView.WI.RemoteObject.resolveNode.then):
+        (WI.DOMNode.prototype.scrollIntoView):
+        (WI.DOMNode.prototype.toggleClass.resolvedNode.inspectedPage_node_toggleClass): Deleted.
+        (WI.DOMNode.prototype.toggleClass.resolvedNode): Deleted.
+        (WI.DOMNode.prototype.scrollIntoView.resolvedNode.inspectedPage_node_scrollIntoView): Deleted.
+        (WI.DOMNode.prototype.scrollIntoView.resolvedNode): Deleted.
+
+        * UserInterface/Protocol/RemoteObject.js:
+        (WI.RemoteObject.resolveNode):
+
+        * UserInterface/Views/BoxModelDetailsSectionRow.js:
+        (WI.BoxModelDetailsSectionRow.prototype._applyUserInput.WI.RemoteObject.resolveNode.then):
+        (WI.BoxModelDetailsSectionRow.prototype._applyUserInput):
+        (WI.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode.toggleInlineStyleProperty): Deleted.
+        (WI.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode.didToggle): Deleted.
+        (WI.BoxModelDetailsSectionRow.prototype._applyUserInput.resolvedNode): Deleted.
+        * UserInterface/Views/CanvasDetailsSidebarPanel.js:
+
+        * UserInterface/Views/ContextMenuUtilities.js:
+        (WI.appendContextMenuItemsForDOMNode):
+
+        * UserInterface/Views/DOMNodeDetailsSidebarPanel.js:
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodeResolved.inspectedPage_node_collectPrototypes): Deleted.
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodeResolved): Deleted.
+        (WI.DOMNodeDetailsSidebarPanel.prototype._refreshProperties.nodePrototypesReady): Deleted.
+
+        * UserInterface/Views/DOMTreeElement.js:
+        (WI.DOMTreeElement.prototype._createTooltipForNode.WI.RemoteObject.resolveNode.then):
+        (WI.DOMTreeElement.prototype._createTooltipForNode):
+        (WI.DOMTreeElement.prototype._createTooltipForNode.resolvedNode.dimensions): Deleted.
+        (WI.DOMTreeElement.prototype._createTooltipForNode.resolvedNode): Deleted.
+
+        * UserInterface/Views/DOMTreeOutline.js:
+        (WI.DOMTreeOutline.prototype._hideElement.injectStyleAndToggleClass):
+        (WI.DOMTreeOutline.prototype._hideElement):
+        (WI.DOMTreeOutline):
+        (WI.DOMTreeOutline.prototype._hideElement.resolvedNode.injectStyleAndToggleClass): Deleted.
+        (WI.DOMTreeOutline.prototype._hideElement.resolvedNode): Deleted.
+
 2017-09-18  Brian Burg  <bburg@apple.com>
 
         Web Inspector: introduce an AppController class and shared instance of it
