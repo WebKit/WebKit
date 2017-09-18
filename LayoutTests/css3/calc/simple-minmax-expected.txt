@@ -1,18 +1,54 @@
 All boxes below should be 100px * 100px and green.
 
-min(100px) => FAIL: expected width of 100, but was 256
-min( 100px ) => FAIL: expected width of 100, but was 256
-min((((100px)))) => FAIL: expected width of 100, but was 256
-min(150px,100px) => FAIL: expected width of 100, but was 256
-min(150px,100px,200px) => FAIL: expected width of 100, but was 256
-min( 150px , 100px ,200px) => FAIL: expected width of 100, but was 256
-min(90px + 50px ,100px) => FAIL: expected width of 100, but was 256
-min(100%,100px) - where 100% is 200px => FAIL: expected width of 100, but was 256
-min(100px,100%) - where 100% is 200px => FAIL: expected width of 100, but was 256
-max(100px) => FAIL: expected width of 100, but was 256
-max(50px,100px) => FAIL: expected width of 100, but was 256
-max(50px,100px,20px) => FAIL: expected width of 100, but was 256
-max(120px - 50px,100px) => FAIL: expected width of 100, but was 256
-max(100%,100px) - where 100% is 50px => FAIL: expected width of 100, but was 256
-max(100px,100%) - where 100% is 50px => FAIL: expected width of 100, but was 256
-min(200px,100px) => FAIL: expected height of 100, but was 50
+Bare min()
+min(100px) => PASS
+min( 100px ) => PASS
+min((((100px)))) => PASS
+min(150px,100px) => PASS
+min(150px,100px,200px) => PASS
+min( 150px , 100px ,200px) => PASS
+min(90px + 50px ,100px) => PASS
+min(100%,100px) - where 100% is 200px => PASS
+min(50%,150px) - where 50% is 100px => PASS
+min(100% - 50px,100px) - where 100% is 200px => PASS
+min(25% + 50px,150px) - where 25% is 50px => PASS
+min(100px,100%) - where 100% is 200px => PASS
+min(200px,100px) => PASS
+
+
+min() inside calc()
+calc(min(100px)) => PASS
+calc(min(150px, 200px) - 50px) => PASS
+calc(50 + min(150px, 50px)) => PASS
+calc(min(250px, 200px) / 2) => PASS
+calc(min( 100px )) => PASS
+calc(min((((100px))))) => PASS
+calc(min(150px,100px)) => PASS
+calc(min(150px,100px,200px)) => PASS
+calc(min( 150px , 100px ,200px)) => PASS
+calc(min(90px + 50px ,100px)) => PASS
+calc(min(100%,100px)) - where 100% is 200px => PASS
+calc(min(50%,150px)) - where 50% is 100px => PASS
+calc(min(100% - 50px,100px)) - where 100% is 200px => PASS
+calc(min(25% + 50px,150px)) - where 25% is 50px => PASS
+calc(min(100px,100%)) - where 100% is 200px => PASS
+calc(min(200px,100px)) => PASS
+
+
+Bare max()
+max(100px) => PASS
+calc(max(150px, 100px) - 50px) => PASS
+max(50px,100px) => PASS
+max(50px,100px,20px) => PASS
+max(120px - 50px,100px) => PASS
+max(100%,100px) - where 100% is 50px => PASS
+max(100px,100%) - where 100% is 50px => PASS
+
+
+max() inside calc()
+calc(max(100px)) => PASS
+calc(max(50px,100px)) => PASS
+calc(max(50px,100px,20px)) => PASS
+calc(max(120px - 50px,100px)) => PASS
+calc(max(100%,100px)) - where 100% is 50px => PASS
+calc(max(100px,100%)) - where 100% is 50px => PASS

@@ -19,32 +19,83 @@
 
 <div id="test">
 
-<div class="width-test" style="width: -webkit-min(100px);">min(100px)</div>
-<div class="width-test" style="width: -webkit-min( 100px );">min( 100px )</div>
-<div class="width-test" style="width: -webkit-min((((100px))));">min((((100px))))</div>
-<div class="width-test" style="width: -webkit-min(150px,100px);">min(150px,100px)</div>
-<div class="width-test" style="width: -webkit-min(150px,100px,200px);">min(150px,100px,200px)</div>
-<div class="width-test" style="width: -webkit-min(  150px ,  100px  ,200px);">min(  150px  ,  100px  ,200px)</div>
-<div class="width-test" style="width: -webkit-min(90px + 50px ,100px);">min(90px + 50px ,100px)</div>
+Bare min()
+<div class="width-test" style="width: min(100px);">min(100px)</div>
+<div class="width-test" style="width: min( 100px );">min( 100px )</div>
+<div class="width-test" style="width: min((((100px))));">min((((100px))))</div>
+<div class="width-test" style="width: min(150px,100px);">min(150px,100px)</div>
+<div class="width-test" style="width: min(150px,100px,200px);">min(150px,100px,200px)</div>
+<div class="width-test" style="width: min(  150px ,  100px  ,200px);">min(  150px  ,  100px  ,200px)</div>
+<div class="width-test" style="width: min(90px + 50px ,100px);">min(90px + 50px ,100px)</div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-  <div class="width-test" style="width: -webkit-min(100%,100px);">min(100%,100px) - where 100% is 200px</div>
+  <div class="width-test" style="width: min(100%,100px);">min(100%,100px) - where 100% is 200px</div>
 </div>
 <div style="width: 200px; background-color: white;" class="wrapper">
-  <div class="width-test" style="width: -webkit-min(100px,100%);">min(100px,100%) - where 100% is 200px</div>
+  <div class="width-test" style="width: min(50%,150px);">min(50%,150px) - where 50% is 100px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: min(100% - 50px,100px);">min(100% - 50px,100px) - where 100% is 200px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: min(25% + 50px,150px);">min(25% + 50px,150px) - where 25% is 50px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: min(100px,100%);">min(100px,100%) - where 100% is 200px</div>
+</div>
+<div class="height-test" style="height: min(200px, 100px);">min(200px,100px)</div>
+
+<br/><br/>min() inside calc()
+<div class="width-test" style="width: calc(min(100px));">calc(min(100px))</div>
+<div class="width-test" style="width: calc(min(150px, 200px) - 50px);">calc(min(150px, 200px) - 50px)</div>
+<div class="width-test" style="width: calc(50px + min(150px, 50px));">calc(50 + min(150px, 50px))</div>
+<div class="width-test" style="width: calc(min(250px, 200px) / 2);">calc(min(250px, 200px) / 2)</div>
+<div class="width-test" style="width: calc(min( 100px ));">calc(min( 100px ))</div>
+<div class="width-test" style="width: calc(min((((100px)))));">calc(min((((100px)))))</div>
+<div class="width-test" style="width: calc(min(150px,100px));">calc(min(150px,100px))</div>
+<div class="width-test" style="width: calc(min(150px,100px,200px));">calc(min(150px,100px,200px))</div>
+<div class="width-test" style="width: calc(min(  150px ,  100px  ,200px));">calc(min(  150px  ,  100px  ,200px))</div>
+<div class="width-test" style="width: calc(min(90px + 50px ,100px));">calc(min(90px + 50px ,100px))</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: calc(min(100%,100px));">calc(min(100%,100px)) - where 100% is 200px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: calc(min(50%,150px));">calc(min(50%,150px)) - where 50% is 100px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: calc(min(100% - 50px,100px));">calc(min(100% - 50px,100px)) - where 100% is 200px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: calc(min(25% + 50px,150px));">calc(min(25% + 50px,150px)) - where 25% is 50px</div>
+</div>
+<div style="width: 200px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: calc(min(100px,100%));">calc(min(100px,100%)) - where 100% is 200px</div>
+</div>
+<div class="height-test" style="height: calc(min(200px, 100px));">calc(min(200px,100px))</div>
+
+<br/><br/>Bare max()
+<div class="width-test" style="width: max(100px);">max(100px)</div>
+<div class="width-test" style="width: calc(max(150px, 100px) - 50px);">calc(max(150px, 100px) - 50px)</div>
+<div class="width-test" style="width: max(50px,100px);">max(50px,100px)</div>
+<div class="width-test" style="width: max(50px,100px,20px);">max(50px,100px,20px)</div>
+<div class="width-test" style="width: max(120px - 50px,100px);">max(120px - 50px,100px)</div>
+<div style="width: 50px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: max(100%,100px);">max(100%,100px) - where 100% is 50px</div>
+</div>
+<div style="width: 50px; background-color: white;" class="wrapper">
+  <div class="width-test" style="width: max(100px,100%);">max(100px,100%) - where 100% is 50px</div>
 </div>
 
-<div class="width-test" style="width: -webkit-max(100px);">max(100px)</div>
-<div class="width-test" style="width: -webkit-max(50px,100px);">max(50px,100px)</div>
-<div class="width-test" style="width: -webkit-max(50px,100px,20px);">max(50px,100px,20px)</div>
-<div class="width-test" style="width: -webkit-max(120px - 50px,100px);">max(120px - 50px,100px)</div>
+<br/><br/>max() inside calc()
+<div class="width-test" style="width: calc(max(100px));">calc(max(100px))</div>
+<div class="width-test" style="width: calc(max(50px,100px));">calc(max(50px,100px))</div>
+<div class="width-test" style="width: calc(max(50px,100px,20px));">calc(max(50px,100px,20px))</div>
+<div class="width-test" style="width: calc(max(120px - 50px,100px));">calc(max(120px - 50px,100px))</div>
 <div style="width: 50px; background-color: white;" class="wrapper">
-  <div class="width-test" style="width: -webkit-max(100%,100px);">max(100%,100px) - where 100% is 50px</div>
+  <div class="width-test" style="width: calc(max(100%,100px));">calc(max(100%,100px)) - where 100% is 50px</div>
 </div>
 <div style="width: 50px; background-color: white;" class="wrapper">
-  <div class="width-test" style="width: -webkit-max(100px,100%);">max(100px,100%) - where 100% is 50px</div>
+  <div class="width-test" style="width: calc(max(100px,100%));">calc(max(100px,100%)) - where 100% is 50px</div>
 </div>
-
-<div class="height-test" style="height: -webkit-min(200px, 100px);">min(200px,100px)</div>
 
 </div>
 
