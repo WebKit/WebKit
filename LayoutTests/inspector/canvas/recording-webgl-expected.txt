@@ -3,3944 +3,1219 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
 
 == Running test suite: Canvas.recordingWebGL
 -- Running test case: Canvas.recordingWebGL.singleFrame
-{
-  "version": 1,
-  "type": "canvas-webgl",
-  "initialState": {
-    "attributes": {
-      "width": 300,
-      "height": 150
-    },
-    "parameters": [
-      {
-        "alpha": true,
-        "depth": true,
-        "stencil": false,
-        "antialias": true,
-        "premultipliedAlpha": true,
-        "preserveDrawingBuffer": false,
-        "failIfMajorPerformanceCaveat": false
-      }
-    ],
-    "content": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
-  },
-  "frames": [
-    {
-      "actions": [
-        [
-          0,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            3,
-            5,
-            7,
-            9,
-            12,
-            14,
-            16
-          ]
-        ]
-      ]
-    }
-  ],
-  "data": [
-    "activeTexture",
-    "",
-    "inspector/canvas/recording-webgl.html",
-    [
-      1,
-      2,
-      72,
-      34
-    ],
-    "executeFrameFunction",
-    [
-      4,
-      2,
-      491,
-      24
-    ],
-    "performActions",
-    [
-      6,
-      2,
-      495,
-      25
-    ],
-    "global code",
-    [
-      8,
-      1,
-      1,
-      15
-    ],
-    "evaluateWithScopeExtension",
-    "[native code]",
-    [
-      10,
-      11,
-      0,
-      0
-    ],
-    "_evaluateOn",
-    [
-      13,
-      1,
-      128,
-      29
-    ],
-    "_evaluateAndWrap",
-    [
-      15,
-      1,
-      122,
-      108
-    ]
-  ]
-}
+initialState:
+  attributes:
+    width: 300
+    height: 150
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
+frames:
+  0:
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (3)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+        2: performActions - inspector/canvas/recording-webgl.html:495:25 (7)
+        3: Global Code - [program code] (9)
+        4: evaluateWithScopeExtension - [native code] (12)
+        5: _evaluateOn (14)
+        6: _evaluateAndWrap (16)
+data:
+  0: "activeTexture"
+  1: ""
+  2: "inspector/canvas/recording-webgl.html"
+  3: [1,2,73,34]
+  4: "executeFrameFunction"
+  5: [4,2,492,24]
+  6: "performActions"
+  7: [6,2,496,25]
+  8: "global code"
+  9: [8,1,1,15]
+  10: "evaluateWithScopeExtension"
+  11: "[native code]"
+  12: [10,11,0,0]
+  13: "_evaluateOn"
+  14: [13,1,128,29]
+  15: "_evaluateAndWrap"
+  16: [15,1,122,108]
 
 -- Running test case: Canvas.recordingWebGL.multipleFrames
-{
-  "version": 1,
-  "type": "canvas-webgl",
-  "initialState": {
-    "attributes": {
-      "width": 300,
-      "height": 150
-    },
-    "parameters": [
-      {
-        "alpha": true,
-        "depth": true,
-        "stencil": false,
-        "antialias": true,
-        "premultipliedAlpha": true,
-        "preserveDrawingBuffer": false,
-        "failIfMajorPerformanceCaveat": false
-      }
-    ],
-    "content": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
-  },
-  "frames": [
-    {
-      "actions": [
-        [
-          0,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            3,
-            5,
-            7,
-            9,
-            12,
-            14,
-            16
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          17,
-          [
-            0,
-            0
-          ],
-          [
-            17,
-            16
-          ],
-          [
-            18,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          19,
-          [
-            0,
-            1,
-            20
-          ],
-          [
-            17,
-            1,
-            3
-          ],
-          [
-            21,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          22,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            12
-          ],
-          [
-            23,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          24,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            13
-          ],
-          [
-            25,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          26,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            14
-          ],
-          [
-            27,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          28,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            15
-          ],
-          [
-            29,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          30,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            31,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          32,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            33,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          34,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            35,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          36,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            37,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          38,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            39,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          40,
-          [
-            1,
-            0,
-            2
-          ],
-          [
-            1,
-            5,
-            1
-          ],
-          [
-            41,
-            5
-          ]
-        ],
-        [
-          40,
-          [
-            3,
-            4,
-            5
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            42,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          43,
-          [
-            1,
-            2,
-            0
-          ],
-          [
-            1,
-            1,
-            5
-          ],
-          [
-            44,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          45,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            46,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          47,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            48,
-            5
-          ],
-          49
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          50,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            51,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          52,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            53,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          54,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            55,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          56,
-          [
-            1,
-            0,
-            1,
-            0
-          ],
-          [
-            2,
-            2,
-            2,
-            2
-          ],
-          [
-            57,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          58,
-          [
-            0
-          ],
-          [
-            16
-          ],
-          [
-            59,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          60,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            5
-          ],
-          [
-            61,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          62,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            5
-          ],
-          [
-            63,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          64,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            65,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          66,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            67,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          68,
-          [],
-          [],
-          [
-            69,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          70,
-          [],
-          [],
-          [
-            71,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          72,
-          [],
-          [],
-          [
-            73,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          74,
-          [],
-          [],
-          [
-            75,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          76,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            77,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          78,
-          [],
-          [],
-          [
-            79,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          80,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            81,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          82,
-          [
-            0
-          ],
-          [
-            12
-          ],
-          [
-            83,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          84,
-          [
-            0
-          ],
-          [
-            13
-          ],
-          [
-            85,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          86,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            87,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          88,
-          [
-            0
-          ],
-          [
-            14
-          ],
-          [
-            89,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          90,
-          [
-            0
-          ],
-          [
-            16
-          ],
-          [
-            91,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          92,
-          [
-            0
-          ],
-          [
-            15
-          ],
-          [
-            93,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          94,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            95,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          96,
-          [
-            1
-          ],
-          [
-            2
-          ],
-          [
-            97,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          98,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            99,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          100,
-          [
-            0,
-            0
-          ],
-          [
-            17,
-            16
-          ],
-          [
-            101,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          102,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            103,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          104,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            105,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          106,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            107,
-            5
-          ],
-          49
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          108,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            109,
-            5
-          ],
-          49
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          110,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            111,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          112,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            113,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          114,
-          [],
-          [],
-          [
-            115,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          116,
-          [],
-          [],
-          [
-            117,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          118,
-          [
-            1,
-            2,
-            3,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            14
-          ],
-          [
-            119,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          120,
-          [
-            1,
-            2,
-            3,
-            0,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            15,
-            1
-          ],
-          [
-            121,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          122,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            123,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          124,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            125,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          126,
-          [
-            0,
-            1
-          ],
-          [
-            17,
-            1
-          ],
-          [
-            127,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          128,
-          [
-            0,
-            1
-          ],
-          [
-            17,
-            1
-          ],
-          [
-            129,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          130,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            131,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          132,
-          [
-            0,
-            20
-          ],
-          [
-            17,
-            3
-          ],
-          [
-            133,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          134,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            135,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          136,
-          [],
-          [],
-          [
-            137,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          138,
-          [],
-          [],
-          [
-            139,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          140,
-          [
-            20
-          ],
-          [
-            3
-          ],
-          [
-            141,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          142,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            143,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          144,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            145,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          146,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            147,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          148,
-          [
-            0,
-            1
-          ],
-          [
-            17,
-            1
-          ],
-          [
-            149,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          150,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            151,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          152,
-          [
-            0
-          ],
-          [
-            16
-          ],
-          [
-            153,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          154,
-          [
-            0,
-            1
-          ],
-          [
-            16,
-            1
-          ],
-          [
-            155,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          156,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            157,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          158,
-          [
-            0
-          ],
-          [
-            16
-          ],
-          [
-            159,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          160,
-          [],
-          [],
-          [
-            161,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          162,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            163,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          164,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            165,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          166,
-          [
-            0,
-            20
-          ],
-          [
-            17,
-            3
-          ],
-          [
-            167,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          168,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            169,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          170,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            171,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          172,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            173,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          174,
-          [
-            0
-          ],
-          [
-            12
-          ],
-          [
-            175,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          176,
-          [],
-          [],
-          [
-            177,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          178,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            179,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          180,
-          [
-            0
-          ],
-          [
-            13
-          ],
-          [
-            181,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          182,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            183,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          184,
-          [
-            0
-          ],
-          [
-            14
-          ],
-          [
-            185,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          186,
-          [
-            0
-          ],
-          [
-            16
-          ],
-          [
-            187,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          188,
-          [
-            0
-          ],
-          [
-            15
-          ],
-          [
-            189,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          190,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            191,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          192,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            193,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          194,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            195,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          196,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            197,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          198,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            5
-          ],
-          [
-            199,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          200,
-          [],
-          [],
-          [
-            201,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          202,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            203,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          204,
-          [
-            1,
-            1
-          ],
-          [
-            1,
-            2
-          ],
-          [
-            205,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          206,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            207,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          208,
-          [
-            0,
-            20
-          ],
-          [
-            16,
-            3
-          ],
-          [
-            209,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          210,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            211,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          212,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            213,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          214,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            215,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          216,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            217,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          218,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            219,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          220,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            221,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          222,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            223
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            6
-          ],
-          [
-            224,
-            5
-          ]
-        ],
-        [
-          222,
-          [
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            5
-          ],
-          [
-            225,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          226,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            227,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          228,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            229,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          230,
-          [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            223
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            6
-          ],
-          [
-            231,
-            5
-          ]
-        ],
-        [
-          230,
-          [
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            5
-          ],
-          [
-            232,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          233,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            234,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          235,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            236,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          237,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            238,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          239,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            240,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          241,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            242,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          243,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            244,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          245,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            246,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          247,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            248,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          249,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            250,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          251,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            252,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          253,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            254,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          255,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            256,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          257,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            258,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          259,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            260,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          261,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            262,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          263,
-          [
-            0
-          ],
-          [
-            5
-          ],
-          [
-            264,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          265,
-          [
-            1,
-            0
-          ],
-          [
-            2,
-            5
-          ],
-          [
-            266,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          267,
-          [
-            1,
-            0
-          ],
-          [
-            2,
-            5
-          ],
-          [
-            268,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          269,
-          [
-            1,
-            0
-          ],
-          [
-            2,
-            5
-          ],
-          [
-            270,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          271,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            272,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          273,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            274,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          275,
-          [
-            1,
-            2
-          ],
-          [
-            1,
-            1
-          ],
-          [
-            276,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          277,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            5
-          ],
-          [
-            278,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          279,
-          [
-            1,
-            2,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            280,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          281,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            5
-          ],
-          [
-            282,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          283,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            284,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          285,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            5
-          ],
-          [
-            286,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          287,
-          [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            288,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          289,
-          [
-            1,
-            0
-          ],
-          [
-            1,
-            5
-          ],
-          [
-            290,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          291,
-          [
-            1,
-            2,
-            3,
-            1,
-            5,
-            6
-          ],
-          [
-            1,
-            1,
-            1,
-            2,
-            1,
-            1
-          ],
-          [
-            292,
-            5
-          ]
-        ]
-      ]
-    },
-    {
-      "actions": [
-        [
-          293,
-          [
-            1,
-            2,
-            3,
-            4
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            294,
-            5
-          ]
-        ]
-      ]
-    }
-  ],
-  "data": [
-    "activeTexture",
-    "",
-    "inspector/canvas/recording-webgl.html",
-    [
-      1,
-      2,
-      72,
-      34
-    ],
-    "executeFrameFunction",
-    [
-      4,
-      2,
-      491,
-      24
-    ],
-    "performActions",
-    [
-      6,
-      2,
-      495,
-      25
-    ],
-    "global code",
-    [
-      8,
-      1,
-      1,
-      15
-    ],
-    "evaluateWithScopeExtension",
-    "[native code]",
-    [
-      10,
-      11,
-      0,
-      0
-    ],
-    "_evaluateOn",
-    [
-      13,
-      1,
-      128,
-      29
-    ],
-    "_evaluateAndWrap",
-    [
-      15,
-      1,
-      122,
-      108
-    ],
-    "attachShader",
-    [
-      1,
-      2,
-      75,
-      33
-    ],
-    "bindAttribLocation",
-    "test",
-    [
-      1,
-      2,
-      78,
-      39
-    ],
-    "bindBuffer",
-    [
-      1,
-      2,
-      81,
-      31
-    ],
-    "bindFramebuffer",
-    [
-      1,
-      2,
-      84,
-      36
-    ],
-    "bindRenderbuffer",
-    [
-      1,
-      2,
-      87,
-      37
-    ],
-    "bindTexture",
-    [
-      1,
-      2,
-      90,
-      32
-    ],
-    "blendColor",
-    [
-      1,
-      2,
-      93,
-      31
-    ],
-    "blendEquation",
-    [
-      1,
-      2,
-      96,
-      34
-    ],
-    "blendEquationSeparate",
-    [
-      1,
-      2,
-      99,
-      42
-    ],
-    "blendFunc",
-    [
-      1,
-      2,
-      102,
-      30
-    ],
-    "blendFuncSeparate",
-    [
-      1,
-      2,
-      105,
-      38
-    ],
-    "bufferData",
-    [
-      1,
-      2,
-      108,
-      31
-    ],
-    [
-      1,
-      2,
-      109,
-      31
-    ],
-    "bufferSubData",
-    [
-      1,
-      2,
-      112,
-      34
-    ],
-    "checkFramebufferStatus",
-    [
-      1,
-      2,
-      115,
-      43
-    ],
-    "clear",
-    [
-      1,
-      2,
-      118,
-      26
-    ],
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC",
-    "clearColor",
-    [
-      1,
-      2,
-      121,
-      31
-    ],
-    "clearDepth",
-    [
-      1,
-      2,
-      124,
-      31
-    ],
-    "clearStencil",
-    [
-      1,
-      2,
-      127,
-      33
-    ],
-    "colorMask",
-    [
-      1,
-      2,
-      130,
-      30
-    ],
-    "compileShader",
-    [
-      1,
-      2,
-      133,
-      34
-    ],
-    "compressedTexImage2D",
-    [
-      1,
-      2,
-      136,
-      41
-    ],
-    "compressedTexSubImage2D",
-    [
-      1,
-      2,
-      139,
-      44
-    ],
-    "copyTexImage2D",
-    [
-      1,
-      2,
-      142,
-      35
-    ],
-    "copyTexSubImage2D",
-    [
-      1,
-      2,
-      145,
-      38
-    ],
-    "createBuffer",
-    [
-      1,
-      2,
-      148,
-      33
-    ],
-    "createFramebuffer",
-    [
-      1,
-      2,
-      151,
-      38
-    ],
-    "createProgram",
-    [
-      1,
-      2,
-      154,
-      34
-    ],
-    "createRenderbuffer",
-    [
-      1,
-      2,
-      157,
-      39
-    ],
-    "createShader",
-    [
-      1,
-      2,
-      160,
-      33
-    ],
-    "createTexture",
-    [
-      1,
-      2,
-      163,
-      34
-    ],
-    "cullFace",
-    [
-      1,
-      2,
-      166,
-      29
-    ],
-    "deleteBuffer",
-    [
-      1,
-      2,
-      169,
-      33
-    ],
-    "deleteFramebuffer",
-    [
-      1,
-      2,
-      172,
-      38
-    ],
-    "deleteProgram",
-    [
-      1,
-      2,
-      175,
-      34
-    ],
-    "deleteRenderbuffer",
-    [
-      1,
-      2,
-      178,
-      39
-    ],
-    "deleteShader",
-    [
-      1,
-      2,
-      181,
-      33
-    ],
-    "deleteTexture",
-    [
-      1,
-      2,
-      184,
-      34
-    ],
-    "depthFunc",
-    [
-      1,
-      2,
-      187,
-      30
-    ],
-    "depthMask",
-    [
-      1,
-      2,
-      190,
-      30
-    ],
-    "depthRange",
-    [
-      1,
-      2,
-      193,
-      31
-    ],
-    "detachShader",
-    [
-      1,
-      2,
-      196,
-      33
-    ],
-    "disable",
-    [
-      1,
-      2,
-      199,
-      28
-    ],
-    "disableVertexAttribArray",
-    [
-      1,
-      2,
-      202,
-      45
-    ],
-    "drawArrays",
-    [
-      1,
-      2,
-      205,
-      31
-    ],
-    "drawElements",
-    [
-      1,
-      2,
-      208,
-      33
-    ],
-    "enable",
-    [
-      1,
-      2,
-      211,
-      27
-    ],
-    "enableVertexAttribArray",
-    [
-      1,
-      2,
-      214,
-      44
-    ],
-    "finish",
-    [
-      1,
-      2,
-      217,
-      27
-    ],
-    "flush",
-    [
-      1,
-      2,
-      220,
-      26
-    ],
-    "framebufferRenderbuffer",
-    [
-      1,
-      2,
-      223,
-      44
-    ],
-    "framebufferTexture2D",
-    [
-      1,
-      2,
-      226,
-      41
-    ],
-    "frontFace",
-    [
-      1,
-      2,
-      229,
-      30
-    ],
-    "generateMipmap",
-    [
-      1,
-      2,
-      232,
-      35
-    ],
-    "getActiveAttrib",
-    [
-      1,
-      2,
-      235,
-      36
-    ],
-    "getActiveUniform",
-    [
-      1,
-      2,
-      238,
-      37
-    ],
-    "getAttachedShaders",
-    [
-      1,
-      2,
-      241,
-      39
-    ],
-    "getAttribLocation",
-    [
-      1,
-      2,
-      244,
-      38
-    ],
-    "getBufferParameter",
-    [
-      1,
-      2,
-      247,
-      39
-    ],
-    "getContextAttributes",
-    [
-      1,
-      2,
-      250,
-      41
-    ],
-    "getError",
-    [
-      1,
-      2,
-      253,
-      29
-    ],
-    "getExtension",
-    [
-      1,
-      2,
-      256,
-      33
-    ],
-    "getFramebufferAttachmentParameter",
-    [
-      1,
-      2,
-      259,
-      54
-    ],
-    "getParameter",
-    [
-      1,
-      2,
-      262,
-      33
-    ],
-    "getProgramInfoLog",
-    [
-      1,
-      2,
-      265,
-      38
-    ],
-    "getProgramParameter",
-    [
-      1,
-      2,
-      268,
-      40
-    ],
-    "getRenderbufferParameter",
-    [
-      1,
-      2,
-      271,
-      45
-    ],
-    "getShaderInfoLog",
-    [
-      1,
-      2,
-      274,
-      37
-    ],
-    "getShaderParameter",
-    [
-      1,
-      2,
-      277,
-      39
-    ],
-    "getShaderPrecisionFormat",
-    [
-      1,
-      2,
-      280,
-      45
-    ],
-    "getShaderSource",
-    [
-      1,
-      2,
-      283,
-      36
-    ],
-    "getSupportedExtensions",
-    [
-      1,
-      2,
-      286,
-      43
-    ],
-    "getTexParameter",
-    [
-      1,
-      2,
-      289,
-      36
-    ],
-    "getUniform",
-    [
-      1,
-      2,
-      292,
-      31
-    ],
-    "getUniformLocation",
-    [
-      1,
-      2,
-      295,
-      39
-    ],
-    "getVertexAttrib",
-    [
-      1,
-      2,
-      298,
-      36
-    ],
-    "getVertexAttribOffset",
-    [
-      1,
-      2,
-      301,
-      42
-    ],
-    "hint",
-    [
-      1,
-      2,
-      304,
-      25
-    ],
-    "isBuffer",
-    [
-      1,
-      2,
-      307,
-      29
-    ],
-    "isContextLost",
-    [
-      1,
-      2,
-      310,
-      34
-    ],
-    "isEnabled",
-    [
-      1,
-      2,
-      313,
-      30
-    ],
-    "isFramebuffer",
-    [
-      1,
-      2,
-      316,
-      34
-    ],
-    "isProgram",
-    [
-      1,
-      2,
-      319,
-      30
-    ],
-    "isRenderbuffer",
-    [
-      1,
-      2,
-      322,
-      35
-    ],
-    "isShader",
-    [
-      1,
-      2,
-      325,
-      29
-    ],
-    "isTexture",
-    [
-      1,
-      2,
-      328,
-      30
-    ],
-    "lineWidth",
-    [
-      1,
-      2,
-      331,
-      30
-    ],
-    "linkProgram",
-    [
-      1,
-      2,
-      334,
-      32
-    ],
-    "pixelStorei",
-    [
-      1,
-      2,
-      337,
-      32
-    ],
-    "polygonOffset",
-    [
-      1,
-      2,
-      340,
-      34
-    ],
-    "readPixels",
-    [
-      1,
-      2,
-      343,
-      31
-    ],
-    "releaseShaderCompiler",
-    [
-      1,
-      2,
-      346,
-      42
-    ],
-    "renderbufferStorage",
-    [
-      1,
-      2,
-      349,
-      40
-    ],
-    "sampleCoverage",
-    [
-      1,
-      2,
-      352,
-      35
-    ],
-    "scissor",
-    [
-      1,
-      2,
-      355,
-      28
-    ],
-    "shaderSource",
-    [
-      1,
-      2,
-      358,
-      33
-    ],
-    "stencilFunc",
-    [
-      1,
-      2,
-      361,
-      32
-    ],
-    "stencilFuncSeparate",
-    [
-      1,
-      2,
-      364,
-      40
-    ],
-    "stencilMask",
-    [
-      1,
-      2,
-      367,
-      32
-    ],
-    "stencilMaskSeparate",
-    [
-      1,
-      2,
-      370,
-      40
-    ],
-    "stencilOp",
-    [
-      1,
-      2,
-      373,
-      30
-    ],
-    "stencilOpSeparate",
-    [
-      1,
-      2,
-      376,
-      38
-    ],
-    "texImage2D",
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII=",
-    [
-      1,
-      2,
-      379,
-      31
-    ],
-    [
-      1,
-      2,
-      380,
-      31
-    ],
-    "texParameterf",
-    [
-      1,
-      2,
-      383,
-      34
-    ],
-    "texParameteri",
-    [
-      1,
-      2,
-      386,
-      34
-    ],
-    "texSubImage2D",
-    [
-      1,
-      2,
-      389,
-      34
-    ],
-    [
-      1,
-      2,
-      390,
-      34
-    ],
-    "uniform1f",
-    [
-      1,
-      2,
-      393,
-      30
-    ],
-    "uniform1fv",
-    [
-      1,
-      2,
-      396,
-      31
-    ],
-    "uniform1i",
-    [
-      1,
-      2,
-      399,
-      30
-    ],
-    "uniform1iv",
-    [
-      1,
-      2,
-      402,
-      31
-    ],
-    "uniform2f",
-    [
-      1,
-      2,
-      405,
-      30
-    ],
-    "uniform2fv",
-    [
-      1,
-      2,
-      408,
-      31
-    ],
-    "uniform2i",
-    [
-      1,
-      2,
-      411,
-      30
-    ],
-    "uniform2iv",
-    [
-      1,
-      2,
-      414,
-      31
-    ],
-    "uniform3f",
-    [
-      1,
-      2,
-      417,
-      30
-    ],
-    "uniform3fv",
-    [
-      1,
-      2,
-      420,
-      31
-    ],
-    "uniform3i",
-    [
-      1,
-      2,
-      423,
-      30
-    ],
-    "uniform3iv",
-    [
-      1,
-      2,
-      426,
-      31
-    ],
-    "uniform4f",
-    [
-      1,
-      2,
-      429,
-      30
-    ],
-    "uniform4fv",
-    [
-      1,
-      2,
-      432,
-      31
-    ],
-    "uniform4i",
-    [
-      1,
-      2,
-      435,
-      30
-    ],
-    "uniform4iv",
-    [
-      1,
-      2,
-      438,
-      31
-    ],
-    "uniformMatrix2fv",
-    [
-      1,
-      2,
-      441,
-      37
-    ],
-    "uniformMatrix3fv",
-    [
-      1,
-      2,
-      444,
-      37
-    ],
-    "uniformMatrix4fv",
-    [
-      1,
-      2,
-      447,
-      37
-    ],
-    "useProgram",
-    [
-      1,
-      2,
-      450,
-      31
-    ],
-    "validateProgram",
-    [
-      1,
-      2,
-      453,
-      36
-    ],
-    "vertexAttrib1f",
-    [
-      1,
-      2,
-      456,
-      35
-    ],
-    "vertexAttrib1fv",
-    [
-      1,
-      2,
-      459,
-      36
-    ],
-    "vertexAttrib2f",
-    [
-      1,
-      2,
-      462,
-      35
-    ],
-    "vertexAttrib2fv",
-    [
-      1,
-      2,
-      465,
-      36
-    ],
-    "vertexAttrib3f",
-    [
-      1,
-      2,
-      468,
-      35
-    ],
-    "vertexAttrib3fv",
-    [
-      1,
-      2,
-      471,
-      36
-    ],
-    "vertexAttrib4f",
-    [
-      1,
-      2,
-      474,
-      35
-    ],
-    "vertexAttrib4fv",
-    [
-      1,
-      2,
-      477,
-      36
-    ],
-    "vertexAttribPointer",
-    [
-      1,
-      2,
-      480,
-      40
-    ],
-    "viewport",
-    [
-      1,
-      2,
-      483,
-      29
-    ]
-  ]
-}
+initialState:
+  attributes:
+    width: 300
+    height: 150
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
+frames:
+  0:
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (3)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+        2: performActions - inspector/canvas/recording-webgl.html:495:25 (7)
+        3: Global Code - [program code] (9)
+        4: evaluateWithScopeExtension - [native code] (12)
+        5: _evaluateOn (14)
+        6: _evaluateAndWrap (16)
+  1:
+    0: attachShader(0, 0)
+      swizzleTypes: [WebGLProgram, WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:75:33 (18)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  2:
+    0: bindAttribLocation(0, 1, "test")
+      swizzleTypes: [WebGLProgram, Number, String (20)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:78:39 (21)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  3:
+    0: bindBuffer(1, 0)
+      swizzleTypes: [Number, WebGLBuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:81:31 (23)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  4:
+    0: bindFramebuffer(1, 0)
+      swizzleTypes: [Number, WebGLFramebuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:84:36 (25)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  5:
+    0: bindRenderbuffer(1, 0)
+      swizzleTypes: [Number, WebGLRenderbuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:87:37 (27)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  6:
+    0: bindTexture(1, 0)
+      swizzleTypes: [Number, WebGLTexture]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:90:32 (29)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  7:
+    0: blendColor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:93:31 (31)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  8:
+    0: blendEquation(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:96:34 (33)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  9:
+    0: blendEquationSeparate(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:99:42 (35)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  10:
+    0: blendFunc(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:102:30 (37)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  11:
+    0: blendFuncSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:105:38 (39)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  12:
+    0: bufferData(1, 0, 2)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:108:31 (41)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+    1: bufferData(3, 4, 5)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:109:31 (42)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  13:
+    0: bufferSubData(1, 2, 0)
+      swizzleTypes: [Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:112:34 (44)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  14:
+    0: checkFramebufferStatus(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:115:43 (46)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  15:
+    0: clear(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:118:26 (48)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (49)
+  16:
+    0: clearColor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:121:31 (51)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  17:
+    0: clearDepth(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:124:31 (53)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  18:
+    0: clearStencil(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:127:33 (55)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  19:
+    0: colorMask(true, false, true, false)
+      swizzleTypes: [Boolean, Boolean, Boolean, Boolean]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:130:30 (57)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  20:
+    0: compileShader(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:133:34 (59)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  21:
+    0: compressedTexImage2D(1, 2, 3, 4, 5, 6, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:136:41 (61)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  22:
+    0: compressedTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:139:44 (63)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  23:
+    0: copyTexImage2D(1, 2, 3, 4, 5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:142:35 (65)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  24:
+    0: copyTexSubImage2D(1, 2, 3, 4, 5, 6, 7, 8)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:145:38 (67)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  25:
+    0: createBuffer()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:148:33 (69)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  26:
+    0: createFramebuffer()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:151:38 (71)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  27:
+    0: createProgram()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:154:34 (73)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  28:
+    0: createRenderbuffer()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:157:39 (75)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  29:
+    0: createShader(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:160:33 (77)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  30:
+    0: createTexture()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:163:34 (79)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  31:
+    0: cullFace(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:166:29 (81)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  32:
+    0: deleteBuffer(0)
+      swizzleTypes: [WebGLBuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:169:33 (83)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  33:
+    0: deleteFramebuffer(0)
+      swizzleTypes: [WebGLFramebuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:172:38 (85)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  34:
+    0: deleteProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:175:34 (87)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  35:
+    0: deleteRenderbuffer(0)
+      swizzleTypes: [WebGLRenderbuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:178:39 (89)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  36:
+    0: deleteShader(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:181:33 (91)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  37:
+    0: deleteTexture(0)
+      swizzleTypes: [WebGLTexture]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:184:34 (93)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  38:
+    0: depthFunc(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:187:30 (95)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  39:
+    0: depthMask(true)
+      swizzleTypes: [Boolean]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:190:30 (97)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  40:
+    0: depthRange(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:193:31 (99)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  41:
+    0: detachShader(0, 0)
+      swizzleTypes: [WebGLProgram, WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:196:33 (101)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  42:
+    0: disable(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:199:28 (103)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  43:
+    0: disableVertexAttribArray(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:202:45 (105)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  44:
+    0: drawArrays(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:205:31 (107)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (49)
+  45:
+    0: drawElements(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:208:33 (109)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC" (49)
+  46:
+    0: enable(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:211:27 (111)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  47:
+    0: enableVertexAttribArray(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:214:44 (113)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  48:
+    0: finish()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:217:27 (115)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  49:
+    0: flush()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:220:26 (117)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  50:
+    0: framebufferRenderbuffer(1, 2, 3, 0)
+      swizzleTypes: [Number, Number, Number, WebGLRenderbuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:223:44 (119)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  51:
+    0: framebufferTexture2D(1, 2, 3, 0, 4)
+      swizzleTypes: [Number, Number, Number, WebGLTexture, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:226:41 (121)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  52:
+    0: frontFace(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:229:30 (123)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  53:
+    0: generateMipmap(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:232:35 (125)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  54:
+    0: getActiveAttrib(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:235:36 (127)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  55:
+    0: getActiveUniform(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:238:37 (129)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  56:
+    0: getAttachedShaders(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:241:39 (131)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  57:
+    0: getAttribLocation(0, "test")
+      swizzleTypes: [WebGLProgram, String (20)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:244:38 (133)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  58:
+    0: getBufferParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:247:39 (135)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  59:
+    0: getContextAttributes()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:250:41 (137)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  60:
+    0: getError()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:253:29 (139)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  61:
+    0: getExtension("test")
+      swizzleTypes: [String (20)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:256:33 (141)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  62:
+    0: getFramebufferAttachmentParameter(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:259:54 (143)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  63:
+    0: getParameter(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:262:33 (145)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  64:
+    0: getProgramInfoLog(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:265:38 (147)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  65:
+    0: getProgramParameter(0, 1)
+      swizzleTypes: [WebGLProgram, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:268:40 (149)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  66:
+    0: getRenderbufferParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:271:45 (151)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  67:
+    0: getShaderInfoLog(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:274:37 (153)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  68:
+    0: getShaderParameter(0, 1)
+      swizzleTypes: [WebGLShader, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:277:39 (155)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  69:
+    0: getShaderPrecisionFormat(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:280:45 (157)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  70:
+    0: getShaderSource(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:283:36 (159)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  71:
+    0: getSupportedExtensions()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:286:43 (161)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  72:
+    0: getTexParameter(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:289:36 (163)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  73:
+    0: getUniform(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:292:31 (165)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  74:
+    0: getUniformLocation(0, "test")
+      swizzleTypes: [WebGLProgram, String (20)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:295:39 (167)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  75:
+    0: getVertexAttrib(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:298:36 (169)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  76:
+    0: getVertexAttribOffset(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:301:42 (171)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  77:
+    0: hint(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:304:25 (173)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  78:
+    0: isBuffer(0)
+      swizzleTypes: [WebGLBuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:307:29 (175)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  79:
+    0: isContextLost()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:310:34 (177)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  80:
+    0: isEnabled(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:313:30 (179)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  81:
+    0: isFramebuffer(0)
+      swizzleTypes: [WebGLFramebuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:316:34 (181)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  82:
+    0: isProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:319:30 (183)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  83:
+    0: isRenderbuffer(0)
+      swizzleTypes: [WebGLRenderbuffer]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:322:35 (185)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  84:
+    0: isShader(0)
+      swizzleTypes: [WebGLShader]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:325:29 (187)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  85:
+    0: isTexture(0)
+      swizzleTypes: [WebGLTexture]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:328:30 (189)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  86:
+    0: lineWidth(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:331:30 (191)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  87:
+    0: linkProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:334:32 (193)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  88:
+    0: pixelStorei(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:337:32 (195)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  89:
+    0: polygonOffset(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:340:34 (197)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  90:
+    0: readPixels(1, 2, 3, 4, 5, 6, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:343:31 (199)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  91:
+    0: releaseShaderCompiler()
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:346:42 (201)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  92:
+    0: renderbufferStorage(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:349:40 (203)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  93:
+    0: sampleCoverage(1, true)
+      swizzleTypes: [Number, Boolean]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:352:35 (205)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  94:
+    0: scissor(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:355:28 (207)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  95:
+    0: shaderSource(0, "test")
+      swizzleTypes: [WebGLShader, String (20)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:358:33 (209)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  96:
+    0: stencilFunc(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:361:32 (211)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  97:
+    0: stencilFuncSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:364:40 (213)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  98:
+    0: stencilMask(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:367:32 (215)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  99:
+    0: stencilMaskSeparate(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:370:40 (217)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  100:
+    0: stencilOp(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:373:30 (219)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  101:
+    0: stencilOpSeparate(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:376:38 (221)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  102:
+    0: texImage2D(1, 2, 3, 4, 5, [object HTMLImageElement])
+      swizzleTypes: [Number, Number, Number, Number, Number, Image (223)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:379:31 (224)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+    1: texImage2D(6, 7, 8, 9, 10, 11, 12, 13, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:380:31 (225)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  103:
+    0: texParameterf(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:383:34 (227)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  104:
+    0: texParameteri(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:386:34 (229)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  105:
+    0: texSubImage2D(1, 2, 3, 4, 5, 6, [object HTMLImageElement])
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Image (223)]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:389:34 (231)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+    1: texSubImage2D(7, 8, 9, 10, 11, 12, 13, 14, 0)
+      swizzleTypes: [Number, Number, Number, Number, Number, Number, Number, Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:390:34 (232)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  106:
+    0: uniform1f(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:393:30 (234)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  107:
+    0: uniform1fv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:396:31 (236)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  108:
+    0: uniform1i(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:399:30 (238)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  109:
+    0: uniform1iv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:402:31 (240)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  110:
+    0: uniform2f(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:405:30 (242)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  111:
+    0: uniform2fv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:408:31 (244)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  112:
+    0: uniform2i(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:411:30 (246)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  113:
+    0: uniform2iv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:414:31 (248)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  114:
+    0: uniform3f(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:417:30 (250)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  115:
+    0: uniform3fv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:420:31 (252)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  116:
+    0: uniform3i(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:423:30 (254)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  117:
+    0: uniform3iv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:426:31 (256)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  118:
+    0: uniform4f(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:429:30 (258)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  119:
+    0: uniform4fv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:432:31 (260)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  120:
+    0: uniform4i(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:435:30 (262)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  121:
+    0: uniform4iv(0)
+      swizzleTypes: [TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:438:31 (264)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  122:
+    0: uniformMatrix2fv(true, 0)
+      swizzleTypes: [Boolean, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:441:37 (266)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  123:
+    0: uniformMatrix3fv(true, 0)
+      swizzleTypes: [Boolean, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:444:37 (268)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  124:
+    0: uniformMatrix4fv(true, 0)
+      swizzleTypes: [Boolean, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:447:37 (270)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  125:
+    0: useProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:450:31 (272)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  126:
+    0: validateProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:453:36 (274)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  127:
+    0: vertexAttrib1f(1, 2)
+      swizzleTypes: [Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:456:35 (276)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  128:
+    0: vertexAttrib1fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:459:36 (278)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  129:
+    0: vertexAttrib2f(1, 2, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:462:35 (280)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  130:
+    0: vertexAttrib2fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:465:36 (282)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  131:
+    0: vertexAttrib3f(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:468:35 (284)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  132:
+    0: vertexAttrib3fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:471:36 (286)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  133:
+    0: vertexAttrib4f(1, 2, 3, 4, 5)
+      swizzleTypes: [Number, Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:474:35 (288)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  134:
+    0: vertexAttrib4fv(1, 0)
+      swizzleTypes: [Number, TypedArray]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:477:36 (290)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  135:
+    0: vertexAttribPointer(1, 2, 3, true, 5, 6)
+      swizzleTypes: [Number, Number, Number, Boolean, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:480:40 (292)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+  136:
+    0: viewport(1, 2, 3, 4)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:483:29 (294)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+data:
+  0: "activeTexture"
+  1: ""
+  2: "inspector/canvas/recording-webgl.html"
+  3: [1,2,73,34]
+  4: "executeFrameFunction"
+  5: [4,2,492,24]
+  6: "performActions"
+  7: [6,2,496,25]
+  8: "global code"
+  9: [8,1,1,15]
+  10: "evaluateWithScopeExtension"
+  11: "[native code]"
+  12: [10,11,0,0]
+  13: "_evaluateOn"
+  14: [13,1,128,29]
+  15: "_evaluateAndWrap"
+  16: [15,1,122,108]
+  17: "attachShader"
+  18: [1,2,76,33]
+  19: "bindAttribLocation"
+  20: "test"
+  21: [1,2,79,39]
+  22: "bindBuffer"
+  23: [1,2,82,31]
+  24: "bindFramebuffer"
+  25: [1,2,85,36]
+  26: "bindRenderbuffer"
+  27: [1,2,88,37]
+  28: "bindTexture"
+  29: [1,2,91,32]
+  30: "blendColor"
+  31: [1,2,94,31]
+  32: "blendEquation"
+  33: [1,2,97,34]
+  34: "blendEquationSeparate"
+  35: [1,2,100,42]
+  36: "blendFunc"
+  37: [1,2,103,30]
+  38: "blendFuncSeparate"
+  39: [1,2,106,38]
+  40: "bufferData"
+  41: [1,2,109,31]
+  42: [1,2,110,31]
+  43: "bufferSubData"
+  44: [1,2,113,34]
+  45: "checkFramebufferStatus"
+  46: [1,2,116,43]
+  47: "clear"
+  48: [1,2,119,26]
+  49: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
+  50: "clearColor"
+  51: [1,2,122,31]
+  52: "clearDepth"
+  53: [1,2,125,31]
+  54: "clearStencil"
+  55: [1,2,128,33]
+  56: "colorMask"
+  57: [1,2,131,30]
+  58: "compileShader"
+  59: [1,2,134,34]
+  60: "compressedTexImage2D"
+  61: [1,2,137,41]
+  62: "compressedTexSubImage2D"
+  63: [1,2,140,44]
+  64: "copyTexImage2D"
+  65: [1,2,143,35]
+  66: "copyTexSubImage2D"
+  67: [1,2,146,38]
+  68: "createBuffer"
+  69: [1,2,149,33]
+  70: "createFramebuffer"
+  71: [1,2,152,38]
+  72: "createProgram"
+  73: [1,2,155,34]
+  74: "createRenderbuffer"
+  75: [1,2,158,39]
+  76: "createShader"
+  77: [1,2,161,33]
+  78: "createTexture"
+  79: [1,2,164,34]
+  80: "cullFace"
+  81: [1,2,167,29]
+  82: "deleteBuffer"
+  83: [1,2,170,33]
+  84: "deleteFramebuffer"
+  85: [1,2,173,38]
+  86: "deleteProgram"
+  87: [1,2,176,34]
+  88: "deleteRenderbuffer"
+  89: [1,2,179,39]
+  90: "deleteShader"
+  91: [1,2,182,33]
+  92: "deleteTexture"
+  93: [1,2,185,34]
+  94: "depthFunc"
+  95: [1,2,188,30]
+  96: "depthMask"
+  97: [1,2,191,30]
+  98: "depthRange"
+  99: [1,2,194,31]
+  100: "detachShader"
+  101: [1,2,197,33]
+  102: "disable"
+  103: [1,2,200,28]
+  104: "disableVertexAttribArray"
+  105: [1,2,203,45]
+  106: "drawArrays"
+  107: [1,2,206,31]
+  108: "drawElements"
+  109: [1,2,209,33]
+  110: "enable"
+  111: [1,2,212,27]
+  112: "enableVertexAttribArray"
+  113: [1,2,215,44]
+  114: "finish"
+  115: [1,2,218,27]
+  116: "flush"
+  117: [1,2,221,26]
+  118: "framebufferRenderbuffer"
+  119: [1,2,224,44]
+  120: "framebufferTexture2D"
+  121: [1,2,227,41]
+  122: "frontFace"
+  123: [1,2,230,30]
+  124: "generateMipmap"
+  125: [1,2,233,35]
+  126: "getActiveAttrib"
+  127: [1,2,236,36]
+  128: "getActiveUniform"
+  129: [1,2,239,37]
+  130: "getAttachedShaders"
+  131: [1,2,242,39]
+  132: "getAttribLocation"
+  133: [1,2,245,38]
+  134: "getBufferParameter"
+  135: [1,2,248,39]
+  136: "getContextAttributes"
+  137: [1,2,251,41]
+  138: "getError"
+  139: [1,2,254,29]
+  140: "getExtension"
+  141: [1,2,257,33]
+  142: "getFramebufferAttachmentParameter"
+  143: [1,2,260,54]
+  144: "getParameter"
+  145: [1,2,263,33]
+  146: "getProgramInfoLog"
+  147: [1,2,266,38]
+  148: "getProgramParameter"
+  149: [1,2,269,40]
+  150: "getRenderbufferParameter"
+  151: [1,2,272,45]
+  152: "getShaderInfoLog"
+  153: [1,2,275,37]
+  154: "getShaderParameter"
+  155: [1,2,278,39]
+  156: "getShaderPrecisionFormat"
+  157: [1,2,281,45]
+  158: "getShaderSource"
+  159: [1,2,284,36]
+  160: "getSupportedExtensions"
+  161: [1,2,287,43]
+  162: "getTexParameter"
+  163: [1,2,290,36]
+  164: "getUniform"
+  165: [1,2,293,31]
+  166: "getUniformLocation"
+  167: [1,2,296,39]
+  168: "getVertexAttrib"
+  169: [1,2,299,36]
+  170: "getVertexAttribOffset"
+  171: [1,2,302,42]
+  172: "hint"
+  173: [1,2,305,25]
+  174: "isBuffer"
+  175: [1,2,308,29]
+  176: "isContextLost"
+  177: [1,2,311,34]
+  178: "isEnabled"
+  179: [1,2,314,30]
+  180: "isFramebuffer"
+  181: [1,2,317,34]
+  182: "isProgram"
+  183: [1,2,320,30]
+  184: "isRenderbuffer"
+  185: [1,2,323,35]
+  186: "isShader"
+  187: [1,2,326,29]
+  188: "isTexture"
+  189: [1,2,329,30]
+  190: "lineWidth"
+  191: [1,2,332,30]
+  192: "linkProgram"
+  193: [1,2,335,32]
+  194: "pixelStorei"
+  195: [1,2,338,32]
+  196: "polygonOffset"
+  197: [1,2,341,34]
+  198: "readPixels"
+  199: [1,2,344,31]
+  200: "releaseShaderCompiler"
+  201: [1,2,347,42]
+  202: "renderbufferStorage"
+  203: [1,2,350,40]
+  204: "sampleCoverage"
+  205: [1,2,353,35]
+  206: "scissor"
+  207: [1,2,356,28]
+  208: "shaderSource"
+  209: [1,2,359,33]
+  210: "stencilFunc"
+  211: [1,2,362,32]
+  212: "stencilFuncSeparate"
+  213: [1,2,365,40]
+  214: "stencilMask"
+  215: [1,2,368,32]
+  216: "stencilMaskSeparate"
+  217: [1,2,371,40]
+  218: "stencilOp"
+  219: [1,2,374,30]
+  220: "stencilOpSeparate"
+  221: [1,2,377,38]
+  222: "texImage2D"
+  223: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAAXNSR0IArs4c6QAAABNJREFUCB1j/M/AAEQMDEwgAgQAHxcCAmtAm/sAAAAASUVORK5CYII="
+  224: [1,2,380,31]
+  225: [1,2,381,31]
+  226: "texParameterf"
+  227: [1,2,384,34]
+  228: "texParameteri"
+  229: [1,2,387,34]
+  230: "texSubImage2D"
+  231: [1,2,390,34]
+  232: [1,2,391,34]
+  233: "uniform1f"
+  234: [1,2,394,30]
+  235: "uniform1fv"
+  236: [1,2,397,31]
+  237: "uniform1i"
+  238: [1,2,400,30]
+  239: "uniform1iv"
+  240: [1,2,403,31]
+  241: "uniform2f"
+  242: [1,2,406,30]
+  243: "uniform2fv"
+  244: [1,2,409,31]
+  245: "uniform2i"
+  246: [1,2,412,30]
+  247: "uniform2iv"
+  248: [1,2,415,31]
+  249: "uniform3f"
+  250: [1,2,418,30]
+  251: "uniform3fv"
+  252: [1,2,421,31]
+  253: "uniform3i"
+  254: [1,2,424,30]
+  255: "uniform3iv"
+  256: [1,2,427,31]
+  257: "uniform4f"
+  258: [1,2,430,30]
+  259: "uniform4fv"
+  260: [1,2,433,31]
+  261: "uniform4i"
+  262: [1,2,436,30]
+  263: "uniform4iv"
+  264: [1,2,439,31]
+  265: "uniformMatrix2fv"
+  266: [1,2,442,37]
+  267: "uniformMatrix3fv"
+  268: [1,2,445,37]
+  269: "uniformMatrix4fv"
+  270: [1,2,448,37]
+  271: "useProgram"
+  272: [1,2,451,31]
+  273: "validateProgram"
+  274: [1,2,454,36]
+  275: "vertexAttrib1f"
+  276: [1,2,457,35]
+  277: "vertexAttrib1fv"
+  278: [1,2,460,36]
+  279: "vertexAttrib2f"
+  280: [1,2,463,35]
+  281: "vertexAttrib2fv"
+  282: [1,2,466,36]
+  283: "vertexAttrib3f"
+  284: [1,2,469,35]
+  285: "vertexAttrib3fv"
+  286: [1,2,472,36]
+  287: "vertexAttrib4f"
+  288: [1,2,475,35]
+  289: "vertexAttrib4fv"
+  290: [1,2,478,36]
+  291: "vertexAttribPointer"
+  292: [1,2,481,40]
+  293: "viewport"
+  294: [1,2,484,29]
 
 -- Running test case: Canvas.recordingWebGL.memoryLimit
-{
-  "version": 1,
-  "type": "canvas-webgl",
-  "initialState": {
-    "attributes": {
-      "width": 300,
-      "height": 150
-    },
-    "parameters": [
-      {
-        "alpha": true,
-        "depth": true,
-        "stencil": false,
-        "antialias": true,
-        "premultipliedAlpha": true,
-        "preserveDrawingBuffer": false,
-        "failIfMajorPerformanceCaveat": false
-      }
-    ],
-    "content": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
-  },
-  "frames": [
-    {
-      "actions": [
-        [
-          0,
-          [
-            1
-          ],
-          [
-            1
-          ],
-          [
-            3,
-            5,
-            7,
-            9,
-            12,
-            14,
-            16
-          ]
-        ]
-      ],
-      "incomplete": true
-    }
-  ],
-  "data": [
-    "activeTexture",
-    "",
-    "inspector/canvas/recording-webgl.html",
-    [
-      1,
-      2,
-      72,
-      34
-    ],
-    "executeFrameFunction",
-    [
-      4,
-      2,
-      491,
-      24
-    ],
-    "performActions",
-    [
-      6,
-      2,
-      495,
-      25
-    ],
-    "global code",
-    [
-      8,
-      1,
-      1,
-      15
-    ],
-    "evaluateWithScopeExtension",
-    "[native code]",
-    [
-      10,
-      11,
-      0,
-      0
-    ],
-    "_evaluateOn",
-    [
-      13,
-      1,
-      128,
-      29
-    ],
-    "_evaluateAndWrap",
-    [
-      15,
-      1,
-      122,
-      108
-    ]
-  ]
-}
+initialState:
+  attributes:
+    width: 300
+    height: 150
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
+frames:
+  0: (incomplete)
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: (anonymous function) - inspector/canvas/recording-webgl.html:72:34 (3)
+        1: executeFrameFunction - inspector/canvas/recording-webgl.html:491:24 (5)
+        2: performActions - inspector/canvas/recording-webgl.html:495:25 (7)
+        3: Global Code - [program code] (9)
+        4: evaluateWithScopeExtension - [native code] (12)
+        5: _evaluateOn (14)
+        6: _evaluateAndWrap (16)
+data:
+  0: "activeTexture"
+  1: ""
+  2: "inspector/canvas/recording-webgl.html"
+  3: [1,2,73,34]
+  4: "executeFrameFunction"
+  5: [4,2,492,24]
+  6: "performActions"
+  7: [6,2,496,25]
+  8: "global code"
+  9: [8,1,1,15]
+  10: "evaluateWithScopeExtension"
+  11: "[native code]"
+  12: [10,11,0,0]
+  13: "_evaluateOn"
+  14: [13,1,128,29]
+  15: "_evaluateAndWrap"
+  16: [15,1,122,108]
 

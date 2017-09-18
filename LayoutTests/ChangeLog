@@ -1,3 +1,25 @@
+2017-09-18  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: make Canvas recording tests more human readable
+        https://bugs.webkit.org/show_bug.cgi?id=176441
+
+        Reviewed by Joseph Pecoraro.
+
+        * TestExpectations:
+
+        * inspector/canvas/resources/recording-utilities.js: Added.
+        (TestPage.registerInitializer):
+        Create common functions for requesting and printing a recording.
+
+        * inspector/canvas/recording-2d-expected.txt:
+        * inspector/canvas/recording-2d.html:
+
+        * inspector/canvas/recording-webgl-expected.txt:
+        * inspector/canvas/recording-webgl.html:
+
+        * inspector/canvas/recording-webgl-snapshots-expected.txt:
+        * inspector/canvas/recording-webgl-snapshots.html:
+
 2017-09-18  Antti Koivisto  <antti@apple.com>
 
         Another WK1 unflake attempt.

@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
 <script src="resources/shaderProgram-utilities.js"></script>
 <script id="vertex-shader" type="x-shader/x-vertex">
     attribute vec4 test;
@@ -498,57 +499,11 @@ function performActions() {
 function test() {
     let suite = InspectorTest.createAsyncSuite("Canvas.recordingWebGL");
 
-    function sanitizeURL(url) {
-        return url.replace(/^.*?LayoutTests\//, "");
-    }
-
-    function getCanvas() {
-        let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
-        InspectorTest.assert(canvases.length === 1, "There should only be one WebGL canvas.");
-        if (canvases.length !== 1)
-            return null;
-        return canvases[0];
-    }
-
-    function requestRecording(resolve, reject, {singleFrame, memoryLimit} = {}) {
-        let canvas = getCanvas();
-        if (!canvas) {
-            reject("Missing WebGL canvas.");
-            return;
-        }
-
-        WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingFinished)
-        .then((event) => {
-            InspectorTest.evaluateInPage(`cancelActions()`);
-
-            let json = event.data.recording.toJSON();
-            json.data = json.data.map((item) => {
-                if (typeof item !== "string")
-                    return item;
-
-                return sanitizeURL(item);
-            });
-            InspectorTest.log(JSON.stringify(json, null, 2));
-        })
-        .then(resolve, reject);
-
-        CanvasAgent.requestRecording(canvas.identifier, singleFrame, memoryLimit, (error) => {
-            if (error) {
-                reject(error);
-                return;
-            }
-
-            InspectorTest.evaluateInPage(`performActions()`);
-        });
-
-        return canvas;
-    }
-
     suite.addTestCase({
         name: "Canvas.recordingWebGL.singleFrame",
         description: "Check that the recording is stopped after a single frame.",
         test(resolve, reject) {
-            requestRecording(resolve, reject, {singleFrame: true});
+            requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
         },
     });
 
@@ -556,7 +511,7 @@ function test() {
         name: "Canvas.recordingWebGL.multipleFrames",
         description: "Check that recording data is serialized correctly for multiple frames.",
         test(resolve, reject) {
-            let canvas = requestRecording(resolve, reject, {singleFrame: false});
+            let canvas = requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: false});
 
             InspectorTest.singleFireEventListener("LastFrame", () => {
                 CanvasAgent.cancelRecording(canvas.identifier, (error) => {
@@ -573,7 +528,7 @@ function test() {
         name: "Canvas.recordingWebGL.memoryLimit",
         description: "Check that the recording is stopped when it reaches the memory limit.",
         test(resolve, reject) {
-            requestRecording(resolve, reject, {memoryLimit: 10});
+            requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {memoryLimit: 10});
         },
     });
 

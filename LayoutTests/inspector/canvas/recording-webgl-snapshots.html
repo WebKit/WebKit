@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
 <script src="resources/shaderProgram-utilities.js"></script>
 <script id="vertex-shader" type="x-shader/x-vertex">
     attribute vec3 position;
@@ -95,35 +96,7 @@ function test() {
         name: "Canvas.recordingWebGL.snapshots",
         description: "Check that the snapshot taken after each visual action is different.",
         test(resolve, reject) {
-            let canvases = WI.canvasManager.canvases.filter((canvas) => canvas.contextType === WI.Canvas.ContextType.WebGL);
-            InspectorTest.assert(canvases.length === 1, "There should only be one WebGL canvas.");
-            if (canvases.length !== 1) {
-                reject("Missing WebGL canvas.");
-                return;
-            }
-
-            WI.canvasManager.awaitEvent(WI.CanvasManager.Event.RecordingFinished)
-            .then((event) => {
-                let json = event.data.recording.toJSON();
-                json.data = json.data.map((item) => {
-                    if (typeof item !== "string")
-                        return item;
-
-                    return sanitizeURL(item);
-                });
-                InspectorTest.log(JSON.stringify(json, null, 2));
-            })
-            .then(resolve, reject);
-
-            const singleFrame = true;
-            CanvasAgent.requestRecording(canvases[0].identifier, singleFrame, (error) => {
-                if (error) {
-                    reject(error);
-                    return;
-                }
-
-                InspectorTest.evaluateInPage(`performActions()`);
-            });
+            requestRecording(WI.Canvas.ContextType.WebGL, resolve, reject, {singleFrame: true});
         },
     });
 

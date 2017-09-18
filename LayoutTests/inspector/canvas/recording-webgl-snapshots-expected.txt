@@ -3,402 +3,161 @@ Test that CanvasManager is able to record actions made to WebGL canvas contexts.
 
 == Running test suite: Canvas.recordingWebGL
 -- Running test case: Canvas.recordingWebGL.snapshots
-{
-  "version": 1,
-  "type": "canvas-webgl",
-  "initialState": {
-    "attributes": {
-      "width": 300,
-      "height": 150
-    },
-    "parameters": [
-      {
-        "alpha": true,
-        "depth": true,
-        "stencil": false,
-        "antialias": true,
-        "premultipliedAlpha": true,
-        "preserveDrawingBuffer": false,
-        "failIfMajorPerformanceCaveat": false
-      }
-    ],
-    "content": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
-  },
-  "frames": [
-    {
-      "actions": [
-        [
-          0,
-          [
-            0
-          ],
-          [
-            17
-          ],
-          [
-            3,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          14,
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            16,
-            17,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          18,
-          [
-            16384
-          ],
-          [
-            1
-          ],
-          [
-            19,
-            17,
-            6,
-            9,
-            11,
-            13
-          ],
-          20
-        ],
-        [
-          21,
-          [
-            34962,
-            0,
-            35044
-          ],
-          [
-            1,
-            5,
-            1
-          ],
-          [
-            23,
-            24,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          22,
-          [
-            4,
-            0,
-            3
-          ],
-          [
-            1,
-            1,
-            1
-          ],
-          [
-            25,
-            24,
-            6,
-            9,
-            11,
-            13
-          ],
-          26
-        ],
-        [
-          14,
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            16,
-            27,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          18,
-          [
-            16384
-          ],
-          [
-            1
-          ],
-          [
-            19,
-            27,
-            6,
-            9,
-            11,
-            13
-          ],
-          20
-        ],
-        [
-          21,
-          [
-            34962,
-            0,
-            35044
-          ],
-          [
-            1,
-            5,
-            1
-          ],
-          [
-            29,
-            30,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          21,
-          [
-            34963,
-            0,
-            35044
-          ],
-          [
-            1,
-            5,
-            1
-          ],
-          [
-            31,
-            30,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          28,
-          [
-            4,
-            3,
-            5123,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            32,
-            30,
-            6,
-            9,
-            11,
-            13
-          ],
-          33
-        ],
-        [
-          14,
-          [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            16,
-            34,
-            6,
-            9,
-            11,
-            13
-          ]
-        ],
-        [
-          18,
-          [
-            16384
-          ],
-          [
-            1
-          ],
-          [
-            19,
-            34,
-            6,
-            9,
-            11,
-            13
-          ],
-          20
-        ]
-      ]
-    }
-  ],
-  "data": [
-    "useProgram",
-    "performActions",
-    "inspector/canvas/recording-webgl-snapshots.html",
-    [
-      1,
-      2,
-      48,
-      23
-    ],
-    "global code",
-    "",
-    [
-      4,
-      5,
-      1,
-      15
-    ],
-    "evaluateWithScopeExtension",
-    "[native code]",
-    [
-      7,
-      8,
-      0,
-      0
-    ],
-    "_evaluateOn",
-    [
-      10,
-      5,
-      128,
-      29
-    ],
-    "_evaluateAndWrap",
-    [
-      12,
-      5,
-      122,
-      108
-    ],
-    "clearColor",
-    "clearContext",
-    [
-      15,
-      2,
-      51,
-      27
-    ],
-    [
-      1,
-      2,
-      80,
-      17
-    ],
-    "clear",
-    [
-      15,
-      2,
-      52,
-      22
-    ],
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGxJREFUeAHt1MEJwDAMBEHF/fec5OEitDAG/485cc/MvP/3CBAgsF7grE8oIAECBK6AwXIKBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIfSAwCK2+QFXIAAAAASUVORK5CYII=",
-    "bufferData",
-    "drawArrays",
-    [
-      22,
-      2,
-      61,
-      27
-    ],
-    [
-      1,
-      2,
-      81,
-      15
-    ],
-    [
-      22,
-      2,
-      63,
-      27
-    ],
-    "data:image/png;base64,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",
-    [
-      1,
-      2,
-      82,
-      17
-    ],
-    "drawElements",
-    [
-      28,
-      2,
-      72,
-      27
-    ],
-    [
-      1,
-      2,
-      83,
-      17
-    ],
-    [
-      28,
-      2,
-      75,
-      27
-    ],
-    [
-      28,
-      2,
-      77,
-      29
-    ],
-    "data:image/png;base64,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",
-    [
-      1,
-      2,
-      84,
-      17
-    ]
-  ]
-}
+initialState:
+  attributes:
+    width: 300
+    height: 150
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"failIfMajorPerformanceCaveat":false}
+  content: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAAAylJREFUeAHt0DEBAAAAwqD1T20IX4hAYcCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYMCAAQMGDBgwYOAdGL/UAAEPpnR6AAAAAElFTkSuQmCC"
+frames:
+  0:
+    0: useProgram(0)
+      swizzleTypes: [WebGLProgram]
+      trace:
+        0: performActions - inspector/canvas/recording-webgl-snapshots.html:48:23 (3)
+        1: Global Code - [program code] (6)
+        2: evaluateWithScopeExtension - [native code] (9)
+        3: _evaluateOn (11)
+        4: _evaluateAndWrap (13)
+    1: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:51:27 (16)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:80:17 (17)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    2: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:52:22 (19)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:80:17 (17)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGxJREFUeAHt1MEJwDAMBEHF/fec5OEitDAG/485cc/MvP/3CBAgsF7grE8oIAECBK6AwXIKBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIfSAwCK2+QFXIAAAAASUVORK5CYII=" (20)
+    3: bufferData(34962, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: drawArrays - inspector/canvas/recording-webgl-snapshots.html:61:27 (23)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:81:15 (24)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    4: drawArrays(4, 0, 3)
+      swizzleTypes: [Number, Number, Number]
+      trace:
+        0: drawArrays - inspector/canvas/recording-webgl-snapshots.html:63:27 (25)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:81:15 (24)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+      snapshot: "data:image/png;base64,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" (26)
+    5: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:51:27 (16)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:82:17 (27)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    6: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:52:22 (19)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:82:17 (27)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGxJREFUeAHt1MEJwDAMBEHF/fec5OEitDAG/485cc/MvP/3CBAgsF7grE8oIAECBK6AwXIKBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIfSAwCK2+QFXIAAAAASUVORK5CYII=" (20)
+    7: bufferData(34962, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: drawElements - inspector/canvas/recording-webgl-snapshots.html:72:27 (29)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:83:17 (30)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    8: bufferData(34963, 0, 35044)
+      swizzleTypes: [Number, TypedArray, Number]
+      trace:
+        0: drawElements - inspector/canvas/recording-webgl-snapshots.html:75:27 (31)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:83:17 (30)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    9: drawElements(4, 3, 5123, 0)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: drawElements - inspector/canvas/recording-webgl-snapshots.html:77:29 (32)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:83:17 (30)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+      snapshot: "data:image/png;base64,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" (33)
+    10: clearColor(0, 0, 0, 1)
+      swizzleTypes: [Number, Number, Number, Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:51:27 (16)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:84:17 (34)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+    11: clear(16384)
+      swizzleTypes: [Number]
+      trace:
+        0: clearContext - inspector/canvas/recording-webgl-snapshots.html:52:22 (19)
+        1: performActions - inspector/canvas/recording-webgl-snapshots.html:84:17 (34)
+        2: Global Code - [program code] (6)
+        3: evaluateWithScopeExtension - [native code] (9)
+        4: _evaluateOn (11)
+        5: _evaluateAndWrap (13)
+      snapshot: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGxJREFUeAHt1MEJwDAMBEHF/fec5OEitDAG/485cc/MvP/3CBAgsF7grE8oIAECBK6AwXIKBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIfSAwCK2+QFXIAAAAASUVORK5CYII=" (20)
+data:
+  0: "useProgram"
+  1: "performActions"
+  2: "inspector/canvas/recording-webgl-snapshots.html"
+  3: [1,2,49,23]
+  4: "global code"
+  5: ""
+  6: [4,5,1,15]
+  7: "evaluateWithScopeExtension"
+  8: "[native code]"
+  9: [7,8,0,0]
+  10: "_evaluateOn"
+  11: [10,5,128,29]
+  12: "_evaluateAndWrap"
+  13: [12,5,122,108]
+  14: "clearColor"
+  15: "clearContext"
+  16: [15,2,52,27]
+  17: [1,2,81,17]
+  18: "clear"
+  19: [15,2,53,22]
+  20: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABGxJREFUeAHt1MEJwDAMBEHF/fec5OEitDAG/485cc/MvP/3CBAgsF7grE8oIAECBK6AwXIKBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIGyw0QIJARMFiZqgQlQMBguQECBDICBitTlaAECBgsN0CAQEbAYGWqEpQAAYPlBggQyAgYrExVghIgYLDcAAECGQGDlalKUAIEDJYbIEAgI2CwMlUJSoCAwXIDBAhkBAxWpipBCRAwWG6AAIGMgMHKVCUoAQIfSAwCK2+QFXIAAAAASUVORK5CYII="
+  21: "bufferData"
+  22: "drawArrays"
+  23: [22,2,62,27]
+  24: [1,2,82,15]
+  25: [22,2,64,27]
+  26: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAACWCAYAAABkW7XSAAAAAXNSR0IArs4c6QAABnpJREFUeAHt2otNHEEQRdHBkRAKoREKmRAKZILB5iPQAjs7/auqY8kyLDPd9e4rXdmSr7Zte3r+7RcCCCCwPIE/y09oQAQQQOCVAGFZBQQQCEOAsMJUZVAEECAsO4AAAmEIEFaYqgyKAAKEZQcQQCAMAcIKU5VBEUCAsOwAAgiEIUBYYaoyKAIIEJYdQACBMAQIK0xVBkUAAcKyAwggEIYAYYWpyqAIIEBYdgABBMIQIKwwVRkUAQQIyw4ggEAYAoQVpiqDIoAAYdkBBBAIQ4CwwlRlUAQQICw7gAACYQgQVpiqDIoAAoRlBxBAIAwBwgpTlUERQICw7AACCIQhQFhhqjIoAggQlh1AAIEwBAgrTFUGRQABwrIDCCAQhgBhhanKoAggQFh2AAEEwhAgrDBVGRQBBAjLDiCAQBgChBWmKoMigABh2QEEEAhDgLDCVGVQBBAgLDuAAAJhCBDWjqpubm52PO1RBBBoTYCwdhC9v7/fHh4eNuLaAc2jCDQkQFg7YV5fX2/EtROaxxFoRICwLgRJXBeC8xoCBwgQ1gF4L68S10GAXkdgBwHC2gHrp0eJ6yc6foZAGwKE1Ybj+ynE9Y7CFwg0J0BYzZH+P5C4OoF1bGkChNW5fuLqDNjxpQgQ1qC6iWsQaNekJkBYg+slrsHAXZeKAGFNqpO4JoF3bWgChDW5PuKaXIDrQxEgrEXqIq5FijDG0gQIa7F6iGuxQoyzFAHCWqqOj2GI64OFrxB4I0BYbyQW/ZO4Fi3GWFMIENYU7PsvJa79zLyRjwBhBeuUuIIVZtymBAirKc5xhxHXONZuWocAYa3TxUWTENdF2LwUlABhBS3u69jE9ZWI7zMSIKxkrRJXskLF+USAsD7hyPMNceXpUpIPAoT1wSLlV8SVstayoQirSPXEVaTo5DEJK3nBX+MR11civo9EgLAitdVwVuJqCNNRwwgQ1jDUa15EXGv2YqrTBAjrNJdynxJXucpDBiaskLX1G5q4+rF18nEChHWcYcoTiCtlreFDEVb4CvsGIK6+fJ2+jwBh7eNV9mniKlv9UsEJa6k61h+GuNbvKPOEhJW53Y7ZiKsjXEd/S4CwvkXjB+cQIK5zKHmmFQHCakWy+DnEVXwBBsUnrEGgq1xDXFWanpOTsOZwT38rcaWveEpAwpqCvc6lxFWn6xFJCWsEZXdsxGUJWhAgrBYUnXE2AeI6G5UHTxAgrBNQfNSfAHH1Z5zxBsLK2GqgTMQVqKwFRiWsBUowwrYRly04hwBhnUPJM8MIENcw1CEvIqyQteUfmrjyd3xJQsK6hJp3hhEgrmGoQ1xEWCFqMiRx2YEXAoRlD0IRIK5QdTUflrCaI3XgCALENYLyencQ1nqdmGgHAeLaASvBo4SVoEQR/D+uKjtAWFWaLpLT37hyF01Yufstm464clZPWDl7leqVAHHlWgXCytWnNN8QIK5vwAT7mLCCFWbcYwSI6xi/2W8T1uwG3D+FAHFNwX74UsI6jNABkQkQV6z2CCtWX6btRIC4OoFtfCxhNQbquNgEiGvt/ghr7X5MN4kAcU0C/8u1hPULID+uTYC41uqfsNbqwzSLEiCuNYohrDV6MEUQAsQ1tyjCmsvf7UEJENec4ghrDne3JiFAXGOLJKyxvN2WlABxjSmWsMZwdksRAsTVt2jC6svX6UUJEFef4gmrD1enIvCPAHG1XQTCasvTaQicJEBcJ7Hs/pCwdiPzAgKXEyCuy9m9vHn1/Pvp2BF13r69va0TVtIhBB4fH7e7u7shd2W4hLAytCgDAkUI+CdhkaLFRCADAcLK0KIMCBQhQFhFihYTgQwECCtDizIgUIQAYRUpWkwEMhAgrAwtyoBAEQKEVaRoMRHIQICwMrQoAwJFCBBWkaLFRCADAcLK0KIMCBQhQFhFihYTgQwECCtDizIgUIQAYRUpWkwEMhAgrAwtyoBAEQKEVaRoMRHIQICwMrQoAwJFCBBWkaLFRCADAcLK0KIMCBQhQFhFihYTgQwECCtDizIgUIQAYRUpWkwEMhAgrAwtyoBAEQKEVaRoMRHIQICwMrQoAwJFCBBWkaLFRCADAcLK0KIMCBQhQFhFihYTgQwECCtDizIgUIQAYRUpWkwEMhAgrAwtyoBAEQKEVaRoMRHIQICwMrQoAwJFCBBWkaLFRCADAcLK0KIMCBQhQFhFihYTgQwECCtDizIgUITAXwCSxNpDApB5AAAAAElFTkSuQmCC"
+  27: [1,2,83,17]
+  28: "drawElements"
+  29: [28,2,73,27]
+  30: [1,2,84,17]
+  31: [28,2,76,27]
+  32: [28,2,78,29]
+  33: "data:image/png;base64,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"
+  34: [1,2,85,17]
 
