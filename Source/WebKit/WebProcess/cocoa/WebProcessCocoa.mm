@@ -62,6 +62,7 @@
 #import <dispatch/dispatch.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <pal/spi/cocoa/pthreadSPI.h>
 #import <pal/spi/mac/NSAccessibilitySPI.h>
@@ -194,7 +195,7 @@ void WebProcess::initializeProcessName(const ChildProcessInitializationParameter
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Inspector", "Visible name of Web Inspector's web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     else
         applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
 #endif
 }
 
@@ -394,7 +395,7 @@ void WebProcess::updateActivePages()
     }
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [activePageURLs] {
-        WKSetApplicationInformationItem(CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activePageURLs.get());
+        _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)activePageURLs.get(), nullptr);
     });
 #endif
 }

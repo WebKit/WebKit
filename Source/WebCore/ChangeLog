@@ -1,3 +1,32 @@
+2017-09-18  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream miscellaneous WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=177029
+
+        Reviewed by Alex Christensen.
+
+        * Configurations/WebCore.xcconfig: Used -force_load of libPAL instead of -ObjC. This forces
+        the linker to load both Objective-C and C PAL symbols in WebCore. This change is needed for
+        PAL::popUpMenu(), which is used by WebKit and WebKitLegacy but not WebCore.
+        * platform/cocoa/LocalizedStringsCocoa.mm:
+        (WebCore::contextMenuItemTagSearchWeb):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::elasticDeltaForTimeDelta):
+        (WebCore::elasticDeltaForReboundDelta):
+        (WebCore::reboundDeltaForElasticDelta):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::createTransformAnimationsFromKeyframes):
+        * platform/mac/CursorMac.mm:
+        (WebCore::WKCoreCursor_coreCursorType):
+        (WebCore::createCoreCursorClass):
+        (WebCore::coreCursorClass):
+        (WebCore::cursor):
+        (WebCore::Cursor::ensurePlatformCursor const):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintTextArea):
+
 2017-09-18  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [Win][PAL] Move WebCoreHeaderDetection.h to PAL

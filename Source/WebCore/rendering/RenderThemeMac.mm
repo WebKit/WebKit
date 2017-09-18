@@ -74,6 +74,7 @@
 #import <math.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/NSColorSPI.h>
+#import <pal/spi/mac/NSCellSPI.h>
 #import <pal/spi/mac/NSSharingServicePickerSPI.h>
 #import <wtf/MathExtras.h>
 #import <wtf/RetainPtr.h>
@@ -884,7 +885,7 @@ void RenderThemeMac::adjustTextFieldStyle(StyleResolver&, RenderStyle&, const El
 bool RenderThemeMac::paintTextArea(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& r)
 {
     LocalCurrentGraphicsContext localContext(paintInfo.context());
-    wkDrawBezeledTextArea(r, isEnabled(o) && !isReadOnlyControl(o));
+    _NSDrawCarbonThemeListBox(r, isEnabled(o) && !isReadOnlyControl(o), YES, YES);
     return false;
 }
 

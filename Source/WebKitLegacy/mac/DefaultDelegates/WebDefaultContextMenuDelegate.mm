@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,7 @@
 #import <WebKitLegacy/DOM.h>
 #import <WebKitLegacy/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
+#import <pal/system/mac/DefaultSearchProvider.h>
 #import <wtf/Assertions.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
@@ -91,7 +92,7 @@
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
         case WebMenuItemTagSearchWeb: {
-            RetainPtr<CFStringRef> searchProviderName = adoptCF(WKCopyDefaultSearchProviderDisplayName());
+            auto searchProviderName = PAL::defaultSearchProviderDisplayName();
             title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
             action = @selector(_searchWithGoogleFromMenu:);
             break;

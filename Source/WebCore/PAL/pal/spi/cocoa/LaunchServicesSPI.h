@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,11 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#if PLATFORM(MAC)
+#import <LaunchServices/LaunchServicesPriv.h>
+#elif PLATFORM(IOS)
 #import <MobileCoreServices/LSAppLinkPriv.h>
+#endif
 
 #endif
 
@@ -59,4 +63,26 @@ typedef void (^LSAppLinkOpenCompletionHandler)(BOOL success, NSError *error);
 @property (readonly, strong) LSApplicationProxy *targetApplicationProxy;
 @end
 
+#if PLATFORM(MAC)
+enum LSSessionID {
+    kLSDefaultSessionID = -2,
+};
 #endif
+
+#endif // !USE(APPLE_INTERNAL_SDK)
+
+#if PLATFORM(MAC)
+
+typedef const struct CF_BRIDGED_TYPE(id) __LSASN* LSASNRef;
+typedef enum LSSessionID LSSessionID;
+
+WTF_EXTERN_C_BEGIN
+
+extern const CFStringRef _kLSDisplayNameKey;
+
+LSASNRef _LSGetCurrentApplicationASN();
+OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef keyToSetRef, CFTypeRef valueToSetRef, CFDictionaryRef* newInformationDictRef);
+
+WTF_EXTERN_C_END
+
+#endif // PLATFORM(MAC)

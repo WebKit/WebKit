@@ -155,7 +155,7 @@
 
 #if HAVE(APP_LINKS)
 #import <WebCore/WebCoreThreadRun.h>
-#import <pal/spi/ios/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
 #if ENABLE(CONTENT_FILTERING)

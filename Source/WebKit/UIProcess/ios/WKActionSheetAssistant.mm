@@ -47,7 +47,7 @@
 #import <wtf/text/WTFString.h>
 
 #if HAVE(APP_LINKS)
-#import <pal/spi/ios/LaunchServicesSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
 #if HAVE(SAFARI_SERVICES_FRAMEWORK)

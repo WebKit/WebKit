@@ -123,7 +123,6 @@ typedef enum {
     wkPatternTilingConstantSpacing
 } wkPatternTiling;
 #if !PLATFORM(IOS)
-extern void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 extern void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
     float duration, unsigned state);
 extern void (*wkDrawMediaUIPart)(int part, CGContextRef context, CGRect rect, unsigned state);
@@ -136,24 +135,10 @@ extern void (*wkSetCookieStoragePrivateBrowsingEnabled)(BOOL);
 extern void* wkGetHyphenationLocationBeforeIndex;
 #endif
 
-#if !PLATFORM(IOS)
-extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
-
-extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
-
-extern NSCursor *(*wkCursor)(const char*);
-#endif // !PLATFORM(IOS)
-
 #if PLATFORM(IOS)
 extern void (*wkSetLayerContentsScale)(CALayer *);
 #endif
 
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
-
-#if !PLATFORM(IOS)
-extern CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
-extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
-extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
-#endif
 
 }

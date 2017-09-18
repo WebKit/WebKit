@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 
 using namespace WebCore;
 
@@ -47,7 +48,7 @@ void StorageProcess::initializeProcess(const ChildProcessInitializationParameter
 void StorageProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Storage", "visible name of the storage process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
 }
 
 void StorageProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

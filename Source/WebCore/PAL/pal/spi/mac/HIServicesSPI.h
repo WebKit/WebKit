@@ -25,12 +25,63 @@
 
 #pragma once
 
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #include <HIServices/AXTextMarker.h>
+#include <HIServices/CoreCursor.h>
 #include <HIServices/CoreDrag.h>
 
 #else
+
+typedef CF_ENUM(SInt32, CoreCursorType) {
+    kCoreCursorFirstCursor = 0,
+    kCoreCursorArrow = kCoreCursorFirstCursor,
+    kCoreCursorIBeam,
+    kCoreCursorMakeAlias,
+    kCoreCursorNotAllowed,
+    kCoreCursorBusyButClickable,
+    kCoreCursorCopy,
+    kCoreCursorScreenShotSelection = 7,
+    kCoreCursorScreenShotSelectionToClip,
+    kCoreCursorScreenShotWindow,
+    kCoreCursorScreenShotWindowToClip,
+    kCoreCursorClosedHand,
+    kCoreCursorOpenHand,
+    kCoreCursorPointingHand,
+    kCoreCursorCountingUpHand,
+    kCoreCursorCountingDownHand,
+    kCoreCursorCountingUpAndDownHand,
+    kCoreCursorResizeLeft,
+    kCoreCursorResizeRight,
+    kCoreCursorResizeLeftRight,
+    kCoreCursorCross,
+    kCoreCursorResizeUp,
+    kCoreCursorResizeDown,
+    kCoreCursorResizeUpDown,
+    kCoreCursorContextualMenu,
+    kCoreCursorPoof,
+    kCoreCursorIBeamVertical,
+    kCoreCursorWindowResizeEast,
+    kCoreCursorWindowResizeEastWest,
+    kCoreCursorWindowResizeNorthEast,
+    kCoreCursorWindowResizeNorthEastSouthWest,
+    kCoreCursorWindowResizeNorth,
+    kCoreCursorWindowResizeNorthSouth,
+    kCoreCursorWindowResizeNorthWest,
+    kCoreCursorWindowResizeNorthWestSouthEast,
+    kCoreCursorWindowResizeSouthEast,
+    kCoreCursorWindowResizeSouth,
+    kCoreCursorWindowResizeSouthWest,
+    kCoreCursorWindowResizeWest,
+    kCoreCursorWindowMove,
+    kCoreCursorHelp,
+    kCoreCursorCell,
+    kCoreCursorZoomIn,
+    kCoreCursorZoomOut,
+    kCoreCursorLastCursor = kCoreCursorZoomOut
+};
 
 enum {
     kCoreDragImageSpecVersionOne = 1,
@@ -51,6 +102,7 @@ struct CoreDragImageSpec {
 
 #endif
 
+typedef UInt32 MSHCreateOptions;
 typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
 typedef struct CoreDragImageSpec CoreDragImageSpec;
@@ -63,6 +115,7 @@ AXTextMarkerRef AXTextMarkerCreate(CFAllocatorRef, const UInt8* bytes, CFIndex l
 AXTextMarkerRef AXTextMarkerRangeCopyStartMarker(AXTextMarkerRangeRef);
 AXTextMarkerRef AXTextMarkerRangeCopyEndMarker(AXTextMarkerRangeRef);
 CFIndex AXTextMarkerGetLength(AXTextMarkerRef);
+CFRunLoopSourceRef MSHCreateMIGServerSource(CFAllocatorRef, CFIndex order, mig_subsystem_t sub_system, MSHCreateOptions, mach_port_t, void* user_data);
 CFTypeID AXTextMarkerGetTypeID();
 CFTypeID AXTextMarkerRangeGetTypeID();
 CoreDragRef CoreDragGetCurrentDrag();

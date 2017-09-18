@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,30 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "DefaultSearchProvider.h"
 
-#if USE(APPLE_INTERNAL_SDK)
+#if PLATFORM(MAC)
 
-#import <CoreFoundation/CFPriv.h>
-
-#else
-
+#include "CFUtilitiesSPI.h"
 #include <CoreFoundation/CoreFoundation.h>
 
-typedef CF_ENUM(CFIndex, CFSystemVersion) {
-    CFSystemVersionLion = 7,
-    CFSystemVersionMountainLion = 8,
-};
+namespace PAL {
 
-#endif
+RetainPtr<CFStringRef> defaultSearchProviderDisplayName()
+{
+    auto providerInfo = adoptCF(_CFWebServicesCopyProviderInfo(kCFWebServicesTypeWebSearch, nullptr));
+    if (!providerInfo)
+        return CFSTR("Google");
 
-WTF_EXTERN_C_BEGIN
+    CFTypeRef displayName = CFDictionaryGetValue(providerInfo.get(), kCFWebServicesProviderDefaultDisplayNameKey);
+    if (!displayName)
+        return CFSTR("Google");
 
-extern const CFStringRef kCFWebServicesProviderDefaultDisplayNameKey;
-extern const CFStringRef kCFWebServicesTypeWebSearch;
-extern const CFStringRef _kCFSystemVersionBuildVersionKey;
-extern const CFStringRef _kCFSystemVersionProductVersionKey;
+    ASSERT(CFGetTypeID(displayName) == CFStringGetTypeID());
+    return adoptCF(CFStringCreateCopy(kCFAllocatorDefault, (CFStringRef)displayName));
+}
 
-Boolean _CFAppVersionCheckLessThan(CFStringRef bundleID, int linkedOnAnOlderSystemThan, double versionNumberLessThan);
-Boolean _CFExecutableLinkedOnOrAfter(CFSystemVersion);
-CFDictionaryRef _CFCopySystemVersionDictionary();
-CFDictionaryRef _CFWebServicesCopyProviderInfo(CFStringRef serviceType, Boolean* outIsUserSelection);
+} // namespace PAL
 
-WTF_EXTERN_C_END
+#endif // PLATFORM(MAC)

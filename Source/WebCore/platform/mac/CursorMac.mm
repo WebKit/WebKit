@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 #import "Cursor.h"
 
 #import "WebCoreSystemInterface.h"
+#import <objc/runtime.h>
+#import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/StdLibExtras.h>
 
@@ -37,6 +39,139 @@
 @end
 
 namespace WebCore {
+    
+static NSCursor *busyButClickableNSCursor;
+static NSCursor *makeAliasNSCursor;
+static NSCursor *moveNSCursor;
+static NSCursor *resizeEastNSCursor;
+static NSCursor *resizeEastWestNSCursor;
+static NSCursor *resizeNorthNSCursor;
+static NSCursor *resizeNorthSouthNSCursor;
+static NSCursor *resizeNortheastNSCursor;
+static NSCursor *resizeNortheastSouthwestNSCursor;
+static NSCursor *resizeNorthwestNSCursor;
+static NSCursor *resizeNorthwestSoutheastNSCursor;
+static NSCursor *resizeSouthNSCursor;
+static NSCursor *resizeSoutheastNSCursor;
+static NSCursor *resizeSouthwestNSCursor;
+static NSCursor *resizeWestNSCursor;
+
+static NSCursor *cellNSCursor;
+static NSCursor *helpNSCursor;
+static NSCursor *zoomInNSCursor;
+static NSCursor *zoomOutNSCursor;
+
+static NSInteger WKCoreCursor_coreCursorType(id self, SEL)
+{
+    if (self == busyButClickableNSCursor)
+        return kCoreCursorBusyButClickable;
+    if (self == makeAliasNSCursor)
+        return kCoreCursorMakeAlias;
+    if (self == moveNSCursor)
+        return kCoreCursorWindowMove;
+    if (self == resizeEastNSCursor)
+        return kCoreCursorWindowResizeEast;
+    if (self == resizeEastWestNSCursor)
+        return kCoreCursorWindowResizeEastWest;
+    if (self == resizeNorthNSCursor)
+        return kCoreCursorWindowResizeNorth;
+    if (self == resizeNorthSouthNSCursor)
+        return kCoreCursorWindowResizeNorthSouth;
+    if (self == resizeNortheastNSCursor)
+        return kCoreCursorWindowResizeNorthEast;
+    if (self == resizeNortheastSouthwestNSCursor)
+        return kCoreCursorWindowResizeNorthEastSouthWest;
+    if (self == resizeNorthwestNSCursor)
+        return kCoreCursorWindowResizeNorthWest;
+    if (self == resizeNorthwestSoutheastNSCursor)
+        return kCoreCursorWindowResizeNorthWestSouthEast;
+    if (self == resizeSouthNSCursor)
+        return kCoreCursorWindowResizeSouth;
+    if (self == resizeSoutheastNSCursor)
+        return kCoreCursorWindowResizeSouthEast;
+    if (self == resizeSouthwestNSCursor)
+        return kCoreCursorWindowResizeSouthWest;
+    if (self == resizeWestNSCursor)
+        return kCoreCursorWindowResizeWest;
+    if (self == cellNSCursor)
+        return kCoreCursorCell;
+    if (self == helpNSCursor)
+        return kCoreCursorHelp;
+    if (self == zoomInNSCursor)
+        return kCoreCursorZoomIn;
+    if (self == zoomOutNSCursor)
+        return kCoreCursorZoomOut;
+    
+    return NSNotFound;
+}
+
+static Class createCoreCursorClass()
+{
+    Class coreCursorClass = objc_allocateClassPair([NSCursor class], "WKCoreCursor", 0);
+    SEL coreCursorType = NSSelectorFromString(@"_coreCursorType");
+    class_addMethod(coreCursorClass, coreCursorType, (IMP)WKCoreCursor_coreCursorType, method_getTypeEncoding(class_getInstanceMethod([NSCursor class], coreCursorType)));
+    objc_registerClassPair(coreCursorClass);
+    return coreCursorClass;
+}
+
+static Class coreCursorClass()
+{
+    Class coreCursorClass = objc_lookUpClass("WKCoreCursor");
+    if (!coreCursorClass)
+        coreCursorClass = createCoreCursorClass();
+    return coreCursorClass;
+}
+
+static NSCursor *cursor(const char *name)
+{
+    NSCursor **slot = 0;
+    
+    if (!strcmp(name, "BusyButClickable"))
+        slot = &busyButClickableNSCursor;
+    else if (!strcmp(name, "MakeAlias"))
+        slot = &makeAliasNSCursor;
+    else if (!strcmp(name, "Move"))
+        slot = &moveNSCursor;
+    else if (!strcmp(name, "ResizeEast"))
+        slot = &resizeEastNSCursor;
+    else if (!strcmp(name, "ResizeEastWest"))
+        slot = &resizeEastWestNSCursor;
+    else if (!strcmp(name, "ResizeNorth"))
+        slot = &resizeNorthNSCursor;
+    else if (!strcmp(name, "ResizeNorthSouth"))
+        slot = &resizeNorthSouthNSCursor;
+    else if (!strcmp(name, "ResizeNortheast"))
+        slot = &resizeNortheastNSCursor;
+    else if (!strcmp(name, "ResizeNortheastSouthwest"))
+        slot = &resizeNortheastSouthwestNSCursor;
+    else if (!strcmp(name, "ResizeNorthwest"))
+        slot = &resizeNorthwestNSCursor;
+    else if (!strcmp(name, "ResizeNorthwestSoutheast"))
+        slot = &resizeNorthwestSoutheastNSCursor;
+    else if (!strcmp(name, "ResizeSouth"))
+        slot = &resizeSouthNSCursor;
+    else if (!strcmp(name, "ResizeSoutheast"))
+        slot = &resizeSoutheastNSCursor;
+    else if (!strcmp(name, "ResizeSouthwest"))
+        slot = &resizeSouthwestNSCursor;
+    else if (!strcmp(name, "ResizeWest"))
+        slot = &resizeWestNSCursor;
+    else if (!strcmp(name, "Cell"))
+        slot = &cellNSCursor;
+    else if (!strcmp(name, "Help"))
+        slot = &helpNSCursor;
+    else if (!strcmp(name, "ZoomIn"))
+        slot = &zoomInNSCursor;
+    else if (!strcmp(name, "ZoomOut"))
+        slot = &zoomOutNSCursor;
+    
+    if (!slot)
+        return nil;
+    
+    if (!*slot)
+        *slot = [[coreCursorClass() alloc] init];
+    return *slot;
+}
 
 // Simple NSCursor calls shouldn't need protection,
 // but creating a cursor with a bad image might throw.
@@ -103,72 +238,72 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::Wait:
-        m_platformCursor = wkCursor("BusyButClickable");
+        m_platformCursor = cursor("BusyButClickable");
         break;
 
     case Cursor::Help:
-        m_platformCursor = wkCursor("Help");
+        m_platformCursor = cursor("Help");
         break;
 
     case Cursor::Move:
     case Cursor::MiddlePanning:
-        m_platformCursor = wkCursor("Move");
+        m_platformCursor = cursor("Move");
         break;
 
     case Cursor::EastResize:
     case Cursor::EastPanning:
-        m_platformCursor = wkCursor("ResizeEast");
+        m_platformCursor = cursor("ResizeEast");
         break;
 
     case Cursor::NorthResize:
     case Cursor::NorthPanning:
-        m_platformCursor = wkCursor("ResizeNorth");
+        m_platformCursor = cursor("ResizeNorth");
         break;
 
     case Cursor::NorthEastResize:
     case Cursor::NorthEastPanning:
-        m_platformCursor = wkCursor("ResizeNortheast");
+        m_platformCursor = cursor("ResizeNortheast");
         break;
 
     case Cursor::NorthWestResize:
     case Cursor::NorthWestPanning:
-        m_platformCursor = wkCursor("ResizeNorthwest");
+        m_platformCursor = cursor("ResizeNorthwest");
         break;
 
     case Cursor::SouthResize:
     case Cursor::SouthPanning:
-        m_platformCursor = wkCursor("ResizeSouth");
+        m_platformCursor = cursor("ResizeSouth");
         break;
 
     case Cursor::SouthEastResize:
     case Cursor::SouthEastPanning:
-        m_platformCursor = wkCursor("ResizeSoutheast");
+        m_platformCursor = cursor("ResizeSoutheast");
         break;
 
     case Cursor::SouthWestResize:
     case Cursor::SouthWestPanning:
-        m_platformCursor = wkCursor("ResizeSouthwest");
+        m_platformCursor = cursor("ResizeSouthwest");
         break;
 
     case Cursor::WestResize:
     case Cursor::WestPanning:
-        m_platformCursor = wkCursor("ResizeWest");
+        m_platformCursor = cursor("ResizeWest");
         break;
 
     case Cursor::NorthSouthResize:
-        m_platformCursor = wkCursor("ResizeNorthSouth");
+        m_platformCursor = cursor("ResizeNorthSouth");
         break;
 
     case Cursor::EastWestResize:
-        m_platformCursor = wkCursor("ResizeEastWest");
+        m_platformCursor = cursor("ResizeEastWest");
         break;
 
     case Cursor::NorthEastSouthWestResize:
-        m_platformCursor = wkCursor("ResizeNortheastSouthwest");
+        m_platformCursor = cursor("ResizeNortheastSouthwest");
         break;
 
     case Cursor::NorthWestSouthEastResize:
-        m_platformCursor = wkCursor("ResizeNorthwestSoutheast");
+        m_platformCursor = cursor("ResizeNorthwestSoutheast");
         break;
 
     case Cursor::ColumnResize:
@@ -184,7 +319,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::Cell:
-        m_platformCursor = wkCursor("Cell");
+        m_platformCursor = cursor("Cell");
         break;
 
     case Cursor::ContextMenu:
@@ -192,11 +327,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::Alias:
-        m_platformCursor = wkCursor("MakeAlias");
+        m_platformCursor = cursor("MakeAlias");
         break;
 
     case Cursor::Progress:
-        m_platformCursor = wkCursor("BusyButClickable");
+        m_platformCursor = cursor("BusyButClickable");
         break;
 
     case Cursor::NoDrop:
@@ -216,11 +351,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::ZoomIn:
-        m_platformCursor = wkCursor("ZoomIn");
+        m_platformCursor = cursor("ZoomIn");
         break;
 
     case Cursor::ZoomOut:
-        m_platformCursor = wkCursor("ZoomOut");
+        m_platformCursor = cursor("ZoomOut");
         break;
 
     case Cursor::Grab:

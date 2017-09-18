@@ -30,7 +30,6 @@
 
 #import <Foundation/Foundation.h>
 
-void (*wkDrawBezeledTextArea)(NSRect, BOOL enabled);
 void (*wkDrawMediaSliderTrack)(CGContextRef context, CGRect rect, float timeLoaded, float currentTime,
     float duration, unsigned state);
 BOOL (*wkHitTestMediaUIPart)(int part, CGRect bounds, CGPoint point);
@@ -42,14 +41,4 @@ void (*wkPopupMenu)(NSMenu*, NSPoint location, float width, NSView*, int selecte
 
 void* wkGetHyphenationLocationBeforeIndex;
 
-bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
-
 CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
-
-NSCursor *(*wkCursor)(const char*);
-
-#if !PLATFORM(IOS)
-CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initialVelocity, CGFloat elapsedTime);
-CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
-CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
-#endif

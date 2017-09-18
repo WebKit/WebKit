@@ -43,23 +43,10 @@ void InitWebCoreSystemInterface(void)
         return;
 
 #if !PLATFORM(IOS)
-    INIT(DrawBezeledTextArea);
     INIT(DrawMediaUIPart);
     INIT(DrawMediaSliderTrack);
     INIT(HitTestMediaUIPart);
     INIT(MeasureMediaUIPart);
-#endif
-
-#if !PLATFORM(IOS)
-    INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
-    INIT(CopyDefaultSearchProviderDisplayName);
-    INIT(Cursor);
-#endif
-
-#if !PLATFORM(IOS)
-    INIT(NSElasticDeltaForTimeDelta);
-    INIT(NSElasticDeltaForReboundDelta);
-    INIT(NSReboundDeltaForElasticDelta);
 #endif
 
     didInit = true;

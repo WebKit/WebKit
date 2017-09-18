@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2017 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PopupMenuClient.h>
 #import <WebKitSystemInterface.h>
+#import <pal/system/mac/PopupMenu.h>
 #import <wtf/BlockObjCExceptions.h>
 
 using namespace WebCore;
@@ -217,7 +218,7 @@ void PopupMenuMac::show(const IntRect& r, FrameView* v, int index)
         break;
     }
 
-    WKPopupMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());
+    PAL::popUpMenu(menu, location, roundf(NSWidth(r)), dummyView.get(), index, toNSFont(font), controlSize, !m_client->menuStyle().hasDefaultAppearance());
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

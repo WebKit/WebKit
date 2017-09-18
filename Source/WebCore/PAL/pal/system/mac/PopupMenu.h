@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if PLATFORM(MAC)
 
-#if USE(APPLE_INTERNAL_SDK)
+#import <AppKit/AppKit.h>
 
-#import <CoreFoundation/CFPriv.h>
+namespace PAL {
 
-#else
+PAL_EXPORT void popUpMenu(NSMenu *, NSPoint location, float width, NSView *, int selectedItem, NSFont *, NSControlSize, bool usesCustomAppearance);
 
-#include <CoreFoundation/CoreFoundation.h>
+}
 
-typedef CF_ENUM(CFIndex, CFSystemVersion) {
-    CFSystemVersionLion = 7,
-    CFSystemVersionMountainLion = 8,
-};
-
-#endif
-
-WTF_EXTERN_C_BEGIN
-
-extern const CFStringRef kCFWebServicesProviderDefaultDisplayNameKey;
-extern const CFStringRef kCFWebServicesTypeWebSearch;
-extern const CFStringRef _kCFSystemVersionBuildVersionKey;
-extern const CFStringRef _kCFSystemVersionProductVersionKey;
-
-Boolean _CFAppVersionCheckLessThan(CFStringRef bundleID, int linkedOnAnOlderSystemThan, double versionNumberLessThan);
-Boolean _CFExecutableLinkedOnOrAfter(CFSystemVersion);
-CFDictionaryRef _CFCopySystemVersionDictionary();
-CFDictionaryRef _CFWebServicesCopyProviderInfo(CFStringRef serviceType, Boolean* outIsUserSelection);
-
-WTF_EXTERN_C_END
+#endif // PLATFORM(MAC)

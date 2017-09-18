@@ -42,6 +42,7 @@
 #import <WebKitSystemInterface.h>
 #import <notify.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <sysexits.h>
 #import <wtf/MemoryPressureHandler.h>
 #import <wtf/text/WTFString.h>
@@ -59,7 +60,7 @@ void NetworkProcess::initializeProcess(const ChildProcessInitializationParameter
 void NetworkProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
 }
 
 static void overrideSystemProxies(const String& httpProxy, const String& httpsProxy)

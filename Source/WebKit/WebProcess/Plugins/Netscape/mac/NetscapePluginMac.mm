@@ -38,6 +38,7 @@
 #import <WebKitSystemInterface.h>
 #import <objc/runtime.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/StringView.h>
 
@@ -158,7 +159,6 @@ NPBool NetscapePlugin::convertPoint(double sourceX, double sourceY, NPCoordinate
     return false;
 }
 
-
 NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
 {
     if (!m_currentMouseEvent)
@@ -168,7 +168,7 @@ NPError NetscapePlugin::popUpContextMenu(NPMenu* npMenu)
     if (!convertPoint(m_currentMouseEvent->data.mouse.pluginX, m_currentMouseEvent->data.mouse.pluginY, NPCoordinateSpacePlugin, screenX, screenY, NPCoordinateSpaceScreen))
         ASSERT_NOT_REACHED();
 
-    WKPopupContextMenu(reinterpret_cast<NSMenu *>(npMenu), NSMakePoint(screenX, screenY));
+    _NSPopUpCarbonMenu3(reinterpret_cast<NSMenu *>(npMenu), nil, nil, NSMakePoint(screenX, screenY), -1, nil, 0, nil, NSPopUpMenuTypeContext, nil);
     return NPERR_NO_ERROR;
 }
 

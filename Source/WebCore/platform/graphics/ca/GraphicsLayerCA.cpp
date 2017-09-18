@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #include "GraphicsLayerCA.h"
 
 #if USE(CA)
@@ -47,6 +46,7 @@
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
+#include <pal/spi/cf/CFUtilitiesSPI.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -2988,7 +2988,7 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
         // on or before Snow Leopard.
         // FIXME: This fix has not been added to QuartzCore on Windows yet (<rdar://problem/9112233>) so we expect the
         // reversed animation behavior
-        static bool executableWasLinkedOnOrBeforeSnowLeopard = wkExecutableWasLinkedOnOrBeforeSnowLeopard();
+        static bool executableWasLinkedOnOrBeforeSnowLeopard = !_CFExecutableLinkedOnOrAfter(CFSystemVersionLion);
         if (!executableWasLinkedOnOrBeforeSnowLeopard)
             reverseAnimationList = false;
 #endif

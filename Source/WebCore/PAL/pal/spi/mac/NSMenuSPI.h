@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,26 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+WTF_EXTERN_C_BEGIN
 #import <AppKit/NSMenu_Private.h>
+WTF_EXTERN_C_END
 
 #else
 
 typedef NS_ENUM(NSInteger, NSMenuType) {
     NSMenuTypeNone = 0,
     NSMenuTypeContextMenu,
+};
+
+enum {
+    NSPopUpMenuTypeGeneric,
+    NSPopUpMenuTypePopUp,
+    NSPopUpMenuTypePullsDown,
+    NSPopUpMenuTypeMainMenu,
+    NSPopUpMenuTypeContext,
+    NSPopUpMenuDefaultToPopUpControlFont = 0x10,
+    NSPopUpMenuPositionRelativeToRightEdge = 0x20,
+    NSPopUpMenuIsPopupButton = 0x40,
 };
 
 @interface NSMenu ()
@@ -56,4 +69,17 @@ typedef NS_ENUM(NSInteger, NSMenuType) {
 
 #endif
 
-#endif
+typedef NSUInteger NSPopUpMenuFlags;
+
+WTF_EXTERN_C_BEGIN
+
+extern NSString * const NSPopUpMenuPopupButtonBounds;
+extern NSString * const NSPopUpMenuPopupButtonLabelOffset;
+extern NSString * const NSPopUpMenuPopupButtonSize;
+extern NSString * const NSPopUpMenuPopupButtonWidget;
+
+void _NSPopUpCarbonMenu3(NSMenu *, NSWindow *, NSView *ownerView, NSPoint screenPoint, NSInteger checkedItem, NSFont *, CGFloat minWidth, NSString *runLoopMode, NSPopUpMenuFlags, NSDictionary *options);
+
+WTF_EXTERN_C_END
+
+#endif // PLATFORM(MAC)

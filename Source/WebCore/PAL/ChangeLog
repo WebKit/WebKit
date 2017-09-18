@@ -1,3 +1,26 @@
+2017-09-18  Andy Estes  <aestes@apple.com>
+
+        [Mac] Upstream miscellaneous WebKitSystemInterface functions
+        https://bugs.webkit.org/show_bug.cgi?id=177029
+
+        Reviewed by Alex Christensen.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformMac.cmake:
+        * pal/spi/cf/CFUtilitiesSPI.h:
+        * pal/spi/cocoa/LaunchServicesSPI.h: Renamed from Source/WebCore/PAL/pal/spi/ios/LaunchServicesSPI.h.
+        * pal/spi/mac/HIServicesSPI.h:
+        * pal/spi/mac/NSCellSPI.h: Copied from Source/WebCore/PAL/pal/spi/cf/CFUtilitiesSPI.h.
+        * pal/spi/mac/NSMenuSPI.h:
+        * pal/spi/mac/NSScrollViewSPI.h: Copied from Source/WebCore/PAL/pal/spi/cf/CFUtilitiesSPI.h.
+        * pal/spi/mac/NSScrollerImpSPI.h:
+        * pal/system/cf/DefaultSearchProvider.cpp: Copied from Source/WebCore/PAL/pal/spi/cf/CFUtilitiesSPI.h.
+        (PAL::defaultSearchProviderDisplayName):
+        * pal/system/cf/DefaultSearchProvider.h: Copied from Source/WebCore/PAL/pal/spi/cf/CFUtilitiesSPI.h.
+        * pal/system/mac/PopupMenu.h: Copied from Source/WebCore/PAL/pal/spi/cf/CFUtilitiesSPI.h.
+        * pal/system/mac/PopupMenu.mm: Added.
+        (PAL::popUpMenu):
+
 2017-09-18  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [Win][PAL] Move WebCoreHeaderDetection.h to PAL

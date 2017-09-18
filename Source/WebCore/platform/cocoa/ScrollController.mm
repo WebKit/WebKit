@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2014-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,20 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ScrollController.h"
+#import "config.h"
+#import "ScrollController.h"
 
-#include "LayoutSize.h"
-#include "PlatformWheelEvent.h"
-#include "WebCoreSystemInterface.h"
-#include "WheelEventTestTrigger.h"
-#include <sys/sysctl.h>
-#include <sys/time.h>
-#include <wtf/CurrentTime.h>
+#import "LayoutSize.h"
+#import "PlatformWheelEvent.h"
+#import "WebCoreSystemInterface.h"
+#import "WheelEventTestTrigger.h"
+#import <sys/sysctl.h>
+#import <sys/time.h>
+#import <wtf/CurrentTime.h>
 
 #if ENABLE(CSS_SCROLL_SNAP)
-#include "ScrollSnapAnimatorState.h"
-#include "ScrollableArea.h"
+#import "ScrollSnapAnimatorState.h"
+#import "ScrollableArea.h"
+#endif
+
+#if PLATFORM(MAC)
+#import <pal/spi/mac/NSScrollViewSPI.h>
 #endif
 
 #if ENABLE(RUBBER_BANDING) || ENABLE(CSS_SCROLL_SNAP)
@@ -52,17 +56,17 @@ static const float rubberbandMinimumRequiredDeltaBeforeStretch = 10;
 #if PLATFORM(MAC)
 static float elasticDeltaForTimeDelta(float initialPosition, float initialVelocity, float elapsedTime)
 {
-    return wkNSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime);
+    return _NSElasticDeltaForTimeDelta(initialPosition, initialVelocity, elapsedTime);
 }
 
 static float elasticDeltaForReboundDelta(float delta)
 {
-    return wkNSElasticDeltaForReboundDelta(delta);
+    return _NSElasticDeltaForReboundDelta(delta);
 }
 
 static float reboundDeltaForElasticDelta(float delta)
 {
-    return wkNSReboundDeltaForElasticDelta(delta);
+    return _NSReboundDeltaForElasticDelta(delta);
 }
 
 static float scrollWheelMultiplier()

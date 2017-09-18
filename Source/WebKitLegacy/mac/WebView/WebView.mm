@@ -209,6 +209,7 @@
 #import <mach-o/dyld.h>
 #import <objc/runtime.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/NSTouchBarSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
 #import <pal/spi/mac/NSResponderSPI.h>
@@ -2609,16 +2610,16 @@ static bool fastDocumentTeardownEnabled()
 #if !PLATFORM(IOS)
 - (BOOL)_needsAdobeFrameReloadingQuirk
 {
-    static BOOL needsQuirk = WKAppVersionCheckLessThan(@"com.adobe.Acrobat", -1, 9.0)
-        || WKAppVersionCheckLessThan(@"com.adobe.Acrobat.Pro", -1, 9.0)
-        || WKAppVersionCheckLessThan(@"com.adobe.Reader", -1, 9.0)
-        || WKAppVersionCheckLessThan(@"com.adobe.distiller", -1, 9.0)
-        || WKAppVersionCheckLessThan(@"com.adobe.Contribute", -1, 4.2)
-        || WKAppVersionCheckLessThan(@"com.adobe.dreamweaver-9.0", -1, 9.1)
-        || WKAppVersionCheckLessThan(@"com.macromedia.fireworks", -1, 9.1)
-        || WKAppVersionCheckLessThan(@"com.adobe.InCopy", -1, 5.1)
-        || WKAppVersionCheckLessThan(@"com.adobe.InDesign", -1, 5.1)
-        || WKAppVersionCheckLessThan(@"com.adobe.Soundbooth", -1, 2);
+    static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.adobe.Acrobat"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Acrobat.Pro"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Reader"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.distiller"), -1, 9.0)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Contribute"), -1, 4.2)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.dreamweaver-9.0"), -1, 9.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.macromedia.fireworks"), -1, 9.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.InCopy"), -1, 5.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.InDesign"), -1, 5.1)
+        || _CFAppVersionCheckLessThan(CFSTR("com.adobe.Soundbooth"), -1, 2);
 
     return needsQuirk;
 }
@@ -2626,13 +2627,13 @@ static bool fastDocumentTeardownEnabled()
 - (BOOL)_needsLinkElementTextCSSQuirk
 {
     static BOOL needsQuirk = !WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITHOUT_LINK_ELEMENT_TEXT_CSS_QUIRK)
-        && WKAppVersionCheckLessThan(@"com.e-frontier.shade10", -1, 10.6);
+        && _CFAppVersionCheckLessThan(CFSTR("com.e-frontier.shade10"), -1, 10.6);
     return needsQuirk;
 }
 
 - (BOOL)_needsIsLoadingInAPISenseQuirk
 {
-    static BOOL needsQuirk = WKAppVersionCheckLessThan(@"com.apple.iAdProducer", -1, 2.1);
+    static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.apple.iAdProducer"), -1, 2.1);
     
     return needsQuirk;
 }
@@ -2645,7 +2646,7 @@ static bool fastDocumentTeardownEnabled()
 
 - (BOOL)_needsFrameLoadDelegateRetainQuirk
 {
-    static BOOL needsQuirk = WKAppVersionCheckLessThan(@"com.equinux.iSale5", -1, 5.6);    
+    static BOOL needsQuirk = _CFAppVersionCheckLessThan(CFSTR("com.equinux.iSale5"), -1, 5.6);
     return needsQuirk;
 }
 
@@ -2927,7 +2928,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings.setNeedsAdobeFrameReloadingQuirk([self _needsAdobeFrameReloadingQuirk]);
     settings.setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
     settings.setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
-    settings.setEnforceCSSMIMETypeInNoQuirksMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
+    settings.setEnforceCSSMIMETypeInNoQuirksMode(!_CFAppVersionCheckLessThan(CFSTR("com.apple.iWeb"), -1, 2.1));
     settings.setNeedsIsLoadingInAPISenseQuirk([self _needsIsLoadingInAPISenseQuirk]);
     settings.setTextAreasAreResizable([preferences textAreasAreResizable]);
     settings.setExperimentalNotificationsEnabled([preferences experimentalNotificationsEnabled]);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,6 +94,7 @@
 #import <pal/spi/mac/NSAccessibilitySPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSImmediateActionGestureRecognizerSPI.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
@@ -1259,7 +1260,7 @@ static NSTrackingAreaOptions trackingAreaOptions()
 {
     // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
     NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
-    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+    if (_NSRecommendedScrollerStyle() == NSScrollerStyleLegacy)
         options |= NSTrackingActiveAlways;
     else
         options |= NSTrackingActiveInKeyWindow;
@@ -1945,7 +1946,7 @@ bool WebViewImpl::mightBeginDragWhileInactive()
 bool WebViewImpl::mightBeginScrollWhileInactive()
 {
     // Legacy style scrollbars have design details that rely on tracking the mouse all the time.
-    if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy)
+    if (_NSRecommendedScrollerStyle() == NSScrollerStyleLegacy)
         return true;
 
     return false;

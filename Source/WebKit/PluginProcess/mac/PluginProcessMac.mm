@@ -47,6 +47,7 @@
 #import <mach/vm_statistics.h>
 #import <objc/runtime.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/mac/HIToolboxSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
 #import <sysexits.h>
@@ -622,9 +623,9 @@ void PluginProcess::platformInitializeProcess(const ChildProcessInitializationPa
 void PluginProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ (%@ Internet plug-in)", "visible name of the plug-in host process. The first argument is the plug-in name and the second argument is the application name."), [[(NSString *)m_pluginPath lastPathComponent] stringByDeletingPathExtension], (NSString *)parameters.uiProcessName];
-    WKSetVisibleApplicationName((CFStringRef)applicationName);
+    _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, (CFStringRef)applicationName, nullptr);
     if (!m_pluginBundleIdentifier.isEmpty())
-        WKSetApplicationInformationItem(kLSPlugInBundleIdentifierKey, m_pluginBundleIdentifier.createCFString().get());
+        _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), kLSPlugInBundleIdentifierKey, m_pluginBundleIdentifier.createCFString().get(), nullptr);
 }
 
 void PluginProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

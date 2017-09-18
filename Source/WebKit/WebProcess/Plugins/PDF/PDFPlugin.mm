@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2011, 2012, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +81,7 @@
 #import <WebCore/WheelEventTestTrigger.h>
 #import <WebKitSystemInterface.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/UUID.h>
 
@@ -1585,7 +1586,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
     
     if (NSMenu *nsMenu = [m_pdfLayerController menuForEvent:nsEventForWebMouseEvent(event)]) {
-        WKPopupContextMenu(nsMenu, point);
+        _NSPopUpCarbonMenu3(nsMenu, nil, nil, point, -1, nil, 0, nil, NSPopUpMenuTypeContext, nil);
         return true;
     }
     

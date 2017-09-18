@@ -107,6 +107,12 @@
 		A10826FA1F576292004772AC /* WebPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = A10826F81F576292004772AC /* WebPanel.mm */; };
 		A10826FE1F58A433004772AC /* NSGraphicsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A10826FD1F58A433004772AC /* NSGraphicsSPI.h */; };
 		A1175B491F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */; };
+		A1175B4B1F6B2D7E00C4B9F0 /* NSCellSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */; };
+		A1175B4E1F6B337300C4B9F0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */; };
+		A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */; };
+		A1175B571F6B470500C4B9F0 /* DefaultSearchProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */; };
+		A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */; };
+		A1175B5A1F6B4A8400C4B9F0 /* NSScrollViewSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */; };
 		A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */; };
 		A30D41211F0DD0EA00B71954 /* KillRing.h in Headers */ = {isa = PBXBuildFile; fileRef = A30D411E1F0DD0EA00B71954 /* KillRing.h */; };
 		A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D411F1F0DD0EA00B71954 /* KillRing.cpp */; };
@@ -229,6 +235,12 @@
 		A10826F81F576292004772AC /* WebPanel.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPanel.mm; sourceTree = "<group>"; };
 		A10826FD1F58A433004772AC /* NSGraphicsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSGraphicsSPI.h; sourceTree = "<group>"; };
 		A1175B481F6AFF8E00C4B9F0 /* SpeechSynthesisSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SpeechSynthesisSPI.h; sourceTree = "<group>"; };
+		A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSCellSPI.h; sourceTree = "<group>"; };
+		A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
+		A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenu.mm; sourceTree = "<group>"; };
+		A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DefaultSearchProvider.h; sourceTree = "<group>"; };
+		A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultSearchProvider.cpp; sourceTree = "<group>"; };
+		A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSScrollViewSPI.h; sourceTree = "<group>"; };
 		A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetadataSPI.h; sourceTree = "<group>"; };
 		A30D411E1F0DD0EA00B71954 /* KillRing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KillRing.h; sourceTree = "<group>"; };
 		A30D411F1F0DD0EA00B71954 /* KillRing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KillRing.cpp; sourceTree = "<group>"; };
@@ -307,6 +319,7 @@
 				0C2DA1281F3BEB4900DBC317 /* IOReturnSPI.h */,
 				0C2DA1291F3BEB4900DBC317 /* IOSurfaceSPI.h */,
 				0C2DA12A1F3BEB4900DBC317 /* IOTypesSPI.h */,
+				0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */,
 				0C2DA12B1F3BEB4900DBC317 /* LinkPresentationSPI.h */,
 				0C2DA12C1F3BEB4900DBC317 /* MachVMSPI.h */,
 				0C2DA12D1F3BEB4900DBC317 /* NEFilterSourceSPI.h */,
@@ -336,7 +349,6 @@
 				0C5AF90F1F43A4C7002EAC02 /* CoreUISPI.h */,
 				0C5AF9101F43A4C7002EAC02 /* DataDetectorsUISPI.h */,
 				0C5AF9111F43A4C7002EAC02 /* GraphicsServicesSPI.h */,
-				0C5AF9121F43A4C7002EAC02 /* LaunchServicesSPI.h */,
 				0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */,
 				0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */,
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
@@ -359,6 +371,7 @@
 				A1F55DCE1F5528EC00EDB75F /* MetadataSPI.h */,
 				0C7785741F45130F00F4EBB6 /* NSAccessibilitySPI.h */,
 				0C7785751F45130F00F4EBB6 /* NSApplicationSPI.h */,
+				A1175B4A1F6B2D7E00C4B9F0 /* NSCellSPI.h */,
 				0C7785761F45130F00F4EBB6 /* NSEventSPI.h */,
 				0C7785771F45130F00F4EBB6 /* NSFontSPI.h */,
 				A10826FD1F58A433004772AC /* NSGraphicsSPI.h */,
@@ -370,6 +383,7 @@
 				0C77857C1F45130F00F4EBB6 /* NSScrollerImpSPI.h */,
 				0C77857D1F45130F00F4EBB6 /* NSScrollingInputFilterSPI.h */,
 				0C77857E1F45130F00F4EBB6 /* NSScrollingMomentumCalculatorSPI.h */,
+				A1175B591F6B4A8400C4B9F0 /* NSScrollViewSPI.h */,
 				0C77857F1F45130F00F4EBB6 /* NSSharingServicePickerSPI.h */,
 				0C7785801F45130F00F4EBB6 /* NSSharingServiceSPI.h */,
 				0C7785811F45130F00F4EBB6 /* NSSpellCheckerSPI.h */,
@@ -486,6 +500,10 @@
 		A3788EA01F05B7E200679425 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */,
+				A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */,
+				A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */,
+				A1175B4D1F6B337300C4B9F0 /* PopupMenu.mm */,
 				A3788E9D1F05B78E00679425 /* SoundMac.mm */,
 				A3AB6E621F3D217F009C14B1 /* SystemSleepListenerMac.h */,
 				A3AB6E631F3D217F009C14B1 /* SystemSleepListenerMac.mm */,
@@ -528,6 +546,7 @@
 				0C2DA1411F3BEB4900DBC317 /* DataDetectorsCoreSPI.h in Headers */,
 				0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */,
 				0C5AF91A1F43A4C7002EAC02 /* DataDetectorsUISPI.h in Headers */,
+				A1175B571F6B470500C4B9F0 /* DefaultSearchProvider.h in Headers */,
 				0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */,
 				A10265871F56746100B4C844 /* FoundationSPI.h in Headers */,
 				0C5AF91B1F43A4C7002EAC02 /* GraphicsServicesSPI.h in Headers */,
@@ -556,6 +575,7 @@
 				0C2DA14A1F3BEB4900DBC317 /* NSAttributedStringSPI.h in Headers */,
 				0C2DA14B1F3BEB4900DBC317 /* NSButtonCellSPI.h in Headers */,
 				0C2DA14C1F3BEB4900DBC317 /* NSCalendarDateSPI.h in Headers */,
+				A1175B4B1F6B2D7E00C4B9F0 /* NSCellSPI.h in Headers */,
 				0C2DA14D1F3BEB4900DBC317 /* NSColorSPI.h in Headers */,
 				0C77858F1F45130F00F4EBB6 /* NSEventSPI.h in Headers */,
 				0C2DA14E1F3BEB4900DBC317 /* NSExtensionSPI.h in Headers */,
@@ -570,6 +590,7 @@
 				0C7785951F45130F00F4EBB6 /* NSScrollerImpSPI.h in Headers */,
 				0C7785961F45130F00F4EBB6 /* NSScrollingInputFilterSPI.h in Headers */,
 				0C7785971F45130F00F4EBB6 /* NSScrollingMomentumCalculatorSPI.h in Headers */,
+				A1175B5A1F6B4A8400C4B9F0 /* NSScrollViewSPI.h in Headers */,
 				0C7785981F45130F00F4EBB6 /* NSSharingServicePickerSPI.h in Headers */,
 				0C7785991F45130F00F4EBB6 /* NSSharingServiceSPI.h in Headers */,
 				0C77859A1F45130F00F4EBB6 /* NSSpellCheckerSPI.h in Headers */,
@@ -584,6 +605,7 @@
 				0C5AF91F1F43A4C7002EAC02 /* OpenGLESSPI.h in Headers */,
 				0C2DA1551F3BEB4900DBC317 /* PassKitSPI.h in Headers */,
 				0C77859E1F45130F00F4EBB6 /* PIPSPI.h in Headers */,
+				A1175B4E1F6B337300C4B9F0 /* PopupMenu.h in Headers */,
 				0C2DA1561F3BEB4900DBC317 /* pthreadSPI.h in Headers */,
 				0C77859F1F45130F00F4EBB6 /* QTKitSPI.h in Headers */,
 				0C2DA1571F3BEB4900DBC317 /* QuartzCoreSPI.h in Headers */,
@@ -692,8 +714,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
+				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
+				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
 				A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */,
 				A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */,
 				A3AB6E601F3D1E39009C14B1 /* SleepDisablerCocoa.cpp in Sources */,

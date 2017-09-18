@@ -130,7 +130,9 @@
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <limits>
+#import <pal/spi/cf/CFUtilitiesSPI.h>
 #import <pal/spi/cocoa/NSURLFileTypeMappingsSPI.h>
+#import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <pal/spi/mac/NSSpellCheckerSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
 #import <pal/spi/mac/NSWindowSPI.h>
@@ -4682,7 +4684,7 @@ static RefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 #if PLATFORM(MAC)
     if (!_private->installedTrackingArea) {
         NSTrackingAreaOptions options = NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingInVisibleRect | NSTrackingCursorUpdate;
-        if (WKRecommendedScrollerStyle() == NSScrollerStyleLegacy
+        if (_NSRecommendedScrollerStyle() == NSScrollerStyleLegacy
 #if ENABLE(DASHBOARD_SUPPORT)
             || [[self _webView] _dashboardBehavior:WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows]
 #endif
@@ -6354,7 +6356,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     if ([[self _webView] _postsAcceleratedCompositingNotifications])
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
 
-    if (WKExecutableWasLinkedOnOrBeforeLion())
+    if (!_CFExecutableLinkedOnOrAfter(CFSystemVersionMountainLion))
         [viewLayer setGeometryFlipped:YES];
 }
 
