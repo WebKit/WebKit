@@ -391,7 +391,80 @@ The same overloading power is provided for array accesses. For example:
 
 Alternatively, it's possible to overload getters and setters (`operator[]` and `operator[]=`).
 
-## Summary
+# Mapping of API concepts
+
+WSL is designed to be useful as both a graphics shading language and as a computation language. However, these two environments have
+slightly different semantics.
+
+When using WSL as a graphics shading language, there is a distinction between *entry-points* and *non-entry-points*. Entry points are top-level functions which have either the `vertex` or `fragment` keyword in front of their declaration. Entry points may not be forward declared. An entry point annotated with the `vertex` keyword may not be used as a fragment shader, and an entry point annotated with the `fragment` keyword may not be used as a vertex shader. No argument nor return value of an entry point may be a pointer. Entry points must not accept type arguments (also known as "generics").
+
+## Vertex entry points
+
+WebGPU's API passes data to a WSL vertex shader in four ways:
+
+- Attributes
+- Buffered data
+- Texture data
+- Samplers
+
+Each of these API objects is referred to by name from the API. Variables in WSL are not annotated with extra API-visible names (like they are in some other graphics APIs).
+
+Variables are passed to vertex shaders as arguments to a vertex entry point. Each buffer is represented as an argument with an array reference type (using the `[]` syntax). Textures and samplers are represented by arguments with the `texture` and `sampler` types, respectively. All other non-builtin arguments to a vertex entry point are implied to be attributes.
+
+Some arguments are recognized by the compiler from their name and type. These arguments provide built-in functionality inherent in the graphics pipeline. For example, an argument of the form `int wsl_vertexID` refers to the ID of the current vertex, and is not recognized as an attribute. All non-builtin arguments to a vertex entry point must be associated with an API object whenever any draw call using the vertex entry point is invoked. Otherwise, the draw call will fail.
+
+The only way to pass data between successive shader stages within a single draw call is by return value. An entry point must indicate that it returns a collection of values contained within a structure. Every variable inside this structure, recursively, is passed to the next stage in the graphics pipeline. Members of this struct may also be output built-in variables. For example, a vertex entry point may return a struct which contains a member `float4 wsl_Position`, and this variable will represent the rasterized position of the vertex. Buffers (as described by WSL array references), textures, and samplers must not be present in this returned struct. Built-in variables must never appear twice inside the returned structure.
+
+## Fragment entry points
+
+Fragment entry points may accept one argument with the type that the previous shader stage returned. The argument name for this argument must be `stageIn`. In addition to this argument, fragment entry points may accept buffers, textures, and samplers as arguments in the same way that vertex entry points accept them. Fragment entry points also must return a struct, and all members of this struct must be built-in variables. The set of recognized built-in variables which may be accepted or returned from an entry point is different between all types of entry points.
+
+For example, this would be a valid graphics program:
+
+    struct VertexInput {
+        float2 position;
+        float3 color;
+    }
+    
+    struct VertexOutput {
+        float4 wsl_Position;
+        float3 color;
+    }
+    
+    struct FragmentOutput {
+        float4 wsl_Color;
+    }
+    
+    vertex VertexOutput vertexShader(VertexInput vertexInput) {
+        VertexOutput result;
+        result.wsl_Position = float4(vertexInput.position, 0., 1.);
+        result.color = vertexInput.color;
+        return result;
+    }
+    
+    fragment FragmentOutput fragmentShader(VertexOutput stageIn) {
+        FragmentOutput result;
+        result.wsl_Color = float4(stageIn.color, 1.);
+        return result;
+    }
+
+## Compute entry points
+
+WebGPU's API passes data to a compute shader in three ways:
+
+- Buffered data
+- Texture data
+- Samplers
+
+Compute entry points start with the keyword `compute`. The return type for a compute entry point must be `void`. Each buffer is represented as an argument with an array reference type (using the `[]` syntax). Textures and samplers are represented by arguments with the `texture` and `sampler` types, respectively. Compute entry points may also accept built-in variables as arguments. Arguments of any other type are disallowed. Arguments may not use the `threadgroup` memory space.
+
+# Error handling
+
+Errors may occur during shader processing. For example, the shader may attempt to dereference a `null` array reference. If this occurs, the shader stage immediately completes successfully. The entry point immediately returns a struct with all fields set to 0. After this event, subsequent shader stages will proceed as if there was no problem.
+
+Buffer and texture reads and writes before the error all complete, and have the same semantics as if no error had occurred. Buffer and texture reads and writes after the error do not occur.
+
+# Summary
 
 WSL is a type-safe language based on C syntax. It eliminates some C features, like unions and pointer casts, but adds other modern features in their place, like generics and overloading.
 
@@ -401,5 +474,6 @@ The following additional limitations may be placed on a WSL program:
 
 - `device`, `constant`, and `threadgroup` pointers cannot point to data that may have pointers in it. This safety check is not done as part of the normal type system checks. It's performed only after instantiation.
 - Pointers and array references (collectively, *references*) may be restricted to support compiling to SPIR-V *logical mode*. In this mode, references may never point to data structures that have references in them. References must be initialized upon declaration and never reassigned. Functions that return references must have one return point. Ternary expressions may not return references.
+- Graphics entry points must transitively never refer to the `threadgroup` memory space.
 
 

@@ -1,3 +1,16 @@
+2017-09-18  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Add a section in WSL's documentation about how API objects and WSL interact
+        https://bugs.webkit.org/show_bug.cgi?id=177089
+
+        Reviewed by Filip Pizlo.
+
+        No global variables; entry points accept arguments. Buffers are array references ([]),
+        and texture and sampler opaque types exist. Data is passed between stages in return
+        values.
+
+        * WebGPUShadingLanguageRI/WSL.md:
+
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix typo.
