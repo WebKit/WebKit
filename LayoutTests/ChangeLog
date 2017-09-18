@@ -1,3 +1,11 @@
+2017-09-18  Antti Koivisto  <antti@apple.com>
+
+        Try to unflake a test.
+
+        Unreviewed.
+
+        * transitions/transition-display-property-2.html:
+
 2017-09-18  Ryan Haddad  <ryanhaddad@apple.com>
 
         Move baseline for editing/mac/attributed-string/font-style-variant-effect.html to mac-sierra.
