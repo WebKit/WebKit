@@ -33,11 +33,6 @@ WI.ContentViewCookieType = {
     Timelines: "timelines"
 };
 
-WI.DebuggableType = {
-    Web: "web",
-    JavaScript: "javascript"
-};
-
 WI.SelectedSidebarPanelCookieKey = "selected-sidebar-panel";
 WI.TypeIdentifierCookieKey = "represented-object-type";
 
@@ -55,9 +50,6 @@ WI.LayoutDirection = {
 
 WI.loaded = function()
 {
-    this.debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WI.DebuggableType.Web : WI.DebuggableType.JavaScript;
-    this.hasExtraDomains = false;
-
     // Register observers for events from the InspectorBackend.
     if (InspectorBackend.registerInspectorDispatcher)
         InspectorBackend.registerInspectorDispatcher(new WI.InspectorObserver);
@@ -247,7 +239,7 @@ WI.contentLoaded = function()
             document.body.classList.add("legacy-mac");
     }
 
-    document.body.classList.add(this.debuggableType);
+    document.body.classList.add(WI.sharedApp.debuggableType);
     document.body.setAttribute("dir", this.resolvedLayoutDirection());
 
     function setTabSize() {
@@ -378,7 +370,7 @@ WI.contentLoaded = function()
     this._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", this._togglePreviousDockConfiguration.bind(this));
 
     var toolTip;
-    if (WI.debuggableType === WI.DebuggableType.JavaScript)
+    if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
         toolTip = WI.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
     else
         toolTip = WI.UIString("Reload this page (%s)\nReload ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageIgnoringCacheKeyboardShortcut.displayName);
@@ -704,14 +696,6 @@ WI.registerTabClass = function(tabClass)
 
 WI.activateExtraDomains = function(domains)
 {
-    this.hasExtraDomains = true;
-
-    for (var domain of domains) {
-        var agent = InspectorBackend.activateDomain(domain);
-        if (agent.enable)
-            agent.enable();
-    }
-
     this.notifications.dispatchEventToListeners(WI.Notification.ExtraDomainsActivated, {"domains": domains});
 
     WI.CSSCompletions.requestCSSCompletions();
@@ -1859,7 +1843,7 @@ WI._updateReloadToolbarButton = function()
 WI._updateDownloadToolbarButton = function()
 {
     // COMPATIBILITY (iOS 7): Page.archive did not exist yet.
-    if (!window.PageAgent || !PageAgent.archive || this.debuggableType !== WI.DebuggableType.Web) {
+    if (!window.PageAgent || !PageAgent.archive || this.sharedApp.debuggableType !== WI.DebuggableType.Web) {
         this._downloadToolbarButton.hidden = true;
         return;
     }
@@ -2589,7 +2573,7 @@ WI.archiveMainFrame = function()
 WI.canArchiveMainFrame = function()
 {
     // COMPATIBILITY (iOS 7): Page.archive did not exist yet.
-    if (!PageAgent.archive || this.debuggableType !== WI.DebuggableType.Web)
+    if (!PageAgent.archive || this.sharedApp.debuggableType !== WI.DebuggableType.Web)
         return false;
 
     if (!WI.frameResourceManager.mainFrame || !WI.frameResourceManager.mainFrame.mainResource)

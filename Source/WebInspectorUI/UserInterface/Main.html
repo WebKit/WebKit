@@ -817,6 +817,8 @@
     <script src="Workers/Formatter/FormatterContentBuilder.js"></script>
 
     <script src="Base/Main.js"></script>
+    <script src="Controllers/AppControllerBase.js"></script>
+    <script src="Controllers/AppController.js"></script>
 
     <script src="Debug/Bootstrap.js"></script>
     <script src="Debug/CapturingProtocolTracer.js"></script>
@@ -824,7 +826,8 @@
     <script src="Debug/DebugContentView.js"></script>
 
     <script>
-        WI.loaded();
+        WI.sharedApp = new WI.AppController;
+        WI.sharedApp.initialize();
     </script>
 </head>
 <body>

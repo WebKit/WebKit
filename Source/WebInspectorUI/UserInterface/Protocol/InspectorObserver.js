@@ -55,7 +55,7 @@ WI.InspectorObserver = class InspectorObserver
                 }
             });
             remoteObject.release();
-            return;            
+            return;
         }
 
         if (hints.databaseId)
@@ -68,6 +68,6 @@ WI.InspectorObserver = class InspectorObserver
 
     activateExtraDomains(domains)
     {
-        WI.activateExtraDomains(domains);
+        WI.sharedApp.activateExtraDomains(domains);
     }
 };

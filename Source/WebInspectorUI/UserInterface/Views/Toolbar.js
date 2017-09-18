@@ -101,7 +101,7 @@ WI.Toolbar = class Toolbar extends WI.NavigationBar
             return;
 
         // Force collapsed style for JavaScript debuggables.
-        if (WI.debuggableType === WI.DebuggableType.JavaScript) {
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript) {
             this.element.classList.add(WI.NavigationBar.CollapsedStyleClassName);
             return;
         }

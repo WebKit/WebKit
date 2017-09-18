@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MainTarget = class MainTarget extends WI.Target
+WI.DebuggableType = {
+    Web: "web",
+    JavaScript: "javascript"
+};
+
+WI.NotImplementedError = class NotImplementedError extends Error
 {
-    constructor(connection)
+    constructor(message="This method is not implemented.")
     {
-        super("main", "", WI.Target.Type.Main, InspectorBackend.mainConnection);
-
-        let displayName = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.UIString("Main Frame") : this.displayName;
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        super(message);
     }
 
-    // Protected (Target)
-
-    get displayName()
+    static subclassMustOverride()
     {
-        switch (WI.sharedApp.debuggableType) {
-        case WI.DebuggableType.Web:
-            return WI.UIString("Page");
-        case WI.DebuggableType.JavaScript:
-            return WI.UIString("JavaScript Context");
-        default:
-            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
-            return WI.UIString("Main");
-        }
+        return new WI.NotImplementedError("This method must be overridden by a subclass.");
+    }
+};
+
+WI.AppControllerBase = class AppControllerBase
+{
+    constructor()
+    {
+        this._initialized = false;
     }
 
-    get mainResource()
+    get hasExtraDomains() { throw WI.NotImplementedError.subclassMustOverride(); }
+    get debuggableType() { throw WI.NotImplementedError.subclassMustOverride(); }
+
+    // Since various members of the app controller depend on the global singleton to exist,
+    // some initialization needs to happen after the app controller has been constructed.
+    initialize()
     {
-        let mainFrame = WI.frameResourceManager.mainFrame;
-        return mainFrame ? mainFrame.mainResource : null;
+        if (this._initialized)
+            throw new Error("App controller is already initialized.");
+
+        this._initialized = true;
+
+        // FIXME: eventually all code within WI.loaded should be distributed elsewhere.
+        WI.loaded();
     }
 };

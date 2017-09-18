@@ -76,7 +76,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         this.contentTreeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this.contentTreeOutline.includeSourceMapResourceChildren = true;
 
-        if (WI.debuggableType === WI.DebuggableType.JavaScript) {
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript) {
             this.contentTreeOutline.disclosureButtons = false;
             WI.SourceCode.addEventListener(WI.SourceCode.Event.SourceMapAdded, () => { this.contentTreeOutline.disclosureButtons = true; }, this);
         }
@@ -203,7 +203,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
         for (let script of WI.debuggerManager.knownNonResourceScripts) {
             this._addScript(script);
 
-            if (script.sourceMaps.length && WI.debuggableType === WI.DebuggableType.JavaScript)
+            if (script.sourceMaps.length && WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
                 this.contentTreeOutline.disclosureButtons = true;
         }
     }
@@ -335,7 +335,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
             parentFolderTreeElement = this._extensionScriptsFolderTreeElement;
         } else {
-            if (WI.debuggableType === WI.DebuggableType.JavaScript && !WI.hasExtraDomains)
+            if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript && !WI.sharedApp.hasExtraDomains)
                 insertIntoTopLevel = true;
             else {
                 if (!this._extraScriptsFolderTreeElement) {
@@ -496,7 +496,7 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
 
     _extraDomainsActivated()
     {
-        if (WI.debuggableType === WI.DebuggableType.JavaScript)
+        if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
             this.contentTreeOutline.disclosureButtons = true;
     }
 

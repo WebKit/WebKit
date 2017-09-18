@@ -1,3 +1,83 @@
+2017-09-18  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: introduce an AppController class and shared instance of it
+        https://bugs.webkit.org/show_bug.cgi?id=177024
+
+        Reviewed by Matt Baker.
+
+        WebInspectorUI currently has an app controller singleton that's distributed
+        among many properties on the WI object, which also serves as a namespace for
+        classes, enums, and other frontend objects. The singleton should be a proper
+        class so that we can think more easily about what state is global.
+
+        In the process of moving pieces of Main.js into AppController, I intend to move
+        most UI related code into a view controller class for the top level view.
+        AppController really shouldn't be doing anything to the view hierarchy or DOM.
+        It is yet to be determined how responsibility for global DOM events, such as
+        those for keyboard shortcuts, will be handled.
+
+        This larger refactoring project will let us more easily do things like connect
+        to multiple debuggables in the same Inspector instance, and switch between views
+        of different debuggable targets. Even if this never comes to pass, the code will
+        be a lot easier to reason about and maintain in the future.
+
+        For the first patch, introduce {AppController, TestAppController} <: AppControllerBase.
+        Shared code goes in the base class. In the Main.html and Test.html files, first
+        construct the AppController and then call .initialize() to avoid cyclic dependencies
+        on the global singleton WI.sharedApp.
+
+        * UserInterface/Main.html:
+        * UserInterface/Test.html:
+        * UserInterface/Test/Test.js:
+        (WI.loaded):
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        Move some shared code out of here into AppControllerBase.constructor.
+        Eventually WI.loaded should not exist, and its code will move elsewhere.
+
+        (WI.contentLoaded):
+        Adopt global reference.
+
+        * UserInterface/Controllers/AppControllerBase.js: Copied from Source/WebInspectorUI/UserInterface/Protocol/MainTarget.js.
+        (WI.AppControllerBase):
+        (WI.AppControllerBase.prototype.get hasExtraDomains):
+        (WI.AppControllerBase.prototype.get debuggableType):
+        (WI.AppControllerBase.prototype.initialize):
+
+        * UserInterface/Controllers/AppController.js: New.
+        (WI.AppController):
+        (WI.AppController.prototype.get hasExtraDomains):
+        (WI.AppController.prototype.get debuggableType):
+        (WI.AppController.prototype.activateExtraDomains):
+
+        * UserInterface/Test/TestAppController.js: New.
+        (WI.TestAppController):
+        (WI.TestAppController.prototype.get hasExtraDomains):
+        (WI.TestAppController.prototype.get debuggableType):
+
+        * UserInterface/Controllers/TimelineManager.js:
+        (WI.TimelineManager.defaultTimelineTypes):
+        (WI.TimelineManager.availableTimelineTypes):
+        (WI.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStarted):
+        (WI.TimelineManager.prototype.scriptProfilerProgrammaticCaptureStopped):
+        (WI.TimelineManager.prototype.scriptProfilerTrackingCompleted):
+        * UserInterface/Models/TimelineRecording.js:
+        (WI.TimelineRecording.sourceCodeTimelinesSupported):
+        * UserInterface/Protocol/InspectorObserver.js:
+        (WI.InspectorObserver.prototype.inspect):
+        (WI.InspectorObserver.prototype.activateExtraDomains):
+        (WI.InspectorObserver):
+        * UserInterface/Protocol/MainTarget.js:
+        (WI.MainTarget):
+        (WI.MainTarget.prototype.get displayName):
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel):
+        (WI.ResourceSidebarPanel.prototype.initialLayout):
+        (WI.ResourceSidebarPanel.prototype._addScript):
+        (WI.ResourceSidebarPanel.prototype._extraDomainsActivated):
+        * UserInterface/Views/Toolbar.js:
+        Use WI.sharedApp.{debuggableType, hasExtraDomains}.
+
 2017-09-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: console.assert messages shouldn't end in an exclamation point

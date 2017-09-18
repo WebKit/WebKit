@@ -56,7 +56,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     static sourceCodeTimelinesSupported()
     {
-        return WI.debuggableType === WI.DebuggableType.Web;
+        return WI.sharedApp.debuggableType === WI.DebuggableType.Web;
     }
 
     // Public

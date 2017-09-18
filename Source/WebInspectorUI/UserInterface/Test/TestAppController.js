@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MainTarget = class MainTarget extends WI.Target
+WI.TestAppController = class TestAppController extends WI.AppControllerBase
 {
-    constructor(connection)
+    constructor()
     {
-        super("main", "", WI.Target.Type.Main, InspectorBackend.mainConnection);
-
-        let displayName = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.UIString("Main Frame") : this.displayName;
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        super();
     }
 
-    // Protected (Target)
-
-    get displayName()
-    {
-        switch (WI.sharedApp.debuggableType) {
-        case WI.DebuggableType.Web:
-            return WI.UIString("Page");
-        case WI.DebuggableType.JavaScript:
-            return WI.UIString("JavaScript Context");
-        default:
-            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
-            return WI.UIString("Main");
-        }
-    }
-
-    get mainResource()
-    {
-        let mainFrame = WI.frameResourceManager.mainFrame;
-        return mainFrame ? mainFrame.mainResource : null;
-    }
+    get hasExtraDomains() { return false; }
+    get debuggableType() { return WI.DebuggableType.Web; }
 };

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,34 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.MainTarget = class MainTarget extends WI.Target
+WI.AppController = class AppController extends WI.AppControllerBase
 {
-    constructor(connection)
+    constructor()
     {
-        super("main", "", WI.Target.Type.Main, InspectorBackend.mainConnection);
+        super();
 
-        let displayName = WI.sharedApp.debuggableType === WI.DebuggableType.Web ? WI.UIString("Main Frame") : this.displayName;
-        this._executionContext = new WI.ExecutionContext(this, WI.RuntimeManager.TopLevelContextExecutionIdentifier, displayName, true, null);
+        this._hasExtraDomains = false;
+        this._debuggableType = InspectorFrontendHost.debuggableType() === "web" ? WI.DebuggableType.Web : WI.DebuggableType.JavaScript;
     }
 
-    // Protected (Target)
+    // Properties.
 
-    get displayName()
+    get hasExtraDomains() { return this._hasExtraDomains; }
+    get debuggableType() { return this._debuggableType; }
+
+    // API.
+
+    activateExtraDomains(domains)
     {
-        switch (WI.sharedApp.debuggableType) {
-        case WI.DebuggableType.Web:
-            return WI.UIString("Page");
-        case WI.DebuggableType.JavaScript:
-            return WI.UIString("JavaScript Context");
-        default:
-            console.error("Unexpected debuggable type: ", WI.sharedApp.debuggableType);
-            return WI.UIString("Main");
+        if (this._hasExtraDomains)
+            throw new Error("Extra domains have already been activated, cannot activate again.");
+
+        this._hasExtraDomains = true;
+
+        for (let domain of domains) {
+            let agent = InspectorBackend.activateDomain(domain);
+            if (agent.enable)
+                agent.enable();
         }
-    }
 
-    get mainResource()
-    {
-        let mainFrame = WI.frameResourceManager.mainFrame;
-        return mainFrame ? mainFrame.mainResource : null;
+        // FIXME: all code within WI.activateExtraDomains should be distributed elsewhere.
+        WI.activateExtraDomains();
     }
 };

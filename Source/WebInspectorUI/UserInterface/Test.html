@@ -46,6 +46,8 @@
     <script src="Test/TestSuite.js"></script>
 
     <script src="Test/Test.js"></script>
+    <script src="Controllers/AppControllerBase.js"></script>
+    <script src="Test/TestAppController.js"></script>
 
     <script src="Base/DOMUtilities.js"></script>
     <script src="Base/EventListener.js"></script>
@@ -216,7 +218,8 @@
     <script src="Views/CodeMirrorFormatters.js"></script>
 
     <script type="text/javascript">
-        WI.loaded();
+        WI.sharedApp = new WI.TestAppController;
+        WI.sharedApp.initialize();
 
         // Debug logging is synchronous on the test page.
         InspectorTest.forceDebugLogging = false;
