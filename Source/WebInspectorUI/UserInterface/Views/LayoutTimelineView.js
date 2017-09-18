@@ -217,7 +217,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
                 console.assert(childRecord.type === WI.TimelineRecord.Type.Layout, childRecord);
 
                 let childDataGridNode = new WI.LayoutTimelineDataGridNode(childRecord, this.zeroTime);
-                console.assert(entry.parentDataGridNode, "entry without parent!");
+                console.assert(entry.parentDataGridNode, "Missing parent node for entry.", entry);
                 this._dataGrid.addRowInSortOrder(null, childDataGridNode, entry.parentDataGridNode);
 
                 if (childDataGridNode && childRecord.children.length)

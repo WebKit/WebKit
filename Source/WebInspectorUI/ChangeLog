@@ -1,3 +1,21 @@
+2017-09-18  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: console.assert messages shouldn't end in an exclamation point
+        https://bugs.webkit.org/show_bug.cgi?id=177054
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Base/EventListener.js:
+        * UserInterface/Base/EventListenerSet.js:
+        (WI.EventListenerSet.prototype.register):
+        Drive-by: make assertions the same in both.
+
+        * UserInterface/Views/LayoutTimelineView.js:
+        (WI.LayoutTimelineView.prototype._processPendingRecords):
+
+        * UserInterface/Views/Resizer.js:
+        (WI.Resizer.prototype._currentPosition):
+
 2017-09-18  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: REGRESSION(r221901): Single frame recordings don't reset the recording navigation item
