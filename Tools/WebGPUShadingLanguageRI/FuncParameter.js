@@ -37,6 +37,7 @@ class FuncParameter extends Value {
     get origin() { return this._origin; }
     get name() { return this._name; }
     get type() { return this._type; }
+    get varIsLValue() { return true; }
     
     toString()
     {

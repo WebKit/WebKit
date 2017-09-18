@@ -37,6 +37,7 @@ class ConstexprTypeParameter extends Value {
     get type() { return this._type; }
     get isConstexpr() { return true; }
     get isUnifiable() { return true; }
+    get varIsLValue() { return false; }
     
     typeVariableUnify(unificationContext, other)
     {

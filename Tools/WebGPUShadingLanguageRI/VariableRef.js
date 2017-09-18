@@ -42,7 +42,7 @@ class VariableRef extends Expression {
     get name() { return this._name; }
     get isConstexpr() { return this.variable.isConstexpr; }
     get unifyNode() { return this.variable.unifyNode; } // This only makes sense when this is a constexpr.
-    get isLValue() { return true; }
+    get isLValue() { return this.variable.varIsLValue; }
     get addressSpace() { return "thread"; }
     
     toString()

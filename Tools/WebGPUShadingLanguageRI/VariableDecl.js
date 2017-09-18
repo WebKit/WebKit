@@ -38,6 +38,7 @@ class VariableDecl extends Value {
     get name() { return this._name; }
     get type() { return this._type; }
     get initializer() { return this._initializer; }
+    get varIsLValue() { return true; }
     
     toString()
     {

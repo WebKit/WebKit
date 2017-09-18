@@ -2625,7 +2625,7 @@ function TEST_simpleLength()
     checkUint(program, callFunction(program, "foo", [], []), 754);
 }
 
-function TEST_nonArrayRefArrayLength()
+function TEST_nonArrayRefArrayLengthSucceed()
 {
     let program = doPrep(`
         uint foo()
@@ -2635,6 +2635,55 @@ function TEST_nonArrayRefArrayLength()
         }
     `);
     checkUint(program, callFunction(program, "foo", [], []), 754);
+}
+
+function TEST_nonArrayRefArrayLengthFail()
+{
+    checkFail(
+        () => doPrep(`
+            thread uint^ lengthPtr()
+            {
+                int[42] array;
+                return &(array.length);
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_constexprIsNotLValuePtr()
+{
+    checkFail(
+        () => doPrep(`
+            thread int^ foo<int x>()
+            {
+                return &x;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_constexprIsNotLValueAssign()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<int x>()
+            {
+                x = 42;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_constexprIsNotLValueRMW()
+{
+    checkFail(
+        () => doPrep(`
+            void foo<int x>()
+            {
+                x += 42;
+            }
+        `),
+        e => e instanceof WTypeError);
 }
 
 function TEST_assignLength()
