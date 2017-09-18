@@ -1,3 +1,14 @@
+2017-09-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Start working on WSL documentation
+        https://bugs.webkit.org/show_bug.cgi?id=177064
+
+        Reviewed by Mylex Maxfield.
+        
+        This is a work in progress. I'd like to check it in and then keep adding to it.
+
+        * WebGPUShadingLanguageRI/WSL.md: Added.
+
 2017-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
 
         WSL needs to understand && and ||
