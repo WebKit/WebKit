@@ -1,5 +1,13 @@
 2017-09-18  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] Fix invalid line in TestExpectations.
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
+2017-09-18  Per Arne Vollan  <pvollan@apple.com>
+
         Mark http/tests/websocket/tests/hybi/secure-cookie-secure-connection.pl as a failure on Windows.
         https://bugs.webkit.org/show_bug.cgi?id=177072
 
