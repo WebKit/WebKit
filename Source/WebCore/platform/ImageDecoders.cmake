@@ -9,7 +9,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
-    platform/image-decoders/ImageDecoder.cpp
+    platform/image-decoders/ScalableImageDecoder.cpp
 
     platform/image-decoders/bmp/BMPImageDecoder.cpp
     platform/image-decoders/bmp/BMPImageReader.cpp

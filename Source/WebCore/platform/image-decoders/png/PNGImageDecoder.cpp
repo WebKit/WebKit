@@ -173,7 +173,7 @@ public:
             // We explicitly specify the superclass encodedDataStatus() because we
             // merely want to check if we've managed to set the size, not
             // (recursively) trigger additional decoding if we haven't.
-            if (sizeOnly ? decoder->ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable : decoder->isCompleteAtIndex(haltAtFrame))
+            if (sizeOnly ? decoder->ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable : decoder->isCompleteAtIndex(haltAtFrame))
                 return true;
         }
         return false;
@@ -202,7 +202,7 @@ private:
 };
 
 PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+    : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_doNothingOnFailure(false)
     , m_currentFrame(0)
 #if ENABLE(APNG)
@@ -249,7 +249,7 @@ RepetitionCount PNGImageDecoder::repetitionCount() const
 
 bool PNGImageDecoder::setSize(const IntSize& size)
 {
-    if (!ImageDecoder::setSize(size))
+    if (!ScalableImageDecoder::setSize(size))
         return false;
 
     prepareScaleDataIfNecessary();
@@ -259,7 +259,7 @@ bool PNGImageDecoder::setSize(const IntSize& size)
 ImageFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
 {
 #if ENABLE(APNG)
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
+    if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
 
     if (index >= frameCount())
@@ -283,7 +283,7 @@ bool PNGImageDecoder::setFailed()
     if (m_doNothingOnFailure)
         return false;
     m_reader = nullptr;
-    return ImageDecoder::setFailed();
+    return ScalableImageDecoder::setFailed();
 }
 
 void PNGImageDecoder::headerAvailable()

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "ImageDecoder.h"
+#include "ScalableImageDecoder.h"
 #if ENABLE(APNG)
 #include <png.h>
 #endif
@@ -35,16 +35,16 @@ namespace WebCore {
     class PNGImageReader;
 
     // This class decodes the PNG image format.
-    class PNGImageDecoder final : public ImageDecoder {
+    class PNGImageDecoder final : public ScalableImageDecoder {
     public:
-        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        static Ref<ScalableImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
         {
             return adoptRef(*new PNGImageDecoder(alphaOption, gammaAndColorProfileOption));
         }
 
         virtual ~PNGImageDecoder();
 
-        // ImageDecoder
+        // ScalableImageDecoder
         String filenameExtension() const override { return ASCIILiteral("png"); }
 #if ENABLE(APNG)
         size_t frameCount() const override { return m_frameCount; }

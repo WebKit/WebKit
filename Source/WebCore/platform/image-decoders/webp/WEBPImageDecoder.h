@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include "ImageDecoder.h"
+#include "ScalableImageDecoder.h"
 
 #if USE(WEBP)
 
@@ -36,9 +36,9 @@
 
 namespace WebCore {
 
-class WEBPImageDecoder final : public ImageDecoder {
+class WEBPImageDecoder final : public ScalableImageDecoder {
 public:
-    static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+    static Ref<ScalableImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     {
         return adoptRef(*new WEBPImageDecoder(alphaOption, gammaAndColorProfileOption));
     }

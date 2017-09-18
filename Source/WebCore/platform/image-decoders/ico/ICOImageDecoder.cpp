@@ -45,7 +45,7 @@ static const size_t sizeOfDirectory = 6;
 static const size_t sizeOfDirEntry = 16;
 
 ICOImageDecoder::ICOImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+    : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decodedOffset(0)
 {
 }
@@ -59,7 +59,7 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
     if (failed())
         return;
 
-    ImageDecoder::setData(data, allDataReceived);
+    ScalableImageDecoder::setData(data, allDataReceived);
 
     for (BMPReaders::iterator i(m_bmpReaders.begin()); i != m_bmpReaders.end(); ++i) {
         if (*i)
@@ -69,12 +69,12 @@ void ICOImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
         setDataForPNGDecoderAtIndex(i);
 }
 
-IntSize ICOImageDecoder::size()
+IntSize ICOImageDecoder::size() const
 {
-    return m_frameSize.isEmpty() ? ImageDecoder::size() : m_frameSize;
+    return m_frameSize.isEmpty() ? ScalableImageDecoder::size() : m_frameSize;
 }
 
-IntSize ICOImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel)
+IntSize ICOImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel) const
 {
     return (index && (index < m_dirEntries.size())) ? m_dirEntries[index].m_size : size();
 }
@@ -83,7 +83,7 @@ bool ICOImageDecoder::setSize(const IntSize& size)
 {
     // The size calculated inside the BMPImageReader had better match the one in
     // the icon directory.
-    return m_frameSize.isEmpty() ? ImageDecoder::setSize(size) : ((size == m_frameSize) || setFailed());
+    return m_frameSize.isEmpty() ? ScalableImageDecoder::setSize(size) : ((size == m_frameSize) || setFailed());
 }
 
 size_t ICOImageDecoder::frameCount() const
@@ -108,7 +108,7 @@ bool ICOImageDecoder::setFailed()
 {
     m_bmpReaders.clear();
     m_pngDecoders.clear();
-    return ImageDecoder::setFailed();
+    return ScalableImageDecoder::setFailed();
 }
 
 std::optional<IntPoint> ICOImageDecoder::hotSpot() const

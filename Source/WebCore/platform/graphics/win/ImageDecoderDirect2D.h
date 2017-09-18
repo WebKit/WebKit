@@ -25,9 +25,10 @@
 
 #pragma once
 
+#if USE(DIRECT2D)
+
 #include "COMPtr.h"
-#include "ImageSource.h"
-#include "IntSize.h"
+#include "ImageDecoder.h"
 #include <wtf/Optional.h>
 
 interface ID2D1RenderTarget;
@@ -36,43 +37,43 @@ interface IWICImagingFactory;
 
 namespace WebCore {
 
-class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
+class ImageDecoderDirect2D final : public ImageDecoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    ImageDecoder();
-    
-    static Ref<ImageDecoder> create(SharedBuffer&, AlphaOption, GammaAndColorProfileOption)
-    {
-        return adoptRef(*new ImageDecoder());
-    }
-    
-    static size_t bytesDecodedToDetermineProperties();
-    
-    String filenameExtension() const;
-    EncodedDataStatus encodedDataStatus() const;
-    bool isSizeAvailable() const;
-    
-    // Always original size, without subsampling.
-    IntSize size() const;
-    size_t frameCount() const;
+    ImageDecoderDirect2D();
 
-    RepetitionCount repetitionCount() const;
-    std::optional<IntPoint> hotSpot() const;
-    
-    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
-    bool frameIsCompleteAtIndex(size_t) const;
-    ImageOrientation frameOrientationAtIndex(size_t) const;
-    
-    float frameDurationAtIndex(size_t) const;
-    bool frameHasAlphaAtIndex(size_t) const;
-    bool frameAllowSubsamplingAtIndex(size_t) const;
-    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const;
-    
-    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingMode::Synchronous) const;
-    
-    void setData(SharedBuffer&, bool allDataReceived);
-    bool isAllDataReceived() const { return m_isAllDataReceived; }
-    void clearFrameBufferCache(size_t) { }
+    static Ref<ImageDecoderDirect2D> create(SharedBuffer&, AlphaOption, GammaAndColorProfileOption)
+    {
+        return adoptRef(*new ImageDecoderDirect2D());
+    }
+
+    static size_t bytesDecodedToDetermineProperties();
+
+    String filenameExtension() const final;
+    EncodedDataStatus encodedDataStatus() const final;
+    bool isSizeAvailable() const final;
+
+    // Always original size, without subsampling.
+    IntSize size() const final;
+    size_t frameCount() const final;
+
+    RepetitionCount repetitionCount() const final;
+    std::optional<IntPoint> hotSpot() const final;
+
+    IntSize frameSizeAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
+    bool frameIsCompleteAtIndex(size_t) const final;
+    ImageOrientation frameOrientationAtIndex(size_t) const final;
+
+    float frameDurationAtIndex(size_t) const final;
+    bool frameHasAlphaAtIndex(size_t) const final;
+    bool frameAllowSubsamplingAtIndex(size_t) const final;
+    unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const final;
+
+    NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingMode::Synchronous) const final;
+
+    void setData(SharedBuffer&, bool allDataReceived) final;
+    bool isAllDataReceived() const final { return m_isAllDataReceived; }
+    void clearFrameBufferCache(size_t) final { }
 
     void setTargetContext(ID2D1RenderTarget*);
 
@@ -86,3 +87,5 @@ protected:
 };
 
 }
+
+#endif

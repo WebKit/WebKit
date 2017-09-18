@@ -41,11 +41,11 @@
 
 namespace WebCore {
 
-ImageDecoder::ImageDecoder()
+ImageDecoderDirect2D::ImageDecoderDirect2D()
 {
 }
 
-IWICImagingFactory* ImageDecoder::systemImagingFactory()
+IWICImagingFactory* ImageDecoderDirect2D::systemImagingFactory()
 {
     static IWICImagingFactory* wicImagingFactory = nullptr;
     if (!wicImagingFactory) {
@@ -56,30 +56,30 @@ IWICImagingFactory* ImageDecoder::systemImagingFactory()
     return wicImagingFactory;
 }
 
-size_t ImageDecoder::bytesDecodedToDetermineProperties()
+size_t ImageDecoderDirect2D::bytesDecodedToDetermineProperties()
 {
     // Set to match value used for CoreGraphics.
     return 13088;
 }
 
-String ImageDecoder::filenameExtension() const
+String ImageDecoderDirect2D::filenameExtension() const
 {
     notImplemented();
     return String();
 }
 
-bool ImageDecoder::isSizeAvailable() const
+bool ImageDecoderDirect2D::isSizeAvailable() const
 {
     return m_nativeDecoder ? true : false;
 }
 
-EncodedDataStatus ImageDecoder::encodedDataStatus() const
+EncodedDataStatus ImageDecoderDirect2D::encodedDataStatus() const
 {
     notImplemented();
     return EncodedDataStatus::Unknown;
 }
 
-IntSize ImageDecoder::size() const
+IntSize ImageDecoderDirect2D::size() const
 {
     if (!m_nativeDecoder)
         return IntSize();
@@ -97,7 +97,7 @@ IntSize ImageDecoder::size() const
     return IntSize(width, height);
 }
 
-size_t ImageDecoder::frameCount() const
+size_t ImageDecoderDirect2D::frameCount() const
 {
     if (!m_nativeDecoder)
         return 0;
@@ -110,17 +110,17 @@ size_t ImageDecoder::frameCount() const
     return count;
 }
 
-RepetitionCount ImageDecoder::repetitionCount() const
+RepetitionCount ImageDecoderDirect2D::repetitionCount() const
 {
     return RepetitionCountNone;
 }
 
-std::optional<IntPoint> ImageDecoder::hotSpot() const
+std::optional<IntPoint> ImageDecoderDirect2D::hotSpot() const
 {
     return IntPoint();
 }
 
-IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+IntSize ImageDecoderDirect2D::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
     if (!m_nativeDecoder)
         return IntSize();
@@ -138,7 +138,7 @@ IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplin
     return IntSize(width, height);
 }
 
-bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
+bool ImageDecoderDirect2D::frameIsCompleteAtIndex(size_t index) const
 {
     if (!m_nativeDecoder)
         return false;
@@ -148,31 +148,31 @@ bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
     return SUCCEEDED(hr);
 }
 
-ImageOrientation ImageDecoder::frameOrientationAtIndex(size_t index) const
+ImageOrientation ImageDecoderDirect2D::frameOrientationAtIndex(size_t index) const
 {
     notImplemented();
     return ImageOrientation();
 }
 
-float ImageDecoder::frameDurationAtIndex(size_t index) const
+float ImageDecoderDirect2D::frameDurationAtIndex(size_t index) const
 {
     notImplemented();
     return 0;
 }
 
-bool ImageDecoder::frameAllowSubsamplingAtIndex(size_t) const
+bool ImageDecoderDirect2D::frameAllowSubsamplingAtIndex(size_t) const
 {
     notImplemented();
     return true;
 }
 
-bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
+bool ImageDecoderDirect2D::frameHasAlphaAtIndex(size_t index) const
 {
     notImplemented();
     return true;
 }
 
-unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+unsigned ImageDecoderDirect2D::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
     if (!m_nativeDecoder)
         return 0;
@@ -181,12 +181,12 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsampl
     return (frameSize.area() * 4).unsafeGet();
 }
 
-void ImageDecoder::setTargetContext(ID2D1RenderTarget* renderTarget)
+void ImageDecoderDirect2D::setTargetContext(ID2D1RenderTarget* renderTarget)
 {
     m_renderTarget = renderTarget;
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&) const
+NativeImagePtr ImageDecoderDirect2D::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions&) const
 {
     if (!m_nativeDecoder || !m_renderTarget)
         return nullptr;
@@ -213,7 +213,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
     return bitmap;
 }
 
-void ImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoderDirect2D::setData(SharedBuffer& data, bool allDataReceived)
 {
     if (!allDataReceived)
         return;

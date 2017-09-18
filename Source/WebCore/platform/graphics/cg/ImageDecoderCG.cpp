@@ -147,7 +147,7 @@ void sharedBufferRelease(void* info)
 }
 #endif
 
-ImageDecoder::ImageDecoder(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
+ImageDecoderCG::ImageDecoderCG(SharedBuffer& data, AlphaOption, GammaAndColorProfileOption)
 {
     RetainPtr<CFStringRef> utiHint;
     if (data.size() >= 32)
@@ -162,7 +162,7 @@ ImageDecoder::ImageDecoder(SharedBuffer& data, AlphaOption, GammaAndColorProfile
         m_nativeDecoder = adoptCF(CGImageSourceCreateIncremental(nullptr));
 }
 
-size_t ImageDecoder::bytesDecodedToDetermineProperties()
+size_t ImageDecoderCG::bytesDecodedToDetermineProperties() const
 {
     // Measured by tracing malloc/calloc calls on Mac OS 10.6.6, x86_64.
     // A non-zero value ensures cached images with no decoded frames still enter
@@ -173,17 +173,17 @@ size_t ImageDecoder::bytesDecodedToDetermineProperties()
     return 13088;
 }
     
-String ImageDecoder::uti() const
+String ImageDecoderCG::uti() const
 {
     return CGImageSourceGetType(m_nativeDecoder.get());
 }
 
-String ImageDecoder::filenameExtension() const
+String ImageDecoderCG::filenameExtension() const
 {
     return WebCore::preferredExtensionForImageSourceType(uti());
 }
 
-EncodedDataStatus ImageDecoder::encodedDataStatus() const
+EncodedDataStatus ImageDecoderCG::encodedDataStatus() const
 {
     String uti = this->uti();
     if (uti.isEmpty())
@@ -227,12 +227,12 @@ EncodedDataStatus ImageDecoder::encodedDataStatus() const
     return EncodedDataStatus::Unknown;
 }
 
-size_t ImageDecoder::frameCount() const
+size_t ImageDecoderCG::frameCount() const
 {
     return CGImageSourceGetCount(m_nativeDecoder.get());
 }
 
-RepetitionCount ImageDecoder::repetitionCount() const
+RepetitionCount ImageDecoderCG::repetitionCount() const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyProperties(m_nativeDecoder.get(), imageSourceOptions().get()));
     if (!properties)
@@ -268,7 +268,7 @@ RepetitionCount ImageDecoder::repetitionCount() const
     return RepetitionCountNone;
 }
 
-std::optional<IntPoint> ImageDecoder::hotSpot() const
+std::optional<IntPoint> ImageDecoderCG::hotSpot() const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
@@ -289,7 +289,7 @@ std::optional<IntPoint> ImageDecoder::hotSpot() const
     return IntPoint(x, y);
 }
 
-IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+IntSize ImageDecoderCG::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions(subsamplingLevel).get()));
     
@@ -309,7 +309,7 @@ IntSize ImageDecoder::frameSizeAtIndex(size_t index, SubsamplingLevel subsamplin
     return IntSize(width, height);
 }
 
-bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
+bool ImageDecoderCG::frameIsCompleteAtIndex(size_t index) const
 {
     ASSERT(frameCount());
     // CGImageSourceGetStatusAtIndex() changes the return status value from kCGImageStatusIncomplete
@@ -321,7 +321,7 @@ bool ImageDecoder::frameIsCompleteAtIndex(size_t index) const
     return CGImageSourceGetStatusAtIndex(m_nativeDecoder.get(), index) == kCGImageStatusComplete;
 }
 
-ImageOrientation ImageDecoder::frameOrientationAtIndex(size_t index) const
+ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (!properties)
@@ -330,7 +330,7 @@ ImageOrientation ImageDecoder::frameOrientationAtIndex(size_t index) const
     return orientationFromProperties(properties.get());
 }
 
-float ImageDecoder::frameDurationAtIndex(size_t index) const
+float ImageDecoderCG::frameDurationAtIndex(size_t index) const
 {
     float duration = 0;
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
@@ -364,7 +364,7 @@ float ImageDecoder::frameDurationAtIndex(size_t index) const
     return duration;
 }
 
-bool ImageDecoder::frameAllowSubsamplingAtIndex(size_t) const
+bool ImageDecoderCG::frameAllowSubsamplingAtIndex(size_t) const
 {
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), 0, imageSourceOptions().get()));
     if (!properties)
@@ -386,7 +386,7 @@ bool ImageDecoder::frameAllowSubsamplingAtIndex(size_t) const
     return true;
 }
 
-bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
+bool ImageDecoderCG::frameHasAlphaAtIndex(size_t index) const
 {
     if (!frameIsCompleteAtIndex(index))
         return true;
@@ -404,13 +404,13 @@ bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
     return true;
 }
 
-unsigned ImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
+unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel) const
 {
     IntSize frameSize = frameSizeAtIndex(index, subsamplingLevel);
     return (frameSize.area() * 4).unsafeGet();
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions) const
+NativeImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     LOG(Images, "ImageDecoder %p createFrameImageAtIndex %lu", this, index);
     RetainPtr<CFDictionaryRef> options;
@@ -460,7 +460,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
     return maskedImage ? maskedImage : image;
 }
 
-void ImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
+void ImageDecoderCG::setData(SharedBuffer& data, bool allDataReceived)
 {
     m_isAllDataReceived = allDataReceived;
 

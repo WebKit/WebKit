@@ -1,3 +1,154 @@
+2017-09-18  Jer Noble  <jer.noble@apple.com>
+
+        Virtualize ImageDecoder
+        https://bugs.webkit.org/show_bug.cgi?id=176118
+
+        Reviewed by Eric Carlson.
+
+        Add an explicit, abstract base class ImageDecoder, and convert ImageDecoderCG to a true
+        subclass. This will allow multiple ImageDecoder subclasses to exist simultaneously at
+        runtime.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/ImageDecoders.cmake:
+        * platform/graphics/ImageDecoder.cpp: Added.
+        (WebCore::ImageDecoder::create):
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties):
+        * platform/graphics/ImageDecoder.h: Added.
+        (WebCore::ImageDecoder::isSizeAvailable):
+        (WebCore::ImageDecoder::isAllDataReceived const):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::ImageDecoderCG):
+        (WebCore::ImageDecoderCG::bytesDecodedToDetermineProperties):
+        (WebCore::ImageDecoderCG::uti const):
+        (WebCore::ImageDecoderCG::filenameExtension const):
+        (WebCore::ImageDecoderCG::encodedDataStatus const):
+        (WebCore::ImageDecoderCG::frameCount const):
+        (WebCore::ImageDecoderCG::repetitionCount const):
+        (WebCore::ImageDecoderCG::hotSpot const):
+        (WebCore::ImageDecoderCG::frameSizeAtIndex const):
+        (WebCore::ImageDecoderCG::frameIsCompleteAtIndex const):
+        (WebCore::ImageDecoderCG::frameOrientationAtIndex const):
+        (WebCore::ImageDecoderCG::frameDurationAtIndex const):
+        (WebCore::ImageDecoderCG::frameAllowSubsamplingAtIndex const):
+        (WebCore::ImageDecoderCG::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoderCG::frameBytesAtIndex const):
+        (WebCore::ImageDecoderCG::createFrameImageAtIndex const):
+        (WebCore::ImageDecoderCG::setData):
+        (WebCore::ImageDecoder::ImageDecoder): Deleted.
+        (WebCore::ImageDecoder::bytesDecodedToDetermineProperties): Deleted.
+        (WebCore::ImageDecoder::uti const): Deleted.
+        (WebCore::ImageDecoder::filenameExtension const): Deleted.
+        (WebCore::ImageDecoder::encodedDataStatus const): Deleted.
+        (WebCore::ImageDecoder::frameCount const): Deleted.
+        (WebCore::ImageDecoder::repetitionCount const): Deleted.
+        (WebCore::ImageDecoder::hotSpot const): Deleted.
+        (WebCore::ImageDecoder::frameSizeAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameIsCompleteAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameOrientationAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameDurationAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameAllowSubsamplingAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameHasAlphaAtIndex const): Deleted.
+        (WebCore::ImageDecoder::frameBytesAtIndex const): Deleted.
+        (WebCore::ImageDecoder::createFrameImageAtIndex const): Deleted.
+        (WebCore::ImageDecoder::setData): Deleted.
+        * platform/graphics/cg/ImageDecoderCG.h:
+        (WebCore::ImageDecoderCG::create):
+        (WebCore::ImageDecoder::create): Deleted.
+        (WebCore::ImageDecoder::isSizeAvailable): Deleted.
+        (WebCore::ImageDecoder::isAllDataReceived const): Deleted.
+        (WebCore::ImageDecoder::clearFrameBufferCache): Deleted.
+        * platform/graphics/win/ImageDecoderDirect2D.cpp:
+        (WebCore::ImageDecoderDirect2D::ImageDecoderDirect2D):
+        (WebCore::ImageDecoderDirect2D::systemImagingFactory):
+        (WebCore::ImageDecoderDirect2D::bytesDecodedToDetermineProperties):
+        (WebCore::ImageDecoderDirect2D::filenameExtension const):
+        (WebCore::ImageDecoderDirect2D::isSizeAvailable const):
+        (WebCore::ImageDecoderDirect2D::encodedDataStatus const):
+        (WebCore::ImageDecoderDirect2D::size const):
+        (WebCore::ImageDecoderDirect2D::frameCount const):
+        (WebCore::ImageDecoderDirect2D::repetitionCount const):
+        (WebCore::ImageDecoderDirect2D::hotSpot const):
+        (WebCore::ImageDecoderDirect2D::frameSizeAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameIsCompleteAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameOrientationAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameDurationAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameAllowSubsamplingAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameHasAlphaAtIndex const):
+        (WebCore::ImageDecoderDirect2D::frameBytesAtIndex const):
+        (WebCore::ImageDecoderDirect2D::setTargetContext):
+        (WebCore::ImageDecoderDirect2D::createFrameImageAtIndex const):
+        (WebCore::ImageDecoderDirect2D::setData):
+        * platform/graphics/win/ImageDecoderDirect2D.h:
+        (WebCore::ImageDecoderDirect2D::create):
+        (WebCore::ImageDecoder::create): Deleted.
+        (WebCore::ImageDecoder::isAllDataReceived const): Deleted.
+        (WebCore::ImageDecoder::clearFrameBufferCache): Deleted.
+        * platform/image-decoders/ScalableImageDecoder.cpp: Renamed from Source/WebCore/platform/image-decoders/ImageDecoder.cpp.
+        (WebCore::ScalableImageDecoder::create):
+        (WebCore::ScalableImageDecoder::frameIsCompleteAtIndex const):
+        (WebCore::ScalableImageDecoder::frameHasAlphaAtIndex const):
+        (WebCore::ScalableImageDecoder::frameBytesAtIndex const):
+        (WebCore::ScalableImageDecoder::frameDurationAtIndex const):
+        (WebCore::ScalableImageDecoder::createFrameImageAtIndex):
+        (WebCore::ScalableImageDecoder::prepareScaleDataIfNecessary):
+        (WebCore::ScalableImageDecoder::upperBoundScaledX):
+        (WebCore::ScalableImageDecoder::lowerBoundScaledX):
+        (WebCore::ScalableImageDecoder::upperBoundScaledY):
+        (WebCore::ScalableImageDecoder::lowerBoundScaledY):
+        (WebCore::ScalableImageDecoder::scaledY):
+        * platform/image-decoders/ScalableImageDecoder.h: Renamed from Source/WebCore/platform/image-decoders/ImageDecoder.h.
+        (WebCore::ScalableImageDecoder::ScalableImageDecoder):
+        (WebCore::ScalableImageDecoder::~ScalableImageDecoder):
+        (WebCore::ScalableImageDecoder::premultiplyAlpha const):
+        (WebCore::ScalableImageDecoder::isAllDataReceived const):
+        (WebCore::ScalableImageDecoder::size const):
+        (WebCore::ScalableImageDecoder::scaledSize):
+        (WebCore::ScalableImageDecoder::setSize):
+        (WebCore::ScalableImageDecoder::setIgnoreGammaAndColorProfile):
+        (WebCore::ScalableImageDecoder::ignoresGammaAndColorProfile const):
+        (WebCore::ScalableImageDecoder::rgbColorProfile):
+        (WebCore::ScalableImageDecoder::subsamplingLevelForScale):
+        (WebCore::ScalableImageDecoder::inputDeviceColorProfile):
+        (WebCore::ScalableImageDecoder::setFailed):
+        (WebCore::ScalableImageDecoder::failed const):
+        * platform/image-decoders/bmp/BMPImageDecoder.cpp:
+        (WebCore::BMPImageDecoder::BMPImageDecoder):
+        (WebCore::BMPImageDecoder::setData):
+        (WebCore::BMPImageDecoder::setFailed):
+        * platform/image-decoders/bmp/BMPImageDecoder.h:
+        * platform/image-decoders/bmp/BMPImageReader.h:
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::GIFImageDecoder):
+        (WebCore::GIFImageDecoder::setData):
+        (WebCore::GIFImageDecoder::setSize):
+        (WebCore::GIFImageDecoder::setFailed):
+        * platform/image-decoders/gif/GIFImageDecoder.h:
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::ICOImageDecoder):
+        (WebCore::ICOImageDecoder::setData):
+        (WebCore::ICOImageDecoder::size):
+        (WebCore::ICOImageDecoder::setSize):
+        (WebCore::ICOImageDecoder::setFailed):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageDecoder::JPEGImageDecoder):
+        (WebCore::JPEGImageDecoder::setSize):
+        (WebCore::JPEGImageDecoder::setFailed):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageReader::decode):
+        (WebCore::PNGImageDecoder::PNGImageDecoder):
+        (WebCore::PNGImageDecoder::setSize):
+        (WebCore::PNGImageDecoder::frameBufferAtIndex):
+        (WebCore::PNGImageDecoder::setFailed):
+        * platform/image-decoders/png/PNGImageDecoder.h:
+        * platform/image-decoders/webp/WEBPImageDecoder.cpp:
+        (WebCore::WEBPImageDecoder::WEBPImageDecoder):
+        (WebCore::WEBPImageDecoder::decode):
+        * platform/image-decoders/webp/WEBPImageDecoder.h:
+
 2017-09-18  Andy Estes  <aestes@apple.com>
 
         [Mac] Upstream miscellaneous WebKitSystemInterface functions

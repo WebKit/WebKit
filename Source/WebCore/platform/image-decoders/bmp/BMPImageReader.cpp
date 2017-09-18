@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-BMPImageReader::BMPImageReader(ImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask)
+BMPImageReader::BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHeaderOffset, size_t imgDataOffset, bool usesAndMask)
     : m_parent(parent)
     , m_buffer(0)
     , m_decodedOffset(decodedAndHeaderOffset)

@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "ImageDecoder.h"
+#include "ScalableImageDecoder.h"
 #include <stdio.h> // Needed by jpeglib.h for FILE.
 
 // ICU defines TRUE and FALSE macros, breaking libjpeg v9 headers
@@ -41,16 +41,16 @@ namespace WebCore {
     class JPEGImageReader;
 
     // This class decodes the JPEG image format.
-    class JPEGImageDecoder final : public ImageDecoder {
+    class JPEGImageDecoder final : public ScalableImageDecoder {
     public:
-        static Ref<ImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+        static Ref<ScalableImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
         {
             return adoptRef(*new JPEGImageDecoder(alphaOption, gammaAndColorProfileOption));
         }
 
         virtual ~JPEGImageDecoder();
 
-        // ImageDecoder
+        // ScalableImageDecoder
         String filenameExtension() const override { return ASCIILiteral("jpg"); }
         bool setSize(const IntSize&) override;
         ImageFrame* frameBufferAtIndex(size_t index) override;
@@ -61,7 +61,7 @@ namespace WebCore {
 
         bool willDownSample()
         {
-            ASSERT(ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
+            ASSERT(ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
             return m_scaled;
         }
 

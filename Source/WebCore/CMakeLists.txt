@@ -2448,6 +2448,7 @@ set(WebCore_SOURCES
     platform/graphics/ISOVTTCue.cpp
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
+    platform/graphics/ImageDecoder.cpp
     platform/graphics/ImageFrame.cpp
     platform/graphics/ImageFrameCache.cpp
     platform/graphics/ImageOrientation.cpp

@@ -46,7 +46,7 @@ inline WEBP_CSP_MODE outputMode(bool hasAlpha) { return hasAlpha ? MODE_bgrA : M
 namespace WebCore {
 
 WEBPImageDecoder::WEBPImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+    : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_decoder(0)
     , m_hasAlpha(false)
 {
@@ -86,7 +86,7 @@ bool WEBPImageDecoder::decode(bool onlySize, bool)
     const uint8_t* dataBytes = reinterpret_cast<const uint8_t*>(m_data->data());
     const size_t dataSize = m_data->size();
 
-    if (ImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable) {
+    if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable) {
         static const size_t imageHeaderSize = 30;
         if (dataSize < imageHeaderSize)
             return false;
@@ -108,7 +108,7 @@ bool WEBPImageDecoder::decode(bool onlySize, bool)
             return setFailed();
     }
 
-    ASSERT(ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
+    ASSERT(ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable);
     if (onlySize)
         return true;
 

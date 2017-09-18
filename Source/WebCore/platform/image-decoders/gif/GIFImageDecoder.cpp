@@ -32,7 +32,7 @@
 namespace WebCore {
 
 GIFImageDecoder::GIFImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    : ImageDecoder(alphaOption, gammaAndColorProfileOption)
+    : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
 {
 }
 
@@ -45,17 +45,17 @@ void GIFImageDecoder::setData(SharedBuffer& data, bool allDataReceived)
     if (failed())
         return;
 
-    ImageDecoder::setData(data, allDataReceived);
+    ScalableImageDecoder::setData(data, allDataReceived);
     if (m_reader)
         m_reader->setData(&data);
 }
 
 bool GIFImageDecoder::setSize(const IntSize& size)
 {
-    if (ImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable && this->size() == size)
+    if (ScalableImageDecoder::encodedDataStatus() >= EncodedDataStatus::SizeAvailable && this->size() == size)
         return true;
 
-    if (!ImageDecoder::setSize(size))
+    if (!ScalableImageDecoder::setSize(size))
         return false;
 
     prepareScaleDataIfNecessary();
@@ -115,7 +115,7 @@ ImageFrame* GIFImageDecoder::frameBufferAtIndex(size_t index)
 bool GIFImageDecoder::setFailed()
 {
     m_reader = nullptr;
-    return ImageDecoder::setFailed();
+    return ScalableImageDecoder::setFailed();
 }
 
 void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)

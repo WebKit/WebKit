@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "ImageDecoder.h"
+#include "ScalableImageDecoder.h"
 
 #include "BMPImageDecoder.h"
 #include "GIFImageDecoder.h"
@@ -98,7 +98,7 @@ bool matchesCURSignature(char* contents)
 
 }
 
-RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ScalableImageDecoder> ScalableImageDecoder::create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     static const unsigned lengthOfLongestSignature = 14; // To wit: "RIFF????WEBPVP"
     char contents[lengthOfLongestSignature];
@@ -170,13 +170,16 @@ template <MatchType type> int getScaledValue(const Vector<int>& scaledValues, in
 
 }
 
-bool ImageDecoder::frameIsCompleteAtIndex(size_t index)
+bool ScalableImageDecoder::frameIsCompleteAtIndex(size_t index) const
 {
-    ImageFrame* buffer = frameBufferAtIndex(index);
+    // FIXME(176089): asking whether enough data has been appended for a decode
+    // operation to succeed should not require decoding the entire frame.
+    // This function should be implementable in a way that allows const.
+    ImageFrame* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
     return buffer && buffer->isComplete();
 }
 
-bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
+bool ScalableImageDecoder::frameHasAlphaAtIndex(size_t index) const
 {
     if (m_frameBufferCache.size() <= index)
         return true;
@@ -185,7 +188,7 @@ bool ImageDecoder::frameHasAlphaAtIndex(size_t index) const
     return true;
 }
 
-unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
+unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel) const
 {
     if (m_frameBufferCache.size() <= index)
         return 0;
@@ -193,9 +196,12 @@ unsigned ImageDecoder::frameBytesAtIndex(size_t index) const
     return (m_size.area() * sizeof(RGBA32)).unsafeGet();
 }
 
-float ImageDecoder::frameDurationAtIndex(size_t index)
+float ScalableImageDecoder::frameDurationAtIndex(size_t index) const
 {
-    ImageFrame* buffer = frameBufferAtIndex(index);
+    // FIXME(176089): asking for the duration of a sub-image should not require decoding
+    // the entire frame. This function should be implementable in a way that
+    // allows const.
+    ImageFrame* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
     if (!buffer || buffer->isInvalid())
         return 0;
     
@@ -209,7 +215,7 @@ float ImageDecoder::frameDurationAtIndex(size_t index)
     return duration;
 }
 
-NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
+NativeImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)
 {
     // Zero-height images can cause problems for some ports. If we have an empty image dimension, just bail.
     if (size().isEmpty())
@@ -224,7 +230,7 @@ NativeImagePtr ImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLe
     return buffer->backingStore()->image();
 }
 
-void ImageDecoder::prepareScaleDataIfNecessary()
+void ScalableImageDecoder::prepareScaleDataIfNecessary()
 {
     m_scaled = false;
     m_scaledColumns.clear();
@@ -242,27 +248,27 @@ void ImageDecoder::prepareScaleDataIfNecessary()
     fillScaledValues(m_scaledRows, scale, height);
 }
 
-int ImageDecoder::upperBoundScaledX(int origX, int searchStart)
+int ScalableImageDecoder::upperBoundScaledX(int origX, int searchStart)
 {
     return getScaledValue<UpperBound>(m_scaledColumns, origX, searchStart);
 }
 
-int ImageDecoder::lowerBoundScaledX(int origX, int searchStart)
+int ScalableImageDecoder::lowerBoundScaledX(int origX, int searchStart)
 {
     return getScaledValue<LowerBound>(m_scaledColumns, origX, searchStart);
 }
 
-int ImageDecoder::upperBoundScaledY(int origY, int searchStart)
+int ScalableImageDecoder::upperBoundScaledY(int origY, int searchStart)
 {
     return getScaledValue<UpperBound>(m_scaledRows, origY, searchStart);
 }
 
-int ImageDecoder::lowerBoundScaledY(int origY, int searchStart)
+int ScalableImageDecoder::lowerBoundScaledY(int origY, int searchStart)
 {
     return getScaledValue<LowerBound>(m_scaledRows, origY, searchStart);
 }
 
-int ImageDecoder::scaledY(int origY, int searchStart)
+int ScalableImageDecoder::scaledY(int origY, int searchStart)
 {
     return getScaledValue<Exact>(m_scaledRows, origY, searchStart);
 }
