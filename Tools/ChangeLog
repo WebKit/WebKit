@@ -1,3 +1,7 @@
+2017-09-18  Lucas Forschler  <lforschler@apple.com>
+
+        Land a patch to verify svn->git update is working.
+
 2017-09-18  Ms2ger  <Ms2ger@igalia.com>
 
         Update my status.
