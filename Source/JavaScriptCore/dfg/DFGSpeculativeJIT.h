@@ -2840,6 +2840,7 @@ public:
     void compileGetScope(Node*);
     void compileSkipScope(Node*);
     void compileGetGlobalObject(Node*);
+    void compileGetGlobalThis(Node*);
 
     void compileGetArrayLength(Node*);
 

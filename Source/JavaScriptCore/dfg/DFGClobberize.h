@@ -184,6 +184,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         def(PureValue(node));
         return;
 
+    case GetGlobalThis:
+        read(World);
+        return;
+
     case AtomicsIsLockFree:
         if (node->child1().useKind() == Int32Use)
             def(PureValue(node));

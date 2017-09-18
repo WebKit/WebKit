@@ -863,6 +863,10 @@ private:
             break;
         }
 
+        case GetGlobalThis:
+            setPrediction(SpecObject);
+            break;
+
         case ResolveScope: {
             setPrediction(SpecObjectOther);
             break;

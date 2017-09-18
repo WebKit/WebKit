@@ -1378,13 +1378,6 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     thisObject->m_typedArraySuperConstructor.visit(visitor);
 }
 
-JSValue JSGlobalObject::toThis(JSCell*, ExecState* exec, ECMAMode ecmaMode)
-{
-    if (ecmaMode == StrictMode)
-        return jsUndefined();
-    return exec->globalThisValue();
-}
-
 ExecState* JSGlobalObject::globalExec()
 {
     return CallFrame::create(m_globalCallFrame);

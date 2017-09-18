@@ -250,6 +250,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node)
     case GetScope:
     case SkipScope:
     case GetGlobalObject:
+    case GetGlobalThis:
     case GetClosureVar:
     case PutClosureVar:
     case GetGlobalVar:

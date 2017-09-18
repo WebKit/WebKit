@@ -896,6 +896,9 @@ private:
         case GetGlobalObject:
             compileGetGlobalObject();
             break;
+        case GetGlobalThis:
+            compileGetGlobalThis();
+            break;
         case GetClosureVar:
             compileGetClosureVar();
             break;
@@ -5959,6 +5962,12 @@ private:
     {
         LValue structure = loadStructure(lowCell(m_node->child1()));
         setJSValue(m_out.loadPtr(structure, m_heaps.Structure_globalObject));
+    }
+
+    void compileGetGlobalThis()
+    {
+        auto* globalObject = m_graph.globalObjectFor(m_node->origin.semantic);
+        setJSValue(m_out.loadPtr(m_out.absolute(globalObject->addressOfGlobalThis())));
     }
     
     void compileGetClosureVar()

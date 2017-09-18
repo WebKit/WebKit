@@ -48,7 +48,7 @@ public:
     }
 
     using Base = JSSymbolTableObject;
-    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesToThis;
+    static const unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetPropertyNames;
 
     WriteBarrierBase<Unknown>* variables()
     {
@@ -111,8 +111,6 @@ public:
     static bool put(JSCell*, ExecState*, PropertyName, JSValue, PutPropertySlot&);
 
     static bool deleteProperty(JSCell*, ExecState*, PropertyName);
-
-    static JSValue toThis(JSCell*, ExecState*, ECMAMode);
 
     DECLARE_INFO;
 

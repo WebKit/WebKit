@@ -2082,6 +2082,7 @@ private:
         case GetByValWithThis:
         case CompareEqPtr:
         case NumberToStringWithValidRadixConstant:
+        case GetGlobalThis:
             break;
 #else
         default:

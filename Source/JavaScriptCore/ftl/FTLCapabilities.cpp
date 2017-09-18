@@ -116,6 +116,7 @@ inline CapabilityLevel canCompile(Node* node)
     case LoopHint:
     case SkipScope:
     case GetGlobalObject:
+    case GetGlobalThis:
     case CreateActivation:
     case PushWithScope:
     case NewFunction:

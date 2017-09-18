@@ -1,3 +1,19 @@
+2017-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Remove ToThis more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=177056
+
+        Reviewed by Saam Barati.
+
+        * stress/generator-with-this-strict.js: Added.
+        (shouldBe):
+        (generator):
+        (target):
+        * stress/generator-with-this.js: Added.
+        (shouldBe):
+        (generator):
+        (target):
+
 2017-09-17  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=177038

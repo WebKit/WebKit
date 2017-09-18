@@ -231,6 +231,7 @@ namespace JSC { namespace DFG {
     macro(ResolveScope, NodeResultJS | NodeMustGenerate) \
     macro(ResolveScopeForHoistingFuncDeclInEval, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalObject, NodeResultJS) \
+    macro(GetGlobalThis, NodeResultJS) \
     macro(GetClosureVar, NodeResultJS) \
     macro(PutClosureVar, NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS) \

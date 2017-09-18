@@ -466,7 +466,7 @@ public:
         
 public:
     typedef JSSegmentedVariableObject Base;
-    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | OverridesToThis | IsImmutablePrototypeExoticObject;
+    static const unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable | OverridesGetOwnPropertySlot | OverridesGetPropertyNames | IsImmutablePrototypeExoticObject;
 
     JS_EXPORT_PRIVATE static JSGlobalObject* create(VM&, Structure*);
 
@@ -826,6 +826,7 @@ public:
 
     VM& vm() const { return m_vm; }
     JSObject* globalThis() const;
+    WriteBarrier<JSObject>* addressOfGlobalThis() { return &m_globalThis; }
 
     static Structure* createStructure(VM& vm, JSValue prototype)
     {
@@ -881,14 +882,12 @@ protected:
     };
     JS_EXPORT_PRIVATE void addStaticGlobals(GlobalPropertyInfo*, int count);
 
-    JS_EXPORT_PRIVATE static JSC::JSValue toThis(JSC::JSCell*, JSC::ExecState*, ECMAMode);
-
     void setNeedsSiteSpecificQuirks(bool needQuirks) { m_needsSiteSpecificQuirks = needQuirks; }
 
 private:
     friend class LLIntOffsetsExtractor;
 
-    JS_EXPORT_PRIVATE void setGlobalThis(VM&, JSObject* globalThis);
+    void setGlobalThis(VM&, JSObject* globalThis);
 
     JS_EXPORT_PRIVATE void init(VM&);
 

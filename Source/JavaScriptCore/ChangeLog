@@ -1,5 +1,72 @@
 2017-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
+        [DFG] Remove ToThis more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=177056
+
+        Reviewed by Saam Barati.
+
+        The variation of toThis() implementation is limited. So, we attempts to implement common toThis operation in AI.
+        We move scope related toThis to JSScope::toThis. And AI investigates proven value/structure's toThis methods
+        and attempts to fold/convert to efficient nodes.
+
+        We introduces GetGlobalThis, which just loads globalThis from semantic origin's globalObject. Using this,
+        we can implement JSScope::toThis in DFG. This can avoid costly toThis indirect function pointer call.
+
+        Currently, we just emit GetGlobalThis if necessary. We can further convert it to constant if we can put
+        watchpoint to JSGlobalObject's globalThis change. But we leave it for a future patch for now.
+
+        This removes GetGlobalThis from ES6 generators in common cases.
+
+        spread-generator.es6      303.1550+-9.5037          290.9337+-8.3487          might be 1.0420x faster
+
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::isToThisAnIdentity):
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetGlobalThis):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileGetGlobalThis):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileGetGlobalThis):
+        * runtime/JSGlobalLexicalEnvironment.cpp:
+        (JSC::JSGlobalLexicalEnvironment::toThis): Deleted.
+        * runtime/JSGlobalLexicalEnvironment.h:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::toThis): Deleted.
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::addressOfGlobalThis):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::toThis): Deleted.
+        * runtime/JSLexicalEnvironment.h:
+        * runtime/JSScope.cpp:
+        (JSC::JSScope::toThis):
+        * runtime/JSScope.h:
+        * runtime/StrictEvalActivation.cpp:
+        (JSC::StrictEvalActivation::toThis): Deleted.
+        * runtime/StrictEvalActivation.h:
+
+2017-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
+
         Merge JSLexicalEnvironment and JSEnvironmentRecord
         https://bugs.webkit.org/show_bug.cgi?id=175492
 

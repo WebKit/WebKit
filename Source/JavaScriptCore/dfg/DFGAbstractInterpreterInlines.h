@@ -140,18 +140,38 @@ void AbstractInterpreter<AbstractStateType>::verifyEdges(Node* node)
     DFG_NODE_DO_TO_CHILDREN(m_graph, node, verifyEdge);
 }
 
-inline bool isToThisAnIdentity(bool isStrictMode, AbstractValue& valueForNode)
+enum class ToThisResult {
+    Identity,
+    Undefined,
+    GlobalThis,
+    Dynamic,
+};
+inline ToThisResult isToThisAnIdentity(VM& vm, bool isStrictMode, AbstractValue& valueForNode)
 {
     // We look at the type first since that will cover most cases and does not require iterating all the structures.
     if (isStrictMode) {
         if (valueForNode.m_type && !(valueForNode.m_type & SpecObjectOther))
-            return true;
+            return ToThisResult::Identity;
     } else {
         if (valueForNode.m_type && !(valueForNode.m_type & (~SpecObject | SpecObjectOther)))
-            return true;
+            return ToThisResult::Identity;
+    }
+
+    if (JSValue value = valueForNode.value()) {
+        if (value.isCell()) {
+            auto* toThisMethod = value.asCell()->classInfo(vm)->methodTable.toThis;
+            if (toThisMethod == &JSObject::toThis)
+                return ToThisResult::Identity;
+            if (toThisMethod == &JSScope::toThis) {
+                if (isStrictMode)
+                    return ToThisResult::Undefined;
+                return ToThisResult::GlobalThis;
+            }
+        }
     }
 
     if ((isStrictMode || (valueForNode.m_type && !(valueForNode.m_type & ~SpecObject))) && valueForNode.m_structure.isFinite()) {
+        bool allStructuresAreJSScope = !valueForNode.m_structure.isClear();
         bool overridesToThis = false;
         valueForNode.m_structure.forEach([&](RegisteredStructure structure) {
             TypeInfo type = structure->typeInfo();
@@ -163,11 +183,20 @@ inline bool isToThisAnIdentity(bool isStrictMode, AbstractValue& valueForNode)
             // 2) The AI has proven that the type of this is a subtype of object
             if (type.isObject() && type.overridesToThis())
                 overridesToThis = true;
+
+            // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.
+            allStructuresAreJSScope &= structure->classInfo()->methodTable.toThis == JSScope::info()->methodTable.toThis;
         });
-        return !overridesToThis;
+        if (!overridesToThis)
+            return ToThisResult::Identity;
+        if (allStructuresAreJSScope) {
+            if (isStrictMode)
+                return ToThisResult::Undefined;
+            return ToThisResult::GlobalThis;
+        }
     }
 
-    return false;
+    return ToThisResult::Dynamic;
 }
 
 template<typename AbstractStateType>
@@ -2072,9 +2101,23 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         AbstractValue& destination = forNode(node);
         bool strictMode = m_graph.executableFor(node->origin.semantic)->isStrictMode();
 
-        if (isToThisAnIdentity(strictMode, source)) {
-            m_state.setFoundConstants(true);
-            destination = source;
+        ToThisResult result = isToThisAnIdentity(m_vm, strictMode, source);
+        if (result != ToThisResult::Dynamic) {
+            switch (result) {
+            case ToThisResult::Identity:
+                m_state.setFoundConstants(true);
+                destination = source;
+                break;
+            case ToThisResult::Undefined:
+                setConstant(node, jsUndefined());
+                break;
+            case ToThisResult::GlobalThis:
+                m_state.setFoundConstants(true);
+                destination.setType(m_graph, SpecObject);
+                break;
+            case ToThisResult::Dynamic:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
             break;
         }
 
@@ -2276,6 +2319,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         }
 
         forNode(node).setType(m_graph, SpecObjectOther);
+        break;
+    }
+
+    case GetGlobalThis: {
+        forNode(node).setType(m_graph, SpecObject);
         break;
     }
 

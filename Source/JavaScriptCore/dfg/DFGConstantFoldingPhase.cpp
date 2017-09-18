@@ -612,11 +612,17 @@ private:
             }
 
             case ToThis: {
-                if (!isToThisAnIdentity(m_graph.executableFor(node->origin.semantic)->isStrictMode(), m_state.forNode(node->child1())))
+                ToThisResult result = isToThisAnIdentity(m_graph.m_vm, m_graph.executableFor(node->origin.semantic)->isStrictMode(), m_state.forNode(node->child1()));
+                if (result == ToThisResult::Identity) {
+                    node->convertToIdentity();
+                    changed = true;
                     break;
-
-                node->convertToIdentity();
-                changed = true;
+                }
+                if (result == ToThisResult::GlobalThis) {
+                    node->convertToGetGlobalThis();
+                    changed = true;
+                    break;
+                }
                 break;
             }
 

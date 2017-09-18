@@ -710,6 +710,13 @@ public:
         children.setChild2(Edge());
         m_opInfo = radix;
     }
+
+    void convertToGetGlobalThis()
+    {
+        ASSERT(m_op == ToThis);
+        setOpAndDefaultFlags(GetGlobalThis);
+        children.setChild1(Edge());
+    }
     
     void convertToDirectCall(FrozenValue*);
 
