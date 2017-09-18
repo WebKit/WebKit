@@ -1,3 +1,14 @@
+2017-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getData('text/plain') doesn't work on iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=177034
+
+        Reviewed by Wenson Hsieh.
+
+        Removed the failing test expectations from tests that now pass on iOS.
+
+        * platform/ios/TestExpectations:
+
 2017-09-18  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Always update display: contents styles in RenderTreeUpdater.

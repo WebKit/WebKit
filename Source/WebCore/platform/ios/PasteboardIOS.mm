@@ -331,7 +331,11 @@ static RetainPtr<NSString> cocoaTypeFromHTMLClipboardType(const String& type)
 {
     // Ignore any trailing charset - JS strings are Unicode, which encapsulates the charset issue.
     if (type == "text/plain")
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000
         return (NSString *)kUTTypePlainText;
+#else
+        return (NSString *)kUTTypeText;
+#endif
 
     // Special case because UTI doesn't work with Cocoa's URL type.
     if (type == "text/uri-list")

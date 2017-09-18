@@ -1,3 +1,22 @@
+2017-09-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        getData('text/plain') doesn't work on iOS 10
+        https://bugs.webkit.org/show_bug.cgi?id=177034
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by the mispatch of UTI between reading & writing plain text.
+        Use kUTTypeText (instead of kUTTypePlainText) to read from UIPasteboard on iOS 10.
+
+        Re-enabled tests were passing on iOS 11 and continues to pass after this code change.
+
+        Tests: editing/pasteboard/clipboard-event.html
+               editing/pasteboard/datatransfer-items-paste-plaintext.html
+               editing/pasteboard/get-data-text-plain-paste.html
+
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+
 2017-09-18  Youenn Fablet  <youenn@apple.com>
 
         Allow WTF::map to use any class that is iterable and has a size getter
