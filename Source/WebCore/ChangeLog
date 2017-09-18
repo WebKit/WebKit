@@ -1,3 +1,18 @@
+2017-09-18  Youenn Fablet  <youenn@apple.com>
+
+        Allow WTF::map to use any class that is iterable and has a size getter
+        https://bugs.webkit.org/show_bug.cgi?id=177026
+
+        Reviewed by Darin Adler.
+
+        No change of behavior.
+        Using WTF::map to go from maps to vectors.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::resourceList):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::dispatchAllPendingUnloadEvents):
+
 2017-09-18  Emilio Cobos Álvarez  <emilio@crisal.io>
 
         Always update display: contents styles in RenderTreeUpdater.

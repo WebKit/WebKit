@@ -1,3 +1,18 @@
+2017-09-18  Youenn Fablet  <youenn@apple.com>
+
+        Allow WTF::map to use any class that is iterable and has a size getter
+        https://bugs.webkit.org/show_bug.cgi?id=177026
+
+        Reviewed by Darin Adler.
+
+        Computing the Item type given to the lambda using the iterator instead of ValueType which is specific to Vector.
+        Adding the possibility to pass a non const container reference and a lambda taking non const references as well. 
+
+        * wtf/Vector.h:
+        (WTF::MapFunctionInspector::acceptsReference):
+        (WTF::Mapper::map):
+        (WTF::map):
+
 2017-09-15  JF Bastien  <jfbastien@apple.com>
 
         WTF: use Forward.h when appropriate instead of Vector.h
