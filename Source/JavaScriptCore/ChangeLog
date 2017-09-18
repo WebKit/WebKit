@@ -1,3 +1,26 @@
+2017-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [JSC] Consider dropping JSObjectSetPrototype feature for JSGlobalObject
+        https://bugs.webkit.org/show_bug.cgi?id=177070
+
+        Reviewed by Saam Barati.
+
+        Due to the security reason, our global object is immutable prototype exotic object.
+        It prevents users from injecting proxies into the prototype chain of the global object[1].
+        But our JSC API does not respect this attribute, and allows users to change [[Prototype]]
+        of the global object after instantiating it.
+
+        This patch removes this feature. Once global object is instantiated, we cannot change [[Prototype]]
+        of the global object. It drops JSGlobalObject::resetPrototype use, which involves GlobalThis
+        edge cases.
+
+        [1]: https://github.com/tc39/ecma262/commit/935dad4283d045bc09c67a259279772d01b3d33d
+
+        * API/JSObjectRef.cpp:
+        (JSObjectSetPrototype):
+        * API/tests/CustomGlobalObjectClassTest.c:
+        (globalObjectSetPrototypeTest):
+
 2017-09-17  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Remove ToThis more aggressively

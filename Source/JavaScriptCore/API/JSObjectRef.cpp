@@ -267,16 +267,8 @@ void JSObjectSetPrototype(JSContextRef ctx, JSObjectRef object, JSValueRef value
 
     JSObject* jsObject = toJS(object);
     JSValue jsValue = toJS(exec, value);
-
-    if (JSProxy* proxy = jsDynamicCast<JSProxy*>(vm, jsObject)) {
-        if (JSGlobalObject* globalObject = jsDynamicCast<JSGlobalObject*>(vm, proxy->target())) {
-            globalObject->resetPrototype(vm, jsValue.isObject() ? jsValue : jsNull());
-            return;
-        }
-        // Someday we might use proxies for something other than JSGlobalObjects, but today is not that day.
-        RELEASE_ASSERT_NOT_REACHED();
-    }
     jsObject->setPrototype(vm, exec, jsValue.isObject() ? jsValue : jsNull());
+    handleExceptionIfNeeded(exec, nullptr);
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
