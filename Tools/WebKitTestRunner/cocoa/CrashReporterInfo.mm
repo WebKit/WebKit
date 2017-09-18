@@ -27,8 +27,8 @@
 #import "CrashReporterInfo.h"
 
 #import "StringFunctions.h"
+#import <WebKit/WKCrashReporter.h>
 #import <WebKit/WKURLCF.h>
-#import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
 namespace WTR {
@@ -71,7 +71,7 @@ void setCrashReportApplicationSpecificInformationToURL(WKURLRef url)
     if (!testPath.isNull()) {
         String message("CRASHING TEST: ");
         message = message + testPath;
-        WKSetCrashReportApplicationSpecificInformation(message.createCFString().get());
+        WebKit::setCrashReportApplicationSpecificInformation(message.createCFString().get());
     }
 }
 

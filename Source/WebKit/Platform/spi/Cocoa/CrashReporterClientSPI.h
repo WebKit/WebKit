@@ -23,17 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ChildProcess.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#import "WKCrashReporter.h"
+#import <CrashReporterClient.h>
 
-namespace WebKit {
+#else
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
-{
-    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data()]);
-    CRASH();
-}
+#define CRASHREPORTER_ANNOTATIONS_SECTION "__crash_info"
+#define CRASHREPORTER_ANNOTATIONS_VERSION 5
+#define CRASH_REPORTER_CLIENT_HIDDEN __attribute__((visibility("hidden")))
 
-}
+#define _crc_make_getter(attr) ((const char *)(unsigned long)gCRAnnotations.attr)
+#define _crc_make_setter(attr, arg) (gCRAnnotations.attr = (uint64_t)(unsigned long)(arg))
+#define CRGetCrashLogMessage() _crc_make_getter(message)
+#define CRSetCrashLogMessage(m) _crc_make_setter(message, m)
+
+struct crashreporter_annotations_t {
+    uint64_t version;
+    uint64_t message;
+    uint64_t signature_string;
+    uint64_t backtrace;
+    uint64_t message2;
+    uint64_t thread;
+    uint64_t dialog_mode;
+    uint64_t abort_cause;
+};
+
+CRASH_REPORTER_CLIENT_HIDDEN
+extern struct crashreporter_annotations_t gCRAnnotations;
+
+#endif

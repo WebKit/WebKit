@@ -36,6 +36,7 @@
 #import "SessionTracker.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
+#import "WKCrashReporter.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKTypeRefWrapper.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
@@ -538,7 +539,7 @@ void WebProcess::destroyRenderingResources()
 // FIXME: This should live somewhere else, and it should have the implementation in line instead of calling out to WKSI.
 void _WKSetCrashReportApplicationSpecificInformation(NSString *infoString)
 {
-    return WKSetCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
+    return setCrashReportApplicationSpecificInformation((__bridge CFStringRef)infoString);
 }
 
 } // namespace WebKit

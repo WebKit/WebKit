@@ -23,17 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "ChildProcess.h"
+#pragma once
 
-#import "WKCrashReporter.h"
+#include <WebKit/WKBase.h>
 
 namespace WebKit {
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
-{
-    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data()]);
-    CRASH();
-}
+WK_EXPORT void setCrashReportApplicationSpecificInformation(CFStringRef);
 
 }

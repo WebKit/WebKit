@@ -1,5 +1,25 @@
 2017-09-18  Andy Estes  <aestes@apple.com>
 
+        [Cocoa] Upstream WKSetCrashReportApplicationSpecificInformation() from WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=177048
+
+        Reviewed by Alex Christensen.
+
+        * Platform/IPC/mac/ConnectionMac.mm:
+        (IPC::Connection::sendMessage):
+        (IPC::readFromMachPort):
+        * Platform/cocoa/CrashReporter.h: Copied from Source/WebKit/Shared/Cocoa/ChildProcessCocoa.mm.
+        * Platform/cocoa/CrashReporter.mm: Copied from Source/WebKit/Shared/Cocoa/ChildProcessCocoa.mm.
+        (WebKit::setCrashReportApplicationSpecificInformation):
+        * Platform/spi/Cocoa/CrashReporterClientSPI.h: Copied from Source/WebKit/Shared/Cocoa/ChildProcessCocoa.mm.
+        * Shared/Cocoa/ChildProcessCocoa.mm:
+        (WebKit::ChildProcess::didReceiveInvalidMessage):
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/cocoa/WebProcessCocoa.mm:
+        (WebKit::_WKSetCrashReportApplicationSpecificInformation):
+
+2017-09-18  Andy Estes  <aestes@apple.com>
+
         [Mac] Upstream miscellaneous WebKitSystemInterface functions
         https://bugs.webkit.org/show_bug.cgi?id=177029
 

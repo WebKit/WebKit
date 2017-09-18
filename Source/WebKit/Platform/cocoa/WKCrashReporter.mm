@@ -24,16 +24,32 @@
  */
 
 #import "config.h"
-#import "ChildProcess.h"
-
 #import "WKCrashReporter.h"
+
+#import "CrashReporterClientSPI.h"
+
+// Avoid having to link with libCrashReporterClient.a
+CRASH_REPORTER_CLIENT_HIDDEN
+struct crashreporter_annotations_t gCRAnnotations
+__attribute__((section("__DATA," CRASHREPORTER_ANNOTATIONS_SECTION)))
+    = { CRASHREPORTER_ANNOTATIONS_VERSION, 0, 0, 0, 0, 0, 0, 0 };
 
 namespace WebKit {
 
-void ChildProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::StringReference messageReceiverName, IPC::StringReference messageName)
+void setCrashReportApplicationSpecificInformation(CFStringRef infoString)
 {
-    setCrashReportApplicationSpecificInformation((__bridge CFStringRef)[NSString stringWithFormat:@"Received invalid message: '%s::%s'", messageReceiverName.toString().data(), messageName.toString().data()]);
-    CRASH();
+    if (!infoString) {
+        CRSetCrashLogMessage(nullptr);
+        return;
+    }
+
+    char* oldMessage = (char*)CRGetCrashLogMessage();
+    if (oldMessage)
+        free(oldMessage);
+
+    // We have to copy the string, because CRSetCrashLogMessage doesn't copy the data.
+    char* lastInfoChars = strdup([(NSString *)infoString UTF8String]);
+    CRSetCrashLogMessage(lastInfoChars);
 }
 
 }

@@ -62,6 +62,7 @@
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMRange.h>
+#import <WebKit/WKCrashReporter.h>
 #import <WebKit/WKRetainPtr.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKStringCF.h>
@@ -1941,7 +1942,7 @@ static void runTest(const string& inputLine)
         testPath = [url absoluteString];
 
     NSString *informationString = [@"CRASHING TEST: " stringByAppendingString:testPath];
-    WKSetCrashReportApplicationSpecificInformation((CFStringRef)informationString);
+    WebKit::setCrashReportApplicationSpecificInformation((CFStringRef)informationString);
 
     TestOptions options(url, command);
     if (!mainFrameTestOptions || !options.webViewIsCompatibleWithOptions(mainFrameTestOptions.value())) {

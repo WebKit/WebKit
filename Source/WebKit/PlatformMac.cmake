@@ -46,6 +46,8 @@ list(APPEND WebKit2_SOURCES
 
     Platform/cg/CGUtilities.cpp
 
+    Platform/cocoa/WKCrashReporter.mm
+
     Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
     Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
