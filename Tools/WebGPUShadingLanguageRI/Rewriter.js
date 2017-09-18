@@ -231,6 +231,7 @@ class Rewriter extends VisitorBase {
     
     visitGenericLiteral(node)
     {
+        // FIXME: This doesn't seem right.
         let result = new IntLiteral(node.origin, node.value);
         result.type = node.type.visit(this);
         result.ePtr = node.ePtr;

@@ -34,7 +34,7 @@ class NativeType extends Type {
         this._typeParameters = typeParameters;
         this._isNumber = false;
         this._isInt = false;
-        this._isFloat = false;
+        this._isFloating = false;
     }
     
     get origin() { return this._origin; }
@@ -48,8 +48,8 @@ class NativeType extends Type {
     set isNumber(value) { this._isNumber = value; }
     get isInt() { return this._isInt; }
     set isInt(value) { this._isInt = value; }
-    get isFloat() { return this._isFloat; }
-    set isFloat(value) { this._isFloat = value; }
+    get isFloating() { return this._isFloating; }
+    set isFloating(value) { this._isFloating = value; }
     
     instantiate(typeArguments)
     {

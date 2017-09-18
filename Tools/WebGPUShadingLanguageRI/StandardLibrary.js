@@ -39,34 +39,55 @@ native primitive typedef bool;
 typedef int = int32;
 typedef uint = uint32;
 
+native primitive typedef float;
 native primitive typedef double;
 
 native operator int32(uint32);
 native operator uint32(int32);
+native operator float(double);
+native operator double(float);
 
 native int operator+(int, int);
 native uint operator+(uint, uint);
+native float operator+(float, float);
+native double operator+(double, double);
 int operator++(int value) { return value + 1; }
 uint operator++(uint value) { return value + 1; }
-int operator--(int value) { return value - 1; }
-uint operator--(uint value) { return value - 1; }
 native int operator-(int, int);
 native uint operator-(uint, uint);
+native float operator-(float, float);
+native double operator-(double, double);
+int operator--(int value) { return value - 1; }
+uint operator--(uint value) { return value - 1; }
 native int operator*(int, int);
 native uint operator*(uint, uint);
+native float operator*(float, float);
+native double operator*(double, double);
 native int operator/(int, int);
 native uint operator/(uint, uint);
+native float operator/(float, float);
+native double operator/(double, double);
 native bool operator==(int, int);
 native bool operator==(uint, uint);
 native bool operator==(bool, bool);
+native bool operator==(float, float);
+native bool operator==(double, double);
 native bool operator<(int, int);
 native bool operator<(uint, uint);
+native bool operator<(float, float);
+native bool operator<(double, double);
 native bool operator<=(int, int);
 native bool operator<=(uint, uint);
+native bool operator<=(float, float);
+native bool operator<=(double, double);
 native bool operator>(int, int);
 native bool operator>(uint, uint);
+native bool operator>(float, float);
+native bool operator>(double, double);
 native bool operator>=(int, int);
 native bool operator>=(uint, uint);
+native bool operator>=(float, float);
+native bool operator>=(double, double);
 
 protocol Equatable {
     bool operator==(Equatable, Equatable);

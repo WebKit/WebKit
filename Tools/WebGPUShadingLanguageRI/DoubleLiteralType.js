@@ -24,22 +24,16 @@
  */
 "use strict";
 
-class Type extends Node {
-    get typeParameters() { return []; }
-    get kind() { return Type; }
-    get isPtr() { return false; }
-    get isArrayRef() { return false; }
-    get isNumber() { return false; }
-    get isInt() { return false; }
-    get isFloating() { return false; }
+let DoubleLiteralType = createLiteralType({
+    preferredTypeName: "double",
     
-    inherits(protocol)
+    verifyAsArgument(unificationContext)
     {
-        if (!protocol)
-            return {result: true};
-        return protocol.hasHeir(this);
+        let realThis = unificationContext.find(this);
+        if (!realThis.isFloating)
+            return {result: false, reason: "Cannot use double literal with non-floating type " + realThis};
+        if (!realThis.canRepresent(this.value))
+            return {result: false, reason: "Float literal " + this.value + " does not fit in type " + realThis};
+        return {result: true};
     }
-    
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
-}
-
+});

@@ -57,14 +57,6 @@ function makeInt(program, value)
     return TypedValue.box(program.intrinsics.int32, value);
 }
 
-function checkNumber(program, result, expected)
-{
-    if (!result.type.isNumber)
-        throw new Error("Wrong result type; result: " + result);
-    if (result.value != expected)
-        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
-}
-
 function makeUint(program, value)
 {
     return TypedValue.box(program.intrinsics.uint32, value);
@@ -73,6 +65,24 @@ function makeUint(program, value)
 function makeBool(program, value)
 {
     return TypedValue.box(program.intrinsics.bool, value);
+}
+
+function makeFloat(program, value)
+{
+    return TypedValue.box(program.intrinsics.float, value);
+}
+
+function makeDouble(program, value)
+{
+    return TypedValue.box(program.intrinsics.double, value);
+}
+
+function checkNumber(program, result, expected)
+{
+    if (!result.type.isNumber)
+        throw new Error("Wrong result type; result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
 }
 
 function checkInt(program, result, expected)
@@ -93,6 +103,22 @@ function checkUint(program, result, expected)
 function checkBool(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.bool))
+        throw new Error("Wrong result type: " + result.type);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
+function checkFloat(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.float))
+        throw new Error("Wrong result type: " + result.type);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
+function checkDouble(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.double))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -501,22 +527,32 @@ function TEST_badAdd()
 
 function TEST_lexerKeyword()
 {
-    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3");
-    if (result.length != 13)
-        throw new Error("Lexer emitted an incorrect number of tokens (expected 12): " + result.length);
-    checkLexerToken(result[0],  0,  "identifier", "ident");
-    checkLexerToken(result[1],  6,  "keyword",     "for");
-    checkLexerToken(result[2],  10, "keyword",     "while");
-    checkLexerToken(result[3],  16, "intLiteral",  "123");
-    checkLexerToken(result[4],  20, "uintLiteral", "123u");
-    checkLexerToken(result[5],  25, "punctuation", "{");
-    checkLexerToken(result[6],  27, "punctuation", "}");
-    checkLexerToken(result[7],  29, "punctuation", "{");
-    checkLexerToken(result[8],  30, "identifier",  "asd");
-    checkLexerToken(result[9],  34, "identifier",  "asd");
-    checkLexerToken(result[10], 37, "punctuation", "{");
-    checkLexerToken(result[11], 39, "intLiteral",  "1");
-    checkLexerToken(result[12], 40, "identifier",  "a3");
+    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2d 0.d .3d");
+    if (result.length != 23)
+        throw new Error("Lexer emitted an incorrect number of tokens (expected 23): " + result.length);
+    checkLexerToken(result[0],  0,  "identifier",    "ident");
+    checkLexerToken(result[1],  6,  "keyword",       "for");
+    checkLexerToken(result[2],  10, "keyword",       "while");
+    checkLexerToken(result[3],  16, "intLiteral",    "123");
+    checkLexerToken(result[4],  20, "uintLiteral",   "123u");
+    checkLexerToken(result[5],  25, "punctuation",   "{");
+    checkLexerToken(result[6],  27, "punctuation",   "}");
+    checkLexerToken(result[7],  29, "punctuation",   "{");
+    checkLexerToken(result[8],  30, "identifier",    "asd");
+    checkLexerToken(result[9],  34, "identifier",    "asd");
+    checkLexerToken(result[10], 37, "punctuation",   "{");
+    checkLexerToken(result[11], 39, "intLiteral",    "1");
+    checkLexerToken(result[12], 40, "identifier",    "a3");
+    checkLexerToken(result[13], 43, "floatLiteral",  "1.2");
+    checkLexerToken(result[14], 47, "punctuation",   "+");
+    checkLexerToken(result[15], 49, "floatLiteral",  "3.4");
+    checkLexerToken(result[16], 53, "punctuation",   "+");
+    checkLexerToken(result[17], 55, "floatLiteral",  "1.");
+    checkLexerToken(result[18], 58, "punctuation",   "+");
+    checkLexerToken(result[19], 60, "floatLiteral",  ".2");
+    checkLexerToken(result[20], 63, "floatLiteral",  "1.2d");
+    checkLexerToken(result[21], 68, "floatLiteral",  "0.d");
+    checkLexerToken(result[22], 72, "floatLiteral",  ".3d");
 }
 
 function TEST_simpleNoReturn()
@@ -2561,6 +2597,194 @@ function TEST_makeArrayRefFromArrayRef()
             {
                 int x = 48;
                 return baz(@x);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+}
+
+function TEST_floatMath()
+{
+    let program = doPrep(`
+        bool foo()
+        {
+            return 42.5 == 42.5;
+        }
+        bool foo2()
+        {
+            return 42.5f == 42.5;
+        }
+        bool foo3()
+        {
+            return 42.5 == 42.5f;
+        }
+        bool foo4()
+        {
+            return 42.5f == 42.5f;
+        }
+        bool foo5()
+        {
+            return 42.5d == 42.5d;
+        }
+        float bar(float x)
+        {
+            return x;
+        }
+        float foo6()
+        {
+            return bar(7.5);
+        }
+        float foo7()
+        {
+            return bar(7.5f);
+        }
+        float foo8()
+        {
+            return bar(7.5d);
+        }
+        float foo9()
+        {
+            return float(7.5);
+        }
+        float foo10()
+        {
+            return float(7.5f);
+        }
+        float foo11()
+        {
+            return float(7.5d);
+        }
+        float foo12()
+        {
+            return float(7);
+        }
+        float foo13()
+        {
+            double x = 7.5d;
+            return float(x);
+        }
+        double foo14()
+        {
+            double x = 7.5f;
+            return double(x);
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], []), true);
+    checkBool(program, callFunction(program, "foo2", [], []), true);
+    checkBool(program, callFunction(program, "foo3", [], []), true);
+    checkBool(program, callFunction(program, "foo4", [], []), true);
+    checkBool(program, callFunction(program, "foo5", [], []), true);
+    checkFloat(program, callFunction(program, "foo6", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo7", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo8", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo9", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo10", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo11", [], []), 7.5);
+    checkFloat(program, callFunction(program, "foo12", [], []), 7);
+    checkFloat(program, callFunction(program, "foo13", [], []), 7.5);
+    checkDouble(program, callFunction(program, "foo14", [], []), 7.5);
+    checkFail(
+        () => doPrep(`
+            int bar(int x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int bar(int x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.d);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int bar(int x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.f);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            uint bar(uint x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            uint bar(uint x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.d);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            uint bar(uint x)
+            {
+                return x;
+            }
+            int foo()
+            {
+                bar(4.f);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            float bar(float x)
+            {
+                return x;
+            }
+            void foo()
+            {
+                bar(16777217.d);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            float bar(float x)
+            {
+                return x;
+            }
+            float foo()
+            {
+                double x = 7.;
+                return bar(x);
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            float foo()
+            {
+                double x = 7.;
+                return x;
             }
         `),
         (e) => e instanceof WTypeError);

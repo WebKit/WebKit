@@ -24,22 +24,12 @@
  */
 "use strict";
 
-class Type extends Node {
-    get typeParameters() { return []; }
-    get kind() { return Type; }
-    get isPtr() { return false; }
-    get isArrayRef() { return false; }
-    get isNumber() { return false; }
-    get isInt() { return false; }
-    get isFloating() { return false; }
+let DoubleLiteral = createLiteral({
+    preferredTypeName: "double",
     
-    inherits(protocol)
+    createType(origin, value)
     {
-        if (!protocol)
-            return {result: true};
-        return protocol.hasHeir(this);
+        return new DoubleLiteralType(origin, value);
     }
-    
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
-}
+});
 

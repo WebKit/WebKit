@@ -1,3 +1,57 @@
+2017-09-17  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        WSL needs float and double support
+        https://bugs.webkit.org/show_bug.cgi?id=177058
+
+        Reviewed by Filip Pizlo.
+
+        Use the existing int and uint types as a model. The types themselves are straighforward. Just like int and uint,
+        you can't pass a float as a double argument and vice-versa. This patch adds operator+, -, *, and / for floats
+        and doubles.
+
+        Float literals are more complicated. If your number has a "." character in it, it is treated as a float literal.
+        You can add a suffix of "f" or "d" to force the literal to pretend to be a float or a double. These literals are
+        able to masquerade as either floats or doubles (unlike an explicit type). However, these literals are not able
+        to masquerade as ints or uints. There's also a nice check that your float literal can actually fit in a float.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/DoubleLiteral.js: Copied from Tools/WebGPUShadingLanguageRI/Type.js.
+        (let.DoubleLiteral.createLiteral.createType):
+        * WebGPUShadingLanguageRI/DoubleLiteralType.js: Copied from Tools/WebGPUShadingLanguageRI/Type.js.
+        (let.DoubleLiteralType.createLiteralType.verifyAsArgument):
+        * WebGPUShadingLanguageRI/FloatLiteral.js: Copied from Tools/WebGPUShadingLanguageRI/Type.js.
+        (let.FloatLiteral.createLiteral.createType):
+        * WebGPUShadingLanguageRI/FloatLiteralType.js: Copied from Tools/WebGPUShadingLanguageRI/Type.js.
+        (let.FloatLiteralType.createLiteralType.verifyAsArgument):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType):
+        (NativeType.prototype.get isFloating):
+        (NativeType.prototype.set isFloating):
+        (NativeType.prototype.get isFloat): Deleted.
+        (NativeType.prototype.set isFloat): Deleted.
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseTerm):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitGenericLiteral):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (uint.operator):
+        (int.operator):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeFloat):
+        (makeDouble):
+        (checkNumber):
+        (checkFloat):
+        (checkDouble):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isFloating):
+        (Type.prototype.get isFloat): Deleted.
+
 2017-09-17  Michael Saboff  <msaboff@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=177038

@@ -101,6 +101,10 @@ class Lexer {
         
         if (this._index >= this._text.length)
             return null;
+
+        // FIXME: Make this handle exp-form literals like 1e1.
+        if (/^(([0-9]*\.[0-9]+[fd]?)|([0-9]+\.[0-9]*[fd]?))/.test(relevantText))
+            return result("floatLiteral");
         
         // FIXME: Make this do Unicode.
         if (/^[^\d\W]\w*/.test(relevantText)) {
@@ -118,10 +122,6 @@ class Lexer {
 
         if (/^[0-9]+/.test(relevantText))
             return result("intLiteral");
-
-        // FIXME: Make this handle exp-form literals like 1e1.
-        if (/^([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)/.test(relevantText))
-            return result("doubleLiteral");
         
         if (/^->|>=|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=|\+\+|--|([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
             return result("punctuation");

@@ -183,11 +183,22 @@ function parse(program, origin, originKind, lineNumberOffset, text)
                 lexer.fail("Integer literal is not 32-bit unsigned integer");
             return new UintLiteral(token, uintVersion);
         }
-        if (token = tryConsumeKind("doubleLiteral"))
-            return new DoubleLiteral(token, +token.text);
+        if (token = tryConsumeKind("floatLiteral")) {
+            let text = token.text;
+            let d = token.text.endsWith("d");
+            let f = token.text.endsWith("f");
+            if (d && f)
+                throw new Error("Literal cannot be both a double literal and a float literal.");
+            if (d || f)
+                text = text.substring(0, text.length - 1);
+            let value = parseFloat(text);
+            if (d)
+                return new DoubleLiteral(token, value);
+            return new FloatLiteral(token, Math.fround(value));
+        }
         if (token = tryConsume("true", "false"))
             return new BoolLiteral(token, token.text == "true");
-        // FIXME: Need support for float literals and probably other literals too.
+        // FIXME: Need support for other literals too.
         consume("(");
         let result = parseExpression();
         consume(")");
