@@ -148,6 +148,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         // Called from WI.CanvasObserver.
 
+        this._recordingCanvas = null;
+
         let canvas = this._canvasIdentifierMap.get(canvasIdentifier);
         console.assert(canvas);
         if (!canvas)

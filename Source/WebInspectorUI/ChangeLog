@@ -1,3 +1,17 @@
+2017-09-18  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: REGRESSION(r221901): Single frame recordings don't reset the recording navigation item
+        https://bugs.webkit.org/show_bug.cgi?id=176893
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/CanvasManager.js:
+        (WI.CanvasManager.prototype.recordingFinished):
+        Set the `_recordingCanvas` to null whenever a recording has finished and been sent to the
+        frontend. It is also necessary to do this inside `stopRecording`, as it is possible for the
+        user to start and stop a recording before any actions are recorded, meaning that no
+        recording would be sent to the frontend and this function will never get called.
+
 2017-09-17  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: support toggling properties
