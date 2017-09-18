@@ -1,3 +1,18 @@
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        ErrorInstance and Exception need destroy methods
+        https://bugs.webkit.org/show_bug.cgi?id=177095
+
+        Reviewed by Saam Barati.
+        
+        When I made ErrorInstance and Exception into JSDestructibleObjects, I forgot to make them
+        follow that type's protocol.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::destroy): Implement this to fix leaks.
+        * runtime/ErrorInstance.h:
+        * runtime/Exception.h: Change how this is declared now that this is a DestructibleObject.
+
 2017-09-18  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [JSC] Consider dropping JSObjectSetPrototype feature for JSGlobalObject

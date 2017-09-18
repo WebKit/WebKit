@@ -127,6 +127,11 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     }
 }
 
+void ErrorInstance::destroy(JSCell* cell)
+{
+    static_cast<ErrorInstance*>(cell)->ErrorInstance::~ErrorInstance();
+}
+
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to
 // have no observable side effects to the user (i.e. does not call proxies,
 // and getters).

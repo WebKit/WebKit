@@ -42,9 +42,6 @@ public:
     };
     JS_EXPORT_PRIVATE static Exception* create(VM&, JSValue thrownValue, StackCaptureAction = CaptureStack);
 
-    static const bool needsDestruction = true;
-    static void destroy(JSCell*);
-
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue prototype);
 
     static void visitChildren(JSCell*, SlotVisitor&);
@@ -67,6 +64,7 @@ public:
 private:
     Exception(VM&);
     void finishCreation(VM&, JSValue thrownValue, StackCaptureAction);
+    static void destroy(JSCell*);
 
     WriteBarrier<Unknown> m_value;
     Vector<StackFrame> m_stack;
