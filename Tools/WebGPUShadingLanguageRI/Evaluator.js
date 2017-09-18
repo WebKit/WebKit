@@ -166,6 +166,24 @@ class Evaluator extends Visitor {
         return node.ePtr.box(result);
     }
 
+    visitLogicalExpression(node)
+    {
+        let lhs = node.left.visit(this).loadValue();
+        let rhs = node.right.visit(this).loadValue();
+        let result;
+        switch (node.text) {
+        case "&&":
+            result = lhs && rhs;
+            break;
+        case "||":
+            result = lhs || rhs;
+            break;
+        default:
+            throw new Error("Unknown type of logical expression");
+        }
+        return node.ePtr.box(result);
+    }
+
     visitIfStatement(node)
     {
         if (node.conditional.visit(this).loadValue())

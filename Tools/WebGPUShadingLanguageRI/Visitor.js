@@ -314,6 +314,12 @@ class Visitor extends VisitorBase {
         node.operand.visit(this);
     }
     
+    visitLogicalExpression(node)
+    {
+        node.left.visit(this);
+        node.right.visit(this);
+    }
+    
     visitFunctionLikeBlock(node)
     {
         if (node.returnType)

@@ -104,6 +104,12 @@ class EBufferBuilder extends Visitor {
         super.visitLogicalNot(node);
     }
     
+    visitLogicalExpression(node)
+    {
+        node.ePtr = EPtr.box();
+        super.visitLogicalExpression(node);
+    }
+    
     visitLetExpression(node)
     {
         this._createEPtrForNode(node);

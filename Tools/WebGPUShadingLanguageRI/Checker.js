@@ -257,23 +257,31 @@ class Checker extends Visitor {
         return this._program.intrinsics.bool;
     }
 
+    _requireBool(expression)
+    {
+        let type = expression.visit(this);
+        if (!type)
+            throw new Error("Expression has no type, but should be bool: " + expression);
+        if (!type.equals(this._program.intrinsics.bool))
+            throw new WError("Expression isn't a bool: " + expression);
+    }
+
     visitLogicalNot(node)
     {
-        let resultType = node.operand.visit(this);
-        if (!resultType)
-            throw new Error("Trying to negate something with no type: " + node.operand);
-        if (!resultType.equals(this._program.intrinsics.bool))
-            throw new WError("Trying to negate something that isn't a bool: " + node.operand);
+        this._requireBool(node.operand);
+        return this._program.intrinsics.bool;
+    }
+
+    visitLogicalExpression(node)
+    {
+        this._requireBool(node.left);
+        this._requireBool(node.right);
         return this._program.intrinsics.bool;
     }
 
     visitIfStatement(node)
     {
-        let conditionalResultType = node.conditional.visit(this);
-        if (!conditionalResultType)
-            throw new Error("Trying to negate something with no type: " + node.conditional);
-        if (!conditionalResultType.equals(this._program.intrinsics.bool))
-            throw new WError("Trying to negate something that isn't a bool: " + node.conditional);
+        this._requireBool(node.conditional);
         node.body.visit(this);
         if (node.elseBody)
             node.elseBody.visit(this);
@@ -281,35 +289,22 @@ class Checker extends Visitor {
 
     visitWhileLoop(node)
     {
-        let conditionalResultType = node.conditional.visit(this);
-        if (!conditionalResultType)
-            throw new Error("While loop conditional has no type: " + node.conditional);
-        if (!conditionalResultType.equals(this._program.intrinsics.bool))
-            throw new WError("While loop conditional isn't a bool: " + node.conditional);
+        this._requireBool(node.conditional);
         node.body.visit(this);
     }
 
     visitDoWhileLoop(node)
     {
         node.body.visit(this);
-        let conditionalResultType = node.conditional.visit(this);
-        if (!conditionalResultType)
-            throw new Error("Do-While loop conditional has no type: " + node.conditional);
-        if (!conditionalResultType.equals(this._program.intrinsics.bool))
-            throw new WError("Do-While loop conditional isn't a bool: " + node.conditional);
+        this._requireBool(node.conditional);
     }
 
     visitForLoop(node)
     {
         if (node.initialization)
             node.initialization.visit(this);
-        if (node.condition) {
-            let conditionResultType = node.condition.visit(this);
-            if (!conditionResultType)
-                throw new Error("For loop conditional has no type: " + node.conditional);
-            if (!conditionResultType.equals(this._program.intrinsics.bool))
-                throw new WError("For loop conditional isn't a bool: " + node.conditional);
-        }
+        if (node.condition)
+            this._requireBool(node.condition);
         if (node.increment)
             node.increment.visit(this);
         node.body.visit(this);

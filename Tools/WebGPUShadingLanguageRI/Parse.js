@@ -507,7 +507,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     {
         return genericParseLeft(
             texts, nextParser,
-            (token, left, right) => new LogicalExpression(token, token.text, left, right));
+            (token, left, right) => new LogicalExpression(token, token.text, new CallExpression(left.origin, "bool", [], [left]), new CallExpression(right.origin, "bool", [], [right])));
     }
     
     function parsePossibleLogicalAnd()

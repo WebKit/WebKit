@@ -527,8 +527,8 @@ function TEST_badAdd()
 
 function TEST_lexerKeyword()
 {
-    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2d 0.d .3d");
-    if (result.length != 23)
+    let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2d 0.d .3d && ||");
+    if (result.length != 25)
         throw new Error("Lexer emitted an incorrect number of tokens (expected 23): " + result.length);
     checkLexerToken(result[0],  0,  "identifier",    "ident");
     checkLexerToken(result[1],  6,  "keyword",       "for");
@@ -553,6 +553,8 @@ function TEST_lexerKeyword()
     checkLexerToken(result[20], 63, "floatLiteral",  "1.2d");
     checkLexerToken(result[21], 68, "floatLiteral",  "0.d");
     checkLexerToken(result[22], 72, "floatLiteral",  ".3d");
+    checkLexerToken(result[23], 76, "punctuation",   "&&");
+    checkLexerToken(result[24], 79, "punctuation",   "||");
 }
 
 function TEST_simpleNoReturn()
@@ -2788,6 +2790,52 @@ function TEST_floatMath()
             }
         `),
         (e) => e instanceof WTypeError);
+}
+
+function TEST_booleanMath()
+{
+    let program = doPrep(`
+        bool foo()
+        {
+            return true && true;
+        }
+        bool foo2()
+        {
+            return true && false;
+        }
+        bool foo3()
+        {
+            return false && true;
+        }
+        bool foo4()
+        {
+            return false && false;
+        }
+        bool foo5()
+        {
+            return true || true;
+        }
+        bool foo6()
+        {
+            return true || false;
+        }
+        bool foo7()
+        {
+            return false || true;
+        }
+        bool foo8()
+        {
+            return false || false;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], []), true);
+    checkBool(program, callFunction(program, "foo2", [], []), false);
+    checkBool(program, callFunction(program, "foo3", [], []), false);
+    checkBool(program, callFunction(program, "foo4", [], []), false);
+    checkBool(program, callFunction(program, "foo5", [], []), true);
+    checkBool(program, callFunction(program, "foo6", [], []), true);
+    checkBool(program, callFunction(program, "foo7", [], []), true);
+    checkBool(program, callFunction(program, "foo8", [], []), false);
 }
 
 let filter = /.*/; // run everything by default

@@ -123,7 +123,7 @@ class Lexer {
         if (/^[0-9]+/.test(relevantText))
             return result("intLiteral");
         
-        if (/^->|>=|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=|\+\+|--|([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
+        if (/^->|>=|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=|\+\+|--|&&|\|\||([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
             return result("punctuation");
         
         let remaining = relevantText.substring(0, 20).split(/\s/)[0];

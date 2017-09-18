@@ -92,6 +92,7 @@ load("LetExpression.js");
 load("Lexer.js");
 load("LexerToken.js");
 load("LiteralTypeChecker.js");
+load("LogicalExpression.js");
 load("LogicalNot.js");
 load("LoopChecker.js");
 load("MakeArrayRefExpression.js");

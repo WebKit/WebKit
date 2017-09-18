@@ -313,6 +313,13 @@ class Rewriter extends VisitorBase {
         result.ePtr = node.ePtr;
         return result;
     }
+    
+    visitLogicalExpression(node)
+    {
+        let result = new LogicalExpression(node.origin, node.text, node.left.visit(this), node.right.visit(this));
+        result.ePtr = node.ePtr;
+        return result;
+    }
 
     visitIfStatement(node)
     {
