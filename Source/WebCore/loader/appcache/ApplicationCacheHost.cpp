@@ -327,11 +327,15 @@ void ApplicationCacheHost::stopDeferringEvents()
 
 Vector<ApplicationCacheHost::ResourceInfo> ApplicationCacheHost::resourceList()
 {
+    Vector<ResourceInfo> result;
+
     auto* cache = applicationCache();
     if (!cache || !cache->isComplete())
-        return { };
+        return result;
 
-    return WTF::map(cache->resources(), [] (auto& urlAndResource) -> ApplicationCacheHost::ResourceInfo {
+    result.reserveInitialCapacity(cache->resources().size());
+
+    for (auto& urlAndResource : cache->resources()) {
         ASSERT(urlAndResource.value);
         auto& resource = *urlAndResource.value;
 
@@ -342,8 +346,10 @@ Vector<ApplicationCacheHost::ResourceInfo> ApplicationCacheHost::resourceList()
         bool isForeign = type & ApplicationCacheResource::Foreign;
         bool isFallback = type & ApplicationCacheResource::Fallback;
 
-        return { resource.url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource.estimatedSizeInStorage() };
-    });
+        result.uncheckedAppend({ resource.url(), isMaster, isManifest, isFallback, isForeign, isExplicit, resource.estimatedSizeInStorage() });
+    }
+
+    return result;
 }
 
 ApplicationCacheHost::CacheInfo ApplicationCacheHost::applicationCacheInfo()

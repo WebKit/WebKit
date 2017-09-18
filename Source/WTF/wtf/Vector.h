@@ -1562,49 +1562,34 @@ size_t removeRepeatedElements(Vector<T, inlineCapacity, OverflowHandler, minCapa
     return removeRepeatedElements(vector, [] (T& a, T& b) { return a == b; });
 }
 
-template<typename MapFunction, typename SourceType>
-struct MapFunctionInspector {
+template<typename Transformer, typename SourceType> struct Mapper {
     using RealSourceType = typename std::remove_reference<SourceType>::type;
-    using IteratorType = decltype(std::begin(std::declval<RealSourceType>()));
-    using SourceItemType = typename std::iterator_traits<IteratorType>::value_type;
-};
+    using SourceItemType = typename RealSourceType::ValueType;
+    using DestinationItemType = typename std::result_of<Transformer(SourceItemType&&)>::type;
 
-template<typename MapFunction, typename SourceType, typename Enable = void>
-struct Mapper {
-    using SourceItemType = typename MapFunctionInspector<MapFunction, SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&)>::type;
-
-    static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
+    static Vector<DestinationItemType> map(const RealSourceType& source, const Transformer& transformer)
     {
         Vector<DestinationItemType> result;
-        // FIXME: Use std::size when available on all compilers.
         result.reserveInitialCapacity(source.size());
         for (auto& item : source)
-            result.uncheckedAppend(mapFunction(item));
+            result.uncheckedAppend(transformer(item));
+        return result;
+    }
+
+    static Vector<DestinationItemType> map(RealSourceType&& source, const Transformer& transformer)
+    {
+        Vector<DestinationItemType> result;
+        result.reserveInitialCapacity(source.size());
+        for (auto& item : source)
+            result.uncheckedAppend(transformer(std::forward<SourceItemType>(item)));
         return result;
     }
 };
 
-template<typename MapFunction, typename SourceType>
-struct Mapper<MapFunction, SourceType, typename std::enable_if<std::is_rvalue_reference<SourceType&&>::value>::type> {
-    using SourceItemType = typename MapFunctionInspector<MapFunction, SourceType>::SourceItemType;
-    using DestinationItemType = typename std::result_of<MapFunction(SourceItemType&&)>::type;
-
-    static Vector<DestinationItemType> map(SourceType source, const MapFunction& mapFunction)
-    {
-        Vector<DestinationItemType> result;
-        // FIXME: Use std::size when available on all compilers.
-        result.reserveInitialCapacity(source.size());
-        for (auto& item : source)
-            result.uncheckedAppend(mapFunction(WTFMove(item)));
-        return result;
-    }
-};
-
-template<typename MapFunction, typename SourceType>
-Vector<typename Mapper<MapFunction, SourceType>::DestinationItemType> map(SourceType&& source, MapFunction&& mapFunction)
+template<typename Transformer, typename VectorType>
+Vector<typename Mapper<Transformer, VectorType>::DestinationItemType> map(VectorType&& source, Transformer&& transformer)
 {
-    return Mapper<MapFunction, SourceType>::map(std::forward<SourceType>(source), std::forward<MapFunction>(mapFunction));
+    return Mapper<Transformer, VectorType>::map(std::forward<VectorType>(source), std::forward<Transformer>(transformer));
 }
 
 } // namespace WTF
