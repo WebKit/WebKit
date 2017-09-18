@@ -1,3 +1,9 @@
+2017-09-18  Antti Koivisto  <antti@apple.com>
+
+        Another WK1 unflake attempt.
+
+        * transitions/transition-display-property-2.html:
+
 2017-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         getData('text/plain') doesn't work on iOS 10

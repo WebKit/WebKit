@@ -10,15 +10,22 @@ test {
 </style>
 <test></test>
 <script>
-const test = document.querySelector("test");
-test.offsetWidth;
-
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.waitUntilDone();
-    requestAnimationFrame(() => {
-        testRunner.notifyDone();
-    });
+
+const test = document.querySelector("test");
+
+function tryComplete()
+{
+    if (test.offsetHeight < 100) {
+        if (window.testRunner)
+            testRunner.notifyDone();
+        return;
+    }
+    setTimeout(tryComplete, 10);
 }
-test.className = "animate";
+
 test.offsetWidth;
+test.className = "animate";
+tryComplete();
 </script>
