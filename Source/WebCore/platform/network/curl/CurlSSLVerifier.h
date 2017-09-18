@@ -30,9 +30,11 @@
 #include <winsock2.h>
 #endif
 
-#include <openssl/ssl.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
+
+struct x509_store_ctx_st;
+typedef struct x509_store_ctx_st X509_STORE_CTX;
 
 namespace WebCore {
 

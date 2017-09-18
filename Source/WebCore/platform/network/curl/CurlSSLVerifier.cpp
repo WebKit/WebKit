@@ -30,6 +30,7 @@
 #if USE(CURL)
 #include "CurlContext.h"
 #include "CurlSSLHandle.h"
+#include <openssl/ssl.h>
 
 namespace WebCore {
 

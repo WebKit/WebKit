@@ -1,3 +1,15 @@
+2017-09-18  Don Olmstead  <don.olmstead@sony.com>
+
+        [Curl] Forward declare SSL context
+
+        Unreviewed build fix after r222147. OpenSSL's SHA1 declaration conflicts with WTF's.
+
+        No new tests. No change in behavior.
+
+        * platform/network/curl/CurlSSLHandle.h:
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        * platform/network/curl/CurlSSLVerifier.h:
+
 2017-09-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         getData('text/plain') doesn't work on iOS 10

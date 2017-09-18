@@ -30,7 +30,6 @@
 #include <winsock2.h>
 #endif
 
-#include <openssl/ssl.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
