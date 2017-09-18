@@ -3291,7 +3291,7 @@ http/tests/security/contentSecurityPolicy/worker-blob-inherits-csp-blocks-eval.h
 http/tests/security/cross-origin-script-window-onerror-redirected.html [ Failure Pass ]
 http/tests/security/isolatedWorld/number-prototype.html [ Failure Pass ]
 http/tests/security/local-video-src-from-remote.html [ Failure Pass ]
-http/tests/security/video-cross-origin-caching.html [ Failure Timeout Pass ]
+http/tests/security/video-cross-origin-caching.html [ Crash Failure Timeout Pass ]
 http/tests/security/video-poster-cross-origin-crash2.html [ Failure Pass ]
 http/tests/websocket/tests/hybi/simple-wss.html [ Crash Timeout ]
 security/contentSecurityPolicy/worker-inherits-blocks-eval.html [ Failure Pass ]
