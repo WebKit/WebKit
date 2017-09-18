@@ -39,6 +39,16 @@ function isAddressSpace(addressSpace)
     }
 }
 
+function needsPrimitiveProtocol(addressSpace)
+{
+    return addressSpace != "thread";
+}
+
+function protocolSuffix(addressSpace)
+{
+    return needsPrimitiveProtocol(addressSpace) ? ":primitive" : "";
+}
+
 function validateAddressSpace(addressSpace)
 {
     if (!isAddressSpace(addressSpace))

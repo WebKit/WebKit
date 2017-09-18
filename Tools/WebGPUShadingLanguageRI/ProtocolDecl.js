@@ -97,16 +97,16 @@ class ProtocolDecl extends Protocol {
     {
         let substitution = new Substitution([this._typeVariable], [type]);
         let signatures = this.signatures;
-        for (let signature of signatures) {
-            signature = signature.visit(substitution);
-            let overload = resolveOverloadImpl(signature.possibleOverloads, signature.typeParameters, signature.parameterTypes, signature.returnTyupeForOverloadResolution);
+        for (let originalSignature of signatures) {
+            let signature = originalSignature.visit(substitution);
+            let overload = resolveOverloadImpl(signature.possibleOverloads, signature.typeParameters, signature.parameterTypes, signature.returnTypeForOverloadResolution);
             if (!overload.func)
-                return {result: false, reason: "Did not find matching signature for " + signature + " with type " + type + (overload.failures.length ? " (tried: " + overload.failures.join("; ") + ")" : "")};
+                return {result: false, reason: "Did not find matching signature for " + originalSignature + " (at " + originalSignature.origin.originString + ") with type " + type + (overload.failures.length ? " (tried: " + overload.failures.join("; ") + ")" : "")};
             
             let substitutedReturnType = overload.func.returnType.substituteToUnification(
                 overload.func.typeParameters, overload.unificationContext);
             if (!substitutedReturnType.equals(signature.returnType))
-                return {result: false, reason: "Return type mismatch between " + signature.returnType + " and " + substitutedReturnType};
+                return {result: false, reason: "At signature " + originalSignature + " (at " + originalSignature.origin.originString + "): return type mismatch between " + signature.returnType + " and " + substitutedReturnType + " in found function " + overload.func.toDeclString()};
         }
         return {result: true};
     }

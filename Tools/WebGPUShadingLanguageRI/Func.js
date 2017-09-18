@@ -29,6 +29,12 @@ class Func extends Node {
     {
         if (!(origin instanceof LexerToken))
             throw new Error("Bad origin: " + origin);
+        for (let parameter of parameters) {
+            if (!parameter)
+                throw new Error("Null parameter");
+            if (!parameter.type)
+                throw new Error("Null parameter type");
+        }
         super();
         this._origin = origin;
         this._name = name;

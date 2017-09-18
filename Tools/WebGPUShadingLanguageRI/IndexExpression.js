@@ -24,24 +24,35 @@
  */
 "use strict";
 
-let letExpressionCount = 0;
-
-class LetExpression extends Value {
-    constructor(origin)
+class IndexExpression extends PropertyAccessExpression {
+    constructor(origin, array, index)
     {
-        super();
-        this._origin = origin;
-        this.index = letExpressionCount++;
-        this.argument = null;
-        this.body = null;
+        super(origin, array);
+        this._index = index;
     }
     
-    get origin() { return this._origin; }
-    get name() { return "let<" + this.index + ">"; }
+    get array() { return this.base; }
+    get index() { return this._index; }
+    get isLValue() { return this.array.isLValue; }
+    get addressSpace() { return this.array.addressSpace; }
     
+    get getFuncName() { return "operator[]"; }
+    get andFuncName() { return "operator&[]"; }
+    get setFuncName() { return "operator[]="; }
+
+    updateCalls()
+    {
+        if (this.callForGet)
+            this.callForGet.argumentList[1] = this.index;
+        if (this.callForAnd)
+            this.callForAnd.argumentList[1] = this.index;
+        if (this.callForSet)
+            this.callForSet.argumentList[1] = this.index;
+        super.updateCalls();
+    }
+
     toString()
     {
-        return this.name + "(" + this.argument + ", " + this.body + ")";
+        return "(" + this.array + "[" + this.index + "])";
     }
 }
-

@@ -28,5 +28,14 @@ class Value extends Node {
     get kind() { return Value; }
     get isConstexpr() { return false; }
     get isLValue() { return false; }
+    
+    become(otherValue)
+    {
+        // NOTE: Make sure that IdentityExpression implements unifyNode and all that
+        let origin = this.origin;
+        this.__proto__ = IdentityExpression.prototype;
+        this._origin = origin;
+        this._target = otherValue;
+    }
 }
 

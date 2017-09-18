@@ -65,6 +65,18 @@ native float operator*(float, float);
 native double operator*(double, double);
 native int operator/(int, int);
 native uint operator/(uint, uint);
+native int operator&(int, int);
+native int operator|(int, int);
+native int operator^(int, int);
+native int operator~(int);
+native int operator<<(int, uint);
+native int operator>>(int, uint);
+native uint operator&(uint, uint);
+native uint operator|(uint, uint);
+native uint operator^(uint, uint);
+native uint operator~(uint);
+native uint operator<<(uint, uint);
+native uint operator>>(uint, uint);
 native float operator/(float, float);
 native double operator/(double, double);
 native bool operator==(int, int);
@@ -88,6 +100,35 @@ native bool operator>=(int, int);
 native bool operator>=(uint, uint);
 native bool operator>=(float, float);
 native bool operator>=(double, double);
+
+bool operator&(bool a, bool b)
+{
+    if (a)
+        return b;
+    return false;
+}
+bool operator|(bool a, bool b)
+{
+    if (a)
+        return true;
+    if (b)
+        return true;
+    return false;
+}
+bool operator^(bool a, bool b)
+{
+    if (a)
+        return !b;
+    return b;
+}
+bool operator~(bool value)
+{
+    return !value;
+}
+
+protocol Addable {
+    Addable operator+(Addable, Addable);
+}
 
 protocol Equatable {
     bool operator==(Equatable, Equatable);
@@ -113,4 +154,14 @@ native thread T^ operator&[]<T>(thread T[], uint);
 native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
 native device T^ operator&[]<T:primitive>(device T[], uint);
 native constant T^ operator&[]<T:primitive>(constant T[], uint);
+
+native uint operator.length<T>(thread T[]);
+native uint operator.length<T:primitive>(threadgroup T[]);
+native uint operator.length<T:primitive>(device T[]);
+native uint operator.length<T:primitive>(constant T[]);
+
+uint operator.length<T, uint length>(T[length])
+{
+    return length;
+}
 `;

@@ -24,18 +24,21 @@
  */
 "use strict";
 
-class DotExpression extends Expression {
+class DotExpression extends PropertyAccessExpression {
     constructor(origin, struct, fieldName)
     {
-        super(origin);
-        this._struct = struct;
+        super(origin, struct);
         this._fieldName = fieldName;
     }
     
-    get struct() { return this._struct; }
+    get struct() { return this.base; }
     get fieldName() { return this._fieldName; }
     get isLValue() { return this.struct.isLValue; }
     get addressSpace() { return this.struct.addressSpace; }
+    
+    get getFuncName() { return "operator." + this.fieldName; }
+    get andFuncName() { return "operator&." + this.fieldName; }
+    get setFuncName() { return "operator." + this.fieldName + "="; }
     
     toString()
     {

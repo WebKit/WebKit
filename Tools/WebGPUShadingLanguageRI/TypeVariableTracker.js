@@ -24,46 +24,29 @@
  */
 "use strict";
 
-class StructLayoutBuilder extends Visitor {
+class TypeVariableTracker extends Visitor {
     constructor()
     {
         super();
-        this._offset = 0;
+        this._set = new Set();
     }
     
-    visitReferenceType(node)
+    get set() { return this._set; }
+    
+    _consider(thing)
     {
+        if (thing.isUnifiable)
+            this._set.add(thing);
     }
     
-    visitStructType(node)
+    visitTypeRef(node)
     {
-        if (node.size != null)
-            return;
-        if (node.typeParameters.length)
-            throw new Error("Cannot do layout for generic type: " + node);
-        let oldOffset = this._offset;
-        this._offset = 0;
-        super.visitStructType(node);
-        node.size = this._offset;
-        this._offset += oldOffset;
+        this._consider(node.type);
     }
     
-    get offset() { return this._offset; }
-    
-    visitField(node)
+    visitVariableRef(node)
     {
-        super.visitField(node);
-        node.offset = this._offset;
-        let size = node.type.size;
-        if (size == null)
-            throw new Error("Type does not have size: " + node.type);
-        this._offset += size;
-    }
-    
-    visitNativeFuncInstance(node)
-    {
-        super.visitNativeFuncInstance(node);
-        node.func.didLayoutStructsInImplementationData(node.implementationData);
+        this._consider(this.variable);
     }
 }
 

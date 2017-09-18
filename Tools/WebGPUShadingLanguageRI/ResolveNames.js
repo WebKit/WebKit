@@ -24,7 +24,28 @@
  */
 "use strict";
 
-function resolveNames(program)
+function createNameResolver(program)
 {
-    program.visit(new NameResolver());
+    return new NameResolver(program.globalNameContext);
 }
+
+function resolveNamesInTypes(program, nameResolver)
+{
+    for (let type of program.types.values())
+        nameResolver.doStatement(type);
+}
+
+function resolveNamesInProtocols(program, nameResolver)
+{
+    for (let protocol of program.protocols.values())
+        nameResolver.doStatement(protocol);
+}
+
+function resolveNamesInFunctions(program, nameResolver)
+{
+    for (let funcs of program.functions.values()) {
+        for (let func of funcs)
+            nameResolver.doStatement(func);
+    }
+}
+

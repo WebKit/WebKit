@@ -24,46 +24,25 @@
  */
 "use strict";
 
-class StructLayoutBuilder extends Visitor {
-    constructor()
+class ReadModifyWriteExpression extends Expression {
+    constructor(origin, lValue, type = null)
     {
-        super();
-        this._offset = 0;
+        super(origin);
+        this._lValue = lValue;
+        this.oldValueVar = new AnonymousVariable(origin, type);
+        this.newValueVar = new AnonymousVariable(origin, type);
+        this.newValueExp = null;
+        this.resultExp = null;
     }
     
-    visitReferenceType(node)
-    {
-    }
+    get lValue() { return this._lValue; }
     
-    visitStructType(node)
-    {
-        if (node.size != null)
-            return;
-        if (node.typeParameters.length)
-            throw new Error("Cannot do layout for generic type: " + node);
-        let oldOffset = this._offset;
-        this._offset = 0;
-        super.visitStructType(node);
-        node.size = this._offset;
-        this._offset += oldOffset;
-    }
+    oldValueRef() { return VariableRef.wrap(this.oldValueVar); }
+    newValueRef() { return VariableRef.wrap(this.newValueVar); }
     
-    get offset() { return this._offset; }
-    
-    visitField(node)
+    toString()
     {
-        super.visitField(node);
-        node.offset = this._offset;
-        let size = node.type.size;
-        if (size == null)
-            throw new Error("Type does not have size: " + node.type);
-        this._offset += size;
-    }
-    
-    visitNativeFuncInstance(node)
-    {
-        super.visitNativeFuncInstance(node);
-        node.func.didLayoutStructsInImplementationData(node.implementationData);
+        return "RMW(" + this.lValue + ", " + this.oldValueVar + ", " + this.newValueVar + ", " + this.newValueExp + ", " + this.resultExp + ")";
     }
 }
 

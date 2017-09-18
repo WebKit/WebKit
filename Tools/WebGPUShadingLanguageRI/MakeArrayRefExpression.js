@@ -33,11 +33,6 @@ class MakeArrayRefExpression extends Expression {
     
     get lValue() { return this._lValue; }
     
-    becomeConvertPtrToArrayRefExpression()
-    {
-        this.__proto__ = ConvertPtrToArrayRefExpression.prototype;
-    }
-    
     toString()
     {
         return "@" + (this.numElements ? "<<" + this.numElements + ">>" : "") + "(" + this.lValue + ")";

@@ -25,10 +25,12 @@
 "use strict";
 
 class DereferenceExpression extends Expression {
-    constructor(origin, ptr)
+    constructor(origin, ptr, type = null, addressSpace = null)
     {
         super(origin);
         this._ptr = ptr;
+        this.type = type;
+        this.addressSpace = addressSpace;
     }
     
     get ptr() { return this._ptr; }

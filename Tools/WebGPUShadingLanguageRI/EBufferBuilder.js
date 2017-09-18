@@ -110,11 +110,9 @@ class EBufferBuilder extends Visitor {
         super.visitLogicalExpression(node);
     }
     
-    visitLetExpression(node)
+    visitAnonymousVariable(node)
     {
         this._createEPtrForNode(node);
-        node.argument.visit(this);
-        node.body.visit(this);
     }
     
     visitMakeArrayRefExpression(node)

@@ -237,6 +237,88 @@ class Intrinsics {
             });
         
         this._map.set(
+            "native int operator&<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() & right.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator&<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() & right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator|<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() | right.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator|<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() | right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator^<>(int,int)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() ^ right.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator^<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() ^ right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator<<<>(int,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() << right.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator<<<>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box((left.loadValue() << right.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
+            "native int operator>><>(int,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() >> right.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator>><>(uint,uint)",
+            func => {
+                func.implementation = ([left, right]) =>
+                    EPtr.box(left.loadValue() >>> right.loadValue());
+            });
+        
+        this._map.set(
+            "native int operator~<>(int)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(~value.loadValue());
+            });
+        
+        this._map.set(
+            "native uint operator~<>(uint)",
+            func => {
+                func.implementation = ([value]) => EPtr.box((~value.loadValue()) >>> 0);
+            });
+        
+        this._map.set(
             "native float operator/<>(float,float)",
             func => {
                 func.implementation = ([left, right]) =>
@@ -397,30 +479,32 @@ class Intrinsics {
                     EPtr.box(left.loadValue() >= right.loadValue());
             });
         
-        let arrayElementPtr = func => {
-            func.implementation = ([ref, index], node) => {
-                ref = ref.loadValue();
-                if (!ref)
-                    throw new WTrapError(node.origin.originString, "Null dereference");
-                index = index.loadValue();
-                if (index > ref.length)
-                    throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
-                return EPtr.box(ref.ptr.plus(index * node.actualTypeArguments[0].size));
-            };
-        };
-        
-        this._map.set(
-            "native T^ thread operator&[]<T>(T[] thread,uint)",
-            arrayElementPtr);
-        this._map.set(
-            "native T^ threadgroup operator&[]<T:primitive>(T[] threadgroup,uint)",
-            arrayElementPtr);
-        this._map.set(
-            "native T^ device operator&[]<T:primitive>(T[] device,uint)",
-            arrayElementPtr);
-        this._map.set(
-            "native T^ constant operator&[]<T:primitive>(T[] constant,uint)",
-            arrayElementPtr);
+        for (let addressSpace of addressSpaces) {
+            this._map.set(
+                `native T^ ${addressSpace} operator&[]<T${protocolSuffix(addressSpace)}>(T[] ${addressSpace},uint)`,
+                func => {
+                    func.implementation = ([ref, index], node) => {
+                        ref = ref.loadValue();
+                        if (!ref)
+                            throw new WTrapError(node.origin.originString, "Null dereference");
+                        index = index.loadValue();
+                        if (index > ref.length)
+                            throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
+                        return EPtr.box(ref.ptr.plus(index * node.actualTypeArguments[0].size));
+                    };
+                });
+
+            this._map.set(
+                `native uint operator.length<T${protocolSuffix(addressSpace)}>(T[] ${addressSpace})`,
+                func => {
+                    func.implementation = ([ref], node) => {
+                        ref = ref.loadValue();
+                        if (!ref)
+                            return EPtr.box(0);
+                        return EPtr.box(ref.length);
+                    };
+                });
+        }
     }
     
     add(thing)

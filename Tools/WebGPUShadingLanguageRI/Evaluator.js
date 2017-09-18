@@ -102,6 +102,11 @@ class Evaluator extends Visitor {
         return target;
     }
     
+    visitIdentityExpression(node)
+    {
+        return node.target.visit(this);
+    }
+    
     visitDereferenceExpression(node)
     {
         let ptr = node.ptr.visit(this).loadValue();
@@ -112,7 +117,8 @@ class Evaluator extends Visitor {
     
     visitMakePtrExpression(node)
     {
-        return node.ePtr.box(node.lValue.visit(this));
+        let ptr = node.lValue.visit(this);
+        return node.ePtr.box(ptr);
     }
     
     visitMakeArrayRefExpression(node)
@@ -123,12 +129,6 @@ class Evaluator extends Visitor {
     visitConvertPtrToArrayRefExpression(node)
     {
         return node.ePtr.box(new EArrayRef(node.lValue.visit(this).loadValue(), 1));
-    }
-    
-    visitDotExpression(node)
-    {
-        let structPtr = node.struct.visit(this);
-        return structPtr.plus(node.field.offset);
     }
     
     visitCommaExpression(node)
@@ -249,10 +249,9 @@ class Evaluator extends Visitor {
         throw ContinueException;
     }
     
-    visitLetExpression(node)
+    visitAnonymousVariable(node)
     {
-        node.ePtr.copyFrom(node.argument.visit(this), node.type.size);
-        return node.body.visit(this);
+        node.type.populateDefaultValue(node.ePtr.buffer, node.ePtr.offset);
     }
     
     visitCallExpression(node)
@@ -265,6 +264,8 @@ class Evaluator extends Visitor {
             if (!type || !argument)
                 throw new Error("Cannot get type or argument; i = " + i + ", argument = " + argument + ", type = " + type + "; in " + node);
             let argumentValue = argument.visit(this);
+            if (!argumentValue)
+                throw new Error("Null argument value, i = " + i + ", node = " + node);
             callArguments.push(() => this._snapshot(type, null, argumentValue));
         }
         

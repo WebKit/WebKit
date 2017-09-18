@@ -24,9 +24,24 @@
  */
 "use strict";
 
-class VisitorBase {
-    constructor()
+let anonymousVariableCount = 0;
+
+class AnonymousVariable extends Value {
+    // You have to initialize the variable's value before use, but that could be quite late.
+    constructor(origin, type = null)
     {
-        this._memoTable = new Map();
+        super();
+        this._origin = origin;
+        this.index = anonymousVariableCount++;
+        this.type = type;
+    }
+    
+    get origin() { return this._origin; }
+    get name() { return "anonVar<" + this.index + ">"; }
+    
+    toString()
+    {
+        return this.name;
     }
 }
+

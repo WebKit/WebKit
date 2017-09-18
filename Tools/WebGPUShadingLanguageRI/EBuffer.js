@@ -60,12 +60,14 @@ class EBuffer {
     get(index)
     {
         if (index < 0 || index >= this._array.length)
-            throw new Error("out of bounds buffer access");
+            throw new Error("Out of bounds buffer access (buffer = " + this + ", index = " + index + ")");
         return this._array[index];
     }
     
     set(index, value)
     {
+        if (index < 0 || index >= this._array.length)
+            throw new Error("out of bounds buffer access (buffer = " + this + ", index = " + index + ")");
         this._array[index] = value;
     }
     

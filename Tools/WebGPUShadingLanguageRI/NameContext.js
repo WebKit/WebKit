@@ -36,7 +36,6 @@ class NameContext {
     {
         this._map = new Map();
         this._set = new Set();
-        this._defined = null;
         this._currentStatement = null;
         this._delegate = delegate;
         this._intrinsics = null;
@@ -62,7 +61,7 @@ class NameContext {
         if (!thing.name)
             return;
         
-        if (thing.isNative) {
+        if (thing.isNative && !thing.implementation) {
             if (!this._intrinsics)
                 throw new Error("Native function in a scope that does not recognize intrinsics");
             this._intrinsics.add(thing);
@@ -115,36 +114,11 @@ class NameContext {
         return null;
     }
     
-    handleDefining()
-    {
-        this._defined = new Set();
-    }
-    
-    isDefined(thing)
-    {
-        if (this._set.has(thing)) {
-            return !this._defined
-                || this._defined.has(thing);
-        }
-        return this._delegate && this._delegate.isDefined(thing);
-    }
-    
-    define(thing)
-    {
-        this._defined.add(thing);
-    }
-    
-    defineAll()
-    {
-        this._defined = null;
-    }
-    
     doStatement(statement, callback)
     {
         this._currentStatement = statement;
         callback();
         this._currentStatement = null;
-        this.define(statement);
     }
     
     recognizeIntrinsics()

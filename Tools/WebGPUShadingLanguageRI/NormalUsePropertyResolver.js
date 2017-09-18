@@ -24,46 +24,15 @@
  */
 "use strict";
 
-class StructLayoutBuilder extends Visitor {
-    constructor()
+class NormalUsePropertyResolver extends Rewriter {
+    visitDotExpression(node)
     {
-        super();
-        this._offset = 0;
+        return super.visitDotExpression(node).rewriteAfterCloning();
     }
     
-    visitReferenceType(node)
+    visitIndexExpression(node)
     {
-    }
-    
-    visitStructType(node)
-    {
-        if (node.size != null)
-            return;
-        if (node.typeParameters.length)
-            throw new Error("Cannot do layout for generic type: " + node);
-        let oldOffset = this._offset;
-        this._offset = 0;
-        super.visitStructType(node);
-        node.size = this._offset;
-        this._offset += oldOffset;
-    }
-    
-    get offset() { return this._offset; }
-    
-    visitField(node)
-    {
-        super.visitField(node);
-        node.offset = this._offset;
-        let size = node.type.size;
-        if (size == null)
-            throw new Error("Type does not have size: " + node.type);
-        this._offset += size;
-    }
-    
-    visitNativeFuncInstance(node)
-    {
-        super.visitNativeFuncInstance(node);
-        node.func.didLayoutStructsInImplementationData(node.implementationData);
+        return super.visitIndexExpression(node).rewriteAfterCloning();
     }
 }
 

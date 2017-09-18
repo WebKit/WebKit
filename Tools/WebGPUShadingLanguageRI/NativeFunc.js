@@ -29,6 +29,10 @@ class NativeFunc extends Func {
     {
         super(origin, name, returnType, typeParameters, parameters, isCast);
         this.isRestricted = false;
+        this.implementation = null;
+        this.instantiateImplementation = (substitution) => {};
+        this.visitImplementationData = (implementationData, visitor) => null;
+        this.didLayoutStructsInImplementationData = implementationData => null;
     }
     
     get isNative() { return true; }

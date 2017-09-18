@@ -43,8 +43,6 @@ function _inlineFunction(program, func, visiting)
     if (func.inlined || func.isNative)
         return;
     
-    func.rewrite(new InstantiateImmediates());
-    
     // This is the precise time when we can build EBuffers in order to get them to be uniqued by
     // type instantiation but nothing else.
     func.visit(new StructLayoutBuilder());

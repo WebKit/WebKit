@@ -43,7 +43,7 @@ class ForLoop extends Node {
 
     toString()
     {
-        return "for (" + (this.initialization ? this.initialization : " ") + "; " + (this.condition ? this.condition : "") + "; " + (this.increment ? this.increment : "") + ") " + body;
+        return "for (" + (this.initialization ? this.initialization : " ") + "; " + (this.condition ? this.condition : "") + "; " + (this.increment ? this.increment : "") + ") " + this.body;
     }
 };
 

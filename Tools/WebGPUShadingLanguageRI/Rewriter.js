@@ -27,10 +27,9 @@
 // FIXME: This should have sensible behavior when it encounters definitions that it cannot handle. Right
 // now we are hackishly preventing this by wrapping things in TypeRef. That's probably wrong.
 // https://bugs.webkit.org/show_bug.cgi?id=176208
-class Rewriter extends VisitorBase {
+class Rewriter {
     constructor()
     {
-        super();
         this._mapping = new Map();
     }
     
@@ -73,7 +72,8 @@ class Rewriter extends VisitorBase {
             node.origin, node.name,
             node.returnType.visit(this),
             node.typeParameters.map(parameter => parameter.visit(this)),
-            node.parameters.map(parameter => parameter.visit(this)));
+            node.parameters.map(parameter => parameter.visit(this)),
+            node.isCast);
         result.protocolDecl = node.protocolDecl;
         result.possibleOverloads = node.possibleOverloads;
         return result;
@@ -99,7 +99,7 @@ class Rewriter extends VisitorBase {
         let result = new VariableDecl(
             node.origin, node.name,
             node.type.visit(this),
-            node.initializer ? node.initializer.visit(this) : null);
+            Node.visit(node.initializer, this));
         this._mapNode(node, result);
         result.ePtr = node.ePtr;
         return result;
@@ -131,7 +131,7 @@ class Rewriter extends VisitorBase {
     visitTypeRef(node)
     {
         let result = new TypeRef(node.origin, node.name, node.typeArguments.map(typeArgument => typeArgument.visit(this)));
-        result.type = node.type ? node.type.visit(this) : null;
+        result.type = Node.visit(node.type, this);
         return result;
     }
     
@@ -163,24 +163,54 @@ class Rewriter extends VisitorBase {
     visitAssignment(node)
     {
         let result = new Assignment(node.origin, node.lhs.visit(this), node.rhs.visit(this));
-        result.type = node.type ? node.type.visit(this) : null;
+        result.type = Node.visit(node.type, this);
+        return result;
+    }
+    
+    visitReadModifyWriteExpression(node)
+    {
+        let result = new ReadModifyWriteExpression(node.origin, node.lValue.visit(this));
+        result.oldValueVar = node.oldValueVar.visit(this);
+        result.newValueVar = node.newValueVar.visit(this);
+        result.newValueExp = node.newValueExp.visit(this);
+        result.resultExp = node.resultExp.visit(this);
         return result;
     }
     
     visitDereferenceExpression(node)
     {
         let result = new DereferenceExpression(node.origin, node.ptr.visit(this));
-        result.type = node.type ? node.type.visit(this) : null;
+        result.type = Node.visit(node.type, this);
+        result.addressSpace = node.addressSpace;
         return result;
+    }
+    
+    _handlePropertyAccessExpression(result, node)
+    {
+        result.possibleGetOverloads = node.possibleGetOverloads;
+        result.possibleSetOverloads = node.possibleSetOverloads;
+        result.possibleAndOverloads = node.possibleAndOverloads;
+        result.baseType = Node.visit(node.baseType, this);
+        result.callForGet = Node.visit(node.callForGet, this);
+        result.resultTypeForGet = Node.visit(node.resultTypeForGet, this);
+        result.callForAnd = Node.visit(node.callForAnd, this);
+        result.resultTypeForAnd = Node.visit(node.resultTypeForAnd, this);
+        result.callForSet = Node.visit(node.callForSet, this);
+        result.errorForSet = node.errorForSet;
+        result.updateCalls();
     }
     
     visitDotExpression(node)
     {
         let result = new DotExpression(node.origin, node.struct.visit(this), node.fieldName);
-        result.structType = node.structType ? node.structType.visit(this) : null;
-        // We don't want to rewrite field, since this is a deep reference going out of the function.
-        // Also, this is set up during inlining, so we're already fully monomorphised.
-        result.field = node.field;
+        this._handlePropertyAccessExpression(result, node);
+        return result;
+    }
+    
+    visitIndexExpression(node)
+    {
+        let result = new IndexExpression(node.origin, node.array.visit(this), node.index.visit(this));
+        this._handlePropertyAccessExpression(result, node);
         return result;
     }
     
@@ -216,7 +246,7 @@ class Rewriter extends VisitorBase {
     
     visitReturn(node)
     {
-        return new Return(node.origin, node.value ? node.value.visit(this) : null);
+        return new Return(node.origin, Node.visit(node.value, this));
     }
     
     visitContinue(node)
@@ -241,7 +271,7 @@ class Rewriter extends VisitorBase {
     visitGenericLiteralType(node)
     {
         let result = new node.constructor(node.origin, node.value);
-        result.type = node.type ? node.type.visit(this) : null;
+        result.type = Node.visit(node.type, this);
         result.preferredType = node.preferredType.visit(this);
         return result;
     }
@@ -262,7 +292,7 @@ class Rewriter extends VisitorBase {
     visitNullType(node)
     {
         let result = new NullType(node.origin);
-        result.type = node.type ? node.type.visit(this) : null;
+        result.type = Node.visit(node.type, this);
         return result;
     }
 
@@ -281,7 +311,7 @@ class Rewriter extends VisitorBase {
         result.possibleOverloads = node.possibleOverloads;
         if (node.isCast)
             result.setCastData(node.returnType.visit(this));
-        result.resultType = node.resultType ? node.resultType.visit(this) : null;
+        result.resultType = Node.visit(node.resultType, this);
         result.resultEPtr = node.resultEPtr;
         return result;
     }
@@ -291,7 +321,7 @@ class Rewriter extends VisitorBase {
         let result = new CallExpression(
             node.origin, node.name,
             node.typeArguments.map(typeArgument => typeArgument.visit(this)),
-            node.argumentList.map(argument => argument.visit(this)));
+            node.argumentList.map(argument => Node.visit(argument, this)));
         return this.processDerivedCallData(node, result);
     }
     
@@ -299,7 +329,7 @@ class Rewriter extends VisitorBase {
     {
         let result = new FunctionLikeBlock(
             node.origin,
-            node.returnType ? node.returnType.visit(this) : null,
+            Node.visit(node.returnType, this),
             node.argumentList.map(argument => argument.visit(this)),
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this));
@@ -323,7 +353,7 @@ class Rewriter extends VisitorBase {
 
     visitIfStatement(node)
     {
-        return new IfStatement(node.origin, node.conditional.visit(this), node.body.visit(this), node.elseBody ? node.elseBody.visit(this) : undefined);
+        return new IfStatement(node.origin, node.conditional.visit(this), node.body.visit(this), Node.visit(node.elseBody, this));
     }
 
     visitWhileLoop(node)
@@ -339,22 +369,24 @@ class Rewriter extends VisitorBase {
     visitForLoop(node)
     {
         return new ForLoop(node.origin,
-            node.initialization ? node.initialization.visit(this) : undefined,
-            node.condition ? node.condition.visit(this) : undefined,
-            node.increment ? node.increment.visit(this) : undefined,
+            Node.visit(node.initialization, this),
+            Node.visit(node.condition, this),
+            Node.visit(node.increment, this),
             node.body.visit(this));
     }
     
-    visitLetExpression(node)
+    visitAnonymousVariable(node)
     {
-        let result = new LetExpression(node.origin);
-        result.index = node.index;
-        result.type = node.type ? node.type.visit(this) : null;
-        result.argument = node.argument.visit(this);
+        let result = new AnonymousVariable(node.origin, node.type.visit(this));
+        result._index = node._index;
         this._mapNode(node, result);
-        result.body = node.body.visit(this);
         result.ePtr = node.ePtr;
         return result;
+    }
+    
+    visitIdentityExpression(node)
+    {
+        return new IdentityExpression(node.target.visit(this));
     }
 }
 

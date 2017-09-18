@@ -56,6 +56,16 @@ class ExpressionFinder extends Visitor {
         this._callback(node);
     }
     
+    visitReadModifyWriteExpression(node)
+    {
+        this._callback(node);
+    }
+    
+    visitIdentityExpression(node)
+    {
+        this._callback(node);
+    }
+    
     visitCallExpression(node)
     {
         this._callback(node);

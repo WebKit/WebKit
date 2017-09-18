@@ -35,6 +35,8 @@ class Substitution extends Rewriter {
             this._map.set(parameters[i], argumentList[i]);
     }
     
+    get map() { return this._map; }
+    
     visitTypeRef(node)
     {
         let replacement = this._map.get(node.type);

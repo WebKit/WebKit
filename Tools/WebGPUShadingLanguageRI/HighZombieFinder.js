@@ -24,46 +24,26 @@
  */
 "use strict";
 
-class StructLayoutBuilder extends Visitor {
-    constructor()
+// If a high-level construct somehow manages to live on when we're lowered, it's a high zombie.
+class HighZombieFinder extends Visitor {
+    _found(node)
     {
-        super();
-        this._offset = 0;
+        throw new Error(node.origin.originString + ": High zombie: " + node);
     }
     
-    visitReferenceType(node)
+    visitDotExpression(node)
     {
+        this._found(node);
     }
     
-    visitStructType(node)
+    visitIndexExpression(node)
     {
-        if (node.size != null)
-            return;
-        if (node.typeParameters.length)
-            throw new Error("Cannot do layout for generic type: " + node);
-        let oldOffset = this._offset;
-        this._offset = 0;
-        super.visitStructType(node);
-        node.size = this._offset;
-        this._offset += oldOffset;
+        this._found(node);
     }
     
-    get offset() { return this._offset; }
-    
-    visitField(node)
+    visitCallExpression(node)
     {
-        super.visitField(node);
-        node.offset = this._offset;
-        let size = node.type.size;
-        if (size == null)
-            throw new Error("Type does not have size: " + node.type);
-        this._offset += size;
-    }
-    
-    visitNativeFuncInstance(node)
-    {
-        super.visitNativeFuncInstance(node);
-        node.func.didLayoutStructsInImplementationData(node.implementationData);
+        super.visitCallExpression(node);
     }
 }
 

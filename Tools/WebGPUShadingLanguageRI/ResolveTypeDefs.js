@@ -24,8 +24,26 @@
  */
 "use strict";
 
-function resolveTypeDefs(program)
+function resolveTypeDefsInTypes(program)
 {
-    program.visit(new TypeDefResolver());
+    let resolver = new TypeDefResolver();
+    for (let type of program.types.values())
+        type.visit(resolver);
+}
+
+function resolveTypeDefsInProtocols(program)
+{
+    let resolver = new TypeDefResolver();
+    for (let protocol of program.protocols.values())
+        protocol.visit(resolver);
+}
+
+function resolveTypeDefsInFunctions(program)
+{
+    let resolver = new TypeDefResolver();
+    for (let funcs of program.functions.values()) {
+        for (let func of funcs)
+            func.visit(resolver);
+    }
 }
 

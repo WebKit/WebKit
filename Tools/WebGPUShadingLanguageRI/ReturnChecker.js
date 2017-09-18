@@ -76,7 +76,7 @@ class ReturnChecker extends Visitor {
 
     _isBoolCastFromLiteralTrue(node)
     {
-        return node.isCast && node.returnType instanceof TypeRef && node.returnType.equals(this._program.intrinsics.bool) && node.argumentList.length == 1 && node.argumentList[0].list.length == 1 && node.argumentList[0].list[0] instanceof BoolLiteral && node.argumentList[0].list[0].value;
+        return node.isCast && node.returnType instanceof TypeRef && node.returnType.equals(this._program.intrinsics.bool) && node.argumentList.length == 1 && node.argumentList[0] instanceof BoolLiteral && node.argumentList[0].value;
     }
 
     visitWhileLoop(node)

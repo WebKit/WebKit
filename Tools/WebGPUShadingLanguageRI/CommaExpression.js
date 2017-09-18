@@ -37,6 +37,9 @@ class CommaExpression extends Expression {
     
     get list() { return this._list; }
     
+    // NOTE: It's super tempting to say that CommaExpression is an lValue if its last entry is an lValue. But,
+    // PropertyResolver relies on this not being the case.
+    
     toString()
     {
         return "(" + this.list.toString() + ")";

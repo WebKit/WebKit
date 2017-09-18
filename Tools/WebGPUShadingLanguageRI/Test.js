@@ -29,6 +29,7 @@ if (this.window) {
         var span = document.createElement("span");
         document.getElementById("messages").appendChild(span);
         span.innerHTML = text.replace(/ /g, "&nbsp;").replace(/\n/g, "<br>") + "<br>";
+        window.scrollTo(0,document.body.scrollHeight);
     };
     this.preciseTime = () => performance.now() / 1000;
 } else
@@ -55,6 +56,14 @@ function doLex(code)
 function makeInt(program, value)
 {
     return TypedValue.box(program.intrinsics.int32, value);
+}
+
+function checkNumber(program, result, expected)
+{
+    if (!result.type.isNumber)
+        throw new Error("Wrong result type; result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
 }
 
 function makeUint(program, value)
@@ -448,10 +457,10 @@ function TEST_deviceArrayStoreIntLiteral()
 function TEST_simpleProtocol()
 {
     let program = doPrep(`
-        protocol Addable {
-            Addable operator+(Addable, Addable);
+        protocol MyAddable {
+            MyAddable operator+(MyAddable, MyAddable);
         }
-        T add<T:Addable>(T a, T b)
+        T add<T:MyAddable>(T a, T b)
         {
             return a + b;
         }
@@ -781,7 +790,7 @@ function TEST_storeNullArrayRef()
         () => doPrep(`
             void foo() { null[0u] = 42; }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("Did not find function for call") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
 }
 
 function TEST_returnNullArrayRef()
@@ -889,14 +898,14 @@ function TEST_badIntLiteralForInt()
 {
     checkFail(
         () => doPrep("void foo() { int x = 3000000000; }"),
-        (e) => e instanceof WTypeError);
+        (e) => e instanceof WSyntaxError);
 }
 
 function TEST_badIntLiteralForUint()
 {
     checkFail(
         () => doPrep("void foo() { uint x = 5000000000; }"),
-        (e) => e instanceof WTypeError);
+        (e) => e instanceof WSyntaxError);
 }
 
 function TEST_badIntLiteralForDouble()
@@ -1505,10 +1514,10 @@ function TEST_intLiteralGeneric()
 function TEST_intLiteralGenericWithProtocols()
 {
     let program = doPrep(`
-        protocol ConvertibleToInt {
-            operator int(ConvertibleToInt);
+        protocol MyConvertibleToInt {
+            operator int(MyConvertibleToInt);
         }
-        int foo<T:ConvertibleToInt>(T x) { return int(x); }
+        int foo<T:MyConvertibleToInt>(T x) { return int(x); }
         int bar() { return foo(42); }
     `);
     checkInt(program, callFunction(program, "bar", [], []), 42);
@@ -1526,10 +1535,10 @@ function TEST_uintLiteralGeneric()
 function TEST_uintLiteralGenericWithProtocols()
 {
     let program = doPrep(`
-        protocol ConvertibleToUint {
-            operator uint(ConvertibleToUint);
+        protocol MyConvertibleToUint {
+            operator uint(MyConvertibleToUint);
         }
-        uint foo<T:ConvertibleToUint>(T x) { return uint(x); }
+        uint foo<T:MyConvertibleToUint>(T x) { return uint(x); }
         uint bar() { return foo(42u); }
     `);
     checkUint(program, callFunction(program, "bar", [], []), 42);
@@ -2604,6 +2613,771 @@ function TEST_makeArrayRefFromArrayRef()
         (e) => e instanceof WTypeError);
 }
 
+function TEST_simpleLength()
+{
+    let program = doPrep(`
+        uint foo()
+        {
+            double[754] array;
+            return (@array).length;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], []), 754);
+}
+
+function TEST_nonArrayRefArrayLength()
+{
+    let program = doPrep(`
+        uint foo()
+        {
+            double[754] array;
+            return array.length;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], []), 754);
+}
+
+function TEST_assignLength()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                double[754] array;
+                (@array).length = 42;
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
+}
+
+function TEST_assignLengthHelper()
+{
+    checkFail(
+        () => doPrep(`
+            void bar(thread double[] array)
+            {
+                array.length = 42;
+            }
+            void foo()
+            {
+                double[754] array;
+                bar(@array);
+            }
+        `),
+        (e) => e instanceof WTypeError && e.message.indexOf("Cannot emit set because: Did not find any functions named operator.length=") != -1);
+}
+
+function TEST_simpleGetter()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        int operator.y(Foo foo)
+        {
+            return foo.x;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 7804;
+            return foo.y;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 7804);
+}
+
+function TEST_simpleSetter()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        int operator.y(Foo foo)
+        {
+            return foo.x;
+        }
+        Foo operator.y=(Foo foo, int value)
+        {
+            foo.x = value;
+            return foo;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.y = 7804;
+            return foo.x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 7804);
+}
+
+function TEST_genericAccessors()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T x;
+            T[3] y;
+        }
+        struct Bar<T> {
+            T x;
+            T y;
+        }
+        Bar<T> operator.z<T>(Foo<T> foo)
+        {
+            Bar<T> result;
+            result.x = foo.x;
+            result.y = foo.y[1];
+            return result;
+        }
+        Foo<T> operator.z=<T>(Foo<T> foo, Bar<T> bar)
+        {
+            foo.x = bar.x;
+            foo.y[1] = bar.y;
+            return foo;
+        }
+        T operator.sum<T:Addable>(Foo<T> foo)
+        {
+            return foo.x + foo.y[0] + foo.y[1] + foo.y[2];
+        }
+        T operator.sum<T:Addable>(Bar<T> bar)
+        {
+            return bar.x + bar.y;
+        }
+        operator<T> Bar<T>(T x, T y)
+        {
+            Bar<T> result;
+            result.x = x;
+            result.y = y;
+            return result;
+        }
+        void setup(thread Foo<int>^ foo)
+        {
+            foo->x = 1;
+            foo->y[0] = 2;
+            foo->y[1] = 3;
+            foo->y[2] = 4;
+        }
+        int testSuperBasic()
+        {
+            Foo<int> foo;
+            setup(&foo);
+            return foo.sum;
+        }
+        int testZSetterDidSetY()
+        {
+            Foo<int> foo;
+            foo.z = Bar<int>(53, 932);
+            return foo.y[1];
+        }
+        int testZSetter()
+        {
+            Foo<int> foo;
+            foo.z = Bar<int>(53, 932);
+            return foo.sum;
+        }
+        int testZGetter()
+        {
+            Foo<int> foo;
+            // This deliberately does not call setup() just so we test this syntax.
+            foo.x = 1;
+            foo.y[0] = 2;
+            foo.y[1] = 3;
+            foo.y[2] = 4;
+            return foo.z.sum;
+        }
+        int testLValueEmulation()
+        {
+            Foo<int> foo;
+            setup(&foo);
+            foo.z.y *= 5;
+            return foo.sum;
+        }
+    `);
+    checkInt(program, callFunction(program, "testSuperBasic", [], []), 1 + 2 + 3 + 4);
+    checkInt(program, callFunction(program, "testZSetterDidSetY", [], []), 932);
+    checkInt(program, callFunction(program, "testZSetter", [], []), 53 + 932);
+    checkInt(program, callFunction(program, "testZGetter", [], []), 1 + 3);
+    checkInt(program, callFunction(program, "testLValueEmulation", [], []), 1 + 2 + 3 * 5 + 4);
+}
+
+function TEST_bitSubscriptAccessor()
+{
+    let program = doPrep(`
+        protocol MyBitmaskable : Equatable {
+            MyBitmaskable operator&(MyBitmaskable, MyBitmaskable);
+            MyBitmaskable operator|(MyBitmaskable, MyBitmaskable);
+            MyBitmaskable operator~(MyBitmaskable);
+            MyBitmaskable operator<<(MyBitmaskable, uint);
+            MyBitmaskable operator>>(MyBitmaskable, uint);
+            operator MyBitmaskable(int);
+        }
+        T maskForBitIndex<T:MyBitmaskable>(uint index)
+        {
+            return T(1) << index;
+        }
+        bool operator[]<T:MyBitmaskable>(T value, uint index)
+        {
+            return bool(value & maskForBitIndex<T>(index));
+        }
+        T operator[]=<T:MyBitmaskable>(T value, uint index, bool bit)
+        {
+            T mask = maskForBitIndex<T>(index);
+            if (bit)
+                value |= mask;
+            else
+                value &= ~mask;
+            return value;
+        }
+        uint operator.length(int)
+        {
+            return 32;
+        }
+        uint operator.length(uint)
+        {
+            return 32;
+        }
+        int testIntSetBit3()
+        {
+            int foo;
+            foo[3] = true;
+            return foo;
+        }
+        bool testIntSetGetBit5()
+        {
+            int foo;
+            foo[5] = true;
+            return foo[5];
+        }
+        bool testIntGetBit1()
+        {
+            int foo;
+            return foo[1];
+        }
+        int testUintSumBits()
+        {
+            int foo = 42;
+            int result;
+            for (uint i = 0; i < foo.length; ++i) {
+                if (foo[i])
+                    result++;
+            }
+            return result;
+        }
+        int testUintSwapBits()
+        {
+            int foo = 42;
+            for (uint i = 0; i < foo.length / 2; ++i) {
+                bool tmp = foo[i];
+                foo[i] = foo[foo.length - i - 1];
+                foo[foo.length - i - 1] = tmp;
+            }
+            return foo;
+        }
+        struct Foo {
+            uint f;
+            uint g;
+        }
+        operator Foo(uint f, uint g)
+        {
+            Foo result;
+            result.f = f;
+            result.g = g;
+            return result;
+        }
+        int operator.h(Foo foo)
+        {
+            return int((foo.f & 0xffff) | ((foo.g & 0xffff) << 16));
+        }
+        Foo operator.h=(Foo foo, int value)
+        {
+            foo.f &= ~0xffffu;
+            foo.f |= uint(value) & 0xffff;
+            foo.g &= ~0xffffu;
+            foo.g |= (uint(value) >> 16) & 0xffff;
+            return foo;
+        }
+        int testLValueEmulation()
+        {
+            Foo foo;
+            foo.f = 42;
+            foo.g = 37;
+            for (uint i = 0; i < foo.h.length; ++i)
+                foo.h[i] ^= true;
+            return int(foo.f + foo.g);
+        }
+        struct Bar {
+            Foo a;
+            Foo b;
+        }
+        Foo operator.c(Bar bar)
+        {
+            return Foo(uint(bar.a.h), uint(bar.b.h));
+        }
+        Bar operator.c=(Bar bar, Foo foo)
+        {
+            bar.a.h = int(foo.f);
+            bar.b.h = int(foo.g);
+            return bar;
+        }
+        int testCrazyLValueEmulation()
+        {
+            Bar bar;
+            bar.a.f = 1;
+            bar.a.g = 2;
+            bar.b.f = 3;
+            bar.b.g = 4;
+            for (uint i = 0; i < bar.c.h.length; i += 2)
+                bar.c.h[i] ^= true;
+            return int(bar.a.f + bar.a.g + bar.b.f + bar.b.g);
+        }
+    `);
+    checkInt(program, callFunction(program, "testIntSetBit3", [], []), 8);
+    checkBool(program, callFunction(program, "testIntSetGetBit5", [], []), true);
+    checkBool(program, callFunction(program, "testIntGetBit1", [], []), false);
+    checkInt(program, callFunction(program, "testUintSumBits", [], []), 3);
+    checkInt(program, callFunction(program, "testUintSwapBits", [], []), 1409286144);
+    checkInt(program, callFunction(program, "testLValueEmulation", [], []), 130991);
+    checkInt(program, callFunction(program, "testCrazyLValueEmulation", [], []), 43696);
+}
+
+function TEST_nestedSubscriptLValueEmulationSimple()
+{
+    let program = doPrep(`
+        struct Foo {
+            int[7] array;
+        }
+        int operator[](Foo foo, uint index)
+        {
+            return foo.array[index];
+        }
+        Foo operator[]=(Foo foo, uint index, int value)
+        {
+            foo.array[index] = value;
+            return foo;
+        }
+        uint operator.length(Foo foo)
+        {
+            return foo.array.length;
+        }
+        int sum(Foo foo)
+        {
+            int result = 0;
+            for (uint i = foo.length; i--;)
+                result += foo[i];
+            return result;
+        }
+        struct Bar {
+            Foo[6] array;
+        }
+        uint operator.length(Bar bar)
+        {
+            return bar.array.length;
+        }
+        Foo operator[](Bar bar, uint index)
+        {
+            return bar.array[index];
+        }
+        Bar operator[]=(Bar bar, uint index, Foo value)
+        {
+            bar.array[index] = value;
+            return bar;
+        }
+        int sum(Bar bar)
+        {
+            int result = 0;
+            for (uint i = bar.length; i--;)
+                result += sum(bar[i]);
+            return result;
+        }
+        struct Baz {
+            Bar[5] array;
+        }
+        Bar operator[](Baz baz, uint index)
+        {
+            return baz.array[index];
+        }
+        Baz operator[]=(Baz baz, uint index, Bar value)
+        {
+            baz.array[index] = value;
+            return baz;
+        }
+        uint operator.length(Baz baz)
+        {
+            return baz.array.length;
+        }
+        int sum(Baz baz)
+        {
+            int result = 0;
+            for (uint i = baz.length; i--;)
+                result += sum(baz[i]);
+            return result;
+        }
+        void setValues(thread Baz^ baz)
+        {
+            for (uint i = baz->length; i--;) {
+                for (uint j = (^baz)[i].length; j--;) {
+                    for (uint k = (^baz)[i][j].length; k--;)
+                        (^baz)[i][j][k] = int(i + j + k);
+                }
+            }
+        }
+        int testSetValuesAndSum()
+        {
+            Baz baz;
+            setValues(&baz);
+            return sum(baz);
+        }
+        int testSetValuesMutateValuesAndSum()
+        {
+            Baz baz;
+            setValues(&baz);
+            for (uint i = baz.length; i--;) {
+                for (uint j = baz[i].length; j--;) {
+                    for (uint k = baz[i][j].length; k--;)
+                        baz[i][j][k] *= int(k);
+                }
+            }
+            return sum(baz);
+        }
+    `);
+    checkInt(program, callFunction(program, "testSetValuesAndSum", [], []), 1575);
+    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
+}
+
+function TEST_nestedSubscriptLValueEmulationGeneric()
+{
+    let program = doPrep(`
+        struct Foo<T> {
+            T[7] array;
+        }
+        T operator[]<T>(Foo<T> foo, uint index)
+        {
+            return foo.array[index];
+        }
+        Foo<T> operator[]=<T>(Foo<T> foo, uint index, T value)
+        {
+            foo.array[index] = value;
+            return foo;
+        }
+        uint operator.length<T>(Foo<T> foo)
+        {
+            return foo.array.length;
+        }
+        protocol MyAddable {
+            MyAddable operator+(MyAddable, MyAddable);
+        }
+        T sum<T:MyAddable>(Foo<T> foo)
+        {
+            T result;
+            for (uint i = foo.length; i--;)
+                result += foo[i];
+            return result;
+        }
+        struct Bar<T> {
+            Foo<T>[6] array;
+        }
+        uint operator.length<T>(Bar<T> bar)
+        {
+            return bar.array.length;
+        }
+        Foo<T> operator[]<T>(Bar<T> bar, uint index)
+        {
+            return bar.array[index];
+        }
+        Bar<T> operator[]=<T>(Bar<T> bar, uint index, Foo<T> value)
+        {
+            bar.array[index] = value;
+            return bar;
+        }
+        T sum<T:MyAddable>(Bar<T> bar)
+        {
+            T result;
+            for (uint i = bar.length; i--;)
+                result += sum(bar[i]);
+            return result;
+        }
+        struct Baz<T> {
+            Bar<T>[5] array;
+        }
+        Bar<T> operator[]<T>(Baz<T> baz, uint index)
+        {
+            return baz.array[index];
+        }
+        Baz<T> operator[]=<T>(Baz<T> baz, uint index, Bar<T> value)
+        {
+            baz.array[index] = value;
+            return baz;
+        }
+        uint operator.length<T>(Baz<T> baz)
+        {
+            return baz.array.length;
+        }
+        T sum<T:MyAddable>(Baz<T> baz)
+        {
+            T result;
+            for (uint i = baz.length; i--;)
+                result += sum(baz[i]);
+            return result;
+        }
+        protocol MyConvertibleFromUint {
+            operator MyConvertibleFromUint(uint);
+        }
+        protocol SetValuable : MyAddable, MyConvertibleFromUint { }
+        void setValues<T:SetValuable>(thread Baz<T>^ baz)
+        {
+            for (uint i = baz->length; i--;) {
+                for (uint j = (^baz)[i].length; j--;) {
+                    for (uint k = (^baz)[i][j].length; k--;)
+                        (^baz)[i][j][k] = T(i + j + k);
+                }
+            }
+        }
+        int testSetValuesAndSum()
+        {
+            Baz<int> baz;
+            setValues(&baz);
+            return sum(baz);
+        }
+        int testSetValuesMutateValuesAndSum()
+        {
+            Baz<int> baz;
+            setValues(&baz);
+            for (uint i = baz.length; i--;) {
+                for (uint j = baz[i].length; j--;) {
+                    for (uint k = baz[i][j].length; k--;)
+                        baz[i][j][k] *= int(k);
+                }
+            }
+            return sum(baz);
+        }
+    `);
+    checkInt(program, callFunction(program, "testSetValuesAndSum", [], []), 1575);
+    checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
+}
+
+function TEST_boolBitAnd()
+{
+    let program = doPrep(`
+        bool foo(bool a, bool b)
+        {
+            return a & b;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+}
+
+function TEST_boolBitOr()
+{
+    let program = doPrep(`
+        bool foo(bool a, bool b)
+        {
+            return a | b;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
+}
+
+function TEST_boolBitXor()
+{
+    let program = doPrep(`
+        bool foo(bool a, bool b)
+        {
+            return a ^ b;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, false)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false), makeBool(program, true)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
+}
+
+function TEST_boolBitNot()
+{
+    let program = doPrep(`
+        bool foo(bool a)
+        {
+            return ~a;
+        }
+    `);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
+}
+
+function TEST_intBitAnd()
+{
+    let program = doPrep(`
+        int foo(int a, int b)
+        {
+            return a & b;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 1);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 42);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), -7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 0);
+}
+
+function TEST_intBitOr()
+{
+    let program = doPrep(`
+        int foo(int a, int b)
+        {
+            return a | b;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 7);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 65535);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), -1);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
+}
+
+function TEST_intBitXor()
+{
+    let program = doPrep(`
+        int foo(int a, int b)
+        {
+            return a ^ b;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeInt(program, 7)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeInt(program, 42)]), 65493);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeInt(program, -7)]), 6);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
+}
+
+function TEST_intBitNot()
+{
+    let program = doPrep(`
+        int foo(int a)
+        {
+            return ~a;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), -2);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535)]), -65536);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1)]), 0);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), -1);
+}
+
+function TEST_intLShift()
+{
+    let program = doPrep(`
+        int foo(int a, uint b)
+        {
+            return a << b;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeUint(program, 7)]), 128);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeUint(program, 2)]), 262140);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeUint(program, 5)]), -32);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
+}
+
+function TEST_intRShift()
+{
+    let program = doPrep(`
+        int foo(int a, uint b)
+        {
+            return a >> b;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1), makeUint(program, 7)]), 0);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 65535), makeUint(program, 2)]), 16383);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, -1), makeUint(program, 5)]), -1);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
+}
+
+function TEST_uintBitAnd()
+{
+    let program = doPrep(`
+        uint foo(uint a, uint b)
+        {
+            return a & b;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 1);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 42);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 4294967289);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 0);
+}
+
+function TEST_uintBitOr()
+{
+    let program = doPrep(`
+        uint foo(uint a, uint b)
+        {
+            return a | b;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 7);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 65535);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 4294967295);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
+}
+
+function TEST_uintBitXor()
+{
+    let program = doPrep(`
+        uint foo(uint a, uint b)
+        {
+            return a ^ b;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 6);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 42)]), 65493);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, -7)]), 6);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
+}
+
+function TEST_uintBitNot()
+{
+    let program = doPrep(`
+        uint foo(uint a)
+        {
+            return ~a;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1)]), 4294967294);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535)]), 4294901760);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1)]), 0);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0)]), 4294967295);
+}
+
+function TEST_uintLShift()
+{
+    let program = doPrep(`
+        uint foo(uint a, uint b)
+        {
+            return a << b;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 128);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 2)]), 262140);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, 5)]), 4294967264);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
+}
+
+function TEST_uintRShift()
+{
+    let program = doPrep(`
+        uint foo(uint a, uint b)
+        {
+            return a >> b;
+        }
+    `);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 1), makeUint(program, 7)]), 0);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 65535), makeUint(program, 2)]), 16383);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, -1), makeUint(program, 5)]), 134217727);
+    checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
+}
+
 function TEST_floatMath()
 {
     let program = doPrep(`
@@ -2792,6 +3566,29 @@ function TEST_floatMath()
         (e) => e instanceof WTypeError);
 }
 
+function TEST_genericCastInfer()
+{
+    let program = doPrep(`
+        struct Complex<T> {
+            T real;
+            T imag;
+        }
+        operator<T> Complex<T>(T real, T imag)
+        {
+            Complex<T> result;
+            result.real = real;
+            result.imag = imag;
+            return result;
+        }
+        int foo()
+        {
+            Complex<int> x = Complex<int>(1, 2);
+            return x.real + x.imag;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 3);
+}
+
 function TEST_booleanMath()
 {
     let program = doPrep(`
@@ -2851,7 +3648,7 @@ if (this["arguments"]) {
     }
 }
 
-function doTest(object)
+function* doTest(object)
 {
     let before = preciseTime();
 
@@ -2860,13 +3657,17 @@ function doTest(object)
             print(s + "...");
             object[s]();
             print("    OK!");
+            yield;
         }
     }
 
     let after = preciseTime();
     
+    print("Success!");
     print("That took " + (after - before) * 1000 + " ms.");
 }
 
 if (!this.window)
-    doTest(this);
+    for (let _ of doTest(this)) { }
+
+

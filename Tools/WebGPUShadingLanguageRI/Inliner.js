@@ -32,24 +32,15 @@ class Inliner extends Rewriter {
         this._visiting = visiting;
     }
     
-    visitDotExpression(node)
-    {
-        let result = super.visitDotExpression(node);
-        result.field = result.structType.unifyNode.fieldByName(result.fieldName);
-        if (result.field.offset == null)
-            throw new Error("Un-laid-out field: " + result.field + " (in " + result.structType + ")");
-        return result;
-    }
-    
     visitCallExpression(node)
     {
         let result = super.visitCallExpression(node);
+        if (result.nativeFuncInstance)
+            return result;
         return this._visiting.doVisit(node.func, () => {
             let func = this._program.funcInstantiator.getUnique(result.func, result.actualTypeArguments);
-            if (func.isNative) {
-                result.nativeFuncInstance = func;
-                return result;
-            }
+            if (func.isNative)
+                throw new Error("Unexpected native func: " + func);
             _inlineFunction(this._program, func, this._visiting);
             let resultingBlock = new FunctionLikeBlock(
                 result.origin, func.returnType, result.argumentList, func.parameters, func.body);

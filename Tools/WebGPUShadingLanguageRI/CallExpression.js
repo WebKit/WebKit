@@ -42,15 +42,82 @@ class CallExpression extends Expression {
     get isCast() { return this._isCast; }
     get returnType() { return this._returnType; }
     
-    resolve(overload)
+    static resolve(origin, possibleOverloads, typeParametersInScope, name, typeArguments, argumentList, argumentTypes, returnType)
+    {
+        let call = new CallExpression(origin, name, typeArguments, argumentList);
+        call.argumentTypes = argumentTypes;
+        if (returnType)
+            call.setCastData(returnType);
+        return {call, resultType: call.resolve(possibleOverloads, typeParametersInScope, typeArguments)};
+    }
+    
+    resolve(possibleOverloads, typeParametersInScope, typeArguments)
+    {
+        if (!possibleOverloads)
+            throw new WTypeError(this.origin.originString, "Did not find any functions named " + this.name);
+        
+        let overload = null;
+        let failures = [];
+        for (let typeParameter of typeParametersInScope) {
+            if (!(typeParameter instanceof TypeVariable))
+                continue;
+            if (!typeParameter.protocol)
+                continue;
+            let signatures =
+                typeParameter.protocol.protocolDecl.signaturesByNameWithTypeVariable(this.name, typeParameter);
+            if (!signatures)
+                continue;
+            overload = resolveOverloadImpl(signatures, this.typeArguments, this.argumentTypes, this.returnType);
+            if (overload.func)
+                break;
+            failures.push(...overload.failures);
+            overload = null;
+        }
+        if (!overload) {
+            overload = resolveOverloadImpl(
+                possibleOverloads, this.typeArguments, this.argumentTypes, this.returnType);
+            if (!overload.func) {
+                failures.push(...overload.failures);
+                let message = "Did not find function for call with ";
+                if (this.typeArguments.length)
+                    message += "type arguments <" + this.typeArguments + "> and ";
+                message += "argument types (" + this.argumentTypes + ")";
+                if (this.returnType)
+                    message +=" and return type " + this.returnType;
+                if (failures.length)
+                    message += ", but considered:\n" + failures.join("\n")
+                throw new WTypeError(this.origin.originString, message);
+            }
+        }
+        for (let i = 0; i < typeArguments.length; ++i) {
+            let typeArgumentType = typeArguments[i];
+            let typeParameter = overload.func.typeParameters[i];
+            if (!(typeParameter instanceof ConstexprTypeParameter))
+                continue;
+            if (!typeParameter.type.equalsWithCommit(typeArgumentType))
+                throw new Error("At " + this.origin.originString + " constexpr type argument and parameter types not equal: argument = " + typeArgumentType + ", parameter = " + typeParameter.type);
+        }
+        for (let i = 0; i < this.argumentTypes.length; ++i) {
+            let argumentType = this.argumentTypes[i];
+            let parameterType = overload.func.parameters[i].type.substituteToUnification(
+                overload.func.typeParameters, overload.unificationContext);
+            let result = argumentType.equalsWithCommit(parameterType);
+            if (!result)
+                throw new Error("At " + this.origin.originString + " argument and parameter types not equal after type argument substitution: argument = " + argumentType + ", parameter = " + parameterType);
+        }
+        return this.resolveToOverload(overload);
+    }
+    
+    resolveToOverload(overload)
     {
         this.func = overload.func;
         this.actualTypeArguments = overload.typeArguments.map(typeArgument => typeArgument instanceof Type ? typeArgument.visit(new AutoWrapper()) : typeArgument);
         let result = overload.func.returnType.substituteToUnification(
             overload.func.typeParameters, overload.unificationContext);
-        this.resultType = result.visit(new AutoWrapper());
         if (!result)
             throw new Error("Null return type");
+        result = result.visit(new AutoWrapper());
+        this.resultType = result;
         return result;
     }
     

@@ -40,6 +40,15 @@ class ArrayRefType extends ReferenceType {
     
     get isArrayRef() { return true; }
 
+    argumentForAndOverload(origin, value)
+    {
+        return value;
+    }
+    argumentTypeForAndOverload(origin)
+    {
+        return this;
+    }
+
     toString()
     {
         return this.elementType + "[] " + this.addressSpace;

@@ -117,13 +117,19 @@ class Lexer {
             return result("identifier");
         }
 
+        if (/^0x[0-9a-fA-F]+u/.test(relevantText))
+            return result("uintHexLiteral");
+
+        if (/^0x[0-9a-fA-F]+/.test(relevantText))
+            return result("intHexLiteral");
+
         if (/^[0-9]+u/.test(relevantText))
             return result("uintLiteral");
 
         if (/^[0-9]+/.test(relevantText))
             return result("intLiteral");
         
-        if (/^->|>=|<=|==|!=|\+=|-=|\*=|\/=|%=|^=|\|=|&=|\+\+|--|&&|\|\||([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
+        if (/^<<|>>|->|>=|<=|==|!=|\+=|-=|\*=|\/=|%=|\^=|\|=|&=|\+\+|--|&&|\|\||([{}()\[\]?:=+*\/,.%!~^&|<>@;-])/.test(relevantText))
             return result("punctuation");
         
         let remaining = relevantText.substring(0, 20).split(/\s/)[0];

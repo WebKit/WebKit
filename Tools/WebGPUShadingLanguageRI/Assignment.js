@@ -25,11 +25,12 @@
 "use strict";
 
 class Assignment extends Expression {
-    constructor(origin, lhs, rhs)
+    constructor(origin, lhs, rhs, type = null)
     {
         super(origin);
         this._lhs = lhs;
         this._rhs = rhs;
+        this.type = type;
     }
     
     get lhs() { return this._lhs; }

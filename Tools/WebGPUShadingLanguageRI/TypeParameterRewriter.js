@@ -24,21 +24,15 @@
  */
 "use strict";
 
-class SuffixCallAssignment extends Expression {
-    constructor(origin, name, lhs)
+class TypeParameterRewriter {
+    visitConstexprTypeParameter(node)
     {
-        super(origin);
-        this._name = name;
-        this._lhs = lhs;
-        this.func = null;
+        return new ConstexprTypeParameter(node.origin, node.name, node.type.visit(new Rewriter()));
     }
     
-    get name() { return this._name; }
-    get lhs() { return this._lhs; }
-    
-    toString()
+    visitTypeVariable(node)
     {
-        return this.lhs + " suffix " + this.name;
+        return new TypeVariable(node.origin, node.name, node.protocol);
     }
 }
 

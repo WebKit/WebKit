@@ -33,6 +33,10 @@ class Program extends Node {
         this._types = new Map();
         this._protocols = new Map();
         this._funcInstantiator = new FuncInstantiator(this);
+        this._globalNameContext = new NameContext();
+        this._globalNameContext.program = this;
+        this._globalNameContext.recognizeIntrinsics();
+        this.intrinsics = this._globalNameContext.intrinsics;
     }
     
     get topLevelStatements() { return this._topLevelStatements; }
@@ -40,6 +44,7 @@ class Program extends Node {
     get types() { return this._types; }
     get protocols() { return this._protocols; }
     get funcInstantiator() { return this._funcInstantiator; }
+    get globalNameContext() { return this._globalNameContext; }
     
     add(statement)
     {
@@ -52,10 +57,11 @@ class Program extends Node {
         } else if (statement instanceof Type)
             this._types.set(statement.name, statement);
         else if (statement instanceof Protocol)
-            this._protocols.set(statement.add, statement);
+            this._protocols.set(statement.name, statement);
         else
             throw new Error("Statement is not a function or type: " + statement);
         this._topLevelStatements.push(statement);
+        this._globalNameContext.add(statement);
     }
     
     toString()

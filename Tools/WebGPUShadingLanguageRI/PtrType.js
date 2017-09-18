@@ -36,6 +36,19 @@ class PtrType extends ReferenceType {
         return this.elementType.unify(unificationContext, other.elementType);
     }
     
+    argumentForAndOverload(origin, value)
+    {
+        throw new WTypeError(origin.originString, "Pointer subscript is not valid");
+    }
+    argumentTypeForAndOverload(origin, type)
+    {
+        throw new WTypeError(origin.originString, "Pointer subscript is not valid");
+    }
+    returnTypeFromAndOverload(origin)
+    {
+        return this.elementType;
+    }
+
     toString()
     {
         return this.elementType + "^ " + this.addressSpace;

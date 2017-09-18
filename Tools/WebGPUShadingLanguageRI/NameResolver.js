@@ -30,27 +30,15 @@
 // more convenient to check here than in the Checker. This usually involves things that need to be
 // checked before TypeRefToTypeDefSkipper.
 class NameResolver extends Visitor {
-    // It's totally OK to instantiate this with zero arguments (i.e. passing undefined for both of
-    // them) if you're creating a NameResolver to visit a Program.
     constructor(nameContext)
     {
         super();
         this._nameContext = nameContext;
     }
-    
-    visitProgram(node)
+
+    doStatement(statement)
     {
-        let nameContext = new NameContext(this._nameContext);
-        nameContext.program = node;
-        nameContext.recognizeIntrinsics();
-        nameContext.handleDefining();
-        node.intrinsics = nameContext.intrinsics;
-        for (let statement of node.topLevelStatements)
-            nameContext.add(statement);
-        let checker = new NameResolver(nameContext);
-        for (let statement of node.topLevelStatements)
-            nameContext.doStatement(statement, () => statement.visit(checker));
-        node.globalNameContext = nameContext;
+        this._nameContext.doStatement(statement, () => statement.visit(this));
     }
     
     _visitTypeParametersAndBuildNameContext(node)
@@ -207,8 +195,6 @@ class NameResolver extends Visitor {
             type = this._nameContext.get(Type, node.name);
             if (!type)
                 throw new WTypeError(node.origin.originString, "Could not find type named " + node.name);
-            if (!this._nameContext.isDefined(type))
-                throw new WTypeError(node.origin.originString, "Illegal forward use of type named " + node.name);
             node.type = type;
         }
         
@@ -230,7 +216,6 @@ class NameResolver extends Visitor {
     visitReferenceType(node)
     {
         let nameContext = new NameContext(this._nameContext);
-        nameContext.defineAll();
         node.elementType.visit(new NameResolver(nameContext));
     }
     
@@ -256,6 +241,28 @@ class NameResolver extends Visitor {
     {
         node.func = this._nameContext.currentStatement;
         super.visitReturn(node);
+    }
+    
+    _handlePropertyAccess(node)
+    {
+        node.possibleGetOverloads = this._nameContext.get(Func, node.getFuncName);
+        node.possibleSetOverloads = this._nameContext.get(Func, node.setFuncName);
+        node.possibleAndOverloads = this._nameContext.get(Func, node.andFuncName);
+
+        if (!node.possibleGetOverloads && !node.possibleAndOverloads)
+            throw new WTypeError(node.origin.originString, "Cannot find either " + node.getFuncName + " or " + node.andFuncName);
+    }
+    
+    visitDotExpression(node)
+    {
+        this._handlePropertyAccess(node);
+        super.visitDotExpression(node);
+    }
+    
+    visitIndexExpression(node)
+    {
+        this._handlePropertyAccess(node);
+        super.visitIndexExpression(node);
     }
     
     visitCallExpression(node)

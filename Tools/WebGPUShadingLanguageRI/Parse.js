@@ -172,17 +172,37 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (token = tryConsumeKind("identifier"))
             return new VariableRef(token, token.text);
         if (token = tryConsumeKind("intLiteral")) {
-            let intVersion = Math.floor(+token.text);
+            let intVersion = (+token.text) | 0;
             if ("" + intVersion !== token.text)
-                lexer.fail("Integer literal is not an integer");
+                lexer.fail("Integer literal is not an integer: " + token.text);
             return new IntLiteral(token, intVersion);
         }
         if (token = tryConsumeKind("uintLiteral")) {
             let uintVersion = token.text.substr(0, token.text.length - 1) >>> 0;
             if (uintVersion + "u" !== token.text)
-                lexer.fail("Integer literal is not 32-bit unsigned integer");
+                lexer.fail("Integer literal is not 32-bit unsigned integer: " + token.text);
             return new UintLiteral(token, uintVersion);
         }
+        if ((token = tryConsumeKind("intHexLiteral"))
+            || (token = tryConsumeKind("uintHexLiteral"))) {
+            let hexString = token.text.substr(2);
+            if (token.kind == "uintHexLiteral")
+                hexString = hexString.substr(0, hexString.length - 1);
+            if (!hexString.length)
+                throw new Error("Bad hex literal: " + token);
+            let intVersion = parseInt(hexString, 16);
+            if (token.kind == "intHexLiteral")
+                intVersion = intVersion | 0;
+            else
+                intVersion = intVersion >>> 0;
+            if (intVersion.toString(16) !== hexString)
+                lexer.fail("Hex integer literal is not an integer: " + token.text);
+            if (token.kind == "intHexLiteral")
+                return new IntLiteral(token, intVersion);
+            return new UintLiteral(token, intVersion >>> 0);
+        }
+        if (token = tryConsumeKind("doubleLiteral"))
+            return new DoubleLiteral(token, +token.text);
         if (token = tryConsumeKind("floatLiteral")) {
             let text = token.text;
             let d = token.text.endsWith("d");
@@ -331,12 +351,14 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         consume("(");
         let argumentList = [];
         while (!test(")")) {
-            argumentList.push(parseExpression());
+            let argument = parsePossibleAssignment();
+            argumentList.push(argument);
             if (!tryConsume(","))
                 break;
         }
         consume(")");
-        return new CallExpression(name, name.text, typeArguments, argumentList);
+        let result = new CallExpression(name, name.text, typeArguments, argumentList);
+        return result;
     }
     
     function isCallExpression()
@@ -348,9 +370,9 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         });
     }
     
-    function emitIncrement(token, ptr, extraArg)
+    function emitIncrement(token, old, extraArg)
     {
-        let args = [new DereferenceExpression(token, VariableRef.wrap(ptr))];
+        let args = [old];
         if (extraArg)
             args.push(extraArg);
         
@@ -361,27 +383,15 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         if (name == "operator")
             throw new Error("Invalid name: " + name);
         
-        return new Assignment(
-            token,
-            new DereferenceExpression(token, VariableRef.wrap(ptr)),
-            new CallExpression(token, name, [], args));
+        return new CallExpression(token, name, [], args);
     }
     
     function finishParsingPostIncrement(token, left)
     {
-        let ptr = new LetExpression(token);
-        ptr.argument = new MakePtrExpression(token, left);
-        
-        let oldValue = new LetExpression(token);
-        oldValue.argument = new DereferenceExpression(token, VariableRef.wrap(ptr));
-        
-        ptr.body = oldValue;
-        
-        oldValue.body = new CommaExpression(token, [
-            emitIncrement(token, ptr),
-            VariableRef.wrap(oldValue)
-        ]);
-        return ptr;
+        let readModifyWrite = new ReadModifyWriteExpression(token, left);
+        readModifyWrite.newValueExp = emitIncrement(token, readModifyWrite.oldValueRef());
+        readModifyWrite.resultExp = readModifyWrite.oldValueRef();
+        return readModifyWrite;
     }
     
     function parsePossibleSuffix()
@@ -406,9 +416,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             case "[": {
                 let index = parseExpression();
                 consume("]");
-                left = new DereferenceExpression(
-                    token,
-                    new CallExpression(token, "operator&[]", [], [left, index]));
+                left = new IndexExpression(token, left, index);
                 break;
             }
             default:
@@ -420,13 +428,10 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     
     function finishParsingPreIncrement(token, left, extraArg)
     {
-        let ptr = new LetExpression(token);
-        ptr.argument = new MakePtrExpression(token, left);
-        ptr.body = new CommaExpression(token, [
-            emitIncrement(token, ptr, extraArg),
-            new DereferenceExpression(token, VariableRef.wrap(ptr))
-        ]);
-        return ptr;
+        let readModifyWrite = new ReadModifyWriteExpression(token, left);
+        readModifyWrite.newValueExp = emitIncrement(token, readModifyWrite.oldValueRef(), extraArg);
+        readModifyWrite.resultExp = readModifyWrite.newValueRef();
+        return readModifyWrite;
     }
     
     function parsePreIncrement()
@@ -586,6 +591,10 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             }
             list.push(effectfulExpression);
         }
+        if (!list.length)
+            throw new Error("Length should never be zero");
+        if (list.length == 1)
+            return list[0];
         return new CommaExpression(origin, list);
     }
     
@@ -772,15 +781,30 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     function parseFuncName()
     {
         if (tryConsume("operator")) {
-            let token = tryConsume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "==", "++", "--", "&");
-            if (token) {
-                if (token.text != "&" || !tryConsume("["))
-                    return "operator" + token.text;
-                consume("]");
-                return "operator&[]";
+            let token = consume("+", "-", "*", "/", "%", "^", "&", "|", "<", ">", "<=", ">=", "==", "++", "--", ".", "~", "<<", ">>", "[");
+            if (token.text == "&") {
+                if (tryConsume("[")) {
+                    consume("]");
+                    return "operator&[]";
+                }
+                if (tryConsume("."))
+                    return "operator&." + consumeKind("identifier").text;
+                return "operator&";
             }
-            let name = consumeKind("identifier");
-            return "operator " + name;
+            if (token.text == ".") {
+                let result = "operator." + consumeKind("identifier").text;
+                if (tryConsume("="))
+                    result += "=";
+                return result;
+            }
+            if (token.text == "[") {
+                consume("]");
+                let result = "operator[]";
+                if (tryConsume("="))
+                    result += "=";
+                return result;
+            }
+            return "operator" + token.text;
         }
         return consumeKind("identifier").text;
     }

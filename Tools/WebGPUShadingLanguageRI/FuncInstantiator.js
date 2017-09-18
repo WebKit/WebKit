@@ -39,8 +39,14 @@ class FuncInstantiator {
     getUnique(func, typeArguments)
     {
         class FindTypeVariable extends Visitor {
+            visitTypeRef(node)
+            {
+                for (let typeArgument of node.typeArguments)
+                    typeArgument.visit(this);
+            }
+            
             visitTypeVariable(node) {
-                throw new Error("Unexpected type variable: " + node);
+                throw new Error("Unexpected type variable: " + node + " when instantiating " + func + " with arguments " + typeArguments);
             }
         }
         for (let typeArgument of typeArguments)
@@ -75,33 +81,38 @@ class FuncInstantiator {
                     let overload = resolveOverloadImpl(result.possibleOverloads, result.typeArguments, result.argumentTypes, result.returnTypeForOverloadResolution);
                     if (!overload.func)
                         throw new Error("Could not resolve protocol signature function call during instantiation: " + result.func + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
-                    result.resolve(overload);
+                    result.resolveToOverload(overload);
                 }
+                
+                if (result.func.isNative)
+                    result.nativeFuncInstance = thisInstantiator.getUnique(result.func, result.actualTypeArguments);
                 
                 return result;
             }
         }
         
         let substitution = new InstantiationSubstitution(func.typeParameters, typeArguments);
+        let instantiateImmediates = new InstantiateImmediates();
         
-        class Instantiate extends VisitorBase {
+        class Instantiate {
             visitFuncDef(func)
             {
                 return new FuncDef(
                     func.origin, func.name,
-                    func.returnType.visit(substitution),
+                    func.returnType.visit(substitution).visit(instantiateImmediates),
                     [], // We're instantiated so we no longer take type parameters.
-                    func.parameters.map(parameter => parameter.visit(substitution)),
-                    func.body.visit(substitution));
+                    func.parameters.map(parameter => parameter.visit(substitution).visit(instantiateImmediates)),
+                    func.body.visit(substitution).visit(instantiateImmediates));
             }
             
             visitNativeFunc(func)
             {
                 return new NativeFuncInstance(
                     func,
-                    func.returnType.visit(substitution),
-                    func.parameters.map(parameter => parameter.visit(substitution)),
-                    func.isCast);
+                    func.returnType.visit(substitution).visit(instantiateImmediates),
+                    func.parameters.map(parameter => parameter.visit(substitution).visit(instantiateImmediates)),
+                    func.isCast,
+                    func.instantiateImplementation(substitution));
             }
         }
         let resultingFunc = func.visit(new Instantiate());

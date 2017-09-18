@@ -73,5 +73,16 @@ class ArrayType extends Type {
         
         return this.elementType.unify(unificationContext, other.elementType);
     }
+
+    argumentForAndOverload(origin, value)
+    {
+        let result = new MakeArrayRefExpression(origin, value);
+        result.numElements = this.numElements;
+        return result;
+    }
+    argumentTypeForAndOverload(origin)
+    {
+        return new ArrayRefType(origin, "thread", this.elementType);
+    }
 }
 

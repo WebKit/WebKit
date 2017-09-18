@@ -26,6 +26,9 @@
 
 function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType)
 {
+    if (!functions)
+        throw new Error("Null functions; that should have been caught by the caller.");
+    
     let failures = [];
     let successes = [];
     for (let func of functions) {

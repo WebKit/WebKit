@@ -1,3 +1,298 @@
+2017-09-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Figure out how WSL will support field overloads like float4.xz and friends
+        https://bugs.webkit.org/show_bug.cgi?id=177031
+
+        Reviewed by JF Bastien.
+        
+        WSL needs to support getters and setters, so that we can do things like:
+        
+            float4 vec;
+            vec.zx = float2(1, 2);
+            // z = 1, x = 2
+        
+        There's no way to express this float4.zx returning a pointer to something, since it's doing swizzling.
+        It could return a crazy smart pointer, but that sounds like a lot of work. So, I decided to go for
+        lvalue emulation instead.
+        
+        The idea of lvalue emulation is that when we try to make an lvalue work for an assignment or RMW
+        operation (like += and friends), we consider the possibility that we have to first load the value using
+        a getter and then store it with a setter. This patch makes this work recursively, so that this will
+        work:
+        
+            float4 vec;
+            vec.zwx.y = 42;
+            // now w is 42
+        
+        This works because we decompose it automatically:
+        
+            float4 vec;
+            float3 tmp = vec.zwx;
+            tmp.y = 42;
+            vec.zwx = tmp;
+        
+        This'll work to any depth.
+        
+        To check if this works, this patch adds two substantial new tests called TEST_genericAccessors() and
+        TEST_bitSubscriptAccessor(). This tests that this stuff works with a lot of generic types, and that it's
+        possible to turn integers into bitvectors using subscript overloading. This patch also adds smaller unit
+        tests also.
+        
+        Oh, and it's now possible to get an array's length.
+
+        * WebGPUShadingLanguageRI/AddressSpace.js:
+        (needsPrimitiveProtocol):
+        (protocolSuffix):
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/AnonymousVariable.js: Added.
+        (AnonymousVariable):
+        (AnonymousVariable.prototype.get origin):
+        (AnonymousVariable.prototype.get name):
+        (AnonymousVariable.prototype.toString):
+        * WebGPUShadingLanguageRI/ArrayRefType.js:
+        (ArrayRefType.prototype.argumentForAndOverload):
+        (ArrayRefType.prototype.argumentTypeForAndOverload):
+        * WebGPUShadingLanguageRI/ArrayType.js:
+        (ArrayType.prototype.argumentForAndOverload):
+        (ArrayType.prototype.argumentTypeForAndOverload):
+        (ArrayType):
+        * WebGPUShadingLanguageRI/Assignment.js:
+        (Assignment):
+        * WebGPUShadingLanguageRI/CallAssignment.js: Removed.
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.resolve):
+        (CallExpression.prototype.resolve):
+        (CallExpression.prototype.resolveToOverload):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitProgram):
+        (Checker.prototype.visitFuncDef):
+        (Checker.prototype.visitNativeFunc):
+        (Checker.prototype.visitProtocolDecl):
+        (Checker.prototype.visitIdentityExpression):
+        (Checker.prototype.visitReadModifyWriteExpression):
+        (Checker.prototype.visitAnonymousVariable):
+        (Checker.prototype.visitMakeArrayRefExpression):
+        (Checker.prototype._finishVisitingPropertyAccess):
+        (Checker.prototype.visitDotExpression):
+        (Checker.prototype.visitIndexExpression):
+        (Checker.prototype.visitCallExpression):
+        (Checker):
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable.prototype.visitTypeRef): Deleted.
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable.prototype.visitVariableRef): Deleted.
+        (Checker.prototype.visitProtocolDecl.NoticeTypeVariable): Deleted.
+        (Checker.prototype.visitProtocolDecl.set throw): Deleted.
+        * WebGPUShadingLanguageRI/CommaExpression.js:
+        * WebGPUShadingLanguageRI/DotExpression.js:
+        (DotExpression):
+        (DotExpression.prototype.get struct):
+        (DotExpression.prototype.get getFuncName):
+        (DotExpression.prototype.get andFuncName):
+        (DotExpression.prototype.get setFuncName):
+        * WebGPUShadingLanguageRI/EBuffer.js:
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype.visitAnonymousVariable):
+        (EBufferBuilder.prototype.visitLetExpression): Deleted.
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitIdentityExpression):
+        (Evaluator.prototype.visitMakePtrExpression):
+        (Evaluator.prototype.visitAnonymousVariable):
+        (Evaluator.prototype.visitDotExpression): Deleted.
+        (Evaluator.prototype.visitLetExpression): Deleted.
+        * WebGPUShadingLanguageRI/ExpressionFinder.js:
+        (ExpressionFinder.prototype.visitReadModifyWriteExpression):
+        (ExpressionFinder.prototype.visitIdentityExpression):
+        * WebGPUShadingLanguageRI/ForLoop.js:
+        (ForLoop.prototype.toString):
+        (ForLoop):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution.prototype.visitCallExpression):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution):
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitFuncDef):
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitNativeFunc):
+        (FuncInstantiator.prototype.getUnique.Instantiate):
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/IdentityExpression.js: Added.
+        (IdentityExpression):
+        (IdentityExpression.prototype.get target):
+        (IdentityExpression.prototype.get unifyNode):
+        (IdentityExpression.prototype.get isConstexpr):
+        (IdentityExpression.prototype.get isLValue):
+        (IdentityExpression.prototype.get addressSpace):
+        (IdentityExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/IndexExpression.js: Added.
+        (IndexExpression):
+        (IndexExpression.prototype.get array):
+        (IndexExpression.prototype.get index):
+        (IndexExpression.prototype.get isLValue):
+        (IndexExpression.prototype.get addressSpace):
+        (IndexExpression.prototype.get getFuncName):
+        (IndexExpression.prototype.get andFuncName):
+        (IndexExpression.prototype.get setFuncName):
+        (IndexExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/InferTypesForCall.js:
+        (inferTypesForCall):
+        * WebGPUShadingLanguageRI/Inline.js:
+        (_inlineFunction):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        (Inliner.prototype.visitDotExpression): Deleted.
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LetExpression.js: Removed.
+        * WebGPUShadingLanguageRI/MakeArrayRefExpression.js:
+        (MakeArrayRefExpression.prototype.becomeConvertPtrToArrayRefExpression): Deleted.
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext):
+        (NameContext.prototype.add):
+        (NameContext.prototype.doStatement):
+        (NameContext.prototype.handleDefining): Deleted.
+        (NameContext.prototype.isDefined): Deleted.
+        (NameContext.prototype.define): Deleted.
+        (NameContext.prototype.defineAll): Deleted.
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.doStatement):
+        (NameResolver.prototype.visitProtocolDecl):
+        (NameResolver.prototype.visitProgram): Deleted.
+        * WebGPUShadingLanguageRI/NativeFunc.js:
+        (NativeFunc):
+        * WebGPUShadingLanguageRI/NativeFuncInstance.js:
+        (NativeFuncInstance):
+        (NativeFuncInstance.prototype.get implementationData):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.visit):
+        (Node.visit):
+        (Node.unify): Deleted.
+        * WebGPUShadingLanguageRI/NormalUsePropertyResolver.js: Added.
+        (NormalUsePropertyResolver.prototype.visitDotExpression):
+        (NormalUsePropertyResolver.prototype.visitIndexExpression):
+        (NormalUsePropertyResolver):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (finishParsingPostIncrement):
+        (parsePossibleSuffix):
+        (finishParsingPreIncrement):
+        (genericParseCommaExpression):
+        (parseFuncName):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/Program.js:
+        (Program):
+        (Program.prototype.get globalNameContext):
+        (Program.prototype.add):
+        * WebGPUShadingLanguageRI/PropertyAccessExpression.js: Added.
+        (PropertyAccessExpression):
+        (PropertyAccessExpression.prototype.get resultType):
+        (PropertyAccessExpression.prototype.rewriteAfterCloning):
+        (PropertyAccessExpression.prototype.updateCallsAfterChangingBase):
+        (PropertyAccessExpression.prototype.emitGet):
+        (PropertyAccessExpression.prototype.emitSet):
+        * WebGPUShadingLanguageRI/PropertyResolver.js: Added.
+        (PropertyResolver.prototype._visitPropertyAccess):
+        (PropertyResolver.prototype.visitDotExpression):
+        (PropertyResolver.prototype.visitIndexExpression):
+        (PropertyResolver.prototype._handleReadModifyWrite):
+        (PropertyResolver.prototype.visitReadModifyWriteExpression):
+        (PropertyResolver.prototype.visitAssignment):
+        (PropertyResolver.visitMakePtrExpression):
+        (PropertyResolver.prototype.visitMakeArrayRefExpression):
+        (PropertyResolver):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.argumentForAndOverload):
+        (PtrType.prototype.argumentTypeForAndOverload):
+        (PtrType.prototype.returnTypeFromAndOverload):
+        * WebGPUShadingLanguageRI/ReadModifyWriteExpression.js: Added.
+        (ReadModifyWriteExpression):
+        (ReadModifyWriteExpression.prototype.get lValue):
+        (ReadModifyWriteExpression.prototype.oldValueRef):
+        (ReadModifyWriteExpression.prototype.newValueRef):
+        (ReadModifyWriteExpression.prototype.toString):
+        * WebGPUShadingLanguageRI/ResolveNames.js:
+        (createNameResolver):
+        (resolveNamesInTypes):
+        (resolveNamesInProtocols):
+        (resolveNamesInFunctions):
+        (resolveNames): Deleted.
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/ResolveProperties.js: Added.
+        (resolveProperties):
+        * WebGPUShadingLanguageRI/ResolveTypeDefs.js:
+        (resolveTypeDefsInTypes):
+        (resolveTypeDefsInProtocols):
+        (resolveTypeDefsInFunctions):
+        (resolveTypeDefs): Deleted.
+        * WebGPUShadingLanguageRI/ReturnChecker.js:
+        (ReturnChecker.prototype._isBoolCastFromLiteralTrue):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter):
+        (Rewriter.prototype.visitVariableDecl):
+        (Rewriter.prototype.visitTypeRef):
+        (Rewriter.prototype.visitAssignment):
+        (Rewriter.prototype.visitReadModifyWriteExpression):
+        (Rewriter.prototype.visitDereferenceExpression):
+        (Rewriter.prototype._handlePropertyAccessExpression):
+        (Rewriter.prototype.visitDotExpression):
+        (Rewriter.prototype.visitIndexExpression):
+        (Rewriter.prototype.visitReturn):
+        (Rewriter.prototype.visitGenericLiteralType):
+        (Rewriter.prototype.visitNullType):
+        (Rewriter.prototype.processDerivedCallData):
+        (Rewriter.prototype.visitCallExpression):
+        (Rewriter.prototype.visitFunctionLikeBlock):
+        (Rewriter.prototype.visitIfStatement):
+        (Rewriter.prototype.visitForLoop):
+        (Rewriter.prototype.visitAnonymousVariable):
+        (Rewriter.prototype.visitIdentityExpression):
+        (Rewriter.prototype.visitLetExpression): Deleted.
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js:
+        (StructLayoutBuilder.prototype.visitNativeFuncInstance):
+        (StructLayoutBuilder):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution.prototype.get map):
+        * WebGPUShadingLanguageRI/SuffixCallAssignment.js: Removed.
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js: Added.
+        (synthesizeStructAccessors.createTypeParameters):
+        (synthesizeStructAccessors.):
+        (synthesizeStructAccessors.createFieldType):
+        (synthesizeStructAccessors.createTypeRef):
+        (synthesizeStructAccessors.setupAnder):
+        (synthesizeStructAccessors):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkNumber):
+        (TEST_simpleProtocol):
+        (TEST_assignLength):
+        (TEST_simpleSetter):
+        (TEST_genericAccessors):
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isRef):
+        (Type.prototype.argumentForAndOverload):
+        (Type.prototype.argumentTypeForAndOverload):
+        (Type.prototype.returnTypeFromAndOverload):
+        (Type):
+        * WebGPUShadingLanguageRI/TypeParameterRewriter.js: Added.
+        (TypeParameterRewriter.prototype.visitConstexprTypeParameter):
+        (TypeParameterRewriter.prototype.visitTypeVariable):
+        (TypeParameterRewriter):
+        * WebGPUShadingLanguageRI/TypeVariableTracker.js: Added.
+        (TypeVariableTracker):
+        * WebGPUShadingLanguageRI/Value.js:
+        (Value.prototype.become):
+        (Value):
+        * WebGPUShadingLanguageRI/VariableRef.js:
+        (VariableRef.prototype.get unifyNode):
+        (VariableRef.prototype.get addressSpace):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitNativeFuncInstance):
+        (Visitor.prototype.visitProtocolDecl):
+        (Visitor): Deleted.
+        * WebGPUShadingLanguageRI/VisitorBase.js: Removed.
+
 2017-09-18  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream WKSetCrashReportApplicationSpecificInformation() from WebKitSystemInterface

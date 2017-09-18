@@ -24,23 +24,7 @@
  */
 "use strict";
 
-class CallAssignment extends Expression {
-    constructor(origin, name, lhs, rhs)
-    {
-        super(origin);
-        this._name = name;
-        this._lhs = lhs;
-        this._rhs = rhs;
-        this.func = null;
-    }
-    
-    get name() { return this._name; }
-    get lhs() { return this._lhs; }
-    get rhs() { return this._rhs; } // This can be null.
-    
-    toString()
-    {
-        return this.lhs + " " + this.name + (this.rhs ? "= " + this.rhs : "");
-    }
+function findHighZombies(program)
+{
+    program.visit(new HighZombieFinder());
 }
-

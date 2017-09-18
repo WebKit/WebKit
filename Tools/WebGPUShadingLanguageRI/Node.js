@@ -33,7 +33,15 @@ class Node {
         let returnValue = visitFunc.call(visitor, this);
         if ("returnValue" in visitor)
             returnValue = visitor.returnValue;
+        
         return returnValue;
+    }
+    
+    static visit(node, visitor)
+    {
+        if (node instanceof Node)
+            return node.visit(visitor);
+        return node;
     }
     
     unify(unificationContext, other)
