@@ -1,5 +1,30 @@
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222167. rdar://problem/34508525
+
+    2017-09-18  Antti Koivisto  <antti@apple.com>
+
+            Avoid style resolution when clearing focused element.
+            https://bugs.webkit.org/show_bug.cgi?id=176224
+            <rdar://problem/34206409>
+
+            Reviewed by Zalan Bujtas.
+
+            Test: fast/dom/focus-style-resolution.html
+
+            * dom/Document.cpp:
+            (WebCore::Document::setFocusedElement):
+
+                Don't do synchronous style resolution with FocusRemovalEventsMode::DoNotDispatch.
+                Style resolution may dispatch events.
+
+            * html/HTMLInputElement.cpp:
+            (WebCore::HTMLInputElement::didBlur):
+
+                Move resolveStyleIfNeeded call to setFocusedElement. It is the only client for didBlur.
+
+2017-09-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222163. rdar://problem/34508516
 
     2017-09-18  Per Arne Vollan  <pvollan@apple.com>
