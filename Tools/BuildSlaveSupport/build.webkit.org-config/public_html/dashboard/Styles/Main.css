@@ -170,16 +170,6 @@ table.queue-grid td.logo img.logo {
     clip-path: circle(72px at center);
 }
 
-table.queue-grid tr.platform.ios-simulator-10 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: -webkit-image-set(url(../Images/IOS10Simulator@2x.png) 2x, url(../Images/IOS10Simulator.png) 1x);
-}
-
-table.queue-grid tr.platform.ios-10 img.logo {
-    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
-    content: -webkit-image-set(url(../Images/IOS10@2x.png) 2x, url(../Images/IOS10.png) 1x);
-}
-
 table.queue-grid tr.platform.ios-simulator-11 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: -webkit-image-set(url(../Images/IOS11Simulator@2x.png) 2x, url(../Images/IOS11Simulator.png) 1x);
