@@ -287,10 +287,14 @@ CREATE TABLE commit_sets (
 CREATE TABLE commit_set_items (
     commitset_set integer REFERENCES commit_sets NOT NULL,
     commitset_commit integer REFERENCES commits,
+    commitset_commit_owner integer REFERENCES commits DEFAULT NULL,
     commitset_patch_file integer REFERENCES uploaded_files,
     commitset_root_file integer REFERENCES uploaded_files,
+    commitset_requires_build boolean DEFAULT FALSE,
     CONSTRAINT commitset_must_have_commit_or_root CHECK (commitset_commit IS NOT NULL OR commitset_root_file IS NOT NULL),
-    CONSTRAINT commitset_with_patch_must_have_commit CHECK (commitset_patch_file IS NULL OR commitset_commit IS NOT NULL));
+    CONSTRAINT commitset_with_patch_must_have_commit CHECK (commitset_patch_file IS NULL OR commitset_commit IS NOT NULL),
+    CONSTRAINT commitset_item_with_patch_must_requires_build CHECK (commitset_patch_file IS NULL OR commitset_requires_build = TRUE),
+    CONSTRAINT commitset_item_with_owned_commit_must_requires_build CHECK (commitset_commit_owner IS NULL OR commitset_requires_build = TRUE));
 
 CREATE TYPE build_request_status_type as ENUM ('pending', 'scheduled', 'running', 'failed', 'completed', 'canceled');
 CREATE TABLE build_requests (

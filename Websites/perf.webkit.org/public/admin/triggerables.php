@@ -76,7 +76,7 @@ if ($db) {
         }
     }
 
-    $repository_rows = $db->fetch_table('repositories', 'repository_name');
+    $repository_rows = $db->select_rows('repositories', 'repository', array('owner' => NULL), 'name');
 
     $page = new AdministrativePage($db, 'build_triggerables', 'triggerable', array(
         'name' => array('editing_mode' => 'string'),

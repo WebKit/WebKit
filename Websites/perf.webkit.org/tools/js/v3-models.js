@@ -16,6 +16,7 @@ importFromV3('models/build-request.js', 'BuildRequest');
 importFromV3('models/builder.js', 'Build');
 importFromV3('models/builder.js', 'Builder');
 importFromV3('models/commit-log.js', 'CommitLog');
+importFromV3('models/commit-set.js', 'CustomCommitSet')
 importFromV3('models/manifest.js', 'Manifest');
 importFromV3('models/measurement-adaptor.js', 'MeasurementAdaptor');
 importFromV3('models/measurement-cluster.js', 'MeasurementCluster');

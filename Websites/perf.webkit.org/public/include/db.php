@@ -118,6 +118,8 @@ class Database
             assert(ctype_alnum_underscore($name));
             array_push($column_names, $name);
             array_push($placeholders, '$' . $i);
+            if (is_bool($current_value))
+                $current_value = $this->to_database_boolean($current_value);
             array_push($values, $current_value);
             $i++;
         }

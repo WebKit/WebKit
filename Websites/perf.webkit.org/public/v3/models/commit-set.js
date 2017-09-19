@@ -9,6 +9,8 @@ class CommitSet extends DataModelObject {
         this._repositoryToCommitMap = new Map;
         this._repositoryToPatchMap = new Map;
         this._repositoryToRootMap = new Map;
+        this._repositoryToCommitOwnerMap = new Map;
+        this._repositoryRequiresBuildMap = new Map;
         this._latestCommitTime = null;
         this._customRoots = [];
         this._allRootFiles = [];
@@ -24,6 +26,8 @@ class CommitSet extends DataModelObject {
         this._repositoryToCommitMap.clear();
         this._repositoryToPatchMap.clear();
         this._repositoryToRootMap.clear();
+        this._repositoryToCommitOwnerMap.clear();
+        this._repositoryRequiresBuildMap.clear();
         this._repositories = [];
         this._updateFromObject(object);
     }
@@ -36,9 +40,12 @@ class CommitSet extends DataModelObject {
             console.assert(commit instanceof CommitLog);
             console.assert(!item.patch || item.patch instanceof UploadedFile);
             console.assert(!item.rootFile || item.rootFile instanceof UploadedFile);
+            console.assert(!item.commitOwner || item.commitOwner instanceof CommitLog);
             const repository = commit.repository();
             this._repositoryToCommitMap.set(repository, commit);
             this._repositoryToPatchMap.set(repository, item.patch);
+            this._repositoryToCommitOwnerMap.set(repository, item.commitOwner);
+            this._repositoryRequiresBuildMap.set(repository, item.requiresBuild);
             this._repositoryToRootMap.set(repository, item.rootFile);
             if (item.rootFile)
                 rootFiles.add(item.rootFile);
@@ -59,8 +66,15 @@ class CommitSet extends DataModelObject {
         return commit ? commit.revision() : null;
     }
 
+    ownerRevisionForRepository(repository)
+    {
+        const commit = this._repositoryToCommitOwnerMap.get(repository);
+        return commit ? commit.revision() : null;
+    }
+
     patchForRepository(repository) { return this._repositoryToPatchMap.get(repository); }
     rootForRepository(repository) { return this._repositoryToRootMap.get(repository); }
+    requiresBuildForRepository(repository) { return this._repositoryRequiresBuildMap.get(repository); }
 
     // FIXME: This should return a Date object.
     latestCommitTime()
@@ -84,6 +98,10 @@ class CommitSet extends DataModelObject {
             if (this._repositoryToPatchMap.get(repository) != other._repositoryToPatchMap.get(repository))
                 return false;
             if (this._repositoryToRootMap.get(repository) != other._repositoryToRootMap.get(repository))
+                return false;
+            if (this._repositoryToCommitOwnerMap.get(repository) != other._repositoryToCommitMap.get(repository))
+                return false;
+            if (this._repositoryRequiresBuildMap.get(repository) != other._repositoryRequiresBuildMap.get(repository))
                 return false;
         }
         return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);
@@ -139,7 +157,7 @@ class MeasurementCommitSet extends CommitSet {
     }
 
     // Use CommitSet's static maps because MeasurementCommitSet and CommitSet are logically of the same type.
-    // FIXME: Idaelly, DataModel should take care of this but traversing prototype chain is expensive.
+    // FIXME: Ideally, DataModel should take care of this but traversing prototype chain is expensive.
     namedStaticMap(name) { return CommitSet.namedStaticMap(name); }
     ensureNamedStaticMap(name) { return CommitSet.ensureNamedStaticMap(name); }
     static namedStaticMap(name) { return CommitSet.namedStaticMap(name); }
@@ -160,11 +178,11 @@ class CustomCommitSet {
         this._customRoots = [];
     }
 
-    setRevisionForRepository(repository, revision, patch = null)
+    setRevisionForRepository(repository, revision, patch = null, ownerRevision = null)
     {
         console.assert(repository instanceof Repository);
         console.assert(!patch || patch instanceof UploadedFile);
-        this._revisionListByRepository.set(repository, {revision, patch});
+        this._revisionListByRepository.set(repository, {revision, patch, ownerRevision});
     }
 
     equals(other)
@@ -172,13 +190,14 @@ class CustomCommitSet {
         console.assert(other instanceof CustomCommitSet);
         if (this._revisionListByRepository.size != other._revisionListByRepository.size)
             return false;
-        for (let repository of this._revisionListByRepository.keys()) {
-            const thisRevision = this._revisionListByRepository.get(repository);
+
+        for (const [repository, thisRevision] of this._revisionListByRepository) {
             const otherRevision = other._revisionListByRepository.get(repository);
             if (!thisRevision != !otherRevision)
                 return false;
             if (thisRevision && (thisRevision.revision != otherRevision.revision
-                || thisRevision.patch != otherRevision.patch))
+                || thisRevision.patch != otherRevision.patch
+                || thisRevision.ownerRevision != otherRevision.ownerRevision))
                 return false;
         }
         return CommitSet.areCustomRootsEqual(this._customRoots, other._customRoots);
@@ -198,6 +217,13 @@ class CustomCommitSet {
         if (!entry)
             return null;
         return entry.patch;
+    }
+    ownerRevisionForRepository(repository)
+    {
+        const entry = this._revisionListByRepository.get(repository);
+        if (!entry)
+            return null;
+        return entry.ownerRevision;
     }
     customRoots() { return this._customRoots; }
 

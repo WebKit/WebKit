@@ -1,3 +1,64 @@
+2017-09-12  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Performance Dashboard backend should support A/B testing for owned components.
+        https://bugs.webkit.org/show_bug.cgi?id=175978
+
+        Reviewed by Ryosuke Niwa.
+
+        Add backend change for Performance Dashboard to support A/B testing for owned components.
+        Added 'commitset_commit_owner' and 'commitset_requires_build' columns to 'commit_set_items' table.
+        'commitset_commit_owner' referrs to determine a commit with owner.
+        'commitset_requires_build' indicates whether a root build is required.
+        This will be set true whenever commit_set_item specifies a patch file,
+        or commit_set_item is commit with owner commit,
+        or any other commit from same repository and in same build-request group requires build.
+        SQL for updating existing database:
+            'BEGIN;
+                ALTER TABLE commit_set_items ADD COLUMN commitset_commit_owner integer REFERENCES commits DEFAULT NULL, ADD COLUMN commitset_requires_build boolean DEFAULT FALSE;
+                UPDATE commit_set_items SET commitset_requires_build = TRUE WHERE commitset_patch_file IS NOT NULL;
+                UPDATE commit_set_items SET commitset_requires_build = TRUE WHERE commitset_set IN (SELECT requests1.request_commit_set FROM build_requests as requests1 JOIN build_requests as requests2 ON requests1.request_group = requests2.request_group JOIN commit_set_items as item ON item.commitset_set = requests2.request_commit_set  WHERE item.commitset_patch_file IS NOT NULL);
+                ALTER TABLE commit_set_items ADD CONSTRAINT commitset_item_with_patch_must_requires_build CHECK (commitset_patch_file IS NULL OR commitset_requires_build = TRUE),
+                    ADD CONSTRAINT commitset_item_with_owned_commit_must_requires_build CHECK (commitset_commit_owner IS NULL OR commitset_requires_build = TRUE);
+            END;'
+
+        * init-database.sql: Updated 'commit_set_items' table.
+        * public/admin/triggerables.php: Only top level repository should show on triggerables page.
+        * public/include/build-requests-fetcher.php: Added 'commitOwner' and 'requireBuild' to 'revision_items'. Added 'commitOwner' field to a commit.
+        * public/include/db.php: Should be able to insert boolean value to database without explicted convert to 't' or 'f'.
+        * public/privileged-api/create-test-group.php:
+            Added logic to process 'commitOwner' and 'requireBuild' in 'commit_set_items'.
+            Removed a 'FIXME' that has been addressed before this commit.
+        * public/v3/models/build-request.js:
+        (BuildRequest.constructBuildRequestsFromData): Set 'commitOwner' field for a commit set item.
+        * public/v3/models/commit-set.js:
+        (CommitSet): Added maps for repository to commit owner and whether a repository requires builds.
+        (CommitSet.prototype.updateSingleton):
+        (CommitSet.prototype._updateFromObject):
+        (CommitSet.prototype.ownerRevisionForRepository): Returns owner revision for a given repository in current commit set.
+        (CommitSet.prototype.requiresBuildForRepository): Returns whether a repository need to build.
+        (CommitSet.prototype.equals): Equality check should include 2 new maps.
+        (CustomCommitSet): CustomCommitSet should be able to store commit with an owner commit.
+        (CustomCommitSet.prototype.setRevisionForRepository): Added each revision list entry should have 'ownerRevision'(null by default).
+        (CustomCommitSet.prototype.equals): Equality check should also check the equality of 'ownerRevision'.
+        (CustomCommitSet.prototype.ownerRevisionForRepository): Returns a owner revision for a given repository.
+        * public/v3/models/repository.js:
+        (Repository.prototype.findOwnedRepositoryByName): Return an repository owned by current repository with a given name.
+        * public/v3/models/test-group.js: Added 'ownerRevision' field in each entry of revisionSet.
+        * server-tests/api-build-requests-tests.js: Added tests.
+        * server-tests/privileged-api-create-test-group-tests.js: Added tests.
+        * server-tests/privileged-api-upload-file-tests.js: Fix unit tests by setting'requires_build' field to be true when updating commit_set_item which has a patch..
+        * server-tests/resources/mock-data.js: Added mock build requests with commit sets contain owned commits.
+        (MockData.jscRepositoryId): Returns id for JavaScriptsCore repository.
+        (MockData.addMockConfiguration): Added mock JavaScriptCore and owned JavaScriptCore repositories and commits associated with them.
+        (MockData.ownedJSCRepositoryId): Added a JavaScriptCore repository with WebKit as owner.
+        (MockData.addMockConfiguration): Added mock data for test cases those require a commit with a owner commit.
+        (MockData.addTestGroupWithOwnedCommits): Added mock data for analysis tasks, the build requires of which contains owned commits.
+        (MockData.set addAnotherTriggerable): Added another triggerable which has mac, webkit and javascript core repositories as triggerable repository group.
+        (MockData.set addAnotherMockTestGroup): Added another mock test group.
+        * tools/js/v3-models.js: Import CustomCommitSet.
+        * unit-tests/resources/mock-v3-models.js: Added an owned webkit repository.
+        * unit-tests/commit-set-tests.js: Added unit tests CustomCommitSet.
+
 2017-09-15  Dewei Zhu  <dewei_zhu@apple.com>
 
         Should not mark a platform as missing in summary page if all expecting metrics are exlucded.

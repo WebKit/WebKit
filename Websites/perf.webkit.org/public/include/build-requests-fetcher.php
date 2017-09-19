@@ -122,7 +122,12 @@ class BuildRequestsFetcher {
             if ($root_file_id)
                 $this->add_uploaded_file($root_file_id);
 
-            array_push($revision_items, array('commit' => $row['commit_id'], 'patch' => $patch_file_id, 'rootFile' => $root_file_id));
+            array_push($revision_items, array(
+                'commit' => $row['commit_id'],
+                'patch' => $patch_file_id,
+                'rootFile' => $root_file_id,
+                'commitOwner' => $row['commitset_commit_owner'],
+                'requiresBuild' => Database::is_true($row['commitset_requires_build'])));
 
             if (array_key_exists($commit_id, $this->commits_by_id))
                 continue;
@@ -130,6 +135,7 @@ class BuildRequestsFetcher {
             array_push($this->commits, array(
                 'id' => $commit_id,
                 'repository' => $repository_id,
+                'commitOwner' => $row['commitset_commit_owner'],
                 'revision' => $revision,
                 'time' => Database::to_js_time($commit_time)));
 

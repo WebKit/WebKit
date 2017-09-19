@@ -113,6 +113,11 @@ function addTriggerableAndCreateTask(name, webkitRevisions)
                 {repository: MockData.macosRepositoryId(), acceptsPatch: false},
                 {repository: MockData.webkitRepositoryId(), acceptsPatch: true}
             ]},
+            {name: 'system-webkit-sjc', acceptsRoot: true, repositories: [
+                {repository: MockData.macosRepositoryId(), acceptsPatch: false},
+                {repository: MockData.jscRepositoryId(), acceptsPatch: false},
+                {repository: MockData.webkitRepositoryId(), acceptsPatch: true}
+            ]},
         ]
     };
     return MockData.addMockData(TestServer.database()).then(() => {
@@ -274,14 +279,14 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
-    it('should return "AmbigiousRevision" when there are multiple commits that match the specified revision string', () => {
+    it('should return "AmbiguousRevision" when there are multiple commits that match the specified revision string', () => {
         return addTriggerableAndCreateTask('some task', ['2ceda45d3cd63cde58d0dbf5767714e03d902e43', '2c71a8ddc1f661663ccfd1a29c633ba57e879533']).then((taskId) => {
             const webkit = Repository.all().find((repository) => repository.name() == 'WebKit');
             const revisionSets = [{[webkit.id()]: {revision: '2ceda'}}, {[webkit.id()]: {revision: '2c'}}];
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, revisionSets}).then((content) => {
                 assert(false, 'should never be reached');
             }, (error) => {
-                assert.equal(error, 'AmbigiousRevision');
+                assert.equal(error, 'AmbiguousRevision');
             });
         });
     });
@@ -342,6 +347,70 @@ describe('/privileged-api/create-test-group', function () {
             }, (error) => {
                 assert.equal(error, 'DuplicateTestGroupName');
             });
+        });
+    });
+
+    it('should return "InvalidOwnerRevision" when commit ownership is not valid', () => {
+        let taskId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            const jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191621'}},
+                {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '191622'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then(() => {
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'InvalidOwnerRevision');
+        });
+    });
+
+    it('should return "InvalidCommitOwnership" when commit ownership is not valid', () => {
+        let taskId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            const jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '191622'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then(() => {
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'InvalidCommitOwnership');
+        });
+    });
+
+    it('should return "CommitOwnerMustExistInCommitSet" when owner of a commit is missing in the commit set', () => {
+        let taskId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            const jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then(() => {
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'CommitOwnerMustExistInCommitSet');
+        });
+    });
+
+    it('should return "CommitOwnerMustExistInCommitSet" when repository of owner commit is not specified at all', () => {
+        let taskId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            const macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            const jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then(() => {
+            assert(false, 'should never be reached');
+        }, (error) => {
+            assert.equal(error, 'CommitOwnerMustExistInCommitSet');
         });
     });
 
@@ -582,7 +651,7 @@ describe('/privileged-api/create-test-group', function () {
         });
     });
 
-    it('should create a test group with a patch', () => {
+    it('should create a build test group with a patch', () => {
         let taskId;
         let webkit;
         let macos;
@@ -647,6 +716,346 @@ describe('/privileged-api/create-test-group', function () {
             assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
             assert.equal(set0.patchForRepository(macos), null);
             assert.equal(set1.patchForRepository(macos), null);
+            assert(!set0.equals(set1));
+        });
+    });
+
+    it('should create a build test group with a owned commits even when one of group does not contain an owned commit', () => {
+        let taskId;
+        let webkit;
+        let jsc;
+        let macos;
+        let insertedGroupId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}},
+                {[webkit.id()]: {revision: '192736'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then((content) => {
+            insertedGroupId = content['testGroupId'];
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group.id(), insertedGroupId);
+            assert.equal(group.repetitionCount(), 2);
+            assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            const requests = group.buildRequests();
+            assert.equal(requests.length, 6);
+
+            assert.equal(requests[0].isBuild(), true);
+            assert.equal(requests[1].isBuild(), true);
+            assert.equal(requests[2].isBuild(), false);
+            assert.equal(requests[3].isBuild(), false);
+            assert.equal(requests[4].isBuild(), false);
+            assert.equal(requests[5].isBuild(), false);
+
+            assert.equal(requests[0].isTest(), false);
+            assert.equal(requests[1].isTest(), false);
+            assert.equal(requests[2].isTest(), true);
+            assert.equal(requests[3].isTest(), true);
+            assert.equal(requests[4].isTest(), true);
+            assert.equal(requests[5].isTest(), true);
+
+            const set0 = requests[0].commitSet();
+            const set1 = requests[1].commitSet();
+            assert.equal(requests[2].commitSet(), set0);
+            assert.equal(requests[3].commitSet(), set1);
+            assert.equal(requests[4].commitSet(), set0);
+            assert.equal(requests[5].commitSet(), set1);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepEqual(set1.customRoots(), []);
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '192736');
+            assert.equal(set0.patchForRepository(webkit), null);
+            assert.equal(set1.patchForRepository(webkit), null);
+            assert.equal(set0.requiresBuildForRepository(webkit), false);
+            assert.equal(set1.requiresBuildForRepository(webkit), false);
+            assert.equal(set0.revisionForRepository(macos), '15A284');
+            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.equal(set0.patchForRepository(macos), null);
+            assert.equal(set1.patchForRepository(macos), null);
+            assert.equal(set0.requiresBuildForRepository(macos), false);
+            assert.equal(set1.requiresBuildForRepository(macos), false);
+            assert.equal(set0.revisionForRepository(jsc), null);
+            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.equal(set0.patchForRepository(jsc), null);
+            assert.equal(set1.patchForRepository(jsc), null);
+            assert.equal(set0.ownerRevisionForRepository(jsc), null);
+            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert(!set0.equals(set1));
+        });
+    });
+
+    it('should create a test group with a owned commits even when no patch is specified', () => {
+        let taskId;
+        let webkit;
+        let jsc;
+        let macos;
+        let insertedGroupId;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[webkit.id()]: {revision: '192736'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then((content) => {
+            insertedGroupId = content['testGroupId'];
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group.id(), insertedGroupId);
+            assert.equal(group.repetitionCount(), 2);
+            assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            const requests = group.buildRequests();
+            assert.equal(requests.length, 6);
+
+            assert.equal(requests[0].isBuild(), true);
+            assert.equal(requests[1].isBuild(), true);
+            assert.equal(requests[2].isBuild(), false);
+            assert.equal(requests[3].isBuild(), false);
+            assert.equal(requests[4].isBuild(), false);
+            assert.equal(requests[5].isBuild(), false);
+
+            assert.equal(requests[0].isTest(), false);
+            assert.equal(requests[1].isTest(), false);
+            assert.equal(requests[2].isTest(), true);
+            assert.equal(requests[3].isTest(), true);
+            assert.equal(requests[4].isTest(), true);
+            assert.equal(requests[5].isTest(), true);
+
+            const set0 = requests[0].commitSet();
+            const set1 = requests[1].commitSet();
+            assert.equal(requests[2].commitSet(), set0);
+            assert.equal(requests[3].commitSet(), set1);
+            assert.equal(requests[4].commitSet(), set0);
+            assert.equal(requests[5].commitSet(), set1);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepEqual(set1.customRoots(), []);
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '192736');
+            assert.equal(set0.patchForRepository(webkit), null);
+            assert.equal(set1.patchForRepository(webkit), null);
+            assert.equal(set0.requiresBuildForRepository(webkit), false);
+            assert.equal(set1.requiresBuildForRepository(webkit), false);
+            assert.equal(set0.revisionForRepository(macos), '15A284');
+            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.equal(set0.patchForRepository(macos), null);
+            assert.equal(set1.patchForRepository(macos), null);
+            assert.equal(set0.requiresBuildForRepository(macos), false);
+            assert.equal(set1.requiresBuildForRepository(macos), false);
+            assert.equal(set0.revisionForRepository(jsc), 'owned-jsc-6161');
+            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.equal(set0.patchForRepository(jsc), null);
+            assert.equal(set1.patchForRepository(jsc), null);
+            assert.equal(set0.ownerRevisionForRepository(jsc), '191622');
+            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.equal(set0.requiresBuildForRepository(jsc), true);
+            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert(!set0.equals(set1));
+        });
+    });
+
+    it('should create a test group with a owned commits and a patch', () => {
+        let taskId;
+        let webkit;
+        let macos;
+        let jsc;
+        let insertedGroupId;
+        let uploadedFile;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore')[0];
+            return TemporaryFile.makeTemporaryFile('some.dat', 'some content');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((response) => {
+            const rawFile = response['uploadedFile'];
+            uploadedFile = UploadedFile.ensureSingleton(rawFile.id, rawFile);
+            const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[webkit.id()]: {revision: '192736', patch: uploadedFile.id()}, [macos.id()]: {revision: '15A284'}, [jsc.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then((content) => {
+            insertedGroupId = content['testGroupId'];
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group.id(), insertedGroupId);
+            assert.equal(group.repetitionCount(), 2);
+            assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            const requests = group.buildRequests();
+            assert.equal(requests.length, 6);
+
+            assert.equal(requests[0].isBuild(), true);
+            assert.equal(requests[1].isBuild(), true);
+            assert.equal(requests[2].isBuild(), false);
+            assert.equal(requests[3].isBuild(), false);
+            assert.equal(requests[4].isBuild(), false);
+            assert.equal(requests[5].isBuild(), false);
+
+            assert.equal(requests[0].isTest(), false);
+            assert.equal(requests[1].isTest(), false);
+            assert.equal(requests[2].isTest(), true);
+            assert.equal(requests[3].isTest(), true);
+            assert.equal(requests[4].isTest(), true);
+            assert.equal(requests[5].isTest(), true);
+
+            const set0 = requests[0].commitSet();
+            const set1 = requests[1].commitSet();
+            assert.equal(requests[2].commitSet(), set0);
+            assert.equal(requests[3].commitSet(), set1);
+            assert.equal(requests[4].commitSet(), set0);
+            assert.equal(requests[5].commitSet(), set1);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, webkit, macos]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, webkit, macos]);
+            assert.deepEqual(set1.customRoots(), []);
+
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '192736');
+            assert.equal(set0.patchForRepository(webkit), null);
+            assert.equal(set1.patchForRepository(webkit), uploadedFile);
+            assert.equal(set0.ownerRevisionForRepository(webkit), null);
+            assert.equal(set1.ownerRevisionForRepository(webkit), null);
+            assert.equal(set0.requiresBuildForRepository(webkit), true);
+            assert.equal(set1.requiresBuildForRepository(webkit), true);
+
+            assert.equal(set0.revisionForRepository(macos), '15A284');
+            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.equal(set0.patchForRepository(macos), null);
+            assert.equal(set1.patchForRepository(macos), null);
+            assert.equal(set0.ownerRevisionForRepository(macos), null);
+            assert.equal(set1.ownerRevisionForRepository(macos), null);
+            assert.equal(set0.requiresBuildForRepository(macos), false);
+            assert.equal(set1.requiresBuildForRepository(macos), false);
+
+            assert.equal(set0.revisionForRepository(jsc), 'owned-jsc-6161');
+            assert.equal(set1.revisionForRepository(jsc), 'owned-jsc-9191');
+            assert.equal(set0.patchForRepository(jsc), null);
+            assert.equal(set1.patchForRepository(jsc), null);
+            assert.equal(set0.ownerRevisionForRepository(jsc), '191622');
+            assert.equal(set1.ownerRevisionForRepository(jsc), '192736');
+            assert.equal(set0.requiresBuildForRepository(jsc), true);
+            assert.equal(set1.requiresBuildForRepository(jsc), true);
+            assert(!set0.equals(set1));
+        });
+    });
+
+    it('should still work even if components with same name but one is owned, one is not', () => {
+        let taskId;
+        let webkit;
+        let macos;
+        let jsc;
+        let ownedJSC;
+        let insertedGroupId;
+        let uploadedFile;
+        return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
+            return MockData.addAnotherTriggerable(TestServer.database());
+        }).then(() => {
+            webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+            macos = Repository.all().filter((repository) => repository.name() == 'macOS')[0];
+            jsc = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore' && !repository.ownerId())[0];
+            ownedJSC = Repository.all().filter((repository) => repository.name() == 'JavaScriptCore' && repository.ownerId())[0];
+            return TemporaryFile.makeTemporaryFile('some.dat', 'some content');
+        }).then((stream) => {
+            return PrivilegedAPI.sendRequest('upload-file', {newFile: stream}, {useFormData: true});
+        }).then((response) => {
+            const rawFile = response['uploadedFile'];
+            uploadedFile = UploadedFile.ensureSingleton(rawFile.id, rawFile);
+            const revisionSets = [{[jsc.id()]: {revision: 'jsc-6161'}, [webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}, [ownedJSC.id()]: {revision: 'owned-jsc-6161', ownerRevision: '191622'}},
+                {[jsc.id()]: {revision: 'jsc-9191'}, [webkit.id()]: {revision: '192736', patch: uploadedFile.id()}, [macos.id()]: {revision: '15A284'}, [ownedJSC.id()]: {revision: 'owned-jsc-9191', ownerRevision: '192736'}}];
+            return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
+        }).then((content) => {
+            insertedGroupId = content['testGroupId'];
+            return TestGroup.fetchForTask(taskId, true);
+        }).then((testGroups) => {
+            assert.equal(testGroups.length, 1);
+            const group = testGroups[0];
+            assert.equal(group.id(), insertedGroupId);
+            assert.equal(group.repetitionCount(), 2);
+            assert.equal(group.test(), Test.findById(MockData.someTestId()));
+            assert.equal(group.platform(), Platform.findById(MockData.somePlatformId()));
+            const requests = group.buildRequests();
+            assert.equal(requests.length, 6);
+
+            assert.equal(requests[0].isBuild(), true);
+            assert.equal(requests[1].isBuild(), true);
+            assert.equal(requests[2].isBuild(), false);
+            assert.equal(requests[3].isBuild(), false);
+            assert.equal(requests[4].isBuild(), false);
+            assert.equal(requests[5].isBuild(), false);
+
+            assert.equal(requests[0].isTest(), false);
+            assert.equal(requests[1].isTest(), false);
+            assert.equal(requests[2].isTest(), true);
+            assert.equal(requests[3].isTest(), true);
+            assert.equal(requests[4].isTest(), true);
+            assert.equal(requests[5].isTest(), true);
+
+            const set0 = requests[0].commitSet();
+            const set1 = requests[1].commitSet();
+            assert.equal(requests[2].commitSet(), set0);
+            assert.equal(requests[3].commitSet(), set1);
+            assert.equal(requests[4].commitSet(), set0);
+            assert.equal(requests[5].commitSet(), set1);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [jsc, ownedJSC, webkit, macos]);
+            assert.deepEqual(set0.customRoots(), []);
+            assert.deepEqual(Repository.sortByNamePreferringOnesWithURL(set1.repositories()), [jsc, ownedJSC, webkit, macos]);
+            assert.deepEqual(set1.customRoots(), []);
+
+            assert.equal(set0.revisionForRepository(webkit), '191622');
+            assert.equal(set1.revisionForRepository(webkit), '192736');
+            assert.equal(set0.patchForRepository(webkit), null);
+            assert.equal(set1.patchForRepository(webkit), uploadedFile);
+            assert.equal(set0.ownerRevisionForRepository(webkit), null);
+            assert.equal(set1.ownerRevisionForRepository(webkit), null);
+            assert.equal(set0.requiresBuildForRepository(webkit), true);
+            assert.equal(set1.requiresBuildForRepository(webkit), true);
+
+            assert.equal(set0.revisionForRepository(macos), '15A284');
+            assert.equal(set0.revisionForRepository(macos), set1.revisionForRepository(macos));
+            assert.equal(set0.commitForRepository(macos), set1.commitForRepository(macos));
+            assert.equal(set0.patchForRepository(macos), null);
+            assert.equal(set1.patchForRepository(macos), null);
+            assert.equal(set0.ownerRevisionForRepository(macos), null);
+            assert.equal(set1.ownerRevisionForRepository(macos), null);
+            assert.equal(set0.requiresBuildForRepository(macos), false);
+            assert.equal(set1.requiresBuildForRepository(macos), false);
+
+            assert.equal(set0.revisionForRepository(ownedJSC), 'owned-jsc-6161');
+            assert.equal(set1.revisionForRepository(ownedJSC), 'owned-jsc-9191');
+            assert.equal(set0.patchForRepository(ownedJSC), null);
+            assert.equal(set1.patchForRepository(ownedJSC), null);
+            assert.equal(set0.ownerRevisionForRepository(ownedJSC), '191622');
+            assert.equal(set1.ownerRevisionForRepository(ownedJSC), '192736');
+            assert.equal(set0.requiresBuildForRepository(ownedJSC), true);
+            assert.equal(set1.requiresBuildForRepository(ownedJSC), true);
+
+            assert.equal(set0.revisionForRepository(jsc), 'jsc-6161');
+            assert.equal(set1.revisionForRepository(jsc), 'jsc-9191');
+            assert.equal(set0.patchForRepository(jsc), null);
+            assert.equal(set1.patchForRepository(jsc), null);
+            assert.equal(set0.ownerRevisionForRepository(jsc), null);
+            assert.equal(set1.ownerRevisionForRepository(jsc), null);
+            assert.equal(set0.requiresBuildForRepository(jsc), false);
+            assert.equal(set1.requiresBuildForRepository(jsc), false);
             assert(!set0.equals(set1));
         });
     });
@@ -719,7 +1128,6 @@ describe('/privileged-api/create-test-group', function () {
         let taskId;
         let webkit;
         let macos;
-        let insertedGroupId;
         let uploadedFile;
         return addTriggerableAndCreateTask('some task').then((id) => taskId = id).then(() => {
             webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
@@ -731,7 +1139,7 @@ describe('/privileged-api/create-test-group', function () {
             const rawFile = response['uploadedFile'];
             uploadedFile = UploadedFile.ensureSingleton(rawFile.id, rawFile);
             const revisionSets = [{[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284', patch: uploadedFile.id()}},
-                {[webkit.id()]: {revision: '191622'}, [macos.id()]: {revision: '15A284'}}];
+                {[webkit.id()]: {revision: '192736'}, [macos.id()]: {revision: '15A284'}}];
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId, repetitionCount: 2, revisionSets});
         }).then(() => {
             assert(false, 'should never be reached');

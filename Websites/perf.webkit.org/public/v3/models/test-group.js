@@ -231,6 +231,7 @@ class TestGroup extends LabeledObject {
                 const patchFile = commitSet.patchForRepository(repository);
                 revisionSet[repository.id()] = {
                     revision: commitSet.revisionForRepository(repository),
+                    ownerRevision: commitSet.ownerRevisionForRepository(repository),
                     patch: patchFile ? patchFile.id() : null,
                 };
             }

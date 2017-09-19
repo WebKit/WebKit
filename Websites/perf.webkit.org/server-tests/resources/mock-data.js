@@ -13,6 +13,8 @@ MockData = {
     otherPlatformId() { return 101; },
     macosRepositoryId() { return 9; },
     webkitRepositoryId() { return 11; },
+    ownedJSCRepositoryId() { return 213; },
+    jscRepositoryId() { return 222; },
     gitWebkitRepositoryId() { return 111; },
     sharedRepositoryId() { return 14; },
     addMockConfiguration: function (db)
@@ -23,6 +25,8 @@ MockData = {
             db.insert('repositories', {id: this.macosRepositoryId(), name: 'macOS'}),
             db.insert('repositories', {id: this.webkitRepositoryId(), name: 'WebKit'}),
             db.insert('repositories', {id: this.sharedRepositoryId(), name: 'Shared'}),
+            db.insert('repositories', {id: this.ownedJSCRepositoryId(), owner: this.webkitRepositoryId(), name: 'JavaScriptCore'}),
+            db.insert('repositories', {id: this.jscRepositoryId(), name: 'JavaScriptCore'}),
             db.insert('triggerable_repository_groups', {id: 2001, name: 'webkit-svn', triggerable: 1000}),
             db.insert('triggerable_repositories', {repository: this.macosRepositoryId(), group: 2001}),
             db.insert('triggerable_repositories', {repository: this.webkitRepositoryId(), group: 2001}),
@@ -31,6 +35,12 @@ MockData = {
             db.insert('commits', {id: 96336, repository: this.webkitRepositoryId(), revision: '192736', time: (new Date(1448225325650)).toISOString()}),
             db.insert('commits', {id: 111168, repository: this.sharedRepositoryId(), revision: '80229', time: '2016-03-02T23:17:54.3Z'}),
             db.insert('commits', {id: 111169, repository: this.sharedRepositoryId(), revision: '80230', time: '2016-03-02T23:37:18.0Z'}),
+            db.insert('commits', {id: 11797, repository: this.jscRepositoryId(), revision: 'jsc-6161', time: '2016-03-02T23:19:55.3Z'}),
+            db.insert('commits', {id: 12017, repository: this.jscRepositoryId(), revision: 'jsc-9191', time: '2016-05-02T23:13:57.1Z'}),
+            db.insert('commits', {id: 1797, repository: this.ownedJSCRepositoryId(), revision: 'owned-jsc-6161', time: '2016-03-02T23:19:55.3Z'}),
+            db.insert('commits', {id: 2017, repository: this.ownedJSCRepositoryId(), revision: 'owned-jsc-9191', time: '2016-05-02T23:13:57.1Z'}),
+            db.insert('commit_ownerships', {owner: 93116, owned: 1797}),
+            db.insert('commit_ownerships', {owner: 96336, owned: 2017}),
             db.insert('builds', {id: 901, number: '901', time: '2015-10-27T12:05:27.1Z'}),
             db.insert('platforms', {id: MockData.somePlatformId(), name: 'some platform'}),
             db.insert('platforms', {id: MockData.otherPlatformId(), name: 'other platform'}),
@@ -61,6 +71,15 @@ MockData = {
             db.insert('build_requests', {id: 701, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 1, commit_set: 402}),
             db.insert('build_requests', {id: 702, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 2, commit_set: 401}),
             db.insert('build_requests', {id: 703, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 600, order: 3, commit_set: 402}),
+        ]);
+    },
+    addAnotherTriggerable(db) {
+        return Promise.all([
+            db.insert('build_triggerables', {id: 2345, name: 'build-webkit-jsc'}),
+            db.insert('triggerable_repository_groups', {id: 4002, name: 'mac-svnwebkit-jsc', triggerable: 2345}),
+            db.insert('triggerable_repositories', {repository: this.macosRepositoryId(), group: 4002}),
+            db.insert('triggerable_repositories', {repository: this.webkitRepositoryId(), group: 4002}),
+            db.insert('triggerable_repositories', {repository: this.jscRepositoryId(), group: 4002}),
         ]);
     },
     addEmptyTriggerable(db)
@@ -112,6 +131,32 @@ MockData = {
             db.insert('build_requests', {id: 710, status: statusList[0], triggerable, repository_group, platform, test, group: 601, order: 0, commit_set: 401}),
             db.insert('build_requests', {id: 712, status: statusList[2], triggerable, repository_group, platform, test, group: 601, order: 2, commit_set: 401}),
             db.insert('build_requests', {id: 711, status: statusList[1], triggerable, repository_group, platform, test, group: 601, order: 1, commit_set: 402}),
+        ]);
+    },
+    addTestGroupWithOwnedCommits(db, statusList)
+    {
+
+        if (!statusList)
+            statusList = ['pending', 'pending', 'pending', 'pending'];
+        return Promise.all([
+            this.addMockConfiguration(db),
+            this.addAnotherTriggerable(db),
+            db.insert('analysis_tasks', {id: 1080, platform: 65, metric: 300, name: 'some task with component test',
+                start_run: 801, start_run_time: '2015-10-27T12:05:27.1Z',
+                end_run: 801, end_run_time: '2015-10-27T12:05:27.1Z'}),
+            db.insert('analysis_test_groups', {id: 900, task: 1080, name: 'some test group with component test'}),
+            db.insert('commit_sets', {id: 403}),
+            db.insert('commit_set_items', {set: 403, commit: 87832}),
+            db.insert('commit_set_items', {set: 403, commit: 93116}),
+            db.insert('commit_set_items', {set: 403, commit: 1797, commit_owner: 93116, requires_build: true}),
+            db.insert('commit_sets', {id: 404}),
+            db.insert('commit_set_items', {set: 404, commit: 87832}),
+            db.insert('commit_set_items', {set: 404, commit: 96336}),
+            db.insert('commit_set_items', {set: 404, commit: 2017, commit_owner: 96336, requires_build: true}),
+            db.insert('build_requests', {id: 704, status: statusList[0], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 0, commit_set: 403}),
+            db.insert('build_requests', {id: 705, status: statusList[1], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 1, commit_set: 404}),
+            db.insert('build_requests', {id: 706, status: statusList[2], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 2, commit_set: 403}),
+            db.insert('build_requests', {id: 707, status: statusList[3], triggerable: 1000, repository_group: 2001, platform: 65, test: 200, group: 900, order: 3, commit_set: 404}),
         ]);
     },
     mockTestSyncConfigWithSingleBuilder: function ()
