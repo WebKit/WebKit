@@ -263,7 +263,7 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     if (!inputVideoTexture)
         return false;
 
-    GC3DStateSaver stateSaver(&m_context.get());
+    GC3DStateSaver stateSaver(m_context.get());
 
     if (!m_program) {
         if (!initializeContextObjects()) {
@@ -271,6 +271,8 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
             return false;
         }
     }
+
+    stateSaver.saveVertexAttribState(m_positionAttributeLocation);
 
     GLfloat lowerLeft[2] = { 0, 0 };
     GLfloat lowerRight[2] = { 0, 0 };
@@ -343,25 +345,42 @@ bool VideoTextureCopierCV::copyVideoTextureToPlatformTexture(TextureType inputVi
     return true;
 }
 
-VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver(GraphicsContext3D* context)
+VideoTextureCopierCV::GC3DStateSaver::GC3DStateSaver(GraphicsContext3D& context)
     : m_context(context)
 {
-    ASSERT(context);
-    m_context->getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &m_texture);
-    m_context->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &m_framebuffer);
-    m_context->getIntegerv(GraphicsContext3D::CURRENT_PROGRAM, &m_program);
-    m_context->getIntegerv(GraphicsContext3D::ARRAY_BUFFER_BINDING, &m_arrayBuffer);
-    m_context->getIntegerv(GraphicsContext3D::VIEWPORT, m_viewport);
+    m_context.getIntegerv(GraphicsContext3D::TEXTURE_BINDING_2D, &m_texture);
+    m_context.getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &m_framebuffer);
+    m_context.getIntegerv(GraphicsContext3D::CURRENT_PROGRAM, &m_program);
+    m_context.getIntegerv(GraphicsContext3D::ARRAY_BUFFER_BINDING, &m_arrayBuffer);
+    m_context.getIntegerv(GraphicsContext3D::VIEWPORT, m_viewport);
+
 }
 
 VideoTextureCopierCV::GC3DStateSaver::~GC3DStateSaver()
 {
-    m_context->bindTexture(GraphicsContext3D::TEXTURE_BINDING_2D, m_texture);
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebuffer);
-    m_context->useProgram(m_program);
-    m_context->bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_arrayBuffer);
-    m_context->viewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
+    if (m_vertexAttribEnabled)
+        m_context.enableVertexAttribArray(m_vertexAttribIndex);
+    else
+        m_context.disableVertexAttribArray(m_vertexAttribIndex);
+
+    m_context.bindBuffer(GraphicsContext3D::ARRAY_BUFFER, m_arrayBuffer);
+    m_context.vertexAttribPointer(m_vertexAttribIndex, m_vertexAttribSize, m_vertexAttribType, m_vertexAttribNormalized, m_vertexAttribStride, m_vertexAttribPointer);
+
+    m_context.bindTexture(GraphicsContext3D::TEXTURE_BINDING_2D, m_texture);
+    m_context.bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_framebuffer);
+    m_context.useProgram(m_program);
+    m_context.viewport(m_viewport[0], m_viewport[1], m_viewport[2], m_viewport[3]);
 }
 
+void VideoTextureCopierCV::GC3DStateSaver::saveVertexAttribState(GC3Duint index)
+{
+    m_vertexAttribIndex = index;
+    m_context.getVertexAttribiv(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_ENABLED, &m_vertexAttribEnabled);
+    m_context.getVertexAttribiv(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_SIZE, &m_vertexAttribSize);
+    m_context.getVertexAttribiv(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_TYPE, &m_vertexAttribType);
+    m_context.getVertexAttribiv(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_NORMALIZED, &m_vertexAttribNormalized);
+    m_context.getVertexAttribiv(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_STRIDE, &m_vertexAttribStride);
+    m_vertexAttribPointer = m_context.getVertexAttribOffset(index, GraphicsContext3D::VERTEX_ATTRIB_ARRAY_POINTER);
+}
 
 }
