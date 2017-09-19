@@ -268,7 +268,7 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    const sameRepositoryNameInSubCommitAndMajorCommit = {
+    const sameRepositoryNameInOwnedCommitAndMajorCommit = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
         "commits": [
@@ -276,7 +276,7 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16D32",
                 "order": 1,
-                "subCommits": {
+                "ownedCommits": {
                     "WebKit": {
                         "revision": "141978",
                         "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
@@ -299,8 +299,8 @@ describe("/api/report-commits/", function () {
     }
 
     it("should distinguish between repositories with the same name but with a different owner.", () => {
-        return addSlaveForReport(sameRepositoryNameInSubCommitAndMajorCommit).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInSubCommitAndMajorCommit);
+        return addSlaveForReport(sameRepositoryNameInOwnedCommitAndMajorCommit).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', sameRepositoryNameInOwnedCommitAndMajorCommit);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
             return TestServer.database().selectRows('repositories', {'name': 'WebKit'});
@@ -314,7 +314,7 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    const systemVersionCommitWithSubcommits = {
+    const systemVersionCommitWithOwnedCommits = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
         "commits": [
@@ -322,7 +322,7 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16D32",
                 "order": 1,
-                "subCommits": {
+                "ownedCommits": {
                     "WebKit": {
                         "revision": "141978",
                         "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
@@ -338,10 +338,10 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should accept inserting one commit with some sub commits", () => {
+    it("should accept inserting one commit with some owned commits", () => {
         const db = TestServer.database();
-        return addSlaveForReport(systemVersionCommitWithSubcommits).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithSubcommits);
+        return addSlaveForReport(systemVersionCommitWithOwnedCommits).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithOwnedCommits);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
@@ -402,7 +402,7 @@ describe("/api/report-commits/", function () {
         });
     })
 
-    const multipleSystemVersionCommitsWithSubcommits = {
+    const multipleSystemVersionCommitsWithOwnedCommits = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
         "commits": [
@@ -410,7 +410,7 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16D32",
                 "order": 2,
-                "subCommits": {
+                "ownedCommits": {
                     "WebKit": {
                         "revision": "141978",
                         "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
@@ -427,7 +427,7 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16C67",
                 "order": 1,
-                "subCommits": {
+                "ownedCommits": {
                     "WebKit": {
                         "revision": "141978",
                         "author": {"name": "Commit Queue", "account": "commit-queue@webkit.org"},
@@ -443,10 +443,10 @@ describe("/api/report-commits/", function () {
         ]
     };
 
-    it("should accept inserting multiple commits with multiple sub-commits", () => {
+    it("should accept inserting multiple commits with multiple owned-commits", () => {
         const db = TestServer.database();
-        return addSlaveForReport(multipleSystemVersionCommitsWithSubcommits).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report-commits/', multipleSystemVersionCommitsWithSubcommits);
+        return addSlaveForReport(multipleSystemVersionCommitsWithOwnedCommits).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', multipleSystemVersionCommitsWithOwnedCommits);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
             return Promise.all([db.selectRows('commits', {'revision': 'Sierra16D32'}),
@@ -530,7 +530,7 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    const systemVersionCommitWithEmptySubcommits = {
+    const systemVersionCommitWithEmptyOwnedCommits = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
         "commits": [
@@ -538,15 +538,15 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16D32",
                 "order": 1,
-                "subCommits": {
+                "ownedCommits": {
                 }
             }
         ]
     }
 
-    it("should accept inserting one commit with no sub commits", () => {
-        return addSlaveForReport(systemVersionCommitWithEmptySubcommits).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithEmptySubcommits);
+    it("should accept inserting one commit with no owned commits", () => {
+        return addSlaveForReport(systemVersionCommitWithEmptyOwnedCommits).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitWithEmptyOwnedCommits);
         }).then((response) => {
             assert.equal(response['status'], 'OK');
             const db = TestServer.database();
@@ -563,7 +563,7 @@ describe("/api/report-commits/", function () {
         });
     });
 
-    const systemVersionCommitAndSubcommitWithTimestamp = {
+    const systemVersionCommitAndOwnedCommitWithTimestamp = {
         "slaveName": "someSlave",
         "slavePassword": "somePassword",
         "commits": [
@@ -571,7 +571,7 @@ describe("/api/report-commits/", function () {
                 "repository": "OSX",
                 "revision": "Sierra16D32",
                 "order": 1,
-                "subCommits": {
+                "ownedCommits": {
                     "WebKit": {
                         "revision": "141978",
                         "time": "2013-02-06T08:55:20.9Z",
@@ -583,11 +583,11 @@ describe("/api/report-commits/", function () {
         ]
     }
 
-    it("should reject inserting one commit with sub commits that contains timestamp", () => {
-        return addSlaveForReport(systemVersionCommitAndSubcommitWithTimestamp).then(() => {
-            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitAndSubcommitWithTimestamp);
+    it("should reject inserting one commit with owned commits that contains timestamp", () => {
+        return addSlaveForReport(systemVersionCommitAndOwnedCommitWithTimestamp).then(() => {
+            return TestServer.remoteAPI().postJSON('/api/report-commits/', systemVersionCommitAndOwnedCommitWithTimestamp);
         }).then((response) => {
-            assert.equal(response['status'], 'SubCommitShouldNotContainTimestamp');
+            assert.equal(response['status'], 'OwnedCommitShouldNotContainTimestamp');
         });
     });
 });

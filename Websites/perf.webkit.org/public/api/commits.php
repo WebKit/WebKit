@@ -38,9 +38,9 @@ function main($paths) {
             $commits = $fetcher->fetch_latest_for_platform($repository_id, $platform_id);
         } else
             $commits = $fetcher->fetch_latest($repository_id);
-    } else if ($filter == 'sub-commits') {
+    } else if ($filter == 'owned-commits') {
         $owner_revision = array_get($_GET, 'owner-revision');
-        $commits = $fetcher->fetch_subcommits_for_revision($repository_id, $owner_revision);
+        $commits = $fetcher->fetch_owned_commits_for_revision($repository_id, $owner_revision);
     } else if ($filter == 'last-reported') {
         $from = array_get($_GET, 'from');
         $to = array_get($_GET, 'to');

@@ -60,12 +60,12 @@ function oldOSXCommit()
     });
 }
 
-function commitWithoutSubCommits()
+function commitWithoutOwnedCommits()
 {
     return new CommitLog(6, {
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E66',
-        ownsSubCommits: false,
+        ownsCommits: false,
         time: null,
     });
 }
@@ -75,7 +75,7 @@ function ownerCommit()
     return new CommitLog(5, {
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E65',
-        ownsSubCommits: true,
+        ownsCommits: true,
         time: null,
     });
 }
@@ -85,7 +85,7 @@ function otherOwnerCommit()
     return new CommitLog(5, {
         repository: MockModels.ownerRepository,
         revision: '10.11.4 15E66',
-        ownsSubCommits: true,
+        ownsCommits: true,
         time: null,
     });
 }
@@ -167,34 +167,34 @@ describe('CommitLog', function () {
         });
     });
 
-    describe('fetchSubCommits', () => {
+    describe('fetchOwnedCommits', () => {
         beforeEach(() => {
             MockRemoteAPI.inject();
         });
 
         it('should reject if repository of the commit does not own other repositories', () => {
             const commit = osxCommit();
-            return commit.fetchSubCommits().then(() => {
+            return commit.fetchOwnedCommits().then(() => {
                assert(false, 'Should not execute this line.');
             }, (error) => {
                 assert.equal(error, undefined);
             });
         });
 
-        it('should reject if commit does not own other sub-commits', () => {
-            const commit = commitWithoutSubCommits();
-            return commit.fetchSubCommits().then(() => {
+        it('should reject if commit does not own other owned-commits', () => {
+            const commit = commitWithoutOwnedCommits();
+            return commit.fetchOwnedCommits().then(() => {
                 assert(false, 'Should not execute this line.');
             }, (error) => {
                 assert.equal(error, undefined);
             });
         });
 
-        it('should return sub-commit for a valid commit revision', () => {
-            const fetchingPromise = ownerCommit().fetchSubCommits();
+        it('should return owned-commit for a valid commit revision', () => {
+            const fetchingPromise = ownerCommit().fetchOwnedCommits();
             const requests = MockRemoteAPI.requests;
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E65');
             assert.equal(requests[0].method, 'GET');
 
             requests[0].resolve({commits: [{
@@ -203,21 +203,21 @@ describe('CommitLog', function () {
                 revision: '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb',
                 time: +(new Date('2016-05-13T00:55:57.841344Z')),
             }]});
-            return fetchingPromise.then((subCommits) => {
-                assert.equal(subCommits.length, 1);
-                assert.equal(subCommits[0].repository(), MockModels.ownedRepository);
-                assert.equal(subCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
-                assert.equal(subCommits[0].id(), 233);
+            return fetchingPromise.then((ownedCommits) => {
+                assert.equal(ownedCommits.length, 1);
+                assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(ownedCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
+                assert.equal(ownedCommits[0].id(), 233);
             });
         });
 
-        it('should only fetch sub-commits exactly once', () => {
+        it('should only fetch owned-commits exactly once', () => {
             const commit = ownerCommit();
-            const fetchingPromise = commit.fetchSubCommits();
+            const fetchingPromise = commit.fetchOwnedCommits();
             const requests = MockRemoteAPI.requests;
-            let existingSubCommits = null;
+            let existingOwnedCommits = null;
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E65');
             assert.equal(requests[0].method, 'GET');
 
             MockRemoteAPI.requests[0].resolve({commits: [{
@@ -227,32 +227,32 @@ describe('CommitLog', function () {
                 time: +(new Date('2016-05-13T00:55:57.841344Z')),
             }]});
 
-            return fetchingPromise.then((subCommits) => {
-                existingSubCommits = subCommits;
-                assert.equal(subCommits.length, 1);
-                assert.equal(subCommits[0].repository(), MockModels.ownedRepository);
-                assert.equal(subCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
-                assert.equal(subCommits[0].id(), 233);
-                return commit.fetchSubCommits();
-            }).then((subCommits) => {
+            return fetchingPromise.then((ownedCommits) => {
+                existingOwnedCommits = ownedCommits;
+                assert.equal(ownedCommits.length, 1);
+                assert.equal(ownedCommits[0].repository(), MockModels.ownedRepository);
+                assert.equal(ownedCommits[0].revision(), '6f8b0dbbda95a440503b88db1dd03dad3a7b07fb');
+                assert.equal(ownedCommits[0].id(), 233);
+                return commit.fetchOwnedCommits();
+            }).then((ownedCommits) => {
                 assert.equal(requests.length, 1);
-                assert.equal(existingSubCommits, subCommits);
+                assert.equal(existingOwnedCommits, ownedCommits);
             });
         });
     });
 
-    describe('diffSubCommits', () => {
+    describe('diffOwnedCommits', () => {
         beforeEach(() => {
             MockRemoteAPI.reset();
         });
 
-        it('should return difference between 2 sub-commits', () => {
+        it('should return difference between 2 owned-commits', () => {
             const oneCommit = ownerCommit();
             const otherCommit = otherOwnerCommit();
-            const fetchingPromise = oneCommit.fetchSubCommits();
+            const fetchingPromise = oneCommit.fetchOwnedCommits();
             const requests = MockRemoteAPI.requests;
             assert.equal(requests.length, 1);
-            assert.equal(requests[0].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E65');
+            assert.equal(requests[0].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E65');
             assert.equal(requests[0].method, 'GET');
 
             requests[0].resolve({commits: [{
@@ -268,9 +268,9 @@ describe('CommitLog', function () {
             }]});
 
             return fetchingPromise.then(() => {
-                const otherFetchingPromise = otherCommit.fetchSubCommits();
+                const otherFetchingPromise = otherCommit.fetchOwnedCommits();
                 assert.equal(requests.length, 2);
-                assert.equal(requests[1].url, '../api/commits/111/sub-commits?owner-revision=10.11.4%2015E66');
+                assert.equal(requests[1].url, '../api/commits/111/owned-commits?owner-revision=10.11.4%2015E66');
                 assert.equal(requests[1].method, 'GET');
 
                 requests[1].resolve({commits: [{
@@ -287,7 +287,7 @@ describe('CommitLog', function () {
 
                 return otherFetchingPromise;
             }).then(() => {
-                const difference = CommitLog.diffSubCommits(oneCommit, otherCommit);
+                const difference = CommitLog.diffOwnedCommits(oneCommit, otherCommit);
                 assert.equal(difference.size, 1);
                 assert.equal(difference.keys().next().value, MockModels.ownedRepository);
             });

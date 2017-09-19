@@ -413,8 +413,8 @@ describe("/api/commits/", function () {
 
     });
 
-    describe('/api/commits/<repository>/sub-commits?owner-revision=<commit>', () => {
-        it("should return sub commits for a given commit", () => {
+    describe('/api/commits/<repository>/owned-commits?owner-revision=<commit>', () => {
+        it("should return owned commits for a given commit", () => {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'macOS'}),
@@ -423,19 +423,19 @@ describe("/api/commits/", function () {
                 db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true}),
                 db.insert('commit_ownerships', {'owner': 1, 'owned': 2})
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A323')
+                return TestServer.remoteAPI().getJSON('/api/commits/1/owned-commits?owner-revision=10.12%2016A323')
             }).then((results) => {
                 assert.equal(results.status, 'OK');
                 assert.equal(results.commits.length, 1);
 
-                const subCommit = results.commits[0];
-                assert.equal(subCommit.repository, 2);
-                assert.equal(subCommit.revision, '210950');
-                assert.equal(subCommit.id, 2);
+                const ownedCommit = results.commits[0];
+                assert.equal(ownedCommit.repository, 2);
+                assert.equal(ownedCommit.revision, '210950');
+                assert.equal(ownedCommit.id, 2);
             });
         });
 
-        it("should return an empty list of commits if no sub-commits is associated with given commit", () => {
+        it("should return an empty list of commits if no owned-commit is associated with given commit", () => {
             const db = TestServer.database();
             return Promise.all([
                 db.insert('repositories', {'id': 1, 'name': 'macOS'}),
@@ -443,7 +443,7 @@ describe("/api/commits/", function () {
                 db.insert('commits', {'id': 1, 'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
                 db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true})
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A323')
+                return TestServer.remoteAPI().getJSON('/api/commits/1/owned-commits?owner-revision=10.12%2016A323')
             }).then((results) => {
                 assert.equal(results.status, 'OK');
                 assert.deepEqual(results.commits, []);
@@ -458,7 +458,7 @@ describe("/api/commits/", function () {
                 db.insert('commits', {'id': 1, 'repository': 1, 'revision': '10.12 16A323', order: 1, 'reported': true}),
                 db.insert('commits', {'id': 2, 'repository': 2, 'revision': '210950', 'reported': true})
             ]).then(() => {
-                return TestServer.remoteAPI().getJSON('/api/commits/1/sub-commits?owner-revision=10.12%2016A324')
+                return TestServer.remoteAPI().getJSON('/api/commits/1/owned-commits?owner-revision=10.12%2016A324')
             }).then((results) => {
                 assert.equal(results.status, 'OK');
                 assert.equal(results.commits.length, 0);

@@ -77,10 +77,10 @@ class CommitLogViewer extends ComponentBase {
         this.renderReplace(this.content('commits-list'), (commits || []).map((commit) => {
             const label = commit.label();
             const url = commit.url();
-            const ownsSubCommits = previousCommit && previousCommit.ownsSubCommits() && commit.ownsSubCommits();
-            const subCommitDifferenceRow = ownsSubCommits ? element('tr', element('td', {colspan: 2}, new SubCommitViewer(previousCommit, commit))) : [];
+            const ownsCommits = previousCommit && previousCommit.ownsCommits() && commit.ownsCommits();
+            const ownedCommitDifferenceRow = ownsCommits ? element('tr', element('td', {colspan: 2}, new OwnedCommitViewer(previousCommit, commit))) : [];
             previousCommit = commit;
-            return [subCommitDifferenceRow,
+            return [ownedCommitDifferenceRow,
                 element('tr', [
                     element('th', [element('h4', {class: 'revision'}, url ? link(label, commit.title(), url) : label), commit.author() || '']),
                     element('td', commit.message() ? commit.message().substring(0, 80) : '')])];

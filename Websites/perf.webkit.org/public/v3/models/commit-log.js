@@ -11,7 +11,7 @@ class CommitLog extends DataModelObject {
         this._remoteId = rawData.id;
         if (this._remoteId)
             this.ensureNamedStaticMap('remoteId')[this._remoteId] = this;
-        this._subCommits = null;
+        this._ownedCommits = null;
     }
 
     updateSingleton(rawData)
@@ -25,8 +25,8 @@ class CommitLog extends DataModelObject {
             this._rawData.authorName = rawData.authorName;
         if (rawData.message)
             this._rawData.message = rawData.message;
-        if (rawData.ownsSubCommits)
-            this._rawData.ownsSubCommits = rawData.ownsSubCommits;
+        if (rawData.ownsCommits)
+            this._rawData.ownsCommits = rawData.ownsCommits;
     }
 
     repository() { return this._repository; }
@@ -35,7 +35,7 @@ class CommitLog extends DataModelObject {
     revision() { return this._rawData['revision']; }
     message() { return this._rawData['message']; }
     url() { return this._repository.urlForRevision(this._rawData['revision']); }
-    ownsSubCommits() { return this._rawData['ownsSubCommits']; }
+    ownsCommits() { return this._rawData['ownsCommits']; }
 
     label()
     {
@@ -86,48 +86,48 @@ class CommitLog extends DataModelObject {
         });
     }
 
-    fetchSubCommits()
+    fetchOwnedCommits()
     {
         if (!this.repository().ownedRepositories())
             return Promise.reject();
 
-        if (!this.ownsSubCommits())
+        if (!this.ownsCommits())
             return Promise.reject();
 
-        if (this._subCommits)
-            return Promise.resolve(this._subCommits);
+        if (this._ownedCommits)
+            return Promise.resolve(this._ownedCommits);
 
-        return CommitLog.cachedFetch(`../api/commits/${this.repository().id()}/sub-commits?owner-revision=${escape(this.revision())}`).then((data) => {
-            this._subCommits = CommitLog._constructFromRawData(data);
-            return this._subCommits;
+        return CommitLog.cachedFetch(`../api/commits/${this.repository().id()}/owned-commits?owner-revision=${escape(this.revision())}`).then((data) => {
+            this._ownedCommits = CommitLog._constructFromRawData(data);
+            return this._ownedCommits;
         });
     }
 
-    _buildSubCommitMap()
+    _buildOwnedCommitMap()
     {
-        const subCommitMap = new Map;
-        for (const commit of this._subCommits)
-            subCommitMap.set(commit.repository(), commit);
-        return subCommitMap;
+        const ownedCommitMap = new Map;
+        for (const commit of this._ownedCommits)
+            ownedCommitMap.set(commit.repository(), commit);
+        return ownedCommitMap;
     }
 
-    static diffSubCommits(previousCommit, currentCommit)
+    static diffOwnedCommits(previousCommit, currentCommit)
     {
         console.assert(previousCommit);
         console.assert(currentCommit);
-        console.assert(previousCommit._subCommits);
-        console.assert(currentCommit._subCommits);
+        console.assert(previousCommit._ownedCommits);
+        console.assert(currentCommit._ownedCommits);
 
-        const previousSubCommitMap = previousCommit._buildSubCommitMap();
-        const currentSubCommitMap = currentCommit._buildSubCommitMap();
-        const subCommitRepositories = new Set([...currentSubCommitMap.keys(), ...previousSubCommitMap.keys()]);
+        const previousOwnedCommitMap = previousCommit._buildOwnedCommitMap();
+        const currentOwnedCommitMap = currentCommit._buildOwnedCommitMap();
+        const ownedCommitRepositories = new Set([...currentOwnedCommitMap.keys(), ...previousOwnedCommitMap.keys()]);
         const difference = new Map;
 
-        subCommitRepositories.forEach((subCommitRepository) => {
-            const currentRevision = currentSubCommitMap.get(subCommitRepository);
-            const previousRevision = previousSubCommitMap.get(subCommitRepository);
+        ownedCommitRepositories.forEach((ownedCommitRepository) => {
+            const currentRevision = currentOwnedCommitMap.get(ownedCommitRepository);
+            const previousRevision = previousOwnedCommitMap.get(ownedCommitRepository);
             if (currentRevision != previousRevision)
-                difference.set(subCommitRepository, [previousRevision, currentRevision]);
+                difference.set(ownedCommitRepository, [previousRevision, currentRevision]);
         });
 
         return difference;

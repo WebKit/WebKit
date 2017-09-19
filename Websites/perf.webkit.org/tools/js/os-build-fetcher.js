@@ -56,9 +56,9 @@ class OSBuildFetcher {
                 const label = 'name' in command ? `"${command['name']}"` : `"command['minRevision']" to "command['maxRevision']"`;
                 this._logger.log(`Found ${commits.length} builds for ${label}`);
 
-                if ('subCommitCommand' in command) {
-                    this._logger.log(`Resolving subcommits for "${label}"`);
-                    return this._addSubCommitsForBuild(commits, command['subCommitCommand']);
+                if ('ownedCommitCommand' in command) {
+                    this._logger.log(`Resolving ownedCommits for "${label}"`);
+                    return this._addOwnedCommitsForBuild(commits, command['ownedCommitCommand']);
                 }
 
                 return commits;
@@ -91,17 +91,17 @@ class OSBuildFetcher {
         });
     }
 
-    _addSubCommitsForBuild(commits, command)
+    _addOwnedCommitsForBuild(commits, command)
     {
         return mapInSerialPromiseChain(commits, (commit) => {
-            return this._subprocess.execute(command.concat(commit['revision'])).then((subCommitOutput) => {
-                const subCommits = JSON.parse(subCommitOutput);
-                for (let repositoryName in subCommits) {
-                    const subCommit = subCommits[repositoryName];
-                    assert.deepEqual(Object.keys(subCommit), ['revision']);
-                    assert(typeof(subCommit['revision']) == 'string');
+            return this._subprocess.execute(command.concat(commit['revision'])).then((ownedCommitOutput) => {
+                const ownedCommits = JSON.parse(ownedCommitOutput);
+                for (let repositoryName in ownedCommits) {
+                    const ownedCommit = ownedCommits[repositoryName];
+                    assert.deepEqual(Object.keys(ownedCommit), ['revision']);
+                    assert(typeof(ownedCommit['revision']) == 'string');
                 }
-                commit['subCommits'] = subCommits;
+                commit['ownedCommits'] = ownedCommits;
                 return commit;
             });
         });

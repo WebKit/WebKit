@@ -1,14 +1,14 @@
-class SubCommitViewer extends ComponentBase {
+class OwnedCommitViewer extends ComponentBase {
 
     constructor(previousCommit, currentCommit)
     {
-        super('sub-commit-viewer');
+        super('owned-commit-viewer');
         this._previousCommit = previousCommit;
         this._currentCommit = currentCommit;
-        this._previousSubCommits = null;
-        this._currentSubCommits = null;
-        this._showingSubCommits = false;
-        this._renderSubCommitTableLazily = new LazilyEvaluatedFunction(this._renderSubcommitTable.bind(this));
+        this._previousOwnedCommits = null;
+        this._currentOwnedCommits = null;
+        this._showingOwnedCommits = false;
+        this._renderOwnedCommitTableLazily = new LazilyEvaluatedFunction(this._renderOwnedCommitTable.bind(this));
     }
 
     didConstructShadowTree()
@@ -18,32 +18,32 @@ class SubCommitViewer extends ComponentBase {
 
     _toggleVisibility(expanded)
     {
-        this._showingSubCommits = expanded;
+        this._showingOwnedCommits = expanded;
         this.enqueueToRender();
 
-        Promise.all([this._previousCommit.fetchSubCommits(), this._currentCommit.fetchSubCommits()]).then((subCommitsList) => {
-            this._previousSubCommits = subCommitsList[0];
-            this._currentSubCommits = subCommitsList[1];
+        Promise.all([this._previousCommit.fetchOwnedCommits(), this._currentCommit.fetchOwnedCommits()]).then((ownedCommitsList) => {
+            this._previousOwnedCommits = ownedCommitsList[0];
+            this._currentOwnedCommits = ownedCommitsList[1];
             this.enqueueToRender();
         });
     }
 
     render()
     {
-        const hideSpinner = (this._previousSubCommits && this._currentSubCommits) || !this._showingSubCommits;
+        const hideSpinner = (this._previousOwnedCommits && this._currentOwnedCommits) || !this._showingOwnedCommits;
 
-        this.content('difference-entries').style.display =  this._showingSubCommits ? null : 'none';
+        this.content('difference-entries').style.display =  this._showingOwnedCommits ? null : 'none';
         this.content('spinner-container').style.display = hideSpinner ? 'none' : null;
-        this.content('difference-table').style.display = this._showingSubCommits ? null : 'none';
-        this._renderSubCommitTableLazily.evaluate(this._previousSubCommits, this._currentSubCommits);
+        this.content('difference-table').style.display = this._showingOwnedCommits ? null : 'none';
+        this._renderOwnedCommitTableLazily.evaluate(this._previousOwnedCommits, this._currentOwnedCommits);
     }
 
-    _renderSubcommitTable(previousSubCommits, currentSubCommits)
+    _renderOwnedCommitTable(previousOwnedCommits, currentOwnedCommits)
     {
-        if (!previousSubCommits || !currentSubCommits)
+        if (!previousOwnedCommits || !currentOwnedCommits)
             return;
 
-        const difference = CommitLog.diffSubCommits(this._previousCommit, this._currentCommit);
+        const difference = CommitLog.diffOwnedCommits(this._previousCommit, this._currentCommit);
         const sortedRepositories = Repository.sortByName([...difference.keys()]);
         const element = ComponentBase.createElement;
 
@@ -95,4 +95,4 @@ class SubCommitViewer extends ComponentBase {
     }
 }
 
-ComponentBase.defineElement('sub-commit-viewer', SubCommitViewer);
+ComponentBase.defineElement('owned-commit-viewer', OwnedCommitViewer);

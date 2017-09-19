@@ -1,3 +1,53 @@
+2017-09-19  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Use 'owned commit' instead of 'sub commit' whenever refers to a commit owned by another commit.
+        https://bugs.webkit.org/show_bug.cgi?id=177178
+
+        Reviewed by Ryosuke Niwa.
+
+        We use both 'owned commit' and 'sub commit' to refer to a commit owned by an another commit. We should use one term instead of two.
+        Renaming 'subCommit' to 'ownedCommit', 'ownsSubCommit' to 'ownsCommit' and 'sub-commit' to 'owned-commit'.
+
+        * browser-tests/commit-log-viewer-tests.js:
+        * public/api/commits.php:
+        * public/api/report-commits.php:
+        * public/include/commit-log-fetcher.php:
+        * public/v3/components/commit-log-viewer.js:
+        (CommitLogViewer.prototype._renderCommitList):
+        * public/v3/components/owned-commit-viewer.js: Renamed from Websites/perf.webkit.org/public/v3/components/sub-commit-viewer.js.
+        (OwnedCommitViewer):
+        (OwnedCommitViewer.prototype.didConstructShadowTree):
+        (OwnedCommitViewer.prototype._toggleVisibility):
+        (OwnedCommitViewer.prototype.render):
+        (OwnedCommitViewer.prototype._renderOwnedCommitTable):
+        (OwnedCommitViewer.htmlTemplate):
+        (OwnedCommitViewer.cssTemplate):
+        * public/v3/index.html:
+        * public/v3/models/commit-log.js:
+        (CommitLog):
+        (CommitLog.prototype.updateSingleton):
+        (CommitLog.prototype.ownsCommits):
+        (CommitLog.prototype.fetchOwnedCommits):
+        (CommitLog.prototype._buildOwnedCommitMap):
+        (CommitLog.diffOwnedCommits):
+        (CommitLog.prototype.ownsSubCommits): Deleted.
+        (CommitLog.prototype.fetchSubCommits): Deleted.
+        (CommitLog.prototype._buildSubCommitMap): Deleted.
+        (CommitLog.diffSubCommits): Deleted.
+        * server-tests/api-commits-tests.js:
+        * server-tests/api-report-commits-tests.js:
+        * server-tests/tools-os-build-fetcher-tests.js:
+        (return.waitForInvocationPromise.then):
+        (string_appeared_here.return.waitForInvocationPromise.then):
+        * tools/js/os-build-fetcher.js:
+        (prototype._fetchAvailableBuilds):
+        (prototype._addOwnedCommitsForBuild):
+        (prototype._addSubCommitsForBuild): Deleted.
+        * unit-tests/commit-log-tests.js:
+        (return.commit.fetchOwnedCommits.then):
+        (return.fetchingPromise.then):
+        (return.commit.fetchSubCommits.then): Deleted.
+
 2017-09-12  Dewei Zhu  <dewei_zhu@apple.com>
 
         Performance Dashboard backend should support A/B testing for owned components.

@@ -32,20 +32,20 @@ function main($post_data)
             exit_with_error('FailedToInsertRepository', array('commit' => $commit_info));
         }
         $owner_commit_id = insert_commit($db, $commit_info, $repository_id, NULL);
-        if (!array_key_exists('subCommits', $commit_info))
+        if (!array_key_exists('ownedCommits', $commit_info))
             continue;
 
-        foreach($commit_info['subCommits'] as $sub_commit_repository_name => $sub_commit_info) {
-            if (array_key_exists('time', $sub_commit_info)) {
+        foreach($commit_info['ownedCommits'] as $owned_commit_repository_name => $owned_commit_info) {
+            if (array_key_exists('time', $owned_commit_info)) {
                 $db->rollback_transaction();
-                exit_with_error('SubCommitShouldNotContainTimestamp', array('commit' => $sub_commit_info));
+                exit_with_error('OwnedCommitShouldNotContainTimestamp', array('commit' => $owned_commit_info));
             }
-            $sub_commit_repository_id = $db->select_or_insert_row('repositories', 'repository', array('name' => $sub_commit_repository_name, 'owner' => $repository_id));
-            if (!$sub_commit_repository_id) {
+            $owned_commit_repository_id = $db->select_or_insert_row('repositories', 'repository', array('name' => $owned_commit_repository_name, 'owner' => $repository_id));
+            if (!$owned_commit_repository_id) {
                 $db->rollback_transaction();
-                exit_with_error('FailedToInsertRepository', array('commit' => $sub_commit_info));
+                exit_with_error('FailedToInsertRepository', array('commit' => $owned_commit_info));
             }
-            insert_commit($db, $sub_commit_info, $sub_commit_repository_id, $owner_commit_id);
+            insert_commit($db, $owned_commit_info, $owned_commit_repository_id, $owner_commit_id);
         }
     }
     $db->commit_transaction();
