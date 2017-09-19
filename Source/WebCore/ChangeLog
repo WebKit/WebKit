@@ -1,3 +1,14 @@
+2017-09-18  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error in InbandTextTrackPrivateAVCF::readNativeSampleBuffer.
+        https://bugs.webkit.org/show_bug.cgi?id=177108
+
+        Reviewed by Brent Fulgham.
+
+        The InbandTextTrackPrivateAVF::m_sampleInputBuffer is private and not accessible in this method.
+ 
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h:
+
 2017-09-18  Tim Horton  <timothy_horton@apple.com>
 
         Support min() and max() in calc()
