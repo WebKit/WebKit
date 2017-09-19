@@ -47,6 +47,15 @@ bool ArgumentCoder<std::chrono::system_clock::time_point>::decode(Decoder& decod
     return true;
 }
 
+std::optional<std::chrono::system_clock::time_point> ArgumentCoder<std::chrono::system_clock::time_point>::decode(Decoder& decoder)
+{
+    std::optional<int64_t> time;
+    decoder >> time;
+    if (!time)
+        return std::nullopt;
+    return { std::chrono::system_clock::time_point { std::chrono::system_clock::duration(static_cast<std::chrono::system_clock::rep>(*time)) }};
+}
+    
 void ArgumentCoder<AtomicString>::encode(Encoder& encoder, const AtomicString& atomicString)
 {
     encoder << atomicString.string();

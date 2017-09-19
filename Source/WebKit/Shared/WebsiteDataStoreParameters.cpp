@@ -55,8 +55,11 @@ bool WebsiteDataStoreParameters::decode(IPC::Decoder& decoder, WebsiteDataStoreP
     if (!decoder.decode(parameters.cookieStoragePathExtensionHandle))
         return false;
 
-    if (!decoder.decode(parameters.pendingCookies))
+    std::optional<Vector<WebCore::Cookie>> pendingCookies;
+    decoder >> pendingCookies;
+    if (!pendingCookies)
         return false;
+    parameters.pendingCookies = WTFMove(*pendingCookies);
 
     if (!decoder.decode(parameters.cacheStorageDirectory))
         return false;

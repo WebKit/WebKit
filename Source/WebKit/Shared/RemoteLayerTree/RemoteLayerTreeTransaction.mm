@@ -56,21 +56,22 @@ void RemoteLayerTreeTransaction::LayerCreationProperties::encode(IPC::Encoder& e
     encoder << hostingDeviceScaleFactor;
 }
 
-bool RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder, LayerCreationProperties& result)
+auto RemoteLayerTreeTransaction::LayerCreationProperties::decode(IPC::Decoder& decoder) -> std::optional<LayerCreationProperties>
 {
+    LayerCreationProperties result;
     if (!decoder.decode(result.layerID))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(result.type))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(result.hostingContextID))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(result.hostingDeviceScaleFactor))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(result);
 }
 
 RemoteLayerTreeTransaction::LayerProperties::LayerProperties()
@@ -674,8 +675,11 @@ bool RemoteLayerTreeTransaction::decode(IPC::Decoder& decoder, RemoteLayerTreeTr
     if (!decoder.decode(result.m_isInStableState))
         return false;
 
-    if (!decoder.decode(result.m_callbackIDs))
+    std::optional<Vector<TransactionCallbackID>> callbackIDs;
+    decoder >> callbackIDs;
+    if (!callbackIDs)
         return false;
+    result.m_callbackIDs = WTFMove(*callbackIDs);
 
     bool hasEditorState;
     if (!decoder.decode(hasEditorState))

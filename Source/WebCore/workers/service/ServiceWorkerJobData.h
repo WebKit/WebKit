@@ -93,8 +93,13 @@ std::optional<ServiceWorkerJobData> ServiceWorkerJobData::decode(Decoder& decode
         return std::nullopt;
     if (!decoder.decode(jobData->clientCreationURL))
         return std::nullopt;
-    if (!decoder.decode(jobData->topOrigin))
+
+    std::optional<SecurityOriginData> topOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin)
         return std::nullopt;
+    jobData->topOrigin = WTFMove(*topOrigin);
+
     if (!decoder.decode(jobData->scopeURL))
         return std::nullopt;
     if (!decoder.decodeEnum(jobData->type))

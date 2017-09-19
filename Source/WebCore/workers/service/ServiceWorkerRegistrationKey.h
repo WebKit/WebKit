@@ -44,7 +44,7 @@ struct ServiceWorkerRegistrationKey {
     ServiceWorkerRegistrationKey isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ServiceWorkerRegistrationKey&);
+    template<class Decoder> static std::optional<ServiceWorkerRegistrationKey> decode(Decoder&);
 };
 
 template<class Encoder>
@@ -54,14 +54,18 @@ void ServiceWorkerRegistrationKey::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool ServiceWorkerRegistrationKey::decode(Decoder& decoder, ServiceWorkerRegistrationKey& key)
+std::optional<ServiceWorkerRegistrationKey> ServiceWorkerRegistrationKey::decode(Decoder& decoder)
 {
-    if (!decoder.decode(key.clientCreationURL))
-        return false;
-    if (!decoder.decode(key.topOrigin))
-        return false;
+    URL clientCreationURL;
+    if (!decoder.decode(clientCreationURL))
+        return std::nullopt;
 
-    return true;
+    std::optional<SecurityOriginData> topOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin)
+        return std::nullopt;
+    
+    return {{ WTFMove(clientCreationURL), WTFMove(*topOrigin) }};
 }
 
 } // namespace WebCore

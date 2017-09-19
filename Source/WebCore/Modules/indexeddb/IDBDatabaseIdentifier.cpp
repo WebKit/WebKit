@@ -35,10 +35,10 @@
 
 namespace WebCore {
 
-IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, const SecurityOrigin& openingOrigin, const SecurityOrigin& mainFrameOrigin)
+IDBDatabaseIdentifier::IDBDatabaseIdentifier(const String& databaseName, SecurityOriginData&& openingOrigin, SecurityOriginData&& mainFrameOrigin)
     : m_databaseName(databaseName)
-    , m_openingOrigin(SecurityOriginData::fromSecurityOrigin(openingOrigin))
-    , m_mainFrameOrigin(SecurityOriginData::fromSecurityOrigin(mainFrameOrigin))
+    , m_openingOrigin(WTFMove(openingOrigin))
+    , m_mainFrameOrigin(WTFMove(mainFrameOrigin))
 
 {
     // The empty string is a valid database name, but a null string is not.

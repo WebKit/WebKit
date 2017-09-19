@@ -50,7 +50,7 @@ bool isValidEnum(WebCore::ShouldOpenExternalURLsPolicy);
 struct HTTPBody {
     struct Element {
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, Element&);
+        static std::optional<Element> decode(IPC::Decoder&);
 
         enum class Type {
             Data,
@@ -82,7 +82,7 @@ struct HTTPBody {
 
 struct FrameState {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, FrameState&);
+    static std::optional<FrameState> decode(IPC::Decoder&);
 
     String urlString;
     String originalURLString;
@@ -124,7 +124,7 @@ struct PageState {
 
 struct BackForwardListItemState {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, BackForwardListItemState&);
+    static std::optional<BackForwardListItemState> decode(IPC::Decoder&);
 
     uint64_t identifier;
 
@@ -137,7 +137,7 @@ struct BackForwardListItemState {
 
 struct BackForwardListState {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, BackForwardListState&);
+    static std::optional<BackForwardListState> decode(IPC::Decoder&);
 
     Vector<BackForwardListItemState> items;
     std::optional<uint32_t> currentIndex;

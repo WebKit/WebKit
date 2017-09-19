@@ -67,24 +67,25 @@ void WebPlatformTouchPoint::encode(IPC::Encoder& encoder) const
     encoder << m_force;
 }
 
-bool WebPlatformTouchPoint::decode(IPC::Decoder& decoder, WebPlatformTouchPoint& result)
+std::optional<WebPlatformTouchPoint> WebPlatformTouchPoint::decode(IPC::Decoder& decoder)
 {
+    WebPlatformTouchPoint result;
     if (!decoder.decode(result.m_id))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_state))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_screenPosition))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_position))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_radius))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_rotationAngle))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(result.m_force))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(result);
 }
 
 } // namespace WebKit

@@ -42,7 +42,7 @@ public:
         return IDBError { UnknownError, ASCIILiteral("Database deleted by request of the user") };
     }
 
-    IDBError& operator=(const IDBError&);
+    WEBCORE_EXPORT IDBError& operator=(const IDBError&);
 
     RefPtr<DOMError> toDOMError() const;
 

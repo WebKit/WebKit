@@ -98,7 +98,7 @@ public:
         LayerCreationProperties();
 
         void encode(IPC::Encoder&) const;
-        static bool decode(IPC::Decoder&, LayerCreationProperties&);
+        static std::optional<LayerCreationProperties> decode(IPC::Decoder&);
 
         WebCore::GraphicsLayer::PlatformLayerID layerID;
         WebCore::PlatformCALayer::LayerType type;

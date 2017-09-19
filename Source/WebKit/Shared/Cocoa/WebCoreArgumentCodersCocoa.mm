@@ -139,16 +139,17 @@ void ArgumentCoder<WebCore::PaymentError>::encode(Encoder& encoder, const WebCor
     encoder << error.contactField;
 }
 
-bool ArgumentCoder<WebCore::PaymentError>::decode(Decoder& decoder, WebCore::PaymentError& error)
+std::optional<WebCore::PaymentError> ArgumentCoder<WebCore::PaymentError>::decode(Decoder& decoder)
 {
+    WebCore::PaymentError error;
     if (!decoder.decode(error.code))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(error.message))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(error.contactField))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(error);
 }
 
 void ArgumentCoder<WebCore::PaymentMerchantSession>::encode(Encoder& encoder, const WebCore::PaymentMerchantSession& paymentMerchantSession)
@@ -227,9 +228,11 @@ void ArgumentCoder<WebCore::PaymentMethodUpdate>::encode(Encoder& encoder, const
 
 bool ArgumentCoder<WebCore::PaymentMethodUpdate>::decode(Decoder& decoder, WebCore::PaymentMethodUpdate& update)
 {
-    if (!decoder.decode(update.newTotalAndLineItems))
+    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    decoder >> newTotalAndLineItems;
+    if (!newTotalAndLineItems)
         return false;
-
+    update = { WTFMove(*newTotalAndLineItems) };
     return true;
 }
 
@@ -308,10 +311,11 @@ bool ArgumentCoder<ApplePaySessionPaymentRequest>::decode(Decoder& decoder, Appl
         return false;
     request.setLineItems(lineItems);
 
-    ApplePaySessionPaymentRequest::LineItem total;
-    if (!decoder.decode(total))
+    std::optional<ApplePaySessionPaymentRequest::LineItem> total;
+    decoder >> total;
+    if (!total)
         return false;
-    request.setTotal(total);
+    request.setTotal(*total);
 
     String applicationData;
     if (!decoder.decode(applicationData))
@@ -358,16 +362,17 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::encode(Encoder& enc
     encoder << lineItem.amount;
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::LineItem& lineItem)
+std::optional<ApplePaySessionPaymentRequest::LineItem> ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode(Decoder& decoder)
 {
+    WebCore::ApplePaySessionPaymentRequest::LineItem lineItem;
     if (!decoder.decodeEnum(lineItem.type))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(lineItem.label))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(lineItem.amount))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(lineItem);
 }
 
 void ArgumentCoder<ApplePaySessionPaymentRequest::MerchantCapabilities>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::MerchantCapabilities& merchantCapabilities)
@@ -400,17 +405,18 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::encode(Encode
     encoder << shippingMethod.identifier;
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::ShippingMethod& shippingMethod)
+std::optional<ApplePaySessionPaymentRequest::ShippingMethod> ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode(Decoder& decoder)
 {
+    ApplePaySessionPaymentRequest::ShippingMethod shippingMethod;
     if (!decoder.decode(shippingMethod.label))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(shippingMethod.detail))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(shippingMethod.amount))
-        return false;
+        return std::nullopt;
     if (!decoder.decode(shippingMethod.identifier))
-        return false;
-    return true;
+        return std::nullopt;
+    return WTFMove(shippingMethod);
 }
 
 void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Encoder& encoder, const ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
@@ -419,13 +425,19 @@ void ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::encode(Enc
     encoder << totalAndLineItems.lineItems;
 }
 
-bool ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder, ApplePaySessionPaymentRequest::TotalAndLineItems& totalAndLineItems)
+std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode(Decoder& decoder)
 {
-    if (!decoder.decode(totalAndLineItems.total))
-        return false;
-    if (!decoder.decode(totalAndLineItems.lineItems))
-        return false;
-    return true;
+    std::optional<ApplePaySessionPaymentRequest::LineItem> total;
+    decoder >> total;
+    if (!total)
+        return std::nullopt;
+    
+    std::optional<Vector<ApplePaySessionPaymentRequest::LineItem>> lineItems;
+    decoder >> lineItems;
+    if (!lineItems)
+        return std::nullopt;
+    
+    return {{ WTFMove(*total), WTFMove(*lineItems) }};
 }
 
 void ArgumentCoder<WebCore::ShippingContactUpdate>::encode(Encoder& encoder, const WebCore::ShippingContactUpdate& update)
@@ -441,8 +453,12 @@ bool ArgumentCoder<WebCore::ShippingContactUpdate>::decode(Decoder& decoder, Web
         return false;
     if (!decoder.decode(update.newShippingMethods))
         return false;
-    if (!decoder.decode(update.newTotalAndLineItems))
+    
+    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    decoder >> newTotalAndLineItems;
+    if (!newTotalAndLineItems)
         return false;
+    update.newTotalAndLineItems = WTFMove(*newTotalAndLineItems);
 
     return true;
 }
@@ -454,9 +470,11 @@ void ArgumentCoder<WebCore::ShippingMethodUpdate>::encode(Encoder& encoder, cons
 
 bool ArgumentCoder<WebCore::ShippingMethodUpdate>::decode(Decoder& decoder, WebCore::ShippingMethodUpdate& update)
 {
-    if (!decoder.decode(update.newTotalAndLineItems))
+    std::optional<ApplePaySessionPaymentRequest::TotalAndLineItems> newTotalAndLineItems;
+    decoder >> newTotalAndLineItems;
+    if (!newTotalAndLineItems)
         return false;
-
+    update = { WTFMove(*newTotalAndLineItems) };
     return true;
 }
 

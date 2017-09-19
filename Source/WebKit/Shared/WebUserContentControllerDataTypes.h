@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebUserContentControllerDataTypes_h
-#define WebUserContentControllerDataTypes_h
+#pragma once
 
 #include <WebCore/UserScript.h>
 #include <WebCore/UserStyleSheet.h>
@@ -38,7 +37,7 @@ namespace WebKit {
 
 struct WebUserScriptData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebUserScriptData&);
+    static std::optional<WebUserScriptData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     uint64_t worldIdentifier;
@@ -47,7 +46,7 @@ struct WebUserScriptData {
 
 struct WebUserStyleSheetData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebUserStyleSheetData&);
+    static std::optional<WebUserStyleSheetData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     uint64_t worldIdentifier;
@@ -56,7 +55,7 @@ struct WebUserStyleSheetData {
 
 struct WebScriptMessageHandlerData {
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebScriptMessageHandlerData&);
+    static std::optional<WebScriptMessageHandlerData> decode(IPC::Decoder&);
 
     uint64_t identifier;
     uint64_t worldIdentifier;
@@ -64,5 +63,3 @@ struct WebScriptMessageHandlerData {
 };
 
 } // namespace WebKit
-
-#endif // WebUserContentControllerDataTypes_h

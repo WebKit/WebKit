@@ -78,46 +78,45 @@ void WebPopupItem::encode(IPC::Encoder& encoder) const
     encoder << m_isSelected;
 }
 
-bool WebPopupItem::decode(IPC::Decoder& decoder, WebPopupItem& item)
+std::optional<WebPopupItem> WebPopupItem::decode(IPC::Decoder& decoder)
 {
     Type type;
     if (!decoder.decodeEnum(type))
-        return false;
+        return std::nullopt;
 
     String text;
     if (!decoder.decode(text))
-        return false;
+        return std::nullopt;
     
     TextDirection textDirection;
     if (!decoder.decodeEnum(textDirection))
-        return false;
+        return std::nullopt;
 
     bool hasTextDirectionOverride;
     if (!decoder.decode(hasTextDirectionOverride))
-        return false;
+        return std::nullopt;
 
     String toolTip;
     if (!decoder.decode(toolTip))
-        return false;
+        return std::nullopt;
 
     String accessibilityText;
     if (!decoder.decode(accessibilityText))
-        return false;
+        return std::nullopt;
 
     bool isEnabled;
     if (!decoder.decode(isEnabled))
-        return false;
+        return std::nullopt;
 
     bool isLabel;
     if (!decoder.decode(isLabel))
-        return false;
+        return std::nullopt;
 
     bool isSelected;
     if (!decoder.decode(isSelected))
-        return false;
+        return std::nullopt;
 
-    item = WebPopupItem(type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected);
-    return true;
+    return {{ type, text, textDirection, hasTextDirectionOverride, toolTip, accessibilityText, isEnabled, isLabel, isSelected }};
 }
 
 } // namespace WebKit

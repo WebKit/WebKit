@@ -161,11 +161,12 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(hasSourceOrigin))
         return false;
     if (hasSourceOrigin) {
-        SecurityOriginData sourceOriginData;
-        if (!decoder.decode(sourceOriginData))
+        std::optional<SecurityOriginData> sourceOriginData;
+        decoder >> sourceOriginData;
+        if (!sourceOriginData)
             return false;
-        ASSERT(!sourceOriginData.isEmpty());
-        result.sourceOrigin = sourceOriginData.securityOrigin();
+        ASSERT(!sourceOriginData->isEmpty());
+        result.sourceOrigin = sourceOriginData->securityOrigin();
     }
     if (!decoder.decodeEnum(result.mode))
         return false;
@@ -176,8 +177,11 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decode(result.mainDocumentURL))
         return false;
 
-    if (!decoder.decode(result.contentRuleLists))
+    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    decoder >> contentRuleLists;
+    if (!contentRuleLists)
         return false;
+    result.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
 
     return true;

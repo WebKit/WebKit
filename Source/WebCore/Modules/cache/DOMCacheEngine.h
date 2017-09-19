@@ -79,7 +79,7 @@ struct CacheInfos {
     CacheInfos isolatedCopy();
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, CacheInfos&);
+    template<class Decoder> static std::optional<CacheInfos> decode(Decoder&);
 
     Vector<CacheInfo> infos;
     uint64_t updateCounter;
@@ -87,7 +87,7 @@ struct CacheInfos {
 
 struct CacheIdentifierOperationResult {
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, CacheIdentifierOperationResult&);
+    template<class Decoder> static std::optional<CacheIdentifierOperationResult> decode(Decoder&);
 
     uint64_t identifier { 0 };
     // True in case storing cache list on the filesystem failed.
@@ -115,11 +115,19 @@ template<class Encoder> inline void CacheInfos::encode(Encoder& encoder) const
     encoder << updateCounter;
 }
 
-template<class Decoder> inline bool CacheInfos::decode(Decoder& decoder, CacheInfos& cacheInfos)
+template<class Decoder> inline std::optional<CacheInfos> CacheInfos::decode(Decoder& decoder)
 {
-    if (!decoder.decode(cacheInfos.infos))
-        return false;
-    return decoder.decode(cacheInfos.updateCounter);
+    std::optional<Vector<CacheInfo>> infos;
+    decoder >> infos;
+    if (!infos)
+        return std::nullopt;
+    
+    std::optional<uint64_t> updateCounter;
+    decoder >> updateCounter;
+    if (!updateCounter)
+        return std::nullopt;
+    
+    return {{ WTFMove(*infos), WTFMove(*updateCounter) }};
 }
 
 template<class Encoder> inline void CacheIdentifierOperationResult::encode(Encoder& encoder) const
@@ -128,12 +136,18 @@ template<class Encoder> inline void CacheIdentifierOperationResult::encode(Encod
     encoder << hadStorageError;
 }
 
-template<class Decoder> inline bool CacheIdentifierOperationResult::decode(Decoder& decoder, CacheIdentifierOperationResult& result)
+template<class Decoder> inline std::optional<CacheIdentifierOperationResult> CacheIdentifierOperationResult::decode(Decoder& decoder)
 {
-    if (!decoder.decode(result.identifier))
-        return false;
-
-    return decoder.decode(result.hadStorageError);
+    std::optional<uint64_t> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    
+    std::optional<bool> hadStorageError;
+    decoder >> hadStorageError;
+    if (!hadStorageError)
+        return std::nullopt;
+    return {{ WTFMove(*identifier), WTFMove(*hadStorageError) }};
 }
 
 } // namespace DOMCacheEngine

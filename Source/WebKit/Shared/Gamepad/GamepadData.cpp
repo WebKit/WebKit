@@ -59,30 +59,31 @@ void GamepadData::encode(IPC::Encoder& encoder) const
     encoder << m_index << m_id << m_axisValues << m_buttonValues << m_lastUpdateTime;
 }
 
-bool GamepadData::decode(IPC::Decoder& decoder, GamepadData& data)
+std::optional<GamepadData> GamepadData::decode(IPC::Decoder& decoder)
 {
+    GamepadData data;
     if (!decoder.decode(data.m_isNull))
-        return false;
+        return std::nullopt;
 
     if (data.m_isNull)
-        return true;
+        return data;
 
     if (!decoder.decode(data.m_index))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(data.m_id))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(data.m_axisValues))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(data.m_buttonValues))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(data.m_lastUpdateTime))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(data);
 }
 
 #if !LOG_DISABLED

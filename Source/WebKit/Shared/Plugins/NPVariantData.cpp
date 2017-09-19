@@ -147,11 +147,12 @@ void NPVariantData::encode(IPC::Encoder& encoder) const
     }
 }
 
-bool NPVariantData::decode(IPC::Decoder& decoder, NPVariantData& result)
+std::optional<NPVariantData> NPVariantData::decode(IPC::Decoder& decoder)
 {
+    NPVariantData result;
     uint32_t type;
     if (!decoder.decode(type))
-        return false;
+        return std::nullopt;
 
     // We special-case LocalNPObjectID and RemoteNPObjectID here so a LocalNPObjectID is
     // decoded as a RemoteNPObjectID and vice versa.
@@ -167,22 +168,34 @@ bool NPVariantData::decode(IPC::Decoder& decoder, NPVariantData& result)
     switch (result.m_type) {
     case NPVariantData::Void:
     case NPVariantData::Null:
-        return true;
+        return WTFMove(result);
     case NPVariantData::Bool:
-        return decoder.decode(result.m_boolValue);
+        if (!decoder.decode(result.m_boolValue))
+            return std::nullopt;
+        return WTFMove(result);
     case NPVariantData::Int32:
-        return decoder.decode(result.m_int32Value);
+        if (!decoder.decode(result.m_int32Value))
+            return std::nullopt;
+        return WTFMove(result);
     case NPVariantData::Double:
-        return decoder.decode(result.m_doubleValue);
+        if (!decoder.decode(result.m_doubleValue))
+            return std::nullopt;
+        return WTFMove(result);
     case NPVariantData::String:
-        return decoder.decode(result.m_stringValue);
+        if (!decoder.decode(result.m_stringValue))
+            return std::nullopt;
+        return WTFMove(result);
     case NPVariantData::LocalNPObjectID:
-        return decoder.decode(result.m_localNPObjectIDValue);
+        if (!decoder.decode(result.m_localNPObjectIDValue))
+            return std::nullopt;
+        return WTFMove(result);
     case NPVariantData::RemoteNPObjectID:
-        return decoder.decode(result.m_remoteNPObjectIDValue);
+        if (!decoder.decode(result.m_remoteNPObjectIDValue))
+            return std::nullopt;
+        return WTFMove(result);
     }
 
-    return false;
+    return std::nullopt;
 }
 
 } // namespace WebKit

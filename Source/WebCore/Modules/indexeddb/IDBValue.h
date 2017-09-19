@@ -50,7 +50,7 @@ public:
     const Vector<String>& blobFilePaths() const { return m_blobFilePaths; }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, IDBValue&);
+    template<class Decoder> static std::optional<IDBValue> decode(Decoder&);
 
 private:
     ThreadSafeDataBuffer m_data;
@@ -68,18 +68,19 @@ void IDBValue::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool IDBValue::decode(Decoder& decoder, IDBValue& result)
+std::optional<IDBValue> IDBValue::decode(Decoder& decoder)
 {
+    IDBValue result;
     if (!decoder.decode(result.m_data))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_blobURLs))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(result.m_blobFilePaths))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(result);
 }
 
 } // namespace WebCore

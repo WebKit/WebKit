@@ -38,7 +38,7 @@ struct ServiceWorkerRegistrationData {
     ServiceWorkerRegistrationData isolatedCopy() const;
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, ServiceWorkerRegistrationData&);
+    template<class Decoder> static std::optional<ServiceWorkerRegistrationData> decode(Decoder&);
 };
 
 
@@ -49,14 +49,19 @@ void ServiceWorkerRegistrationData::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool ServiceWorkerRegistrationData::decode(Decoder& decoder, ServiceWorkerRegistrationData& data)
+std::optional<ServiceWorkerRegistrationData> ServiceWorkerRegistrationData::decode(Decoder& decoder)
 {
-    if (!decoder.decode(data.key))
-        return false;
-    if (!decoder.decodeEnum(data.identifier))
-        return false;
-
-    return true;
+    std::optional<ServiceWorkerRegistrationKey> key;
+    decoder >> key;
+    if (!key)
+        return std::nullopt;
+    
+    std::optional<uint64_t> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    
+    return {{ WTFMove(*key), WTFMove(*identifier) }};
 }
 
 } // namespace WTF

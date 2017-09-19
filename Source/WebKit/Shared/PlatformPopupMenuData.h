@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformPopupMenuData_h
-#define PlatformPopupMenuData_h
+#pragma once
 
 #include "FontInfo.h"
 #include "ShareableBitmap.h"
@@ -43,6 +42,7 @@ struct PlatformPopupMenuData {
 
     void encode(IPC::Encoder&) const;
     static bool decode(IPC::Decoder&, PlatformPopupMenuData&);
+    static std::optional<PlatformPopupMenuData> decode(IPC::Decoder&);
 
 #if PLATFORM(COCOA)
     FontInfo fontInfo;
@@ -53,5 +53,3 @@ struct PlatformPopupMenuData {
 };
 
 } // namespace WebKit
-
-#endif // PlatformPopupMenuData_h

@@ -76,7 +76,7 @@ public:
     template<typename Encoder>
     void encode(Encoder&) const;
     template<typename Decoder>
-    static bool decode(Decoder&, FormDataElement& result);
+    static std::optional<FormDataElement> decode(Decoder&);
 
     Type m_type;
     Vector<char> m_data;
@@ -143,51 +143,52 @@ void FormDataElement::encode(Encoder& encoder) const
 }
 
 template<typename Decoder>
-bool FormDataElement::decode(Decoder& decoder, FormDataElement& result)
+std::optional<FormDataElement> FormDataElement::decode(Decoder& decoder)
 {
+    FormDataElement result;
     if (!decoder.decodeEnum(result.m_type))
-        return false;
+        return std::nullopt;
 
     switch (result.m_type) {
     case Type::Data:
         if (!decoder.decode(result.m_data))
-            return false;
+            return std::nullopt;
 
-        return true;
+        return WTFMove(result);
 
     case Type::EncodedFile:
         if (!decoder.decode(result.m_filename))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(result.m_generatedFilename))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(result.m_shouldGenerateFile))
-            return false;
+            return std::nullopt;
         result.m_ownsGeneratedFile = false;
         if (!decoder.decode(result.m_fileStart))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(result.m_fileLength))
-            return false;
+            return std::nullopt;
 
         if (result.m_fileLength != BlobDataItem::toEndOfFile && result.m_fileLength < result.m_fileStart)
-            return false;
+            return std::nullopt;
 
         if (!decoder.decode(result.m_expectedFileModificationTime))
-            return false;
+            return std::nullopt;
 
-        return true;
+        return WTFMove(result);
 
     case Type::EncodedBlob: {
         String blobURLString;
         if (!decoder.decode(blobURLString))
-            return false;
+            return std::nullopt;
 
         result.m_url = URL(URL(), blobURLString);
 
-        return true;
+        return WTFMove(result);
     }
     }
 
-    return false;
+    return std::nullopt;
 }
 
 class FormData : public RefCounted<FormData> {

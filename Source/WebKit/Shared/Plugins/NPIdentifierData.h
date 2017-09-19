@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPIdentifierData_h
-#define NPIdentifierData_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -46,7 +45,7 @@ public:
     NPIdentifier createNPIdentifier() const;
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, NPIdentifierData&);
+    static std::optional<NPIdentifierData> decode(IPC::Decoder&);
 
 private:
     bool m_isString;
@@ -57,5 +56,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-    
-#endif // NPIdentifierData_h

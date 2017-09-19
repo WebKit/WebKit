@@ -1,3 +1,52 @@
+2017-09-19  Alex Christensen  <achristensen@webkit.org>
+
+        Allow modern decoding of Vectors
+        https://bugs.webkit.org/show_bug.cgi?id=177102
+
+        Reviewed by Andy Estes.
+
+        * Modules/cache/DOMCacheEngine.h:
+        (WebCore::DOMCacheEngine::CacheInfos::decode):
+        (WebCore::DOMCacheEngine::CacheIdentifierOperationResult::decode):
+        * Modules/indexeddb/IDBDatabaseIdentifier.cpp:
+        (WebCore::IDBDatabaseIdentifier::IDBDatabaseIdentifier):
+        * Modules/indexeddb/IDBDatabaseIdentifier.h:
+        (WebCore::IDBDatabaseIdentifier::decode):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        (WebCore::IDBFactory::deleteDatabase):
+        * Modules/indexeddb/IDBGetAllResult.h:
+        (WebCore::IDBGetAllResult::decode):
+        * Modules/indexeddb/IDBGetResult.h:
+        (WebCore::IDBGetResult::decode):
+        * Modules/indexeddb/IDBKeyData.h:
+        (WebCore::IDBKeyData::decode):
+        * Modules/indexeddb/IDBKeyRangeData.h:
+        (WebCore::IDBKeyRangeData::decode):
+        * Modules/indexeddb/IDBValue.h:
+        (WebCore::IDBValue::decode):
+        * Modules/indexeddb/shared/IDBError.h:
+        * Modules/indexeddb/shared/IDBIterateCursorData.h:
+        (WebCore::IDBIterateCursorData::decode):
+        * Modules/indexeddb/shared/IDBRequestData.h:
+        (WebCore::IDBRequestData::decode):
+        * Modules/indexeddb/shared/IDBResultData.h:
+        (WebCore::IDBResultData::decode):
+        * page/SecurityOriginData.h:
+        (WebCore::SecurityOriginData::decode):
+        * platform/Cookie.h:
+        (WebCore::Cookie::decode):
+        * platform/mediastream/MediaConstraints.h:
+        (WebCore::MediaTrackConstraintSetMap::decode):
+        * platform/network/FormData.h:
+        (WebCore::FormDataElement::decode):
+        * workers/service/ServiceWorkerJobData.h:
+        (WebCore::ServiceWorkerJobData::decode):
+        * workers/service/ServiceWorkerRegistrationData.h:
+        (WebCore::ServiceWorkerRegistrationData::decode):
+        * workers/service/ServiceWorkerRegistrationKey.h:
+        (WebCore::ServiceWorkerRegistrationKey::decode):
+
 2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         On iOS, getData can't get text set by setData during copy event

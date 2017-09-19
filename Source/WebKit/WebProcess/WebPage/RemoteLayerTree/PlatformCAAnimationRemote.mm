@@ -128,35 +128,36 @@ void PlatformCAAnimationRemote::KeyframeValue::encode(IPC::Encoder& encoder) con
     }
 }
 
-bool PlatformCAAnimationRemote::KeyframeValue::decode(IPC::Decoder& decoder, PlatformCAAnimationRemote::KeyframeValue& value)
+std::optional<PlatformCAAnimationRemote::KeyframeValue> PlatformCAAnimationRemote::KeyframeValue::decode(IPC::Decoder& decoder)
 {
+    PlatformCAAnimationRemote::KeyframeValue value;
     if (!decoder.decodeEnum(value.keyType))
-        return false;
+        return std::nullopt;
 
     switch (value.keyType) {
     case NumberKeyType:
         if (!decoder.decode(value.number))
-            return false;
+            return std::nullopt;
         break;
     case ColorKeyType:
         if (!decoder.decode(value.color))
-            return false;
+            return std::nullopt;
         break;
     case PointKeyType:
         if (!decoder.decode(value.point))
-            return false;
+            return std::nullopt;
         break;
     case TransformKeyType:
         if (!decoder.decode(value.transform))
-            return false;
+            return std::nullopt;
         break;
     case FilterKeyType:
         if (!decodeFilterOperation(decoder, value.filter))
-            return false;
+            return std::nullopt;
         break;
     }
 
-    return true;
+    return WTFMove(value);
 }
 
 void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
@@ -204,59 +205,60 @@ void PlatformCAAnimationRemote::Properties::encode(IPC::Encoder& encoder) const
     }
 }
 
-bool PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder, PlatformCAAnimationRemote::Properties& properties)
+std::optional<PlatformCAAnimationRemote::Properties> PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder)
 {
+    PlatformCAAnimationRemote::Properties properties;
     if (!decoder.decode(properties.keyPath))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(properties.animationType))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.beginTime))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.duration))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.timeOffset))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.repeatCount))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.speed))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(properties.fillMode))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(properties.valueFunction))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.autoReverses))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.removedOnCompletion))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.additive))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.reverseTimingFunctions))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.hasExplicitBeginTime))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.keyValues))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(properties.keyTimes))
-        return false;
+        return std::nullopt;
 
     uint64_t numTimingFunctions;
     if (!decoder.decode(numTimingFunctions))
-        return false;
+        return std::nullopt;
     
     if (numTimingFunctions) {
         properties.timingFunctions.reserveInitialCapacity(numTimingFunctions);
@@ -265,32 +267,32 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder, Platfo
         
             TimingFunction::TimingFunctionType type;
             if (!decoder.decodeEnum(type))
-                return false;
+                return std::nullopt;
 
             RefPtr<TimingFunction> timingFunction;
             switch (type) {
             case TimingFunction::LinearFunction:
                 timingFunction = LinearTimingFunction::create();
                 if (!decoder.decode(*static_cast<LinearTimingFunction*>(timingFunction.get())))
-                    return false;
+                    return std::nullopt;
                 break;
                 
             case TimingFunction::CubicBezierFunction:
                 timingFunction = CubicBezierTimingFunction::create();
                 if (!decoder.decode(*static_cast<CubicBezierTimingFunction*>(timingFunction.get())))
-                    return false;
+                    return std::nullopt;
                 break;
             
             case TimingFunction::StepsFunction:
                 timingFunction = StepsTimingFunction::create();
                 if (!decoder.decode(*static_cast<StepsTimingFunction*>(timingFunction.get())))
-                    return false;
+                    return std::nullopt;
                 break;
 
             case TimingFunction::SpringFunction:
                 timingFunction = SpringTimingFunction::create();
                 if (!decoder.decode(*static_cast<SpringTimingFunction*>(timingFunction.get())))
-                    return false;
+                    return std::nullopt;
                 break;
             }
             
@@ -298,7 +300,7 @@ bool PlatformCAAnimationRemote::Properties::decode(IPC::Decoder& decoder, Platfo
         }
     }
 
-    return true;
+    return WTFMove(properties);
 }
     
 Ref<PlatformCAAnimation> PlatformCAAnimationRemote::create(PlatformCAAnimation::AnimationType type, const String& keyPath)

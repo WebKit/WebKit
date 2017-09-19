@@ -1,3 +1,121 @@
+2017-09-19  Alex Christensen  <achristensen@webkit.org>
+
+        Allow modern decoding of Vectors
+        https://bugs.webkit.org/show_bug.cgi?id=177102
+
+        Reviewed by Andy Estes.
+
+        Rather than allow modern decoding of Vectors of types that only allow legacy decoding,
+        I just made modern decoders for all types that we need to decode in Vectors.
+
+        * NetworkProcess/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Platform/IPC/ArgumentCoders.cpp:
+        (IPC::ArgumentCoder<std::chrono::system_clock::time_point>::decode):
+        * Platform/IPC/ArgumentCoders.h:
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::OptionItem::decode):
+        * Shared/AssistedNodeInformation.h:
+        * Shared/CallbackID.h:
+        (WebKit::CallbackID::decode):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentError>::decode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::LineItem>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::ShippingMethod>::decode):
+        (IPC::ArgumentCoder<ApplePaySessionPaymentRequest::TotalAndLineItems>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::decode):
+        * Shared/Databases/IndexedDB/WebIDBResult.cpp:
+        (WebKit::WebIDBResult::decode):
+        * Shared/FrameInfoData.cpp:
+        (WebKit::FrameInfoData::decode):
+        * Shared/Gamepad/GamepadData.cpp:
+        (WebKit::GamepadData::decode):
+        * Shared/Gamepad/GamepadData.h:
+        * Shared/PlatformPopupMenuData.cpp:
+        (WebKit::PlatformPopupMenuData::decode):
+        * Shared/PlatformPopupMenuData.h:
+        * Shared/Plugins/NPIdentifierData.cpp:
+        (WebKit::NPIdentifierData::decode):
+        * Shared/Plugins/NPIdentifierData.h:
+        * Shared/Plugins/NPVariantData.cpp:
+        (WebKit::NPVariantData::decode):
+        * Shared/Plugins/NPVariantData.h:
+        * Shared/RTCNetwork.cpp:
+        (WebKit::RTCNetwork::IPAddress::decode):
+        (WebKit::RTCNetwork::SocketAddress::decode):
+        (WebKit::RTCNetwork::decode):
+        * Shared/RTCNetwork.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.h:
+        * Shared/RemoteLayerTree/RemoteLayerTreeTransaction.mm:
+        (WebKit::RemoteLayerTreeTransaction::LayerCreationProperties::decode):
+        (WebKit::RemoteLayerTreeTransaction::decode):
+        * Shared/SessionState.cpp:
+        (WebKit::HTTPBody::Element::decode):
+        (WebKit::FrameState::decode):
+        (WebKit::PageState::decode):
+        (WebKit::BackForwardListItemState::decode):
+        (WebKit::BackForwardListState::decode):
+        * Shared/SessionState.h:
+        * Shared/WebCompiledContentRuleListData.cpp:
+        (WebKit::WebCompiledContentRuleListData::decode):
+        * Shared/WebCompiledContentRuleListData.h:
+        * Shared/WebContextMenuItemData.cpp:
+        (WebKit::WebContextMenuItemData::decode):
+        * Shared/WebContextMenuItemData.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<DOMCacheEngine::CacheInfo>::decode):
+        (IPC::ArgumentCoder<DOMCacheEngine::Record>::decode):
+        (IPC::ArgumentCoder<FloatRect>::decode):
+        (IPC::ArgumentCoder<FloatQuad>::decode):
+        (IPC::ArgumentCoder<IntRect>::decode):
+        (IPC::ArgumentCoder<RecentSearch>::decode):
+        (IPC::ArgumentCoder<Region::Span>::decode):
+        (IPC::ArgumentCoder<MimeClassInfo>::decode):
+        (IPC::ArgumentCoder<PluginInfo>::decode):
+        (IPC::ArgumentCoder<SelectionRect>::decode):
+        (IPC::ArgumentCoder<CompositionUnderline>::decode):
+        (IPC::ArgumentCoder<DictationAlternative>::decode):
+        (IPC::ArgumentCoder<GrammarDetail>::decode):
+        (IPC::ArgumentCoder<TextCheckingResult>::decode):
+        (IPC::ArgumentCoder<BlobPart>::decode):
+        (IPC::ArgumentCoder<ResourceLoadStatistics>::decode):
+        (IPC::ArgumentCoder<MediaConstraints>::decode):
+        (IPC::ArgumentCoder<CaptureDevice>::decode):
+        (IPC::ArgumentCoder<ScrollOffsetRange<float>>::decode):
+        (IPC::ArgumentCoder<MediaSelectionOption>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPlatformTouchPoint.cpp:
+        (WebKit::WebPlatformTouchPoint::decode):
+        * Shared/WebPopupItem.cpp:
+        (WebKit::WebPopupItem::decode):
+        * Shared/WebPopupItem.h:
+        * Shared/WebUserContentControllerDataTypes.cpp:
+        (WebKit::WebUserScriptData::decode):
+        (WebKit::WebUserStyleSheetData::decode):
+        (WebKit::WebScriptMessageHandlerData::decode):
+        * Shared/WebUserContentControllerDataTypes.h:
+        * Shared/WebsiteData/WebsiteData.cpp:
+        (WebKit::WebsiteData::Entry::decode):
+        * Shared/WebsiteData/WebsiteData.h:
+        * Shared/WebsiteDataStoreParameters.cpp:
+        (WebKit::WebsiteDataStoreParameters::decode):
+        * Shared/ios/WebPlatformTouchPointIOS.cpp:
+        (WebKit::WebPlatformTouchPoint::decode):
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        (IPC::ArgumentCoder<KeypressCommand>::decode):
+        * UIProcess/LegacySessionStateCodingNone.cpp:
+        (WebKit::decodeLegacySessionState):
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.h:
+        * WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm:
+        (WebKit::PlatformCAAnimationRemote::KeyframeValue::decode):
+        (WebKit::PlatformCAAnimationRemote::Properties::decode):
+
 2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         On iOS, getData can't get text set by setData during copy event

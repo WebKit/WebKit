@@ -59,7 +59,7 @@ struct Cookie {
     }
 
     template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, Cookie&);
+    template<class Decoder> static std::optional<Cookie> decode(Decoder&);
 
     WEBCORE_EXPORT bool operator==(const Cookie&) const;
     WEBCORE_EXPORT unsigned hash() const;
@@ -117,32 +117,63 @@ void Cookie::encode(Encoder& encoder) const
 }
 
 template<class Decoder>
-bool Cookie::decode(Decoder& decoder, Cookie& cookie)
+std::optional<Cookie> Cookie::decode(Decoder& decoder)
 {
-    if (!decoder.decode(cookie.name))
-        return false;
-    if (!decoder.decode(cookie.value))
-        return false;
-    if (!decoder.decode(cookie.domain))
-        return false;
-    if (!decoder.decode(cookie.path))
-        return false;
-    if (!decoder.decode(cookie.expires))
-        return false;
-    if (!decoder.decode(cookie.httpOnly))
-        return false;
-    if (!decoder.decode(cookie.secure))
-        return false;
-    if (!decoder.decode(cookie.session))
-        return false;
-    if (!decoder.decode(cookie.comment))
-        return false;
-    if (!decoder.decode(cookie.commentURL))
-        return false;
-    if (!decoder.decode(cookie.ports))
-        return false;
+    std::optional<String> name;
+    decoder >> name;
+    if (!name)
+        return std::nullopt;
+    
+    std::optional<String> value;
+    decoder >> value;
+    if (!value)
+        return std::nullopt;
 
-    return true;
+    std::optional<String> domain;
+    decoder >> domain;
+    if (!domain)
+        return std::nullopt;
+
+    std::optional<String> path;
+    decoder >> path;
+    if (!path)
+        return std::nullopt;
+
+    std::optional<double> expires;
+    decoder >> expires;
+    if (!expires)
+        return std::nullopt;
+
+    std::optional<bool> httpOnly;
+    decoder >> httpOnly;
+    if (!httpOnly)
+        return std::nullopt;
+
+    std::optional<bool> secure;
+    decoder >> secure;
+    if (!secure)
+        return std::nullopt;
+
+    std::optional<bool> session;
+    decoder >> session;
+    if (!session)
+        return std::nullopt;
+
+    std::optional<String> comment;
+    decoder >> comment;
+    if (!comment)
+        return std::nullopt;
+
+    URL commentURL;
+    if (!decoder.decode(commentURL))
+        return std::nullopt;
+
+    std::optional<Vector<uint16_t>> ports;
+    decoder >> ports;
+    if (!ports)
+        return std::nullopt;
+
+    return {{ WTFMove(*name), WTFMove(*value), WTFMove(*domain), WTFMove(*path), WTFMove(*expires), WTFMove(*httpOnly), WTFMove(*secure), WTFMove(*session), WTFMove(*comment), WTFMove(commentURL), WTFMove(*ports) }};
 }
 
 }

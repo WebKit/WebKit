@@ -37,15 +37,23 @@ void WebUserScriptData::encode(IPC::Encoder& encoder) const
     encoder << userScript;
 }
 
-bool WebUserScriptData::decode(IPC::Decoder& decoder, WebUserScriptData& data)
+std::optional<WebUserScriptData> WebUserScriptData::decode(IPC::Decoder& decoder)
 {
-    if (!decoder.decode(data.identifier))
-        return false;
-    if (!decoder.decode(data.worldIdentifier))
-        return false;
-    if (!decoder.decode(data.userScript))
-        return false;
-    return true;
+    std::optional<uint64_t> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    
+    std::optional<uint64_t> worldIdentifier;
+    decoder >> worldIdentifier;
+    if (!worldIdentifier)
+        return std::nullopt;
+    
+    WebCore::UserScript userScript;
+    if (!decoder.decode(userScript))
+        return std::nullopt;
+    
+    return {{ WTFMove(*identifier), WTFMove(*worldIdentifier), WTFMove(userScript) }};
 }
 
 void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const
@@ -55,15 +63,23 @@ void WebUserStyleSheetData::encode(IPC::Encoder& encoder) const
     encoder << userStyleSheet;
 }
 
-bool WebUserStyleSheetData::decode(IPC::Decoder& decoder, WebUserStyleSheetData& data)
+std::optional<WebUserStyleSheetData> WebUserStyleSheetData::decode(IPC::Decoder& decoder)
 {
-    if (!decoder.decode(data.identifier))
-        return false;
-    if (!decoder.decode(data.worldIdentifier))
-        return false;
-    if (!decoder.decode(data.userStyleSheet))
-        return false;
-    return true;
+    std::optional<uint64_t> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    
+    std::optional<uint64_t> worldIdentifier;
+    decoder >> worldIdentifier;
+    if (!worldIdentifier)
+        return std::nullopt;
+    
+    WebCore::UserStyleSheet userStyleSheet;
+    if (!decoder.decode(userStyleSheet))
+        return std::nullopt;
+    
+    return {{ WTFMove(*identifier), WTFMove(*worldIdentifier), WTFMove(userStyleSheet) }};
 }
 
 
@@ -74,16 +90,24 @@ void WebScriptMessageHandlerData::encode(IPC::Encoder& encoder) const
     encoder << name;
 }
 
-bool WebScriptMessageHandlerData::decode(IPC::Decoder& decoder, WebScriptMessageHandlerData& data)
+std::optional<WebScriptMessageHandlerData> WebScriptMessageHandlerData::decode(IPC::Decoder& decoder)
 {
-    if (!decoder.decode(data.identifier))
-        return false;
-    if (!decoder.decode(data.worldIdentifier))
-        return false;
-    if (!decoder.decode(data.name))
-        return false;
+    std::optional<uint64_t> identifier;
+    decoder >> identifier;
+    if (!identifier)
+        return std::nullopt;
+    
+    std::optional<uint64_t> worldIdentifier;
+    decoder >> worldIdentifier;
+    if (!worldIdentifier)
+        return std::nullopt;
+    
+    std::optional<String> name;
+    decoder >> name;
+    if (!name)
+        return std::nullopt;
 
-    return true;
+    return {{ WTFMove(*identifier), WTFMove(*worldIdentifier), WTFMove(*name) }};
 }
 
 } // namespace WebKit

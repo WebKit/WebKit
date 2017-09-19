@@ -144,13 +144,19 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decode(parameters.paginationLineGridEnabled))
         return std::nullopt;
+
     std::optional<String> userAgent;
     decoder >> userAgent;
     if (!userAgent)
         return std::nullopt;
     parameters.userAgent = WTFMove(*userAgent);
-    if (!decoder.decode(parameters.itemStates))
+
+    std::optional<Vector<BackForwardListItemState>> itemStates;
+    decoder >> itemStates;
+    if (!itemStates)
         return std::nullopt;
+    parameters.itemStates = WTFMove(*itemStates);
+
     if (!decoder.decode(parameters.sessionID))
         return std::nullopt;
     if (!decoder.decode(parameters.highestUsedBackForwardItemID))
@@ -252,17 +258,36 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.enumeratingAllNetworkInterfacesEnabled))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.userContentWorlds))
+    std::optional<Vector<std::pair<uint64_t, String>>> userContentWorlds;
+    decoder >> userContentWorlds;
+    if (!userContentWorlds)
         return std::nullopt;
-    if (!decoder.decode(parameters.userScripts))
+    parameters.userContentWorlds = WTFMove(*userContentWorlds);
+
+    std::optional<Vector<WebUserScriptData>> userScripts;
+    decoder >> userScripts;
+    if (!userScripts)
         return std::nullopt;
-    if (!decoder.decode(parameters.userStyleSheets))
+    parameters.userScripts = WTFMove(*userScripts);
+    
+    std::optional<Vector<WebUserStyleSheetData>> userStyleSheets;
+    decoder >> userStyleSheets;
+    if (!userStyleSheets)
         return std::nullopt;
-    if (!decoder.decode(parameters.messageHandlers))
+    parameters.userStyleSheets = WTFMove(*userStyleSheets);
+    
+    std::optional<Vector<WebScriptMessageHandlerData>> messageHandlers;
+    decoder >> messageHandlers;
+    if (!messageHandlers)
         return std::nullopt;
+    parameters.messageHandlers = WTFMove(*messageHandlers);
+    
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (!decoder.decode(parameters.contentRuleLists))
+    std::optional<Vector<std::pair<String, WebCompiledContentRuleListData>>> contentRuleLists;
+    decoder >> contentRuleLists;
+    if (!contentRuleLists)
         return std::nullopt;
+    parameters.contentRuleLists = WTFMove(*contentRuleLists);
 #endif
     return WTFMove(parameters);
 }

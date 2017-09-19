@@ -44,8 +44,11 @@ bool FrameInfoData::decode(IPC::Decoder& decoder, FrameInfoData& result)
         return false;
     if (!decoder.decode(result.request))
         return false;
-    if (!decoder.decode(result.securityOrigin))
+    std::optional<WebCore::SecurityOriginData> securityOrigin;
+    decoder >> securityOrigin;
+    if (!securityOrigin)
         return false;
+    result.securityOrigin = WTFMove(*securityOrigin);
     if (!decoder.decode(result.frameID))
         return false;
 

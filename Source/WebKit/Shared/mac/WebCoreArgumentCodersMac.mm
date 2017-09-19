@@ -602,15 +602,22 @@ void ArgumentCoder<KeypressCommand>::encode(Encoder& encoder, const KeypressComm
     encoder << keypressCommand.commandName << keypressCommand.text;
 }
     
-bool ArgumentCoder<KeypressCommand>::decode(Decoder& decoder, KeypressCommand& keypressCommand)
+std::optional<KeypressCommand> ArgumentCoder<KeypressCommand>::decode(Decoder& decoder)
 {
-    if (!decoder.decode(keypressCommand.commandName))
-        return false;
-
-    if (!decoder.decode(keypressCommand.text))
-        return false;
-
-    return true;
+    std::optional<String> commandName;
+    decoder >> commandName;
+    if (!commandName)
+        return std::nullopt;
+    
+    std::optional<String> text;
+    decoder >> text;
+    if (!text)
+        return std::nullopt;
+    
+    KeypressCommand command;
+    command.commandName = WTFMove(*commandName);
+    command.text = WTFMove(*text);
+    return WTFMove(command);
 }
 
 #if ENABLE(CONTENT_FILTERING)

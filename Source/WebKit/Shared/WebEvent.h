@@ -362,7 +362,7 @@ public:
 #endif
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebPlatformTouchPoint&);
+    static std::optional<WebPlatformTouchPoint> decode(IPC::Decoder&);
 
 private:
     unsigned m_identifier;
@@ -455,7 +455,7 @@ public:
     void setState(TouchPointState state) { m_state = state; }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebPlatformTouchPoint&);
+    static std::optional<WebPlatformTouchPoint> decode(IPC::Decoder&);
 
 private:
     uint32_t m_id;

@@ -76,15 +76,21 @@ void NPIdentifierData::encode(IPC::Encoder& encoder) const
         encoder << m_number;
 }
 
-bool NPIdentifierData::decode(IPC::Decoder& decoder, NPIdentifierData& result)
+std::optional<NPIdentifierData> NPIdentifierData::decode(IPC::Decoder& decoder)
 {
+    NPIdentifierData result;
     if (!decoder.decode(result.m_isString))
-        return false;
+        return std::nullopt;
         
-    if (result.m_isString)
-        return decoder.decode(result.m_string);
+    if (result.m_isString) {
+        if (!decoder.decode(result.m_string))
+            return std::nullopt;
+        return result;
+    }
 
-    return decoder.decode(result.m_number);
+    if (!decoder.decode(result.m_number))
+        return std::nullopt;
+    return WTFMove(result);
 }
 
 } // namespace WebKit

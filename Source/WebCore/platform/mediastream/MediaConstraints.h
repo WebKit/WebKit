@@ -616,35 +616,36 @@ public:
         encoder << m_groupId;
     }
 
-    template <class Decoder> static bool decode(Decoder& decoder, MediaTrackConstraintSetMap& map)
+    template <class Decoder> static std::optional<MediaTrackConstraintSetMap> decode(Decoder& decoder)
     {
+        MediaTrackConstraintSetMap map;
         if (!decoder.decode(map.m_width))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_height))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_sampleRate))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_sampleSize))
-            return false;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_aspectRatio))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_frameRate))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_volume))
-            return false;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_echoCancellation))
-            return false;
+            return std::nullopt;
 
         if (!decoder.decode(map.m_facingMode))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_deviceId))
-            return false;
+            return std::nullopt;
         if (!decoder.decode(map.m_groupId))
-            return false;
+            return std::nullopt;
 
-        return true;
+        return WTFMove(map);
     }
 
 private:

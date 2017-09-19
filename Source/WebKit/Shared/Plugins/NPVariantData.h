@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef NPVariantData_h
-#define NPVariantData_h
+#pragma once
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -99,7 +98,7 @@ public:
     }
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, NPVariantData&);
+    static std::optional<NPVariantData> decode(IPC::Decoder&);
 
 private:
     uint32_t m_type;
@@ -114,5 +113,3 @@ private:
 } // namespace WebKit
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
-    
-#endif // NPVariantData_h

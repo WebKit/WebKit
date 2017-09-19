@@ -75,11 +75,14 @@ public:
         encoder << m_id;
     }
 
-    template<class Decoder> static bool decode(Decoder& decoder, CallbackID& callbackID)
+    template<class Decoder> static std::optional<CallbackID> decode(Decoder& decoder)
     {
-        auto result = decoder.decode(callbackID.m_id);
-        RELEASE_ASSERT(callbackID.isValid());
-        return result;
+        std::optional<uint64_t> identifier;
+        decoder >> identifier;
+        if (!identifier)
+            return std::nullopt;
+        RELEASE_ASSERT(isValidCallbackID(*identifier));
+        return fromInteger(*identifier);
     }
 
 private:

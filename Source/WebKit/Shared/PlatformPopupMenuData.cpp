@@ -61,8 +61,16 @@ bool PlatformPopupMenuData::decode(IPC::Decoder& decoder, PlatformPopupMenuData&
     UNUSED_PARAM(decoder);
     UNUSED_PARAM(data);
 #endif
-
+    
     return true;
+}
+
+std::optional<PlatformPopupMenuData> PlatformPopupMenuData::decode(IPC::Decoder& decoder)
+{
+    PlatformPopupMenuData data;
+    if (!decode(decoder, data))
+        return std::nullopt;
+    return data;
 }
 
 } // namespace WebKit

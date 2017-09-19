@@ -82,7 +82,7 @@ struct OptionItem {
     int parentGroupID { 0 };
 
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, OptionItem&);
+    static std::optional<OptionItem> decode(IPC::Decoder&);
 };
 
 struct AssistedNodeInformation {

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebContextMenuItemData_h
-#define WebContextMenuItemData_h
+#pragma once
 
 #if ENABLE(CONTEXT_MENUS)
 
@@ -62,7 +61,7 @@ public:
     void setUserData(API::Object*);
     
     void encode(IPC::Encoder&) const;
-    static bool decode(IPC::Decoder&, WebContextMenuItemData&);
+    static std::optional<WebContextMenuItemData> decode(IPC::Decoder&);
 
 private:
     WebCore::ContextMenuItemType m_type;
@@ -80,4 +79,3 @@ Vector<WebCore::ContextMenuItem> coreItems(const Vector<WebContextMenuItemData>&
 } // namespace WebKit
 
 #endif // ENABLE(CONTEXT_MENUS)
-#endif // WebContextMenuItemData_h
