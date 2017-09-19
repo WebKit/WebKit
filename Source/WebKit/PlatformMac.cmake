@@ -9,16 +9,16 @@ add_definitions(-iframework ${CARBON_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 add_definitions(-DWK_XPC_SERVICE_SUFFIX=".Development")
 
-list(APPEND WebKit2_LIBRARIES
-    PRIVATE WebKit
+list(APPEND WebKit_LIBRARIES
+    PRIVATE WebKitLegacy
     ${APPLICATIONSERVICES_LIBRARY}
 )
 
 if (NOT AVFAUDIO_LIBRARY-NOTFOUND)
-    list(APPEND WebKit2_LIBRARIES ${AVFAUDIO_LIBRARY})
+    list(APPEND WebKit_LIBRARIES ${AVFAUDIO_LIBRARY})
 endif ()
 
-list(APPEND WebKit2_SOURCES
+list(APPEND WebKit_SOURCES
     NetworkProcess/CustomProtocols/Cocoa/LegacyCustomProtocolManagerCocoa.mm
 
     NetworkProcess/Downloads/PendingDownload.cpp
@@ -388,49 +388,49 @@ list(APPEND WebKit2_SOURCES
     WebProcess/mac/SecItemShimLibrary.mm
 )
 
-list(APPEND WebKit2_INCLUDE_DIRECTORIES
+list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${PAL_DIR}"
-    "${WEBKIT2_DIR}/NetworkProcess/cocoa"
-    "${WEBKIT2_DIR}/NetworkProcess/mac"
-    "${WEBKIT2_DIR}/PluginProcess/mac"
-    "${WEBKIT2_DIR}/UIProcess/mac"
-    "${WEBKIT2_DIR}/UIProcess/API/C/mac"
-    "${WEBKIT2_DIR}/UIProcess/API/Cocoa"
-    "${WEBKIT2_DIR}/UIProcess/API/mac"
-    "${WEBKIT2_DIR}/UIProcess/Cocoa"
-    "${WEBKIT2_DIR}/UIProcess/Launcher/mac"
-    "${WEBKIT2_DIR}/UIProcess/RemoteLayerTree"
-    "${WEBKIT2_DIR}/UIProcess/RemoteLayerTree/ios"
-    "${WEBKIT2_DIR}/UIProcess/ios"
-    "${WEBKIT2_DIR}/Platform/cg"
-    "${WEBKIT2_DIR}/Platform/classifier"
-    "${WEBKIT2_DIR}/Platform/classifier/cocoa"
-    "${WEBKIT2_DIR}/Platform/mac"
-    "${WEBKIT2_DIR}/Platform/unix"
-    "${WEBKIT2_DIR}/Platform/spi/Cocoa"
-    "${WEBKIT2_DIR}/Platform/spi/mac"
-    "${WEBKIT2_DIR}/Platform/IPC/mac"
-    "${WEBKIT2_DIR}/Platform/spi/Cocoa"
-    "${WEBKIT2_DIR}/Shared/API/Cocoa"
-    "${WEBKIT2_DIR}/Shared/API/c/cf"
-    "${WEBKIT2_DIR}/Shared/API/c/cg"
-    "${WEBKIT2_DIR}/Shared/API/c/mac"
-    "${WEBKIT2_DIR}/Shared/cf"
-    "${WEBKIT2_DIR}/Shared/Cocoa"
-    "${WEBKIT2_DIR}/Shared/EntryPointUtilities/mac/XPCService"
-    "${WEBKIT2_DIR}/Shared/mac"
-    "${WEBKIT2_DIR}/Shared/Plugins/mac"
-    "${WEBKIT2_DIR}/Shared/Scrolling"
-    "${WEBKIT2_DIR}/WebProcess/cocoa"
-    "${WEBKIT2_DIR}/WebProcess/mac"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/Cocoa"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/mac"
-    "${WEBKIT2_DIR}/WebProcess/Plugins/PDF"
-    "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape/mac"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/Cocoa"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/RemoteLayerTree"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/mac"
-    "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/mac"
+    "${WEBKIT_DIR}/NetworkProcess/cocoa"
+    "${WEBKIT_DIR}/NetworkProcess/mac"
+    "${WEBKIT_DIR}/PluginProcess/mac"
+    "${WEBKIT_DIR}/UIProcess/mac"
+    "${WEBKIT_DIR}/UIProcess/API/C/mac"
+    "${WEBKIT_DIR}/UIProcess/API/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/API/mac"
+    "${WEBKIT_DIR}/UIProcess/Cocoa"
+    "${WEBKIT_DIR}/UIProcess/Launcher/mac"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree/ios"
+    "${WEBKIT_DIR}/UIProcess/ios"
+    "${WEBKIT_DIR}/Platform/cg"
+    "${WEBKIT_DIR}/Platform/classifier"
+    "${WEBKIT_DIR}/Platform/classifier/cocoa"
+    "${WEBKIT_DIR}/Platform/mac"
+    "${WEBKIT_DIR}/Platform/unix"
+    "${WEBKIT_DIR}/Platform/spi/Cocoa"
+    "${WEBKIT_DIR}/Platform/spi/mac"
+    "${WEBKIT_DIR}/Platform/IPC/mac"
+    "${WEBKIT_DIR}/Platform/spi/Cocoa"
+    "${WEBKIT_DIR}/Shared/API/Cocoa"
+    "${WEBKIT_DIR}/Shared/API/c/cf"
+    "${WEBKIT_DIR}/Shared/API/c/cg"
+    "${WEBKIT_DIR}/Shared/API/c/mac"
+    "${WEBKIT_DIR}/Shared/cf"
+    "${WEBKIT_DIR}/Shared/Cocoa"
+    "${WEBKIT_DIR}/Shared/EntryPointUtilities/mac/XPCService"
+    "${WEBKIT_DIR}/Shared/mac"
+    "${WEBKIT_DIR}/Shared/Plugins/mac"
+    "${WEBKIT_DIR}/Shared/Scrolling"
+    "${WEBKIT_DIR}/WebProcess/cocoa"
+    "${WEBKIT_DIR}/WebProcess/mac"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/Cocoa"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/mac"
+    "${WEBKIT_DIR}/WebProcess/Plugins/PDF"
+    "${WEBKIT_DIR}/WebProcess/Plugins/Netscape/mac"
+    "${WEBKIT_DIR}/WebProcess/WebPage/Cocoa"
+    "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
+    "${WEBKIT_DIR}/WebProcess/WebPage/mac"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/mac"
     "${FORWARDING_HEADERS_DIR}/WebCore"
     "${DERIVED_SOURCES_WEBCORE_DIR}"
 )
@@ -461,12 +461,12 @@ list(APPEND StorageProcess_SOURCES
 )
 
 # FIXME: These should not have Development in production builds.
-set(WebKit2_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
-set(WebKit2_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
+set(WebKit_WebProcess_OUTPUT_NAME com.apple.WebKit.WebContent.Development)
+set(WebKit_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 
 add_definitions("-include WebKit2Prefix.h")
 
-set(WebKit2_FORWARDING_HEADERS_FILES
+set(WebKit_FORWARDING_HEADERS_FILES
     Shared/API/c/WKDiagnosticLoggingResultType.h
 
     UIProcess/API/C/WKPageDiagnosticLoggingClient.h
@@ -474,7 +474,7 @@ set(WebKit2_FORWARDING_HEADERS_FILES
     UIProcess/API/C/WKPageRenderingProgressEvents.h
 )
 
-list(APPEND WebKit2_MESSAGES_IN_FILES
+list(APPEND WebKit_MESSAGES_IN_FILES
     Shared/API/Cocoa/RemoteObjectRegistry.messages.in
 
     UIProcess/Cocoa/VideoFullscreenManagerProxy.messages.in
@@ -488,7 +488,7 @@ list(APPEND WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/ViewGestureGeometryCollector.messages.in
 )
 
-set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
+set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     Platform
     Shared
 
@@ -520,7 +520,7 @@ set(WebKit2_FORWARDING_HEADERS_DIRECTORIES
     WebProcess/InjectedBundle/API/mac
 )
 
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit2_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit2_FORWARDING_HEADERS_DIRECTORIES})
+WEBKIT_CREATE_FORWARDING_HEADERS(WebKit FILES ${WebKit_FORWARDING_HEADERS_FILES} DIRECTORIES ${WebKit_FORWARDING_HEADERS_DIRECTORIES})
 
 # This is needed right now to import ObjC headers instead of including them.
 # FIXME: Forwarding headers should be copies of actual headers.
@@ -737,7 +737,7 @@ foreach (_file ${ObjCForwardingHeaders})
     file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/${_file} "#import <WebKitLegacy/${_file}>")
 endforeach ()
 
-list(APPEND WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
+list(APPEND WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
     --platform=macOS
 )
 
@@ -746,4 +746,4 @@ file(WRITE ${FORWARDING_HEADERS_DIR}/WebKit/WKImageCG.h "#import <WebKit/Shared/
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 
-set(WebKit2_OUTPUT_NAME WebKit)
+set(WebKit_OUTPUT_NAME WebKit)

@@ -27,7 +27,7 @@
 #ifndef PrintWebUIDelegate_h
 #define PrintWebUIDelegate_h
 
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 
 class PrintWebUIDelegate : public IWebUIDelegate {
 public:

@@ -1,3 +1,19 @@
+2017-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Rename WebKit target to WebKitLegacy and rename WebKit2 target to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=174558
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * PlatformWPE.cmake:
+        * PlatformWin.cmake:
+        * Shared/gtk/WebKitWaylandProtocol.xml: Renamed from Source/WebKit/Shared/gtk/WebKit2WaylandProtocol.xml.
+        * UIProcess/gtk/WaylandCompositor.cpp:
+        * WebProcess/gtk/WaylandCompositorDisplay.cpp:
+
 2017-09-18  Andy Estes  <aestes@apple.com>
 
         [Cocoa] Upstream sandbox-related WebKitSystemInterface functions

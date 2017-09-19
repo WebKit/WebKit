@@ -6,7 +6,7 @@ if (ENABLE_INTROSPECTION)
 endif ()
 
 list(APPEND DocumentationDependencies
-    WebKit2
+    WebKit
     "${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml"
     "${CMAKE_SOURCE_DIR}/Source/WebKit/UIProcess/API/gtk/docs/webkit2gtk-${WEBKITGTK_API_VERSION}-sections.txt"
 )
@@ -31,7 +31,7 @@ macro(ADD_GTKDOC_GENERATOR _stamp_name _extra_args)
     )
 endmacro()
 
-add_gtkdoc_generator("docs-build.stamp" "")
+ADD_GTKDOC_GENERATOR("docs-build.stamp" "")
 if (ENABLE_GTKDOC)
     add_custom_target(gtkdoc ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build.stamp")
 elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING AND NOT APPLE)
@@ -41,7 +41,7 @@ elseif (NOT ENABLED_COMPILER_SANITIZERS AND NOT CMAKE_CROSSCOMPILING AND NOT APP
     # or errors. This is useful to prevent breaking documentation inadvertently during
     # the course of development.
     if (DEVELOPER_MODE)
-        add_gtkdoc_generator("docs-build-no-html.stamp" "--skip-html")
+        ADD_GTKDOC_GENERATOR("docs-build-no-html.stamp" "--skip-html")
         add_custom_target(gtkdoc-no-html ALL DEPENDS "${CMAKE_BINARY_DIR}/docs-build-no-html.stamp")
     endif ()
 endif ()
@@ -61,7 +61,7 @@ if (DEVELOPER_MODE)
         OUTPUT ${CMAKE_BINARY_DIR}/webkitgtk-${PROJECT_VERSION}.tar
         DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
         DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
-        DEPENDS WebKit2
+        DEPENDS WebKit
         DEPENDS gtkdoc
         COMMAND ${TOOLS_DIR}/gtk/make-dist.py
                 --source-dir=${CMAKE_SOURCE_DIR}
@@ -83,7 +83,7 @@ if (DEVELOPER_MODE)
     add_custom_target(distcheck
         DEPENDS ${TOOLS_DIR}/gtk/make-dist.py
         DEPENDS ${CMAKE_BINARY_DIR}/manifest.txt
-        DEPENDS WebKit2
+        DEPENDS WebKit
         DEPENDS gtkdoc
         COMMAND ${TOOLS_DIR}/gtk/make-dist.py
                 --check

@@ -1,25 +1,25 @@
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1 -DWEBKIT_EXPORTS=1)
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
+    list(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
         ${CAIRO_INCLUDE_DIRS}
         "${WEBKIT_LIBRARIES_DIR}/include"
         "${WEBCORE_DIR}/platform/graphics/cairo"
     )
-    list(APPEND WebKit_SOURCES_Classes
+    list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCURL.cpp
         win/WebURLAuthenticationChallengeSenderCURL.cpp
     )
-    list(APPEND WebKit_LIBRARIES
+    list(APPEND WebKitLegacy_LIBRARIES
         ${OPENSSL_LIBRARIES}
         PRIVATE mfuuid.lib
         PRIVATE strmiids.lib
     )
 else ()
-    list(APPEND WebKit_SOURCES_Classes
+    list(APPEND WebKitLegacy_SOURCES_Classes
         win/WebDownloadCFNet.cpp
         win/WebURLAuthenticationChallengeSenderCFNet.cpp
     )
-    list(APPEND WebKit_LIBRARIES
+    list(APPEND WebKitLegacy_LIBRARIES
         PRIVATE CFNetwork${DEBUG_SUFFIX}
         PRIVATE CoreGraphics${DEBUG_SUFFIX}
         PRIVATE CoreText${DEBUG_SUFFIX}
@@ -35,33 +35,33 @@ else ()
     )
 endif ()
 
-list(APPEND WebKit_LIBRARIES PRIVATE WTF${DEBUG_SUFFIX})
+list(APPEND WebKitLegacy_LIBRARIES PRIVATE WTF${DEBUG_SUFFIX})
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitVersion.h
-    MAIN_DEPENDENCY ${WEBKIT_DIR}/scripts/generate-webkitversion.pl
-    DEPENDS ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/scripts/generate-webkitversion.pl --config ${WEBKIT_DIR}/mac/Configurations/Version.xcconfig --outputDir ${DERIVED_SOURCES_WEBKIT_DIR}
+    OUTPUT ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitVersion.h
+    MAIN_DEPENDENCY ${WEBKITLEGACY_DIR}/scripts/generate-webkitversion.pl
+    DEPENDS ${WEBKITLEGACY_DIR}/mac/Configurations/Version.xcconfig
+    COMMAND ${PERL_EXECUTABLE} ${WEBKITLEGACY_DIR}/scripts/generate-webkitversion.pl --config ${WEBKITLEGACY_DIR}/mac/Configurations/Version.xcconfig --outputDir ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
     VERBATIM)
-list(APPEND WebKit_SOURCES ${DERIVED_SOURCES_WEBKIT_DIR}/WebKitVersion.h)
+list(APPEND WebKitLegacy_SOURCES ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitVersion.h)
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}/../include/private"
     "${CMAKE_BINARY_DIR}/../include/private/JavaScriptCore"
     "${CMAKE_BINARY_DIR}/../include/private/WebCore"
-    "${WEBKIT_DIR}/win"
-    "${WEBKIT_DIR}/win/plugins"
-    "${WEBKIT_DIR}/win/WebCoreSupport"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/include"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces"
+    "${WEBKITLEGACY_DIR}/win"
+    "${WEBKITLEGACY_DIR}/win/plugins"
+    "${WEBKITLEGACY_DIR}/win/WebCoreSupport"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/include"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces"
     "${FORWARDING_HEADERS_DIR}/ANGLE"
     "${FORWARDING_HEADERS_DIR}/ANGLE/include"
     "${FORWARDING_HEADERS_DIR}/ANGLE/include/egl"
     "${FORWARDING_HEADERS_DIR}/ANGLE/include/khr"
-    "${DERIVED_SOURCES_DIR}/WebKit"
+    "${DERIVED_SOURCES_DIR}/WebKitLegacy"
 )
 
-list(APPEND WebKit_INCLUDES
+list(APPEND WebKitLegacy_INCLUDES
     win/CFDictionaryPropertyBag.h
     win/COMEnumVariant.h
     win/COMPropertyBag.h
@@ -131,7 +131,7 @@ list(APPEND WebKit_INCLUDES
     win/WebWorkersPrivate.h
 )
 
-list(APPEND WebKit_SOURCES_Classes
+list(APPEND WebKitLegacy_SOURCES_Classes
     win/AccessibleBase.cpp
     win/AccessibleDocument.cpp
     win/AccessibleImage.cpp
@@ -214,7 +214,7 @@ list(APPEND WebKit_SOURCES_Classes
     win/storage/WebDatabaseProvider.cpp
 )
 
-list(APPEND WebKit_SOURCES_WebCoreSupport
+list(APPEND WebKitLegacy_SOURCES_WebCoreSupport
     win/WebCoreSupport/AcceleratedCompositingContext.cpp
     win/WebCoreSupport/EmbeddedWidget.cpp
     win/WebCoreSupport/EmbeddedWidget.h
@@ -247,11 +247,11 @@ list(APPEND WebKit_SOURCES_WebCoreSupport
 )
 
 if (USE_CF)
-    list(APPEND WebKit_SOURCES_Classes
+    list(APPEND WebKitLegacy_SOURCES_Classes
         cf/WebCoreSupport/WebInspectorClientCF.cpp
     )
 
-    list(APPEND WebKit_LIBRARIES
+    list(APPEND WebKitLegacy_LIBRARIES
         ${COREFOUNDATION_LIBRARY}
     )
 endif ()
@@ -262,44 +262,44 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(MASM_EXECUTABLE ml64)
         set(MASM_FLAGS /c /Fo)
         add_custom_command(
-            OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+            OUTPUT ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/PaintHooks.obj
             MAIN_DEPENDENCY win/plugins/PaintHooks.asm
             COMMAND ${MASM_EXECUTABLE} ${MASM_FLAGS}
-                ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+                ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/PaintHooks.obj
                 ${CMAKE_CURRENT_SOURCE_DIR}/win/plugins/PaintHooks.asm
             VERBATIM)
-        list(APPEND WebKit_SOURCES
-            ${DERIVED_SOURCES_WEBKIT_DIR}/PaintHooks.obj
+        list(APPEND WebKitLegacy_SOURCES
+            ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/PaintHooks.obj
         )
     else ()
-        list(APPEND WebKit_SOURCES
+        list(APPEND WebKitLegacy_SOURCES
             win/plugins/PaintHooks.asm
         )
     endif ()
 endif ()
 
-list(APPEND WebKit_SOURCES ${WebKit_INCLUDES} ${WebKit_SOURCES_Classes} ${WebKit_SOURCES_WebCoreSupport})
+list(APPEND WebKitLegacy_SOURCES ${WebKitLegacy_INCLUDES} ${WebKitLegacy_SOURCES_Classes} ${WebKitLegacy_SOURCES_WebCoreSupport})
 
-source_group(Includes FILES ${WebKit_INCLUDES})
-source_group(Classes FILES ${WebKit_SOURCES_Classes})
-source_group(WebCoreSupport FILES ${WebKit_SOURCES_WebCoreSupport})
+source_group(Includes FILES ${WebKitLegacy_INCLUDES})
+source_group(Classes FILES ${WebKitLegacy_SOURCES_Classes})
+source_group(WebCoreSupport FILES ${WebKitLegacy_SOURCES_WebCoreSupport})
 
 # Build the COM interface:
 macro(GENERATE_INTERFACE _infile _defines _depends)
     get_filename_component(_filewe ${_infile} NAME_WE)
     add_custom_command(
-        OUTPUT  ${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/${_filewe}.h
+        OUTPUT  ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/${_filewe}.h
         MAIN_DEPENDENCY ${_infile}
         DEPENDS ${_depends}
-        COMMAND midl.exe /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces" /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces/Accessible2" /I "${DERIVED_SOURCES_WEBKIT_DIR}/include" /I "${CMAKE_CURRENT_SOURCE_DIR}/win" /WX /char signed /env win32 /tlb "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_filewe}.tlb" /out "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces" /h "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/${_filewe}.h" /iid "${_filewe}_i.c" ${_defines} "${CMAKE_CURRENT_SOURCE_DIR}/${_infile}"
+        COMMAND midl.exe /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces" /I "${CMAKE_CURRENT_SOURCE_DIR}/win/Interfaces/Accessible2" /I "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/include" /I "${CMAKE_CURRENT_SOURCE_DIR}/win" /WX /char signed /env win32 /tlb "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${_filewe}.tlb" /out "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces" /h "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/${_filewe}.h" /iid "${_filewe}_i.c" ${_defines} "${CMAKE_CURRENT_SOURCE_DIR}/${_infile}"
         VERBATIM)
-    set_source_files_properties(${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/${_filewe}.h PROPERTIES GENERATED TRUE)
-    set_source_files_properties(${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/${_filewe}_i.c PROPERTIES GENERATED TRUE)
+    set_source_files_properties(${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/${_filewe}.h PROPERTIES GENERATED TRUE)
+    set_source_files_properties(${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/${_filewe}_i.c PROPERTIES GENERATED TRUE)
 endmacro()
 
 set(MIDL_DEFINES /D\ \"__PRODUCTION__=01\")
 
-set(WEBKIT_IDL_DEPENDENCIES
+set(WEBKITLEGACY_IDL_DEPENDENCIES
     win/Interfaces/AccessibleComparable.idl
     win/Interfaces/DOMCSS.idl
     win/Interfaces/DOMCore.idl
@@ -391,49 +391,49 @@ set(WEBKIT_IDL_DEPENDENCIES
     win/Interfaces/Accessible2/AccessibleText.idl
     win/Interfaces/Accessible2/AccessibleText2.idl
     win/Interfaces/Accessible2/IA2CommonTypes.idl
-    "${DERIVED_SOURCES_WEBKIT_DIR}/include/autoversion.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/include/autoversion.h"
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/include/autoversion.h
+    OUTPUT ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/include/autoversion.h
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${DERIVED_SOURCES_WEBKIT_DIR}
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/auto-version.pl ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
     VERBATIM)
 
-GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2_2.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleRelation.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleStates.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/IA2CommonTypes.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleEditableText.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
-GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText2.idl ${MIDL_DEFINES} "${WEBKIT_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/WebKit.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleApplication.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/Accessible2_2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleRelation.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleStates.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/IA2CommonTypes.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleEditableText.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
+GENERATE_INTERFACE(win/Interfaces/Accessible2/AccessibleText2.idl ${MIDL_DEFINES} "${WEBKITLEGACY_IDL_DEPENDENCIES}")
 
-add_library(WebKitGUID STATIC
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/WebKit.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleApplication.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/Accessible2.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/Accessible2_2.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleRelation.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleStates.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/IA2CommonTypes.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleEditableText.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText2.h"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/WebKit_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleApplication_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/Accessible2_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/Accessible2_2_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleRelation_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleEditableText_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText_i.c"
-    "${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/AccessibleText2_i.c"
+add_library(WebKitLegacyGUID STATIC
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/WebKit.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleApplication.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/Accessible2.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/Accessible2_2.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleRelation.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleStates.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/IA2CommonTypes.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleEditableText.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText2.h"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/WebKit_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleApplication_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/Accessible2_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/Accessible2_2_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleRelation_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleEditableText_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText_i.c"
+    "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText2_i.c"
 )
-set_target_properties(WebKitGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
+set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitLegacyGUID${DEBUG_SUFFIX})
 
-list(APPEND WebKit_LIBRARIES
+list(APPEND WebKitLegacy_LIBRARIES
     PRIVATE Comctl32
     PRIVATE Comsupp
     PRIVATE Crypt32
@@ -447,13 +447,13 @@ list(APPEND WebKit_LIBRARIES
     PRIVATE Usp10
     PRIVATE Version
     PRIVATE Winmm
-    PRIVATE WebKitGUID${DEBUG_SUFFIX}
+    PRIVATE WebKitLegacyGUID${DEBUG_SUFFIX}
     PRIVATE WebCoreDerivedSources${DEBUG_SUFFIX}
     PRIVATE WindowsCodecs
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_3D)
-    list(APPEND WebKit_LIBRARIES
+    list(APPEND WebKitLegacy_LIBRARIES
         libANGLE${DEBUG_SUFFIX}
         libEGL${DEBUG_SUFFIX}
         libGLESv2${DEBUG_SUFFIX}
@@ -466,7 +466,7 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
 # We need the webkit libraries to come before the system default libraries to prevent symbol conflicts with uuid.lib.
 # To do this we add system default libs as webkit libs and zero out system default libs.
 string(REPLACE " " "\;" CXX_LIBS ${CMAKE_CXX_STANDARD_LIBRARIES})
-list(APPEND WebKit_LIBRARIES ${CXX_LIBS})
+list(APPEND WebKitLegacy_LIBRARIES ${CXX_LIBS})
 set(CMAKE_CXX_STANDARD_LIBRARIES "")
 
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT /NODEFAULTLIB:MSVCRTD")
@@ -474,17 +474,17 @@ set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:MSVCRT
 # If this directory isn't created before midl runs and attempts to output WebKit.tlb,
 # It fails with an unusual error - midl failed - failed to save all changes
 file(MAKE_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces)
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces)
 
-set(WebKitGUID_PRE_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebKit/preBuild.cmd")
-file(WRITE "${WebKitGUID_PRE_BUILD_COMMAND}" "@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/WebKitCOMAPI.h\" \"${FORWARDING_HEADERS_DIR}/WebKit\" >nul 2>nul\n@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/CFDictionaryPropertyBag.h\" \"${FORWARDING_HEADERS_DIR}/WebKit\" >nul 2>nul\n")
-file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WebKit)
-add_custom_command(TARGET WebKitGUID PRE_BUILD COMMAND ${WebKitGUID_PRE_BUILD_COMMAND} VERBATIM)
+set(WebKitLegacyGUID_PRE_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebKitLegacy/preBuild.cmd")
+file(WRITE "${WebKitLegacyGUID_PRE_BUILD_COMMAND}" "@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/WebKitCOMAPI.h\" \"${FORWARDING_HEADERS_DIR}/WebKitLegacy\" >nul 2>nul\n@xcopy /y /d /f \"${CMAKE_CURRENT_SOURCE_DIR}/win/CFDictionaryPropertyBag.h\" \"${FORWARDING_HEADERS_DIR}/WebKitLegacy\" >nul 2>nul\n")
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WebKitLegacy)
+add_custom_command(TARGET WebKitLegacyGUID PRE_BUILD COMMAND ${WebKitLegacyGUID_PRE_BUILD_COMMAND} VERBATIM)
 
-set(WebKitGUID_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebKit/postBuild.cmd")
-file(WRITE "${WebKitGUID_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${DERIVED_SOURCES_WEBKIT_DIR}/Interfaces/*.h\" \"${FORWARDING_HEADERS_DIR}/WebKit\" >nul 2>nul")
-add_custom_command(TARGET WebKitGUID POST_BUILD COMMAND ${WebKitGUID_POST_BUILD_COMMAND} VERBATIM)
+set(WebKitLegacyGUID_POST_BUILD_COMMAND "${CMAKE_BINARY_DIR}/DerivedSources/WebKitLegacy/postBuild.cmd")
+file(WRITE "${WebKitLegacyGUID_POST_BUILD_COMMAND}" "@xcopy /y /d /f \"${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/*.h\" \"${FORWARDING_HEADERS_DIR}/WebKitLegacy\" >nul 2>nul")
+add_custom_command(TARGET WebKitLegacyGUID POST_BUILD COMMAND ${WebKitLegacyGUID_POST_BUILD_COMMAND} VERBATIM)
 
-set(WebKit_OUTPUT_NAME
+set(WebKitLegacy_OUTPUT_NAME
     WebKit${DEBUG_SUFFIX}
 )

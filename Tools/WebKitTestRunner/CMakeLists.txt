@@ -25,7 +25,7 @@ set(WebKitTestRunner_SOURCES
 set(WebKitTestRunner_LIBRARIES
     JavaScriptCore
     WebCoreTestSupport
-    WebKit2
+    WebKit
 )
 
 set(WebKitTestRunner_INCLUDE_DIRECTORIES
@@ -36,14 +36,14 @@ set(WebKitTestRunner_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTRUNNER_UISCRIPTCONTEXT_DIR}
     ${WEBKIT_TESTRUNNER_BINDINGS_DIR}
     ${WEBCORE_DIR}/testing/js
-    ${WEBKIT2_DIR}/Platform/IPC
-    ${WEBKIT2_DIR}/Shared
-    ${WEBKIT2_DIR}/Shared/API/c
-    ${WEBKIT2_DIR}/Shared/Plugins
-    ${WEBKIT2_DIR}/UIProcess
-    ${WEBKIT2_DIR}/UIProcess/API/C/soup
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
+    ${WEBKIT_DIR}/Platform/IPC
+    ${WEBKIT_DIR}/Shared
+    ${WEBKIT_DIR}/Shared/API/c
+    ${WEBKIT_DIR}/Shared/Plugins
+    ${WEBKIT_DIR}/UIProcess
+    ${WEBKIT_DIR}/UIProcess/API/C/soup
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c
     ${DERIVED_SOURCES_DIR}/InjectedBundle
     ${DERIVED_SOURCES_DIR}/UIScriptContext
     ${CMAKE_SOURCE_DIR}/Source
@@ -122,5 +122,5 @@ if (COMPILER_IS_GCC_OR_CLANG)
 endif ()
 
 if (NOT APPLE)
-    add_dependencies(WebKit2 ${ForwardingHeadersForWebKitTestRunner_NAME})
+    add_dependencies(WebKit ${ForwardingHeadersForWebKitTestRunner_NAME})
 endif ()

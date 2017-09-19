@@ -28,7 +28,7 @@
 
 #if PLATFORM(WAYLAND) && USE(EGL)
 
-#include "WebKit2WaylandServerProtocol.h"
+#include "WebKitWaylandServerProtocol.h"
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <WebCore/GLContext.h>

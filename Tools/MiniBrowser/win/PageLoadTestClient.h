@@ -27,7 +27,7 @@
 #define PageLoadTestClient_h
 
 #include <CoreFoundation/CFDate.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

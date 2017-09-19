@@ -22,7 +22,7 @@ set(MiniBrowser_INCLUDE_DIRECTORIES
 )
 
 set(MiniBrowser_LIBRARIES
-    WebKit2
+    WebKit
 )
 
 set(EXECUTABLE_NAME MiniBrowser)

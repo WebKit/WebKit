@@ -29,7 +29,7 @@
 #ifndef ResourceLoadDelegate_h
 #define ResourceLoadDelegate_h
 
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <string>
 #include <wtf/HashMap.h>
 

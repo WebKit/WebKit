@@ -3,12 +3,12 @@ find_library(QUARTZ_LIBRARY Quartz)
 add_definitions(-iframework ${QUARTZ_LIBRARY}/Frameworks)
 add_definitions(-iframework ${APPLICATIONSERVICES_LIBRARY}/Versions/Current/Frameworks)
 
-list(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKitLegacy_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
 
-list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
+list(APPEND WebKitLegacy_SYSTEM_INCLUDE_DIRECTORIES
     mac
     mac/Carbon
     mac/DefaultDelegates
@@ -25,7 +25,7 @@ list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     mac/WebView
 )
 
-list(APPEND WebKit_SOURCES
+list(APPEND WebKitLegacy_SOURCES
     cf/WebCoreSupport/WebInspectorClientCF.cpp
 
     mac/Carbon/CarbonUtils.m
@@ -358,10 +358,10 @@ set(WebKitLegacy_FORWARDING_HEADERS_FILES
 add_definitions("-include WebKitPrefix.h")
 
 set(C99_FILES
-    ${WEBKIT_DIR}/mac/Carbon/CarbonUtils.m
-    ${WEBKIT_DIR}/mac/Carbon/CarbonWindowContentView.m
-    ${WEBKIT_DIR}/mac/Carbon/CarbonWindowFrame.m
-    ${WEBKIT_DIR}/mac/Carbon/HIViewAdapter.m
+    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonUtils.m
+    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonWindowContentView.m
+    ${WEBKITLEGACY_DIR}/mac/Carbon/CarbonWindowFrame.m
+    ${WEBKITLEGACY_DIR}/mac/Carbon/HIViewAdapter.m
 
     mac/DefaultDelegates/WebDefaultEditingDelegate.m
     mac/DefaultDelegates/WebDefaultPolicyDelegate.m
@@ -395,7 +395,7 @@ set(C99_FILES
     mac/WebView/WebFormDelegate.m
 )
 
-foreach (_file ${WebKit_SOURCES})
+foreach (_file ${WebKitLegacy_SOURCES})
     list(FIND C99_FILES ${_file} _c99_index)
     if (${_c99_index} EQUAL -1)
         set_source_files_properties(${_file} PROPERTIES COMPILE_FLAGS "-ObjC++ -std=c++14")
@@ -440,7 +440,6 @@ list(APPEND WebKit_SOURCES
 )
 
 WEBKIT_CREATE_FORWARDING_HEADERS(WebKitLegacy DIRECTORIES ${WebKitLegacy_FORWARDING_HEADERS_DIRECTORIES} FILES ${WebKitLegacy_FORWARDING_HEADERS_FILES})
-WEBKIT_CREATE_FORWARDING_HEADERS(WebKit DIRECTORIES ${FORWARDING_HEADERS_DIR}/WebKitLegacy)
 
 # FIXME: Forwarding headers should be copies of actual headers.
 file(GLOB ObjCHeaders ${WEBCORE_DIR}/plugins/*.h)
@@ -455,6 +454,6 @@ foreach (_file ${ObjCHeaders})
     endif ()
 endforeach ()
 
-set(WebKit_OUTPUT_NAME WebKitLegacy)
+set(WebKitLegacy_OUTPUT_NAME WebKitLegacy)
 
 set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} "-compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")

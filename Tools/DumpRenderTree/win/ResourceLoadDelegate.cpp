@@ -31,7 +31,7 @@
 
 #include "DumpRenderTree.h"
 #include "TestRunner.h"
-#include <WebKit/WebKitCOMAPI.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comutil.h>
 #include <sstream>
 #include <tchar.h>

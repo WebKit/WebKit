@@ -28,7 +28,7 @@
 #ifndef DOMDefaultImpl_h
 #define DOMDefaultImpl_h
 
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 
 class WebScriptObject : public IWebScriptObject {
 public:

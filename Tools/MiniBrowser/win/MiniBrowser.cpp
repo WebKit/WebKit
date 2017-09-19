@@ -32,7 +32,7 @@
 #include "DOMDefaultImpl.h"
 #include "MiniBrowserLibResource.h"
 #include "MiniBrowserReplace.h"
-#include <WebKit/WebKitCOMAPI.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 

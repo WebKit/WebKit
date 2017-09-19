@@ -27,8 +27,8 @@
 #include "HostWindow.h"
 #include "Test.h"
 #include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
-#include <WebKit/WebKitCOMAPI.h>
+#include <WebKitLegacy/WebKit.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 
 namespace TestWebKitAPI {
 

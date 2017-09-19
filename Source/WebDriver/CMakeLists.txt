@@ -21,11 +21,11 @@ set(WebDriver_LIBRARIES
 )
 
 set(WebDriver_SCRIPTS
-    ${WEBKIT2_DIR}/UIProcess/Automation/atoms/ElementAttribute.js
-    ${WEBKIT2_DIR}/UIProcess/Automation/atoms/ElementDisplayed.js
-    ${WEBKIT2_DIR}/UIProcess/Automation/atoms/FindNodes.js
-    ${WEBKIT2_DIR}/UIProcess/Automation/atoms/FormElementClear.js
-    ${WEBKIT2_DIR}/UIProcess/Automation/atoms/FormSubmit.js
+    ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementAttribute.js
+    ${WEBKIT_DIR}/UIProcess/Automation/atoms/ElementDisplayed.js
+    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FindNodes.js
+    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormElementClear.js
+    ${WEBKIT_DIR}/UIProcess/Automation/atoms/FormSubmit.js
 )
 
 set(JavaScriptCore_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/JavaScriptCore/Scripts")

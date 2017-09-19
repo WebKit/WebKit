@@ -1,6 +1,6 @@
 set(MiniBrowser_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}"
-    "${FORWARDING_HEADERS_DIR}/WebKit"
+    "${FORWARDING_HEADERS_DIR}/WebKitLegacy"
     "${CMAKE_SOURCE_DIR}"
     "${CMAKE_SOURCE_DIR}/Source"
 )
@@ -22,8 +22,8 @@ set(MiniBrowser_SOURCES
 set(MiniBrowser_LIBRARIES
     DbgHelp
     WTF
-    WebKit
-    WebKitGUID
+    WebKitLegacy
+    WebKitLegacyGUID
     comctl32
     comsupp
     comsuppw

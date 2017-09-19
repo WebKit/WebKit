@@ -142,12 +142,12 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 endif ()
 
-set(test_webkit_LIBRARIES
+set(test_webkitlegacy_LIBRARIES
     WebCoreTestSupport
-    WebKit${DEBUG_SUFFIX}
+    WebKitLegacy${DEBUG_SUFFIX}
     gtest
 )
-add_library(TestWebKitLib SHARED
+add_library(TestWebKitLegacyLib SHARED
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKitLegacy/win/ScaleWebView.cpp
@@ -155,20 +155,20 @@ add_library(TestWebKitLib SHARED
     ${TESTWEBKITAPI_DIR}/win/HostWindow.cpp
 )
 
-target_link_libraries(TestWebKitLib ${test_webkit_LIBRARIES})
+target_link_libraries(TestWebKitLegacyLib ${test_webkitlegacy_LIBRARIES})
 
-add_executable(TestWebKit
+add_executable(TestWebKitLegacy
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
-target_link_libraries(TestWebKit shlwapi)
-add_dependencies(TestWebKit ${ForwardingHeadersForTestWebKitAPI_NAME})
+target_link_libraries(TestWebKitLegacy shlwapi)
+add_dependencies(TestWebKitLegacy ${ForwardingHeadersForTestWebKitAPI_NAME})
 
-add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKit)
-set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
+add_test(TestWebKitLegacy ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitLegacy)
+set_tests_properties(TestWebKitLegacy PROPERTIES TIMEOUT 60)
 
 set(test_main_SOURCES
     ${TOOLS_DIR}/win/DLLLauncher/DLLLauncherMain.cpp
 )
 
 add_dependencies(TestWebCore TestWebCoreLib)
-add_dependencies(TestWebKit TestWebKitLib)
+add_dependencies(TestWebKitLegacy TestWebKitLegacyLib)

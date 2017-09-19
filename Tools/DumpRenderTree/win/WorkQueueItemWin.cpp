@@ -31,12 +31,12 @@
 
 #include <comutil.h>
 #include "DumpRenderTree.h"
-#include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
-#include <WebKit/WebKitCOMAPI.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSStringRefCF.h>
+#include <WebCore/COMPtr.h>
+#include <WebKitLegacy/WebKit.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <string>

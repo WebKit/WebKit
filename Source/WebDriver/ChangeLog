@@ -1,3 +1,12 @@
+2017-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        [CMake] Rename WebKit target to WebKitLegacy and rename WebKit2 target to WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=174558
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-09-15  JF Bastien  <jfbastien@apple.com>
 
         WTF: use Forward.h when appropriate instead of Vector.h

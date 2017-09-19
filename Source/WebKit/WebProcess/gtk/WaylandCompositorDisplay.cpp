@@ -28,7 +28,7 @@
 
 #if PLATFORM(WAYLAND)
 
-#include "WebKit2WaylandClientProtocol.h"
+#include "WebKitWaylandClientProtocol.h"
 #include "WebPage.h"
 
 using namespace WebCore;

@@ -1,14 +1,14 @@
-set(WebKit2_OUTPUT_NAME WebKit2)
-set(WebKit2_WebProcess_OUTPUT_NAME WebKitWebProcess)
-set(WebKit2_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
-set(WebKit2_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
-set(WebKit2_StorageProcess_OUTPUT_NAME WebKitStorageProcess)
+set(WebKit_OUTPUT_NAME WebKit)
+set(WebKit_WebProcess_OUTPUT_NAME WebKitWebProcess)
+set(WebKit_NetworkProcess_OUTPUT_NAME WebKitNetworkProcess)
+set(WebKit_PluginProcess_OUTPUT_NAME WebKitPluginProcess)
+set(WebKit_StorageProcess_OUTPUT_NAME WebKitStorageProcess)
 
-file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT2_DIR})
+file(MAKE_DIRECTORY ${DERIVED_SOURCES_WEBKIT_DIR})
 
 add_definitions(-DBUILDING_WEBKIT)
 
-list(APPEND WebKit2_SOURCES
+list(APPEND WebKit_SOURCES
     NetworkProcess/Downloads/curl/DownloadCurl.cpp
 
     NetworkProcess/curl/NetworkProcessCurl.cpp
@@ -30,38 +30,38 @@ add_custom_command(
     COMMAND cp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendCommands.js ${DERIVED_SOURCES_WEBINSPECTORUI_DIR}/UserInterface/Protocol/InspectorBackendCommands.js
 )
 
-list(APPEND WebKit2_INCLUDE_DIRECTORIES
-    "${WEBKIT2_DIR}/NetworkProcess/win"
-    "${WEBKIT2_DIR}/Platform/classifier"
-    "${WEBKIT2_DIR}/PluginProcess/win"
-    "${WEBKIT2_DIR}/Shared/API/c/win"
-    "${WEBKIT2_DIR}/Shared/CoordinatedGraphics"
-    "${WEBKIT2_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
-    "${WEBKIT2_DIR}/Shared/Plugins/win"
-    "${WEBKIT2_DIR}/Shared/unix"
-    "${WEBKIT2_DIR}/Shared/win"
-    "${WEBKIT2_DIR}/StorageProcess/win"
-    "${WEBKIT2_DIR}/UIProcess/API/C/cairo"
-    "${WEBKIT2_DIR}/UIProcess/API/C/win"
-    "${WEBKIT2_DIR}/UIProcess/API/cpp/win"
-    "${WEBKIT2_DIR}/UIProcess/API/win"
-    "${WEBKIT2_DIR}/UIProcess/Plugins/win"
-    "${WEBKIT2_DIR}/UIProcess/win"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/win"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/win/DOM"
-    "${WEBKIT2_DIR}/WebProcess/win"
-    "${WEBKIT2_DIR}/WebProcess/WebCoreSupport/win"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/CoordinatedGraphics"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/win"
-    "${WEBKIT2_DIR}/win"
+list(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBKIT_DIR}/NetworkProcess/win"
+    "${WEBKIT_DIR}/Platform/classifier"
+    "${WEBKIT_DIR}/PluginProcess/win"
+    "${WEBKIT_DIR}/Shared/API/c/win"
+    "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
+    "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
+    "${WEBKIT_DIR}/Shared/Plugins/win"
+    "${WEBKIT_DIR}/Shared/unix"
+    "${WEBKIT_DIR}/Shared/win"
+    "${WEBKIT_DIR}/StorageProcess/win"
+    "${WEBKIT_DIR}/UIProcess/API/C/cairo"
+    "${WEBKIT_DIR}/UIProcess/API/C/win"
+    "${WEBKIT_DIR}/UIProcess/API/cpp/win"
+    "${WEBKIT_DIR}/UIProcess/API/win"
+    "${WEBKIT_DIR}/UIProcess/Plugins/win"
+    "${WEBKIT_DIR}/UIProcess/win"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/win/DOM"
+    "${WEBKIT_DIR}/WebProcess/win"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport/win"
+    "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
+    "${WEBKIT_DIR}/WebProcess/WebPage/win"
+    "${WEBKIT_DIR}/win"
 )
 
-list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
 )
 
-set(WebKit2CommonIncludeDirectories ${WebKit2_INCLUDE_DIRECTORIES})
-set(WebKit2CommonSystemIncludeDirectories ${WebKit2_SYSTEM_INCLUDE_DIRECTORIES})
+set(WebKitCommonIncludeDirectories ${WebKit_INCLUDE_DIRECTORIES})
+set(WebKitCommonSystemIncludeDirectories ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
 list(APPEND WebProcess_SOURCES
     WebProcess/EntryPoint/win/WebProcessMain.cpp
@@ -83,7 +83,7 @@ endif ()
 if (${WTF_PLATFORM_WIN_CAIRO})
     add_definitions(-DUSE_CAIRO=1 -DUSE_CURL=1)
 
-    list(APPEND WebKit2_LIBRARIES
+    list(APPEND WebKit_LIBRARIES
         libeay32.lib
         mfuuid.lib
         ssleay32.lib
@@ -91,25 +91,25 @@ if (${WTF_PLATFORM_WIN_CAIRO})
     )
 endif ()
 
-list(APPEND WebKit2_LIBRARIES
+list(APPEND WebKit_LIBRARIES
     WebCoreDerivedSources${DEBUG_SUFFIX}
 )
 
-set(SharedWebKit2Libraries
-    ${WebKit2_LIBRARIES}
+set(SharedWebKitLibraries
+    ${WebKit_LIBRARIES}
 )
 
-add_custom_target(WebKit2-forwarding-headers
+add_custom_target(WebKit-forwarding-headers
                   COMMAND ${PERL_EXECUTABLE}
-                  ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl
-                  --include-path ${WEBKIT2_DIR}
+                  ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl
+                  --include-path ${WEBKIT_DIR}
                   --output ${FORWARDING_HEADERS_DIR}
                   --platform win
                   --platform curl
                   )
 
-set(WEBKIT2_EXTRA_DEPENDENCIES
-    WebKit2-forwarding-headers
+set(WEBKIT_EXTRA_DEPENDENCIES
+    WebKit-forwarding-headers
 )
 
-WEBKIT_WRAP_SOURCELIST(${WebKit2_SOURCES})
+WEBKIT_WRAP_SOURCELIST(${WebKit_SOURCES})

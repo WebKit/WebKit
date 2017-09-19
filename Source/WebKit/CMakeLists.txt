@@ -1,101 +1,101 @@
 include(WebKitCommon)
 
-set_property(DIRECTORY . PROPERTY FOLDER "WebKit2")
+set_property(DIRECTORY . PROPERTY FOLDER "WebKit")
 
-set(WebKit2_INCLUDE_DIRECTORIES
-    "${WEBKIT2_DIR}"
-    "${WEBKIT2_DIR}/NetworkProcess"
-    "${WEBKIT2_DIR}/NetworkProcess/CustomProtocols"
-    "${WEBKIT2_DIR}/NetworkProcess/Downloads"
-    "${WEBKIT2_DIR}/NetworkProcess/FileAPI"
-    "${WEBKIT2_DIR}/NetworkProcess/cache"
-    "${WEBKIT2_DIR}/NetworkProcess/capture"
-    "${WEBKIT2_DIR}/NetworkProcess/webrtc"
-    "${WEBKIT2_DIR}/Platform"
-    "${WEBKIT2_DIR}/Platform/IPC"
-    "${WEBKIT2_DIR}/PluginProcess"
-    "${WEBKIT2_DIR}/Shared"
-    "${WEBKIT2_DIR}/Shared/API"
-    "${WEBKIT2_DIR}/Shared/API/c"
-    "${WEBKIT2_DIR}/Shared/Authentication"
-    "${WEBKIT2_DIR}/Shared/CoreIPCSupport"
-    "${WEBKIT2_DIR}/Shared/Databases"
-    "${WEBKIT2_DIR}/Shared/Databases/IndexedDB"
-    "${WEBKIT2_DIR}/Shared/FileAPI"
-    "${WEBKIT2_DIR}/Shared/Gamepad"
-    "${WEBKIT2_DIR}/Shared/Plugins"
-    "${WEBKIT2_DIR}/Shared/Plugins/Netscape"
-    "${WEBKIT2_DIR}/Shared/Plugins/Netscape/x11"
-    "${WEBKIT2_DIR}/Shared/RemoteLayerTree"
-    "${WEBKIT2_DIR}/Shared/Storage"
-    "${WEBKIT2_DIR}/Shared/WebsiteData"
-    "${WEBKIT2_DIR}/StorageProcess"
-    "${WEBKIT2_DIR}/StorageProcess/IndexedDB"
-    "${WEBKIT2_DIR}/StorageProcess/ServiceWorker"
-    "${WEBKIT2_DIR}/UIProcess"
-    "${WEBKIT2_DIR}/UIProcess/API"
-    "${WEBKIT2_DIR}/UIProcess/API/C"
-    "${WEBKIT2_DIR}/UIProcess/API/cpp"
-    "${WEBKIT2_DIR}/UIProcess/ApplePay"
-    "${WEBKIT2_DIR}/UIProcess/Authentication"
-    "${WEBKIT2_DIR}/UIProcess/Automation"
-    "${WEBKIT2_DIR}/UIProcess/Downloads"
-    "${WEBKIT2_DIR}/UIProcess/Gamepad"
-    "${WEBKIT2_DIR}/UIProcess/Launcher"
-    "${WEBKIT2_DIR}/UIProcess/Network"
-    "${WEBKIT2_DIR}/UIProcess/Network/CustomProtocols"
-    "${WEBKIT2_DIR}/UIProcess/Notifications"
-    "${WEBKIT2_DIR}/UIProcess/Plugins"
-    "${WEBKIT2_DIR}/UIProcess/RemoteLayerTree"
-    "${WEBKIT2_DIR}/UIProcess/Storage"
-    "${WEBKIT2_DIR}/UIProcess/UserContent"
-    "${WEBKIT2_DIR}/UIProcess/WebStorage"
-    "${WEBKIT2_DIR}/UIProcess/WebsiteData"
-    "${WEBKIT2_DIR}/WebProcess"
-    "${WEBKIT2_DIR}/WebProcess/ApplePay"
-    "${WEBKIT2_DIR}/WebProcess/ApplicationCache"
-    "${WEBKIT2_DIR}/WebProcess/Automation"
-    "${WEBKIT2_DIR}/WebProcess/Cache"
-    "${WEBKIT2_DIR}/WebProcess/Cookies"
-    "${WEBKIT2_DIR}/WebProcess/Databases"
-    "${WEBKIT2_DIR}/WebProcess/Databases/IndexedDB"
-    "${WEBKIT2_DIR}/WebProcess/FileAPI"
-    "${WEBKIT2_DIR}/WebProcess/FullScreen"
-    "${WEBKIT2_DIR}/WebProcess/Gamepad"
-    "${WEBKIT2_DIR}/WebProcess/Geolocation"
-    "${WEBKIT2_DIR}/WebProcess/IconDatabase"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c"
-    "${WEBKIT2_DIR}/WebProcess/InjectedBundle/DOM"
-    "${WEBKIT2_DIR}/WebProcess/Launching"
-    "${WEBKIT2_DIR}/WebProcess/MediaCache"
-    "${WEBKIT2_DIR}/WebProcess/MediaStream"
-    "${WEBKIT2_DIR}/WebProcess/Network"
-    "${WEBKIT2_DIR}/WebProcess/Network/webrtc"
-    "${WEBKIT2_DIR}/WebProcess/Notifications"
-    "${WEBKIT2_DIR}/WebProcess/OriginData"
-    "${WEBKIT2_DIR}/WebProcess/Plugins"
-    "${WEBKIT2_DIR}/WebProcess/Plugins/Netscape"
-    "${WEBKIT2_DIR}/WebProcess/ResourceCache"
-    "${WEBKIT2_DIR}/WebProcess/Storage"
-    "${WEBKIT2_DIR}/WebProcess/UserContent"
-    "${WEBKIT2_DIR}/WebProcess/WebCoreSupport"
-    "${WEBKIT2_DIR}/WebProcess/WebPage"
-    "${WEBKIT2_DIR}/WebProcess/WebPage/RemoteLayerTree"
-    "${WEBKIT2_DIR}/WebProcess/WebStorage"
-    "${DERIVED_SOURCES_WEBKIT2_DIR}"
-    "${DERIVED_SOURCES_WEBKIT2_DIR}/include"
+set(WebKit_INCLUDE_DIRECTORIES
+    "${WEBKIT_DIR}"
+    "${WEBKIT_DIR}/NetworkProcess"
+    "${WEBKIT_DIR}/NetworkProcess/CustomProtocols"
+    "${WEBKIT_DIR}/NetworkProcess/Downloads"
+    "${WEBKIT_DIR}/NetworkProcess/FileAPI"
+    "${WEBKIT_DIR}/NetworkProcess/cache"
+    "${WEBKIT_DIR}/NetworkProcess/capture"
+    "${WEBKIT_DIR}/NetworkProcess/webrtc"
+    "${WEBKIT_DIR}/Platform"
+    "${WEBKIT_DIR}/Platform/IPC"
+    "${WEBKIT_DIR}/PluginProcess"
+    "${WEBKIT_DIR}/Shared"
+    "${WEBKIT_DIR}/Shared/API"
+    "${WEBKIT_DIR}/Shared/API/c"
+    "${WEBKIT_DIR}/Shared/Authentication"
+    "${WEBKIT_DIR}/Shared/CoreIPCSupport"
+    "${WEBKIT_DIR}/Shared/Databases"
+    "${WEBKIT_DIR}/Shared/Databases/IndexedDB"
+    "${WEBKIT_DIR}/Shared/FileAPI"
+    "${WEBKIT_DIR}/Shared/Gamepad"
+    "${WEBKIT_DIR}/Shared/Plugins"
+    "${WEBKIT_DIR}/Shared/Plugins/Netscape"
+    "${WEBKIT_DIR}/Shared/Plugins/Netscape/x11"
+    "${WEBKIT_DIR}/Shared/RemoteLayerTree"
+    "${WEBKIT_DIR}/Shared/Storage"
+    "${WEBKIT_DIR}/Shared/WebsiteData"
+    "${WEBKIT_DIR}/StorageProcess"
+    "${WEBKIT_DIR}/StorageProcess/IndexedDB"
+    "${WEBKIT_DIR}/StorageProcess/ServiceWorker"
+    "${WEBKIT_DIR}/UIProcess"
+    "${WEBKIT_DIR}/UIProcess/API"
+    "${WEBKIT_DIR}/UIProcess/API/C"
+    "${WEBKIT_DIR}/UIProcess/API/cpp"
+    "${WEBKIT_DIR}/UIProcess/ApplePay"
+    "${WEBKIT_DIR}/UIProcess/Authentication"
+    "${WEBKIT_DIR}/UIProcess/Automation"
+    "${WEBKIT_DIR}/UIProcess/Downloads"
+    "${WEBKIT_DIR}/UIProcess/Gamepad"
+    "${WEBKIT_DIR}/UIProcess/Launcher"
+    "${WEBKIT_DIR}/UIProcess/Network"
+    "${WEBKIT_DIR}/UIProcess/Network/CustomProtocols"
+    "${WEBKIT_DIR}/UIProcess/Notifications"
+    "${WEBKIT_DIR}/UIProcess/Plugins"
+    "${WEBKIT_DIR}/UIProcess/RemoteLayerTree"
+    "${WEBKIT_DIR}/UIProcess/Storage"
+    "${WEBKIT_DIR}/UIProcess/UserContent"
+    "${WEBKIT_DIR}/UIProcess/WebStorage"
+    "${WEBKIT_DIR}/UIProcess/WebsiteData"
+    "${WEBKIT_DIR}/WebProcess"
+    "${WEBKIT_DIR}/WebProcess/ApplePay"
+    "${WEBKIT_DIR}/WebProcess/ApplicationCache"
+    "${WEBKIT_DIR}/WebProcess/Automation"
+    "${WEBKIT_DIR}/WebProcess/Cache"
+    "${WEBKIT_DIR}/WebProcess/Cookies"
+    "${WEBKIT_DIR}/WebProcess/Databases"
+    "${WEBKIT_DIR}/WebProcess/Databases/IndexedDB"
+    "${WEBKIT_DIR}/WebProcess/FileAPI"
+    "${WEBKIT_DIR}/WebProcess/FullScreen"
+    "${WEBKIT_DIR}/WebProcess/Gamepad"
+    "${WEBKIT_DIR}/WebProcess/Geolocation"
+    "${WEBKIT_DIR}/WebProcess/IconDatabase"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c"
+    "${WEBKIT_DIR}/WebProcess/InjectedBundle/DOM"
+    "${WEBKIT_DIR}/WebProcess/Launching"
+    "${WEBKIT_DIR}/WebProcess/MediaCache"
+    "${WEBKIT_DIR}/WebProcess/MediaStream"
+    "${WEBKIT_DIR}/WebProcess/Network"
+    "${WEBKIT_DIR}/WebProcess/Network/webrtc"
+    "${WEBKIT_DIR}/WebProcess/Notifications"
+    "${WEBKIT_DIR}/WebProcess/OriginData"
+    "${WEBKIT_DIR}/WebProcess/Plugins"
+    "${WEBKIT_DIR}/WebProcess/Plugins/Netscape"
+    "${WEBKIT_DIR}/WebProcess/ResourceCache"
+    "${WEBKIT_DIR}/WebProcess/Storage"
+    "${WEBKIT_DIR}/WebProcess/UserContent"
+    "${WEBKIT_DIR}/WebProcess/WebCoreSupport"
+    "${WEBKIT_DIR}/WebProcess/WebPage"
+    "${WEBKIT_DIR}/WebProcess/WebPage/RemoteLayerTree"
+    "${WEBKIT_DIR}/WebProcess/WebStorage"
+    "${DERIVED_SOURCES_WEBKIT_DIR}"
+    "${DERIVED_SOURCES_WEBKIT_DIR}/include"
     "${CMAKE_SOURCE_DIR}/WebKitLibraries"
 )
 
 set(PROTOCOL_GENERATOR_SCRIPTS_DIR "${JAVASCRIPTCORE_DIR}/inspector/scripts")
 
-set(WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+set(WebKit_SYSTEM_INCLUDE_DIRECTORIES
     ${ICU_INCLUDE_DIRS}
 )
 
-set(WebKit2_SOURCES
+set(WebKit_SOURCES
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.cpp
 
     NetworkProcess/Downloads/BlobDownloadClient.cpp
@@ -590,7 +590,7 @@ set(WebKit2_SOURCES
     WebProcess/WebStorage/WebStorageNamespaceProvider.cpp
 )
 
-set(WebKit2_MESSAGES_IN_FILES
+set(WebKit_MESSAGES_IN_FILES
     NetworkProcess/cache/CacheStorageEngineConnection.messages.in
 
     NetworkProcess/CustomProtocols/LegacyCustomProtocolManager.messages.in
@@ -696,31 +696,31 @@ set(WebKit2_MESSAGES_IN_FILES
 )
 
 set(WebProcess_LIBRARIES
-    WebKit2
+    WebKit
 )
 
 set(NetworkProcess_LIBRARIES
-    WebKit2
+    WebKit
 )
 
 set(StorageProcess_LIBRARIES
-    WebKit2
+    WebKit
 )
 
 if (APPLE)
-    set(WebKit2_LIBRARIES
+    set(WebKit_LIBRARIES
         PRIVATE WebCore
         PUBLIC JavaScriptCore
     )
 else ()
-    set(WebKit2_LIBRARIES
+    set(WebKit_LIBRARIES
         WebCore
         JavaScriptCore
     )
 endif ()
 
 set(PluginProcess_LIBRARIES
-    WebKit2
+    WebKit
 )
 
 if (ENABLE_GRAPHICS_CONTEXT_3D)
@@ -728,43 +728,43 @@ if (ENABLE_GRAPHICS_CONTEXT_3D)
     # these include directories, libraries or definitions need to be
     # added before the ANGLE directories.
     if (USE_LIBEPOXY)
-        list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+        list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
             ${LIBEPOXY_INCLUDE_DIRS}
         )
-        list(APPEND WebKit2_LIBRARIES
+        list(APPEND WebKit_LIBRARIES
             ${LIBEPOXY_LIBRARIES}
         )
     else ()
         if (USE_OPENGL)
-            list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${OPENGL_INCLUDE_DIRS}
             )
-            list(APPEND WebKit2_LIBRARIES
+            list(APPEND WebKit_LIBRARIES
                 ${OPENGL_LIBRARIES}
             )
             add_definitions(${OPENGL_DEFINITIONS})
         elseif (USE_OPENGL_ES_2)
-            list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${OPENGLES2_INCLUDE_DIRS}
             )
-            list(APPEND WebKit2_LIBRARIES
+            list(APPEND WebKit_LIBRARIES
                 ${OPENGLES2_LIBRARIES}
             )
             add_definitions(${OPENGLES2_DEFINITIONS})
         endif ()
 
         if (USE_EGL)
-            list(APPEND WebKit2_SYSTEM_INCLUDE_DIRECTORIES
+            list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
                 ${EGL_INCLUDE_DIRS}
             )
-            list(APPEND WebKit2_LIBRARIES
+            list(APPEND WebKit_LIBRARIES
                 ${EGL_LIBRARIES}
             )
             add_definitions(${EGL_DEFINITIONS})
         endif ()
     endif ()
 
-    list(APPEND WebKit2_INCLUDE_DIRECTORIES
+    list(APPEND WebKit_INCLUDE_DIRECTORIES
         "${THIRDPARTY_DIR}/ANGLE"
         "${THIRDPARTY_DIR}/ANGLE/include/KHR"
     )
@@ -788,7 +788,7 @@ if (COMPILER_IS_GCC_OR_CLANG)
         set(CMAKE_REQUIRED_LIBRARIES atomic)
         check_cxx_source_compiles("${ATOMIC_TEST_SOURCE}" ATOMIC_INT64_REQUIRES_LIBATOMIC)
         if (ATOMIC_INT64_REQUIRES_LIBATOMIC)
-            list(APPEND WebKit2_LIBRARIES atomic)
+            list(APPEND WebKit_LIBRARIES atomic)
         endif ()
         unset(CMAKE_REQUIRED_LIBRARIES)
     endif ()
@@ -800,51 +800,51 @@ if (UNIX)
         set(CMAKE_REQUIRED_LIBRARIES rt)
         check_function_exists(shm_open SHM_OPEN_REQUIRES_LIBRT)
         if (SHM_OPEN_REQUIRES_LIBRT)
-            list(APPEND WebKit2_LIBRARIES rt)
+            list(APPEND WebKit_LIBRARIES rt)
         endif ()
     endif ()
 endif ()
 
-macro(ADD_WEBKIT2_PREFIX_HEADER _target)
-    if (WebKit2_USE_PREFIX_HEADER)
+macro(ADD_WEBKIT_PREFIX_HEADER _target)
+    if (WebKit_USE_PREFIX_HEADER)
         get_target_property(OLD_COMPILE_FLAGS ${_target} COMPILE_FLAGS)
         if (${OLD_COMPILE_FLAGS} STREQUAL "OLD_COMPILE_FLAGS-NOTFOUND")
             set(OLD_COMPILE_FLAGS "")
         endif ()
-        set_target_properties(${_target} PROPERTIES COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -include ${WEBKIT2_DIR}/WebKit2Prefix.h")
+        set_target_properties(${_target} PROPERTIES COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -include ${WEBKIT_DIR}/WebKit2Prefix.h")
     endif ()
 endmacro()
 
-set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
+set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS
 )
 
-WEBKIT_FRAMEWORK_DECLARE(WebKit2)
+WEBKIT_FRAMEWORK_DECLARE(WebKit)
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # Helper macro which wraps generate-message-receiver.py and generate-message-header.py scripts
-#   _output_source is a list name which will contain generated sources.(eg. WebKit2_SOURCES)
+#   _output_source is a list name which will contain generated sources.(eg. WebKit_SOURCES)
 #   _input_files are messages.in files to generate.
 macro(GENERATE_MESSAGE_SOURCES _output_source _input_files)
     foreach (_file ${_input_files})
         get_filename_component(_name ${_file} NAME_WE)
         add_custom_command(
-            OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
+            OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/${_name}Messages.h
             MAIN_DEPENDENCY ${_file}
-            DEPENDS ${WEBKIT2_DIR}/Scripts/webkit/__init__.py
-                    ${WEBKIT2_DIR}/Scripts/webkit/messages.py
-                    ${WEBKIT2_DIR}/Scripts/webkit/model.py
-                    ${WEBKIT2_DIR}/Scripts/webkit/parser.py
-            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-message-receiver.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp
-            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-messages-header.py ${_file} > ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
-            WORKING_DIRECTORY ${WEBKIT2_DIR}
+            DEPENDS ${WEBKIT_DIR}/Scripts/webkit/__init__.py
+                    ${WEBKIT_DIR}/Scripts/webkit/messages.py
+                    ${WEBKIT_DIR}/Scripts/webkit/model.py
+                    ${WEBKIT_DIR}/Scripts/webkit/parser.py
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-message-receiver.py ${_file} > ${DERIVED_SOURCES_WEBKIT_DIR}/${_name}MessageReceiver.cpp
+            COMMAND ${PYTHON_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-messages-header.py ${_file} > ${DERIVED_SOURCES_WEBKIT_DIR}/${_name}Messages.h
+            WORKING_DIRECTORY ${WEBKIT_DIR}
             VERBATIM)
 
-        list(APPEND ${_output_source} ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp)
+        list(APPEND ${_output_source} ${DERIVED_SOURCES_WEBKIT_DIR}/${_name}MessageReceiver.cpp)
     endforeach ()
 endmacro()
-GENERATE_MESSAGE_SOURCES(WebKit2_DERIVED_SOURCES "${WebKit2_MESSAGES_IN_FILES}")
+GENERATE_MESSAGE_SOURCES(WebKit_DERIVED_SOURCES "${WebKit_MESSAGES_IN_FILES}")
 
-set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
+set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator.py
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/cpp_generator_templates.py
@@ -859,75 +859,75 @@ set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS
     ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/codegen/models.py
 )
 
-set(WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS
-    ${WEBKIT2_DIR}/UIProcess/Automation/Automation.json
+set(WebKit_AUTOMATION_PROTOCOL_GENERATOR_INPUTS
+    ${WEBKIT_DIR}/UIProcess/Automation/Automation.json
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.h ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.cpp
-    MAIN_DEPENDENCY ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
-    DEPENDS ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT2_DIR}" --framework WebKit ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS} --backend ${WebKit2_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationBackendDispatchers.h ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationBackendDispatchers.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationProtocolObjects.h ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationProtocolObjects.cpp ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationFrontendDispatchers.h ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationFrontendDispatchers.cpp
+    MAIN_DEPENDENCY ${WebKit_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
+    DEPENDS ${WebKit_AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${PROTOCOL_GENERATOR_SCRIPTS_DIR}/generate-inspector-protocol-bindings.py --outputDir "${DERIVED_SOURCES_WEBKIT_DIR}" --framework WebKit ${WebKit_AUTOMATION_PROTOCOL_GENERATOR_EXTRA_FLAGS} --backend ${WebKit_AUTOMATION_PROTOCOL_GENERATOR_INPUTS}
     VERBATIM)
 
-list(APPEND WebKit2_HEADERS
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.h
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.h
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.h
+list(APPEND WebKit_HEADERS
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationBackendDispatchers.h
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationFrontendDispatchers.h
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationProtocolObjects.h
 )
 
-list(APPEND WebKit2_SOURCES
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationBackendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationFrontendDispatchers.cpp
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/AutomationProtocolObjects.cpp
+list(APPEND WebKit_SOURCES
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationBackendDispatchers.cpp
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationFrontendDispatchers.cpp
+    ${DERIVED_SOURCES_WEBKIT_DIR}/AutomationProtocolObjects.cpp
 )
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
-    MAIN_DEPENDENCY ${WEBKIT2_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js
+    OUTPUT ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxyScriptSource.h ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxy.min.js
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js
     DEPENDS ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py
-    COMMAND ${CMAKE_COMMAND} -E echo "//# sourceURL=__InjectedScript_WebAutomationSessionProxy.js" > ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${WEBKIT2_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js >> ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js
-    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl WebAutomationSessionProxyScriptSource ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxy.min.js ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h
+    COMMAND ${CMAKE_COMMAND} -E echo "//# sourceURL=__InjectedScript_WebAutomationSessionProxy.js" > ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxy.min.js
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/jsmin.py < ${WEBKIT_DIR}/WebProcess/Automation/WebAutomationSessionProxy.js >> ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxy.min.js
+    COMMAND ${PERL_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/xxd.pl WebAutomationSessionProxyScriptSource ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxy.min.js ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxyScriptSource.h
     VERBATIM)
 
-list(APPEND WebKit2_HEADERS
-    ${DERIVED_SOURCES_WEBKIT2_DIR}/WebAutomationSessionProxyScriptSource.h
+list(APPEND WebKit_HEADERS
+    ${DERIVED_SOURCES_WEBKIT_DIR}/WebAutomationSessionProxyScriptSource.h
 )
 
-list(APPEND WebKit2_SOURCES ${WebKit2_DERIVED_SOURCES})
+list(APPEND WebKit_SOURCES ${WebKit_DERIVED_SOURCES})
 
-WEBKIT_FRAMEWORK(WebKit2)
-add_dependencies(WebKit2 WebCore ${WEBKIT2_EXTRA_DEPENDENCIES})
-add_webkit2_prefix_header(WebKit2)
+WEBKIT_FRAMEWORK(WebKit)
+add_dependencies(WebKit WebCore ${WEBKIT_EXTRA_DEPENDENCIES})
+ADD_WEBKIT_PREFIX_HEADER(WebKit)
 
 if (COMPILER_IS_GCC_OR_CLANG AND NOT APPLE)
-    target_link_libraries(WebKit2 -Wl,--start-group WebCore WebCoreDerivedSources -Wl,--end-group)
+    target_link_libraries(WebKit -Wl,--start-group WebCore WebCoreDerivedSources -Wl,--end-group)
 endif ()
 
-if (WebKit2_VERSION_SCRIPT)
-    WEBKIT_ADD_TARGET_PROPERTIES(WebKit2 LINK_FLAGS "${WebKit2_VERSION_SCRIPT}")
+if (WebKit_VERSION_SCRIPT)
+    WEBKIT_ADD_TARGET_PROPERTIES(WebKit LINK_FLAGS "${WebKit_VERSION_SCRIPT}")
 endif ()
 
 add_executable(WebProcess ${WebProcess_SOURCES})
-add_webkit2_prefix_header(WebProcess)
+ADD_WEBKIT_PREFIX_HEADER(WebProcess)
 target_link_libraries(WebProcess ${WebProcess_LIBRARIES})
 
-if (WebKit2_WebProcess_OUTPUT_NAME)
-    set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit2_WebProcess_OUTPUT_NAME})
+if (WebKit_WebProcess_OUTPUT_NAME)
+    set_target_properties(WebProcess PROPERTIES OUTPUT_NAME ${WebKit_WebProcess_OUTPUT_NAME})
 endif ()
 
 add_executable(NetworkProcess ${NetworkProcess_SOURCES})
-add_webkit2_prefix_header(NetworkProcess)
+ADD_WEBKIT_PREFIX_HEADER(NetworkProcess)
 target_link_libraries(NetworkProcess ${NetworkProcess_LIBRARIES})
 
-if (WebKit2_NetworkProcess_OUTPUT_NAME)
-    set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit2_NetworkProcess_OUTPUT_NAME})
+if (WebKit_NetworkProcess_OUTPUT_NAME)
+    set_target_properties(NetworkProcess PROPERTIES OUTPUT_NAME ${WebKit_NetworkProcess_OUTPUT_NAME})
 endif ()
 
 if (NOT "${PORT}" STREQUAL "Mac")
     add_executable(StorageProcess ${StorageProcess_SOURCES})
-    add_webkit2_prefix_header(StorageProcess)
+    ADD_WEBKIT_PREFIX_HEADER(StorageProcess)
     target_link_libraries(StorageProcess ${StorageProcess_LIBRARIES})
     install(TARGETS StorageProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
@@ -935,14 +935,13 @@ if (NOT "${PORT}" STREQUAL "Mac")
         WEBKIT_ADD_TARGET_CXX_FLAGS(StorageProcess -Wno-unused-parameter)
     endif ()
 
-    if (WebKit2_StorageProcess_OUTPUT_NAME)
-        set_target_properties(StorageProcess PROPERTIES OUTPUT_NAME ${WebKit2_StorageProcess_OUTPUT_NAME})
+    if (WebKit_StorageProcess_OUTPUT_NAME)
+        set_target_properties(StorageProcess PROPERTIES OUTPUT_NAME ${WebKit_StorageProcess_OUTPUT_NAME})
     endif ()
 endif ()
 
-# Suppress unused parameter warnings for sources in WebKit2.
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit2 -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(WebKit -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebProcess -Wno-unused-parameter)
     WEBKIT_ADD_TARGET_CXX_FLAGS(NetworkProcess -Wno-unused-parameter)
 endif ()
@@ -950,7 +949,7 @@ endif ()
 if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
     add_definitions(-DENABLE_PLUGIN_PROCESS=1)
     add_executable(PluginProcess ${PluginProcess_SOURCES})
-    add_webkit2_prefix_header(PluginProcess)
+    ADD_WEBKIT_PREFIX_HEADER(PluginProcess)
     target_link_libraries(PluginProcess ${PluginProcess_LIBRARIES})
     install(TARGETS PluginProcess DESTINATION "${LIBEXEC_INSTALL_DIR}")
 
@@ -958,8 +957,8 @@ if (ENABLE_PLUGIN_PROCESS AND NOT "${PORT}" STREQUAL "Mac")
         WEBKIT_ADD_TARGET_CXX_FLAGS(PluginProcess -Wno-unused-parameter)
     endif ()
 
-    if (WebKit2_PluginProcess_OUTPUT_NAME)
-      set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit2_PluginProcess_OUTPUT_NAME})
+    if (WebKit_PluginProcess_OUTPUT_NAME)
+      set_target_properties(PluginProcess PROPERTIES OUTPUT_NAME ${WebKit_PluginProcess_OUTPUT_NAME})
     endif ()
 endif ()
 
@@ -970,12 +969,12 @@ if ("${PORT}" STREQUAL "Mac")
     make_directory(${_web_xpc_dir}/_CodeSignature)
 
     add_custom_target(WebContentProcessNib COMMAND
-        ibtool --compile ${_web_xpc_dir}/Resources/WebContentProcess.nib ${WEBKIT2_DIR}/Resources/WebContentProcess.xib
+        ibtool --compile ${_web_xpc_dir}/Resources/WebContentProcess.nib ${WEBKIT_DIR}/Resources/WebContentProcess.xib
         VERBATIM)
-    add_dependencies(WebKit2 WebContentProcessNib)
+    add_dependencies(WebKit WebContentProcessNib)
 
     # FIXME: This shouldn't be two operations.
-    file(COPY ${WEBKIT2_DIR}/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist DESTINATION ${_web_xpc_dir})
+    file(COPY ${WEBKIT_DIR}/WebProcess/EntryPoint/mac/XPCService/WebContentService/Info-OSX.plist DESTINATION ${_web_xpc_dir})
     file(RENAME ${_web_xpc_dir}/Info-OSX.plist ${_web_xpc_dir}/Info.plist)
 
     set_target_properties(WebProcess PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_web_xpc_dir}/MacOS")
@@ -986,15 +985,15 @@ if ("${PORT}" STREQUAL "Mac")
     make_directory(${_net_xpc_dir}/_CodeSignature)
 
     # FIXME: This shouldn't be two operations.
-    file(COPY ${WEBKIT2_DIR}/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist DESTINATION ${_net_xpc_dir})
+    file(COPY ${WEBKIT_DIR}/NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info-OSX.plist DESTINATION ${_net_xpc_dir})
     file(RENAME ${_net_xpc_dir}/Info-OSX.plist ${_net_xpc_dir}/Info.plist)
 
     set_target_properties(NetworkProcess PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${_net_xpc_dir}/MacOS")
 else ()
-    WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT2)
-    set_target_properties(WebKit2 PROPERTIES VERSION ${WEBKIT2_VERSION} SOVERSION ${WEBKIT2_VERSION_MAJOR})
+    WEBKIT_POPULATE_LIBRARY_VERSION(WEBKIT)
+    set_target_properties(WebKit PROPERTIES VERSION ${WEBKIT_VERSION} SOVERSION ${WEBKIT_VERSION_MAJOR})
 
-    install(TARGETS WebKit2 WebProcess NetworkProcess
+    install(TARGETS WebKit WebProcess NetworkProcess
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
     )

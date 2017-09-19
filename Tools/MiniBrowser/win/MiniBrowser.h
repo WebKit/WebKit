@@ -24,7 +24,7 @@
  */
 
 #include "PageLoadTestClient.h"
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <comip.h>
 #include <memory>
 #include <vector>

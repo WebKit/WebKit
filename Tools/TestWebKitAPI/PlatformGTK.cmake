@@ -6,8 +6,8 @@ set(TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY_WTF "${TESTWEBKITAPI_RUNTIME_OUTPUT_D
 add_definitions(-DBUILDING_WEBKIT2__)
 
 add_custom_target(TestWebKitAPI-forwarding-headers
-    COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${TESTWEBKITAPI_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
-    DEPENDS WebKit2-forwarding-headers
+    COMMAND ${PERL_EXECUTABLE} ${WEBKIT_DIR}/Scripts/generate-forwarding-headers.pl --include-path ${TESTWEBKITAPI_DIR} --output ${FORWARDING_HEADERS_DIR} --platform gtk --platform soup
+    DEPENDS WebKit-forwarding-headers
 )
 
 set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
@@ -15,9 +15,9 @@ set(ForwardingHeadersForTestWebKitAPI_NAME TestWebKitAPI-forwarding-headers)
 include_directories(
     ${FORWARDING_HEADERS_DIR}
     ${FORWARDING_HEADERS_DIR}/JavaScriptCore
-    ${WEBKIT2_DIR}/UIProcess/API/C/soup
-    ${WEBKIT2_DIR}/UIProcess/API/C/gtk
-    ${WEBKIT2_DIR}/UIProcess/API/gtk
+    ${WEBKIT_DIR}/UIProcess/API/C/soup
+    ${WEBKIT_DIR}/UIProcess/API/C/gtk
+    ${WEBKIT_DIR}/UIProcess/API/gtk
 )
 
 include_directories(SYSTEM
@@ -36,7 +36,7 @@ set(bundle_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/gtk/PlatformUtilitiesGtk.cpp
 )
 
-set(webkit2_api_harness_SOURCES
+set(webkit_api_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/gtk/PlatformUtilitiesGtk.cpp
     ${TESTWEBKITAPI_DIR}/gtk/PlatformWebViewGtk.cpp
 )
@@ -46,7 +46,7 @@ list(APPEND test_wtf_LIBRARIES
     ${GTK3_LIBRARIES}
 )
 
-list(APPEND test_webkit2_api_LIBRARIES
+list(APPEND test_webkit_api_LIBRARIES
     ${GDK3_LIBRARIES}
     ${GTK3_LIBRARIES}
 )
@@ -68,7 +68,7 @@ list(APPEND TestJavaScriptCore_LIBRARIES
     ${GTK3_LIBRARIES}
 )
 
-add_executable(TestWebKit2
+add_executable(TestWebKit
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/AboutBlankLoad.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/CanHandleRequest.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/CookieManager.cpp
@@ -122,10 +122,10 @@ add_executable(TestWebKit2
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/gtk/InputMethodFilter.cpp
 )
 
-target_link_libraries(TestWebKit2 ${test_webkit2_api_LIBRARIES})
-add_test(TestWebKit2 ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2/TestWebKit2)
-set_tests_properties(TestWebKit2 PROPERTIES TIMEOUT 60)
-set_target_properties(TestWebKit2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit2)
+target_link_libraries(TestWebKit ${test_webkit_api_LIBRARIES})
+add_test(TestWebKit ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit/TestWebKit)
+set_tests_properties(TestWebKit PROPERTIES TIMEOUT 60)
+set_target_properties(TestWebKit PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${TESTWEBKITAPI_RUNTIME_OUTPUT_DIRECTORY}/WebKit)
 
 add_executable(TestWebCore
     ${test_main_SOURCES}
@@ -159,9 +159,9 @@ list(APPEND TestWTF_SOURCES
 )
 
 if (COMPILER_IS_GCC_OR_CLANG)
-    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit2 -Wno-sign-compare
-                                            -Wno-undef
-                                            -Wno-unused-parameter)
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKit -Wno-sign-compare
+                                           -Wno-undef
+                                           -Wno-unused-parameter)
 
     WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebCore -Wno-sign-compare
                                             -Wno-undef

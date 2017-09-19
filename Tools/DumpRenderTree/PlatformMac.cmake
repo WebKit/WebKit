@@ -16,14 +16,14 @@ link_directories(../../WebKitLibraries)
 
 list(APPEND TestNetscapePlugIn_LIBRARIES
     ${QUARTZ_LIBRARY}
-    WebKit2
+    WebKitLegacy
 )
 
 list(APPEND DumpRenderTree_LIBRARIES
     ${CARBON_LIBRARY}
     ${QUARTZ_LIBRARY}
     ${WEBKITSYSTEMINTERFACE_LIBRARY}
-    WebKit2
+    WebKitLegacy
 )
 
 if ("${CURRENT_OSX_VERSION}" MATCHES "10.9")

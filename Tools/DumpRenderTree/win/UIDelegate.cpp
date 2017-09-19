@@ -39,8 +39,8 @@
 #include <wtf/Platform.h>
 #include <wtf/Vector.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <WebKit/WebKit.h>
-#include <WebKit/WebKitCOMAPI.h>
+#include <WebKitLegacy/WebKit.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 #include <comutil.h>
 #include <stdio.h>
 

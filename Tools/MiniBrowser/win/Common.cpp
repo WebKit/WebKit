@@ -33,7 +33,7 @@
 #include "WebDownloadDelegate.h"
 #include "MiniBrowser.h"
 #include "MiniBrowserReplace.h"
-#include <WebKit/WebKitCOMAPI.h>
+#include <WebKitLegacy/WebKitCOMAPI.h>
 #include <wtf/ExportMacros.h>
 #include <wtf/Platform.h>
 #include <wtf/text/CString.h>
@@ -41,7 +41,7 @@
 
 #if USE(CF)
 #include <CoreFoundation/CFRunLoop.h>
-#include <WebKit/CFDictionaryPropertyBag.h>
+#include <WebKitLegacy/CFDictionaryPropertyBag.h>
 #endif
 
 #include <cassert>

@@ -22,7 +22,7 @@ set(WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES
 
 set(WebKitGLibAPITest_LIBRARIES
     JavaScriptCore
-    WebKit2
+    WebKit
     WebKitGLibAPITestsCore
     ${GLIB_LIBRARIES}
     ${LIBSOUP_LIBRARIES}
@@ -30,7 +30,7 @@ set(WebKitGLibAPITest_LIBRARIES
 
 set(WebKitGLibAPITestExtension_LIBRARIES
     JavaScriptCore
-    WebKit2
+    WebKit
     ${GLIB_LIBRARIES}
 )
 
@@ -41,7 +41,7 @@ set(WebKitGLibAPIWebProcessTests
 
 macro(ADD_WK2_TEST_WEB_EXTENSION extension_name)
     add_library(${extension_name} MODULE ${ARGN})
-    add_dependencies(${extension_name} WebKit2)
+    add_dependencies(${extension_name} WebKit)
     set_property(
         TARGET ${extension_name}
         APPEND
@@ -91,7 +91,7 @@ include_directories(${WebKitGLibAPITests_INCLUDE_DIRECTORIES})
 include_directories(SYSTEM ${WebKitGLibAPITests_SYSTEM_INCLUDE_DIRECTORIES})
 
 add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
-target_link_libraries(WebKitGLibAPITestsCore WebKit2)
+target_link_libraries(WebKitGLibAPITestsCore WebKit)
 
 if (COMPILER_IS_GCC_OR_CLANG)
     WEBKIT_ADD_TARGET_CXX_FLAGS(WebKitGLibAPITestsCore -Wno-unused-parameter)

@@ -32,7 +32,7 @@
 #include "DumpRenderTree.h"
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <comutil.h>
 #include <string>
 

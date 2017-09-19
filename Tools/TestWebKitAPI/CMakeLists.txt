@@ -15,19 +15,19 @@ set(TestWebKitAPI_LIBRARIES
 )
 
 if (ENABLE_WEBKIT)
-    set(test_webkit2_api_LIBRARIES
+    set(test_webkit_api_LIBRARIES
         JavaScriptCore
         TestWebKitAPIBase
         WTF
-        WebKit2
+        WebKit
         gtest
     )
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit2
+        WebKit
     )
 else ()
     list(APPEND TestWebKitAPI_LIBRARIES
-        WebKit${DEBUG_SUFFIX}
+        WebKitLegacy${DEBUG_SUFFIX}
     )
 endif ()
 
@@ -111,15 +111,15 @@ include_directories(
     ${JAVASCRIPTCORE_DIR}
     ${PAL_DIR}
     ${THIRDPARTY_DIR}/gtest/include
-    ${WEBKIT2_DIR}/Platform/IPC
-    ${WEBKIT2_DIR}/Shared
-    ${WEBKIT2_DIR}/Shared/API
-    ${WEBKIT2_DIR}/Shared/API/c
-    ${WEBKIT2_DIR}/Shared/Plugins
-    ${WEBKIT2_DIR}/UIProcess
-    ${WEBKIT2_DIR}/UIProcess/API
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle
-    ${WEBKIT2_DIR}/WebProcess/InjectedBundle/API/c
+    ${WEBKIT_DIR}/Platform/IPC
+    ${WEBKIT_DIR}/Shared
+    ${WEBKIT_DIR}/Shared/API
+    ${WEBKIT_DIR}/Shared/API/c
+    ${WEBKIT_DIR}/Shared/Plugins
+    ${WEBKIT_DIR}/UIProcess
+    ${WEBKIT_DIR}/UIProcess/API
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle
+    ${WEBKIT_DIR}/WebProcess/InjectedBundle/API/c
 )
 
 if (ENABLE_WEBKIT)
@@ -214,15 +214,15 @@ endif ()
 if (ENABLE_WEBKIT)
     add_library(TestWebKitAPIBase
         ${test_main_SOURCES}
-        ${webkit2_api_harness_SOURCES}
+        ${webkit_api_harness_SOURCES}
         ${TESTWEBKITAPI_DIR}/JavaScriptTest.cpp
         ${TESTWEBKITAPI_DIR}/PlatformUtilities.cpp
         ${TESTWEBKITAPI_DIR}/TestsController.cpp
     )
 
-    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit2 gtest)
+    target_link_libraries(TestWebKitAPIBase JavaScriptCore WTF WebKit gtest)
 
-    add_dependencies(TestWebKitAPIBase WebKit2 ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+    add_dependencies(TestWebKitAPIBase WebKit ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWebKitAPIBase -Wno-sign-compare

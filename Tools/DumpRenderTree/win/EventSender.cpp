@@ -39,7 +39,7 @@
 
 #include <JavaScriptCore/JavaScriptCore.h>
 #include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <windows.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>

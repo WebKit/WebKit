@@ -35,7 +35,7 @@
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <WebCore/AccessibilityObjectWrapperWin.h>
 #include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <comutil.h>
 #include <oleacc.h>
 #include <string>

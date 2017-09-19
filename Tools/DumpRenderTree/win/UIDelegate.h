@@ -30,7 +30,7 @@
 #define UIDelegate_h
 
 #include <WebCore/COMPtr.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <windef.h>
 
 class DRTUndoManager;

@@ -42,7 +42,7 @@
 #include "WorkQueue.h"
 #include <WebCore/COMPtr.h>
 #include <JavaScriptCore/JavaScriptCore.h>
-#include <WebKit/WebKit.h>
+#include <WebKitLegacy/WebKit.h>
 #include <stdio.h>
 #include <string>
 #include <wtf/Assertions.h>

@@ -29,9 +29,9 @@
 #include "DumpRenderTree.h"
 #include "DumpRenderTreeWin.h"
 #include "TestRunner.h"
+#include <WebKitLegacy/WebKit.h>
 #include <comutil.h>
 #include <string>
-#include <WebKit/WebKit.h>
 
 using std::wstring;
 
