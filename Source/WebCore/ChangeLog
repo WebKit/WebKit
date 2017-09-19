@@ -1,3 +1,13 @@
+2017-09-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Quiet media player private logging
+        https://bugs.webkit.org/show_bug.cgi?id=177199
+
+        Reviewed by Jer Noble.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+
 2017-09-19  Alex Christensen  <achristensen@webkit.org>
 
         Allow modern decoding of Vectors

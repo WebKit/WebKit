@@ -3409,8 +3409,7 @@ NSArray* playerKVOProperties()
         return;
 
     bool willChange = [[change valueForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
-    bool shouldLogValue = true;
-    bool shouldLog = true;
+    bool shouldLogValue = !willChange;
     WTF::Function<void ()> function;
 
     if (context == MediaPlayerAVFoundationObservationContextAVPlayerLayer) {
@@ -3445,13 +3444,11 @@ NSArray* playerKVOProperties()
         else if ([keyPath isEqualToString:@"asset"]) {
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::setAsset, m_callback, RetainPtr<id>(newValue));
             shouldLogValue = false;
-        } else if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
+        } else if ([keyPath isEqualToString:@"loadedTimeRanges"])
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
-            shouldLog = false;
-        } else if ([keyPath isEqualToString:@"seekableTimeRanges"]) {
+        else if ([keyPath isEqualToString:@"seekableTimeRanges"])
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange, m_callback, RetainPtr<NSArray>(newValue));
-            shouldLog = false;
-        } else if ([keyPath isEqualToString:@"tracks"]) {
+        else if ([keyPath isEqualToString:@"tracks"]) {
             function = std::bind(&MediaPlayerPrivateAVFoundationObjC::tracksDidChange, m_callback, RetainPtr<NSArray>(newValue));
             shouldLogValue = false;
         } else if ([keyPath isEqualToString:@"hasEnabledAudio"])
@@ -3488,21 +3485,18 @@ NSArray* playerKVOProperties()
     }
 
 #if !RELEASE_LOG_DISABLED
-    if (shouldLog && m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug)) {
+    if (m_callback->logger().willLog(m_callback->logChannel(), WTFLogLevelDebug) && !([keyPath isEqualToString:@"loadedTimeRanges"] || [keyPath isEqualToString:@"seekableTimeRanges"])) {
+        auto identifier = PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier());
 
-        if (willChange)
-            m_callback->logger().debug(m_callback->logChannel(), PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier()), "will change '", [keyPath UTF8String], "'");
-        else {
-            if (shouldLogValue) {
-                if ([keyPath isEqualToString:@"duration"])
-                    m_callback->logger().debug(m_callback->logChannel(), PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier()), "did change '", [keyPath UTF8String], "' to ", toMediaTime([newValue CMTimeValue]));
-                else {
-                    RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
-                    m_callback->logger().debug(m_callback->logChannel(), PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier()), "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
-                }
-            } else
-                m_callback->logger().debug(m_callback->logChannel(), PAL::Logger::LogSiteIdentifier("MediaPlayerPrivateAVFoundation", "observeValueForKeyPath", m_callback->logIdentifier()), "did change '", [keyPath UTF8String], "'");
-        }
+        if (shouldLogValue) {
+            if ([keyPath isEqualToString:@"duration"])
+                m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", toMediaTime([newValue CMTimeValue]));
+            else {
+                RetainPtr<NSString> valueString = adoptNS([[NSString alloc] initWithFormat:@"%@", newValue]);
+                m_callback->logger().debug(m_callback->logChannel(), identifier, "did change '", [keyPath UTF8String], "' to ", [valueString.get() UTF8String]);
+            }
+        } else
+            m_callback->logger().debug(m_callback->logChannel(), identifier, willChange ? "will" : "did", " change '", [keyPath UTF8String], "'");
     }
 #endif
 
