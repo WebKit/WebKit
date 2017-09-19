@@ -1,5 +1,26 @@
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222163. rdar://problem/34508516
+
+    2017-09-18  Per Arne Vollan  <pvollan@apple.com>
+
+            [WK1] Layout Test fast/events/beforeunload-dom-manipulation-crash.html is crashing.
+            https://bugs.webkit.org/show_bug.cgi?id=177071
+
+            Reviewed by Brent Fulgham.
+
+            The Page pointer in the history controller's frame is null. Add a null pointer check before
+            accessing the page.
+
+            No new tests, covered by exiting tests.
+
+            * loader/HistoryController.cpp:
+            (WebCore::HistoryController::updateForStandardLoad):
+            (WebCore::HistoryController::updateForRedirectWithLockedBackForwardList):
+            (WebCore::HistoryController::updateForClientRedirect):
+
+2017-09-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222114. rdar://problem/34508510
 
     2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>
