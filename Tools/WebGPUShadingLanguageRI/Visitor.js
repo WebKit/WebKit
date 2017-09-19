@@ -141,6 +141,22 @@ class Visitor {
         node.type.visit(this);
     }
     
+    visitEnumType(node)
+    {
+        node.baseType.visit(this);
+        for (let member of node.members)
+            member.visit(this);
+    }
+    
+    visitEnumMember(node)
+    {
+        Node.visit(node.value, this);
+    }
+    
+    visitEnumLiteral(node)
+    {
+    }
+    
     visitElementalType(node)
     {
         node.elementType.visit(this);

@@ -43,6 +43,7 @@ class StructType extends Type {
     }
     
     get name() { return this._name; }
+    get origin() { return this._origin; }
     get typeParameters() { return this._typeParameters; }
     
     get fieldNames() { return this._fields.keys(); }
@@ -64,7 +65,7 @@ class StructType extends Type {
         
         if (typeArguments) {
             if (typeArguments.length != this.typeParameters.length)
-                throw new WTypeError(origin.originString, "Wrong number of type arguments to instantiation");
+                throw new WTypeError(this.origin.originString, "Wrong number of type arguments to instantiation");
             
             if (!typeArguments.length)
                 return this;

@@ -25,7 +25,13 @@
 "use strict";
 
 let UintLiteral = createLiteral({
+    literalClassName: "UintLiteral",
     preferredTypeName: "uint",
+    
+    negConstexpr(origin)
+    {
+        return new UintLiteral(origin, (-this.value) >>> 0);
+    },
     
     createType(origin, value)
     {

@@ -69,7 +69,13 @@ class Intrinsics {
                 type.isSigned = true;
                 type.canRepresent = value => isBitwiseEquivalent(value | 0, value);
                 type.size = 1;
+                type.defaultValue = 0;
+                type.createLiteral = (origin, value) => IntLiteral.withType(origin, value | 0, type);
+                type.successorValue = value => (value + 1) | 0;
+                type.valuesEqual = (a, b) => a === b;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+                type.formatValueFromIntLiteral = value => value | 0;
+                type.formatValueFromUintLiteral = value => value | 0;
             });
 
         this._map.set(
@@ -81,7 +87,13 @@ class Intrinsics {
                 type.isSigned = false;
                 type.canRepresent = value => isBitwiseEquivalent(value >>> 0, value);
                 type.size = 1;
+                type.defaultValue = 0;
+                type.createLiteral = (origin, value) => IntLiteral.withType(origin, value >>> 0, type);
+                type.successorValue = value => (value + 1) >>> 0;
+                type.valuesEqual = (a, b) => a === b;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+                type.formatValueFromIntLiteral = value => value >>> 0;
+                type.formatValueFromUintLiteral = value => value >>> 0;
             });
 
         this._map.set(
@@ -93,6 +105,10 @@ class Intrinsics {
                 type.isNumber = true;
                 type.canRepresent = value => isBitwiseEquivalent(Math.fround(value), value);
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+                type.formatValueFromIntLiteral = value => value;
+                type.formatValueFromUintLiteral = value => value;
+                type.formatValueFromFloatLiteral = value => Math.fround(value);
+                type.formatValueFromDoubleLiteral = value => Math.fround(value);
             });
 
         this._map.set(
@@ -104,6 +120,10 @@ class Intrinsics {
                 type.isNumber = true;
                 type.canRepresent = value => true;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+                type.formatValueFromIntLiteral = value => value;
+                type.formatValueFromUintLiteral = value => value;
+                type.formatValueFromFloatLiteral = value => value;
+                type.formatValueFromDoubleLiteral = value => value;
             });
 
         this._map.set(

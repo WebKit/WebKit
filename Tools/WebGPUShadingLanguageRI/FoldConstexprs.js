@@ -24,18 +24,8 @@
  */
 "use strict";
 
-let IntLiteral = createLiteral({
-    literalClassName: "IntLiteral",
-    preferredTypeName: "int",
-    
-    negConstexpr(origin)
-    {
-        return new IntLiteral(origin, (-this.value) | 0);
-    },
-    
-    createType(origin, value)
-    {
-        return new IntLiteralType(origin, value);
-    }
-});
+function foldConstexprs(program)
+{
+    program.visit(new ConstexprFolder());
+}
 

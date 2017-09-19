@@ -24,18 +24,27 @@
  */
 "use strict";
 
-let IntLiteral = createLiteral({
-    literalClassName: "IntLiteral",
-    preferredTypeName: "int",
-    
-    negConstexpr(origin)
+// NOTE: This doesn't let you negate constexpr variables. I think that's probably OK for now, but we should
+// fix that eventually.
+// https://bugs.webkit.org/show_bug.cgi?id=177121
+
+class ConstexprFolder extends Visitor {
+    visitCallExpression(node)
     {
-        return new IntLiteral(origin, (-this.value) | 0);
-    },
-    
-    createType(origin, value)
-    {
-        return new IntLiteralType(origin, value);
+        super.visitCallExpression(node);
+        
+        if (node.name == "operator-"
+            && !node.typeArguments.length
+            && node.argumentList.length == 1
+            && node.argumentList[0].unifyNode.isConstexpr
+            && node.argumentList[0].unifyNode.negConstexpr) {
+            node.become(node.argumentList[0].unifyNode.negConstexpr(node.origin));
+            return;
+        }
     }
-});
+    
+    visitTypeOrVariableRef(node)
+    {
+    }
+}
 

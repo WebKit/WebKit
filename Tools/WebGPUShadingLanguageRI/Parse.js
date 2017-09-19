@@ -227,7 +227,13 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     
     function parseConstexpr()
     {
-        return parseTerm();
+        let token;
+        if (token = tryConsume("-"))
+            return new CallExpression(token, "operator" + token.text, [], [parseTerm()]);
+        let left = parseTerm();
+        if (token = tryConsume("."))
+            left = new DotExpression(token, left, consumeKind("identifier").text);
+        return left;
     }
     
     function parseTypeArguments()
@@ -396,12 +402,17 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     
     function parsePossibleSuffix()
     {
-        if (isCallExpression())
-            return parseCallExpression();
+        let acceptableOperators = ["++", "--", ".", "->", "["];
+        let limitedOperators = [".", "->", "["];
+        let left;
+        if (isCallExpression()) {
+            left = parseCallExpression();
+            acceptableOperators = limitedOperators;
+        } else
+            left = parseTerm();
         
-        let left = parseTerm();
         let token;
-        while (token = tryConsume("++", "--", ".", "->", "[")) {
+        while (token = tryConsume(...acceptableOperators)) {
             switch (token.text) {
             case "++":
             case "--":
@@ -422,6 +433,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             default:
                 throw new Error("Bad token: " + token);
             }
+            acceptableOperators = limitedOperators;
         }
         return left;
     }
@@ -931,6 +943,35 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return result;
     }
     
+    function parseEnumMember()
+    {
+        let name = consumeKind("identifier");
+        let value = null;
+        if (tryConsume("="))
+            value = parseConstexpr();
+        return new EnumMember(name, name.text, value);
+    }
+    
+    function parseEnumType()
+    {
+        consume("enum");
+        let name = consumeKind("identifier");
+        let baseType;
+        if (tryConsume(":"))
+            baseType = parseType();
+        else
+            baseType = new TypeRef(name, "int", []);
+        consume("{");
+        let result = new EnumType(name, name.text, baseType);
+        while (!test("}")) {
+            result.add(parseEnumMember());
+            if (!tryConsume(","))
+                break;
+        }
+        consume("}");
+        return result;
+    }
+    
     for (;;) {
         let token = lexer.peek();
         if (!token)
@@ -946,7 +987,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         else if (token.text == "struct")
             program.add(parseStructType());
         else if (token.text == "enum")
-            program.add(parseEnum());
+            program.add(parseEnumType());
         else if (token.text == "protocol")
             program.add(parseProtocolDecl());
         else

@@ -79,6 +79,56 @@ class Checker extends Visitor {
         }
     }
     
+    visitEnumType(node)
+    {
+        node.baseType.visit(this);
+        
+        let baseType = node.baseType.unifyNode;
+        
+        if (!baseType.isInt)
+            throw new WTypeError(node.origin.originString, "Base type of enum is not an integer: " + node.baseType);
+        
+        for (let member of node.members) {
+            if (!member.value)
+                continue;
+            
+            let memberType = member.value.visit(this);
+            if (!baseType.equalsWithCommit(memberType))
+                throw new WTypeError(member.origin.originString, "Type of enum member " + member.value.name + " does not patch enum base type (member type is " + memberType + ", enum base type is " + node.baseType + ")");
+        }
+        
+        let nextValue = baseType.defaultValue;
+        for (let member of node.members) {
+            if (member.value) {
+                nextValue = baseType.successorValue(member.value.unifyNode.valueForSelectedType);
+                continue;
+            }
+            
+            member.value = baseType.createLiteral(member.origin, nextValue);
+            nextValue = baseType.successorValue(nextValue);
+        }
+        
+        let memberArray = Array.from(node.members);
+        for (let i = 0; i < memberArray.length; ++i) {
+            let member = memberArray[i];
+            for (let j = i + 1; j < memberArray.length; ++j) {
+                let otherMember = memberArray[j];
+                if (baseType.valuesEqual(member.value.unifyNode.valueForSelectedType, otherMember.value.unifyNode.valueForSelectedType))
+                    throw new WTypeError(otherMember.origin.originString, "Duplicate enum member value (" + member.name + " has " + member.value + " while " + otherMember.name + " has " + otherMember.value + ")");
+            }
+        }
+        
+        let foundZero = false;
+        for (let member of node.members) {
+            if (baseType.valuesEqual(member.value.unifyNode.valueForSelectedType, baseType.defaultValue)) {
+                foundZero = true;
+                break;
+            }
+        }
+        if (!foundZero)
+            throw new WTypeError(node.origin.originString, "Enum does not have a member with the value zero");
+    }
+    
     _checkTypeArguments(origin, typeParameters, typeArguments)
     {
         for (let i = 0; i < typeParameters.length; ++i) {
@@ -344,6 +394,11 @@ class Checker extends Visitor {
     visitBoolLiteral(node)
     {
         return this._program.intrinsics.bool;
+    }
+    
+    visitEnumLiteral(node)
+    {
+        return node.member.enumType;
     }
 
     _requireBool(expression)

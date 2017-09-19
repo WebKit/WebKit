@@ -1,5 +1,112 @@
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should support enum
+        https://bugs.webkit.org/show_bug.cgi?id=176977
+
+        Reviewed by Myles Maxfield.
+        
+        This implements enum. Enums members are referenced Java-style. For example, if we have an enum like:
+        
+            enum Bank {
+                GP,
+                FP
+            }
+        
+        Then you refer to the members by saying Bank.GP and Bank.FP.
+        
+        Also adds a hack that makes operator- on a literal fold the literal. This fixes two issues:
+        
+        - Lets you use negative literals in constexprs.
+        - Means that negative literals also get literal type unification.
+        
+        WSL's constexpr support is really thin, but I think it's all we really need for now.
+        
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitEnumType):
+        (Checker.prototype.visitEnumLiteral):
+        * WebGPUShadingLanguageRI/ConstexprFolder.js: Added.
+        (ConstexprFolder.prototype.visitCallExpression):
+        (ConstexprFolder.prototype.visitTypeOrVariableRef):
+        (ConstexprFolder):
+        * WebGPUShadingLanguageRI/CreateLiteral.js:
+        (createLiteral.GenericLiteral.prototype.get valueForSelectedType):
+        (createLiteral.GenericLiteral.prototype.get negConstexpr):
+        * WebGPUShadingLanguageRI/DoubleLiteral.js:
+        (let.DoubleLiteral.createLiteral.negConstexpr):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype.visitEnumLiteral):
+        * WebGPUShadingLanguageRI/EnumLiteral.js: Added.
+        (EnumLiteral):
+        (EnumLiteral.prototype.get member):
+        (EnumLiteral.prototype.get type):
+        (EnumLiteral.prototype.get isConstexpr):
+        (EnumLiteral.prototype.unifyImpl):
+        (EnumLiteral.prototype.toString):
+        * WebGPUShadingLanguageRI/EnumMember.js: Added.
+        (EnumMember):
+        (EnumMember.prototype.get origin):
+        (EnumMember.prototype.get name):
+        (EnumMember.prototype.toString):
+        * WebGPUShadingLanguageRI/EnumType.js: Added.
+        (EnumType):
+        (EnumType.prototype.add):
+        (EnumType.prototype.get origin):
+        (EnumType.prototype.get name):
+        (EnumType.prototype.get baseType):
+        (EnumType.prototype.get memberNames):
+        (EnumType.prototype.memberByName):
+        (EnumType.prototype.get members):
+        (EnumType.prototype.get memberMap):
+        (EnumType.prototype.get isPrimitive):
+        (EnumType.prototype.populateDefaultValue):
+        (EnumType.prototype.get size):
+        (EnumType.prototype.toString):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitGenericLiteral):
+        (Evaluator.prototype.visitEnumLiteral):
+        * WebGPUShadingLanguageRI/FloatLiteral.js:
+        (let.FloatLiteral.createLiteral.negConstexpr):
+        * WebGPUShadingLanguageRI/FoldConstexprs.js: Added.
+        (foldConstexprs):
+        * WebGPUShadingLanguageRI/IntLiteral.js:
+        (let.IntLiteral.createLiteral.negConstexpr):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseConstexpr):
+        (parsePossibleSuffix):
+        (parseEnumMember):
+        (parseEnumType):
+        (parse):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitEnumType):
+        (Rewriter.prototype.visitEnumMember):
+        (Rewriter.prototype.visitEnumLiteral):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.get origin):
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/SynthesizeEnumFunctions.js: Added.
+        (synthesizeEnumFunctions):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkEnum):
+        (TEST_simpleEnum):
+        (TEST_enumWithManualValues):
+        (TEST_enumWithoutZero):
+        (TEST_enumConstexprGenericFunction):
+        (TEST_enumConstexprGenericStruct):
+        * WebGPUShadingLanguageRI/UintLiteral.js:
+        (let.UintLiteral.createLiteral.negConstexpr):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
         WSL prepare() should cache the parsed standard library
         https://bugs.webkit.org/show_bug.cgi?id=177118
 

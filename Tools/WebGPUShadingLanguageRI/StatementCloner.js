@@ -109,5 +109,13 @@ class StatementCloner extends Rewriter {
     {
         return new TypeOrVariableRef(node.origin, node.name);
     }
+    
+    visitEnumType(node)
+    {
+        let result = new EnumType(node.origin, node.name, node.baseType.visit(this));
+        for (let member of node.members)
+            result.add(member);
+        return result;
+    }
 }
 

@@ -25,7 +25,13 @@
 "use strict";
 
 let DoubleLiteral = createLiteral({
+    literalClassName: "DoubleLiteral",
     preferredTypeName: "double",
+    
+    negConstexpr(origin)
+    {
+        return new IntLiteral(origin, -this.value);
+    },
     
     createType(origin, value)
     {

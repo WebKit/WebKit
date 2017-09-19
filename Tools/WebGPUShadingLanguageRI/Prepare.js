@@ -35,6 +35,7 @@ let prepare = (() => {
         let program = cloneProgram(standardProgram);
         parse(program, origin, "user", lineNumberOffset, text);
         
+        foldConstexprs(program);
         let nameResolver = createNameResolver(program);
         resolveNamesInTypes(program, nameResolver);
         resolveNamesInProtocols(program, nameResolver);
@@ -43,6 +44,7 @@ let prepare = (() => {
         // FIXME: Need to verify that structre are not cyclic.
         // https://bugs.webkit.org/show_bug.cgi?id=177044
         synthesizeStructAccessors(program);
+        synthesizeEnumFunctions(program);
         resolveNamesInFunctions(program, nameResolver);
         resolveTypeDefsInFunctions(program);
         

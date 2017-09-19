@@ -24,18 +24,45 @@
  */
 "use strict";
 
-let IntLiteral = createLiteral({
-    literalClassName: "IntLiteral",
-    preferredTypeName: "int",
-    
-    negConstexpr(origin)
+class EnumType extends Type {
+    constructor(origin, name, baseType)
     {
-        return new IntLiteral(origin, (-this.value) | 0);
-    },
-    
-    createType(origin, value)
-    {
-        return new IntLiteralType(origin, value);
+        super();
+        this._origin = origin;
+        this._name = name;
+        this._baseType = baseType;
+        this._members = new Map();
     }
-});
+    
+    add(member)
+    {
+        if (this._members.has(member.name))
+            throw new WTypeError(member.origin.originString, "Duplicate enum member name: " + member.name);
+        member.enumType = this;
+        this._members.set(member.name, member);
+    }
+    
+    get origin() { return this._origin; }
+    get name() { return this._name; }
+    get baseType() { return this._baseType; }
+    
+    get memberNames() { return this._members.keys(); }
+    memberByName(name) { return this._members.get(name); }
+    get members() { return this._members.values(); }
+    get memberMap() { return this._members; }
+    
+    get isPrimitive() { return true; }
+    
+    populateDefaultValue(buffer, offset)
+    {
+        this.baseType.populateDefaultValue(buffer, offset);
+    }
+    
+    get size() { return this.baseType.size; }
+    
+    toString()
+    {
+        return "enum " + this.name + " : " + this.baseType + " { " + Array.from(this.members).join(",") + " }";
+    }
+}
 

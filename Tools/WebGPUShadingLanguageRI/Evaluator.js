@@ -147,7 +147,7 @@ class Evaluator extends Visitor {
     
     visitGenericLiteral(node)
     {
-        return node.ePtr.box(node.value);
+        return node.ePtr.box(node.valueForSelectedType);
     }
     
     visitNullLiteral(node)
@@ -158,6 +158,11 @@ class Evaluator extends Visitor {
     visitBoolLiteral(node)
     {
         return node.ePtr.box(node.value);
+    }
+    
+    visitEnumLiteral(node)
+    {
+        return node.ePtr.box(node.member.value.unifyNode.valueForSelectedType);
     }
 
     visitLogicalNot(node)

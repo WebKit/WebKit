@@ -24,18 +24,26 @@
  */
 "use strict";
 
-let IntLiteral = createLiteral({
-    literalClassName: "IntLiteral",
-    preferredTypeName: "int",
-    
-    negConstexpr(origin)
+class EnumLiteral extends Expression {
+    constructor(origin, member)
     {
-        return new IntLiteral(origin, (-this.value) | 0);
-    },
-    
-    createType(origin, value)
-    {
-        return new IntLiteralType(origin, value);
+        super(origin);
+        this._member = member;
     }
-});
-
+    
+    get member() { return this._member; }
+    get type() { return this.member.enumType; }
+    get isConstexpr() { return true; }
+    
+    unifyImpl(unificationContext, other)
+    {
+        if (!(other instanceof EnumLiteral))
+            return false;
+        return this.member == other.member;
+    }
+        
+    toString()
+    {
+        return this.member.enumType.name + "." + this.member.name;
+    }
+}

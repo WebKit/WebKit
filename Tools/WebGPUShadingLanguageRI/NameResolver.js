@@ -255,6 +255,18 @@ class NameResolver extends Visitor {
     
     visitDotExpression(node)
     {
+        // This could be a reference to an enum. Let's resolve that now.
+        if (node.struct instanceof VariableRef) {
+            let enumType = this._nameContext.get(Type, node.struct.name);
+            if (enumType && enumType instanceof EnumType) {
+                let enumMember = enumType.memberByName(node.fieldName);
+                if (!enumMember)
+                    throw new WTypeError(node.origin.originString, "Enum " + enumType.name + " does not have a member named " + node.fieldName);
+                node.become(new EnumLiteral(node.origin, enumMember));
+                return;
+            }
+        }
+        
         this._handlePropertyAccess(node);
         super.visitDotExpression(node);
     }

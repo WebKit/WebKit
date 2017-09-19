@@ -98,6 +98,11 @@ class EBufferBuilder extends Visitor {
         node.ePtr = EPtr.box();
     }
     
+    visitEnumLiteral(node)
+    {
+        node.ePtr = EPtr.box();
+    }
+    
     visitLogicalNot(node)
     {
         node.ePtr = EPtr.box();

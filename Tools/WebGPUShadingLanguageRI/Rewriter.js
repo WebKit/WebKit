@@ -59,6 +59,7 @@ class Rewriter {
     visitStructType(node) { return node; }
     visitConstexprTypeParameter(node) { return node; }
     visitProtocolDecl(node) { return node; }
+    visitEnumType(node) { return node; }
 
     // This is almost wrong. We instantiate Func in Substitution in ProtocolDecl. Then, we end up
     // not rewriting type variables. I think that just works because not rewriting them there is OK.
@@ -139,6 +140,18 @@ class Rewriter {
     visitField(node)
     {
         return new Field(node.origin, node.name, node.type.visit(this));
+    }
+    
+    visitEnumMember(node)
+    {
+        return new EnumMember(node.origin, node.name, node.value.visit(this));
+    }
+    
+    visitEnumLiteral(node)
+    {
+        let result = new EnumLiteral(node.origin, node.member);
+        result.ePtr = node.ePtr;
+        return result;
     }
     
     visitReferenceType(node)

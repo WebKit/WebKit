@@ -25,7 +25,13 @@
 "use strict";
 
 let FloatLiteral = createLiteral({
+    literalClassName: "FloatLiteral",
     preferredTypeName: "float",
+    
+    negConstexpr(origin)
+    {
+        return new IntLiteral(origin, -this.value);
+    },
     
     createType(origin, value)
     {

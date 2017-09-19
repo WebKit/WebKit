@@ -101,6 +101,14 @@ function checkInt(program, result, expected)
     checkNumber(program, result, expected);
 }
 
+function checkEnum(program, result, expected)
+{
+    if (!(result.type instanceof EnumType))
+        throw new Error("Wrong result type; result: " + result);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
 function checkUint(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.uint32))
@@ -3892,6 +3900,281 @@ function TEST_builtinVectors()
     checkDouble(program, callFunction(program, "food4", [], []), 5);
     checkBool(program, callFunction(program, "food5", [], []), true);
     checkBool(program, callFunction(program, "food6", [], []), false);
+}
+
+function TEST_simpleEnum()
+{
+    let program = doPrep(`
+        enum Foo {
+            War,
+            Famine,
+            Pestilence,
+            Death
+        }
+        Foo war()
+        {
+            return Foo.War;
+        }
+        Foo famine()
+        {
+            return Foo.Famine;
+        }
+        Foo pestilence()
+        {
+            return Foo.Pestilence;
+        }
+        Foo death()
+        {
+            return Foo.Death;
+        }
+        bool equals(Foo a, Foo b)
+        {
+            return a == b;
+        }
+        bool notEquals(Foo a, Foo b)
+        {
+            return a != b;
+        }
+        bool testSimpleEqual()
+        {
+            return equals(Foo.War, Foo.War);
+        }
+        bool testAnotherEqual()
+        {
+            return equals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotEqual()
+        {
+            return equals(Foo.Famine, Foo.Death);
+        }
+        bool testSimpleNotEqual()
+        {
+            return notEquals(Foo.War, Foo.War);
+        }
+        bool testAnotherNotEqual()
+        {
+            return notEquals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotNotEqual()
+        {
+            return notEquals(Foo.Famine, Foo.Death);
+        }
+        int intWar()
+        {
+            return int(war());
+        }
+        int intFamine()
+        {
+            return int(famine());
+        }
+        int intPestilence()
+        {
+            return int(pestilence());
+        }
+        int intDeath()
+        {
+            return int(death());
+        }
+        int warValue()
+        {
+            return war().value;
+        }
+        int famineValue()
+        {
+            return famine().value;
+        }
+        int pestilenceValue()
+        {
+            return pestilence().value;
+        }
+        int deathValue()
+        {
+            return death().value;
+        }
+        int warValueLiteral()
+        {
+            return Foo.War.value;
+        }
+        int famineValueLiteral()
+        {
+            return Foo.Famine.value;
+        }
+        int pestilenceValueLiteral()
+        {
+            return Foo.Pestilence.value;
+        }
+        int deathValueLiteral()
+        {
+            return Foo.Death.value;
+        }
+        Foo intWarBackwards()
+        {
+            return Foo(intWar());
+        }
+        Foo intFamineBackwards()
+        {
+            return Foo(intFamine());
+        }
+        Foo intPestilenceBackwards()
+        {
+            return Foo(intPestilence());
+        }
+        Foo intDeathBackwards()
+        {
+            return Foo(intDeath());
+        }
+    `);
+    checkEnum(program, callFunction(program, "war", [], []), 0);
+    checkEnum(program, callFunction(program, "famine", [], []), 1);
+    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
+    checkEnum(program, callFunction(program, "death", [], []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
+    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
+    checkInt(program, callFunction(program, "intWar", [], []), 0);
+    checkInt(program, callFunction(program, "intFamine", [], []), 1);
+    checkInt(program, callFunction(program, "intPestilence", [], []), 2);
+    checkInt(program, callFunction(program, "intDeath", [], []), 3);
+    checkInt(program, callFunction(program, "warValue", [], []), 0);
+    checkInt(program, callFunction(program, "famineValue", [], []), 1);
+    checkInt(program, callFunction(program, "pestilenceValue", [], []), 2);
+    checkInt(program, callFunction(program, "deathValue", [], []), 3);
+    checkInt(program, callFunction(program, "warValueLiteral", [], []), 0);
+    checkInt(program, callFunction(program, "famineValueLiteral", [], []), 1);
+    checkInt(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
+    checkInt(program, callFunction(program, "deathValueLiteral", [], []), 3);
+    checkEnum(program, callFunction(program, "intWarBackwards", [], []), 0);
+    checkEnum(program, callFunction(program, "intFamineBackwards", [], []), 1);
+    checkEnum(program, callFunction(program, "intPestilenceBackwards", [], []), 2);
+    checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
+}
+
+function TEST_enumWithManualValues()
+{
+    let program = doPrep(`
+        enum Foo {
+            War = 72,
+            Famine = 0,
+            Pestilence = 23,
+            Death = -42
+        }
+        Foo war()
+        {
+            return Foo.War;
+        }
+        Foo famine()
+        {
+            return Foo.Famine;
+        }
+        Foo pestilence()
+        {
+            return Foo.Pestilence;
+        }
+        Foo death()
+        {
+            return Foo.Death;
+        }
+    `);
+    checkEnum(program, callFunction(program, "war", [], []), 72);
+    checkEnum(program, callFunction(program, "famine", [], []), 0);
+    checkEnum(program, callFunction(program, "pestilence", [], []), 23);
+    checkEnum(program, callFunction(program, "death", [], []), -42);
+}
+
+function TEST_enumWithoutZero()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo {
+                War = 72,
+                Famine = 64,
+                Pestilence = 23,
+                Death = -42
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumDuplicates()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo {
+                War = -42,
+                Famine = 0,
+                Pestilence = 23,
+                Death = -42
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumWithSomeManualValues()
+{
+    let program = doPrep(`
+        enum Foo {
+            War = 72,
+            Famine,
+            Pestilence = 0,
+            Death
+        }
+        Foo war()
+        {
+            return Foo.War;
+        }
+        Foo famine()
+        {
+            return Foo.Famine;
+        }
+        Foo pestilence()
+        {
+            return Foo.Pestilence;
+        }
+        Foo death()
+        {
+            return Foo.Death;
+        }
+    `);
+    checkEnum(program, callFunction(program, "war", [], []), 72);
+    checkEnum(program, callFunction(program, "famine", [], []), 73);
+    checkEnum(program, callFunction(program, "pestilence", [], []), 0);
+    checkEnum(program, callFunction(program, "death", [], []), 1);
+}
+
+function TEST_enumConstexprGenericFunction()
+{
+    let program = doPrep(`
+        enum Axis { X, Y }
+        int foo<Axis axis>() { return int(axis); }
+        int testX() { return foo<Axis.X>(); }
+        int testY() { return foo<Axis.Y>(); }
+    `);
+    checkInt(program, callFunction(program, "testX", [], []), 0);
+    checkInt(program, callFunction(program, "testY", [], []), 1);
+}
+
+function TEST_enumConstexprGenericStruct()
+{
+    let program = doPrep(`
+        enum Axis { X, Y }
+        struct Foo<Axis axis> { }
+        int foo<Axis axis>(Foo<axis>) { return int(axis); }
+        int testX()
+        {   
+            Foo<Axis.X> f;
+            return foo(f);
+        }
+        int testY()
+        {   
+            Foo<Axis.Y> f;
+            return foo(f);
+        }
+    `);
+    checkInt(program, callFunction(program, "testX", [], []), 0);
+    checkInt(program, callFunction(program, "testY", [], []), 1);
 }
 
 let filter = /.*/; // run everything by default

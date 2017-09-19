@@ -24,18 +24,23 @@
  */
 "use strict";
 
-let IntLiteral = createLiteral({
-    literalClassName: "IntLiteral",
-    preferredTypeName: "int",
-    
-    negConstexpr(origin)
+class EnumMember extends Node {
+    constructor(origin, name, value)
     {
-        return new IntLiteral(origin, (-this.value) | 0);
-    },
-    
-    createType(origin, value)
-    {
-        return new IntLiteralType(origin, value);
+        super();
+        this._origin = origin;
+        this._name = name;
+        this.value = value;
     }
-});
-
+    
+    get origin() { return this._origin; }
+    get name() { return this._name; }
+    
+    toString()
+    {
+        let result = this.name;
+        if (this.value)
+            result += " = " + this.value;
+        return result;
+    }
+}

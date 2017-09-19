@@ -42,8 +42,30 @@ function createLiteral(config)
         }
         
         get value() { return this._value; }
+        
+        // This is necessary because once we support int64, we'll need that to be represented as an object
+        // rather than as a primitive. Then we'll need to convert.
+        get valueForSelectedType()
+        {
+            let type = this.type.type.unifyNode;
+            if (!type)
+                throw new Error("Cannot get type for " + this);
+            let func = type["formatValueFrom" + config.literalClassName];
+            if (!func)
+                throw new Error("Cannot get function to format type for " + config.literalClassName + " from " + type);
+            return func.call(type, this.value);
+        }
+        
         get isConstexpr() { return true; }
         get isLiteral() { return true; }
+        
+        get negConstexpr()
+        {
+            if (!config.negConstexpr)
+                return null;
+            
+            return () => config.negConstexpr.call(this);
+        }
         
         unifyImpl(unificationContext, other)
         {
