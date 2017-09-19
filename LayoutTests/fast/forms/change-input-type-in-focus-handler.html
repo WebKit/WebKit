@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<div id="div">
+    <form id="form">
+        <input id="input" onfocus="focused()" type="tel"></input>
+    </form>
+</div>
+
+<script>
+function focused() {
+    if (input.autofocus) {
+        input.type = "checkbox";
+        document.body.innerHTML = "<code style='color: green'>PASS</code>";
+        return;
+    }
+
+    document.body.appendChild(input);
+    input.autofocus = true;
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+input.focus();
+</script>
+</html>
