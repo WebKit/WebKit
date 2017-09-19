@@ -67,6 +67,8 @@ typedef NS_ENUM(NSUInteger, _WKDragInteractionPolicy) {
     _WKDragInteractionPolicyAlwaysDisable
 } WK_API_AVAILABLE(ios(11.0));
 
+#else
+#import <WebKit/WKBase.h>
 #endif
 
 #if !TARGET_OS_IPHONE
@@ -386,6 +388,7 @@ typedef NS_OPTIONS(NSInteger, _WKRectEdge) {
 #endif // TARGET_OS_IPHONE
 
 #if !TARGET_OS_IPHONE
+@property (nonatomic, readonly) WKPageRef _pageRefForTransitionToWKWebView  WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, readonly) BOOL _hasActiveVideoForControlsManager WK_API_AVAILABLE(macosx(10.12));
 - (void)_requestControlledElementID WK_API_AVAILABLE(macosx(10.12.3));
 - (void)_handleControlledElementIDResponse:(NSString *)identifier WK_API_AVAILABLE(macosx(10.12.3));

@@ -1,5 +1,17 @@
 2017-09-19  Alex Christensen  <achristensen@webkit.org>
 
+        Expose WKPageRef as a private property on WKWebView on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=177022
+        <rdar://problem/34342762>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _pageRefForTransitionToWKWebView]):
+        * UIProcess/API/Cocoa/WKWebViewPrivate.h:
+
+2017-09-19  Alex Christensen  <achristensen@webkit.org>
+
         Make _WKProcessPoolConfiguration.allowsCellularAccess actually work on iOS
         https://bugs.webkit.org/show_bug.cgi?id=177124
 

@@ -5653,6 +5653,11 @@ static WebCore::UserInterfaceLayoutDirection toUserInterfaceLayoutDirection(UISe
 #endif // PLATFORM(IOS)
 
 #if PLATFORM(MAC)
+- (WKPageRef)_pageRefForTransitionToWKWebView
+{
+    return toAPI(_page.get());
+}
+
 - (BOOL)_hasActiveVideoForControlsManager
 {
     return _page && _page->hasActiveVideoForControlsManager();
