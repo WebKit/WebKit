@@ -1,3 +1,17 @@
+2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [Harfbuzz] adjustSelectionRectForComplexText() should also pass the character range when shaping
+        https://bugs.webkit.org/show_bug.cgi?id=177049
+
+        Reviewed by Michael Catanzaro.
+
+        Now that the shaper support receiving a range we should use that also in
+        adjustSelectionRectForComplexText(). This will ensure consistent results with
+        getGlyphsAndAdvancesForComplexText().
+
+        * platform/graphics/cairo/FontCairoHarfbuzzNG.cpp:
+        (WebCore::FontCascade::adjustSelectionRectForComplexText const):
+
 2017-09-19  Dean Jackson  <dino@apple.com>
 
         [WebGL] VideoTextureCopierCV doesn't correctly restore vertex attribute state

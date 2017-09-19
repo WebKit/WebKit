@@ -92,13 +92,14 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRect& selectionRect, unsigned from, unsigned to) const
 {
     HarfBuzzShaper shaper(this, run);
-    if (shaper.shape()) {
-        // FIXME: This should mimic Mac port.
-        FloatRect rect = shaper.selectionRect(FloatPoint(selectionRect.location()), selectionRect.height().toInt(), from, to);
-        selectionRect = LayoutRect(rect);
+    GlyphBuffer glyphBuffer;
+    if (!shaper.shape(&glyphBuffer, from, to)) {
+        LOG_ERROR("Shaper couldn't shape text run.");
         return;
     }
-    LOG_ERROR("Shaper couldn't shape text run.");
+
+    // FIXME: This should mimic Mac port.
+    selectionRect = LayoutRect(shaper.selectionRect(selectionRect.location(), selectionRect.height().toInt(), from, to));
 }
 
 } // namespace WebCore
