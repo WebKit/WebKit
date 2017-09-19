@@ -3914,9 +3914,9 @@ function* doTest(object)
     for (let s in object) {
         if (s.startsWith("TEST_") && s.match(filter)) {
             print(s + "...");
+            yield;
             object[s]();
             print("    OK!");
-            yield;
         }
     }
 

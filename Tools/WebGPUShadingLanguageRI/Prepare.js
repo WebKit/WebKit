@@ -24,39 +24,44 @@
  */
 "use strict";
 
-function prepare(origin, lineNumberOffset, text)
-{
-    let program = new Program();
-    
-    parse(program, "/internal/stdlib", "native", 27, standardLibrary);
-    parse(program, origin, "user", lineNumberOffset, text);
-    
-    let nameResolver = createNameResolver(program);
-    resolveNamesInTypes(program, nameResolver);
-    resolveNamesInProtocols(program, nameResolver);
-    resolveTypeDefsInTypes(program);
-    resolveTypeDefsInProtocols(program);
-    // FIXME: Need to verify that structre are not cyclic.
-    // https://bugs.webkit.org/show_bug.cgi?id=177044
-    synthesizeStructAccessors(program);
-    resolveNamesInFunctions(program, nameResolver);
-    resolveTypeDefsInFunctions(program);
-    
-    flattenProtocolExtends(program);
-    check(program);
-    checkLiteralTypes(program);
-    resolveProperties(program);
-    findHighZombies(program);
-    checkLiteralTypes(program);
-    checkProgramWrapped(program);
-    checkReturns(program);
-    checkUnreachableCode(program);
-    checkLoops(program);
-    checkRecursion(program);
-    checkProgramWrapped(program);
-    findHighZombies(program);
-    inline(program);
-    
-    return program;
-}
+let prepare = (() => {
+    let standardProgram;
+    return (origin, lineNumberOffset, text) => {
+        if (!standardProgram) {
+            standardProgram = new Program();
+            parse(standardProgram, "/internal/stdlib", "native", 27, standardLibrary);
+        }
+        
+        let program = cloneProgram(standardProgram);
+        parse(program, origin, "user", lineNumberOffset, text);
+        
+        let nameResolver = createNameResolver(program);
+        resolveNamesInTypes(program, nameResolver);
+        resolveNamesInProtocols(program, nameResolver);
+        resolveTypeDefsInTypes(program);
+        resolveTypeDefsInProtocols(program);
+        // FIXME: Need to verify that structre are not cyclic.
+        // https://bugs.webkit.org/show_bug.cgi?id=177044
+        synthesizeStructAccessors(program);
+        resolveNamesInFunctions(program, nameResolver);
+        resolveTypeDefsInFunctions(program);
+        
+        flattenProtocolExtends(program);
+        check(program);
+        checkLiteralTypes(program);
+        resolveProperties(program);
+        findHighZombies(program);
+        checkLiteralTypes(program);
+        checkProgramWrapped(program);
+        checkReturns(program);
+        checkUnreachableCode(program);
+        checkLoops(program);
+        checkRecursion(program);
+        checkProgramWrapped(program);
+        findHighZombies(program);
+        inline(program);
+        
+        return program;
+    };
+})();
 

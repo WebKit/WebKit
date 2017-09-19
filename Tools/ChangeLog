@@ -1,3 +1,32 @@
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL prepare() should cache the parsed standard library
+        https://bugs.webkit.org/show_bug.cgi?id=177118
+
+        Reviewed by Myles Maxfield.
+        
+        The execution time of Test.js is too damn high!
+        
+        So I made it 2x faster by caching the parsed standard library.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CloneProgram.js: Added.
+        (cloneProgram):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        (prepare): Deleted.
+        * WebGPUShadingLanguageRI/StatementCloner.js: Added.
+        (StatementCloner.prototype.visitFuncDef):
+        (StatementCloner.prototype.visitNativeFunc):
+        (StatementCloner.prototype.visitNativeType):
+        (StatementCloner.prototype.visitTypeDef):
+        (StatementCloner.prototype.visitStructType):
+        (StatementCloner.prototype.visitConstexprTypeParameter):
+        (StatementCloner.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (doTest):
+
 2017-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Rename WebKit target to WebKitLegacy and rename WebKit2 target to WebKit
