@@ -1,5 +1,20 @@
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222167. rdar://problem/34508525
+
+    2017-09-18  Antti Koivisto  <antti@apple.com>
+
+            Avoid style resolution when clearing focused element.
+            https://bugs.webkit.org/show_bug.cgi?id=176224
+            <rdar://problem/34206409>
+
+            Reviewed by Zalan Bujtas.
+
+            * fast/dom/focus-style-resolution-expected.txt: Added.
+            * fast/dom/focus-style-resolution.html: Added.
+
+2017-09-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222114. rdar://problem/34508510
 
     2017-09-15  Wenson Hsieh  <wenson_hsieh@apple.com>

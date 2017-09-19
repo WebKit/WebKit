@@ -1119,9 +1119,6 @@ void HTMLInputElement::didDispatchClickEvent(Event& event, const InputElementCli
 
 void HTMLInputElement::didBlur()
 {
-    // We need to update style here, rather than in InputType itself, since style recomputation may fire events
-    // that could change the input's type.
-    document().updateStyleIfNeeded();
     m_inputType->elementDidBlur();
 }
 
