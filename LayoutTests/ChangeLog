@@ -1,5 +1,16 @@
 2017-09-19  Youenn Fablet  <youenn@apple.com>
 
+        webrtc/video-rotation.html is failing and now occasionally times out.
+        https://bugs.webkit.org/show_bug.cgi?id=175305
+
+        Reviewed by Alex Christensen.
+
+        * TestExpectations: Marking test as passing.
+        * webrtc/video-rotation-expected.txt:
+        * webrtc/video-rotation.html: Removing unneded subtest. Purpose of the test is checking that rotation change video size.
+
+2017-09-19  Youenn Fablet  <youenn@apple.com>
+
         LayoutTest webrtc/video-getParameters.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=170148
 

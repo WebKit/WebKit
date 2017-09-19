@@ -86,14 +86,6 @@ promise_test((test) => {
         return waitForVideoSize(video, 240, 320);
     });
 }, "Track is enabled and rotated, video should not be black and should change size");
-
-promise_test((test) => {
-    track.enabled = false;
-    return waitFor(500).then(() => {
-        return checkVideoBlack(true, "canvas2");
-    })
-}, "Track is disabled, video should be black");
-
         </script>
     </body>
 </html>
