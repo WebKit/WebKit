@@ -54,7 +54,6 @@ void RenderCombineText::styleDidChange(StyleDifference diff, const RenderStyle* 
     }
 
     m_needsFontUpdate = true;
-    combineTextIfNeeded();
 }
 
 void RenderCombineText::setRenderedText(const String& text)
@@ -62,7 +61,6 @@ void RenderCombineText::setRenderedText(const String& text)
     RenderText::setRenderedText(text);
 
     m_needsFontUpdate = true;
-    combineTextIfNeeded();
 }
 
 float RenderCombineText::width(unsigned from, unsigned length, const FontCascade& font, float xPosition, HashSet<const Font*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
@@ -97,7 +95,7 @@ String RenderCombineText::combinedStringForRendering() const
     return { };
 }
 
-void RenderCombineText::combineTextIfNeeded()
+void RenderCombineText::combineText()
 {
     if (!m_needsFontUpdate)
         return;
@@ -194,7 +192,6 @@ void RenderCombineText::combineTextIfNeeded()
         m_combinedTextWidth = combinedTextWidth;
         m_combinedTextAscent = glyphOverflow.top;
         m_combinedTextDescent = glyphOverflow.bottom;
-        m_lineBoxes.dirtyRange(*this, 0, originalText().length(), originalText().length());
     }
 }
 

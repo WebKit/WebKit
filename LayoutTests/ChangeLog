@@ -1,3 +1,13 @@
+2017-09-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rolling out r222217 and r222214.
+        This change introduced two LayoutTest failures.
+        https://bugs.webkit.org/show_bug.cgi?id=177026
+
+        * fast/text/international/dynamic-text-combine-crash-expected.txt: Removed.
+        * fast/text/international/dynamic-text-combine-crash.html: Removed.
+        * fast/text/text-combine-crash-expected.txt:
+
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
         Do not mutate RenderText content during layout.
