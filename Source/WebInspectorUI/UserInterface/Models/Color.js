@@ -58,11 +58,11 @@ WI.Color = class Color
         }
 
         // Simple - #hex, rgb(), keyword, hsl()
-        let simple = /^(?:#([0-9a-f]{3,8})|rgb\(([^)]+)\)|(\w+)|hsl\(([^)]+)\))$/i;
+        let simple = /^(?:#(?<hex>[0-9a-f]{3,8})|rgb\((?<rgb>[^)]+)\)|(?<keyword>\w+)|hsl\((?<hsl>[^)]+)\))$/i;
         let match = colorString.match(simple);
         if (match) {
-            if (match[1]) { // hex
-                let hex = match[1].toUpperCase();
+            if (match.groups.hex) {
+                let hex = match.groups.hex.toUpperCase();
                 let len = hex.length;
                 if (len === 3) {
                     return new WI.Color(WI.Color.Format.ShortHEX, [
@@ -94,8 +94,8 @@ WI.Color = class Color
                     ]);
                 } else
                     return null;
-            } else if (match[2]) { // rgb
-                let rgb = match[2].split(/\s*,\s*/);
+            } else if (match.groups.rgb) {
+                let rgb = match.groups.rgb.split(/\s*,\s*/);
                 if (rgb.length !== 3)
                     return null;
                 return new WI.Color(WI.Color.Format.RGB, [
@@ -104,16 +104,16 @@ WI.Color = class Color
                     parseInt(rgb[2]),
                     1
                 ]);
-            } else if (match[3]) { // keyword
-                let keyword = match[3].toLowerCase();
+            } else if (match.groups.keyword) {
+                let keyword = match.groups.keyword.toLowerCase();
                 if (!WI.Color.Keywords.hasOwnProperty(keyword))
                     return null;
                 let color = new WI.Color(WI.Color.Format.Keyword, WI.Color.Keywords[keyword].concat(1));
                 color.keyword = keyword;
                 color.original = colorString;
                 return color;
-            } else if (match[4]) { // hsl
-                let hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
+            } else if (match.groups.hsl) {
+                let hsl = match.groups.hsl.replace(/%/g, "").split(/\s*,\s*/);
                 if (hsl.length !== 3)
                     return null;
                 return new WI.Color(WI.Color.Format.HSL, [
@@ -126,11 +126,11 @@ WI.Color = class Color
         }
 
         // Advanced - rgba(), hsla()
-        let advanced = /^(?:rgba\(([^)]+)\)|hsla\(([^)]+)\))$/i;
+        let advanced = /^(?:rgba\((?<rgba>[^)]+)\)|hsla\((?<hsla>[^)]+)\))$/i;
         match = colorString.match(advanced);
         if (match) {
-            if (match[1]) { // rgba
-                let rgba = match[1].split(/\s*,\s*/);
+            if (match.groups.rgba) {
+                let rgba = match.groups.rgba.split(/\s*,\s*/);
                 if (rgba.length !== 4)
                     return null;
                 return new WI.Color(WI.Color.Format.RGBA, [
@@ -139,8 +139,8 @@ WI.Color = class Color
                     parseInt(rgba[2]),
                     Number.constrain(parseFloat(rgba[3]), 0, 1)
                 ]);
-            } else if (match[2]) { // hsla
-                let hsla = match[2].replace(/%/g, "").split(/\s*,\s*/);
+            } else if (match.groups.hsla) {
+                let hsla = match.groups.hsla.replace(/%/g, "").split(/\s*,\s*/);
                 if (hsla.length !== 4)
                     return null;
                 return new WI.Color(WI.Color.Format.HSLA, [

@@ -1,5 +1,19 @@
 2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Adopt named groups in complex regexes
+        https://bugs.webkit.org/show_bug.cgi?id=177117
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Base/URLUtilities.js:
+        (parseSecurityOrigin):
+        (parseDataURL):
+        (parseURL):
+        * UserInterface/Models/Color.js:
+        (WI.Color.fromString):
+
+2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
         REGRESSION(r214494): Web Inspector: Ignore cache button does not work in Network tab
         https://bugs.webkit.org/show_bug.cgi?id=177114
         <rdar://problem/34505265>

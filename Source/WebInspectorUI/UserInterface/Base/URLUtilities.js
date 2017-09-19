@@ -61,13 +61,13 @@ function parseSecurityOrigin(securityOrigin)
 {
     securityOrigin = securityOrigin ? securityOrigin.trim() : "";
 
-    var match = securityOrigin.match(/^([^:]+):\/\/([^\/:]*)(?::([\d]+))?$/i);
+    let match = securityOrigin.match(/^(?<scheme>[^:]+):\/\/(?<host>[^\/:]*)(?::(?<port>[\d]+))?$/i);
     if (!match)
         return {scheme: null, host: null, port: null};
 
-    var scheme = match[1].toLowerCase();
-    var host = match[2].toLowerCase();
-    var port = Number(match[3]) || null;
+    let scheme = match.groups.scheme.toLowerCase();
+    let host = match.groups.host.toLowerCase();
+    let port = Number(match.groups.port) || null;
 
     return {scheme, host, port};
 }
@@ -78,15 +78,15 @@ function parseDataURL(url)
         return null;
 
     // data:[<media type>][;charset=<character set>][;base64],<data>
-    let match = url.match(/^data:([^;,]*)?(?:;charset=([^;,]*?))?(;base64)?,(.*)$/);
+    let match = url.match(/^data:(?<mime>[^;,]*)?(?:;charset=(?<charset>[^;,]*?))?(?<base64>;base64)?,(?<data>.*)$/);
     if (!match)
         return null;
 
     let scheme = "data";
-    let mimeType = match[1] || "text/plain";
-    let charset = match[2] || "US-ASCII";
-    let base64 = !!match[3];
-    let data = decodeURIComponent(match[4]);
+    let mimeType = match.groups.mime || "text/plain";
+    let charset = match.groups.charset || "US-ASCII";
+    let base64 = !!match.groups.base64;
+    let data = decodeURIComponent(match.groups.data);
 
     return {scheme, mimeType, charset, base64, data};
 }
@@ -98,15 +98,15 @@ function parseURL(url)
     if (url.startsWith("data:"))
         return {scheme: "data", host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
-    var match = url.match(/^([^\/:]+):\/\/([^\/#:]*)(?::([\d]+))?(?:(\/[^#]*)?(?:#(.*))?)?$/i);
+    var match = url.match(/^(?<scheme>[^\/:]+):\/\/(?<host>[^\/#:]*)(?::(?<port>[\d]+))?(?:(?<path>\/[^#]*)?(?:#(?<fragment>.*))?)?$/i);
     if (!match)
         return {scheme: null, host: null, port: null, path: null, queryString: null, fragment: null, lastPathComponent: null};
 
-    var scheme = match[1].toLowerCase();
-    var host = match[2].toLowerCase();
-    var port = Number(match[3]) || null;
-    var wholePath = match[4] || null;
-    var fragment = match[5] || null;
+    var scheme = match.groups.scheme.toLowerCase();
+    var host = match.groups.host.toLowerCase();
+    var port = Number(match.groups.port) || null;
+    var wholePath = match.groups.path || null;
+    var fragment = match.groups.fragment || null;
     var path = wholePath;
     var queryString = null;
 
