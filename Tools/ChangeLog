@@ -1,3 +1,17 @@
+2017-09-19  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] WebKit fails to build with 64-bit Perl.
+        https://bugs.webkit.org/show_bug.cgi?id=177106
+
+        Reviewed by Brent Fulgham.
+
+        Visual Studio is installed in the 32-bit program files folder.
+ 
+        * Scripts/webkitdirs.pm:
+        (programFilesPathX86):
+        (visualStudioInstallDir):
+        (msBuildInstallDir):
+
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         [WSL] Cannot put templated structs inside structs
