@@ -225,8 +225,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-ab
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-updating.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjectURL-revoke.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/interfaces.html [ Failure ]
-# See also bug #175578 
+# See also bug #175578
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Crash Failure ]
 # Crash is webkit.org/b/176804
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-addsourcebuffer-mode.html [ Failure Crash ]

@@ -1,3 +1,18 @@
+2017-09-19  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        [GTK] The binding code of Media Source Extension of AudioTrack, VideoTrack and TextTrack is not generated
+        https://bugs.webkit.org/show_bug.cgi?id=174620
+
+        Reviewed by Michael Catanzaro.
+
+        Add AudioTrackMediaSource, VideoTrackMediaSource and TextTrackMediaSource IDL files in CMakeLists. Fix WPT test
+        that checks MSE interfaces. This test failed since webm is not supported for MSE in GTK port. PR already merged
+        in WPT repository.
+
+        Remove skipped test that is now passing in TestExpectation. Modify expected file for GTK (same as mac).
+
+        * CMakeLists.txt:
+
 2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [Harfbuzz] adjustSelectionRectForComplexText() should also pass the character range when shaping
