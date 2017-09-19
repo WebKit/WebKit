@@ -381,7 +381,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
 
     FrameLoader& frameLoader = m_frame.loader();
 
-    bool needPrivacy = m_frame.page()->usesEphemeralSession();
+    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = frameLoader.documentLoader()->urlForHistory();
 
     if (!frameLoader.documentLoader()->isClientRedirect()) {
@@ -415,7 +415,7 @@ void HistoryController::updateForRedirectWithLockedBackForwardList()
 {
     LOG(History, "HistoryController %p updateForRedirectWithLockedBackForwardList: Updating History for redirect load in frame %p (main frame %d) %s", this, &m_frame, m_frame.isMainFrame(), m_frame.loader().documentLoader() ? m_frame.loader().documentLoader()->url().string().utf8().data() : "");
     
-    bool needPrivacy = m_frame.page()->usesEphemeralSession();
+    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
     if (m_frame.loader().documentLoader()->isClientRedirect()) {
@@ -460,7 +460,7 @@ void HistoryController::updateForClientRedirect()
         m_currentItem->clearScrollPosition();
     }
 
-    bool needPrivacy = m_frame.page()->usesEphemeralSession();
+    bool needPrivacy = m_frame.page() ? m_frame.page()->usesEphemeralSession() : true;
     const URL& historyURL = m_frame.loader().documentLoader()->urlForHistory();
 
     if (!historyURL.isEmpty() && !needPrivacy) {
@@ -549,11 +549,11 @@ void HistoryController::updateForSameDocumentNavigation()
     if (m_frame.document()->url().isEmpty())
         return;
 
-    if (m_frame.page()->usesEphemeralSession())
-        return;
-
     Page* page = m_frame.page();
     if (!page)
+        return;
+
+    if (page->usesEphemeralSession())
         return;
 
     addVisitedLink(*page, m_frame.document()->url());
@@ -893,10 +893,10 @@ void HistoryController::replaceState(RefPtr<SerializedScriptValue>&& stateObject
     m_currentItem->setFormData(nullptr);
     m_currentItem->setFormContentType(String());
 
+    ASSERT(m_frame.page());
     if (m_frame.page()->usesEphemeralSession())
         return;
 
-    ASSERT(m_frame.page());
     addVisitedLink(*m_frame.page(), URL(ParsedURLString, urlString));
     m_frame.loader().client().updateGlobalHistory();
 }
