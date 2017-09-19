@@ -225,6 +225,12 @@ void IndentOutdentCommand::outdentRegion(const VisiblePosition& startOfSelection
             endOfNextParagraph = endOfParagraph(endOfCurrentParagraph.next());
         }
         endOfCurrentParagraph = endOfNextParagraph;
+
+        if (endOfCurrentParagraph.isNull()) {
+            // If the end of the current paragraph is null, we'll end up looping infinitely, since the end of the next paragraph
+            // (and the paragraph after that, and so on) will always be null. To avoid this infinite loop, just bail.
+            break;
+        }
     }
 }
 
