@@ -27,20 +27,20 @@
 // NOTE: The next line is line 28, and we rely on this in Prepare.js.
 const standardLibrary = `
 // This is the WSL standard library. Implementations of all of these things are in
-// Intrinsics.js. The only thing that gets defined before we get here is the primitive
+// Intrinsics.js. The only thing that gets defined before we get here is the Primitive
 // protocol.
 
 // Need to bootstrap void first.
-native primitive typedef void;
+native Primitive typedef void;
 
-native primitive typedef int32;
-native primitive typedef uint32;
-native primitive typedef bool;
+native Primitive typedef int32;
+native Primitive typedef uint32;
+native Primitive typedef bool;
 typedef int = int32;
 typedef uint = uint32;
 
-native primitive typedef float;
-native primitive typedef double;
+native Primitive typedef float;
+native Primitive typedef double;
 
 native operator int32(uint32);
 native operator uint32(int32);
@@ -337,14 +337,14 @@ thread T^ operator&[]<T>(thread vec4<T>^ foo, uint index)
 }
 
 native thread T^ operator&[]<T>(thread T[], uint);
-native threadgroup T^ operator&[]<T:primitive>(threadgroup T[], uint);
-native device T^ operator&[]<T:primitive>(device T[], uint);
-native constant T^ operator&[]<T:primitive>(constant T[], uint);
+native threadgroup T^ operator&[]<T:Primitive>(threadgroup T[], uint);
+native device T^ operator&[]<T:Primitive>(device T[], uint);
+native constant T^ operator&[]<T:Primitive>(constant T[], uint);
 
 native uint operator.length<T>(thread T[]);
-native uint operator.length<T:primitive>(threadgroup T[]);
-native uint operator.length<T:primitive>(device T[]);
-native uint operator.length<T:primitive>(constant T[]);
+native uint operator.length<T:Primitive>(threadgroup T[]);
+native uint operator.length<T:Primitive>(device T[]);
+native uint operator.length<T:Primitive>(constant T[]);
 
 uint operator.length<T, uint length>(T[length])
 {

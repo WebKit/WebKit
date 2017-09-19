@@ -46,7 +46,7 @@ function needsPrimitiveProtocol(addressSpace)
 
 function protocolSuffix(addressSpace)
 {
-    return needsPrimitiveProtocol(addressSpace) ? ":primitive" : "";
+    return needsPrimitiveProtocol(addressSpace) ? ":Primitive" : "";
 }
 
 function validateAddressSpace(addressSpace)

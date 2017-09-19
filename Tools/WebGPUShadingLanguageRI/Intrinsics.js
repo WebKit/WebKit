@@ -27,7 +27,7 @@
 class Intrinsics {
     constructor(nameContext)
     {
-        this.primitive = new ProtocolDecl(null, "primitive");
+        this.primitive = new ProtocolDecl(null, "Primitive");
         this.primitive.isPrimitive = true;
         nameContext.add(this.primitive);
         
@@ -39,7 +39,7 @@ class Intrinsics {
         // use "int" here, since we don't yet know that they are the same type.
         
         this._map.set(
-            "native primitive type void<>",
+            "native Primitive type void<>",
             type => {
                 this.void = type;
                 type.size = 0;
@@ -61,7 +61,7 @@ class Intrinsics {
         }
 
         this._map.set(
-            "native primitive type int32<>",
+            "native Primitive type int32<>",
             type => {
                 this.int32 = type;
                 type.isInt = true;
@@ -79,7 +79,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native primitive type uint32<>",
+            "native Primitive type uint32<>",
             type => {
                 this.uint32 = type;
                 type.isInt = true;
@@ -97,7 +97,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native primitive type float<>",
+            "native Primitive type float<>",
             type => {
                 this.float = type;
                 type.size = 1;
@@ -112,7 +112,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native primitive type double<>",
+            "native Primitive type double<>",
             type => {
                 this.double = type;
                 type.size = 1;
@@ -127,7 +127,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native primitive type bool<>",
+            "native Primitive type bool<>",
             type => {
                 this.bool = type;
                 type.size = 1;

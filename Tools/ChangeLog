@@ -1,3 +1,43 @@
+2017-09-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Primitive protocol should have capital name
+        https://bugs.webkit.org/show_bug.cgi?id=177097
+
+        Reviewed by JF Bastien.
+        
+        As soon as I started programming in WSL, I found that I preferred to capitalize protocol names. So, my
+        early decision to call the primitive protocol "primitive" instead of "Primitive" seems absurd now. This
+        change reverses that decision.
+        
+        Aesthetically, this is a slight improvement. For example:
+        
+            struct Bar<T:Primitive> {
+                Foo<device T^> f;
+            }
+
+        This makes more sense since all of the non-keyword type identifiers are capital.
+        
+        The one place where this is an aesthetic regression is native primitive typedefs, which now look like:
+        
+            native Primitive typedef bool;
+        
+        I'm happy with that tradeoff, since native typedefs are only in the standard library. Users don't see
+        this.
+
+        * WebGPUShadingLanguageRI/AddressSpace.js:
+        (protocolSuffix):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType.prototype.toString):
+        (NativeType):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseNative):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_passNullAndNotNullFullPoly):
+        (TEST_passNullAndNotNullFullPolyReverse):
+
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         Cannot put typedefs of templated structs inside structs

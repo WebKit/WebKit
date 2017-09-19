@@ -62,7 +62,7 @@ class NativeType extends Type {
     
     toString()
     {
-        return "native " + (this.isPrimitive ? "primitive " : "") + "type " + this.name + "<" + this.typeParameters + ">";
+        return "native " + (this.isPrimitive ? "Primitive " : "") + "type " + this.name + "<" + this.typeParameters + ">";
     }
 }
 

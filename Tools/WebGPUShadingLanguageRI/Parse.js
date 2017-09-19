@@ -921,7 +921,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         let isType = lexer.backtrackingScope(() => {
             if (tryConsume("typedef"))
                 return "normal";
-            consume("primitive");
+            consume("Primitive");
             consume("typedef");
             return "primitive";
         });

@@ -926,7 +926,7 @@ function TEST_badIntLiteralForDouble()
 function TEST_passNullAndNotNull()
 {
     let program = doPrep(`
-        T bar<T:primitive>(device T^ p, device T^)
+        T bar<T:Primitive>(device T^ p, device T^)
         {
             return ^p;
         }
@@ -943,7 +943,7 @@ function TEST_passNullAndNotNull()
 function TEST_passNullAndNotNullFullPoly()
 {
     let program = doPrep(`
-        T bar<T:primitive>(T p, T)
+        T bar<T:Primitive>(T p, T)
         {
             return p;
         }
@@ -960,7 +960,7 @@ function TEST_passNullAndNotNullFullPoly()
 function TEST_passNullAndNotNullFullPolyReverse()
 {
     let program = doPrep(`
-        T bar<T:primitive>(T, T p)
+        T bar<T:Primitive>(T, T p)
         {
             return p;
         }
@@ -2020,7 +2020,7 @@ function TEST_chainStructDevice()
         struct Foo<T> {
             T f;
         }
-        struct Bar<T:primitive> {
+        struct Bar<T:Primitive> {
             Foo<device T^> f;
         }
         int foo(thread Bar<int>^ x)
