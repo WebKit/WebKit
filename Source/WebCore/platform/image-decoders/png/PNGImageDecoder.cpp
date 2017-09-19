@@ -650,9 +650,9 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             ImageFrame& buffer = m_frameBufferCache[m_currentFrame];
 
             if (!m_delayDenominator)
-                buffer.setDuration(m_delayNumerator * 10);
+                buffer.setDuration(Seconds::fromMilliseconds(m_delayNumerator * 10));
             else
-                buffer.setDuration(m_delayNumerator * 1000 / m_delayDenominator);
+                buffer.setDuration(Seconds::fromMilliseconds(m_delayNumerator * 1000 / m_delayDenominator));
 
             if (m_dispose == 2)
                 buffer.setDisposalMethod(ImageFrame::DisposalMethod::RestoreToPrevious);

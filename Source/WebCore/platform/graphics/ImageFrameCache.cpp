@@ -534,9 +534,9 @@ unsigned ImageFrameCache::frameBytesAtIndex(size_t index, SubsamplingLevel subsa
     return frameMetadataAtIndexCacheIfNeeded<unsigned>(index, (&ImageFrame::frameBytes), nullptr, ImageFrame::Caching::Metadata, subsamplingLevel);
 }
 
-float ImageFrameCache::frameDurationAtIndex(size_t index)
+Seconds ImageFrameCache::frameDurationAtIndex(size_t index)
 {
-    return frameMetadataAtIndexCacheIfNeeded<float>(index, (&ImageFrame::duration), nullptr, ImageFrame::Caching::Metadata);
+    return frameMetadataAtIndexCacheIfNeeded<Seconds>(index, (&ImageFrame::duration), nullptr, ImageFrame::Caching::Metadata);
 }
 
 ImageOrientation ImageFrameCache::frameOrientationAtIndex(size_t index)

@@ -196,23 +196,22 @@ unsigned ScalableImageDecoder::frameBytesAtIndex(size_t index, SubsamplingLevel)
     return (m_size.area() * sizeof(RGBA32)).unsafeGet();
 }
 
-float ScalableImageDecoder::frameDurationAtIndex(size_t index) const
+Seconds ScalableImageDecoder::frameDurationAtIndex(size_t index) const
 {
     // FIXME(176089): asking for the duration of a sub-image should not require decoding
     // the entire frame. This function should be implementable in a way that
     // allows const.
     ImageFrame* buffer = const_cast<ScalableImageDecoder*>(this)->frameBufferAtIndex(index);
     if (!buffer || buffer->isInvalid())
-        return 0;
+        return 0_s;
     
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
     // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
     // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
     // for more information.
-    const float duration = buffer->duration() / 1000.0f;
-    if (duration < 0.011f)
-        return 0.100f;
-    return duration;
+    if (buffer->duration() < 11_ms)
+        return 100_ms;
+    return buffer->duration();
 }
 
 NativeImagePtr ScalableImageDecoder::createFrameImageAtIndex(size_t index, SubsamplingLevel, const DecodingOptions&)

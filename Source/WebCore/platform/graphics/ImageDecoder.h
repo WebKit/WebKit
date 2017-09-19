@@ -32,6 +32,7 @@
 #include "IntSize.h"
 #include "NativeImage.h"
 #include <wtf/Optional.h>
+#include <wtf/Seconds.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -60,7 +61,7 @@ public:
     virtual bool frameIsCompleteAtIndex(size_t) const = 0;
     virtual ImageOrientation frameOrientationAtIndex(size_t) const = 0;
 
-    virtual float frameDurationAtIndex(size_t) const = 0;
+    virtual Seconds frameDurationAtIndex(size_t) const = 0;
     virtual bool frameHasAlphaAtIndex(size_t) const = 0;
     virtual bool frameAllowSubsamplingAtIndex(size_t) const = 0;
     virtual unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const = 0;

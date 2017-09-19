@@ -248,7 +248,7 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
         return false; // initFrameBuffer() has already called setFailed().
 
     buffer.setDecodingStatus(DecodingStatus::Complete);
-    buffer.setDuration(frameDuration);
+    buffer.setDuration(Seconds::fromMilliseconds(frameDuration));
     buffer.setDisposalMethod(disposalMethod);
 
     if (!m_currentBufferSawAlpha) {

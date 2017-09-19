@@ -101,7 +101,7 @@ public:
     // ImageFrame metadata which forces caching or re-caching the ImageFrame.
     IntSize frameSizeAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache->frameSizeAtIndex(index, subsamplingLevel); }
     unsigned frameBytesAtIndex(size_t index, SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default) { return m_frameCache->frameBytesAtIndex(index, subsamplingLevel); }
-    float frameDurationAtIndex(size_t index) { return m_frameCache->frameDurationAtIndex(index); }
+    Seconds frameDurationAtIndex(size_t index) { return m_frameCache->frameDurationAtIndex(index); }
     ImageOrientation frameOrientationAtIndex(size_t index) { return m_frameCache->frameOrientationAtIndex(index); }
 
     NativeImagePtr frameImageAtIndex(size_t index) { return m_frameCache->frameImageAtIndex(index); }

@@ -143,7 +143,7 @@ public:
     // Number of bytes in the decoded frame requested. Return 0 if not yet decoded.
     unsigned frameBytesAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default) const override;
 
-    float frameDurationAtIndex(size_t) const override;
+    Seconds frameDurationAtIndex(size_t) const final;
 
     NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingMode::Synchronous) override;
 

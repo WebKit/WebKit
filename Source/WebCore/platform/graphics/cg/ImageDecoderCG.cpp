@@ -330,37 +330,39 @@ ImageOrientation ImageDecoderCG::frameOrientationAtIndex(size_t index) const
     return orientationFromProperties(properties.get());
 }
 
-float ImageDecoderCG::frameDurationAtIndex(size_t index) const
+Seconds ImageDecoderCG::frameDurationAtIndex(size_t index) const
 {
-    float duration = 0;
+    float value = 0;
     RetainPtr<CFDictionaryRef> properties = adoptCF(CGImageSourceCopyPropertiesAtIndex(m_nativeDecoder.get(), index, imageSourceOptions().get()));
     if (properties) {
         CFDictionaryRef gifProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyGIFDictionary);
         if (gifProperties) {
             if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFUnclampedDelayTime)) {
                 // Use the unclamped frame delay if it exists.
-                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+                CFNumberGetValue(num, kCFNumberFloatType, &value);
             } else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(gifProperties, kCGImagePropertyGIFDelayTime)) {
                 // Fall back to the clamped frame delay if the unclamped frame delay does not exist.
-                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+                CFNumberGetValue(num, kCFNumberFloatType, &value);
             }
         }
         
         CFDictionaryRef pngProperties = (CFDictionaryRef)CFDictionaryGetValue(properties.get(), kCGImagePropertyPNGDictionary);
         if (pngProperties) {
             if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGUnclampedDelayTime))
-                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+                CFNumberGetValue(num, kCFNumberFloatType, &value);
             else if (CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(pngProperties, WebCoreCGImagePropertyAPNGDelayTime))
-                CFNumberGetValue(num, kCFNumberFloatType, &duration);
+                CFNumberGetValue(num, kCFNumberFloatType, &value);
         }
     }
-    
+
+    Seconds duration(value);
+
     // Many annoying ads specify a 0 duration to make an image flash as quickly as possible.
     // We follow Firefox's behavior and use a duration of 100 ms for any frames that specify
     // a duration of <= 10 ms. See <rdar://problem/7689300> and <http://webkit.org/b/36082>
     // for more information.
-    if (duration < 0.011f)
-        return 0.1f;
+    if (duration < 11_ms)
+        return 100_ms;
     return duration;
 }
 
