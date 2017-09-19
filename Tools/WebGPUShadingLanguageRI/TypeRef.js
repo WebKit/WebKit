@@ -38,7 +38,7 @@ class TypeRef extends Type {
     {
         if (type instanceof TypeRef && !type.typeArguments)
             return type;
-        let result = new TypeRef(type.origin, type.name, []);
+        let result = new TypeRef(type.origin, null, []);
         result.type = type;
         return result;
     }
@@ -53,17 +53,6 @@ class TypeRef extends Type {
     get origin() { return this._origin; }
     get name() { return this._name; }
     get typeArguments() { return this._typeArguments; }
-    
-    get instantiatedType()
-    {
-        let type = this.type.unifyNode;
-        if (!type.instantiate) {
-            if (this.typeArguments.length)
-                throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
-            return this;
-        }
-        return type.instantiate(this.typeArguments);
-    }
     
     get unifyNode()
     {
@@ -95,7 +84,7 @@ class TypeRef extends Type {
     
     setTypeAndArguments(type, typeArguments)
     {
-        this._name = type.name;
+        this._name = null;
         this.type = type;
         this._typeArguments = typeArguments;
     }
@@ -118,7 +107,7 @@ class TypeRef extends Type {
     toString()
     {
         if (!this.name)
-            return "ref:" + this.type.toString();
+            return this.type.toString();
         if (!this.typeArguments.length)
             return this.name;
         return this.name + "<" + this.typeArguments + ">";

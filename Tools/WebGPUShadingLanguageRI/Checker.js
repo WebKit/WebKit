@@ -53,7 +53,7 @@ class Checker extends Visitor {
                 doStatement(func);
         }
     }
-        
+    
     visitFuncDef(node)
     {
         node.body.visit(this);

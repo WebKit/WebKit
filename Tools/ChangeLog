@@ -1,3 +1,58 @@
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Cannot put typedefs of templated structs inside structs
+        https://bugs.webkit.org/show_bug.cgi?id=177123
+
+        Reviewed by Michael Saboff.
+        
+        Ever since I wrote the generic type instantiation code in WSL, it had a bizarre stink to it. I
+        did not know what it was, until I met this test case:
+        
+            struct Foo { int2 x; }
+        
+        The problem was that Type has a getter called instantiatedType, which invoked
+        InstantiateImmediates. That's great. Where we went wrong was that TypeRef overrode
+        instantiatedType, and then InstantiateImmediates called TypeRef.instantiatedType from its
+        visitTypeRef. What a mess. None of that was necessary for anything, and it was just wrong. This
+        patch fixes it so that:
+        
+        - Type has an instantiatedType getter, which does InstantiateImmediates. I didn't change this.
+          This was the only part of the status quo that really made sense.
+        
+        - TypeRef no longer overrides instantiatedType.
+        
+        - InstantianteImmediates.prototype.visitTypeRef now does what TypeRef's instantiatedType would
+          have done.
+        
+        And voila! This test case passes and so do all of the other test cases.
+        
+        The reason why that specific test case did not work was that the use of a TypeDef (int2) for
+        a generic type instantiation (vec2<int>) caused there to be two TypeRef's in a row, sorta like
+        this, if we could use wrap() to denote a TypeRef that just wrapped another type:
+        
+            wrap(vec2<int>)
+        
+        We would call instantiatedType on this monstrosity. Since TypeRef overrode instantiatedType,
+        we would stop there because that TypeRef has no type arguments - it's just a wrapper. Well,
+        actually, we'd do something a bit stranger than stopping there - there's more to the story -
+        but the effect was the same. Now we do InstantiateImmediates, which recursively builds a new
+        type. This chews through the wrapper and then instantiates the wrapped type, as we want it to.
+        Also, this approach no longer has the stink. instantiatedType isn't overriden by anyone
+        anymore!
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        * WebGPUShadingLanguageRI/InstantiateImmediates.js:
+        (InstantiateImmediates.prototype.visitTypeRef):
+        (InstantiateImmediates.prototype.visitReferenceType): Deleted.
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_instantiateStructInStructWithInt2):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.wrap):
+        (TypeRef.prototype.setTypeAndArguments):
+        (TypeRef.prototype.toString):
+        (TypeRef):
+        (TypeRef.prototype.get instantiatedType): Deleted.
+
 2017-09-19  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebKit fails to build with 64-bit Perl.

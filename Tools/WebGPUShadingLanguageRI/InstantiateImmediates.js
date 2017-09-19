@@ -28,8 +28,12 @@ class InstantiateImmediates extends Rewriter {
     visitTypeRef(node)
     {
         node = super.visitTypeRef(node);
-        let result = node.instantiatedType.visit(new AutoWrapper());
-        return result;
+        if (!node.type.instantiate) {
+            if (node.typeArguments.length)
+                throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
+            return node;
+        }
+        return node.type.instantiate(node.typeArguments).visit(new AutoWrapper());
     }
     
     visitReferenceType(node)

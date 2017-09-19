@@ -3922,6 +3922,23 @@ function TEST_instantiateStructInStruct()
     checkInt(program, callFunction(program, "foo", [], []), 43);
 }
 
+function TEST_instantiateStructInStructWithInt2()
+{
+    let program = doPrep(`
+        struct Foo {
+            int2 x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x.x = 42;
+            x.x.x++;
+            return x.x.x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 43);
+}
+
 function TEST_simpleEnum()
 {
     let program = doPrep(`
