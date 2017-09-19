@@ -1,3 +1,16 @@
+2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        REGRESSION(r214494): Web Inspector: Ignore cache button does not work in Network tab
+        https://bugs.webkit.org/show_bug.cgi?id=177114
+        <rdar://problem/34505265>
+
+        Reviewed by Brian Burg.
+
+        * UserInterface/Base/Main.js:
+        (WI.loaded):
+        We need to register the settings change handler regardless of what the
+        initial value of the setting is.
+
 2017-09-18  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: RemoteObject.resolveNode should return a Promise
