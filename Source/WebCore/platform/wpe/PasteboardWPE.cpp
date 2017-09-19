@@ -37,11 +37,6 @@ std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
     return std::make_unique<Pasteboard>();
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
-{
-    return std::make_unique<Pasteboard>();
-}
-
 Pasteboard::Pasteboard()
 {
 }
@@ -125,10 +120,6 @@ void Pasteboard::writeMarkup(const String&)
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
     writeString("text/plain;charset=utf-8", text);
-}
-
-void Pasteboard::writePasteboard(const Pasteboard&)
-{
 }
 
 } // namespace WebCore

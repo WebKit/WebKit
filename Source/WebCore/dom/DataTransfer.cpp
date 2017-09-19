@@ -74,7 +74,7 @@ DataTransfer::DataTransfer(StoreMode mode, std::unique_ptr<Pasteboard> pasteboar
 
 Ref<DataTransfer> DataTransfer::createForCopyAndPaste(StoreMode mode)
 {
-    return adoptRef(*new DataTransfer(mode, mode == StoreMode::ReadWrite ? Pasteboard::createPrivate() : Pasteboard::createForCopyAndPaste()));
+    return adoptRef(*new DataTransfer(mode, mode == StoreMode::ReadWrite ? std::make_unique<StaticPasteboard>() : Pasteboard::createForCopyAndPaste()));
 }
 
 DataTransfer::~DataTransfer()
@@ -220,8 +220,10 @@ bool DataTransfer::hasStringOfType(const String& type)
 
 Ref<DataTransfer> DataTransfer::createForInputEvent(const String& plainText, const String& htmlText)
 {
-    TypeToStringMap typeToStringMap { { ASCIILiteral("text/plain"), plainText }, { ASCIILiteral("text/html"), htmlText } };
-    return adoptRef(*new DataTransfer(StoreMode::Readonly, StaticPasteboard::create(WTFMove(typeToStringMap)), Type::InputEvent));
+    auto pasteboard = std::make_unique<StaticPasteboard>();
+    pasteboard->writeString(ASCIILiteral("text/plain"), plainText);
+    pasteboard->writeString(ASCIILiteral("text/html"), htmlText);
+    return adoptRef(*new DataTransfer(StoreMode::Readonly, WTFMove(pasteboard), Type::InputEvent));
 }
 
 #if !ENABLE(DRAG_SUPPORT)

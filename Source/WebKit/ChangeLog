@@ -1,3 +1,15 @@
+2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        On iOS, getData can't get text set by setData during copy event
+        https://bugs.webkit.org/show_bug.cgi?id=176980
+        <rdar://problem/34453915>
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::copy): Deleted.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-09-19  Alex Christensen  <achristensen@webkit.org>
 
         Expose WKPageRef as a private property on WKWebView on Mac

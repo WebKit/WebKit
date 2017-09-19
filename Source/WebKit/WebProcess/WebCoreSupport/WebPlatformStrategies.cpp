@@ -202,13 +202,6 @@ String WebPlatformStrategies::stringForType(const String& pasteboardType, const 
     return value;
 }
 
-long WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
-{
-    uint64_t newChangeCount;
-    WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::PasteboardCopy(fromPasteboard, toPasteboard), Messages::WebPasteboardProxy::PasteboardCopy::Reply(newChangeCount), 0);
-    return newChangeCount;
-}
-
 long WebPlatformStrategies::changeCount(const WTF::String &pasteboardName)
 {
     uint64_t changeCount;

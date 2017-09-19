@@ -1,3 +1,61 @@
+2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        On iOS, getData can't get text set by setData during copy event
+        https://bugs.webkit.org/show_bug.cgi?id=176980
+        <rdar://problem/34453915>
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by iOS port not implementing Pasteboard::createPrivate(). Rather than implementing this in iOS,
+        replace its use for copy & paste events by StaticPasteboard Wenson added for input events. This makes read-write
+        pasteboard platform agnostic and paves the way to make writing to pasteboard in a single IPC in WebKit2.
+
+        Also fixed a bug that iOS port's Pasteboard::types returned the list of all supported types instead of ones
+        actually present in the pasteboard.
+
+        This patch also adds a vector of types to StaticPasteboard to maintain the type order.
+
+        Tests: editing/pasteboard/dataTransfer-types-is-initially-empty-on-copy.html
+               editing/pasteboard/dataTransfer-types-pasting-plaintext.html
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::createForCopyAndPaste): Make StaticPasteboard instead of a private pasteboard.
+        (WebCore::DataTransfer::createForInputEvent):
+        * editing/Editor.cpp:
+        (WebCore::dispatchClipboardEvent): Call newly added commitToPasteboard on StaticPasteboard.
+        * platform/Pasteboard.h:
+        (WebCore::Pasteboard::isStatic const):
+        * platform/PasteboardStrategy.h:
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::create): Deleted.
+        (WebCore::StaticPasteboard::StaticPasteboard):
+        (WebCore::StaticPasteboard::hasData):
+        (WebCore::StaticPasteboard::types): Deleted. Now simply returns m_type.
+        (WebCore::StaticPasteboard::readString): Added.
+        (WebCore::StaticPasteboard::writeString): Added.
+        (WebCore::StaticPasteboard::clear): Added.
+        (WebCore::StaticPasteboard::commitToPasteboard): Added.
+        (isType): Added.
+        * platform/StaticPasteboard.h:
+        (WebCore::Pasteboard::isStatic const): Added.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::createPrivate): Deleted.
+        (WebCore::Pasteboard::writePasteboard): Deleted.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::createPrivate): Deleted.
+        (WebCore::Pasteboard::writePasteboard): Deleted.
+        (WebCore::addHTMLClipboardTypesForCocoaType):
+        (WebCore::Pasteboard::types): Return the actual list of types in the pasteboard.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::createPrivate): Deleted.
+        (WebCore::Pasteboard::writePasteboard): Deleted.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::createPrivate): Deleted.
+        (WebCore::Pasteboard::writePasteboard): Deleted.
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::createPrivate): Deleted.
+        (WebCore::Pasteboard::writePasteboard): Deleted.
+
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
         AXObjectCache::performDeferredCacheUpdate is called recursively through FrameView::layout. 

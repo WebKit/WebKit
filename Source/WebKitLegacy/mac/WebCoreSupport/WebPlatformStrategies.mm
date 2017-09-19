@@ -129,11 +129,6 @@ String WebPlatformStrategies::stringForType(const String& pasteboardType, const 
     return PlatformPasteboard(pasteboardName).stringForType(pasteboardType);
 }
 
-long WebPlatformStrategies::copy(const String& fromPasteboard, const String& toPasteboard)
-{
-    return PlatformPasteboard(toPasteboard).copy(fromPasteboard);
-}
-
 long WebPlatformStrategies::changeCount(const String &pasteboardName)
 {
     return PlatformPasteboard(pasteboardName).changeCount();

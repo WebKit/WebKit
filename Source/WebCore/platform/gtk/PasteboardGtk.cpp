@@ -50,11 +50,6 @@ std::unique_ptr<Pasteboard> Pasteboard::createForGlobalSelection()
     return std::make_unique<Pasteboard>("PRIMARY");
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
-{
-    return std::make_unique<Pasteboard>(SelectionData::create());
-}
-
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
@@ -195,29 +190,6 @@ void Pasteboard::write(const PasteboardWebContent& pasteboardContent)
     m_selectionData->setText(pasteboardContent.text);
     m_selectionData->setMarkup(pasteboardContent.markup);
     m_selectionData->setCanSmartReplace(pasteboardContent.canSmartCopyOrDelete);
-
-    writeToClipboard();
-}
-
-void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
-{
-    const auto& sourceDataObject = sourcePasteboard.selectionData();
-    m_selectionData->clearAll();
-
-    if (sourceDataObject.hasText())
-        m_selectionData->setText(sourceDataObject.text());
-    if (sourceDataObject.hasMarkup())
-        m_selectionData->setMarkup(sourceDataObject.markup());
-    if (sourceDataObject.hasURL())
-        m_selectionData->setURL(sourceDataObject.url(), sourceDataObject.urlLabel());
-    if (sourceDataObject.hasURIList())
-        m_selectionData->setURIList(sourceDataObject.uriList());
-    if (sourceDataObject.hasImage())
-        m_selectionData->setImage(sourceDataObject.image());
-    if (sourceDataObject.hasUnknownTypeData()) {
-        for (auto& it : sourceDataObject.unknownTypes())
-            m_selectionData->setUnknownTypeData(it.key, it.value);
-    }
 
     writeToClipboard();
 }

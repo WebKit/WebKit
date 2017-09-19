@@ -138,11 +138,6 @@ std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 #pragma clang diagnostic pop
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
-{
-    return std::make_unique<Pasteboard>(platformStrategies()->pasteboardStrategy()->uniqueName());
-}
-
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
@@ -296,11 +291,6 @@ void Pasteboard::write(const PasteboardImage& pasteboardImage)
     if (pasteboardImage.dataInWebArchiveFormat)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(pasteboardImage.dataInWebArchiveFormat.get(), WebArchivePboardType, m_pasteboardName);
     writeFileWrapperAsRTFDAttachment(fileWrapper(pasteboardImage), m_pasteboardName, m_changeCount);
-}
-
-void Pasteboard::writePasteboard(const Pasteboard& pasteboard)
-{
-    m_changeCount = platformStrategies()->pasteboardStrategy()->copy(pasteboard.m_pasteboardName, m_pasteboardName);
 }
 
 bool Pasteboard::canSmartReplace()

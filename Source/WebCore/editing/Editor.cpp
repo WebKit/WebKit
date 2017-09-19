@@ -85,6 +85,7 @@
 #include "SimplifyMarkupCommand.h"
 #include "SpellChecker.h"
 #include "SpellingCorrectionCommand.h"
+#include "StaticPasteboard.h"
 #include "StyleProperties.h"
 #include "TelephoneNumberDetector.h"
 #include "Text.h"
@@ -345,7 +346,7 @@ static bool dispatchClipboardEvent(RefPtr<Element>&& target, const AtomicString&
     if (noDefaultProcessing && storeMode == DataTransfer::StoreMode::ReadWrite) {
         auto pasteboard = Pasteboard::createForCopyAndPaste();
         pasteboard->clear();
-        pasteboard->writePasteboard(dataTransfer->pasteboard());
+        downcast<StaticPasteboard>(dataTransfer->pasteboard()).commitToPasteboard(*pasteboard);
     }
 
     dataTransfer->makeInvalidForSecurity();

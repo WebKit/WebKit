@@ -1,3 +1,23 @@
+2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        On iOS, getData can't get text set by setData during copy event
+        https://bugs.webkit.org/show_bug.cgi?id=176980
+        <rdar://problem/34453915>
+
+        Reviewed by Darin Adler.
+
+        Added regression tests to make sure dataTransfer.types returns an empty list when writing to a pasteboard (copy),
+        and doesn't contain image types when pasting plain text. Unfortunately, pasting image does result in plain text
+        content being present in the pasteboard in the form of URL so we can't test that scenario.
+
+        Also removed failing expectations from a number of tests that are now passing on iOS.
+
+        * editing/pasteboard/dataTransfer-types-is-initially-empty-on-copy-expected.txt: Added.
+        * editing/pasteboard/dataTransfer-types-is-initially-empty-on-copy.html: Added.
+        * editing/pasteboard/dataTransfer-types-pasting-plaintext-expected.txt: Added.
+        * editing/pasteboard/dataTransfer-types-pasting-plaintext.html: Added.
+        * platform/ios/TestExpectations:
+
 2017-09-19  Zalan Bujtas  <zalan@apple.com>
 
         AXObjectCache::performDeferredCacheUpdate is called recursively through FrameView::layout. 

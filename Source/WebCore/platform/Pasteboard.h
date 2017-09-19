@@ -163,7 +163,8 @@ public:
 #endif
 
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste();
-    static std::unique_ptr<Pasteboard> createPrivate(); // Temporary pasteboard. Can put data on this and then write to another pasteboard with writePasteboard.
+
+    virtual bool isStatic() const { return false; }
 
     virtual bool hasData();
     virtual Vector<String> types();
@@ -187,7 +188,6 @@ public:
     virtual void writeMarkup(const String& markup);
     enum SmartReplaceOption { CanSmartReplace, CannotSmartReplace };
     virtual WEBCORE_EXPORT void writePlainText(const String&, SmartReplaceOption); // FIXME: Two separate functions would be clearer than one function with an argument.
-    virtual void writePasteboard(const Pasteboard& sourcePasteboard);
 
 #if ENABLE(DRAG_SUPPORT)
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForDragAndDrop();

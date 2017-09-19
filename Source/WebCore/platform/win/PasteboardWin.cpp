@@ -99,12 +99,6 @@ std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
     return pasteboard;
 }
 
-std::unique_ptr<Pasteboard> Pasteboard::createPrivate()
-{
-    // Windows has no "Private pasteboard" concept.
-    return createForCopyAndPaste();
-}
-
 #if ENABLE(DRAG_SUPPORT)
 std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop()
 {
@@ -758,11 +752,6 @@ void Pasteboard::writeImage(Element& element, const URL&, const String&)
         ::SetClipboardData(CF_BITMAP, resultBitmap.leak());
         ::CloseClipboard();
     }
-}
-
-void Pasteboard::writePasteboard(const Pasteboard& sourcePasteboard)
-{
-    notImplemented();
 }
 
 bool Pasteboard::canSmartReplace()

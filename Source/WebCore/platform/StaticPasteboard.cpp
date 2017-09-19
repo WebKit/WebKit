@@ -28,34 +28,53 @@
 
 namespace WebCore {
 
-std::unique_ptr<StaticPasteboard> StaticPasteboard::create(TypeToStringMap&& typeToStringMap)
-{
-    return std::make_unique<StaticPasteboard>(WTFMove(typeToStringMap));
-}
-
-StaticPasteboard::StaticPasteboard(TypeToStringMap&& typeToStringMap)
-    : m_typeToStringMap(typeToStringMap)
+StaticPasteboard::StaticPasteboard()
 {
 }
 
 bool StaticPasteboard::hasData()
 {
-    return !m_typeToStringMap.isEmpty();
-}
-
-Vector<String> StaticPasteboard::types()
-{
-    Vector<String> allTypes(m_typeToStringMap.size());
-    for (auto& type : m_typeToStringMap.keys())
-        allTypes.append(type);
-    return allTypes;
+    return !m_stringContents.isEmpty();
 }
 
 String StaticPasteboard::readString(const String& type)
 {
-    if (!m_typeToStringMap.contains(type))
+    if (!m_stringContents.contains(type))
         return { };
-    return m_typeToStringMap.get(type);
+    return m_stringContents.get(type);
+}
+
+void StaticPasteboard::writeString(const String& type, const String& value)
+{
+    auto result = m_stringContents.set(type, value);
+    if (result.isNewEntry)
+        m_types.append(type);
+    else {
+        m_types.removeFirst(type);
+        ASSERT(!m_types.contains(type));
+        m_types.append(type);
+    }
+}
+
+void StaticPasteboard::clear()
+{
+    m_stringContents.clear();
+    m_types.clear();
+}
+
+void StaticPasteboard::clear(const String& type)
+{
+    if (!m_stringContents.remove(type))
+        return;
+    m_types.removeFirst(type);
+    ASSERT(!m_types.contains(type));
+}
+
+// FIXME: Copy the entire StaticPasteboard to UIProcess instead of writing each string.
+void StaticPasteboard::commitToPasteboard(Pasteboard& pasteboard)
+{
+    for (auto& type : m_types)
+        pasteboard.writeString(type, m_stringContents.get(type));
 }
 
 }
