@@ -1,3 +1,15 @@
+2017-09-19  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add an ImageDecoder subclass backed by AVFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=176825
+
+        Reviewed by Eric Carlson.
+
+        * fast/images/animated-image-mp4-expected.txt: Added.
+        * fast/images/animated-image-mp4.html: Added.
+        * fast/images/resources/animated-red-green-blue.mp4: Added.
+        * platform/ios/TestExpectations:
+
 2017-09-19  Matt Lewis  <jlewis3@apple.com>
 
         Marked imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html as flaky on El Capitan Debug.

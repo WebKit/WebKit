@@ -6282,6 +6282,8 @@
 		CD19A2681A13E700008D650E /* DiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A2671A13E700008D650E /* DiagnosticLoggingClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD19FEA81F573972000C42FB /* ImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19FEA61F573972000C42FB /* ImageDecoder.h */; };
 		CD19FEA91F573972000C42FB /* ImageDecoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD19FEA71F573972000C42FB /* ImageDecoder.cpp */; };
+		CD19FEAE1F574B6D000C42FB /* ImageDecoderAVFObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19FEAC1F574B6D000C42FB /* ImageDecoderAVFObjC.h */; };
+		CD19FEAF1F574B6D000C42FB /* ImageDecoderAVFObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD19FEAD1F574B6D000C42FB /* ImageDecoderAVFObjC.mm */; };
 		CD1E7347167BC78E009A885D /* TextTrackRepresentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */; };
 		CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */; };
 		CD225C0C1C46FBF400140761 /* WebCoreNSURLSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15028,6 +15030,8 @@
 		CD19A2671A13E700008D650E /* DiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD19FEA61F573972000C42FB /* ImageDecoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDecoder.h; sourceTree = "<group>"; };
 		CD19FEA71F573972000C42FB /* ImageDecoder.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageDecoder.cpp; sourceTree = "<group>"; };
+		CD19FEAC1F574B6D000C42FB /* ImageDecoderAVFObjC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDecoderAVFObjC.h; sourceTree = "<group>"; };
+		CD19FEAD1F574B6D000C42FB /* ImageDecoderAVFObjC.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDecoderAVFObjC.mm; sourceTree = "<group>"; };
 		CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackRepresentation.cpp; sourceTree = "<group>"; };
 		CD225C091C46FBF400140761 /* WebCoreNSURLSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreNSURLSession.mm; sourceTree = "<group>"; };
 		CD225C0A1C46FBF400140761 /* WebCoreNSURLSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSURLSession.h; sourceTree = "<group>"; };
@@ -23847,8 +23851,8 @@
 				43D2597613C816F400608559 /* ImageBuffer.cpp */,
 				B2A10B910B3818BD00099AA4 /* ImageBuffer.h */,
 				22BD9F7D1353625C009BD102 /* ImageBufferData.h */,
-				CD19FEA61F573972000C42FB /* ImageDecoder.h */,
 				CD19FEA71F573972000C42FB /* ImageDecoder.cpp */,
+				CD19FEA61F573972000C42FB /* ImageDecoder.h */,
 				5576A5621D88A70800CCC04C /* ImageFrame.cpp */,
 				5576A5631D88A70800CCC04C /* ImageFrame.h */,
 				5597F8241D91C3130066BC21 /* ImageFrameCache.cpp */,
@@ -25060,6 +25064,8 @@
 				CDDE02EF18B5651200CF7FF1 /* CDMSessionAVStreamSession.mm */,
 				CDE595961BF26E2100A1CBE8 /* CDMSessionMediaSourceAVFObjC.h */,
 				CDE5959C1BF2757100A1CBE8 /* CDMSessionMediaSourceAVFObjC.mm */,
+				CD19FEAC1F574B6D000C42FB /* ImageDecoderAVFObjC.h */,
+				CD19FEAD1F574B6D000C42FB /* ImageDecoderAVFObjC.mm */,
 				07AA6B69166D019500D45671 /* InbandTextTrackPrivateAVFObjC.h */,
 				07AA6B6A166D019500D45671 /* InbandTextTrackPrivateAVFObjC.mm */,
 				07367DDD172CA67F00D861B9 /* InbandTextTrackPrivateLegacyAVFObjC.h */,
@@ -28274,6 +28280,8 @@
 				510192D618B6B9B7007FC7A1 /* ImageControlsRootElement.h in Headers */,
 				510192D218B6B9AB007FC7A1 /* ImageControlsRootElementMac.h in Headers */,
 				A779791A0D6B9D0C003851B9 /* ImageData.h in Headers */,
+				CD19FEA81F573972000C42FB /* ImageDecoder.h in Headers */,
+				CD19FEAE1F574B6D000C42FB /* ImageDecoderAVFObjC.h in Headers */,
 				555B87ED1CAAF0AB00349425 /* ImageDecoderCG.h in Headers */,
 				97205AB61239291000B17380 /* ImageDocument.h in Headers */,
 				5576A5651D88A70800CCC04C /* ImageFrame.h in Headers */,
@@ -28485,7 +28493,6 @@
 				947949381E0459FA00018D85 /* JSDeprecatedCSSOMValue.h in Headers */,
 				9479493A1E0459FA00018D85 /* JSDeprecatedCSSOMValueList.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
-				CD19FEA81F573972000C42FB /* ImageDecoder.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
 				659DDC8309E198BA001BF3C6 /* JSDocument.h in Headers */,
 				1221E05E1C02B444006A1A00 /* JSDocumentAnimation.h in Headers */,
@@ -31462,7 +31469,6 @@
 				A104F24314C71F7A009E2C23 /* CachedSVGDocument.cpp in Sources */,
 				E1B533471717D0A100F205F9 /* CachedSVGDocumentReference.cpp in Sources */,
 				1C0939EA1A13E12900B788E5 /* CachedSVGFont.cpp in Sources */,
-				CD19FEA91F573972000C42FB /* ImageDecoder.cpp in Sources */,
 				0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */,
 				BCB16C270979C3BD00467741 /* CachedXSLStyleSheet.cpp in Sources */,
 				41380C281F3436AC00155FDA /* CacheStorage.cpp in Sources */,
@@ -32311,6 +32317,8 @@
 				510192D518B6B9B7007FC7A1 /* ImageControlsRootElement.cpp in Sources */,
 				510192D118B6B9AB007FC7A1 /* ImageControlsRootElementMac.cpp in Sources */,
 				A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */,
+				CD19FEA91F573972000C42FB /* ImageDecoder.cpp in Sources */,
+				CD19FEAF1F574B6D000C42FB /* ImageDecoderAVFObjC.mm in Sources */,
 				555B87EC1CAAF0AB00349425 /* ImageDecoderCG.cpp in Sources */,
 				97205AB51239291000B17380 /* ImageDocument.cpp in Sources */,
 				5576A5641D88A70800CCC04C /* ImageFrame.cpp in Sources */,

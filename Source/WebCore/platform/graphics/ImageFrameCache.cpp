@@ -390,6 +390,16 @@ URL ImageFrameCache::sourceURL() const
     return m_image ? m_image->sourceURL() : URL();
 }
 
+String ImageFrameCache::mimeType() const
+{
+    return m_image ? m_image->mimeType() : emptyString();
+}
+
+long long ImageFrameCache::expectedContentLength() const
+{
+    return m_image ? m_image->expectedContentLength() : 0;
+}
+
 template<typename T, T (ImageDecoder::*functor)() const>
 T ImageFrameCache::metadata(const T& defaultValue, std::optional<T>* cachedValue)
 {

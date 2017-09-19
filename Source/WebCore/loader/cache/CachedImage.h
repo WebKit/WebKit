@@ -130,6 +130,9 @@ private:
 
         // ImageObserver API
         URL sourceUrl() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->url() : URL(); }
+        String mimeType() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->mimeType() : emptyString(); }
+        long long expectedContentLength() const override { return !m_cachedImages.isEmpty() ? (*m_cachedImages.begin())->expectedContentLength() : 0; }
+
         void decodedSizeChanged(const Image&, long long delta) final;
         void didDraw(const Image&) final;
 

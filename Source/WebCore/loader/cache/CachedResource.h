@@ -117,6 +117,8 @@ public:
     const String& cachePartition() const { return m_resourceRequest.cachePartition(); }
     PAL::SessionID sessionID() const { return m_sessionID; }
     Type type() const { return m_type; }
+    String mimeType() const { return m_response.mimeType(); }
+    long long expectedContentLength() const { return m_response.expectedContentLength(); }
 
     static bool shouldUsePingLoad(Type type) { return type == Type::Beacon; }
 

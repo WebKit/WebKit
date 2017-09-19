@@ -1,3 +1,124 @@
+2017-09-19  Jer Noble  <jer.noble@apple.com>
+
+        [Cocoa] Add an ImageDecoder subclass backed by AVFoundation
+        https://bugs.webkit.org/show_bug.cgi?id=176825
+
+        Reviewed by Eric Carlson.
+
+        Add a new concrete subclass of ImageDecoder which uses AVFoundation to parse and decode
+        image data.
+
+        AVFoundation APIs require prior knowledge of the media data's mime type to determine whether
+        the media data is decodable, so the mime type information must be passed through from the
+        CachedResource -> CachedImage -> ImageFrameCache -> ImageSource so as to be available when
+        creating the ImageDecoder:
+
+        (Drive-by fix: the createFrameImageAtIndex() method will mutate internal state, so make it
+        non-const.)
+
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::mimeType const):
+        * platform/cf/CoreMediaSoftLink.cpp:
+        * platform/cf/CoreMediaSoftLink.h:
+        * platform/cocoa/VideoToolboxSoftLink.cpp:
+        * platform/cocoa/VideoToolboxSoftLink.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::mimeType const):
+        (WebCore::Image::expectedContentSize const):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageDecoder.cpp:
+        (WebCore::ImageDecoder::create):
+        * platform/graphics/ImageDecoder.h:
+        (WebCore::ImageDecoder::setExpectedContentSize):
+        * platform/graphics/ImageFrameCache.cpp:
+        (WebCore::ImageFrameCache::mimeType const):
+        * platform/graphics/ImageFrameCache.h:
+        * platform/graphics/ImageObserver.h:
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::ensureDecoderAvailable):
+        * platform/graphics/cg/ImageDecoderCG.cpp:
+        (WebCore::ImageDecoderCG::createFrameImageAtIndex):
+        * platform/graphics/cg/ImageDecoderCG.h:
+
+        Add the new class, ImageDecoderAVFObjC:
+
+        AVFoundation expects to load all the media data for an AVURLAsset itself. To map between the
+        provided SharedData and AVURLAsset's requirements, create a delegate object
+        WebCoreSharedBufferResourceLoaderDelegate, which responds to requests from the AVURLAsset by
+        extracting data from the SharedData object. Ensure AVURLAsset doesn't load any data outside
+        this delegate by passing the AVURLAssetReferenceRestrictionsKey /
+        AVAssetReferenceRestrictionForbidAll key and value in the AVURLAsset creation options.
+
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h: Added.
+        (WebCore::ImageDecoderAVFObjC::create):
+        (WebCore::ImageDecoderAVFObjC::mimeType const):
+        (WebCore::ImageDecoderAVFObjC::RotationProperties::isIdentity const):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm: Added.
+        (SOFT_LINK_CONSTANT):
+        (-[WebCoreSharedBufferResourceLoaderDelegate initWithParent:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate setExpectedContentSize:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate updateData:complete:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate canFulfillRequest:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate enqueueRequest:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate fulfillPendingRequests]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate fulfillRequest:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate resourceLoader:shouldWaitForLoadingOfRequestedResource:]):
+        (-[WebCoreSharedBufferResourceLoaderDelegate resourceLoader:didCancelLoadingRequest:]):
+        (WebCore::customSchemeURL):
+        (WebCore::imageDecoderAssetOptions):
+        (WebCore::transformToRotationProperties):
+        (WebCore::ImageDecoderAVFObjC::ImageDecoderAVFObjC):
+        (WebCore::ImageDecoderAVFObjC::canDecodeType):
+        (WebCore::ImageDecoderAVFObjC::firstEnabledTrack):
+        (WebCore::ImageDecoderAVFObjC::readSampleMetadata): Parses the media data using AVSampleCursor to walk
+            the media sample table, extracting frame presentation time, decode time, and duration.
+        (WebCore::ImageDecoderAVFObjC::readTrackMetadata): Reads the affine transform and size information from
+            the AVAssetTrack, and transforms the transform into a rotation value.
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer): Decompress the incoming sample data, optionally rotate
+            the output, and store the results in the sample data vector.
+        (WebCore::ImageDecoderAVFObjC::advanceCursor): Wrap around the end of the sample table.
+        (WebCore::ImageDecoderAVFObjC::setTrack): Reset all sample and track metadata.
+        (WebCore::ImageDecoderAVFObjC::encodedDataStatus const): Retrieve from sample data.
+        (WebCore::ImageDecoderAVFObjC::frameCount const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::repetitionCount const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::uti const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::filenameExtension const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameSizeAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameIsCompleteAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameOrientationAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameDurationAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameHasAlphaAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameAllowSubsamplingAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::frameBytesAtIndex const): Ditto.
+        (WebCore::ImageDecoderAVFObjC::createFrameImageAtIndex): If the sample data has already been
+            decompressed, return it. Otherwise, walk through the sample table decompressing frames
+            until the desired frame is decoded.
+        (WebCore::ImageDecoderAVFObjC::setData):
+        (WebCore::ImageDecoderAVFObjC::clearFrameBufferCache):
+
+        Modify WebCoreDecompressionSession so that it can emit frames which have been converted from
+        YUV -> RGB as part of the decode operation. Also, add a synchronous decoding operation
+        method, for use in ImageDecoderAVFObjC.
+
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.h:
+        (WebCore::WebCoreDecompressionSession::createOpenGL):
+        (WebCore::WebCoreDecompressionSession::createRGB):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::WebCoreDecompressionSession):
+        (WebCore::WebCoreDecompressionSession::ensureDecompressionSessionForSample):
+        (WebCore::WebCoreDecompressionSession::decodeSample):
+        (WebCore::WebCoreDecompressionSession::decodeSampleSync):
+
+        Other changes:
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files to project.
+        * platform/cocoa/VideoToolboxSoftLink.cpp: Add newly referenced methods.
+        * platform/cocoa/VideoToolboxSoftLink.h: Ditto.
+
+
 2017-09-19  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Move Authentication related tasks into AuthenticationChallenge class

@@ -67,6 +67,8 @@ public:
     void clearMetadata();
     void clearImage() { m_image = nullptr; }
     URL sourceURL() const;
+    String mimeType() const;
+    long long expectedContentLength() const;
 
     // Asynchronous image decoding
     void startAsyncDecodingQueue();

@@ -43,7 +43,7 @@ class SharedBuffer;
 class ImageDecoder : public ThreadSafeRefCounted<ImageDecoder> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static RefPtr<ImageDecoder> create(SharedBuffer&, AlphaOption, GammaAndColorProfileOption);
+    static RefPtr<ImageDecoder> create(SharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption);
     virtual ~ImageDecoder() = default;
 
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
@@ -68,6 +68,7 @@ public:
 
     virtual NativeImagePtr createFrameImageAtIndex(size_t, SubsamplingLevel = SubsamplingLevel::Default, const DecodingOptions& = DecodingMode::Synchronous) = 0;
 
+    virtual void setExpectedContentSize(long long) { }
     virtual void setData(SharedBuffer&, bool allDataReceived) = 0;
     virtual bool isAllDataReceived() const = 0;
     virtual void clearFrameBufferCache(size_t) = 0;

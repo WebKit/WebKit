@@ -2993,3 +2993,5 @@ webkit.org/b/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/
 
 webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Crash ]
 
+# This test relies on APIs not available on iOS
+fast/images/animated-image-mp4.html [ Skip ]

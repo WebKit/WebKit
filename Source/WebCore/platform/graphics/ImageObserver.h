@@ -41,6 +41,9 @@ protected:
     virtual ~ImageObserver() {}
 public:
     virtual URL sourceUrl() const = 0;
+    virtual String mimeType() const = 0;
+    virtual long long expectedContentLength() const = 0;
+
     virtual void decodedSizeChanged(const Image&, long long delta) = 0;
 
     virtual void didDraw(const Image&) = 0;

@@ -34,10 +34,21 @@
 #include "ScalableImageDecoder.h"
 #endif
 
+#if HAVE(AVSAMPLEBUFFERGENERATOR)
+#include "ImageDecoderAVFObjC.h"
+#endif
+
 namespace WebCore {
 
-RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+RefPtr<ImageDecoder> ImageDecoder::create(SharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
+#if HAVE(AVSAMPLEBUFFERGENERATOR)
+    if (ImageDecoderAVFObjC::canDecodeType(mimeType))
+        return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
+#else
+    UNUSED_PARAM(mimeType);
+#endif
+
 #if USE(CG)
     return ImageDecoderCG::create(data, alphaOption, gammaAndColorProfileOption);
 #elif USE(DIRECT2D)

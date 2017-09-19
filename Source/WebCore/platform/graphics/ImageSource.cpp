@@ -75,7 +75,7 @@ bool ImageSource::ensureDecoderAvailable(SharedBuffer* data)
     if (!data || isDecoderAvailable())
         return true;
 
-    m_decoder = ImageDecoder::create(*data, m_alphaOption, m_gammaAndColorProfileOption);
+    m_decoder = ImageDecoder::create(*data, m_frameCache->mimeType(), m_alphaOption, m_gammaAndColorProfileOption);
     if (!isDecoderAvailable())
         return false;
 
