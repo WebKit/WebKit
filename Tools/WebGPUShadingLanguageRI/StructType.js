@@ -67,9 +67,6 @@ class StructType extends Type {
             if (typeArguments.length != this.typeParameters.length)
                 throw new WTypeError(this.origin.originString, "Wrong number of type arguments to instantiation");
             
-            if (!typeArguments.length)
-                return this;
-            
             substitution = new Substitution(this.typeParameters, typeArguments);
             typeParameters = [];
         }
@@ -83,6 +80,7 @@ class StructType extends Type {
             newField = newField.visit(instantiateImmediates);
             result.add(newField);
         }
+        
         return result;
     }
     

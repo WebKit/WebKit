@@ -117,6 +117,7 @@ class FuncInstantiator {
             }
         }
         let resultingFunc = func.visit(new Instantiate());
+        resultingFunc.uninstantiatedReturnType = func.returnType.visit(substitution);
         let instance = {func: resultingFunc, typeArguments};
         instances.push(instance);
         return resultingFunc;

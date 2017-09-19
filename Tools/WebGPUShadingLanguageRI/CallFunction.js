@@ -40,6 +40,6 @@ function callFunction(program, name, typeArguments, argumentList)
         func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, type.size);
     }
     let result = new Evaluator(program).runFunc(func);
-    return new TypedValue(func.returnType.unifyNode, result);
+    return new TypedValue(func.uninstantiatedReturnType, result);
 }
 

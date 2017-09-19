@@ -88,7 +88,7 @@ function makeDouble(program, value)
 
 function checkNumber(program, result, expected)
 {
-    if (!result.type.isNumber)
+    if (!result.type.unifyNode.isNumber)
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result + " (expected " + expected + ")");
@@ -103,7 +103,7 @@ function checkInt(program, result, expected)
 
 function checkEnum(program, result, expected)
 {
-    if (!(result.type instanceof EnumType))
+    if (!(result.type.unifyNode instanceof EnumType))
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -3900,6 +3900,26 @@ function TEST_builtinVectors()
     checkDouble(program, callFunction(program, "food4", [], []), 5);
     checkBool(program, callFunction(program, "food5", [], []), true);
     checkBool(program, callFunction(program, "food6", [], []), false);
+}
+
+function TEST_instantiateStructInStruct()
+{
+    let program = doPrep(`
+        struct Bar<T> {
+            T x;
+        }
+        struct Foo {
+            Bar<int> x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x.x = 42;
+            x.x.x++;
+            return x.x.x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 43);
 }
 
 function TEST_simpleEnum()

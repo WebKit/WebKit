@@ -160,7 +160,8 @@ class Checker extends Visitor {
         if (node.addressSpace == "thread")
             return;
         
-        if (!node.elementType.instantiatedType.isPrimitive)
+        let instantiatedType = node.elementType.instantiatedType;
+        if (!instantiatedType.isPrimitive)
             throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node.elementType + " (instantiated to " + node.elementType.instantiatedType + ")");
     }
     

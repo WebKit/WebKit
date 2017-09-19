@@ -57,10 +57,11 @@ class TypeRef extends Type {
     get instantiatedType()
     {
         let type = this.type.unifyNode;
-        if (!this.typeArguments.length)
-            return type;
-        if (!type.instantiate)
-            throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
+        if (!type.instantiate) {
+            if (this.typeArguments.length)
+                throw new Error("type does not support instantiation: " + type + " (" + type.constructor.name + ")");
+            return this;
+        }
         return type.instantiate(this.typeArguments);
     }
     
@@ -89,7 +90,7 @@ class TypeRef extends Type {
     {
         if (!this.typeArguments.length)
             return this.type.isPrimitive;
-        throw new Error("Cannot determine if an uninstantiated type is primitive");
+        throw new Error("Cannot determine if an uninstantiated type is primitive: " + this);
     }
     
     setTypeAndArguments(type, typeArguments)

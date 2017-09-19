@@ -400,24 +400,14 @@ function parse(program, origin, originKind, lineNumberOffset, text)
         return readModifyWrite;
     }
     
-    function parsePossibleSuffix()
+    function parseSuffixOperator(left, acceptableOperators)
     {
-        let acceptableOperators = ["++", "--", ".", "->", "["];
-        let limitedOperators = [".", "->", "["];
-        let left;
-        if (isCallExpression()) {
-            left = parseCallExpression();
-            acceptableOperators = limitedOperators;
-        } else
-            left = parseTerm();
-        
         let token;
         while (token = tryConsume(...acceptableOperators)) {
             switch (token.text) {
             case "++":
             case "--":
-                left = finishParsingPostIncrement(token, left);
-                break;
+                return finishParsingPostIncrement(token, left);
             case ".":
             case "->":
                 if (token.text == "->")
@@ -433,9 +423,22 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             default:
                 throw new Error("Bad token: " + token);
             }
-            acceptableOperators = limitedOperators;
         }
         return left;
+    }
+    
+    function parsePossibleSuffix()
+    {
+        let acceptableOperators = ["++", "--", ".", "->", "["];
+        let limitedOperators = [".", "->", "["];
+        let left;
+        if (isCallExpression()) {
+            left = parseCallExpression();
+            acceptableOperators = limitedOperators;
+        } else
+            left = parseTerm();
+        
+        return parseSuffixOperator(left, acceptableOperators);
     }
     
     function finishParsingPreIncrement(token, left, extraArg)
@@ -567,7 +570,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     
     function parsePostIncrement()
     {
-        let left = parseTerm();
+        let left = parseSuffixOperator(parseTerm(), ".", "->", "[");
         let token = consume("++", "--");
         return finishParsingPostIncrement(token, left);
     }

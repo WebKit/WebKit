@@ -1,5 +1,39 @@
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
+        [WSL] Cannot put templated structs inside structs
+        https://bugs.webkit.org/show_bug.cgi?id=177120
+
+        Reviewed by Myles Maxfield.
+        
+        It turns out that we still need to instantiate structs even if not passing type arguments,
+        since its fields may need to be instantiated.
+        
+        This makes Myles's test case pass. When writing the test case, I encountered parser bugs, and
+        I fixed them.
+
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitReferenceType):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique):
+        (FuncInstantiator):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseSuffixOperator):
+        (parsePossibleSuffix):
+        (parsePostIncrement):
+        * WebGPUShadingLanguageRI/StructType.js:
+        (StructType.prototype.instantiate):
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkNumber):
+        (checkEnum):
+        (TEST_instantiateStructInStruct):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.prototype.get instantiatedType):
+        (TypeRef.prototype.get isPrimitive):
+
+2017-09-18  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should support enum
         https://bugs.webkit.org/show_bug.cgi?id=176977
 
