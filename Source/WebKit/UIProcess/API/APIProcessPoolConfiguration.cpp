@@ -126,6 +126,7 @@ Ref<ProcessPoolConfiguration> ProcessPoolConfiguration::copy()
     copy->m_fullySynchronousModeIsAllowedForTesting = this->m_fullySynchronousModeIsAllowedForTesting;
     copy->m_ignoreSynchronousMessagingTimeoutsForTesting = this->m_ignoreSynchronousMessagingTimeoutsForTesting;
     copy->m_overrideLanguages = this->m_overrideLanguages;
+    copy->m_allowsCellularAccess = this->m_allowsCellularAccess;
     copy->m_sourceApplicationBundleIdentifier = this->m_sourceApplicationBundleIdentifier;
     copy->m_sourceApplicationSecondaryIdentifier = this->m_sourceApplicationSecondaryIdentifier;
     copy->m_alwaysRunsAtBackgroundPriority = this->m_alwaysRunsAtBackgroundPriority;

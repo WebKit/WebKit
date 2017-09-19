@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIContextConfiguration_h
-#define APIContextConfiguration_h
+#pragma once
 
 #include "APIObject.h"
 #include "CacheModel.h"
@@ -181,5 +180,3 @@ private:
 };
 
 } // namespace API
-
-#endif // APIContextConfiguration_h

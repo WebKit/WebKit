@@ -1,3 +1,23 @@
+2017-09-19  Alex Christensen  <achristensen@webkit.org>
+
+        Make _WKProcessPoolConfiguration.allowsCellularAccess actually work on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177124
+
+        Reviewed by Andy Estes.
+
+        The boolean added in r213747 was getting lost in two places:
+        1. The API::ProcessPoolConfiguration gets copied before it's used, so we need to set the bool on the copy.
+        2. The bool was not getting copied from that ProcessPoolConfiguration to the NetworkProcessCreationParameters
+        to be sent to the NetworkProcess to be given to the NSURLSessionConfiguration in NetworkSessionCocoa.mm.
+
+        These two problems were fixed and verified manually with a customized iOS app on my phone.
+        Unfortunately, this cannot be tested well with our current test infrastructure.
+
+        * UIProcess/API/APIProcessPoolConfiguration.cpp:
+        (API::ProcessPoolConfiguration::copy):
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::ensureNetworkProcess):
+
 2017-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Rename WebKit target to WebKitLegacy and rename WebKit2 target to WebKit

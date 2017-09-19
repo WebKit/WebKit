@@ -457,6 +457,8 @@ NetworkProcessProxy& WebProcessPool::ensureNetworkProcess(WebsiteDataStore* with
     String parentBundleDirectory = this->parentBundleDirectory();
     if (!parentBundleDirectory.isEmpty())
         SandboxExtension::createHandle(parentBundleDirectory, SandboxExtension::Type::ReadOnly, parameters.parentBundleDirectoryExtensionHandle);
+
+    parameters.allowsCellularAccess = m_configuration->allowsCellularAccess();
 #endif
 
 #if OS(LINUX)
