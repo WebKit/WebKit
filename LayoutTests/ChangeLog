@@ -1,3 +1,13 @@
+2017-09-18  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for macOS.
+
+        * platform/mac-elcapitan/editing/mac/attributed-string/font-style-variant-effect-expected.txt: Copied from LayoutTests/platform/mac-sierra/editing/mac/attributed-string/font-style-variant-effect-expected.txt.
+        * platform/mac-sierra/editing/mac/attributed-string/font-style-variant-effect-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/loader/file-url-mimetypes-3-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-09-18  Per Arne Vollan  <pvollan@apple.com>
 
         Mark fast/css/display-contents-style-update.html as a failure on Windows.

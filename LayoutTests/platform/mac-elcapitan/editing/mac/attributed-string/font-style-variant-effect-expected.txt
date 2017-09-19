@@ -42,17 +42,7 @@ Alignment 4
     NSKern: 0pt
     NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
     NSStrokeWidth: 0
-[ ]
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
-    NSStrokeWidth: 0
-[small-caps]
-    NSFont: Times-Roman 16.00 pt.
-    NSKern: 0pt
-    NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
-    NSStrokeWidth: 0
-[ outline emboss ]
+[ small-caps outline emboss ]
     NSFont: Times-Roman 16.00 pt.
     NSKern: 0pt
     NSStrokeColor: NSCustomColorSpace sRGB IEC61966-2.1 colorspace 0 0 0 1
