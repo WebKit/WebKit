@@ -3,6 +3,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 list(APPEND WebCore_SOURCES
+    platform/network/curl/AuthenticationChallengeCurl.cpp
     platform/network/curl/CookieJarCurl.cpp
     platform/network/curl/CredentialStorageCurl.cpp
     platform/network/curl/CurlCacheEntry.cpp

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +28,10 @@
 
 #include "AuthenticationChallengeBase.h"
 #include "AuthenticationClient.h"
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class AuthenticationChallenge : public AuthenticationChallengeBase {
+class AuthenticationChallenge final : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge()
     {
@@ -42,8 +42,13 @@ public:
     {
     }
 
+    AuthenticationChallenge(uint16_t, long, unsigned, const ResourceResponse&, AuthenticationClient* = nullptr);
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
-    void setAuthenticationClient(AuthenticationClient* client) { m_authenticationClient = client; }
+
+private:
+    ProtectionSpaceServerType protectionSpaceServerTypeFromURI(const URL&);
+    ProtectionSpace protectionSpaceFromHandle(uint16_t, long, const ResourceResponse&);
+    void removeLeadingAndTrailingQuotes(String&);
 
     RefPtr<AuthenticationClient> m_authenticationClient;
 };

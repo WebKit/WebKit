@@ -73,9 +73,8 @@ private:
     ResourceResponse& response();
 
     void setupAuthentication();
-    bool getProtectionSpace(const ResourceResponse&, ProtectionSpace&);
 
-    void didReceiveAllHeaders(long httpCode, long long contentLength);
+    void didReceiveAllHeaders(long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth);
     void didReceiveContentData(ThreadSafeDataBuffer);
     void handleLocalReceiveResponse();
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);

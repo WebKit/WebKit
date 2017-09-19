@@ -324,67 +324,12 @@ void ResourceHandleCurlDelegate::setupAuthentication()
     }
 }
 
-static void removeLeadingAndTrailingQuotes(String& value)
-{
-    unsigned length = value.length();
-    if (value.startsWith('"') && value.endsWith('"') && length > 1)
-        value = value.substring(1, length - 2);
-}
-
-bool ResourceHandleCurlDelegate::getProtectionSpace(const ResourceResponse& response, ProtectionSpace& protectionSpace)
-{
-    auto port = m_curlHandle.getPrimaryPort();
-    if (!port)
-        return false;
-
-    auto availableAuth = m_curlHandle.getHttpAuthAvail();
-    if (!availableAuth)
-        return false;
-
-    auto url = m_curlHandle.getEffectiveURL();
-    if (!url.isValid())
-        return false;
-
-    String host = url.host();
-    StringView protocol = url.protocol();
-
-    String realm;
-
-    const String authHeader = response.httpHeaderField(HTTPHeaderName::Authorization);
-    const String realmString = "realm=";
-    int realmPos = authHeader.find(realmString);
-    if (realmPos > 0) {
-        realm = authHeader.substring(realmPos + realmString.length());
-        realm = realm.left(realm.find(','));
-        removeLeadingAndTrailingQuotes(realm);
-    }
-
-    ProtectionSpaceServerType serverType = ProtectionSpaceServerHTTP;
-    if (protocol == "https")
-        serverType = ProtectionSpaceServerHTTPS;
-
-    ProtectionSpaceAuthenticationScheme authScheme = ProtectionSpaceAuthenticationSchemeUnknown;
-
-    if (*availableAuth & CURLAUTH_BASIC)
-        authScheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
-    if (*availableAuth & CURLAUTH_DIGEST)
-        authScheme = ProtectionSpaceAuthenticationSchemeHTTPDigest;
-    if (*availableAuth & CURLAUTH_GSSNEGOTIATE)
-        authScheme = ProtectionSpaceAuthenticationSchemeNegotiate;
-    if (*availableAuth & CURLAUTH_NTLM)
-        authScheme = ProtectionSpaceAuthenticationSchemeNTLM;
-
-    protectionSpace = ProtectionSpace(host, *port, serverType, realm, authScheme);
-
-    return true;
-}
-
 inline static bool isHttpInfo(int statusCode)
 {
     return 100 <= statusCode && statusCode < 200;
 }
 
-void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long contentLength)
+void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth)
 {
     ASSERT(isMainThread());
 
@@ -419,15 +364,10 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
             return;
         }
     } else if (response().isUnauthorized()) {
-        ProtectionSpace protectionSpace;
-        if (getProtectionSpace(response(), protectionSpace)) {
-            Credential credential;
-            AuthenticationChallenge challenge(protectionSpace, credential, m_authFailureCount, response(), ResourceError());
-            challenge.setAuthenticationClient(m_handle);
-            m_handle->didReceiveAuthenticationChallenge(challenge);
-            m_authFailureCount++;
-            return;
-        }
+        AuthenticationChallenge challenge(connectPort, availableHttpAuth, m_authFailureCount, response(), m_handle);
+        m_handle->didReceiveAuthenticationChallenge(challenge);
+        m_authFailureCount++;
+        return;
     }
 
     response().setResponseFired(true);
@@ -762,13 +702,21 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
         if (auto length = m_curlHandle.getContentLenghtDownload())
             contentLength = *length;
 
+        uint16_t connectPort = 0;
+        if (auto port = m_curlHandle.getPrimaryPort())
+            connectPort = *port;
+
+        long availableAuth = CURLAUTH_NONE;
+        if (auto auth = m_curlHandle.getHttpAuthAvail())
+            availableAuth = *auth;
+
         if (isMainThread())
-            didReceiveAllHeaders(httpCode, contentLength);
+            didReceiveAllHeaders(httpCode, contentLength, connectPort, availableAuth);
         else {
-            callOnMainThread([protectedThis = makeRef(*this), httpCode, contentLength] {
+            callOnMainThread([protectedThis = makeRef(*this), httpCode, contentLength, connectPort, availableAuth] {
                 if (!protectedThis->m_handle)
                     return;
-                protectedThis->didReceiveAllHeaders(httpCode, contentLength);
+                protectedThis->didReceiveAllHeaders(httpCode, contentLength, connectPort, availableAuth);
             });
         }
     } else {
