@@ -187,6 +187,7 @@ using namespace WebCore;
     [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification object:nil];
 
     [[_highlightWindow parentWindow] removeChildWindow:_highlightWindow];
+    [_highlightWindow close];
 
     [_highlightWindow release];
     _highlightWindow = nil;
