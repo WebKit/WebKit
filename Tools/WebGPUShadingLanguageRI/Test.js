@@ -3709,12 +3709,128 @@ function TEST_shaderTypes()
 {
     checkFail(
         () => doPrep(`
-            vertex float4 bar()
-            {
-                return float4();
+            struct Foo {
+                float4 x;
             }
-            float4 foo() {
+            vertex Foo bar()
+            {
+                Foo result;
+                result.x = float4();
+                return result;
+            }
+            Foo foo() {
                 return bar();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            vertex float bar()
+            {
+                return 4.;
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                float4 x;
+            }
+            vertex Foo bar(device Foo^ x)
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Boo {
+                float4 x;
+            }
+            struct Foo {
+                float4 x;
+                device Boo^ y;
+            }
+            vertex Foo bar()
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                float4 x;
+            }
+            struct Boo {
+                device Foo^ y;
+            }
+            vertex Foo bar(Boo b)
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                float4 x;
+            }
+            vertex Foo bar(device Foo^ x)
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                float4 x;
+            }
+            fragment Foo bar(Foo foo)
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                float4 x;
+            }
+            fragment Foo bar(device Foo^ stageIn)
+            {
+                return Foo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Boo {
+                float4 x;
+            }
+            struct Foo {
+                float4 x;
+                device Boo^ y;
+            }
+            fragment Boo bar(Foo stageIn)
+            {
+                return boo();
+            }
+        `),
+        (e) => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Boo {
+                float4 x;
+            }
+            struct Foo {
+                float4 x;
+                device Boo^ y;
+            }
+            fragment Foo bar(Boo stageIn)
+            {
+                return Foo();
             }
         `),
         (e) => e instanceof WTypeError);

@@ -30,6 +30,8 @@ class Checker extends Visitor {
         super();
         this._program = program;
         this._currentStatement = null;
+        this._vertexEntryPoints = new Set();
+        this._fragmentEntryPoints = new Set();
     }
     
     visitProgram(node)
@@ -53,9 +55,67 @@ class Checker extends Visitor {
                 doStatement(func);
         }
     }
+
+    _checkShaderType(node)
+    {
+        // FIXME: Relax these checks once we have implemented support for textures and samplers.
+        if (node.typeParameters.length != 0)
+            throw new WTypeError("Entry point " + node.name + " must not have type arguments.");
+        class NonNumericSearcher extends Visitor {
+            constructor(name)
+            {
+                super();
+                this._name = name;
+            }
+            visitArrayRefType(node)
+            {
+                throw new WTypeError(this._name + " must transitively only have numeric types.");
+            }
+            visitPtrType(node)
+            {
+                throw new WTypeError(this._name + " must transitively only have numeric types.");
+            }
+        }
+        switch (node.shaderType) {
+        case "vertex":
+            if (this._vertexEntryPoints.has(node.name))
+                throw new WTypeError("Duplicate vertex entry point name " + node.name);
+            this._vertexEntryPoints.add(node.name);
+            if (!(node.returnType.type instanceof StructType))
+                throw new WTypeError("Vertex shader " + node.name + " must return a struct.");
+            for (let parameter of node.parameters) {
+                if (parameter.type.type instanceof StructType)
+                    parameter.type.visit(new NonNumericSearcher(node.name));
+                else if (!(parameter.type.type instanceof ArrayRefType))
+                    throw new WTypeError(node.name + " accepts a parameter " + parameter.name + " which isn't a struct and isn't an ArrayRef.");
+            }
+            node.returnType.type.visit(new NonNumericSearcher);
+            break;
+        case "fragment":
+            if (this._fragmentEntryPoints.has(node.name))
+                throw new WTypeError("Duplicate fragment entry point name " + node.name);
+            this._fragmentEntryPoints.add(node.name);
+            if (!(node.returnType.type instanceof StructType))
+                throw new WTypeError("Fragment shader " + node.name + " must return a struct.");
+            for (let parameter of node.parameters) {
+                if (parameter.name == "stageIn") {
+                    if (!(parameter.type.type instanceof StructType))
+                        throw new WTypeError("Fragment entry points' stageIn parameter (of " + node.name + ") must be a struct type.");
+                    parameter.type.visit(new NonNumericSearcher(node.name));
+                } else {
+                    if (!(parameter.type.type instanceof ArrayRefType))
+                        throw new WTypeError("Fragment entry point's " + parameter.name + " parameter is not an array reference.");
+                }
+            }
+            node.returnType.type.visit(new NonNumericSearcher);
+            break;
+        }
+    }
     
     visitFuncDef(node)
     {
+        if (node.shaderType)
+            this._checkShaderType(node);
         node.body.visit(this);
     }
     
@@ -408,7 +468,7 @@ class Checker extends Visitor {
         if (!type)
             throw new Error("Expression has no type, but should be bool: " + expression);
         if (!type.equals(this._program.intrinsics.bool))
-            throw new WError("Expression isn't a bool: " + expression);
+            throw new WTypeError("Expression isn't a bool: " + expression);
     }
 
     visitLogicalNot(node)

@@ -1,3 +1,25 @@
+2017-09-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        [WSL] Restrict vertex and fragment entry points according to WSL.md
+        https://bugs.webkit.org/show_bug.cgi?id=177253
+
+        Reviewed by Filip Pizlo.
+
+        Entry points can't have template arguments, and their argument/return types need to be restricted.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker):
+        (Checker.prototype._checkShaderType.NonNumericSearcher):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitArrayRefType):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitPtrType):
+        (Checker.prototype._checkShaderType):
+        (Checker.prototype.visitFuncDef):
+        (Checker.prototype._requireBool):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_shaderTypes):
+
 2017-09-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Cygwin 64-bit EWS process cannot find Visual Studio installation.
