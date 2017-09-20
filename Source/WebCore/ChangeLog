@@ -1,3 +1,18 @@
+2017-09-20  Daniel Bates  <dabates@apple.com>
+
+        RenderedDocumentMarker.h should include DocumentMarker.h
+        https://bugs.webkit.org/show_bug.cgi?id=177263
+
+        Reviewed by Andy Estes.
+
+        RenderedDocumentMarker extends DocumentMarker. RenderedDocumentMarker.h should
+        include DocumentMarker.h. Otherwise, both DocumentMarker.h and RenderedDocumentMarker.h
+        must be explicitly included.
+
+        * dom/RenderedDocumentMarker.h:
+        * rendering/RenderText.cpp:
+        * testing/Internals.cpp:
+
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Clean up content extensions code in preparation for more actions with string arguments

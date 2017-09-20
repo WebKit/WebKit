@@ -29,7 +29,6 @@
 #include "BreakLines.h"
 #include "BreakingContext.h"
 #include "CharacterProperties.h"
-#include "DocumentMarker.h"
 #include "DocumentMarkerController.h"
 #include "EllipsisBox.h"
 #include "FloatQuad.h"
