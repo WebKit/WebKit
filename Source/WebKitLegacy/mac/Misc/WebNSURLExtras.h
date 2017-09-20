@@ -71,11 +71,6 @@
 
 - (NSURL *)_webkit_URLFromURLOrSchemelessFileURL;
 
-#if TARGET_OS_IPHONE
-// FIXME: This method name needs a prefix.
-+ (NSURL *)uniqueURLWithRelativePart:(NSString *)relativePart;
-#endif
-
 @end
 
 @interface NSString (WebNSURLExtras)

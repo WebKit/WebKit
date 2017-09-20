@@ -23,49 +23,104 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebContentReader.h"
+#import "config.h"
+#import "WebContentReader.h"
 
-#include "ArchiveResource.h"
-#include "Blob.h"
-#include "CachedResourceLoader.h"
-#include "DOMURL.h"
-#include "Document.h"
-#include "DocumentFragment.h"
-#include "DocumentLoader.h"
-#include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
-#include "HTMLImageElement.h"
-#include "LegacyWebArchive.h"
-#include "Page.h"
-#include "Settings.h"
-#include "WebNSAttributedStringExtras.h"
-#include "markup.h"
-#include <pal/spi/cocoa/NSAttributedStringSPI.h>
-#include <wtf/SoftLinking.h>
+#import "ArchiveResource.h"
+#import "Blob.h"
+#import "CachedResourceLoader.h"
+#import "DOMURL.h"
+#import "Document.h"
+#import "DocumentFragment.h"
+#import "DocumentLoader.h"
+#import "Frame.h"
+#import "FrameLoader.h"
+#import "FrameLoaderClient.h"
+#import "HTMLBodyElement.h"
+#import "HTMLImageElement.h"
+#import "LegacyWebArchive.h"
+#import "Page.h"
+#import "Settings.h"
+#import "WebArchiveResourceFromNSAttributedString.h"
+#import "WebArchiveResourceWebResourceHandler.h"
+#import "WebNSAttributedStringExtras.h"
+#import "markup.h"
+#import <pal/spi/cocoa/NSAttributedStringSPI.h>
+#import <wtf/SoftLinking.h>
 
-#if PLATFORM(IOS)
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+@interface NSAttributedString ()
+- (NSString *)_htmlDocumentFragmentString:(NSRange)range documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+@end
+#elif PLATFORM(IOS)
 SOFT_LINK_PRIVATE_FRAMEWORK(WebKitLegacy)
-#endif
-
-#if PLATFORM(MAC)
+#elif PLATFORM(MAC)
 SOFT_LINK_FRAMEWORK_IN_UMBRELLA(WebKit, WebKitLegacy)
 #endif
 
-// FIXME: Get rid of this and change NSAttributedString conversion so it doesn't use WebKitLegacy (cf. rdar://problem/30597352).
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 SOFT_LINK(WebKitLegacy, _WebCreateFragment, void, (WebCore::Document& document, NSAttributedString *string, WebCore::FragmentAndResources& result), (document, string, result))
+#endif
 
 namespace WebCore {
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+
+static NSDictionary *attributesForAttributedStringConversion()
+{
+    // This function needs to be kept in sync with identically named one in WebKitLegacy, which is used on older OS versions.
+    RetainPtr<NSArray> excludedElements = adoptNS([[NSArray alloc] initWithObjects:
+        // Omit style since we want style to be inline so the fragment can be easily inserted.
+        @"style",
+        // Omit xml so the result is not XHTML.
+        @"xml",
+        // Omit tags that will get stripped when converted to a fragment anyway.
+        @"doctype", @"html", @"head", @"body",
+        // Omit deprecated tags.
+        @"applet", @"basefont", @"center", @"dir", @"font", @"menu", @"s", @"strike", @"u",
+        // Omit object so no file attachments are part of the fragment.
+        @"object", nil]);
+
+#if PLATFORM(IOS)
+    static NSString * const NSExcludedElementsDocumentAttribute = @"ExcludedElements";
+#endif
+
+    return @{
+        NSExcludedElementsDocumentAttribute: excludedElements.get(),
+        @"InterchangeNewline": @YES,
+        @"CoalesceTabSpans": @YES,
+        @"OutputBaseURL": [(NSURL *)URL::fakeURLWithRelativePart(emptyString()) retain], // The value needs +1 refcount, as NSAttributedString over-releases it.
+        @"WebResourceHandler": [WebArchiveResourceWebResourceHandler new],
+    };
+}
+
 static FragmentAndResources createFragment(Frame& frame, NSAttributedString *string)
 {
-    // FIXME: The algorithm to convert an attributed string into HTML should be implemented here in WebCore.
-    // For now, though, we call into WebKitLegacy, which in turn calls into AppKit/TextKit.
+    FragmentAndResources result;
+    Document& document = *frame.document();
+
+    NSArray *subresources = nil;
+    NSString *fragmentString = [string _htmlDocumentFragmentString:NSMakeRange(0, [string length]) documentAttributes:attributesForAttributedStringConversion() subresources:&subresources];
+    auto fragment = DocumentFragment::create(document);
+    fragment->parseHTML(fragmentString, document.body(), DisallowScriptingAndPluginContent);
+
+    result.fragment = WTFMove(fragment);
+    for (WebArchiveResourceFromNSAttributedString *resource in subresources)
+        result.resources.append(*resource->resource);
+
+    return result;
+}
+
+#else
+
+static FragmentAndResources createFragment(Frame& frame, NSAttributedString *string)
+{
     FragmentAndResources result;
     _WebCreateFragment(*frame.document(), string, result);
     return result;
 }
+
+#endif
 
 RefPtr<DocumentFragment> createFragmentAndAddResources(Frame& frame, NSAttributedString *string)
 {

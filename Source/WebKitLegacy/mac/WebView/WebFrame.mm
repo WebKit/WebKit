@@ -2295,7 +2295,7 @@ static WebFrameLoadType toWebFrameLoadType(FrameLoadType frameLoadType)
 - (DOMDocumentFragment *)_documentFragmentForImageData:(NSData *)data withRelativeURLPart:(NSString *)relativeURLPart andMIMEType:(NSString *)mimeType
 {
     WebResource *resource = [[WebResource alloc] initWithData:data
-                                                          URL:[NSURL uniqueURLWithRelativePart:relativeURLPart]
+                                                          URL:URL::fakeURLWithRelativePart(relativeURLPart)
                                                      MIMEType:mimeType
                                              textEncodingName:nil
                                                     frameName:nil];

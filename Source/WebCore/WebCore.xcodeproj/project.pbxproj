@@ -6717,6 +6717,10 @@
 		E182568F0EF2B02D00933242 /* JSWorkerGlobalScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerGlobalScope.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerGlobalScope.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */; };
+		E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */ = {isa = PBXBuildFile; fileRef = E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */; };
+		E18536851F50906100FE091B /* WebArchiveResourceFromNSAttributedString.mm in Sources */ = {isa = PBXBuildFile; fileRef = E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */; };
+		E18C35431F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */; };
+		E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */; };
 		E18DF33518AAF12C00773E59 /* SerializedCryptoKeyWrap.h in Headers */ = {isa = PBXBuildFile; fileRef = E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E18DF33818AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */; };
 		E19727161820549E00592D51 /* CryptoKeyType.h in Headers */ = {isa = PBXBuildFile; fileRef = E19727151820549E00592D51 /* CryptoKeyType.h */; };
@@ -15528,6 +15532,10 @@
 		E182568D0EF2B02D00933242 /* JSWorkerGlobalScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScope.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerGlobalScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerGlobalScope.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerGlobalScopeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerGlobalScopeCustom.cpp; sourceTree = "<group>"; };
+		E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceFromNSAttributedString.h; sourceTree = "<group>"; };
+		E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceFromNSAttributedString.mm; sourceTree = "<group>"; };
+		E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebArchiveResourceWebResourceHandler.h; sourceTree = "<group>"; };
+		E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebArchiveResourceWebResourceHandler.mm; sourceTree = "<group>"; };
 		E18DF33418AAF12C00773E59 /* SerializedCryptoKeyWrap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedCryptoKeyWrap.h; sourceTree = "<group>"; };
 		E18DF33618AAF14D00773E59 /* SerializedCryptoKeyWrapMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedCryptoKeyWrapMac.mm; sourceTree = "<group>"; };
 		E19727151820549E00592D51 /* CryptoKeyType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyType.h; sourceTree = "<group>"; };
@@ -20268,6 +20276,10 @@
 				9B55EEE81B3E8898005342BC /* EditorCocoa.mm */,
 				7C3E510818DF8F3500C112F7 /* HTMLConverter.h */,
 				7C3E510918DF8F3500C112F7 /* HTMLConverter.mm */,
+				E18536811F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.h */,
+				E18536821F4E472700FE091B /* WebArchiveResourceFromNSAttributedString.mm */,
+				E18C35411F7196CD00FF632D /* WebArchiveResourceWebResourceHandler.h */,
+				E18C35421F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm */,
 				9B9299B01F6796A4006723C2 /* WebContentReaderCocoa.mm */,
 			);
 			path = cocoa;
@@ -28884,6 +28896,7 @@
 				316DCB201E78CA55001B5F87 /* JSRTCOfferAnswerOptions.h in Headers */,
 				07969DBA17D14151007FF842 /* JSRTCPeerConnection.h in Headers */,
 				07969DB817D14151007FF842 /* JSRTCPeerConnectionIceEvent.h in Headers */,
+				E18C35441F71970C00FF632D /* WebArchiveResourceWebResourceHandler.h in Headers */,
 				5E2C43741BCF0D750001E2BE /* JSRTCRtpParameters.h in Headers */,
 				5E2C43721BCF0D750001E2BC /* JSRTCRtpReceiver.h in Headers */,
 				5E2C43741BCF0D750001E2BC /* JSRTCRtpSender.h in Headers */,
@@ -30372,6 +30385,7 @@
 				0806E57A12893045007CED32 /* SVGMatrix.h in Headers */,
 				08CA3D4412894A3800FFF260 /* SVGMatrixTearOff.h in Headers */,
 				7CE58D5C1DD7EC9C00128552 /* SVGMatrixValue.h in Headers */,
+				E18536841F4E481400FE091B /* WebArchiveResourceFromNSAttributedString.h in Headers */,
 				B2227A4B0D00BF220071B782 /* SVGMetadataElement.h in Headers */,
 				B2A1F2B10CEF0ABF00442F6A /* SVGMissingGlyphElement.h in Headers */,
 				B2227A4E0D00BF220071B782 /* SVGMPathElement.h in Headers */,
@@ -32714,6 +32728,7 @@
 				A6148A7812E41E3B0044A784 /* JSHTMLKeygenElement.cpp in Sources */,
 				1AE2AB210A1CE63B00B42B25 /* JSHTMLLabelElement.cpp in Sources */,
 				1AE2AB230A1CE63B00B42B25 /* JSHTMLLegendElement.cpp in Sources */,
+				E18C35431F71970100FF632D /* WebArchiveResourceWebResourceHandler.mm in Sources */,
 				1AE2AB250A1CE63B00B42B25 /* JSHTMLLIElement.cpp in Sources */,
 				A80E7B100A19D606007FB8C5 /* JSHTMLLinkElement.cpp in Sources */,
 				1AE2AB270A1CE63B00B42B25 /* JSHTMLMapElement.cpp in Sources */,
@@ -32881,6 +32896,7 @@
 				A1CC56781F4614A500A4555B /* JSPaymentRequest.cpp in Sources */,
 				A1F600571F4765050077E83F /* JSPaymentRequestUpdateEvent.cpp in Sources */,
 				A1F600591F4765050077E83F /* JSPaymentRequestUpdateEventInit.cpp in Sources */,
+				E18536851F50906100FE091B /* WebArchiveResourceFromNSAttributedString.mm in Sources */,
 				A1CC567A1F4614AA00A4555B /* JSPaymentResponse.cpp in Sources */,
 				A1CC567C1F4614AF00A4555B /* JSPaymentShippingOption.cpp in Sources */,
 				A1CC567E1F4614B400A4555B /* JSPaymentShippingType.cpp in Sources */,

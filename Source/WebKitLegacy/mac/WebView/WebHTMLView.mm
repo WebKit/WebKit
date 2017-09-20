@@ -786,9 +786,6 @@ const float _WebHTMLViewPrintingMaximumShrinkFactor = PrintContext::maximumShrin
 #define MIN_BOLD_WEIGHT 7
 #define STANDARD_BOLD_WEIGHT 9
 
-// Fake URL scheme.
-#define WebDataProtocolScheme @"webkit-fake-url"
-
 #if PLATFORM(MAC)
 
 // <rdar://problem/4985524> References to WebCoreScrollView as a subview of a WebHTMLView may be present
@@ -1127,11 +1124,6 @@ static NSCellStateValue kit(TriState state)
         // Omit object so no file attachments are part of the fragment.
         @"object", nil];
     return elements;
-}
-
-static NSURL *uniqueURLWithRelativePart(NSString *relativePart)
-{
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@/%@", WebDataProtocolScheme, [NSUUID UUID], relativePart]];
 }
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
@@ -2332,7 +2324,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
 {
     auto filename = [imageMIMEType stringByReplacingOccurrencesOfString:@"/" withString:@"."];
     auto resource = adoptNS([[WebResource alloc] initWithData:[pasteboard dataForType:pasteboardType]
-        URL:uniqueURLWithRelativePart(filename) MIMEType:imageMIMEType textEncodingName:nil frameName:nil]);
+        URL:URL::fakeURLWithRelativePart(filename) MIMEType:imageMIMEType textEncodingName:nil frameName:nil]);
     return [[self _dataSource] _documentFragmentWithImageResource:resource.get()];
 }
 
@@ -7300,16 +7292,18 @@ static CGImageRef selectionImage(Frame* frame, bool forceBlackText)
 
 @end
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 // This is used by AppKit/TextKit and is implemented here in part so that WebDataProtocolScheme is only defined once.
 // FIXME: Really should have an @interface for this somewhere in this file or an include. Not sure why it compiles without one.
 @implementation NSURL (WebDataURL)
 
 + (NSURL *)_web_uniqueWebDataURL
 {
-    return [NSURL URLWithString:[NSString stringWithFormat:@"%@://%@", WebDataProtocolScheme, [NSUUID UUID]]];
+    return URL::fakeURLWithRelativePart(emptyString());
 }
 
 @end
+#endif
 
 #if PLATFORM(MAC)
 

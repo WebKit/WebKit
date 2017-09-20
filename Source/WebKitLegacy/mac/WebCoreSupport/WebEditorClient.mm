@@ -101,9 +101,11 @@ using namespace HTMLNames;
 @end
 #endif
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300)
 @interface NSAttributedString (WebNSAttributedStringDetails)
 - (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)attributes subresources:(NSArray **)subresources;
 @end
+#endif
 
 static WebViewInsertAction kit(EditorInsertAction action)
 {
@@ -435,8 +437,21 @@ NSURL *WebEditorClient::canonicalizeURLString(NSString *URLString)
     return URL;
 }
 
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300)
+
+// FIXME: Remove both this stub and the real version of this function below once we don't need the real version on any supported platform.
+// This stub is not used outside WebKit, but it's here so we won't get a linker error.
+__attribute__((__noreturn__))
+void _WebCreateFragment(Document&, NSAttributedString *, FragmentAndResources&)
+{
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+#else
+
 static NSDictionary *attributesForAttributedStringConversion()
 {
+    // This function needs to be kept in sync with identically named one in WebCore, which is used on newer OS versions.
     NSArray *excludedElements = [[NSArray alloc] initWithObjects:
         // Omit style since we want style to be inline so the fragment can be easily inserted.
         @"style",
@@ -470,6 +485,8 @@ void _WebCreateFragment(Document& document, NSAttributedString *string, Fragment
     for (WebResource* resource in subresources)
         result.resources.append([resource _coreResource]);
 }
+
+#endif
 
 void WebEditorClient::setInsertionPasteboard(const String& pasteboardName)
 {
