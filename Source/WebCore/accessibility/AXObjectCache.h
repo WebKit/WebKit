@@ -436,9 +436,10 @@ private:
     ListHashSet<Node*> m_ariaModalNodesSet;
 
     AXTextStateChangeIntent m_textSelectionIntent;
-    bool m_isSynchronizingSelection { false };
     ListHashSet<Element*> m_deferredRecomputeIsIgnoredList;
     ListHashSet<Node*> m_deferredTextChangedList;
+    bool m_isSynchronizingSelection { false };
+    bool m_performingDeferredCacheUpdate { false };
 };
 
 class AXAttributeCacheEnabler

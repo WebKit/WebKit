@@ -97,6 +97,7 @@
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include <wtf/DataLog.h>
+#include <wtf/SetForScope.h>
 
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
@@ -2774,6 +2775,10 @@ bool AXObjectCache::nodeIsTextControl(const Node* node)
     
 void AXObjectCache::performDeferredCacheUpdate()
 {
+    if (m_performingDeferredCacheUpdate)
+        return;
+
+    SetForScope<bool> performingDeferredCacheUpdate(m_performingDeferredCacheUpdate, true);
     for (auto* node : m_deferredTextChangedList)
         textChanged(node);
     m_deferredTextChangedList.clear();
