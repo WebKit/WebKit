@@ -1441,16 +1441,6 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
                 }
                     
                 if (paginated) {
-                    if (RenderFlowThread* flowThread = flowThreadContainingBlock()) {
-                        if (flowThread->isRenderNamedFlowThread() && overflowsRegion && hasNextPage(lineBox->lineTop())) {
-                            // Limit the height of this block to the end of the current region because
-                            // it is also fragmented into the next region.
-                            LayoutUnit remainingLogicalHeight = pageRemainingLogicalHeightForOffset(logicalTop(), ExcludePageBoundary);
-                            if (logicalHeight() > remainingLogicalHeight)
-                                setLogicalHeight(remainingLogicalHeight);
-                        }
-                    }
-
                     if (layoutState.flowThread())
                         updateRegionForLine(lineBox);
                 }

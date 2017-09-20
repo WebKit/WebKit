@@ -25,7 +25,6 @@
 #include "Element.h"
 #include "FloatQuad.h"
 #include "FloatingObjects.h"
-#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -47,7 +46,6 @@
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderQuote.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
@@ -248,8 +246,6 @@ void RenderView::layoutContent(const LayoutState& state)
     ASSERT(needsLayout());
 
     RenderBlockFlow::layout();
-    if (hasRenderNamedFlowThreads())
-        flowThreadController().layoutRenderNamedFlowThreads();
 #ifndef NDEBUG
     checkLayoutState(state);
 #endif
@@ -275,65 +271,8 @@ void RenderView::initializeLayoutState(LayoutState& state)
     state.m_isPaginated = state.m_pageLogicalHeight > 0;
 }
 
-// The algorithm below assumes this is a full layout. In case there are previously computed values for regions, supplemental steps are taken
-// to ensure the results are the same as those obtained from a full layout (i.e. the auto-height regions from all the flows are marked as needing
-// layout).
-// 1. The flows are laid out from the outer flow to the inner flow. This successfully computes the outer non-auto-height regions size so the 
-// inner flows have the necessary information to correctly fragment the content.
-// 2. The flows are laid out from the inner flow to the outer flow. After an inner flow is laid out it goes into the constrained layout phase
-// and marks the auto-height regions they need layout. This means the outer flows will relayout if they depend on regions with auto-height regions
-// belonging to inner flows. This step will correctly set the computedAutoHeight for the auto-height regions. It's possible for non-auto-height
-// regions to relayout if they depend on auto-height regions. This will invalidate the inner flow threads and mark them as needing layout.
-// 3. The last step is to do one last layout if there are pathological dependencies between non-auto-height regions and auto-height regions
-// as detected in the previous step.
-void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& state)
+void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState&)
 {
-    // We need to invalidate all the flows with auto-height regions if one such flow needs layout.
-    // If none is found we do a layout a check back again afterwards.
-    if (!flowThreadController().updateFlowThreadsNeedingLayout()) {
-        // Do a first layout of the content. In some cases more layouts are not needed (e.g. only flows with non-auto-height regions have changed).
-        layoutContent(state);
-
-        // If we find no named flow needing a two step layout after the first layout, exit early.
-        // Otherwise, initiate the two step layout algorithm and recompute all the flows.
-        if (!flowThreadController().updateFlowThreadsNeedingTwoStepLayout())
-            return;
-    }
-
-    // Layout to recompute all the named flows with auto-height regions.
-    layoutContent(state);
-
-    // Propagate the computed auto-height values upwards.
-    // Non-auto-height regions may invalidate the flow thread because they depended on auto-height regions, but that's ok.
-    flowThreadController().updateFlowThreadsIntoConstrainedPhase();
-
-    // Do one last layout that should update the auto-height regions found in the main flow
-    // and solve pathological dependencies between regions (e.g. a non-auto-height region depending
-    // on an auto-height one).
-    if (needsLayout())
-        layoutContent(state);
-}
-
-void RenderView::layoutContentToComputeOverflowInRegions(const LayoutState& state)
-{
-    if (!hasRenderNamedFlowThreads())
-        return;
-
-    // First pass through the flow threads and mark the regions as needing a simple layout.
-    // The regions extract the overflow from the flow thread and pass it to their containg
-    // block chain.
-    flowThreadController().updateFlowThreadsIntoOverflowPhase();
-    if (needsLayout())
-        layoutContent(state);
-
-    // In case scrollbars resized the regions a new pass is necessary to update the flow threads
-    // and recompute the overflow on regions. This is the final state of the flow threads.
-    flowThreadController().updateFlowThreadsIntoFinalPhase();
-    if (needsLayout())
-        layoutContent(state);
-
-    // Finally reset the layout state of the flow threads.
-    flowThreadController().updateFlowThreadsIntoMeasureContentPhase();
 }
 
 void RenderView::layout()
@@ -378,8 +317,6 @@ void RenderView::layout()
         layoutContentInAutoLogicalHeightRegions(*m_layoutState);
     else
         layoutContent(*m_layoutState);
-
-    layoutContentToComputeOverflowInRegions(*m_layoutState);
 
 #ifndef NDEBUG
     checkLayoutState(*m_layoutState);
@@ -780,14 +717,6 @@ static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset
 IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
     LayoutRect selRect = subtreeSelectionBounds(*this, clipToVisibleContent);
-
-    if (hasRenderNamedFlowThreads()) {
-        for (auto* namedFlowThread : *m_flowThreadController->renderNamedFlowThreadList()) {
-            LayoutRect currRect = subtreeSelectionBounds(*namedFlowThread, clipToVisibleContent);
-            selRect.unite(currRect);
-        }
-    }
-
     return snappedIntRect(selRect);
 }
 
@@ -838,11 +767,6 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
 void RenderView::repaintSelection() const
 {
     repaintSubtreeSelection(*this);
-
-    if (hasRenderNamedFlowThreads()) {
-        for (auto* namedFlowThread : *m_flowThreadController->renderNamedFlowThreadList())
-            repaintSubtreeSelection(*namedFlowThread);
-    }
 }
 
 void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
@@ -897,58 +821,9 @@ void RenderView::setSelection(RenderObject* start, std::optional<unsigned> start
     m_selectionUnsplitEnd = end;
     m_selectionUnsplitEndPos = endPos;
 
-    // If there is no RenderNamedFlowThreads we follow the regular selection.
-    if (!hasRenderNamedFlowThreads()) {
-        RenderSubtreesMap singleSubtreeMap;
-        singleSubtreeMap.set(this, SelectionSubtreeData(start, startPos, end, endPos));
-        updateSelectionForSubtrees(singleSubtreeMap, blockRepaintMode);
-        return;
-    }
-
-    splitSelectionBetweenSubtrees(start, startPos, end, endPos, blockRepaintMode);
-}
-
-void RenderView::splitSelectionBetweenSubtrees(const RenderObject* start, std::optional<unsigned> startPos, const RenderObject* end, std::optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode)
-{
-    // Compute the visible selection end points for each of the subtrees.
-    RenderSubtreesMap renderSubtreesMap;
-
-    SelectionSubtreeData initialSelection;
-    renderSubtreesMap.set(this, initialSelection);
-    for (auto* namedFlowThread : *flowThreadController().renderNamedFlowThreadList())
-        renderSubtreesMap.set(namedFlowThread, initialSelection);
-
-    if (start && end) {
-        Node* startNode = start->node();
-        Node* endNode = end->node();
-        ASSERT(endNode);
-        Node* stopNode = NodeTraversal::nextSkippingChildren(*endNode);
-
-        for (Node* node = startNode; node != stopNode; node = NodeTraversal::next(*node)) {
-            RenderObject* renderer = node->renderer();
-            if (!renderer)
-                continue;
-
-            SelectionSubtreeRoot& root = renderer->selectionRoot();
-            SelectionSubtreeData selectionData = renderSubtreesMap.get(&root);
-            if (selectionData.selectionClear()) {
-                selectionData.setSelectionStart(node->renderer());
-                selectionData.setSelectionStartPos(node == startNode ? startPos : std::optional<unsigned>(0));
-            }
-
-            selectionData.setSelectionEnd(node->renderer());
-            if (node == endNode)
-                selectionData.setSelectionEndPos(endPos);
-            else {
-                unsigned newEndPos = node->offsetInCharacters() ? node->maxCharacterOffset() : node->countChildNodes();
-                selectionData.setSelectionEndPos(newEndPos);
-            }
-
-            renderSubtreesMap.set(&root, selectionData);
-        }
-    }
-    
-    updateSelectionForSubtrees(renderSubtreesMap, blockRepaintMode);
+    RenderSubtreesMap singleSubtreeMap;
+    singleSubtreeMap.set(this, SelectionSubtreeData(start, startPos, end, endPos));
+    updateSelectionForSubtrees(singleSubtreeMap, blockRepaintMode);
 }
 
 void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap, SelectionRepaintMode blockRepaintMode)
@@ -962,8 +837,6 @@ void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap
         oldSelectionDataMap.set(&root, WTFMove(oldSelectionData));
 
         root.setSelectionData(subtreeSelectionInfo.value);
-        if (hasRenderNamedFlowThreads())
-            root.adjustForVisibleSelection(document());
     }
 
     // Update selection status for the objects inside the selection subtrees.
@@ -1331,54 +1204,21 @@ void RenderView::setIsInWindow(bool isInWindow)
 void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
-    if (hasRenderNamedFlowThreads())
-        flowThreadController().styleDidChange();
 
     frameView().styleDidChange();
 }
 
-bool RenderView::hasRenderNamedFlowThreads() const
-{
-    return m_flowThreadController && m_flowThreadController->hasRenderNamedFlowThreads();
-}
-
 bool RenderView::checkTwoPassLayoutForAutoHeightRegions() const
 {
-    return hasRenderNamedFlowThreads() && m_flowThreadController->hasFlowThreadsWithAutoLogicalHeightRegions();
+    return false;
 }
 
-FlowThreadController& RenderView::flowThreadController()
+void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject&)
 {
-    if (!m_flowThreadController)
-        m_flowThreadController = std::make_unique<FlowThreadController>(this);
-
-    return *m_flowThreadController;
-}
-
-void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject& object)
-{
-    if (!m_flowThreadController)
-        return;
-
-    RenderFlowThread* currentFlowThread = object.flowThreadContainingBlock();
-    if (!currentFlowThread)
-        return;
-
-    m_layoutState->setCurrentRenderFlowThread(currentFlowThread);
-
-    currentFlowThread->pushFlowThreadLayoutState(object);
 }
 
 void RenderView::popLayoutStateForCurrentFlowThread()
 {
-    if (!m_flowThreadController)
-        return;
-
-    RenderFlowThread* currentFlowThread = m_layoutState->currentRenderFlowThread();
-    if (!currentFlowThread)
-        return;
-
-    currentFlowThread->popFlowThreadLayoutState();
 }
 
 ImageQualityController& RenderView::imageQualityController()

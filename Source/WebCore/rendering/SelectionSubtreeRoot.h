@@ -110,7 +110,6 @@ public:
     const SelectionSubtreeData& selectionData() const { return m_selectionSubtreeData; }
 
     void setSelectionData(const SelectionSubtreeData& selectionSubtreeData) { m_selectionSubtreeData = selectionSubtreeData; }
-    void adjustForVisibleSelection(Document&);
 
 private:
     SelectionSubtreeData m_selectionSubtreeData;

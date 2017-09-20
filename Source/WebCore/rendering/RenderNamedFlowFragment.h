@@ -85,8 +85,6 @@ public:
     
     LayoutRect visualOverflowRect() const override;
 
-    RenderNamedFlowThread* namedFlowThread() const;
-
     bool hasAutoLogicalHeight() const override { return m_hasAutoLogicalHeight; }
 
     LayoutUnit computedAutoHeight() const { return m_computedAutoHeight; }

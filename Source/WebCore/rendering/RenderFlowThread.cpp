@@ -30,7 +30,6 @@
 #include "config.h"
 #include "RenderFlowThread.h"
 
-#include "FlowThreadController.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "InlineElementBox.h"
@@ -41,7 +40,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderNamedFlowFragment.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
@@ -445,7 +443,7 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
         // and if so, drop the object's top position (which was computed relative to its containing block
         // and is no longer valid) and recompute it using the region in which it flows as reference.
         bool wasComputedRelativeToOtherRegion = false;
-        while (objContainingBlock && !is<RenderView>(*objContainingBlock) && !objContainingBlock->isRenderNamedFlowThread()) {
+        while (objContainingBlock && !is<RenderView>(*objContainingBlock)) {
             // Check if this object is in a different region.
             RenderRegion* parentStartRegion = nullptr;
             RenderRegion* parentEndRegion = nullptr;
@@ -1117,8 +1115,6 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
 
 void RenderFlowThread::incrementAutoLogicalHeightRegions()
 {
-    if (!m_autoLogicalHeightRegionsCount)
-        view().flowThreadController().incrementFlowThreadsWithAutoLogicalHeightRegions();
     ++m_autoLogicalHeightRegionsCount;
 }
 
@@ -1126,8 +1122,6 @@ void RenderFlowThread::decrementAutoLogicalHeightRegions()
 {
     ASSERT(m_autoLogicalHeightRegionsCount > 0);
     --m_autoLogicalHeightRegionsCount;
-    if (!m_autoLogicalHeightRegionsCount)
-        view().flowThreadController().decrementFlowThreadsWithAutoLogicalHeightRegions();
 }
 
 void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
@@ -1404,32 +1398,6 @@ void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const R
 
         LayoutRect childLayoutOverflowRect = region->layoutOverflowRectForBoxForPropagation(child);
         childLayoutOverflowRect.move(delta);
-        
-        // When propagating the layout overflow to the flow thread object, make sure to include
-        // the logical bottom padding of the scrollable region and the bottom margin of the flowed element.
-        // In order to behave in a similar manner to the non-regions case, content overflowing the box
-        // flowed into the region must be painted on top of the region's padding and the box's margin.
-        // See http://lists.w3.org/Archives/Public/www-style/2014Jan/0089.html
-        if (is<RenderNamedFlowThread>(*box)) {
-            ASSERT(box == this);
-            RenderBlockFlow& fragmentContainer = downcast<RenderNamedFlowFragment>(*region).fragmentContainer();
-            LayoutUnit spacingAfterLayout = fragmentContainer.paddingAfter() + child->marginAfter();
-            if (isHorizontalWritingMode()) {
-                if (fragmentContainer.scrollsOverflowY()) {
-                    LayoutUnit layoutMaxLogicalY = region->rectFlowPortionForBox(child, child->frameRect()).maxY() + spacingAfterLayout;
-                    LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxY();
-                    if (maxYDiff > 0)
-                        childLayoutOverflowRect.expand(0, maxYDiff);
-                }
-            } else {
-                if (fragmentContainer.scrollsOverflowX()) {
-                    LayoutUnit layoutMaxLogicalY = region->rectFlowPortionForBox(child, child->frameRect()).maxX() + spacingAfterLayout;
-                    LayoutUnit maxYDiff = layoutMaxLogicalY - childLayoutOverflowRect.maxX();
-                    if (maxYDiff > 0)
-                        childLayoutOverflowRect.expand(maxYDiff, 0);
-                }
-            }
-        }
         
         region->addLayoutOverflowForBox(box, childLayoutOverflowRect);
 

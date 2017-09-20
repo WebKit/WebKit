@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-class FlowThreadController;
 class ImageQualityController;
 class RenderLayerCompositor;
 class RenderQuote;
@@ -188,9 +187,7 @@ public:
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
     
-    bool hasRenderNamedFlowThreads() const;
     bool checkTwoPassLayoutForAutoHeightRegions() const;
-    FlowThreadController& flowThreadController();
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -310,7 +307,6 @@ private:
 
     void layoutContent(const LayoutState&);
     void layoutContentInAutoLogicalHeightRegions(const LayoutState&);
-    void layoutContentToComputeOverflowInRegions(const LayoutState&);
 #ifndef NDEBUG
     void checkLayoutState(const LayoutState&);
 #endif
@@ -325,7 +321,6 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
-    void splitSelectionBetweenSubtrees(const RenderObject* startRenderer, std::optional<unsigned> startPos, const RenderObject* endRenderer, std::optional<unsigned> endPos, SelectionRepaintMode blockRepaintMode);
     void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&) const;
     void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
     void applySubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, const OldSelectionData&);
@@ -370,7 +365,6 @@ private:
     std::unique_ptr<LayoutState> m_layoutState;
     unsigned m_layoutStateDisableCount { 0 };
     std::unique_ptr<RenderLayerCompositor> m_compositor;
-    std::unique_ptr<FlowThreadController> m_flowThreadController;
 
     bool m_hasQuotesNeedingUpdate { false };
 

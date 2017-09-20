@@ -2645,7 +2645,6 @@ set(WebCore_SOURCES
     rendering/FlexibleBoxAlgorithm.cpp
     rendering/FixedTableLayout.cpp
     rendering/FloatingObjects.cpp
-    rendering/FlowThreadController.cpp
     rendering/Grid.cpp
     rendering/GridTrackSizingAlgorithm.cpp
     rendering/HitTestLocation.cpp
@@ -2710,7 +2709,6 @@ set(WebCore_SOURCES
     rendering/RenderMultiColumnSet.cpp
     rendering/RenderMultiColumnSpannerPlaceholder.cpp
     rendering/RenderNamedFlowFragment.cpp
-    rendering/RenderNamedFlowThread.cpp
     rendering/RenderObject.cpp
     rendering/RenderProgress.cpp
     rendering/RenderQuote.cpp

@@ -49,7 +49,6 @@
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderNamedFlowFragment.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
@@ -411,7 +410,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             // Since we will bypass the body’s renderer anyway, just end the loop if we encounter a region flow (named flow thread).
             // See http://dev.w3.org/csswg/css-regions/#cssomview-offset-attributes
             auto* ancestor = parent();
-            while (ancestor != offsetParent && !is<RenderNamedFlowThread>(*ancestor)) {
+            while (ancestor != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
                 
                 if (is<RenderMultiColumnFlowThread>(*ancestor)) {
@@ -427,11 +426,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 ancestor = ancestor->parent();
             }
             
-            // Compute the offset position for elements inside named flow threads for which the offsetParent was the body.
-            // See https://bugs.webkit.org/show_bug.cgi?id=115899
-            if (is<RenderNamedFlowThread>(*ancestor))
-                referencePoint = downcast<RenderNamedFlowThread>(*ancestor).adjustedPositionRelativeToOffsetParent(*this, referencePoint);
-            else if (is<RenderBox>(*offsetParent) && offsetParent->isBody() && !offsetParent->isPositioned())
+            if (is<RenderBox>(*offsetParent) && offsetParent->isBody() && !offsetParent->isPositioned())
                 referencePoint.moveBy(downcast<RenderBox>(*offsetParent).topLeftLocation());
         }
     }

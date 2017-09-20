@@ -1,5 +1,107 @@
 2017-09-20  Antti Koivisto  <antti@apple.com>
 
+        Remove RenderNamedFlowThread and FlowThreadController
+        https://bugs.webkit.org/show_bug.cgi?id=177229
+
+        Reviewed by Andreas Kling.
+
+        Get rid of some parts of the rendering code for CSS Regions.
+
+        The feature is disabled, no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/FlowThreadController.cpp: Removed.
+        * rendering/FlowThreadController.h: Removed.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::canComputeRegionRangeForBox):
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::determineLogicalLeftPositionForChild):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::logicalHeightForChildForFragmentation const):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::borderBoxRectInRegion const):
+        (WebCore::RenderBox::scroll):
+        (WebCore::RenderBox::renderBoxRegionInfo const):
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing const):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent const):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::willBeDestroyed):
+        (WebCore::RenderElement::hoverAncestor const):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderFlowThread::incrementAutoLogicalHeightRegions):
+        (WebCore::RenderFlowThread::decrementAutoLogicalHeightRegions):
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::paintFixedLayersInNamedFlows): Deleted.
+        (WebCore::RenderLayer::hitTestFixedLayersInNamedFlows): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed): Deleted.
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::checkRegionStyle):
+        (WebCore::RenderNamedFlowFragment::namedFlowThread const): Deleted.
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp: Removed.
+        * rendering/RenderNamedFlowThread.h: Removed.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionRoot const):
+        (WebCore::RenderObject::offsetParent const):
+        (WebCore::RenderObject::currentRenderNamedFlowFragment const):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderGrid const):
+        (WebCore::RenderObject::isRenderNamedFlowThread const): Deleted.
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::attachRegion):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::parentNamedFlowThread const): Deleted.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        (WebCore::writeRenderRegionList): Deleted.
+        (WebCore::writeRenderNamedFlowThreads): Deleted.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layoutContent):
+        (WebCore::RenderView::layoutContentInAutoLogicalHeightRegions):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::selectionBounds const):
+        (WebCore::RenderView::repaintSelection const):
+        (WebCore::RenderView::setSelection):
+        (WebCore::RenderView::updateSelectionForSubtrees):
+        (WebCore::RenderView::styleDidChange):
+        (WebCore::RenderView::checkTwoPassLayoutForAutoHeightRegions const):
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread):
+        (WebCore::RenderView::popLayoutStateForCurrentFlowThread):
+        (WebCore::RenderView::layoutContentToComputeOverflowInRegions): Deleted.
+        (WebCore::RenderView::splitSelectionBetweenSubtrees): Deleted.
+        (WebCore::RenderView::hasRenderNamedFlowThreads const): Deleted.
+        (WebCore::RenderView::flowThreadController): Deleted.
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::SelectionSubtreeRoot::adjustForVisibleSelection): Deleted.
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::setSelectionData):
+
+2017-09-20  Antti Koivisto  <antti@apple.com>
+
         Remove DOM and styling support for CSS Regions
         https://bugs.webkit.org/show_bug.cgi?id=177221
 

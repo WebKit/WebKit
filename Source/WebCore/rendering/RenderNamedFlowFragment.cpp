@@ -30,12 +30,10 @@
 #include "config.h"
 #include "RenderNamedFlowFragment.h"
 
-#include "FlowThreadController.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderIterator.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "StyleResolver.h"
@@ -293,7 +291,6 @@ void RenderNamedFlowFragment::checkRegionStyle()
     bool customRegionStyle = false;
 
     setHasCustomRegionStyle(customRegionStyle);
-    downcast<RenderNamedFlowThread>(*m_flowThread).checkRegionsWithStyling();
 }
 
 std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement&, const RenderStyle&) const
@@ -387,11 +384,6 @@ void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()
     }
 
     m_rendererRegionStyle.swap(temp);
-}
-
-RenderNamedFlowThread* RenderNamedFlowFragment::namedFlowThread() const
-{
-    return downcast<RenderNamedFlowThread>(flowThread());
 }
 
 LayoutRect RenderNamedFlowFragment::visualOverflowRect() const

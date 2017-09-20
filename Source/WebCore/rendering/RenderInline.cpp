@@ -32,13 +32,13 @@
 #include "InlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
+#include "RenderFlowThread.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderListMarker.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderTable.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -223,14 +223,12 @@ void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
     auto* parentStyle = &parent()->style();
     RenderInline* parentRenderInline = is<RenderInline>(*parent()) ? downcast<RenderInline>(parent()) : nullptr;
     bool checkFonts = document().inNoQuirksMode();
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
     bool alwaysCreateLineBoxes = (parentRenderInline && parentRenderInline->alwaysCreateLineBoxes())
         || (parentRenderInline && parentStyle->verticalAlign() != BASELINE)
         || style().verticalAlign() != BASELINE
         || style().textEmphasisMark() != TextEmphasisMarkNone
         || (checkFonts && (!parentStyle->fontCascade().fontMetrics().hasIdenticalAscentDescentAndLineGap(style().fontCascade().fontMetrics())
-        || parentStyle->lineHeight() != style().lineHeight()))
-        || (flowThread && flowThread->isRenderNamedFlowThread()); // FIXME: Enable the optimization once we make overflow computation for culled inlines in regions.
+        || parentStyle->lineHeight() != style().lineHeight()));
 
     if (!alwaysCreateLineBoxes && checkFonts && view().usesFirstLineRules()) {
         // Have to check the first line style as well.

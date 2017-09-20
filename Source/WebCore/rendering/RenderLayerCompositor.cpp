@@ -32,7 +32,6 @@
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "FlowThreadController.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsLayer.h"
@@ -702,8 +701,6 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
 #endif
 
     if (checkForHierarchyUpdate) {
-        if (m_renderView.hasRenderNamedFlowThreads() && isFullUpdate)
-            m_renderView.flowThreadController().updateFlowThreadsLayerToRegionMappingsIfNeeded();
         // Go through the layers in presentation order, so that we can compute which RenderLayers need compositing layers.
         // FIXME: we could maybe do this and the hierarchy udpate in one pass, but the parenting logic would be more complex.
         CompositingState compState(updateRoot);
@@ -1259,21 +1256,6 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, con
         overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 }
 
-void RenderLayerCompositor::computeCompositingRequirementsForNamedFlowFixed(RenderLayer& layer, OverlapMap& overlapMap, CompositingState& childState, bool& layersChanged, bool& anyDescendantHas3DTransform)
-{
-    if (!layer.isRenderViewLayer())
-        return;
-
-    if (!layer.renderer().view().hasRenderNamedFlowThreads())
-        return;
-
-    Vector<RenderLayer*> fixedLayers;
-    layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
-
-    for (auto* fixedLayer : fixedLayers)
-        computeCompositingRequirements(&layer, *fixedLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
-}
-
 //  Recurse through the layers in z-index and overflow order (which is equivalent to painting order)
 //  For the z-order children of a compositing layer:
 //      If a child layers has a compositing layer, then all subsequent layers must
@@ -1413,9 +1395,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
                 computeCompositingRequirements(&layer, *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
         }
     }
-
-    if (layer.isRenderViewLayer())
-        computeCompositingRequirementsForNamedFlowFixed(layer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
 
     // If we just entered compositing mode, the root will have become composited (as long as accelerated compositing is enabled).
     if (layer.isRenderViewLayer()) {
@@ -1569,21 +1548,6 @@ bool RenderLayerCompositor::canAccelerateVideoRendering(RenderVideo& video) cons
 }
 #endif
 
-void RenderLayerCompositor::rebuildCompositingLayerTreeForNamedFlowFixed(RenderLayer& layer, Vector<GraphicsLayer*>& childGraphicsLayersOfEnclosingLayer, int depth)
-{
-    if (!layer.isRenderViewLayer())
-        return;
-
-    if (!layer.renderer().view().hasRenderNamedFlowThreads())
-        return;
-
-    Vector<RenderLayer*> fixedLayers;
-    layer.renderer().view().flowThreadController().collectFixedPositionedLayers(fixedLayers);
-
-    for (auto* fixedLayer : fixedLayers)
-        rebuildCompositingLayerTree(*fixedLayer, childGraphicsLayersOfEnclosingLayer, depth);
-}
-
 void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vector<GraphicsLayer*>& childLayersOfEnclosingLayer, int depth)
 {
     // Make the layer compositing if necessary, and set up clipping and content layers.
@@ -1656,9 +1620,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
                 rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
         }
     }
-
-    if (layer.isRenderViewLayer())
-        rebuildCompositingLayerTreeForNamedFlowFixed(layer, childList, depth + 1);
 
     if (layerBacking) {
         bool parented = false;

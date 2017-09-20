@@ -57,7 +57,6 @@
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
 #include "RenderNamedFlowFragment.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
@@ -1681,27 +1680,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
 
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style().visibility() == VISIBLE) {
-        if (hasVisibleBoxDecorations()) {
-            bool didClipToRegion = false;
-            
-            RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
-            if (namedFlowFragment && is<RenderNamedFlowThread>(paintInfo.paintContainer)) {
-                // If this box goes beyond the current region, then make sure not to overflow the region.
-                // This (overflowing region X altough also fragmented to region X+1) could happen when one of this box's children
-                // overflows region X and is an unsplittable element (like an image).
-                // The same applies for a box overflowing the top of region X when that box is also fragmented in region X-1.
-
-                paintInfo.context().save();
-                didClipToRegion = true;
-
-                paintInfo.context().clip(downcast<RenderNamedFlowThread>(*paintInfo.paintContainer).decorationsClipRectForBoxInNamedFlowFragment(*this, *namedFlowFragment));
-            }
-
+        if (hasVisibleBoxDecorations())
             paintBoxDecorations(paintInfo, paintOffset);
-            
-            if (didClipToRegion)
-                paintInfo.context().restore();
-        }
     }
     
     // Paint legends just above the border before we scroll or clip.
@@ -3429,8 +3409,6 @@ RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
 
 static bool canComputeRegionRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
 {
-    ASSERT(!childBox.isRenderNamedFlowThread());
-
     if (!flowThreadContainingBlock)
         return false;
 
@@ -3448,11 +3426,9 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     bool checkColumnBreaks = flowThread && flowThread->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().layoutState()->m_pageLogicalHeight;
-    bool checkRegionBreaks = flowThread && flowThread->isRenderNamedFlowThread();
     return child.isUnsplittableForPagination() || child.style().breakInside() == AvoidBreakInside
         || (checkColumnBreaks && child.style().breakInside() == AvoidColumnBreakInside)
-        || (checkPageBreaks && child.style().breakInside() == AvoidPageBreakInside)
-        || (checkRegionBreaks && child.style().breakInside() == AvoidRegionBreakInside);
+        || (checkPageBreaks && child.style().breakInside() == AvoidPageBreakInside);
 }
 
 void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
