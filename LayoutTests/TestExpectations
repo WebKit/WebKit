@@ -776,8 +776,6 @@ webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-14.html [ Skip ]
 webkit.org/b/173506  ietestcenter/Javascript/15.4.4.15-3-8.html [ Skip ]
 webkit.org/b/173506  sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.9_Array_prototype_shift/S15.4.4.9_A2_T2.html [ Skip ]
 
-[ Debug ] js/regress-141098.html [ Slow ]
-
 # IDBVersionChangeEvent tests need to be rewritten to use event constructors instead of createEvent,
 # after we implement the IDBVersionChangeEvent constructor.
 webkit.org/b/145390 storage/indexeddb/events.html [ Failure ]
@@ -1391,6 +1389,9 @@ imported/w3c/web-platform-tests/secure-contexts/basic-popup-and-iframe-tests.htt
 
 ### END OF -disabled tests
 ########################################
+
+webkit.org/b/163046 [ Release ] js/regress-141098.html [ Pass Failure ]
+webkit.org/b/163046 [ Debug ] js/regress-141098.html [ Slow Pass Failure ]
 
 webkit.org/b/169625 imported/w3c/web-platform-tests/cors/status.htm [ Pass Failure ]
 
