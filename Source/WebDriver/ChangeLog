@@ -1,5 +1,32 @@
 2017-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        WebDriver: Implement commands to get and set the window rect
+        https://bugs.webkit.org/show_bug.cgi?id=177134
+
+        Reviewed by Brian Burg.
+
+        We are currently implementing the selenium legacy ones, we should implement the w3c ones instead.
+
+        https://w3c.github.io/webdriver/webdriver-spec.html#resizing-and-positioning-windows
+
+        * Session.cpp:
+        (WebDriver::Session::getToplevelBrowsingContextRect): Helper to get the window rect. This is used by both get
+        and set window rect commands.
+        (WebDriver::Session::moveToplevelBrowsingContextwindow): Helper to ask automation to move the window.
+        (WebDriver::Session::resizeToplevelBrowsingContextwindow): Helper to ask automation to resize the window.
+        (WebDriver::Session::getWindowRect): Handle prompts and then call getToplevelBrowsingContextRect().
+        (WebDriver::Session::setWindowRect): Handle prompts and then move and resize the window according to the given
+        parameters and finish the operation calling getToplevelBrowsingContextRect().
+        * Session.h:
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::getWindowRect): Ask the session to get the window rect.
+        (WebDriver::valueAsNumberInRange): Helper to check a value is a valid number in the given range.
+        (WebDriver::WebDriverService::setWindowRect): Get and check size and position from parameters and then ask the
+        session to set the window rect.
+        * WebDriverService.h:
+
+2017-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         WebDriver: wrong response in case of errors
         https://bugs.webkit.org/show_bug.cgi?id=177127
 
