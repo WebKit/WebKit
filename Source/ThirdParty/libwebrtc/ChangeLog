@@ -1,3 +1,14 @@
+2017-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Upstream googletest framework
+        https://bugs.webkit.org/show_bug.cgi?id=177252
+
+        Reviewed by Alex Christensen.
+
+        This is used by libwebrtc.
+
+        * Source/third_party/googletest: Added.
+ 
 2017-09-15  Alicia Boya García  <aboya@igalia.com>
 
         Normalize line terminators in jsoncpp Visual Studio files
