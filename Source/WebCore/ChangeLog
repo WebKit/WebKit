@@ -1,3 +1,27 @@
+2017-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ActionType::InvalidAction
+        https://bugs.webkit.org/show_bug.cgi?id=177262
+
+        Reviewed by Tim Horton.
+
+        This was needed before r213322 because we needed to have a default constructor.
+        With all these cool new C++14/17 types, we don't need this any more.
+
+        No change in behaviour.
+
+        * contentextensions/ContentExtensionActions.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        (WebCore::ContentExtensions::Action::deserializeType):
+        (WebCore::ContentExtensions::Action::serializedLength):
+        * contentextensions/ContentExtensionRule.h:
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForPingLoad):
+
 2017-09-20  Daniel Bates  <dabates@apple.com>
 
         RenderedDocumentMarker.h should include DocumentMarker.h

@@ -152,7 +152,6 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 
         switch (actionType) {
         case ActionType::CSSDisplayNoneStyleSheet:
-        case ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
 
         case ActionType::CSSDisplayNoneSelector: {

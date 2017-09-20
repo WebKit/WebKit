@@ -202,7 +202,6 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
             break;
         }
         case ContentExtensions::ActionType::IgnorePreviousRules:
-        case ContentExtensions::ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
@@ -246,7 +245,6 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
         case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet:
             break;
         case ContentExtensions::ActionType::IgnorePreviousRules:
-        case ContentExtensions::ActionType::InvalidAction:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }

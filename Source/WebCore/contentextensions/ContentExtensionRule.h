@@ -130,12 +130,6 @@ struct TriggerHashTraits : public WTF::CustomHashTraits<Trigger> {
 };
 
 struct Action {
-    Action()
-        : m_type(ActionType::InvalidAction)
-        , m_actionID(std::numeric_limits<uint32_t>::max())
-    {
-    }
-
     Action(ActionType type, const String& stringArgument, uint32_t actionID = std::numeric_limits<uint32_t>::max())
         : m_type(type)
         , m_actionID(actionID)

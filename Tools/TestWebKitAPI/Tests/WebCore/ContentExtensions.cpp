@@ -62,8 +62,6 @@ inline std::ostream& operator<<(std::ostream& os, const ActionType& action)
         return os << "ActionType::IgnorePreviousRules";
     case ActionType::MakeHTTPS:
         return os << "ActionType::MakeHTTPS";
-    case ActionType::InvalidAction:
-        return os << "ActionType::InvalidAction";
     }
 }
 }

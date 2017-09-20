@@ -1,3 +1,13 @@
+2017-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ActionType::InvalidAction
+        https://bugs.webkit.org/show_bug.cgi?id=177262
+
+        Reviewed by Tim Horton.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (WebCore::ContentExtensions::operator<<):
+
 2017-09-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Make a playground where people can try WSL
