@@ -1,3 +1,26 @@
+2017-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Drop legacy DOMError type
+        https://bugs.webkit.org/show_bug.cgi?id=177207
+
+        Reviewed by Eric Carlson.
+
+        Drop legacy DOMError type. It has been removed from the Web standards,
+        is no longer used by our implementation and was not exposed to the
+        Web in WebKit (i.e. marked as [NoInterfaceObject]).
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * Modules/mediastream/MediaEndpointSessionDescription.h:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMPromiseDeferred.cpp:
+        * dom/DOMAllInOne.cpp:
+        * dom/DOMError.cpp: Removed.
+        * dom/DOMError.h: Removed.
+        * dom/DOMError.idl: Removed.
+        * platform/mock/RTCNotifiersMock.cpp:
+
 2017-09-20  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222254.

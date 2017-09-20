@@ -30,7 +30,6 @@
 
 #include "RTCNotifiersMock.h"
 
-#include "DOMError.h"
 #include "RTCDataChannelHandlerMock.h"
 #include "RTCSessionDescriptionDescriptor.h"
 #include "RTCSessionDescriptionRequest.h"

@@ -152,7 +152,6 @@
 #include "JSDocumentType.cpp"
 #include "JSDOMApplicationCache.cpp"
 #include "JSDOMCSSNamespace.cpp"
-#include "JSDOMError.cpp"
 #include "JSDOMException.cpp"
 #include "JSDOMFileSystem.cpp"
 #include "JSDOMFormData.cpp"

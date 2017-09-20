@@ -41,7 +41,6 @@ namespace WebCore {
 
 class MediaEndpointSessionConfiguration;
 class SDPProcessor;
-class DOMError;
 
 class MediaEndpointSessionDescription : public RefCounted<MediaEndpointSessionDescription> {
 public:
