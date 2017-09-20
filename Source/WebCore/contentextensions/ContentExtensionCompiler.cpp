@@ -48,25 +48,23 @@
 namespace WebCore {
 namespace ContentExtensions {
 
-static void serializeSelector(Vector<SerializedActionByte>& actions, const String& selector)
+static void serializeString(Vector<SerializedActionByte>& actions, const String& string)
 {
-    // Append action type (1 byte).
-    actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
     // Append Selector length (4 bytes).
-    unsigned selectorLength = selector.length();
-    actions.grow(actions.size() + sizeof(unsigned));
-    *reinterpret_cast<unsigned*>(&actions[actions.size() - sizeof(unsigned)]) = selectorLength;
-    bool wideCharacters = !selector.is8Bit();
+    uint32_t stringLength = string.length();
+    actions.grow(actions.size() + sizeof(uint32_t));
+    *reinterpret_cast<uint32_t*>(&actions[actions.size() - sizeof(uint32_t)]) = stringLength;
+    bool wideCharacters = !string.is8Bit();
     actions.append(wideCharacters);
     // Append Selector.
     if (wideCharacters) {
-        unsigned startIndex = actions.size();
-        actions.grow(actions.size() + sizeof(UChar) * selectorLength);
-        for (unsigned i = 0; i < selectorLength; ++i)
-            *reinterpret_cast<UChar*>(&actions[startIndex + i * sizeof(UChar)]) = selector[i];
+        uint32_t startIndex = actions.size();
+        actions.grow(actions.size() + sizeof(UChar) * stringLength);
+        for (uint32_t i = 0; i < stringLength; ++i)
+            *reinterpret_cast<UChar*>(&actions[startIndex + i * sizeof(UChar)]) = string[i];
     } else {
-        for (unsigned i = 0; i < selectorLength; ++i)
-            actions.append(selector[i]);
+        for (uint32_t i = 0; i < stringLength; ++i)
+            actions.append(string[i]);
     }
 }
 
@@ -74,7 +72,7 @@ struct PendingDisplayNoneActions {
     Vector<String> selectors;
     Vector<unsigned> clientLocations;
 };
-typedef HashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits> PendingDisplayNoneActionsMap;
+using PendingDisplayNoneActionsMap = HashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits>;
 
 static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<unsigned>& actionLocations, PendingDisplayNoneActionsMap& pendingDisplayNoneActionsMap)
 {
@@ -89,7 +87,8 @@ static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actio
         }
 
         unsigned actionLocation = actions.size();
-        serializeSelector(actions, combinedSelectors.toString());
+        actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
+        serializeString(actions, combinedSelectors.toString());
         for (unsigned clientLocation : pendingActions.clientLocations)
             actionLocations[clientLocation] = actionLocation;
     }
@@ -104,7 +103,8 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
 
     // Order only matters because of IgnorePreviousRules. All other identical actions can be combined between each IgnorePreviousRules
     // and CSSDisplayNone strings can be combined if their triggers are identical.
-    typedef HashMap<uint32_t, uint32_t, DefaultHash<uint32_t>::Hash, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> ActionMap;
+    using ActionLocation = uint32_t;
+    using ActionMap = HashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>::Hash, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
     ActionMap blockLoadActionsMap;
     ActionMap blockCookiesActionsMap;
     PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;
@@ -130,10 +130,9 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         if (!rule.trigger().conditions.isEmpty()) {
             actionLocations.append(actions.size());
 
+            actions.append(static_cast<SerializedActionByte>(actionType));
             if (actionType == ActionType::CSSDisplayNoneSelector)
-                serializeSelector(actions, rule.action().stringArgument());
-            else
-                actions.append(static_cast<SerializedActionByte>(actionType));
+                serializeString(actions, rule.action().stringArgument());
             continue;
         }
 

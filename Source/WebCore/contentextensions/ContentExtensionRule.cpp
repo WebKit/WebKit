@@ -39,37 +39,39 @@ ContentExtensionRule::ContentExtensionRule(Trigger&& trigger, Action&& action)
     ASSERT(!m_trigger.urlFilter.isEmpty());
 }
 
+static String deserializeString(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t beginIndex)
+{
+    uint32_t prefixLength = sizeof(uint32_t) + sizeof(bool);
+    uint32_t stringStartIndex = beginIndex + prefixLength;
+    RELEASE_ASSERT(actionsLength >= stringStartIndex);
+    uint32_t stringLength = *reinterpret_cast<const uint32_t*>(&actions[beginIndex]);
+    bool wideCharacters = actions[beginIndex + sizeof(uint32_t)];
+
+    if (wideCharacters) {
+        RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(UChar));
+        return String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), stringLength);
+    }
+    RELEASE_ASSERT(actionsLength >= stringStartIndex + stringLength * sizeof(LChar));
+    return String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), stringLength);
+}
+
 Action Action::deserialize(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
 {
     RELEASE_ASSERT(location < actionsLength);
-    switch (static_cast<ActionType>(actions[location])) {
+    auto actionType = static_cast<ActionType>(actions[location]);
+    switch (actionType) {
     case ActionType::BlockCookies:
-        return Action(ActionType::BlockCookies, location);
     case ActionType::BlockLoad:
-        return Action(ActionType::BlockLoad, location);
     case ActionType::IgnorePreviousRules:
-        return Action(ActionType::IgnorePreviousRules, location);
     case ActionType::MakeHTTPS:
-        return Action(ActionType::MakeHTTPS, location);
-    case ActionType::CSSDisplayNoneSelector: {
-        uint32_t headerLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
-        uint32_t stringStartIndex = location + headerLength;
-        RELEASE_ASSERT(actionsLength >= stringStartIndex);
-        uint32_t selectorLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
-        bool wideCharacters = actions[location + sizeof(ActionType) + sizeof(uint32_t)];
-        
-        if (wideCharacters) {
-            RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(UChar));
-            return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const UChar*>(&actions[stringStartIndex]), selectorLength), location);
-        }
-        RELEASE_ASSERT(actionsLength >= stringStartIndex + selectorLength * sizeof(LChar));
-        return Action(ActionType::CSSDisplayNoneSelector, String(reinterpret_cast<const LChar*>(&actions[stringStartIndex]), selectorLength), location);
-    }
+        return Action(actionType, location);
+    case ActionType::CSSDisplayNoneSelector:
+        return Action(actionType, deserializeString(actions, actionsLength, location + sizeof(ActionType)), location);
     case ActionType::CSSDisplayNoneStyleSheet:
     case ActionType::InvalidAction:
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
     
 ActionType Action::deserializeType(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
@@ -85,9 +87,9 @@ ActionType Action::deserializeType(const SerializedActionByte* actions, const ui
         return type;
     case ActionType::CSSDisplayNoneStyleSheet:
     case ActionType::InvalidAction:
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
     
 uint32_t Action::serializedLength(const SerializedActionByte* actions, const uint32_t actionsLength, uint32_t location)
@@ -100,21 +102,21 @@ uint32_t Action::serializedLength(const SerializedActionByte* actions, const uin
     case ActionType::MakeHTTPS:
         return sizeof(ActionType);
     case ActionType::CSSDisplayNoneSelector: {
-        uint32_t headerLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
-        uint32_t stringStartIndex = location + headerLength;
+        uint32_t prefixLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
+        uint32_t stringStartIndex = location + prefixLength;
         RELEASE_ASSERT(actionsLength >= stringStartIndex);
-        uint32_t selectorLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
+        uint32_t stringLength = *reinterpret_cast<const unsigned*>(&actions[location + sizeof(ActionType)]);
         bool wideCharacters = actions[location + sizeof(ActionType) + sizeof(uint32_t)];
         
         if (wideCharacters)
-            return headerLength + selectorLength * sizeof(UChar);
-        return headerLength + selectorLength * sizeof(LChar);
+            return prefixLength + stringLength * sizeof(UChar);
+        return prefixLength + stringLength * sizeof(LChar);
     }
     case ActionType::CSSDisplayNoneStyleSheet:
     case ActionType::InvalidAction:
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
+        break;
     }
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 } // namespace ContentExtensions

@@ -148,7 +148,8 @@ struct Action {
         : m_type(type)
         , m_actionID(actionID)
     {
-        ASSERT(type != ActionType::CSSDisplayNoneSelector && type != ActionType::CSSDisplayNoneStyleSheet);
+        ASSERT(type != ActionType::CSSDisplayNoneSelector);
+        ASSERT(type != ActionType::CSSDisplayNoneStyleSheet);
     }
 
     bool operator==(const Action& other) const
