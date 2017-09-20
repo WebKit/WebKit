@@ -297,10 +297,9 @@ void DOMWindow::dispatchAllPendingUnloadEvents()
     if (alreadyDispatched)
         return;
 
-    Vector<Ref<DOMWindow>> windows;
-    windows.reserveInitialCapacity(set.size());
-    for (auto& keyValue : set)
-        windows.uncheckedAppend(*keyValue.key);
+    auto windows = WTF::map(set, [] (auto& keyValue) {
+        return Ref<DOMWindow>(*(keyValue.key));
+    });
 
     for (auto& window : windows) {
         if (!set.contains(window.ptr()))

@@ -1,3 +1,18 @@
+2017-09-19  Youenn Fablet  <youenn@apple.com>
+
+        Allow WTF::map to use any class that is iterable and has a size getter
+        https://bugs.webkit.org/show_bug.cgi?id=177026
+
+        Reviewed by Darin Adler.
+
+        Computing the Item type given to the lambda using the iterator instead of ValueType which is specific to Vector.
+        Adding the possibility to pass a non const container reference and a lambda taking non const references as well. 
+
+        * wtf/Vector.h:
+        (WTF::MapFunctionInspector::acceptsReference):
+        (WTF::Mapper::map):
+        (WTF::map):
+
 2017-09-19  Jer Noble  <jer.noble@apple.com>
 
         [Cocoa] Add an ImageDecoder subclass backed by AVFoundation
