@@ -163,6 +163,9 @@ public:
     bool shouldDisallowIncreaseForApplicationCacheQuota() { return m_disallowIncreaseForApplicationCacheQuota; }
     JSValueRef originsWithApplicationCache();
 
+    // Failed load condition testing
+    void forceImmediateCompletion();
+
     // Printing
     bool isPageBoxVisible(int pageIndex);
     bool isPrinting() { return m_isPrinting; }

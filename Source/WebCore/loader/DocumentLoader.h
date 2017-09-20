@@ -32,6 +32,7 @@
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "DocumentWriter.h"
+#include "FrameDestructionObserver.h"
 #include "IconDatabaseBase.h"
 #include "LinkIcon.h"
 #include "LoadTiming.h"
@@ -91,7 +92,7 @@ enum class AutoplayQuirk {
     InheritedUserGestures = 1 << 1,
 };
 
-class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
+class DocumentLoader : public RefCounted<DocumentLoader>, public FrameDestructionObserver, private CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
     friend class ContentFilter;
 public:
@@ -102,7 +103,6 @@ public:
     WEBCORE_EXPORT virtual ~DocumentLoader();
 
     void attachToFrame(Frame&);
-    Frame* frame() const { return m_frame; }
 
     WEBCORE_EXPORT virtual void detachFromFrame();
 
@@ -370,7 +370,6 @@ private:
 
     void notifyFinishedLoadingIcon(uint64_t callbackIdentifier, SharedBuffer*);
 
-    Frame* m_frame { nullptr };
     Ref<CachedResourceLoader> m_cachedResourceLoader;
 
     CachedResourceHandle<CachedRawResource> m_mainResource;
