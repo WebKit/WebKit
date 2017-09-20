@@ -1,3 +1,9 @@
+2017-09-19  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed follow-up to r222229, remove invalid triggers.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2017-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         tiled-drawing/tiled-backing-in-window.html fails on Retina displays

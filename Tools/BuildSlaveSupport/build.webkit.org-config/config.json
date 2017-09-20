@@ -216,13 +216,13 @@
                     {
                       "name": "Apple iOS 11 Simulator Release (Build)", "type": "Build", "builddir": "ios-simulator-11-release",
                       "platform": "ios-simulator-11", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-11-release-tests-wk1", "ios-simulator-11-release-tests-wk2"],
+                      "triggers": ["ios-simulator-11-release-tests-wk2"],
                       "slavenames": ["bot618", "bot620"]
                     },
                     {
                       "name": "Apple iOS 11 Simulator Debug (Build)", "type": "Build", "builddir": "ios-simulator-11-debug",
                       "platform": "ios-simulator-11", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["ios-simulator-11-debug-tests-wk1", "ios-simulator-11-debug-tests-wk2"],
+                      "triggers": ["ios-simulator-11-debug-tests-wk2"],
                       "slavenames": ["bot626", "bot621"]
                     },
                     {
