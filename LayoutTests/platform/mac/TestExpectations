@@ -1439,12 +1439,13 @@ webkit.org/b/168087 media/video-zoom.html [ Pass Failure ]
 webkit.org/b/168094 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort.html [ Pass Failure ]
 webkit.org/b/167975 imported/w3c/web-platform-tests/media-source/SourceBuffer-abort-removed.html [ Pass Failure ]
 
-webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.html [ Skip ]
-webkit.org/b/168415 [ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html [ Skip ]
+# Resource Timing data not available in El Capitan.
+webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.html [ Skip ]
+webkit.org/b/168415 [ ElCapitan ] http/wpt/resource-timing/rt-cors.worker.html [ Skip ]
 
 # Resource Timing networking data not available without Network Session.
-[ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Failure ]
-[ ElCapitan ] imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
+[ ElCapitan ] http/wpt/resource-timing/rt-nextHopProtocol.html [ Failure ]
+[ ElCapitan ] http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Failure ]
 
 # Request Header networking data not available without Network Session.
 [ ElCapitan ] http/tests/inspector/network/resource-request-headers.html [ Failure ]

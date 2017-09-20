@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <title>Resource Timing - Error cases</title>
 <meta http-equiv="Content-Security-Policy" content="img-src 'self'">
-<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
 <link rel="help" href="https://w3c.github.io/resource-timing/#resources-included">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
@@ -15,7 +14,7 @@
 <div id="log"></div>
 <script>
 promise_test(function(t) {
-    let rejectedImageURL = crossOriginURL("csp-denied", "resource-timing/resources/resource_timing_test0.png");
+    let rejectedImageURL = crossOriginURL("csp-denied", "WebKit/resource-timing/resources/resource.png");
     let allowedImageURL = uniqueImageURL("csp-allowed");
 
     let rejectedImg = document.body.appendChild(document.createElement("img"));
@@ -30,8 +29,8 @@ promise_test(function(t) {
 }, "Content-Security-Policy rejections do not create entries");
 
 promise_test(function(t) {
-    let rejectedDataURL = crossOriginURL("cors-denied", "resource-timing/resources/data.json");
-    let allowedDataURL = crossOriginURL("cors-allowed", "resource-timing/resources/data.json") + "&pipe=header(Access-Control-Allow-Origin,*)";
+    let rejectedDataURL = crossOriginURL("cors-denied", "WebKit/resource-timing/resources/data.json");
+    let allowedDataURL = crossOriginURL("cors-allowed", "WebKit/resource-timing/resources/data.json") + "&pipe=header(Access-Control-Allow-Origin,*)";
 
     fetch(rejectedDataURL).catch(function(){});
     fetch(allowedDataURL);

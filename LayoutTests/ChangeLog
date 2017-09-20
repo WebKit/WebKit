@@ -1,3 +1,85 @@
+2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move non-upstreamed Resource Timing tests out of web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=177197
+
+        Reviewed by Youenn Fablet.
+
+        * TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/win/TestExpectations:
+        Update expectations for path changes.
+
+        * http/wpt/resource-timing/resources/data.json: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/data.json.
+        * http/wpt/resource-timing/resources/resource.css: Added.
+        * http/wpt/resource-timing/resources/resource.html: Added.
+        * http/wpt/resource-timing/resources/resource.js: Added.
+        * http/wpt/resource-timing/resources/resource.png: Added.
+        * http/wpt/resource-timing/resources/rt-iframe-1.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-iframe-1.html.
+        * http/wpt/resource-timing/resources/rt-iframe-2.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-iframe-2.html.
+        * http/wpt/resource-timing/resources/rt-module.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-module.js.
+        * http/wpt/resource-timing/resources/rt-revalidation-response.py: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-revalidation-response.py.
+        * http/wpt/resource-timing/resources/rt-sub-module.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-sub-module.js.
+        * http/wpt/resource-timing/resources/rt-utilities.sub.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-utilities.sub.js.
+        * http/wpt/resource-timing/resources/rt-worker-resources.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/resources/rt-worker-resources.js.
+        * http/wpt/resource-timing/rt-cors-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors-expected.txt.
+        * http/wpt/resource-timing/rt-cors.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors.html.
+        * http/wpt/resource-timing/rt-cors.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors.js.
+        * http/wpt/resource-timing/rt-cors.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors.worker-expected.txt.
+        * http/wpt/resource-timing/rt-cors.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.html.
+        * http/wpt/resource-timing/rt-cors.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-cors.worker.js.
+        * http/wpt/resource-timing/rt-initiatorType-css-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-css-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-css.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-css.html.
+        * http/wpt/resource-timing/rt-initiatorType-element-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-element-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-element.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-element.html.
+        * http/wpt/resource-timing/rt-initiatorType-fetch-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-fetch-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-fetch.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-fetch.html.
+        * http/wpt/resource-timing/rt-initiatorType-fetch.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-fetch.js.
+        * http/wpt/resource-timing/rt-initiatorType-media-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-media-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-media.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-media.html.
+        * http/wpt/resource-timing/rt-initiatorType-other-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-other-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-other.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-other.html.
+        * http/wpt/resource-timing/rt-initiatorType-script-module-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-script-module-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-script-module.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-script-module.html.
+        * http/wpt/resource-timing/rt-initiatorType-xmlhttprequest-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-xmlhttprequest-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-xmlhttprequest.html.
+        * http/wpt/resource-timing/rt-initiatorType-xmlhttprequest.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType-xmlhttprequest.js.
+        * http/wpt/resource-timing/rt-initiatorType.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType.worker-expected.txt.
+        * http/wpt/resource-timing/rt-initiatorType.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType.worker.html.
+        * http/wpt/resource-timing/rt-initiatorType.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-initiatorType.worker.js.
+        * http/wpt/resource-timing/rt-nextHopProtocol-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol-expected.txt.
+        * http/wpt/resource-timing/rt-nextHopProtocol.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html.
+        * http/wpt/resource-timing/rt-nextHopProtocol.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.js.
+        * http/wpt/resource-timing/rt-nextHopProtocol.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker-expected.txt.
+        * http/wpt/resource-timing/rt-nextHopProtocol.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html.
+        * http/wpt/resource-timing/rt-nextHopProtocol.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.js.
+        * http/wpt/resource-timing/rt-performance-extensions-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions-expected.txt.
+        * http/wpt/resource-timing/rt-performance-extensions.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.html.
+        * http/wpt/resource-timing/rt-performance-extensions.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.js.
+        * http/wpt/resource-timing/rt-performance-extensions.worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.worker-expected.txt.
+        * http/wpt/resource-timing/rt-performance-extensions.worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.worker.html.
+        * http/wpt/resource-timing/rt-performance-extensions.worker.js: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-performance-extensions.worker.js.
+        * http/wpt/resource-timing/rt-resource-errors-expected.txt: Added.
+        * http/wpt/resource-timing/rt-resource-errors.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resource-errors.html.
+        * http/wpt/resource-timing/rt-resource-ignored-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resource-ignored-expected.txt.
+        * http/wpt/resource-timing/rt-resource-ignored.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resource-ignored.html.
+        * http/wpt/resource-timing/rt-resources-per-frame-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resources-per-frame-expected.txt.
+        * http/wpt/resource-timing/rt-resources-per-frame.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resources-per-frame.html.
+        * http/wpt/resource-timing/rt-resources-per-worker-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resources-per-worker-expected.txt.
+        * http/wpt/resource-timing/rt-resources-per-worker.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-resources-per-worker.html.
+        * http/wpt/resource-timing/rt-revalidate-requests-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-revalidate-requests-expected.txt.
+        * http/wpt/resource-timing/rt-revalidate-requests.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-revalidate-requests.html.
+        * http/wpt/resource-timing/rt-serialization-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-serialization-expected.txt.
+        * http/wpt/resource-timing/rt-serialization.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-serialization.html.
+        * http/wpt/resource-timing/rt-shared-resource-in-frames-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames-expected.txt.
+        * http/wpt/resource-timing/rt-shared-resource-in-frames.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-frames.html.
+        * http/wpt/resource-timing/rt-shared-resource-in-workers-expected.txt: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-workers-expected.txt.
+        * http/wpt/resource-timing/rt-shared-resource-in-workers.html: Renamed from LayoutTests/imported/w3c/web-platform-tests/resource-timing/rt-shared-resource-in-workers.html.
+        Move tests and make small modifications to ensure we load "/WebKit/resource-timing"
+        test resources instead of "/resource-timing" resources (web-platform-tests ones).
+
 2017-09-19  Per Arne Vollan  <pvollan@apple.com>
 
         Skip fast/images/animated-image-mp4.html on Windows.

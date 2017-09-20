@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <title>Resource Timing - ResourceTiming for revalidation requests</title>
-<meta name="author" title="JosephPecoraro" href="mailto:joepeck@webkit.org">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="resources/rt-utilities.sub.js"></script>
@@ -20,7 +19,7 @@ function createRevalidationURL({tao, crossOrigin}) {
     let date = encodeURIComponent(new Date(2000, 1, 1).toGMTString());
     let params = `content=${content}&mimeType=${mimeType}&date=${date}&tao=${tao ? true : false}`;
 
-    const path = "resource-timing/resources/rt-revalidation-response.py";
+    const path = "WebKit/resource-timing/resources/rt-revalidation-response.py";
     if (crossOrigin)
         return crossOriginURL(`${token}&${params}`, path);
     return location.origin + `/${path}?${token}&${params}`;

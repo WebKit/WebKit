@@ -3885,8 +3885,8 @@ http/tests/webrtc/filtering-ice-candidate-same-origin-frame.html [ Skip ]
 http/tests/webrtc/filtering-ice-candidate-same-origin-frame2.html [ Skip ]
 
 # Resource Timing Metrics not available.
-imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.html [ Skip ]
-imported/w3c/web-platform-tests/resource-timing/rt-nextHopProtocol.worker.html [ Skip ]
+http/wpt/resource-timing/rt-nextHopProtocol.html [ Skip ]
+http/wpt/resource-timing/rt-nextHopProtocol.worker.html [ Skip ]
 
 # WebCrypto tests are failing.
 webkit.org/b/165090 imported/w3c/web-platform-tests/WebCryptoAPI [ Skip ]

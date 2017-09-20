@@ -1,3 +1,13 @@
+2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Move non-upstreamed Resource Timing tests out of web-platform-tests
+        https://bugs.webkit.org/show_bug.cgi?id=177197
+
+        Reviewed by Youenn Fablet.
+
+        * web-platform-tests/resource-timing/rt-*:
+        These are not upstream, move them out to http/wpt.
+
 2017-09-19  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] The binding code of Media Source Extension of AudioTrack, VideoTrack and TextTrack is not generated

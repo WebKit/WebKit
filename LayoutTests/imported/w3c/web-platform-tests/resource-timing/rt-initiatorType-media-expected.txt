@@ -1,8 +1,0 @@
-Resource Timing: Element localName initiatorType
-
-
-PASS Type: video - <video src> 
-PASS Timing: video - <video src> 
-FAIL Type: audio - <audio src> assert_equals: name should be the url expected "http://localhost:8800/resource-timing/resources/data.json?audio&0.033975899379337426" but got "http://localhost:8800/resource-timing/resources/data.json?video&0.019321360269903165"
-PASS Timing: audio - <audio src> 
-

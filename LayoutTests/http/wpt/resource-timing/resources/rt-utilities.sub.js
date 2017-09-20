@@ -20,12 +20,12 @@ function wait() {
         continue;
 }
 
-function uniqueDataURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/data.json"); }
-function uniqueImageURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/resource_timing_test0.png"); }
-function uniqueScriptURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/resource_timing_test0.js"); }
-function uniqueStylesheetURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/resource_timing_test0.css"); }
-function uniqueDocumentURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/resource_timing_test0.html"); }
-function uniqueEventSourceURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "resource-timing/resources/rt-event-stream.py"); }
+function uniqueDataURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/data.json"); }
+function uniqueImageURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/resource.png"); }
+function uniqueScriptURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/resource.js"); }
+function uniqueStylesheetURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/resource.css"); }
+function uniqueDocumentURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/resource.html"); }
+function uniqueEventSourceURL(key, crossOrigin) { return uniqueURL(key, crossOrigin, "WebKit/resource-timing/resources/rt-event-stream.py"); }
 function uniqueURL(key, crossOrigin, path) {
     let params = key ? `${key}&${Math.random()}` : `${Math.random()}`;
     if (crossOrigin === "cross-origin")
