@@ -36,6 +36,23 @@ enum class RTCSignalingState {
     HaveRemotePranswer,
 };
 
+String convertEnumerationToString(RTCSignalingState); // in JSCRTCSignalingState.cpp
+
 }; // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RTCSignalingState> {
+    static String toString(const WebCore::RTCSignalingState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+}; // namespace PAL
 
 #endif

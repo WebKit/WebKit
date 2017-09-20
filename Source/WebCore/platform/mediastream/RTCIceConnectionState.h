@@ -38,6 +38,23 @@ enum class RTCIceConnectionState {
     Closed
 };
 
+String convertEnumerationToString(RTCIceConnectionState); // in JSCRTCIceConnectionState.cpp
+
 }; // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RTCIceConnectionState> {
+    static String toString(const WebCore::RTCIceConnectionState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+}; // namespace PAL
 
 #endif

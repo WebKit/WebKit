@@ -26,6 +26,8 @@
 
 #if ENABLE(WEB_RTC)
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 enum class RTCIceGatheringState {
@@ -34,6 +36,23 @@ enum class RTCIceGatheringState {
     Complete
 };
 
+String convertEnumerationToString(RTCIceGatheringState); // in JSCRTCIceGatheringState.cpp
+
 }; // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RTCIceGatheringState> {
+    static String toString(const WebCore::RTCIceGatheringState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+}; // namespace PAL
 
 #endif

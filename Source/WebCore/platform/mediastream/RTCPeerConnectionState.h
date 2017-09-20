@@ -37,6 +37,23 @@ enum class RTCPeerConnectionState {
     Closed
 };
 
+String convertEnumerationToString(RTCPeerConnectionState); // in JSCRTCPeerConnectionState.h
+
 }; // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<WebCore::RTCPeerConnectionState> {
+    static String toString(const WebCore::RTCPeerConnectionState state)
+    {
+        return convertEnumerationToString(state);
+    }
+};
+
+}; // namespace PAL
 
 #endif

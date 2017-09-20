@@ -1,3 +1,75 @@
+2017-09-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Switch PeerConnection to release logging
+        https://bugs.webkit.org/show_bug.cgi?id=177193
+        <rdar://problem/34529014>
+
+        Reviewed by Youenn Fablet.
+
+        * Modules/mediastream/PeerConnectionBackend.cpp:
+        (WebCore::PeerConnectionBackend::PeerConnectionBackend):
+        (WebCore::PeerConnectionBackend::createOfferSucceeded):
+        (WebCore::PeerConnectionBackend::createOfferFailed):
+        (WebCore::PeerConnectionBackend::createAnswerSucceeded):
+        (WebCore::PeerConnectionBackend::createAnswerFailed):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setLocalDescriptionFailed):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionSucceeded):
+        (WebCore::PeerConnectionBackend::setRemoteDescriptionFailed):
+        (WebCore::PeerConnectionBackend::addIceCandidateSucceeded):
+        (WebCore::PeerConnectionBackend::addIceCandidateFailed):
+        (WebCore::PeerConnectionBackend::newICECandidate):
+        (WebCore::PeerConnectionBackend::doneGatheringCandidates):
+        (WebCore::PeerConnectionBackend::logChannel const):
+        * Modules/mediastream/PeerConnectionBackend.h:
+        (WebCore::PeerConnectionBackend::PeerConnectionBackend): Deleted.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::~RTCPeerConnection):
+        (WebCore::RTCPeerConnection::addTrack):
+        (WebCore::RTCPeerConnection::removeTrack):
+        (WebCore::RTCPeerConnection::addTransceiver):
+        (WebCore::RTCPeerConnection::queuedCreateOffer):
+        (WebCore::RTCPeerConnection::queuedCreateAnswer):
+        (WebCore::RTCPeerConnection::queuedSetLocalDescription):
+        (WebCore::RTCPeerConnection::queuedSetRemoteDescription):
+        (WebCore::RTCPeerConnection::queuedAddIceCandidate):
+        (WebCore::RTCPeerConnection::initializeConfiguration):
+        (WebCore::RTCPeerConnection::setConfiguration):
+        (WebCore::RTCPeerConnection::createDataChannel):
+        (WebCore::RTCPeerConnection::setSignalingState):
+        (WebCore::RTCPeerConnection::updateIceGatheringState):
+        (WebCore::RTCPeerConnection::updateIceConnectionState):
+        (WebCore::RTCPeerConnection::updateConnectionState):
+        (WebCore::RTCPeerConnection::replaceTrack):
+        (WebCore::RTCPeerConnection::dispatchEvent):
+        (WebCore::RTCPeerConnection::logChannel const):
+        (WebCore::rtcIceGatheringStateToString): Deleted.
+        (WebCore::rtcIceConnectionStateToString): Deleted.
+        * Modules/mediastream/RTCPeerConnection.h:
+
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.cpp:
+        (WebCore::LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint):
+        (WebCore::LibWebRTCMediaEndpoint::OnStatsDelivered):
+        (WebCore::LibWebRTCMediaEndpoint::startLoggingStats):
+        (WebCore::LibWebRTCMediaEndpoint::logChannel const):
+        (WebCore::LibWebRTCMediaEndpoint::statsLogInterval const):
+        * Modules/mediastream/libwebrtc/LibWebRTCMediaEndpoint.h:
+        (PAL::LogArgument<webrtc::RTCStats>::toString):
+
+        * platform/mediastream/RTCIceConnectionState.h:
+        (PAL::LogArgument<WebCore::RTCIceConnectionState>::toString):
+
+        * platform/mediastream/RTCIceGatheringState.h:
+        (PAL::LogArgument<WebCore::RTCIceGatheringState>::toString):
+
+        * platform/mediastream/RTCPeerConnectionState.h:
+        (PAL::LogArgument<WebCore::RTCPeerConnectionState>::toString):
+
+        * platform/mediastream/RTCSignalingState.h:
+        (PAL::LogArgument<WebCore::RTCSignalingState>::toString):
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         Video errors should be instances of Error

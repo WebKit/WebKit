@@ -37,6 +37,8 @@
 #include "RTCRtpParameters.h"
 #include "RTCSessionDescription.h"
 #include "RTCSignalingState.h"
+#include <pal/Logger.h>
+#include <pal/LoggerHelper.h>
 
 namespace WebCore {
 
@@ -63,11 +65,15 @@ using StatsPromise = DOMPromiseDeferred<IDLInterface<RTCStatsReport>>;
 
 using CreatePeerConnectionBackend = std::unique_ptr<PeerConnectionBackend> (*)(RTCPeerConnection&);
 
-class PeerConnectionBackend {
+class PeerConnectionBackend
+#if !RELEASE_LOG_DISABLED
+    : public PAL::LoggerHelper
+#endif
+{
 public:
     WEBCORE_EXPORT static CreatePeerConnectionBackend create;
 
-    PeerConnectionBackend(RTCPeerConnection& peerConnection) : m_peerConnection(peerConnection) { }
+    explicit PeerConnectionBackend(RTCPeerConnection&);
     virtual ~PeerConnectionBackend() { }
 
     void createOffer(RTCOfferOptions&&, PeerConnection::SessionDescriptionPromise&&);
@@ -112,6 +118,13 @@ public:
     void enableICECandidateFiltering();
 
     virtual void applyRotationForOutgoingVideoSources() { }
+
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const override { return "PeerConnectionBackend"; }
+    WTFLogChannel& logChannel() const final;
+#endif
 
 protected:
     void fireICECandidateEvent(RefPtr<RTCIceCandidate>&&);
@@ -162,6 +175,10 @@ private:
     };
     Vector<PendingICECandidate> m_pendingICECandidates;
 
+#if !RELEASE_LOG_DISABLED
+    Ref<const PAL::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
     bool m_negotiationNeeded { false };
 };
 

@@ -52,6 +52,7 @@
 #include "RTCPeerConnectionIceEvent.h"
 #include "RTCSessionDescription.h"
 #include "RTCTrackEvent.h"
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
@@ -81,14 +82,20 @@ Ref<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext& context
 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(downcast<Document>(context).logger())
+    , m_logIdentifier(reinterpret_cast<const void*>(cryptographicallyRandomNumber()))
+#endif
     , m_backend(PeerConnectionBackend::create(*this))
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (!m_backend)
         m_connectionState = RTCPeerConnectionState::Closed;
 }
 
 RTCPeerConnection::~RTCPeerConnection()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     unregisterFromController();
     stop();
 }
@@ -106,6 +113,8 @@ ExceptionOr<void> RTCPeerConnection::initializeWith(Document& document, RTCConfi
 
 ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>&& track, const Vector<std::reference_wrapper<MediaStream>>& streams)
 {
+    INFO_LOG(LOGIDENTIFIER);
+
     if (isClosed())
         return Exception { InvalidStateError };
 
@@ -160,6 +169,8 @@ ExceptionOr<Ref<RTCRtpSender>> RTCPeerConnection::addTrack(Ref<MediaStreamTrack>
 
 ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 {
+    INFO_LOG(LOGIDENTIFIER);
+
     if (isClosed())
         return Exception { InvalidStateError };
 
@@ -184,6 +195,8 @@ ExceptionOr<void> RTCPeerConnection::removeTrack(RTCRtpSender& sender)
 
 ExceptionOr<Ref<RTCRtpTransceiver>> RTCPeerConnection::addTransceiver(AddTransceiverTrackOrKind&& withTrack, const RTCRtpTransceiverInit& init)
 {
+    INFO_LOG(LOGIDENTIFIER);
+
     if (WTF::holds_alternative<String>(withTrack)) {
         const String& kind = WTF::get<String>(withTrack);
         if (kind != "audio" && kind != "video")
@@ -218,7 +231,7 @@ Ref<RTCRtpTransceiver> RTCPeerConnection::completeAddTransceiver(Ref<RTCRtpSende
 
 void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDescriptionPromise&& promise)
 {
-    RELEASE_LOG(WebRTC, "Creating offer\n");
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (isClosed()) {
         promise.reject(InvalidStateError);
         return;
@@ -229,7 +242,7 @@ void RTCPeerConnection::queuedCreateOffer(RTCOfferOptions&& options, SessionDesc
 
 void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDescriptionPromise&& promise)
 {
-    RELEASE_LOG(WebRTC, "Creating answer\n");
+    ALWAYS_LOG(LOGIDENTIFIER);
     if (isClosed()) {
         promise.reject(InvalidStateError);
         return;
@@ -240,7 +253,7 @@ void RTCPeerConnection::queuedCreateAnswer(RTCAnswerOptions&& options, SessionDe
 
 void RTCPeerConnection::queuedSetLocalDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Setting local description:\n%{public}s\n", description.sdp().utf8().data());
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting local description to:\n", description.sdp());
     if (isClosed()) {
         promise.reject(InvalidStateError);
         return;
@@ -266,7 +279,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingLocalDescription() const
 
 void RTCPeerConnection::queuedSetRemoteDescription(RTCSessionDescription& description, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Setting remote description:\n%{public}s\n", description.sdp().utf8().data());
+    ALWAYS_LOG(LOGIDENTIFIER, "Setting remote description to:\n", description.sdp());
 
     if (isClosed()) {
         promise.reject(InvalidStateError);
@@ -292,7 +305,7 @@ RefPtr<RTCSessionDescription> RTCPeerConnection::pendingRemoteDescription() cons
 
 void RTCPeerConnection::queuedAddIceCandidate(RTCIceCandidate* rtcCandidate, DOMPromiseDeferred<void>&& promise)
 {
-    RELEASE_LOG(WebRTC, "Received ice candidate:\n%{public}s\n", rtcCandidate ? rtcCandidate->candidate().utf8().data() : "null");
+    ALWAYS_LOG(LOGIDENTIFIER, "Received ice candidate:\n", rtcCandidate ? rtcCandidate->candidate() : "null");
 
     if (isClosed()) {
         promise.reject(InvalidStateError);
@@ -329,6 +342,8 @@ static inline std::optional<Vector<MediaEndpointConfiguration::IceServerInfo>> i
 
 ExceptionOr<void> RTCPeerConnection::initializeConfiguration(RTCConfiguration&& configuration)
 {
+    INFO_LOG(LOGIDENTIFIER);
+
     auto servers = iceServersFromConfiguration(configuration);
     if (!servers)
         return Exception { InvalidAccessError };
@@ -345,6 +360,8 @@ ExceptionOr<void> RTCPeerConnection::setConfiguration(RTCConfiguration&& configu
 {
     if (isClosed())
         return Exception { InvalidStateError };
+
+    INFO_LOG(LOGIDENTIFIER);
 
     auto servers = iceServersFromConfiguration(configuration);
     if (!servers)
@@ -364,6 +381,8 @@ void RTCPeerConnection::getStats(MediaStreamTrack* selector, Ref<DeferredPromise
 
 ExceptionOr<Ref<RTCDataChannel>> RTCPeerConnection::createDataChannel(ScriptExecutionContext& context, String&& label, RTCDataChannelInit&& options)
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     if (isClosed())
         return Exception { InvalidStateError };
 
@@ -465,31 +484,19 @@ bool RTCPeerConnection::hasPendingActivity() const
 
 void RTCPeerConnection::addTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
 {
+    INFO_LOG(LOGIDENTIFIER);
     m_transceiverSet->append(WTFMove(transceiver));
 }
 
 void RTCPeerConnection::setSignalingState(RTCSignalingState newState)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, newState);
     m_signalingState = newState;
 }
 
-#if !RELEASE_LOG_DISABLED
-static inline const char* rtcIceGatheringStateToString(RTCIceGatheringState newState)
-{
-    switch (newState) {
-    case RTCIceGatheringState::New:
-        return "new";
-    case RTCIceGatheringState::Gathering:
-        return "gathering";
-    case RTCIceGatheringState::Complete:
-        return "complete";
-    }
-}
-#endif
-
 void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
 {
-    RELEASE_LOG(WebRTC, "New ICE gathering state: %{public}s\n", rtcIceGatheringStateToString(newState));
+    ALWAYS_LOG(LOGIDENTIFIER, newState);
 
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
         if (protectedThis->isClosed() || protectedThis->m_iceGatheringState == newState)
@@ -501,31 +508,9 @@ void RTCPeerConnection::updateIceGatheringState(RTCIceGatheringState newState)
     });
 }
 
-#if !RELEASE_LOG_DISABLED
-static inline const char* rtcIceConnectionStateToString(RTCIceConnectionState newState)
-{
-    switch (newState) {
-    case RTCIceConnectionState::New:
-        return "new";
-    case RTCIceConnectionState::Checking:
-        return "checking";
-    case RTCIceConnectionState::Connected:
-        return "connected";
-    case RTCIceConnectionState::Completed:
-        return "completed";
-    case RTCIceConnectionState::Failed:
-        return "failed";
-    case RTCIceConnectionState::Disconnected:
-        return "disconnected";
-    case RTCIceConnectionState::Closed:
-        return "closed";
-    }
-}
-#endif
-
 void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState newState)
 {
-    RELEASE_LOG(WebRTC, "New ICE connection state: %{public}s\n", rtcIceConnectionStateToString(newState));
+    ALWAYS_LOG(LOGIDENTIFIER, newState);
 
     scriptExecutionContext()->postTask([protectedThis = makeRef(*this), newState](ScriptExecutionContext&) {
         if (protectedThis->isClosed() || protectedThis->m_iceConnectionState == newState)
@@ -559,6 +544,8 @@ void RTCPeerConnection::updateConnectionState()
 
     if (state == m_connectionState)
         return;
+
+    INFO_LOG(LOGIDENTIFIER, "state changed from: " , m_connectionState, " to ", state);
 
     m_connectionState = state;
     dispatchEvent(Event::create(eventNames().connectionstatechangeEvent, false, false));
@@ -594,6 +581,8 @@ void RTCPeerConnection::enqueueReplaceTrackTask(RTCRtpSender& sender, Ref<MediaS
 
 void RTCPeerConnection::replaceTrack(RTCRtpSender& sender, RefPtr<MediaStreamTrack>&& withTrack, DOMPromiseDeferred<void>&& promise)
 {
+    INFO_LOG(LOGIDENTIFIER);
+
     if (!withTrack) {
         scriptExecutionContext()->postTask([protectedSender = makeRef(sender), promise = WTFMove(promise)](ScriptExecutionContext&) mutable {
             protectedSender->setTrackToNull();
@@ -614,6 +603,19 @@ RTCRtpParameters RTCPeerConnection::getParameters(RTCRtpSender& sender) const
 {
     return m_backend->getParameters(sender);
 }
+
+bool RTCPeerConnection::dispatchEvent(Event& event)
+{
+    DEBUG_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
+    return EventTarget::dispatchEvent(event);
+}
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& RTCPeerConnection::logChannel() const
+{
+    return LogWebRTC;
+}
+#endif
 
 } // namespace WebCore
 

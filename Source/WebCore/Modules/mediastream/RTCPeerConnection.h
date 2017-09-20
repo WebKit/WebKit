@@ -45,6 +45,7 @@
 #include "RTCPeerConnectionState.h"
 #include "RTCRtpTransceiver.h"
 #include "RTCSignalingState.h"
+#include <pal/LoggerHelper.h>
 
 namespace WebCore {
 
@@ -63,7 +64,15 @@ struct RTCRtpTransceiverInit {
     RTCRtpTransceiverDirection direction;
 };
 
-class RTCPeerConnection final : public RefCounted<RTCPeerConnection>, public RTCRtpSender::Backend, public EventTargetWithInlineData, public ActiveDOMObject {
+class RTCPeerConnection final
+    : public RefCounted<RTCPeerConnection>
+    , public RTCRtpSender::Backend
+    , public EventTargetWithInlineData
+    , public ActiveDOMObject
+#if !RELEASE_LOG_DISABLED
+    , public PAL::LoggerHelper
+#endif
+{
 public:
     static Ref<RTCPeerConnection> create(ScriptExecutionContext&);
     virtual ~RTCPeerConnection();
@@ -150,6 +159,13 @@ public:
     // ActiveDOMObject.
     bool hasPendingActivity() const final;
 
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "RTCPeerConnection"; }
+    WTFLogChannel& logChannel() const final;
+#endif
+
 private:
     RTCPeerConnection(ScriptExecutionContext&);
 
@@ -165,6 +181,7 @@ private:
     // EventTarget implementation.
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
+    bool dispatchEvent(Event&) final;
 
     // ActiveDOMObject
     WEBCORE_EXPORT void stop() final;
@@ -185,6 +202,11 @@ private:
     RTCIceGatheringState m_iceGatheringState { RTCIceGatheringState::New };
     RTCIceConnectionState m_iceConnectionState { RTCIceConnectionState::New };
     RTCPeerConnectionState m_connectionState { RTCPeerConnectionState::New };
+
+#if !RELEASE_LOG_DISABLED
+    Ref<const PAL::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 
     std::unique_ptr<RtpTransceiverSet> m_transceiverSet { std::unique_ptr<RtpTransceiverSet>(new RtpTransceiverSet()) };
 

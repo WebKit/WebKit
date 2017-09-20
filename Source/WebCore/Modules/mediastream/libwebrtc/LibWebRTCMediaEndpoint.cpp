@@ -63,6 +63,10 @@ LibWebRTCMediaEndpoint::LibWebRTCMediaEndpoint(LibWebRTCPeerConnectionBackend& p
     , m_setLocalSessionDescriptionObserver(*this)
     , m_setRemoteSessionDescriptionObserver(*this)
     , m_statsLogTimer(*this, &LibWebRTCMediaEndpoint::gatherStatsForLogging)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(peerConnection.logger())
+    , m_logIdentifier(peerConnection.logIdentifier())
+#endif
 {
     ASSERT(client.factory());
 }
@@ -1065,20 +1069,23 @@ void LibWebRTCMediaEndpoint::gatherStatsForLogging()
 
 void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const webrtc::RTCStatsReport>& report)
 {
-    if (!m_statsTimestamp)
-        m_statsTimestamp = report->timestamp_us();
-    else if (m_statsLogTimer.repeatInterval() == 2_s && (report->timestamp_us() - m_statsTimestamp) > 15000000) {
-        callOnMainThread([protectedThis = makeRef(*this)] {
-            protectedThis->m_statsLogTimer.augmentRepeatInterval(9_s);
+#if !RELEASE_LOG_DISABLED
+    int64_t timestamp = report->timestamp_us();
+    if (!m_statsFirstDeliveredTimestamp)
+        m_statsFirstDeliveredTimestamp = timestamp;
+
+    if (m_statsLogTimer.repeatInterval() != statsLogInterval(timestamp)) {
+        callOnMainThread([protectedThis = makeRef(*this), this, timestamp] {
+            m_statsLogTimer.stop();
+            m_statsLogTimer.startRepeating(statsLogInterval(timestamp));
         });
     }
 
-#if !RELEASE_LOG_DISABLED
-    // Log stats once every second for the 30 seconds, then drop to once every 5 seconds.
     for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
         if (iterator->type() == webrtc::RTCCodecStats::kType)
             continue;
-        RELEASE_LOG(WebRTC, "WebRTC stats for %p: %{public}s", this, iterator->ToString().c_str());
+
+        ALWAYS_LOG(LOGIDENTIFIER, "WebRTC stats for :", *iterator);
     }
 #else
     UNUSED_PARAM(report);
@@ -1090,7 +1097,7 @@ void LibWebRTCMediaEndpoint::startLoggingStats()
 #if !RELEASE_LOG_DISABLED
     if (m_statsLogTimer.isActive())
         m_statsLogTimer.stop();
-    m_statsLogTimer.startRepeating(2_s);
+    m_statsLogTimer.startRepeating(statsLogInterval(0));
 #endif
 }
 
@@ -1098,6 +1105,24 @@ void LibWebRTCMediaEndpoint::stopLoggingStats()
 {
     m_statsLogTimer.stop();
 }
+
+#if !RELEASE_LOG_DISABLED
+WTFLogChannel& LibWebRTCMediaEndpoint::logChannel() const
+{
+    return LogWebRTC;
+}
+
+Seconds LibWebRTCMediaEndpoint::statsLogInterval(int64_t reportTimestamp) const
+{
+    if (logger().willLog(logChannel(), WTFLogLevelInfo))
+        return 2_s;
+
+    if (reportTimestamp - m_statsFirstDeliveredTimestamp > 15000000)
+        return 10_s;
+
+    return 4_s;
+}
+#endif
 
 } // namespace WebCore
 

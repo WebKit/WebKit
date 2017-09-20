@@ -32,12 +32,12 @@
 #include "RealtimeOutgoingAudioSource.h"
 #include "RealtimeOutgoingVideoSource.h"
 #include <Timer.h>
-
+#include <pal/Logger.h>
+#include <pal/LoggerHelper.h>
 #include <webrtc/api/jsep.h>
 #include <webrtc/api/peerconnectioninterface.h>
 #include <webrtc/pc/peerconnectionfactory.h>
 #include <webrtc/pc/rtcstatscollector.h>
-
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace webrtc {
@@ -57,7 +57,14 @@ class LibWebRTCPeerConnectionBackend;
 class MediaStreamTrack;
 class RTCSessionDescription;
 
-class LibWebRTCMediaEndpoint : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint>, private webrtc::PeerConnectionObserver, private webrtc::RTCStatsCollectorCallback {
+class LibWebRTCMediaEndpoint
+    : public ThreadSafeRefCounted<LibWebRTCMediaEndpoint>
+    , private webrtc::PeerConnectionObserver
+    , private webrtc::RTCStatsCollectorCallback
+#if !RELEASE_LOG_DISABLED
+    , public PAL::LoggerHelper
+#endif
+{
 public:
     static Ref<LibWebRTCMediaEndpoint> create(LibWebRTCPeerConnectionBackend& peerConnection, LibWebRTCProvider& client) { return adoptRef(*new LibWebRTCMediaEndpoint(peerConnection, client)); }
     virtual ~LibWebRTCMediaEndpoint() { }
@@ -125,6 +132,15 @@ private:
 
     bool shouldOfferAllowToReceiveAudio() const;
     bool shouldOfferAllowToReceiveVideo() const;
+
+#if !RELEASE_LOG_DISABLED
+    const PAL::Logger& logger() const final { return m_logger.get(); }
+    const void* logIdentifier() const final { return m_logIdentifier; }
+    const char* logClassName() const final { return "LibWebRTCMediaEndpoint"; }
+    WTFLogChannel& logChannel() const final;
+
+    Seconds statsLogInterval(int64_t) const;
+#endif
 
     class CreateSessionDescriptionObserver final : public webrtc::CreateSessionDescriptionObserver {
     public:
@@ -194,9 +210,29 @@ private:
 
     bool m_isInitiator { false };
     Timer m_statsLogTimer;
-    int64_t m_statsTimestamp { 0 };
+
+#if !RELEASE_LOG_DISABLED
+    int64_t m_statsFirstDeliveredTimestamp { 0 };
+    Ref<const PAL::Logger> m_logger;
+    const void* m_logIdentifier;
+#endif
 };
 
 } // namespace WebCore
+
+namespace PAL {
+
+template<typename Type>
+struct LogArgument;
+
+template <>
+struct LogArgument<webrtc::RTCStats> {
+    static String toString(const webrtc::RTCStats& iterator)
+    {
+        return WTF::String(iterator.ToString().c_str());
+    }
+};
+
+}; // namespace PAL
 
 #endif // USE(LIBWEBRTC)
