@@ -1,3 +1,19 @@
+2017-09-20  Daniel Bates  <dabates@apple.com>
+
+        Spelling and grammar dots should not overlap
+        https://bugs.webkit.org/show_bug.cgi?id=177265
+        <rdar://problem/34556424>
+
+        Reviewed by David Hyatt.
+
+        Add unit tests for the subdivision algorithm.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/MarkerSubrange.cpp: Added.
+        (WebCore::operator<<):
+        (WebCore::operator==):
+        (TestWebKitAPI::TEST):
+
 2017-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should not type-check functions in the standard library that it does not use

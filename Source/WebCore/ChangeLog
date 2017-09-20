@@ -1,3 +1,42 @@
+2017-09-20  Daniel Bates  <dabates@apple.com>
+
+        Spelling and grammar dots should not overlap
+        https://bugs.webkit.org/show_bug.cgi?id=177265
+        <rdar://problem/34556424>
+
+        Reviewed by David Hyatt.
+
+        A line may contain both spelling and grammar errors such that these errors overlap.
+        For example, "to mooof or not to mooof.". It is more pleasing aesthetically to
+        paint spelling and grammar dots such that they do not overlap. This also matches
+        AppKit's behavior.
+
+        A side benefit of this change is that it adds support infrastructure towards
+        implementing the CSS Pseudo-Elements Module Level 4 pseudo elements ::spelling-error
+        and ::grammar-error (see <https://bugs.webkit.org/show_bug.cgi?id=175784>).
+        It will also make it straightforward to add ::inactive-selection and allow us
+        to make ::selection conform to CSS Pseudo-Elements Module Level 4.
+
+        * CMakeLists.txt: Add file MarkerSubrange.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Add files MarkerSubrange.{cpp, h}.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarker): Modified to take a const MarkerSubrange&
+        instead of a RenderedDocumentMarker&.
+        (WebCore::InlineTextBox::paintTextMatchMarker): Modified to take a const MarkerSubrange&
+        instead of a RenderedDocumentMarker& and take a boolean as to whether the text match is active.
+        (WebCore::InlineTextBox::paintDocumentMarkers): Collect the subranges that need to be
+        painted, subdivide them preserving only the frontmost subrange when two or more subranges
+        overlap and paint the resulting subranges.
+        (WebCore::lineStyleForMarkerType): Deleted; converted to a lambda function inlined
+        in paintDocumentMarker() as this is the only place we made use of this function.
+        * rendering/InlineTextBox.h:
+        * rendering/MarkerSubrange.cpp: Added.
+        (WebCore::subdivide): Subdivides the specified list of subranges and returns a list of non-overlapping
+        subranges in paint order. The implementation of subdivide() is derived from an algorithm that
+        Said Abou-Hallawa came up with.
+        * rendering/MarkerSubrange.h: Added.
+        (WebCore::MarkerSubrange::MarkerSubrange):
+
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove ActionType::CSSDisplayNoneStyleSheet

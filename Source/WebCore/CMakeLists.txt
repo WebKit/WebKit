@@ -2657,6 +2657,7 @@ set(WebCore_SOURCES
     rendering/LayoutDisallowedScope.cpp
     rendering/LayoutRepainter.cpp
     rendering/LayoutState.cpp
+    rendering/MarkerSubrange.cpp
     rendering/OrderIterator.cpp
     rendering/PointerEventsHitRules.cpp
     rendering/RenderAttachment.cpp

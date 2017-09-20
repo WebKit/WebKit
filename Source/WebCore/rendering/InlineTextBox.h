@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2009, 2010, 2011, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,10 +28,11 @@
 
 namespace WebCore {
 
-struct CompositionUnderline;
 class RenderCombineText;
 class RenderedDocumentMarker;
 class TextPainter;
+struct CompositionUnderline;
+struct MarkerSubrange;
 struct TextPaintStyle;
 
 const unsigned short cNoTruncation = USHRT_MAX;
@@ -161,8 +162,8 @@ private:
     void paintDecoration(GraphicsContext&, const FontCascade&, RenderCombineText*, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
         TextDecoration, TextPaintStyle, const ShadowData*, const FloatRect& clipOutRect);
     void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color& textColor);
-    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
-    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, RenderedDocumentMarker&, const RenderStyle&, const FontCascade&);
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&, const RenderStyle&, const FontCascade&);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&, const RenderStyle&, const FontCascade&, bool isActiveMatch);
 
     ExpansionBehavior expansionBehavior() const;
 

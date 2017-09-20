@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InlineTextBoxStyle.h"
+#include "MarkerSubrange.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlock.h"
@@ -782,29 +783,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-static GraphicsContext::DocumentMarkerLineStyle lineStyleForMarkerType(DocumentMarker::MarkerType markerType)
-{
-    switch (markerType) {
-    case DocumentMarker::Spelling:
-        return GraphicsContext::DocumentMarkerSpellingLineStyle;
-    case DocumentMarker::Grammar:
-        return GraphicsContext::DocumentMarkerGrammarLineStyle;
-    case DocumentMarker::CorrectionIndicator:
-        return GraphicsContext::DocumentMarkerAutocorrectionReplacementLineStyle;
-    case DocumentMarker::DictationAlternatives:
-        return GraphicsContext::DocumentMarkerDictationAlternativesLineStyle;
-#if PLATFORM(IOS)
-    case DocumentMarker::DictationPhraseWithAlternatives:
-        // FIXME: Rename TextCheckingDictationPhraseWithAlternativesLineStyle and remove the PLATFORM(IOS)-guard.
-        return GraphicsContext::TextCheckingDictationPhraseWithAlternativesLineStyle;
-#endif
-    default:
-        ASSERT_NOT_REACHED();
-        return GraphicsContext::DocumentMarkerSpellingLineStyle;
-    }
-}
-
-void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange, const RenderStyle& style, const FontCascade& font)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -818,16 +797,16 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
 
     // Determine whether we need to measure text
     bool markerSpansWholeBox = true;
-    if (m_start <= marker.startOffset())
+    if (m_start <= subrange.startOffset)
         markerSpansWholeBox = false;
-    if ((end() + 1) != marker.endOffset()) // end points at the last char, not past it
+    if ((end() + 1) != subrange.endOffset) // End points at the last char, not past it
         markerSpansWholeBox = false;
     if (m_truncation != cNoTruncation)
         markerSpansWholeBox = false;
 
     if (!markerSpansWholeBox) {
-        unsigned startPosition = clampedOffset(marker.startOffset());
-        unsigned endPosition = clampedOffset(marker.endOffset());
+        unsigned startPosition = clampedOffset(subrange.startOffset);
+        unsigned endPosition = clampedOffset(subrange.endOffset);
         
         if (m_truncation != cNoTruncation)
             endPosition = std::min(endPosition, static_cast<unsigned>(m_truncation));
@@ -845,6 +824,27 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         width = markerRect.width();
     }
     
+    auto lineStyleForSubrangeType = [] (MarkerSubrange::Type type) {
+        switch (type) {
+        case MarkerSubrange::SpellingError:
+            return GraphicsContext::DocumentMarkerSpellingLineStyle;
+        case MarkerSubrange::GrammarError:
+            return GraphicsContext::DocumentMarkerGrammarLineStyle;
+        case MarkerSubrange::Correction:
+            return GraphicsContext::DocumentMarkerAutocorrectionReplacementLineStyle;
+        case MarkerSubrange::DictationAlternatives:
+            return GraphicsContext::DocumentMarkerDictationAlternativesLineStyle;
+#if PLATFORM(IOS)
+        case MarkerSubrange::DictationPhraseWithAlternatives:
+            // FIXME: Rename TextCheckingDictationPhraseWithAlternativesLineStyle and remove the PLATFORM(IOS)-guard.
+            return GraphicsContext::TextCheckingDictationPhraseWithAlternativesLineStyle;
+#endif
+        default:
+            ASSERT_NOT_REACHED();
+            return GraphicsContext::DocumentMarkerSpellingLineStyle;
+        }
+    };
+
     // IMPORTANT: The misspelling underline is not considered when calculating the text bounds, so we have to
     // make sure to fit within those bounds.  This means the top pixel(s) of the underline will overlap the
     // bottom pixel(s) of the glyphs in smaller font sizes.  The alternatives are to increase the line spacing (bad!!)
@@ -862,15 +862,15 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
-    context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForMarkerType(marker.type()));
+    context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForSubrangeType(subrange.type));
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, RenderedDocumentMarker& marker, const RenderStyle& style, const FontCascade& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange, const RenderStyle& style, const FontCascade& font, bool isActiveMatch)
 {
     if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
         return;
 
-    Color color = marker.isActiveMatch() ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+    auto color = isActiveMatch ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
     GraphicsContextStateSaver stateSaver(context);
     updateGraphicsContext(context, TextPaintStyle(color)); // Don't draw text at all!
 
@@ -879,8 +879,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, this->selectionHeight());
 
-    unsigned sPos = clampedOffset(marker.startOffset());
-    unsigned ePos = clampedOffset(marker.endOffset());
+    unsigned sPos = clampedOffset(subrange.startOffset);
+    unsigned ePos = clampedOffset(subrange.endOffset);
     TextRun run = constructTextRun(style);
     font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
 
@@ -889,13 +889,37 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPo
 
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color);
 }
-    
+
 void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
 {
     if (!renderer().textNode())
         return;
 
     Vector<RenderedDocumentMarker*> markers = renderer().document().markers().markersFor(renderer().textNode());
+
+    auto markerTypeForSubrangeType = [] (DocumentMarker::MarkerType type) {
+        switch (type) {
+        case DocumentMarker::Spelling:
+            return MarkerSubrange::SpellingError;
+        case DocumentMarker::Grammar:
+            return MarkerSubrange::GrammarError;
+        case DocumentMarker::CorrectionIndicator:
+            return MarkerSubrange::Correction;
+        case DocumentMarker::TextMatch:
+            return MarkerSubrange::TextMatch;
+        case DocumentMarker::DictationAlternatives:
+            return MarkerSubrange::DictationAlternatives;
+#if PLATFORM(IOS)
+        case DocumentMarker::DictationPhraseWithAlternatives:
+            return MarkerSubrange::DictationPhraseWithAlternatives;
+#endif
+        default:
+            return MarkerSubrange::Unmarked;
+        }
+    };
+
+    Vector<MarkerSubrange> subranges;
+    subranges.reserveInitialCapacity(markers.size());
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
@@ -939,19 +963,13 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
             case DocumentMarker::Spelling:
             case DocumentMarker::CorrectionIndicator:
             case DocumentMarker::DictationAlternatives:
-                paintDocumentMarker(context, boxOrigin, *marker, style, font);
-                break;
             case DocumentMarker::Grammar:
-                paintDocumentMarker(context, boxOrigin, *marker, style, font);
-                break;
 #if PLATFORM(IOS)
             // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS)-guard.
             case DocumentMarker::DictationPhraseWithAlternatives:
-                paintDocumentMarker(context, boxOrigin, *marker, style, font);
-                break;
 #endif
             case DocumentMarker::TextMatch:
-                paintTextMatchMarker(context, boxOrigin, *marker, style, font);
+                subranges.uncheckedAppend({ marker->startOffset(), marker->endOffset(), markerTypeForSubrangeType(marker->type()), marker });
                 break;
             case DocumentMarker::Replacement:
                 break;
@@ -962,7 +980,13 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
             default:
                 ASSERT_NOT_REACHED();
         }
+    }
 
+    for (auto& subrange : subdivide(subranges, OverlapStrategy::Frontmost)) {
+        if (subrange.type == MarkerSubrange::TextMatch)
+            paintTextMatchMarker(context, boxOrigin, subrange, style, font, subrange.marker->isActiveMatch());
+        else
+            paintDocumentMarker(context, boxOrigin, subrange, style, font);
     }
 }
 
