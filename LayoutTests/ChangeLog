@@ -1,3 +1,15 @@
+2017-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify compositing layer updating
+        https://bugs.webkit.org/show_bug.cgi?id=176196
+
+        Reviewed by Zalan Bujtas.
+
+        New baselines.
+
+        * scrollingcoordinator/ios/sync-layer-positions-after-scroll-expected.txt:
+        * tiled-drawing/background-transparency-toggle-expected.txt:
+
 2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Move non-upstreamed Resource Timing tests out of web-platform-tests

@@ -562,11 +562,6 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
     if (m_reflection)
         m_reflection->layout();
 
-    // Clear the IsCompositingUpdateRoot flag once we've found the first compositing layer in this update.
-    bool isUpdateRoot = (flags & IsCompositingUpdateRoot);
-    if (isComposited())
-        flags &= ~IsCompositingUpdateRoot;
-
     if (renderer().isInFlowRenderFlowThread()) {
         updatePagination();
         flags |= UpdatePagination;
@@ -581,15 +576,6 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositions(geometryMap, flags);
 
-    if ((flags & UpdateCompositingLayers) && isComposited()) {
-        RenderLayerBacking::UpdateAfterLayoutFlags updateFlags = RenderLayerBacking::CompositingChildrenOnly;
-        if (flags & NeedsFullRepaintInBacking)
-            updateFlags |= RenderLayerBacking::NeedsFullRepaint;
-        if (isUpdateRoot)
-            updateFlags |= RenderLayerBacking::IsUpdateRoot;
-        backing()->updateAfterLayout(updateFlags);
-    }
-        
     // With all our children positioned, now update our marquee if we need to.
     if (m_marquee) {
         // FIXME: would like to use SetForScope<> but it doesn't work with bitfields.
@@ -5161,7 +5147,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Ensure our lists and 3d status are up-to-date.
-    updateCompositingAndLayerListsIfNeeded();
+    updateLayerListsIfNeeded();
     update3DTransformedDescendantStatus();
 
     RefPtr<HitTestingTransformState> localTransformState;
@@ -6486,17 +6472,6 @@ void RenderLayer::updateDescendantsLayerListsIfNeeded(bool recursive)
         if (recursive)
             childLayer->updateDescendantsLayerListsIfNeeded(true);
     }
-}
-
-void RenderLayer::updateCompositingAndLayerListsIfNeeded()
-{
-    if (compositor().inCompositingMode()) {
-        if (isDirtyStackingContainer() || m_normalFlowListDirty)
-            compositor().updateCompositingLayers(CompositingUpdateType::OnHitTest, this);
-        return;
-    }
-
-    updateLayerListsIfNeeded();
 }
 
 void RenderLayer::repaintIncludingDescendants()

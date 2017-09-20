@@ -50,7 +50,6 @@ typedef unsigned LayerTreeFlags;
 enum class CompositingUpdateType {
     AfterStyleChange,
     AfterLayout,
-    OnHitTest,
     OnScroll,
     OnCompositedScroll
 };

@@ -1,5 +1,41 @@
 2017-09-19  Simon Fraser  <simon.fraser@apple.com>
 
+        Simplify compositing layer updating
+        https://bugs.webkit.org/show_bug.cgi?id=176196
+
+        Reviewed by Zalan Bujtas.
+
+        Remove compositing layer updating from the updateLayerPositions() code path, which
+        was problematic because it wasn't pre-order. Instead, just rely on post-layout
+        compositing updates, which now need to do geometry updates. Micro benchmarking shows
+        this to be no slower.
+
+        We can remove the 'OnHitTest' update type, since we always ensure that layout is updated
+        before hit testing now.
+
+        Also remove a code path that could trigger updateGeometry() during a style change, and
+        in response to images loads, which were bad because layout may not be up-to-date at this time.
+
+        Tested by existing compositing tests. Rebaselined two tests after confirming they are progressions.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGeometry):
+        (WebCore::RenderLayerBacking::contentChanged):
+        (WebCore::RenderLayerBacking::updateAfterLayout): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers):
+        (WebCore::RenderLayerCompositor::layerStyleChanged):
+        (WebCore::operator<<):
+        * rendering/RenderLayerCompositor.h:
+
+2017-09-19  Simon Fraser  <simon.fraser@apple.com>
+
         Do more math in terms of FloatSizes and FloatPoints
         https://bugs.webkit.org/show_bug.cgi?id=177217
 
