@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef GeneratedImage_h
-#define GeneratedImage_h
+#pragma once
 
 #include "FloatSize.h"
 #include "Image.h"
@@ -64,4 +63,4 @@ private:
 
 }
 
-#endif
+SPECIALIZE_TYPE_TRAITS_IMAGE(GeneratedImage)

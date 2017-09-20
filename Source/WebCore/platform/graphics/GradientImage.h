@@ -41,6 +41,8 @@ public:
 
     virtual ~GradientImage();
 
+    const Gradient& gradient() const { return m_gradient.get(); }
+
 private:
     GradientImage(Gradient&, const FloatSize&);
 
@@ -56,3 +58,5 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_IMAGE(GradientImage)
