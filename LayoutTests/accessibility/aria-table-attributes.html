@@ -81,8 +81,13 @@
           // aria-colcount and aria-rowcount
           shouldBe("grid.numberAttributeValue('AXARIAColumnCount')", "16");
           shouldBe("grid.numberAttributeValue('AXARIARowCount')", "30");
-          shouldBe("grid.rowCount", "4");
-          shouldBe("grid.columnCount", "4");
+          if (accessibilityController.platformName == "atk") {
+              shouldBe("grid.rowCount", "30");
+              shouldBe("grid.columnCount", "16");
+          } else {
+              shouldBe("grid.rowCount", "4");
+              shouldBe("grid.columnCount", "4");
+          }
           
           // aria-colindex and aria-rowindex
           shouldBe("cell1.numberAttributeValue('AXARIAColumnIndex')", "2");
