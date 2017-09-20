@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Alp Toker <alp.toker@collabora.co.uk>
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,14 +30,11 @@
  */
 
 #include "config.h"
+#include "FormDataStreamCurl.h"
 
 #if USE(CURL)
 
-#include "FormDataStreamCurl.h"
-
 #include "FormData.h"
-#include "ResourceRequest.h"
-#include <wtf/text/CString.h>
 
 namespace WebCore {
 
@@ -53,8 +51,8 @@ size_t FormDataStream::read(void* ptr, size_t blockSize, size_t numberOfBlocks)
         return 0;
 
     Vector<FormDataElement> elements;
-    if (m_resourceHandle->firstRequest().httpBody())
-        elements = m_resourceHandle->firstRequest().httpBody()->elements();
+    if (m_formData)
+        elements = m_formData->elements();
 
     if (m_formDataElementIndex >= elements.size())
         return 0;
@@ -107,8 +105,8 @@ size_t FormDataStream::read(void* ptr, size_t blockSize, size_t numberOfBlocks)
 bool FormDataStream::hasMoreElements() const
 {
     Vector<FormDataElement> elements;
-    if (m_resourceHandle->firstRequest().httpBody())
-        elements = m_resourceHandle->firstRequest().httpBody()->elements();
+    if (m_formData)
+        elements = m_formData->elements();
 
     return m_formDataElementIndex < elements.size();
 }

@@ -49,7 +49,6 @@ namespace WebCore {
 
 ResourceHandleCurlDelegate::ResourceHandleCurlDelegate(ResourceHandle* handle)
     : m_handle(handle)
-    , m_formDataStream(handle)
     , m_firstRequest(handle->firstRequest().isolatedCopy())
     , m_customHTTPHeaderFields(m_firstRequest.httpHeaderFields().isolatedCopy())
     , m_shouldUseCredentialStorage(handle->shouldUseCredentialStorage())
@@ -427,13 +426,16 @@ void ResourceHandleCurlDelegate::prepareSendData(char* buffer, size_t blockSize,
 
     std::unique_lock<Lock> lock(m_workerThreadMutex);
 
-    if (!m_formDataStream.hasMoreElements())
+    if (!m_formDataStream || !m_formDataStream->hasMoreElements()) {
+        m_workerThreadConditionVariable.notifyOne();
         return;
+    }
 
-    size_t size = m_formDataStream.read(buffer, blockSize, numberOfBlocks);
+    size_t size = m_formDataStream->read(buffer, blockSize, numberOfBlocks);
     if (!size) {
         // Something went wrong so cancel the job.
         m_handle->cancel();
+        m_workerThreadConditionVariable.notifyOne();
         return;
     }
 
@@ -444,6 +446,8 @@ void ResourceHandleCurlDelegate::prepareSendData(char* buffer, size_t blockSize,
 void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics)
 {
     response().setDeprecatedNetworkLoadMetrics(networkLoadMetrics);
+
+    m_formDataStream = nullptr;
 
     if (!m_handle)
         return;
@@ -465,6 +469,8 @@ void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics
 
 void ResourceHandleCurlDelegate::didFail(const ResourceError& resourceError)
 {
+    m_formDataStream = nullptr;
+
     if (!m_handle)
         return;
 
@@ -619,6 +625,9 @@ void ResourceHandleCurlDelegate::setupFormData(bool isPostRequest)
         else
             m_curlHandle.setInFileSizeLarge(size);
     }
+
+    m_formDataStream = std::make_unique<FormDataStream>();
+    m_formDataStream->setHTTPBody(m_firstRequest.httpBody());
 
     m_curlHandle.setReadCallbackFunction(willSendDataCallback, this);
 }

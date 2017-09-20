@@ -42,6 +42,7 @@ namespace WebCore {
 
 class MultipartHandle;
 class ProtectionSpace;
+class ResourceError;
 class ResourceHandle;
 class ThreadSafeDataBuffer;
 
@@ -104,7 +105,7 @@ private:
 
     // Used by main thread.
     ResourceHandle* m_handle;
-    FormDataStream m_formDataStream;
+    std::unique_ptr<FormDataStream> m_formDataStream;
     std::unique_ptr<MultipartHandle> m_multipartHandle;
     unsigned short m_authFailureCount { 0 };
     CurlJobTicket m_job { nullptr };

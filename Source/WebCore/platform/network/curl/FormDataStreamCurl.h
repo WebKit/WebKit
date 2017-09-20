@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2017 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,42 +23,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef FormDataStreamCurl_h
-#define FormDataStreamCurl_h
 
-#include "config.h"
+#pragma once
 
-#include "FileSystem.h"
-#include "ResourceHandle.h"
 #include <stdio.h>
 
 namespace WebCore {
 
+class FormData;
+
 class FormDataStream {
 public:
-    FormDataStream(ResourceHandle* handle)
-        : m_resourceHandle(handle)
-        , m_file(0)
-        , m_formDataElementIndex(0)
-        , m_formDataElementDataOffset(0)
-    {
-    }
-
+    FormDataStream() = default;
     ~FormDataStream();
 
+    void setHTTPBody(FormData* formData) { m_formData = formData; }
     size_t read(void* ptr, size_t blockSize, size_t numberOfBlocks);
     bool hasMoreElements() const;
 
 private:
-    // We can hold a weak reference to our ResourceHandle as it holds a strong reference
-    // to us through its ResourceHandleInternal.
-    ResourceHandle* m_resourceHandle;
+    // We can hold a weak reference to our ResourceRequest as it holds a strong reference
+    // to us through its owner.
+    FormData* m_formData { };
 
-    FILE* m_file;
-    size_t m_formDataElementIndex;
-    size_t m_formDataElementDataOffset;
+    FILE* m_file { };
+    size_t m_formDataElementIndex { 0 };
+    size_t m_formDataElementDataOffset { 0 };
 };
 
 } // namespace WebCore
-
-#endif // FormDataStreamCurl_h
