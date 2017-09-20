@@ -107,6 +107,7 @@ bool operator&(bool a, bool b)
         return b;
     return false;
 }
+
 bool operator|(bool a, bool b)
 {
     if (a)
@@ -115,12 +116,14 @@ bool operator|(bool a, bool b)
         return true;
     return false;
 }
+
 bool operator^(bool a, bool b)
 {
     if (a)
         return !b;
     return b;
 }
+
 bool operator~(bool value)
 {
     return !value;
@@ -179,7 +182,7 @@ thread T^ operator&[]<T>(thread vec2<T>^ foo, uint index)
         return &foo->x;
     if (index == 1)
         return &foo->y;
-    return null;
+    trap;
 }
 
 struct vec3<T> {
@@ -233,7 +236,7 @@ thread T^ operator&[]<T>(thread vec3<T>^ foo, uint index)
         return &foo->y;
     if (index == 2)
         return &foo->z;
-    return null;
+    trap;
 }
 
 struct vec4<T> {
@@ -333,7 +336,7 @@ thread T^ operator&[]<T>(thread vec4<T>^ foo, uint index)
         return &foo->z;
     if (index == 3)
         return &foo->w;
-    return null;
+    trap;
 }
 
 native thread T^ operator&[]<T>(thread T[], uint);

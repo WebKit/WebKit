@@ -253,6 +253,11 @@ class Evaluator extends Visitor {
     {
         throw ContinueException;
     }
+
+    visitTrapStatement(node)
+    {
+        throw TrapException;
+    }
     
     visitAnonymousVariable(node)
     {

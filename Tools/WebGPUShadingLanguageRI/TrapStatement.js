@@ -24,8 +24,18 @@
  */
 "use strict";
 
-const BreakException = Symbol("BreakException");
-const ContinueException = Symbol("ContinueException");
-const TrapException = Symbol("TrapException");
-
+class TrapStatement extends Node {
+    constructor(origin)
+    {
+        super();
+        this._origin = origin;
+    }
+    
+    get origin() { return this._origin; }
+    
+    toString()
+    {
+        return "trap";
+    }
+};
 

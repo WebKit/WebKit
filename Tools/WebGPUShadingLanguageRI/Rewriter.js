@@ -272,6 +272,11 @@ class Rewriter {
     {
         return new Break(node.origin);
     }
+
+    visitTrapStatement(node)
+    {
+        return new TrapStatement(node.origin);
+    }
     
     visitGenericLiteral(node)
     {

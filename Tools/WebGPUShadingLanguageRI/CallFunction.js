@@ -39,7 +39,17 @@ function callFunction(program, name, typeArguments, argumentList)
         type.visit(new StructLayoutBuilder());
         func.parameters[i].ePtr.copyFrom(argumentList[i].ePtr, type.size);
     }
-    let result = new Evaluator(program).runFunc(func);
+    let result;
+    try {
+        result = new Evaluator(program).runFunc(func);
+    } catch (e) {
+        if (e == TrapException) {
+            let buffer = new EBuffer(func.returnType.size);
+            func.returnType.populateDefaultValue(buffer, 0);
+            result = new EPtr(buffer, 0);
+        } else
+            throw e;
+    }
     return new TypedValue(func.uninstantiatedReturnType, result);
 }
 

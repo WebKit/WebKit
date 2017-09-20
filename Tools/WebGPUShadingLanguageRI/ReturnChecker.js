@@ -133,6 +133,11 @@ class ReturnChecker extends Visitor {
     {
         return this.returnStyle.DefinitelyReturns;
     }
+    
+    visitTrapStatement(node)
+    {
+        return this.returnStyle.DefinitelyReturns;
+    }
 
     visitBreak(node)
     {

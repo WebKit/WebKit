@@ -752,6 +752,11 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return parseFor();
         if (token.text == "if")
             return parseIfStatement();
+        if (token.text == "trap") {
+            let origin = consume("trap");
+            consume(";");
+            return new TrapStatement(origin);
+        }
         if (token.text == "{")
             return parseBlock();
         let variableDecl = lexer.backtrackingScope(parseVariableDecls);

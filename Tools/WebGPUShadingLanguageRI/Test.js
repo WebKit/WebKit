@@ -4214,6 +4214,38 @@ function TEST_enumConstexprGenericStruct()
     checkInt(program, callFunction(program, "testY", [], []), 1);
 }
 
+function TEST_trap()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            trap;
+        }
+        int foo2(int x)
+        {
+            if (x == 3)
+                trap;
+            return 4;
+        }
+        struct Bar {
+            int3 x;
+            float y;
+        }
+        Bar foo3()
+        {
+            trap;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 0);
+    checkInt(program, callFunction(program, "foo2", [], [makeInt(program, 1)]), 4);
+    checkInt(program, callFunction(program, "foo2", [], [makeInt(program, 3)]), 0);
+    let foo3 = callFunction(program, "foo3", [], []);
+    for (let value of foo3.ePtr.buffer._array) {
+        if (value != undefined && value != 0)
+            throw new Error("Trap returned a non-zero value");
+    }
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

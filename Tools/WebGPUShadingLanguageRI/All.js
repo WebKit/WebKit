@@ -141,6 +141,7 @@ load("StructType.js");
 load("Substitution.js");
 load("SynthesizeEnumFunctions.js");
 load("SynthesizeStructAccessors.js");
+load("TrapStatement.js");
 load("TypeDef.js");
 load("TypeDefResolver.js");
 load("TypeOrVariableRef.js");

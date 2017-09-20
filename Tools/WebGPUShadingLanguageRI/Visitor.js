@@ -292,6 +292,10 @@ class Visitor {
     visitBreak(node)
     {
     }
+
+    visitTrapStatement(node)
+    {
+    }
     
     visitGenericLiteral(node)
     {
