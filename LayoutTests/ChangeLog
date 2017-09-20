@@ -1,3 +1,24 @@
+2017-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Make webrtc replace track tests less flaky
+        https://bugs.webkit.org/show_bug.cgi?id=172645
+        <rdar://problem/34118218>
+
+        Reviewed by Eric Carlson.
+
+        Improving stability of tests by retrying tests every 50 ms instead of once.
+        Doing some refactoring to put more helper routines in routine.js
+        Relaxing black pixel check as compression may introduce some uncertainty.
+        It is now considered black if RGB < (30, 30, 30).
+
+        * TestExpectations: Marking video-mute.html as Pass/Fail instead of Fail.
+        * webrtc/routines.js:
+        * webrtc/video-mute.html:
+        * webrtc/video-replace-muted-track.html:
+        * webrtc/video-replace-track-expected.txt:
+        * webrtc/video-replace-track-to-null.html:
+        * webrtc/video-replace-track.html:
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         Video errors should be instances of Error

@@ -798,7 +798,7 @@ media/session [ Skip ]
 webrtc/datachannel/multiple-connections.html [ Slow ]
 webrtc/video-replace-track.html [ Pass Failure ]
 webkit.org/b/170178 webrtc/video-replace-track-to-null.html [ Pass Failure ]
-webkit.org/b/170704 webrtc/video-mute.html [ Failure ]
+webkit.org/b/170704 webrtc/video-mute.html [ Pass Failure ]
 webkit.org/b/170701 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Pass Failure ]
 webkit.org/b/173486 webrtc/video-replace-muted-track.html [ Pass Failure Timeout ]
 

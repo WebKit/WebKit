@@ -15,41 +15,6 @@
         <canvas id="canvas3" width="320" height="240"></canvas>
         <script src ="routines.js"></script>
         <script>
-function isVideoBlack(id)
-{
-    var canvas = document.getElementById(id);
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-    data = imageData.data;
-    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
-        // Approximatively black pixels.
-        if (data[4 * cptr] > 10 || data[4 * cptr + 1] > 10 || data[4 * cptr + 2] > 10)
-            return false;
-    }
-    return true;
-}
-
-function pollVideoBlackCheck(expected, id, resolve)
-{
-    if (isVideoBlack(id) === expected) {
-        resolve();
-        return;
-    }
-
-    setTimeout(() => pollVideoBlackCheck(expected, id, resolve), 50);
-}
-
-function checkVideoBlack(expected, id)
-{
-    return new Promise((resolve, reject) => {
-       pollVideoBlackCheck(expected, id, resolve);
-        setTimeout(() => reject("checkVideoBlack timed out for " + id + " expected " + expected), 5000);
-    });
-}
-
 var track;
 var remoteTrack;
 var receivingConnection;
@@ -91,12 +56,12 @@ promise_test(() => {
 }, "Ensuring connection state is connected");
 
 promise_test((test) => {
-    return checkVideoBlack(false, "canvas1");
+    return checkVideoBlack(false, canvas1, video);
 }, "Track is enabled, video should not be black");
 
 promise_test((test) => {
     track.enabled = false;
-    return checkVideoBlack(true, "canvas2");
+    return checkVideoBlack(true, canvas2, video);
 }, "Track is disabled, video should be black");
 
 promise_test((test) => {
@@ -116,7 +81,7 @@ promise_test((test) => {
 
 promise_test((test) => {
     track.enabled = true;
-    return checkVideoBlack(true, "canvas2");
+    return checkVideoBlack(false, canvas2, video);
 }, "Track is enabled, video should not be black");
 
         </script>

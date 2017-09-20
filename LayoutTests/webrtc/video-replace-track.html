@@ -5,6 +5,7 @@
         <title>Testing basic video exchange from offerer to receiver</title>
         <script src="../resources/testharness.js"></script>
         <script src="../resources/testharnessreport.js"></script>
+        <script src="routines.js"></script>
     </head>
     <body>
 <div id="log"></div>
@@ -25,30 +26,41 @@ function grabImagePixels()
     return imageData.data;
  }
 
-function testFrontCameraImage(testName)
+async function testFrontCameraImage(counter)
 {
-    test(() => {
-        data = grabImagePixels();
+    if (!counter)
+        counter = 0;
 
-        assert_true(data[0] < 20, "1");
-        assert_true(data[1] < 20, "2");
-        assert_true(data[2] < 20, "3");
-    }, "testFrontCameraImage " + testName);
+    if (isVideoBlack(canvas, video, 20, 20, 2 ,2))
+        return;
+
+    if (counter >= 20)
+        return Promise.reject("testFrontCameraImage timed out");
+
+    await waitFor(50);
+    return testFrontCameraImage(++counter);
 }
 
-function testBackCameraImage(testName)
+function isBetween100And200(value)
 {
-    test(() => {
-        data = grabImagePixels();
+     return data[0] > 100 && data[0] < 200;
+}
 
-        assert_true(data[0] > 100, "1");
-        assert_true(data[1] > 100, "2");
-        assert_true(data[2] > 100, "3");
+async function testBackCameraImage(counter)
+{
+    if (!counter)
+        counter = 0;
 
-        assert_true(data[0] < 200, "4");
-        assert_true(data[1] < 200, "5");
-        assert_true(data[2] < 200, "6");
-    }, "testBackCameraImage " + testName);
+    data = grabImagePixels();
+
+    if(isBetween100And200(data[0]) && isBetween100And200(data[1]) && isBetween100And200(data[2]))
+        return;
+
+    if (counter >= 20)
+        return Promise.reject("testFrontCameraImage timed out");
+
+    await waitFor(50);
+    return testBackCameraImage(++counter);
 }
 
 promise_test((test) => {
@@ -74,7 +86,8 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage("test1");
+        return testFrontCameraImage();
+    }).then(() => {
         return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
     }).then((stream) => {
         backStream = stream;
@@ -84,9 +97,7 @@ promise_test((test) => {
         return promise;
     }).then(() => {
         assert_true(sender.track === backStream.getVideoTracks()[0]);
-        return waitFor(500);
-    }).then(() => {
-        testBackCameraImage("test1");
+        return testBackCameraImage();
     });
 }, "Switching from front to back camera");
 
@@ -115,16 +126,15 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage("test2");
+        return testFrontCameraImage();
+    }).then(() => {
         return navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240, facingMode: { exact: ["environment"] } } });
     }).then((stream) => {
         backStream = stream;
         assert_true(backStream.getVideoTracks()[0].getSettings().height === 240, "backStream should be small");
         return sender.replaceTrack(backStream.getVideoTracks()[0]);
     }).then(() => {
-        return waitFor(500);
-    }).then(() => {
-        testBackCameraImage("test2");
+        return testBackCameraImage();
     });
 }, "Switching from front to back camera, with lower resolution");
 
@@ -154,16 +164,15 @@ promise_test((test) => {
         video.srcObject = remoteStream;
         return video.play();
     }).then(() => {
-        testFrontCameraImage("test3");
+        return testFrontCameraImage();
+    }).then(() => {
         return navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 , facingMode: { exact: ["environment"] } } });
     }).then((stream) => {
         backStream = stream;
         assert_true(backStream.getVideoTracks()[0].getSettings().height === 480, "back stream should be big");
         return sender.replaceTrack(backStream.getVideoTracks()[0]);
     }).then(() => {
-        return waitFor(500);
-    }).then(() => {
-        testBackCameraImage("test4");
+        return testBackCameraImage();
     });
 
 }, "Switching from front to back camera, with higher resolution");

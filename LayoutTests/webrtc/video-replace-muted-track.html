@@ -12,64 +12,6 @@
         <canvas id="canvas" width="640" height="480"></canvas>
         <script src ="routines.js"></script>
         <script>
-function isVideoBlack()
-{
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    imageData = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
-    data = imageData.data;
-    for (var cptr = 0; cptr < canvas.width * canvas.height; ++cptr) {
-        // Approximatively black pixels.
-        if (data[4 * cptr] > 10 || data[4 * cptr + 1] > 10 || data[4 * cptr + 2] > 10)
-            return false;
-    }
-    return true;
-}
-
-var stopPolling = false;
-function pollVideoBlackCheck(expected, resolve, delay)
-{
-    if (isVideoBlack() === expected || stopPolling) {
-        resolve(true);
-        return;
-    }
-
-    setTimeout(() => pollVideoBlackCheck(expected, resolve), delay);
-}
-
-async function checkVideoBlack(expected, duration, id, delay)
-{
-    stopPolling = false;
-    return new Promise((resolve, reject) => {
-        pollVideoBlackCheck(expected, resolve, delay);
-        setTimeout(() => {
-            resolve(false);
-            stopPolling = true;
-        }, duration);
-    });
-}
-
-function grabImagePixels()
-{
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    imageData = canvas.getContext('2d').getImageData(20, 20, 2, 2);
-    return imageData.data;
-}
-
-async function checkForNoBlackFrames()
-{
-    for (var cptr = 0; cptr < 10; cptr++) {
-        if (!(await checkVideoBlack(true, 1500, "test3", 50)))
-            return true;
-    }
-    return false;
-}
-
 promise_test((test) => {
     if (window.testRunner)
         testRunner.setUserMediaPermission(true);
@@ -94,22 +36,15 @@ promise_test((test) => {
         return video.play();
     }).then(() => {
         firstTrack.enabled = false;
-        return waitFor(200);
+        return checkVideoBlack(true, canvas, video, "Check we receive black frames after disabling the track");
     }).then(() => {
         return navigator.mediaDevices.getUserMedia({ video: { facingMode: { exact: ["environment"] } } });
     }).then((stream) => {
         return sender.replaceTrack(stream.getVideoTracks()[0]);
     }).then(() => {
-        return waitFor(200);
+        return checkVideoBlack(false, canvas, video, "Check we receive some non black frames");
     }).then(() => {
-        return checkVideoBlack(false, 5000, "test2", 200);
-    }).then((result) => {
-        assert_true(result, "expect to receive some non black frames");
-    }).then(() => {
-        // Let's ensure there are no black frames being received.
-        return checkForNoBlackFrames();
-    }).then((result) => {
-        assert_true(result, "check no black frame");
+        return checkVideoBlack(true, canvas, video, "Check we do not receive any black frame", 40).then(assert_unreached, () => { });
     });
 }, "Switching from disabled to enabled track");
         </script>
