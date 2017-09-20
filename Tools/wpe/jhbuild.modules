@@ -111,12 +111,9 @@
     <dependencies>
       <dep package="freetype6"/>
     </dependencies>
-    <branch module="software/fontconfig/release/fontconfig-2.11.1.tar.gz" version="2.11.1"
+    <branch module="software/fontconfig/release/fontconfig-2.12.4.tar.bz2" version="2.12.4"
             repo="freedesktop.org"
-            hash="sha256:b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d"
-            md5sum="e75e303b4f7756c2b16203a57ac87eba">
-        <patch file="fontconfig-avoid-conflicts-with-integer-width-macros-from-TS-18.patch" strip="1"/>
-    </branch>
+            hash="sha256:668293fcc4b3c59765cdee5cee05941091c0879edcc24dfec5455ef83912e45c"/>
   </autotools>
 
   <autotools id="harfbuzz" autogen-sh="configure"
