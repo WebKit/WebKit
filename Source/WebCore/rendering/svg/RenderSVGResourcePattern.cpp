@@ -118,8 +118,8 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
 
     // Compute pattern space transformation.
 
-    patternData->transform.translate(tileBoundaries.x(), tileBoundaries.y());
-    patternData->transform.scale(tileBoundaries.width() / tileImageSize.width(), tileBoundaries.height() / tileImageSize.height());
+    patternData->transform.translate(tileBoundaries.location());
+    patternData->transform.scale(tileBoundaries.size() / tileImageSize);
 
     AffineTransform patternTransform = m_attributes.patternTransform();
     if (!patternTransform.isIdentity())
@@ -258,8 +258,7 @@ std::unique_ptr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const Pat
     GraphicsContext& tileImageContext = tileImage->context();
 
     // The image buffer represents the final rendered size, so the content has to be scaled (to avoid pixelation).
-    tileImageContext.scale(FloatSize(clampedAbsoluteTileBoundaries.width() / tileBoundaries.width(),
-                                      clampedAbsoluteTileBoundaries.height() / tileBoundaries.height()));
+    tileImageContext.scale(clampedAbsoluteTileBoundaries.size() / tileBoundaries.size());
 
     // Apply tile image transformations.
     if (!tileImageTransform.isIdentity())

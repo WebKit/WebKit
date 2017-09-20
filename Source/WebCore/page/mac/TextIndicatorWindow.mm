@@ -183,7 +183,7 @@ static bool indicatorWantsManualAnimation(const TextIndicator& indicator)
 
         Path translatedPath;
         AffineTransform transform;
-        transform.translate(-pathBoundingRect.x(), -pathBoundingRect.y());
+        transform.translate(-pathBoundingRect.location());
         translatedPath.addPath(path, transform);
 
         FloatRect offsetTextRect = pathBoundingRect;

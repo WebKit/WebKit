@@ -439,7 +439,7 @@ bool FilterEffectRendererHelper::beginFilterEffect()
 
     // Translate the context so that the contents of the layer is captured in the offscreen memory buffer.
     sourceGraphicsContext->save();
-    sourceGraphicsContext->translate(-m_paintOffset.x(), -m_paintOffset.y());
+    sourceGraphicsContext->translate(-m_paintOffset);
     sourceGraphicsContext->clearRect(m_repaintRect);
     sourceGraphicsContext->clip(m_repaintRect);
 

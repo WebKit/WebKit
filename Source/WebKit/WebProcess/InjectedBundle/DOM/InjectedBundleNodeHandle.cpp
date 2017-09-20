@@ -163,7 +163,7 @@ static RefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& painti
     graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
     graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     graphicsContext->scale(bitmapScaleFactor);
-    graphicsContext->translate(-paintingRect.x(), -paintingRect.y());
+    graphicsContext->translate(-paintingRect.location());
 
     FrameView::SelectionInSnapshot shouldPaintSelection = FrameView::IncludeSelection;
     if (options & SnapshotOptionsExcludeSelectionHighlighting)

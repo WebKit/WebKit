@@ -79,7 +79,7 @@ void FETile::platformApplySoftware()
     auto pattern = Pattern::create(tileImageCopy.releaseNonNull(), true, true);
 
     AffineTransform patternTransform;
-    patternTransform.translate(inMaxEffectLocation.x() - maxEffectLocation.x(), inMaxEffectLocation.y() - maxEffectLocation.y());
+    patternTransform.translate(inMaxEffectLocation - maxEffectLocation);
     pattern.get().setPatternSpaceTransform(patternTransform);
     GraphicsContext& filterContext = resultImage->context();
     filterContext.setFillPattern(WTFMove(pattern));

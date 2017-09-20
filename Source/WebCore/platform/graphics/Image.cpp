@@ -125,11 +125,10 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& destRec
     if (hasRelativeHeight())
         intrinsicTileSize.setHeight(scaledTileSize.height());
 
-    FloatSize scale(scaledTileSize.width() / intrinsicTileSize.width(),
-                    scaledTileSize.height() / intrinsicTileSize.height());
+    FloatSize scale(scaledTileSize / intrinsicTileSize);
 
     FloatRect oneTileRect;
-    FloatSize actualTileSize(scaledTileSize.width() + spacing.width(), scaledTileSize.height() + spacing.height());
+    FloatSize actualTileSize = scaledTileSize + spacing;
     oneTileRect.setX(destRect.x() + fmodf(fmodf(-srcPoint.x(), actualTileSize.width()) - actualTileSize.width(), actualTileSize.width()));
     oneTileRect.setY(destRect.y() + fmodf(fmodf(-srcPoint.y(), actualTileSize.height()) - actualTileSize.height(), actualTileSize.height()));
     oneTileRect.setSize(scaledTileSize);

@@ -63,7 +63,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
         return false;
 
     m_localTransform = element.animatedLocalTransform();
-    m_localTransform.translate(m_lastTranslation.width(), m_lastTranslation.height());
+    m_localTransform.translate(m_lastTranslation);
     m_needsTransformUpdate = false;
     return true;
 }

@@ -57,10 +57,9 @@ static UITargetedDragPreview *createTargetedDragPreview(UIImage *image, UIView *
     if (frameInContainerCoordinates.isEmpty())
         return nullptr;
 
-    float widthScalingRatio = frameInContainerCoordinates.width() / frameInRootViewCoordinates.width();
-    float heightScalingRatio = frameInContainerCoordinates.height() / frameInRootViewCoordinates.height();
+    FloatSize scalingRatio = frameInContainerCoordinates.size() / frameInRootViewCoordinates.size();
     for (auto rect : clippingRectsInFrameCoordinates) {
-        rect.scale(widthScalingRatio, heightScalingRatio);
+        rect.scale(scalingRatio);
         [clippingRectValuesInFrameCoordinates addObject:[NSValue valueWithCGRect:rect]];
     }
 

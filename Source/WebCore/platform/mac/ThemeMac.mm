@@ -415,9 +415,9 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     if (zoomFactor != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
         inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-        context.translate(inflatedRect.x(), inflatedRect.y());
+        context.translate(inflatedRect.location());
         context.scale(zoomFactor);
-        context.translate(-inflatedRect.x(), -inflatedRect.y());
+        context.translate(-inflatedRect.location());
     }
 
     LocalCurrentGraphicsContext localContext(context);
@@ -429,7 +429,7 @@ static void paintToggleButton(ControlPart buttonType, ControlStates& controlStat
     bool isCellFocused = controlStates.states() & ControlStates::FocusState;
 
     if ([toggleButtonCell _stateAnimationRunning]) {
-        context.translate(inflatedRect.x(), inflatedRect.y());
+        context.translate(inflatedRect.location());
         context.scale(FloatSize(1, -1));
         context.translate(0, -inflatedRect.height());
 
@@ -540,9 +540,9 @@ static void paintButton(ControlPart part, ControlStates& controlStates, Graphics
         if (zoomFactor != 1.0f) {
             inflatedRect.setWidth(inflatedRect.width() / zoomFactor);
             inflatedRect.setHeight(inflatedRect.height() / zoomFactor);
-            context.translate(inflatedRect.x(), inflatedRect.y());
+            context.translate(inflatedRect.location());
             context.scale(zoomFactor);
-            context.translate(-inflatedRect.x(), -inflatedRect.y());
+            context.translate(-inflatedRect.location());
         }
     }
     
@@ -611,9 +611,9 @@ static void paintStepper(ControlStates& states, GraphicsContext& context, const 
     if (zoomFactor != 1.0f) {
         rect.setWidth(rect.width() / zoomFactor);
         rect.setHeight(rect.height() / zoomFactor);
-        context.translate(rect.x(), rect.y());
+        context.translate(rect.location());
         context.scale(zoomFactor);
-        context.translate(-rect.x(), -rect.y());
+        context.translate(-rect.location());
     }
     CGRect bounds(rect);
     CGRect backgroundBounds;

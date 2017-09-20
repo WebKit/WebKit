@@ -108,7 +108,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
         return nullptr;
 
     // Set up a corresponding scale factor on the graphics context.
-    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
+    buffer->context().scale(scaledSize / size);
     return buffer;
 }
 

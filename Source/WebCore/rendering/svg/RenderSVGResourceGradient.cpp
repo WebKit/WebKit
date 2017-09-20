@@ -83,8 +83,8 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, std::uniq
     AffineTransform matrix;
     if (boundingBoxMode) {
         FloatRect maskBoundingBox = textRootBlock->objectBoundingBox();
-        matrix.translate(maskBoundingBox.x(), maskBoundingBox.y());
-        matrix.scaleNonUniform(maskBoundingBox.width(), maskBoundingBox.height());
+        matrix.translate(maskBoundingBox.location());
+        matrix.scale(maskBoundingBox.size());
     }
     matrix *= gradientTransform;
     return matrix;
@@ -132,8 +132,8 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
 #else
         if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX && !objectBoundingBox.isEmpty()) {
 #endif
-            gradientData->userspaceTransform.translate(objectBoundingBox.x(), objectBoundingBox.y());
-            gradientData->userspaceTransform.scaleNonUniform(objectBoundingBox.width(), objectBoundingBox.height());
+            gradientData->userspaceTransform.translate(objectBoundingBox.location());
+            gradientData->userspaceTransform.scale(objectBoundingBox.size());
         }
 
         AffineTransform gradientTransform;

@@ -272,7 +272,7 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
 std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatRect& targetRect, const FloatRect& clampedRect, ColorSpace colorSpace, RenderingMode renderingMode)
 {
     IntSize clampedSize = roundedIntSize(clampedRect.size());
-    IntSize unclampedSize = roundedIntSize(targetRect.size());
+    FloatSize unclampedSize = roundedIntSize(targetRect.size());
 
     // Don't create empty ImageBuffers.
     if (clampedSize.isEmpty())
@@ -285,7 +285,7 @@ std::unique_ptr<ImageBuffer> SVGRenderingContext::createImageBuffer(const FloatR
     GraphicsContext& imageContext = imageBuffer->context();
 
     // Compensate rounding effects, as the absolute target rect is using floating-point numbers and the image buffer size is integer.
-    imageContext.scale(FloatSize(unclampedSize.width() / targetRect.width(), unclampedSize.height() / targetRect.height()));
+    imageContext.scale(unclampedSize / targetRect.size());
 
     return imageBuffer;
 }
@@ -354,7 +354,7 @@ bool SVGRenderingContext::bufferForeground(std::unique_ptr<ImageBuffer>& imageBu
     if (!imageBuffer) {
         if ((imageBuffer = ImageBuffer::createCompatibleBuffer(expandedIntSize(boundingBox.size()), ColorSpaceSRGB, m_paintInfo->context()))) {
             GraphicsContext& bufferedRenderingContext = imageBuffer->context();
-            bufferedRenderingContext.translate(-boundingBox.x(), -boundingBox.y());
+            bufferedRenderingContext.translate(-boundingBox.location());
             PaintInfo bufferedInfo(*m_paintInfo);
             bufferedInfo.setContext(bufferedRenderingContext);
             downcast<RenderSVGImage>(*m_renderer).paintForeground(bufferedInfo);

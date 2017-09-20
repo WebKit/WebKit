@@ -136,7 +136,8 @@ public:
     }
 
 private:
-    LayoutUnit m_width, m_height;
+    LayoutUnit m_width;
+    LayoutUnit m_height;
 };
 
 inline LayoutSize& operator+=(LayoutSize& a, const LayoutSize& b)

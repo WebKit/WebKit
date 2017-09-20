@@ -1,3 +1,120 @@
+2017-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        Do more math in terms of FloatSizes and FloatPoints
+        https://bugs.webkit.org/show_bug.cgi?id=177217
+
+        Reviewed by Zalan Bujtas.
+        
+        Add operator/(const FloatSize&, const FloatSize&), GraphicsContext::translate(const FloatPoint&),
+        FloatRect.scale(FloatSize) and AffineTransform::translate(const FloatSize&)
+        and use them in lots of places to do math in terms of points and sizes.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::fullCanvasCompositedDrawImage):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * page/mac/TextIndicatorWindow.mm:
+        (-[WebTextIndicatorView initWithFrame:textIndicator:margin:offset:]):
+        * platform/Theme.cpp:
+        (WebCore::Theme::drawNamedImage const):
+        * platform/graphics/CrossfadeGeneratedImage.cpp:
+        (WebCore::drawCrossfadeSubimage):
+        (WebCore::CrossfadeGeneratedImage::draw):
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::center const):
+        (WebCore::FloatRect::scale):
+        * platform/graphics/FloatSize.h:
+        (WebCore::operator/):
+        * platform/graphics/GradientImage.cpp:
+        (WebCore::GradientImage::draw):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::scaleFactorForDrawing const):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore::GraphicsContext::translate):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::clampedSize):
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/LayoutSize.h:
+        * platform/graphics/NamedImageGeneratedImage.cpp:
+        (WebCore::NamedImageGeneratedImage::draw):
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        * platform/graphics/cg/PDFDocumentImage.cpp:
+        (WebCore::transformContextForPainting):
+        (WebCore::applyRotationForPainting):
+        (WebCore::PDFDocumentImage::drawPDFPage):
+        * platform/graphics/filters/FETile.cpp:
+        (WebCore::FETile::platformApplySoftware):
+        * platform/graphics/transforms/AffineTransform.cpp:
+        (WebCore::AffineTransform::translate):
+        (WebCore::makeMapBetweenRects):
+        * platform/graphics/transforms/AffineTransform.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintToggleButton):
+        (WebCore::paintButton):
+        (WebCore::paintStepper):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRendererHelper::beginFilterEffect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::getUnzoomedRectAndAdjustCurrentContext):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+        (WebCore::RenderThemeMac::paintImageControlsButton):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::RenderSVGForeignObject):
+        (WebCore::RenderSVGForeignObject::localToParentTransform const):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGResourceClipper.cpp:
+        (WebCore::RenderSVGResourceClipper::pathOnlyClipping):
+        (WebCore::RenderSVGResourceClipper::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceClipper::hitTestClipContent):
+        (WebCore::RenderSVGResourceClipper::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourceGradient.cpp:
+        (WebCore::clipToTextMask):
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceMarker.cpp:
+        (WebCore::RenderSVGResourceMarker::markerTransformation const):
+        (WebCore::RenderSVGResourceMarker::markerContentTransformation const):
+        * rendering/svg/RenderSVGResourceMasker.cpp:
+        (WebCore::RenderSVGResourceMasker::drawContentIntoMaskImage):
+        (WebCore::RenderSVGResourceMasker::resourceBoundingBox):
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::createTileImage const):
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/SVGRenderingContext.cpp:
+        (WebCore::SVGRenderingContext::createImageBuffer):
+        (WebCore::SVGRenderingContext::bufferForeground):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::buildTransformForProgress):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform const):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::draw):
+
 2017-09-19  Chris Dumez  <cdumez@apple.com>
 
         IDBRequest and IDBTransaction error properties should be DOMExceptions

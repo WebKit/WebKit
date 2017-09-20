@@ -153,7 +153,7 @@ static void transformContextForPainting(GraphicsContext& context, const FloatRec
     // drawPDFPage() relies on drawing the whole PDF into a context starting at (0, 0). We need
     // to transform the destination context such that srcRect of the source context will be drawn
     // in dstRect of destination context.
-    context.translate(dstRect.x() - srcRect.x(), dstRect.y() - srcRect.y());
+    context.translate(dstRect.location() - srcRect.location());
     context.scale(FloatSize(hScale, -vScale));
     context.translate(0, -srcRect.height());
 }
@@ -334,7 +334,7 @@ static void applyRotationForPainting(GraphicsContext& context, FloatSize size, i
     if (rotationDegrees == 90)
         context.translate(0, size.height());
     else if (rotationDegrees == 180)
-        context.translate(size.width(), size.height());
+        context.translate(size);
     else if (rotationDegrees == 270)
         context.translate(size.width(), 0);
 
@@ -345,7 +345,7 @@ void PDFDocumentImage::drawPDFPage(GraphicsContext& context)
 {
     applyRotationForPainting(context, size(), m_rotationDegrees);
 
-    context.translate(-m_cropBox.x(), -m_cropBox.y());
+    context.translate(-m_cropBox.location());
 
 #if USE(DIRECT2D)
     notImplemented();

@@ -1040,7 +1040,7 @@ FloatSize GraphicsContext::scaleFactorForDrawing(const FloatRect& destRect, cons
 {
     AffineTransform transform = getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
     auto transformedDestRect = transform.mapRect(destRect);
-    return { static_cast<float>(transformedDestRect.width() / srcRect.width()), static_cast<float>(transformedDestRect.height() / srcRect.height()) };
+    return transformedDestRect.size() / srcRect.size();
 }
 
 void GraphicsContext::fillEllipse(const FloatRect& ellipse)

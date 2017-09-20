@@ -2888,7 +2888,7 @@ void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRec
 
     context.save();
     const IntRect& scrollbarRect = scrollbar->frameRect();
-    context.translate(-scrollbarRect.x(), -scrollbarRect.y());
+    context.translate(-scrollbarRect.location());
     IntRect transformedClip = clip;
     transformedClip.moveBy(scrollbarRect.location());
     scrollbar->paint(context, transformedClip);
@@ -2905,7 +2905,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     else if (graphicsLayer == layerForScrollCorner()) {
         const IntRect& scrollCorner = m_renderView.frameView().scrollCornerRect();
         context.save();
-        context.translate(-scrollCorner.x(), -scrollCorner.y());
+        context.translate(-scrollCorner.location());
         IntRect transformedClip = pixelSnappedRectForIntegralPositionedItems;
         transformedClip.moveBy(scrollCorner.location());
         m_renderView.frameView().paintScrollCorner(context, transformedClip);

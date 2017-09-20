@@ -221,7 +221,7 @@ void SVGAnimateMotionElement::buildTransformForProgress(AffineTransform* transfo
     FloatPoint position = traversalState.current();
     float angle = traversalState.normalAngle();
 
-    transform->translate(position.x(), position.y());
+    transform->translate(position);
     RotateMode rotateMode = this->rotateMode();
     if (rotateMode != RotateAuto && rotateMode != RotateAutoReverse)
         return;

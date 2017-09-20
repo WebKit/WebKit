@@ -949,9 +949,9 @@ bool RenderThemeMac::paintMenuList(const RenderObject& renderer, const PaintInfo
     if (zoomLevel != 1.0f) {
         inflatedRect.setWidth(inflatedRect.width() / zoomLevel);
         inflatedRect.setHeight(inflatedRect.height() / zoomLevel);
-        paintInfo.context().translate(inflatedRect.x(), inflatedRect.y());
+        paintInfo.context().translate(inflatedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-inflatedRect.x(), -inflatedRect.y());
+        paintInfo.context().translate(-inflatedRect.location());
     }
 
     paintCellAndSetFocusedElementNeedsRepaintIfNecessary(popupButton, renderer, paintInfo, inflatedRect);
@@ -1583,11 +1583,10 @@ bool RenderThemeMac::paintSliderThumb(const RenderObject& o, const PaintInfo& pa
 
     FloatRect unzoomedRect = bounds;
     if (zoomLevel != 1.0f) {
-        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
-        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.x(), unzoomedRect.y());
+        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
+        paintInfo.context().translate(unzoomedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
+        paintInfo.context().translate(-unzoomedRect.location());
     }
 
     bool shouldDrawCell = true;
@@ -1611,14 +1610,12 @@ bool RenderThemeMac::paintSearchField(const RenderObject& o, const PaintInfo& pa
 
     float zoomLevel = o.style().effectiveZoom();
 
-    IntRect unzoomedRect = r;
-
+    FloatRect unzoomedRect = r;
     if (zoomLevel != 1.0f) {
-        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
-        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.x(), unzoomedRect.y());
+        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
+        paintInfo.context().translate(unzoomedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
+        paintInfo.context().translate(-unzoomedRect.location());
     }
 
     // Set the search button to nil before drawing.  Then reset it so we can draw it later.
@@ -1742,11 +1739,10 @@ bool RenderThemeMac::paintSearchFieldCancelButton(const RenderBox& box, const Pa
 
     FloatRect unzoomedRect(paintingPos, localBounds.size());
     if (zoomLevel != 1.0f) {
-        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
-        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.x(), unzoomedRect.y());
+        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
+        paintInfo.context().translate(unzoomedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
+        paintInfo.context().translate(-unzoomedRect.location());
     }
     [[search cancelButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(box)];
     [[search cancelButtonCell] setControlView:nil];
@@ -1878,11 +1874,10 @@ bool RenderThemeMac::paintSearchFieldResultsButton(const RenderBox& box, const P
     
     FloatRect unzoomedRect(paintingPos, localBounds.size());
     if (zoomLevel != 1.0f) {
-        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
-        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.x(), unzoomedRect.y());
+        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
+        paintInfo.context().translate(unzoomedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
+        paintInfo.context().translate(-unzoomedRect.location());
     }
 
     [[search searchButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(box)];
@@ -2114,7 +2109,7 @@ bool RenderThemeMac::paintImageControlsButton(const RenderObject& renderer, cons
     LocalCurrentGraphicsContext localContext(paintInfo.context());
     GraphicsContextStateSaver stateSaver(paintInfo.context());
 
-    paintInfo.context().translate(rect.x(), rect.y());
+    paintInfo.context().translate(rect.location());
 
     IntRect innerFrame(IntPoint(), rect.size());
     [cell drawWithFrame:innerFrame inView:documentViewFor(renderer)];

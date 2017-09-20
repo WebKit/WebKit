@@ -90,7 +90,7 @@ FloatSize ImageBuffer::clampedSize(const FloatSize& size, FloatSize& scale)
         return size;
 
     FloatSize clampedSize = ImageBuffer::clampedSize(size);
-    scale = FloatSize(clampedSize.width() / size.width(), clampedSize.height() / size.height());
+    scale = clampedSize / size;
     ASSERT(!sizeNeedsClamping(clampedSize));
     ASSERT(!sizeNeedsClamping(size, scale));
     return clampedSize;
@@ -211,7 +211,7 @@ std::unique_ptr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const FloatSize
         return nullptr;
 
     // Set up a corresponding scale factor on the graphics context.
-    buffer->context().scale(FloatSize(scaledSize.width() / size.width(), scaledSize.height() / size.height()));
+    buffer->context().scale(scaledSize / size);
     return buffer;
 }
 

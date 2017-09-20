@@ -108,7 +108,7 @@ void Theme::drawNamedImage(const String& name, GraphicsContext& context, const F
 
     // Draw a generic Wireless Playback icon.
 
-    context.scale(FloatSize(rect.size().width() / 100, rect.size().height() / 100));
+    context.scale(rect.size() / 100);
     context.translate(8, 1);
 
     Path outline;

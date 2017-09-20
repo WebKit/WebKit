@@ -91,11 +91,10 @@ static FloatRect getUnzoomedRectAndAdjustCurrentContext(const RenderObject& o, c
     float zoomLevel = o.style().effectiveZoom();
     FloatRect unzoomedRect(originalRect);
     if (zoomLevel != 1.0f) {
-        unzoomedRect.setWidth(unzoomedRect.width() / zoomLevel);
-        unzoomedRect.setHeight(unzoomedRect.height() / zoomLevel);
-        paintInfo.context().translate(unzoomedRect.x(), unzoomedRect.y());
+        unzoomedRect.setSize(unzoomedRect.size() / zoomLevel);
+        paintInfo.context().translate(unzoomedRect.location());
         paintInfo.context().scale(zoomLevel);
-        paintInfo.context().translate(-unzoomedRect.x(), -unzoomedRect.y());
+        paintInfo.context().translate(-unzoomedRect.location());
     }
     return unzoomedRect;
 }

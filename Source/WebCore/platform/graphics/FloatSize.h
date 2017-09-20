@@ -202,6 +202,11 @@ inline FloatSize operator*(const FloatSize& a, const FloatSize& b)
     return FloatSize(a.width() * b.width(), a.height() * b.height());
 }
 
+inline FloatSize operator/(const FloatSize& a, const FloatSize& b)
+{
+    return FloatSize(a.width() / b.width(), a.height() / b.height());
+}
+
 inline FloatSize operator/(const FloatSize& a, float b)
 {
     return FloatSize(a.width() / b, a.height() / b);

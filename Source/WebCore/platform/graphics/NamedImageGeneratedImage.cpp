@@ -46,10 +46,10 @@ ImageDrawResult NamedImageGeneratedImage::draw(GraphicsContext& context, const F
     GraphicsContextStateSaver stateSaver(context);
     context.setCompositeOperation(compositeOp, blendMode);
     context.clip(dstRect);
-    context.translate(dstRect.x(), dstRect.y());
+    context.translate(dstRect.location());
     if (dstRect.size() != srcRect.size())
         context.scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
-    context.translate(-srcRect.x(), -srcRect.y());
+    context.translate(-srcRect.location());
 
     Theme::singleton().drawNamedImage(m_name, context, dstRect);
     return ImageDrawResult::DidDraw;

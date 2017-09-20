@@ -98,7 +98,7 @@ public:
     bool isZero() const { return m_size.isZero(); }
     bool isExpressibleAsIntRect() const;
 
-    FloatPoint center() const { return FloatPoint(x() + width() / 2, y() + height() / 2); }
+    FloatPoint center() const { return location() + size() / 2; }
 
     void move(const FloatSize& delta) { m_location += delta; } 
     void moveBy(const FloatPoint& delta) { m_location.move(delta.x(), delta.y()); }
@@ -166,6 +166,7 @@ public:
     void inflate(float d) { inflateX(d); inflateY(d); }
     void scale(float s) { scale(s, s); }
     WEBCORE_EXPORT void scale(float sx, float sy);
+    void scale(FloatSize size) { scale(size.width(), size.height()); }
 
     FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }
 

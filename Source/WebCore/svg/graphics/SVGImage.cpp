@@ -298,14 +298,14 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
         context.setCompositeOperation(CompositeSourceOver, BlendModeNormal);
     }
 
-    FloatSize scale(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height());
+    FloatSize scale(dstRect.size() / srcRect.size());
     
     // We can only draw the entire frame, clipped to the rect we want. So compute where the top left
     // of the image would be if we were drawing without clipping, and translate accordingly.
     FloatSize topLeftOffset(srcRect.location().x() * scale.width(), srcRect.location().y() * scale.height());
     FloatPoint destOffset = dstRect.location() - topLeftOffset;
 
-    context.translate(destOffset.x(), destOffset.y());
+    context.translate(destOffset);
     context.scale(scale);
 
     view->resize(containerSize());

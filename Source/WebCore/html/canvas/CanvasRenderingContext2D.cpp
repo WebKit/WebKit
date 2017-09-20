@@ -1651,9 +1651,9 @@ ExceptionOr<void> CanvasRenderingContext2D::drawImage(HTMLVideoElement& video, c
 
     GraphicsContextStateSaver stateSaver(*c);
     c->clip(dstRect);
-    c->translate(dstRect.x(), dstRect.y());
+    c->translate(dstRect.location());
     c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
-    c->translate(-srcRect.x(), -srcRect.y());
+    c->translate(-srcRect.location());
     video.paintCurrentFrameInContext(*c, FloatRect(FloatPoint(), size(video)));
     stateSaver.restore();
     didDraw(dstRect);
@@ -1778,8 +1778,8 @@ template<class T> void CanvasRenderingContext2D::fullCanvasCompositedDrawImage(T
     adjustedDest.setLocation(FloatPoint(0, 0));
     AffineTransform effectiveTransform = c->getCTM();
     IntRect transformedAdjustedRect = enclosingIntRect(effectiveTransform.mapRect(adjustedDest));
-    buffer->context().translate(-transformedAdjustedRect.location().x(), -transformedAdjustedRect.location().y());
-    buffer->context().translate(croppedOffset.width(), croppedOffset.height());
+    buffer->context().translate(-transformedAdjustedRect.location());
+    buffer->context().translate(croppedOffset);
     buffer->context().concatCTM(effectiveTransform);
     drawImageToContext(image, buffer->context(), adjustedDest, src, CompositeSourceOver);
 
@@ -2642,12 +2642,12 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         maskImageContext.setTextDrawingMode(fill ? TextModeFill : TextModeStroke);
 
         if (useMaxWidth) {
-            maskImageContext.translate(location.x() - maskRect.x(), location.y() - maskRect.y());
+            maskImageContext.translate(location - maskRect.location());
             // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
             maskImageContext.scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
             fontProxy.drawBidiText(maskImageContext, textRun, FloatPoint(0, 0), FontCascade::UseFallbackIfFontNotReady);
         } else {
-            maskImageContext.translate(-maskRect.x(), -maskRect.y());
+            maskImageContext.translate(-maskRect.location());
             fontProxy.drawBidiText(maskImageContext, textRun, location, FontCascade::UseFallbackIfFontNotReady);
         }
 
@@ -2663,7 +2663,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
 
     GraphicsContextStateSaver stateSaver(*c);
     if (useMaxWidth) {
-        c->translate(location.x(), location.y());
+        c->translate(location);
         // We draw when fontWidth is 0 so compositing operations (eg, a "copy" op) still work.
         c->scale(FloatSize((fontWidth > 0 ? (width / fontWidth) : 0), 1));
         location = FloatPoint();
