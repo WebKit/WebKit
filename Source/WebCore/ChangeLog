@@ -1,3 +1,37 @@
+2017-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ActionType::CSSDisplayNoneStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=177275
+
+        Reviewed by Andy Estes.
+
+        It not a real action type anyways.  It was a fake action type
+        that stored a String indicating which ContentRuleLists had not triggered
+        an ignore-previous-rules action, so we should apply the default stylesheet,
+        which is the css-display-none selectors that match everything.
+
+        No change in behaviour.  Covered by existing tests.
+
+        * contentextensions/ContentExtensionActions.h:
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::serializeActions):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        (WebCore::ContentExtensions::Action::deserializeType):
+        (WebCore::ContentExtensions::Action::serializedLength):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::Action):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::actionsForResourceLoad const):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForPingLoad):
+        * contentextensions/ContentExtensionsBackend.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::open):
+        * page/UserContentProvider.cpp:
+        (WebCore::UserContentProvider::actionsForResourceLoad):
+        * page/UserContentProvider.h:
+
 2017-09-20  Zalan Bujtas  <zalan@apple.com>
 
         FloatingObject should not hold a raw pointer to RootInlineBox.

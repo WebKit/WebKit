@@ -56,8 +56,6 @@ inline std::ostream& operator<<(std::ostream& os, const ActionType& action)
         return os << "ActionType::BlockCookies";
     case ActionType::CSSDisplayNoneSelector:
         return os << "ActionType::CSSDisplayNone";
-    case ActionType::CSSDisplayNoneStyleSheet:
-        return os << "ActionType::CSSDisplayNoneStyleSheet";
     case ActionType::IgnorePreviousRules:
         return os << "ActionType::IgnorePreviousRules";
     case ActionType::MakeHTTPS:
@@ -187,21 +185,17 @@ private:
     CompiledContentExtensionData m_data;
 };
 
-void static testRequest(const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, bool ignorePreviousRules = false)
+void static testRequest(const ContentExtensions::ContentExtensionsBackend& contentExtensionsBackend, const ResourceLoadInfo& resourceLoadInfo, Vector<ContentExtensions::ActionType> expectedActions, size_t stylesheets = 1)
 {
     auto actions = contentExtensionsBackend.actionsForResourceLoad(resourceLoadInfo);
-    unsigned expectedSize = actions.size();
-    if (!ignorePreviousRules)
-        expectedSize--; // The last action is applying the compiled stylesheet.
-    
+    unsigned expectedSize = actions.first.size();
     EXPECT_EQ(expectedActions.size(), expectedSize);
     if (expectedActions.size() != expectedSize)
         return;
 
     for (unsigned i = 0; i < expectedActions.size(); ++i)
-        EXPECT_EQ(expectedActions[i], actions[i].type());
-    if (!ignorePreviousRules)
-        EXPECT_EQ(actions[actions.size() - 1].type(), ContentExtensions::ActionType::CSSDisplayNoneStyleSheet);
+        EXPECT_EQ(expectedActions[i], actions.first[i].type());
+    EXPECT_EQ(actions.second.size(), stylesheets);
 }
 
 static ResourceLoadInfo mainDocumentRequest(const char* url, ResourceType resourceType = ResourceType::Document)
@@ -775,19 +769,19 @@ TEST_F(ContentExtensionTest, DomainTriggersAlongMergedActions)
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
 
-    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, true);
-    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, true);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html", ResourceType::Image), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { }, 0);
 
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html"), { ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html"), { ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::BlockCookies });
-    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
-    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, true);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, 0);
+    testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies }, 0);
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(backend, mainDocumentRequest("http://webkit.org/except-this-ignore-previous-trigger-on-scripts.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(backend, mainDocumentRequest("http://notwebkit.org/except-this-ignore-previous-trigger-on-scripts.html.test.html", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneSelector, ContentExtensions::ActionType::BlockCookies });
@@ -868,12 +862,11 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     backend.addContentExtension("testFilter1", WTFMove(extension1));
     backend.addContentExtension("testFilter2", WTFMove(extension2));
     
-    // These each have two display:none stylesheets. The second one is implied by using the default parameter ignorePreviousRules = false.
-    testRequest(backend, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad});
-    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet});
-    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies/block_load.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::BlockLoad });
+    testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, 2);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load.html"), { ContentExtensions::ActionType::BlockLoad }, 2);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies }, 2);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_load/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad }, 2);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies/block_load.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad }, 2);
     
     auto ignoreExtension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore1\"}}]");
@@ -882,13 +875,13 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     ContentExtensions::ContentExtensionsBackend backendWithIgnore;
     backendWithIgnore.addContentExtension("testFilter1", WTFMove(ignoreExtension1));
     backendWithIgnore.addContentExtension("testFilter2", WTFMove(ignoreExtension2));
-    
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore1.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet}, true);
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore2.html"), { ContentExtensions::ActionType::BlockLoad, ContentExtensions::ActionType::CSSDisplayNoneStyleSheet }, true);
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore2.html"), { ContentExtensions::ActionType::CSSDisplayNoneStyleSheet}, true);
-    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/block_cookies/ignore1/ignore2.html"), { }, true);
+
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org"), { }, 2);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore1.html"), { }, 1);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore1.html"), { ContentExtensions::ActionType::BlockCookies }, 1);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore2.html"), { ContentExtensions::ActionType::BlockLoad }, 1);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore2.html"), { }, 1);
+    testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/block_cookies/ignore1/ignore2.html"), { }, 0);
 }
 
 TEST_F(ContentExtensionTest, TermsKnownToMatchAnything)
@@ -1072,7 +1065,7 @@ TEST_F(ContentExtensionTest, ResourceOrLoadTypeMatchingEverything)
         "{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"third-party\"]}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\",\"load-type\":[\"first-party\"]}}]");
     
-    testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org"), { }, 0);
     testRequest(backend, {URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Document}, { ContentExtensions::ActionType::BlockCookies });
     testRequest(backend, {URL(URL(), "http://webkit.org"), URL(URL(), "http://not_webkit.org"), ResourceType::Image}, { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad });
 }
@@ -1113,9 +1106,9 @@ TEST_F(ContentExtensionTest, WideNFA)
 
     testRequest(backend, mainDocumentRequest("http://webkit.org/AAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
     testRequest(backend, mainDocumentRequest("http://webkit.org/YAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ZAA"), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/AAA"), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/MAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ZAA"), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/AAA"), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/LAA/MAA"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, 0);
     testRequest(backend, mainDocumentRequest("http://webkit.org/"), { });
 }
     
@@ -1304,7 +1297,7 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     auto backend5 = makeBackend("[{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\".*\"}},"
         "{\"action\":{\"type\":\"css-display-none\",\"selector\":\".hidden\"},\"trigger\":{\"url-filter\":\".*\"}}]");
     EXPECT_EQ(nullptr, backend5.globalDisplayNoneStyleSheet(ASCIILiteral("testFilter")));
-    testRequest(backend5, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, true);
+    testRequest(backend5, mainDocumentRequest("http://webkit.org"), { ContentExtensions::ActionType::CSSDisplayNoneSelector }, 0);
     
     auto backend6 = makeBackend("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\".*\",\"if-domain\":[\"webkit.org\",\"*w3c.org\"],\"resource-type\":[\"document\",\"script\"]}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore\",\"if-domain\":[\"*webkit.org\",\"w3c.org\"]}},"
@@ -1316,10 +1309,10 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     testRequest(backend6, mainDocumentRequest("http://sub.webkit.org"), { });
     testRequest(backend6, mainDocumentRequest("http://sub.w3c.org"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend6, mainDocumentRequest("http://sub.whatwg.org"), { });
-    testRequest(backend6, mainDocumentRequest("http://webkit.org/ignore"), { }, true);
-    testRequest(backend6, mainDocumentRequest("http://w3c.org/ignore"), { }, true);
+    testRequest(backend6, mainDocumentRequest("http://webkit.org/ignore"), { }, 0);
+    testRequest(backend6, mainDocumentRequest("http://w3c.org/ignore"), { }, 0);
     testRequest(backend6, mainDocumentRequest("http://whatwg.org/ignore"), { });
-    testRequest(backend6, mainDocumentRequest("http://sub.webkit.org/ignore"), { }, true);
+    testRequest(backend6, mainDocumentRequest("http://sub.webkit.org/ignore"), { }, 0);
     testRequest(backend6, mainDocumentRequest("http://sub.w3c.org/ignore"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend6, mainDocumentRequest("http://sub.whatwg.org/ignore"), { });
     testRequest(backend6, subResourceRequest("http://example.com/image.png", "http://webkit.org/", ResourceType::Image), { });
@@ -1328,13 +1321,13 @@ TEST_F(ContentExtensionTest, MatchesEverything)
     testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://webkit.org/", ResourceType::Script), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://w3c.org/", ResourceType::Script), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad });
     testRequest(backend6, subResourceRequest("http://example.com/script.js", "http://example.com/", ResourceType::Script), { });
-    testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://webkit.org/", ResourceType::Image), { }, true);
+    testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://webkit.org/", ResourceType::Image), { }, 0);
     testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://example.com/", ResourceType::Image), { });
     testRequest(backend6, subResourceRequest("http://example.com/ignore/image.png", "http://example.org/", ResourceType::Image), { ContentExtensions::ActionType::BlockCookies });
     testRequest(backend6, subResourceRequest("http://example.com/doc.html", "http://example.org/", ResourceType::Document), { });
     testRequest(backend6, subResourceRequest("http://example.com/", "http://example.com/", ResourceType::Font), { });
-    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Image), { }, true);
-    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Font), { }, true);
+    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Image), { }, 0);
+    testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://webkit.org/", ResourceType::Font), { }, 0);
     testRequest(backend6, subResourceRequest("http://example.com/", "http://example.com/", ResourceType::Script), { });
     testRequest(backend6, subResourceRequest("http://example.com/ignore", "http://example.com/", ResourceType::Script), { });
 }
@@ -1521,12 +1514,12 @@ TEST_F(ContentExtensionTest, StrictPrefixSeparatedMachines3)
     testRequest(backend, mainDocumentRequest("http://webkit.org/D"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://webkit.org/AAD"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(backend, mainDocumentRequest("http://webkit.org/AB"), { });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ABA"), { }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ABAD"), { }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ABA"), { }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ABAD"), { }, 0);
     testRequest(backend, mainDocumentRequest("http://webkit.org/BC"), { ContentExtensions::ActionType::MakeHTTPS });
     testRequest(backend, mainDocumentRequest("http://webkit.org/ABC"), { ContentExtensions::ActionType::MakeHTTPS });
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ABABC"), { ContentExtensions::ActionType::MakeHTTPS }, true);
-    testRequest(backend, mainDocumentRequest("http://webkit.org/ABABCAD"), { ContentExtensions::ActionType::MakeHTTPS }, true);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ABABC"), { ContentExtensions::ActionType::MakeHTTPS }, 0);
+    testRequest(backend, mainDocumentRequest("http://webkit.org/ABABCAD"), { ContentExtensions::ActionType::MakeHTTPS }, 0);
     testRequest(backend, mainDocumentRequest("http://webkit.org/ABCAD"), { ContentExtensions::ActionType::MakeHTTPS, ContentExtensions::ActionType::BlockLoad });
 }
     
@@ -1944,9 +1937,9 @@ TEST_F(ContentExtensionTest, RangeOverlapCase1)
 
     testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { }, true);
-    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { }, true);
-    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { }, 0);
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { }, 0);
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { }, 0);
     testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
@@ -1955,9 +1948,9 @@ TEST_F(ContentExtensionTest, RangeOverlapCase1)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"[c-e]\"}}]");
     testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { }, true);
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { }, true);
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { }, 0);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { }, 0);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { }, 0);
     testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
@@ -1969,7 +1962,7 @@ TEST_F(ContentExtensionTest, RangeOverlapCase2)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"^b\"}}]");
 
     testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { }, 0);
     testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
@@ -1978,7 +1971,7 @@ TEST_F(ContentExtensionTest, RangeOverlapCase2)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"l\"}}]");
     testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.k.xxx/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { }, 0);
     testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
 }
@@ -2409,9 +2402,9 @@ TEST_F(ContentExtensionTest, CombinedRangeOverlapCase1)
 
     testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { }, true);
-    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { }, true);
-    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { }, 0);
+    testRequest(matchBackend, mainDocumentRequest("d://www.webkit.org/"), { }, 0);
+    testRequest(matchBackend, mainDocumentRequest("e://www.webkit.org/"), { }, 0);
     testRequest(matchBackend, mainDocumentRequest("f://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
@@ -2420,9 +2413,9 @@ TEST_F(ContentExtensionTest, CombinedRangeOverlapCase1)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"(bar)*[c-e]\"}}]");
     testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.b.xxx/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { }, true);
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { }, true);
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.c.xxx/"), { }, 0);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.d.xxx/"), { }, 0);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.e.xxx/"), { }, 0);
     testRequest(searchBackend, mainDocumentRequest("zzz://www.f.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
@@ -2435,7 +2428,7 @@ TEST_F(ContentExtensionTest, CombinedRangeOverlapCase2)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"^(bar)*b\"}}]");
 
     testRequest(matchBackend, mainDocumentRequest("a://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { }, true);
+    testRequest(matchBackend, mainDocumentRequest("b://www.webkit.org/"), { }, 0);
     testRequest(matchBackend, mainDocumentRequest("c://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("m://www.webkit.org/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(matchBackend, mainDocumentRequest("n://www.webkit.org/"), { });
@@ -2444,7 +2437,7 @@ TEST_F(ContentExtensionTest, CombinedRangeOverlapCase2)
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"(bar)*l\"}}]");
     testRequest(searchBackend, mainDocumentRequest("zzz://www.a.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.k.xxx/"), { ContentExtensions::ActionType::BlockLoad });
-    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { }, true);
+    testRequest(searchBackend, mainDocumentRequest("zzz://www.l.xxx/"), { }, 0);
     testRequest(searchBackend, mainDocumentRequest("zzz://www.m.xxx/"), { ContentExtensions::ActionType::BlockLoad });
     testRequest(searchBackend, mainDocumentRequest("zzz://www.n.xxx/"), { });
 }

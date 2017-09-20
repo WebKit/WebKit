@@ -1,3 +1,15 @@
+2017-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Remove ActionType::CSSDisplayNoneStyleSheet
+        https://bugs.webkit.org/show_bug.cgi?id=177275
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (WebCore::ContentExtensions::operator<<):
+        (TestWebKitAPI::testRequest):
+        (TestWebKitAPI::TEST_F):
+
 2017-09-20  Jonathan Bedard  <jbedard@apple.com>
 
         Device iOS 11 builds fail with FileProvider linker errors

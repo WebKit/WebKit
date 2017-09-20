@@ -68,19 +68,20 @@ void ContentExtensionsBackend::removeAllContentExtensions()
     m_contentExtensions.clear();
 }
 
-Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const
+std::pair<Vector<Action>, Vector<String>> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLoadInfo& resourceLoadInfo) const
 {
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double addedTimeStart = monotonicallyIncreasingTime();
 #endif
     if (resourceLoadInfo.resourceURL.protocolIsData())
-        return Vector<Action>();
+        return { };
 
     const String& urlString = resourceLoadInfo.resourceURL.string();
     ASSERT_WITH_MESSAGE(urlString.containsOnlyASCII(), "A decoded URL should only contain ASCII characters. The matching algorithm assumes the input is ASCII.");
     const CString& urlCString = urlString.utf8();
 
     Vector<Action> finalActions;
+    Vector<String> stylesheetIdentifiers;
     ResourceFlags flags = resourceLoadInfo.getResourceFlags();
     for (auto& contentExtension : m_contentExtensions.values()) {
         const CompiledContentExtension& compiledExtension = contentExtension->compiledExtension();
@@ -122,16 +123,14 @@ Vector<Action> ContentExtensionsBackend::actionsForResourceLoad(const ResourceLo
                 finalActions.append(action);
             }
         }
-        if (!sawIgnorePreviousRules) {
-            finalActions.append(Action(ActionType::CSSDisplayNoneStyleSheet, contentExtension->identifier()));
-            finalActions.last().setExtensionIdentifier(contentExtension->identifier());
-        }
+        if (!sawIgnorePreviousRules)
+            stylesheetIdentifiers.append(contentExtension->identifier());
     }
 #if CONTENT_EXTENSIONS_PERFORMANCE_REPORTING
     double addedTimeEnd = monotonicallyIncreasingTime();
     dataLogF("Time added: %f microseconds %s \n", (addedTimeEnd - addedTimeStart) * 1.0e6, resourceLoadInfo.resourceURL.string().utf8().data());
 #endif
-    return finalActions;
+    return { WTFMove(finalActions), WTFMove(stylesheetIdentifiers) };
 }
 
 void ContentExtensionsBackend::forEach(const WTF::Function<void(const String&, ContentExtension&)>& apply)
@@ -166,12 +165,12 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
     }
 
     ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, resourceType };
-    Vector<ContentExtensions::Action> actions = actionsForResourceLoad(resourceLoadInfo);
+    auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     bool willBlockLoad = false;
     bool willBlockCookies = false;
     bool willMakeHTTPS = false;
-    for (const auto& action : actions) {
+    for (const auto& action : actions.first) {
         switch (action.type()) {
         case ContentExtensions::ActionType::BlockLoad:
             willBlockLoad = true;
@@ -185,16 +184,6 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
             else if (currentDocument)
                 currentDocument->extensionStyleSheets().addDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
             break;
-        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet: {
-            StyleSheetContents* styleSheetContents = globalDisplayNoneStyleSheet(action.stringArgument());
-            if (styleSheetContents) {
-                if (resourceType == ResourceType::Document)
-                    initiatingDocumentLoader.addPendingContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-                else if (currentDocument)
-                    currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(action.stringArgument(), *styleSheetContents);
-            }
-            break;
-        }
         case ContentExtensions::ActionType::MakeHTTPS: {
             if ((url.protocolIs("http") || url.protocolIs("ws"))
                 && (!url.port() || isDefaultPortForProtocol(url.port().value(), url.protocol())))
@@ -203,6 +192,15 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
         }
         case ContentExtensions::ActionType::IgnorePreviousRules:
             RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
+    for (const auto& identifier : actions.second) {
+        if (auto* styleSheetContents = globalDisplayNoneStyleSheet(identifier)) {
+            if (resourceType == ResourceType::Document)
+                initiatingDocumentLoader.addPendingContentExtensionSheet(identifier, *styleSheetContents);
+            else if (currentDocument)
+                currentDocument->extensionStyleSheets().maybeAddContentExtensionSheet(identifier, *styleSheetContents);
         }
     }
 
@@ -224,12 +222,12 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
         return { };
 
     ResourceLoadInfo resourceLoadInfo = { url, mainDocumentURL, ResourceType::Raw };
-    Vector<ContentExtensions::Action> actions = actionsForResourceLoad(resourceLoadInfo);
+    auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     bool willBlockLoad = false;
     bool willBlockCookies = false;
     bool willMakeHTTPS = false;
-    for (const auto& action : actions) {
+    for (const auto& action : actions.first) {
         switch (action.type()) {
         case ContentExtensions::ActionType::BlockLoad:
             willBlockLoad = true;
@@ -242,7 +240,6 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
                 willMakeHTTPS = true;
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
-        case ContentExtensions::ActionType::CSSDisplayNoneStyleSheet:
             break;
         case ContentExtensions::ActionType::IgnorePreviousRules:
             RELEASE_ASSERT_NOT_REACHED();

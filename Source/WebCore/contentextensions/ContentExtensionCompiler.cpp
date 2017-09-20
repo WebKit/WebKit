@@ -151,9 +151,6 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
         };
 
         switch (actionType) {
-        case ActionType::CSSDisplayNoneStyleSheet:
-            RELEASE_ASSERT_NOT_REACHED();
-
         case ActionType::CSSDisplayNoneSelector: {
             const auto addResult = cssDisplayNoneActionsMap.add(rule.trigger(), PendingDisplayNoneActions());
             PendingDisplayNoneActions& pendingDisplayNoneActions = addResult.iterator->value;

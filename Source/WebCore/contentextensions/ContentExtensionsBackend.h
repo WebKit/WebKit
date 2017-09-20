@@ -61,7 +61,7 @@ public:
     WEBCORE_EXPORT void removeAllContentExtensions();
 
     // - Internal WebCore Interface.
-    WEBCORE_EXPORT Vector<Action> actionsForResourceLoad(const ResourceLoadInfo&) const;
+    WEBCORE_EXPORT std::pair<Vector<Action>, Vector<String>> actionsForResourceLoad(const ResourceLoadInfo&) const;
     WEBCORE_EXPORT StyleSheetContents* globalDisplayNoneStyleSheet(const String& identifier) const;
 
     BlockedStatus processContentExtensionRulesForLoad(const URL&, ResourceType, DocumentLoader& initiatingDocumentLoader);

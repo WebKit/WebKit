@@ -2251,7 +2251,7 @@ RefPtr<DOMWindow> DOMWindow::open(DOMWindow& activeWindow, DOMWindow& firstWindo
         && firstFrame->mainFrame().document()
         && firstFrame->mainFrame().document()->loader()) {
         ResourceLoadInfo resourceLoadInfo { firstFrame->document()->completeURL(urlString), firstFrame->mainFrame().document()->url(), ResourceType::Popup };
-        for (auto& action : firstFrame->page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader())) {
+        for (auto& action : firstFrame->page()->userContentProvider().actionsForResourceLoad(resourceLoadInfo, *firstFrame->mainFrame().document()->loader()).first) {
             if (action.type() == ContentExtensions::ActionType::BlockLoad)
                 return nullptr;
         }

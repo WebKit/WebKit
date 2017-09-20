@@ -67,8 +67,6 @@ Action Action::deserialize(const SerializedActionByte* actions, const uint32_t a
         return Action(actionType, location);
     case ActionType::CSSDisplayNoneSelector:
         return Action(actionType, deserializeString(actions, actionsLength, location + sizeof(ActionType)), location);
-    case ActionType::CSSDisplayNoneStyleSheet:
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -84,8 +82,6 @@ ActionType Action::deserializeType(const SerializedActionByte* actions, const ui
     case ActionType::CSSDisplayNoneSelector:
     case ActionType::MakeHTTPS:
         return type;
-    case ActionType::CSSDisplayNoneStyleSheet:
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -110,8 +106,6 @@ uint32_t Action::serializedLength(const SerializedActionByte* actions, const uin
             return prefixLength + stringLength * sizeof(UChar);
         return prefixLength + stringLength * sizeof(LChar);
     }
-    case ActionType::CSSDisplayNoneStyleSheet:
-        break;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }
