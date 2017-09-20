@@ -54,10 +54,6 @@ set(ENABLE_API_TESTS ${DEVELOPER_MODE})
 
 set(JavaScriptCore_LIBRARY_TYPE STATIC)
 set(WebCore_LIBRARY_TYPE STATIC)
-set(WebKit2_OUTPUT_NAME WPEWebKit)
-set(WebKit2_WebProcess_OUTPUT_NAME WPEWebProcess)
-set(WebKit2_NetworkProcess_OUTPUT_NAME WPENetworkProcess)
-set(WebKit2_StorageProcess_OUTPUT_NAME WPEStorageProcess)
 
 find_package(ICU REQUIRED)
 find_package(Threads REQUIRED)

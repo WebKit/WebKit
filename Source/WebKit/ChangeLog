@@ -1,3 +1,15 @@
+2017-09-20  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        REGRESSION(r222194) [WPE] Library and executable output names broken
+        https://bugs.webkit.org/show_bug.cgi?id=177273
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        Move the WebKit2 output name variables to here from Source/cmake, since this is a better
+        place and where they are set on all other ports. Update them for the changes in r222194.
+
+        * PlatformWPE.cmake:
+
 2017-09-20  Jonathan Bedard  <jbedard@apple.com>
 
         Removed nullable from UIDragItem property
