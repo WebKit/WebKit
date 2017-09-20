@@ -1,3 +1,30 @@
+2017-09-20  Keith Miller  <keith_miller@apple.com>
+
+        JSC Xcode build should use unified sources for platform independent files
+        https://bugs.webkit.org/show_bug.cgi?id=177190
+
+        Reviewed by Saam Barati.
+
+        This patch changes the Xcode build to use unified sources. The
+        main difference from a development perspective is that instead of
+        added source files to Xcode they need to be added to the shared
+        sources.txt. For now, platform specific files are still added
+        to the JavaScriptCore target.
+
+        Because Xcode needs to know about all the files before we generate
+        them all the unified source files need to be added to the
+        JavaScriptCore framework target. As a result, if we run out of
+        bundle files more will need to be added to the project. Currently,
+        there are no spare files. If adding more bundle files becomes
+        problematic we can change this.
+
+        LowLevelInterpreter.cpp can't be added to the unified source list yet
+        due to a clang bug.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * sources.txt: Added.
+
 2017-09-20  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Cannot find script to generate unified sources.

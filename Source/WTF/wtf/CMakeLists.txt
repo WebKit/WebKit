@@ -397,7 +397,7 @@ endif ()
 file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WTF/Scripts)
 
 file(COPY
-    ../generate-unified-source-bundles.rb
+    ../Scripts/generate-unified-source-bundles.rb
     DESTINATION
     ${FORWARDING_HEADERS_DIR}/WTF/Scripts
 )

@@ -2,6 +2,45 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
+macro(WEBKIT_COMPUTE_SOURCES_FROM_FILE _framework _file)
+
+    if (WIN32 AND INTERNAL_BUILD)
+        set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
+    else ()
+        set(WTF_SCRIPTS_DIR "${FORWARDING_HEADERS_DIR}/WTF/Scripts")
+    endif ()
+
+    execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        "--print-bundled-sources"
+        "--sources-file" ${_file}
+        RESULT_VARIABLE _resultTmp
+        OUTPUT_VARIABLE _outputTmp)
+
+    if (${_resultTmp})
+         message(FATAL_ERROR "generate-unified-source-bundles.rb exited with non-zero status, exiting")
+    endif ()
+
+    foreach (_sourceFileTmp IN LISTS _outputTmp)
+        set_source_files_properties(${_sourceFileTmp} PROPERTIES HEADER_FILE_ONLY ON)
+        list(APPEND ${_framework}_HEADERS ${_sourceFileTmp})
+    endforeach ()
+    unset(_sourceFileTmp)
+
+    execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
+        "--sources-file" ${_file}
+        RESULT_VARIABLE  _resultTmp
+        OUTPUT_VARIABLE _outputTmp)
+
+    if (${_resultTmp})
+        message(FATAL_ERROR "generate-unified-source-bundles.rb exited with non-zero status, exiting")
+    endif ()
+
+    list(APPEND ${_framework}_SOURCES ${_outputTmp})
+    unset(_resultTmp)
+    unset(_outputTmp)
+endmacro()
+
 macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
     set(_file ${CMAKE_CURRENT_SOURCE_DIR}/Platform${PORT}.cmake)
     if (EXISTS ${_file})
