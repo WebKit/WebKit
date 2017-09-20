@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "CacheStorage.h"
+#include "DOMCacheStorage.h"
 
 #include "CacheQueryOptions.h"
 #include "JSDOMCache.h"
@@ -35,14 +35,14 @@ using namespace WebCore::DOMCacheEngine;
 
 namespace WebCore {
 
-CacheStorage::CacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
+DOMCacheStorage::DOMCacheStorage(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection)
     : ActiveDOMObject(&context)
     , m_connection(WTFMove(connection))
 {
     suspendIfNeeded();
 }
 
-String CacheStorage::origin() const
+String DOMCacheStorage::origin() const
 {
     // FIXME: Do we really need to check for origin being null?
     auto* origin = scriptExecutionContext() ? scriptExecutionContext()->securityOrigin() : nullptr;
@@ -83,7 +83,7 @@ static inline Vector<Ref<DOMCache>> copyCaches(const Vector<Ref<DOMCache>>& cach
     return copy;
 }
 
-void CacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
+void DOMCacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& options, Ref<DeferredPromise>&& promise)
 {
     retrieveCaches([this, info = WTFMove(info), options = WTFMove(options), promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -118,7 +118,7 @@ void CacheStorage::match(DOMCache::RequestInfo&& info, CacheQueryOptions&& optio
     });
 }
 
-void CacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -129,7 +129,7 @@ void CacheStorage::has(const String& name, DOMPromiseDeferred<IDLBoolean>&& prom
     });
 }
 
-void CacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&& callback)
+void DOMCacheStorage::retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&& callback)
 {
     String origin = this->origin();
     if (origin.isNull())
@@ -173,7 +173,7 @@ static void logConsolePersistencyError(ScriptExecutionContext* context, const St
     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("There was an error making ", cacheName, " persistent on the filesystem"));
 }
 
-void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
+void DOMCacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMCache>>&& promise)
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -210,7 +210,7 @@ void CacheStorage::open(const String& name, DOMPromiseDeferred<IDLInterface<DOMC
     });
 }
 
-void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
+void DOMCacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& promise)
 {
     retrieveCaches([this, name, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -244,7 +244,7 @@ void CacheStorage::remove(const String& name, DOMPromiseDeferred<IDLBoolean>&& p
     });
 }
 
-void CacheStorage::keys(KeysPromise&& promise)
+void DOMCacheStorage::keys(KeysPromise&& promise)
 {
     retrieveCaches([this, promise = WTFMove(promise)](std::optional<Exception>&& exception) mutable {
         if (exception) {
@@ -260,17 +260,17 @@ void CacheStorage::keys(KeysPromise&& promise)
     });
 }
 
-void CacheStorage::stop()
+void DOMCacheStorage::stop()
 {
     m_isStopped = true;
 }
 
-const char* CacheStorage::activeDOMObjectName() const
+const char* DOMCacheStorage::activeDOMObjectName() const
 {
     return "CacheStorage";
 }
 
-bool CacheStorage::canSuspendForDocumentSuspension() const
+bool DOMCacheStorage::canSuspendForDocumentSuspension() const
 {
     return !hasPendingActivity();
 }

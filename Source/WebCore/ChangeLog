@@ -1,3 +1,45 @@
+2017-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Rename CacheStorage to DOMCacheStorage
+        https://bugs.webkit.org/show_bug.cgi?id=177025
+
+        Reviewed by Chris Dumez.
+
+        No change of behavior, just renaming CacheStorage class and files to DOMCacheStorage.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * Modules/cache/DOMCacheStorage.cpp: Renamed from Source/WebCore/Modules/cache/CacheStorage.cpp.
+        (WebCore::DOMCacheStorage::DOMCacheStorage):
+        (WebCore::DOMCacheStorage::origin const):
+        (WebCore::doSequentialMatch):
+        (WebCore::startSequentialMatch):
+        (WebCore::copyCaches):
+        (WebCore::DOMCacheStorage::match):
+        (WebCore::DOMCacheStorage::has):
+        (WebCore::DOMCacheStorage::retrieveCaches):
+        (WebCore::logConsolePersistencyError):
+        (WebCore::DOMCacheStorage::open):
+        (WebCore::DOMCacheStorage::remove):
+        (WebCore::DOMCacheStorage::keys):
+        (WebCore::DOMCacheStorage::stop):
+        (WebCore::DOMCacheStorage::activeDOMObjectName const):
+        (WebCore::DOMCacheStorage::canSuspendForDocumentSuspension const):
+        * Modules/cache/DOMCacheStorage.h: Renamed from Source/WebCore/Modules/cache/CacheStorage.h.
+        (WebCore::DOMCacheStorage::create):
+        * Modules/cache/DOMCacheStorage.idl: Renamed from Source/WebCore/Modules/cache/CacheStorage.idl.
+        * Modules/cache/DOMWindowCaches.cpp:
+        (WebCore::DOMWindowCaches::caches):
+        (WebCore::DOMWindowCaches::caches const):
+        * Modules/cache/DOMWindowCaches.h:
+        * Modules/cache/DOMWindowCaches.idl:
+        * Modules/cache/WorkerGlobalScopeCaches.cpp:
+        (WebCore::WorkerGlobalScopeCaches::caches):
+        (WebCore::WorkerGlobalScopeCaches::caches const):
+        * Modules/cache/WorkerGlobalScopeCaches.h:
+        * Modules/cache/WorkerGlobalScopeCaches.idl:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2017-09-20  Eric Carlson  <eric.carlson@apple.com>
 
         Switch PeerConnection to release logging

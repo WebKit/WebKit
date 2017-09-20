@@ -26,8 +26,8 @@
 #include "config.h"
 #include "DOMWindowCaches.h"
 
-#include "CacheStorage.h"
 #include "CacheStorageProvider.h"
+#include "DOMCacheStorage.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
@@ -56,7 +56,7 @@ DOMWindowCaches* DOMWindowCaches::from(DOMWindow* window)
     return supplement;
 }
 
-CacheStorage* DOMWindowCaches::caches(DOMWindow& window)
+DOMCacheStorage* DOMWindowCaches::caches(DOMWindow& window)
 {
     if (!window.isCurrentlyDisplayedInFrame())
         return nullptr;
@@ -64,12 +64,12 @@ CacheStorage* DOMWindowCaches::caches(DOMWindow& window)
     return DOMWindowCaches::from(&window)->caches();
 }
 
-CacheStorage* DOMWindowCaches::caches() const
+DOMCacheStorage* DOMWindowCaches::caches() const
 {
     ASSERT(frame());
     ASSERT(frame()->document());
     if (!m_caches && frame()->page())
-        m_caches = CacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection(frame()->page()->sessionID()));
+        m_caches = DOMCacheStorage::create(*frame()->document(), frame()->page()->cacheStorageProvider().createCacheStorageConnection(frame()->page()->sessionID()));
     return m_caches.get();
 }
 

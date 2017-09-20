@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class CacheStorage;
+class DOMCacheStorage;
 class WorkerGlobalScope;
 
 class WorkerGlobalScopeCaches : public Supplement<WorkerGlobalScope> {
@@ -39,15 +39,15 @@ public:
     {
     }
 
-    static CacheStorage* caches(WorkerGlobalScope&);
+    static DOMCacheStorage* caches(WorkerGlobalScope&);
 
 private:
     static WorkerGlobalScopeCaches* from(WorkerGlobalScope&);
     static const char* supplementName();
-    CacheStorage* caches() const;
+    DOMCacheStorage* caches() const;
 
     WorkerGlobalScope& m_scope;
-    mutable RefPtr<CacheStorage> m_caches;
+    mutable RefPtr<DOMCacheStorage> m_caches;
 };
 
 } // namespace WebCore

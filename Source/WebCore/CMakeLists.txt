@@ -188,9 +188,9 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/beacon/NavigatorBeacon.idl
 
-    Modules/cache/DOMCache.idl
     Modules/cache/CacheQueryOptions.idl
-    Modules/cache/CacheStorage.idl
+    Modules/cache/DOMCache.idl
+    Modules/cache/DOMCacheStorage.idl
     Modules/cache/DOMWindowCaches.idl
     Modules/cache/WorkerGlobalScopeCaches.idl
 
@@ -970,9 +970,9 @@ set(WebCore_SOURCES
 
     Modules/beacon/NavigatorBeacon.cpp
 
-    Modules/cache/DOMCache.cpp
-    Modules/cache/CacheStorage.cpp
     Modules/cache/CacheStorageConnection.cpp
+    Modules/cache/DOMCache.cpp
+    Modules/cache/DOMCacheStorage.cpp
     Modules/cache/DOMCacheEngine.cpp
     Modules/cache/DOMWindowCaches.cpp
     Modules/cache/WorkerCacheStorageConnection.cpp

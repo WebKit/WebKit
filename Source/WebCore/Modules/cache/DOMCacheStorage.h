@@ -23,16 +23,42 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef (FetchRequest or USVString) RequestInfo;
+#pragma once
 
-[
-    SecureContext,
-    Exposed=(Window,Worker),
-    EnabledAtRuntime=CacheAPI,
-] interface CacheStorage {
-    [NewObject] Promise<any> match(RequestInfo request, optional CacheQueryOptions options);
-    [NewObject] Promise<boolean> has(DOMString cacheName);
-    [NewObject] Promise<Cache> open(DOMString cacheName);
-    [NewObject, ImplementedAs=remove] Promise<boolean> delete(DOMString cacheName);
-    [NewObject] Promise<sequence<DOMString>> keys();
+#include "CacheStorageConnection.h"
+#include "DOMCache.h"
+#include "FetchRequest.h"
+#include <wtf/Forward.h>
+
+namespace WebCore {
+
+class DOMCacheStorage : public RefCounted<DOMCacheStorage>, public ActiveDOMObject {
+public:
+    static Ref<DOMCacheStorage> create(ScriptExecutionContext& context, Ref<CacheStorageConnection>&& connection) { return adoptRef(*new DOMCacheStorage(context, WTFMove(connection))); }
+
+    using KeysPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;
+
+    void match(DOMCache::RequestInfo&&, CacheQueryOptions&&, Ref<DeferredPromise>&&);
+    void has(const String&, DOMPromiseDeferred<IDLBoolean>&&);
+    void open(const String&, DOMPromiseDeferred<IDLInterface<DOMCache>>&&);
+    void remove(const String&, DOMPromiseDeferred<IDLBoolean>&&);
+    void keys(KeysPromise&&);
+
+private:
+    DOMCacheStorage(ScriptExecutionContext&, Ref<CacheStorageConnection>&&);
+
+    // ActiveDOMObject
+    void stop() final;
+    const char* activeDOMObjectName() const final;
+    bool canSuspendForDocumentSuspension() const final;
+
+    void retrieveCaches(WTF::Function<void(std::optional<Exception>&&)>&&);
+    String origin() const;
+
+    Vector<Ref<DOMCache>> m_caches;
+    uint64_t m_updateCounter { 0 };
+    Ref<CacheStorageConnection> m_connection;
+    bool m_isStopped { false };
 };
+
+} // namespace WebCore
