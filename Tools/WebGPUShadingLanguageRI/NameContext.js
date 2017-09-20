@@ -96,13 +96,13 @@ class NameContext {
         return result;
     }
     
-    resolveFuncOverload(name, typeArguments, argumentTypes, returnType)
+    resolveFuncOverload(name, typeArguments, argumentTypes, returnType, allowEntryPoint = false)
     {
         let functions = this.get(Func, name);
         if (!functions)
             return {failures: []};
         
-        return resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType);
+        return resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType, allowEntryPoint);
     }
     
     get currentStatement()

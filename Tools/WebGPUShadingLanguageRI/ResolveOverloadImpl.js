@@ -24,7 +24,7 @@
  */
 "use strict";
 
-function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType)
+function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType, allowEntryPoint = false)
 {
     if (!functions)
         throw new Error("Null functions; that should have been caught by the caller.");
@@ -32,7 +32,7 @@ function resolveOverloadImpl(functions, typeArguments, argumentTypes, returnType
     let failures = [];
     let successes = [];
     for (let func of functions) {
-        if (func.shaderType) {
+        if (!allowEntryPoint && func.shaderType) {
             failures.push(new OverloadResolutionFailure(func, "Function is a " + func.shaderType + " shader, so it cannot be called from within an existing shader."))
             continue;
         }

@@ -78,6 +78,7 @@ load("ExpressionFinder.js");
 load("Field.js");
 load("FindHighZombies.js");
 load("FlattenProtocolExtends.js");
+load("FlattenedStructOffsetGatherer.js");
 load("FloatLiteral.js");
 load("FloatLiteralType.js");
 load("FoldConstexprs.js");

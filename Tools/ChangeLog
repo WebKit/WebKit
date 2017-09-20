@@ -1,5 +1,46 @@
 2017-09-20  Myles C. Maxfield  <mmaxfield@apple.com>
 
+        Make a playground where people can try WSL
+        https://bugs.webkit.org/show_bug.cgi?id=177125
+
+        Reviewed by Filip Pizlo.
+
+        This patch creates a webpage, index.html, which lets users type in a WSL program and
+        run it, and see the results.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CallFunction.js:
+        (callFunction):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker):
+        (Checker.prototype._checkShaderType.NonNumericSearcher):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitArrayRefType):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitPtrType):
+        (Checker.prototype._checkShaderType):
+        (Checker.prototype.visitFuncDef):
+        (Checker.prototype._requireBool):
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js: Copied from Tools/WebGPUShadingLanguageRI/CallFunction.js.
+        (FlattenedStructOffsetGatherer):
+        (FlattenedStructOffsetGatherer.prototype.get result):
+        (FlattenedStructOffsetGatherer.prototype.visitReferenceType):
+        (FlattenedStructOffsetGatherer.prototype.visitField):
+        (FlattenedStructOffsetGatherer.prototype.visitNativeType):
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/Inline.js:
+        (resolveInlinedFunction):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (NameContext.prototype.get let):
+        * WebGPUShadingLanguageRI/ResolveOverloadImpl.js:
+        (resolveOverloadImpl):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_shaderTypes):
+        * WebGPUShadingLanguageRI/index.html: Added.
+
+2017-09-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
         [WSL] Restrict vertex and fragment entry points according to WSL.md
         https://bugs.webkit.org/show_bug.cgi?id=177253
 

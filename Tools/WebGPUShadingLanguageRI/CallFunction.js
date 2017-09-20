@@ -28,7 +28,7 @@
 function callFunction(program, name, typeArguments, argumentList)
 {
     let argumentTypes = argumentList.map(argument => argument.type);
-    let funcOrFailures = resolveInlinedFunction(program, name, typeArguments, argumentTypes);
+    let funcOrFailures = resolveInlinedFunction(program, name, typeArguments, argumentTypes, true);
     if (!(funcOrFailures instanceof Func)) {
         let failures = funcOrFailures;
         throw new WTypeError("<callFunction>", "Cannot resolve function call " + name + "<" + typeArguments + ">(" + argumentList + ")" + (failures.length ? "; tried:\n" + failures.join("\n") : ""));
