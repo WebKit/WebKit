@@ -1,3 +1,19 @@
+2017-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: wrong response in case of errors
+        https://bugs.webkit.org/show_bug.cgi?id=177127
+
+        Reviewed by Brian Burg.
+
+        I misunderstood the spec when I implemented this, so we either return a "value" key with the result in case of
+        success or the error object as the body in case of error. We should always add a "value" key to the body and set
+        it with either the result or the error object.
+
+        https://w3c.github.io/webdriver/webdriver-spec.html#dfn-send-an-error
+
+        * WebDriverService.cpp:
+        (WebDriver::WebDriverService::sendResponse const):
+
 2017-09-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: wrong key name for capabilities in new session response
