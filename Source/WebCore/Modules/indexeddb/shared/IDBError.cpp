@@ -64,9 +64,12 @@ String IDBError::message() const
     return DOMException::message(m_code.value());
 }
 
-RefPtr<DOMError> IDBError::toDOMError() const
+RefPtr<DOMException> IDBError::toDOMException() const
 {
-    return DOMError::create(name(), m_message);
+    if (!m_code)
+        return nullptr;
+
+    return DOMException::create(*m_code, m_message);
 }
 
 } // namespace WebCore

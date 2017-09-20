@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMError.h"
+#include "DOMException.h"
 #include "EventNames.h"
 #include "IDBConnectionProxy.h"
 #include "IDBConnectionToServer.h"
@@ -70,7 +70,7 @@ void IDBOpenDBRequest::onError(const IDBResultData& data)
 {
     ASSERT(currentThread() == originThreadID());
 
-    m_domError = DOMError::create(data.error().name(), data.error().message());
+    m_domError = data.error().toDOMException();
     enqueueEvent(IDBRequestCompletionEvent::create(eventNames().errorEvent, true, true, *this));
 }
 
@@ -105,7 +105,7 @@ void IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion()
     ASSERT(hasPendingActivity());
 
     IDBError idbError(AbortError);
-    m_domError = DOMError::create(idbError.name(), idbError.message());
+    m_domError = DOMException::create(AbortError);
     setResultToUndefined();
 
     m_transaction->addRequest(*this);

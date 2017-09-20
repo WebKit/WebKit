@@ -90,10 +90,10 @@ static DOMException::LegacyCode legacyCodeFromName(const String& name)
     return 0;
 }
 
-Ref<DOMException> DOMException::create(ExceptionCode ec, const String* message)
+Ref<DOMException> DOMException::create(ExceptionCode ec, const String& message)
 {
     auto& description = DOMException::description(ec);
-    return adoptRef(*new DOMException(description.legacyCode, description.name, message && !message->isEmpty() ? *message : ASCIILiteral(description.message)));
+    return adoptRef(*new DOMException(description.legacyCode, description.name, !message.isEmpty() ? message : ASCIILiteral(description.message)));
 }
 
 Ref<DOMException> DOMException::create(const String& message, const String& name)

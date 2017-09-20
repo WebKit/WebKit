@@ -27,7 +27,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMError.h"
+#include "DOMException.h"
 #include "ExceptionCode.h"
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +44,7 @@ public:
 
     WEBCORE_EXPORT IDBError& operator=(const IDBError&);
 
-    RefPtr<DOMError> toDOMError() const;
+    RefPtr<DOMException> toDOMException() const;
 
     std::optional<ExceptionCode> code() const { return m_code; }
     String name() const;

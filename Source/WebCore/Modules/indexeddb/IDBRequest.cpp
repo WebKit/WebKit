@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMError.h"
+#include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "EventQueue.h"
@@ -161,7 +161,7 @@ ExceptionOr<std::optional<IDBRequest::Result>> IDBRequest::result() const
     return std::optional<IDBRequest::Result> { m_result };
 }
 
-ExceptionOr<DOMError*> IDBRequest::error() const
+ExceptionOr<DOMException*> IDBRequest::error() const
 {
     ASSERT(currentThread() == originThreadID());
 
@@ -354,7 +354,7 @@ void IDBRequest::uncaughtExceptionInEventHandler()
     ASSERT(currentThread() == originThreadID());
 
     if (m_transaction && m_idbError.code() != AbortError)
-        m_transaction->abortDueToFailedRequest(DOMError::create("AbortError", ASCIILiteral("IDBTransaction will abort due to uncaught exception in an event handler")));
+        m_transaction->abortDueToFailedRequest(DOMException::create(AbortError, ASCIILiteral("IDBTransaction will abort due to uncaught exception in an event handler")));
 }
 
 void IDBRequest::setResult(const IDBKeyData& keyData)
@@ -531,7 +531,7 @@ void IDBRequest::onError()
     ASSERT(currentThread() == originThreadID());
     ASSERT(!m_idbError.isNull());
 
-    m_domError = DOMError::create(m_idbError.name(), m_idbError.message());
+    m_domError = m_idbError.toDOMException();
     enqueueEvent(Event::create(eventNames().errorEvent, true, true));
 }
 

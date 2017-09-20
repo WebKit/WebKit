@@ -1,3 +1,38 @@
+2017-09-19  Chris Dumez  <cdumez@apple.com>
+
+        IDBRequest and IDBTransaction error properties should be DOMExceptions
+        https://bugs.webkit.org/show_bug.cgi?id=177201
+
+        Reviewed by Alex Christensen.
+
+        IDBRequest and IDBTransaction error properties should be DOMExceptions:
+        - https://w3c.github.io/IndexedDB/#idbrequest
+        - https://w3c.github.io/IndexedDB/#transaction
+
+        Previously, we used a DOMError type, which is obsolete.
+
+        No new tests, rebaselined existing test.
+
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onError):
+        (WebCore::IDBOpenDBRequest::fireErrorAfterVersionChangeCompletion):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore:: const):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        (WebCore::IDBRequest::onError):
+        * Modules/indexeddb/IDBRequest.h:
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::error const):
+        (WebCore::IDBTransaction::abortDueToFailedRequest):
+        (WebCore::IDBTransaction::didCreateIndexOnServer):
+        (WebCore::IDBTransaction::connectionClosedFromServer):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransaction.idl:
+        * Modules/indexeddb/shared/IDBError.cpp:
+        (WebCore::IDBError::toDOMException const):
+        * Modules/indexeddb/shared/IDBError.h:
+
 2017-09-19  Daewoong Jang  <daewoong.jang@naverlabs.com>
 
         [Curl] Fix r222147

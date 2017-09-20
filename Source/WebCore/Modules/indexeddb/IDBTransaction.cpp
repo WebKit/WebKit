@@ -28,7 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "DOMError.h"
+#include "DOMException.h"
 #include "DOMStringList.h"
 #include "DOMWindow.h"
 #include "Event.h"
@@ -134,7 +134,7 @@ IDBDatabase* IDBTransaction::db()
     return m_database.ptr();
 }
 
-DOMError* IDBTransaction::error() const
+DOMException* IDBTransaction::error() const
 {
     ASSERT(currentThread() == m_database->originThreadID());
     return m_domError.get();
@@ -181,7 +181,7 @@ ExceptionOr<Ref<IDBObjectStore>> IDBTransaction::objectStore(const String& objec
 }
 
 
-void IDBTransaction::abortDueToFailedRequest(DOMError& error)
+void IDBTransaction::abortDueToFailedRequest(DOMException& error)
 {
     LOG(IndexedDB, "IDBTransaction::abortDueToFailedRequest");
     ASSERT(currentThread() == m_database->originThreadID());
@@ -759,7 +759,7 @@ void IDBTransaction::didCreateIndexOnServer(const IDBResultData& resultData)
         return;
 
     // Otherwise, failure to create an index forced abortion of the transaction.
-    abortDueToFailedRequest(DOMError::create(resultData.error().name(), resultData.error().message()));
+    abortDueToFailedRequest(DOMException::create(resultData.error().message(), resultData.error().name()));
 }
 
 void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
@@ -1385,7 +1385,7 @@ void IDBTransaction::connectionClosedFromServer(const IDBError& error)
     m_transactionOperationMap.clear();
 
     m_idbError = error;
-    m_domError = error.toDOMError();
+    m_domError = error.toDOMException();
     fireOnAbort();
 }
 

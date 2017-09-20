@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-class DOMError;
+class DOMException;
 class DOMStringList;
 class IDBCursor;
 class IDBCursorInfo;
@@ -76,7 +76,7 @@ public:
     Ref<DOMStringList> objectStoreNames() const;
     IDBTransactionMode mode() const { return m_info.mode(); }
     IDBDatabase* db();
-    DOMError* error() const;
+    DOMException* error() const;
     ExceptionOr<Ref<IDBObjectStore>> objectStore(const String& name);
     ExceptionOr<void> abort();
 
@@ -133,7 +133,7 @@ public:
     void addRequest(IDBRequest&);
     void removeRequest(IDBRequest&);
 
-    void abortDueToFailedRequest(DOMError&);
+    void abortDueToFailedRequest(DOMException&);
 
     void activate();
     void deactivate();
@@ -235,7 +235,7 @@ private:
     bool m_startedOnServer { false };
 
     IDBError m_idbError;
-    RefPtr<DOMError> m_domError;
+    RefPtr<DOMException> m_domError;
 
     Timer m_pendingOperationTimer;
     Timer m_completedOperationTimer;

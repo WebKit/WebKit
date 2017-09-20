@@ -37,7 +37,7 @@ class Exception;
 
 class DOMException : public RefCounted<DOMException> {
 public:
-    static Ref<DOMException> create(ExceptionCode, const String* message = nullptr);
+    static Ref<DOMException> create(ExceptionCode, const String& message = emptyString());
     static Ref<DOMException> create(const Exception&);
 
     // For DOM bindings.

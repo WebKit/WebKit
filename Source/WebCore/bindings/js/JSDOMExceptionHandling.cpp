@@ -122,22 +122,22 @@ void reportCurrentException(ExecState* exec)
     reportException(exec, exception);
 }
 
-static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String* message = nullptr)
+JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& message)
 {
     if (ec == ExistingExceptionError)
         return jsUndefined();
 
     // FIXME: Handle other WebIDL exception types.
     if (ec == TypeError) {
-        if (!message || message->isEmpty())
+        if (message.isEmpty())
             return createTypeError(exec);
-        return createTypeError(exec, *message);
+        return createTypeError(exec, message);
     }
 
     if (ec == RangeError) {
-        if (!message || message->isEmpty())
+        if (message.isEmpty())
             return createRangeError(exec, ASCIILiteral("Bad value"));
-        return createRangeError(exec, *message);
+        return createRangeError(exec, message);
     }
 
     if (ec == StackOverflowError)
@@ -152,11 +152,6 @@ static JSValue createDOMException(ExecState* exec, ExceptionCode ec, const Strin
     ASSERT(errorObject);
     addErrorInfo(exec, asObject(errorObject), true);
     return errorObject;
-}
-
-JSValue createDOMException(ExecState* exec, ExceptionCode ec, const String& message)
-{
-    return createDOMException(exec, ec, &message);
 }
 
 JSValue createDOMException(ExecState& state, Exception&& exception)
@@ -216,15 +211,13 @@ void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope)
 void throwNotSupportedError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
     scope.assertNoException();
-    String messageString(message);
-    throwException(&state, scope, createDOMException(&state, NotSupportedError, &messageString));
+    throwException(&state, scope, createDOMException(&state, NotSupportedError, message));
 }
 
 void throwInvalidStateError(JSC::ExecState& state, JSC::ThrowScope& scope, const char* message)
 {
     scope.assertNoException();
-    String messageString(message);
-    throwException(&state, scope, createDOMException(&state, InvalidStateError, &messageString));
+    throwException(&state, scope, createDOMException(&state, InvalidStateError, message));
 }
 
 void throwSecurityError(JSC::ExecState& state, JSC::ThrowScope& scope, const String& message)
