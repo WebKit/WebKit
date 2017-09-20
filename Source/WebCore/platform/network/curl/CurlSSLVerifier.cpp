@@ -53,12 +53,12 @@ int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)
     SSL* ssl = static_cast<SSL*>(X509_STORE_CTX_get_ex_data(storeCtx, SSL_get_ex_data_X509_STORE_CTX_idx()));
     SSL_CTX* sslCtx = SSL_get_SSL_CTX(ssl);
     CurlSSLVerifier* verifier = static_cast<CurlSSLVerifier*>(SSL_CTX_get_app_data(sslCtx));
-    if (verifier)
+    if (!verifier)
         return 0;
 
     verifier->m_sslErrors = static_cast<int>(verifier->convertToSSLCertificateFlags(certErrCd));
 
-#if OS(WINDOWS)
+#if PLATFORM(WIN)
     ok = CurlContext::singleton().sslHandle().isAllowedHTTPSCertificateHost(verifier->m_hostName);
 #else
     ListHashSet<String> certificates;
@@ -78,7 +78,7 @@ int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)
     return ok;
 }
 
-#if !OS(WINDOWS)
+#if !PLATFORM(WIN)
 
 bool CurlSSLVerifier::getPemDataFromCtx(X509_STORE_CTX* ctx, ListHashSet<String>& certificates)
 {

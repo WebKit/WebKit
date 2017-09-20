@@ -1,3 +1,15 @@
+2017-09-19  Daewoong Jang  <daewoong.jang@naverlabs.com>
+
+        [Curl] Fix r222147
+        https://bugs.webkit.org/show_bug.cgi?id=177128
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlSSLHandle.h:
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::certVerifyCallback):
+        * platform/network/curl/CurlSSLVerifier.h:
+
 2017-09-19  Simon Fraser  <simon.fraser@apple.com>
 
         Image subclasses should support is<> and downcast<>

@@ -26,10 +26,6 @@
 
 #pragma once
 
-#if OS(WINDOWS)
-#include <winsock2.h>
-#endif
-
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>

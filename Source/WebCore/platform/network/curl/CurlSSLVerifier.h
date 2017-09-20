@@ -26,10 +26,7 @@
 
 #pragma once
 
-#if OS(WINDOWS)
-#include <winsock2.h>
-#endif
-
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -41,8 +38,7 @@ namespace WebCore {
 class CurlHandle;
 
 class CurlSSLVerifier {
-WTF_MAKE_NONCOPYABLE(CurlSSLVerifier);
-
+    WTF_MAKE_NONCOPYABLE(CurlSSLVerifier);
 public:
     enum class SSLCertificateFlags {
         SSL_CERTIFICATE_UNKNOWN_CA = (1 << 0), // The signing certificate authority is not known.
@@ -65,8 +61,8 @@ public:
 private:
     static int certVerifyCallback(int, X509_STORE_CTX*);
 
-#if !OS(WINDOWS)
-    bool getPemDataFromCtx(X509_STORE_CTX*, ListHashSet<String>&);
+#if !PLATFORM(WIN)
+    static bool getPemDataFromCtx(X509_STORE_CTX*, ListHashSet<String>&);
 #endif
 
     SSLCertificateFlags convertToSSLCertificateFlags(const unsigned&);
