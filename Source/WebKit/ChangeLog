@@ -1,3 +1,18 @@
+2017-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        tiled-drawing/tiled-backing-in-window.html fails on Retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=177113
+
+        Reviewed by Tim Horton.
+
+        Make m_customDeviceScaleFactor a std::optional<> instead of having the weird "0 is unset"
+        behavior.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::deviceScaleFactor const):
+        (WebKit::WebPageProxy::setCustomDeviceScaleFactor):
+        * UIProcess/WebPageProxy.h:
+
 2017-09-19  Alex Christensen  <achristensen@webkit.org>
 
         Allow modern decoding of Vectors

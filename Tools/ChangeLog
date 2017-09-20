@@ -1,3 +1,21 @@
+2017-09-19  Simon Fraser  <simon.fraser@apple.com>
+
+        tiled-drawing/tiled-backing-in-window.html fails on Retina displays
+        https://bugs.webkit.org/show_bug.cgi?id=177113
+
+        Reviewed by Tim Horton.
+
+        This test removes the view from the window, and then dumps the layer tree, at which point
+        some layers would report a contentsScale of 2 on Retina displays.
+
+        This occurs because WebKitTestRunner overrides the default device scale factor on NSWindow,
+        but windowless views fall back to [NSScreen mainScreen].backingScaleFactor (in WebViewImpl::intrinsicDeviceScaleFactor()).
+
+        Fix by having PlatformWebView::changeWindowScaleIfNeeded() call -_setOverrideDeviceScaleFactor: on the view.
+
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::changeWindowScaleIfNeeded):
+
 2017-09-19  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         REGRESSION (r215613): Incorrect corners clipping with border-radius

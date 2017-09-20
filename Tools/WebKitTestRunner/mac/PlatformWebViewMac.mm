@@ -287,7 +287,12 @@ void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
     CGFloat currentScale = [m_window backingScaleFactor];
     if (currentScale == newScale)
         return;
+
     [m_window _setWindowResolution:newScale displayIfChanged:YES];
+#if WK_API_ENABLED
+    [m_view _setOverrideDeviceScaleFactor:newScale];
+#endif
+
     // Instead of re-constructing the current window, let's fake resize it to ensure that the scale change gets picked up.
     forceWindowFramesChanged();
     // Changing the scaling factor on the window does not trigger NSWindowDidChangeBackingPropertiesNotification. We need to send the notification manually.

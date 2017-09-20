@@ -2561,9 +2561,7 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
 
 float WebPageProxy::deviceScaleFactor() const
 {
-    if (m_customDeviceScaleFactor)
-        return m_customDeviceScaleFactor;
-    return m_intrinsicDeviceScaleFactor;
+    return m_customDeviceScaleFactor.value_or(m_intrinsicDeviceScaleFactor);
 }
 
 void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
@@ -2577,12 +2575,16 @@ void WebPageProxy::setCustomDeviceScaleFactor(float customScaleFactor)
     return;
 #endif
 
-    if (m_customDeviceScaleFactor == customScaleFactor)
+    if (m_customDeviceScaleFactor && m_customDeviceScaleFactor.value() == customScaleFactor)
         return;
 
     float oldScaleFactor = deviceScaleFactor();
 
-    m_customDeviceScaleFactor = customScaleFactor;
+    // A value of 0 clears the customScaleFactor.
+    if (customScaleFactor)
+        m_customDeviceScaleFactor = customScaleFactor;
+    else
+        m_customDeviceScaleFactor = std::nullopt;
 
     if (deviceScaleFactor() != oldScaleFactor)
         m_drawingArea->deviceScaleFactorDidChange();
