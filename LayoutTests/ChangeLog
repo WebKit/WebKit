@@ -1,5 +1,20 @@
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222214. rdar://problem/34534751
+
+    2017-09-19  Zalan Bujtas  <zalan@apple.com>
+
+            Do not mutate RenderText content during layout.
+            https://bugs.webkit.org/show_bug.cgi?id=176219
+            <rdar://problem/34205724>
+
+            Reviewed by David Hyatt.
+
+            * fast/text/international/dynamic-text-combine-crash.html: Added.
+            * fast/text/text-combine-crash-expected.txt:
+
+2017-09-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r221978. rdar://problem/34508522
 
     2017-09-13  Daniel Bates  <dabates@apple.com>
