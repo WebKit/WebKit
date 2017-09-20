@@ -1,3 +1,15 @@
+2017-09-20  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Cannot find script to generate unified sources.
+        https://bugs.webkit.org/show_bug.cgi?id=177014
+
+        Reviewed by Keith Miller.
+
+        The ruby script can now be found in WTF/Scripts in the forwarding headers folder.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.vcxproj/JavaScriptCore.proj:
+
 2017-09-20  Alberto Garcia  <berto@igalia.com>
 
         Fix HPPA and Alpha builds

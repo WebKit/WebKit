@@ -393,3 +393,11 @@ if (MSVC)
         COMMAND ${PERL_EXECUTABLE} ${WEBKIT_LIBRARIES_DIR}/tools/scripts/version-stamp.pl ${DERIVED_SOURCES_DIR} $<TARGET_FILE:WTF>
         VERBATIM)
 endif ()
+
+file(MAKE_DIRECTORY ${FORWARDING_HEADERS_DIR}/WTF/Scripts)
+
+file(COPY
+    ../generate-unified-source-bundles.rb
+    DESTINATION
+    ${FORWARDING_HEADERS_DIR}/WTF/Scripts
+)
