@@ -56,10 +56,6 @@ CSSAtRuleID cssAtRuleID(StringView name)
         return CSSAtRuleWebkitKeyframes;
     if (equalIgnoringASCIICase(name, "apply"))
         return CSSAtRuleApply;
-#if ENABLE(CSS_REGIONS)
-    if (equalIgnoringASCIICase(name, "-webkit-region"))
-        return CSSAtRuleWebkitRegion;
-#endif
     return CSSAtRuleInvalid;
 }
 

@@ -100,12 +100,6 @@
     // Extensions from Pointer Lock API (https://w3c.github.io/pointerlock/#extensions-to-the-element-interface).
     [Conditional=POINTER_LOCK] void requestPointerLock();
 
-    // Extensions from CSS Regions API (https://drafts.csswg.org/css-regions/#the-region-interface).
-    // FIXME: Should be in a separate Region interface implemented by Element.
-    // FIXME: Should we add unprefixed versions?
-    [Conditional=CSS_REGIONS] readonly attribute DOMString webkitRegionOverset;
-    [Conditional=CSS_REGIONS] sequence<Range>? webkitGetRegionFlowRanges();
-
     // Non standard API (https://www.w3.org/Bugs/Public/show_bug.cgi?id=17152).
     void scrollIntoViewIfNeeded(optional boolean centerIfNeeded = true);
 

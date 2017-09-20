@@ -132,10 +132,6 @@ private:
     RefPtr<StyleRuleFontFace> consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleKeyframes> consumeKeyframesRule(bool webkitPrefixed, CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRulePage> consumePageRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-#if ENABLE(CSS_REGIONS)
-    RefPtr<StyleRuleRegion> consumeRegionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
-#endif
-    // Updates m_parsedProperties
     
     // FIXME-NEWPARSER: Support "apply"
     // void consumeApplyRule(CSSParserTokenRange prelude);

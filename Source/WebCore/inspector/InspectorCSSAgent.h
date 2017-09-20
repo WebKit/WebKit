@@ -47,14 +47,12 @@ namespace WebCore {
 class CSSRule;
 class CSSStyleRule;
 class CSSStyleSheet;
-class ChangeRegionOversetTask;
 class Document;
 class Element;
 class Node;
 class NodeList;
 class StyleResolver;
 class StyleRule;
-class WebKitNamedFlow;
 
 class InspectorCSSAgent final
     : public InspectorAgentBase
@@ -91,18 +89,12 @@ public:
     void discardAgent() override;
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void regionOversetChanged(WebKitNamedFlow*, int documentNodeId);
     void reset();
 
     // InspectorInstrumentation
     void documentDetached(Document&);
     void mediaQueryResultChanged();
     void activeStyleSheetsUpdated(Document&);
-    void didCreateNamedFlow(Document&, WebKitNamedFlow&);
-    void willRemoveNamedFlow(Document&, WebKitNamedFlow&);
-    void didChangeRegionOverset(Document&, WebKitNamedFlow&);
-    void didRegisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
-    void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
     bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
 
     void getComputedStyleForNode(ErrorString&, int nodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::CSSComputedStyleProperty>>&) override;
@@ -137,7 +129,6 @@ private:
     void resetNonPersistentData();
     InspectorStyleSheetForInlineStyle& asInspectorStyleSheet(StyledElement&);
     Element* elementForId(ErrorString&, int nodeId);
-    int documentNodeWithRequestedFlowsId(Document*);
 
     void collectAllStyleSheets(Vector<InspectorStyleSheet*>&);
     void collectAllDocumentStyleSheets(Document&, Vector<CSSStyleSheet*>&);
@@ -154,8 +145,6 @@ private:
     RefPtr<Inspector::Protocol::CSS::CSSRule> buildObjectForRule(CSSStyleRule*);
     RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::RuleMatch>> buildArrayForMatchedRuleList(const Vector<RefPtr<StyleRule>>&, StyleResolver&, Element&, PseudoId);
     RefPtr<Inspector::Protocol::CSS::CSSStyle> buildObjectForAttributesStyle(StyledElement&);
-    RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::Region>> buildArrayForRegions(ErrorString&, RefPtr<NodeList>&&, int documentNodeId);
-    RefPtr<Inspector::Protocol::CSS::NamedFlow> buildObjectForNamedFlow(ErrorString&, WebKitNamedFlow*, int documentNodeId);
 
     // InspectorDOMAgent::DOMListener implementation
     void didRemoveDOMNode(Node&, int nodeId) override;
@@ -177,8 +166,6 @@ private:
     HashMap<Document*, HashSet<CSSStyleSheet*>> m_documentToKnownCSSStyleSheets;
     NodeIdToForcedPseudoState m_nodeIdToForcedPseudoState;
     HashSet<Document*> m_documentsWithForcedPseudoStates;
-    HashSet<int> m_namedFlowCollectionsRequested;
-    std::unique_ptr<ChangeRegionOversetTask> m_changeRegionOversetTask;
 
     int m_lastStyleSheetId { 1 };
     bool m_creatingViaInspectorStyleSheet { false };

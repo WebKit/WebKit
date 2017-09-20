@@ -48,7 +48,6 @@
 #include "EventDispatcher.h"
 #include "EventHandler.h"
 #include "EventNames.h"
-#include "FlowThreadController.h"
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FrameSelection.h"
@@ -79,10 +78,8 @@
 #include "NodeRenderStyle.h"
 #include "PlatformWheelEvent.h"
 #include "PointerLockController.h"
-#include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderListBox.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTheme.h"
 #include "RenderTreeUpdater.h"
@@ -182,15 +179,6 @@ Element::Element(const QualifiedName& tagName, Document& document, ConstructionT
 
 Element::~Element()
 {
-#ifndef NDEBUG
-    if (document().hasLivingRenderTree()) {
-        // When the document is not destroyed, an element that was part of a named flow
-        // content nodes should have been removed from the content nodes collection
-        // and the isNamedFlowContentElement flag reset.
-        ASSERT_WITH_SECURITY_IMPLICATION(!isNamedFlowContentElement());
-    }
-#endif
-
     ASSERT(!beforePseudoElement());
     ASSERT(!afterPseudoElement());
 
@@ -1783,12 +1771,6 @@ void Element::removedFrom(ContainerNode& insertionPoint)
 #endif
 }
 
-void Element::unregisterNamedFlowContentElement()
-{
-    if (isNamedFlowContentElement() && document().renderView())
-        document().renderView()->flowThreadController().unregisterNamedFlowContentElement(*this);
-}
-
 ShadowRoot* Element::shadowRoot() const
 {
     return hasRareData() ? elementRareData()->shadowRoot() : nullptr;
@@ -2110,16 +2092,6 @@ void Element::childrenChanged(const ChildChange& change)
 void Element::setAttributeEventListener(const AtomicString& eventType, const QualifiedName& attributeName, const AtomicString& attributeValue)
 {
     setAttributeEventListener(eventType, JSLazyEventListener::create(*this, attributeName, attributeValue), mainThreadNormalWorld());
-}
-
-void Element::setIsNamedFlowContentElement()
-{
-    ensureElementRareData().setIsNamedFlowContentElement(true);
-}
-
-void Element::clearIsNamedFlowContentElement()
-{
-    ensureElementRareData().setIsNamedFlowContentElement(false);
 }
 
 void Element::removeAllEventListeners()
@@ -2853,12 +2825,6 @@ bool Element::rareDataStyleAffectedByFocusWithin() const
     return elementRareData()->styleAffectedByFocusWithin();
 }
 
-bool Element::rareDataIsNamedFlowContentElement() const
-{
-    ASSERT(hasRareData());
-    return elementRareData()->isNamedFlowContentElement();
-}
-
 bool Element::rareDataStyleAffectedByActive() const
 {
     ASSERT(hasRareData());
@@ -2887,16 +2853,6 @@ unsigned Element::rareDataChildIndex() const
 {
     ASSERT(hasRareData());
     return elementRareData()->childIndex();
-}
-
-void Element::setRegionOversetState(RegionOversetState state)
-{
-    ensureElementRareData().setRegionOversetState(state);
-}
-
-RegionOversetState Element::regionOversetState() const
-{
-    return hasRareData() ? elementRareData()->regionOversetState() : RegionUndefined;
 }
 
 AtomicString Element::computeInheritedLanguage() const
@@ -3181,76 +3137,6 @@ bool Element::isSpellCheckingEnabled() const
     return true;
 }
 
-RenderNamedFlowFragment* Element::renderNamedFlowFragment() const
-{
-    if (renderer() && renderer()->isRenderNamedFlowFragmentContainer())
-        return downcast<RenderBlockFlow>(*renderer()).renderNamedFlowFragment();
-
-    return nullptr;
-}
-
-#if ENABLE(CSS_REGIONS)
-
-bool Element::shouldMoveToFlowThread(const RenderStyle& styleToUse) const
-{
-#if ENABLE(FULLSCREEN_API)
-    if (document().webkitIsFullScreen() && document().webkitCurrentFullScreenElement() == this)
-        return false;
-#endif
-
-    if (isInShadowTree())
-        return false;
-
-    if (!styleToUse.hasFlowInto())
-        return false;
-
-    return true;
-}
-
-const AtomicString& Element::webkitRegionOverset() const
-{
-    document().updateLayoutIgnorePendingStylesheets();
-
-    static NeverDestroyed<AtomicString> undefinedState("undefined", AtomicString::ConstructFromLiteral);
-    if (!renderNamedFlowFragment())
-        return undefinedState;
-
-    switch (regionOversetState()) {
-    case RegionFit: {
-        static NeverDestroyed<AtomicString> fitState("fit", AtomicString::ConstructFromLiteral);
-        return fitState;
-    }
-    case RegionEmpty: {
-        static NeverDestroyed<AtomicString> emptyState("empty", AtomicString::ConstructFromLiteral);
-        return emptyState;
-    }
-    case RegionOverset: {
-        static NeverDestroyed<AtomicString> overflowState("overset", AtomicString::ConstructFromLiteral);
-        return overflowState;
-    }
-    case RegionUndefined:
-        return undefinedState;
-    }
-
-    ASSERT_NOT_REACHED();
-    return undefinedState;
-}
-
-Vector<RefPtr<Range>> Element::webkitGetRegionFlowRanges() const
-{
-    Vector<RefPtr<Range>> rangeObjects;
-    document().updateLayoutIgnorePendingStylesheets();
-    auto* renderer = this->renderer();
-    if (renderer && renderer->isRenderNamedFlowFragmentContainer()) {
-        auto& namedFlowFragment = *downcast<RenderBlockFlow>(*renderer).renderNamedFlowFragment();
-        if (namedFlowFragment.isValid())
-            namedFlowFragment.getRanges(rangeObjects);
-    }
-    return rangeObjects;
-}
-
-#endif
-
 #ifndef NDEBUG
 bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 {
@@ -3520,7 +3406,6 @@ void Element::resetStyleRelations()
 
 void Element::clearStyleDerivedDataBeforeDetachingRenderer()
 {
-    unregisterNamedFlowContentElement();
     clearBeforePseudoElement();
     clearAfterPseudoElement();
 }

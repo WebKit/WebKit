@@ -87,10 +87,8 @@ void RenderNamedFlowFragment::styleDidChange(StyleDifference diff, const RenderS
         setNeedsLayout(MarkOnlyThis);
 }
 
-void RenderNamedFlowFragment::getRanges(Vector<RefPtr<Range>>& rangeObjects) const
+void RenderNamedFlowFragment::getRanges(Vector<RefPtr<Range>>&) const
 {
-    const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style().regionThread());
-    namedFlow.getRanges(rangeObjects, this);
 }
 
 bool RenderNamedFlowFragment::shouldHaveAutoLogicalHeight() const
@@ -262,10 +260,8 @@ void RenderNamedFlowFragment::layoutBlock(bool relayoutChildren, LayoutUnit)
     RenderRegion::layoutBlock(relayoutChildren);
 
     if (isValid()) {
-        if (m_flowThread->inOverflowLayoutPhase() || m_flowThread->inFinalLayoutPhase()) {
+        if (m_flowThread->inOverflowLayoutPhase() || m_flowThread->inFinalLayoutPhase())
             computeOverflowFromFlowThread();
-            updateOversetState();
-        }
 
         if (hasAutoLogicalHeight() && m_flowThread->inMeasureContentLayoutPhase()) {
             m_flowThread->invalidateRegions();
@@ -290,71 +286,19 @@ void RenderNamedFlowFragment::invalidateRegionIfNeeded()
     }
 }
 
-void RenderNamedFlowFragment::setRegionOversetState(RegionOversetState state)
-{
-    ASSERT(generatingElement());
-
-    generatingElement()->setRegionOversetState(state);
-}
-
-RegionOversetState RenderNamedFlowFragment::regionOversetState() const
-{
-    ASSERT(generatingElement());
-
-    if (!isValid())
-        return RegionUndefined;
-
-    return generatingElement()->regionOversetState();
-}
-
-void RenderNamedFlowFragment::updateOversetState()
-{
-    ASSERT(isValid());
-
-    RenderNamedFlowThread* flowThread = namedFlowThread();
-    ASSERT(flowThread && (flowThread->inOverflowLayoutPhase() || flowThread->inFinalLayoutPhase()));
-
-    LayoutUnit flowContentBottom = flowThread->flowContentBottom();
-    bool isHorizontalWritingMode = flowThread->isHorizontalWritingMode();
-
-    LayoutUnit flowMin = flowContentBottom - (isHorizontalWritingMode ? flowThreadPortionRect().y() : flowThreadPortionRect().x());
-    LayoutUnit flowMax = flowContentBottom - (isHorizontalWritingMode ? flowThreadPortionRect().maxY() : flowThreadPortionRect().maxX());
-
-    RegionOversetState previousState = regionOversetState();
-    RegionOversetState state = RegionFit;
-    if (flowMin <= 0)
-        state = RegionEmpty;
-    if (flowMax > 0 && isLastRegion())
-        state = RegionOverset;
-    
-    setRegionOversetState(state);
-
-    // Determine whether the NamedFlow object should dispatch a regionOversetChange event
-    if (previousState != state)
-        flowThread->setDispatchRegionOversetChangeEvent(true);
-}
-
 void RenderNamedFlowFragment::checkRegionStyle()
 {
     ASSERT(isValid());
 
     bool customRegionStyle = false;
 
-    // FIXME: Region styling doesn't work for pseudo elements.
-    if (!isPseudoElement())
-        customRegionStyle = generatingElement()->styleResolver().checkRegionStyle(generatingElement());
     setHasCustomRegionStyle(customRegionStyle);
     downcast<RenderNamedFlowThread>(*m_flowThread).checkRegionsWithStyling();
 }
 
-std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement& renderer, const RenderStyle& parentStyle) const
+std::unique_ptr<RenderStyle> RenderNamedFlowFragment::computeStyleInRegion(RenderElement&, const RenderStyle&) const
 {
-    ASSERT(!renderer.isAnonymous());
-
-    // FIXME: Region styling fails for pseudo-elements because the renderers don't have a node.
-    auto renderObjectRegionStyle = renderer.element()->styleResolver().styleForElement(*renderer.element(), &parentStyle, nullptr, MatchAllRules, this).renderStyle;
-
-    return renderObjectRegionStyle;
+    return nullptr;
 }
 
 void RenderNamedFlowFragment::computeChildrenStyleInRegion(RenderElement& renderer)
@@ -412,40 +356,6 @@ void RenderNamedFlowFragment::clearObjectStyleInRegion(const RenderElement& obje
 
 void RenderNamedFlowFragment::setRegionObjectsRegionStyle()
 {
-    if (!hasCustomRegionStyle())
-        return;
-
-    // Start from content nodes and recursively compute the style in region for the render objects below.
-    // If the style in region was already computed, used that style instead of computing a new one.
-    const RenderNamedFlowThread& namedFlow = view().flowThreadController().ensureRenderFlowThreadWithName(style().regionThread());
-    const NamedFlowContentElements& contentElements = namedFlow.contentElements();
-
-    for (const auto& element : contentElements) {
-        // The list of content nodes contains also the nodes with display:none.
-        if (!element->renderer())
-            continue;
-        auto& renderer = *element->renderer();
-
-        // If the content node does not flow any of its children in this region,
-        // we do not compute any style for them in this region.
-        if (!flowThread()->objectInFlowRegion(&renderer, this))
-            continue;
-
-        // If the object has style in region, use that instead of computing a new one.
-        auto it = m_rendererRegionStyle.find(&renderer);
-        std::unique_ptr<RenderStyle> objectStyleInRegion;
-        bool objectRegionStyleCached = false;
-        if (it != m_rendererRegionStyle.end()) {
-            objectStyleInRegion = RenderStyle::clonePtr(*it->value.style);
-            ASSERT(it->value.cached);
-            objectRegionStyleCached = true;
-        } else
-            objectStyleInRegion = computeStyleInRegion(renderer, style());
-
-        setRendererStyleInRegion(renderer, WTFMove(objectStyleInRegion), objectRegionStyleCached);
-
-        computeChildrenStyleInRegion(renderer);
-    }
 }
 
 void RenderNamedFlowFragment::restoreRegionObjectsOriginalStyle()

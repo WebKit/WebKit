@@ -30,12 +30,10 @@
 #include "config.h"
 #include "FlowThreadController.h"
 
-#include "NamedFlowCollection.h"
 #include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderNamedFlowThread.h"
 #include "StyleInheritedData.h"
-#include "WebKitNamedFlow.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -49,34 +47,6 @@ FlowThreadController::FlowThreadController(RenderView* view)
 
 FlowThreadController::~FlowThreadController()
 {
-}
-
-RenderNamedFlowThread& FlowThreadController::ensureRenderFlowThreadWithName(const AtomicString& name)
-{
-    if (!m_renderNamedFlowThreadList)
-        m_renderNamedFlowThreadList = std::make_unique<RenderNamedFlowThreadList>();
-    else {
-        for (auto& flowRenderer : *m_renderNamedFlowThreadList) {
-            if (flowRenderer->flowThreadName() == name)
-                return *flowRenderer;
-        }
-    }
-
-    NamedFlowCollection& namedFlows = m_view->document().namedFlows();
-
-    // Sanity check for the absence of a named flow in the "CREATED" state with the same name.
-    ASSERT(!namedFlows.flowByName(name));
-
-    auto flowRenderer = new RenderNamedFlowThread(m_view->document(), RenderFlowThread::createFlowThreadStyle(&m_view->style()), namedFlows.ensureFlowWithName(name));
-    flowRenderer->initializeStyle();
-    m_renderNamedFlowThreadList->add(flowRenderer);
-
-    // Keep the flow renderer as a child of RenderView.
-    m_view->addChild(flowRenderer);
-
-    setIsRenderNamedFlowThreadOrderDirty(true);
-
-    return *flowRenderer;
 }
 
 void FlowThreadController::styleDidChange()

@@ -44,12 +44,6 @@ public:
 
     bool rendererIsNeeded(const RenderStyle&) override;
 
-    // As per http://dev.w3.org/csswg/css3-regions/#flow-into, pseudo-elements such as ::first-line, ::first-letter, ::before or ::after
-    // cannot be directly collected into a named flow.
-#if ENABLE(CSS_REGIONS)
-    bool shouldMoveToFlowThread(const RenderStyle&) const override { return false; }
-#endif
-
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }
 

@@ -51,8 +51,6 @@
 #include "RenderElement.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
-#include "RenderNamedFlowFragment.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "ScriptController.h"
@@ -120,7 +118,7 @@ static void buildRendererHighlight(RenderObject* renderer, RenderRegion* region,
                 margins.end(renderBox.style().writingMode()) = computedValues.m_margins.m_end;
             }
 
-            paddingBox = renderBox.clientBoxRectInRegion(region);
+            paddingBox = renderBox.clientBoxRect();
             contentBox = LayoutRect(paddingBox.x() + renderBox.paddingLeft(), paddingBox.y() + renderBox.paddingTop(),
                 paddingBox.width() - renderBox.paddingLeft() - renderBox.paddingRight(), paddingBox.height() - renderBox.paddingTop() - renderBox.paddingBottom());
             borderBox = LayoutRect(paddingBox.x() - renderBox.borderLeft(), paddingBox.y() - renderBox.borderTop(),
@@ -395,68 +393,6 @@ static Ref<Inspector::Protocol::OverlayTypes::FragmentHighlightData> buildObject
         .release();
 }
 
-static RefPtr<Inspector::Protocol::OverlayTypes::Region> buildObjectForRegion(FrameView* mainView, RenderRegion* region)
-{
-    FrameView* containingView = region->frame().view();
-    if (!containingView)
-        return nullptr;
-
-    RenderBlockFlow& regionContainer = downcast<RenderBlockFlow>(*region->parent());
-    LayoutRect borderBox = regionContainer.borderBoxRect();
-    borderBox.setWidth(borderBox.width() + regionContainer.verticalScrollbarWidth());
-    borderBox.setHeight(borderBox.height() + regionContainer.horizontalScrollbarHeight());
-
-    // Create incoming and outgoing boxes that we use to chain the regions toghether.
-    const LayoutSize linkBoxSize(10, 10);
-    const LayoutSize linkBoxMidpoint(linkBoxSize.width() / 2, linkBoxSize.height() / 2);
-
-    LayoutRect incomingRectBox = LayoutRect(borderBox.location() - linkBoxMidpoint, linkBoxSize);
-    LayoutRect outgoingRectBox = LayoutRect(borderBox.location() - linkBoxMidpoint + borderBox.size(), linkBoxSize);
-
-    // Move the link boxes slightly inside the region border box.
-    LayoutUnit maxUsableHeight = std::max(LayoutUnit(), borderBox.height() - linkBoxMidpoint.height());
-    LayoutUnit linkBoxVerticalOffset = std::min(LayoutUnit::fromPixel(15), maxUsableHeight);
-    incomingRectBox.move(0, linkBoxVerticalOffset);
-    outgoingRectBox.move(0, -linkBoxVerticalOffset);
-
-    FloatQuad borderRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(borderBox));
-    FloatQuad incomingRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(incomingRectBox));
-    FloatQuad outgoingRectQuad = regionContainer.localToAbsoluteQuad(FloatRect(outgoingRectBox));
-
-    contentsQuadToPage(mainView, containingView, borderRectQuad);
-    contentsQuadToPage(mainView, containingView, incomingRectQuad);
-    contentsQuadToPage(mainView, containingView, outgoingRectQuad);
-
-    return Inspector::Protocol::OverlayTypes::Region::create()
-        .setBorderQuad(buildArrayForQuad(borderRectQuad))
-        .setIncomingQuad(buildArrayForQuad(incomingRectQuad))
-        .setOutgoingQuad(buildArrayForQuad(outgoingRectQuad))
-        .release();
-}
-
-static Ref<Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Region>> buildObjectForFlowRegions(RenderRegion* region, RenderFlowThread* flowThread)
-{
-    FrameView* mainFrameView = region->document().page()->mainFrame().view();
-
-    auto arrayOfRegions = Inspector::Protocol::Array<Inspector::Protocol::OverlayTypes::Region>::create();
-
-    const RenderRegionList& regionList = flowThread->renderRegionList();
-    for (auto& iterRegion : regionList) {
-        if (!iterRegion->isValid())
-            continue;
-        RefPtr<Inspector::Protocol::OverlayTypes::Region> regionObject = buildObjectForRegion(mainFrameView, iterRegion);
-        if (!regionObject)
-            continue;
-        if (region == iterRegion) {
-            // Let the script know that this is the currently highlighted node.
-            regionObject->setIsHighlighted(true);
-        }
-        arrayOfRegions->addItem(WTFMove(regionObject));
-    }
-
-    return arrayOfRegions;
-}
-
 static Ref<Inspector::Protocol::OverlayTypes::Size> buildObjectForSize(const IntSize& size)
 {
     return Inspector::Protocol::OverlayTypes::Size::create()
@@ -695,7 +631,7 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ShapeOutsideData> buildObjectFo
     return WTFMove(shapeObject);
 }
 
-static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElementData(Node* node, HighlightType type)
+static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElementData(Node* node, HighlightType)
 {
     if (!is<Element>(node) || !node->document().frame())
         return nullptr;
@@ -750,27 +686,6 @@ static RefPtr<Inspector::Protocol::OverlayTypes::ElementData> buildObjectForElem
         .setHeight(modelObject ? adjustForAbsoluteZoom(roundToInt(modelObject->offsetHeight()), *modelObject) : boundingBox.height())
         .release();
     elementData->setSize(WTFMove(sizeObject));
-
-    if (type != HighlightType::NodeList && renderer->isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(*renderer).renderNamedFlowFragment();
-        if (region.isValid()) {
-            RenderFlowThread* flowThread = region.flowThread();
-            auto regionFlowData = Inspector::Protocol::OverlayTypes::RegionFlowData::create()
-                .setName(downcast<RenderNamedFlowThread>(*flowThread).flowThreadName())
-                .setRegions(buildObjectForFlowRegions(&region, flowThread))
-                .release();
-            elementData->setRegionFlowData(WTFMove(regionFlowData));
-        }
-    }
-
-    RenderFlowThread* containingFlowThread = renderer->flowThreadContainingBlock();
-    if (is<RenderNamedFlowThread>(containingFlowThread)) {
-        auto contentFlowData = Inspector::Protocol::OverlayTypes::ContentFlowData::create()
-            .setName(downcast<RenderNamedFlowThread>(*containingFlowThread).flowThreadName())
-            .release();
-
-        elementData->setContentFlowData(WTFMove(contentFlowData));
-    }
 
     if (is<RenderBox>(*renderer)) {
         auto& renderBox = downcast<RenderBox>(*renderer);

@@ -82,9 +82,6 @@ Class kitClass(WebCore::CSSRule* impl)
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     case WebCore::CSSRule::WEBKIT_VIEWPORT_RULE:
 #endif
-#if ENABLE(CSS_REGIONS)
-    case WebCore::CSSRule::WEBKIT_REGION_RULE:
-#endif
         return [DOMCSSRule class];
     }
     ASSERT_NOT_REACHED();

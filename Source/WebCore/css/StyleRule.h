@@ -55,7 +55,6 @@ public:
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         Viewport = 15,
 #endif
-        Region = 16,
     };
 
     Type type() const { return static_cast<Type>(m_type); }
@@ -68,7 +67,6 @@ public:
     bool isMediaRule() const { return type() == Media; }
     bool isPageRule() const { return type() == Page; }
     bool isStyleRule() const { return type() == Style; }
-    bool isRegionRule() const { return type() == Region; }
     bool isSupportsRule() const { return type() == Supports; }
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     bool isViewportRule() const { return type() == Viewport; }
@@ -276,31 +274,6 @@ private:
     bool m_conditionIsSupported;
 };
 
-class StyleRuleRegion final : public StyleRuleGroup {
-public:
-    static Ref<StyleRuleRegion> create(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
-    {
-        return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
-    }
-    
-    static Ref<StyleRuleRegion> create(CSSSelectorList& selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
-    {
-        return adoptRef(*new StyleRuleRegion(selectors, adoptRules));
-    }
-    
-    const CSSSelectorList& selectorList() const { return m_selectorList; }
-
-    Ref<StyleRuleRegion> copy() const { return adoptRef(*new StyleRuleRegion(*this)); }
-
-private:
-    StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>*, Vector<RefPtr<StyleRuleBase>>& adoptRules);
-    StyleRuleRegion(CSSSelectorList&, Vector<RefPtr<StyleRuleBase>>&);
-    
-    StyleRuleRegion(const StyleRuleRegion&);
-    
-    CSSSelectorList m_selectorList;
-};
-
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 class StyleRuleViewport final : public StyleRuleBase {
 public:
@@ -377,10 +350,6 @@ SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleSupports)
     static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isSupportsRule(); }
-SPECIALIZE_TYPE_TRAITS_END()
-
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::StyleRuleRegion)
-    static bool isType(const WebCore::StyleRuleBase& rule) { return rule.isRegionRule(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)

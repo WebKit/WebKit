@@ -143,11 +143,7 @@ public:
     static BreakInside convertPageBreakInside(StyleResolver&, const CSSValue&);
     static BreakBetween convertColumnBreakBetween(StyleResolver&, const CSSValue&);
     static BreakInside convertColumnBreakInside(StyleResolver&, const CSSValue&);
-#if ENABLE(CSS_REGIONS)
-    static BreakBetween convertRegionBreakBetween(StyleResolver&, const CSSValue&);
-    static BreakInside convertRegionBreakInside(StyleResolver&, const CSSValue&);
-#endif
-    
+
     static HangingPunctuation convertHangingPunctuation(StyleResolver&, const CSSValue&);
 
     static Length convertPositionComponentX(StyleResolver&, const CSSValue&);
@@ -1519,26 +1515,6 @@ inline BreakInside StyleBuilderConverter::convertColumnBreakInside(StyleResolver
         return AvoidColumnBreakInside;
     return primitiveValue;
 }
-
-#if ENABLE(CSS_REGIONS)
-inline BreakBetween StyleBuilderConverter::convertRegionBreakBetween(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAlways)
-        return RegionBreakBetween;
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidRegionBreakBetween;
-    return primitiveValue;
-}
-
-inline BreakInside StyleBuilderConverter::convertRegionBreakInside(StyleResolver&, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    if (primitiveValue.valueID() == CSSValueAvoid)
-        return AvoidRegionBreakInside;
-    return primitiveValue;
-}
-#endif
 
 inline HangingPunctuation StyleBuilderConverter::convertHangingPunctuation(StyleResolver&, const CSSValue& value)
 {

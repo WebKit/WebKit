@@ -131,10 +131,6 @@ public:
     bool removeEventListener(const AtomicString& eventType, EventListener&, const ListenerOptions&) override;
     bool hasFocusEventListeners() const;
 
-#if ENABLE(CSS_REGIONS)
-    bool shouldMoveToFlowThread(const RenderStyle&) const override;
-#endif
-
     bool hasTagName(const SVGQualifiedName& name) const { return hasLocalName(name.localName()); }
     int tabIndex() const override;
 

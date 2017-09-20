@@ -60,12 +60,6 @@ public:
     bool styleAffectedByFocusWithin() const { return m_styleAffectedByFocusWithin; }
     void setStyleAffectedByFocusWithin(bool value) { m_styleAffectedByFocusWithin = value; }
 
-    RegionOversetState regionOversetState() const { return m_regionOversetState; }
-    void setRegionOversetState(RegionOversetState state) { m_regionOversetState = state; }
-
-    bool isNamedFlowContentElement() const { return m_isNamedFlowContentElement; }
-    void setIsNamedFlowContentElement(bool value) { m_isNamedFlowContentElement = value; }
-
 #if ENABLE(FULLSCREEN_API)
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
@@ -132,9 +126,6 @@ private:
     unsigned m_childrenAffectedByLastChildRules : 1;
     unsigned m_childrenAffectedByBackwardPositionalRules : 1;
     unsigned m_childrenAffectedByPropertyBasedBackwardPositionalRules : 1;
-    unsigned m_isNamedFlowContentElement : 1;
-
-    RegionOversetState m_regionOversetState;
 
     LayoutSize m_minimumSizeForResizing;
     IntPoint m_savedLayerScrollPosition;
@@ -174,8 +165,6 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_childrenAffectedByLastChildRules(false)
     , m_childrenAffectedByBackwardPositionalRules(false)
     , m_childrenAffectedByPropertyBasedBackwardPositionalRules(false)
-    , m_isNamedFlowContentElement(false)
-    , m_regionOversetState(RegionUndefined)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }

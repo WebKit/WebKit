@@ -417,14 +417,6 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
-#if ENABLE(CSS_REGIONS)
-    CSSPropertyWebkitFlowInto,
-    CSSPropertyWebkitFlowFrom,
-    CSSPropertyWebkitRegionBreakAfter,
-    CSSPropertyWebkitRegionBreakBefore,
-    CSSPropertyWebkitRegionBreakInside,
-    CSSPropertyWebkitRegionFragment,
-#endif
     CSSPropertyShapeImageThreshold,
     CSSPropertyShapeMargin,
     CSSPropertyShapeOutside,
@@ -1916,8 +1908,6 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
         else if (is<TextContentData>(*contentData))
             list->append(cssValuePool.createValue(downcast<TextContentData>(*contentData).text(), CSSPrimitiveValue::CSS_STRING));
     }
-    if (style.hasFlowFrom())
-        list->append(cssValuePool.createValue(style.regionThread(), CSSPrimitiveValue::CSS_STRING));
     return list;
 }
 
@@ -2289,24 +2279,6 @@ static CSSValueID convertToColumnBreak(BreakInside value)
         return CSSValueAvoid;
     return CSSValueAuto;
 }
-
-#if ENABLE(CSS_REGIONS)
-static CSSValueID convertToRegionBreak(BreakBetween value)
-{
-    if (value == RegionBreakBetween)
-        return CSSValueAlways;
-    if (value == AvoidBreakBetween || value == AvoidRegionBreakBetween)
-        return CSSValueAvoid;
-    return CSSValueAuto;
-}
-    
-static CSSValueID convertToRegionBreak(BreakInside value)
-{
-    if (value == AvoidBreakInside || value == AvoidRegionBreakInside)
-        return CSSValueAvoid;
-    return CSSValueAuto;
-}
-#endif
 
 static inline bool isNonReplacedInline(RenderObject& renderer)
 {
@@ -2945,14 +2917,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
             return zoomAdjustedPixelValue(style->columnWidth(), *style);
         case CSSPropertyTabSize:
             return cssValuePool.createValue(style->tabSize(), CSSPrimitiveValue::CSS_NUMBER);
-#if ENABLE(CSS_REGIONS)
-        case CSSPropertyWebkitRegionBreakAfter:
-            return cssValuePool.createValue(convertToRegionBreak(style->breakAfter()));
-        case CSSPropertyWebkitRegionBreakBefore:
-            return cssValuePool.createValue(convertToRegionBreak(style->breakBefore()));
-        case CSSPropertyWebkitRegionBreakInside:
-            return cssValuePool.createValue(convertToRegionBreak(style->breakInside()));
-#endif
         case CSSPropertyCursor: {
             RefPtr<CSSValueList> list;
             auto* cursors = style->cursors();
@@ -3828,18 +3792,6 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
                 list->append(cssValuePool.createValue(downcast<BoxClipPathOperation>(*operation).referenceBox()));
             return WTFMove(list);
         }
-#if ENABLE(CSS_REGIONS)
-        case CSSPropertyWebkitFlowInto:
-            if (!style->hasFlowInto())
-                return cssValuePool.createIdentifierValue(CSSValueNone);
-            return cssValuePool.createValue(style->flowThread(), CSSPrimitiveValue::CSS_STRING);
-        case CSSPropertyWebkitFlowFrom:
-            if (!style->hasFlowFrom())
-                return cssValuePool.createIdentifierValue(CSSValueNone);
-            return cssValuePool.createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING);
-        case CSSPropertyWebkitRegionFragment:
-            return cssValuePool.createValue(style->regionFragment());
-#endif
         case CSSPropertyShapeMargin:
             return cssValuePool.createValue(style->shapeMargin(), *style);
         case CSSPropertyShapeImageThreshold:

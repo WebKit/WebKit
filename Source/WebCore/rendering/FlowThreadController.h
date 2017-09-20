@@ -55,7 +55,6 @@ public:
             m_view->setNeedsLayout();
     }
 
-    RenderNamedFlowThread& ensureRenderFlowThreadWithName(const AtomicString&);
     const RenderNamedFlowThreadList* renderNamedFlowThreadList() const { return m_renderNamedFlowThreadList.get(); }
     bool hasRenderNamedFlowThreads() const { return m_renderNamedFlowThreadList && !m_renderNamedFlowThreadList->isEmpty(); }
     void layoutRenderNamedFlowThreads();

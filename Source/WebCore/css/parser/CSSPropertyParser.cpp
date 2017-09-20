@@ -290,11 +290,6 @@ static bool isLegacyBreakProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
     case CSSPropertyWebkitColumnBreakInside:
-#if ENABLE(CSS_REGIONS)
-    case CSSPropertyWebkitRegionBreakAfter:
-    case CSSPropertyWebkitRegionBreakBefore:
-    case CSSPropertyWebkitRegionBreakInside:
-#endif
         return true;
     default:
         break;
@@ -3498,18 +3493,6 @@ static RefPtr<CSSValue> consumeGridTemplateAreas(CSSParserTokenRange& range)
     return CSSGridTemplateAreasValue::create(gridAreaMap, rowCount, columnCount);
 }
 
-#if ENABLE(CSS_REGIONS)
-static RefPtr<CSSValue> consumeFlowProperty(CSSParserTokenRange& range)
-{
-    RefPtr<CSSValue> result;
-    if (range.peek().id() == CSSValueNone)
-        result = consumeIdent(range);
-    else
-        result = consumeCustomIdent(range);
-    return result;
-}
-#endif
-
 static RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueNone)
@@ -4253,11 +4236,6 @@ RefPtr<CSSValue> CSSPropertyParser::parseSingleValue(CSSPropertyID property, CSS
         if (!m_context.cssGridLayoutEnabled)
             return nullptr;
         return consumeGridAutoFlow(m_range);
-#if ENABLE(CSS_REGIONS)
-    case CSSPropertyWebkitFlowInto:
-    case CSSPropertyWebkitFlowFrom:
-        return consumeFlowProperty(m_range);
-#endif
     case CSSPropertyWebkitLineGrid:
         return consumeLineGrid(m_range);
     case CSSPropertyWebkitInitialLetter:
@@ -5001,19 +4979,6 @@ static inline CSSValueID mapFromColumnBreakBetween(CSSValueID value)
     return CSSValueInvalid;
 }
 
-#if ENABLE(CSS_REGIONS)
-static inline CSSValueID mapFromRegionBreakBetween(CSSValueID value)
-{
-    if (value == CSSValueAlways)
-        return CSSValueRegion;
-    if (value == CSSValueAuto)
-        return value;
-    if (value == CSSValueAvoid)
-        return CSSValueAvoidRegion;
-    return CSSValueInvalid;
-}
-#endif
-
 static inline CSSValueID mapFromColumnRegionOrPageBreakInside(CSSValueID value)
 {
     if (value == CSSValueAuto || value == CSSValueAvoid)
@@ -5027,15 +4992,7 @@ static inline CSSPropertyID mapFromLegacyBreakProperty(CSSPropertyID property)
         return CSSPropertyBreakAfter;
     if (property == CSSPropertyPageBreakBefore || property == CSSPropertyWebkitColumnBreakBefore)
         return CSSPropertyBreakBefore;
-#if ENABLE(CSS_REGIONS)
-    if (property == CSSPropertyWebkitRegionBreakAfter)
-        return CSSPropertyBreakAfter;
-    if (property == CSSPropertyWebkitRegionBreakBefore)
-        return CSSPropertyBreakBefore;
-    ASSERT(property == CSSPropertyPageBreakInside || property == CSSPropertyWebkitColumnBreakInside || property == CSSPropertyWebkitRegionBreakInside);
-#else
     ASSERT(property == CSSPropertyPageBreakInside || property == CSSPropertyWebkitColumnBreakInside);
-#endif
     return CSSPropertyBreakInside;
 }
 
@@ -5059,13 +5016,6 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
     case CSSPropertyWebkitColumnBreakBefore:
         value = mapFromColumnBreakBetween(value);
         break;
-#if ENABLE(CSS_REGIONS)
-    case CSSPropertyWebkitRegionBreakAfter:
-    case CSSPropertyWebkitRegionBreakBefore:
-        value = mapFromRegionBreakBetween(value);
-        break;
-    case CSSPropertyWebkitRegionBreakInside:
-#endif
     case CSSPropertyPageBreakInside:
     case CSSPropertyWebkitColumnBreakInside:
         value = mapFromColumnRegionOrPageBreakInside(value);

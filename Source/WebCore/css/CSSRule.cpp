@@ -36,10 +36,6 @@ struct SameSizeAsCSSRule : public RefCounted<SameSizeAsCSSRule> {
 
 COMPILE_ASSERT(sizeof(CSSRule) == sizeof(SameSizeAsCSSRule), CSSRule_should_stay_small);
 
-#if ENABLE(CSS_REGIONS)
-COMPILE_ASSERT(StyleRuleBase::Region == static_cast<StyleRuleBase::Type>(CSSRule::WEBKIT_REGION_RULE), enums_should_match);
-#endif
-
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 COMPILE_ASSERT(StyleRuleBase::Viewport == static_cast<StyleRuleBase::Type>(CSSRule::WEBKIT_VIEWPORT_RULE), enums_should_match);
 #endif

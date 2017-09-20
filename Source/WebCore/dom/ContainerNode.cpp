@@ -108,9 +108,7 @@ static inline void destroyRenderTreeIfNeeded(Node& child)
 {
     bool isElement = is<Element>(child);
     auto hasDisplayContents = isElement && downcast<Element>(child).hasDisplayContents();
-    auto isNamedFlowElement = isElement && downcast<Element>(child).isNamedFlowContentElement();
-    // FIXME: Get rid of the named flow test.
-    if (!child.renderer() && !hasDisplayContents && !isNamedFlowElement)
+    if (!child.renderer() && !hasDisplayContents)
         return;
     if (isElement)
         RenderTreeUpdater::tearDownRenderers(downcast<Element>(child));

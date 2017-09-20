@@ -32,7 +32,6 @@ namespace WebCore {
 
 class DocumentRuleSets;
 class MatchRequest;
-class RenderRegion;
 class RuleData;
 class RuleSet;
 class SelectorFilter;
@@ -56,7 +55,6 @@ public:
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
     void setPseudoStyleRequest(const PseudoStyleRequest& request) { m_pseudoStyleRequest = request; }
     void setSameOriginOnly(bool f) { m_sameOriginOnly = f; } 
-    void setRegionForStyling(const RenderRegion* regionForStyling) { m_regionForStyling = regionForStyling; }
     void setMedium(const MediaQueryEvaluator* medium) { m_isPrintStyle = medium->mediaTypeMatchSpecific("print"); }
 
     bool hasAnyMatchingRules(const RuleSet*);
@@ -83,7 +81,6 @@ private:
     std::unique_ptr<RuleSet::RuleDataVector> collectSlottedPseudoElementRulesForSlot(bool includeEmptyRules);
 
     void collectMatchingRules(const MatchRequest&, StyleResolver::RuleRange&);
-    void collectMatchingRulesForRegion(const MatchRequest&, StyleResolver::RuleRange&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&, StyleResolver::RuleRange&);
     bool ruleMatches(const RuleData&, unsigned &specificity);
 
@@ -98,7 +95,6 @@ private:
     const SelectorFilter* m_selectorFilter { nullptr };
 
     bool m_isPrintStyle { false };
-    const RenderRegion* m_regionForStyling { nullptr };
     PseudoStyleRequest m_pseudoStyleRequest { NOPSEUDO };
     bool m_sameOriginOnly { false };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };

@@ -452,10 +452,6 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeAtRule(CSSParserTokenRange& range, A
         return consumeKeyframesRule(false, prelude, block);
     case CSSAtRulePage:
         return consumePageRule(prelude, block);
-#if ENABLE(CSS_REGIONS)
-    case CSSAtRuleWebkitRegion:
-        return consumeRegionRule(prelude, block);
-#endif
     default:
         return nullptr; // Parse error, unrecognised at-rule with block
     }
@@ -676,32 +672,6 @@ RefPtr<StyleRulePage> CSSParserImpl::consumePageRule(CSSParserTokenRange prelude
     page->wrapperAdoptSelectorList(selectorList);
     return page;
 }
-
-#if ENABLE(CSS_REGIONS)
-RefPtr<StyleRuleRegion> CSSParserImpl::consumeRegionRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
-{
-    CSSSelectorList selectorList = CSSSelectorParser::parseSelector(prelude, m_context, m_styleSheet.get());
-    if (!selectorList.isValid())
-        return nullptr; // Parse error, invalid selector list
-
-    if (m_observerWrapper) {
-        m_observerWrapper->observer().startRuleHeader(StyleRule::Region, m_observerWrapper->startOffset(prelude));
-        m_observerWrapper->observer().endRuleHeader(m_observerWrapper->endOffset(prelude));
-        m_observerWrapper->observer().startRuleBody(m_observerWrapper->previousTokenStartOffset(block));
-    }
-    
-    Vector<RefPtr<StyleRuleBase>> rules;
-    consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
-        rules.append(rule);
-    });
-    
-    if (m_observerWrapper)
-        m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
-    
-    return StyleRuleRegion::create(selectorList, rules);
-
-}
-#endif
 
 // FIXME-NEWPARSER: Support "apply"
 /*void CSSParserImpl::consumeApplyRule(CSSParserTokenRange prelude)

@@ -36,7 +36,6 @@ namespace WebCore {
 
 class Node;
 class RenderNamedFlowThread;
-class WebKitNamedFlow;
 
 typedef ListHashSet<RenderNamedFlowThread*> RenderNamedFlowThreadList;
 typedef HashCountedSet<RenderNamedFlowThread*> RenderNamedFlowThreadCountedSet;
@@ -44,7 +43,7 @@ typedef ListHashSet<Element*> NamedFlowContentElements;
 
 class RenderNamedFlowThread final : public RenderFlowThread, public SelectionSubtreeRoot {
 public:
-    RenderNamedFlowThread(Document&, RenderStyle&&, Ref<WebKitNamedFlow>&&);
+    RenderNamedFlowThread(Document&, RenderStyle&&);
     virtual ~RenderNamedFlowThread();
 
     const AtomicString& flowThreadName() const;
@@ -118,9 +117,6 @@ private:
     void clearContentElements();
     void updateWritingMode();
 
-    WebKitNamedFlow& namedFlow() { return m_namedFlow; }
-    const WebKitNamedFlow& namedFlow() const { return m_namedFlow; }
-
     // Observer flow threads have invalid regions that depend on the state of this thread
     // to re-validate their regions. Keeping a set of observer threads make it easy
     // to notify them when a region was removed from this flow.
@@ -137,9 +133,6 @@ private:
 
     bool m_hasRegionsWithStyling : 1;
     bool m_dispatchRegionOversetChangeEvent : 1;
-
-    // The DOM Object that represents a named flow.
-    Ref<WebKitNamedFlow> m_namedFlow;
 
     Timer m_regionOversetChangeEventTimer;
 

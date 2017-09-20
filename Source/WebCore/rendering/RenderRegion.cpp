@@ -262,19 +262,7 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
 
 void RenderRegion::installFlowThread()
 {
-    m_flowThread = &view().flowThreadController().ensureRenderFlowThreadWithName(style().regionThread());
-
-    // By now the flow thread should already be added to the rendering tree,
-    // so we go up the rendering parents and check that this region is not part of the same
-    // flow that it actually needs to display. It would create a circular reference.
-
-    auto closestFlowThreadAncestor = ancestorsOfType<RenderNamedFlowThread>(*this).first();
-    if (!closestFlowThreadAncestor) {
-        m_parentNamedFlowThread = nullptr;
-        return;
-    }
-
-    m_parentNamedFlowThread = &*closestFlowThreadAncestor;
+    ASSERT_NOT_REACHED();
 }
 
 void RenderRegion::attachRegion()

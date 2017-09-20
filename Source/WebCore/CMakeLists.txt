@@ -488,7 +488,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/StyleSheet.idl
     css/StyleSheetList.idl
     css/WebKitCSSMatrix.idl
-    css/WebKitCSSRegionRule.idl
     css/WebKitCSSViewportRule.idl
 
     dom/AnimationEvent.idl
@@ -506,7 +505,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/DOMError.idl
     dom/DOMException.idl
     dom/DOMImplementation.idl
-    dom/DOMNamedFlowCollection.idl
     dom/DOMPoint.idl
     dom/DOMPointInit.idl
     dom/DOMPointReadOnly.idl
@@ -583,7 +581,6 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/UIEvent.idl
     dom/UIEventInit.idl
     dom/WebKitAnimationEvent.idl
-    dom/WebKitNamedFlow.idl
     dom/WebKitTransitionEvent.idl
     dom/WheelEvent.idl
     dom/XMLDocument.idl
@@ -1561,7 +1558,6 @@ set(WebCore_SOURCES
     css/TransformFunctions.cpp
     css/ViewportStyleResolver.cpp
     css/WebKitCSSMatrix.cpp
-    css/WebKitCSSRegionRule.cpp
     css/WebKitCSSViewportRule.cpp
 
     css/parser/CSSAtRuleID.cpp
@@ -1615,7 +1611,6 @@ set(WebCore_SOURCES
     dom/DOMError.cpp
     dom/DOMException.cpp
     dom/DOMImplementation.cpp
-    dom/DOMNamedFlowCollection.cpp
     dom/DOMPointReadOnly.cpp
     dom/DOMQuad.cpp
     dom/DOMRectList.cpp
@@ -1677,7 +1672,6 @@ set(WebCore_SOURCES
     dom/MutationObserverRegistration.cpp
     dom/MutationRecord.cpp
     dom/NameNodeList.cpp
-    dom/NamedFlowCollection.cpp
     dom/NamedNodeMap.cpp
     dom/NativeNodeFilter.cpp
     dom/Node.cpp
@@ -1740,7 +1734,6 @@ set(WebCore_SOURCES
     dom/ViewportArguments.cpp
     dom/VisitedLinkState.cpp
     dom/WebKitAnimationEvent.cpp
-    dom/WebKitNamedFlow.cpp
     dom/WebKitTransitionEvent.cpp
     dom/WheelEvent.cpp
 

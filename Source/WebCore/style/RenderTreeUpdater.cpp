@@ -32,7 +32,6 @@
 #include "ComposedTreeIterator.h"
 #include "Document.h"
 #include "Element.h"
-#include "FlowThreadController.h"
 #include "HTMLSlotElement.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
@@ -40,7 +39,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderFullScreen.h"
 #include "RenderListItem.h"
-#include "RenderNamedFlowThread.h"
 #include "RenderTreeUpdaterFirstLetter.h"
 #include "RenderTreeUpdaterGeneratedContent.h"
 #include "RenderTreeUpdaterListItem.h"
@@ -300,8 +298,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     CheckForVisibilityChange checkForVisibilityChange(element);
 #endif
 
-    bool shouldTearDownRenderers = update.change == Style::Detach
-        && (element.renderer() || element.isNamedFlowContentElement() || element.hasDisplayContents());
+    bool shouldTearDownRenderers = update.change == Style::Detach && (element.renderer() || element.hasDisplayContents());
     if (shouldTearDownRenderers) {
         if (!element.renderer()) {
             // We may be tearing down a descendant renderer cached in renderTreePosition.
@@ -348,36 +345,15 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     renderer.setStyle(RenderStyle::clone(*update.style), StyleDifferenceEqual);
 }
 
-#if ENABLE(CSS_REGIONS)
-static void registerElementForFlowThreadIfNeeded(Element& element, const RenderStyle& style)
-{
-    if (!element.shouldMoveToFlowThread(style))
-        return;
-    FlowThreadController& flowThreadController = renderView().flowThreadController();
-    flowThreadController.registerNamedFlowContentElement(element, flowThreadController.ensureRenderFlowThreadWithName(style.flowThread()));
-}
-#endif
-
 void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
 {
-    auto computeInsertionPosition = [this, &element, &style] () {
-#if ENABLE(CSS_REGIONS)
-        if (element.shouldMoveToFlowThread(style))
-            return RenderTreePosition::insertionPositionForFlowThread(renderTreePosition().parent().element(), element, style);
-#else
-        UNUSED_PARAM(style);
-#endif
+    auto computeInsertionPosition = [this, &element] () {
         renderTreePosition().computeNextSibling(element);
         return renderTreePosition();
     };
     
     if (!shouldCreateRenderer(element, renderTreePosition().parent()))
         return;
-
-#if ENABLE(CSS_REGIONS)
-    // Even display: none elements need to be registered in FlowThreadController.
-    registerElementForFlowThreadIfNeeded(element, style);
-#endif
 
     if (!element.rendererIsNeeded(style))
         return;
@@ -390,10 +366,6 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
         newRenderer->destroy();
         return;
     }
-
-    // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
-    // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setFlowThreadState(insertionPosition.parent().flowThreadState());
 
     element.setRenderer(newRenderer);
 
@@ -503,9 +475,9 @@ void RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded(
             if (m_styleUpdate->elementUpdate(downcast<Element>(*sibling)))
                 return;
             // Text renderers beyond rendered elements can't be affected.
-            if (!sibling->renderer() || RenderTreePosition::isRendererReparented(*sibling->renderer()))
-                continue;
-            return;
+            if (sibling->renderer())
+                return;
+            continue;
         }
         if (!is<Text>(*sibling))
             continue;

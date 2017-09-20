@@ -124,6 +124,5 @@
 #include "TransformFunctions.cpp"
 #include "ViewportStyleResolver.cpp"
 #include "WebKitCSSMatrix.cpp"
-#include "WebKitCSSRegionRule.cpp"
 #include "WebKitCSSViewportRule.cpp"
 

@@ -35,7 +35,6 @@
 #include "MediaList.h"
 #include "StyleProperties.h"
 #include "StyleRuleImport.h"
-#include "WebKitCSSRegionRule.h"
 #include "WebKitCSSViewportRule.h"
 
 namespace WebCore {
@@ -74,11 +73,6 @@ void StyleRuleBase::destroy()
     case Supports:
         delete downcast<StyleRuleSupports>(this);
         return;
-#if ENABLE(CSS_REGIONS)
-    case Region:
-        delete downcast<StyleRuleRegion>(this);
-        return;
-#endif
     case Import:
         delete downcast<StyleRuleImport>(this);
         return;
@@ -100,9 +94,6 @@ void StyleRuleBase::destroy()
         delete downcast<StyleRuleCharset>(this);
         return;
     case Unknown:
-#if !ENABLE(CSS_REGIONS)
-    case Region:
-#endif
         ASSERT_NOT_REACHED();
         return;
     }
@@ -122,10 +113,6 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
         return downcast<StyleRuleMedia>(*this).copy();
     case Supports:
         return downcast<StyleRuleSupports>(*this).copy();
-#if ENABLE(CSS_REGIONS)
-    case Region:
-        return downcast<StyleRuleRegion>(*this).copy();
-#endif
     case Keyframes:
         return downcast<StyleRuleKeyframes>(*this).copy();
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -139,9 +126,6 @@ Ref<StyleRuleBase> StyleRuleBase::copy() const
     case Unknown:
     case Charset:
     case Keyframe:
-#if !ENABLE(CSS_REGIONS)
-    case Region:
-#endif
         break;
     }
     CRASH();
@@ -167,11 +151,6 @@ RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CS
     case Supports:
         rule = CSSSupportsRule::create(downcast<StyleRuleSupports>(self), parentSheet);
         break;
-#if ENABLE(CSS_REGIONS)
-    case Region:
-        rule = WebKitCSSRegionRule::create(downcast<StyleRuleRegion>(self), parentSheet);
-        break;
-#endif
     case Import:
         rule = CSSImportRule::create(downcast<StyleRuleImport>(self), parentSheet);
         break;
@@ -189,9 +168,6 @@ RefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CS
     case Unknown:
     case Charset:
     case Keyframe:
-#if !ENABLE(CSS_REGIONS)
-    case Region:
-#endif
         ASSERT_NOT_REACHED();
         return nullptr;
     }
@@ -426,25 +402,6 @@ StyleRuleSupports::StyleRuleSupports(const StyleRuleSupports& o)
     , m_conditionIsSupported(o.m_conditionIsSupported)
 {
 }
-
-StyleRuleRegion::StyleRuleRegion(Vector<std::unique_ptr<CSSParserSelector>>* selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
-    : StyleRuleGroup(Region, adoptRules)
-{
-    m_selectorList.adoptSelectorVector(*selectors);
-}
-
-StyleRuleRegion::StyleRuleRegion(CSSSelectorList& selectors, Vector<RefPtr<StyleRuleBase>>& adoptRules)
-    : StyleRuleGroup(Region, adoptRules)
-    , m_selectorList(WTFMove(selectors))
-{
-}
-
-StyleRuleRegion::StyleRuleRegion(const StyleRuleRegion& o)
-    : StyleRuleGroup(o)
-    , m_selectorList(o.m_selectorList)
-{
-}
-
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 StyleRuleViewport::StyleRuleViewport(Ref<StyleProperties>&& properties)

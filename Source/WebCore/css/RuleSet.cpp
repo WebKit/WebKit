@@ -135,10 +135,8 @@ static inline bool containsUncommonAttributeSelector(const CSSSelector& rootSele
     return containsUncommonAttributeSelector(rootSelector, true);
 }
 
-static inline PropertyWhitelistType determinePropertyWhitelistType(const AddRuleFlags addRuleFlags, const CSSSelector* selector)
+static inline PropertyWhitelistType determinePropertyWhitelistType(const CSSSelector* selector)
 {
-    if (addRuleFlags & RuleIsInRegionRule)
-        return PropertyWhitelistRegion;
     for (const CSSSelector* component = selector; component; component = component->tagHistory()) {
 #if ENABLE(VIDEO_TRACK)
         if (component->match() == CSSSelector::PseudoElement && (component->pseudoElementType() == CSSSelector::PseudoElementCue || component->value() == TextTrackCue::cueShadowPseudoId()))
@@ -159,7 +157,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     , m_canMatchPseudoElement(selectorCanMatchPseudoElement(*selector()))
     , m_containsUncommonAttributeSelector(WebCore::containsUncommonAttributeSelector(*selector()))
     , m_linkMatchType(SelectorChecker::determineLinkMatchType(selector()))
-    , m_propertyWhitelistType(determinePropertyWhitelistType(addRuleFlags, selector()))
+    , m_propertyWhitelistType(determinePropertyWhitelistType(selector()))
 #if ENABLE(CSS_SELECTOR_JIT) && CSS_SELECTOR_JIT_PROFILING
     , m_compiledSelectorUseCount(0)
 #endif
@@ -366,29 +364,6 @@ void RuleSet::addPageRule(StyleRulePage* rule)
     m_pageRules.append(rule);
 }
 
-void RuleSet::addRegionRule(StyleRuleRegion* regionRule, bool hasDocumentSecurityOrigin)
-{
-    auto regionRuleSet = std::make_unique<RuleSet>();
-    // The region rule set should take into account the position inside the parent rule set.
-    // Otherwise, the rules inside region block might be incorrectly positioned before other similar rules from
-    // the stylesheet that contains the region block.
-    regionRuleSet->m_ruleCount = m_ruleCount;
-
-    // Collect the region rules into a rule set
-    // FIXME: Should this add other types of rules? (i.e. use addChildRules() directly?)
-    const Vector<RefPtr<StyleRuleBase>>& childRules = regionRule->childRules();
-    AddRuleFlags addRuleFlags = hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState;
-    addRuleFlags = static_cast<AddRuleFlags>(addRuleFlags | RuleIsInRegionRule);
-    for (auto& childRule : childRules) {
-        if (is<StyleRule>(*childRule))
-            regionRuleSet->addStyleRule(downcast<StyleRule>(childRule.get()), addRuleFlags);
-    }
-    // Update the "global" rule count so that proper order is maintained
-    m_ruleCount = regionRuleSet->m_ruleCount;
-
-    m_regionSelectorsAndRuleSets.append(RuleSetSelectorPair(regionRule->selectorList().first(), WTFMove(regionRuleSet)));
-}
-
 void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const MediaQueryEvaluator& medium, StyleResolver* resolver, bool hasDocumentSecurityOrigin, bool isInitiatingElementInUserAgentShadowTree, AddRuleFlags addRuleFlags)
 {
     for (auto& rule : rules) {
@@ -408,11 +383,6 @@ void RuleSet::addChildRules(const Vector<RefPtr<StyleRuleBase>>& rules, const Me
             resolver->addKeyframeStyle(downcast<StyleRuleKeyframes>(*rule));
         else if (is<StyleRuleSupports>(*rule) && downcast<StyleRuleSupports>(*rule).conditionIsSupported())
             addChildRules(downcast<StyleRuleSupports>(*rule).childRules(), medium, resolver, hasDocumentSecurityOrigin, isInitiatingElementInUserAgentShadowTree, addRuleFlags);
-#if ENABLE(CSS_REGIONS)
-        else if (is<StyleRuleRegion>(*rule) && resolver) {
-            addRegionRule(downcast<StyleRuleRegion>(rule.get()), hasDocumentSecurityOrigin);
-        }
-#endif
 #if ENABLE(CSS_DEVICE_ADAPTATION)
         else if (is<StyleRuleViewport>(*rule) && resolver) {
             resolver->viewportStyleResolver()->addViewportRule(downcast<StyleRuleViewport>(rule.get()));
@@ -480,7 +450,6 @@ void RuleSet::shrinkToFit()
     m_universalRules.shrinkToFit();
     m_pageRules.shrinkToFit();
     m_features.shrinkToFit();
-    m_regionSelectorsAndRuleSets.shrinkToFit();
 }
 
 } // namespace WebCore

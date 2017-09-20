@@ -44,10 +44,6 @@ public:
         : m_parent(parent)
     {
     }
-    
-#if ENABLE(CSS_REGIONS)
-    static RenderTreePosition insertionPositionForFlowThread(Element* insertionParent, Element& child, const RenderStyle&);
-#endif
 
     RenderElement& parent() const { return m_parent; }
     void insert(RenderObject&);
@@ -60,18 +56,8 @@ public:
 
     RenderObject* previousSiblingRenderer(const Text&) const;
     RenderObject* nextSiblingRenderer(const Node&) const;
-    static bool isRendererReparented(const RenderObject&);
 
 private:
-#if ENABLE(CSS_REGIONS)
-    RenderTreePosition(RenderFlowThread& parent, RenderObject* nextSibling)
-        : m_parent(parent)
-        , m_nextSibling(nextSibling)
-        , m_hasValidNextSibling(true)
-    {
-    }
-#endif
-
     RenderElement& m_parent;
     RenderObject* m_nextSibling { nullptr };
     bool m_hasValidNextSibling { false };

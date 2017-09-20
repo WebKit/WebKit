@@ -41,7 +41,6 @@ TextTrackList conditional=VIDEO_TRACK
 VRDisplay
 VideoTrackList conditional=VIDEO_TRACK
 WebKitMediaKeySession conditional=LEGACY_ENCRYPTED_MEDIA
-WebKitNamedFlow
 WebSocket
 Worker
 XMLHttpRequest

@@ -82,9 +82,6 @@ void RenderTreeUpdater::GeneratedContent::updateQuotesUpTo(RenderQuote* lastQuot
 static void createContentRenderers(RenderElement& renderer)
 {
     auto& style = renderer.style();
-    if (style.hasFlowFrom())
-        return;
-
     ASSERT(style.contentData());
 
     for (const ContentData* content = style.contentData(); content; content = content->next()) {

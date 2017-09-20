@@ -51,7 +51,6 @@
 #include "CustomElementRegistry.h"
 #include "CustomEvent.h"
 #include "DOMImplementation.h"
-#include "DOMNamedFlowCollection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
 #include "DebugPageOverlays.h"
@@ -118,7 +117,6 @@
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
-#include "NamedFlowCollection.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
 #include "NestingLevelIncrementer.h"
@@ -1153,28 +1151,6 @@ bool Document::isCSSGridLayoutEnabled() const
     return RuntimeEnabledFeatures::sharedFeatures().isCSSGridLayoutEnabled();
 }
 
-#if ENABLE(CSS_REGIONS)
-
-RefPtr<DOMNamedFlowCollection> Document::webkitGetNamedFlows()
-{
-    if (!renderView())
-        return nullptr;
-
-    updateStyleIfNeeded();
-
-    return namedFlows().createCSSOMSnapshot();
-}
-
-#endif
-
-NamedFlowCollection& Document::namedFlows()
-{
-    if (!m_namedFlows)
-        m_namedFlows = NamedFlowCollection::create(this);
-
-    return *m_namedFlows;
-}
-
 ExceptionOr<Ref<Element>> Document::createElementNS(const AtomicString& namespaceURI, const String& qualifiedName)
 {
     auto parseResult = parseQualifiedName(namespaceURI, qualifiedName);
@@ -2036,10 +2012,8 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
     updateStyleIfNeeded();
 
     RenderObject* renderer = element.renderer();
-    if (!renderer || renderer->needsLayout() || element.renderNamedFlowFragment()) {
+    if (!renderer || renderer->needsLayout()) {
         // If we don't have a renderer or if the renderer needs layout for any reason, give up.
-        // Named flows can have auto height, so don't try to enforce the optimization in this case.
-        // The 2-pass nature of auto height named flow layout means the region may not be dirty yet.
         requireFullLayout = true;
     }
 
@@ -2085,7 +2059,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
             if (!currentBox->isRenderBlockFlow() || currentBox->flowThreadContainingBlock() || currentBox->isWritingModeRoot()) {
                 // FIXME: For now require only block flows all the way back to the root. This limits the optimization
                 // for now, and we'll expand it in future patches to apply to more and more scenarios.
-                // Disallow regions/columns from having the optimization.
+                // Disallow columns from having the optimization.
                 // Give up if the writing mode changes at all in the containing block chain.
                 requireFullLayout = true;
                 break;

@@ -41,7 +41,6 @@ struct SameSizeAsElementRareData : NodeRareData {
 #else
     unsigned bitfields : 10;
 #endif
-    RegionOversetState regionOversetState;
     LayoutSize sizeForResizing;
     IntPoint savedLayerScrollPosition;
     void* pointers[8];

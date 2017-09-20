@@ -227,14 +227,6 @@ DOMElement *kit(WebCore::Element* value)
     unwrap(*self).setAttributeWithoutSynchronization(WebCore::HTMLNames::uiactionsAttr, newUiactions);
 }
 
-#if ENABLE(CSS_REGIONS)
-- (NSString *)webkitRegionOverset
-{
-    WebCore::JSMainThreadNullState state;
-    return unwrap(*self).webkitRegionOverset();
-}
-#endif
-
 - (DOMElement *)previousElementSibling
 {
     WebCore::JSMainThreadNullState state;

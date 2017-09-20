@@ -105,7 +105,6 @@ public:
 
     bool hasComputedAutoHeight() const { return m_hasComputedAutoHeight; }
 
-    RegionOversetState regionOversetState() const;
 
     void attachRegion() override;
     void detachRegion() override;
@@ -135,9 +134,6 @@ private:
     void decrementAutoLogicalHeightCount();
 
     bool shouldHaveAutoLogicalHeight() const;
-
-    void updateOversetState();
-    void setRegionOversetState(RegionOversetState);
 
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) override;
 

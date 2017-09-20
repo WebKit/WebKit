@@ -450,10 +450,6 @@ static bool traverseSubresourcesInRules(const Vector<RefPtr<StyleRuleBase>>& rul
                 return true;
             break;
         }
-        case StyleRuleBase::Region:
-            if (traverseSubresourcesInRules(downcast<StyleRuleRegion>(*rule).childRules(), handler))
-                return true;
-            break;
         case StyleRuleBase::Import:
             ASSERT_NOT_REACHED();
 #if ASSERT_DISABLED

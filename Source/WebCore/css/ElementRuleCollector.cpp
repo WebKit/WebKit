@@ -35,7 +35,6 @@
 #include "CSSValueKeywords.h"
 #include "HTMLElement.h"
 #include "HTMLSlotElement.h"
-#include "RenderRegion.h"
 #include "SVGElement.h"
 #include "SelectorCompiler.h"
 #include "SelectorFilter.h"
@@ -164,22 +163,6 @@ void ElementRuleCollector::collectMatchingRules(const MatchRequest& matchRequest
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest, ruleRange);
 }
 
-void ElementRuleCollector::collectMatchingRulesForRegion(const MatchRequest& matchRequest, StyleResolver::RuleRange& ruleRange)
-{
-    if (!m_regionForStyling)
-        return;
-
-    unsigned size = matchRequest.ruleSet->regionSelectorsAndRuleSets().size();
-    for (unsigned i = 0; i < size; ++i) {
-        const CSSSelector* regionSelector = matchRequest.ruleSet->regionSelectorsAndRuleSets().at(i).selector;
-        if (checkRegionSelector(regionSelector, m_regionForStyling->generatingElement())) {
-            RuleSet* regionRules = matchRequest.ruleSet->regionSelectorsAndRuleSets().at(i).ruleSet.get();
-            ASSERT(regionRules);
-            collectMatchingRules(MatchRequest(regionRules, matchRequest.includeEmptyRules), ruleRange);
-        }
-    }
-}
-
 void ElementRuleCollector::sortAndTransferMatchedRules()
 {
     if (m_matchedRules.isEmpty())
@@ -208,7 +191,6 @@ void ElementRuleCollector::matchAuthorRules(bool includeEmptyRules)
     {
         MatchRequest matchRequest(&m_authorStyle, includeEmptyRules);
         collectMatchingRules(matchRequest, ruleRange);
-        collectMatchingRulesForRegion(matchRequest, ruleRange);
     }
 
     auto* parent = m_element.parentElement();
@@ -327,7 +309,6 @@ void ElementRuleCollector::matchUserRules(bool includeEmptyRules)
     MatchRequest matchRequest(m_userStyle, includeEmptyRules);
     StyleResolver::RuleRange ruleRange = m_result.ranges.userRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
-    collectMatchingRulesForRegion(matchRequest, ruleRange);
 
     sortAndTransferMatchedRules();
 }

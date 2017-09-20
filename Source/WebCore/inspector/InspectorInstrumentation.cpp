@@ -249,42 +249,6 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
-void InspectorInstrumentation::didCreateNamedFlowImpl(InstrumentingAgents& instrumentingAgents, Document* document, WebKitNamedFlow& namedFlow)
-{
-    if (!document)
-        return;
-
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
-        cssAgent->didCreateNamedFlow(*document, namedFlow);
-}
-
-void InspectorInstrumentation::willRemoveNamedFlowImpl(InstrumentingAgents& instrumentingAgents, Document* document, WebKitNamedFlow& namedFlow)
-{
-    if (!document)
-        return;
-
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
-        cssAgent->willRemoveNamedFlow(*document, namedFlow);
-}
-
-void InspectorInstrumentation::didChangeRegionOversetImpl(InstrumentingAgents& instrumentingAgents, Document& document, WebKitNamedFlow& namedFlow)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
-        cssAgent->didChangeRegionOverset(document, namedFlow);
-}
-
-void InspectorInstrumentation::didRegisterNamedFlowContentElementImpl(InstrumentingAgents& instrumentingAgents, Document& document, WebKitNamedFlow& namedFlow, Node& contentElement, Node* nextContentElement)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
-        cssAgent->didRegisterNamedFlowContentElement(document, namedFlow, contentElement, nextContentElement);
-}
-
-void InspectorInstrumentation::didUnregisterNamedFlowContentElementImpl(InstrumentingAgents& instrumentingAgents, Document& document, WebKitNamedFlow& namedFlow, Node& contentElement)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents.inspectorCSSAgent())
-        cssAgent->didUnregisterNamedFlowContentElement(document, namedFlow, contentElement);
-}
-
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents.inspectorDOMAgent())

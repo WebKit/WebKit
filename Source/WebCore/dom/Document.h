@@ -97,7 +97,6 @@ class CharacterData;
 class Comment;
 class ConstantPropertyMap;
 class DOMImplementation;
-class DOMNamedFlowCollection;
 class DOMSelection;
 class DOMWindow;
 class DOMWrapperWorld;
@@ -146,7 +145,6 @@ class MediaPlaybackTargetClient;
 class MediaQueryList;
 class MediaQueryMatcher;
 class MouseEventWithHitTestResults;
-class NamedFlowCollection;
 class NodeFilter;
 class NodeIterator;
 class Page;
@@ -408,11 +406,6 @@ public:
     static CustomElementNameValidationStatus validateCustomElementName(const AtomicString&);
 
     bool isCSSGridLayoutEnabled() const;
-#if ENABLE(CSS_REGIONS)
-    RefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
-#endif
-
-    NamedFlowCollection& namedFlows();
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y);
     RefPtr<Range> caretRangeFromPoint(const LayoutPoint& clientPoint);
@@ -1671,8 +1664,6 @@ private:
 #endif
 
     Timer m_visualUpdatesSuppressionTimer;
-
-    RefPtr<NamedFlowCollection> m_namedFlows;
 
     void clearSharedObjectPool();
     Timer m_sharedObjectPoolClearTimer;

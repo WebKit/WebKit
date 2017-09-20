@@ -1639,10 +1639,8 @@
                 "verso",
                 "column",
                 "page",
-                "region",
                 "avoid-column",
-                "avoid-page",
-                "avoid-region"
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakBetween"
@@ -1662,10 +1660,8 @@
                 "verso",
                 "column",
                 "page",
-                "region",
                 "avoid-column",
-                "avoid-page",
-                "avoid-region"
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakBetween"
@@ -1680,8 +1676,7 @@
                 "auto",
                 "avoid",
                 "avoid-column",
-                "avoid-page",
-                "avoid-region"
+                "avoid-page"
             ],
             "codegen-properties": {
                 "initial": "initialBreakInside"
@@ -6095,95 +6090,6 @@
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-user-select"
             }
         },
-        "-webkit-flow-into": {
-            "codegen-properties": {
-                "name-for-methods": "FlowThread",
-                "converter": "StringOrNone",
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-flow-into"
-            }
-        },
-        "-webkit-flow-from": {
-            "codegen-properties": {
-                "name-for-methods": "RegionThread",
-                "converter": "StringOrNone",
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-flow-from"
-            }
-        },
-        "-webkit-region-fragment": {
-            "values": [
-                "auto",
-                "break"
-            ],
-            "codegen-properties": {
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-region-fragment"
-            }
-        },
-        "-webkit-region-break-after": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
-            "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakAfter",
-                "converter": "RegionBreakBetween",
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-break-after"
-            }
-        },
-        "-webkit-region-break-before": {
-            "values": [
-                "auto",
-                "always",
-                "avoid",
-                "left",
-                "right"
-            ],
-            "codegen-properties": {
-                "initial": "initialBreakBetween",
-                "name-for-methods": "BreakBefore",
-                "converter": "RegionBreakBetween",
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-break-before"
-            }
-        },
-        "-webkit-region-break-inside": {
-            "values": [
-                "auto",
-                "avoid"
-            ],
-            "codegen-properties": {
-                "initial": "initialBreakInside",
-                "name-for-methods": "BreakInside",
-                "converter": "RegionBreakInside",
-                "enable-if": "ENABLE_CSS_REGIONS"
-            },
-            "specification": {
-                "category": "css-regions",
-                "url": "https://www.w3.org/TR/css-regions-1/#propdef-break-inside"
-            }
-        },
         "scroll-padding": {
             "codegen-properties": {
                 "enable-if": "ENABLE_CSS_SCROLL_SNAP",
@@ -6821,12 +6727,6 @@
             "shortname": "CSS Paged Media",
             "longname": "CSS Paged Media Module",
             "url": "https://www.w3.org/TR/css3-page/"
-        },
-        "css-regions": {
-            "shortname": "CSS Regions",
-            "longname": "CSS Regions Module",
-            "url": "https://www.w3.org/TR/css-regions-1/",
-            "status": "experimental"
         },
         "css-round-display": {
             "shortname": "CSS Round Display",

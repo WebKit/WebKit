@@ -75,7 +75,6 @@
 #include "NodeRenderStyle.h"
 #include "PageRuleCollector.h"
 #include "Pair.h"
-#include "RenderRegion.h"
 #include "RenderScrollbar.h"
 #include "RenderStyleConstants.h"
 #include "RenderTheme.h"
@@ -141,7 +140,6 @@ inline void StyleResolver::State::clear()
     m_element = nullptr;
     m_parentStyle = nullptr;
     m_ownedParentStyle = nullptr;
-    m_regionForStyling = nullptr;
     m_cssToLengthConversionData = CSSToLengthConversionData();
 }
 
@@ -298,10 +296,9 @@ void StyleResolver::sweepMatchedPropertiesCache()
     m_matchedPropertiesCacheAdditionsSinceLastSweep = 0;
 }
 
-StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+StyleResolver::State::State(const Element& element, const RenderStyle* parentStyle, const RenderStyle* documentElementStyle, const SelectorFilter* selectorFilter)
     : m_element(&element)
     , m_parentStyle(parentStyle)
-    , m_regionForStyling(regionForStyling)
     , m_elementLinkState(element.document().visitedLinkState().determineLinkState(element))
     , m_selectorFilter(selectorFilter)
 {
@@ -342,11 +339,11 @@ static inline bool isAtShadowBoundary(const Element& element)
     return parentNode && parentNode->isShadowRoot();
 }
 
-ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const RenderRegion* regionForStyling, const SelectorFilter* selectorFilter)
+ElementStyle StyleResolver::styleForElement(const Element& element, const RenderStyle* parentStyle, const RenderStyle* parentBoxStyle, RuleMatchingBehavior matchingBehavior, const SelectorFilter* selectorFilter)
 {
     RELEASE_ASSERT(!m_isDeleted);
 
-    m_state = State(element, parentStyle, m_overrideDocumentElementStyle, regionForStyling, selectorFilter);
+    m_state = State(element, parentStyle, m_overrideDocumentElementStyle, selectorFilter);
     State& state = m_state;
 
     if (state.parentStyle()) {
@@ -373,7 +370,6 @@ ElementStyle StyleResolver::styleForElement(const Element& element, const Render
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element);
 
     ElementRuleCollector collector(element, m_ruleSets, m_state.selectorFilter());
-    collector.setRegionForStyling(regionForStyling);
     collector.setMedium(&m_mediaQueryEvaluator);
 
     if (matchingBehavior == MatchOnlyUserAgentRules)
@@ -1059,27 +1055,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
     }
 }
 
-bool StyleResolver::checkRegionStyle(const Element* regionElement)
-{
-    unsigned rulesSize = m_ruleSets.authorStyle().regionSelectorsAndRuleSets().size();
-    for (unsigned i = 0; i < rulesSize; ++i) {
-        ASSERT(m_ruleSets.authorStyle().regionSelectorsAndRuleSets().at(i).ruleSet.get());
-        if (checkRegionSelector(m_ruleSets.authorStyle().regionSelectorsAndRuleSets().at(i).selector, regionElement))
-            return true;
-    }
-
-    if (m_ruleSets.userStyle()) {
-        rulesSize = m_ruleSets.userStyle()->regionSelectorsAndRuleSets().size();
-        for (unsigned i = 0; i < rulesSize; ++i) {
-            ASSERT(m_ruleSets.userStyle()->regionSelectorsAndRuleSets().at(i).ruleSet.get());
-            if (checkRegionSelector(m_ruleSets.userStyle()->regionSelectorsAndRuleSets().at(i).selector, regionElement))
-                return true;
-        }
-    }
-
-    return false;
-}
-
 static void checkForOrientationChange(RenderStyle* style)
 {
     FontOrientation fontOrientation;
@@ -1501,21 +1476,6 @@ static inline bool isValidMarkerStyleProperty(CSSPropertyID id)
     default:
         break;
     }
-    return false;
-}
-
-// http://dev.w3.org/csswg/css3-regions/#the-at-region-style-rule
-// FIXME: Add incremental support for other region styling properties.
-static inline bool isValidRegionStyleProperty(CSSPropertyID id)
-{
-    switch (id) {
-    case CSSPropertyBackgroundColor:
-    case CSSPropertyColor:
-        return true;
-    default:
-        break;
-    }
-
     return false;
 }
 
@@ -2179,8 +2139,6 @@ void StyleResolver::CascadedProperties::addMatch(const MatchResult& matchResult,
         }
         CSSPropertyID propertyID = current.id();
 
-        if (propertyWhitelistType == PropertyWhitelistRegion && !isValidRegionStyleProperty(propertyID))
-            continue;
 #if ENABLE(VIDEO_TRACK)
         if (propertyWhitelistType == PropertyWhitelistCue && !isValidCueStyleProperty(propertyID))
             continue;

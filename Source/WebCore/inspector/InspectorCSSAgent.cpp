@@ -37,16 +37,15 @@
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "FontCache.h"
+#include "Frame.h"
 #include "HTMLHeadElement.h"
 #include "HTMLStyleElement.h"
 #include "InspectorHistory.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
-#include "NamedFlowCollection.h"
 #include "Node.h"
 #include "NodeList.h"
 #include "PseudoElement.h"
-#include "RenderNamedFlowFragment.h"
 #include "SVGStyleElement.h"
 #include "SelectorChecker.h"
 #include "ShadowRoot.h"
@@ -56,7 +55,6 @@
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetList.h"
-#include "WebKitNamedFlow.h"
 #include <inspector/InspectorProtocolObjects.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -101,54 +99,6 @@ static unsigned computePseudoClassMask(const InspectorArray& pseudoClassArray)
     }
 
     return result;
-}
-
-class ChangeRegionOversetTask {
-public:
-    ChangeRegionOversetTask(InspectorCSSAgent*);
-    void scheduleFor(WebKitNamedFlow*, int documentNodeId);
-    void unschedule(WebKitNamedFlow*);
-    void reset();
-    void timerFired();
-
-private:
-    InspectorCSSAgent* m_cssAgent;
-    Timer m_timer;
-    HashMap<WebKitNamedFlow*, int> m_namedFlows;
-};
-
-ChangeRegionOversetTask::ChangeRegionOversetTask(InspectorCSSAgent* cssAgent)
-    : m_cssAgent(cssAgent)
-    , m_timer(*this, &ChangeRegionOversetTask::timerFired)
-{
-}
-
-void ChangeRegionOversetTask::scheduleFor(WebKitNamedFlow* namedFlow, int documentNodeId)
-{
-    m_namedFlows.add(namedFlow, documentNodeId);
-
-    if (!m_timer.isActive())
-        m_timer.startOneShot(0_s);
-}
-
-void ChangeRegionOversetTask::unschedule(WebKitNamedFlow* namedFlow)
-{
-    m_namedFlows.remove(namedFlow);
-}
-
-void ChangeRegionOversetTask::reset()
-{
-    m_timer.stop();
-    m_namedFlows.clear();
-}
-
-void ChangeRegionOversetTask::timerFired()
-{
-    // The timer is stopped on m_cssAgent destruction, so this method will never be called after m_cssAgent has been destroyed.
-    for (auto& namedFlow : m_namedFlows)
-        m_cssAgent->regionOversetChanged(namedFlow.key, namedFlow.value);
-
-    m_namedFlows.clear();
 }
 
 class InspectorCSSAgent::StyleSheetAction : public InspectorHistory::Action {
@@ -385,9 +335,6 @@ void InspectorCSSAgent::reset()
 
 void InspectorCSSAgent::resetNonPersistentData()
 {
-    m_namedFlowCollectionsRequested.clear();
-    if (m_changeRegionOversetTask)
-        m_changeRegionOversetTask->reset();
     resetPseudoStates();
 }
 
@@ -456,77 +403,6 @@ void InspectorCSSAgent::setActiveStyleSheetsForDocument(Document& document, Vect
             m_frontendDispatcher->styleSheetAdded(inspectorStyleSheet->buildObjectForStyleSheetInfo());
         }
     }
-}
-
-void InspectorCSSAgent::didCreateNamedFlow(Document& document, WebKitNamedFlow& namedFlow)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
-    if (!documentNodeId)
-        return;
-
-    ErrorString unused;
-    m_frontendDispatcher->namedFlowCreated(buildObjectForNamedFlow(unused, &namedFlow, documentNodeId));
-}
-
-void InspectorCSSAgent::willRemoveNamedFlow(Document& document, WebKitNamedFlow& namedFlow)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
-    if (!documentNodeId)
-        return;
-
-    if (m_changeRegionOversetTask)
-        m_changeRegionOversetTask->unschedule(&namedFlow);
-
-    m_frontendDispatcher->namedFlowRemoved(documentNodeId, namedFlow.name().string());
-}
-
-void InspectorCSSAgent::didChangeRegionOverset(Document& document, WebKitNamedFlow& namedFlow)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
-    if (!documentNodeId)
-        return;
-
-    if (!m_changeRegionOversetTask)
-        m_changeRegionOversetTask = std::make_unique<ChangeRegionOversetTask>(this);
-    m_changeRegionOversetTask->scheduleFor(&namedFlow, documentNodeId);
-}
-
-void InspectorCSSAgent::regionOversetChanged(WebKitNamedFlow* namedFlow, int documentNodeId)
-{
-    if (namedFlow->flowState() == WebKitNamedFlow::FlowStateNull)
-        return;
-
-    ErrorString unused;
-    Ref<WebKitNamedFlow> protect(*namedFlow);
-
-    m_frontendDispatcher->regionOversetChanged(buildObjectForNamedFlow(unused, namedFlow, documentNodeId));
-}
-
-void InspectorCSSAgent::didRegisterNamedFlowContentElement(Document& document, WebKitNamedFlow& namedFlow, Node& contentElement, Node* nextContentElement)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
-    if (!documentNodeId)
-        return;
-
-    ErrorString unused;
-    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, &contentElement);
-    int nextContentElementNodeId = nextContentElement ? m_domAgent->pushNodeToFrontend(unused, documentNodeId, nextContentElement) : 0;
-    m_frontendDispatcher->registeredNamedFlowContentElement(documentNodeId, namedFlow.name().string(), contentElementNodeId, nextContentElementNodeId);
-}
-
-void InspectorCSSAgent::didUnregisterNamedFlowContentElement(Document& document, WebKitNamedFlow& namedFlow, Node& contentElement)
-{
-    int documentNodeId = documentNodeWithRequestedFlowsId(&document);
-    if (!documentNodeId)
-        return;
-
-    ErrorString unused;
-    int contentElementNodeId = m_domAgent->pushNodeToFrontend(unused, documentNodeId, &contentElement);
-    if (!contentElementNodeId) {
-        // We've already notified that the DOM node was removed from the DOM, so there's no need to send another event.
-        return;
-    }
-    m_frontendDispatcher->unregisteredNamedFlowContentElement(documentNodeId, namedFlow.name().string(), contentElementNodeId);
 }
 
 bool InspectorCSSAgent::forcePseudoState(const Element& element, CSSSelector::PseudoClassType pseudoClassType)
@@ -901,21 +777,8 @@ void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, c
     element->document().styleScope().didChangeStyleSheetEnvironment();
 }
 
-void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int documentNodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>& result)
+void InspectorCSSAgent::getNamedFlowCollection(ErrorString&, int, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>&)
 {
-    Document* document = m_domAgent->assertDocument(errorString, documentNodeId);
-    if (!document)
-        return;
-
-    m_namedFlowCollectionsRequested.add(documentNodeId);
-
-    Vector<RefPtr<WebKitNamedFlow>> namedFlowsVector = document->namedFlows().namedFlows();
-    auto namedFlows = Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>::create();
-
-    for (auto& namedFlow : namedFlowsVector)
-        namedFlows->addItem(buildObjectForNamedFlow(errorString, namedFlow.get(), documentNodeId));
-
-    result = WTFMove(namedFlows);
 }
 
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)
@@ -945,15 +808,6 @@ Element* InspectorCSSAgent::elementForId(ErrorString& errorString, int nodeId)
         return nullptr;
     }
     return downcast<Element>(node);
-}
-
-int InspectorCSSAgent::documentNodeWithRequestedFlowsId(Document* document)
-{
-    int documentNodeId = m_domAgent->boundNodeId(document);
-    if (!documentNodeId || !m_namedFlowCollectionsRequested.contains(documentNodeId))
-        return 0;
-
-    return documentNodeId;
 }
 
 String InspectorCSSAgent::unbindStyleSheet(InspectorStyleSheet* inspectorStyleSheet)
@@ -1090,61 +944,6 @@ RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttr
     auto& mutableAttributeStyle = downcast<MutableStyleProperties>(*attributeStyle);
     auto inspectorStyle = InspectorStyle::create(InspectorCSSId(), mutableAttributeStyle.ensureCSSStyleDeclaration(), nullptr);
     return inspectorStyle->buildObjectForStyle();
-}
-
-RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::Region>> InspectorCSSAgent::buildArrayForRegions(ErrorString& errorString, RefPtr<NodeList>&& regionList, int documentNodeId)
-{
-    auto regions = Inspector::Protocol::Array<Inspector::Protocol::CSS::Region>::create();
-
-    for (unsigned i = 0; i < regionList->length(); ++i) {
-        Inspector::Protocol::CSS::Region::RegionOverset regionOverset;
-
-        switch (downcast<Element>(regionList->item(i))->regionOversetState()) {
-        case RegionFit:
-            regionOverset = Inspector::Protocol::CSS::Region::RegionOverset::Fit;
-            break;
-        case RegionEmpty:
-            regionOverset = Inspector::Protocol::CSS::Region::RegionOverset::Empty;
-            break;
-        case RegionOverset:
-            regionOverset = Inspector::Protocol::CSS::Region::RegionOverset::Overset;
-            break;
-        case RegionUndefined:
-            continue;
-        default:
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-
-        auto region = Inspector::Protocol::CSS::Region::create()
-            .setRegionOverset(regionOverset)
-            // documentNodeId was previously asserted
-            .setNodeId(m_domAgent->pushNodeToFrontend(errorString, documentNodeId, regionList->item(i)))
-            .release();
-
-        regions->addItem(WTFMove(region));
-    }
-
-    return WTFMove(regions);
-}
-
-RefPtr<Inspector::Protocol::CSS::NamedFlow> InspectorCSSAgent::buildObjectForNamedFlow(ErrorString& errorString, WebKitNamedFlow* webkitNamedFlow, int documentNodeId)
-{
-    RefPtr<NodeList> contentList = webkitNamedFlow->getContent();
-    auto content = Inspector::Protocol::Array<int>::create();
-
-    for (unsigned i = 0; i < contentList->length(); ++i) {
-        // documentNodeId was previously asserted
-        content->addItem(m_domAgent->pushNodeToFrontend(errorString, documentNodeId, contentList->item(i)));
-    }
-
-    return Inspector::Protocol::CSS::NamedFlow::create()
-        .setDocumentNodeId(documentNodeId)
-        .setName(webkitNamedFlow->name().string())
-        .setOverset(webkitNamedFlow->overset())
-        .setContent(WTFMove(content))
-        .setRegions(buildArrayForRegions(errorString, webkitNamedFlow->getRegions(), documentNodeId))
-        .release();
 }
 
 void InspectorCSSAgent::didRemoveDOMNode(Node& node, int nodeId)

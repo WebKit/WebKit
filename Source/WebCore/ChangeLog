@@ -1,3 +1,224 @@
+2017-09-20  Antti Koivisto  <antti@apple.com>
+
+        Remove DOM and styling support for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=177221
+
+        Reviewed by Andreas Kling.
+
+        This patch removes all CSS Regions (aka "named flow") related code excluding rendering.
+
+        The feature is already disabled so no functional changes.
+
+        * CMakeLists.txt:
+        * Configurations/FeatureDefines.xcconfig:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+        (WebCore::ComputedStyleExtractor::propertyValue):
+        (WebCore::convertToRegionBreak): Deleted.
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator BreakBetween const):
+        * css/CSSProperties.json:
+        * css/CSSRule.cpp:
+        * css/CSSRule.h:
+        * css/CSSRule.idl:
+        * css/ElementRuleCollector.cpp:
+        (WebCore::ElementRuleCollector::matchAuthorRules):
+        (WebCore::ElementRuleCollector::matchUserRules):
+        (WebCore::ElementRuleCollector::collectMatchingRulesForRegion): Deleted.
+        * css/ElementRuleCollector.h:
+        (WebCore::ElementRuleCollector::setSameOriginOnly):
+        (WebCore::ElementRuleCollector::setRegionForStyling): Deleted.
+        * css/InspectorCSSOMWrappers.cpp:
+        (WebCore::InspectorCSSOMWrappers::collect):
+        * css/RuleSet.cpp:
+        (WebCore::determinePropertyWhitelistType):
+        (WebCore::RuleData::RuleData):
+        (WebCore::RuleSet::addChildRules):
+        (WebCore::RuleSet::shrinkToFit):
+        (WebCore::RuleSet::addRegionRule): Deleted.
+        * css/RuleSet.h:
+        (WebCore::RuleSet:: const):
+        (WebCore::RuleSet::regionSelectorsAndRuleSets const): Deleted.
+        * css/StyleBuilderConverter.h:
+        (WebCore::StyleBuilderConverter::convertRegionBreakBetween): Deleted.
+        (WebCore::StyleBuilderConverter::convertRegionBreakInside): Deleted.
+        * css/StyleProperties.cpp:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::State::clear):
+        (WebCore::StyleResolver::State::State):
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::CascadedProperties::addMatch):
+        (WebCore::StyleResolver::checkRegionStyle): Deleted.
+        (WebCore::isValidRegionStyleProperty): Deleted.
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::State::regionForStyling const): Deleted.
+        (WebCore::checkRegionSelector): Deleted.
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::destroy):
+        (WebCore::StyleRuleBase::copy const):
+        (WebCore::StyleRuleBase::createCSSOMWrapper const):
+        (WebCore::StyleRuleRegion::StyleRuleRegion): Deleted.
+        * css/StyleRule.h:
+        (WebCore::StyleRuleBase::isStyleRule const):
+        (WebCore::StyleRuleBase::isRegionRule const): Deleted.
+        * css/StyleSheetContents.cpp:
+        (WebCore::traverseSubresourcesInRules):
+        * css/WebKitCSSRegionRule.cpp: Removed.
+        * css/WebKitCSSRegionRule.h: Removed.
+        * css/WebKitCSSRegionRule.idl: Removed.
+        * css/parser/CSSAtRuleID.cpp:
+        (WebCore::cssAtRuleID):
+        * css/parser/CSSAtRuleID.h:
+        * css/parser/CSSParserFastPaths.cpp:
+        (WebCore::CSSParserFastPaths::isValidKeywordPropertyAndValue):
+        (WebCore::CSSParserFastPaths::isKeywordPropertyID):
+        * css/parser/CSSParserImpl.cpp:
+        (WebCore::CSSParserImpl::consumeAtRule):
+        (WebCore::CSSParserImpl::consumeRegionRule): Deleted.
+        * css/parser/CSSParserImpl.h:
+        * css/parser/CSSPropertyParser.cpp:
+        (WebCore::isLegacyBreakProperty):
+        (WebCore::CSSPropertyParser::parseSingleValue):
+        (WebCore::mapFromLegacyBreakProperty):
+        (WebCore::CSSPropertyParser::consumeLegacyBreakProperty):
+        (WebCore::consumeFlowProperty): Deleted.
+        (WebCore::mapFromRegionBreakBetween): Deleted.
+        * dom/ContainerNode.cpp:
+        (WebCore::destroyRenderTreeIfNeeded):
+        * dom/DOMNamedFlowCollection.cpp: Removed.
+        * dom/DOMNamedFlowCollection.h: Removed.
+        * dom/DOMNamedFlowCollection.idl: Removed.
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        (WebCore::Document::webkitGetNamedFlows): Deleted.
+        (WebCore::Document::namedFlows): Deleted.
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::clearStyleDerivedDataBeforeDetachingRenderer):
+        (WebCore::Element::unregisterNamedFlowContentElement): Deleted.
+        (WebCore::Element::setIsNamedFlowContentElement): Deleted.
+        (WebCore::Element::clearIsNamedFlowContentElement): Deleted.
+        (WebCore::Element::rareDataIsNamedFlowContentElement const): Deleted.
+        (WebCore::Element::setRegionOversetState): Deleted.
+        (WebCore::Element::regionOversetState const): Deleted.
+        (WebCore::Element::renderNamedFlowFragment const): Deleted.
+        (WebCore::Element::shouldMoveToFlowThread const): Deleted.
+        (WebCore::Element::webkitRegionOverset const): Deleted.
+        (WebCore::Element::webkitGetRegionFlowRanges const): Deleted.
+        * dom/Element.h:
+        (WebCore::Element::isNamedFlowContentElement const): Deleted.
+        * dom/Element.idl:
+        * dom/ElementRareData.cpp:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::regionOversetState const): Deleted.
+        (WebCore::ElementRareData::setRegionOversetState): Deleted.
+        (WebCore::ElementRareData::isNamedFlowContentElement const): Deleted.
+        (WebCore::ElementRareData::setIsNamedFlowContentElement): Deleted.
+        * dom/EventTargetFactory.in:
+        * dom/NamedFlowCollection.cpp: Removed.
+        * dom/NamedFlowCollection.h: Removed.
+        * dom/PseudoElement.h:
+        * dom/WebKitNamedFlow.cpp: Removed.
+        * dom/WebKitNamedFlow.h: Removed.
+        * dom/WebKitNamedFlow.idl: Removed.
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::resetNonPersistentData):
+        (WebCore::ChangeRegionOversetTask::ChangeRegionOversetTask): Deleted.
+        (WebCore::ChangeRegionOversetTask::scheduleFor): Deleted.
+        (WebCore::ChangeRegionOversetTask::unschedule): Deleted.
+        (WebCore::ChangeRegionOversetTask::reset): Deleted.
+        (WebCore::ChangeRegionOversetTask::timerFired): Deleted.
+        (WebCore::InspectorCSSAgent::didCreateNamedFlow): Deleted.
+        (WebCore::InspectorCSSAgent::willRemoveNamedFlow): Deleted.
+        (WebCore::InspectorCSSAgent::didChangeRegionOverset): Deleted.
+        (WebCore::InspectorCSSAgent::regionOversetChanged): Deleted.
+        (WebCore::InspectorCSSAgent::didRegisterNamedFlowContentElement): Deleted.
+        (WebCore::InspectorCSSAgent::didUnregisterNamedFlowContentElement): Deleted.
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection): Deleted.
+        (WebCore::InspectorCSSAgent::documentNodeWithRequestedFlowsId): Deleted.
+        (WebCore::InspectorCSSAgent::buildArrayForRegions): Deleted.
+        (WebCore::InspectorCSSAgent::buildObjectForNamedFlow): Deleted.
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCreateNamedFlowImpl): Deleted.
+        (WebCore::InspectorInstrumentation::willRemoveNamedFlowImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didChangeRegionOversetImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didRegisterNamedFlowContentElementImpl): Deleted.
+        (WebCore::InspectorInstrumentation::didUnregisterNamedFlowContentElementImpl): Deleted.
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildRendererHighlight):
+        (WebCore::buildObjectForElementData):
+        (WebCore::buildObjectForRegion): Deleted.
+        (WebCore::buildObjectForFlowRegions): Deleted.
+        * page/EventHandler.cpp:
+        (WebCore::handleWheelEventInAppropriateEnclosingBox):
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::ensureRenderFlowThreadWithName): Deleted.
+        * rendering/FlowThreadController.h:
+        * rendering/RegionOversetState.h: Removed.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        * rendering/RenderNamedFlowFragment.cpp:
+        (WebCore::RenderNamedFlowFragment::getRanges const):
+        (WebCore::RenderNamedFlowFragment::layoutBlock):
+        (WebCore::RenderNamedFlowFragment::checkRegionStyle):
+        (WebCore::RenderNamedFlowFragment::computeStyleInRegion const):
+        (WebCore::RenderNamedFlowFragment::setRegionObjectsRegionStyle):
+        (WebCore::RenderNamedFlowFragment::setRegionOversetState): Deleted.
+        (WebCore::RenderNamedFlowFragment::regionOversetState const): Deleted.
+        (WebCore::RenderNamedFlowFragment::updateOversetState): Deleted.
+        * rendering/RenderNamedFlowFragment.h:
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::RenderNamedFlowThread):
+        (WebCore::RenderNamedFlowThread::clearContentElements):
+        (WebCore::RenderNamedFlowThread::registerNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::unregisterNamedFlowContentElement):
+        (WebCore::RenderNamedFlowThread::hasContentElement const):
+        (WebCore::RenderNamedFlowThread::flowThreadName const):
+        (WebCore::RenderNamedFlowThread::dispatchRegionOversetChangeEventIfNeeded):
+        (WebCore::RenderNamedFlowThread::regionOversetChangeEventTimerFired):
+        (WebCore::RenderNamedFlowThread::setMarkForDestruction):
+        (WebCore::RenderNamedFlowThread::resetMarkForDestruction):
+        (WebCore::RenderNamedFlowThread::isMarkedForDestruction const):
+        (WebCore::nextNodeInsideContentElement):
+        * rendering/RenderNamedFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::installFlowThread):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/WillChangeData.cpp:
+        (WebCore::WillChangeData::propertyCreatesStackingContext):
+        * style/RenderTreePosition.cpp:
+        (WebCore::RenderTreePosition::previousSiblingRenderer const):
+        (WebCore::RenderTreePosition::nextSiblingRenderer const):
+        (WebCore::RenderTreePosition::insertionPositionForFlowThread): Deleted.
+        (WebCore::RenderTreePosition::isRendererReparented): Deleted.
+        * style/RenderTreePosition.h:
+        (WebCore::RenderTreePosition::RenderTreePosition):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::updateElementRenderer):
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::RenderTreeUpdater::invalidateWhitespaceOnlyTextSiblingsAfterAttachIfNeeded):
+        (WebCore::registerElementForFlowThreadIfNeeded): Deleted.
+        * style/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::createContentRenderers):
+        * style/StyleChange.cpp:
+        (WebCore::Style::determineChange):
+        * style/StyleTreeResolver.cpp:
+        (WebCore::Style::TreeResolver::styleForElement):
+        (WebCore::Style::affectsRenderedSubtree):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::shouldMoveToFlowThread const): Deleted.
+        * svg/SVGElement.h:
+
 2017-09-20  Ms2ger  <Ms2ger@igalia.com>
 
         Add bindings for optional arguments to some WebGL2 methods.
