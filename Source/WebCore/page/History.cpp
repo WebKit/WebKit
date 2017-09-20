@@ -175,14 +175,19 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
         return { };
 
     URL fullURL = urlForState(urlString);
-    if (!fullURL.isValid() || !m_frame->document()->securityOrigin().canRequest(fullURL))
+    if (!fullURL.isValid())
         return Exception { SECURITY_ERR };
 
-    if (fullURL.hasUsername() || fullURL.hasPassword()) {
-        if (stateObjectType == StateObjectType::Replace)
-            return Exception { SECURITY_ERR, "Attempt to use history.replaceState() to change session history URL to " + fullURL.string() + " is insecure; Username/passwords aren't allowed in state object URLs" };
-        return Exception { SECURITY_ERR, "Attempt to use history.pushState() to add URL " + fullURL.string() + " to session history is insecure; Username/passwords aren't allowed in state object URLs" };
-    }
+    const URL& documentURL = m_frame->document()->url();
+
+    auto createBlockedURLSecurityErrorWithMessageSuffix = [&] (const char* suffix) {
+        const char* functionName = stateObjectType == StateObjectType::Replace ? "history.replaceState()" : "history.pushState()";
+        return Exception { SECURITY_ERR, makeString("Blocked attempt to use ", functionName, " to change session history URL from ", documentURL.stringCenterEllipsizedToLength(), " to ", fullURL.stringCenterEllipsizedToLength(), ". ", suffix) };
+    };
+    if (!protocolHostAndPortAreEqual(fullURL, documentURL) || fullURL.user() != documentURL.user() || fullURL.pass() != documentURL.pass())
+        return createBlockedURLSecurityErrorWithMessageSuffix("Protocols, domains, ports, usernames, and passwords must match.");
+    if (!m_frame->document()->securityOrigin().canRequest(fullURL) && (fullURL.path() != documentURL.path() || fullURL.query() != documentURL.query()))
+        return createBlockedURLSecurityErrorWithMessageSuffix("Paths and fragments must match for a sandboxed document.");
 
     Document* mainDocument = m_frame->page()->mainFrame().document();
     History* mainHistory = nullptr;

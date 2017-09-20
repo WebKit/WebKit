@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<script src="/js-test-resources/js-test.js"></script>
+<body>
+<script>
+function completeURL(path = "", fragment = "")
+{
+    var url = `${location.protocol}//${location.host}/`;
+    if (path)
+        url += path;
+    if (fragment)
+        url += "?" + fragment;
+    return url;
+}
+
+description("Tests history.replaceState(), history.pushState() from a sandboxed iframe");
+
+shouldNotThrow('window.history.replaceState(null, "New title", location.href)');
+shouldNotThrow('window.history.pushState(null, "New title", location.href)');
+
+shouldThrow('window.history.replaceState(null, "New title", completeURL(""))', "'SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/. Paths and fragments must match for a sandboxed document.'");
+
+shouldThrow('window.history.pushState(null, "New title", completeURL(""))', "'SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/. Paths and fragments must match for a sandboxed document.'");
+
+shouldThrow('window.history.replaceState(null, "New title", completeURL("dummy"))', "'SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/dummy. Paths and fragments must match for a sandboxed document.'");
+
+shouldThrow('window.history.pushState(null, "New title", completeURL("dummy"))', "'SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/dummy. Paths and fragments must match for a sandboxed document.'");
+
+shouldThrow('window.history.replaceState(null, "New title", completeURL("", "dummy"))', "'SecurityError: Blocked attempt to use history.replaceState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/?dummy. Paths and fragments must match for a sandboxed document.'");
+
+shouldThrow('window.history.pushState(null, "New title", completeURL("", "dummy"))', "'SecurityError: Blocked attempt to use history.pushState() to change session history URL from http://127.0.0.1:8000/security/resources/history-pushState-replaceState-from-sandboxed-iframe.html to http://127.0.0.1:8000/?dummy. Paths and fragments must match for a sandboxed document.'");
+</script>
+</body>
+</html>
