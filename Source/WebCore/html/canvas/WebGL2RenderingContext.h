@@ -85,16 +85,16 @@ public:
     void uniform2ui(WebGLUniformLocation*, GC3Duint v0, GC3Duint v1);
     void uniform3ui(WebGLUniformLocation*, GC3Duint v0, GC3Duint v1, GC3Duint v2);
     void uniform4ui(WebGLUniformLocation*, GC3Duint v0, GC3Duint v1, GC3Duint v2, GC3Duint v3);
-    void uniform1uiv(WebGLUniformLocation*, Uint32List&&);
-    void uniform2uiv(WebGLUniformLocation*, Uint32List&& value);
-    void uniform3uiv(WebGLUniformLocation*, Uint32List&& value);
-    void uniform4uiv(WebGLUniformLocation*, Uint32List&& value);
-    void uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
-    void uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
-    void uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
-    void uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
-    void uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
-    void uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value);
+    void uniform1uiv(WebGLUniformLocation*, Uint32List&& data, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniform2uiv(WebGLUniformLocation*, Uint32List&& data, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniform3uiv(WebGLUniformLocation*, Uint32List&& data, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniform4uiv(WebGLUniformLocation*, Uint32List&& data, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix2x3fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix3x2fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix2x4fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix4x2fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix3x4fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
+    void uniformMatrix4x3fv(WebGLUniformLocation*, GC3Dboolean transpose, Float32List&& value, GC3Duint srcOffset, GC3Duint srcLength);
     void vertexAttribI4i(GC3Duint index, GC3Dint x, GC3Dint y, GC3Dint z, GC3Dint w);
     void vertexAttribI4iv(GC3Duint index, Int32List&& v);
     void vertexAttribI4ui(GC3Duint index, GC3Duint x, GC3Duint y, GC3Duint z, GC3Duint w);
@@ -110,9 +110,9 @@ public:
     
     // Multiple render targets
     void drawBuffers(const Vector<GC3Denum>& buffers);
-    void clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, Int32List&& value);
-    void clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, Uint32List&& value);
-    void clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, Float32List&& value);
+    void clearBufferiv(GC3Denum buffer, GC3Dint drawbuffer, Int32List&& values, GC3Duint srcOffset);
+    void clearBufferuiv(GC3Denum buffer, GC3Dint drawbuffer, Uint32List&& values, GC3Duint srcOffset);
+    void clearBufferfv(GC3Denum buffer, GC3Dint drawbuffer, Float32List&& values, GC3Duint srcOffset);
     void clearBufferfi(GC3Denum buffer, GC3Dint drawbuffer, GC3Dfloat depth, GC3Dint stencil);
     
     // Query objects

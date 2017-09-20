@@ -1,3 +1,32 @@
+2017-09-20  Ms2ger  <Ms2ger@igalia.com>
+
+        Add bindings for optional arguments to some WebGL2 methods.
+        https://bugs.webkit.org/show_bug.cgi?id=177067
+
+        Reviewed by Antti Koivisto.
+
+        Add bindings for optional arguments to some WebGL2 methods.
+
+        No new tests: not much point in adding tests now; these methods don't
+        do anything anyway.
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::uniform1uiv):
+        (WebCore::WebGL2RenderingContext::uniform2uiv):
+        (WebCore::WebGL2RenderingContext::uniform3uiv):
+        (WebCore::WebGL2RenderingContext::uniform4uiv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x3fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix2x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x2fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix3x4fv):
+        (WebCore::WebGL2RenderingContext::uniformMatrix4x3fv):
+        (WebCore::WebGL2RenderingContext::clearBufferiv):
+        (WebCore::WebGL2RenderingContext::clearBufferuiv):
+        (WebCore::WebGL2RenderingContext::clearBufferfv):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2017-09-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         On Mac, dataTransfer claims to contain URL list when dropping files
