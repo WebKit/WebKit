@@ -1,3 +1,18 @@
+2017-09-20  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222097. rdar://problem/34508516
+
+    2017-09-15  Brent Fulgham  <bfulgham@apple.com>
+
+            Make DocumentLoader a FrameDestructionObserver
+            https://bugs.webkit.org/show_bug.cgi?id=176364
+            <rdar://problem/34254780>
+
+            Reviewed by Alex Christensen.
+
+            * fast/events/beforeunload-dom-manipulation-crash-expected.txt: Added.
+            * fast/events/beforeunload-dom-manipulation-crash.html: Added.
+
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222226. rdar://problem/34534758

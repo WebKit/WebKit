@@ -191,6 +191,18 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+void TestRunner::forceImmediateCompletion()
+{
+    auto& injectedBundle = InjectedBundle::singleton();
+    if (!injectedBundle.isTestRunning())
+        return;
+
+    if (m_waitToDump && injectedBundle.page())
+        injectedBundle.page()->dump();
+
+    m_waitToDump = false;
+}
+
 unsigned TestRunner::imageCountInGeneralPasteboard() const
 {
     return InjectedBundle::singleton().imageCountInGeneralPasteboard();

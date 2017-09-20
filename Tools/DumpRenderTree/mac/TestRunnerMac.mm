@@ -291,6 +291,13 @@ void TestRunner::notifyDone()
     m_waitToDump = false;
 }
 
+void TestRunner::forceImmediateCompletion()
+{
+    if (m_waitToDump && !WorkQueue::singleton().count())
+        dump();
+    m_waitToDump = false;
+}
+
 static inline std::string stringFromJSString(JSStringRef jsString)
 {
     size_t maxBufferSize = JSStringGetMaximumUTF8CStringSize(jsString);
