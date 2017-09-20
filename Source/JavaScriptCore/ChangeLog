@@ -1,3 +1,12 @@
+2017-09-20  Alberto Garcia  <berto@igalia.com>
+
+        Fix HPPA and Alpha builds
+        https://bugs.webkit.org/show_bug.cgi?id=177224
+
+        Reviewed by Alex Christensen.
+
+        * CMakeLists.txt:
+
 2017-09-18  Filip Pizlo  <fpizlo@apple.com>
 
         ErrorInstance and Exception need destroy methods
