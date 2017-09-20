@@ -1,3 +1,9 @@
+2017-09-19  Zalan Bujtas  <zalan@apple.com>
+
+        Add missing text after r222226.
+
+        * accessibility/crash-table-recursive-layout.html:
+
 2017-09-19  Matt Lewis  <jlewis3@apple.com>
 
         Marked tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html as flaky on macOS Debug.
