@@ -901,7 +901,7 @@ typedef NS_OPTIONS(NSUInteger, UIDragOperation)
 @end
 
 @interface UIDragItem ()
-@property (nonatomic, strong, nullable, setter=_setPrivateLocalContext:, getter=_privateLocalContext) id privateLocalContext;
+@property (nonatomic, strong, setter=_setPrivateLocalContext:, getter=_privateLocalContext) id privateLocalContext;
 @end
 
 @protocol UITextInput;

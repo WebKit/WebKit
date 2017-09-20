@@ -1,3 +1,18 @@
+2017-09-20  Jonathan Bedard  <jbedard@apple.com>
+
+        Removed nullable from UIDragItem property
+        https://bugs.webkit.org/show_bug.cgi?id=176264
+        <rdar://problem/31144674>
+
+        Unreviewed build fix
+
+        When a nullable annotation is used in a header file,
+        the Objective-C compiler forces annotations on the entire
+        file. Remove an unneeded annotation in UIKitSPI.h so that
+        we can build in iOS 11.
+
+        * Platform/spi/ios/UIKitSPI.h:
+
 2017-09-20  Antti Koivisto  <antti@apple.com>
 
         Remove DOM and styling support for CSS Regions
