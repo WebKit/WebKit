@@ -1,3 +1,21 @@
+2017-09-20  Myles C. Maxfield  <mmaxfield@apple.com>
+
+        Create vector swizzle operators in WSL's standard library
+        https://bugs.webkit.org/show_bug.cgi?id=177116
+
+        Reviewed by Filip Pizlo.
+
+        Because there are 481 possible swizzling operators, StandardLibrary.js generates them
+        instead of including them by hand.
+
+        Adding so many functions slows down the compiler quite a bit.
+
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (prepare):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (intToString):
+        (_generateSwizzle):
+
 2017-09-20  Ms2ger  <Ms2ger@igalia.com>
 
         [WPE] Update fontconfig to 2.12.4.

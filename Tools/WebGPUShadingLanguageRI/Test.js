@@ -4246,6 +4246,31 @@ function TEST_trap()
     }
 }
 
+function TEST_swizzle()
+{
+    let program = doPrep(`
+        float foo() {
+            float4 bar = float4(3., 4., 5., 6.);
+            float3 baz = bar.zzx;
+            return baz.z;
+        }
+        float foo2() {
+            float4 bar = float4(3., 4., 5., 6.);
+            float3 baz = bar.wyz;
+            return baz.x;
+        }
+        float foo3() {
+            float3 bar = float3(3., 4., 5.);
+            float2 baz = bar.yz;
+            float4 quix = baz.yyxx;
+            return quix.z;
+        }
+    `);
+    checkFloat(program, callFunction(program, "foo", [], []), 3);
+    checkFloat(program, callFunction(program, "foo2", [], []), 6);
+    checkFloat(program, callFunction(program, "foo3", [], []), 4);
+}
+
 let filter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {

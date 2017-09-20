@@ -29,7 +29,7 @@ let prepare = (() => {
     return (origin, lineNumberOffset, text) => {
         if (!standardProgram) {
             standardProgram = new Program();
-            parse(standardProgram, "/internal/stdlib", "native", 27, standardLibrary);
+            parse(standardProgram, "/internal/stdlib", "native", 72, standardLibrary);
         }
         
         let program = cloneProgram(standardProgram);

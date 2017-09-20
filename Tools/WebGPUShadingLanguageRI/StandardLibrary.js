@@ -24,7 +24,51 @@
  */
 "use strict";
 
-// NOTE: The next line is line 28, and we rely on this in Prepare.js.
+function intToString(x)
+{
+    switch (x) {
+    case 0:
+        return "x";
+    case 1:
+        return "y";
+    case 2:
+        return "z";
+    case 3:
+        return "w";
+    default:
+        throw new Error("Could not generate standard library.");
+    }
+}
+
+// There are 481 swizzle operators. Let's not list them explicitly.
+function _generateSwizzle(maxDepth, maxItems, array)
+{
+    if (!array)
+        array = [];
+    if (array.length == maxDepth) {
+        let result = `vec${array.length}<T> operator.${array.join("")}<T>(vec${maxItems}<T> v)
+{
+    vec${array.length}<T> result;
+`;
+        for (let i = 0; i < array.length; ++i) {
+            result += `    result.${intToString(i)} = v.${array[i]};
+`;
+        }
+        result += `    return result;
+}
+`;
+        return result;
+    }
+    let result = "";
+    for (let i = 0; i < maxItems; ++i) {
+        array.push(intToString(i));
+        result += _generateSwizzle(maxDepth, maxItems, array);
+        array.pop();
+    }
+    return result;
+}
+
+// NOTE: The next line is line 72, and we rely on this in Prepare.js.
 const standardLibrary = `
 // This is the WSL standard library. Implementations of all of these things are in
 // Intrinsics.js. The only thing that gets defined before we get here is the Primitive
@@ -353,4 +397,14 @@ uint operator.length<T, uint length>(T[length])
 {
     return length;
 }
+
+${_generateSwizzle(2, 2)}
+${_generateSwizzle(3, 2)}
+${_generateSwizzle(4, 2)}
+${_generateSwizzle(2, 3)}
+${_generateSwizzle(3, 3)}
+${_generateSwizzle(4, 3)}
+${_generateSwizzle(2, 4)}
+${_generateSwizzle(3, 4)}
+${_generateSwizzle(4, 4)}
 `;
