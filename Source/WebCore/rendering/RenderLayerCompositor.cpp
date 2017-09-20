@@ -665,11 +665,12 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     switch (updateType) {
     case CompositingUpdateType::AfterStyleChange:
     case CompositingUpdateType::AfterLayout:
+    case CompositingUpdateType::OnHitTest:
         checkForHierarchyUpdate = true;
-        needGeometryUpdate = true;
         break;
     case CompositingUpdateType::OnScroll:
         checkForHierarchyUpdate = true; // Overlap can change with scrolling, so need to check for hierarchy updates.
+
         needGeometryUpdate = true;
         break;
     case CompositingUpdateType::OnCompositedScroll:
@@ -690,7 +691,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (isFullUpdate && updateType == CompositingUpdateType::AfterLayout)
         m_reevaluateCompositingAfterLayout = false;
 
-    LOG(Compositing, " checkForHierarchyUpdate %d, needGeometryUpdate %d", checkForHierarchyUpdate, needGeometryUpdate);
+    LOG(Compositing, " checkForHierarchyUpdate %d, needGeometryUpdate %d", checkForHierarchyUpdate, needHierarchyUpdate);
 
 #if !LOG_DISABLED
     MonotonicTime startTime;
@@ -742,6 +743,8 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
         
         reattachSubframeScrollLayers();
     } else if (needGeometryUpdate) {
+        // We just need to do a geometry update. This is only used for position:fixed scrolling;
+        // most of the time, geometry is updated via RenderLayer::styleChanged().
         updateLayerTreeGeometry(*updateRoot, 0);
         ASSERT(!isFullUpdate || !m_subframeScrollLayersNeedReattach);
     }
@@ -761,6 +764,7 @@ bool RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType update
     if (!hasAcceleratedCompositing())
         enableCompositingMode(false);
 
+    // Inform the inspector that the layer tree has changed.
     InspectorInstrumentation::layerTreeDidChange(&page());
 
     return true;
@@ -933,7 +937,15 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
         return;
     }
 
-    if (layer.isComposited() || needsCompositingUpdateForStyleChangeOnNonCompositedLayer(layer, oldStyle))
+    if (layer.isComposited()) {
+        // FIXME: updating geometry here is potentially harmful, because layout is not up-to-date.
+        layer.backing()->updateGeometry();
+        layer.backing()->updateAfterDescendants();
+        m_layerNeedsCompositingUpdate = true;
+        return;
+    }
+
+    if (needsCompositingUpdateForStyleChangeOnNonCompositedLayer(layer, oldStyle))
         m_layerNeedsCompositingUpdate = true;
 }
 
@@ -4174,6 +4186,7 @@ TextStream& operator<<(TextStream& ts, CompositingUpdateType updateType)
     switch (updateType) {
     case CompositingUpdateType::AfterStyleChange: ts << "after style change"; break;
     case CompositingUpdateType::AfterLayout: ts << "after layout"; break;
+    case CompositingUpdateType::OnHitTest: ts << "on hit test"; break;
     case CompositingUpdateType::OnScroll: ts << "on scroll"; break;
     case CompositingUpdateType::OnCompositedScroll: ts << "on composited scroll"; break;
     }

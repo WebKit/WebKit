@@ -633,6 +633,34 @@ void RenderLayerBacking::updateAfterWidgetResize()
     }
 }
 
+void RenderLayerBacking::updateAfterLayout(UpdateAfterLayoutFlags flags)
+{
+    LOG(Compositing, "RenderLayerBacking %p updateAfterLayout (layer %p)", this, &m_owningLayer);
+
+    if (!compositor().compositingLayersNeedRebuild()) {
+        // Calling updateGeometry() here gives incorrect results, because the
+        // position of this layer's GraphicsLayer depends on the position of our compositing
+        // ancestor's GraphicsLayer. That cannot be determined until all the descendant 
+        // RenderLayers of that ancestor have been processed via updateLayerPositions().
+        //
+        // The solution is to update compositing children of this layer here,
+        // via updateCompositingChildrenGeometry().
+        updateCompositedBounds();
+        compositor().updateCompositingDescendantGeometry(m_owningLayer, m_owningLayer, flags & CompositingChildrenOnly);
+        
+        if (flags & IsUpdateRoot) {
+            updateGeometry();
+            compositor().updateRootLayerPosition();
+            RenderLayer* stackingContainer = m_owningLayer.enclosingStackingContainer();
+            if (!compositor().compositingLayersNeedRebuild() && stackingContainer && (stackingContainer != &m_owningLayer))
+                compositor().updateCompositingDescendantGeometry(*stackingContainer, *stackingContainer, flags & CompositingChildrenOnly);
+        }
+    }
+    
+    if (flags & NeedsFullRepaint && canIssueSetNeedsDisplay())
+        setContentsNeedDisplay();
+}
+
 bool RenderLayerBacking::updateConfiguration()
 {
     m_owningLayer.updateDescendantDependentFlags();
@@ -951,7 +979,6 @@ void RenderLayerBacking::updateGeometry()
 
     RenderLayer* compositedAncestor = m_owningLayer.ancestorCompositingLayer();
     LayoutSize ancestorClippingLayerOffset;
-    // FIXME: can we avoid computeParentGraphicsLayerRect here?
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor, ancestorClippingLayerOffset);
     LayoutRect primaryGraphicsLayerRect = computePrimaryGraphicsLayerRect(parentGraphicsLayerRect);
 
@@ -2229,12 +2256,12 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
     }
 
     if ((changeType == BackgroundImageChanged) && canDirectlyCompositeBackgroundBackgroundImage(renderer().style()))
-        compositor().setCompositingLayersNeedRebuild();
+        updateGeometry();
 
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
         // when the mask image becomes available.
-        compositor().setCompositingLayersNeedRebuild();
+        updateAfterLayout(CompositingChildrenOnly | IsUpdateRoot);
     }
 
 #if ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)

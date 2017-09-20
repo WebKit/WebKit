@@ -304,14 +304,16 @@ public:
     bool canRender3DTransforms() const;
 
     enum UpdateLayerPositionsFlag {
-        CheckForRepaint                 = 1 << 0,
-        NeedsFullRepaintInBacking       = 1 << 1,
-        UpdatePagination                = 1 << 2,
-        SeenTransformedLayer            = 1 << 3,
-        Seen3DTransformedLayer          = 1 << 4
+        CheckForRepaint = 1 << 0,
+        NeedsFullRepaintInBacking = 1 << 1,
+        IsCompositingUpdateRoot = 1 << 2,
+        UpdateCompositingLayers = 1 << 3,
+        UpdatePagination = 1 << 4,
+        SeenTransformedLayer = 1 << 5,
+        Seen3DTransformedLayer = 1 << 6
     };
     typedef unsigned UpdateLayerPositionsFlags;
-    static const UpdateLayerPositionsFlags defaultFlags = CheckForRepaint;
+    static const UpdateLayerPositionsFlags defaultFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers;
 
     void updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, UpdateLayerPositionsFlags);
 
@@ -820,6 +822,8 @@ private:
     LayoutPoint renderBoxLocation() const { return is<RenderBox>(renderer()) ? downcast<RenderBox>(renderer()).location() : LayoutPoint(); }
 
     void collectLayers(bool includeHiddenLayers, CollectLayersBehavior, std::unique_ptr<Vector<RenderLayer*>>&, std::unique_ptr<Vector<RenderLayer*>>&);
+
+    void updateCompositingAndLayerListsIfNeeded();
 
     bool setupFontSubpixelQuantization(GraphicsContext&, bool& didQuantizeFonts);
 
