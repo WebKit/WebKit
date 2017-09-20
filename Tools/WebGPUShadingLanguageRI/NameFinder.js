@@ -24,62 +24,71 @@
  */
 "use strict";
 
-class LexerToken {
-    constructor(lexer, index, kind, text)
+class NameFinder extends Visitor {
+    constructor()
     {
-        this._lexer = lexer;
-        this._index = index;
-        this._kind = kind;
-        this._text = text;
+        super();
+        this._set = new Set();
+        this._worklist = [];
     }
     
-    get lexer()
+    get set() { return this._set; }
+    get worklist() { return this._worklist; }
+    
+    add(name)
     {
-        return this._lexer;
+        if (this._set.has(name))
+            return;
+        this._set.add(name);
+        this._worklist.push(name);
     }
     
-    get kind()
+    visitProtocolRef(node)
     {
-        return this._kind;
+        this.add(node.name);
+        super.visitProtocolRef(node);
     }
     
-    get text()
+    visitTypeRef(node)
     {
-        return this._text;
+        this.add(node.name);
+        super.visitTypeRef(node);
     }
     
-    get origin()
+    visitVariableRef(node)
     {
-        return this.lexer.origin;
+        this.add(node.name);
+        super.visitVariableRef(node);
     }
     
-    get originKind()
+    visitTypeOrVariableRef(node)
     {
-        return this.lexer.originKind;
+        this.add(node.name);
+    }
+
+    _handlePropertyAccess(node)
+    {
+        this.add(node.getFuncName);
+        this.add(node.setFuncName);
+        this.add(node.andFuncName);
     }
     
-    get isInternal()
+    visitDotExpression(node)
     {
-        return false;
+        this._handlePropertyAccess(node);
+        super.visitDotExpression(node);
     }
     
-    get index()
+    visitIndexExpression(node)
     {
-        return this._index;
+        this._handlePropertyAccess(node);
+        super.visitIndexExpression(node);
     }
     
-    get lineNumber()
+    visitCallExpression(node)
     {
-        return this._lexer.lineNumberForIndex(this._index);
-    }
-    
-    get originString()
-    {
-        return this.origin + ":" + (this.lineNumber + 1);
-    }
-    
-    toString()
-    {
-        return "LexerToken(" + this.kind + ", " + this.text + ", " + this.lineNumber + ")";
+        this.add(node.name);
+        super.visitCallExpression(node);
     }
 }
+

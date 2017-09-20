@@ -33,6 +33,7 @@ class ConstexprTypeParameter extends Value {
         this._type = type;
     }
     
+    get origin() { return this._origin; }
     get name() { return this._name; }
     get type() { return this._type; }
     get isConstexpr() { return true; }

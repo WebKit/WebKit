@@ -24,11 +24,11 @@
  */
 "use strict";
 
-const NotFunc = Symbol();
+const Anything = Symbol();
 
 function isWildcardKind(kind)
 {
-    return kind == NotFunc;
+    return kind == Anything;
 }
 
 class NameContext {
@@ -42,24 +42,12 @@ class NameContext {
         this._program = null;
     }
     
-    mapFor(kind)
-    {
-        switch (kind) {
-        case NotFunc:
-        case Value:
-        case Type:
-        case Protocol:
-        case Func:
-            return this._map;
-        default:
-            throw new Error("Bad kind: " + kind);
-        }
-    }
-    
     add(thing)
     {
         if (!thing.name)
             return;
+        if (!thing.origin)
+            throw new Error("Thing does not have origin: " + thing);
         
         if (thing.isNative && !thing.implementation) {
             if (!this._intrinsics)
@@ -88,12 +76,32 @@ class NameContext {
     
     get(kind, name)
     {
-        let result = this.mapFor(kind).get(name);
+        let result = this._map.get(name);
         if (!result && this._delegate)
             return this._delegate.get(kind, name);
         if (result && !isWildcardKind(kind) && result.kind != kind)
             return null;
         return result;
+    }
+    
+    underlyingThings(kind, name)
+    {
+        let things = this.get(kind, name);
+        return NameContext.underlyingThings(things);
+    }
+    
+    static *underlyingThings(thing)
+    {
+        if (!thing)
+            return;
+        if (thing.kind === Func) {
+            if (!(thing instanceof Array))
+                throw new Error("Func thing is not array: " + thing);
+            for (let func of thing)
+                yield func;
+            return;
+        }
+        yield thing;
     }
     
     resolveFuncOverload(name, typeArguments, argumentTypes, returnType, allowEntryPoint = false)

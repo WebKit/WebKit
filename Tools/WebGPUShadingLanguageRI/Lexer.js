@@ -27,6 +27,8 @@
 class Lexer {
     constructor(origin, originKind, lineNumberOffset, text)
     {
+        if (!isOriginKind(originKind))
+            throw new Error("Bad origin kind: " + originKind);
         this._origin = origin;
         this._originKind = originKind;
         this._lineNumberOffset = lineNumberOffset;
@@ -46,6 +48,8 @@ class Lexer {
     {
         return this._origin + ":" + (this.lineNumber + 1);
     }
+    
+    get originKind() { return this._originKind; }
     
     lineNumberForIndex(index)
     {

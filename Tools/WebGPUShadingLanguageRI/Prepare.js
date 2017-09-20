@@ -26,14 +26,18 @@
 
 let prepare = (() => {
     let standardProgram;
-    return (origin, lineNumberOffset, text) => {
+    return function(origin, lineNumberOffset, text) {
         if (!standardProgram) {
             standardProgram = new Program();
             parse(standardProgram, "/internal/stdlib", "native", 72, standardLibrary);
         }
         
+        if (!arguments.length)
+            return;
+        
         let program = cloneProgram(standardProgram);
         parse(program, origin, "user", lineNumberOffset, text);
+        program = programWithUnnecessaryThingsRemoved(program);
         
         foldConstexprs(program);
         let nameResolver = createNameResolver(program);

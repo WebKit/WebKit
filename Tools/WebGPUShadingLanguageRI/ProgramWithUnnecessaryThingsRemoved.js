@@ -24,62 +24,39 @@
  */
 "use strict";
 
-class LexerToken {
-    constructor(lexer, index, kind, text)
-    {
-        this._lexer = lexer;
-        this._index = index;
-        this._kind = kind;
-        this._text = text;
+function programWithUnnecessaryThingsRemoved(program)
+{
+    let nameFinder = new NameFinder();
+    
+    // Build our roots.
+    for (let statement of program.topLevelStatements) {
+        if (statement.origin.originKind === "user")
+            nameFinder.add(statement.name);
     }
     
-    get lexer()
-    {
-        return this._lexer;
+    // Unfortunately, we cannot know yet which operator casts we'll need.
+    nameFinder.add("operator cast");
+    
+    // We need these even if the program doesn't mention them by name.
+    nameFinder.add("void");
+    nameFinder.add("bool");
+    nameFinder.add("int");
+    
+    // Pull in things as necessary.
+    while (nameFinder.worklist.length) {
+        let name = nameFinder.worklist.pop();
+        for (let thing of program.globalNameContext.underlyingThings(Anything, name))
+            thing.visit(nameFinder);
     }
     
-    get kind()
-    {
-        return this._kind;
+    let result = new Program();
+    for (let name of nameFinder.set) {
+        for (let thing of program.globalNameContext.underlyingThings(Anything, name)) {
+            if (!thing.origin.isInternal)
+                result.add(thing);
+        }
     }
     
-    get text()
-    {
-        return this._text;
-    }
-    
-    get origin()
-    {
-        return this.lexer.origin;
-    }
-    
-    get originKind()
-    {
-        return this.lexer.originKind;
-    }
-    
-    get isInternal()
-    {
-        return false;
-    }
-    
-    get index()
-    {
-        return this._index;
-    }
-    
-    get lineNumber()
-    {
-        return this._lexer.lineNumberForIndex(this._index);
-    }
-    
-    get originString()
-    {
-        return this.origin + ":" + (this.lineNumber + 1);
-    }
-    
-    toString()
-    {
-        return "LexerToken(" + this.kind + ", " + this.text + ", " + this.lineNumber + ")";
-    }
+    return result;
 }
+

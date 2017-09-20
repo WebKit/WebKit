@@ -27,7 +27,7 @@
 class Intrinsics {
     constructor(nameContext)
     {
-        this.primitive = new ProtocolDecl(null, "Primitive");
+        this.primitive = new ProtocolDecl({origin: "<internal>", originString: "native", isInternal: true}, "Primitive");
         this.primitive.isPrimitive = true;
         nameContext.add(this.primitive);
         

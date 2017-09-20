@@ -1,3 +1,56 @@
+2017-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should not type-check functions in the standard library that it does not use
+        https://bugs.webkit.org/show_bug.cgi?id=177269
+
+        Reviewed by JS Bastien.
+        
+        Once we added all of the swizzling operators, the size of the standard library ballooned to the point
+        where it's just not practical to compile anything anymore. If you want to compile
+        "int foo(int x) { return x}" then it will take some ridiculous amount of time (many seconds) because WSL
+        will have to type check all of those swizzling operators.
+        
+        This change makes it so that after parsing the whole program, we remove the things that we aren't using.
+        We can make a really good estimate of what we need even before doing any name resolution. In practice,
+        this change removes almost all of the things from Program before we get to the hard work of type
+        checking. That's true because the standard library contains _many_ things and you'd have to try very
+        hard to use all of them.
+        
+        This is a 13x speed-up for Test.js. It went from 155 seconds to 12 seconds on my machine.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/ConstexprTypeParameter.js:
+        (ConstexprTypeParameter.prototype.get origin):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer):
+        (Lexer.prototype.get originKind):
+        * WebGPUShadingLanguageRI/LexerToken.js:
+        (LexerToken.prototype.get lexer):
+        (LexerToken.prototype.get origin):
+        (LexerToken.prototype.get originKind):
+        (LexerToken.prototype.get isInternal):
+        * WebGPUShadingLanguageRI/NameContext.js:
+        (isWildcardKind):
+        (NameContext.prototype.add):
+        (NameContext.prototype.get let):
+        (NameContext.prototype.mapFor): Deleted.
+        * WebGPUShadingLanguageRI/NameFinder.js: Added.
+        (NameFinder):
+        (NameFinder.get worklist):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/OriginKind.js: Added.
+        (isOriginKind):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/ProgramWithUnnecessaryThingsRemoved.js: Added.
+        (programWithUnnecessaryThingsRemoved):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (doTest):
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Remove ActionType::CSSDisplayNoneStyleSheet

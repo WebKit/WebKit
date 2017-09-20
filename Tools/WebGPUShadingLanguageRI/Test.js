@@ -4403,6 +4403,11 @@ if (this["arguments"]) {
 function* doTest(object)
 {
     let before = preciseTime();
+    
+    print("Compiling standard library...");
+    yield;
+    prepare();
+    print("    OK!");
 
     for (let s in object) {
         if (s.startsWith("TEST_") && s.match(filter)) {

@@ -24,62 +24,16 @@
  */
 "use strict";
 
-class LexerToken {
-    constructor(lexer, index, kind, text)
-    {
-        this._lexer = lexer;
-        this._index = index;
-        this._kind = kind;
-        this._text = text;
-    }
-    
-    get lexer()
-    {
-        return this._lexer;
-    }
-    
-    get kind()
-    {
-        return this._kind;
-    }
-    
-    get text()
-    {
-        return this._text;
-    }
-    
-    get origin()
-    {
-        return this.lexer.origin;
-    }
-    
-    get originKind()
-    {
-        return this.lexer.originKind;
-    }
-    
-    get isInternal()
-    {
+const originKinds = ["native", "user"];
+
+function isOriginKind(originKind)
+{
+    switch (originKind) {
+    case "native":
+    case "user":
+        return true;
+    default:
         return false;
     }
-    
-    get index()
-    {
-        return this._index;
-    }
-    
-    get lineNumber()
-    {
-        return this._lexer.lineNumberForIndex(this._index);
-    }
-    
-    get originString()
-    {
-        return this.origin + ":" + (this.lineNumber + 1);
-    }
-    
-    toString()
-    {
-        return "LexerToken(" + this.kind + ", " + this.text + ", " + this.lineNumber + ")";
-    }
 }
+
