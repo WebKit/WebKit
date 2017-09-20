@@ -1,5 +1,18 @@
 2017-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Unreviewed, rolling out r222278.
+
+        This needs more work before it can be landed.
+
+        Reverted changeset:
+
+        "Work towards: Move test expectations from 'ios-11' to 'ios'
+        directory"
+        https://bugs.webkit.org/show_bug.cgi?id=177167
+        http://trac.webkit.org/changeset/222278
+
+2017-09-20  Ryan Haddad  <ryanhaddad@apple.com>
+
         Work towards: Move test expectations from 'ios-11' to 'ios' directory
         https://bugs.webkit.org/show_bug.cgi?id=177167
 
