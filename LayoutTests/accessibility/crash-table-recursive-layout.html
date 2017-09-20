@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#colgrp { 
+    display: table-footer-group;
+}
+
+.class1 {
+    text-transform: capitalize;
+    display: -webkit-box;
+}
+</style>
+<script>
+    if (window.accessibilityController)
+        accessibilityController.focusedElement;
+    if (window.testRunner)
+        testRunner.dumpAsText();
+    function runTest() {
+        textarea.setSelectionRange(30, 1);
+        option.defaultSelected = true;
+        col.setAttribute("aria-labeledby", "link");
+    }
+</script>
+</head>
+<body onload=runTest()>
+<link id="link">
+<table>
+<colgroup id="colgrp">
+<col id="col" tabindex="1"></col>
+<thead class="class1">
+<th class="class1">
+<textarea id="textarea" readonly="readonly"></textarea>
+<option id="option"></option>
+</body>
+</html>
