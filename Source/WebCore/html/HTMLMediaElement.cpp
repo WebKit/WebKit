@@ -51,7 +51,7 @@
 #include "HTMLParserIdioms.h"
 #include "HTMLSourceElement.h"
 #include "HTMLVideoElement.h"
-#include "JSDOMError.h"
+#include "JSDOMException.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSHTMLMediaElement.h"
 #include "Logging.h"
@@ -1037,12 +1037,12 @@ void HTMLMediaElement::scheduleResolvePendingPlayPromises()
     m_promiseTaskQueue.enqueueTask(std::bind(&HTMLMediaElement::resolvePendingPlayPromises, this));
 }
 
-void HTMLMediaElement::rejectPendingPlayPromises(DOMError& error)
+void HTMLMediaElement::rejectPendingPlayPromises(DOMException& error)
 {
     Vector<DOMPromiseDeferred<void>> pendingPlayPromises = WTFMove(m_pendingPlayPromises);
 
     for (auto& promise : pendingPlayPromises)
-        promise.rejectType<IDLInterface<DOMError>>(error);
+        promise.rejectType<IDLInterface<DOMException>>(error);
 }
 
 void HTMLMediaElement::resolvePendingPlayPromises()
@@ -2130,7 +2130,7 @@ void HTMLMediaElement::noneSupported()
     // 7 - Queue a task to fire a simple event named error at the media element.
     scheduleEvent(eventNames().errorEvent);
 
-    rejectPendingPlayPromises(DOMError::create("NotSupportedError", "The operation is not supported."));
+    rejectPendingPlayPromises(DOMException::create(NotSupportedError));
 
 #if ENABLE(MEDIA_SOURCE)
     detachMediaSource();
@@ -2193,7 +2193,7 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     for (auto& source : childrenOfType<HTMLSourceElement>(*this))
         source.cancelPendingErrorEvent();
 
-    rejectPendingPlayPromises(DOMError::create("AbortError", "The operation was aborted."));
+    rejectPendingPlayPromises(DOMException::create(AbortError));
 }
 
 void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
@@ -3502,7 +3502,7 @@ void HTMLMediaElement::pauseInternal()
         scheduleTimeupdateEvent(false);
         scheduleEvent(eventNames().pauseEvent);
         m_promiseTaskQueue.enqueueTask([this]() {
-            rejectPendingPlayPromises(DOMError::create("AbortError", "The operation was aborted."));
+            rejectPendingPlayPromises(DOMException::create(AbortError));
         });
         if (MemoryPressureHandler::singleton().isUnderMemoryPressure())
             purgeBufferedDataIfPossible();

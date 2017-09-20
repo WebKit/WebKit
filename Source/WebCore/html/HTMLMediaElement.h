@@ -76,7 +76,7 @@ class AudioSourceProvider;
 class AudioTrackList;
 class AudioTrackPrivate;
 class Blob;
-class DOMError;
+class DOMException;
 class DeferredPromise;
 class Event;
 class HTMLSourceElement;
@@ -184,7 +184,7 @@ public:
     using HTMLMediaElementEnums::DelayedActionType;
     void scheduleDelayedAction(DelayedActionType);
     void scheduleResolvePendingPlayPromises();
-    void rejectPendingPlayPromises(DOMError&);
+    void rejectPendingPlayPromises(DOMException&);
     void resolvePendingPlayPromises();
     void scheduleNotifyAboutPlaying();
     void notifyAboutPlaying();

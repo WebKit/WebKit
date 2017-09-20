@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: [object DOMError]
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: The operation was aborted.
 PASS video.srcObject = stream did not throw exception.
 PASS video.duration is Number.POSITIVE_INFINITY
 PASS video.srcObject = null did not throw exception.

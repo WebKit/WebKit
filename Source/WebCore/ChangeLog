@@ -1,3 +1,27 @@
+2017-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Video errors should be instances of Error
+        https://bugs.webkit.org/show_bug.cgi?id=174573
+        <rdar://problem/34445494>
+
+        Reviewed by Youenn Fablet.
+
+        Video errors should be instances of DOMException and Error as per:
+        - https://html.spec.whatwg.org/multipage/media.html#reject-pending-play-promises
+        - https://html.spec.whatwg.org/multipage/media.html#loading-the-media-resource:reject-pending-play-promises-2
+        - https://html.spec.whatwg.org/multipage/media.html#loading-the-media-resource:reject-pending-play-promises-3
+        - https://html.spec.whatwg.org/multipage/media.html#playing-the-media-resource:reject-pending-play-promises-3
+        - https://html.spec.whatwg.org/multipage/media.html#playing-the-media-resource:reject-pending-play-promises
+
+        No new tests, extended existing test.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::rejectPendingPlayPromises):
+        (WebCore::HTMLMediaElement::noneSupported):
+        (WebCore::HTMLMediaElement::cancelPendingEventsAndCallbacks):
+        (WebCore::HTMLMediaElement::pauseInternal):
+        * html/HTMLMediaElement.h:
+
 2017-09-20  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] improve the implementation of FormDataStream

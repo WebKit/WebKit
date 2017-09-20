@@ -1,3 +1,18 @@
+2017-09-20  Chris Dumez  <cdumez@apple.com>
+
+        Video errors should be instances of Error
+        https://bugs.webkit.org/show_bug.cgi?id=174573
+        <rdar://problem/34445494>
+
+        Reviewed by Youenn Fablet.
+
+        * http/tests/security/video-cross-origin-caching-expected.txt:
+        Rebaseline test now that output has changed slightly.
+
+        * media/media-play-promise-reject-load-abort-expected.txt:
+        * media/media-play-promise-reject-load-abort.html:
+        Extend test coverage.
+
 2017-09-20  Ryan Haddad  <ryanhaddad@apple.com>
 
         Skip inspector tests that crash after r222259.

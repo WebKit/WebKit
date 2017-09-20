@@ -18,6 +18,8 @@
             error = e;
             logResult(true, "Promise rejected.");
             testExpected('error.name', 'AbortError');
+            testExpected('error instanceof DOMException', true);
+            testExpected('error instanceof Error', true);
             endTest();
         }
         </script>
