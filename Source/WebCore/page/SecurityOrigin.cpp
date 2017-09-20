@@ -66,7 +66,7 @@ URL SecurityOrigin::extractInnerURL(const URL& url)
 {
     // FIXME: Update this callsite to use the innerURL member function when
     // we finish implementing it.
-    return URL(ParsedURLString, decodeURLEscapeSequences(url.path()));
+    return { URL(), decodeURLEscapeSequences(url.path()) };
 }
 
 static RefPtr<SecurityOrigin> getCachedOrigin(const URL& url)

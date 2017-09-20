@@ -1,5 +1,31 @@
 2017-09-19  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r221978. rdar://problem/34508522
+
+    2017-09-13  Daniel Bates  <dabates@apple.com>
+
+            Make history.pushState()/replaceState() more closely aligned to the HTML standard
+            https://bugs.webkit.org/show_bug.cgi?id=176730
+            <rdar://problem/33839265>
+
+            Reviewed by Alex Christensen.
+
+            Update history.pushState()/replaceState() to more closely align with the algorithm
+            specified in <https://html.spec.whatwg.org/multipage/history.html#dom-history-pushstate-2> (9 September 2017).
+
+            Test: http/tests/security/history-pushState-replaceState-from-sandboxed-iframe.html
+
+            * page/History.cpp:
+            (WebCore::History::stateObjectAdded):
+            * page/SecurityOrigin.cpp:
+            (WebCore::SecurityOrigin::extractInnerURL): Use URL constructor that takes a base URL as opposed
+            to using the special ParsedURLString-variant because the latter can only be used to parse a string
+            returned from URL::string(). And the extracted inner URL does not meet this criterion. Using the
+            ParsedURLString-variant of the URL constructor with a string that is not the result of URL::string()
+            will cause an assertion failure in a debug build.
+
+2017-09-19  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222167. rdar://problem/34508525
 
     2017-09-18  Antti Koivisto  <antti@apple.com>
