@@ -662,6 +662,7 @@
 		ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = ECA680CD1E68CC0900731D20 /* StringUtilities.mm */; };
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
 		F415086D1DA040C50044BE9B /* play-audio-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F415086C1DA040C10044BE9B /* play-audio-on-click.html */; };
+		F418BE151F71B7DC001970E6 /* RoundedRectTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F418BE141F71B7DC001970E6 /* RoundedRectTests.cpp */; };
 		F4194AD11F5A320100ADD83F /* drop-targets.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4194AD01F5A2EA500ADD83F /* drop-targets.html */; };
 		F41AB99F1EF4696B0083FA08 /* autofocus-contenteditable.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9981EF4692C0083FA08 /* autofocus-contenteditable.html */; };
 		F41AB9A01EF4696B0083FA08 /* background-image-link-and-input.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F41AB9971EF4692C0083FA08 /* background-image-link-and-input.html */; };
@@ -1701,6 +1702,7 @@
 		F3FC3EE213678B7300126A65 /* libgtest.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libgtest.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		F407FE381F1D0DE60017CF25 /* enormous.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = enormous.svg; sourceTree = "<group>"; };
 		F415086C1DA040C10044BE9B /* play-audio-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "play-audio-on-click.html"; sourceTree = "<group>"; };
+		F418BE141F71B7DC001970E6 /* RoundedRectTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRectTests.cpp; sourceTree = "<group>"; };
 		F4194AD01F5A2EA500ADD83F /* drop-targets.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "drop-targets.html"; sourceTree = "<group>"; };
 		F41AB9931EF4692C0083FA08 /* image-and-textarea.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "image-and-textarea.html"; sourceTree = "<group>"; };
 		F41AB9941EF4692C0083FA08 /* prevent-operation.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "prevent-operation.html"; sourceTree = "<group>"; };
@@ -2085,6 +2087,7 @@
 				076E507E1F45031E006E9F5A /* Logging.cpp */,
 				A5B149DD1F5A19DC00C6DAFF /* MIMETypeRegistry.cpp */,
 				CD225C071C45A69200140761 /* ParsedContentRange.cpp */,
+				F418BE141F71B7DC001970E6 /* RoundedRectTests.cpp */,
 				CDCFA7A91E45122F00C2433D /* SampleMap.cpp */,
 				CE06DF9A1E1851F200E570C9 /* SecurityOrigin.cpp */,
 				41973B5C1AF22875006C7B36 /* SharedBuffer.cpp */,
@@ -3339,6 +3342,7 @@
 				7CCE7F111A411AE600447C4C /* RestoreSessionStateContainingFormData.cpp in Sources */,
 				835CF9671D25FCD6001A65D4 /* RestoreSessionStateWithoutNavigation.cpp in Sources */,
 				46E816F81E79E29C00375ADC /* RestoreStateAfterTermination.mm in Sources */,
+				F418BE151F71B7DC001970E6 /* RoundedRectTests.cpp in Sources */,
 				A180C0FA1EE67DF000468F47 /* RunOpenPanel.mm in Sources */,
 				CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */,
 				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.cpp in Sources */,
@@ -3473,6 +3477,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37E7DD671EA071F3009B396D /* AdditionalReadAccessAllowedURLsPlugin.mm in Sources */,
+				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
 				374B7A611DF371CF00ACCB6C /* BundleEditingDelegatePlugIn.mm in Sources */,
 				A13EBBB01B87436F00097110 /* BundleParametersPlugIn.mm in Sources */,
 				37A709AF1E3EA97E00CA5969 /* BundleRangeHandlePlugIn.mm in Sources */,
@@ -3481,7 +3486,6 @@
 				A14FC58B1B89927100D107EB /* ContentFilteringPlugIn.mm in Sources */,
 				A13EBBAB1B87434600097110 /* PlatformUtilitiesCocoa.mm in Sources */,
 				1A4F81CF1BDFFD53004E672E /* RemoteObjectRegistryPlugIn.mm in Sources */,
-				754CEC811F6722F200D0039A /* AutoFillAvailable.mm in Sources */,
 				A12DDC021E837C2400CF6CAE /* RenderedImageWithOptionsPlugIn.mm in Sources */,
 				7C882E091C80C630006BF731 /* UserContentWorldPlugIn.mm in Sources */,
 				7C83E03D1D0A60D600FEBCF3 /* UtilitiesCocoa.mm in Sources */,
