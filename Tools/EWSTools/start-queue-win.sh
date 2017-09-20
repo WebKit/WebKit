@@ -12,7 +12,7 @@ function start_ews()
 {
     trap 'error_handler ${LINENO} $?' ERR
 
-    "$PROGRAMFILES/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
+    "$PROGRAMFILES(X86)/Microsoft Visual Studio 14.0/VC/vcvarsall.bat"
 
     while :
     do
@@ -24,7 +24,7 @@ function start_ews()
         find ~/win-ews-logs -mtime +7 -exec rm -f {} \;
         echo "TASK: Starting up"
         cd ~/WebKit
-        export VSINSTALLDIR="$PROGRAMFILES\Microsoft Visual Studio 14.0"
+        export VSINSTALLDIR="$PROGRAMFILES(X86)\Microsoft Visual Studio 14.0"
         echo "TASK: Cleaning WebKitBuild"
         rm -rf WebKitBuild
         date
