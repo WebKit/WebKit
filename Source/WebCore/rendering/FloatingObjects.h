@@ -26,6 +26,7 @@
 #include "PODIntervalTree.h"
 #include "RootInlineBox.h"
 #include <wtf/ListHashSet.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -82,8 +83,9 @@ public:
     void setIsDescendant(bool isDescendant) { m_isDescendant = isDescendant; }
 
     // FIXME: Callers of these methods are dangerous and should be whitelisted explicitly or removed.
-    RootInlineBox* originatingLine() const { return m_originatingLine; }
-    void setOriginatingLine(RootInlineBox* line) { m_originatingLine = line; }
+    RootInlineBox* originatingLine() const { return m_originatingLine.get(); }
+    void clearOriginatingLine() { m_originatingLine = nullptr; }
+    void setOriginatingLine(RootInlineBox& line) { m_originatingLine = line.createWeakPtr(); }
 
     LayoutSize locationOffsetOfBorderBox() const
     {
@@ -95,7 +97,7 @@ public:
 
 private:
     RenderBox& m_renderer;
-    RootInlineBox* m_originatingLine { nullptr };
+    WeakPtr<RootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
     LayoutSize m_marginOffset;

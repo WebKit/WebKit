@@ -263,7 +263,7 @@ void FloatingObjects::clearLineBoxTreePointers()
     // Clear references to originating lines, since the lines are being deleted
     for (auto it = m_set.begin(), end = m_set.end(); it != end; ++it) {
         ASSERT(!((*it)->originatingLine()) || &((*it)->originatingLine()->renderer()) == &m_renderer);
-        (*it)->setOriginatingLine(0);
+        (*it)->clearOriginatingLine();
     }
 }
 

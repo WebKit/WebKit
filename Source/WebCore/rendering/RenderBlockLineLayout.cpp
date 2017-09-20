@@ -1096,7 +1096,8 @@ inline BidiRun* RenderBlockFlow::handleTrailingSpaces(BidiRunList<BidiRun>& bidi
 void RenderBlockFlow::appendFloatingObjectToLastLine(FloatingObject& floatingObject)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject.originatingLine());
-    floatingObject.setOriginatingLine(lastRootBox());
+    ASSERT(lastRootBox());
+    floatingObject.setOriginatingLine(*lastRootBox());
     lastRootBox()->appendFloat(floatingObject.renderer());
 }
 
@@ -1557,7 +1558,7 @@ void RenderBlockFlow::reattachCleanLineFloats(RootInlineBox& cleanLine, LayoutUn
             continue;
         }
         ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
-        floatingObject->setOriginatingLine(&cleanLine);
+        floatingObject->setOriginatingLine(cleanLine);
         setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox) + delta);
         positionNewFloats();
     }
@@ -1870,7 +1871,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                     auto* floatingBox = *it;
                     auto* floatingObject = insertFloatingObject(*floatingBox);
                     ASSERT_WITH_SECURITY_IMPLICATION(!floatingObject->originatingLine());
-                    floatingObject->setOriginatingLine(line);
+                    floatingObject->setOriginatingLine(*line);
                     setLogicalHeight(logicalTopForChild(*floatingBox) - marginBeforeForChild(*floatingBox));
                     positionNewFloats();
                     floats.setLastCleanFloat(*floatingBox);

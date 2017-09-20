@@ -22,6 +22,7 @@
 
 #include "BidiContext.h"
 #include "InlineFlowBox.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -38,6 +39,7 @@ class RootInlineBox : public InlineFlowBox {
 public:
     explicit RootInlineBox(RenderBlockFlow&);
     virtual ~RootInlineBox();
+    WeakPtr<RootInlineBox> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
 
     RenderBlockFlow& blockFlow() const;
 
@@ -227,6 +229,7 @@ private:
     // Floats hanging off the line are pushed into this vector during layout. It is only
     // good for as long as the line has not been marked dirty.
     std::unique_ptr<Vector<RenderBox*>> m_floats;
+    WeakPtrFactory<RootInlineBox> m_weakPtrFactory;
 };
 
 inline RootInlineBox* RootInlineBox::nextRootBox() const

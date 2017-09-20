@@ -43,7 +43,7 @@ namespace WebCore {
 
 struct SameSizeAsRootInlineBox : public InlineFlowBox {
     unsigned variables[7];
-    void* pointers[3];
+    void* pointers[4];
 };
 
 COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInlineBox_should_stay_small);
@@ -61,6 +61,8 @@ RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
     , m_lineBreakObj(nullptr)
+    , m_weakPtrFactory(this)
+
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }

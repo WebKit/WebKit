@@ -1,3 +1,31 @@
+2017-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        FloatingObject should not hold a raw pointer to RootInlineBox.
+        https://bugs.webkit.org/show_bug.cgi?id=177266
+
+        Reviewed by Simon Fraser.
+
+        FloatingObject and RootInlineBox objects' lifetimes are very much independent from each other.
+
+        Not testable.
+
+        * rendering/FloatingObjects.cpp:
+        (WebCore::FloatingObjects::clearLineBoxTreePointers):
+        * rendering/FloatingObjects.h:
+        (WebCore::FloatingObject::originatingLine const):
+        (WebCore::FloatingObject::clearOriginatingLine):
+        (WebCore::FloatingObject::setOriginatingLine):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::removeFloatingObject):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::appendFloatingObjectToLastLine):
+        (WebCore::RenderBlockFlow::reattachCleanLineFloats):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::createWeakPtr):
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         Drop legacy DOMError type

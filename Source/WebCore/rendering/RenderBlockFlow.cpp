@@ -2326,7 +2326,7 @@ void RenderBlockFlow::removeFloatingObject(RenderBox& floatBox)
                         floatingObject.originatingLine()->markDirty();
                     }
 #if !ASSERT_DISABLED
-                    floatingObject.setOriginatingLine(0);
+                    floatingObject.clearOriginatingLine();
 #endif
                 }
                 markLinesDirtyInBlockRange(0, logicalBottom);
