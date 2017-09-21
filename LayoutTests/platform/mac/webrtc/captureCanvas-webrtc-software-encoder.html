@@ -21,8 +21,9 @@ function printRectangle(canvas)
 if (window.internals)
     internals.setH264HardwareEncoderAllowed(false);
 
-function testCanvas(testName, array1, isSame, count)
+function testCanvas(testName, canvas, isSame, count)
 {
+    var array1 = canvas.getContext("2d").getImageData(20, 20, 60, 60).data;
     if (count === undefined)
         count = 0;
     canvas2.getContext("2d").drawImage(video, 0 ,0);
@@ -31,7 +32,7 @@ function testCanvas(testName, array1, isSame, count)
     for (var index = 0; index < array1.length; ++index) {
         // Rough comparison since we are compressing data.
         // This test still catches errors since we are going from green to blue to red.
-        if (Math.abs(array1[index] - array2[index]) > 40) {
+        if (Math.abs(array1[index] - array2[index]) > 100) {
             isEqual = false;
             continue;
         }
@@ -43,7 +44,7 @@ function testCanvas(testName, array1, isSame, count)
         return Promise.reject(testName + " failed");
 
     return waitFor(100).then(() => {
-        return testCanvas(testName, array1, isSame, ++count);
+        return testCanvas(testName, canvas, isSame, ++count);
     });
 }
 
@@ -67,7 +68,7 @@ promise_test((test) => {
         video.srcObject = stream;
         return video.play();
     }).then(() => {
-        return testCanvas("test1", canvas0.getContext("2d").getImageData(20 ,20, 60, 60).data, true);
+        return testCanvas("test1", canvas0, true);
     }).then(() => {
         canvas1.color = "blue";
         printRectangle(canvas1);
@@ -76,9 +77,9 @@ promise_test((test) => {
     }).then(() => {
         return waitFor(200);
     }).then(() => {
-        return testCanvas("test2", canvas1.getContext("2d").getImageData(20 ,20, 60, 60).data, false);
+        return testCanvas("test2", canvas1, false);
     }).then(() => {
-        return testCanvas("test3", canvas0.getContext("2d").getImageData(20 ,20, 60, 60).data, true);
+        return testCanvas("test3", canvas0, true);
     }).then(() => {
         return sender.replaceTrack(canvas0Track);
     }).then(() => {
@@ -86,7 +87,7 @@ promise_test((test) => {
         // Let's wait for red color to be printed on canvas0
         return waitFor(200);
     }).then(() => {
-        return testCanvas("test4", canvas0.getContext("2d").getImageData(20 ,20, 60, 60).data, true);
+        return testCanvas("test4", canvas0, true);
     }).catch((error) => {
         if (window.internals)
             internals.setH264HardwareEncoderAllowed(true);

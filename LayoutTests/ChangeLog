@@ -1,3 +1,16 @@
+2017-09-21  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=173741
+
+        Reviewed by Alex Christensen.
+
+        Making the test more robust by getting the reference canvas to compare with each time a new comparison is done.
+        Previously, this was done at the start of the comparison.
+        Also increasing the threshold since we are going from 0 to 255 or vice-versa.
+
+        * platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html:
+
 2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove support for CSS Regions
