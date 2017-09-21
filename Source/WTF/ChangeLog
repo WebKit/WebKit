@@ -1,3 +1,13 @@
+2017-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Make StringBuilder movable
+        https://bugs.webkit.org/show_bug.cgi?id=177311
+
+        Reviewed by Chris Dumez.
+
+        * wtf/text/StringBuilder.h:
+        (WTF::StringBuilder::StringBuilder):
+
 2017-09-20  Keith Miller  <keith_miller@apple.com>
 
         JSC should use unified sources for platform specific files.

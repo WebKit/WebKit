@@ -42,9 +42,11 @@ public:
     StringBuilder()
         : m_length(0)
         , m_is8Bit(true)
-        , m_bufferCharacters8(0)
+        , m_bufferCharacters8(nullptr)
     {
     }
+    StringBuilder(StringBuilder&&) = default;
+    StringBuilder& operator=(StringBuilder&&) = default;
 
     WTF_EXPORT_PRIVATE void append(const UChar*, unsigned);
     WTF_EXPORT_PRIVATE void append(const LChar*, unsigned);
