@@ -1,3 +1,9 @@
+2017-09-21  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix Apple internal builds with the iOS 11.0 SDK.
+
+        * Configurations/WebKit.xcconfig: Disable framework header postprocessing for iOS 11.0.
+
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r222308): new API tests are failing for !NETWORK_SESSION
