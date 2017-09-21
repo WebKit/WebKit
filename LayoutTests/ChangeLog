@@ -1,3 +1,19 @@
+2017-09-21  Megan Gardner  <megan_gardner@apple.com>
+
+        Add long press and drag test
+        https://bugs.webkit.org/show_bug.cgi?id=177289
+
+        Reviewed by Simon Fraser and Tim Horton.
+
+        Adding a test to test the long press and then drag functionality of selection.
+        Also add additional helper functions to basic gestures, and clarified the existing function
+        names, as to be more clear in what behavior to expect from them.
+
+        * fast/events/touch/ios/long-press-then-drag-to-select-text-expected.txt: Added.
+        * fast/events/touch/ios/long-press-then-drag-to-select-text.html: Added.
+        * fast/events/touch/ios/resources/basic-gestures.js:
+        (touchAndDragFromPointToPoint):
+
 2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Rebaseline some tests for macOS.
