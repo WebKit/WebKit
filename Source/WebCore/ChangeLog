@@ -1,3 +1,24 @@
+2017-09-21  Chris Dumez  <cdumez@apple.com>
+
+        eventInitDict parameter to GamepadEvent constructor should be optional
+        https://bugs.webkit.org/show_bug.cgi?id=177308
+
+        Reviewed by Sam Weinig.
+
+        eventInitDict parameter to GamepadEvent constructor should be optional to match Firefox
+        and Chrome. Having such dictionary parameter is also not valid Web IDL:
+        """
+        If the type of an argument is a dictionary type (or a union type that has a dictionary as one
+        of its flattened member types), and that dictionary type and its ancestors have no required
+        members, and the argument is either the final argument or is followed only by optional arguments,
+        then the argument must be specified as optional. Such arguments are always considered to have a
+        default value of an empty dictionary, unless otherwise specified.
+        """
+
+        Test: gamepad/gamepad-event.html
+
+        * Modules/gamepad/GamepadEvent.idl:
+
 2017-09-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: keyboard shortcut for "Reload page from origin" doesn't match Safari, and doesn't work
