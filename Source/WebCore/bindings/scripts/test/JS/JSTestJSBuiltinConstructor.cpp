@@ -207,7 +207,6 @@ EncodedJSValue jsTestJSBuiltinConstructorTestAttributeRWCustom(ExecState* state,
 
 static inline bool setJSTestJSBuiltinConstructorTestAttributeRWCustomSetter(ExecState& state, JSTestJSBuiltinConstructor& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     thisObject.setTestAttributeRWCustom(state, value);
     return true;

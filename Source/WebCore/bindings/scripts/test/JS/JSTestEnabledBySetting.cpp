@@ -225,7 +225,6 @@ EncodedJSValue jsTestEnabledBySettingTestSubObjEnabledBySettingConstructor(ExecS
 
 static inline bool setJSTestEnabledBySettingTestSubObjEnabledBySettingConstructorSetter(ExecState& state, JSTestEnabledBySetting& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     // Shadowing a built-in constructor.
     return thisObject.putDirect(state.vm(), Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("TestSubObjEnabledBySetting"), strlen("TestSubObjEnabledBySetting")), value);
@@ -256,12 +255,13 @@ EncodedJSValue jsTestEnabledBySettingEnabledBySettingAttribute(ExecState* state,
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestEnabledBySettingEnabledBySettingAttributeSetter(ExecState& state, JSTestEnabledBySetting& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setEnabledBySettingAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setEnabledBySettingAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setEnabledBySettingAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 

@@ -262,12 +262,13 @@ EncodedJSValue jsTestNodeName(ExecState* state, EncodedJSValue thisValue, Proper
 
 static inline bool setJSTestNodeNameSetter(ExecState& state, JSTestNode& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setName(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setName(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setName(WTFMove(nativeValue));
+    });
     return true;
 }
 

@@ -186,12 +186,13 @@ EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeFoo(ExecState* s
 
 static inline bool setJSTestSerializationInheritFinalFinalLongAttributeFooSetter(ExecState& state, JSTestSerializationInheritFinal& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setFinalLongAttributeFoo(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setFinalLongAttributeFoo(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setFinalLongAttributeFoo(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -216,12 +217,13 @@ EncodedJSValue jsTestSerializationInheritFinalFinalLongAttributeBar(ExecState* s
 
 static inline bool setJSTestSerializationInheritFinalFinalLongAttributeBarSetter(ExecState& state, JSTestSerializationInheritFinal& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setFinalLongAttributeBar(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setFinalLongAttributeBar(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setFinalLongAttributeBar(WTFMove(nativeValue));
+    });
     return true;
 }
 

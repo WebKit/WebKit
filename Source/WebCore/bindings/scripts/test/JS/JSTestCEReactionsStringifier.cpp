@@ -191,13 +191,14 @@ EncodedJSValue jsTestCEReactionsStringifierValue(ExecState* state, EncodedJSValu
 
 static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, JSTestCEReactionsStringifier& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     CustomElementReactionStack customElementReactionStack;
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setValue(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setValue(WTFMove(nativeValue));
+    });
     return true;
 }
 

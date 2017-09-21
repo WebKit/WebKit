@@ -183,12 +183,13 @@ EncodedJSValue jsTestSerializationInheritInheritLongAttribute(ExecState* state, 
 
 static inline bool setJSTestSerializationInheritInheritLongAttributeSetter(ExecState& state, JSTestSerializationInherit& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setInheritLongAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setInheritLongAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setInheritLongAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 

@@ -201,13 +201,14 @@ EncodedJSValue jsTestCEReactionsAttributeWithCEReactions(ExecState* state, Encod
 
 static inline bool setJSTestCEReactionsAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     CustomElementReactionStack customElementReactionStack;
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttributeWithCEReactions(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttributeWithCEReactions(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttributeWithCEReactions(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -232,13 +233,14 @@ EncodedJSValue jsTestCEReactionsReflectAttributeWithCEReactions(ExecState* state
 
 static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     CustomElementReactionStack customElementReactionStack;
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -263,7 +265,6 @@ EncodedJSValue jsTestCEReactionsStringifierAttribute(ExecState* state, EncodedJS
 
 static inline bool setJSTestCEReactionsStringifierAttributeSetter(ExecState& state, JSTestCEReactions& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto id = Identifier::fromString(&state.vm(), reinterpret_cast<const LChar*>("stringifierAttribute"), strlen("stringifierAttribute"));
     auto valueToForwardTo = thisObject.get(&state, id);

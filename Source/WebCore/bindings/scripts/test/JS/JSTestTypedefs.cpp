@@ -305,12 +305,13 @@ EncodedJSValue jsTestTypedefsUnsignedLongLongAttr(ExecState* state, EncodedJSVal
 
 static inline bool setJSTestTypedefsUnsignedLongLongAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLongLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setUnsignedLongLongAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -335,12 +336,13 @@ EncodedJSValue jsTestTypedefsSerializedScriptValue(ExecState* state, EncodedJSVa
 
 static inline bool setJSTestTypedefsSerializedScriptValueSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setSerializedScriptValue(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setSerializedScriptValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setSerializedScriptValue(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -377,12 +379,13 @@ EncodedJSValue jsTestTypedefsAttributeWithClamp(ExecState* state, EncodedJSValue
 
 static inline bool setJSTestTypedefsAttributeWithClampSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLClampAdaptor<IDLUnsignedLongLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttributeWithClamp(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttributeWithClamp(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttributeWithClamp(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -407,12 +410,13 @@ EncodedJSValue jsTestTypedefsAttributeWithClampInTypedef(ExecState* state, Encod
 
 static inline bool setJSTestTypedefsAttributeWithClampInTypedefSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLClampAdaptor<IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttributeWithClampInTypedef(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttributeWithClampInTypedef(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttributeWithClampInTypedef(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -437,12 +441,13 @@ EncodedJSValue jsTestTypedefsAttrWithGetterException(ExecState* state, EncodedJS
 
 static inline bool setJSTestTypedefsAttrWithGetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttrWithGetterException(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttrWithGetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttrWithGetterException(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -467,12 +472,13 @@ EncodedJSValue jsTestTypedefsAttrWithSetterException(ExecState* state, EncodedJS
 
 static inline bool setJSTestTypedefsAttrWithSetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    propagateException(state, throwScope, impl.setAttrWithSetterException(WTFMove(nativeValue)));
+    AttributeSetter<decltype(impl.setAttrWithSetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttrWithSetterException(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -497,12 +503,13 @@ EncodedJSValue jsTestTypedefsStringAttrWithGetterException(ExecState* state, Enc
 
 static inline bool setJSTestTypedefsStringAttrWithGetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setStringAttrWithGetterException(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setStringAttrWithGetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setStringAttrWithGetterException(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -527,12 +534,13 @@ EncodedJSValue jsTestTypedefsStringAttrWithSetterException(ExecState* state, Enc
 
 static inline bool setJSTestTypedefsStringAttrWithSetterExceptionSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    propagateException(state, throwScope, impl.setStringAttrWithSetterException(WTFMove(nativeValue)));
+    AttributeSetter<decltype(impl.setStringAttrWithSetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setStringAttrWithSetterException(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -557,12 +565,13 @@ EncodedJSValue jsTestTypedefsBufferSourceAttr(ExecState* state, EncodedJSValue t
 
 static inline bool setJSTestTypedefsBufferSourceAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setBufferSourceAttr(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setBufferSourceAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setBufferSourceAttr(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -587,12 +596,13 @@ EncodedJSValue jsTestTypedefsDomTimeStampAttr(ExecState* state, EncodedJSValue t
 
 static inline bool setJSTestTypedefsDomTimeStampAttrSetter(ExecState& state, JSTestTypedefs& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLongLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setDomTimeStampAttr(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setDomTimeStampAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setDomTimeStampAttr(WTFMove(nativeValue));
+    });
     return true;
 }
 

@@ -234,7 +234,6 @@ EncodedJSValue jsTestCallTracerTestAttributeInterface(ExecState* state, EncodedJ
 
 static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(ExecState& state, JSTestCallTracer& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
@@ -244,7 +243,9 @@ static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(ExecState& st
         callTracerParameters.append(nativeValue);
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeInterface"), WTFMove(callTracerParameters));
     }
-    impl.setTestAttributeInterface(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setTestAttributeInterface(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setTestAttributeInterface(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -271,7 +272,6 @@ EncodedJSValue jsTestCallTracerTestAttributeSpecified(ExecState* state, EncodedJ
 
 static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(ExecState& state, JSTestCallTracer& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
@@ -281,7 +281,9 @@ static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(ExecState& st
         callTracerParameters.append(nativeValue);
         CallTracer::testCallTracerAttribute(impl, ASCIILiteral("testAttributeSpecified"), WTFMove(callTracerParameters));
     }
-    impl.setTestAttributeSpecified(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setTestAttributeSpecified(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setTestAttributeSpecified(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -308,7 +310,6 @@ EncodedJSValue jsTestCallTracerTestAttributeWithVariant(ExecState* state, Encode
 
 static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(ExecState& state, JSTestCallTracer& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(state, value);
@@ -318,7 +319,9 @@ static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(ExecState& 
         WTF::visit([&] (auto& value) { callTracerParameters.append(value); }, nativeValue);
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeWithVariant"), WTFMove(callTracerParameters));
     }
-    impl.setTestAttributeWithVariant(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setTestAttributeWithVariant(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setTestAttributeWithVariant(WTFMove(nativeValue));
+    });
     return true;
 }
 

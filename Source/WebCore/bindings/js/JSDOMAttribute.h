@@ -90,4 +90,28 @@ public:
     }
 };
 
+template<typename ReturnType>
+struct AttributeSetter;
+
+template<>
+struct AttributeSetter<ExceptionOr<void>> {
+    template<typename Functor>
+    static void call(JSC::ExecState& state, JSC::ThrowScope& throwScope, Functor&& functor)
+    {
+        auto result = functor();
+        if (!result.hasException())
+            return;
+        propagateException(state, throwScope, result.releaseException());
+    }
+};
+
+template<>
+struct AttributeSetter<void> {
+    template<typename Functor>
+    static void call(JSC::ExecState&, JSC::ThrowScope&, Functor&& functor)
+    {
+        functor();
+    }
+};
+
 } // namespace WebCore

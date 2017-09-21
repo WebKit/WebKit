@@ -4801,7 +4801,6 @@ sub GenerateAttributeSetterBodyDefinition
     
     push(@$outputArray, "static inline bool ${attributeSetterBodyName}(" . join(", ", @signatureArguments) . ")\n");
     push(@$outputArray, "{\n");
-    push(@$outputArray, "    UNUSED_PARAM(state);\n");
     push(@$outputArray, "    UNUSED_PARAM(throwScope);\n");
     
     if ($attribute->extendedAttributes->{CEReactions}) {
@@ -4915,9 +4914,6 @@ sub GenerateAttributeSetterBodyDefinition
         unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{SetterCallWith}, $outputArray, "false", "thisObject"));
         unshift(@arguments, GenerateCallWithUsingReferences($attribute->extendedAttributes->{CallWith}, $outputArray, "false", "thisObject"));
 
-        my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
-        $functionString = "propagateException(state, throwScope, $functionString)" if $attribute->extendedAttributes->{SetterMayThrowException};
-
         my $callTracingCallback = $attribute->extendedAttributes->{CallTracingCallback} || $interface->extendedAttributes->{CallTracingCallback};
         if ($callTracingCallback) {
             my $indent = "    ";
@@ -4926,7 +4922,10 @@ sub GenerateAttributeSetterBodyDefinition
             GenerateCallTracer($outputArray, $callTracingCallback, $attribute->name, \@callTracerArguments, $indent);
         }
 
-        push(@$outputArray, "    ${functionString};\n");
+        my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
+        push(@$outputArray, "    AttributeSetter<decltype($functionString)>::call(state, throwScope, [&] {\n");
+        push(@$outputArray, "        return $functionString;\n");
+        push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");
     }
     push(@$outputArray, "}\n\n");

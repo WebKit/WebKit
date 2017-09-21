@@ -258,12 +258,13 @@ EncodedJSValue jsTestGlobalObjectRegularAttribute(ExecState* state, EncodedJSVal
 
 static inline bool setJSTestGlobalObjectRegularAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setRegularAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setRegularAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setRegularAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -288,12 +289,13 @@ EncodedJSValue jsTestGlobalObjectPublicAndPrivateAttribute(ExecState* state, Enc
 
 static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setPublicAndPrivateAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setPublicAndPrivateAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setPublicAndPrivateAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -322,12 +324,13 @@ EncodedJSValue jsTestGlobalObjectPublicAndPrivateConditionalAttribute(ExecState*
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -358,12 +361,13 @@ EncodedJSValue jsTestGlobalObjectEnabledAtRuntimeAttribute(ExecState* state, Enc
 #if ENABLE(TEST_FEATURE)
 static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeSetter(ExecState& state, JSTestGlobalObject& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
+    });
     return true;
 }
 

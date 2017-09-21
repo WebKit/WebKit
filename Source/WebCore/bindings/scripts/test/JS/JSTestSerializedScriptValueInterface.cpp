@@ -210,12 +210,13 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceValue(ExecState* state, Encod
 
 static inline bool setJSTestSerializedScriptValueInterfaceValueSetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setValue(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setValue(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -257,12 +258,13 @@ EncodedJSValue jsTestSerializedScriptValueInterfaceCachedValue(ExecState* state,
 
 static inline bool setJSTestSerializedScriptValueInterfaceCachedValueSetter(ExecState& state, JSTestSerializedScriptValueInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setCachedValue(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setCachedValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setCachedValue(WTFMove(nativeValue));
+    });
     return true;
 }
 

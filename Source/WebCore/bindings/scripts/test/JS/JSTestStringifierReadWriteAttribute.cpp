@@ -190,12 +190,13 @@ EncodedJSValue jsTestStringifierReadWriteAttributeIdentifier(ExecState* state, E
 
 static inline bool setJSTestStringifierReadWriteAttributeIdentifierSetter(ExecState& state, JSTestStringifierReadWriteAttribute& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setIdentifier(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setIdentifier(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setIdentifier(WTFMove(nativeValue));
+    });
     return true;
 }
 

@@ -1,3 +1,36 @@
+2017-09-21  Youenn Fablet  <youenn@apple.com>
+
+        Remove the need for SetterMayThrowException
+        https://bugs.webkit.org/show_bug.cgi?id=177099
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+        Introducing AttributeSetter to handle exception raising attribute setters,
+        based on the C++ class method instead of SetterMayThrowException.
+        A follow-up patch should remove SetterMayThrowException from the IDLs
+
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::AttributeSetter<ExceptionOr<void>>::call):
+        (WebCore::AttributeSetter<void>::call):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeSetterBodyDefinition):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+
 2017-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         DataTransfer.items should contain text/html and text/uri-list

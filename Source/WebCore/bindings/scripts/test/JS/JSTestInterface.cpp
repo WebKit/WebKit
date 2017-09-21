@@ -491,11 +491,12 @@ EncodedJSValue jsTestInterfaceConstructorImplementsStaticAttr(ExecState* state, 
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
+    AttributeSetter<decltype(TestInterface::setImplementsStaticAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -543,12 +544,13 @@ EncodedJSValue jsTestInterfaceImplementsStr2(ExecState* state, EncodedJSValue th
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestInterfaceImplementsStr2Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setImplementsStr2(WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setImplementsStr2(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setImplementsStr2(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -577,7 +579,6 @@ EncodedJSValue jsTestInterfaceImplementsStr3(ExecState* state, EncodedJSValue th
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestInterfaceImplementsStr3Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     thisObject.setImplementsStr3(state, value);
     return true;
@@ -610,12 +611,13 @@ EncodedJSValue jsTestInterfaceImplementsNode(ExecState* state, EncodedJSValue th
 #if ENABLE(Condition22) || ENABLE(Condition23)
 static inline bool setJSTestInterfaceImplementsNodeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "implementsNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setImplementsNode(*nativeValue);
+    AttributeSetter<decltype(impl.setImplementsNode(*nativeValue))>::call(state, throwScope, [&] {
+        return impl.setImplementsNode(*nativeValue);
+    });
     return true;
 }
 
@@ -661,11 +663,12 @@ EncodedJSValue jsTestInterfaceConstructorSupplementalStaticAttr(ExecState* state
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static inline bool setJSTestInterfaceConstructorSupplementalStaticAttrSetter(ExecState& state, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
+    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -713,12 +716,13 @@ EncodedJSValue jsTestInterfaceSupplementalStr2(ExecState* state, EncodedJSValue 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static inline bool setJSTestInterfaceSupplementalStr2Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
+    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
+    });
     return true;
 }
 
@@ -747,7 +751,6 @@ EncodedJSValue jsTestInterfaceSupplementalStr3(ExecState* state, EncodedJSValue 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static inline bool setJSTestInterfaceSupplementalStr3Setter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     thisObject.setSupplementalStr3(state, value);
     return true;
@@ -780,12 +783,13 @@ EncodedJSValue jsTestInterfaceSupplementalNode(ExecState* state, EncodedJSValue 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static inline bool setJSTestInterfaceSupplementalNodeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "supplementalNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
+    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue))>::call(state, throwScope, [&] {
+        return WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
+    });
     return true;
 }
 
@@ -816,12 +820,13 @@ EncodedJSValue jsTestInterfaceReflectAttribute(ExecState* state, EncodedJSValue 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 static inline bool setJSTestInterfaceReflectAttributeSetter(ExecState& state, JSTestInterface& thisObject, JSValue value, ThrowScope& throwScope)
 {
-    UNUSED_PARAM(state);
     UNUSED_PARAM(throwScope);
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
+    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+        return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
+    });
     return true;
 }
 
