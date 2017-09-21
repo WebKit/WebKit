@@ -37,7 +37,6 @@
 #import "Logging.h"
 #import "MediaSourcePrivateAVFObjC.h"
 #import "MediaSourcePrivateClient.h"
-#import "MediaTimeAVFoundation.h"
 #import "PixelBufferConformerCV.h"
 #import "PlatformClockCM.h"
 #import "TextTrackRepresentation.h"
@@ -49,6 +48,7 @@
 #import <AVFoundation/AVTime.h>
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Deque.h>
 #import <wtf/MainThread.h>
@@ -147,7 +147,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     // addPeriodicTimeObserverForInterval: throws an exception if you pass a non-numeric CMTime, so just use
     // an arbitrarily large time value of once an hour:
     __block auto weakThis = createWeakPtr();
-    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    m_timeJumpedObserver = [m_synchronizer addPeriodicTimeObserverForInterval:PAL::toCMTime(MediaTime::createWithDouble(3600)) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
 #if LOG_DISABLED
         UNUSED_PARAM(time);
 #endif
@@ -156,7 +156,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
             return;
 
         if (m_seeking && !m_pendingSeek) {
-            LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::m_timeJumpedObserver(%p) - time(%s)", weakThis.get(), toString(toMediaTime(time)).utf8().data());
+            LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::m_timeJumpedObserver(%p) - time(%s)", weakThis.get(), toString(PAL::toMediaTime(time)).utf8().data());
             m_seeking = false;
 
             if (shouldBePlaying())
@@ -388,7 +388,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::durationMediaTime() const
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 {
-    MediaTime synchronizerTime = toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
+    MediaTime synchronizerTime = PAL::toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();
     if (synchronizerTime < m_lastSeekTime)
@@ -436,11 +436,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
 
     LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::seekInternal(%p) - seekTime(%s)", this, toString(m_lastSeekTime).utf8().data());
 
-    MediaTime synchronizerTime = toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
+    MediaTime synchronizerTime = PAL::toMediaTime(CMTimebaseGetTime([m_synchronizer timebase]));
     bool doesNotRequireSeek = synchronizerTime == m_lastSeekTime;
 
     m_mediaSourcePrivate->willSeek();
-    [m_synchronizer setRate:0 time:toCMTime(m_lastSeekTime)];
+    [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
     m_mediaSourcePrivate->seekToTime(m_lastSeekTime);
 
     // In cases where the destination seek time precisely matches the synchronizer's existing time
@@ -859,7 +859,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
     MediaTime duration = m_mediaSourcePrivate->duration();
     auto weakThis = createWeakPtr();
-    NSArray* times = @[[NSValue valueWithCMTime:toCMTime(duration)]];
+    NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
 
     LOG(MediaSource, "MediaPlayerPrivateMediaSourceAVFObjC::durationChanged(%p) - duration = %s", this, toString(duration).utf8().data());
 
@@ -873,7 +873,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
         weakThis->pauseInternal();
         if (now < duration) {
             LOG(MediaSource, "   ERROR: boundary time observer called before duration!", weakThis.get());
-            [weakThis->m_synchronizer setRate:0 time:toCMTime(duration)];
+            [weakThis->m_synchronizer setRate:0 time:PAL::toCMTime(duration)];
         }
         weakThis->m_player->timeChanged();
 
@@ -891,7 +891,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime& time, const FloatSize& size)
 {
     auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr();
-    NSArray* times = @[[NSValue valueWithCMTime:toCMTime(time)]];
+    NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
     RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis, size] {
         if (!weakThis)
             return;

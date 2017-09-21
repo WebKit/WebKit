@@ -106,7 +106,7 @@ void MockRealtimeAudioSourceMac::emitSampleBuffers(uint32_t frameCount)
     CMTime startTime = CMTimeMake(m_samplesEmitted, sampleRate());
     m_samplesEmitted += frameCount;
 
-    audioSamplesAvailable(toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
+    audioSamplesAvailable(PAL::toMediaTime(startTime), *m_audioBufferList, CAAudioStreamDescription(m_streamFormat), frameCount);
 }
 
 void MockRealtimeAudioSourceMac::reconfigure()

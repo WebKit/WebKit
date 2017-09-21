@@ -23,21 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef MediaTimeAVFoundation_h
-#define MediaTimeAVFoundation_h
+#pragma once
 
 #if USE(AVFOUNDATION)
 
 #include <CoreMedia/CMTime.h>
 #include <wtf/MediaTime.h>
 
-namespace WebCore {
+namespace PAL {
 
-CMTime toCMTime(const MediaTime&);
-MediaTime toMediaTime(const CMTime&);
+PAL_EXPORT CMTime toCMTime(const MediaTime&);
+PAL_EXPORT MediaTime toMediaTime(const CMTime&);
 
 }
-
-#endif
 
 #endif

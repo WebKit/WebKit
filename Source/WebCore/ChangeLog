@@ -1,3 +1,85 @@
+2017-09-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move MediaTimeAVFoundation into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=177222
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests. No change in behavior..
+
+        * Configurations/WebCore.unexp:
+        * PlatformAppleWin.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/mac/AudioSampleDataSource.mm:
+        (WebCore::AudioSampleDataSource::pushSamples):
+        * platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm:
+        (WebCore::AudioSourceProviderAVFObjC::process):
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp:
+        (WebCore::InbandTextTrackPrivateAVF::readNativeSampleBuffer):
+        * platform/graphics/avfoundation/MediaSampleAVFObjC.h:
+        * platform/graphics/avfoundation/cf/InbandTextTrackPrivateAVCF.cpp:
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration const):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges const):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded const):
+        (WebCore::AVFWrapper::seekToTime):
+        (WebCore::AVFWrapper::legibleOutputCallback):
+        (WebCore::AVFWrapper::createImageForTimeInRect):
+        * platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.mm:
+        (WebCore::ImageDecoderAVFObjC::readSampleMetadata):
+        (WebCore::ImageDecoderAVFObjC::storeSampleBuffer):
+        (WebCore::ImageDecoderAVFObjC::createFrameImageAtIndex):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMinTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::metadataDidArrive):
+        (-[WebCoreAVFMovieObserver observeValueForKeyPath:ofObject:change:context:]):
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::seekInternal):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::durationChanged):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset):
+        * platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm:
+        (WebCore::MediaSampleAVFObjC::presentationTime const):
+        (WebCore::MediaSampleAVFObjC::outputPresentationTime const):
+        (WebCore::MediaSampleAVFObjC::decodeTime const):
+        (WebCore::MediaSampleAVFObjC::duration const):
+        (WebCore::MediaSampleAVFObjC::outputDuration const):
+        (WebCore::MediaSampleAVFObjC::offsetTimestampsBy):
+        (WebCore::MediaSampleAVFObjC::setTimestamps):
+        (WebCore::MediaSampleAVFObjC::divide):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset):
+        * platform/graphics/cocoa/WebCoreDecompressionSession.mm:
+        (WebCore::WebCoreDecompressionSession::handleDecompressionOutput):
+        (WebCore::WebCoreDecompressionSession::automaticDequeue):
+        (WebCore::WebCoreDecompressionSession::enqueueDecodedSample):
+        (WebCore::WebCoreDecompressionSession::imageForTime):
+        * platform/mac/PlatformClockCM.mm:
+        (PlatformClockCM::setCurrentMediaTime):
+        (PlatformClockCM::currentMediaTime const):
+        * platform/mac/PlaybackSessionInterfaceMac.mm:
+        (WebCore::timeRangesToArray):
+        * platform/mac/VideoFullscreenInterfaceMac.mm:
+        * platform/mediastream/mac/CoreAudioCaptureSource.cpp:
+        * platform/mediastream/mac/MockRealtimeAudioSourceMac.mm:
+        (WebCore::MockRealtimeAudioSourceMac::emitSampleBuffers):
+        * platform/mediastream/mac/RealtimeIncomingAudioSource.cpp:
+        (WebCore::RealtimeIncomingAudioSource::OnData):
+        * platform/mediastream/mac/WebAudioSourceProviderAVFObjC.mm:
+
 2017-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix ASAN build after r222306

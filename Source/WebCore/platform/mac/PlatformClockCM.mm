@@ -29,7 +29,7 @@
 
 #import "PlatformClockCM.h"
 
-#import "MediaTimeAVFoundation.h"
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #import "CoreMediaSoftLink.h"
 
@@ -81,12 +81,12 @@ double PlatformClockCM::currentTime() const
 
 void PlatformClockCM::setCurrentMediaTime(const MediaTime& time)
 {
-    CMTimebaseSetTime(m_timebase.get(), toCMTime(time));
+    CMTimebaseSetTime(m_timebase.get(), PAL::toCMTime(time));
 }
 
 MediaTime PlatformClockCM::currentMediaTime() const
 {
-    return toMediaTime(CMTimebaseGetTime(m_timebase.get()));
+    return PAL::toMediaTime(CMTimebaseGetTime(m_timebase.get()));
 }
 
 void PlatformClockCM::setPlayRate(double rate)

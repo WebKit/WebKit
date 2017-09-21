@@ -33,7 +33,6 @@
 #import "FloatRect.h"
 #import "FloatSize.h"
 #import "MIMETypeRegistry.h"
-#import "MediaTimeAVFoundation.h"
 #import "SharedBuffer.h"
 #import "UTIUtilities.h"
 #import "WebCoreDecompressionSession.h"
@@ -45,6 +44,7 @@
 #import <AVFoundation/AVTime.h>
 #import <VideoToolbox/VTUtilities.h>
 #import <map>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/MainThread.h>
 #import <wtf/MediaTime.h>
 #import <wtf/NeverDestroyed.h>
@@ -338,8 +338,8 @@ void ImageDecoderAVFObjC::readSampleMetadata()
     for (size_t index = 0; index < static_cast<size_t>(sampleCount); ++index) {
         auto& sampleData = m_sampleData[index];
         sampleData.duration = Seconds(CMTimeGetSeconds([cursor currentSampleDuration]));
-        sampleData.decodeTime = toMediaTime([cursor decodeTimeStamp]);
-        sampleData.presentationTime = toMediaTime([cursor presentationTimeStamp]);
+        sampleData.decodeTime = PAL::toMediaTime([cursor decodeTimeStamp]);
+        sampleData.presentationTime = PAL::toMediaTime([cursor presentationTimeStamp]);
         auto request = adoptNS([allocAVSampleBufferRequestInstance() initWithStartCursor:cursor.get()]);
         sampleData.sample = adoptCF([m_generator createSampleBufferForRequest:request.get()]);
         m_presentationTimeToIndex.insert(std::make_pair(sampleData.presentationTime, index));
@@ -368,7 +368,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
     if (!pixelBuffer)
         return false;
 
-    auto presentationTime = toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
+    auto presentationTime = PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer));
     auto indexIter = m_presentationTimeToIndex.find(presentationTime);
 
     if (m_rotation && !m_rotation.value().isIdentity()) {
@@ -547,7 +547,7 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
     if (!m_cursor)
         m_cursor = [m_track makeSampleCursorAtFirstSampleInDecodeOrder];
 
-    auto frameCursor = [m_track makeSampleCursorWithPresentationTimeStamp:toCMTime(sampleData.presentationTime)];
+    auto frameCursor = [m_track makeSampleCursorWithPresentationTimeStamp:PAL::toCMTime(sampleData.presentationTime)];
     if ([frameCursor comparePositionInDecodeOrderWithPositionOfCursor:m_cursor.get()] == NSOrderedAscending)  {
         // Rewind cursor to the last sync sample to begin decoding
         m_cursor = [frameCursor copy];
@@ -566,7 +566,7 @@ NativeImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subsam
         if ([frameCursor comparePositionInDecodeOrderWithPositionOfCursor:m_cursor.get()] == NSOrderedAscending)
             return nullptr;
 
-        auto presentationTime = toMediaTime(m_cursor.get().presentationTimeStamp);
+        auto presentationTime = PAL::toMediaTime(m_cursor.get().presentationTimeStamp);
         auto indexIter = m_presentationTimeToIndex.find(presentationTime);
         advanceCursor();
 

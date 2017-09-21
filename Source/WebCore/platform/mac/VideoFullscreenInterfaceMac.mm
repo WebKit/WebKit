@@ -30,13 +30,13 @@
 
 #import "IntRect.h"
 #import "Logging.h"
-#import "MediaTimeAVFoundation.h"
 #import "PlaybackSessionInterfaceMac.h"
 #import "TimeRanges.h"
 #import "VideoFullscreenChangeObserver.h"
 #import "VideoFullscreenModel.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <pal/spi/mac/PIPSPI.h>
 

@@ -37,7 +37,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/avfoundation/InbandMetadataTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp
-    platform/graphics/avfoundation/MediaTimeAVFoundation.cpp
     platform/graphics/avfoundation/WebMediaSessionManagerMac.cpp
 
     platform/graphics/avfoundation/cf/CDMSessionAVFoundationCF.cpp

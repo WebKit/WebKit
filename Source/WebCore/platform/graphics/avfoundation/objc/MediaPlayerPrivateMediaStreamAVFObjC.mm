@@ -33,13 +33,13 @@
 #import "GraphicsContextCG.h"
 #import "Logging.h"
 #import "MediaStreamPrivate.h"
-#import "MediaTimeAVFoundation.h"
 #import "PixelBufferConformerCV.h"
 #import "VideoTrackPrivateMediaStream.h"
 #import <AVFoundation/AVSampleBufferDisplayLayer.h>
 #import <QuartzCore/CALayer.h>
 #import <QuartzCore/CATransaction.h>
 #import <objc_runtime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <wtf/Function.h>
 #import <wtf/MainThread.h>
@@ -304,7 +304,7 @@ MediaTime MediaPlayerPrivateMediaStreamAVFObjC::calculateTimelineOffset(const Me
         sampleTime = sample.presentationTime();
     MediaTime timelineOffset = streamTime() - sampleTime + MediaTime::createWithDouble(latency);
     if (timelineOffset.timeScale() != sampleTime.timeScale())
-        timelineOffset = toMediaTime(CMTimeConvertScale(toCMTime(timelineOffset), sampleTime.timeScale(), kCMTimeRoundingMethod_Default));
+        timelineOffset = PAL::toMediaTime(CMTimeConvertScale(PAL::toCMTime(timelineOffset), sampleTime.timeScale(), kCMTimeRoundingMethod_Default));
     return timelineOffset;
 }
 

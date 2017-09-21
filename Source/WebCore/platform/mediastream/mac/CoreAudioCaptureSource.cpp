@@ -37,13 +37,13 @@
 #include "CoreAudioCaptureDeviceManager.h"
 #include "CoreAudioCaptureSourceIOS.h"
 #include "Logging.h"
-#include "MediaTimeAVFoundation.h"
 #include "Timer.h"
 #include "WebAudioSourceProviderAVFObjC.h"
 #include <AudioToolbox/AudioConverter.h>
 #include <AudioUnit/AudioUnit.h>
 #include <CoreMedia/CMSync.h>
 #include <mach/mach_time.h>
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <pal/spi/cf/CoreAudioSPI.h>
 #include <sys/time.h>
 #include <wtf/MainThread.h>

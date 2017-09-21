@@ -36,9 +36,9 @@
 #include "AudioStreamDescription.h"
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioFormat.h"
-#include "MediaTimeAVFoundation.h"
 #include "WebAudioBufferList.h"
 #include "WebAudioSourceProviderAVFObjC.h"
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #include "CoreMediaSoftLink.h"
 
@@ -83,7 +83,7 @@ void RealtimeIncomingAudioSource::OnData(const void* audioData, int bitsPerSampl
     ASSERT(sampleRate == 48000);
 
     CMTime startTime = CMTimeMake(m_numberOfFrames, sampleRate);
-    auto mediaTime = toMediaTime(startTime);
+    auto mediaTime = PAL::toMediaTime(startTime);
     m_numberOfFrames += numberOfFrames;
 
     AudioStreamBasicDescription newDescription = streamDescription(sampleRate, numberOfChannels);

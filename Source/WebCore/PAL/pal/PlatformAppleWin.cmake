@@ -8,3 +8,13 @@ else ()
         spi/cg
     )
 endif ()
+
+list(APPEND PAL_SOURCES
+    avfoundation/MediaTimeAVFoundation.cpp
+
+    cf/CoreMediaSoftLink.cpp
+)
+
+list(APPEND PAL_PRIVATE_INCLUDE_DIRECTORIES
+    "${PAL_DIR}/pal/cf"
+)

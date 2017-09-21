@@ -39,7 +39,6 @@
 #import "MediaSample.h"
 #import "MediaSampleAVFObjC.h"
 #import "MediaSourcePrivateAVFObjC.h"
-#import "MediaTimeAVFoundation.h"
 #import "NotImplemented.h"
 #import "SourceBufferPrivateClient.h"
 #import "TimeRanges.h"
@@ -49,6 +48,7 @@
 #import <QuartzCore/CALayer.h>
 #import <map>
 #import <objc/runtime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/mac/AVFoundationSPI.h>
 #import <runtime/TypedArrayInlines.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -526,10 +526,10 @@ void SourceBufferPrivateAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
     SourceBufferPrivateClient::InitializationSegment segment;
 
     if ([m_asset respondsToSelector:@selector(overallDurationHint)])
-        segment.duration = toMediaTime([m_asset overallDurationHint]);
+        segment.duration = PAL::toMediaTime([m_asset overallDurationHint]);
 
     if (segment.duration.isInvalid() || segment.duration == MediaTime::zeroTime())
-        segment.duration = toMediaTime([m_asset duration]);
+        segment.duration = PAL::toMediaTime([m_asset duration]);
 
     for (AVAssetTrack* track in [m_asset tracks]) {
         if ([track hasMediaCharacteristic:AVMediaCharacteristicLegible]) {

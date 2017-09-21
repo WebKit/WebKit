@@ -33,13 +33,13 @@
 #import "AudioSourceProviderClient.h"
 #import "CARingBuffer.h"
 #import "Logging.h"
-#import "MediaTimeAVFoundation.h"
 #import <AVFoundation/AVAssetTrack.h>
 #import <AVFoundation/AVAudioMix.h>
 #import <AVFoundation/AVMediaFormat.h>
 #import <AVFoundation/AVPlayerItem.h>
 #import <mutex>
 #import <objc/runtime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <wtf/Lock.h>
 #import <wtf/MainThread.h>
 
@@ -367,13 +367,13 @@ void AudioSourceProviderAVFObjC::process(MTAudioProcessingTapRef tap, CMItemCoun
     if (status != noErr || !itemCount)
         return;
 
-    MediaTime rangeStart = toMediaTime(rangeOut.start);
-    MediaTime rangeDuration = toMediaTime(rangeOut.duration);
+    MediaTime rangeStart = PAL::toMediaTime(rangeOut.start);
+    MediaTime rangeDuration = PAL::toMediaTime(rangeOut.duration);
 
     if (rangeStart.isInvalid())
         return;
 
-    MediaTime currentTime = toMediaTime(CMTimebaseGetTime([m_avPlayerItem timebase]));
+    MediaTime currentTime = PAL::toMediaTime(CMTimebaseGetTime([m_avPlayerItem timebase]));
     if (currentTime.isInvalid())
         return;
 

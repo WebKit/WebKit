@@ -30,7 +30,7 @@
 
 #include "CoreMediaSoftLink.h"
 
-namespace WebCore {
+namespace PAL {
 
 static bool CMTimeHasFlags(const CMTime& cmTime, uint32_t flags)
 {

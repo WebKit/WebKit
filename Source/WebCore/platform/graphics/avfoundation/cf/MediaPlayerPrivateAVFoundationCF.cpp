@@ -41,13 +41,13 @@
 #else
 #include "InbandTextTrackPrivateLegacyAVCF.h"
 #endif
-#include "MediaTimeAVFoundation.h"
-#include "URL.h"
 #include "Logging.h"
 #include "PlatformCALayerClient.h"
 #include "PlatformCALayerWin.h"
 #include "TimeRanges.h"
+#include "URL.h"
 #include "WebCoreAVCFResourceLoader.h"
+#include <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #include <AVFoundationCF/AVCFPlayerItem.h>
 #if HAVE(AVFOUNDATION_LEGIBLE_OUTPUT_SUPPORT)
@@ -592,7 +592,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::platformDuration() const
         cmDuration = AVCFAssetGetDuration(avAsset(m_avfWrapper));
 
     if (CMTIME_IS_NUMERIC(cmDuration))
-        return toMediaTime(cmDuration);
+        return PAL::toMediaTime(cmDuration);
 
     if (CMTIME_IS_INDEFINITE(cmDuration))
         return MediaTime::positiveInfiniteTime();
@@ -608,7 +608,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::currentMediaTime() const
 
     CMTime itemTime = AVCFPlayerItemGetCurrentTime(avPlayerItem(m_avfWrapper));
     if (CMTIME_IS_NUMERIC(itemTime))
-        return max(toMediaTime(itemTime), MediaTime::zeroTime());
+        return max(PAL::toMediaTime(itemTime), MediaTime::zeroTime());
 
     return MediaTime::zeroTime();
 }
@@ -694,8 +694,8 @@ std::unique_ptr<PlatformTimeRanges> MediaPlayerPrivateAVFoundationCF::platformBu
         CMTime duration = CMTimeMakeFromDictionary(static_cast<CFDictionaryRef>(CFDictionaryGetValue(range, CMTimeRangeDurationKey())));
         
         if (timeRangeIsValidAndNotEmpty(start, duration)) {
-            MediaTime rangeStart = toMediaTime(start);
-            MediaTime rangeEnd = rangeStart + toMediaTime(duration);
+            MediaTime rangeStart = PAL::toMediaTime(start);
+            MediaTime rangeEnd = rangeStart + PAL::toMediaTime(duration);
             timeRanges->add(rangeStart, rangeEnd);
         }
     }
@@ -720,7 +720,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::platformMinTimeSeekable() const
             continue;
 
         hasValidRange = true; 
-        MediaTime startOfRange = toMediaTime(start); 
+        MediaTime startOfRange = PAL::toMediaTime(start);
         if (minTimeSeekable > startOfRange) 
             minTimeSeekable = startOfRange; 
     } 
@@ -745,7 +745,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable() const
         if (!timeRangeIsValidAndNotEmpty(start, duration))
             continue;
         
-        MediaTime endOfRange = toMediaTime(CMTimeAdd(start, duration));
+        MediaTime endOfRange = PAL::toMediaTime(CMTimeAdd(start, duration));
         if (maxTimeSeekable < endOfRange)
             maxTimeSeekable = endOfRange;
     }
@@ -771,7 +771,7 @@ MediaTime MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded() const
         if (!timeRangeIsValidAndNotEmpty(start, duration))
             continue;
         
-        MediaTime endOfRange = toMediaTime(CMTimeAdd(start, duration));
+        MediaTime endOfRange = PAL::toMediaTime(CMTimeAdd(start, duration));
         if (maxTimeLoaded < endOfRange)
             maxTimeLoaded = endOfRange;
     }
@@ -1795,9 +1795,9 @@ void AVFWrapper::seekCompletedCallback(AVCFPlayerItemRef, Boolean finished, void
 void AVFWrapper::seekToTime(const MediaTime& time, const MediaTime& negativeTolerance, const MediaTime& positiveTolerance)
 {
     ASSERT(avPlayerItem());
-    CMTime cmTime = toCMTime(time);
-    CMTime cmBefore = toCMTime(negativeTolerance);
-    CMTime cmAfter = toCMTime(positiveTolerance);
+    CMTime cmTime = PAL::toCMTime(time);
+    CMTime cmBefore = PAL::toCMTime(negativeTolerance);
+    CMTime cmAfter = PAL::toCMTime(positiveTolerance);
     AVCFPlayerItemSeekToTimeWithToleranceAndCompletionCallback(avPlayerItem(), cmTime, cmBefore, cmAfter, &seekCompletedCallback, callbackContext());
 }
 
@@ -1851,7 +1851,7 @@ void AVFWrapper::legibleOutputCallback(void* context, AVCFPlayerItemLegibleOutpu
 
     ASSERT(legibleOutput == self->m_legibleOutput);
 
-    auto legibleOutputData = std::make_unique<LegibleOutputData>(attributedStrings, nativeSampleBuffers, toMediaTime(itemTime), context);
+    auto legibleOutputData = std::make_unique<LegibleOutputData>(attributedStrings, nativeSampleBuffers, PAL::toMediaTime(itemTime), context);
 
     dispatch_async_f(dispatch_get_main_queue(), legibleOutputData.release(), processCue);
 }
@@ -2063,7 +2063,7 @@ RetainPtr<CGImageRef> AVFWrapper::createImageForTimeInRect(const MediaTime& time
 #endif
 
     AVCFAssetImageGeneratorSetMaximumSize(m_imageGenerator.get(), CGSize(rect.size()));
-    RetainPtr<CGImageRef> rawimage = adoptCF(AVCFAssetImageGeneratorCopyCGImageAtTime(m_imageGenerator.get(), toCMTime(time), 0, 0));
+    RetainPtr<CGImageRef> rawimage = adoptCF(AVCFAssetImageGeneratorCopyCGImageAtTime(m_imageGenerator.get(), PAL::toCMTime(time), 0, 0));
     RetainPtr<CGImageRef> image = adoptCF(CGImageCreateCopyWithColorSpace(rawimage.get(), adoptCF(CGColorSpaceCreateDeviceRGB()).get()));
 
 #if !LOG_DISABLED

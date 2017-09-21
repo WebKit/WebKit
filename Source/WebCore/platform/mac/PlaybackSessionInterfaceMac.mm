@@ -30,11 +30,11 @@
 
 #import "IntRect.h"
 #import "MediaSelectionOption.h"
-#import "MediaTimeAVFoundation.h"
 #import "PlaybackSessionModel.h"
 #import "TimeRanges.h"
 #import "WebPlaybackControlsManager.h"
 #import <AVFoundation/AVTime.h>
+#import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 
 #import "CoreMediaSoftLink.h"
@@ -122,7 +122,7 @@ static RetainPtr<NSMutableArray> timeRangesToArray(const TimeRanges& timeRanges)
 
     for (unsigned i = 0; i < timeRanges.length(); i++) {
         const PlatformTimeRanges& ranges = timeRanges.ranges();
-        CMTimeRange range = CMTimeRangeMake(toCMTime(ranges.start(i)), toCMTime(ranges.end(i)));
+        CMTimeRange range = CMTimeRangeMake(PAL::toCMTime(ranges.start(i)), PAL::toCMTime(ranges.end(i)));
         [rangeArray addObject:[NSValue valueWithCMTimeRange:range]];
     }
 

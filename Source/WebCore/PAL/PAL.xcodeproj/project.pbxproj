@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0708AC331F4C874B001F788F /* Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = 0708AC321F4C874A001F788F /* Logger.h */; };
 		07377ADC1F5777D90027F16D /* LoggerHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 07377ADB1F5777D70027F16D /* LoggerHelper.h */; };
+		0C00CFD41F68CE4600AAC26D /* MediaTimeAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */; };
 		0C2D9E731EEF5AF600DBC317 /* ExportMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */; };
 		0C2DA06D1F33CA8400DBC317 /* CFLocaleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */; };
 		0C2DA06E1F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */; };
@@ -95,6 +96,9 @@
 		0C77859F1F45130F00F4EBB6 /* QTKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785861F45130F00F4EBB6 /* QTKitSPI.h */; };
 		0C7785A01F45130F00F4EBB6 /* QuickLookMacSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */; };
 		0C7785A11F45130F00F4EBB6 /* TUCallSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785881F45130F00F4EBB6 /* TUCallSPI.h */; };
+		0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */; };
+		0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */; };
+		0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */; };
 		1C09D0531E31C44100725F18 /* CryptoDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0521E31C44100725F18 /* CryptoDigest.h */; };
 		1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */; };
 		1C09D0581E31C57E00725F18 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C09D0571E31C57E00725F18 /* config.h */; };
@@ -145,6 +149,8 @@
 /* Begin PBXFileReference section */
 		0708AC321F4C874A001F788F /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
 		07377ADB1F5777D70027F16D /* LoggerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerHelper.h; sourceTree = "<group>"; };
+		0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaTimeAVFoundation.cpp; path = avfoundation/MediaTimeAVFoundation.cpp; sourceTree = "<group>"; };
+		0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaTimeAVFoundation.h; path = avfoundation/MediaTimeAVFoundation.h; sourceTree = "<group>"; };
 		0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExportMacros.h; sourceTree = "<group>"; };
 		0C2DA0671F33CA8400DBC317 /* CFLocaleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFLocaleSPI.h; sourceTree = "<group>"; };
 		0C2DA0681F33CA8400DBC317 /* CFNetworkConnectionCacheSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNetworkConnectionCacheSPI.h; sourceTree = "<group>"; };
@@ -217,6 +223,8 @@
 		0C7785861F45130F00F4EBB6 /* QTKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QTKitSPI.h; sourceTree = "<group>"; };
 		0C7785871F45130F00F4EBB6 /* QuickLookMacSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookMacSPI.h; sourceTree = "<group>"; };
 		0C7785881F45130F00F4EBB6 /* TUCallSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUCallSPI.h; sourceTree = "<group>"; };
+		0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CoreMediaSoftLink.cpp; path = pal/cf/CoreMediaSoftLink.cpp; sourceTree = SOURCE_ROOT; };
+		0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CoreMediaSoftLink.h; path = pal/cf/CoreMediaSoftLink.h; sourceTree = SOURCE_ROOT; };
 		1C09D03D1E31C32800725F18 /* libPAL.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPAL.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C09D0521E31C44100725F18 /* CryptoDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoDigest.h; sourceTree = "<group>"; };
 		1C09D0551E31C46500725F18 /* CryptoDigestCommonCrypto.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CryptoDigestCommonCrypto.cpp; path = commoncrypto/CryptoDigestCommonCrypto.cpp; sourceTree = "<group>"; };
@@ -272,6 +280,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C00CFCC1F68CE2300AAC26D /* avfoundation */ = {
+			isa = PBXGroup;
+			children = (
+				0C00CFD11F68CE4600AAC26D /* MediaTimeAVFoundation.cpp */,
+				0C00CFD21F68CE4600AAC26D /* MediaTimeAVFoundation.h */,
+			);
+			name = avfoundation;
+			sourceTree = "<group>";
+		};
 		0C2DA0651F33CA3300DBC317 /* spi */ = {
 			isa = PBXGroup;
 			children = (
@@ -400,6 +417,16 @@
 			path = mac;
 			sourceTree = "<group>";
 		};
+		0CF99CA51F73841C007EE793 /* cf */ = {
+			isa = PBXGroup;
+			children = (
+				0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */,
+				0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */,
+			);
+			name = cf;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		1C09D0341E31C32800725F18 = {
 			isa = PBXGroup;
 			children = (
@@ -421,6 +448,8 @@
 		1C09D03F1E31C32800725F18 /* pal */ = {
 			isa = PBXGroup;
 			children = (
+				0C00CFCC1F68CE2300AAC26D /* avfoundation */,
+				0CF99CA51F73841C007EE793 /* cf */,
 				1C09D0511E31C41200725F18 /* crypto */,
 				0C2DA0651F33CA3300DBC317 /* spi */,
 				A3788E9F1F05B7CE00679425 /* system */,
@@ -539,6 +568,7 @@
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
 				0C2DA0711F33CA8400DBC317 /* CoreAudioSPI.h in Headers */,
 				0C2DA11E1F3BE9E000DBC317 /* CoreGraphicsSPI.h in Headers */,
+				0CF99CA91F738437007EE793 /* CoreMediaSoftLink.h in Headers */,
 				0C2DA0721F33CA8400DBC317 /* CoreMediaSPI.h in Headers */,
 				0C2DA1401F3BEB4900DBC317 /* CoreTextSPI.h in Headers */,
 				0C5AF9191F43A4C7002EAC02 /* CoreUISPI.h in Headers */,
@@ -567,6 +597,7 @@
 				0C2DA1481F3BEB4900DBC317 /* MachVMSPI.h in Headers */,
 				0C5AF91D1F43A4C7002EAC02 /* MediaPlayerSPI.h in Headers */,
 				0C77858C1F45130F00F4EBB6 /* MediaRemoteSPI.h in Headers */,
+				0C00CFD41F68CE4600AAC26D /* MediaTimeAVFoundation.h in Headers */,
 				A1F55DCF1F5528EC00EDB75F /* MetadataSPI.h in Headers */,
 				0C5AF91E1F43A4C7002EAC02 /* MobileGestaltSPI.h in Headers */,
 				0C2DA1491F3BEB4900DBC317 /* NEFilterSourceSPI.h in Headers */,
@@ -713,10 +744,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
+				0CF99CA41F736375007EE793 /* MediaTimeAVFoundation.cpp in Sources */,
 				A1175B4F1F6B337300C4B9F0 /* PopupMenu.mm in Sources */,
 				A3C66CDC1F462D6A009E6EE9 /* SessionID.cpp in Sources */,
 				A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */,

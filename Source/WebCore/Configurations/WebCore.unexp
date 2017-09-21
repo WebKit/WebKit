@@ -59,3 +59,14 @@ _DDHighlightPointIsOnHighlight
 __ZTVN9Inspector17ScriptDebugServer4TaskE
 # Source/JavaScriptCore/inspector/agents/InspectorDebuggerAgent.h
 __ZTVN9Inspector22InspectorDebuggerAgent8ListenerE
+
+# Member functions of an exported C++ class in WTF
+
+# Source/WTF/wtf/MediaTime.h
+__ZNK3WTF9MediaTime14hasBeenRoundedEv
+__ZNK3WTF9MediaTime14hasDoubleValueEv
+__ZNK3WTF9MediaTime18isNegativeInfiniteEv
+__ZNK3WTF9MediaTime18isPositiveInfiniteEv
+__ZNK3WTF9MediaTime7isValidEv
+__ZNK3WTF9MediaTime9timeScaleEv
+__ZNK3WTF9MediaTime9timeValueEv

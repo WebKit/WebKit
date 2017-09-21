@@ -74,27 +74,27 @@ RefPtr<MediaSampleAVFObjC> MediaSampleAVFObjC::createImageSample(Vector<uint8_t>
 
 MediaTime MediaSampleAVFObjC::presentationTime() const
 {
-    return toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get()));
+    return PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(m_sample.get()));
 }
 
 MediaTime MediaSampleAVFObjC::outputPresentationTime() const
 {
-    return toMediaTime(CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get()));
+    return PAL::toMediaTime(CMSampleBufferGetOutputPresentationTimeStamp(m_sample.get()));
 }
 
 MediaTime MediaSampleAVFObjC::decodeTime() const
 {
-    return toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get()));
+    return PAL::toMediaTime(CMSampleBufferGetDecodeTimeStamp(m_sample.get()));
 }
 
 MediaTime MediaSampleAVFObjC::duration() const
 {
-    return toMediaTime(CMSampleBufferGetDuration(m_sample.get()));
+    return PAL::toMediaTime(CMSampleBufferGetDuration(m_sample.get()));
 }
 
 MediaTime MediaSampleAVFObjC::outputDuration() const
 {
-    return toMediaTime(CMSampleBufferGetOutputDuration(m_sample.get()));
+    return PAL::toMediaTime(CMSampleBufferGetOutputDuration(m_sample.get()));
 }
 
 size_t MediaSampleAVFObjC::sizeInBytes() const
@@ -176,8 +176,8 @@ void MediaSampleAVFObjC::offsetTimestampsBy(const MediaTime& offset)
         return;
     
     for (auto& timing : timingInfoArray) {
-        timing.presentationTimeStamp = toCMTime(toMediaTime(timing.presentationTimeStamp) + offset);
-        timing.decodeTimeStamp = toCMTime(toMediaTime(timing.decodeTimeStamp) + offset);
+        timing.presentationTimeStamp = PAL::toCMTime(PAL::toMediaTime(timing.presentationTimeStamp) + offset);
+        timing.decodeTimeStamp = PAL::toCMTime(PAL::toMediaTime(timing.decodeTimeStamp) + offset);
     }
     
     CMSampleBufferRef newSample;
@@ -199,8 +199,8 @@ void MediaSampleAVFObjC::setTimestamps(const WTF::MediaTime &presentationTimesta
         return;
     
     for (auto& timing : timingInfoArray) {
-        timing.presentationTimeStamp = toCMTime(presentationTimestamp);
-        timing.decodeTimeStamp = toCMTime(decodeTimestamp);
+        timing.presentationTimeStamp = PAL::toCMTime(presentationTimestamp);
+        timing.decodeTimeStamp = PAL::toCMTime(decodeTimestamp);
     }
     
     CMSampleBufferRef newSample;
@@ -229,7 +229,7 @@ std::pair<RefPtr<MediaSample>, RefPtr<MediaSample>> MediaSampleAVFObjC::divide(c
     CFIndex samplesBeforePresentationTime = 0;
 
     CMSampleBufferCallBlockForEachSample(m_sample.get(), [&] (CMSampleBufferRef sampleBuffer, CMItemCount) -> OSStatus {
-        if (toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) >= presentationTime)
+        if (PAL::toMediaTime(CMSampleBufferGetPresentationTimeStamp(sampleBuffer)) >= presentationTime)
             return 1;
         ++samplesBeforePresentationTime;
         return noErr;
