@@ -1,3 +1,12 @@
+2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestResultsServer for iOS 11 queues.
+        https://bugs.webkit.org/show_bug.cgi?id=177285
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+
 2017-09-21  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r221465) WKWebViews without WebGL delegate callbacks crash when WebGL contexts are created
