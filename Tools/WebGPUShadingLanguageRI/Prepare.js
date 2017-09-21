@@ -32,11 +32,9 @@ let prepare = (() => {
             parse(standardProgram, "/internal/stdlib", "native", 72, standardLibrary);
         }
         
-        if (!arguments.length)
-            return;
-        
         let program = cloneProgram(standardProgram);
-        parse(program, origin, "user", lineNumberOffset, text);
+        if (arguments.length)
+            parse(program, origin, "user", lineNumberOffset, text);
         program = programWithUnnecessaryThingsRemoved(program);
         
         foldConstexprs(program);

@@ -53,6 +53,17 @@ class EnumType extends Type {
     
     get isPrimitive() { return true; }
     
+    *allValues()
+    {
+        for (let member of this.members)
+            yield {value: member.value.unifyNode.valueForSelectedType, name: member.name};
+    }
+    
+    valuesEqual(a, b)
+    {
+        return this.baseType.unifyNode.valuesEqual(a, b);
+    }
+    
     populateDefaultValue(buffer, offset)
     {
         this.baseType.populateDefaultValue(buffer, offset);

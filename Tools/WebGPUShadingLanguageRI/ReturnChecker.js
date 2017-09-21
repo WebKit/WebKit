@@ -35,6 +35,25 @@ class ReturnChecker extends Visitor {
         };
         this._program = program;
     }
+    
+    _mergeReturnStyle(a, b)
+    {
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        switch (a) {
+        case this.returnStyle.DefinitelyReturns:
+        case this.returnStyle.DefinitelyDoesntReturn:
+            if (a == b)
+                return a;
+            return this.returnStyle.HasntReturnedYet;
+        case this.returnStyle.HasntReturnedYet:
+            return this.returnStyle.HasntReturnedYet;
+        default:
+            throw new Error("Bad return style: " + a);
+        }
+    }
 
     visitFuncDef(node)
     {
@@ -66,10 +85,7 @@ class ReturnChecker extends Visitor {
         if (node.elseBody) {
             let bodyValue = node.body.visit(this);
             let elseValue = node.elseBody.visit(this);
-            if (bodyValue == this.returnStyle.DefinitelyReturns && elseValue == this.returnStyle.DefinitelyReturns)
-                return this.returnStyle.DefinitelyReturns;
-            if (bodyValue == this.returnStyle.DefinitelyDoesntReturn && elseValue == this.returnStyle.DefinitelyDoesntReturn)
-                return this.returnStyle.DefinitelyDoesntReturn;
+            return this._mergeReturnStyle(bodyValue, elseValue);
         }
         return this.returnStyle.HasntReturnedYet;
     }
@@ -81,7 +97,6 @@ class ReturnChecker extends Visitor {
 
     visitWhileLoop(node)
     {
-        node.conditional.visit(this);
         let bodyReturn = node.body.visit(this);
         if (node.conditional instanceof CallExpression && this._isBoolCastFromLiteralTrue(node.conditional)) {
             switch (bodyReturn) {
@@ -105,18 +120,11 @@ class ReturnChecker extends Visitor {
         case this.returnStyle.HasntReturnedYet:
             result = this.returnStyle.HasntReturnedYet;
         }
-        node.conditional.visit(this);
         return result;
     }
 
     visitForLoop(node)
     {
-        if (node.initialization)
-            node.initialization.visit(this);
-        if (node.condition)
-            node.condition.visit(this);
-        if (node.increment)
-            node.increment.visit(this);
         let bodyReturn = node.body.visit(this);
         if (node.condition === undefined || this._isBoolCastFromLiteralTrue(node.condition)) {
             switch (bodyReturn) {
@@ -127,6 +135,32 @@ class ReturnChecker extends Visitor {
                 return this.returnStyle.HasntReturnedYet;
             }
         }
+    }
+    
+    visitSwitchStatement(node)
+    {
+        // FIXME: This seems like it's missing things. For example, we need to be smart about this:
+        //
+        // for (;;) {
+        //     switch (...) {
+        //     ...
+        //         continue; // This continues the for loop
+        //     }
+        // }
+        //
+        // I'm not sure what that means for this analysis. I'm starting to think that the right way to
+        // build this analysis is to run a visitor that builds a CFG and then analyze the CFG.
+        // https://bugs.webkit.org/show_bug.cgi?id=177172
+        
+        let returnStyle = null;
+        for (let switchCase of node.switchCases) {
+            let bodyStyle = switchCase.body.visit(this);
+            // FIXME: The fact that we need this demonstrates the need for CFG analysis.
+            if (bodyStyle == this.returnStyle.DefinitelyDoesntReturn)
+                bodyStyle = this.returnStyle.HasntReturnedYet;
+            returnStyle = this._mergeReturnStyle(returnStyle, bodyStyle);
+        }
+        return returnStyle;
     }
     
     visitReturn(node)
@@ -146,6 +180,12 @@ class ReturnChecker extends Visitor {
 
     visitContinue(node)
     {
+        // FIXME: This seems wrong. Consider a loop like:
+        //
+        // int foo() { for (;;) { continue; } }
+        //
+        // This program shouldn't claim that the problem is that it doesn't return.
+        // https://bugs.webkit.org/show_bug.cgi?id=177172
         return this.returnStyle.DefinitelyDoesntReturn;
     }
 }

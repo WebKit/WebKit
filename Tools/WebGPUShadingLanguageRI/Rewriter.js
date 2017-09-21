@@ -394,6 +394,20 @@ class Rewriter {
             node.body.visit(this));
     }
     
+    visitSwitchStatement(node)
+    {
+        let result = new SwitchStatement(node.origin, Node.visit(node.value, this));
+        for (let switchCase of node.switchCases)
+            result.add(switchCase.visit(this));
+        result.type = Node.visit(node.type, this);
+        return result;
+    }
+    
+    visitSwitchCase(node)
+    {
+        return new SwitchCase(node.origin, Node.visit(node.value, this), node.body.visit(this));
+    }
+    
     visitAnonymousVariable(node)
     {
         let result = new AnonymousVariable(node.origin, node.type.visit(this));

@@ -29,6 +29,7 @@ class UnificationContext {
     {
         this._typeParameters = new Set(typeParameters);
         this._nextMap = new Map();
+        this._extraNodes = new Set();
     }
     
     union(a, b)
@@ -67,6 +68,11 @@ class UnificationContext {
         return currentNode;
     }
     
+    addExtraNode(node)
+    {
+        this._extraNodes.add(node);
+    }
+    
     get nodes()
     {
         let result = new Set();
@@ -74,6 +80,8 @@ class UnificationContext {
             result.add(key);
             result.add(value);
         }
+        for (let node of this._extraNodes)
+            result.add(node);
         return result;
     }
     

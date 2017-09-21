@@ -24,31 +24,29 @@
  */
 "use strict";
 
-class EnumLiteral extends Expression {
-    constructor(origin, member)
+class SwitchCase extends Node {
+    // Null value means default.
+    constructor(origin, value, body)
     {
-        super(origin);
-        this._member = member;
+        super();
+        this._origin = origin;
+        this._value = value;
+        this._body = body;
     }
     
-    get member() { return this._member; }
-    get type() { return this.member.enumType; }
-    get isConstexpr() { return true; }
+    get origin() { return this._origin; }
+    get isDefault() { return !this._value; }
+    get value() { return this._value; }
+    get body() { return this._body; }
     
-    unifyImpl(unificationContext, other)
-    {
-        if (!(other instanceof EnumLiteral))
-            return false;
-        return this.member == other.member;
-    }
-    
-    get valueForSelectedType()
-    {
-        return this.member.value.unifyNode.valueForSelectedType;
-    }
-        
     toString()
     {
-        return this.member.enumType.name + "." + this.member.name;
+        let result = "";
+        if (this.isDefault)
+            result += "default";
+        else
+            result += "cast " + this.value;
+        return result + ": " + this.body;
     }
 }
+

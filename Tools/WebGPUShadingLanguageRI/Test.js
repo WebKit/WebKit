@@ -71,6 +71,11 @@ function makeUint(program, value)
     return TypedValue.box(program.intrinsics.uint32, value);
 }
 
+function makeUint8(program, value)
+{
+    return TypedValue.box(program.intrinsics.uint8, value);
+}
+
 function makeBool(program, value)
 {
     return TypedValue.box(program.intrinsics.bool, value);
@@ -84,6 +89,17 @@ function makeFloat(program, value)
 function makeDouble(program, value)
 {
     return TypedValue.box(program.intrinsics.double, value);
+}
+
+function makeEnum(program, enumName, value)
+{
+    let enumType = program.types.get(enumName);
+    if (!enumType)
+        throw new Error("No type named " + enumName);
+    let enumMember = enumType.memberByName(value);
+    if (!enumMember)
+        throw new Error("No member named " + enumMember + " in " + enumType);
+    return TypedValue.box(enumType, enumMember.value.unifyNode.valueForSelectedType);
 }
 
 function checkNumber(program, result, expected)
@@ -112,6 +128,14 @@ function checkEnum(program, result, expected)
 function checkUint(program, result, expected)
 {
     if (!result.type.equals(program.intrinsics.uint32))
+        throw new Error("Wrong result type: " + result.type);
+    if (result.value != expected)
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
+}
+
+function checkUint8(program, result, expected)
+{
+    if (!result.type.equals(program.intrinsics.uint8))
         throw new Error("Wrong result type: " + result.type);
     if (result.value != expected)
         throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
@@ -202,10 +226,25 @@ function TEST_uintSimpleMath() {
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 2)]), 3);
 }
 
+function TEST_uint8SimpleMath() {
+    let program = doPrep("uint8 foo(uint8 x, uint8 y) { return x + y; }");
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 12);
+    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x - y; }");
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 2);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 5), makeUint8(program, 7)]), 254);
+    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x * y; }");
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 35);
+    program = doPrep("uint8 foo(uint8 x, uint8 y) { return x / y; }");
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 2)]), 3);
+}
+
 function TEST_equality() {
     let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), true);
+    program = doPrep("bool foo(uint8 x, uint8 y) { return x == y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), false);
+    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 7)]), true);
     program = doPrep("bool foo(int x, int y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), true);
@@ -227,6 +266,9 @@ function TEST_notEquality() {
     let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), false);
+    program = doPrep("bool foo(uint8 x, uint8 y) { return x != y; }");
+    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), true);
+    checkBool(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 7)]), false);
     program = doPrep("bool foo(int x, int y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 7)]), false);
@@ -3435,6 +3477,90 @@ function TEST_uintRShift()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
+function TEST_uint8BitAnd()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a, uint8 b)
+        {
+            return a & b;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 1);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 42);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 249);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 0);
+}
+
+function TEST_uint8BitOr()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a, uint8 b)
+        {
+            return a | b;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 7);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 255);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 255);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
+}
+
+function TEST_uint8BitXor()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a, uint8 b)
+        {
+            return a ^ b;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint8(program, 7)]), 6);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint8(program, 42)]), 213);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint8(program, -7)]), 6);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
+}
+
+function TEST_uint8BitNot()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a)
+        {
+            return ~a;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1)]), 254);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535)]), 0);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1)]), 0);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0)]), 255);
+}
+
+function TEST_uint8LShift()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a, uint b)
+        {
+            return a << b;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint(program, 7)]), 128);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint(program, 2)]), 252);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint(program, 5)]), 224);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
+}
+
+function TEST_uint8RShift()
+{
+    let program = doPrep(`
+        uint8 foo(uint8 a, uint b)
+        {
+            return a >> b;
+        }
+    `);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 1), makeUint(program, 7)]), 0);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 65535), makeUint(program, 2)]), 255);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, -1), makeUint(program, 5)]), 255);
+    checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
+}
+
 function TEST_floatMath()
 {
     let program = doPrep(`
@@ -4389,6 +4515,577 @@ function TEST_swizzle()
     checkFloat(program, callFunction(program, "foo3", [], []), 4);
 }
 
+function TEST_enumWithExplicitIntBase()
+{
+    let program = doPrep(`
+        enum Foo : int {
+            War,
+            Famine,
+            Pestilence,
+            Death
+        }
+        Foo war()
+        {
+            return Foo.War;
+        }
+        Foo famine()
+        {
+            return Foo.Famine;
+        }
+        Foo pestilence()
+        {
+            return Foo.Pestilence;
+        }
+        Foo death()
+        {
+            return Foo.Death;
+        }
+        bool equals(Foo a, Foo b)
+        {
+            return a == b;
+        }
+        bool notEquals(Foo a, Foo b)
+        {
+            return a != b;
+        }
+        bool testSimpleEqual()
+        {
+            return equals(Foo.War, Foo.War);
+        }
+        bool testAnotherEqual()
+        {
+            return equals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotEqual()
+        {
+            return equals(Foo.Famine, Foo.Death);
+        }
+        bool testSimpleNotEqual()
+        {
+            return notEquals(Foo.War, Foo.War);
+        }
+        bool testAnotherNotEqual()
+        {
+            return notEquals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotNotEqual()
+        {
+            return notEquals(Foo.Famine, Foo.Death);
+        }
+        int intWar()
+        {
+            return int(war());
+        }
+        int intFamine()
+        {
+            return int(famine());
+        }
+        int intPestilence()
+        {
+            return int(pestilence());
+        }
+        int intDeath()
+        {
+            return int(death());
+        }
+        int warValue()
+        {
+            return war().value;
+        }
+        int famineValue()
+        {
+            return famine().value;
+        }
+        int pestilenceValue()
+        {
+            return pestilence().value;
+        }
+        int deathValue()
+        {
+            return death().value;
+        }
+        int warValueLiteral()
+        {
+            return Foo.War.value;
+        }
+        int famineValueLiteral()
+        {
+            return Foo.Famine.value;
+        }
+        int pestilenceValueLiteral()
+        {
+            return Foo.Pestilence.value;
+        }
+        int deathValueLiteral()
+        {
+            return Foo.Death.value;
+        }
+        Foo intWarBackwards()
+        {
+            return Foo(intWar());
+        }
+        Foo intFamineBackwards()
+        {
+            return Foo(intFamine());
+        }
+        Foo intPestilenceBackwards()
+        {
+            return Foo(intPestilence());
+        }
+        Foo intDeathBackwards()
+        {
+            return Foo(intDeath());
+        }
+    `);
+    checkEnum(program, callFunction(program, "war", [], []), 0);
+    checkEnum(program, callFunction(program, "famine", [], []), 1);
+    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
+    checkEnum(program, callFunction(program, "death", [], []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
+    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
+    checkInt(program, callFunction(program, "intWar", [], []), 0);
+    checkInt(program, callFunction(program, "intFamine", [], []), 1);
+    checkInt(program, callFunction(program, "intPestilence", [], []), 2);
+    checkInt(program, callFunction(program, "intDeath", [], []), 3);
+    checkInt(program, callFunction(program, "warValue", [], []), 0);
+    checkInt(program, callFunction(program, "famineValue", [], []), 1);
+    checkInt(program, callFunction(program, "pestilenceValue", [], []), 2);
+    checkInt(program, callFunction(program, "deathValue", [], []), 3);
+    checkInt(program, callFunction(program, "warValueLiteral", [], []), 0);
+    checkInt(program, callFunction(program, "famineValueLiteral", [], []), 1);
+    checkInt(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
+    checkInt(program, callFunction(program, "deathValueLiteral", [], []), 3);
+    checkEnum(program, callFunction(program, "intWarBackwards", [], []), 0);
+    checkEnum(program, callFunction(program, "intFamineBackwards", [], []), 1);
+    checkEnum(program, callFunction(program, "intPestilenceBackwards", [], []), 2);
+    checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
+}
+
+function TEST_enumWithUintBase()
+{
+    let program = doPrep(`
+        enum Foo : uint {
+            War,
+            Famine,
+            Pestilence,
+            Death
+        }
+        Foo war()
+        {
+            return Foo.War;
+        }
+        Foo famine()
+        {
+            return Foo.Famine;
+        }
+        Foo pestilence()
+        {
+            return Foo.Pestilence;
+        }
+        Foo death()
+        {
+            return Foo.Death;
+        }
+        bool equals(Foo a, Foo b)
+        {
+            return a == b;
+        }
+        bool notEquals(Foo a, Foo b)
+        {
+            return a != b;
+        }
+        bool testSimpleEqual()
+        {
+            return equals(Foo.War, Foo.War);
+        }
+        bool testAnotherEqual()
+        {
+            return equals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotEqual()
+        {
+            return equals(Foo.Famine, Foo.Death);
+        }
+        bool testSimpleNotEqual()
+        {
+            return notEquals(Foo.War, Foo.War);
+        }
+        bool testAnotherNotEqual()
+        {
+            return notEquals(Foo.Pestilence, Foo.Pestilence);
+        }
+        bool testNotNotEqual()
+        {
+            return notEquals(Foo.Famine, Foo.Death);
+        }
+        uint uintWar()
+        {
+            return uint(war());
+        }
+        uint uintFamine()
+        {
+            return uint(famine());
+        }
+        uint uintPestilence()
+        {
+            return uint(pestilence());
+        }
+        uint uintDeath()
+        {
+            return uint(death());
+        }
+        uint warValue()
+        {
+            return war().value;
+        }
+        uint famineValue()
+        {
+            return famine().value;
+        }
+        uint pestilenceValue()
+        {
+            return pestilence().value;
+        }
+        uint deathValue()
+        {
+            return death().value;
+        }
+        uint warValueLiteral()
+        {
+            return Foo.War.value;
+        }
+        uint famineValueLiteral()
+        {
+            return Foo.Famine.value;
+        }
+        uint pestilenceValueLiteral()
+        {
+            return Foo.Pestilence.value;
+        }
+        uint deathValueLiteral()
+        {
+            return Foo.Death.value;
+        }
+        Foo uintWarBackwards()
+        {
+            return Foo(uintWar());
+        }
+        Foo uintFamineBackwards()
+        {
+            return Foo(uintFamine());
+        }
+        Foo uintPestilenceBackwards()
+        {
+            return Foo(uintPestilence());
+        }
+        Foo uintDeathBackwards()
+        {
+            return Foo(uintDeath());
+        }
+    `);
+    checkEnum(program, callFunction(program, "war", [], []), 0);
+    checkEnum(program, callFunction(program, "famine", [], []), 1);
+    checkEnum(program, callFunction(program, "pestilence", [], []), 2);
+    checkEnum(program, callFunction(program, "death", [], []), 3);
+    checkBool(program, callFunction(program, "testSimpleEqual", [], []), true);
+    checkBool(program, callFunction(program, "testAnotherEqual", [], []), true);
+    checkBool(program, callFunction(program, "testNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testSimpleNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testAnotherNotEqual", [], []), false);
+    checkBool(program, callFunction(program, "testNotNotEqual", [], []), true);
+    checkUint(program, callFunction(program, "uintWar", [], []), 0);
+    checkUint(program, callFunction(program, "uintFamine", [], []), 1);
+    checkUint(program, callFunction(program, "uintPestilence", [], []), 2);
+    checkUint(program, callFunction(program, "uintDeath", [], []), 3);
+    checkUint(program, callFunction(program, "warValue", [], []), 0);
+    checkUint(program, callFunction(program, "famineValue", [], []), 1);
+    checkUint(program, callFunction(program, "pestilenceValue", [], []), 2);
+    checkUint(program, callFunction(program, "deathValue", [], []), 3);
+    checkUint(program, callFunction(program, "warValueLiteral", [], []), 0);
+    checkUint(program, callFunction(program, "famineValueLiteral", [], []), 1);
+    checkUint(program, callFunction(program, "pestilenceValueLiteral", [], []), 2);
+    checkUint(program, callFunction(program, "deathValueLiteral", [], []), 3);
+    checkEnum(program, callFunction(program, "uintWarBackwards", [], []), 0);
+    checkEnum(program, callFunction(program, "uintFamineBackwards", [], []), 1);
+    checkEnum(program, callFunction(program, "uintPestilenceBackwards", [], []), 2);
+    checkEnum(program, callFunction(program, "uintDeathBackwards", [], []), 3);
+}
+
+function TEST_enumFloatBase()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo : float {
+                Bar
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumPtrBase()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo : thread int^ {
+                Bar
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumArrayRefBase()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo : thread int[] {
+                Bar
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_emptyStruct()
+{
+    let program = doPrep(`
+        struct Thingy { }
+        int foo()
+        {
+            Thingy thingy;
+            return 46;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 46);
+}
+
+function TEST_enumStructBase()
+{
+    checkFail(
+        () => doPrep(`
+            struct Thingy { }
+            enum Foo : Thingy {
+                Bar
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumNoMembers()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo { }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_simpleSwitch()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            switch (x) {
+            case 767:
+                return 27;
+            case 69:
+                return 7624;
+            default:
+                return 49;
+            }
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+}
+
+function TEST_simpleSwitch()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            switch (x) {
+            case 767:
+                return 27;
+            case 69:
+                return 7624;
+            default:
+                return 49;
+            }
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+}
+
+function TEST_exhaustiveUint8Switch()
+{
+    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    for (let i = 0; i <= 0xff; ++i)
+        text += "case " + i + ": return " + i * 1.5 + ";";
+    text += "} }";
+    let program = doPrep(text);
+    for (let i = 0; i < 0xff; ++i)
+        checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+}
+
+function TEST_notQuiteExhaustiveUint8Switch()
+{
+    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    for (let i = 0; i <= 0xfe; ++i)
+        text += "case " + i + ": return " + i * 1.5 + ";";
+    text += "} }";
+    checkFail(() => doPrep(text), e => e instanceof WTypeError);
+}
+
+function TEST_notQuiteExhaustiveUint8SwitchWithDefault()
+{
+    let text = "double foo(uint8 x) { switch (uint8(x)) {"
+    for (let i = 0; i <= 0xfe; ++i)
+        text += "case " + i + ": return " + i * 1.5 + ";";
+    text += "default: return " + 0xff * 1.5 + ";";
+    text += "} }";
+    let program = doPrep(text);
+    for (let i = 0; i < 0xff; ++i)
+        checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
+}
+
+function TEST_switchFallThrough()
+{
+    // FIXME: This might become an error in future versions.
+    // https://bugs.webkit.org/show_bug.cgi?id=177172
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int result = 0;
+            switch (x) {
+            case 767:
+                result += 27;
+            case 69:
+                result += 7624;
+            default:
+                result += 49;
+            }
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27 + 7624 + 49);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624 + 49);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+}
+
+function TEST_switchBreak()
+{
+    let program = doPrep(`
+        int foo(int x)
+        {
+            int result = 0;
+            switch (x) {
+            case 767:
+                result += 27;
+                break;
+            case 69:
+                result += 7624;
+                break;
+            default:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
+    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
+}
+
+function TEST_enumSwitchBreakExhaustive()
+{
+    let program = doPrep(`
+        enum Foo {
+            A, B, C
+        }
+        int foo(Foo x)
+        {
+            int result = 0;
+            switch (x) {
+            case Foo.A:
+                result += 27;
+                break;
+            case Foo.B:
+                result += 7624;
+                break;
+            case Foo.C:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "A")]), 27);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "B")]), 7624);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
+}
+
+function TEST_enumSwitchBreakNotQuiteExhaustive()
+{
+    checkFail(
+        () => doPrep(`
+            enum Foo {
+                A, B, C, D
+            }
+            int foo(Foo x)
+            {
+                int result = 0;
+                switch (x) {
+                case Foo.A:
+                    result += 27;
+                    break;
+                case Foo.B:
+                    result += 7624;
+                    break;
+                case Foo.C:
+                    result += 49;
+                    break;
+                }
+                return result;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_enumSwitchBreakNotQuiteExhaustiveWithDefault()
+{
+    let program = doPrep(`
+        enum Foo {
+            A, B, C
+        }
+        int foo(Foo x)
+        {
+            int result = 0;
+            switch (x) {
+            case Foo.A:
+                result += 27;
+                break;
+            case Foo.B:
+                result += 7624;
+                break;
+            default:
+                result += 49;
+                break;
+            }
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "A")]), 27);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "B")]), 7624);
+    checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
+}
+
 function TEST_simpleRecursiveStruct()
 {
     checkFail(
@@ -4507,7 +5204,11 @@ function* doTest(object)
     prepare();
     print("    OK!");
 
-    for (let s in object) {
+    let names = [];
+    for (let s in object)
+        names.push(s);
+    names.sort();
+    for (let s of names) {
         if (s.startsWith("TEST_") && s.match(filter)) {
             print(s + "...");
             yield;

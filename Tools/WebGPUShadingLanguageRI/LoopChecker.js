@@ -29,13 +29,13 @@ class LoopChecker extends Visitor {
     {
         super();
         this._loopDepth = 0;
+        this._switchDepth = 0;
     }
 
     visitFuncDef(node)
     {
-        if (this._loopDepth != 0) {
-            throw new Error("LoopChecker does not understand nested functions.");
-        }
+        if (this._loopDepth != 0)
+            throw new WTypeError(node.origin.originString, "LoopChecker does not understand nested functions.");
         super.visitFuncDef(node);
     }
 
@@ -44,9 +44,8 @@ class LoopChecker extends Visitor {
         node.conditional.visit(this);
         ++this._loopDepth;
         node.body.visit(this);
-        if (this._loopDepth == 0) {
-            throw new Error("The number of nested loops is negative!");
-        }
+        if (this._loopDepth == 0)
+            throw new WTypeError(node.origin.originString, "The number of nested loops is negative!");
         --this._loopDepth;
     }
 
@@ -54,9 +53,8 @@ class LoopChecker extends Visitor {
     {
         ++this._loopDepth;
         node.body.visit(this);
-        if (this._loopDepth == 0) {
-            throw new Error("The number of nested loops is negative!");
-        }
+        if (this._loopDepth == 0)
+            throw new WTypeError(node.origin.originString, "The number of nested loops is negative!");
         --this._loopDepth;
         node.conditional.visit(this);
     }
@@ -71,25 +69,31 @@ class LoopChecker extends Visitor {
             node.increment.visit(this);
         ++this._loopDepth;
         node.body.visit(this);
-        if (this._loopDepth == 0) {
-            throw new Error("The number of nested loops is negative!");
-        }
+        if (this._loopDepth == 0)
+            throw new WTypeError(node.origin.originString, "The number of nested loops is negative!");
         --this._loopDepth;
+    }
+    
+    visitSwitchStatement(node)
+    {
+        node.value.visit(this);
+        this._switchDepth++;
+        for (let switchCase of node.switchCases)
+            switchCase.visit(this);
+        this._switchDepth--;
     }
     
     visitBreak(node)
     {
-        if (this._loopDepth == 0) {
-            throw new WError("Break statement without enclosing loop!");
-        }
+        if (this._loopDepth == 0 && this._switchDepth == 0)
+            throw new WTypeError(node.origin.originString, "Break statement without enclosing loop or switch!");
         super.visitBreak(node);
     }
     
     visitContinue(node)
     {
-        if (this._loopDepth == 0) {
-            throw new WError("Continue statement without enclosing loop!");
-        }
+        if (this._loopDepth == 0)
+            throw new WTypeError(node.origin.originString, "Continue statement without enclosing loop!");
         super.visitContinue(node);
     }
 }

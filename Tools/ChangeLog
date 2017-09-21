@@ -1,5 +1,121 @@
 2017-09-20  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL should support switch
+        https://bugs.webkit.org/show_bug.cgi?id=176978
+
+        Reviewed by Keith Miller.
+        
+        This adds fairly complete support for switch statements. This includes things like verifying
+        whether or not a default statement is needed. This even works when the programmer lists all of
+        the values of an integer type.
+        
+        To test that last part, this patch adds uint8 support. It's easy add it, but of course it
+        meant adding a lot of tests.
+        
+        This also fixes enum bugs, since switch does things to enums that we previously didn't test.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitSwitchStatement):
+        * WebGPUShadingLanguageRI/EnumLiteral.js:
+        (EnumLiteral.prototype.get valueForSelectedType):
+        * WebGPUShadingLanguageRI/EnumType.js:
+        (EnumType.prototype.allValues):
+        (EnumType.prototype.valuesEqual):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype.visitSwitchStatement):
+        * WebGPUShadingLanguageRI/Inliner.js:
+        (Inliner.prototype.visitCallExpression):
+        (Inliner):
+        (Inliner.prototype.visitCastExpression): Deleted.
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics.):
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LoopChecker.js:
+        (LoopChecker):
+        (LoopChecker.prototype.visitFuncDef):
+        (LoopChecker.prototype.visitWhileLoop):
+        (LoopChecker.prototype.visitDoWhileLoop):
+        (LoopChecker.prototype.visitForLoop):
+        (LoopChecker.prototype.visitSwitchStatement):
+        (LoopChecker.prototype.visitBreak):
+        (LoopChecker.prototype.visitContinue):
+        * WebGPUShadingLanguageRI/Node.js:
+        (Node.prototype.commit):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseSwitchCase):
+        (parseSwitchStatement):
+        (parseStatement):
+        (parseBlockBody):
+        (parseBlock):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/ReturnChecker.js:
+        (ReturnChecker.prototype._mergeReturnStyle):
+        (ReturnChecker.prototype.visitIfStatement):
+        (ReturnChecker.prototype.visitWhileLoop):
+        (ReturnChecker.prototype.visitDoWhileLoop):
+        (ReturnChecker.prototype.visitForLoop):
+        (ReturnChecker.prototype.visitSwitchStatement):
+        (ReturnChecker.prototype.visitContinue):
+        (ReturnChecker):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitSwitchStatement):
+        (Rewriter.prototype.visitSwitchCase):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (uint8.operator):
+        (bool.operator):
+        (_generateSwizzle):
+        * WebGPUShadingLanguageRI/SwitchCase.js: Added.
+        (SwitchCase):
+        (SwitchCase.prototype.get origin):
+        (SwitchCase.prototype.get isDefault):
+        (SwitchCase.prototype.get value):
+        (SwitchCase.prototype.get body):
+        (SwitchCase.prototype.toString):
+        * WebGPUShadingLanguageRI/SwitchStatement.js: Added.
+        (SwitchStatement):
+        (SwitchStatement.prototype.get origin):
+        (SwitchStatement.prototype.get value):
+        (SwitchStatement.prototype.add):
+        (SwitchStatement.prototype.get switchCases):
+        (SwitchStatement.prototype.toString):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (makeUint8):
+        (makeEnum):
+        (checkUint8):
+        (TEST_uint8SimpleMath):
+        (TEST_equality):
+        (TEST_notEquality):
+        (TEST_uint8BitAnd):
+        (TEST_uint8BitOr):
+        (TEST_uint8BitXor):
+        (TEST_uint8BitNot):
+        (TEST_uint8LShift):
+        (TEST_uint8RShift):
+        (TEST_enumWithExplicitIntBase):
+        (TEST_enumWithUintBase):
+        (TEST_enumFloatBase):
+        (TEST_enumStructBase):
+        (TEST_simpleSwitch):
+        (TEST_exhaustiveUint8Switch):
+        (TEST_notQuiteExhaustiveUint8Switch):
+        (TEST_switchFallThrough):
+        (TEST_switchBreak):
+        (TEST_enumSwitchBreakExhaustive):
+        (TEST_enumSwitchBreakNotQuiteExhaustive):
+        (doTest):
+        * WebGPUShadingLanguageRI/UnificationContext.js:
+        (UnificationContext):
+        (UnificationContext.prototype.addExtraNode):
+        (UnificationContext.prototype.get nodes):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/index.html:
+
+2017-09-20  Filip Pizlo  <fpizlo@apple.com>
+
         WSL needs a way to verify that structs are not cyclic
         https://bugs.webkit.org/show_bug.cgi?id=177044
 

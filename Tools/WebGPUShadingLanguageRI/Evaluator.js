@@ -243,6 +243,41 @@ class Evaluator extends Visitor {
             }
         }
     }
+    
+    visitSwitchStatement(node)
+    {
+        let findAndRunCast = predicate => {
+            for (let i = 0; i < node.switchCases.length; ++i) {
+                let switchCase = node.switchCases[i];
+                if (predicate(switchCase)) {
+                    try {
+                        for (let j = i; j < node.switchCases.length; ++j)
+                            node.switchCases[j].visit(this);
+                    } catch (e) {
+                        if (e != BreakException)
+                            throw e;
+                    }
+                    return true;
+                }
+            }
+            return false;
+        };
+        
+        let value = node.value.visit(this).loadValue();
+        
+        let found = findAndRunCast(switchCase => {
+            if (switchCase.isDefault)
+                return false;
+            return node.type.unifyNode.valuesEqual(
+                value, switchCase.value.unifyNode.valueForSelectedType);
+        });
+        if (found)
+            return;
+        
+        found = findAndRunCast(switchCase => switchCase.isDefault);
+        if (!found)
+            throw new Error("Switch statement did not find case");
+    }
 
     visitBreak(node)
     {

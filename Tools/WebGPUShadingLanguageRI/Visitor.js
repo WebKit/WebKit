@@ -278,6 +278,19 @@ class Visitor {
         Node.visit(node.increment, this);
         node.body.visit(this);
     }
+    
+    visitSwitchStatement(node)
+    {
+        node.value.visit(this);
+        for (let switchCase of node.switchCases)
+            switchCase.visit(this);
+    }
+    
+    visitSwitchCase(node)
+    {
+        Node.visit(node.value, this);
+        node.body.visit(this);
+    }
 
     visitReturn(node)
     {

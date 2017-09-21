@@ -108,6 +108,17 @@ class Node {
         return unificationContext;
     }
     
+    commit()
+    {
+        let unificationContext = new UnificationContext();
+        unificationContext.addExtraNode(this);
+        let result = unificationContext.verify();
+        if (!result.result)
+            throw new WError(node.origin.originString, "Could not infer type: " + result.reason);
+        unificationContext.commit();
+        return unificationContext.find(this);
+    }
+    
     substitute(parameters, argumentList)
     {
         return this.visit(new Substitution(parameters, argumentList));

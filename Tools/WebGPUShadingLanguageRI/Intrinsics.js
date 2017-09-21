@@ -76,6 +76,12 @@ class Intrinsics {
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
                 type.formatValueFromIntLiteral = value => value | 0;
                 type.formatValueFromUintLiteral = value => value | 0;
+                type.allValues = function*() { 
+                    for (let i = 0; i <= 0xffffffff; ++i) {
+                        let value = i | 0;
+                        yield {value: value, name: value};
+                    }
+                };
             });
 
         this._map.set(
@@ -94,6 +100,32 @@ class Intrinsics {
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
                 type.formatValueFromIntLiteral = value => value >>> 0;
                 type.formatValueFromUintLiteral = value => value >>> 0;
+                type.allValues = function*() { 
+                    for (let i = 0; i <= 0xffffffff; ++i)
+                        yield {value: i, name: i};
+                };
+            });
+
+        this._map.set(
+            "native Primitive type uint8<>",
+            type => {
+                this.uint8 = type;
+                type.isInt = true;
+                type.isNumber = true;
+                type.isSigned = false;
+                type.canRepresent = value => isBitwiseEquivalent(value & 0xff, value);
+                type.size = 1;
+                type.defaultValue = 0;
+                type.createLiteral = (origin, value) => IntLiteral.withType(origin, value & 0xff, type);
+                type.successorValue = value => (value + 1) & 0xff;
+                type.valuesEqual = (a, b) => a === b;
+                type.populateDefaultValue = (buffer, offset) => buffer.set(offset, 0);
+                type.formatValueFromIntLiteral = value => value & 0xff;
+                type.formatValueFromUintLiteral = value => value & 0xff;
+                type.allValues = function*() {
+                    for (let i = 0; i <= 0xff; ++i)
+                        yield {value: i, name: i};
+                };
             });
 
         this._map.set(
@@ -141,9 +173,33 @@ class Intrinsics {
             });
         
         this._map.set(
+            "native operator int32<>(uint8)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
+            });
+        
+        this._map.set(
             "native operator uint32<>(int32)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+            });
+        
+        this._map.set(
+            "native operator uint32<>(uint8)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+            });
+        
+        this._map.set(
+            "native operator uint8<>(int32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
+            });
+        
+        this._map.set(
+            "native operator uint8<>(uint32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
             });
         
         this._map.set(

@@ -24,31 +24,31 @@
  */
 "use strict";
 
-class EnumLiteral extends Expression {
-    constructor(origin, member)
+class SwitchStatement extends Node {
+    constructor(origin, value)
     {
-        super(origin);
-        this._member = member;
+        super();
+        this._origin = origin;
+        this._value = value;
+        this._switchCases = [];
     }
     
-    get member() { return this._member; }
-    get type() { return this.member.enumType; }
-    get isConstexpr() { return true; }
+    get origin() { return this._origin; }
+    get value() { return this._value; }
     
-    unifyImpl(unificationContext, other)
+    add(switchCase)
     {
-        if (!(other instanceof EnumLiteral))
-            return false;
-        return this.member == other.member;
+        this._switchCases.push(switchCase);
     }
     
-    get valueForSelectedType()
-    {
-        return this.member.value.unifyNode.valueForSelectedType;
-    }
-        
+    get switchCases() { return this._switchCases; }
+    
     toString()
     {
-        return this.member.enumType.name + "." + this.member.name;
+        let result = "switch (" + this.value + ") { ";
+        if (this.switchCases.length)
+            result += this.switchCases.join("; "); + "; ";
+        return result + "}";
     }
 }
+

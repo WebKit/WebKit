@@ -145,6 +145,8 @@ load("StatementCloner.js");
 load("StructLayoutBuilder.js");
 load("StructType.js");
 load("Substitution.js");
+load("SwitchCase.js");
+load("SwitchStatement.js");
 load("SynthesizeEnumFunctions.js");
 load("SynthesizeStructAccessors.js");
 load("TrapStatement.js");

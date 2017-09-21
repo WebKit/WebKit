@@ -521,6 +521,64 @@ class Checker extends Visitor {
             node.increment.visit(this);
         node.body.visit(this);
     }
+
+    visitSwitchStatement(node)
+    {
+        let type = node.value.visit(this).commit();
+        
+        if (!type.unifyNode.isInt && !(type.unifyNode instanceof EnumType))
+            throw new WTypeError(node.origin.originString, "Cannot switch on non-integer/non-enum type: " + type);
+
+        node.type = type;
+        
+        let hasDefault = false;
+        
+        for (let switchCase of node.switchCases) {
+            switchCase.body.visit(this);
+
+            if (switchCase.isDefault) {
+                hasDefault = true;
+                continue;
+            }
+            
+            if (!switchCase.value.isConstexpr)
+                throw new WTypeError(switchCase.origin.originString, "Switch case not constexpr: " + switchCase.value);
+            
+            let caseType = switchCase.value.visit(this);
+            if (!type.equalsWithCommit(caseType))
+                throw new WTypeError(switchCase.origin.originString, "Switch case type does not match switch value type (case type is " + caseType + " but switch value type is " + type + ")");
+        }
+        
+        for (let i = 0; i < node.switchCases.length; ++i) {
+            let firstCase = node.switchCases[i];
+            for (let j = i + 1; j < node.switchCases.length; ++j) {
+                let secondCase = node.switchCases[j];
+                
+                if (firstCase.isDefault != secondCase.isDefault)
+                    continue;
+                
+                if (firstCase.isDefault)
+                    throw new WTypeError(secondCase.origin.originString, "Duplicate default case in switch statement");
+                
+                let valuesEqual = type.unifyNode.valuesEqual(
+                    firstCase.value.unifyNode.valueForSelectedType,
+                    secondCase.value.unifyNode.valueForSelectedType);
+                if (valuesEqual)
+                    throw new WTypeError(secondCase.origin.originString, "Duplicate case in switch statement for value " + firstCase.value.unifyNode.valueForSelectedType);
+            }
+        }
+        
+        if (!hasDefault) {
+            let includedValues = new Set();
+            for (let switchCase of node.switchCases)
+                includedValues.add(switchCase.value.unifyNode.valueForSelectedType);
+            
+            for (let {value, name} of type.unifyNode.allValues()) {
+                if (!includedValues.has(value))
+                    throw new WTypeError(node.origin.originString, "Value not handled by switch statement: " + name);
+            }
+        }
+    }
     
     visitCommaExpression(node)
     {

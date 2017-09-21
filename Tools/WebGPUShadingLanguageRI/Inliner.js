@@ -48,10 +48,5 @@ class Inliner extends Rewriter {
             return resultingBlock;
         });
     }
-
-    visitCastExpression(node)
-    {
-        return this.visitCallExpression(node);
-    }
 }
 
