@@ -77,6 +77,7 @@
 <script src="IntLiteral.js"></script>
 <script src="IntLiteralType.js"></script>
 <script src="Intrinsics.js"></script>
+<script src="LateChecker.js"></script>
 <script src="Lexer.js"></script>
 <script src="LexerToken.js"></script>
 <script src="LiteralTypeChecker.js"></script>
@@ -157,22 +158,15 @@ function doTestInBrowser()
     var lastTime;
     function next()
     {
-        var before = Date.now();
-        for (;;) {
-            try {
-                if (tester.next().done)
-                    return;
-            } catch (e) {
-                print("ERROR: " + e.message);
-                print(e.stack);
+        try {
+            if (tester.next().done)
                 return;
-            }
-            var now = Date.now();
-            if (now - before > 100) {
-                window.setTimeout(next, 0);
-                return;
-            }
+        } catch (e) {
+            print("ERROR: " + e.message);
+            print(e.stack);
+            return;
         }
+        window.setTimeout(next, 0);
     }
     next();
 }

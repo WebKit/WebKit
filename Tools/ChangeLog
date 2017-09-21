@@ -1,3 +1,10 @@
+2017-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix ability to run tests in browser.
+
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-21  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Ignore failure to get updated selenium version
