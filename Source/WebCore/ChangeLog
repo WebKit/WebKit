@@ -1,3 +1,72 @@
+2017-09-21  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebCrypto] Support Elliptic Curve P-521
+        https://bugs.webkit.org/show_bug.cgi?id=169231
+        <rdar://problem/30881703>
+
+        Reviewed by Jiewen Tan.
+
+        Add support for the P-521 elliptic curve to the CryptoKeyEC class, but
+        allow the underlying platform-specific implementations to opt out of
+        supporting this feature.
+
+        This is achieved with the platformSupportedCurve() static function that
+        each platform has to implement, returning true if the passed-in curve
+        type is supported. The function is called at each CryptoKeyEC entrypoint,
+        that is in each static function that could generate a new CryptoKeyEC
+        object. These functions return a NotSupportedError exception in case the
+        platformSupportedCurve() call returns false.
+
+        While the libgcrypt-based implementation will support P-521 curves in
+        the near future, the CommonCrypto-based implementation might not. The use
+        of platformSupportedCurve() ensures that the implementations that don't
+        support EC P-521 continue to return the NotSupportedError exception at
+        these entrypoints, instead of the OperationError exception that's returned
+        when the platform-specific extensions of these entrypoints fail due to the
+        specified elliptic curve not being supported.
+
+        Both libgcrypt-based and CommonCrypto-based implementations mark P-256 and
+        P-384 curves as supported. Switch statements handling NamedCurve values
+        must now also handle the NamedCurve::P521 value, but both implementations
+        treat that as an unreachable case since support is not indicated in
+        platformSupportedCurve(), and all CryptoKeyEC operations should have
+        returned with an NotSupportedError exception before entering
+        platform-specific code. The common CryptoKeyEC constructor similarly asserts
+        that the specified curve is supported by the underlying implementation.
+
+        CryptoAlgorithmECDSA is modified to now also support 'ES512' as the algorithm
+        identifier, matching it against the 'P-521' curve value.
+
+        No new tests -- tests covering EC P-521 already exist, but no platform
+        runs them yet due to missing implementations.
+
+        * crypto/algorithms/CryptoAlgorithmECDSA.cpp:
+        (WebCore::CryptoAlgorithmECDSA::importKey):
+        * crypto/gcrypt/CryptoKeyECGCrypt.cpp:
+        (WebCore::curveName):
+        (WebCore::curveIdentifier):
+        (WebCore::curveSize):
+        (WebCore::curveUncompressedFieldElementSize):
+        (WebCore::CryptoKeyEC::platformSupportedCurve):
+        * crypto/keys/CryptoKeyEC.cpp:
+        (WebCore::toNamedCurve):
+        (WebCore::CryptoKeyEC::CryptoKeyEC):
+        (WebCore::CryptoKeyEC::generatePair):
+        (WebCore::CryptoKeyEC::importRaw):
+        (WebCore::CryptoKeyEC::importJwk):
+        (WebCore::CryptoKeyEC::importSpki):
+        (WebCore::CryptoKeyEC::importPkcs8):
+        (WebCore::CryptoKeyEC::exportJwk const):
+        (WebCore::CryptoKeyEC::namedCurveString const):
+        (WebCore::CryptoKeyEC::algorithm const):
+        * crypto/keys/CryptoKeyEC.h:
+        * crypto/mac/CryptoKeyECMac.cpp:
+        (WebCore::doesUncompressedPointMatchNamedCurve):
+        (WebCore::doesFieldElementMatchNamedCurve):
+        (WebCore::getKeySizeFromNamedCurve):
+        (WebCore::CryptoKeyEC::platformSupportedCurve):
+        (WebCore::getOID):
+
 2017-09-20  Antti Koivisto  <antti@apple.com>
 
         inspector/dom/content-node-region-info.html and inspector/dom/content-flow tests crashing

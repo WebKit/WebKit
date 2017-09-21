@@ -56,6 +56,8 @@ static bool doesUncompressedPointMatchNamedCurve(CryptoKeyEC::NamedCurve curve, 
         return size == 65;
     case CryptoKeyEC::NamedCurve::P384:
         return size == 97;
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -70,6 +72,8 @@ static bool doesFieldElementMatchNamedCurve(CryptoKeyEC::NamedCurve curve, size_
         return size == 32;
     case CryptoKeyEC::NamedCurve::P384:
         return size == 48;
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -83,6 +87,8 @@ static size_t getKeySizeFromNamedCurve(CryptoKeyEC::NamedCurve curve)
         return 256;
     case CryptoKeyEC::NamedCurve::P384:
         return 384;
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -98,6 +104,11 @@ size_t CryptoKeyEC::keySizeInBits() const
 {
     int result = CCECGetKeySize(m_platformKey);
     return result ? result : 0;
+}
+
+bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
+{
+    return curve == NamedCurve::P256 || curve == NamedCurve::P384;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)
@@ -210,6 +221,12 @@ static size_t getOID(CryptoKeyEC::NamedCurve curve, const uint8_t*& oid)
     case CryptoKeyEC::NamedCurve::P384:
         oid = Secp384r1;
         oidSize = sizeof(Secp384r1);
+        break;
+    case CryptoKeyEC::NamedCurve::P521:
+        ASSERT_NOT_REACHED();
+        oid = nullptr;
+        oidSize = 0;
+        break;
     }
     return oidSize;
 }

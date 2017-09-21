@@ -36,6 +36,7 @@ namespace WebCore {
 
 static const char* const P256 = "P-256";
 static const char* const P384 = "P-384";
+static const char* const P521 = "P-521";
 
 static std::optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
 {
@@ -43,6 +44,8 @@ static std::optional<CryptoKeyEC::NamedCurve> toNamedCurve(const String& curve)
         return CryptoKeyEC::NamedCurve::P256;
     if (curve == P384)
         return CryptoKeyEC::NamedCurve::P384;
+    if (curve == P521)
+        return CryptoKeyEC::NamedCurve::P521;
 
     return std::nullopt;
 }
@@ -52,12 +55,14 @@ CryptoKeyEC::CryptoKeyEC(CryptoAlgorithmIdentifier identifier, NamedCurve curve,
     , m_platformKey(platformKey)
     , m_curve(curve)
 {
+    // Only CryptoKeyEC objects for supported curves should be created.
+    ASSERT(platformSupportedCurve(curve));
 }
 
 ExceptionOr<CryptoKeyPair> CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier identifier, const String& curve, bool extractable, CryptoKeyUsageBitmap usages)
 {
     auto namedCurve = toNamedCurve(curve);
-    if (!namedCurve)
+    if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return Exception { NotSupportedError };
 
     auto result = platformGeneratePair(identifier, *namedCurve, extractable, usages);
@@ -70,7 +75,7 @@ ExceptionOr<CryptoKeyPair> CryptoKeyEC::generatePair(CryptoAlgorithmIdentifier i
 RefPtr<CryptoKeyEC> CryptoKeyEC::importRaw(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     auto namedCurve = toNamedCurve(curve);
-    if (!namedCurve)
+    if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
     return platformImportRaw(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
@@ -88,7 +93,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier,
     if (keyData.crv.isNull() || curve != keyData.crv)
         return nullptr;
     auto namedCurve = toNamedCurve(keyData.crv);
-    if (!namedCurve)
+    if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
     if (keyData.x.isNull() || keyData.y.isNull())
@@ -114,7 +119,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::importJwk(CryptoAlgorithmIdentifier identifier,
 RefPtr<CryptoKeyEC> CryptoKeyEC::importSpki(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     auto namedCurve = toNamedCurve(curve);
-    if (!namedCurve)
+    if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
     return platformImportSpki(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
@@ -123,7 +128,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::importSpki(CryptoAlgorithmIdentifier identifier
 RefPtr<CryptoKeyEC> CryptoKeyEC::importPkcs8(CryptoAlgorithmIdentifier identifier, const String& curve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
     auto namedCurve = toNamedCurve(curve);
-    if (!namedCurve)
+    if (!namedCurve || !platformSupportedCurve(*namedCurve))
         return nullptr;
 
     return platformImportPkcs8(identifier, *namedCurve, WTFMove(keyData), extractable, usages);
@@ -150,6 +155,9 @@ ExceptionOr<JsonWebKey> CryptoKeyEC::exportJwk() const
         break;
     case NamedCurve::P384:
         result.crv = P384;
+        break;
+    case NamedCurve::P521:
+        result.crv = P521;
         break;
     }
     result.key_ops = usages();
@@ -188,6 +196,8 @@ String CryptoKeyEC::namedCurveString() const
         return String(P256);
     case NamedCurve::P384:
         return String(P384);
+    case NamedCurve::P521:
+        return String(P521);
     }
 
     ASSERT_NOT_REACHED();
@@ -210,6 +220,9 @@ auto CryptoKeyEC::algorithm() const -> KeyAlgorithm
         break;
     case NamedCurve::P384:
         result.namedCurve = ASCIILiteral(P384);
+        break;
+    case NamedCurve::P521:
+        result.namedCurve = ASCIILiteral(P521);
         break;
     }
 

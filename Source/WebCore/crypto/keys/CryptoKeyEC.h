@@ -49,10 +49,10 @@ struct JsonWebKey;
 
 class CryptoKeyEC final : public CryptoKey {
 public:
-    // FIXME: Add support for Elliptic Curve P-521 (https://webkit.org/b/169231)
     enum class NamedCurve {
         P256,
         P384,
+        P521,
     };
 
     static Ref<CryptoKeyEC> create(CryptoAlgorithmIdentifier identifier, NamedCurve curve, CryptoKeyType type, PlatformECKey platformKey, bool extractable, CryptoKeyUsageBitmap usages)
@@ -85,6 +85,7 @@ private:
 
     KeyAlgorithm algorithm() const final;
 
+    static bool platformSupportedCurve(NamedCurve);
     static std::optional<CryptoKeyPair> platformGeneratePair(CryptoAlgorithmIdentifier, NamedCurve, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyEC> platformImportRaw(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap);
     static RefPtr<CryptoKeyEC> platformImportJWKPublic(CryptoAlgorithmIdentifier, NamedCurve, Vector<uint8_t>&& x, Vector<uint8_t>&& y, bool extractable, CryptoKeyUsageBitmap);

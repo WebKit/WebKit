@@ -45,6 +45,8 @@ static const char* curveName(CryptoKeyEC::NamedCurve curve)
         return "NIST P-256";
     case CryptoKeyEC::NamedCurve::P384:
         return "NIST P-384";
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -58,6 +60,8 @@ static const uint8_t* curveIdentifier(CryptoKeyEC::NamedCurve curve)
         return CryptoConstants::s_secp256r1Identifier.data();
     case CryptoKeyEC::NamedCurve::P384:
         return CryptoConstants::s_secp384r1Identifier.data();
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -71,6 +75,8 @@ static size_t curveSize(CryptoKeyEC::NamedCurve curve)
         return 256;
     case CryptoKeyEC::NamedCurve::P384:
         return 384;
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -84,6 +90,8 @@ static unsigned curveUncompressedFieldElementSize(CryptoKeyEC::NamedCurve curve)
         return 32;
     case CryptoKeyEC::NamedCurve::P384:
         return 48;
+    case CryptoKeyEC::NamedCurve::P521:
+        break;
     }
 
     ASSERT_NOT_REACHED();
@@ -106,6 +114,11 @@ size_t CryptoKeyEC::keySizeInBits() const
     size_t size = curveSize(m_curve);
     ASSERT(size == gcry_pk_get_nbits(m_platformKey));
     return size;
+}
+
+bool CryptoKeyEC::platformSupportedCurve(NamedCurve curve)
+{
+    return curve == NamedCurve::P256 || curve == NamedCurve::P384;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyEC::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve curve, bool extractable, CryptoKeyUsageBitmap usages)

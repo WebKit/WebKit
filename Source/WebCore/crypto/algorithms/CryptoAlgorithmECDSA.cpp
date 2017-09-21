@@ -36,8 +36,10 @@ namespace WebCore {
 
 static const char* const ALG256 = "ES256";
 static const char* const ALG384 = "ES384";
+static const char* const ALG512 = "ES512";
 static const char* const P256 = "P-256";
 static const char* const P384 = "P-384";
+static const char* const P521 = "P-521";
 
 Ref<CryptoAlgorithm> CryptoAlgorithmECDSA::create()
 {
@@ -120,6 +122,8 @@ void CryptoAlgorithmECDSA::importKey(CryptoKeyFormat format, KeyData&& data, con
             isMatched = key.alg.isNull() || key.alg == ALG256;
         if (key.crv == P384)
             isMatched = key.alg.isNull() || key.alg == ALG384;
+        if (key.crv == P521)
+            isMatched = key.alg.isNull() || key.alg == ALG512;
         if (!isMatched) {
             exceptionCallback(DataError);
             return;
