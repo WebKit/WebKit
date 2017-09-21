@@ -132,8 +132,7 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const URL& url)
 {
-    // FIXME: Re-enable this assertion.
-    // ASSERT(m_provisionalLoadRedirectChain.isEmpty());
+    ASSERT(m_provisionalLoadRedirectChain.isEmpty());
     m_provisionalLoadRedirectChain = { url };
 
     m_frameLoadState.didStartProvisionalLoad(url);
@@ -150,6 +149,7 @@ void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 
 void WebFrameProxy::didFailProvisionalLoad()
 {
+    m_provisionalLoadRedirectChain.clear();
     m_frameLoadState.didFailProvisionalLoad();
 }
 

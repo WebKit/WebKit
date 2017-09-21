@@ -1,3 +1,19 @@
+2017-09-21  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add API to get the redirect chain of a WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=176628
+        <rdar://problem/34338279>
+
+        Reviewed by Alex Christensen.
+
+        Re-enable assertion initially added in r222308 and later disabled in
+        r222320. The assertion was hit because we failed to clear the redirect
+        chain in WebFrameProxy::didFailProvisionalLoad().
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+
 2017-09-21  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r221465) WKWebViews without WebGL delegate callbacks crash when WebGL contexts are created
