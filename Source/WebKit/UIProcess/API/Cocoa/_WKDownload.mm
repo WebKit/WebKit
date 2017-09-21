@@ -58,7 +58,15 @@
     if (auto* originatingPage = _download->originatingPage())
         return [[fromWebPageProxy(*originatingPage) retain] autorelease];
     return nil;
+}
 
+-(NSArray<NSURL *> *)redirectChain
+{
+    auto& redirectURLs = _download->redirectChain();
+    NSMutableArray<NSURL *> *nsURLs = [NSMutableArray arrayWithCapacity:redirectURLs.size()];
+    for (const auto& redirectURL : redirectURLs)
+        [nsURLs addObject:(NSURL *)redirectURL];
+    return nsURLs;
 }
 
 #pragma mark WKObject protocol implementation

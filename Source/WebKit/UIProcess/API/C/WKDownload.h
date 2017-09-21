@@ -43,6 +43,7 @@ WK_EXPORT WKURLRequestRef WKDownloadCopyRequest(WKDownloadRef download);
 WK_EXPORT WKDataRef WKDownloadGetResumeData(WKDownloadRef download);
 WK_EXPORT void WKDownloadCancel(WKDownloadRef download);
 WK_EXPORT WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download);
+WK_EXPORT WKArrayRef WKDownloadCopyRedirectChain(WKDownloadRef download);
 
 #ifdef __cplusplus
 }

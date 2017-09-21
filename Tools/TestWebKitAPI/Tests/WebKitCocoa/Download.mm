@@ -46,7 +46,7 @@
 #import <wtf/text/WTFString.h>
 
 static bool isDone;
-static bool hasReceivedRedirect;
+static unsigned redirectCount = 0;
 static bool hasReceivedResponse;
 static NSURL *sourceURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 static WKWebView* expectedOriginatingWebView;
@@ -468,12 +468,24 @@ TEST(_WKDownload, DownloadRequestBlobURL)
 
 - (void)_download:(_WKDownload *)download didReceiveServerRedirectToURL:(NSURL *)url
 {
-    EXPECT_STREQ("http://pass/", [url.absoluteString UTF8String]);
-    hasReceivedRedirect = true;
+    if (!redirectCount)
+        EXPECT_STREQ("http://redirect/?pass", [url.absoluteString UTF8String]);
+    else
+        EXPECT_STREQ("http://pass/", [url.absoluteString UTF8String]);
+    ++redirectCount = true;
 }
 
 - (void)_downloadDidFinish:(_WKDownload *)download
 {
+    NSArray<NSURL *> *redirectChain = download.redirectChain;
+    EXPECT_EQ(3U, redirectChain.count);
+    if (redirectChain.count > 0)
+        EXPECT_STREQ("http://redirect/?redirect/?pass", [redirectChain[0].absoluteString UTF8String]);
+    if (redirectChain.count > 1)
+        EXPECT_STREQ("http://redirect/?pass", [redirectChain[1].absoluteString UTF8String]);
+    if (redirectChain.count > 2)
+        EXPECT_STREQ("http://pass/", [redirectChain[2].absoluteString UTF8String]);
+
     WebCore::deleteFile(_destinationPath);
     isDone = true;
 }
@@ -484,7 +496,7 @@ TEST(_WKDownload, RedirectedDownload)
 {
     [TestProtocol registerWithScheme:@"http"];
 
-    hasReceivedRedirect = false;
+    redirectCount = 0;
     isDone = false;
 
     auto delegate = adoptNS([[UIDownloadAsFileTestDelegate alloc] init]);
@@ -497,7 +509,9 @@ TEST(_WKDownload, RedirectedDownload)
     auto window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSWindowStyleMaskBorderless backing:NSBackingStoreBuffered defer:YES]);
     [[window contentView] addSubview:webView.get()];
 
-    [webView synchronouslyLoadHTMLString:@"<a style='display: block; height: 100%; width: 100%' href='http://redirect/?pass'>test</a>"];
+    // Do 2 loads in the same view to make sure the redirect chain is properly cleared between loads.
+    [webView synchronouslyLoadHTMLString:@"<div>First load</div>"];
+    [webView synchronouslyLoadHTMLString:@"<a style='display: block; height: 100%; width: 100%' href='http://redirect/?redirect/?pass'>test</a>"];
 
     expectedOriginatingWebView = webView.get();
     NSPoint clickPoint = NSMakePoint(100, 100);
@@ -506,7 +520,51 @@ TEST(_WKDownload, RedirectedDownload)
 
     isDone = false;
     TestWebKitAPI::Util::run(&isDone);
-    EXPECT_TRUE(hasReceivedRedirect);
+    EXPECT_EQ(1U, redirectCount);
+
+    [TestProtocol unregister];
+}
+
+TEST(_WKDownload, RedirectedLoadConvertedToDownload)
+{
+    [TestProtocol registerWithScheme:@"http"];
+
+    auto navigationDelegate = adoptNS([[ConvertResponseToDownloadNavigationDelegate alloc] init]);
+    auto downloadDelegate = adoptNS([[RedirectedDownloadDelegate alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
+
+    expectedOriginatingWebView = webView.get();
+    isDone = false;
+    redirectCount = 0;
+    hasReceivedResponse = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://redirect/?redirect/?pass"]]];
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(0U, redirectCount);
+
+    [TestProtocol unregister];
+}
+
+TEST(_WKDownload, RedirectedSubframeLoadConvertedToDownload)
+{
+    [TestProtocol registerWithScheme:@"http"];
+
+    auto navigationDelegate = adoptNS([[ConvertResponseToDownloadNavigationDelegate alloc] init]);
+    auto downloadDelegate = adoptNS([[RedirectedDownloadDelegate alloc] init]);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView setNavigationDelegate:navigationDelegate.get()];
+    [[[webView configuration] processPool] _setDownloadDelegate:downloadDelegate.get()];
+
+    expectedOriginatingWebView = webView.get();
+    isDone = false;
+    redirectCount = 0;
+    hasReceivedResponse = false;
+    [webView loadHTMLString:@"<body><iframe src='http://redirect/?redirect/?pass'></iframe></body>" baseURL:nil];
+    TestWebKitAPI::Util::run(&isDone);
+    EXPECT_EQ(0U, redirectCount);
 
     [TestProtocol unregister];
 }

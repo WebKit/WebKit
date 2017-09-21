@@ -132,11 +132,18 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const URL& url)
 {
+    ASSERT(m_provisionalLoadRedirectChain.isEmpty());
+    m_provisionalLoadRedirectChain = { url };
+
     m_frameLoadState.didStartProvisionalLoad(url);
 }
 
 void WebFrameProxy::didReceiveServerRedirectForProvisionalLoad(const URL& url)
 {
+    // didReceiveServerRedirectForProvisionalLoad() often gets called twice for the same redirect.
+    if (m_provisionalLoadRedirectChain.isEmpty() || m_provisionalLoadRedirectChain.last() != url)
+        m_provisionalLoadRedirectChain.append(url);
+
     m_frameLoadState.didReceiveServerRedirectForProvisionalLoad(url);
 }
 
@@ -158,11 +165,13 @@ void WebFrameProxy::didCommitLoad(const String& contentType, WebCertificateInfo&
 
 void WebFrameProxy::didFinishLoad()
 {
+    m_provisionalLoadRedirectChain.clear();
     m_frameLoadState.didFinishLoad();
 }
 
 void WebFrameProxy::didFailLoad()
 {
+    m_provisionalLoadRedirectChain.clear();
     m_frameLoadState.didFailLoad();
 }
 

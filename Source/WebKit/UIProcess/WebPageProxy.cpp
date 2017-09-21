@@ -2278,6 +2278,8 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
     if (action == PolicyDownload) {
         // Create a download proxy.
         auto* download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
+        download->setRedirectChain(frame.takeProvisionalLoadRedirectChain());
+
         downloadID = download->downloadID();
         handleDownloadRequest(download);
         m_decidePolicyForResponseRequest = { };

@@ -1,3 +1,34 @@
+2017-09-20  Chris Dumez  <cdumez@apple.com>
+
+        [WK2] Add API to get the redirect chain of a WKDownload
+        https://bugs.webkit.org/show_bug.cgi?id=176628
+        <rdar://problem/34338279>
+
+        Reviewed by Alex Christensen.
+
+        Add API to get the redirect chain of a WKDwnload. The redirect chain includes redirects
+        that happened during initial load, before the load was converted into a download.
+
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadCopyRedirectChain):
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload originatingWebView]):
+        (-[_WKDownload redirectChain]):
+        * UIProcess/Downloads/DownloadProxy.cpp:
+        (WebKit::DownloadProxy::willSendRequest):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::setRedirectChain):
+        (WebKit::DownloadProxy::redirectChain const):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::redirectChain const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Add infrastructure for adding custom headers to requests per website

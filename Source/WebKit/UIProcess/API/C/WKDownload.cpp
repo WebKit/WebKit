@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WKDownload.h"
 
+#include "APIArray.h"
 #include "APIData.h"
 #include "APIURLRequest.h"
 #include "DownloadProxy.h"
@@ -62,4 +63,14 @@ void WKDownloadCancel(WKDownloadRef download)
 WKPageRef WKDownloadGetOriginatingPage(WKDownloadRef download)
 {
     return toAPI(toImpl(download)->originatingPage());
+}
+
+WKArrayRef WKDownloadCopyRedirectChain(WKDownloadRef download)
+{
+    auto& redirectChain =  toImpl(download)->redirectChain();
+    Vector<RefPtr<API::Object>> urls;
+    urls.reserveInitialCapacity(redirectChain.size());
+    for (auto& redirectURL : redirectChain)
+        urls.uncheckedAppend(API::URL::create(redirectURL.string()));
+    return toAPI(&API::Array::create(WTFMove(urls)).leakRef());
 }
