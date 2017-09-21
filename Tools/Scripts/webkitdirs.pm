@@ -2000,15 +2000,15 @@ sub canUseNinja(@)
         return 0;
     }
 
+    if (isAppleCocoaWebKit()) {
+        my $devnull = File::Spec->devnull();
+        if (exitStatus(system("xcrun -find ninja >$devnull 2>&1")) == 0) {
+            return 1;
+        }
+    }
+
     # Test both ninja and ninja-build. Fedora uses ninja-build and has patched CMake to also call ninja-build.
     return commandExists("ninja") || commandExists("ninja-build");
-}
-
-sub canUseNinjaGenerator(@)
-{
-    # Check that a Ninja generator is installed
-    my $devnull = File::Spec->devnull();
-    return exitStatus(system("cmake -N -G Ninja >$devnull 2>&1")) == 0;
 }
 
 sub canUseEclipseNinjaGenerator(@)
@@ -2041,7 +2041,7 @@ sub generateBuildSystemFromCMakeProject
     chdir($buildPath) or die;
 
     # We try to be smart about when to rerun cmake, so that we can have faster incremental builds.
-    my $willUseNinja = canUseNinja() && canUseNinjaGenerator();
+    my $willUseNinja = canUseNinja();
     if (-e cmakeCachePath() && -e cmakeGeneratedBuildfile($willUseNinja)) {
         return 0;
     }

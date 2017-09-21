@@ -1,3 +1,19 @@
+2017-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        Use 'ninja' from the SDK if it exists
+        https://bugs.webkit.org/show_bug.cgi?id=177330
+
+        Reviewed by Alex Christensen.
+
+        * Scripts/webkitdirs.pm:
+        (canUseNinja):
+        Check for ninja with xcrun in addition to commandExists() for Cocoa platforms.
+
+        (generateBuildSystemFromCMakeProject):
+        (canUseNinjaGenerator): Deleted.
+        Remove canUseNinjaGenerator; as noted in bug 177057, the Ninja generator
+        is available in all versions of CMake supported by WebKit.
+
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
         Regression(r222308): new API tests are failing for !NETWORK_SESSION
