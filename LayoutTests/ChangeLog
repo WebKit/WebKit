@@ -1,3 +1,21 @@
+2017-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DataTransfer.items should contain text/html and text/uri-list
+        https://bugs.webkit.org/show_bug.cgi?id=176772
+        <rdar://problem/34386899>
+
+        Reviewed by Darin Adler.
+
+        Added tests for copying text/html and text/uri-list, and updated the existing test for
+        coping & pasting plain text to explicitly set only text/plain now that
+        the data transfer item list can contain HTML markup.
+
+        * editing/pasteboard/datatransfer-items-copy-html-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-copy-html.html: Added.
+        * editing/pasteboard/datatransfer-items-copy-url-expected.txt: Added.
+        * editing/pasteboard/datatransfer-items-copy-url.html: Added.
+        * editing/pasteboard/datatransfer-items-paste-plaintext.html:
+
 2017-09-21  Youenn Fablet  <youenn@apple.com>
 
         LayoutTest platform/mac/webrtc/captureCanvas-webrtc-software-encoder.html is a flaky failure

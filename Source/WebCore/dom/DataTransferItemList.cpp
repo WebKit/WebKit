@@ -35,7 +35,9 @@ namespace WebCore {
 // FIXME: DataTransfer should filter types itself.
 static bool isSupportedType(const String& type)
 {
-    return type == "text/plain";
+    return type == "text/plain"
+        || type == "text/html"
+        || type == "text/uri-list";
 }
 
 DataTransferItemList::DataTransferItemList(DataTransfer& dataTransfer)
@@ -79,7 +81,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
 
     m_dataTransfer.pasteboard().writeString(lowercasedType, data);
     ASSERT(m_items);
-    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), type));
+    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), lowercasedType));
     return RefPtr<DataTransferItem> { m_items->last().copyRef() };
 }
 

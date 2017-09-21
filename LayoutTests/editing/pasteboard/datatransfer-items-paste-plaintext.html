@@ -18,6 +18,12 @@ function copyText()
         testRunner.execCommand('Paste', null);
 }
 
+function copy(event)
+{
+    event.preventDefault();
+    event.clipboardData.setData('text/plain', 'hello, world');
+}
+
 function paste(event)
 {
     clipboardData = event.clipboardData;
@@ -43,7 +49,7 @@ successfullyParsed = true;
 </script>
 <div id="container">
     <button onclick="copyText();">Copy text</button>
-    <div id="source" contenteditable="true" style="display: none">hello, world</div>
+    <div id="source" contenteditable="true" oncopy="copy(event)" style="display: none">hello, world</div>
     <div id="target" contenteditable="true" onpaste="paste(event)"></div>
 </div>
 <script src="../../resources/js-test-post.js"></script>

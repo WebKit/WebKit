@@ -1,0 +1,48 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: string
+This tests copying HTML markup using dataTransfer.items. To manually test, click on "Copy text" and paste (Command+V on Mac Control+V elsewhere).
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS clipboardData.items.length is 0
+PASS clipboardData.setData("text/html", "rock"); clipboardData.items.length is 1
+PASS initialItem = clipboardData.items[0]; initialItem.kind is "string"
+PASS initialItem.type is "text/html"
+PASS initialItem.getAsFile() is null
+PASS initialItem.getAsString(checkContent(1, "rock")) is undefined
+PASS clipboardData.items.add("paper", "text/HTML") threw exception NotSupportedError: The operation is not supported..
+PASS clipboardData.items[0] is initialItem
+PASS clipboardData.clearData(); clipboardData.items.length is 0
+PASS clipboardData.items.add("<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>", "TEXT/html"); clipboardData.items.length is 1
+PASS clipboardData.items[0] is not initialItem
+PASS initialItem.kind is "string"
+PASS initialItem.type is ""
+PASS initialItem.getAsFile() is null
+PASS initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled 1")) is undefined
+PASS clipboardData.getData("text/html") is "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>"
+PASS clipboardData.getData("text/plain") is ""
+PASS firstItem = clipboardData.items[0]; clipboardData.items[0].kind is "string"
+PASS firstItem.type is "text/html"
+PASS firstItem.getAsFile() is null
+PASS firstItem.getAsString(checkContent(2, "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>")) is undefined
+PASS secondItem = clipboardData.items.add("some content", "text/plain"); secondItem is clipboardData.items[1]
+PASS clipboardData.getData("text/plain") is "some content"
+PASS secondItem.kind is "string"
+PASS secondItem.type is "text/plain"
+PASS secondItem.getAsFile() is null
+PASS secondItem.getAsString(checkContent(3, "some content")) is undefined
+PASS clipboardData.items[0] is firstItem
+PASS firstItem.kind is "string"
+PASS firstItem.type is "text/html"
+PASS clipboardData.getData("text/html") is "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>"
+PASS firstItem.getAsString(checkContent(4, "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>")) is undefined
+PASS clipboardData.items.remove(0); clipboardData.items.length is 1
+PASS clipboardData.items[0] is secondItem
+PASS actualContent1 is "rock"
+PASS actualContent2 is "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>"
+PASS actualContent3 is "some content"
+PASS actualContent4 is "<!DOCTYPE html><!-- hello --><script>alert('Test failed');</script>"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

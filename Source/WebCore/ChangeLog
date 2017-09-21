@@ -1,3 +1,21 @@
+2017-09-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        DataTransfer.items should contain text/html and text/uri-list
+        https://bugs.webkit.org/show_bug.cgi?id=176772
+        <rdar://problem/34386899>
+
+        Reviewed by Darin Adler.
+
+        Expose text/html and text/uri-list in dataTransfer.items.
+
+        Tests: editing/pasteboard/datatransfer-items-copy-html.html
+               editing/pasteboard/datatransfer-items-copy-url.html
+
+        * dom/DataTransferItemList.cpp:
+        (WebCore::isSupportedType): Added both MIME types.
+        (WebCore::DataTransferItemList::add): Fixed the bug that new data transfer item was using
+        the original type string instead of the lowercased one.
+
 2017-09-21  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile error, PALHeaderDetection.h not found.
