@@ -128,6 +128,8 @@ WI.LayerTreeManager = class LayerTreeManager extends WI.Object
                 return;
             }
 
+            layers = layers.map(WI.Layer.fromPayload);
+
             var firstLayer = layers[0];
             var layerForNode = firstLayer.nodeId === node.id && !firstLayer.isGeneratedContent ? layers.shift() : null;
             callback(layerForNode, layers);

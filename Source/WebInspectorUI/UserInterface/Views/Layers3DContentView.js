@@ -33,6 +33,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
         WI.layerTreeManager.addEventListener(WI.LayerTreeManager.Event.LayerTreeDidChange, this._layerTreeDidChange, this);
 
+        this._layers = [];
         this._layersChangedWhileHidden = false;
         this._renderer = null;
         this._camera = null;
@@ -44,6 +45,11 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
     }
 
     // Public
+
+    get supplementalRepresentedObjects()
+    {
+        return this._layers;
+    }
 
     shown()
     {
@@ -117,6 +123,9 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
                 this._clearLayers();
                 for (let i = 0; i < childLayers.length; i++)
                     this._addLayer(childLayers[i], i);
+
+                this._layers = childLayers;
+                this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
             });
         });
     }
@@ -165,15 +174,8 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     _addLayer(layer, index)
     {
-        let compositedBounds = {
-            x: layer.bounds.x,
-            y: layer.bounds.y,
-            width: layer.compositedBounds.width,
-            height: layer.compositedBounds.height,
-        };
-
         this._boundsGroup.add(this._createLayerMesh(layer.bounds, index));
-        this._compositedBoundsGroup.add(this._createLayerMesh(compositedBounds, index, true));
+        this._compositedBoundsGroup.add(this._createLayerMesh(layer.compositedBounds, index, true));
     }
 
     _createLayerMesh(rect, index, isOutline = false)

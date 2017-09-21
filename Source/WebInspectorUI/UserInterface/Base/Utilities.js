@@ -28,6 +28,7 @@ var enDash = "\u2013";
 var figureDash = "\u2012";
 var ellipsis = "\u2026";
 var zeroWidthSpace = "\u200b";
+var multiplicationSign = "\u00d7";
 
 Object.defineProperty(Object, "shallowCopy",
 {

@@ -1,3 +1,37 @@
+2017-09-21  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Add details sidebar to Layers tab.
+        https://bugs.webkit.org/show_bug.cgi?id=177115
+
+        Reviewed by Devin Rousso.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        * UserInterface/Views/LayerDetailsSidebarPanel.css: Added.
+        * UserInterface/Views/LayerDetailsSidebarPanel.js: Added.
+        New files and strings for sidebar.
+
+        * UserInterface/Base/Utilities.js:
+        Add global identifier for "×" character.
+        
+        * UserInterface/Models/Layer.js: Added.
+        Add a model class for layers so that we can instanceof-check them.
+
+        * UserInterface/Controllers/LayerTreeManager.js:
+        (WI.LayerTreeManager.prototype.layersForNode):
+        Utilize model class WI.Layer.
+
+        * UserInterface/Views/Layers3DContentView.js:
+        (WI.Layers3DContentView):
+        (WI.Layers3DContentView.prototype.get supplementalRepresentedObjects):
+        (WI.Layers3DContentView.prototype.layout):
+        (WI.Layers3DContentView.prototype._addLayer):
+        Pass layer data to sidebar and utilize model class WI.Layer.
+
+        * UserInterface/Views/LayersTabContentView.js:
+        (WI.LayersTabContentView):
+        Attach details sidebar.
+
 2017-09-21  Brian Burg  <bburg@apple.com>
 
         Web Inspector: keyboard shortcut for "Reload page from origin" doesn't match Safari, and doesn't work

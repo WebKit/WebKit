@@ -31,7 +31,7 @@ WI.LayersTabContentView = class LayersTabContentView extends WI.ContentBrowserTa
         let tabBarItem = new WI.GeneralTabBarItem(image, title);
 
         const navigationSidebarPanelConstructor = null;
-        const detailsSidebarPanelConstructors = null;
+        const detailsSidebarPanelConstructors = [WI.LayerDetailsSidebarPanel];
         const disableBackForward = true;
         super("layers", "layers", tabBarItem, navigationSidebarPanelConstructor, detailsSidebarPanelConstructors, disableBackForward);
 
