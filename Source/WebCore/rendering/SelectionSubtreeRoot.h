@@ -59,8 +59,8 @@ public:
 
         SelectionSubtreeData(RenderObject* selectionStart, std::optional<unsigned> selectionStartPos, RenderObject* selectionEnd, std::optional<unsigned> selectionEndPos)
             : m_selectionStart(selectionStart)
-            , m_selectionStartPos(selectionStartPos)
             , m_selectionEnd(selectionEnd)
+            , m_selectionStartPos(selectionStartPos)
             , m_selectionEndPos(selectionEndPos)
         {
         }
@@ -69,23 +69,11 @@ public:
         std::optional<unsigned> selectionStartPos() const { return m_selectionStartPos; }
         RenderObject* selectionEnd() const { return m_selectionEnd; }
         std::optional<unsigned> selectionEndPos() const { return m_selectionEndPos; }
-        bool selectionClear() const
-        {
-            return !m_selectionStart
-            && (!m_selectionStartPos)
-            && !m_selectionEnd
-            && (!m_selectionEndPos);
-        }
-
         void selectionStartEndPositions(unsigned& startPos, unsigned& endPos) const
         {
             startPos = m_selectionStartPos.value();
             endPos = m_selectionEndPos.value();
         }
-        void setSelectionStart(RenderObject* selectionStart) { m_selectionStart = selectionStart; }
-        void setSelectionStartPos(std::optional<unsigned> selectionStartPos) { m_selectionStartPos = selectionStartPos;}
-        void setSelectionEnd(RenderObject* selectionEnd) { m_selectionEnd = selectionEnd; }
-        void setSelectionEndPos(std::optional<unsigned> selectionEndPos) { m_selectionEndPos = selectionEndPos;}
         void clearSelection()
         {
             m_selectionStart = nullptr;
@@ -96,8 +84,8 @@ public:
 
     private:
         RenderObject* m_selectionStart { nullptr };
-        std::optional<unsigned> m_selectionStartPos;
         RenderObject* m_selectionEnd { nullptr };
+        std::optional<unsigned> m_selectionStartPos;
         std::optional<unsigned> m_selectionEndPos;
     };
 

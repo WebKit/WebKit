@@ -1,3 +1,22 @@
+2017-09-20  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant SelectionSubtreeData functions.
+        https://bugs.webkit.org/show_bug.cgi?id=177288
+
+        Reviewed by Simon Fraser.
+
+        No change in functionality.
+
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::SelectionSubtreeData):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionEndPos const):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionClear const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionStart): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionStartPos): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionEnd): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::setSelectionEndPos): Deleted.
+        (): Deleted.
+
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Add infrastructure for adding custom headers to requests per website
