@@ -1,3 +1,16 @@
+2017-09-20  Antti Koivisto  <antti@apple.com>
+
+        inspector/dom/content-node-region-info.html and inspector/dom/content-flow tests crashing
+        https://bugs.webkit.org/show_bug.cgi?id=177249
+        <rdar://problem/34559968>
+
+        Unreviewed.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection):
+
+            Fix crashing by adding a few lines of removed code back.
+
 2017-09-20  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant SelectionSubtreeData functions.
