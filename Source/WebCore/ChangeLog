@@ -1,3 +1,38 @@
+2017-09-21  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unpredictable selection when dragging out of float elements children of in-flow block-level box
+        https://bugs.webkit.org/show_bug.cgi?id=176096
+
+        Reviewed by David Hyatt.
+
+        In order to improve Selection across float elements we need to
+        consider them as HitTest candidates.  Additionally, since
+        out-of-flow elements must not affect how in-flow elements are
+        rendered we have to deal with some special cases when implementing
+        the positionForPoint logic.
+
+        This patch addresses the issues caused by the fact that an in-flow
+        box's logicalBottom does not consider the out-of-flow children, as
+        they don't affect its height. Hence, we should add the lowest float
+        logical bottom to figure out the box the point is actually hitting.
+
+        Tests: editing/selection/select-out-of-floated-non-editable-01.html
+               editing/selection/select-out-of-floated-non-editable-02.html
+               editing/selection/select-out-of-floated-non-editable-03.html
+               editing/selection/select-out-of-floated-non-editable-04.html
+               editing/selection/select-out-of-floated-non-editable-05.html
+               editing/selection/select-out-of-floated-non-editable-06.html
+               editing/selection/select-out-of-floated-non-editable-07.html
+               editing/selection/select-out-of-floated-non-editable-08.html
+               editing/selection/select-out-of-floated-non-editable-09.html
+               editing/selection/select-out-of-floated-non-editable-10.html
+               editing/selection/select-out-of-floated-non-editable-11.html
+               editing/selection/select-out-of-floated-non-editable-12.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::positionForPoint):
+
 2017-09-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebCrypto] Support Elliptic Curve P-521

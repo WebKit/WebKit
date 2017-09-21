@@ -1,3 +1,45 @@
+2017-09-21  Javier Fernandez  <jfernandez@igalia.com>
+
+        Unpredictable selection when dragging out of float elements children of in-flow block-level box
+        https://bugs.webkit.org/show_bug.cgi?id=176096
+
+        Reviewed by David Hyatt.
+
+        Tests defining several cases of selection with floats, children of
+        a block-level box, so they behave as regular HitTest candidates
+        and don't mess the selection boundaries.
+
+        * editing/selection/resources/select-out-of-floated-non-editable.js: Added.
+        (clearLog):
+        (log):
+        (else.window.onmouseup):
+        (runTest):
+        (checkSelection):
+        * editing/selection/select-out-of-floated-non-editable-01-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-01.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-02-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-02.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-03-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-03.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-04-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-04.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-05-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-05.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-06-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-06.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-07-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-07.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-08-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-08.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-09-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-09.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-10-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-10.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-11-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-11.html: Added.
+        * editing/selection/select-out-of-floated-non-editable-12-expected.txt: Added.
+        * editing/selection/select-out-of-floated-non-editable-12.html: Added.
+
 2017-09-21  Miguel Gomez  <magomez@igalia.com>
 
         Unreviewed GTK+ gardening. Update expectations and rebaseline several tests failing at r222312.

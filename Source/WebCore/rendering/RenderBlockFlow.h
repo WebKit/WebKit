@@ -293,6 +293,8 @@ public:
     Position positionForPoint(const LayoutPoint&) override;
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
+    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const;
+
     void removeFloatingObjects();
     void markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove = nullptr, bool inLayout = true);
     void markSiblingsWithFloatsForLayout(RenderBox* floatToRemove = nullptr);
@@ -509,7 +511,6 @@ private:
 
     LayoutUnit lowestInitialLetterLogicalBottom() const;
     
-    LayoutUnit lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatLeftRight) const; 
     LayoutUnit nextFloatLogicalBottomBelow(LayoutUnit) const;
     LayoutUnit nextFloatLogicalBottomBelowForBlock(LayoutUnit) const;
     

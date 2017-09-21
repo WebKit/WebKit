@@ -1,0 +1,13 @@
+block-level text before floats
+first float*inline-level text after the floats
+To test manually, drag from the middle of the 'first float' div to the right, into the space before the inline-level box. The selection should go to the end of the first float element with a portion of the inline-level box's background and not jump to the beginning.
+
+SUCCESS: Selected test is 'float*' as expected
+| <div>
+|   "block-level text before floats"
+| <div>
+|   id="target"
+|   style="float: left; margin-right: 20px"
+|   "first <#selection-anchor>float*"
+| "<#selection-focus>inline-level text after the floats"
+

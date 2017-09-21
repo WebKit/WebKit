@@ -2628,7 +2628,7 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoin
 
 static inline bool isChildHitTestCandidate(const RenderBox& box)
 {
-    return box.height() && box.style().visibility() == VISIBLE && !box.isFloatingOrOutOfFlowPositioned() && !box.isInFlowRenderFlowThread();
+    return box.height() && box.style().visibility() == VISIBLE && !box.isOutOfFlowPositioned() && !box.isInFlowRenderFlowThread();
 }
 
 // Valid candidates in a FlowThread must be rendered by the region.
@@ -2685,6 +2685,8 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
             if (!isChildHitTestCandidate(*childBox, region, pointInLogicalContents))
                 continue;
             LayoutUnit childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
+            if (is<RenderBlockFlow>(childBox))
+                childLogicalBottom += downcast<RenderBlockFlow>(childBox)->lowestFloatLogicalBottom();
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
             if (isChildHitTestCandidate(*childBox, region, pointInLogicalContents) && (pointInLogicalContents.y() < childLogicalBottom
                 || (blocksAreFlipped && pointInLogicalContents.y() == childLogicalBottom)))
