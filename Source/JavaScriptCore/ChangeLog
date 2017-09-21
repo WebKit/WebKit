@@ -1,3 +1,16 @@
+2017-09-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: keyboard shortcut for "Reload page from origin" doesn't match Safari, and doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=177010
+        <rdar://problem/33134548>
+
+        Reviewed by Joseph Pecoraro.
+
+        Use "reload from origin" nomenclature instead of "reload ignoring cache".
+
+        * inspector/protocol/Page.json: Improve the comment, but don't change the
+        parameter name since this would be a divergence from legacy protocols.
+
 2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: test262/test/annexB/built-ins/RegExp/prototype/flags/order-after-compile.js ASSERTs

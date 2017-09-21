@@ -128,10 +128,10 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         this._testPageIsReloading = true;
 
         let {ignoreCache, revalidateAllResources} = options;
-        let shouldIgnoreCache = !!ignoreCache;
+        ignoreCache = !!ignoreCache;
         revalidateAllResources = !!revalidateAllResources;
 
-        return PageAgent.reload.invoke({shouldIgnoreCache, revalidateAllResources})
+        return PageAgent.reload.invoke({ignoreCache, revalidateAllResources})
             .then(() => {
                 this._shouldResendResults = true;
                 this._testPageReloadedOnce = true;

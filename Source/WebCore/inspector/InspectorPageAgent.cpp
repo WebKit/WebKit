@@ -376,11 +376,11 @@ void InspectorPageAgent::disable(ErrorString&)
     setEmulatedMedia(unused, emptyString());
 }
 
-void InspectorPageAgent::reload(ErrorString&, const bool* const optionalIgnoreCache, const bool* const optionalRevalidateAllResources, const String* optionalScriptToEvaluateOnLoad)
+void InspectorPageAgent::reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources, const String* optionalScriptToEvaluateOnLoad)
 {
     m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : emptyString();
 
-    bool reloadFromOrigin = optionalIgnoreCache && *optionalIgnoreCache;
+    bool reloadFromOrigin = optionalReloadFromOrigin && *optionalReloadFromOrigin;
     bool revalidateAllResources = optionalRevalidateAllResources && *optionalRevalidateAllResources;
 
     OptionSet<ReloadOption> reloadOptions;

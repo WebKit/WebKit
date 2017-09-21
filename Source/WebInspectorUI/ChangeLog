@@ -1,3 +1,26 @@
+2017-09-21  Brian Burg  <bburg@apple.com>
+
+        Web Inspector: keyboard shortcut for "Reload page from origin" doesn't match Safari, and doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=177010
+        <rdar://problem/33134548>
+
+        Reviewed by Joseph Pecoraro.
+
+        I seem to have broken reload from origin via Web Inspector in a previous
+        patch, because the parameter is 'ignoreCache' instead of 'shouldIgnoreCache'.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        Modernize tooltip text.
+
+        * UserInterface/Base/Main.js:
+        (WI.contentLoaded):
+        Disambiguate two locals with the same name. Modernize the tooltip.
+        Make the shortcut Cmd-Opt-R to match Safari. Fix wrong parameter usage.
+
+        * UserInterface/Test/FrontendTestHarness.js:
+        (FrontendTestHarness.prototype.reloadPage):
+        Fix wrong parameter.
+
 2017-09-19  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Adopt named groups in complex regexes

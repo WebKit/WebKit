@@ -327,8 +327,8 @@ WI.contentLoaded = function()
     this.tabBrowser.addEventListener(WI.TabBrowser.Event.SelectedTabContentViewDidChange, this._tabBrowserSelectedTabContentViewDidChange, this);
 
     this._reloadPageKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl, "R", this._reloadPage.bind(this));
-    this._reloadPageIgnoringCacheKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "R", this._reloadPageIgnoringCache.bind(this));
-    this._reloadPageKeyboardShortcut.implicitlyPreventsDefault = this._reloadPageIgnoringCacheKeyboardShortcut.implicitlyPreventsDefault = false;
+    this._reloadPageFromOriginKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Option, "R", this._reloadPageFromOrigin.bind(this));
+    this._reloadPageKeyboardShortcut.implicitlyPreventsDefault = this._reloadPageFromOriginKeyboardShortcut.implicitlyPreventsDefault = false;
 
     this._consoleTabKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Option | WI.KeyboardShortcut.Modifier.CommandOrControl, "C", this._showConsoleTab.bind(this));
     this._quickConsoleKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.Control, WI.KeyboardShortcut.Key.Apostrophe, this._focusConsolePrompt.bind(this));
@@ -370,21 +370,21 @@ WI.contentLoaded = function()
 
     this._togglePreviousDockConfigurationKeyboardShortcut = new WI.KeyboardShortcut(WI.KeyboardShortcut.Modifier.CommandOrControl | WI.KeyboardShortcut.Modifier.Shift, "D", this._togglePreviousDockConfiguration.bind(this));
 
-    var toolTip;
-    if (WI.sharedApp.debuggableType === WI.DebuggableType.JavaScript)
-        toolTip = WI.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
+    let reloadToolTip;
+    if (WI.debuggableType === WI.DebuggableType.JavaScript)
+        reloadToolTip = WI.UIString("Restart (%s)").format(this._reloadPageKeyboardShortcut.displayName);
     else
-        toolTip = WI.UIString("Reload this page (%s)\nReload ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageIgnoringCacheKeyboardShortcut.displayName);
-
-    this._reloadToolbarButton = new WI.ButtonToolbarItem("reload", toolTip, "Images/ReloadToolbar.svg");
-    this._reloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._reloadPageClicked, this);
+        reloadToolTip = WI.UIString("Reload page (%s)\nReload page ignoring cache (%s)").format(this._reloadPageKeyboardShortcut.displayName, this._reloadPageFromOriginKeyboardShortcut.displayName);
+  
+    this._reloadToolbarButton = new WI.ButtonToolbarItem("reload", reloadToolTip, "Images/ReloadToolbar.svg");
+    this._reloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._reloadToolbarButtonClicked, this);
 
     this._downloadToolbarButton = new WI.ButtonToolbarItem("download", WI.UIString("Download Web Archive"), "Images/DownloadArrow.svg");
     this._downloadToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._downloadWebArchive, this);
 
-    var toolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    var activatedToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
-    this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", toolTip, activatedToolTip, "Images/Crosshair.svg");
+    let elementSelectionToolTip = WI.UIString("Start element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    let activatedElementSelectionToolTip = WI.UIString("Stop element selection (%s)").format(WI._inspectModeKeyboardShortcut.displayName);
+    this._inspectModeToolbarButton = new WI.ActivateButtonToolbarItem("inspect", elementSelectionToolTip, activatedElementSelectionToolTip, "Images/Crosshair.svg");
     this._inspectModeToolbarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleInspectMode, this);
 
     this._updateReloadToolbarButton();
@@ -1816,18 +1816,18 @@ WI._reloadPage = function(event)
     event.preventDefault();
 };
 
-WI._reloadPageClicked = function(event)
+WI._reloadToolbarButtonClicked = function(event)
 {
-    // Ignore cache when the shift key is pressed.
-    PageAgent.reload.invoke({shouldIgnoreCache: window.event ? window.event.shiftKey : false});
+    // Reload page from origin if the button is clicked while the shift key is pressed down.
+    PageAgent.reload.invoke({ignoreCache: this.modifierKeys.shiftKey});
 };
 
-WI._reloadPageIgnoringCache = function(event)
+WI._reloadPageFromOrigin = function(event)
 {
     if (!window.PageAgent)
         return;
 
-    PageAgent.reload(true);
+    PageAgent.reload.invoke({ignoreCache: true});
     event.preventDefault();
 };
 
