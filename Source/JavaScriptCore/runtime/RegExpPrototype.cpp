@@ -190,7 +190,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     return JSValue::encode(thisValue);
 }
 
-typedef std::array<char, 5 + 1> FlagsString; // 5 different flags and a null character terminator.
+typedef std::array<char, 6 + 1> FlagsString; // 6 different flags and a null character terminator.
 
 static inline FlagsString flagsString(ExecState* exec, JSObject* regexp)
 {

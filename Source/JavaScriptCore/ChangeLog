@@ -1,3 +1,14 @@
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: test262/test/annexB/built-ins/RegExp/prototype/flags/order-after-compile.js ASSERTs
+        https://bugs.webkit.org/show_bug.cgi?id=177307
+
+        Reviewed by Michael Saboff.
+
+        * runtime/RegExpPrototype.cpp:
+        In r221160 we added support for the new RegExp flag (dotAll).
+        We needed to make space for it in FlagsString.
+
 2017-09-20  Keith Miller  <keith_miller@apple.com>
 
         JSC should use unified sources for platform specific files.
