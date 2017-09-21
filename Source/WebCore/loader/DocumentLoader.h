@@ -296,7 +296,7 @@ public:
 
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
-    void setCustomHeaderFields(Vector<HTTPHeaderField>&& fields);
+    WEBCORE_EXPORT void setCustomHeaderFields(Vector<HTTPHeaderField>&& fields);
     
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);

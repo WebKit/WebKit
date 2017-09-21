@@ -1,3 +1,10 @@
+2017-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix all builds after r222325
+
+        * loader/DocumentLoader.h:
+        WebKit needs this, too.
+
 2017-09-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move MediaTimeAVFoundation into PAL
