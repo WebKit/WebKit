@@ -6,8 +6,12 @@ description: >
     It is a Syntax Error if the ExportedNames of ModuleItemList contains any
     duplicate entries.
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var x;
 export { x };

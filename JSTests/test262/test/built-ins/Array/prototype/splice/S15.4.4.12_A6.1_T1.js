@@ -3,6 +3,7 @@
 
 /*---
 info: Array.prototype.splice sets `length` on `this`
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A6.1_T1
 description: Array.prototype.splice sets `length` on Array
 ---*/

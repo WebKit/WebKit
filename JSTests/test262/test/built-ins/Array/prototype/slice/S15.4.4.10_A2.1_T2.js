@@ -3,6 +3,7 @@
 
 /*---
 info: Operator use ToInteger from start
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A2.1_T2
 description: start = NaN
 ---*/
@@ -19,7 +20,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 3) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(NaN,3); arr.length === 3. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 0) {
@@ -29,12 +30,12 @@ if (arr[0] !== 0) {
 //CHECK#4
 if (arr[1] !== 1) {
   $ERROR('#4: var x = [0,1,2,3,4]; var arr = x.slice(NaN,3); arr[1] === 1. Actual: ' + (arr[1]));
-}      
+}
 
 //CHECK#5
 if (arr[2] !== 2) {
   $ERROR('#5: var x = [0,1,2,3,4]; var arr = x.slice(NaN,3); arr[2] === 2. Actual: ' + (arr[2]));
-}   
+}
 
 //CHECK#6
 if (arr[3] !== undefined) {

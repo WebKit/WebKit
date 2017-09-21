@@ -4,9 +4,11 @@
 
 
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat Symbol.isConcatSpreadable boolean wrapper
 includes: [compareArray.js]
+features: [Symbol.isConcatSpreadable]
 ---*/
 var bool = new Boolean(true)
 // Boolean wrapper objects are not concat-spreadable by default

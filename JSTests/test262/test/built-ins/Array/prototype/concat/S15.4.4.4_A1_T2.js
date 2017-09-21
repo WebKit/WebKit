@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.concat
 info: >
     When the concat method is called with zero or more arguments item1, item2,
     etc., it returns an array containing the array elements of the object followed by

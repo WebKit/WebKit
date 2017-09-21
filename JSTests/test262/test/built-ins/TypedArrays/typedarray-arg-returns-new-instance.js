@@ -15,16 +15,17 @@ info: >
   20. Return O.
 
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
-var length = 10;
-var typedArraySample = new Int8Array(length);
+var len = 10;
+var typedArraySample = new Int8Array(len);
 
 testWithTypedArrayConstructors(function(TA) {
   var typedArray = new TA(typedArraySample);
 
   assert.notSameValue(typedArray, typedArraySample);
-  assert.sameValue(typedArray.length, length);
+  assert.sameValue(typedArray.length, len);
   assert.sameValue(typedArray.constructor, TA);
   assert.sameValue(Object.getPrototypeOf(typedArray), TA.prototype);
 });

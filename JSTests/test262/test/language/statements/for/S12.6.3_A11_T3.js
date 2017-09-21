@@ -8,8 +8,12 @@ info: >
     breaks
 es5id: 12.6.3_A11_T3
 description: Trying to continue non-existent label
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 __str="";
 

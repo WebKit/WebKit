@@ -20,6 +20,7 @@ info: >
   5. If IsInteger(index) is false, return undefined.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

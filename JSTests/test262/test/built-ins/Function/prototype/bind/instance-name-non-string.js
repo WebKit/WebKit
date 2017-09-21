@@ -1,4 +1,4 @@
-// Copyright (C) Copyright 2015 the V8 project authors. All rights reserved.
+// Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
@@ -11,6 +11,7 @@ info: >
     14. If Type(targetName) is not String, let targetName be the empty string.
     15. Perform SetFunctionName(F, targetName, "bound").
 includes: [propertyHelper.js]
+features: [Symbol]
 ---*/
 
 var target;

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-9-c-ii-4-s
 description: >
     Array.prototype.reduce - undefined passed as thisValue to strict
@@ -11,7 +12,7 @@ flags: [noStrict]
 
   var innerThisCorrect = false;
   function callbackfn(prevVal, curVal, idx, obj)
-  { 
+  {
      "use strict";
      innerThisCorrect = this===undefined;
      return true;

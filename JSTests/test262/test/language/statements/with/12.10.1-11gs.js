@@ -4,9 +4,12 @@
 /*---
 es5id: 12.10.1-11gs
 description: Strict Mode - SyntaxError is thrown when using with statement
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 with ({}) { }

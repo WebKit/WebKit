@@ -7,8 +7,12 @@ info: >
     that might make it ambiguous with a FunctionDeclaration
 es5id: 12.4_A1
 description: Checking if execution of "function(){}()" fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1

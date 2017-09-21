@@ -5,8 +5,12 @@
 info: "UnicodeEscapeSequence :: u HexDigit (one, two or three time) is incorrect"
 es5id: 7.8.4_A7.2_T3
 description: ":: HexDigit :: 1"
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 "\u11"

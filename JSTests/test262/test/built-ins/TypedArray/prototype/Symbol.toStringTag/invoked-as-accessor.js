@@ -11,8 +11,8 @@ info: >
   ...
   3. If O does not have a [[TypedArrayName]] internal slot, return undefined.
   ...
-features: [Symbol.toStringTag]
 includes: [testTypedArray.js]
+features: [Symbol.toStringTag, TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

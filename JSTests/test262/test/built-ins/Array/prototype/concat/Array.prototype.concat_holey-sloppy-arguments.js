@@ -4,9 +4,11 @@
 
 
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat holey sloppy arguments
 includes: [compareArray.js]
+features: [Symbol.isConcatSpreadable]
 ---*/
 var args = (function(a) { return arguments; })(1,2,3);
 delete args[1];

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.splice
 es6id: 22.1.3.25
 description: >
   Array.prototype.splice.name is "splice".

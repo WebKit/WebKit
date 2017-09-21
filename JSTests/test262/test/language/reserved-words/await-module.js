@@ -5,7 +5,11 @@ esid: sec-reserved-words
 es6id: 11.6.2
 description: The `await` token is not permitted as an identifier in module code
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var await;

@@ -15,8 +15,5 @@ var validTimeZoneNames = [
 validTimeZoneNames.forEach(function (name) {
     // this must not throw an exception for a valid time zone name
     var format = new Intl.DateTimeFormat(["de-de"], {timeZone: name});
-    if (format.resolvedOptions().timeZone !== name.toUpperCase()) {
-        $ERROR("Time zone name " + name + " was not correctly accepted; turned into " +
-            format.resolvedOptions().timeZone + ".");
-    }
+    assert.sameValue(format.resolvedOptions().timeZone, name.toUpperCase(), "Time zone name " + name + " was not correctly accepted.");
 });

@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.4
+esid: sec-typedarray-constructors
 description: >
   Uint32Array is a constructor function.
 ---*/

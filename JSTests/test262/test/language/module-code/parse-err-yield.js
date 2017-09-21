@@ -22,7 +22,11 @@ info: |
     ExportDeclaration
     StatementListItem[~Yield, ~Return]
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 yield;

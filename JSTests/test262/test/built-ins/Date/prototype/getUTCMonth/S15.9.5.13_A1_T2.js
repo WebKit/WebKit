@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype property "getUTCMonth" has { DontEnum } attributes
+esid: sec-date.prototype.getutcmonth
 es5id: 15.9.5.13_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/

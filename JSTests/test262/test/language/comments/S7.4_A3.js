@@ -5,8 +5,12 @@
 info: Multi line comments cannot nest
 es5id: 7.4_A3
 description: Try use nested comments
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /*CHECK#1*/
 

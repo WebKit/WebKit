@@ -5,6 +5,7 @@
 info: >
     If start is negative, use max(start + length, 0).
     If deleteCount is positive, use min(deleteCount, length - start)
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A1.4_T1
 description: length = -start > deleteCount > 0, itemCount = 0
 ---*/
@@ -21,7 +22,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 3) {
   $ERROR('#2: var x = [0,1,2,3]; var arr = x.splice(-4,3); arr.length === 3. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 0) {
@@ -31,17 +32,17 @@ if (arr[0] !== 0) {
 //CHECK#4
 if (arr[1] !== 1) {
   $ERROR('#4: var x = [0,1,2,3]; var arr = x.splice(-4,3); arr[1] === 1. Actual: ' + (arr[1]));
-}      
+}
 
 //CHECK#5
 if (arr[2] !== 2) {
   $ERROR('#5: var x = [0,1,2,3]; var arr = x.splice(-4,3); arr[2] === 2. Actual: ' + (arr[2]));
-}   
+}
 
 //CHECK#6
 if (x.length !== 1) {
   $ERROR('#6: var x = [0,1,2,3]; var arr = x.splice(-4,3); x.length === 1. Actual: ' + (x.length));
-} 
+}
 
 //CHECK#7
 if (x[0] !== 3) {

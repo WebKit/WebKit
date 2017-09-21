@@ -9,7 +9,4 @@ description: >
 author: Roozbeh Pournader
 ---*/
 
-if (Intl.DateTimeFormat.prototype.constructor !== Intl.DateTimeFormat) {
-    $ERROR("Intl.DateTimeFormat.prototype.constructor is not the same as " +
-          "Intl.DateTimeFormat");
-}
+assert.sameValue(Intl.DateTimeFormat.prototype.constructor, Intl.DateTimeFormat, "Intl.DateTimeFormat.prototype.constructor is not the same as Intl.DateTimeFormat");

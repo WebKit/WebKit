@@ -56,6 +56,7 @@ info: |
              BindingPattern with A and environment as the arguments.
        [...]
 ---*/
+let length = "outer";
 
 var callCount = 0;
 var obj = {
@@ -66,9 +67,7 @@ var obj = {
     assert.sameValue(y, undefined);
     assert.sameValue(z, 3);
 
-    assert.throws(ReferenceError, function() {
-      length;
-    });
+    assert.sameValue(length, "outer", "the length prop is not set as a binding name");
     callCount = callCount + 1;
   }
 };

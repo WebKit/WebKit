@@ -19,8 +19,8 @@ features: [Symbol]
 ---*/
 
 var buffer = new ArrayBuffer(8);
-var length = Symbol("1");
+var s = Symbol("1");
 
 assert.throws(TypeError, function() {
-  new DataView(buffer, 0, length);
+  new DataView(buffer, 0, s);
 });

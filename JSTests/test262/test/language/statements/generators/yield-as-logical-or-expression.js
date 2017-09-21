@@ -5,8 +5,12 @@
   description: >
       `yield` expressions are not LogicalOrExpressions.
   es6id: 12.1.1
-  negative: SyntaxError
+  negative:
+    phase: early
+    type: SyntaxError
  ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 
 function* g() {

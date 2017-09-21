@@ -5,8 +5,12 @@
 info: Expression in "do-while" IterationStatement is bracketed with braces
 es5id: 12.6.1_A6_T4
 description: Checking if execution of "do{}while false" fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1

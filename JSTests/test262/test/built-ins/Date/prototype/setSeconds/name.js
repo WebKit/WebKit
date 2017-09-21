@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.setseconds
 es6id: 20.3.4.26
 description: >
   Date.prototype.setSeconds.name is "setSeconds".

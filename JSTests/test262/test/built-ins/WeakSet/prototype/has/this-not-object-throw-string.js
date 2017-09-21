@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.3.4
+esid: sec-weakset.prototype.has
 description: Throws TypeError if `this` is not Object.
 info: >
   WeakSet.prototype.has ( value )

@@ -5,6 +5,7 @@ es6id: 12.2.5
 description: >
     In a class, static computed property method names can be a symbol
 includes: [compareArray.js]
+features: [Symbol]
 ---*/
 var sym1 = Symbol();
 var sym2 = Symbol();

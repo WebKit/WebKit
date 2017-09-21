@@ -15,6 +15,7 @@ info: >
   4. Return OrdinaryGetOwnProperty(O, P).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

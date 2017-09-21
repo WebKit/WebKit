@@ -3,7 +3,7 @@
 
 /*---
 es5id: 10.6-14-1-s
-description: Strict Mode - 'callee' exists and 'caller' exists under strict mode
+description: Strict Mode - 'callee' exists under strict mode
 flags: [onlyStrict]
 ---*/
 
@@ -12,4 +12,3 @@ flags: [onlyStrict]
         } ();
 
 assert(argObj.hasOwnProperty("callee"), 'argObj.hasOwnProperty("callee") !== true');
-assert(argObj.hasOwnProperty("caller"), 'argObj.hasOwnProperty("caller") !== true');

@@ -18,17 +18,12 @@ var dates = [
 var format = new Intl.DateTimeFormat(["en-US"], {year: "numeric", month: "long", timeZone: "UTC"});
 
 // this test requires a Gregorian calendar, which we usually find in the US
-if (format.resolvedOptions().calendar !== "gregory") {
-    $ERROR("Internal error: Didn't find Gregorian calendar");
-}
+assert.sameValue(format.resolvedOptions().calendar, "gregory", "Internal error: Didn't find Gregorian calendar");
 
 dates.forEach(function (date) {
     var year = new Date(date).getUTCFullYear();
     var expectedYear = year <= 0 ? 1 - year : year;
     var expectedYearString = expectedYear.toLocaleString(["en-US"], {useGrouping: false});
     var dateString = format.format(date);
-    if (dateString.indexOf(expectedYearString) === -1) {
-        $ERROR("Formatted year doesn't contain expected year – expected " +
-            expectedYearString + ", got " + dateString + ".");
-    }
+    assert.notSameValue(dateString.indexOf(expectedYearString), -1, "Formatted year doesn't contain expected year – expected " + expectedYearString + ", got " + dateString + ".");
 });

@@ -7,8 +7,8 @@ es5id: 7.3_A3.4_T2
 description: >
     Insert PARAGRAPH SEPARATOR (\u2029) into begin of single line
     comment
-negative: SyntaxError
 ---*/
 
-// CHECK#1
-eval("//\u2029 single line comment");
+assert.throws(SyntaxError, function() {
+  eval("//\u2029 single line comment");
+});

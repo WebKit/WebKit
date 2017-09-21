@@ -9,8 +9,12 @@ info: >
   Static Semantics: Early Errors
 
   It is a Syntax Error if ContainsUseStrict of FunctionBody is true and IsSimpleParameterList of FormalParameters is false.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function f(a = 0) {
   "use strict";

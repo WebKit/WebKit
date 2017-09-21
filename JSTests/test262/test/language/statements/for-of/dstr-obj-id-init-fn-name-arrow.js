@@ -40,10 +40,12 @@ var arrow;
 var counter = 0;
 
 for ({ arrow = () => {} } of [{}]) {
-  assert.sameValue(arrow.name, 'arrow');
-  verifyNotEnumerable(arrow, 'name');
-  verifyNotWritable(arrow, 'name');
-  verifyConfigurable(arrow, 'name');
+  verifyProperty(arrow, 'name', {
+    enumerable: false,
+    writable: false,
+    configurable: true,
+    value: 'arrow'
+  });
   counter += 1;
 }
 

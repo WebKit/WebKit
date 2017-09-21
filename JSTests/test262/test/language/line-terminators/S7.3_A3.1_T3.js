@@ -5,8 +5,12 @@
 info: Single line comments can not contain LINE FEED (U+000A) inside
 es5id: 7.3_A3.1_T3
 description: Insert real LINE FEED into single line comment
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 // CHECK#1
 //single 

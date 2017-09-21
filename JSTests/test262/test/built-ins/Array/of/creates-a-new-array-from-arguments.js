@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 /*---
+esid: sec-array.of
 es6id: 22.1.2.3
 description: >
   Array.of method creates a new Array with a variable number of arguments.

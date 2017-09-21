@@ -5,7 +5,7 @@
 description: Elision advances iterator (method)
 esid: sec-runtime-semantics-definemethod
 es6id: 14.3.8
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     MethodDefinition : PropertyName ( StrictFormalParameters ) { FunctionBody }

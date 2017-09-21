@@ -10,6 +10,7 @@ info: >
   7. Let relativeBegin be ? ToInteger(begin).
   ...
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 var obj = {

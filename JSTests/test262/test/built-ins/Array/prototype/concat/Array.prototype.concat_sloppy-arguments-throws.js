@@ -4,8 +4,10 @@
 
 
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat sloppy arguments throws
+features: [Symbol.isConcatSpreadable]
 ---*/
 function MyError() {}
 var args = (function(a) { return arguments; })(1,2,3);

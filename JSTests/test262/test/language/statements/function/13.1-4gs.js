@@ -7,9 +7,12 @@ description: >
     Strict Mode - SyntaxError is thrown if the identifier 'arguments'
     appears within a FormalParameterList of a strict mode
     FunctionExpression
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 var _13_1_4_fun = function (arguments) { };

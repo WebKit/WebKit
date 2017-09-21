@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getutcfullyear
 es6id: 20.3.4.14
 description: >
   Date.prototype.getUTCFullYear.name is "getUTCFullYear".

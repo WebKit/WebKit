@@ -24,7 +24,7 @@ info: >
     argumentList[0], throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -6,8 +6,12 @@ description: >
     It is a Syntax Error if ContainsUndefinedContinueTarget of ModuleItemList
     with arguments « » and « » is true.
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 while (false) {
   continue undef;

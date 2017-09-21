@@ -6,7 +6,9 @@ es5id: 10.1.1-2gs
 description: >
     Strict Mode - Use Strict Directive Prologue is ''use strict''
     which lost the last character ';'
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [raw]
 ---*/
 

@@ -3,6 +3,7 @@
 
 /*---
 info: Operator use ToInteger from end
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A2.2_T3
 description: end = Infinity
 ---*/
@@ -19,7 +20,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 5) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(0,Number.POSITIVE_INFINITY); arr.length === 5. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 0) {

@@ -7,7 +7,11 @@ info: >
     DecimalEscape is not allowed when the `u` flag is set (regardless of Annex
     B extensions--see ES6 section B.1.4).
 es6id: 21.2.1
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /\1/u;

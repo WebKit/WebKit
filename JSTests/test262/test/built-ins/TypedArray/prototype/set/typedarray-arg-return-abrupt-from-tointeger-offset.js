@@ -12,6 +12,7 @@ info: >
   ...
   6. Let targetOffset be ? ToInteger(offset).
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var obj1 = {

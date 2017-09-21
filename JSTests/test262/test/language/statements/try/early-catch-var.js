@@ -11,8 +11,12 @@ info: >
     VariableDeclarationList of a for statement, and the ForBinding of a for-of
     statement. Bindings from the ForBinding of a for-in statement are
     restricted regardless of the application of Annex B.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 $ERROR('This code should not be executed.');
 

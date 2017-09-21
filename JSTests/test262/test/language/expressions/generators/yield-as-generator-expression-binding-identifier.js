@@ -6,7 +6,11 @@
       `yield` is not a valid BindingIdentifier for GeneratorExpressions.
   es6id: 12.1.1
   flags: [noStrict]
-  negative: SyntaxError
+  negative:
+    phase: early
+    type: SyntaxError
  ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var g = function* yield() {};

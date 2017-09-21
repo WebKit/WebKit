@@ -15,7 +15,7 @@ info: |
     the [[Exports]] list may still pass. A separate test is dedicated to sort
     order.
 flags: [module]
-features: [Reflect, Symbol.iterator, Symbol.toStringTag, let]
+features: [Reflect, Symbol.toStringTag, let]
 ---*/
 
 import * as ns from './own-property-keys-binding-types.js';
@@ -42,12 +42,8 @@ assert.sameValue(stringKeys[9], 'i_starIndirect');
 var symbolKeys = Object.getOwnPropertySymbols(ns);
 
 assert(
-  symbolKeys.length > 1,
+  symbolKeys.length > 0,
   'at least as many Symbol keys as defined by the specification'
-);
-assert(
-  symbolKeys.indexOf(Symbol.iterator) > -1,
-  'Symbol keys array includes Symbol.iterator'
 );
 assert(
   symbolKeys.indexOf(Symbol.toStringTag) > -1,
@@ -57,7 +53,7 @@ assert(
 var allKeys = Reflect.ownKeys(ns);
 
 assert(
-  allKeys.length > 11,
+  allKeys.length >= 11,
   'at least as many keys as defined by the module and the specification'
 );
 assert.sameValue(allKeys[0], 'a_local1');
@@ -70,9 +66,6 @@ assert.sameValue(allKeys[6], 'f_indirectUninit');
 assert.sameValue(allKeys[7], 'g_star');
 assert.sameValue(allKeys[8], 'h_starRenamed');
 assert.sameValue(allKeys[9], 'i_starIndirect');
-assert(
-  allKeys.indexOf(Symbol.iterator) > 9, 'keys array includes Symbol.iterator'
-);
 assert(
   allKeys.indexOf(Symbol.toStringTag) > 9,
   'keys array includes Symbol.toStringTag'

@@ -5,7 +5,11 @@
 description: >
     Non-hexadecimal value within the delimiters of a UnicodeEscapeSequence
 es6id: 21.2.1
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /\u{1,}/u;

@@ -7,7 +7,11 @@ info: >
     consisting of six characters, namely \u plus four hexadecimal digits
 es5id: 7.3_A6_T2
 description: Insert CARRIAGE RETURN (U+000D) in var x
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var\u000Dx;

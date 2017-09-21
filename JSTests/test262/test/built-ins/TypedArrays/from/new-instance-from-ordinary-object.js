@@ -5,7 +5,7 @@ esid: sec-%typedarray%.from
 description: >
   Return a new TypedArray from an ordinary object
 includes: [testTypedArray.js]
-features: [Array.prototype.values]
+features: [Array.prototype.values, TypedArray]
 ---*/
 
 var source = {

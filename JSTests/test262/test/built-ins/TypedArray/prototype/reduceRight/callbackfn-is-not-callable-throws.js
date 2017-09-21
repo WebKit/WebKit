@@ -19,7 +19,7 @@ info: >
   4. If len is 0 and initialValue is not present, throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

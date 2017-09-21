@@ -5,8 +5,12 @@
 info: CARRIAGE RETURN (U+000D) within strings is not allowed
 es5id: 7.3_A2.2_T2
 description: Insert real CARRIAGE RETURN into string
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 "

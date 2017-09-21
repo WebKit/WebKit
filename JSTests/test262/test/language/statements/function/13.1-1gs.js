@@ -7,9 +7,12 @@ description: >
     Strict Mode - SyntaxError is thrown if the identifier 'eval'
     appears within a FormalParameterList of a strict mode
     FunctionDeclaration
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 function _13_1_1_fun(eval) { }

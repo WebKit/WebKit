@@ -70,35 +70,35 @@ Object.defineProperty(
 );
 
 assert.throws(TypeError, function() {
-  $.evalScript('var x; function data1() {}');
+  $262.evalScript('var x; function data1() {}');
 }, 'writable, non-enumerable data property');
 assert.throws(ReferenceError, function() {
   x;
 }, 'bindings not created for writable, non-enumerable data property');
 
 assert.throws(TypeError, function() {
-  $.evalScript('var x; function data2() {}');
+  $262.evalScript('var x; function data2() {}');
 }, 'non-writable, enumerable data property');
 assert.throws(ReferenceError, function() {
   x;
 }, 'bindings not created for non-writable, enumerable data property');
 
 assert.throws(TypeError, function() {
-  $.evalScript('var x; function data3() {}');
+  $262.evalScript('var x; function data3() {}');
 }, 'non-writable, non-enumerable data property');
 assert.throws(ReferenceError, function() {
   x;
 }, 'bindings not created for non-writable, non-enumerable data property');
 
 assert.throws(TypeError, function() {
-  $.evalScript('var x; function accessor1() {}');
+  $262.evalScript('var x; function accessor1() {}');
 }, 'enumerable accessor property');
 assert.throws(ReferenceError, function() {
   x;
 }, 'bindings not created for enumerableaccessor property');
 
 assert.throws(TypeError, function() {
-  $.evalScript('var x; function accessor2() {}');
+  $262.evalScript('var x; function accessor2() {}');
 }, 'non-enumerable accessor property');
 assert.throws(ReferenceError, function() {
   x;

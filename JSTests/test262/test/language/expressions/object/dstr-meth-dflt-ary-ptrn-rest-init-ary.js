@@ -7,7 +7,9 @@ esid: sec-runtime-semantics-definemethod
 es6id: 14.3.8
 features: [destructuring-binding, default-parameters]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     MethodDefinition : PropertyName ( StrictFormalParameters ) { FunctionBody }
 
@@ -47,6 +49,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 var callCount = 0;
 var obj = {

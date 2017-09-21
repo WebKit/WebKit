@@ -19,8 +19,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.fontcolor.name, "fontcolor");
-
-verifyNotEnumerable(String.prototype.fontcolor, "name");
-verifyNotWritable(String.prototype.fontcolor, "name");
-verifyConfigurable(String.prototype.fontcolor, "name");
+verifyProperty(String.prototype.fontcolor, "name", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: "fontcolor"
+});

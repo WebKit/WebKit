@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorStep returns an abrupt completion (static class expression generator method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 es6id: 14.5.15
-features: [destructuring-binding]
+features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail
@@ -68,6 +68,7 @@ info: |
        a. Let next be IteratorStep(iteratorRecord.[[iterator]]).
        b. If next is an abrupt completion, set iteratorRecord.[[done]] to true.
        c. ReturnIfAbrupt(next).
+
 ---*/
 var g = {};
 g[Symbol.iterator] = function() {

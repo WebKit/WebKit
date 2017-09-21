@@ -9,8 +9,12 @@ es5id: 12.8_A6
 description: >
     Checking if using "break Identifier" within a function body
     appears to be invalid
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var x=0,y=0;
 

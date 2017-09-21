@@ -20,7 +20,7 @@ info: >
   ...
   16. Return A.
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

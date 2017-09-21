@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.3.3
+esid: sec-weakset.prototype.delete
 description: >
   WeakSet.prototype.delete.length value and writability.
 info: >

@@ -7,8 +7,12 @@ info: >
     It is a Syntax Error if FlagText of RegularExpressionLiteral contains any
     code points other than "g", "i", "m", "u", or "y", or if it contains the
     same code point more than once.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 throw new Test262Error();
 

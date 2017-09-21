@@ -26,6 +26,7 @@ info: >
     c. Increase k by 1.
   8. Return false.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var obj = {

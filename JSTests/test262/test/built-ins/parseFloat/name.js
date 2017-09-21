@@ -3,6 +3,7 @@
 
 /*---
 es6id: 18.2.4
+esid: sec-parsefloat-string
 description: >
   parseFloat.name is "parseFloat".
 info: >

@@ -14,7 +14,7 @@ info: >
     a. Add ! ToString(i) as the last element of keys.
   ...
 includes: [testTypedArray.js, compareArray.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

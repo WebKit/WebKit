@@ -5,6 +5,7 @@
 info: >
     The reverse function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.reverse
 es5id: 15.4.4.8_A2_T2
 description: >
     Checking this for Object object, elements are objects and
@@ -36,7 +37,7 @@ if (obj[0] !== "-1") {
 //CHECK#3
 if (obj[1] !== "NaN") {
    $ERROR('#3: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj[1] === "NaN". Actual: ' + (obj[1]));
-}    
+}
 
 //CHECK#4
 if (obj[2] !== undefined) {
@@ -46,7 +47,7 @@ if (obj[2] !== undefined) {
 //CHECK#5
 if (obj[3] !== undefined) {
    $ERROR('#5: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj[3] === undefined. Actual: ' + (obj[3]));
-}    
+}
 
 //CHECK#6
 if (obj[4] !== undefined) {
@@ -61,7 +62,7 @@ if (obj[5] !== undefined) {
 //CHECK#8
 if (obj[6] !== undefined) {
    $ERROR('#8: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj[6] === undefined. Actual: ' + (obj[6]));
-}      
+}
 
 //CHECK#9
 if (obj[7] !== Infinity) {
@@ -76,7 +77,7 @@ if (obj[8] !== undefined) {
 //CHECK#11
 if (obj[9] !== true) {
    $ERROR('#11: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj[9] === true. Actual: ' + (obj[9]));
-}   
+}
 
 obj.length = new Number(9.5);
 
@@ -93,7 +94,7 @@ if (obj[0] !== undefined) {
 //CHECK#13
 if (obj[1] !== Infinity) {
    $ERROR('#13: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj.length = new Number(9.5); obj.reverse(); obj[1] === Infinity. Actual: ' + (obj[1]));
-}    
+}
 
 //CHECK#14
 if (obj[2] !== undefined) {
@@ -103,7 +104,7 @@ if (obj[2] !== undefined) {
 //CHECK#15
 if (obj[3] !== undefined) {
    $ERROR('#15: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj.length = new Number(9.5); obj.reverse(); obj[3] === undefined. Actual: ' + (obj[3]));
-}    
+}
 
 //CHECK#16
 if (obj[4] !== undefined) {
@@ -118,7 +119,7 @@ if (obj[5] !== undefined) {
 //CHECK#18
 if (obj[6] !== undefined) {
    $ERROR('#18: var obj = {}; obj.reverse = Array.prototype.reverse; obj.length = 10.5; obj[0] = true; obj[2] = Infinity; obj[4] = undefined; obj[5] = undefined; obj[8] = "NaN"; obj[9] = "-1"; obj.reverse(); obj.length = new Number(9.5); obj.reverse(); obj[6] === undefined. Actual: ' + (obj[6]));
-}      
+}
 
 //CHECK#19
 if (obj[7] !== "NaN") {

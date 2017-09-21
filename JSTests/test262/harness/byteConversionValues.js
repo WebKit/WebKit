@@ -1,13 +1,13 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
-
-/**
- * Provide a list for original and expected values for different byte
- * conversions.
- * This helper is mostly used on tests for TypedArray and DataView, and each
- * array from the expected values must match the original values array on every
- * index containing its original value.
- */
+/*---
+description: |
+    Provide a list for original and expected values for different byte
+    conversions.
+    This helper is mostly used on tests for TypedArray and DataView, and each
+    array from the expected values must match the original values array on every
+    index containing its original value.
+---*/
 var byteConversionValues = {
   values: [
     127,         // 2 ** 7 - 1

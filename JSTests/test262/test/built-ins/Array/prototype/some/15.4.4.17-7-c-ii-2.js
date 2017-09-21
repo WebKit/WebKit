@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-7-c-ii-2
 description: Array.prototype.some - callbackfn takes 3 arguments
 ---*/
@@ -16,6 +17,6 @@ description: Array.prototype.some - callbackfn takes 3 arguments
 
   var arr = [0,1,true,null,new Object(),"five"];
   arr[999999] = -6.6;
-  
+
 
 assert.sameValue(arr.some(callbackfn), false, 'arr.some(callbackfn)');

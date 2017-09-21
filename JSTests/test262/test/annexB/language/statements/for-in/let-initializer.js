@@ -4,8 +4,12 @@
 esid: sec-initializers-in-forin-statement-heads
 description: >
     for-in initializers with let are prohibited
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 throw NotEarlyError;
 for (let a = 0 in {});
 

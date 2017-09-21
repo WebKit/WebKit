@@ -13,8 +13,8 @@ info: >
       ii. If next is not false, then
         1. Let nextValue be ? IteratorValue(next).
   ...
-features: [Symbol.iterator]
 includes: [testTypedArray.js]
+features: [Symbol.iterator, TypedArray]
 ---*/
 
 var iter = {};

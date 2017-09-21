@@ -5,7 +5,11 @@ es6id: B.3.3
 description: >
     redeclaration within block:
     attempt to redeclare let binding with var
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 { let f; var f; }
 

@@ -4,6 +4,8 @@
 /*---
 info: Operator use ToString
 es5id: 15.1.2.2_A1_T7
+es6id: 18.2.5
+esid: sec-parseint-string-radix
 description: If Type(value) is Object, evaluate ToPrimitive(value, String)
 ---*/
 
@@ -15,7 +17,7 @@ assert.sameValue(parseInt(object), NaN, "{valueOf: function() {return 1}}");
 var object = {valueOf: function() {return 1}, toString: function() {return 0}};
 if (parseInt(object) !== 0) {
   $ERROR('#2: var object = {valueOf: function() {return 1}, toString: function() {return 0}}; parseInt(object) === 0. Actual: ' + (parseInt(object)));
-} 
+}
 
 //CHECK#3
 var object = {valueOf: function() {return 1}, toString: function() {return {}}};
@@ -55,11 +57,11 @@ try {
   var object = {valueOf: function() {return 1}, toString: function() {throw "error"}};
   parseInt(object);
   $ERROR('#7.1: var object = {valueOf: function() {return 1}, toString: function() {throw "error"}}; parseInt(object) throw "error". Actual: ' + (parseInt(object)));
-}  
+}
 catch (e) {
   if (e !== "error") {
     $ERROR('#7.2: var object = {valueOf: function() {return 1}, toString: function() {throw "error"}}; parseInt(object) throw "error". Actual: ' + (e));
-  } 
+  }
 }
 
 //CHECK#8
@@ -67,9 +69,9 @@ try {
   var object = {valueOf: function() {return {}}, toString: function() {return {}}};
   parseInt(object);
   $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; parseInt(object) throw TypeError. Actual: ' + (parseInt(object)));
-}  
+}
 catch (e) {
   if ((e instanceof TypeError) !== true) {
     $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; parseInt(object) throw TypeError. Actual: ' + (e));
-  } 
+  }
 }

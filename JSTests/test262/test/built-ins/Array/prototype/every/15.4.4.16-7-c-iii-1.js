@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-7-c-iii-1
 description: Array.prototype.every - return value of callbackfn is undefined
 ---*/
@@ -14,7 +15,7 @@ description: Array.prototype.every - return value of callbackfn is undefined
             return undefined;
         }
 
-        
+
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn), false, 'Array.prototype.every.call(obj, callbackfn)');
 assert(accessed, 'accessed !== true');

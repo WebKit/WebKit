@@ -12,6 +12,7 @@ info: >
   ...
   6. Let targetOffset be ? ToInteger(offset).
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

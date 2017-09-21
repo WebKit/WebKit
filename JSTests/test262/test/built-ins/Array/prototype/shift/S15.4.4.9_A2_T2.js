@@ -5,6 +5,7 @@
 info: >
     The shift function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.shift
 es5id: 15.4.4.9_A2_T2
 description: >
     If ToUint32(length) equal zero, call the [[Put]] method  of this
@@ -43,7 +44,7 @@ obj.length = -0;
 var shift = obj.shift();
 if (shift !== undefined) {
   $ERROR('#7: var obj = {}; obj.length = -0; obj.shift = Array.prototype.shift; obj.shift() === undefined. Actual: ' + (shift));
-}    
+}
 
 //CHECK#8
 if (obj.length !== 0) {
@@ -51,8 +52,8 @@ if (obj.length !== 0) {
 } else {
   if (1/obj.length !== Number.POSITIVE_INFINITY) {
     $ERROR('#8: var obj = {}; obj.length = -0; obj.shift = Array.prototype.shift; obj.shift(); obj.length === +0. Actual: ' + (obj.length));
-  }  
-}   
+  }
+}
 
 //CHECK#9
 obj.length = 0.5;
@@ -64,7 +65,7 @@ if (shift !== undefined) {
 //CHECK#10
 if (obj.length !== 0) {
   $ERROR('#10: var obj = {}; obj.length = 0.5; obj.shift = Array.prototype.shift; obj.shift(); obj.length === 0. Actual: ' + (obj.length));
-} 
+}
 
 //CHECK#11
 obj.length = new Number(0);

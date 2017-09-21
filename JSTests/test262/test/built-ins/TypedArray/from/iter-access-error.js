@@ -14,8 +14,8 @@ info: >
 
   1. Let usingIterator be ? GetMethod(items, @@iterator).
   ...
-features: [Symbol.iterator]
 includes: [testTypedArray.js]
+features: [Symbol.iterator, TypedArray]
 ---*/
 
 var iter = {};

@@ -6,11 +6,13 @@ description: >
     [[Delete]] behavior for a key that does not describe an exported binding
 info: |
     [...]
-    2. Let exports be the value of O's [[Exports]] internal slot.
-    3. If P is an element of exports, return false.
-    4. Return true.
+    2. If Type(P) is Symbol, then
+        a. Return ? OrdinaryDelete(O, P).
+    3. Let exports be O.[[Exports]].
+    4. If P is an element of exports, return false.
+    5. Return true.
 flags: [module]
-features: [Reflect, Symbol, Symbol.iterator, Symbol.toStringTag]
+features: [Reflect, Symbol, Symbol.toStringTag]
 ---*/
 
 import * as ns from './delete-non-exported.js';
@@ -24,15 +26,9 @@ assert(
   Reflect.deleteProperty(ns, 'default'), 'Reflect.deleteProperty: default'
 );
 
-assert(delete ns[Symbol.iterator], 'delete: Symbol.iterator');
-assert(
-  Reflect.deleteProperty(ns, Symbol.iterator),
-  'Reflect.deleteProperty: Symbol.iterator'
-);
-
-assert(delete ns[Symbol.toStringTag], 'delete: Symbol.toStringTag');
-assert(
-  Reflect.deleteProperty(ns, Symbol.toStringTag),
+assert.throws(TypeError, function() { delete ns[Symbol.toStringTag]; }, 'delete: Symbol.toStringTag');
+assert.sameValue(
+  Reflect.deleteProperty(ns, Symbol.toStringTag), false,
   'Reflect.deleteProperty: Symbol.toStringTag'
 );
 

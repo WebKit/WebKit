@@ -3,6 +3,7 @@
 
 /*---
 info: If length is zero, return the empty string
+esid: sec-array.prototype.join
 es5id: 15.4.4.5_A1.1_T1
 description: Checking this use new Array() and []
 ---*/
@@ -11,7 +12,7 @@ description: Checking this use new Array() and []
 var x = new Array();
 if (x.join() !== "") {
   $ERROR('#1: x = new Array(); x.join() === "". Actual: ' + (x.join()));
-}  
+}
 
 //CHECK#2
 x = [];

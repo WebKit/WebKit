@@ -20,16 +20,8 @@ var invalidCurrencyCodes = [
 ];
 
 invalidCurrencyCodes.forEach(function (code) {
-    var error;
-    try {
-        // this must throw an exception for an invalid currency code
+    // this must throw an exception for an invalid currency code
+    assert.throws(RangeError, function() {
         var format = new Intl.NumberFormat(["de-de"], {style: "currency", currency: code});
-    } catch (e) {
-        error = e;
-    }
-    if (error === undefined) {
-        $ERROR("Invalid currency code '" + code + "' was not rejected.");
-    } else if (error.name !== "RangeError") {
-        $ERROR("Invalid currency code '" + code + "' was rejected with wrong error " + error.name + ".");
-    }
+    }, "Invalid currency code '" + code + "' was not rejected.");
 });

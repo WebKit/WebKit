@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es6id: 22.1.3.7
 description: >
   Array.prototype.filter.name is "filter".

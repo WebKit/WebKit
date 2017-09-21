@@ -13,7 +13,11 @@ info: |
 
     get PropertyName[?Yield] ( ) { FunctionBody }
 features: [default-parameters]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 0, class { get a(param = null) {} };

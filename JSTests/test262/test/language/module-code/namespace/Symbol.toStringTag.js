@@ -10,7 +10,7 @@ info: >
     "Module".
 
     This property has the attributes { [[Writable]]: false, [[Enumerable]]:
-    false, [[Configurable]]: true }.
+    false, [[Configurable]]: false }.
 flags: [module]
 features: [Symbol.toStringTag]
 ---*/
@@ -26,4 +26,4 @@ var desc = Object.getOwnPropertyDescriptor(ns, Symbol.toStringTag);
 
 assert.sameValue(desc.enumerable, false, 'reports as non-enumerable');
 assert.sameValue(desc.writable, false, 'reports as non-writable');
-assert.sameValue(desc.configurable, true, 'reports as configurable');
+assert.sameValue(desc.configurable, false, 'reports as non-configurable');

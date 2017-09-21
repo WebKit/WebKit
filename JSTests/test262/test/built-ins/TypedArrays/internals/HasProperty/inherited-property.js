@@ -14,8 +14,8 @@ info: >
     ...
   4. Return ? OrdinaryHasProperty(O, P).
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 TypedArray.prototype.foo = 42;

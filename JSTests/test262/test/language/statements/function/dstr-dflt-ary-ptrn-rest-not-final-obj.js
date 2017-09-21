@@ -7,7 +7,9 @@ esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 es6id: 14.1.19
 features: [destructuring-binding, default-parameters]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     FunctionDeclaration :
         function BindingIdentifier ( FormalParameters ) { FunctionBody }
@@ -46,6 +48,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 var callCount = 0;
 function f([...{ x }, y] = [1, 2, 3]) {

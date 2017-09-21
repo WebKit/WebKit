@@ -8,4 +8,4 @@ description: Function.prototype.toString on a function created with the Function
 
 let f = /* before */Function("a", " /* a */ b, c /* b */ //", "/* c */ ; /* d */ //")/* after */;
 
-assert.sameValue(f.toString(), "function anonymous(a, /* a */ b, c /* b */ //\n) {/* c */ ; /* d */ //\n}");
+assert.sameValue(f.toString(), "function anonymous(a, /* a */ b, c /* b */ //\n) {\n/* c */ ; /* d */ //\n}");

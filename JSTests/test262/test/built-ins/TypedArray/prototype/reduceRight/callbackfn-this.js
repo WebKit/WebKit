@@ -24,6 +24,7 @@ info: >
     d. Decrease k by 1.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var expected = (function() { return this; })();

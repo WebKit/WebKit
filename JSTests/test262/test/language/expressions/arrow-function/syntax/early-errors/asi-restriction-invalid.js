@@ -5,7 +5,11 @@ es6id: 14.2
 description: >
     ArrowFunction[In, Yield] :
       ArrowParameters[?Yield] [no LineTerminator here] => ConciseBody[?In]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 var af = ()
 => {};

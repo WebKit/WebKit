@@ -10,7 +10,11 @@ info: |
 
     When the "unicode" flag is set, this algorithm is honored irrespective of
     the presence of Annex B extensions.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /\8/u;

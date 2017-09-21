@@ -14,6 +14,7 @@ info: >
       i. Let mappedValue be ? Call(mapfn, T, « kValue, k »).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var source = [42, 43, 44];

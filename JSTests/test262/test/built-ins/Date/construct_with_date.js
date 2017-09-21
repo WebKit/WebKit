@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date-value
 description: Date constructor called with Date object
 info: >
   20.3.2.2 Date ( value )

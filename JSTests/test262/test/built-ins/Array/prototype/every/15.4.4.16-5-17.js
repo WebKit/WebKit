@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-5-17
 description: Array.prototype.every - the JSON object can be used as thisArg
 ---*/

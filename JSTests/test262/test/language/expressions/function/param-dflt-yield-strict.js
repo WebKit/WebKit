@@ -11,8 +11,12 @@ info: |
     function BindingIdentifieropt ( FormalParameters ) { FunctionBody }
 features: [generators, default-parameters]
 flags: [onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function *g() {
   0, function(x = yield) {

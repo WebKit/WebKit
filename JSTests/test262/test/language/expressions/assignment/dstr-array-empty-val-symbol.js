@@ -5,7 +5,7 @@
 description: An ArrayAssignmentPattern without an AssignmentElementList requires iterable values and throws for Symbol values. (AssignmentExpression)
 esid: sec-variable-statement-runtime-semantics-evaluation
 es6id: 13.3.2.4
-features: [destructuring-binding]
+features: [Symbol, destructuring-binding]
 flags: [generated]
 info: |
     VariableDeclaration : BindingPattern Initializer

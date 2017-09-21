@@ -3,6 +3,7 @@
 
 /*---
 info: Boolean.prototype.valueOf() returns this boolean value
+esid: sec-boolean.prototype.valueof
 es5id: 15.6.4.3_A1_T1
 description: no arguments
 ---*/

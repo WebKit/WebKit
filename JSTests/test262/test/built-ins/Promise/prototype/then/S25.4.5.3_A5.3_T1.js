@@ -8,7 +8,7 @@ info: >
 es6id: S25.4.5.3_A5.3_T1
 author: Sam Mikes
 description: Promise.prototype.then immediately queues handler if rejected
-includes: [PromiseHelper.js]
+includes: [promiseHelper.js]
 flags: [async]
 ---*/
 

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-get-arraybuffer-@@species
 es6id: 24.1.3.3
 description: >
   get ArrayBuffer [ @@species ].length is 0.

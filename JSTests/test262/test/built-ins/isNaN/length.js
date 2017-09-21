@@ -2,8 +2,8 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-isnan-number
 es6id: 18.2.3
+esid: sec-isnan-number
 description: >
   The length property of isNaN is 1
 includes: [propertyHelper.js]

@@ -29,6 +29,7 @@ info: |
     d. Else,
       i. Let R be ? ToString(? Invoke(nextElement, "toLocaleString")).
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var calls = 0;

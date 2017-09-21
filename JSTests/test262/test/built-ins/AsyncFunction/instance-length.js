@@ -3,7 +3,7 @@
 
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
-esid: pending
+esid: sec-async-function-instances-length
 description: >
   Async functions have a length property that is the number of expected
   arguments.

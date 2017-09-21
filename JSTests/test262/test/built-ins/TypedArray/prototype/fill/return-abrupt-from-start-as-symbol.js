@@ -24,8 +24,8 @@ info: >
   ...
   3. Let relativeStart be ? ToInteger(start).
   ...
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 var start = Symbol(1);

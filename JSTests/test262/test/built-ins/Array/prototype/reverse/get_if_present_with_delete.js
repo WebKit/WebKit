@@ -18,6 +18,7 @@ info: >
     i. If upperExists is true, then
       i.  Let upperValue be Get(O, upperP).
       ii. ReturnIfAbrupt(upperValue).
+esid: sec-array.prototype.reverse
 es6id: 22.1.3.20
 ---*/
 

@@ -23,8 +23,8 @@ info: >
   7. If end is undefined, let relativeEnd be len; else let relativeEnd be ?
   ToInteger(end).
   ...
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 var s = Symbol(1);

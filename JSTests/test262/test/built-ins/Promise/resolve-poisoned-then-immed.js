@@ -17,6 +17,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var value = {};
 var poisonedThen = Object.defineProperty({}, 'then', {
   get: function() {
@@ -24,8 +25,10 @@ var poisonedThen = Object.defineProperty({}, 'then', {
   }
 });
 var promise = new Promise(function(resolve) {
-  resolve(poisonedThen);
+  returnValue = resolve(poisonedThen);
 });
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');
 
 promise.then(function() {
     $DONE('The promise should not be fulfilled.');

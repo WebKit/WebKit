@@ -14,8 +14,12 @@ info: |
       export default HoistableDeclaration[Default]
       export default ClassDeclaration[Default]
       export default [lookahead ∉ { function, class }] AssignmentExpression[In];
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 export default function() {}();

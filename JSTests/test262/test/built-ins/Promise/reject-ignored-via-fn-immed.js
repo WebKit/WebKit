@@ -21,11 +21,14 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var thenable = new Promise(function() {});
 var p = new Promise(function(resolve, reject) {
   resolve();
-  reject(thenable);
+  returnValue = reject(thenable);
 });
+
+assert.sameValue(returnValue, undefined, '"reject" function return value');
 
 p.then(function() {
     $DONE();

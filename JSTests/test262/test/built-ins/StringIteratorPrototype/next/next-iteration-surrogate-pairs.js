@@ -5,6 +5,7 @@ es6id: 21.1.5.2.1
 description: >
     Iteration should respect UTF-16-encoded Unicode code points specified via
     surrogate pairs.
+features: [Symbol.iterator]
 ---*/
 
 var lo = '\uD834';

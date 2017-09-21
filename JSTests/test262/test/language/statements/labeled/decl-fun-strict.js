@@ -7,7 +7,11 @@ description: >
     function declarations in statement position in strict mode:
     label: Statement
 flags: [onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 label: function g() {}

@@ -32,7 +32,7 @@ info: >
   "%ArrayBufferPrototype%", « [[ArrayBufferData]], [[ArrayBufferByteLength]] » )
   ...
 includes: [testTypedArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 var sample1 = new Int8Array();

@@ -9,28 +9,23 @@ description: >
 author: Norbert Lindenberg
 ---*/
 
-var read = 0;
+var minimumSignificantDigitsRead = false;
+var maximumSignificantDigitsRead = false;
 
 function readMinimumSignificantDigits() {
-    ++read;
-    if (read === 1) {
-        return 0; // invalid value, but on first read that's OK
-    } else if (read === 3) {
-        return 1; // valid value
-    } else {
-        $ERROR("minimumSignificantDigits read out of sequence: " + read + ".");
-    }
+    assert.sameValue(minimumSignificantDigitsRead, false,
+                     "minimumSignificantDigits getter already called");
+    assert.sameValue(maximumSignificantDigitsRead, false,
+                     "maximumSignificantDigits getter called before minimumSignificantDigits");
+    minimumSignificantDigitsRead = true;
+    return 1;
 }
 
 function readMaximumSignificantDigits() {
-    ++read;
-    if (read === 2) {
-        return 0; // invalid value, but on first read that's OK
-    } else if (read === 4) {
-        return 1; // valid value
-    } else {
-        $ERROR("maximumSignificantDigits read out of sequence: " + read + ".");
-    }
+    assert.sameValue(maximumSignificantDigitsRead, false,
+                     "maximumSignificantDigits getter already called");
+    maximumSignificantDigitsRead = true;
+    return 1;
 }
 
 var options = {};
@@ -41,6 +36,5 @@ Object.defineProperty(options, "maximumSignificantDigits",
 
 new Intl.NumberFormat("de", options);
 
-if (read !== 4) {
-    $ERROR("insuffient number of property reads: " + read + ".");
-}
+assert(minimumSignificantDigitsRead, "minimumSignificantDigits getter was called once");
+assert(maximumSignificantDigitsRead, "maximumSignificantDigits getter was called once");

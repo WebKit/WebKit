@@ -13,7 +13,11 @@ info: |
         CharacterEscape[?U]
 
     The `u` flag precludes the Annex B extension that enables this pattern.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /\c0/u;

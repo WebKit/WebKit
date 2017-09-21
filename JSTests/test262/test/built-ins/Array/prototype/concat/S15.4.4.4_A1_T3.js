@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.concat
 info: >
     When the concat method is called with zero or more arguments item1, item2,
     etc., it returns an array containing the array elements of the object followed by
@@ -32,7 +33,7 @@ if (arr[1] !== 1) {
 //CHECK#3
 if (arr.length !== 2) {
   $ERROR('#3: var x = [0,1]; var arr = x.concat(); arr.length === 2. Actual: ' + (arr.length));
-}  
+}
 
 //CHECK#4
 if (arr === x) {

@@ -4,6 +4,8 @@
 /*---
 info: The length property of encodeURI has the attribute DontEnum
 es5id: 15.1.3.3_A5.1
+es6id: 18.2.6.4
+esid: sec-encodeuri-uri
 description: Checking use propertyIsEnumerable, for-in
 ---*/
 
@@ -17,7 +19,7 @@ var result = true;
 for (var p in encodeURI){
   if (p === "length") {
     result = false;
-  }  
+  }
 }
 
 if (result !== true) {

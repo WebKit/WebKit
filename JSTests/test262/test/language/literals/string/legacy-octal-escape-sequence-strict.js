@@ -28,7 +28,11 @@ info: >
     This definition of EscapeSequence is not used in strict mode or when
     parsing TemplateCharacter.
 flags: [onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 '\1';

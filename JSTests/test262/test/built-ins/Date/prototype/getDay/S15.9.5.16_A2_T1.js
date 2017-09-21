@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getday
 info: The "length" property of the "getDay" is 0
 es5id: 15.9.5.16_A2_T1
 description: The "length" property of the "getDay" is 0

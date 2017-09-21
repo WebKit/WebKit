@@ -13,7 +13,11 @@ info: >
       OctalDigits OctalDigit
     OctalDigit :: one of
       0 1 2 3 4 5 6 7
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 0o;

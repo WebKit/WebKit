@@ -9,8 +9,12 @@ info: >
   Static Semantics: Early Errors
 
   It is a Syntax Error if ContainsUseStrict of FunctionBody is true and IsSimpleParameterList of PropertySetParameterList is false.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var o = {
   set m(a = 0) {

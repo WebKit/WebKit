@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-7-c-ii-8
 description: >
     Array.prototype.every - element changed by callbackfn on previous
@@ -17,6 +18,6 @@ description: >
             return val > 10;
         }
 
-       
+
 
 assert.sameValue(Array.prototype.every.call(obj, callbackfn), false, 'Array.prototype.every.call(obj, callbackfn)');

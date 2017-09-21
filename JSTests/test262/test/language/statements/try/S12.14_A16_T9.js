@@ -7,8 +7,12 @@ info: >
     Catch Finally"
 es5id: 12.14_A16_T9
 description: Checking if execution of "catch(){} finally{}" fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 // CHECK#1
 catch(){}

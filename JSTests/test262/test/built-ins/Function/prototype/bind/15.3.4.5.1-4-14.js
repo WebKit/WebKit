@@ -11,7 +11,7 @@ description: >
         var obj = { prop: "abc" };
 
         var func = function (x) {
-            return this === obj && x === 1 && arguments[1] === 2
+            return this === obj && x === 1 && arguments[1] === 2 &&
                 arguments[0] === 1 && arguments.length === 2 && this.prop === "abc";
         };
 

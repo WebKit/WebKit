@@ -4,8 +4,8 @@
 /*---
 description: >
     The assertion fails when invoked with a single argument.
+includes: [sta.js]
 ---*/
-
 var threw = false;
 
 try {

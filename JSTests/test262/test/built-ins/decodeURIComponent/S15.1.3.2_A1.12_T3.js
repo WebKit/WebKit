@@ -8,6 +8,8 @@ info: >
     string.charAt(k + 8)) or (string.charAt(k + 10) and
     string.charAt(k + 11)) do not represent hexadecimal digits, throw URIError
 es5id: 15.1.3.2_A1.12_T3
+es6id: 18.2.6.3
+esid: sec-decodeuricomponent-encodeduricomponent
 description: >
     Complex tests, string.charAt(k + 10) and string.charAt(k + 11)  do
     not represent hexadecimal digits
@@ -20,15 +22,15 @@ for (var indexI = 0; indexI < interval.length; indexI++) {
   for (var indexJ = interval[indexI][0]; indexJ <= interval[indexI][1]; indexJ++) {
     try {
       decodeURIComponent("%F0%" + "%A0%A0" + String.fromCharCode(indexJ, indexJ));
-      result = false;      
-    } catch (e) {   
+      result = false;
+    } catch (e) {
       if ((e instanceof URIError) !== true) {
-        result = false;        
+        result = false;
       }
-    }      
-  }  
-}  
+    }
+  }
+}
 
-if (result !== true) {    
+if (result !== true) {
   $ERROR('#1: If B = 11110xxx (n = 4) and (string.charAt(k + 10) and string.charAt(k + 11)) do not represent hexadecimal digits, throw URIError');
 }

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-9-a-15
 description: >
     Array.prototype.indexOf - deleting own property with prototype
@@ -10,7 +11,7 @@ description: >
 ---*/
 
         var arr = { 0: 0, 1: 111, 2: 2, length: 10 };
-        
+
         Object.defineProperty(arr, "0", {
             get: function () {
                 delete arr[1];

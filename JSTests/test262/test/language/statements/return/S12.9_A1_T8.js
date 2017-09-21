@@ -7,8 +7,12 @@ es5id: 12.9_A1_T8
 description: >
     Checking if execution of "return x" with no function, placed into
     a loop, fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1

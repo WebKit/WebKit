@@ -4,7 +4,11 @@
 description: Class declaration not allowed in statement position
 esid: sec-labelled-statements
 es6id: 13.13
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 label: class C {}

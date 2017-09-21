@@ -35,10 +35,7 @@ options.forEach(function (option) {
     supportedValues.forEach(function (value) {
         collator = new Intl.Collator([defaultLocale + "-u-" + option.key + "-" + value]);
         result = collator.resolvedOptions()[option.property];
-        if (result !== value) {
-            $ERROR("Property " + option.property + " couldn't be set through locale extension key " +
-                option.key + "; requested value: " + value + "; actual value: " + result + ".");
-        }
+        assert.sameValue(result, value, "Property " + option.property + " couldn't be set through locale extension key " + option.key + ".");
     });
     
     // verify that the options setting overrides the locale setting
@@ -54,10 +51,7 @@ options.forEach(function (option) {
             opt[option.property] = value;
             collator = new Intl.Collator([defaultLocale + "-u-" + option.key + "-" + otherValue], opt);
             result = collator.resolvedOptions()[option.property];
-            if (result !== value) {
-                $ERROR("Options value for property " + option.property + " doesn't override locale extension key " +
-                    option.key + "; requested value: " + value + "; actual value: " + result + ".");
-            }
+            assert.sameValue(result, value, "Options value for property " + option.property + " doesn't override locale extension key " + option.key + ".");
         }
     });
 });

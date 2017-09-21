@@ -18,7 +18,7 @@ info: >
   n be len-1.
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var fromIndex = Symbol("1");

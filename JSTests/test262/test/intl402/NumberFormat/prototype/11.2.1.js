@@ -8,15 +8,7 @@ author: Norbert Lindenberg
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(Intl.NumberFormat, "prototype");
-if (desc === undefined) {
-    $ERROR("Intl.NumberFormat.prototype is not defined.");
-}
-if (desc.writable) {
-    $ERROR("Intl.NumberFormat.prototype must not be writable.");
-}
-if (desc.enumerable) {
-    $ERROR("Intl.NumberFormat.prototype must not be enumerable.");
-}
-if (desc.configurable) {
-    $ERROR("Intl.NumberFormat.prototype must not be configurable.");
-}
+assert.notSameValue(desc, undefined, "Intl.NumberFormat.prototype is not defined.");
+assert.sameValue(desc.writable, false, "Intl.NumberFormat.prototype must not be writable.");
+assert.sameValue(desc.enumerable, false, "Intl.NumberFormat.prototype must not be enumerable.");
+assert.sameValue(desc.configurable, false, "Intl.NumberFormat.prototype must not be configurable.");

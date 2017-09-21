@@ -8,8 +8,12 @@ info: >
     Don`t use semicolons
 es5id: 7.9_A6.3_T2
 description: For header is (\n \n)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 for(

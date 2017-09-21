@@ -4,8 +4,12 @@
 es6id: 14.5
 description: >
     class strict mode: `with` disallowed
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 class C extends (function B() { with ({}); return B; }()) {}
 

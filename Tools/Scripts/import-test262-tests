@@ -23,12 +23,21 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# Steps to update test262 test resources and yaml:
+#
+#   1. Run importer to update the yaml and test resources.
+#       $ import-test262-tests /path/to/test262
+#   2. Run the tests to produce a list of failures.
+#       $ run-jsc-stress-tests JSTests/test262.yaml
+#   3. Run importer to update the yaml with a new list of failures.
+#       $ import-test262-tests --failures ./results/failed /path/to/test262
 
 require 'fileutils'
 require 'getoptlong'
 require 'pathname'
 require 'yaml'
 require 'find'
+require 'shellwords'
 
 THIS_SCRIPT_PATH = Pathname.new(__FILE__).realpath
 SCRIPTS_PATH = THIS_SCRIPT_PATH.dirname
@@ -39,19 +48,13 @@ TEST262_REVISION_PATH = WEBKIT_PATH + "JSTests/test262/test262-Revision.txt"
 raise unless SCRIPTS_PATH.basename.to_s == "Scripts"
 raise unless SCRIPTS_PATH.dirname.basename.to_s == "Tools"
 
-def mysys(*cmd)
-    printCommandArray(*cmd) if $verbosity >= 1
-    raise "Command failed: #{$?.inspect}" unless system(*cmd)
-end
-
-
 def usage
-    puts "import-test262-tests [options] <path-to-test262-repository>"
+    puts "#{File.basename $0} [options] <path-to-test262-repository>"
     puts
     puts "-h, --help                   print this help message."
     puts "-f, --failures FAILURES      Supplied file will be used to determine which tests fail."
-    puts "                             If a failures file is not provided all tests are assumed to pass."
-
+    puts "                             If a failures file is not provided all tests are assumed to pass,"
+    puts "                             and test resources are not updated, only the yaml is updated."
     exit 1
 end
 
@@ -67,16 +70,23 @@ GetoptLong.new(["--help", "-h", GetoptLong::NO_ARGUMENT],
     when "--help"
         usage
     when "--failures"
-        $failures = File.open(Pathname.new(arg)).readlines
+        $failures = {}
+        File.open(Pathname.new(arg)).readlines.each {
+            | line |
+            match = line.match(/test262\/(.*?\.default.*?$)/)
+            if (match)
+                $failures[match[1]] = true
+            end
+        }
     end
 }
 
 def didPassForMode(path, strict)
     if $failures
         if strict == :strict
-            return $failures.grep(/.*#{path}\.default-strict$/).length == 0
+            return !$failures.key?(path.to_s + ".default-strict")
         else
-            return $failures.grep(/.*#{path}\.default$/).length == 0
+            return !$failures.key?(path.to_s + ".default")
         end
     else
         return true
@@ -157,7 +167,7 @@ def processTestFile(path)
         | option |
         case option[0]
         when "negative"
-            test.failsWithException = option[1].to_s
+            test.failsWithException = option[1]["type"].to_s
         when "includes"
             test.includeFiles += option[1]
         when "flags"
@@ -199,7 +209,6 @@ class Fixture
     def formatCmdArguments(strict)
         return "prepareTest262Fixture"
     end
-
 end
 
 def processFixtureFile(path)
@@ -207,28 +216,20 @@ def processFixtureFile(path)
 end
 
 def processFilesRecursively(path)
-    # We only run the run the built-ins, language, and annexB tests.
-    # At some point we should add intl402
     tests = []
 
     Dir.chdir(path) {
-        paths = [Pathname.new("test/annexB"), Pathname.new("test/built-ins"), Pathname.new("test/language")]
-
-        paths.each {
-            | testPath |
-            Find.find(testPath) {
-                | file |
-                if File.file?(file) and JS_TEST_REGEXP =~ file.to_s
-                    path = Pathname.new(file)
-                    if JS_FIXTURE_REGEXP =~ file.to_s
-                        tests << processFixtureFile(path)
-                    else
-                        tests << processTestFile(path)
-                    end
+        Find.find(Pathname.new("test")) {
+            | file |
+            if File.file?(file) and JS_TEST_REGEXP =~ file.to_s
+                path = Pathname.new(file)
+                if JS_FIXTURE_REGEXP =~ file.to_s
+                    tests << processFixtureFile(path)
+                else
+                    tests << processTestFile(path)
                 end
-            }
+            end
         }
-
     }
 
     return tests
@@ -249,7 +250,6 @@ def printYAML(tests)
                 outp.puts "  cmd: " + test.formatCmdArguments(:strict)
             end
         }
-
     }
 end
 
@@ -258,25 +258,49 @@ def printRevision(test262Path)
     branchname = url
     revision = url
     Dir.chdir(test262Path) {
-        branchname = `git rev-parse --abbrev-ref HEAD`.strip
-        # Not sure what we should do if they don't have a branch checked out.
-        # Getting the url from origin seems reasonable.
-        branchname = "origin" if branchname == "HEAD"
-        url = `git remote get-url #{branchname}`
+        tracking = `git rev-parse --abbrev-ref --symbolic-full-name @{u}`.chomp
+        remoteName, branchName = tracking.split("/")
+        url = `git remote get-url #{remoteName}`
         revision = `git rev-parse HEAD`.strip
     }
 
     File.open(TEST262_REVISION_PATH, "w+") {
-        | outp |
+        | f |
         puts "test262 remote url: " + url
         puts "test262 revision: " + revision
-        outp.puts "test262 remote url: " + url
-        outp.puts "test262 revision: " + revision
-        outp.puts
+        f.puts "test262 remote url: " + url
+        f.puts "test262 revision: " + revision
     }
 end
 
+def replaceResources(test262Path)
+    harnessSource = File.join(test262Path, "harness")
+    harnessDestination = File.join(WEBKIT_PATH, "JSTests", "test262", "harness")
+    testSource = File.join(test262Path, "test")
+    testDestination = File.join(WEBKIT_PATH, "JSTests", "test262", "test")
+    
+    `rm -r #{Shellwords.shellescape(harnessDestination.to_s)}`
+    `ditto #{Shellwords.shellescape(harnessSource.to_s)} #{Shellwords.shellescape(harnessDestination.to_s)}`
+    
+    `rm -r #{Shellwords.shellescape(testDestination.to_s)}`
+    `ditto #{Shellwords.shellescape(testSource.to_s)} #{Shellwords.shellescape(testDestination.to_s)}`
+end
+
+if ARGV.empty?
+    usage
+end
+
+puts "Writing #{File.basename(TEST262_REVISION_PATH)}..."
 test262Path = Pathname.new(ARGV[0])
 printRevision(test262Path)
+
+puts "Enumerating tests..."
 tests = processFilesRecursively(test262Path)
+
+puts "Writing #{File.basename(TEST262_YAML_PATH)}..."
 printYAML(tests)
+
+if !$failures
+    puts "Replacing test262 resources..."
+    replaceResources(test262Path)
+end

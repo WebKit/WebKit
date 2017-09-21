@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-3-22
 description: >
     Array.prototype.some throws TypeError exception when 'length' is

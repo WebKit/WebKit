@@ -13,13 +13,8 @@ description: >
 ---*/
 
 //CHECK#1
-Array.prototype.myproperty = 1;
-var x = Array(); 
-if (x.myproperty !== 1) {
-  $ERROR('#1: Array.prototype.myproperty = 1; var x = Array(); x.myproperty === 1. Actual: ' + (x.myproperty));
-}
+Array.prototype.myproperty = 42;
+var x = Array();
+assert.sameValue(x.myproperty, 42);
 
-//CHECK#2
-if (x.hasOwnProperty('myproperty') !== false) {
-  $ERROR('#2: Array.prototype.myproperty = 1; var x = Array(); x.hasOwnProperty(\'myproperty\') === false. Actual: ' + (x.hasOwnProperty('myproperty')));
-}
+assert.sameValue(Object.prototype.hasOwnProperty.call(x, 'myproperty'), false);

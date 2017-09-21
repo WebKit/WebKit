@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-description:
+description: >
     Ambiguous exports are not reflected in module namespace objects, nor do
     they trigger an error upon resolution
 esid: sec-moduledeclarationinstantiation

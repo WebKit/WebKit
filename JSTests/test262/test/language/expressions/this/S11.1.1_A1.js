@@ -5,7 +5,11 @@
 info: The "this" is reserved word
 es5id: 11.1.1_A1
 description: Checking if execution of "this=1" fails
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 this = 1;

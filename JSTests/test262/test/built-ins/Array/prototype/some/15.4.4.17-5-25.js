@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-5-25
 description: Array.prototype.some - thisArg not passed
 flags: [noStrict]
@@ -10,7 +11,7 @@ flags: [noStrict]
         function innerObj() {
             this._15_4_4_17_5_25 = true;
             var _15_4_4_17_5_25 = false;
-            
+
             function callbackfn(val, idx, obj) {
                 return this._15_4_4_17_5_25;
             }

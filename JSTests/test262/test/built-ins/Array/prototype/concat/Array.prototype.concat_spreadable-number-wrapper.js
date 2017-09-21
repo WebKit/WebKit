@@ -4,9 +4,11 @@
 
 
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat Symbol.isConcatSpreadable number wrapper
 includes: [compareArray.js]
+features: [Symbol.isConcatSpreadable]
 ---*/
 var num = new Number(true)
 // Number wrapper objects are not concat-spreadable by default

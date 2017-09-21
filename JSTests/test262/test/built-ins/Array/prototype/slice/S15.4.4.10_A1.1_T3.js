@@ -5,6 +5,7 @@
 info: >
     If start is positive, use min(start, length).
     If end is positive, use min(end, length)
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A1.1_T3
 description: length > start > end > 0
 ---*/
@@ -21,7 +22,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 0) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(4,3); arr.length === 0. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== undefined) {

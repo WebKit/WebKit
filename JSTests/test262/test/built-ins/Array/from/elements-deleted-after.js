@@ -5,6 +5,7 @@
 description: >
     Elements deleted after the call started and before visited are not
     visited
+esid: sec-array.from
 es6id: 22.1.2.1
 ---*/
 

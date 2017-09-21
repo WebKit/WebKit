@@ -18,6 +18,7 @@ info: >
     a. If n is -0, let k be +0; else let k be n.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

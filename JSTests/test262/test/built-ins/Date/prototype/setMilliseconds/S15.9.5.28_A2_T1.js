@@ -3,6 +3,7 @@
 
 /*---
 info: The "length" property of the "setMilliseconds" is 1
+esid: sec-date.prototype.setmilliseconds
 es5id: 15.9.5.28_A2_T1
 description: The "length" property of the "setMilliseconds" is 1
 ---*/

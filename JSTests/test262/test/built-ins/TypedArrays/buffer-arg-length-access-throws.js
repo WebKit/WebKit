@@ -16,10 +16,11 @@ info: >
     a. Let newLength be ? ToLength(length).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var buffer = new ArrayBuffer(8);
-var length = {
+var len = {
   valueOf() {
     throw new Test262Error();
   }
@@ -27,6 +28,6 @@ var length = {
 
 testWithTypedArrayConstructors(function(TA) {
   assert.throws(Test262Error, function() {
-    new TA(buffer, 0, length);
+    new TA(buffer, 0, len);
   });
 });

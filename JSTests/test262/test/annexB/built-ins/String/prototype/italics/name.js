@@ -19,8 +19,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.italics.name, "italics");
-
-verifyNotEnumerable(String.prototype.italics, "name");
-verifyNotWritable(String.prototype.italics, "name");
-verifyConfigurable(String.prototype.italics, "name");
+verifyProperty(String.prototype.italics, "name", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: "italics"
+});

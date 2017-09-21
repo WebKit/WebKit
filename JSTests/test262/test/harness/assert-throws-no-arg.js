@@ -4,6 +4,7 @@
 /*---
 description: >
     The assertion fails when invoked without arguments.
+includes: [sta.js]
 ---*/
 
 var threw = false;

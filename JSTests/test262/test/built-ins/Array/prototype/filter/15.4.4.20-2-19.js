@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es5id: 15.4.4.20-2-19
 description: >
     Array.prototype.filter applied to Function object, which

@@ -7,6 +7,7 @@ description: >
 info: >
   22.2.3.19 %TypedArray%.prototype.map ( callbackfn [ , thisArg ] )
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

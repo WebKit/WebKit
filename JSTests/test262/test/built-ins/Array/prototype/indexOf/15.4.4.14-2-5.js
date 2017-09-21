@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-2-5
 description: >
     Array.prototype.indexOf - 'length' is own data property that
@@ -20,7 +21,7 @@ description: >
         Con.prototype = proto;
 
         var child = new Con();
-        
+
         Object.defineProperty(child, "length", {
             value: 2,
             configurable: true

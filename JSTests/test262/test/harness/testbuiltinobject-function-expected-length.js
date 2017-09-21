@@ -5,9 +5,8 @@
 description: >
     Functions whose `length` property does not match the expected value do not
     satisfy the assertion.
-includes: [testBuiltInObject.js]
+includes: [testBuiltInObject.js,sta.js]
 ---*/
-
 var threw = false;
 
 try {

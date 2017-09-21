@@ -41,7 +41,7 @@ var proxy = new Proxy(target, {
   }
 });
 
-assert.sameValue(Reflect.setPrototypeOf(proxy, proto), false);
+assert.sameValue(Reflect.setPrototypeOf(proxy, proto), true);
 assert.sameValue(calls.length, 3);
 assert.sameValue(calls[0], "proxy.[[setPrototypeOf]]");
 assert.sameValue(calls[1], "target.[[IsExtensible]]");

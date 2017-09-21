@@ -7,7 +7,9 @@ esid: sec-generator-function-definitions-runtime-semantics-propertydefinitioneva
 es6id: 14.4.13
 features: [destructuring-binding, default-parameters]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     GeneratorMethod :
         * PropertyName ( StrictFormalParameters ) { GeneratorBody }
@@ -50,6 +52,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 var callCount = 0;
 var obj = {

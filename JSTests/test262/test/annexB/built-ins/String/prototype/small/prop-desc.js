@@ -11,6 +11,8 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(String.prototype, 'small');
-verifyWritable(String.prototype, 'small');
-verifyConfigurable(String.prototype, 'small');
+verifyProperty(String.prototype, "small", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

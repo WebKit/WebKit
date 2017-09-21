@@ -5,8 +5,8 @@
 info: Line Terminator between LeftHandSideExpression and "--" is not allowed
 es5id: 11.3.2_A1.1_T4
 description: Checking Line separator
-negative: SyntaxError
 ---*/
 
-//CHECK#1
-eval("var x = 1; x\u2029--");
+assert.throws(SyntaxError, function() {
+  eval("var x = 1; x\u2029--");
+});

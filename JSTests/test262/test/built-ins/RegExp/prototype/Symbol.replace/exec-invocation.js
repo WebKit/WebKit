@@ -17,7 +17,7 @@ info: >
     4. ReturnIfAbrupt(exec).
     5. If IsCallable(exec) is true, then
        a. Let result be Call(exec, R, «S»).
-features: [Symbol.match]
+features: [Symbol.replace]
 ---*/
 
 var r = /./;

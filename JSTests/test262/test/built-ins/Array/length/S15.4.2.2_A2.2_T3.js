@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array-len
 info: >
     If the argument len is a Number and ToUint32(len) is not equal to len,
     a RangeError exception is thrown
@@ -10,8 +11,8 @@ description: Use try statement. len = 1.5, Number.MAX_VALUE, Number.MIN_VALUE
 ---*/
 
 //CHECK#1
-try {  
-  new Array(1.5);   
+try {
+  new Array(1.5);
   $ERROR('#1.1: new Array(1.5) throw RangeError. Actual: ' + (new Array(1.5)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {
@@ -20,8 +21,8 @@ try {
 }
 
 //CHECK#2
-try {  
-  new Array(Number.MAX_VALUE);   
+try {
+  new Array(Number.MAX_VALUE);
   $ERROR('#2.1: new Array(Number.MAX_VALUE) throw RangeError. Actual: ' + (new Array(Number.MAX_VALUE)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {
@@ -30,8 +31,8 @@ try {
 }
 
 //CHECK#3
-try {  
-  new Array(Number.MIN_VALUE);   
+try {
+  new Array(Number.MIN_VALUE);
   $ERROR('#3.1: new Array(Number.MIN_VALUE) throw RangeError. Actual: ' + (new Array(Number.MIN_VALUE)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {

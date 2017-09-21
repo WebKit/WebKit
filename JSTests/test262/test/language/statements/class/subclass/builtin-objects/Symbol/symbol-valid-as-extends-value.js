@@ -11,6 +11,7 @@ info: >
   be subclassed. It may be used as the value of an extends clause of a class
   definition but a super call to the Symbol constructor will cause an exception.
   ...
+features: [Symbol]
 ---*/
 
 class S extends Symbol {}

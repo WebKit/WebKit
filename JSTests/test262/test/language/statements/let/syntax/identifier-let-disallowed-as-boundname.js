@@ -4,7 +4,11 @@
 es6id: 13.6.4.1
 description: >
     It is a Syntax Error if the BoundNames of ForDeclaration contains "let".
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 for (let let in {}) { }
 

@@ -3,6 +3,7 @@
 
 /*---
 info: "[[Get]] from not an inherited property"
+esid: sec-array.prototype.join
 es5id: 15.4.4.5_A5_T1
 description: >
     [[Prototype]] of Array instance is Array.prototype, [[Prototype]
@@ -13,8 +14,8 @@ description: >
 Array.prototype[1] = 1;
 var x = [0];
 x.length = 2;
-if (x.join() !== "0,1") {  
-  $ERROR('#1: Array.prototype[1] = 1; x = [0]; x.length = 2; x.join() === "0,1". Actual: ' + (x.join()));    
+if (x.join() !== "0,1") {
+  $ERROR('#1: Array.prototype[1] = 1; x = [0]; x.length = 2; x.join() === "0,1". Actual: ' + (x.join()));
 }
 
 //CHECK#2
@@ -22,6 +23,6 @@ Object.prototype[1] = 1;
 Object.prototype.length = 2;
 Object.prototype.join = Array.prototype.join;
 x = {0:0};
-if (x.join() !== "0,1") {  
-  $ERROR('#2: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.join = Array.prototype.join; x = {0:0}; x.join() === "0,1". Actual: ' + (x.join()));    
+if (x.join() !== "0,1") {
+  $ERROR('#2: Object.prototype[1] = 1; Object.prototype.length = 2; Object.prototype.join = Array.prototype.join; x = {0:0}; x.join() === "0,1". Actual: ' + (x.join()));
 }

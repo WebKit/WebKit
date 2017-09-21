@@ -18,6 +18,7 @@ info: >
   exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var indexOf = TypedArray.prototype.indexOf;

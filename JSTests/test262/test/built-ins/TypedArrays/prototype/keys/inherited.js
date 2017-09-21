@@ -5,6 +5,7 @@ esid: sec-%typedarray%.prototype.keys
 description: >
   _TypedArray_.prototype has no own property "keys"
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -11,7 +11,7 @@ info: >
     a. If IsCallable(mapfn) is false, throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol, Symbol.iterator]
+features: [Symbol, Symbol.iterator, TypedArray]
 ---*/
 
 var getIterator = 0;

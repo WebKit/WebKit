@@ -5,6 +5,7 @@
 info: >
     The pop function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.pop
 es5id: 15.4.4.6_A2_T3
 description: >
     The last element ToUint32(length) - 1 of the array is removed from
@@ -24,7 +25,7 @@ if (pop !== undefined) {
 //CHECK#2
 if (obj.length !== 1) {
   $ERROR('#2: var obj = {}; obj.length = 2.5; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 1. Actual: ' + (obj.length));
-} 
+}
 
 //CHECK#3
 obj.length = new Number(2);

@@ -4,8 +4,8 @@
 /*---
 description: >
     Functions that throw primitive values do not satisfy the assertion.
+includes: [sta.js]
 ---*/
-
 var threw = false;
 
 try {

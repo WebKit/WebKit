@@ -38,7 +38,7 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-$.evalScript('function brandNew() {}');
+$262.evalScript('function brandNew() {}');
 
 assert.sameValue(
   typeof brandNew, 'function', 'new binding on an extensible global object'
@@ -58,7 +58,7 @@ Object.defineProperty(
 // considered by any of the declarations which follow.
 Object.preventExtensions(this);
 
-$.evalScript('function configurable() {}');
+$262.evalScript('function configurable() {}');
 
 assert.sameValue(
   typeof configurable, 'function', 'like-named configurable property'
@@ -67,7 +67,7 @@ verifyEnumerable(this, 'configurable')
 verifyWritable(this, 'configurable');
 verifyNotConfigurable(this, 'configurable');
 
-$.evalScript('function nonConfigurable() {}');
+$262.evalScript('function nonConfigurable() {}');
 
 assert.sameValue(
   typeof nonConfigurable,

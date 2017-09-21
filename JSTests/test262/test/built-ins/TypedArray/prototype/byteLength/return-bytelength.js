@@ -11,6 +11,7 @@ info: >
   6. Let size be the value of O's [[ByteLength]] internal slot.
   7. Return size.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

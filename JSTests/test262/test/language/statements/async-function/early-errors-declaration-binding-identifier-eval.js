@@ -6,7 +6,11 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   If the source code matching this production is strict code, it is a Syntax Error if BindingIdentifier is the IdentifierName eval. 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 async function eval () {  }

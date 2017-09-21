@@ -3,8 +3,8 @@
 /*---
 esid: sec-runtime-semantics-classdefinitionevaluation
 description: >
-  The `this` value of a null-extending class is automatically initialized,
-  preventing the use of `super` from within the constructor.
+  Attempting to call `super()` in a null-extending class throws a TypeError,
+  because %FunctionPrototype% cannot be called as constructor function.
 info: |
   Runtime Semantics: ClassDefinitionEvaluation
 
@@ -13,20 +13,13 @@ info: |
      [...]
   6. Else,
      [...]
+     b. Let superclass be the result of evaluating ClassHeritage.
+     [...]
      e. If superclass is null, then
-        i. Let protoParent be null.
+        [...]
         ii. Let constructorParent be the intrinsic object %FunctionPrototype%.
   [...]
-  15. If ClassHeritageopt is present and protoParent is not null, then set F's
-      [[ConstructorKind]] internal slot to "derived".
-  [...]
-
-  9.2.2 [[Construct]]
-
-  [...]
-  5. If kind is "base", then
-     a. Let thisArgument be ? OrdinaryCreateFromConstructor(newTarget,
-        "%ObjectPrototype%").
+  15. Let constructorInfo be the result of performing DefineMethod for constructor with arguments proto and constructorParent as the optional functionPrototype argument.
   [...]
 
   12.3.5.1 Runtime Semantics: Evaluation
@@ -34,17 +27,15 @@ info: |
   SuperCall : super Arguments
 
   [...]
-  6. Let result be ? Construct(func, argList, newTarget).
-  7. Let thisER be GetThisEnvironment( ).
-  8. Return ? thisER.BindThisValue(result).
+  3. Let func be ? GetSuperConstructor().
+  4. Let argList be ArgumentListEvaluation of Arguments.
+  [...]
 
-  8.1.1.3.1 BindThisValue
+  12.3.5.2 Runtime Semantics: GetSuperConstructor ( )
 
   [...]
-  3. If envRec.[[ThisBindingStatus]] is "initialized", throw a ReferenceError
-     exception.
-  4. Set envRec.[[ThisValue]] to V.
-  5. Set envRec.[[ThisBindingStatus]] to "initialized".
+  5. Let superConstructor be ! activeFunction.[[GetPrototypeOf]]().
+  6. If IsConstructor(superConstructor) is false, throw a TypeError exception.
   [...]
 ---*/
 
@@ -54,7 +45,7 @@ var reachable = 0;
 class C extends null {
   constructor() {
     reachable += 1;
-    super();
+    super(unreachable += 1);
     unreachable += 1;
   }
 }

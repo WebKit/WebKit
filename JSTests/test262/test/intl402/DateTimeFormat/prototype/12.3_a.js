@@ -2,16 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 12.3_a
+esid: sec-properties-of-intl-datetimeformat-prototype-object
 description: >
-    Tests that Intl.DateTimeFormat.prototype is an object that  has
+    Tests that Intl.DateTimeFormat.prototype is not an object that has
     been initialized as an Intl.DateTimeFormat.
 author: Roozbeh Pournader
 ---*/
 
-// test by calling a function that would fail if "this" were not an object
+// test by calling a function that should fail as "this" is not an object
 // initialized as an Intl.DateTimeFormat
-if (typeof Intl.DateTimeFormat.prototype.format(0) !== "string") {
-    $ERROR("Intl.DateTimeFormat's prototype is not an object that has been " +
-        "initialized as an Intl.DateTimeFormat");
-}
+assert.throws(TypeError, () => Intl.DateTimeFormat.prototype.format(0),
+              "Intl.DateTimeFormat's prototype is not an object that has been initialized as an Intl.DateTimeFormat");

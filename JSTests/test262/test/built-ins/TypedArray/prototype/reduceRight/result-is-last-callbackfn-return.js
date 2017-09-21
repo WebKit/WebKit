@@ -33,6 +33,7 @@ info: >
     d. Decrease k by 1.
   9. Return accumulator.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

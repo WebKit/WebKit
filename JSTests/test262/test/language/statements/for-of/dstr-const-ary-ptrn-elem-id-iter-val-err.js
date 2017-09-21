@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorValue returns an abrupt completion (for-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
-features: [destructuring-binding]
+features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |
     IterationStatement :
@@ -51,6 +51,7 @@ info: |
           ii. If v is an abrupt completion, set iteratorRecord.[[done]] to
               true.
           iii. ReturnIfAbrupt(v).
+
 ---*/
 var poisonedValue = Object.defineProperty({}, 'value', {
   get: function() {

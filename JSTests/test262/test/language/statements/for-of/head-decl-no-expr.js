@@ -7,7 +7,11 @@ info: >
     IterationStatement :
         for ( ForDeclaration of AssignmentExpression ) Statement
 es6id: 13.7
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 for (let x of [], []) {}

@@ -5,6 +5,7 @@
 info: >
     The pop function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.pop
 es5id: 15.4.4.6_A2_T2
 description: >
     If ToUint32(length) equal zero, call the [[Put]] method  of this
@@ -55,7 +56,7 @@ obj.length = -0;
 var pop = obj.pop();
 if (pop !== undefined) {
   $ERROR('#7: var obj = {}; obj.length = -0; obj.pop = Array.prototype.pop; obj.pop() === undefined. Actual: ' + (pop));
-}    
+}
 
 //CHECK#8
 if (obj.length !== 0) {
@@ -63,8 +64,8 @@ if (obj.length !== 0) {
 } else {
   if (1/obj.length !== Number.POSITIVE_INFINITY) {
     $ERROR('#8: var obj = {}; obj.length = -0; obj.pop = Array.prototype.pop; obj.pop(); obj.length === +0. Actual: ' + (obj.length));
-  }  
-}   
+  }
+}
 
 //CHECK#9
 obj.length = 0.5;
@@ -76,7 +77,7 @@ if (pop !== undefined) {
 //CHECK#10
 if (obj.length !== 0) {
   $ERROR('#10: var obj = {}; obj.length = 0.5; obj.pop = Array.prototype.pop; obj.pop(); obj.length === 0. Actual: ' + (obj.length));
-} 
+}
 
 //CHECK#11
 obj.length = new Number(0);

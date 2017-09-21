@@ -22,6 +22,7 @@ info: >
       ii. Perform ? Call(callbackfn, T, « kValue, k, O »).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

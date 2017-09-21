@@ -14,7 +14,7 @@ info: >
     ...
   3. Return ? OrdinarySet(O, P, V, Receiver).
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -3,6 +3,7 @@
 
 /*---
 info: If end is undefined use length
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A1.5_T2
 description: end is absent
 ---*/
@@ -19,7 +20,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 2) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(-2); arr.length === 2. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 3) {

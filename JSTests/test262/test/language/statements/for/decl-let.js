@@ -4,7 +4,11 @@
 description: Lexical declaration (let) not allowed in statement position
 esid: sec-for-statement
 es6id: 13.7.4
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 for ( ; false; ) let x;

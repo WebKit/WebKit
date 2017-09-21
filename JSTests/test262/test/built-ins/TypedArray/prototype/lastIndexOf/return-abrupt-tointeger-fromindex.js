@@ -18,6 +18,7 @@ info: >
   n be len-1.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var fromIndex = {

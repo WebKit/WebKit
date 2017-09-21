@@ -9,6 +9,7 @@ author: Sam Mikes
 description: Symbol.species exists
 includes: 
   - propertyHelper.js
+features: [Symbol.species]
 ---*/
 
 assert(Symbol !== undefined, "Symbol exists");

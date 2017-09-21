@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorValue returns an abrupt completion (arrow function expression (default parameter))
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
-features: [destructuring-binding, default-parameters]
+features: [Symbol.iterator, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     ArrowFunction : ArrowParameters => ConciseBody
@@ -52,6 +52,7 @@ info: |
           ii. If v is an abrupt completion, set iteratorRecord.[[done]] to
               true.
           iii. ReturnIfAbrupt(v).
+
 ---*/
 var poisonedValue = Object.defineProperty({}, 'value', {
   get: function() {

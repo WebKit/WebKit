@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array-len
 info: >
     If the argument len is not a Number, then the length property of
     the newly constructed object is set to 1 and the 0 property of
@@ -12,7 +13,7 @@ description: Checking for null and undefined
 
 var x = new Array(null);
 
-//CHECK#1 
+//CHECK#1
 if (x.length !== 1) {
   $ERROR('#1: var x = new Array(null); x.length === 1. Actual: ' + (x.length));
 }
@@ -24,7 +25,7 @@ if (x[0] !== null) {
 
 var x = new Array(undefined);
 
-//CHECK#3 
+//CHECK#3
 if (x.length !== 1) {
   $ERROR('#3: var x = new Array(undefined); x.length === 1. Actual: ' + (x.length));
 }

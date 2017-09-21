@@ -8,6 +8,5 @@ flags: [onlyStrict]
 ---*/
 
 "use strict";
-if (this===undefined) {
-    throw NotEarlyError;
-}
+
+assert.notSameValue(this, undefined);

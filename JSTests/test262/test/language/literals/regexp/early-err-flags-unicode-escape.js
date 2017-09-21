@@ -7,7 +7,11 @@ description: >
   RegularExpressionFlags :: RegularExpressionFlags IdentifierPart
 
   - It is a Syntax Error if IdentifierPart contains a Unicode escape sequence.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /./\u0067;

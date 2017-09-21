@@ -16,14 +16,14 @@ info: >
     a. Let newLength be ? ToLength(length).
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var buffer = new ArrayBuffer(8);
-var length = Symbol("1");
+var s = Symbol("1");
 
 testWithTypedArrayConstructors(function(TA) {
   assert.throws(TypeError, function() {
-    new TA(buffer, 0, length);
+    new TA(buffer, 0, s);
   });
 });

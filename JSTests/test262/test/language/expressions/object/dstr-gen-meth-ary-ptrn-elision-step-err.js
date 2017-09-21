@@ -5,7 +5,7 @@
 description: Elision advances iterator and forwards abrupt completions (generator method)
 esid: sec-generator-function-definitions-runtime-semantics-propertydefinitionevaluation
 es6id: 14.4.13
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     GeneratorMethod :

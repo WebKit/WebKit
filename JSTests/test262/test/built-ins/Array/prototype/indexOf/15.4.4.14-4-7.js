@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-4-7
 description: >
     Array.prototype.indexOf returns -1 if 'length' is 0 ( length is
@@ -14,6 +15,6 @@ description: >
   // to a number by calling its toString() method and converting the
   // resulting string to a number.
  var i = Array.prototype.indexOf.call({length: { toString: function () { return '0';}}}, 1);
-  
+
 
 assert.sameValue(i, -1, 'i');

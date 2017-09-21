@@ -8,13 +8,13 @@ es6id:  19.1.2.1.5.c
 
 //"a" will be an property of the final object and the value should be 1
 var target = {a:1};
-/*---
+/*
 "1a2c3" have own enumerable properties, so it Should be wrapped to objects;
 {b:6} is an object,should be assigned to final object.
 undefined and null should be ignored;
 125 is a number,it cannot has own enumerable properties;
 {a:"c"},{a:5} will override property a, the value should be 5.
----*/
+*/
 var result = Object.assign(target,"1a2c3",{a:"c"},undefined,{b:6},null,125,{a:5});
 
 assert.sameValue(Object.keys(result).length, 7 , "The length should be 7 in the final object.");

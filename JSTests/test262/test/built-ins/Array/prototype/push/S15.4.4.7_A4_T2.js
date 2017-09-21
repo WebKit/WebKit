@@ -3,6 +3,7 @@
 
 /*---
 info: Check ToLength(length) for non Array objects
+esid: sec-array.prototype.push
 es5id: 15.4.4.7_A4_T2
 description: length = 4294967295
 ---*/
@@ -30,7 +31,7 @@ if (obj[4294967295] !== "x") {
 //CHECK#4
 if (obj[4294967296] !== "y") {
    $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = 4294967295; obj.push("x", "y", "z"); obj[4294967296] === "y". Actual: ' + (obj[4294967296]));
-}  
+}
 
 //CHECK#5
 if (obj[4294967297] !== "z") {

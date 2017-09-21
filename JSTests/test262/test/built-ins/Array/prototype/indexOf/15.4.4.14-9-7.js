@@ -2,11 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-9-7
 description: Array.prototype.indexOf must return correct index (self reference)
 ---*/
 
-  var a = new Array(0,1,2,3);  
+  var a = new Array(0,1,2,3);
   a[2] = a;
 
 assert.sameValue(a.indexOf(a), 2, 'a.indexOf(a)');

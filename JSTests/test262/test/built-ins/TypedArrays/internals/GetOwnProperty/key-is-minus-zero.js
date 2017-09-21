@@ -26,6 +26,7 @@ info: >
   6. If index = -0, return undefined.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

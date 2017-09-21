@@ -19,8 +19,12 @@ info: |
   new.target
 
   1. Return false.
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function f() {
   (new.target)++;

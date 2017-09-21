@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorStep returns an abrupt completion (function declaration (default parameter))
 esid: sec-function-definitions-runtime-semantics-instantiatefunctionobject
 es6id: 14.1.19
-features: [destructuring-binding, default-parameters]
+features: [Symbol.iterator, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     FunctionDeclaration :
@@ -48,6 +48,7 @@ info: |
        a. Let next be IteratorStep(iteratorRecord.[[iterator]]).
        b. If next is an abrupt completion, set iteratorRecord.[[done]] to true.
        c. ReturnIfAbrupt(next).
+
 ---*/
 var g = {};
 g[Symbol.iterator] = function() {

@@ -5,7 +5,7 @@
 description: >
     Objects whose specified property is not configurable do not satisfy the
     assertion outside of strict mode.
-includes: [propertyHelper.js]
+includes: [propertyHelper.js,sta.js]
 flags: [noStrict]
 ---*/
 

@@ -5,6 +5,7 @@ esid: sec-%typedarray%.prototype.findindex
 description: >
   _TypedArray_.prototype has no own property "findIndex"
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

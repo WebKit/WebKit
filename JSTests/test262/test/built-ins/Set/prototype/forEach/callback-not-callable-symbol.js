@@ -11,6 +11,7 @@ description: >
 
     Passing `symbol` as callback
 
+features: [Symbol]
 ---*/
 
 var s = new Set([1]);

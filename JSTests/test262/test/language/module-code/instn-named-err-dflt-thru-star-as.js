@@ -23,7 +23,9 @@ info: |
        a. Assert: A default export was not explicitly defined by this module.
        b. Throw a SyntaxError exception.
        c. NOTE A default export cannot be provided by an export *.
-negative: SyntaxError
+negative:
+  phase: runtime
+  type: SyntaxError
 flags: [module]
 ---*/
 

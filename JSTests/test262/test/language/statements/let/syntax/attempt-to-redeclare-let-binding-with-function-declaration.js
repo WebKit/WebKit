@@ -5,6 +5,10 @@ es6id: B.3.3
 description: >
     redeclaration within block:
     attempt to redeclare let binding with function declaration
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 { let f; function f() {} }

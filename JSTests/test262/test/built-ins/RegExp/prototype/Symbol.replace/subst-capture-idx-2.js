@@ -28,11 +28,14 @@ info: >
     Replacement text:
     The nnth element of captures, where nn is a two-digit decimal number in the
     range 01 to 99. If nn≤m and the nnth element of captures is undefined, use
-    the empty String instead. If nn is 00 or nn>m, the result is
-    implementation-defined.
+    the empty String instead. If nn is 00 or nn>m, no replacement is done.
 features: [Symbol.replace]
 ---*/
 
 assert.sameValue(
   /b(c)(z)?(.)/[Symbol.replace]('abcde', '[$01$02$03]'), 'a[cd]e'
+);
+
+assert.sameValue(
+  /b(c)(z)?(.)/[Symbol.replace]('abcde', '[$01$02$03$04$00]'), 'a[cd$04$00]e'
 );

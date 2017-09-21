@@ -14,34 +14,20 @@ testWithIntlConstructors(function (Constructor) {
     // undefined is handled separately
     
     // null should result in a TypeError
-    var error;
-    try {
+    assert.throws(TypeError, function() {
         var supportedForNull = Constructor.supportedLocalesOf(null);
-    } catch (e) {
-        error = e;
-    }
-    if (error === undefined) {
-        $ERROR("Null as locale list was not rejected.");
-    } else if (error.name !== "TypeError") {
-        $ERROR("Null as locale list was rejected with wrong error " + error.name + ".");
-    }    
+    }, "Null as locale list was not rejected.");
     
     // let's use an empty list for comparison
     var supportedForEmptyList = Constructor.supportedLocalesOf([]);
     // we don't compare the elements because length should be 0 - let's just verify that
-    if (supportedForEmptyList.length !== 0) {
-        $ERROR("Internal test error: Assumption about length being 0 is invalid.");
-    }
+    assert.sameValue(supportedForEmptyList.length, 0, "Internal test error: Assumption about length being 0 is invalid.");
 
     // most non-objects will be interpreted as empty lists because a missing length property is interpreted as 0
     var supportedForNumber = Constructor.supportedLocalesOf(5);
-    if (supportedForNumber.length !== supportedForEmptyList.length) {
-        $ERROR("Supported locales differ between numeric and empty list input.");
-    }
+    assert.sameValue(supportedForNumber.length, supportedForEmptyList.length, "Supported locales differ between numeric and empty list input.");
     var supportedForBoolean = Constructor.supportedLocalesOf(true);
-    if (supportedForBoolean.length !== supportedForEmptyList.length) {
-        $ERROR("Supported locales differ between boolean and empty list input.");
-    }
+    assert.sameValue(supportedForBoolean.length, supportedForEmptyList.length, "Supported locales differ between boolean and empty list input.");
     
     return true;
 });

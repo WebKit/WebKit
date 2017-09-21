@@ -5,6 +5,7 @@
 info: >
     The elements of the array are rearranged so as to reverse their order.
     The object is returned as the result of the call
+esid: sec-array.prototype.reverse
 es5id: 15.4.4.8_A1_T2
 description: Checking this algorithm, elements are objects and primitives
 ---*/
@@ -31,7 +32,7 @@ if (x[0] !== "-1") {
 //CHECK#3
 if (x[1] !== "NaN") {
    $ERROR('#3: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x[1] === "NaN". Actual: ' + (x[1]));
-}    
+}
 
 //CHECK#4
 if (x[2] !== undefined) {
@@ -41,7 +42,7 @@ if (x[2] !== undefined) {
 //CHECK#5
 if (x[3] !== undefined) {
    $ERROR('#5: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x[3] === undefined. Actual: ' + (x[3]));
-}    
+}
 
 //CHECK#6
 if (x[4] !== undefined) {
@@ -56,7 +57,7 @@ if (x[5] !== undefined) {
 //CHECK#8
 if (x[6] !== undefined) {
    $ERROR('#8: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x[6] === undefined. Actual: ' + (x[6]));
-}      
+}
 
 //CHECK#9
 if (x[7] !== Infinity) {
@@ -71,7 +72,7 @@ if (x[8] !== undefined) {
 //CHECK#11
 if (x[9] !== true) {
    $ERROR('#11: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x[9] === true. Actual: ' + (x[9]));
-}   
+}
 
 x.length = 9;
 
@@ -88,7 +89,7 @@ if (x[0] !== undefined) {
 //CHECK#13
 if (x[1] !== Infinity) {
    $ERROR('#13: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x.length = 9; x.reverse(); x[1] === Infinity. Actual: ' + (x[1]));
-}    
+}
 
 //CHECK#14
 if (x[2] !== undefined) {
@@ -98,7 +99,7 @@ if (x[2] !== undefined) {
 //CHECK#15
 if (x[3] !== undefined) {
    $ERROR('#15: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x.length = 9; x.reverse(); x[3] === undefined. Actual: ' + (x[3]));
-}    
+}
 
 //CHECK#16
 if (x[4] !== undefined) {
@@ -113,7 +114,7 @@ if (x[5] !== undefined) {
 //CHECK#18
 if (x[6] !== undefined) {
    $ERROR('#18: x = []; x[0] = true; x[2] = Infinity; x[4] = undefined; x[5] = undefined; x[8] = "NaN"; x[9] = "-1"; x.reverse(); x.length = 9; x.reverse(); x[6] === undefined. Actual: ' + (x[6]));
-}      
+}
 
 //CHECK#19
 if (x[7] !== "NaN") {

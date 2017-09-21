@@ -7,7 +7,9 @@ esid: sec-let-and-const-declarations-runtime-semantics-evaluation
 es6id: 13.3.1.4
 features: [destructuring-binding]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     LexicalBinding : BindingPattern Initializer
 
@@ -24,6 +26,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 let [...{ x } = []] = [];
 

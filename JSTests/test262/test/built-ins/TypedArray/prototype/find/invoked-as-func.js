@@ -17,6 +17,7 @@ info: >
   exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var find = TypedArray.prototype.find;

@@ -3,6 +3,7 @@
 
 /*---
 info: Check ToLength(length) for non Array objects
+esid: sec-array.prototype.pop
 es5id: 15.4.4.6_A3_T1
 description: length = 4294967296
 ---*/
@@ -27,7 +28,7 @@ if (obj.length !== 4294967295) {
 //CHECK#3
 if (obj[0] !== "x") {
    $ERROR('#3: var obj = {}; obj.pop = Array.prototype.pop; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; obj.pop(); obj[0] === "x". Actual: ' + (obj[0]));
-}  
+}
 
 //CHECK#4
 if (obj[4294967295] !== undefined) {

@@ -3,6 +3,7 @@
 
 /*---
 info: Operator use ToInteger from start
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A2.1_T3
 description: start = Infinity
 ---*/
@@ -19,7 +20,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 0) {
   $ERROR('#2: var x = [0,1,2,3]; var arr = x.splice(Number.POSITIVE_INFINITY,3); arr.length === 0. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (x[0] !== 0) {
@@ -29,12 +30,12 @@ if (x[0] !== 0) {
 //CHECK#4
 if (x[1] !== 1) {
   $ERROR('#4: var x = [0,1,2,3]; var x = x.splice(Number.POSITIVE_INFINITY,3); x[1] === 1. Actual: ' + (x[1]));
-}      
+}
 
 //CHECK#5
 if (x[2] !== 2) {
   $ERROR('#5: var x = [0,1,2,3]; var x = x.splice(Number.POSITIVE_INFINITY,3); x[2] === 2. Actual: ' + (x[2]));
-}   
+}
 
 //CHECK#6
 if (x[3] !== 3) {

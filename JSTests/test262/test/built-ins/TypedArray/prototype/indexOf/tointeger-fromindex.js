@@ -18,6 +18,7 @@ info: >
   produces the value 0.)
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var obj = {

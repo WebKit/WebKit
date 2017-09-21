@@ -16,6 +16,7 @@ info: >
   17. If srcLength + targetOffset > targetLength, throw a RangeError exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var getCalls = 0;

@@ -23,6 +23,7 @@ info: >
       iii. If same is true, return k.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

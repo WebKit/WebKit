@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.1.1
+esid: sec-weakmap-iterable
 description: >
   Return abrupt from next iterator step.
 info: >
@@ -12,6 +13,7 @@ info: >
     a. Let next be IteratorStep(iter).
     b. ReturnIfAbrupt(next).
     ...
+features: [Symbol.iterator]
 ---*/
 
 var iterable = {};

@@ -3,7 +3,7 @@
 /*---
 esid: sec-with-statement-static-semantics-early-errors
 es6id: 13.11.1
-description:
+description: >
   A labelled function declaration is never permitted in the Statement position
 info: |
   WithStatementa: with ( Expression ) Statement
@@ -16,7 +16,11 @@ info: |
 
   In the absence of Annex B.3.2, a SyntaxError should be produced due to the
   labelled function declaration itself.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 with ({}) label1: label2: function test262() {}

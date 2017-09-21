@@ -22,9 +22,12 @@ info: >
   are considered.  *Then* 13.3.1.1's static semantics for the LexicalDeclaration
   just chosen, per 5.3, are validated to recognize the Script as invalid.  Thus
   the eval script can't be evaluated, and a SyntaxError is thrown.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
-throw NotEarlyError;
+
+throw "Test262: This statement should not be evaluated.";
 
 let  // start of a LexicalDeclaration, *not* an ASI opportunity
 let = "irrelevant initializer";

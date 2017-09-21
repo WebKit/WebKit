@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.3.4
+esid: sec-weakset.prototype.has
 description: >
   Returns false if value is not a non-null Object.
 info: >

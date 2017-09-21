@@ -9,8 +9,12 @@ info: |
     any duplicate entries for "__proto__" and at least two of those entries
     were obtained from productions of the form
     PropertyDefinition : PropertyName : AssignmentExpression .
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 ({
   __proto__: null,

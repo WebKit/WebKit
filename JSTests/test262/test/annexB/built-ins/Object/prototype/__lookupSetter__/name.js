@@ -19,8 +19,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(Object.prototype.__lookupSetter__.name, '__lookupSetter__');
-
-verifyNotEnumerable(Object.prototype.__lookupSetter__, 'name');
-verifyNotWritable(Object.prototype.__lookupSetter__, 'name');
-verifyConfigurable(Object.prototype.__lookupSetter__, 'name');
+verifyProperty(Object.prototype.__lookupSetter__, "name", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: "__lookupSetter__"
+});

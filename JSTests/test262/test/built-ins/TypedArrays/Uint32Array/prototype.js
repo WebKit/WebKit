@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.5.2
+esid: sec-typedarray.prototype
 description: >
   The initial value of Uint32Array.prototype is the Uint32Array prototype object.
 info: >

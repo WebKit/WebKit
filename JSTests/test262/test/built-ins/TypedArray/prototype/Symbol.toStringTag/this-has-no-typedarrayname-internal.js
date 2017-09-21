@@ -12,7 +12,7 @@ info: >
   3. If O does not have a [[TypedArrayName]] internal slot, return undefined.
   ...
 includes: [testTypedArray.js]
-features: [Symbol.toStringTag, DataView]
+features: [Symbol.toStringTag, DataView, TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

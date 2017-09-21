@@ -5,9 +5,13 @@
 author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: It is a SyntaxError if FormalParameters contains arguments
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 async(arguments) => {  }
 

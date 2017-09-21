@@ -20,6 +20,7 @@ info: >
   6. If index = -0, return undefined.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var proto = TypedArray.prototype;

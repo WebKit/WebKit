@@ -10,7 +10,9 @@ info: |
     18. Resume the context that is now on the top of the execution context
         stack as the running execution context.
     19. Return Completion(result).
-negative: Test262Error
+negative:
+  phase: runtime
+  type: Test262Error
 flags: [module]
 ---*/
 

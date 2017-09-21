@@ -5,6 +5,7 @@ es6id: 12.5.6.1
 description: >
     typeof Symbol() returns 'symbol'.
     typeof Object(Symbol()) returns 'object'.
+features: [Symbol]
 ---*/
 assert.sameValue(typeof Symbol('A'), 'symbol', "`typeof Symbol('A')` is `'symbol'`");
 assert.sameValue(typeof Symbol(), 'symbol', "`typeof Symbol()` is `'symbol'`");

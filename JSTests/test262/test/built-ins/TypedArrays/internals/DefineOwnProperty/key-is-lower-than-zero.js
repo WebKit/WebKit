@@ -15,7 +15,7 @@ info: >
       iv. If intIndex < 0, return false.
   ...
 includes: [testTypedArray.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {
@@ -24,7 +24,7 @@ testWithTypedArrayConstructors(function(TA) {
   assert.sameValue(
     Reflect.defineProperty(sample, "-1", {
       value: 42,
-      configurable: true,
+      configurable: false,
       enumerable: true,
       writable: true
     }),

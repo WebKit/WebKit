@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-4-15
 description: >
     Array.prototype.every - calling with no callbackfn is the same as

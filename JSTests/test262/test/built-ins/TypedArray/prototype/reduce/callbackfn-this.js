@@ -23,6 +23,7 @@ info: >
       k, O »).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var expected = (function() { return this; })();

@@ -11,13 +11,13 @@ flags: [noStrict]
 ---*/
 
 //CHECK#1
-function MyFunction() {return this}
-if (MyFunction() !== this) {
-  $ERROR('#1: function MyFunction() {return this} MyFunction() === this. Actual: ' + (MyFunction()));
+function ReturnThis() {return this}
+if (ReturnThis() !== this) {
+  $ERROR('#1: function ReturnThis() {return this} ReturnThis() === this. Actual: ' + (ReturnThis()));
 }
 
 //CHECK#2
-function MyFunction() {return eval("this")}
-if (MyFunction() !== this) {
-  $ERROR('#2: function MyFunction() {return eval("this")} MyFunction() === this. Actual: ' + (MyFunction()));
+function ReturnEvalThis() {return eval("this")}
+if (ReturnEvalThis() !== this) {
+  $ERROR('#2: function ReturnEvalThis() {return eval("this")} ReturnEvalThis() === this. Actual: ' + (ReturnEvalThis()));
 }

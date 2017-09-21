@@ -14,8 +14,8 @@ info: >
       vi. If numericIndex ≥ the value of O's [[ArrayLength]] internal slot,
       return false.
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 // Prevents false positives using OrdinaryHasProperty

@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat array like string length
 includes: [compareArray.js]
+features: [Symbol.isConcatSpreadable]
 ---*/
 var obj = {
   "length": "6",

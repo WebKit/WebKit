@@ -5,6 +5,7 @@
 info: >
     The shift function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.shift
 es5id: 15.4.4.9_A2_T4
 description: >
     The first element of the array is removed from the array and
@@ -21,7 +22,7 @@ obj.length = 4;
 var shift = obj.shift();
 if (shift !== 0) {
   $ERROR('#1: var obj = {}; obj["0"] = 0; obj["3"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift() === 0. Actual: ' + (shift));
-} 
+}
 
 //CHECK#2
 if (obj.length !== 3) {
@@ -32,7 +33,7 @@ if (obj.length !== 3) {
 var shift = obj.shift();
 if (shift !== undefined) {
   $ERROR('#3: var obj = {}; obj["0"] = 0; obj["3"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift() === undefined. Actual: ' + (shift));
-} 
+}
 
 //CHECK#4
 if (obj.length !== 2) {
@@ -44,7 +45,7 @@ obj.length = 1;
 var shift = obj.shift();
 if (shift !== undefined) {
   $ERROR('#5: var obj = {}; obj["0"] = 0; obj["3"] = 3; obj.length = 4; obj.shift = Array.prototype.shift; obj.shift(); obj.shift(); obj.length = 1; obj.shift() === undefined. Actual: ' + (shift));
-} 
+}
 
 //CHECK#6
 if (obj.length !== 0) {

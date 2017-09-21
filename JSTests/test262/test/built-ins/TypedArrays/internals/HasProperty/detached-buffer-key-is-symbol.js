@@ -14,7 +14,7 @@ info: >
     ...
   4. Return ? OrdinaryHasProperty(O, P).
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect, Symbol]
+features: [Reflect, Symbol, TypedArray]
 ---*/
 
 var s1 = Symbol("foo");

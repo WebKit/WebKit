@@ -5,6 +5,7 @@
 info: >
     The splice function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A2_T2
 description: >
     If start is negative, use max(start + length, 0).  If deleteCount
@@ -25,12 +26,12 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#1
 if (arr.length !== 0) {
   $ERROR('#1: var obj = {0:0,1:1}; obj.length = 2; obj.splice = Array.prototype.splice; var arr = obj.splice(-2,-1,2,3); arr.length === 0. Actual: ' + (arr.length));
-}   
+}
 
 //CHECK#2
 if (obj.length !== 4) {
   $ERROR('#2: var obj = {0:0,1:1}; obj.length = 2; obj.splice = Array.prototype.splice; var arr = obj.splice(-2,-1,2,3); obj.length === 4. Actual: ' + (obj.length));
-}      
+}
 
 //CHECK#3
 if (obj[0] !== 2) {

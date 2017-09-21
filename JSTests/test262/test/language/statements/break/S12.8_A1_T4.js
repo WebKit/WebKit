@@ -7,8 +7,12 @@ es5id: 12.8_A1_T4
 description: >
     Checking if break Identifier with no loop, placed into a  block,
     fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 LABEL : x=3.14;
 

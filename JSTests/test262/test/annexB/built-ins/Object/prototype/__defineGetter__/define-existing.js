@@ -29,8 +29,11 @@ Object.defineProperty(subject, 'stringAcsr', {
 result = subject.__defineGetter__('stringAcsr', newGet);
 
 desc = Object.getOwnPropertyDescriptor(subject, 'stringAcsr');
-verifyEnumerable(subject, 'stringAcsr');
-verifyConfigurable(subject, 'stringAcsr');
+
+verifyProperty(subject, "stringAcsr", {
+  enumerable: true,
+  configurable: true
+});
 
 assert.sameValue(desc.get, newGet, 'descriptor `get` method');
 assert.sameValue(desc.set, originalSet, 'descriptor `set` method');

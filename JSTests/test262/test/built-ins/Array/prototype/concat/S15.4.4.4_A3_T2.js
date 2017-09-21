@@ -2,6 +2,7 @@
 // See LICENSE or https://github.com/tc39/test262/blob/master/LICENSE
 
 /*---
+esid: sec-array.prototype.concat
 info: Array.prototype.concat uses [[Get]] on 'length' to determine array length
 es5id: 15.4.4.4_A3_T2
 description: >

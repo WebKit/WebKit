@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.concat
 es5id: 15.4.4.4-5-b-iii-3-b-1
 description: >
     Array.prototype.concat will concat an Array when index property

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-arraybuffer.prototype.slice
 es6id: 24.1.4.3
 description: >
   Throws a TypeError if `this` does not have an [[ArrayBufferData]] internal slot.

@@ -5,7 +5,7 @@
 description: Elision advances iterator and forwards abrupt completions (for-of statement)
 esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     IterationStatement :

@@ -5,6 +5,7 @@ esid: sec-%typedarray%.prototype.reduce
 description: >
   The callbackfn return does not change the `this` instance
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

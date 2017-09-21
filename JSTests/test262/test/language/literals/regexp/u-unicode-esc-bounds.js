@@ -10,7 +10,11 @@ info: >
     RegExpUnicodeEscapeSequence :: u{ HexDigits }
 
         - It is a Syntax Error if the MV of HexDigits > 1114111.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /\u{110000}/u;

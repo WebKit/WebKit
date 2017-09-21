@@ -12,7 +12,7 @@ info: >
   5. Assert: name is a String value.
   6. Return name.
 includes: [testTypedArray.js]
-features: [Symbol.toStringTag]
+features: [Symbol.toStringTag, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

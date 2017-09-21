@@ -13,7 +13,7 @@ info: >
     b. Increment n by 1.
   13. Return A.
 includes: [testTypedArray.js, compareArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

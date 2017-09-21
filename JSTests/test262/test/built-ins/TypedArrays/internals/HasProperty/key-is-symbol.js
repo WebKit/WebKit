@@ -11,8 +11,8 @@ info: >
   3. If Type(P) is String, then
     ...
   4. Return ? OrdinaryHasProperty(O, P).
-features: [Reflect, Symbol]
 includes: [testTypedArray.js]
+features: [Reflect, Symbol, TypedArray]
 ---*/
 
 var s = Symbol("foo");

@@ -16,6 +16,7 @@ info: >
   ...
   6. Return O.
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 var buffer = new ArrayBuffer(64);

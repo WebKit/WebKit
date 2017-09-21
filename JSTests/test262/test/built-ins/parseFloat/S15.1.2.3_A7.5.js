@@ -4,6 +4,8 @@
 /*---
 info: The parseFloat property has the attribute DontEnum
 es5id: 15.1.2.3_A7.5
+es6id: 18.2.4
+esid: sec-parsefloat-string
 description: Checking use propertyIsEnumerable, for-in
 ---*/
 
@@ -17,7 +19,7 @@ var result = true;
 for (var p in this){
   if (p === "parseFloat") {
     result = false;
-  }  
+  }
 }
 
 if (result !== true) {

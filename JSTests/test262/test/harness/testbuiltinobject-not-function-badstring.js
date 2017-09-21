@@ -5,9 +5,8 @@
 description: >
     Objects that are not expected to be functions but do not define the correct
     [[Class]] internal property do not satisfy the assertion.
-includes: [testBuiltInObject.js]
+includes: [testBuiltInObject.js,sta.js]
 ---*/
-
 var threw = false;
 
 try {

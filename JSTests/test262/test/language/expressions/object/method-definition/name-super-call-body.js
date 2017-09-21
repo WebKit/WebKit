@@ -5,8 +5,12 @@
 description: >
     It is a Syntax Error if HasDirectSuper of MethodDefinition is true.
 es6id: 12.2.5.1
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 ({
   method() {

@@ -10,6 +10,7 @@ info: >
   4. Let relativeStart be ? ToInteger(start).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var o1 = {

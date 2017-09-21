@@ -29,8 +29,12 @@ info: |
         { }
         { ExportsList }
         { ExportsList , }
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 export {} from './instn-resolve-empty-export_FIXTURE.js';

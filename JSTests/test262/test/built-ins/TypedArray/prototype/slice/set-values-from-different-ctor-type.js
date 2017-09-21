@@ -27,7 +27,7 @@ info: >
   ...
   16. Return A
 includes: [testTypedArray.js, compareArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 var arr = [42, 43, 44];

@@ -7,8 +7,12 @@ description: >
 
     It is a Syntax Error if PrototypePropertyNameList of ClassElementList contains more than one occurrence of "constructor".
 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 class A {
   constructor() {}
   constructor() {}

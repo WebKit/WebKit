@@ -6,6 +6,7 @@ info: >
     The arguments are appended to the end of the array, in
     the order in which they appear. The new length of the array is returned
     as the result of the call
+esid: sec-array.prototype.push
 es5id: 15.4.4.7_A1_T1
 description: Checking case when push is given no arguments or one argument
 ---*/
@@ -15,7 +16,7 @@ var x = new Array();
 var push = x.push(1);
 if (push !== 1) {
   $ERROR('#1: x = new Array(); x.push(1) === 1. Actual: ' + (push));
-}  
+}
 
 //CHECK#2
 if (x[0] !== 1) {

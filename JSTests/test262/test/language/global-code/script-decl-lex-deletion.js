@@ -18,7 +18,7 @@ info: |
 flags: [noStrict]
 ---*/
 
-$.evalScript('let test262let;');
+$262.evalScript('let test262let;');
 
 delete test262let;
 
@@ -26,13 +26,13 @@ delete test262let;
 // to ensure that the entries in the environment record persist.
 test262let;
 
-$.evalScript('const test262const = null;');
+$262.evalScript('const test262const = null;');
 
 delete test262const;
 
 test262const;
 
-$.evalScript('class test262class {}');
+$262.evalScript('class test262class {}');
 
 delete test262class;
 

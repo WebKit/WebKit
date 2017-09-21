@@ -6,7 +6,11 @@ es6id: 14.1.2
 description: Parameters may not contain a "super" property reference
 info: >
   It is a Syntax Error if FunctionBody Contains SuperProperty is true.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function f(x = super.x) {}

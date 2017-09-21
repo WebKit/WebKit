@@ -18,7 +18,9 @@ info: |
     10. For each ExportEntry Record e in module.[[StarExportEntries]], do
         [...]
     11. Return starResolution.
-negative: SyntaxError
+negative:
+  phase: runtime
+  type: SyntaxError
 flags: [module]
 ---*/
 

@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorValue returns an abrupt completion (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
 es6id: 13.15.7
-features: [destructuring-binding]
+features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |
     Catch : catch ( CatchParameter ) Block
@@ -30,6 +30,7 @@ info: |
           ii. If v is an abrupt completion, set iteratorRecord.[[done]] to
               true.
           iii. ReturnIfAbrupt(v).
+
 ---*/
 var poisonedValue = Object.defineProperty({}, 'value', {
   get: function() {

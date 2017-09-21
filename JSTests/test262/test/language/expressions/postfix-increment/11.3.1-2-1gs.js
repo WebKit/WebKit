@@ -6,9 +6,12 @@ es5id: 11.3.1-2-1gs
 description: >
     Strict Mode - SyntaxError is throw if the identifier arguments
     appear as a PostfixExpression(arguments++)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 arguments++;

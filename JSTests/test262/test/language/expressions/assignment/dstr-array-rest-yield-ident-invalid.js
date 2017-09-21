@@ -7,7 +7,9 @@ esid: sec-variable-statement-runtime-semantics-evaluation
 es6id: 13.3.2.4
 features: [destructuring-binding]
 flags: [generated, onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     VariableDeclaration : BindingPattern Initializer
 
@@ -17,6 +19,7 @@ info: |
     4. Return the result of performing BindingInitialization for
        BindingPattern passing rval and undefined as arguments.
 ---*/
+throw "Test262: This statement should not be evaluated.";
 var x = {};
 
 0, [...x[yield]] = [];

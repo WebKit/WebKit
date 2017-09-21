@@ -7,8 +7,12 @@ es5id: 12.7_A1_T2
 description: >
     Checking if single "continue" with Label but without any
     IterationStatement fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 LABEL : x=3.14;
 

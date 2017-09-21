@@ -35,8 +35,12 @@ info: |
         { }
         { ImportsList }
         { ImportsList , }
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 import {} from './instn-resolve-empty-import_FIXTURE.js';

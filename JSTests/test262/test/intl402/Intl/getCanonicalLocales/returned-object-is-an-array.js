@@ -8,11 +8,13 @@ info: |
   8.2.1 Intl.getCanonicalLocales (locales)
   1. Let ll be ? CanonicalizeLocaleList(locales).
   2. Return CreateArrayFromList(ll).
-includes: [compareArray.js]
 ---*/
 
 var locales = ['en-US'];
 var result = Intl.getCanonicalLocales(['en-US']);
+
+assert.sameValue(Object.getPrototypeOf(result), Array.prototype, 'prototype is Array.prototype');
+assert.sameValue(result.constructor, Array);
 
 assert.notSameValue(result, locales, "result is a new array instance");
 assert.sameValue(result.length, 1, "result.length");

@@ -1,7 +1,7 @@
 // Copyright (C) 2016 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-description:
+description: >
     Indirect default exports are included in the module namespace object
 esid: sec-moduledeclarationinstantiation
 info: |

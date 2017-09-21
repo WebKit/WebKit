@@ -9,8 +9,12 @@ description: >
 
     (set)
 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 class A {
   set method(_) {
     super();

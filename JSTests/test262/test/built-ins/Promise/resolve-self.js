@@ -17,6 +17,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var resolve;
 var promise = new Promise(function(_resolve) {
   resolve = _resolve;
@@ -38,4 +39,6 @@ promise.then(function() {
     $DONE();
   });
 
-resolve(promise);
+returnValue = resolve(promise);
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');

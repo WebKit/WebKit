@@ -3,8 +3,12 @@
 /*---
 description: Expression cannot contain an `import` declaration
 esid: sec-modules
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 () => { import v from './decl-pos-import-arrow-function.js'; };

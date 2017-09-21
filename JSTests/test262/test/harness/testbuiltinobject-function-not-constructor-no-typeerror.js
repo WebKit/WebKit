@@ -5,9 +5,8 @@
 description: >
     Non-constructor functions that do not throw a TypeError when invoked via
     `new` do not satisfy the assertion.
-includes: [testBuiltInObject.js]
+includes: [testBuiltInObject.js,sta.js]
 ---*/
-
 var threw = false;
 var fn = function() {
   throw new Error();

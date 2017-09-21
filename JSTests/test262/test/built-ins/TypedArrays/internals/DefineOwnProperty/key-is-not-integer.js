@@ -13,7 +13,7 @@ info: >
       i. If IsInteger(numericIndex) is false, return false.
   ...
 includes: [testTypedArray.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -4,6 +4,8 @@
 /*---
 info: Operator use ToString
 es5id: 15.1.3.1_A6_T1
+es6id: 18.2.6.2
+esid: sec-decodeuri-encodeduri
 description: If Type(value) is Object, evaluate ToPrimitive(value, String)
 ---*/
 
@@ -17,7 +19,7 @@ if (decodeURI(object) !== "[object Object]") {
 var object = {valueOf: function() {return ""}, toString: function() {return "%5E"}};
 if (decodeURI(object) !== "^") {
   $ERROR('#2: var object = {valueOf: function() {return ""}, toString: function() {return "%5E"}}; decodeURI(object) === "^". Actual: ' + (decodeURI(object)));
-} 
+}
 
 //CHECK#3
 var object = {valueOf: function() {return "%5E"}, toString: function() {return {}}};
@@ -57,11 +59,11 @@ try {
   var object = {valueOf: function() {return "%5E"}, toString: function() {throw "error"}};
   decodeURI(object);
   $ERROR('#7.1: var object = {valueOf: function() {return "%5E"}, toString: function() {throw "error"}}; decodeURI(object) throw "error". Actual: ' + (decodeURI(object)));
-}  
+}
 catch (e) {
   if (e !== "error") {
     $ERROR('#7.2: var object = {valueOf: function() {return "%5E"}, toString: function() {throw "error"}}; decodeURI(object) throw "error". Actual: ' + (e));
-  } 
+  }
 }
 
 //CHECK#8
@@ -69,9 +71,9 @@ try {
   var object = {valueOf: function() {return {}}, toString: function() {return {}}};
   decodeURI(object);
   $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; decodeURI(object) throw TypeError. Actual: ' + (decodeURI(object)));
-}  
+}
 catch (e) {
   if ((e instanceof TypeError) !== true) {
     $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}}; decodeURI(object) throw TypeError. Actual: ' + (e));
-  } 
+  }
 }

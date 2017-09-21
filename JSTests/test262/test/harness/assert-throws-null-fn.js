@@ -4,6 +4,7 @@
 /*---
 description: >
   Fails if second arg is not a function
+includes: [sta.js]
 ---*/
 
 var threw = false;

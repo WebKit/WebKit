@@ -62,6 +62,7 @@ info: >
       ii. If Type(result) is not Object, return result.
   6. Throw a TypeError exception.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

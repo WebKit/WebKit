@@ -8,8 +8,12 @@ info: >
     IterationStatement
 es5id: 12.7_A5_T3
 description: Identifier is within loop label
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 LABEL_OUT : var x=0, y=0;
 

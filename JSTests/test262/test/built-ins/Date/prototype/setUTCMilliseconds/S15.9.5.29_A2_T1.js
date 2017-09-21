@@ -3,6 +3,7 @@
 
 /*---
 info: The "length" property of the "setUTCMilliseconds" is 1
+esid: sec-date.prototype.setutcmilliseconds
 es5id: 15.9.5.29_A2_T1
 description: The "length" property of the "setUTCMilliseconds" is 1
 ---*/

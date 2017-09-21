@@ -13,7 +13,9 @@ info: |
              2. NOTE: eval will not create a global var declaration that would
                 be shadowed by a global lexical declaration.
        [...]
-negative: SyntaxError
+negative:
+  phase: runtime
+  type: SyntaxError
 flags: [noStrict]
 features: [let]
 ---*/

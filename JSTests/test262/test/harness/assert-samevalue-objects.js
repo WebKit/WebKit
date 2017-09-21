@@ -4,6 +4,7 @@
 /*---
 description: >
     Distinct objects do not satisfy the assertion.
+includes: [sta.js]
 ---*/
 
 var threw = false;

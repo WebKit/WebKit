@@ -3,6 +3,7 @@
 
 /*---
 es6id: 18.2.6.5
+esid: sec-encodeuricomponent-uricomponent
 description: >
   encodeURIComponent.name is "encodeURIComponent".
 info: >

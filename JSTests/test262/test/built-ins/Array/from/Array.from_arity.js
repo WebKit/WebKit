@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 /*---
+esid: sec-array.from
 es6id: 22.1.2.1
 description: >
   The length property of the Array.from method is 1.

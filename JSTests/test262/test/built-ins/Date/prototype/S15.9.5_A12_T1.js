@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype has the property "getMonth"
+esid: sec-properties-of-the-date-prototype-object
 es5id: 15.9.5_A12_T1
 description: The Date.prototype has the property "getMonth"
 ---*/

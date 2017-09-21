@@ -2,16 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-es5id: 11.3_a
+esid: sec-properties-of-intl-numberformat-prototype-object
 description: >
-    Tests that Intl.NumberFormat.prototype is an object that  has been
+    Tests that Intl.NumberFormat.prototype is not an object that has been
     initialized as an Intl.NumberFormat.
 author: Roozbeh Pournader
 ---*/
 
-// test by calling a function that would fail if "this" were not an object
+// test by calling a function that should fail as "this" is not an object
 // initialized as an Intl.NumberFormat
-if (typeof Intl.NumberFormat.prototype.format(0) !== "string") {
-    $ERROR("Intl.NumberFormat's prototype is not an object that has been " +
-        "initialized as an Intl.NumberFormat");
-}
+assert.throws(TypeError, () => Intl.NumberFormat.prototype.format(0),
+              "Intl.NumberFormat's prototype is not an object that has been initialized as an Intl.NumberFormat");

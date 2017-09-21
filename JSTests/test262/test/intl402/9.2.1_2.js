@@ -15,7 +15,5 @@ taintArray();
 testWithIntlConstructors(function (Constructor) {
     var defaultLocale = new Constructor().resolvedOptions().locale;
     var canonicalized = Constructor.supportedLocalesOf([defaultLocale, defaultLocale]);
-    if (canonicalized.length > 1) {
-        $ERROR("Canonicalization didn't remove duplicate language tags from locale list.");
-    }
+    assert.sameValue(canonicalized.length > 1, false, "Canonicalization didn't remove duplicate language tags from locale list.");
 });

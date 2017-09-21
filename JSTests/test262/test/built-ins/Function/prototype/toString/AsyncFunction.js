@@ -12,4 +12,4 @@ features: [async-functions]
 async function f() {}
 var AsyncFunction = f.constructor;
 var g = /* before */AsyncFunction("a", " /* a */ b, c /* b */ //", "/* c */ ; /* d */ //")/* after */; 
-assert.sameValue(g.toString(), "async function anonymous(a, /* a */ b, c /* b */ //\n) {/* c */ ; /* d */ //\n}");
+assert.sameValue(g.toString(), "async function anonymous(a, /* a */ b, c /* b */ //\n) {\n/* c */ ; /* d */ //\n}");

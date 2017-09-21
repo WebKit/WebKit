@@ -6,9 +6,12 @@ es5id: 13.1-5gs
 description: >
     Strict Mode - SyntaxError is thrown if a FunctionDeclaration has
     two identical parameters
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 function _13_1_5_fun(param, param) { }

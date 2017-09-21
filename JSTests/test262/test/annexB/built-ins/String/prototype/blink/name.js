@@ -19,8 +19,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(String.prototype.blink.name, "blink");
-
-verifyNotEnumerable(String.prototype.blink, "name");
-verifyNotWritable(String.prototype.blink, "name");
-verifyConfigurable(String.prototype.blink, "name");
+verifyProperty(String.prototype.blink, "name", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: "blink"
+});

@@ -17,7 +17,7 @@ info: >
   ...
   7. Return true.
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

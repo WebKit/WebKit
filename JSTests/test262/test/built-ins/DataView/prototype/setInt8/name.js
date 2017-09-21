@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-dataview.prototype.setint8
 es6id: 24.2.4.15
 description: >
   DataView.prototype.setInt8.name is "setInt8".

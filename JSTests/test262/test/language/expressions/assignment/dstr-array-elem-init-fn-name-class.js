@@ -37,9 +37,11 @@ result = [ xCls = class x {}, cls = class {}, xCls2 = class { static name() {} }
 assert(xCls.name !== 'xCls');
 assert(xCls2.name !== 'xCls2');
 
-assert.sameValue(cls.name, 'cls');
-verifyNotEnumerable(cls, 'name');
-verifyNotWritable(cls, 'name');
-verifyConfigurable(cls, 'name');
+verifyProperty(cls, 'name', {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: 'cls'
+});
 
 assert.sameValue(result, vals);

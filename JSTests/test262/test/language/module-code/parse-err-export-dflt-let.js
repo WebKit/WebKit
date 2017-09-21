@@ -5,7 +5,11 @@ esid: sec-exports
 es6id: 15.2.3
 description: The default export may not be a LexicalDeclaration (let)
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 export default let x;

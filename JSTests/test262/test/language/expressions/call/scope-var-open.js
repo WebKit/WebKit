@@ -20,19 +20,19 @@ info: |
     [...]
 ---*/
 
-var name = 'outside';
-var probeBefore = function() { return name; };
+var n = 'outside';
+var probeBefore = function() { return n; };
 var probeBody;
 
 // This test intentionally elides parameter expressions because their presence
 // triggers the creation of an additional LexicalEnvironment dedicated to the
 // function body (see sec-functiondeclarationinstantiation)
-var func = function name() {
+var func = function n() {
   // The initializer is intentionally omitted from the following
   // VariableStatement in order to demonstrate that a new binding is created
   // (and not simply re-used from the FunctionExpression's BindingIdentifier).
-  var name;
-  probeBody = function() { return name; };
+  var n;
+  probeBody = function() { return n; };
 };
 
 func();

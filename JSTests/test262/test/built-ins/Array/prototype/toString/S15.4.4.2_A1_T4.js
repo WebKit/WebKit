@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.tostring
 info: >
     The result of calling this function is the same as if
     the built-in join method were invoked for this object with no argument
@@ -28,8 +29,8 @@ if (x.toString() !== x.join()) {
 } else {
   if (x.toString() !== "*") {
     $ERROR('#2.2: var object = {valueOf: function() {return "+"}, toString: function() {return "*"}} var x = new Array(object); x.toString() === "*". Actual: ' + (x.toString()));
-  } 
-} 
+  }
+}
 
 //CHECK#3
 var object = {valueOf: function() {return "+"}, toString: function() {return {}}};
@@ -90,11 +91,11 @@ try {
   var x = new Array(object);
   x.toString();
   $ERROR('#7.1: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (x.toString()));
-}  
+}
 catch (e) {
   if (e !== "error") {
     $ERROR('#7.2: var object = {valueOf: function() {return "+"}, toString: function() {throw "error"}} var x = new Array(object); x.toString() throw "error". Actual: ' + (e));
-  } 
+  }
 }
 
 //CHECK#8
@@ -103,9 +104,9 @@ try {
   var x = new Array(object);
   x.toString();
   $ERROR('#8.1: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (x.toString()));
-}  
+}
 catch (e) {
   if ((e instanceof TypeError) !== true) {
     $ERROR('#8.2: var object = {valueOf: function() {return {}}, toString: function() {return {}}} var x = new Array(object); x.toString() throw TypeError. Actual: ' + (e));
-  } 
+  }
 }

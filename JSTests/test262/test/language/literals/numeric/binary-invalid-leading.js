@@ -13,7 +13,11 @@ info: >
       BinaryDigits BinaryDigit
     BinaryDigit :: one of
       0 1
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 00b0;

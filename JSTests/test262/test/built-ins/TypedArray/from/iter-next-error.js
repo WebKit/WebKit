@@ -11,8 +11,8 @@ info: >
     d. Repeat, while next is not false
       i. Let next be ? IteratorStep(iterator).
   ...
-features: [Symbol.iterator]
 includes: [testTypedArray.js]
+features: [Symbol.iterator, TypedArray]
 ---*/
 
 var iter = {};

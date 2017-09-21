@@ -6,8 +6,12 @@ es6id: 14.1.2
 description: Body may not contain a "super" call
 info: >
   It is a Syntax Error if FunctionBody Contains SuperCall is true.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function f() {
   super();

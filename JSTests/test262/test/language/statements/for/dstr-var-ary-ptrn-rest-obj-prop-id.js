@@ -43,6 +43,7 @@ info: |
              BindingPattern with A and environment as the arguments.
        [...]
 ---*/
+let length = "outer";
 
 var iterCount = 0;
 
@@ -53,9 +54,7 @@ for (var [...{ 0: v, 1: w, 2: x, 3: y, length: z }] = [7, 8, 9]; iterCount < 1; 
   assert.sameValue(y, undefined);
   assert.sameValue(z, 3);
 
-  assert.throws(ReferenceError, function() {
-    length;
-  });
+  assert.sameValue(length, "outer", "the length prop is not set as a binding name");
   iterCount += 1;
 }
 

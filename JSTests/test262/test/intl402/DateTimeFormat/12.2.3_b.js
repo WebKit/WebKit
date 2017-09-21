@@ -30,18 +30,9 @@ locales.forEach(function (locale) {
         keyValues[key].forEach(function (value) {
             var dateTimeFormat = new Intl.DateTimeFormat([locale + "-u-" + key + "-" + value]);
             var options = dateTimeFormat.resolvedOptions();
-            if (options.locale !== defaultLocale) {
-                $ERROR("Locale " + options.locale + " is affected by key " +
-                key + "; value " + value + ".");
-            }
-            if (JSON.stringify(options) !== defaultOptionsJSON) {
-                $ERROR("Resolved options " + JSON.stringify(options) + " are affected by key " +
-                key + "; value " + value + ".");
-            }
-            if (defaultFormatted !== dateTimeFormat.format(input)) {
-                $ERROR("Formatted value " + dateTimeFormat.format(input) + " is affected by key " +
-                key + "; value " + value + ".");
-            }
+            assert.sameValue(options.locale, defaultLocale, "Locale " + options.locale + " is affected by key " + key + "; value " + value + ".");
+            assert.sameValue(JSON.stringify(options), defaultOptionsJSON, "Resolved options " + JSON.stringify(options) + " are affected by key " + key + "; value " + value + ".");
+            assert.sameValue(dateTimeFormat.format(input), defaultFormatted, "Formatted value " + dateTimeFormat.format(input) + " is affected by key " + key + "; value " + value + ".");
         });
     });
 });

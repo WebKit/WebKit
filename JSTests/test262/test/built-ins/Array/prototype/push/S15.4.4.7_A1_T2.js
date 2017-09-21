@@ -6,6 +6,7 @@ info: >
     The arguments are appended to the end of the array, in
     the order in which they appear. The new length of the array is returned
     as the result of the call
+esid: sec-array.prototype.push
 es5id: 15.4.4.7_A1_T2
 description: Checking case when push is given many arguments
 ---*/
@@ -21,7 +22,7 @@ x[0] = 0;
 var push = x.push(true, Number.POSITIVE_INFINITY, "NaN", "1", -1);
 if (push !== 6) {
   $ERROR('#2: x = []; x[0] = 0; x.push(true, Number.POSITIVE_INFINITY, "NaN", "1", -1) === 6. Actual: ' + (push));
-}  
+}
 
 //CHECK#3
 if (x[0] !== 0) {
@@ -36,12 +37,12 @@ if (x[1] !== true) {
 //CHECK#5
 if (x[2] !== Number.POSITIVE_INFINITY) {
   $ERROR('#5: x = []; x[0] = 0; x.push(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[2] === Number.POSITIVE_INFINITY. Actual: ' + (x[2]));
-}  
+}
 
 //CHECK#6
 if (x[3] !== "NaN") {
   $ERROR('#6: x = []; x[0] = 0; x.push(true, Number.POSITIVE_INFINITY, "NaN", "1", -1); x[3] === "NaN". Actual: ' + (x[3]));
-} 
+}
 
 //CHECK#7
 if (x[4] !== "1") {

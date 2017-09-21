@@ -14,7 +14,7 @@ info: >
 features: [Symbol]
 ---*/
 
-var promise = new Promise(function(){}, function(){});
+var promise = new Promise(function(){});
 
 promise.constructor = undefined;
 assert.throws(TypeError, function() {

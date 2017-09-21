@@ -15,6 +15,7 @@ info: >
 
   ...
   1. If NewTarget is not undefined, throw a TypeError exception.
+features: [Symbol]
 ---*/
 
 class S1 extends Symbol {}

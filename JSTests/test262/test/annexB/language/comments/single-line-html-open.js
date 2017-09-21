@@ -14,7 +14,9 @@ info: |
 
     SingleLineHTMLOpenComment ::
       <!--SingleLineCommentCharsopt
-negative: Test262Error
+negative:
+  phase: runtime
+  type: Test262Error
 ---*/
 
 var counter = 0;

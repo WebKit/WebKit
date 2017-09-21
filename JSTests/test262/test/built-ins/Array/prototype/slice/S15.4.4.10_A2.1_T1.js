@@ -3,6 +3,7 @@
 
 /*---
 info: Operator use ToInteger from start
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A2.1_T1
 description: start is not integer
 ---*/
@@ -19,7 +20,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 2) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(2.5,4); arr.length === 2. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 2) {
@@ -29,7 +30,7 @@ if (arr[0] !== 2) {
 //CHECK#4
 if (arr[1] !== 3) {
   $ERROR('#4: var x = [0,1,2,3,4]; var arr = x.slice(2.5,4); arr[1] === 3. Actual: ' + (arr[1]));
-}      
+}
 
 //CHECK#5
 if (arr[3] !== undefined) {

@@ -6,20 +6,23 @@ es6id: 21.2.5.9
 description: The `lastIndex` value is restored following match execution
 info: >
     [...]
-    11. Let status be Set(rx, "lastIndex", previousLastIndex, true).
+    8. If SameValue(currentLastIndex, previousLastIndex) is false, then
+       a. Perform ? Set(rx, "lastIndex", previousLastIndex, true).
     [...]
 features: [Symbol.search]
 ---*/
 
-var latestValue;
+var latestValue = 86;
+var callCount = 0;
 var fakeRe = {
   get lastIndex() {
-    return 86;
+    return latestValue;
   },
   set lastIndex(_) {
     latestValue = _;
   },
   exec: function() {
+    callCount++;
     latestValue = null;
     return null;
   }
@@ -27,4 +30,5 @@ var fakeRe = {
 
 RegExp.prototype[Symbol.search].call(fakeRe);
 
+assert.sameValue(callCount, 1);
 assert.sameValue(latestValue, 86);

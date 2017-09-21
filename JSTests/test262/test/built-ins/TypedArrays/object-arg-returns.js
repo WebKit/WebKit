@@ -13,7 +13,7 @@ info: >
   internal slot.
 
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var obj = {

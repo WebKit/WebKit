@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-9-c-ii-1
 description: >
     Array.prototype.reduce - callbackfn called with correct parameters
@@ -12,7 +13,7 @@ description: >
   {
     if(idx > 0 && obj[idx] === curVal && obj[idx-1] === prevVal)
       return curVal;
-    else 
+    else
       return false;
   }
 

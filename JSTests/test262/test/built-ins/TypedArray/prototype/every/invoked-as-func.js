@@ -17,6 +17,7 @@ info: >
   exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var every = TypedArray.prototype.every;

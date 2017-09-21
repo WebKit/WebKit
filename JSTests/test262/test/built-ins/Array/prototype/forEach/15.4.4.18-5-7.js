@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.foreach
 es5id: 15.4.4.18-5-7
 description: Array.prototype.forEach - built-in functions can be used as thisArg
 ---*/

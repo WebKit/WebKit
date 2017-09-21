@@ -23,12 +23,14 @@ assert.throws(TypeError, function() {
 });
 
 var calledExecutor = false;
+var executorArguments;
 
-var prom1 = new Prom(function(resolve) {
+var prom1 = new Prom(function() {
   calledExecutor = true;
-  assert.sameValue(arguments.length, 2);
-  assert(arguments[0] === Promise.resolve);
-  assert(arguments[1] === Promise.reject);
+  executorArguments = arguments;
 });
 
 assert(calledExecutor);
+assert.sameValue(executorArguments.length, 2);
+assert.sameValue(typeof executorArguments[0], "function");
+assert.sameValue(typeof executorArguments[1], "function");

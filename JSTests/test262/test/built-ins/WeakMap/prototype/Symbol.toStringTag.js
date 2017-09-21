@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.3.6
+esid: sec-weakmap.prototype-@@tostringtag
 description: >
     `Symbol.toStringTag` property descriptor
 info: >

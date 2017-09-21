@@ -7,8 +7,12 @@ description: >
     ModuleItemList also occurs in the VarDeclaredNames of ModuleItemList.
 flags: [module]
 features: [let]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 let x;
 var x;

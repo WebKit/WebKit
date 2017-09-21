@@ -5,6 +5,7 @@
 description: Test the first argument(target) of Object.Assign(target,...sources),
              if target is Symbol,the return value should be a new Symbol object whose [[SymbolData]] value is target.
 es6id:  19.1.2.1.1
+features: [Symbol]
 ---*/
 
 var target = Symbol('foo');

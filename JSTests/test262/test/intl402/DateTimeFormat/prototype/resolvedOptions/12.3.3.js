@@ -14,9 +14,7 @@ includes: [testIntl.js]
 var actual = new Intl.DateTimeFormat().resolvedOptions();
 
 var actual2 = new Intl.DateTimeFormat().resolvedOptions();
-if (actual2 === actual) {
-    $ERROR("resolvedOptions returned the same object twice.");
-}
+assert.notSameValue(actual2, actual, "resolvedOptions returned the same object twice.");
 
 // source: CLDR file common/bcp47/calendar.xml; version CLDR 21.
 var calendars = [

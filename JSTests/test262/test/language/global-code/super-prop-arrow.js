@@ -25,8 +25,12 @@ info: |
        Contains is used to detect new.target, this, and super usage within an
        ArrowFunction.
 features: [super, arrow-function]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 () => {
   super.property;

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date-year-month-date-hours-minutes-seconds-ms
 info: >
     All of the arguments are optional, any arguments supplied are
     accepted but are completely ignored. A string is created and returned as
@@ -15,7 +16,7 @@ function isEqual(d1, d2) {
     return true;
   } else if (Math.abs(Date.parse(d1) - Date.parse(d2)) <= 1000) {
     return true;
-  } else { 
+  } else {
     return false;
   }
 }

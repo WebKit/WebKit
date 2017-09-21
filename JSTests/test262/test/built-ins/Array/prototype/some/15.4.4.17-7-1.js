@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-7-1
 description: >
     Array.prototype.some considers new elements added to array after
@@ -9,7 +10,7 @@ description: >
 ---*/
 
   var calledForThree = false;
- 
+
   function callbackfn(val, idx, obj)
   {
     arr[2] = 3;
@@ -20,7 +21,7 @@ description: >
   }
 
   var arr = [1,2,,4,5];
-  
+
   var val = arr.some(callbackfn);
 
 assert(calledForThree, 'calledForThree !== true');

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es5id: 15.4.4.20-9-c-iii-1
 description: >
     Array.prototype.filter - getOwnPropertyDescriptor(all true) of
@@ -10,7 +11,7 @@ description: >
 
   function callbackfn(val, idx, obj){
     if(val % 2)
-      return true; 
+      return true;
     else
       return false;
   }

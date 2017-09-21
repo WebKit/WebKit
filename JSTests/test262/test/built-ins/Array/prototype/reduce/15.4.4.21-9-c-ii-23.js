@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-9-c-ii-23
 description: >
     Array.prototype.reduce - number primitive can be used as

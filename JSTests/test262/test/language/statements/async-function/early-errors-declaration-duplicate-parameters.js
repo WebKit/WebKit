@@ -6,8 +6,12 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   If strict mode, early error rules for StrictFormalParameters are applied
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 async function foo(a, a) { }

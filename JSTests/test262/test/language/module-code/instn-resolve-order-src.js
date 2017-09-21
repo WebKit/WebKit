@@ -3,9 +3,13 @@
 /*---
 description: Modules dependencies are resolved in source text order
 esid: sec-moduledeclarationinstantiation
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 import './instn-resolve-order-src-valid_FIXTURE.js';
 import './instn-resolve-order-src-reference_FIXTURE.js';

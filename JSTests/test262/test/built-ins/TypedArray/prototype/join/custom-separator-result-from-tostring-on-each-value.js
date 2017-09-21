@@ -26,6 +26,7 @@ info: >
     d. Let R be a String value produced by concatenating S and next.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var arr = [-2, Infinity, NaN, -Infinity, 0.6, 9007199254740992];

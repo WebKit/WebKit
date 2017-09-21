@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es5id: 15.4.4.20-5-22
 description: Array.prototype.filter - boolean primitive can be used as thisArg
 ---*/

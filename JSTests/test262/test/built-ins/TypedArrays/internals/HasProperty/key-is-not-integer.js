@@ -13,8 +13,8 @@ info: >
       ...
       iii. If IsInteger(numericIndex) is false, return false.
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 

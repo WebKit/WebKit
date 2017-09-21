@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.5
+esid: sec-properties-of-the-typedarray-constructors
 description: >
   Uint8Array.name is "Uint8Array".
 info: >

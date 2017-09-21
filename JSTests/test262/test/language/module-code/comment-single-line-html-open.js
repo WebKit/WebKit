@@ -6,8 +6,12 @@ description: >
     (SingleLineHTMLOpenComment)
 esid: sec-html-like-comments
 es6id: B1.3
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 <!--

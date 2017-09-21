@@ -3,7 +3,7 @@
 
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
-esid: pending
+esid: sec-async-function-constructor
 description: >
   %AsyncFunction% creates functions with or without new and handles arguments
   similarly to functions.

@@ -5,7 +5,11 @@
 es6id: 11.6
 description: >
     SyntaxError expected: reserved words used as Identifier
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var new = 123;

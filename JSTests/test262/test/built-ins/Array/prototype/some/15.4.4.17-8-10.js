@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-8-10
 description: Array.prototype.some - subclassed array when length is reduced
 ---*/
@@ -10,7 +11,7 @@ description: Array.prototype.some - subclassed array when length is reduced
   function foo() {}
   var f = new foo();
   f.length = 2;
-  
+
   function cb(val)
   {
     if(val > 2)
@@ -19,6 +20,6 @@ description: Array.prototype.some - subclassed array when length is reduced
       return false;
   }
   var i = f.some(cb);
-  
+
 
 assert.sameValue(i, false, 'i');

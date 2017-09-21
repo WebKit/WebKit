@@ -15,8 +15,12 @@ info: |
   function because any expressions that are part of FormalParameters are
   evaluated before the resulting generator object is in a resumable state.
 features: [generators, default-parameters]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 0, class {
   static *g(x = yield) {}

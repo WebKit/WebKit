@@ -22,6 +22,7 @@ info: >
   3. Let numValue be ? ToNumber(value).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var obj = {

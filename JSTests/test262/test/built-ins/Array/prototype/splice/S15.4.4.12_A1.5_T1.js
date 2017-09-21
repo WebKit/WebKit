@@ -3,6 +3,7 @@
 
 /*---
 info: Splice with undefined arguments
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A1.5_T1
 description: start === undefined, end === undefined
 ---*/
@@ -19,12 +20,12 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 0) {
   $ERROR('#2: var x = [0,1,2,3]; var arr = x.splice(undefined, undefined); arr.length === 0. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (x.length !== 4) {
   $ERROR('#3: var x = [0,1,2,3]; var arr = x.splice(undefined, undefined); x.length === 4. Actual: ' + (x.length));
-} 
+}
 
 //CHECK#4
 if (x[0] !== 0) {
@@ -34,7 +35,7 @@ if (x[0] !== 0) {
 //CHECK#5
 if (x[1] !== 1) {
   $ERROR('#5: var x = [0,1,2,3]; var arr = x.splice(undefined, undefined); x[1] === 1. Actual: ' + (x[1]));
-} 
+}
 
 //CHECK#6
 if (x[2] !== 2) {

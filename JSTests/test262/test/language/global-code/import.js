@@ -3,7 +3,9 @@
 /*---
 description: The `import` declaration may not appear within a ScriptBody
 esid: sec-scripts
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
      A.5 Scripts and Modules
 
@@ -13,5 +15,7 @@ info: |
      ScriptBody:
          StatementList
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 import v from './import.js';

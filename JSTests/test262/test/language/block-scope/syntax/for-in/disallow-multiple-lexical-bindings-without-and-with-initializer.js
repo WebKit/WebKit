@@ -5,7 +5,11 @@ es6id: 13.1
 description: >
     for declaration:
     disallow multiple lexical bindings, without and with initializer
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 for (let x, y = 4 in {}) { }
 

@@ -24,7 +24,7 @@ info: >
   5. Let S be ? Get(C, @@species).
   ...
 includes: [testTypedArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

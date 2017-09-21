@@ -24,6 +24,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var value = {};
 var resolve;
 var thenable = new Promise(function(resolve) { resolve(value); });
@@ -42,4 +43,6 @@ promise.then(function(val) {
     $DONE('The promise should not be rejected.');
   });
 
-resolve(thenable);
+returnValue = resolve(thenable);
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');

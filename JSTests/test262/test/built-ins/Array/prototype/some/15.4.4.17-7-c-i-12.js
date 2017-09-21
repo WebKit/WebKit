@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.some
 es5id: 15.4.4.17-7-c-i-12
 description: >
     Array.prototype.some - element to be retrieved is own accessor
@@ -16,7 +17,7 @@ description: >
             }
             return false;
         }
-        
+
         var arr = [];
 
             Array.prototype[1] = 100;

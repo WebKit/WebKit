@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.1.1
+esid: sec-weakset-iterable
 description: >
   The WeakSet constructor is the %WeakSet% intrinsic object and the initial
   value of the WeakSet property of the global object.

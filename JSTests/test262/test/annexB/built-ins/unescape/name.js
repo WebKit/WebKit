@@ -19,8 +19,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(unescape.name, "unescape");
-
-verifyNotEnumerable(unescape, "name");
-verifyNotWritable(unescape, "name");
-verifyConfigurable(unescape, "name");
+verifyProperty(unescape, "name", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: "unescape"
+});

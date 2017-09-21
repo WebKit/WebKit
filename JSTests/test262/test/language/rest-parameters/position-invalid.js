@@ -4,6 +4,10 @@
 es6id: 14.1
 description: >
     Rest parameter cannot be followed by another named parameter
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 function f(a, ...b, c) {}

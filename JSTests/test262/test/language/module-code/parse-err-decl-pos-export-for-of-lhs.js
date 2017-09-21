@@ -3,9 +3,13 @@
 /*---
 description: Statement cannot contain an `export` declaration
 esid: sec-modules
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 for (y of [])
   export default null;

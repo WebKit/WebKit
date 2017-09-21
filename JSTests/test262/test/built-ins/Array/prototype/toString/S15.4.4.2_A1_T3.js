@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.tostring
 info: >
     The result of calling this function is the same as if
     the built-in join method were invoked for this object with no argument
@@ -26,7 +27,7 @@ if (x.toString() !== x.join()) {
 } else {
   if (x.toString() !== "\\,\\,\\") {
     $ERROR('#1.2: var x = new Array("\\","\\","\\"); x.toString() === "\\,\\,\\". Actual: ' + (x.toString()));
-  } 
+  }
 }
 
 //CHECK#2

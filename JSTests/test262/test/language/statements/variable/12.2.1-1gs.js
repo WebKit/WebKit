@@ -6,9 +6,12 @@ es5id: 12.2.1-1gs
 description: >
     Strict Mode - SyntaxError is thrown if a VariableDeclaration
     occurs within strict code and its Identifier is eval
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 for (var eval in arrObj) { }

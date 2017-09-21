@@ -9,8 +9,8 @@ info: >
 
   %TypedArray%[@@species] is an accessor property whose set accessor function
   is undefined.
-features: [Symbol.species]
 includes: [testTypedArray.js]
+features: [Symbol.species, TypedArray]
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(TypedArray, Symbol.species);

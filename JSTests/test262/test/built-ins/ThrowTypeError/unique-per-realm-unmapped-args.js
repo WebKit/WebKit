@@ -20,9 +20,6 @@ function strictFn() {
   return arguments;
 }
 var unmappedCalleeDesc = Object.getOwnPropertyDescriptor(strictFn(), "callee");
-var unmappedCallerDesc = Object.getOwnPropertyDescriptor(strictFn(), "caller");
 
 assert.sameValue(ThrowTypeError, unmappedCalleeDesc.get, "callee.get");
 assert.sameValue(ThrowTypeError, unmappedCalleeDesc.set, "callee.set");
-assert.sameValue(ThrowTypeError, unmappedCallerDesc.get, "caller.get");
-assert.sameValue(ThrowTypeError, unmappedCallerDesc.set, "caller.set");

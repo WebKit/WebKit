@@ -51,3 +51,6 @@ assert.sameValue((0.9999).toExponential(17), "9.99900000000000011e-1");
 assert.sameValue((0.9999).toExponential(18), "9.999000000000000110e-1");
 assert.sameValue((0.9999).toExponential(19), "9.9990000000000001101e-1");
 assert.sameValue((0.9999).toExponential(20), "9.99900000000000011013e-1");
+
+assert.sameValue((25).toExponential(0), "3e+1");
+assert.sameValue((12345).toExponential(3), "1.235e+4");

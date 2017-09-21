@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-8-10
 description: Array.prototype.every - subclassed array when length is reduced
 ---*/
@@ -10,15 +11,15 @@ description: Array.prototype.every - subclassed array when length is reduced
   function foo() {}
   var f = new foo();
   f.length = 2;
-  
+
   function cb(val)
   {
     if(val>2)
       return false;
     else
-      return true;    
+      return true;
   }
   var i = f.every(cb);
-  
+
 
 assert.sameValue(i, true, 'i');

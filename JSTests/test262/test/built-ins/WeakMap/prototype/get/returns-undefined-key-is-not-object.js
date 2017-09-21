@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.3.3
+esid: sec-weakmap.prototype.get
 description: >
   Returns undefined when key is not an Object.
 info: >
@@ -12,6 +13,7 @@ info: >
   slot.
   5. If Type(key) is not Object, return undefined.
   ...
+features: [Symbol]
 ---*/
 
 var map = new WeakMap();

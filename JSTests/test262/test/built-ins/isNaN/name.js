@@ -3,6 +3,7 @@
 
 /*---
 es6id: 18.2.3
+esid: sec-isnan-number
 description: >
   isNaN.name is "isNaN".
 info: >

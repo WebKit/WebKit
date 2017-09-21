@@ -2,8 +2,8 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-esid: sec-isfinite-number
 es6id: 18.2.2
+esid: sec-isfinite-number
 description: >
   The length property of isFinite is 1
 includes: [propertyHelper.js]

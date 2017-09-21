@@ -1,3 +1,16 @@
+2017-09-20  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Update test262 tests
+        https://bugs.webkit.org/show_bug.cgi?id=177220
+
+        Reviewed by Saam Barati and Yusuke Suzuki.
+
+        * Scripts/import-test262-tests:
+        - better detect upstream git repository url from import location
+        - update JSTest test262 resources when importing from repository
+        - take seconds instead of 20+ minutes to write yaml with --failures
+        - update "negative" command to only include just the exception type
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add API to get the redirect chain of a WKDownload
@@ -17,6 +30,7 @@
         (-[RedirectedDownloadDelegate _downloadDidFinish:]):
         (TEST):
 
+>>>>>>> .r222309
 2017-09-20  Alex Christensen  <achristensen@webkit.org>
 
         Add infrastructure for adding custom headers to requests per website

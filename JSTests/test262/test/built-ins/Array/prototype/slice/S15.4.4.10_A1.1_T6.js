@@ -5,6 +5,7 @@
 info: >
     If start is positive, use min(start, length).
     If end is positive, use min(end, length)
+esid: sec-array.prototype.slice
 es5id: 15.4.4.10_A1.1_T6
 description: length > end > start > 0;
 ---*/
@@ -21,7 +22,7 @@ if (arr.getClass() !== "[object " + "Array" + "]") {
 //CHECK#2
 if (arr.length !== 2) {
   $ERROR('#2: var x = [0,1,2,3,4]; var arr = x.slice(2,4); arr.length === 2. Actual: ' + (arr.length));
-}      
+}
 
 //CHECK#3
 if (arr[0] !== 2) {
@@ -31,7 +32,7 @@ if (arr[0] !== 2) {
 //CHECK#4
 if (arr[1] !== 3) {
   $ERROR('#4: var x = [0,1,2,3,4]; var arr = x.slice(2,4); arr[1] === 3. Actual: ' + (arr[1]));
-}      
+}
 
 //CHECK#5
 if (arr[3] !== undefined) {

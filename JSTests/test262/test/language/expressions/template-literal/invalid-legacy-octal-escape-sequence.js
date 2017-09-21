@@ -6,7 +6,11 @@ description: Invalid octal escape sequence
 info: >
     TemplateCharacter (11.8.6) must not be extended to include
     LegacyOctalEscapeSequence as defined in B.1.2.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 `\00`;

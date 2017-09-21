@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 esid: sec-if-statement-runtime-semantics-evaluation
-description:
+description: >
     Completion value when expression is false with an `else` clause and body
     returns an empty abrupt completion
 info: >

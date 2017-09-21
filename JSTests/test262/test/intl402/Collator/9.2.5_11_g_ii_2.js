@@ -17,11 +17,7 @@ extensions.forEach(function (extension) {
     var locale = collator.resolvedOptions().locale;
     var numeric = collator.resolvedOptions().numeric;
     if (numeric !== undefined) {
-        if (numeric !== true) {
-            $ERROR("Default value for \"kn\" should be true, but is " + numeric + ".");
-        }
-        if (locale.indexOf("-kn") !== -1) {
-            $ERROR("\"kn\" is returned in locale, but shouldn't be.");
-        }
+        assert.sameValue(numeric, true, "Default value for \"kn\" should be true, but is " + numeric + ".");
+        assert.sameValue(locale.indexOf("-kn"), -1, "\"kn\" is returned in locale, but shouldn't be.");
     }
 });

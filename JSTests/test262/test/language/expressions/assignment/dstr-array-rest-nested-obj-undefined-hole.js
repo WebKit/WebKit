@@ -17,7 +17,9 @@ info: |
        BindingPattern passing rval and undefined as arguments.
 ---*/
 var x = null;
-var length;
+// Use the the top-level lexical scope for 'length' to provide compatibility with browsers
+// where length and name are properties of WindowProxy
+let length;
 
 var result;
 var vals = [ , ];

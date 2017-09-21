@@ -16,6 +16,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var resolve;
 var promise = new Promise(function(_resolve) {
   resolve = _resolve;
@@ -32,4 +33,6 @@ promise.then(function(value) {
     $DONE('The promise should not be rejected.');
   });
 
-resolve(45);
+returnValue = resolve(45);
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');

@@ -8,7 +8,7 @@ description: >
 info: |
   [...]
   10. If constructor is empty, then
-      a. If ClassHeritageopt is present and protoParent is not null, then
+      a. If ClassHeritageopt is present and superclass is not null, then
          i. Let constructor be the result of parsing the source text
 
              constructor(... args){ super (...args);}

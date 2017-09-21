@@ -3,7 +3,7 @@
 
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
-esid: pending
+esid: sec-async-function-constructor
 description: >
   %AsyncFunction% is a subclass of Function
 ---*/

@@ -14,9 +14,13 @@ info: |
 
     - It is a Syntax Error if any element of the LexicallyDeclaredNames of
       ModuleItemList also occurs in the VarDeclaredNames of ModuleItemList.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var g;
 function* g() {}

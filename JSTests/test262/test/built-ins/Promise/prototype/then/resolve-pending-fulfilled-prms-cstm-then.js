@@ -25,6 +25,7 @@ info: >
         [...]
     12. Perform EnqueueJob ("PromiseJobs", PromiseResolveThenableJob,
         «promise, resolution, thenAction»)
+flags: [async]
 ---*/
 
 var value = {};

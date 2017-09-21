@@ -8,8 +8,12 @@ info: >
     Use one semicolon
 es5id: 7.9_A6.2_T8
 description: For header is (false \n semicolon false \n)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 for(false

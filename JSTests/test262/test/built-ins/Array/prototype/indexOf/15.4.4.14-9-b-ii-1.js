@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-9-b-ii-1
 description: >
     Array.prototype.indexOf - type of array element is different from

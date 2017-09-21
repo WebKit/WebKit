@@ -14,6 +14,7 @@ info: >
   3. Let elementLength be ? ToIndex(length).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var items = [

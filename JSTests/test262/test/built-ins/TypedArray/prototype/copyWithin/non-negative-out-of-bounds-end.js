@@ -30,9 +30,25 @@ testWithTypedArrayConstructors(function(TA) {
 
   assert(
     compareArray(
+      new TA([1, 2, 3, 4, 5]).copyWithin(0, 1, Infinity),
+      [2, 3, 4, 5, 5]
+    ),
+    '[1, 2, 3, 4, 5].copyWithin(0, 1, Infinity) -> [2, 3, 4, 5, 5]'
+  );
+
+  assert(
+    compareArray(
       new TA([0, 1, 2, 3, 4, 5]).copyWithin(1, 3, 6),
       [0, 3, 4, 5, 4, 5]
     ),
     '[0, 1, 2, 3, 4, 5].copyWithin(1, 3, 6) -> [0, 3, 4, 5, 4, 5]'
+  );
+
+  assert(
+    compareArray(
+      new TA([1, 2, 3, 4, 5]).copyWithin(1, 3, Infinity),
+      [1, 4, 5, 4, 5]
+    ),
+    '[1, 2, 3, 4, 5].copyWithin(1, 3, Infinity) -> [1, 4, 5, 4, 5]'
   );
 });

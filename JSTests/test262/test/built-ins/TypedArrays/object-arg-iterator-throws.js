@@ -16,7 +16,7 @@ info: >
   4. Let arrayLike be ? IterableToArrayLike(object).
   ...
 includes: [testTypedArray.js]
-features: [Symbol.iterator]
+features: [Symbol.iterator, TypedArray]
 ---*/
 
 var obj = function () {};

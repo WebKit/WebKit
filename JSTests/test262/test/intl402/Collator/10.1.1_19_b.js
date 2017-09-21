@@ -13,16 +13,10 @@ function checkCollation(extensionCoValue, usageValue, expectedCollations, expect
     var collator = new Intl.Collator([requestLocale], options);
 
     var collation = collator.resolvedOptions().collation;
-    if (expectedCollations.indexOf(collation) === -1) {
-        $ERROR((extensionCoValue === undefined ? "Default collation" : "Collation for \"" + extensionCoValue) +
-            "\" should be " + expectedCollations.join(" or ") + ", but is " + collation + ".");
-    }
+    assert.notSameValue(expectedCollations.indexOf(collation), -1, (extensionCoValue === undefined ? "Default collation" : "Collation for \"" + extensionCoValue) + "\" should be " + expectedCollations.join(" or ") + ", but is " + collation + ".");
 
     var usage = collator.resolvedOptions().usage;
-    if (expectedUsage !== usage) {
-        $ERROR((usageValue === undefined ? "Default usage" : "Usage") +
-            " should be " + expectedUsage + ", but is " + usage + ".");
-    }
+    assert.sameValue(usage, expectedUsage, (usageValue === undefined ? "Default usage" : "Usage") + " mismatch.");
 }
 
 checkCollation(undefined, undefined, ["default"], "sort");

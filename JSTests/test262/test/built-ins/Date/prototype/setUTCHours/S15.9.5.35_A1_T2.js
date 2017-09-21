@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype property "setUTCHours" has { DontEnum } attributes
+esid: sec-date.prototype.setutchours
 es5id: 15.9.5.35_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/

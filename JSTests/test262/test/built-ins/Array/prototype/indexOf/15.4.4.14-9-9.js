@@ -2,11 +2,12 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-9-9
 description: Array.prototype.indexOf must return correct index (Sparse Array)
 ---*/
 
-  var a = new Array(0,1);  
+  var a = new Array(0,1);
   a[4294967294] = 2;          // 2^32-2 - is max array element
   a[4294967295] = 3;          // 2^32-1 added as non-array element property
   a[4294967296] = 4;          // 2^32   added as non-array element property

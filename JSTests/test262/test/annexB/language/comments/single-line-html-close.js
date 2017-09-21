@@ -17,7 +17,9 @@ info: |
 
     HTMLCloseComment ::
       WhiteSpaceSequence[opt] SingleLineDelimitedCommentSequence[opt] --> SingleLineCommentChars[opt]
-negative: Test262Error
+negative:
+  phase: runtime
+  type: Test262Error
 ---*/
 
 var counter = 0;

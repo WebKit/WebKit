@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date-year-month-date-hours-minutes-seconds-ms
 info: >
     When Date is called as a function rather than as a constructor,
     it should be "string" representing the current time (UTC)

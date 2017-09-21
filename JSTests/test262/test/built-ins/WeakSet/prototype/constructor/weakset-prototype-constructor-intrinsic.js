@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.3.2
+esid: sec-weakset.prototype.constructor
 description: >
   The initial value of WeakSet.prototype.constructor is the %WeakSet%
   intrinsic object.

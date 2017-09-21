@@ -52,10 +52,7 @@ var pairs = [
 var i;
 for (i = 0; i < pairs.length; i++) {
     var pair = pairs[i];
-    if (collator.compare(pair[0], pair[1]) !== 0) {
-        $ERROR("Collator.compare considers " + pair[0] + " (" + toU(pair[0]) +
-            ") ≠ " + pair[1] + " (" + toU(pair[1]) + ").");
-    }
+    assert.sameValue(collator.compare(pair[0], pair[1]), 0, "Collator.compare considers " + pair[0] + " (" + toU(pair[0]) + ") ≠ " + pair[1] + " (" + toU(pair[1]) + ").");
 }
 
 function toU(s) {

@@ -13,6 +13,7 @@ description: >
 
     1. If Type(set) is not Object, throw a TypeError exception.
     ...
+features: [Symbol]
 ---*/
 
 assert.throws(TypeError, function() {

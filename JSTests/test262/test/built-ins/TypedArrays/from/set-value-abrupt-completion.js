@@ -16,6 +16,7 @@ info: >
     e. Perform ? Set(targetObj, Pk, mappedValue, true).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var obj = {

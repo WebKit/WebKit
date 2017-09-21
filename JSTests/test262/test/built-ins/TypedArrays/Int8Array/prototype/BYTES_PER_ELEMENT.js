@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.6.1
+esid: sec-typedarray.prototype.bytes_per_element
 description: >
   The initial value of Int8Array.prototype.BYTES_PER_ELEMENT is 1.
 info: >

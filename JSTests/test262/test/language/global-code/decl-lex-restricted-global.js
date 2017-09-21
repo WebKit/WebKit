@@ -10,7 +10,9 @@ info: |
      [...]
      c. Let hasRestrictedGlobal be ? envRec.HasRestrictedGlobalProperty(name).
      d. If hasRestrictedGlobal is true, throw a SyntaxError exception.
-negative: SyntaxError
+negative:
+  phase: runtime
+  type: SyntaxError
 ---*/
 
 let undefined;

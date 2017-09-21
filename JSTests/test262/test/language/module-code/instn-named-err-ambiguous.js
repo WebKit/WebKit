@@ -35,7 +35,9 @@ info: |
                   not the same Module Record or
                   SameValue(resolution.[[BindingName]],
                   starResolution.[[BindingName]]) is false, return "ambiguous".
-negative: SyntaxError
+negative:
+  phase: runtime
+  type: SyntaxError
 flags: [module]
 ---*/
 

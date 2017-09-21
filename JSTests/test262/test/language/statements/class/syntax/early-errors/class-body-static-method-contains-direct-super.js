@@ -7,8 +7,12 @@ description: >
 
     It is a Syntax Error if HasDirectSuper of MethodDefinition is true.
 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 class A {
   static method() {
     super();

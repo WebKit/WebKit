@@ -2,15 +2,16 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-9-c-ii-3
 description: Array.prototype.reduce - callbackfn takes 4 arguments
 ---*/
 
   var bCalled = false;
   function callbackfn(prevVal, curVal, idx, obj)
-  { 
+  {
     bCalled = true;
-    if(prevVal === true && arguments.length === 4)   
+    if(prevVal === true && arguments.length === 4)
       return true;
     else
       return false;

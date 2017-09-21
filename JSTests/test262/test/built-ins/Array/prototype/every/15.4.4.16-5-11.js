@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-5-11
 description: Array.prototype.every - String Object can be used as thisArg
 ---*/
@@ -14,7 +15,7 @@ description: Array.prototype.every - String Object can be used as thisArg
             return this === objString;
         }
 
-        
+
 
 assert([11].every(callbackfn, objString), '[11].every(callbackfn, objString) !== true');
 assert(accessed, 'accessed !== true');

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reverse
 es6id: 22.1.3.20
 description: >
   Array.prototype.reverse.name is "reverse".

@@ -7,7 +7,9 @@ esid: sec-for-in-and-for-of-statements-runtime-semantics-labelledevaluation
 es6id: 13.7.5.11
 features: [destructuring-binding]
 flags: [generated, onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     IterationStatement :
       for ( LeftHandSideExpression of AssignmentExpression ) Statement
@@ -26,5 +28,6 @@ info: |
           lhs using AssignmentPattern as the goal symbol.
     [...]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 for ([ x = yield ] in [[]]) ;

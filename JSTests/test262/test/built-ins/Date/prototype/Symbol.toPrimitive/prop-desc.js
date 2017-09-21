@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype-@@toprimitive
 es6id: 20.3.4.45
 description: Date.prototype[Symbol.toPrimitive] property descriptor
 info: >

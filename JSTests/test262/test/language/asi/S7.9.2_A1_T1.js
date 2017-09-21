@@ -5,8 +5,12 @@
 info: Check examples for automatic semicolon insertion from the Standart
 es5id: 7.9.2_A1_T1
 description: "{ 1 2 } 3 is not a valid sentence in the ECMAScript grammar"
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 { 1 2 } 3

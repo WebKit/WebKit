@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.lastindexof
 es5id: 15.4.4.15-8-a-3
 description: >
     Array.prototype.lastIndexOf -  added properties in step 5 are

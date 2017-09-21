@@ -5,6 +5,7 @@ esid: sec-%typedarray%.from
 description: >
   Return a new TypedArray using a custom Constructor
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var source = [42, 43, 42];

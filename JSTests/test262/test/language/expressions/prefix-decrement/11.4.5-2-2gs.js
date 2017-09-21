@@ -6,9 +6,12 @@ es5id: 11.4.5-2-2gs
 description: >
     Strict Mode - SyntaxError is throw if the UnaryExpression operated
     upon by a Prefix Decrement operator(--arguments)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 --arguments;

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.map
 es5id: 15.4.4.19-8-c-ii-16
 description: >
     Array.prototype.map - 'this' object when T is not an object (T is

@@ -24,7 +24,7 @@ info: >
   7. If IsConstructor(S) is true, return S.
   8. Throw a TypeError exception.
 includes: [testTypedArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 var sample1 = new Int8Array();

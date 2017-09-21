@@ -15,6 +15,7 @@ info: |
   5. Let newObj be ? TypedArrayCreate(C, « len »).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

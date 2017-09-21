@@ -21,6 +21,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var thenable = new Promise(function() {});
 var resolve, reject;
 var p = new Promise(function(_resolve, _reject) {
@@ -35,4 +36,6 @@ p.then(function() {
   });
 
 resolve();
-reject(thenable);
+returnValue = reject(thenable);
+
+assert.sameValue(returnValue, undefined, '"reject" function return value');

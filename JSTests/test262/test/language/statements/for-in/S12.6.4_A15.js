@@ -5,8 +5,12 @@
 info: Block within a "for-in" Expression is not allowed
 es5id: 12.6.4_A15
 description: Using block within "for-in" Expression
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var __arr=[1,2,3];
 

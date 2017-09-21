@@ -16,8 +16,8 @@ info: >
   2. If usingIterator is not undefined, then
     a. Let iterator be ? GetIterator(items, usingIterator).
   ...
-features: [Symbol.iterator]
 includes: [testTypedArray.js]
+features: [Symbol.iterator, TypedArray]
 ---*/
 
 var iter = {};

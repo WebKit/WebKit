@@ -4,6 +4,7 @@
 /*---
 description: >
     Positive and negative zero do not satisfy the assertion.
+includes: [sta.js]
 ---*/
 
 var threw = false;

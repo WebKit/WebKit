@@ -5,6 +5,10 @@ es6id: 13.1
 description: >
     const declarations without initialisers in statement positions: 
     default : StatementList
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 switch (true) { default: const x; }

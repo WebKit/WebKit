@@ -7,8 +7,12 @@ info: >
     It is a Syntax Error if BodyText of RegularExpressionLiteral cannot be
     recognized using the goal symbol Pattern of the ECMAScript RegExp grammar
     specified in 21.2.1.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 throw new Test262Error();
 

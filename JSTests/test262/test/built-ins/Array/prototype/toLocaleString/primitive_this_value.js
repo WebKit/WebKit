@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.tolocalestring
 description: Array.prototype.toLocaleString called with primitive element
 info: >
   22.1.3.26 Array.prototype.toLocaleString ( [ reserved1 [ , reserved2 ] ] )

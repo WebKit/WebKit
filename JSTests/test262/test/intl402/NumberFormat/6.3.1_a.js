@@ -18,8 +18,5 @@ var wellFormedCurrencyCodes = [
 wellFormedCurrencyCodes.forEach(function (code) {
     // this must not throw an exception for a valid currency code
     var format = new Intl.NumberFormat(["de-de"], {style: "currency", currency: code});
-    if (format.resolvedOptions().currency !== code.toUpperCase()) {
-        $ERROR("Currency " + code + " was not correctly accepted; turned into " +
-            format.resolvedOptions().currency + ".");
-    }
+    assert.sameValue(format.resolvedOptions().currency, code.toUpperCase(), "Currency " + code + " was not correctly accepted.");
 });

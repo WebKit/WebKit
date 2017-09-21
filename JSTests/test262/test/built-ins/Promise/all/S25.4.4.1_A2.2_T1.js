@@ -5,7 +5,7 @@
 info: Promise.all([]) is resolved immediately
 es6id: 25.4.4.1_A2.2_T1
 author: Sam Mikes
-includes: [PromiseHelper.js]
+includes: [promiseHelper.js]
 description: Promise.all([]) returns immediately
 flags: [async]
 ---*/

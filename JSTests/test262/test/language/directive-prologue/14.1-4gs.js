@@ -6,7 +6,9 @@ es5id: 14.1-4gs
 description: >
     StrictMode - a Use Strict Directive followed by a strict mode
     violation
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [raw]
 ---*/
 

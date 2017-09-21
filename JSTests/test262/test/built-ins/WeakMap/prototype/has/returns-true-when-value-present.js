@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.3.4
+esid: sec-weakmap.prototype.has
 description: >
   Returns true when value is present in the WeakMap entries list.
 info: >

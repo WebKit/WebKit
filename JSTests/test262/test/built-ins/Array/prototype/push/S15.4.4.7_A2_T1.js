@@ -5,6 +5,7 @@
 info: >
     The push function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.push
 es5id: 15.4.4.7_A2_T1
 description: >
     The arguments are appended to the end of the array, in  the order
@@ -18,7 +19,7 @@ obj.push = Array.prototype.push;
 if (obj.length !== undefined) {
   $ERROR('#0: var obj = {}; obj.length === undefined. Actual: ' + (obj.length));
 } else {
-    //CHECK#1  
+    //CHECK#1
     var push = obj.push(-1);
 if (push !== 1) {
       $ERROR('#1: var obj = {}; obj.push = Array.prototype.push; obj.push(-1) === 1. Actual: ' + (push));
@@ -31,14 +32,14 @@ if (push !== 1) {
     if (obj["0"] !== -1) {
       $ERROR('#3: var obj = {}; obj.push = Array.prototype.push; obj.push(-1); obj["0"] === -1. Actual: ' + (obj["0"]));
     }
-} 
+}
 
 //CHECK#4
 obj.length = undefined;
 var push = obj.push(-4);
 if (push !== 1) {
   $ERROR('#4: var obj = {}; obj.length = undefined; obj.push = Array.prototype.push; obj.push(-4) === 1. Actual: ' + (push));
-} 
+}
 
 //CHECK#5
 if (obj.length !== 1) {
@@ -55,7 +56,7 @@ obj.length = null
 var push = obj.push(-7);
 if (push !== 1) {
   $ERROR('#7: var obj = {}; obj.length = null; obj.push = Array.prototype.push; obj.push(-7) === 1. Actual: ' + (push));
-} 
+}
 
 //CHECK#8
 if (obj.length !== 1) {

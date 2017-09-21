@@ -3,6 +3,8 @@
 
 /*---
 es5id: 15.1.1.3-2
+es6id: 18.1.3
+esid: sec-undefined
 description: undefined is not writable, should throw TypeError in strict mode
 flags: [onlyStrict]
 ---*/

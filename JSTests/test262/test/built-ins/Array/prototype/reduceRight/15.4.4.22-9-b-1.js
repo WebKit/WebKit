@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduceright
 es5id: 15.4.4.22-9-b-1
 description: >
     Array.prototype.reduceRight returns initialvalue when Array is
@@ -13,6 +14,6 @@ description: >
   }
 
   var arr = new Array(10);
-  
+
 
 assert.sameValue(arr.reduceRight(callbackfn,5), 5, 'arr.reduceRight(callbackfn,5)');

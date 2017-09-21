@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.1.1
+esid: sec-weakmap-iterable
 description: >
   Return IteratorClose(iter, status) if fail on adding value on constructing.
 info: >
@@ -11,6 +12,7 @@ info: >
   9. Repeat
     k. Let status be Call(adder, map, «k.[[value]], v.[[value]]»).
     l. If status is an abrupt completion, return IteratorClose(iter, status).
+features: [Symbol.iterator]
 ---*/
 
 var count = 0;

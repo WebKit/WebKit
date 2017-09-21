@@ -9,8 +9,12 @@ es5id: 12.14_A16_T6
 description: >
     Block: "{ StatementList }". Checking if execution of "try{
     catch{}{}" fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 // CHECK#1
 try{

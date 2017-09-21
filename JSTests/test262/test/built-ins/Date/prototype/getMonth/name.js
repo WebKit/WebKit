@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getmonth
 es6id: 20.3.4.8
 description: >
   Date.prototype.getMonth.name is "getMonth".

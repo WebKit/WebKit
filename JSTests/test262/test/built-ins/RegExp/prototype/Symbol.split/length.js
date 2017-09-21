@@ -14,6 +14,7 @@ info: >
     object has the attributes { [[Writable]]: false, [[Enumerable]]: false,
     [[Configurable]]: true }.
 includes: [propertyHelper.js]
+features: [Symbol.split]
 ---*/
 
 assert.sameValue(RegExp.prototype[Symbol.split].length, 2);

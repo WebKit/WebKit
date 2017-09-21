@@ -3,6 +3,7 @@
 
 /*---
 info: The "length" property of the "getUTCMinutes" is 0
+esid: sec-date.prototype.getutcminutes
 es5id: 15.9.5.21_A2_T1
 description: The "length" property of the "getUTCMinutes" is 0
 ---*/

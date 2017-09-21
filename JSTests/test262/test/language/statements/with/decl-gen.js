@@ -5,7 +5,11 @@ description: Generator declaration not allowed in statement position
 esid: sec-with-statement
 es6id: 13.11
 flags: [noStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 with ({}) function* g() {}

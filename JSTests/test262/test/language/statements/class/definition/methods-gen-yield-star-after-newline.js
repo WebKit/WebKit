@@ -6,8 +6,12 @@
       A newline may not precede the `*` token in a `yield` expression.
   features: [generators]
   es6id: 14.4
-  negative: SyntaxError
+  negative:
+    phase: early
+    type: SyntaxError
  ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 class A {
   *g() {

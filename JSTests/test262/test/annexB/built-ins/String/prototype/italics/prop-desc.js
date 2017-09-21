@@ -11,6 +11,8 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(String.prototype, 'italics');
-verifyWritable(String.prototype, 'italics');
-verifyConfigurable(String.prototype, 'italics');
+verifyProperty(String.prototype, "italics", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

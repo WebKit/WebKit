@@ -5,10 +5,9 @@
 description: >
     Objects whose specified property is not writable do not satisfy the
     assertion outside of strict mode.
-includes: [propertyHelper.js]
+includes: [propertyHelper.js,sta.js]
 flags: [noStrict]
 ---*/
-
 var threw = false;
 var obj = {};
 Object.defineProperty(obj, 'a', {

@@ -5,7 +5,7 @@
 description: Elision accepts exhausted iterator (class expression method)
 esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

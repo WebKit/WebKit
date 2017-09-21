@@ -2,13 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.lastindexof
 es5id: 15.4.4.15-8-7
 description: >
     Array.prototype.lastIndexOf must return correct index (self
     reference)
 ---*/
 
-  var a = new Array(0,1,2,3);  
+  var a = new Array(0,1,2,3);
   a[2] = a;
 
 assert.sameValue(a.lastIndexOf(a), 2, 'a.lastIndexOf(a)');

@@ -15,7 +15,7 @@ var test262Var;
 function test262Fn() {}
 
 assert.throws(SyntaxError, function() {
-  $.evalScript('var x; let test262Var;');
+  $262.evalScript('var x; let test262Var;');
 }, 'variable');
 
 assert.throws(ReferenceError, function() {
@@ -23,7 +23,7 @@ assert.throws(ReferenceError, function() {
 }, 'no bindings created (script shadowing variable)');
 
 assert.throws(SyntaxError, function() {
-  $.evalScript('var x; let test262Fn;');
+  $262.evalScript('var x; let test262Fn;');
 }, 'function');
 
 assert.throws(ReferenceError, function() {

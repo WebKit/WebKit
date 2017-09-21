@@ -7,7 +7,11 @@ info: >
     of six characters, namely \u plus four hexadecimal digits
 es5id: 7.2_A5_T1
 description: Use TAB (U+0009)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var\u0009x;

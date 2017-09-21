@@ -7,8 +7,12 @@ es5id: 7.9.2_A1_T6
 description: >
     if(a>b) \n else c=d is not a valid sentence in the ECMAScript
     grammar
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 var a=1,b=2,c=3,d;

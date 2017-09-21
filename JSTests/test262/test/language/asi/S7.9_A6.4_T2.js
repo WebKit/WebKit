@@ -7,8 +7,12 @@ es5id: 7.9_A6.4_T2
 description: >
     Three semicolons. For header is (false semicolon false two
     semicolons false)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 for(false;false;;false) {

@@ -7,7 +7,11 @@ info: >
     LeftHandSideExpression is false.
 es6id: 12.4.1
 description: Applied to a non-simple assignment target
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 1--;

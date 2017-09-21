@@ -15,6 +15,7 @@ info: >
     ...
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var expectedThis = (function() {

@@ -5,6 +5,7 @@ esid: sec-%typedarray%.prototype.filter
 description: >
   The callbackfn return does not change the instance
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

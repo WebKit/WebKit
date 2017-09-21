@@ -8,8 +8,8 @@ info: >
   22.2.2.4 get %TypedArray% [ @@species ]
 
   1. Return the this value.
-features: [Symbol.species]
 includes: [testTypedArray.js]
+features: [Symbol.species, TypedArray]
 ---*/
 
 var value = {};

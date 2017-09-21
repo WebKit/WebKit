@@ -23,6 +23,7 @@ info: >
   3. If C is undefined, return defaultConstructor.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

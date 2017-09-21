@@ -6,8 +6,12 @@ description: >
     It is a Syntax Error if ContainsDuplicateLabels of ModuleItemList with
     argument « » is true.
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 label: {
   label: 0;

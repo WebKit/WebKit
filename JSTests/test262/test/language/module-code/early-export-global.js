@@ -9,7 +9,11 @@ info: >
     ModuleItemList does not also occur in either the VarDeclaredNames of
     ModuleItemList, or the LexicallyDeclaredNames of ModuleItemList.
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 export { Number };

@@ -9,6 +9,7 @@ info: >
   This function is not generic. The this value must be an object with a
   [[TypedArrayName]] internal slot.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

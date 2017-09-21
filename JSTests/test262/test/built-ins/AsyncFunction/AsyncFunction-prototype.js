@@ -3,7 +3,7 @@
 
 /*---
 author: Brian Terlson <brian.terlson@microsoft.com>
-esid: pending
+esid: sec-async-function-constructor-prototype
 description: AsyncFunction has a prototype property with writable false, enumerable false, configurable false.
 includes: [propertyHelper.js]
 ---*/

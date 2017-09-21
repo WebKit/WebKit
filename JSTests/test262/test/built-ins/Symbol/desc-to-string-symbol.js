@@ -10,6 +10,7 @@ info: |
     2. Else, let descString be ? ToString(description).
     3. Return a new unique Symbol value whose [[Description]] value is
        descString.
+features: [Symbol]
 ---*/
 
 var s = Symbol('1');

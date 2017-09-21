@@ -16,6 +16,7 @@ info: >
   1. Let newTypedArray be ? Construct(constructor, argumentList).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

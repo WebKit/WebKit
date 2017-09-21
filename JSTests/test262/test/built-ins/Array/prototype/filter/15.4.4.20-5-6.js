@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es5id: 15.4.4.20-5-6
 description: Array.prototype.filter - thisArg is function
 ---*/
@@ -14,7 +15,7 @@ description: Array.prototype.filter - thisArg is function
 
   function foo(){}
   foo.res = true;
-  
+
   var srcArr = [1];
   var resArr = srcArr.filter(callbackfn,foo);
 

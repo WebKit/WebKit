@@ -9,8 +9,8 @@ info: >
   1. Let O be the this value.
   2. If Type(O) is not Object, return undefined.
   ...
-features: [Symbol.toStringTag]
 includes: [testTypedArray.js]
+features: [Symbol.toStringTag, TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

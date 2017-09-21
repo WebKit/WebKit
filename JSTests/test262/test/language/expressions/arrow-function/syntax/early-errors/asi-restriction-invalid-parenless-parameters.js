@@ -8,7 +8,11 @@ description: >
 
     No parens around ArrowParameters
 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 var af = x
 => {};

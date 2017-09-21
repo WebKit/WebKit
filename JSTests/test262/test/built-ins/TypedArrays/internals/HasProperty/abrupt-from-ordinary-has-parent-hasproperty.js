@@ -23,8 +23,8 @@ info: >
   5. If parent is not null, then
     a. Return ? parent.[[HasProperty]](P).
   6. Return false.
-features: [Reflect, Proxy]
 includes: [testTypedArray.js, detachArrayBuffer.js]
+features: [Reflect, Proxy, TypedArray]
 ---*/
 
 var handler = {

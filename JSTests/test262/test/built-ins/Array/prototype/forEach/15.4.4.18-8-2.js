@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.foreach
 es5id: 15.4.4.18-8-2
 description: >
     Array.prototype.forEach doesn't call callbackfn if 'length' is 0
@@ -12,9 +13,9 @@ description: >
   function foo() {}
   var f = new foo();
   f.length = null;
-  
+
   var callCnt = 0;
   function cb(){callCnt++}
-  var i = f.forEach(cb);  
+  var i = f.forEach(cb);
 
 assert.sameValue(callCnt, 0, 'callCnt');

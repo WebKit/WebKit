@@ -2,12 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.isarray
 es5id: 15.4.3.2-0-7
 description: Array.isArray returns false if its argument is not an Array
 ---*/
 
-  var o = new Object();
-  o[12] = 13;
-  var b = Array.isArray(o);
+var o = new Object();
+o[12] = 13;
+var b = Array.isArray(o);
 
 assert.sameValue(b, false, 'b');

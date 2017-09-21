@@ -18,6 +18,7 @@ info: |
     3. If desc is undefined, let desc be the empty string.
     4. Assert: Type(desc) is String.
     5. Return the result of concatenating the strings "Symbol(", desc, and ")".
+features: [Symbol]
 ---*/
 
 assert.sameValue(Symbol().toString(), 'Symbol()', 'implicit value');

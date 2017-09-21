@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.filter
 es5id: 15.4.4.20-9-2
 description: >
     Array.prototype.filter considers new value of elements in array
@@ -9,7 +10,7 @@ description: >
 ---*/
 
   function callbackfn(val, idx, obj)
-  {    
+  {
     srcArr[2] = -1;
     srcArr[4] = -1;
     if(val > 0)

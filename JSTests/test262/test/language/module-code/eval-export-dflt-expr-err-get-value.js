@@ -24,7 +24,9 @@ info: |
     2. If Type(V) is not Reference, return V.
     3. Let base be GetBase(V).
     4. If IsUnresolvableReference(V) is true, throw a ReferenceError exception.
-negative: ReferenceError
+negative:
+  phase: runtime
+  type: ReferenceError
 flags: [module]
 ---*/
 

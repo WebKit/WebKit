@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.6.1
+esid: sec-typedarray.prototype.bytes_per_element
 description: >
   The initial value of Uint16Array.prototype.BYTES_PER_ELEMENT is 2.
 info: >

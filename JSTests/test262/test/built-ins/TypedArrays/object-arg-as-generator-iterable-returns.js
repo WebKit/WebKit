@@ -13,6 +13,7 @@ info: >
   internal slot.
 
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

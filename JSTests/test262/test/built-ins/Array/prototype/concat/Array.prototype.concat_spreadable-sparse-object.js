@@ -4,9 +4,11 @@
 
 
 /*---
+esid: sec-array.prototype.concat
 es6id: 22.1.3.1_3
 description: Array.prototype.concat Symbol.isConcatSpreadable sparse object
 includes: [compareArray.js]
+features: [Symbol.isConcatSpreadable]
 ---*/
 var obj = { length: 5 };
 obj[Symbol.isConcatSpreadable] = true;

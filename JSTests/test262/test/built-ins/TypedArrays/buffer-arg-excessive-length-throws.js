@@ -18,6 +18,7 @@ info: >
     c. If offset+newByteLength > bufferByteLength, throw a RangeError exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

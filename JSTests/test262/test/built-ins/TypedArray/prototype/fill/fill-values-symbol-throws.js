@@ -33,8 +33,8 @@ info: >
   3. Let numValue be ? ToNumber(value).
   ...
 
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 var s = Symbol('1');

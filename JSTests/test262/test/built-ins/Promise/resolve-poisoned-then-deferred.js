@@ -17,6 +17,7 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var value = {};
 var resolve;
 var poisonedThen = Object.defineProperty({}, 'then', {
@@ -39,4 +40,6 @@ promise.then(function() {
     $DONE();
   });
 
-resolve(poisonedThen);
+returnValue = resolve(poisonedThen);
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');

@@ -1,10 +1,13 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
+/*---
+description: |
+    Verify that the given date object's Number representation describes the
+    correct number of milliseconds since the Unix epoch relative to the local
+    time zone (as interpreted at the specified date).
+---*/
+
 /**
- * Verify that the given date object's Number representation describes the
- * correct number of milliseconds since the Unix epoch relative to the local
- * time zone (as interpreted at the specified date).
- *
  * @param {Date} date
  * @param {Number} expectedMs
  */

@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype property "getSeconds" has { DontEnum } attributes
+esid: sec-date.prototype.getseconds
 es5id: 15.9.5.22_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/

@@ -18,18 +18,18 @@ var start = {
     throw new Test262Error();
   }
 };
-var length = {
+var len = {
   valueOf: function() {
     lengthCallCount += 1;
   }
 };
 
 assert.throws(Test262Error, function() {
-  ''.substr(start, length);
+  ''.substr(start, len);
 });
 
 assert.throws(TypeError, function() {
-  ''.substr(symbol, length);
+  ''.substr(symbol, len);
 });
 
 assert.sameValue(lengthCallCount, 0);

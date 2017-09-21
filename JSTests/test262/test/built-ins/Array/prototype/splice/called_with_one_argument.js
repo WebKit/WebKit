@@ -11,6 +11,7 @@ info: >
     a. Let insertCount be 0.
     b. Let actualDeleteCount be len – actualStart.
 es6id: 22.1.3.25
+esid: sec-array.prototype.splice
 ---*/
 
 var array = ["first", "second", "third"];

@@ -24,8 +24,8 @@ info: >
     c. Let testResult be ToBoolean(? Call(predicate, T, « kValue, k, O »)).
     d. If testResult is true, return k.
   ...
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

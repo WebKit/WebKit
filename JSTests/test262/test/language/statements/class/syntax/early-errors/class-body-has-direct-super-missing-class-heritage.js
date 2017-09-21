@@ -10,8 +10,12 @@ description: >
       2. If constructor is empty, return false.
       3. Return HasDirectSuper of constructor.
 
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 class A {
   constructor() {
     super();

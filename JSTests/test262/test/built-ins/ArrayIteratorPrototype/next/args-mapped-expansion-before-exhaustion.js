@@ -1,11 +1,13 @@
 // Copyright (C) 2014 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
-es6id: 9.4.4.7 S22
+es6id: 9.4.4.7
+esid: sec-%arrayiteratorprototype%.next
 description: >
     Prior to being exhausted, iterators for mapped arguments exotic objects
     should honor the insertion of additional argument values.
 flags: [noStrict]
+features: [Symbol.iterator]
 ---*/
 
 (function(a, b, c) {

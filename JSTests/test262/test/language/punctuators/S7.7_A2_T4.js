@@ -7,7 +7,11 @@ info: >
     six characters, namely \u plus four hexadecimal digits
 es5id: 7.7_A2_T4
 description: Try to use ; as a Unicode \u003B
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 \u003B;

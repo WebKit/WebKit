@@ -5,6 +5,7 @@
 info: >
     The join function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.join
 es5id: 15.4.4.5_A2_T3
 description: If ToUint32(length) is zero, return the empty string
 ---*/
@@ -29,7 +30,7 @@ if (obj.join() !== ",1,,") {
 //CHECK#3
 if (obj.length !== 4.5) {
   $ERROR('#1: var obj = {}; obj.length = 4.5; obj[0] = undefined; obj[1] = 1; obj[2] = null; obj.join = Array.prototype.join; obj.join(); obj.length === 4.5. Actual: ' + (obj.length));
-}  
+}
 
 var obj = {};
 obj.join = Array.prototype.join;

@@ -5,7 +5,11 @@ es6id: 15.2.1.1
 description: >
     It is a Syntax Error if ModuleItemList Contains NewTarget
 flags: [module]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 new.target;

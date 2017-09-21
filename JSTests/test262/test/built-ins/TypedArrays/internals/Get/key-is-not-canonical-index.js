@@ -14,6 +14,7 @@ info: >
     ...
   3. Return ? OrdinaryGet(O, P, Receiver).
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var keys = [

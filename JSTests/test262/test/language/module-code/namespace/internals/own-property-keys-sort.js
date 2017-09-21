@@ -10,7 +10,7 @@ info: |
     3. Append all the entries of symbolKeys to the end of exports.
     4. Return exports.
 flags: [module]
-features: [Reflect, Symbol.iterator, Symbol.toStringTag]
+features: [Reflect, Symbol.toStringTag]
 ---*/
 
 var x;
@@ -55,7 +55,7 @@ assert.sameValue(stringKeys[15], '\u03c0', 'stringKeys[15] === "\u03c0"');
 
 var allKeys = Reflect.ownKeys(ns);
 assert(
-  allKeys.length > 17,
+  allKeys.length >= 17,
   'at least as many keys as defined by the module and the specification'
 );
 assert.sameValue(allKeys[0], '$', 'allKeys[0] === "$"');
@@ -74,9 +74,6 @@ assert.sameValue(allKeys[12], 'zz', 'allKeys[12] === "zz"');
 assert.sameValue(allKeys[13], '\u03bb', 'allKeys[13] === "\u03bb"');
 assert.sameValue(allKeys[14], '\u03bc', 'allKeys[14] === "\u03bc"');
 assert.sameValue(allKeys[15], '\u03c0', 'allKeys[15] === "\u03c0"');
-assert(
-  allKeys.indexOf(Symbol.iterator) > 15, 'keys array includes Symbol.iterator'
-);
 assert(
   allKeys.indexOf(Symbol.toStringTag) > 15,
   'keys array includes Symbol.toStringTag'

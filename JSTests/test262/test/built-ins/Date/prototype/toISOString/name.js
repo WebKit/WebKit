@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.toisostring
 es6id: 20.3.4.36
 description: >
   Date.prototype.toISOString.name is "toISOString".

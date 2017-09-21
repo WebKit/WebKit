@@ -61,6 +61,7 @@ info: >
       i. Let result be ? Call(method, O).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

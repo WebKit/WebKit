@@ -6,7 +6,7 @@ description: The [[Set]] internal method consistently returns `false`
 info: |
     1. Return false.
 flags: [module]
-features: [Reflect, Symbol.iterator, Symbol.toStringTag]
+features: [Reflect, Symbol, Symbol.toStringTag]
 ---*/
 
 import * as ns from './define-own-property.js';
@@ -40,13 +40,6 @@ assert.sameValue(Reflect.set(ns, 'default'), false, 'Reflect.set: default');
 assert.throws(TypeError, function() {
   ns.default = null;
 }, 'AssignmentExpression: default');
-
-assert.sameValue(
-  Reflect.set(ns, Symbol.iterator), false, 'Reflect.set: Symbol.iterator'
-);
-assert.throws(TypeError, function() {
-  ns[Symbol.iterator] = null;
-}, 'AssignmentExpression: Symbol.iterator');
 
 assert.sameValue(
   Reflect.set(ns, Symbol.toStringTag),

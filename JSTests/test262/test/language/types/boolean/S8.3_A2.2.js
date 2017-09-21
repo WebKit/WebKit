@@ -5,7 +5,11 @@
 info: The false is reserved word
 es5id: 8.3_A2.2
 description: Checking if execution of "false=0" fails
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 false = 0;

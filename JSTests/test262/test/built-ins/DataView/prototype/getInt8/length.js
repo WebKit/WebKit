@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-dataview.prototype.getint8
 es6id: 24.2.4.7
 description: >
   DataView.prototype.getInt8.length is 1.

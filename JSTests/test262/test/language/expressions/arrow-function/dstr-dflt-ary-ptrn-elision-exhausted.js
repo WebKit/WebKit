@@ -5,7 +5,7 @@
 description: Elision accepts exhausted iterator (arrow function expression (default parameter))
 esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
-features: [generator, destructuring-binding, default-parameters]
+features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     ArrowFunction : ArrowParameters => ConciseBody

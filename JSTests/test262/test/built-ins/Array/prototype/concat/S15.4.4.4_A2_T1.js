@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.concat
 info: >
     The concat function is intentionally generic.
     It does not require that its this value be an Array object

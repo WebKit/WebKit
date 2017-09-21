@@ -7,7 +7,11 @@ info: >
     of six characters, namely \u plus four hexadecimal digits
 es5id: 7.2_A5_T5
 description: Use NO-BREAK SPACE (U+00A0)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var\u00A0x;

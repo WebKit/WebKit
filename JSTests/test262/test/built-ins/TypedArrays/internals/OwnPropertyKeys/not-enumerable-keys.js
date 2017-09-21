@@ -14,7 +14,7 @@ info: >
     a. Add ! ToString(i) as the last element of keys.
   ...
 includes: [testTypedArray.js, compareArray.js]
-features: [Reflect, Symbol]
+features: [Reflect, Symbol, TypedArray]
 ---*/
 
 var s = Symbol("1");

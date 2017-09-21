@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getfullyear
 info: The "length" property of the "getFullYear" is 0
 es5id: 15.9.5.10_A2_T1
 description: The "length" property of the "getFullYear" is 0

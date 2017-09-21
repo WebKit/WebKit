@@ -15,9 +15,12 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var promise = new Promise(function(resolve) {
-  resolve(45);
+  returnValue = resolve(45);
 });
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');
 
 promise.then(function(value) {
     if (value !== 45) {

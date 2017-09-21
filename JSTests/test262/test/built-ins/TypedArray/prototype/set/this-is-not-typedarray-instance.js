@@ -14,6 +14,7 @@ info: >
   TypeError exception.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var set = TypedArray.prototype.set;

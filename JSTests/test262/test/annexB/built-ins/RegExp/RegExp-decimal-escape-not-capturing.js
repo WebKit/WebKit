@@ -13,9 +13,6 @@ description: >
     check results
 ---*/
 
-var __executed = /\b(\w+) \2\b/.test("do you listen the the band");
+var executed = /\b(\w+) \2\b/.test("do you listen the the band");
 
-//CHECK#1
-if (__executed) {
-	$ERROR('#1: /\\b(\\w+) \\2\\b/.test("do you listen the the band") === false');
-}
+assert.sameValue(executed, false);

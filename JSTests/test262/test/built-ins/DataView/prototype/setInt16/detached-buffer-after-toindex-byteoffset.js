@@ -28,7 +28,7 @@ var sample = new DataView(buffer, 0);
 
 $DETACHBUFFER(buffer);
 
-assert.throws(TypeError, function() {
+assert.throws(RangeError, function() {
   sample.setInt16(Infinity, 0);
 }, "Infinity");
 

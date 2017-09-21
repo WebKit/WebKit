@@ -9,6 +9,7 @@ description: >
     6. For each e that is an element of entries
       a. If e is not empty, set count to count+1.
 
+features: [Symbol]
 ---*/
 
 var s = new Set([0, undefined, false, NaN, null, "", Symbol()]);

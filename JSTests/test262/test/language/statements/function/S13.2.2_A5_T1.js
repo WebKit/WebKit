@@ -11,26 +11,26 @@ es5id: 13.2.2_A5_T1
 description: Declaring a function with "function __FACTORY(arg1, arg2)"
 ---*/
 
-var __VOLUME, __RED, __ID, __TOP, __BOTTOM, __LEFT, color, top, left, __device;
+var __VOLUME, __RED, __ID, __BOTTOM, __TOP, __LEFT, color, bottom, left, __device;
 
 __VOLUME=8;
 __RED="red";
 __ID=12342;
-__TOP=1.1;
-__BOTTOM=0.0;
-__LEFT=0.0;
+__BOTTOM=1.1;
+__TOP=0.1;
+__LEFT=0.5;
 
 
 function __FACTORY(arg1, arg2){
 	this.volume=__VOLUME;
 	color=__RED;
 	this.id=arg1;
-	top=arg2;
-	this.bottom=arguments[3];
-	left=arguments[4];
+	bottom=arg2;
+	this.top=arguments[2];
+	left=arguments[3];
 };
 
-__device = new __FACTORY(__ID, __TOP, __BOTTOM, __LEFT);
+__device = new __FACTORY(__ID, __BOTTOM, __TOP, __LEFT);
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#1
@@ -50,8 +50,8 @@ if (__device.volume !== __VOLUME) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#3
-if (__device.top !== undefined) {
-	$ERROR('#3: __device.top === undefined. Actual: __device.top ==='+__device.top);
+if (__device.bottom !== undefined) {
+	$ERROR('#3: __device.bottom === undefined. Actual: __device.bottom ==='+__device.bottom);
 }
 //
 //////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ if (__device.left !== undefined) {
 
 //////////////////////////////////////////////////////////////////////////////
 //CHECK#6
-if (__device.bottom !== __BOTTOM) {
-	$ERROR('#6: __device.bottom === __BOTTOM. Actual: __device.bottom ==='+__device.bottom);
+if (__device.top !== __TOP) {
+	$ERROR('#6: __device.top === __TOP. Actual: __device.top ==='+__device.top);
 }
 //
 //////////////////////////////////////////////////////////////////////////////

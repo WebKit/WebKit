@@ -6,8 +6,12 @@
       `yield` expressions bind weakly
   features: [generators]
   es6id: 14.4
-  negative: SyntaxError
+  negative:
+    phase: early
+    type: SyntaxError
  ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var obj = {
   *g() { yield 3 + yield 4; }

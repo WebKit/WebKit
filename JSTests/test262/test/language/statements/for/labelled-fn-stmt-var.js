@@ -2,7 +2,9 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 description: It is a Syntax Error if IsLabelledFunction(Statement) is true.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 esid: sec-semantics-static-semantics-early-errors
 es6id: 13.7.1.1
 info: >
@@ -10,5 +12,7 @@ info: >
     declarations outside of strict mode, this early error is applied regardless
     of the language mode.
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 for (var x; false; ) label1: label2: function f() {}

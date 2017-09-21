@@ -11,7 +11,7 @@ info: >
   3. If Type(target) is not Object, throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var set = TypedArray.prototype.set;

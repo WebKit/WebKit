@@ -13,8 +13,8 @@ info: >
   ...
   4. Let numberLength be ? ToNumber(length).
   ...
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 var s = Symbol('1');

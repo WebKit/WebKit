@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.5.2
+esid: sec-typedarray.prototype
 description: >
   The initial value of Float32Array.prototype is the Float32Array prototype object.
 info: >

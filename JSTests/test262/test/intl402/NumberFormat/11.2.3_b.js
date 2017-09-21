@@ -29,18 +29,9 @@ locales.forEach(function (locale) {
         keyValues[key].forEach(function (value) {
             var numberFormat = new Intl.NumberFormat([locale + "-u-" + key + "-" + value]);
             var options = numberFormat.resolvedOptions();
-            if (options.locale !== defaultLocale) {
-                $ERROR("Locale " + options.locale + " is affected by key " +
-                key + "; value " + value + ".");
-            }
-            if (JSON.stringify(options) !== defaultOptionsJSON) {
-                $ERROR("Resolved options " + JSON.stringify(options) + " are affected by key " +
-                key + "; value " + value + ".");
-            }
-            if (defaultFormatted !== numberFormat.format(input)) {
-                $ERROR("Formatted value " + numberFormat.format(input) + " is affected by key " +
-                key + "; value " + value + ".");
-            }
+            assert.sameValue(options.locale, defaultLocale, "Locale " + options.locale + " is affected by key " + key + "; value " + value + ".");
+            assert.sameValue(JSON.stringify(options), defaultOptionsJSON, "Resolved options " + JSON.stringify(options) + " are affected by key " + key + "; value " + value + ".");
+            assert.sameValue(numberFormat.format(input), defaultFormatted, "Formatted value " + numberFormat.format(input) + " is affected by key " + key + "; value " + value + ".");
         });
     });
 });

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-9-a-4
 description: >
     Array.prototype.indexOf - deleted properties in step 2 are visible

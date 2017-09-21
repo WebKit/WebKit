@@ -16,7 +16,7 @@ info: >
   5. Let len be ? ToLength(? Get(arrayLike, "length")).
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var obj = {

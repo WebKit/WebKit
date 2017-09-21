@@ -6,7 +6,9 @@ es5id: 10.1.1-5gs
 description: >
     Strict Mode - Use Strict Directive Prologue is ''use strict';'
     which appears at the start of the code
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [raw]
 ---*/
 

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-5-9
 description: >
     Array.prototype.reduce - 'initialValue' is returned if 'len' is 0

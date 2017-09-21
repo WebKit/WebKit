@@ -4,6 +4,7 @@
 es6id: 19.1.2.4
 description: >
     Symbol used as property for configurable data property definition
+features: [Symbol]
 ---*/
 var sym = Symbol();
 var obj = {};

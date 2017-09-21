@@ -8,9 +8,12 @@ description: >
     const: |const let| split across two lines is a static semantics early error.
 info: >
   Lexical declarations may not declare a binding named "let".
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
-throw NotEarlyError;
+
+throw "Test262: This statement should not be evaluated.";
 
 const
 let = "irrelevant initializer";

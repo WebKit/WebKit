@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorValue returns an abrupt completion (generator function expression (default parameter))
 esid: sec-generator-function-definitions-runtime-semantics-evaluation
 es6id: 14.4.14
-features: [destructuring-binding, default-parameters]
+features: [Symbol.iterator, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     GeneratorExpression : function * ( FormalParameters ) { GeneratorBody }
@@ -53,6 +53,7 @@ info: |
           ii. If v is an abrupt completion, set iteratorRecord.[[done]] to
               true.
           iii. ReturnIfAbrupt(v).
+
 ---*/
 var poisonedValue = Object.defineProperty({}, 'value', {
   get: function() {

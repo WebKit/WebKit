@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array-len
 info: >
     If the argument len is a Number and ToUint32(len) is not equal to len,
     a RangeError exception is thrown
@@ -10,8 +11,8 @@ description: Use try statement. len = NaN, +/-Infinity
 ---*/
 
 //CHECK#1
-try {  
-  new Array(NaN);   
+try {
+  new Array(NaN);
   $ERROR('#1.1: new Array(NaN) throw RangeError. Actual: ' + (new Array(NaN)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {
@@ -20,8 +21,8 @@ try {
 }
 
 //CHECK#2
-try {  
-  new Array(Number.POSITIVE_INFINITY);   
+try {
+  new Array(Number.POSITIVE_INFINITY);
   $ERROR('#2.1: new Array(Number.POSITIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.POSITIVE_INFINITY)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {
@@ -30,8 +31,8 @@ try {
 }
 
 //CHECK#3
-try {  
-  new Array(Number.NEGATIVE_INFINITY);   
+try {
+  new Array(Number.NEGATIVE_INFINITY);
   $ERROR('#3.1: new Array(Number.NEGATIVE_INFINITY) throw RangeError. Actual: ' + (new Array(Number.NEGATIVE_INFINITY)));
 } catch(e) {
   if ((e instanceof RangeError) !== true) {

@@ -17,6 +17,7 @@ info: >
   2. Perform ? ValidateTypedArray(newTypedArray).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array-len
 info: >
     If the argument len is not a Number, then the length property of
     the newly constructed object is set to 1 and the 0 property of
@@ -12,7 +13,7 @@ description: Checking for boolean primitive and Boolean object
 
 var x = new Array("1");
 
-//CHECK#1 
+//CHECK#1
 if (x.length !== 1) {
   $ERROR('#1: var x = new Array("1"); x.length === 1. Actual: ' + (x.length));
 }
@@ -25,7 +26,7 @@ if (x[0] !== "1") {
 var obj = new String("0");
 var x = new Array(obj);
 
-//CHECK#3 
+//CHECK#3
 if (x.length !== 1) {
   $ERROR('#3: var obj = new String("0"); var x = new Array(obj); x.length === 1. Actual: ' + (x.length));
 }

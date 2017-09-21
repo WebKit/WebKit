@@ -21,6 +21,7 @@ info: >
   2. Let len be ? ToLength(? Get(O, "length")).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 Object.defineProperty(TypedArray.prototype, "length", {

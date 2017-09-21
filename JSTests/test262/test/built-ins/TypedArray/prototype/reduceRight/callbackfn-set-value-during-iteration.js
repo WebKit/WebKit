@@ -15,7 +15,7 @@ info: >
 
   22.1.3.20 Array.prototype.reduceRight ( callbackfn [ , initialValue ] )
 includes: [testTypedArray.js]
-features: [Reflect.set]
+features: [Reflect.set, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

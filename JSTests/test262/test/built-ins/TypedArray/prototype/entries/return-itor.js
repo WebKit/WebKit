@@ -10,6 +10,7 @@ info: >
   ...
   3. Return CreateArrayIterator(O, "key+value").
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 var sample = new Int8Array([0, 42, 64]);

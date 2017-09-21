@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.2
+esid: sec-properties-of-the-weakset-constructor
 description: >
   The length property of the WeakSet constructor is 0.
 includes: [propertyHelper.js]

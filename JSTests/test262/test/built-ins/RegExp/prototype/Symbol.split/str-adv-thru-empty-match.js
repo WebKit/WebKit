@@ -2,7 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-description:
+description: >
     lastIndex is explicitly advanced following an empty match
 es6id: 21.2.5.11
 info: >

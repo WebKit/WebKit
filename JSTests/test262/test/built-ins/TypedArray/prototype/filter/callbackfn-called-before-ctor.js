@@ -14,7 +14,7 @@ info: >
   10. Let A be ? TypedArraySpeciesCreate(O, « captured »).
   ...
 includes: [testTypedArray.js]
-features: [Symbol.species]
+features: [Symbol.species, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -2,10 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.toisostring
 es5id: 15.9.5.43-0-13
 description: >
     Date.prototype.toISOString - RangeError is thrown when value of
-    date is outside the valid range of time. 
+    date is outside the valid range of time.
 ---*/
 
   // As specified in ES5 15.9.1.14, time > 8.64e15 is not in the valid range.

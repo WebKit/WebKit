@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.indexof
 es5id: 15.4.4.14-4-8
 description: >
     Array.prototype.indexOf returns -1 if 'length' is 0 (length is an
@@ -22,6 +23,6 @@ description: >
   // then converted back to n itself. If an array contains more than one element,
   // or if its one element is not a number, the array converts to NaN.
  var i = Array.prototype.indexOf.call({length: [ ]}, 1);
-  
+
 
 assert.sameValue(i, -1, 'i');

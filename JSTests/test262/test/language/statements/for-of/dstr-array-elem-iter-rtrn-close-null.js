@@ -42,13 +42,20 @@ info: |
        exception.
 
 ---*/
-var iterable = {};
+var nextCount = 0;
+var returnCount = 0;
+var unreachable = 0;
 var iterator = {
+  next: function() {
+    nextCount += 1;
+    return {done: false, value: undefined};
+  },
   return: function() {
+    returnCount += 1;
     return null;
   }
 };
-var iter;
+var iterable = {};
 iterable[Symbol.iterator] = function() {
   return iterator;
 };
@@ -56,7 +63,7 @@ function* g() {
 
 var counter = 0;
 
-for ([ {}[yield] ] of [iterable]) {
+for ([ {} = yield ] of [iterable]) {
   unreachable += 1;
   counter += 1;
 }
@@ -65,9 +72,14 @@ assert.sameValue(counter, 1);
 
 }
 
-iter = g();
+var iter = g();
 iter.next();
 
+assert.sameValue(nextCount, 1);
+assert.sameValue(returnCount, 0);
 assert.throws(TypeError, function() {
   iter.return();
 });
+assert.sameValue(nextCount, 1);
+assert.sameValue(returnCount, 1);
+assert.sameValue(unreachable, 0, 'Unreachable statement was not executed');

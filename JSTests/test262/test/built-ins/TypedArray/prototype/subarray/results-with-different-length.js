@@ -9,6 +9,7 @@ info: >
   ...
   17. Return ? TypedArraySpeciesCreate(O, argumentsList).
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

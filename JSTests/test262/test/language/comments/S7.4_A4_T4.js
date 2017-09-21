@@ -5,8 +5,12 @@
 info: Single and Multi line comments are used together
 es5id: 7.4_A4_T4
 description: Try to open Multi line comment at the end of Single comment
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /*CHECK#1*/
 

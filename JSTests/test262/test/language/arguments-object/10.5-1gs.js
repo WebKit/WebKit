@@ -4,11 +4,14 @@
 /*---
 es5id: 10.5-1gs
 description: Strict Mode - arguments cannot be assigned to in a strict function
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
 
-throw NotEarlyError;
+throw "Test262: This statement should not be evaluated.";
+
 
 function f_10_5_1_gs(){
     arguments = 7;

@@ -23,11 +23,14 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var value = {};
 var thenable = new Promise(function(resolve) { resolve(value); });
 var promise = new Promise(function(resolve) {
-  resolve(thenable);
+  returnValue = resolve(thenable);
 });
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');
 
 promise.then(function(val) {
     if (val !== value) {

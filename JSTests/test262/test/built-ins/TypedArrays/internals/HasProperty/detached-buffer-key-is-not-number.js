@@ -15,7 +15,7 @@ info: >
     ...
   4. Return ? OrdinaryHasProperty(O, P).
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

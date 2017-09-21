@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.isarray
 es6id: 22.1.2.2
 description: >
   Array.isArray.name is "isArray".

@@ -15,7 +15,7 @@ info: >
       return false.
   ...
 includes: [testTypedArray.js, propertyHelper.js]
-features: [Reflect]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

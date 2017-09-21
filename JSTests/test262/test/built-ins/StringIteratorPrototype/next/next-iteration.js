@@ -4,6 +4,7 @@
 es6id: 21.1.5.2.1
 description: >
     Iteration should visit each UTF-8 code point exactly once.
+features: [Symbol.iterator]
 ---*/
 
 var string = "abc";

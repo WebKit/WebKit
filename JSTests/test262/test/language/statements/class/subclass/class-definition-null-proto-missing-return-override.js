@@ -3,12 +3,9 @@
 /*---
 esid: sec-runtime-semantics-classdefinitionevaluation
 description: >
-  The `this` value of a null-extending class is automatically initialized,
-  obviating the need for an explicit return value in the constructor.
+  The `this` value of a null-extending class isn't automatically initialized,
+  which makes it necessary to have an explicit return value in the constructor.
 info: |
-  The behavior under test was introduced in the "ES2017" revision of the
-  specification and conflicts with prior editions.
-
   Runtime Semantics: ClassDefinitionEvaluation
 
   [...]
@@ -16,28 +13,27 @@ info: |
      [...]
   6. Else,
      [...]
-     e. If superclass is null, then
-        i. Let protoParent be null.
-        ii. Let constructorParent be the intrinsic object %FunctionPrototype%.
+     b. Let superclass be the result of evaluating ClassHeritage.
   [...]
-  15. If ClassHeritageopt is present and protoParent is not null, then set F's
-      [[ConstructorKind]] internal slot to "derived".
+  15. If ClassHeritageopt is present, then set F's [[ConstructorKind]] internal slot to "derived".
   [...]
 
   9.2.2 [[Construct]]
 
   [...]
-  5. If kind is "base", then
-     a. Let thisArgument be ? OrdinaryCreateFromConstructor(newTarget,
-        "%ObjectPrototype%").
-  [...]
   15. Return ? envRec.GetThisBinding().
+
+  8.1.1.3.4 GetThisBinding ( )
+  [...]
+  3. If envRec.[[ThisBindingStatus]] is "uninitialized", throw a ReferenceError exception.
+  [...]
 ---*/
 
 class Foo extends null {
-  constructor() {}
+  constructor() {
+  }
 }
 
-var foo = new Foo();
-
-assert.sameValue(Object.getPrototypeOf(foo), Foo);
+assert.throws(ReferenceError, function() {
+  new C();
+});

@@ -7,8 +7,12 @@ es5id: 7.8.4_A1.2_T2
 description: >
     SingleStringCharacter :: SourceCharacter but not single-quote ' or
     LineTerminator
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 //CHECK#1
 '

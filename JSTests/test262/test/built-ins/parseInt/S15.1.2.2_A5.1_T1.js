@@ -8,6 +8,8 @@ info: >
     when the number begins with the character pairs 0x or 0X, in which
     case a radix of 16 is assumed."
 es5id: 15.1.2.2_A5.1_T1
+es6id: 18.2.5
+esid: sec-parseint-string-radix
 description: Check if parseInt still accepts octal
 ---*/
 

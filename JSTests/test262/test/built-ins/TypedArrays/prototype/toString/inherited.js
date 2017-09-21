@@ -5,6 +5,7 @@ esid: sec-%typedarray%.prototype.tostring
 description: >
   _TypedArray_.prototype has no own property "toString"
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

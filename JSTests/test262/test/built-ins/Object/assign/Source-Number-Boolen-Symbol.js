@@ -5,6 +5,7 @@
 description: Number,Boolean,Symbol cannot have own enumerable properties,
              So cannot be Assigned.Here result should be original object.
 es6id:  19.1.2.1.5.c
+features: [Symbol]
 ---*/
 
 var target = new Object();

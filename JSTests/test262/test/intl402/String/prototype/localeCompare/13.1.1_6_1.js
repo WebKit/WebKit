@@ -23,21 +23,11 @@ locales.forEach(function (locales) {
     } catch (e) {
         referenceError = e;
     }
-    if (referenceError === undefined) {
-        $ERROR("Internal error: Expected exception was not thrown by Intl.Collator for locales " + locales + ".");
-    }
-    
-    try {
+    assert.notSameValue(referenceError, undefined, "Internal error: Expected exception was not thrown by Intl.Collator for locales " + locales + ".");
+
+    assert.throws(referenceError.constructor, function() {
         var result = "".localeCompare("", locales);
-    } catch (e) {
-        error = e;
-    }
-    if (error === undefined) {
-        $ERROR("String.prototype.localeCompare didn't throw exception for locales " + locales + ".");
-    } else if (error.name !== referenceError.name) {
-        $ERROR("String.prototype.localeCompare threw exception " + error.name +
-            " for locales " + locales + "; expected " + referenceError.name + ".");
-    }
+    }, "String.prototype.localeCompare didn't throw exception for locales " + locales + ".");
 });
 
 options.forEach(function (options) {
@@ -47,21 +37,9 @@ options.forEach(function (options) {
     } catch (e) {
         referenceError = e;
     }
-    if (referenceError === undefined) {
-        $ERROR("Internal error: Expected exception was not thrown by Intl.Collator for options " +
-            JSON.stringify(options) + ".");
-    }
-    
-    try {
+    assert.notSameValue(referenceError, undefined, "Internal error: Expected exception was not thrown by Intl.Collator for options " + JSON.stringify(options) + ".");
+
+    assert.throws(referenceError.constructor, function() {
         var result = "".localeCompare("", [], options);
-    } catch (e) {
-        error = e;
-    }
-    if (error === undefined) {
-        $ERROR("String.prototype.localeCompare didn't throw exception for options " +
-            JSON.stringify(options) + ".");
-    } else if (error.name !== referenceError.name) {
-        $ERROR("String.prototype.localeCompare threw exception " + error.name +
-            " for options " + JSON.stringify(options) + "; expected " + referenceError.name + ".");
-    }
+    }, "String.prototype.localeCompare didn't throw exception for options " + JSON.stringify(options) + ".");
 });

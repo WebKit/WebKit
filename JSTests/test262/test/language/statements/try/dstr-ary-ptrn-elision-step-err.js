@@ -5,7 +5,7 @@
 description: Elision advances iterator and forwards abrupt completions (try statement)
 esid: sec-runtime-semantics-catchclauseevaluation
 es6id: 13.15.7
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     Catch : catch ( CatchParameter ) Block

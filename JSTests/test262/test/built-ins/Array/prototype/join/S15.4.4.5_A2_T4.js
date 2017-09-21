@@ -5,6 +5,7 @@
 info: >
     The join function is intentionally generic.
     It does not require that its this value be an Array object
+esid: sec-array.prototype.join
 es5id: 15.4.4.5_A2_T4
 description: >
     Operator use ToNumber from length.  If Type(value) is Object,
@@ -24,7 +25,7 @@ if (obj.join() !== ",,") {
 obj.length = {valueOf: function() {return 3}, toString: function() {return 2}};
 if (obj.join() !== ",,") {
   $ERROR('#2: obj.length = {valueOf: function() {return 3}, toString: function() {return 2}}  obj.join() === ",,". Actual: ' + (obj.join()));
-} 
+}
 
 //CHECK#3
 obj.length = {valueOf: function() {return 3}, toString: function() {return {}}};
@@ -33,8 +34,8 @@ if (obj.join() !== ",,") {
 }
 
 //CHECK#4
-try {  
-  obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}};  
+try {
+  obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}};
   if (obj.join() !== ",,") {
     $ERROR('#4.1: obj.length = {valueOf: function() {return 3}, toString: function() {throw "error"}}; obj.join() === ",". Actual: ' + (obj.join()));
   }
@@ -61,14 +62,14 @@ if (obj.join() !== ",") {
 
 //CHECK#7
 try {
-  obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}};  
+  obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}};
   obj.join();
   $ERROR('#7.1: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (obj.join()));
-}  
+}
 catch (e) {
   if (e !== "error") {
     $ERROR('#7.2: obj.length = {valueOf: function() {throw "error"}, toString: function() {return 2}}; obj.join() throw "error". Actual: ' + (e));
-  } 
+  }
 }
 
 //CHECK#8
@@ -76,9 +77,9 @@ try {
   obj.length = {valueOf: function() {return {}}, toString: function() {return {}}};
   obj.join();
   $ERROR('#8.1: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (obj.join()));
-}  
+}
 catch (e) {
   if ((e instanceof TypeError) !== true) {
     $ERROR('#8,2: obj.length = {valueOf: function() {return {}}, toString: function() {return {}}}  obj.join() throw TypeError. Actual: ' + (e));
-  } 
+  }
 }

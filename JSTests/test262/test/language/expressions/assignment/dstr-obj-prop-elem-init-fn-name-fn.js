@@ -36,9 +36,11 @@ result = { x: xFn = function x() {}, x: fn = function() {} } = vals;
 
 assert.notSameValue(xFn.name, 'xFn');
 
-assert.sameValue(fn.name, 'fn');
-verifyNotEnumerable(fn, 'name');
-verifyNotWritable(fn, 'name');
-verifyConfigurable(fn, 'name');
+verifyProperty(fn, 'name', {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: 'fn'
+});
 
 assert.sameValue(result, vals);

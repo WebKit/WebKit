@@ -12,10 +12,6 @@ author: Norbert Lindenberg
 var obj = new Intl.DateTimeFormat();
 
 var actualPrototype = Object.getPrototypeOf(obj);
-if (actualPrototype !== Intl.DateTimeFormat.prototype) {
-    $ERROR("Prototype of object constructed by Intl.DateTimeFormat isn't Intl.DateTimeFormat.prototype; got " + actualPrototype);
-}
+assert.sameValue(actualPrototype, Intl.DateTimeFormat.prototype, "Prototype of object constructed by Intl.DateTimeFormat isn't Intl.DateTimeFormat.prototype.");
 
-if (!Object.isExtensible(obj)) {
-    $ERROR("Object constructed by Intl.DateTimeFormat must be extensible.");
-}
+assert(Object.isExtensible(obj), "Object constructed by Intl.DateTimeFormat must be extensible.");

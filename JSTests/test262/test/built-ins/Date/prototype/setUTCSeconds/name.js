@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.setutcseconds
 es6id: 20.3.4.34
 description: >
   Date.prototype.setUTCSeconds.name is "setUTCSeconds".

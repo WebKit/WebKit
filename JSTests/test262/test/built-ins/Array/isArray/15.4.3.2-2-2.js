@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.isarray
 es5id: 15.4.3.2-2-2
 description: >
     Array.isArray applied to an object with Array.prototype as the

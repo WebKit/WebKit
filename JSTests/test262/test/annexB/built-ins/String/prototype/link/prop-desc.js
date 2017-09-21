@@ -11,6 +11,8 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(String.prototype, 'link');
-verifyWritable(String.prototype, 'link');
-verifyConfigurable(String.prototype, 'link');
+verifyProperty(String.prototype, "link", {
+  enumerable: false,
+  writable: true,
+  configurable: true
+});

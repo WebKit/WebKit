@@ -22,8 +22,9 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-assert.sameValue(escape.length, 1);
-
-verifyNotEnumerable(escape, "length");
-verifyNotWritable(escape, "length");
-verifyConfigurable(escape, "length");
+verifyProperty(escape, "length", {
+  enumerable: false,
+  writable: false,
+  configurable: true,
+  value: 1
+});

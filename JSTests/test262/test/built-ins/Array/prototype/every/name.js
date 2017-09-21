@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es6id: 22.1.3.5
 description: >
   Array.prototype.every.name is "every".

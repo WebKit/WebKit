@@ -7,8 +7,12 @@ description: >
     semantics of the surrounding context.
     The SV of EscapeSequence :: HexEscapeSequence is the SV of the
     HexEscapeSequence.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [onlyStrict]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 `${'\07'}`;

@@ -14,7 +14,7 @@ info: >
   exception.
   ...
 includes: [testTypedArray.js]
-features: [DataView]
+features: [DataView, TypedArray]
 ---*/
 
 var TypedArrayPrototype = TypedArray.prototype;

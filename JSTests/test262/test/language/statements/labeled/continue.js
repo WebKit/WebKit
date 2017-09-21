@@ -12,9 +12,13 @@ info: |
   1. Let label be the StringValue of LabelIdentifier.
   2. Let newLabelSet be a copy of labelSet with label appended.
   3. Return ContainsUndefinedContinueTarget of LabelledItem with arguments
-     iterationSet and newLabelSet. negative: SyntaxError
-negative: SyntaxError
+     iterationSet and newLabelSet.
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 do {
   test262: {

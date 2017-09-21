@@ -7,8 +7,12 @@ description: >
     StrictFormalParameters also occurs in the LexicallyDeclaredNames of
     FunctionBody.
 es6id: 14.3.1
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var obj = {
   method(param) {

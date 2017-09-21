@@ -5,7 +5,7 @@
 description: Elision advances iterator and forwards abrupt completions (class expression method)
 esid: sec-runtime-semantics-bindingclassdeclarationevaluation
 es6id: 14.5.15
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     ClassDeclaration : class BindingIdentifier ClassTail

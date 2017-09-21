@@ -27,8 +27,8 @@ info: >
   ...
   3. Let proto be ? Get(constructor, "prototype").
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 var buffer = new ArrayBuffer(8);

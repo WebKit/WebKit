@@ -12,7 +12,7 @@ info: >
   ...
   6. Let targetOffset be ? ToInteger(offset).
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var s = Symbol("1");

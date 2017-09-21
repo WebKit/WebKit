@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.2.1
+esid: sec-weakset.prototype
 description: >
   WeakSet.prototype is not writable, not enumerable and not configurable.
 includes: [propertyHelper.js]

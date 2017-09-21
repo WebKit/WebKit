@@ -5,6 +5,10 @@ es6id: 13.1
 description: >
     let declarations with initialisers in statement positions: 
     while ( Expression ) Statement
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 while (false) let x = 1;

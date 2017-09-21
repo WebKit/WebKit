@@ -5,6 +5,7 @@ esid: sec-get-%typedarray%.prototype.bytelength
 description: >
   _TypedArray_.prototype has no own property "byteLength"
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

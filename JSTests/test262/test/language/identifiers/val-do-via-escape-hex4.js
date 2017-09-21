@@ -6,7 +6,11 @@ es5id: 7.6-8
 description: >
     7.6 - SyntaxError expected: reserved words used as Identifier
     Names in UTF8: do (do)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var \u0064\u006f = 123;

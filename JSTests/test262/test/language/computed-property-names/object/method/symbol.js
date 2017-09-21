@@ -5,6 +5,7 @@ es6id: 12.2.5
 description: >
     computed property method names can be a symbol
 includes: [compareArray.js]
+features: [Symbol]
 ---*/
 
 function ID(x) {

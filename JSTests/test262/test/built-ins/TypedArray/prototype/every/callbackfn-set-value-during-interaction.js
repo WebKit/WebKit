@@ -22,7 +22,7 @@ info: >
       ii. Let testResult be ToBoolean(? Call(callbackfn, T, « kValue, k, O »)).
   ...
 includes: [testTypedArray.js]
-features: [Reflect.set]
+features: [Reflect.set, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

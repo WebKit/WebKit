@@ -6,7 +6,11 @@
       `yield` is a reserved keyword within generator function bodies and may
       not be used as the binding identifier of a parameter.
   es6id: 12.1.1
-  negative: SyntaxError
+  negative:
+    phase: early
+    type: SyntaxError
  ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function* g(yield) {}

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.pop
 es6id: 22.1.3.16
 description: >
   Array.prototype.pop.name is "pop".

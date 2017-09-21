@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.lastindexof
 es5id: 15.4.4.15-8-a-2
 description: >
     Array.prototype.lastIndexOf -  added properties in step 5 are
@@ -17,6 +18,6 @@ description: >
                 return 10;
             }
         };
-        
+
 
 assert.sameValue(Array.prototype.lastIndexOf.call(arr, targetObj, fromIndex), 4, 'Array.prototype.lastIndexOf.call(arr, targetObj, fromIndex)');

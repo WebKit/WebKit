@@ -3,6 +3,7 @@
 
 /*---
 es6id: 22.2.6.2
+esid: sec-typedarray.prototype.constructor
 description: >
   The initial value of Int32Array.prototype.constructor is the Int32Array object.
 info: >

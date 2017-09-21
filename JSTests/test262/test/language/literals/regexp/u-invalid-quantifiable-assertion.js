@@ -10,7 +10,11 @@ info: |
 
     Term[U] ::
          [~U] QuantifiableAssertion Quantifier
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /.(?=.)?/u;

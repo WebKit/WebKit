@@ -2,12 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.lastindexof
 es5id: 15.4.4.15-7-1
 description: Array.prototype.lastIndexOf with negative fromIndex
 ---*/
 
   var a = new Array(1,2,3);
-  
+
 
 assert.sameValue(a.lastIndexOf(2,-2), 1, 'a.lastIndexOf(2,-2)');
 assert.sameValue(a.lastIndexOf(2,-3), -1, 'a.lastIndexOf(2,-3)');

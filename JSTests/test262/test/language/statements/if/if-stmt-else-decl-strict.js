@@ -4,7 +4,9 @@
 description: AnnexB extension not honored in strict mode (IfStatement with a declaration in the second statement position in the global scope)
 es6id: B.3.4
 flags: [onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: >
     The following rules for IfStatement augment those in 13.6:
     
@@ -20,5 +22,7 @@ info: >
     2. If strict is *false*, then
        [...]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 if (false) ; else function f() {  }

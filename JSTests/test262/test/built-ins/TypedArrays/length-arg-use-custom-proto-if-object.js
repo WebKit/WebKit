@@ -28,8 +28,8 @@ info: >
   10. Set the [[Prototype]] internal slot of A to prototype.
   ...
   12. Return A.
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 function newTarget() {}

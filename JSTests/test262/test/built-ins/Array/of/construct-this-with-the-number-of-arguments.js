@@ -1,6 +1,7 @@
 // Copyright (C) 2015 the V8 project authors. All rights reserved.
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
+esid: sec-array.of
 es6id: 22.1.2.3
 description: Passes the number of arguments to the constructor it calls.
 info: >
@@ -14,25 +15,25 @@ info: >
   ...
 ---*/
 
-var length;
+var len;
 var hits = 0;
 
-function C(len) {
-  length = len;
+function C(length) {
+  len = length;
   hits++;
 }
 
 Array.of.call(C);
-assert.sameValue(length, 0, '`Array.of.call(C);` called `new C(0)`');
+assert.sameValue(len, 0, '`Array.of.call(C);` called `new C(0)`');
 assert.sameValue(hits, 1, 'Called constructor once per call');
 
 Array.of.call(C, 'a', 'b')
-assert.sameValue(length, 2, '`Array.of.call(C, "a", "b"));` called `new C(2)`');
+assert.sameValue(len, 2, '`Array.of.call(C, "a", "b"));` called `new C(2)`');
 assert.sameValue(hits, 2, 'Called constructor once per call');
 
 Array.of.call(C, false, null, undefined);
 assert.sameValue(
-  length, 3,
+  len, 3,
   '`Array.of.call(C, false, null, undefined);` called `new C(3)`'
 );
 assert.sameValue(hits, 3, 'Called constructor once per call');

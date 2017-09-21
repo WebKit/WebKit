@@ -7,8 +7,12 @@ info: >
     syntax
 es5id: 11.2.4_A1.3_T1
 description: incorrect syntax
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function f_arg() {
 }

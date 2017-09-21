@@ -12,14 +12,14 @@ features: [Symbol]
 ---*/
 
 var symbol = Symbol('');
-var length = {
+var len = {
   valueOf: function() {
     throw new Test262Error();
   }
 };
 
 assert.throws(Test262Error, function() {
-  ''.substr(0, length);
+  ''.substr(0, len);
 });
 
 assert.throws(TypeError, function() {

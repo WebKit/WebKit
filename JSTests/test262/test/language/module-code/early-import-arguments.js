@@ -18,9 +18,13 @@ info: |
     - It is a Syntax Error if the code matched by this production is contained
       in strict mode code and the StringValue of Identifier is "arguments" or
       "eval".
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 // Create an appropriately-named ExportEntry in order to avoid false positives
 // (e.g. cases where the implementation does not generate the expected early

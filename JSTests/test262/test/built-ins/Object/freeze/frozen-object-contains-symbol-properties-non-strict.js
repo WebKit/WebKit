@@ -5,6 +5,7 @@ es6id: 19.1.2.5
 description: >
     Frozen object contains symbol properties.
 flags: [noStrict]
+features: [Symbol]
 ---*/
 var sym = Symbol();
 var obj = {};

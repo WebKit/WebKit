@@ -14,6 +14,7 @@ info: >
       i. Return ? IntegerIndexedElementGet(O, numericIndex).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var proto = TypedArray.prototype;

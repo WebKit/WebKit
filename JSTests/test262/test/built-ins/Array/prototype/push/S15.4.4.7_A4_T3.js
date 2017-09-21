@@ -3,6 +3,7 @@
 
 /*---
 info: Check ToLength(length) for non Array objects
+esid: sec-array.prototype.push
 es5id: 15.4.4.7_A4_T3
 description: length = -1
 ---*/
@@ -30,12 +31,12 @@ if (obj[4294967295] !== undefined) {
 //CHECK#4
 if (obj[4294967296] !== undefined) {
    $ERROR('#4: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967296] === undefined. Actual: ' + (obj[4294967296]));
-}  
+}
 
 //CHECK#5
 if (obj[4294967297] !== undefined) {
    $ERROR('#5: var obj = {}; obj.push = Array.prototype.push; obj.length = -1; obj.push("x", "y", "z"); obj[4294967297] === undefined. Actual: ' + (obj[4294967297]));
-}  
+}
 
 //CHECK#6
 if (obj[0] !== "x") {

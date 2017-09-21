@@ -4,7 +4,11 @@
 description: Generator declaration not allowed in statement position
 esid: sec-do-while-statement
 es6id: 13.7.2
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 do function* g() {} while (false)

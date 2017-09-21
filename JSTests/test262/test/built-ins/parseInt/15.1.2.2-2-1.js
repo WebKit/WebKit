@@ -3,6 +3,8 @@
 
 /*---
 es5id: 15.1.2.2-2-1
+es6id: 18.2.5
+esid: sec-parseint-string-radix
 description: >
     pareseInt - 'S' is the empty string when inputString does not
     contain any such characters

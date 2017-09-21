@@ -6,7 +6,11 @@ es5id: 7.6-11
 description: >
     7.6 - SyntaxError expected: reserved words used as Identifier
     Names in UTF8: var (var)
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var va\u0072 = 123;

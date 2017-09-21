@@ -8,15 +8,7 @@ author: Norbert Lindenberg
 ---*/
 
 var desc = Object.getOwnPropertyDescriptor(Intl.Collator, "prototype");
-if (desc === undefined) {
-    $ERROR("Intl.Collator.prototype is not defined.");
-}
-if (desc.writable) {
-    $ERROR("Intl.Collator.prototype must not be writable.");
-}
-if (desc.enumerable) {
-    $ERROR("Intl.Collator.prototype must not be enumerable.");
-}
-if (desc.configurable) {
-    $ERROR("Intl.Collator.prototype must not be configurable.");
-}
+assert.notSameValue(desc, undefined, "Intl.Collator.prototype is not defined.");
+assert.sameValue(desc.writable, false, "Intl.Collator.prototype must not be writable.");
+assert.sameValue(desc.enumerable, false, "Intl.Collator.prototype must not be enumerable.");
+assert.sameValue(desc.configurable, false, "Intl.Collator.prototype must not be configurable.");

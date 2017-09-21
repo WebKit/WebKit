@@ -5,7 +5,7 @@ description: Expression within statement is a candidate for tail-call optimizati
 esid: static-semantics-hasproductionintailposition
 flags: [onlyStrict]
 features: [tail-call-optimization]
-includes: [tco-helper.js]
+includes: [tcoHelper.js]
 ---*/
 
 var callCount = 0;

@@ -11,7 +11,11 @@ info: |
     ArrowParameters[?Yield] [no LineTerminator here] => ConciseBody[?In]
 features: [default-parameters]
 flags: [onlyStrict]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 (x = yield) => {};

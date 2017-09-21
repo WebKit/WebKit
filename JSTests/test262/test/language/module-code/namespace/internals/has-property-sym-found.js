@@ -8,12 +8,10 @@ description: >
 info: |
     1. If Type(P) is Symbol, return OrdinaryHasProperty(O, P).
 flags: [module]
-features: [Symbol.iterator, Symbol.toStringTag, Reflect]
+features: [Symbol.toStringTag, Reflect]
 ---*/
 
 import * as ns from './has-property-sym-found.js';
 
-assert(Symbol.iterator in ns, 'in: Symbol.iterator');
-assert(Reflect.has(ns, Symbol.iterator), 'Reflect.has: Symbol.iterator');
 assert(Symbol.toStringTag in ns, 'in: Symbol.toStringTag');
 assert(Reflect.has(ns, Symbol.toStringTag), 'Reflect.has: Symbol.toStringTag');

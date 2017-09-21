@@ -9,6 +9,7 @@ info: >
   ...
   3. Let len be the value of obj's [[ArrayLength]] internal slot.
 includes: [testTypedArray.js, compareArray.js]
+features: [TypedArray]
 ---*/
 
 var getCalls = 0;

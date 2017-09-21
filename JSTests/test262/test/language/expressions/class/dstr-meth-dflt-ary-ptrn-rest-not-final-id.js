@@ -7,7 +7,9 @@ esid: sec-class-definitions-runtime-semantics-evaluation
 es6id: 14.5.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     ClassExpression : class BindingIdentifieropt ClassTail
 
@@ -65,6 +67,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 var callCount = 0;
 var C = class {

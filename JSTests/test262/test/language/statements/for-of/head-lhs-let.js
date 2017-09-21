@@ -15,7 +15,11 @@ info: |
 
     for ( ForDeclaration[?Yield] of AssignmentExpression[+In, ?Yield] )
       Statement[?Yield, ?Return]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 for ( let of [] ) ;

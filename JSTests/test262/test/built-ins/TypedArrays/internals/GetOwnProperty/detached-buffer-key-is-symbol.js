@@ -14,7 +14,7 @@ info: >
       ...
   4. Return OrdinaryGetOwnProperty(O, P).
 includes: [testTypedArray.js, detachArrayBuffer.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

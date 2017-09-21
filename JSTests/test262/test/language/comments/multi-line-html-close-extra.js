@@ -15,8 +15,12 @@ info: |
 
     MultiLineComment ::
       /* FirstCommentLine[opt] LineTerminator MultiLineCommentChars[opt] * / HTMLCloseComment[opt]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /*
 */ the comment should not include these characters, regardless of AnnexB extensions -->

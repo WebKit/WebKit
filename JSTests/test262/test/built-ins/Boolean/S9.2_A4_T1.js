@@ -5,13 +5,14 @@
 info: >
     Result of boolean conversion from number value is false if the argument
     is +0, -0, or NaN; otherwise, is true
+esid: sec-toboolean
 es5id: 9.2_A4_T1
 description: +0, -0 and NaN convert to Boolean by explicit transformation
 ---*/
 
 // CHECK#1
 if (Boolean(+0) !== false) {
-  $ERROR('#1: Boolean(+0) === false. Actual: ' + (Boolean(+0))); 	 
+  $ERROR('#1: Boolean(+0) === false. Actual: ' + (Boolean(+0)));
 }
 
 // CHECK#2

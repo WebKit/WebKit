@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-7-8
 description: >
     Array.prototype.reduce returns initialValue if 'length' is 0 and
@@ -12,9 +13,9 @@ description: >
   foo.prototype = new Array(1, 2, 3);
   function foo() {}
   var f = new foo();
-  
+
   f.length = [];
-  
+
   // objects inherit the default valueOf method of the Object object;
   // that simply returns the itself. Since the default valueOf() method
   // does not return a primitive value, ES next tries to convert the object

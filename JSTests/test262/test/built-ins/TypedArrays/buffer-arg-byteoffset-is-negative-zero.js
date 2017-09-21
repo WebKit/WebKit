@@ -14,6 +14,7 @@ info: >
   8. If offset is -0, let offset be +0.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TAConstructor) {

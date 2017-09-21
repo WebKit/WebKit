@@ -8,7 +8,7 @@ info: >
 es6id: S25.4.4.1_A7.2_T1
 author: Sam Mikes
 description: Promise.all() accepts a one-element array
-includes: [PromiseHelper.js]
+includes: [promiseHelper.js]
 flags: [async]
 ---*/
 

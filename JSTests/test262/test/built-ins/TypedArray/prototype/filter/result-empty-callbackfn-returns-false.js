@@ -13,6 +13,7 @@ info: >
     b. Increment n by 1.
   13. Return A.
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

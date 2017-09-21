@@ -19,9 +19,6 @@ function nonSimple(a = 0) {
   return arguments;
 }
 var unmappedCalleeDesc = Object.getOwnPropertyDescriptor(nonSimple(), "callee");
-var unmappedCallerDesc = Object.getOwnPropertyDescriptor(nonSimple(), "caller");
 
 assert.sameValue(ThrowTypeError, unmappedCalleeDesc.get, "callee.get");
 assert.sameValue(ThrowTypeError, unmappedCalleeDesc.set, "callee.set");
-assert.sameValue(ThrowTypeError, unmappedCallerDesc.get, "caller.get");
-assert.sameValue(ThrowTypeError, unmappedCallerDesc.set, "caller.set");

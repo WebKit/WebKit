@@ -18,9 +18,12 @@ flags: [async]
 ---*/
 
 var thenable = new Promise(function() {});
+var returnValue = null;
 var p = new Promise(function(_, reject) {
-  reject(thenable);
+  returnValue = reject(thenable);
 });
+
+assert.sameValue(returnValue, undefined, '"reject" function return value');
 
 p.then(function() {
     $DONE('The promise should not be fulfilled.');

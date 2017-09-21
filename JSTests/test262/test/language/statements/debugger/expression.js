@@ -4,7 +4,11 @@
 description: The `debugger` token may not occupy an expression position
 esid: sec-debugger-statement
 es6id: 13.16
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 (debugger);

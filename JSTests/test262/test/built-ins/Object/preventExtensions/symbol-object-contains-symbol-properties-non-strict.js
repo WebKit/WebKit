@@ -5,6 +5,7 @@ es6id: 19.4
 description: >
     Object.preventExtensions(obj) where obj contains symbol properties.
 flags: [noStrict]
+features: [Symbol]
 ---*/
 var symA = Symbol("A");
 var symB = Symbol("B");

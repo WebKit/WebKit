@@ -5,7 +5,11 @@
 info: Correct interpretation of multi line comments
 es5id: 7.4_A2_T2
 description: Try use /*CHECK#1/. This is not closed multi line comment
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 /*CHECK#1/

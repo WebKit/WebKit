@@ -5,12 +5,13 @@
 info: >
     If [[Get]] ToString(j) is undefined, return 1.
     If [[]Get] ToString(k) is undefined, return -1
+esid: sec-array.prototype.sort
 es5id: 15.4.4.11_A1.4_T2
 description: If comparefn is not undefined
 ---*/
 
 var myComparefn = function(x,y) {
-  if (x === undefined) return -1; 
+  if (x === undefined) return -1;
   if (y === undefined) return 1;
   return 0;
 }
@@ -26,7 +27,7 @@ if (x.length !== 2) {
 //CHECK#2
 if (x[0] !== 1) {
   $ERROR('#2: var x = new Array(undefined, 1); x.sort(myComparefn); x[0] === 1. Actual: ' + (x[0]));
-}    
+}
 
 //CHECK#3
 if (x[1] !== undefined) {
@@ -44,7 +45,7 @@ if (x.length !== 2) {
 //CHECK#5
 if (x[0] !== 1) {
   $ERROR('#5: var x = new Array(1, undefined); x.sort(myComparefn); x[0] === 1. Actual: ' + (x[0]));
-}    
+}
 
 //CHECK#6
 if (x[1] !== undefined) {

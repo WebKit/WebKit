@@ -4,7 +4,11 @@
 description: Class declaration not allowed in statement position
 esid: sec-while-statement
 es6id: 13.7.3
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 while (false) class C {}

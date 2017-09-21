@@ -30,11 +30,7 @@ locales.forEach(function (locales) {
         numbers.forEach(function (number) {
             var referenceFormatted = formatObj.format(number);
             var formatted = formatFunc(number);
-            if (referenceFormatted !== formatted) {
-                $ERROR("format function produces different result than format method for locales " +
-                    locales + "; options: " + (options ? JSON.stringify(options) : options) +
-                    " : " + formatted + " vs. " + referenceFormatted + ".");
-            }
+            assert.sameValue(referenceFormatted, formatted, "format function produces different result than format method for locales " + locales + "; options: " + (options ? JSON.stringify(options) : options) + ".");
         });
     });
 });

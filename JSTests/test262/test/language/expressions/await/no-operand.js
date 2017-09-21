@@ -6,8 +6,12 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   await requries an operand.
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 async function foo() {
   await;

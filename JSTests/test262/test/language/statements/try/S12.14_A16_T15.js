@@ -9,8 +9,12 @@ es5id: 12.14_A16_T15
 description: >
     Finally: "finally Block". Checking if passing argument to "try"
     statement fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 // CHECK#1
 try{	

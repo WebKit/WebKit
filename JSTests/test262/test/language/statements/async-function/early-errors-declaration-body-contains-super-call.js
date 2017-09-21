@@ -5,7 +5,11 @@
 author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: It is a syntax error if AsyncFunctionBody contains SuperCall is true
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 async function foo (foo) { super() };

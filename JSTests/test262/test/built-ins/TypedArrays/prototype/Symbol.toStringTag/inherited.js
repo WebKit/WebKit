@@ -6,7 +6,7 @@ description: >
   _TypedArray_.prototype[@@toStringTag] is inherited from %TypedArray%
   _TypedArray_.prototype has no own property @@toStringTag
 includes: [testTypedArray.js]
-features: [Symbol.toStringTag]
+features: [Symbol.toStringTag, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

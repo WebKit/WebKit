@@ -10,7 +10,7 @@ description: First argument is string and null
 ---*/
 
 this.color="red";
-var name="mars";
+var planet="mars";
 
 var f = Function.call("blablastring", "return this.color;");
 
@@ -19,7 +19,7 @@ if (f() !== "red") {
   $ERROR('#1: ');
 }
 
-var g = Function.call(null, "return this.name;");
+var g = Function.call(null, "return this.planet;");
 
 //CHECK#2
 if (g() !== "mars") {

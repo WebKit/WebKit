@@ -13,6 +13,6 @@ description: "Tested string is \"~`!@#$%^&*()-+={[}]|\\\\:;'<,>./?\" + '\"'"
 var non_ident = "~`!@#$%^&*()-+={[}]|\\:;'<,>./?" + '"';
 for (var k = 0; k < non_ident.length; ++k) {
   var arr = new RegExp("\\" + non_ident[k], "g").exec(non_ident);
-  assert.notSameValue(null, "No match for character: " + non_ident[k]);
+  assert.notSameValue(arr, null, "No match for character: " + non_ident[k]);
   assert.sameValue(arr[0], non_ident[k]);
 }

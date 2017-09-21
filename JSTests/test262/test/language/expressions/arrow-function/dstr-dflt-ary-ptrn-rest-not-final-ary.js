@@ -7,7 +7,9 @@ esid: sec-arrow-function-definitions-runtime-semantics-evaluation
 es6id: 14.2.16
 features: [destructuring-binding, default-parameters]
 flags: [generated]
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 info: |
     ArrowFunction : ArrowParameters => ConciseBody
 
@@ -44,6 +46,7 @@ info: |
         [ BindingElementList[?Yield] ]
         [ BindingElementList[?Yield] , Elisionopt BindingRestElement[?Yield]opt ]
 ---*/
+throw "Test262: This statement should not be evaluated.";
 
 var callCount = 0;
 var f;

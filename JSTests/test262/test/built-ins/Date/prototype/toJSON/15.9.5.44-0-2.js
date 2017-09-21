@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.tojson
 es5id: 15.9.5.44-0-2
 description: Date.prototype.toJSON must exist as a function taking 1 parameter
 ---*/

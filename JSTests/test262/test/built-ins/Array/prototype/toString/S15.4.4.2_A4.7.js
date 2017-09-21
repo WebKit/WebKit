@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.tostring
 info: The toString property of Array can't be used as constructor
 es5id: 15.4.4.2_A4.7
 description: >

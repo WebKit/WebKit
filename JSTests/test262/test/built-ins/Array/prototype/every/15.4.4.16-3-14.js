@@ -2,20 +2,21 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-3-14
 description: Array.prototype.every - 'length' is a string containing +/-Infinity
 ---*/
 
-        var accessed = false;
+var accessed = false;
 
-        function callbackfn(val, idx, obj) {
-            accessed = true;
-            return val > 10;
-        }
+function callbackfn(val, idx, obj) {
+    accessed = true;
+    return val > 10;
+}
 
-        var objOne = { 0: 9, length: "Infinity" };
-        var objTwo = { 0: 9, length: "+Infinity" };
-        var objThree = { 0: 9, length: "-Infinity" };
+var objOne = { 0: 9, length: "Infinity" };
+var objTwo = { 0: 9, length: "+Infinity" };
+var objThree = { 0: 9, length: "-Infinity" };
 
 assert.sameValue(Array.prototype.every.call(objOne, callbackfn), false, 'Array.prototype.every.call(objOne, callbackfn)');
 assert.sameValue(Array.prototype.every.call(objTwo, callbackfn), false, 'Array.prototype.every.call(objTwo, callbackfn)');

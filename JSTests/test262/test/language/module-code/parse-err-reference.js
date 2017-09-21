@@ -3,7 +3,9 @@
 /*---
 description: Early ReferenceError resulting from module parsing
 esid: sec-parsemodule
-negative: ReferenceError
+negative:
+  phase: early
+  type: ReferenceError
 info: |
     [...]
     2. Parse sourceText using Module as the goal symbol and analyze the parse
@@ -14,5 +16,7 @@ info: |
        errors.
 flags: [module]
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 1++;

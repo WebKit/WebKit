@@ -27,13 +27,7 @@ if (delete MyFunction !== false) {
 }
 
 //CHECK#4
-function MyFunction(){};
 var MyObject = new MyFunction();
 if (delete MyObject !== false) {
   $ERROR('#4: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false');
-}
-
-//CHECK#5
-if (delete MyObject !== false) {
-  $ERROR('#5: function MyFunction(){}; var MyObject = new MyFunction(); delete MyObject === false');
 }

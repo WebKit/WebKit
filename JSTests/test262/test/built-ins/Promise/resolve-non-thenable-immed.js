@@ -21,10 +21,13 @@ info: >
 flags: [async]
 ---*/
 
+var returnValue = null;
 var nonThenable = { then: null };
 var promise = new Promise(function(resolve) {
-  resolve(nonThenable);
+  returnValue = resolve(nonThenable);
 });
+
+assert.sameValue(returnValue, undefined, '"resolve" return value');
 
 promise.then(function(value) {
     if (value !== nonThenable) {

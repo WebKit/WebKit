@@ -6,7 +6,11 @@ es6id: 11.6
 description: >
     SyntaxError expected: reserved words used as Identifier
     Names in UTF8: void
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var \u{76}\u{6f}\u{69}\u{64} = 123;

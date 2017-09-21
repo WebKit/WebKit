@@ -5,7 +5,7 @@
 description: Error forwarding when IteratorValue returns an abrupt completion (`const` statement)
 esid: sec-let-and-const-declarations-runtime-semantics-evaluation
 es6id: 13.3.1.4
-features: [destructuring-binding]
+features: [Symbol.iterator, destructuring-binding]
 flags: [generated]
 info: |
     LexicalBinding : BindingPattern Initializer
@@ -32,6 +32,7 @@ info: |
           ii. If v is an abrupt completion, set iteratorRecord.[[done]] to
               true.
           iii. ReturnIfAbrupt(v).
+
 ---*/
 var poisonedValue = Object.defineProperty({}, 'value', {
   get: function() {

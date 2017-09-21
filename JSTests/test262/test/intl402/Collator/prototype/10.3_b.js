@@ -19,16 +19,8 @@ var invalidTargets = [undefined, null, true, 0, "Collator", [], {}];
 Object.getOwnPropertyNames(functions).forEach(function (functionName) {
     var f = functions[functionName];
     invalidTargets.forEach(function (target) {
-        var error;
-        try {
+        assert.throws(TypeError, function() {
             f.call(target);
-        } catch (e) {
-            error = e;
-        }
-        if (error === undefined) {
-            $ERROR("Calling " + functionName + " on " + target + " was not rejected.");
-        } else if (error.name !== "TypeError") {
-            $ERROR("Calling " + functionName + " on " + target + " was rejected with wrong error " + error.name + ".");
-        }
+        }, "Calling " + functionName + " on " + target + " was not rejected.");
     });
 });

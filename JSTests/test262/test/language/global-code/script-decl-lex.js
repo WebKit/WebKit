@@ -21,7 +21,7 @@ info: |
 // declarations.
 Object.preventExtensions(this);
 
-$.evalScript('let test262let = 1;');
+$262.evalScript('let test262let = 1;');
 
 test262let = 2;
 
@@ -32,7 +32,7 @@ assert.sameValue(
   'property not created on the global object (let)'
 );
 
-$.evalScript('const test262const = 3;');
+$262.evalScript('const test262const = 3;');
 
 assert.throws(TypeError, function() {
   test262const = 4;
@@ -44,7 +44,7 @@ assert.sameValue(
   'property not created on the global object (const)'
 );
 
-$.evalScript('class test262class {}');
+$262.evalScript('class test262class {}');
 
 test262class = 5;
 

@@ -22,8 +22,8 @@ info: >
   ...
   3. Let relativeTarget be ? ToInteger(target).
   ...
-features: [Symbol]
 includes: [testTypedArray.js]
+features: [Symbol, TypedArray]
 ---*/
 
 var s = Symbol(1);

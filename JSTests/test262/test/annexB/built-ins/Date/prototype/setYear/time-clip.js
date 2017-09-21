@@ -15,7 +15,7 @@ info: |
 
 var date;
 
-date = new Date(1970, 8, 12, 20, 0, 0, 0);
+date = new Date(1970, 8, 10, 0, 0, 0, 0);
 
 assert.notSameValue(
   date.setYear(275760), NaN, 'method return value (valid date)'
@@ -24,7 +24,7 @@ assert.notSameValue(
   date.valueOf(), NaN, '[[DateValue]] internal slot (valid date)'
 );
 
-date = new Date(1970, 8, 12, 20, 0, 0, 1);
+date = new Date(1970, 8, 14, 0, 0, 0, 0);
 
 assert.sameValue(
   date.setYear(275760), NaN, 'method return value (invalid date)'

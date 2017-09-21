@@ -20,8 +20,8 @@ info: >
       return false.
       vii. Return true.
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -4,6 +4,8 @@
 /*---
 info: The length property of parseFloat does not have the attribute DontDelete
 es5id: 15.1.2.3_A7.2
+es6id: 18.2.4
+esid: sec-parsefloat-string
 description: Checking use hasOwnProperty, delete
 ---*/
 

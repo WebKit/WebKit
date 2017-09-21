@@ -14,9 +14,7 @@ testWithIntlConstructors(function (Constructor) {
     // this test should work equally for both matching algorithms
     ["lookup", "best fit"].forEach(function (matcher) {
         var supported = Constructor.supportedLocalesOf([], {localeMatcher: matcher});
-        if (supported.length !== 0) {
-            $ERROR("SupportedLocales with matcher " + matcher + " returned a non-empty list for an empty list.");
-        }
+        assert.sameValue(supported.length, 0, "SupportedLocales with matcher " + matcher + " returned a non-empty list for an empty list.");
     });
 
     return true;

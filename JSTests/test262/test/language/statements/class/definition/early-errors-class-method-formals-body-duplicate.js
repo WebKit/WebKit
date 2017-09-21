@@ -6,8 +6,12 @@ author: Brian Terlson <brian.terlson@microsoft.com>
 esid: pending
 description: >
   It is a SyntaxError if BoundNames of FormalParameters also occurs in the LexicallyDeclaredNames of AsyncFunctionBody
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 class Foo {
   async function foo(bar) { let bar; }

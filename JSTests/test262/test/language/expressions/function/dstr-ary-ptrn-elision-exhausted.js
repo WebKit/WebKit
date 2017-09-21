@@ -5,7 +5,7 @@
 description: Elision accepts exhausted iterator (function expression)
 esid: sec-function-definitions-runtime-semantics-evaluation
 es6id: 14.1.20
-features: [generator, destructuring-binding]
+features: [generators, destructuring-binding]
 flags: [generated]
 info: |
     FunctionExpression : function ( FormalParameters ) { FunctionBody }

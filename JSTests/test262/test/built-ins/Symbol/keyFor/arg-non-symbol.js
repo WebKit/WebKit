@@ -6,6 +6,7 @@ es6id: 19.4.2.5
 description: Called with a non-symbol argument
 info: >
     1. If Type(sym) is not Symbol, throw a TypeError exception.
+features: [Symbol]
 ---*/
 
 assert.sameValue(typeof Symbol.keyFor, 'function');

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.tolocaledatestring
 es6id: 20.3.4.38
 description: >
   Date.prototype.toLocaleDateString.name is "toLocaleDateString".

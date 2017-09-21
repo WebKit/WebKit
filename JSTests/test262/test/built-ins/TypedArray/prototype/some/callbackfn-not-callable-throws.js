@@ -17,7 +17,7 @@ info: >
   3. If IsCallable(callbackfn) is false, throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

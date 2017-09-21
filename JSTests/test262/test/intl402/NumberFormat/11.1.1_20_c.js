@@ -36,7 +36,6 @@ var currencyDigits = {
     BSD: 2,
     BTN: 2,
     BWP: 2,
-    BYR: 0,
     BZD: 2,
     CAD: 2,
     CDF: 2,
@@ -184,12 +183,6 @@ Object.getOwnPropertyNames(currencyDigits).forEach(function (currency) {
     var format = Intl.NumberFormat([], {style: "currency", currency: currency});
     var min = format.resolvedOptions().minimumFractionDigits;
     var max = format.resolvedOptions().maximumFractionDigits;
-    if (min !== digits) {
-        $ERROR("Didn't get correct minimumFractionDigits for currency " +
-            currency + "; expected " + digits + ", got " + min + ".");
-    }
-    if (max !== digits) {
-        $ERROR("Didn't get correct maximumFractionDigits for currency " +
-            currency + "; expected " + digits + ", got " + max + ".");
-    }
+    assert.sameValue(min, digits, "Didn't get correct minimumFractionDigits for currency " + currency + ".");
+    assert.sameValue(max, digits, "Didn't get correct maximumFractionDigits for currency " + currency + ".");
 });

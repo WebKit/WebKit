@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getmilliseconds
 info: >
     The Date.prototype.getMilliseconds property "length" has { ReadOnly, !
     DontDelete, DontEnum } attributes

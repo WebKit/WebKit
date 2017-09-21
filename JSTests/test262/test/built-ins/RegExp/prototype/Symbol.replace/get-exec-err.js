@@ -16,7 +16,7 @@ info: >
     [...]
     3. Let exec be Get(R, "exec").
     4. ReturnIfAbrupt(exec).
-features: [Symbol.match]
+features: [Symbol.replace]
 ---*/
 
 var r = { global: true };

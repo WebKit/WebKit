@@ -7,8 +7,12 @@ es5id: 12.11_A3_T4
 description: >
     Using "case" that has no Expresson after it. "CaseClause: case
     Expression : [StatementList]"
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 function SwitchTest(value){
   var result = 0;

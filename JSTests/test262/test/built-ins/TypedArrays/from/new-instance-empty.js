@@ -5,6 +5,7 @@ esid: sec-%typedarray%.from
 description: >
   Return a new empty TypedArray
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 

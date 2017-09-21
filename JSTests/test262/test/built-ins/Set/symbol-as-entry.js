@@ -4,7 +4,7 @@
 es6id: 19.4
 description: >
     Symbol as Set entry
-features: [Set]
+features: [Symbol, Set]
 ---*/
 var set = new Set();
 var sym = Symbol();

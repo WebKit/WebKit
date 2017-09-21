@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.foreach
 es5id: 15.4.4.18-4-12
 description: Array.prototype.forEach - 'callbackfn' is a function
 ---*/

@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype property "getMonth" has { DontEnum } attributes
+esid: sec-date.prototype.getmonth
 es5id: 15.9.5.12_A1_T3
 description: Checking DontEnum attribute
 ---*/

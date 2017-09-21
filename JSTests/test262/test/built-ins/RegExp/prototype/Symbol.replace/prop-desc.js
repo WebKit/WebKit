@@ -11,6 +11,7 @@ info: >
     B.2 has the attributes { [[Writable]]: true, [[Enumerable]]: false,
     [[Configurable]]: true } unless otherwise specified.
 includes: [propertyHelper.js]
+features: [Symbol.replace]
 ---*/
 
 verifyNotEnumerable(RegExp.prototype, Symbol.replace);

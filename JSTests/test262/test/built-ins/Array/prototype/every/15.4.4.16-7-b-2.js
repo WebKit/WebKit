@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.every
 es5id: 15.4.4.16-7-b-2
 description: Array.prototype.every - added properties in step 2 are visible here
 ---*/
@@ -13,7 +14,7 @@ description: Array.prototype.every - added properties in step 2 are visible here
                 return true;
             }
         }
-        
+
         var arr = { };
 
         Object.defineProperty(arr, "length", {

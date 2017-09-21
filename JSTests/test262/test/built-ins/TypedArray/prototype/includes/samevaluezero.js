@@ -21,6 +21,7 @@ info: >
     c. Increase k by 1.
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

@@ -13,8 +13,8 @@ info: >
       ...
       iv. If numericIndex = -0, return false.
   ...
-features: [Reflect]
 includes: [testTypedArray.js]
+features: [Reflect, TypedArray]
 ---*/
 
 

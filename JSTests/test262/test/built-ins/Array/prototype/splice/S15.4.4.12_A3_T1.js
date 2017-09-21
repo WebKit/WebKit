@@ -3,6 +3,7 @@
 
 /*---
 info: Check ToLength(length) for non Array objects
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A3_T1
 description: length is arbitrarily
 ---*/
@@ -27,12 +28,12 @@ if (obj.length !== 4294967295) {
 //CHECK#3
 if (obj[0] !== "x") {
    $ERROR('#3: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[0] === "x". Actual: ' + (obj[0]));
-}   
+}
 
 //CHECK#4
 if (obj[4294967295] !== undefined) {
    $ERROR('#4: var obj = {}; obj.splice = Array.prototype.splice; obj[0] = "x"; obj[4294967295] = "y"; obj.length = 4294967296; var arr = obj.splice(4294967295,1); obj[4294967295] === undefined. Actual: ' + (obj[4294967295]));
-}  
+}
 
 //CHECK#5
 if (arr[0] !== "y") {

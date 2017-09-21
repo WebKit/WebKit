@@ -7,8 +7,12 @@ es5id: 12.6.3_A8.1_T3
 description: >
     Checking if execution of "for({var index=0; index+=1;}
     index++<=10; index*2;) { arr.add(""+index);}" fails
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 
 var arr = [];
 

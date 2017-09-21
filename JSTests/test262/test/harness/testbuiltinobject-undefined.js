@@ -4,9 +4,8 @@
 /*---
 description: >
     `undefined` does not satisfy the assertion.
-includes: [testBuiltInObject.js]
+includes: [testBuiltInObject.js,sta.js]
 ---*/
-
 var threw = false;
 
 try {

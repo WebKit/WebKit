@@ -10,6 +10,8 @@ info: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Object.prototype, '__defineGetter__');
-verifyWritable(Object.prototype, '__defineGetter__');
-verifyConfigurable(Object.prototype, '__defineGetter__');
+verifyProperty(Object.prototype, "__defineGetter__", {
+  enumerable: false,
+  writable: true,
+  configurable: true,
+});

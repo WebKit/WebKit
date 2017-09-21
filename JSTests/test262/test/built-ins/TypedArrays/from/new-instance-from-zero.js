@@ -5,6 +5,7 @@ esid: sec-%typedarray%.from
 description: >
   Return a new TypedArray using -0 and +0
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

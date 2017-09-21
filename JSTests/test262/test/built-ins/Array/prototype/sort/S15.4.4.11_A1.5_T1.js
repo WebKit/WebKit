@@ -3,6 +3,7 @@
 
 /*---
 info: If comparefn is undefined, use SortCompare operator
+esid: sec-array.prototype.sort
 es5id: 15.4.4.11_A1.5_T1
 description: Checking sort() and sort(undefined)
 ---*/
@@ -18,7 +19,7 @@ if (x.length !== 2) {
 //CHECK#2
 if (x[0] !== 0) {
   $ERROR('#2: var x = new Array(1,0);  x.sort(); x[0] === 0. Actual: ' + (x[0]));
-}    
+}
 
 //CHECK#3
 if (x[1] !== 1) {
@@ -36,7 +37,7 @@ if (x.length !== 2) {
 //CHECK#5
 if (x[0] !== 0) {
   $ERROR('#5: var x = new Array(1,0);  x.sort(undefined); x[0] === 0. Actual: ' + (x[0]));
-}    
+}
 
 //CHECK#6
 if (x[1] !== 1) {

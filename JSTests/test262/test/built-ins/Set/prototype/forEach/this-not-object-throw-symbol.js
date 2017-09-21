@@ -8,6 +8,7 @@ description: >
     1. Let S be the this value.
     2. If Type(S) is not Object, throw a TypeError exception.
 
+features: [Symbol]
 ---*/
 
 assert.throws(TypeError, function() {

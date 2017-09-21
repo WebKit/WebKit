@@ -3,6 +3,7 @@
 
 /*---
 info: Operator use ToInteger from start
+esid: sec-array.prototype.splice
 es5id: 15.4.4.12_A2.1_T5
 description: ToInteger use ToNumber
 ---*/

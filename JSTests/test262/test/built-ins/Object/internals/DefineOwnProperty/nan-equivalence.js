@@ -43,7 +43,7 @@ includes: [nans.js]
 
 var float = new Float64Array(1);
 var ints = new Uint8Array(float.buffer);
-var length = distinctNaNs.length;
+var len = distinctNaNs.length;
 var idx, jdx, subject, first, second;
 function byteValue(value) {
   float[0] = value;
@@ -57,8 +57,8 @@ function byteValue(value) {
  * cannot be verified and this test is expected to pass without evaluating any
  * assertions.
  */
-for (idx = 0; idx < length; ++idx) {
-  for (jdx = 0 ; jdx < length; ++jdx) {
+for (idx = 0; idx < len; ++idx) {
+  for (jdx = 0 ; jdx < len; ++jdx) {
     first = distinctNaNs[idx];
     second = distinctNaNs[jdx];
     if (byteValue(first) === byteValue(second)) {

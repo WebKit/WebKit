@@ -14,6 +14,7 @@ info: >
   15. Let src be ? ToObject(array).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

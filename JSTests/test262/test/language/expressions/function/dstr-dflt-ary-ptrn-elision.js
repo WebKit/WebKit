@@ -5,7 +5,7 @@
 description: Elision advances iterator (function expression (default parameter))
 esid: sec-function-definitions-runtime-semantics-evaluation
 es6id: 14.1.20
-features: [generator, destructuring-binding, default-parameters]
+features: [generators, destructuring-binding, default-parameters]
 flags: [generated]
 info: |
     FunctionExpression : function ( FormalParameters ) { FunctionBody }

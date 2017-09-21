@@ -10,7 +10,9 @@ info: |
        module.[[RequestedModules]] do,
        a. Let requiredModule be ? HostResolveImportedModule(module, required).
        b. Perform ? requiredModule.ModuleEvaluation().
-negative: TypeError
+negative:
+  phase: runtime
+  type: TypeError
 flags: [module]
 ---*/
 

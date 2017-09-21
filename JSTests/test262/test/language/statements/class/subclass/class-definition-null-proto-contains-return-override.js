@@ -4,18 +4,30 @@
 esid: sec-runtime-semantics-classdefinitionevaluation
 es6id: 14.5.14
 description: >
-    Runtime Semantics: ClassDefinitionEvaluation
+    The constructor of a null-extending class can contain an explicit return value.
+info: |
+  Runtime Semantics: ClassDefinitionEvaluation
 
-    If superclass is null, then
-      Let protoParent be null.
-      Let constructorParent be the intrinsic object %FunctionPrototype%.
+  [...]
+  15. If ClassHeritageopt is present, then set F's [[ConstructorKind]] internal slot to "derived".
+  [...]
+
+  9.2.2 [[Construct]]
+
+  [...]
+  13. If result.[[Type]] is return, then
+     a. If Type(result.[[Value]]) is Object, return NormalCompletion(result.[[Value]]).
+  [...]
 ---*/
+var obj;
+
 class Foo extends null {
   constructor() {
-    return {};
+    return obj = {};
   }
 }
 
 var f = new Foo();
 
+assert.sameValue(f, obj);
 assert.sameValue(Object.getPrototypeOf(f), Object.prototype);

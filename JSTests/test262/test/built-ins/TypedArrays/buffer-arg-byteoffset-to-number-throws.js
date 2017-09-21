@@ -15,6 +15,7 @@ info: >
   7. Let offset be ? ToInteger(byteOffset).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var buffer = new ArrayBuffer(8);

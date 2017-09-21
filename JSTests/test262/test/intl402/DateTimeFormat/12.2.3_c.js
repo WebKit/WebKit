@@ -28,11 +28,10 @@ locales.forEach(function (locale) {
         var actual = format.resolvedOptions();
         getDateTimeComponents().forEach(function (component) {
             if (actual.hasOwnProperty(component)) {
-                if (!subset.hasOwnProperty(component)) {
-                    $ERROR("Unrequested component " + component +
+                assert(subset.hasOwnProperty(component),
+                        "Unrequested component " + component +
                         " added to requested subset " + JSON.stringify(subset) +
                         "; locale " + locale + ".");
-                }
                 try {
                     testValidDateTimeComponentValue(component, actual[component]);
                 } catch (e) {
@@ -41,11 +40,10 @@ locales.forEach(function (locale) {
                     throw e;
                 }
             } else {
-                if (subset.hasOwnProperty(component)) {
-                    $ERROR("Missing component " + component +
+                assert.sameValue(subset.hasOwnProperty(component), false,
+                        "Missing component " + component +
                         " from requested subset " + JSON.stringify(subset) +
                         "; locale " + locale + ".");
-                }
             }
         });
     });

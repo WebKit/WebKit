@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-date.prototype.getday
 es6id: 20.3.4.3
 description: >
   Date.prototype.getDay.name is "getDay".

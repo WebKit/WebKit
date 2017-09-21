@@ -51,7 +51,7 @@ info: >
     c. Throw a TypeError exception.
   ...
 includes: [testTypedArray.js]
-features: [Symbol.toPrimitive]
+features: [Symbol.toPrimitive, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

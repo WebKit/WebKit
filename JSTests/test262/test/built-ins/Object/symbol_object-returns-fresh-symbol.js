@@ -4,6 +4,7 @@
 es6id: 19.1.1.1_S3
 description: >
     Object(sym) returns a fresh Symbol object
+features: [Symbol]
 ---*/
 var symA = Symbol('A');
 var symB = Symbol();

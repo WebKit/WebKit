@@ -31,7 +31,7 @@ info: >
       kValue, k, O »).
   9. Return accumulator.
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 testWithTypedArrayConstructors(function(TA) {

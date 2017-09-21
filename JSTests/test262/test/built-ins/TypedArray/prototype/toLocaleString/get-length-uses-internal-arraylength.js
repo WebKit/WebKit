@@ -17,6 +17,7 @@ info: >
   2.Let len be ? ToLength(? Get(array, "length")).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var getCalls = 0;

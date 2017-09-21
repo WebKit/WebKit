@@ -12,7 +12,7 @@ info: >
     ...
   3. Return ? OrdinaryGet(O, P, Receiver).
 includes: [testTypedArray.js]
-features: [Symbol]
+features: [Symbol, TypedArray]
 ---*/
 
 var parentKey = Symbol("2");

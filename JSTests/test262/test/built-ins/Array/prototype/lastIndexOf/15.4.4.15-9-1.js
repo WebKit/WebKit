@@ -2,13 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.lastindexof
 es5id: 15.4.4.15-9-1
 description: Array.prototype.lastIndexOf returns -1 for elements not present
 ---*/
 
   var a = new Array();
   a[100] = 1;
-  a[99999] = "";  
+  a[99999] = "";
   a[10] = new Object();
   a[5555] = 5.5;
   a[123456] = "str";

@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.4.1.1
+esid: sec-weakset-iterable
 description: >
   If the iterable argument is undefined, return new Weakset object.
 info: >

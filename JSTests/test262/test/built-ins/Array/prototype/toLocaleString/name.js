@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.tolocalestring
 es6id: 22.1.3.26
 description: >
   Array.prototype.toLocaleString.name is "toLocaleString".

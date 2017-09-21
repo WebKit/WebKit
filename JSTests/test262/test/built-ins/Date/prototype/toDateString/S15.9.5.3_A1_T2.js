@@ -3,6 +3,7 @@
 
 /*---
 info: The Date.prototype property "toDateString" has { DontEnum } attributes
+esid: sec-date.prototype.todatestring
 es5id: 15.9.5.3_A1_T2
 description: Checking absence of DontDelete attribute
 ---*/

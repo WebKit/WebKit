@@ -13,6 +13,7 @@ info: >
     c. Perform ? Set(newObj, Pk, kValue, true).
   ...
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 var lastValue;

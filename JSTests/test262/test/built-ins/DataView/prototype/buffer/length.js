@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-get-dataview.prototype.buffer
 es6id: 24.2.4.1
 description: >
   get DataView.prototype.buffer.length is 0.

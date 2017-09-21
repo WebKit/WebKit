@@ -13,7 +13,7 @@ info: >
     16. Repeat, for each result in results,
         a. Let nCaptures be ToLength(Get(result, "length")).
         b. ReturnIfAbrupt(nCaptures).
-features: [Symbol.match]
+features: [Symbol.replace]
 ---*/
 
 var r = /./;

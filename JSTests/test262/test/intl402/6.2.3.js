@@ -35,9 +35,7 @@ var canonicalizedTags = {
 // make sure the data above is correct
 Object.getOwnPropertyNames(canonicalizedTags).forEach(function (tag) {
     canonicalizedTags[tag].forEach(function (canonicalTag) {
-        if (!isCanonicalizedStructurallyValidLanguageTag(canonicalTag)) {
-            $ERROR("Test data \"" + canonicalTag + "\" is not canonicalized and structurally valid language tag.");
-        }
+        assert(isCanonicalizedStructurallyValidLanguageTag(canonicalTag), "Test data \"" + canonicalTag + "\" is not canonicalized and structurally valid language tag.");
     });
 });
 
@@ -51,17 +49,11 @@ testWithIntlConstructors(function (Constructor) {
         // In this variant, shortened forms or the default locale may be returned
         var object = new Constructor([tag], {localeMatcher: "lookup"});
         var locale = object.resolvedOptions().locale;
-        if (canonicalizedTags[tag].indexOf(locale) === -1 && locale !== defaultLocale) {
-            $ERROR("For " + tag + " got " + locale + "; expected one of " +
-                canonicalizedTags[tag].join(", ") + ".");
-        }
+        assert(canonicalizedTags[tag].indexOf(locale) !== -1 || locale === defaultLocale, "For " + tag + " got " + locale + "; expected one of " + canonicalizedTags[tag].join(", ") + ".");
         
         // Variant 2: get the supported locales. If the tag is supported, it should be returned canonicalized but unshortened
         var supported = Constructor.supportedLocalesOf([tag]);
-        if (supported.length > 0 && supported[0] !== canonicalizedTags[tag][0]) {
-            $ERROR("For " + tag + " got " + supported[0] + "; expected " +
-                canonicalizedTags[tag][0] + ".");
-        }            
+        assert(supported.length === 0 || supported[0] === canonicalizedTags[tag][0], "For " + tag + " got " + supported[0] + "; expected " + canonicalizedTags[tag][0] + ".");
     });
     return true;
 });

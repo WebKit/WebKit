@@ -5,6 +5,10 @@ es6id: 13.1
 description: >
     let declarations without initialisers in statement positions: 
     if ( Expression ) Statement
-negative: SyntaxError
+negative:
+  phase: early
+  type: SyntaxError
 ---*/
+
+throw "Test262: This statement should not be evaluated.";
 if (true) let x;

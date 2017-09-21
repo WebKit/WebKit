@@ -2,17 +2,18 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
+esid: sec-array.prototype.reduce
 es5id: 15.4.4.21-9-6
 description: >
     Array.prototype.reduce visits deleted element in array after the
     call when same index is also present in prototype
 ---*/
 
-  function callbackfn(prevVal, curVal, idx, obj)  
+  function callbackfn(prevVal, curVal, idx, obj)
   {
     delete arr[3];
     delete arr[4];
-    return prevVal + curVal;    
+    return prevVal + curVal;
   }
 
   Array.prototype[4] = 5;

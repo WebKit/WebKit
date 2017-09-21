@@ -14,6 +14,7 @@ info: >
     ...
   3. Return ? OrdinaryGet(O, P, Receiver).
 includes: [testTypedArray.js]
+features: [TypedArray]
 ---*/
 
 TypedArray.prototype.baz = "test262";

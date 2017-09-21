@@ -12,6 +12,7 @@ description: >
       ...
       d. Let nextValue be IteratorValue(next).
       e. ReturnIfAbrupt(nextValue).
+features: [Symbol.iterator]
 ---*/
 
 var count = 0;

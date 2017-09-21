@@ -10,6 +10,7 @@ description: >
       a. If e is not empty and SameValueZero(e, value) is true, return true.
     ...
 
+features: [Symbol]
 ---*/
 
 var s = new Set();

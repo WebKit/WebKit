@@ -2,6 +2,7 @@
 // This code is governed by the BSD license found in the LICENSE file.
 /*---
 es6id: 23.3.3.2
+esid: sec-weakmap.prototype.delete
 description: >
   Return false if value is not an Object.
 info: >

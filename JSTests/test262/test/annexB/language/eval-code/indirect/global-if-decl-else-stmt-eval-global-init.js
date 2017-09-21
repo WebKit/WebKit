@@ -30,8 +30,9 @@ info: |
   'var global = fnGlobalObject();\
   assert.sameValue(f, undefined, "binding is initialized to `undefined`");\
   \
-  verifyEnumerable(global, "f");\
-  verifyWritable(global, "f");\
-  verifyConfigurable(global, "f");\
-if (true) function f() {  } else ;'
+  verifyProperty(global, "f", {\
+    enumerable: true,\
+    writable: true,\
+    configurable: true\
+  });if (true) function f() {  } else ;'
 );
