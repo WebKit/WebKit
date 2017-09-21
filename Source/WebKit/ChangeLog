@@ -1,3 +1,10 @@
+2017-09-21  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily disable assertion added in r222308 while I investigate.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+
 2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win] WTF: Add alias for process id to use in place of direct uses of pid_t
