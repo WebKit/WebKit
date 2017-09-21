@@ -1,3 +1,12 @@
+2017-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix a bug in the interactive app that was introduced by bad merging.
+
+        * WebGPUShadingLanguageRI/FlattenedStructOffsetGatherer.js:
+        (FlattenedStructOffsetGatherer.prototype.visitTypeRef):
+        (FlattenedStructOffsetGatherer):
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-20  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should support switch

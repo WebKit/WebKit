@@ -56,5 +56,11 @@ class FlattenedStructOffsetGatherer extends Visitor {
         this._result.push({name: this._name.join("."), offset: this._offset, type: node.name});
         super.visitNativeType(node);
     }
+    
+    visitTypeRef(node)
+    {
+        super.visitTypeRef(node);
+        Node.visit(node.type, this);
+    }
 }
 

@@ -345,7 +345,7 @@ function selectedShadersChanged(fromCompilation = false) {
         argumentEPtrs.push({ePtr: ePtr, size: parameter.type.size});
         let gatherer = new FlattenedStructOffsetGatherer(parameter.name);
         parameter.visit(gatherer);
-        for (argumentInfo of gatherer.result) {
+        for (let argumentInfo of gatherer.result) {
             argumentInfo.ePtr = ePtr;
             allArgumentInfos.push(argumentInfo);
         }
