@@ -1,5 +1,36 @@
 2017-09-20  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Unreviewed follow-up to r222311.
+
+        * test262/harness/sta.js:
+        * test262/test/built-ins/Array/from/calling-from-valid-1-noStrict.js:
+        * test262/test/built-ins/Array/from/calling-from-valid-1-onlyStrict.js:
+        * test262/test/built-ins/Array/from/calling-from-valid-2.js:
+        * test262/test/built-ins/Array/from/elements-added-after.js:
+        * test262/test/built-ins/Array/from/elements-deleted-after.js:
+        * test262/test/built-ins/Array/from/elements-updated-after.js:
+        * test262/test/built-ins/Array/from/from-array.js:
+        * test262/test/built-ins/Array/from/mapfn-is-not-callable-typeerror.js:
+        * test262/test/built-ins/Array/from/mapfn-throws-exception.js:
+        * test262/test/built-ins/Array/from/source-array-boundary.js:
+        * test262/test/built-ins/Array/from/source-object-constructor.js:
+        * test262/test/built-ins/Array/from/source-object-iterator-1.js:
+        * test262/test/built-ins/Array/from/source-object-iterator-2.js:
+        * test262/test/built-ins/Array/from/source-object-length.js:
+        * test262/test/built-ins/Array/from/source-object-missing.js:
+        * test262/test/built-ins/Array/from/source-object-without.js:
+        * test262/test/built-ins/Array/from/this-null.js:
+        * test262/test/built-ins/Function/prototype/toString/line-terminator-normalisation-CR.js:
+        * test262/test/language/line-terminators/S7.3_A3.2_T1.js:
+        * test262/test/language/literals/numeric/7.8.3-1gs.js:
+        * test262/test/language/literals/numeric/7.8.3-2gs.js:
+        * test262/test/language/literals/numeric/7.8.3-3gs.js:
+        * test262/test/language/literals/regexp/7.8.5-1gs.js:
+        * test262/test/language/literals/string/7.8.4-1gs.js:
+        Fix some files that I failed to update when I applied my patch.
+
+2017-09-20  Joseph Pecoraro  <pecoraro@apple.com>
+
         Update test262 tests
         https://bugs.webkit.org/show_bug.cgi?id=177220
 
