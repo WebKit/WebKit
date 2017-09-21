@@ -60,7 +60,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderNamedFlowFragment.h"
+#include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1175,16 +1175,9 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
         }
     }
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    RenderRegion* regionToUse = flowThread ? downcast<RenderNamedFlowFragment>(flowThread->currentRegion()) : nullptr;
-
-    // If the box is not contained by this region there's no point in going further.
-    if (regionToUse && !flowThread->objectShouldFragmentInFlowRegion(this, regionToUse))
-        return false;
-
     // Check our bounds next. For this purpose always assume that we can only be hit in the
     // foreground phase (which is true for replaced elements like images).
-    LayoutRect boundsRect = borderBoxRectInRegion(regionToUse);
+    LayoutRect boundsRect = borderBoxRectInRegion(nullptr);
     boundsRect.moveBy(adjustedLocation);
     if (visibleToHitTesting() && action == HitTestForeground && locationInContainer.intersects(boundsRect)) {
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
@@ -1252,7 +1245,7 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     if (!paintInfo.shouldPaintWithinRoot(*this))
         return;
 
-    LayoutRect paintRect = borderBoxRectInRegion(currentRenderNamedFlowFragment());
+    LayoutRect paintRect = borderBoxRectInRegion(nullptr);
     paintRect.moveBy(paintOffset);
     adjustBorderBoxRectForPainting(paintRect);
 
@@ -1739,7 +1732,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
     float deviceScaleFactor = document().deviceScaleFactor();
-    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, currentRenderNamedFlowFragment(), IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
+    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
         paintInfo.context().clipRoundedRect(style().getRoundedInnerBorderFor(LayoutRect(accumulatedOffset, size())).pixelSnappedRoundedRectForPainting(deviceScaleFactor));
@@ -1978,12 +1971,7 @@ void RenderBox::mapLocalToContainer(const RenderLayerModelObject* repaintContain
 
     mode &= ~ApplyContainerFlip;
 
-    // For fixed positioned elements inside out-of-flow named flows, we do not want to
-    // map their position further to regions based on their coordinates inside the named flows.
-    if (!container->isOutOfFlowRenderFlowThread() || !fixedPositionedWithNamedFlowContainingBlock())
-        container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
-    else
-        container->mapLocalToContainer(downcast<RenderLayerModelObject>(container), transformState, mode, wasFixed);
+    container->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
 }
 
 const RenderObject* RenderBox::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -4649,9 +4637,7 @@ bool RenderBox::isUnsplittableForPagination() const
     return isReplaced()
         || hasUnsplittableScrollingOverflow()
         || (parent() && isWritingModeRoot())
-        || (isFloating() && style().styleType() == FIRST_LETTER && style().initialLetterDrop() > 0)
-        || isRenderNamedFlowFragmentContainer()
-        || fixedPositionedWithNamedFlowContainingBlock();
+        || (isFloating() && style().styleType() == FIRST_LETTER && style().initialLetterDrop() > 0);
 }
 
 LayoutUnit RenderBox::lineHeight(bool /*firstLine*/, LineDirectionMode direction, LinePositionMode /*linePositionMode*/) const
@@ -4777,21 +4763,9 @@ LayoutRect RenderBox::flippedClientBoxRect() const
     return rect;
 }
 
-LayoutRect RenderBox::overflowRectForPaintRejection(RenderNamedFlowFragment* namedFlowFragment) const
+LayoutRect RenderBox::overflowRectForPaintRejection() const
 {
     LayoutRect overflowRect = visualOverflowRect();
-    
-    // When using regions, some boxes might have their frame rect relative to the flow thread, which could
-    // cause the paint rejection algorithm to prevent them from painting when using different width regions.
-    // e.g. an absolutely positioned box with bottom:0px and right:0px would have it's frameRect.x relative
-    // to the flow thread, not the last region (in which it will end up because of bottom:0px)
-    if (namedFlowFragment && namedFlowFragment->isValid()) {
-        RenderFlowThread* flowThread = namedFlowFragment->flowThread();
-        RenderRegion* startRegion = nullptr;
-        RenderRegion* endRegion = nullptr;
-        if (flowThread->getRegionRangeForBox(this, startRegion, endRegion))
-            overflowRect.unite(namedFlowFragment->visualOverflowRectForBox(*this));
-    }
     
     if (!m_overflow || !usesCompositedScrolling())
         return overflowRect;

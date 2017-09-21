@@ -53,7 +53,6 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRuby.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGInline.h"
@@ -430,27 +429,6 @@ RenderBoxModelObject& RenderObject::enclosingBoxModelObject() const
     return *lineageOfType<RenderBoxModelObject>(const_cast<RenderObject&>(*this)).first();
 }
 
-bool RenderObject::fixedPositionedWithNamedFlowContainingBlock() const
-{
-    return ((flowThreadState() == RenderObject::InsideOutOfFlowThread)
-        && (style().position() == FixedPosition)
-        && (containingBlock()->isOutOfFlowRenderFlowThread()));
-}
-
-static bool hasFixedPosInNamedFlowContainingBlock(const RenderObject* renderer)
-{
-    ASSERT(renderer->flowThreadState() != RenderObject::NotInsideFlowThread);
-
-    RenderObject* curr = const_cast<RenderObject*>(renderer);
-    while (curr && !is<RenderView>(*curr)) {
-        if (curr->fixedPositionedWithNamedFlowContainingBlock())
-            return true;
-        curr = curr->containingBlock();
-    }
-
-    return false;
-}
-
 RenderBlock* RenderObject::firstLineBlock() const
 {
     return nullptr;
@@ -820,10 +798,6 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     // repainting to do individual region repaints.
     RenderFlowThread* parentRenderFlowThread = flowThreadContainingBlock();
     if (parentRenderFlowThread) {
-        // If the element has a fixed positioned element with named flow as CB along the CB chain
-        // then the repaint container is not the flow thread.
-        if (hasFixedPosInNamedFlowContainingBlock(this))
-            return repaintContainer;
         // If we have already found a repaint container then we will repaint into that container only if it is part of the same
         // flow thread. Otherwise we will need to catch the repaint call and send it to the flow thread.
         RenderFlowThread* repaintContainerFlowThread = repaintContainer ? repaintContainer->flowThreadContainingBlock() : nullptr;
@@ -1911,11 +1885,6 @@ bool RenderObject::nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-RenderNamedFlowFragment* RenderObject::currentRenderNamedFlowFragment() const
-{
-    return nullptr;
 }
 
 RenderFlowThread* RenderObject::locateFlowThreadContainingBlock() const

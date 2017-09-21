@@ -37,15 +37,12 @@ namespace WebCore {
 
 class CurrentRenderRegionMaintainer;
 class RenderFlowThread;
-class RenderNamedFlowFragment;
 class RenderStyle;
 class RenderRegion;
 class RootInlineBox;
 
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<RenderNamedFlowFragment*, RenderLayerList> RegionToLayerListMap;
-typedef HashMap<RenderLayer*, RenderNamedFlowFragment*> LayerToRegionMap;
 typedef HashMap<const RootInlineBox*, RenderRegion*> ContainingRegionMap;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
@@ -142,7 +139,6 @@ public:
     // Check if the object should be painted in this region and if the region is part of this flow thread.
     bool objectShouldFragmentInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
-    void markAutoLogicalHeightRegionsForLayout();
     void markRegionsForOverflowLayoutIfNeeded();
 
     virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
@@ -150,14 +146,6 @@ public:
 
     virtual bool isPageLogicalHeightKnown() const { return true; }
     bool pageLogicalSizeChanged() const { return m_pageLogicalSizeChanged; }
-
-    bool hasAutoLogicalHeightRegions() const { ASSERT(isAutoLogicalHeightRegionsCountConsistent()); return m_autoLogicalHeightRegionsCount; }
-    void incrementAutoLogicalHeightRegions();
-    void decrementAutoLogicalHeightRegions();
-
-#ifndef NDEBUG
-    bool isAutoLogicalHeightRegionsCountConsistent() const;
-#endif
 
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect);
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox);
@@ -177,23 +165,6 @@ public:
 
     bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
     void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
-
-    // Whether any of the regions has a compositing descendant.
-    bool hasCompositingRegionDescendant() const;
-
-    void setNeedsLayerToRegionMappingsUpdate() { m_layersToRegionMappingsDirty = true; }
-    void updateAllLayerToRegionMappingsIfNeeded()
-    {
-        if (m_layersToRegionMappingsDirty)
-            updateAllLayerToRegionMappings();
-    }
-
-    const RenderLayerList* getLayerListForRegion(RenderNamedFlowFragment*) const;
-
-    RenderNamedFlowFragment* regionForCompositedLayer(RenderLayer&) const; // By means of getRegionRangeForBox or regionAtBlockOffset.
-    RenderNamedFlowFragment* cachedRegionForCompositedLayer(RenderLayer&) const;
-
-    virtual bool collectsGraphicsLayersUnderRegions() const;
 
     void pushFlowThreadLayoutState(const RenderObject&);
     void popFlowThreadLayoutState();
@@ -254,14 +225,6 @@ protected:
 
     void updateRegionsFlowThreadPortionRect(const RenderRegion* = nullptr);
     bool shouldRepaint(const LayoutRect&) const;
-
-    bool updateAllLayerToRegionMappings();
-
-    // Triggers a layers' update if a layer has moved from a region to another since the last update.
-    void updateLayerToRegionMappings(RenderLayer&, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
-    void updateRegionForRenderLayer(RenderLayer*, LayerToRegionMap&, RegionToLayerListMap&, bool& needsLayerUpdate);
-
-    void initializeRegionsComputedAutoHeight(RenderRegion* = nullptr);
 
     inline bool hasCachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
     inline LayoutUnit cachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
@@ -330,12 +293,6 @@ protected:
         RenderRegion* m_result;
     };
 
-    // Map a layer to the region in which the layer is painted.
-    std::unique_ptr<LayerToRegionMap> m_layerToRegionMap;
-
-    // Map a region to the list of layers that paint in that region.
-    std::unique_ptr<RegionToLayerListMap> m_regionToLayerListMap;
-
     // Map a line to its containing region.
     std::unique_ptr<ContainingRegionMap> m_lineToRegionMap;
 
@@ -354,8 +311,6 @@ protected:
     typedef HashMap<const RenderBox*, LayoutUnit> RenderBoxToOffsetMap;
     RenderBoxToOffsetMap m_boxesToOffsetMap;
 
-    unsigned m_autoLogicalHeightRegionsCount;
-
     RegionIntervalTree m_regionIntervalTree;
 
     CurrentRenderRegionMaintainer* m_currentRegionMaintainer;
@@ -366,7 +321,6 @@ protected:
     bool m_pageLogicalSizeChanged : 1;
     unsigned m_layoutPhase : 2;
     bool m_needsTwoPhasesLayout : 1;
-    bool m_layersToRegionMappingsDirty : 1;
 };
 
 } // namespace WebCore

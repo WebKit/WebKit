@@ -59,7 +59,6 @@ class RenderFlowThread;
 class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
-class RenderNamedFlowFragment;
 class RenderRegion;
 class RenderTheme;
 class SelectionSubtreeRoot;
@@ -159,8 +158,6 @@ public:
     WEBCORE_EXPORT RenderBox& enclosingBox() const;
     RenderBoxModelObject& enclosingBoxModelObject() const;
 
-    bool fixedPositionedWithNamedFlowContainingBlock() const;
-
     // Function to return our enclosing flow thread if we are contained inside one. This
     // function follows the containing block chain.
     RenderFlowThread* flowThreadContainingBlock() const
@@ -170,8 +167,6 @@ public:
 
         return locateFlowThreadContainingBlock();
     }
-
-    RenderNamedFlowFragment* currentRenderNamedFlowFragment() const;
 
 #ifndef NDEBUG
     void setHasAXObject(bool flag) { m_hasAXObject = flag; }
@@ -244,7 +239,6 @@ public:
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
     virtual bool isRenderRegion() const { return false; }
-    virtual bool isRenderNamedFlowFragment() const { return false; }
     virtual bool isReplica() const { return false; }
 
     virtual bool isRubyInline() const { return false; }
@@ -312,8 +306,7 @@ public:
     
     enum FlowThreadState {
         NotInsideFlowThread = 0,
-        InsideOutOfFlowThread = 1,
-        InsideInFlowThread = 2,
+        InsideInFlowThread = 1,
     };
 
     void setFlowThreadStateIncludingDescendants(FlowThreadState);
@@ -405,7 +398,7 @@ public:
         // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
         // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
         // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return isAnonymous() && (style().display() == BLOCK || style().display() == BOX) && style().styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread() && !isRenderNamedFlowFragment() && !isRenderMultiColumnSet() && !isRenderView()
+        return isAnonymous() && (style().display() == BLOCK || style().display() == BOX) && style().styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread() && !isRenderMultiColumnSet() && !isRenderView()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()

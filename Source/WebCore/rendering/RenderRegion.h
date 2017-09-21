@@ -118,8 +118,6 @@ public:
     bool canHaveGeneratedChildren() const override { return true; }
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
 
-    virtual bool hasAutoLogicalHeight() const { return false; }
-
     virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
 protected:

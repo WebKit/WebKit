@@ -40,7 +40,6 @@
 #include "RenderDescendantIterator.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
@@ -1530,7 +1529,7 @@ LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, RenderRegi
         rect.setLocation(location + rect.location());
     } else
         rect = RenderBox::overflowClipRect(location, region, relevancy);
-    
+
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this
     // for real until captions have been re-written.
@@ -1555,7 +1554,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check kids first.
-    if (!hasOverflowClip() || locationInContainer.intersects(overflowClipRect(adjustedLocation, currentRenderNamedFlowFragment()))) {
+    if (!hasOverflowClip() || locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (is<RenderBox>(*child) && !downcast<RenderBox>(*child).hasSelfPaintingLayer() && (child->isTableSection() || child->isTableCaption())) {
                 LayoutPoint childPoint = flipForWritingModeForChild(downcast<RenderBox>(child), adjustedLocation);

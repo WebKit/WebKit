@@ -49,7 +49,6 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStop.h"
@@ -756,27 +755,18 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     }
 
     if (Vector<RenderLayer*>* positiveZOrderList = layer.posZOrderList()) {
-        size_t layerCount = 0;
-        for (auto* currLayer : *positiveZOrderList) {
-            if (!currLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
-                ++layerCount;
-        }
-        
+        size_t layerCount = positiveZOrderList->size();
+
         if (layerCount) {
             int currIndent = indent;
-            if (!positiveZOrderList->size() || !positiveZOrderList->at(0)->isFlowThreadCollectingGraphicsLayersUnderRegions()) {
-                if (behavior & RenderAsTextShowLayerNesting) {
-                    writeIndent(ts, indent);
-                    ts << " positive z-order list(" << positiveZOrderList->size() << ")\n";
-                    ++currIndent;
-                }
-                
-                for (auto* currLayer : *positiveZOrderList) {
-                    // Do not print named flows twice.
-                    if (!currLayer->isFlowThreadCollectingGraphicsLayersUnderRegions())
-                        writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
-                }
+            if (behavior & RenderAsTextShowLayerNesting) {
+                writeIndent(ts, indent);
+                ts << " positive z-order list(" << positiveZOrderList->size() << ")\n";
+                ++currIndent;
             }
+
+            for (auto* currLayer : *positiveZOrderList)
+                writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
         }
     }
 }

@@ -30,7 +30,6 @@
 #include "HTMLNames.h"
 #include "PaintInfo.h"
 #include "RenderChildIterator.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"
 #include "RenderTableRow.h"
@@ -1501,7 +1500,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     // Just forward to our children always.
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
-    if (hasOverflowClip() && !locationInContainer.intersects(overflowClipRect(adjustedLocation, currentRenderNamedFlowFragment())))
+    if (hasOverflowClip() && !locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr)))
         return false;
 
     if (hasOverflowingCell()) {

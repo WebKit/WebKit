@@ -56,7 +56,6 @@
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
@@ -1536,11 +1535,6 @@ void RenderBlock::markForPaginationRelayoutIfNeeded()
 
 void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
-    // Check our region range to make sure we need to be painting in this region.
-    if (namedFlowFragment && !namedFlowFragment->flowThread()->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
-        return;
-
     LayoutPoint adjustedPaintOffset = paintOffset + location();
     PaintPhase phase = paintInfo.phase;
 
@@ -1548,7 +1542,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     // FIXME: Could eliminate the isDocumentElementRenderer() check if we fix background painting so that the RenderView
     // paints the root's background.
     if (!isDocumentElementRenderer()) {
-        LayoutRect overflowBox = overflowRectForPaintRejection(namedFlowFragment);
+        LayoutRect overflowBox = overflowRectForPaintRejection();
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedPaintOffset);
         if (!overflowBox.intersects(paintInfo.rect)
@@ -1992,13 +1986,6 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         lastLogicalLeft = logicalLeftSelectionOffset(rootBlock, logicalHeight(), cache);
         lastLogicalRight = logicalRightSelectionOffset(rootBlock, logicalHeight(), cache);
         return result;
-    }
-    
-    RenderNamedFlowFragment* namedFlowFragment = currentRenderNamedFlowFragment();
-    if (paintInfo && namedFlowFragment && is<RenderFlowThread>(*paintInfo->paintContainer)) {
-        // Make sure the current object is actually flowed into the region being painted.
-        if (!downcast<RenderFlowThread>(*paintInfo->paintContainer).objectShouldFragmentInFlowRegion(this, namedFlowFragment))
-            return result;
     }
 
     if (childrenInline())
@@ -2452,13 +2439,6 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     LayoutPoint adjustedLocation(accumulatedOffset + location());
     LayoutSize localOffset = toLayoutSize(adjustedLocation);
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    RenderNamedFlowFragment* namedFlowFragment = flowThread ? downcast<RenderNamedFlowFragment>(flowThread->currentRegion()) : nullptr;
-    // If we are now searching inside a region, make sure this element
-    // is being fragmented into this region.
-    if (namedFlowFragment && !flowThread->objectShouldFragmentInFlowRegion(this, namedFlowFragment))
-        return false;
-
     if (!isRenderView()) {
         // Check if we need to do anything at all.
         LayoutRect overflowBox = visualOverflowRect();
@@ -2524,7 +2504,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     // If we have clipping, then we can't have any spillout.
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
-    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, namedFlowFragment, IncludeOverlayScrollbarSize)));
+    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr, IncludeOverlayScrollbarSize)));
     if (checkChildren) {
         // Hit test descendants first.
         LayoutSize scrolledOffset(localOffset - toLayoutSize(scrollPosition()));

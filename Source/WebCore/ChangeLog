@@ -1,3 +1,137 @@
+2017-09-21  Antti Koivisto  <antti@apple.com>
+
+        Remove RenderNamedFlowFragment
+        https://bugs.webkit.org/show_bug.cgi?id=177299
+
+        Reviewed by David Hyatt.
+
+        Remove the remaining named flow rendering code.
+
+        The feature is already disabled, no functional changes.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::insertedIntoTree):
+        (WebCore::RenderBlockFlow::willBeDestroyed):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::updateLogicalHeight):
+        (WebCore::RenderBlockFlow::positionForPoint):
+        (WebCore::RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded): Deleted.
+        (WebCore::RenderBlockFlow::canHaveChildren const): Deleted.
+        (WebCore::RenderBlockFlow::canHaveGeneratedChildren const): Deleted.
+        (WebCore::RenderBlockFlow::namedFlowFragmentNeedsUpdate const): Deleted.
+        (WebCore::RenderBlockFlow::setRenderNamedFlowFragment): Deleted.
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::renderNamedFlowFragment const): Deleted.
+        (WebCore::RenderElement::isRenderNamedFlowFragmentContainer const): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::mapLocalToContainer const):
+        (WebCore::RenderBox::isUnsplittableForPagination const):
+        (WebCore::RenderBox::overflowRectForPaintRejection const):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintMaskForTextFillBox):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::generatingElement const):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::invalidateRegions):
+        (WebCore::RenderFlowThread::validateRegions):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedRegionBreak):
+        (WebCore::RenderFlowThread::hasCompositingRegionDescendant const): Deleted.
+        (WebCore::RenderFlowThread::getLayerListForRegion const): Deleted.
+        (WebCore::RenderFlowThread::regionForCompositedLayer const): Deleted.
+        (WebCore::RenderFlowThread::cachedRegionForCompositedLayer const): Deleted.
+        (WebCore::RenderFlowThread::updateLayerToRegionMappings): Deleted.
+        (WebCore::RenderFlowThread::updateAllLayerToRegionMappings): Deleted.
+        (WebCore::RenderFlowThread::collectsGraphicsLayersUnderRegions const): Deleted.
+        (WebCore::RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent const): Deleted.
+        (WebCore::RenderFlowThread::initializeRegionsComputedAutoHeight): Deleted.
+        (WebCore::RenderFlowThread::markAutoLogicalHeightRegionsForLayout): Deleted.
+        (WebCore::RenderFlowThread::incrementAutoLogicalHeightRegions): Deleted.
+        (WebCore::RenderFlowThread::decrementAutoLogicalHeightRegions): Deleted.
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::paintList):
+        (WebCore::isHitCandidate):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::hitTestList):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::expandClipRectForRegionAndReflection): Deleted.
+        (WebCore::RenderLayer::isFlowThreadCollectingGraphicsLayersUnderRegions const): Deleted.
+        (WebCore::RenderLayer::mapLayerClipRectsToFragmentationLayer const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::shouldClipCompositedBounds const):
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        (WebCore::RenderLayerBacking::isSimpleContainerCompositingLayer const):
+        (WebCore::RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread const): Deleted.
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::computeCompositingRequirements):
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+        (WebCore::RenderLayerCompositor::requiresCompositingForIndirectReason const):
+        (WebCore::RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons):
+        (WebCore::RenderLayerCompositor::requiresCompositingForPosition const):
+        (WebCore::RenderLayerCompositor::computeRegionCompositingRequirements): Deleted.
+        (WebCore::RenderLayerCompositor::rebuildRegionCompositingLayerTree): Deleted.
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderNamedFlowFragment.cpp: Removed.
+        * rendering/RenderNamedFlowFragment.h: Removed.
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint const):
+        (WebCore::RenderObject::fixedPositionedWithNamedFlowContainingBlock const): Deleted.
+        (WebCore::hasFixedPosInNamedFlowContainingBlock): Deleted.
+        (WebCore::RenderObject::currentRenderNamedFlowFragment const): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderRegion const):
+        (WebCore::RenderObject::isAnonymousBlock const):
+        (WebCore::RenderObject::isRenderNamedFlowFragment const): Deleted.
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::hasAutoLogicalHeight const): Deleted.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::pushLayoutState):
+        (WebCore::RenderView::pushLayoutStateForPaginationIfNeeded):
+        (WebCore::RenderView::layoutContentInAutoLogicalHeightRegions): Deleted.
+        (WebCore::RenderView::checkTwoPassLayoutForAutoHeightRegions const): Deleted.
+        (WebCore::RenderView::pushLayoutStateForCurrentFlowThread): Deleted.
+        (WebCore::RenderView::popLayoutStateForCurrentFlowThread): Deleted.
+        * rendering/RenderView.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paintReplaced):
+
 2017-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Fix all builds after r222325

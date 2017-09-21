@@ -271,10 +271,6 @@ void RenderView::initializeLayoutState(LayoutState& state)
     state.m_isPaginated = state.m_pageLogicalHeight > 0;
 }
 
-void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState&)
-{
-}
-
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -313,10 +309,7 @@ void RenderView::layout()
 
     m_pageLogicalHeightChanged = false;
 
-    if (checkTwoPassLayoutForAutoHeightRegions())
-        layoutContentInAutoLogicalHeightRegions(*m_layoutState);
-    else
-        layoutContent(*m_layoutState);
+    layoutContent(*m_layoutState);
 
 #ifndef NDEBUG
     checkLayoutState(*m_layoutState);
@@ -1116,7 +1109,6 @@ void RenderView::pushLayoutState(RenderObject& root)
     ASSERT(m_layoutState == 0);
 
     m_layoutState = std::make_unique<LayoutState>(root);
-    pushLayoutStateForCurrentFlowThread(root);
 }
 
 bool RenderView::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoot)
@@ -1127,7 +1119,6 @@ bool RenderView::pushLayoutStateForPaginationIfNeeded(RenderBlockFlow& layoutRoo
     m_layoutState->m_isPaginated = true;
     // This is just a flag for known page height (see RenderBlockFlow::checkForPaginationLogicalHeightChange).
     m_layoutState->m_pageLogicalHeight = 1;
-    pushLayoutStateForCurrentFlowThread(layoutRoot);
     return true;
 }
 
@@ -1206,19 +1197,6 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     frameView().styleDidChange();
-}
-
-bool RenderView::checkTwoPassLayoutForAutoHeightRegions() const
-{
-    return false;
-}
-
-void RenderView::pushLayoutStateForCurrentFlowThread(const RenderObject&)
-{
-}
-
-void RenderView::popLayoutStateForCurrentFlowThread()
-{
 }
 
 ImageQualityController& RenderView::imageQualityController()

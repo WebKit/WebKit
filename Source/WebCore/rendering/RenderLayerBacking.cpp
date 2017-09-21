@@ -57,7 +57,6 @@
 #include "RenderLayerCompositor.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderMedia.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -572,9 +571,6 @@ bool RenderLayerBacking::shouldClipCompositedBounds() const
     if (layerOrAncestorIsTransformedOrUsingCompositedScrolling(m_owningLayer))
         return false;
 
-    if (m_owningLayer.isFlowThreadCollectingGraphicsLayersUnderRegions())
-        return false;
-
     return true;
 }
 
@@ -897,7 +893,6 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
         // FIXME: flows/columns need work.
         LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
         ancestorCompositedBounds.setLocation(LayoutPoint());
-        adjustAncestorCompositingBoundsForFlowThread(ancestorCompositedBounds, compositedAncestor);
         parentGraphicsLayerRect = ancestorCompositedBounds;
     }
 
@@ -1261,48 +1256,6 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
             m_maskLayer->setShapeLayerPath(clipPath);
             m_maskLayer->setShapeLayerWindRule(windRule);
         }
-    }
-}
-
-void RenderLayerBacking::adjustAncestorCompositingBoundsForFlowThread(LayoutRect& ancestorCompositingBounds, const RenderLayer* compositingAncestor) const
-{
-    RenderLayer* flowThreadLayer = m_owningLayer.isInsideOutOfFlowThread() ? m_owningLayer.stackingContainer() : nullptr;
-    if (flowThreadLayer && flowThreadLayer->isRenderFlowThread()) {
-        if (m_owningLayer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
-            // The RenderNamedFlowThread is not composited, as we need it to paint the 
-            // background layer of the regions. We need to compensate for that by manually
-            // subtracting the position of the flow-thread.
-            IntPoint flowPosition;
-            flowThreadLayer->convertToPixelSnappedLayerCoords(compositingAncestor, flowPosition);
-            ancestorCompositingBounds.moveBy(flowPosition);
-        }
-
-        // Move the ancestor position at the top of the region where the composited layer is going to display.
-        RenderFlowThread& flowThread = downcast<RenderFlowThread>(flowThreadLayer->renderer());
-        RenderNamedFlowFragment* parentRegion = flowThread.cachedRegionForCompositedLayer(m_owningLayer);
-        if (!parentRegion)
-            return;
-
-        IntPoint flowDelta;
-        m_owningLayer.convertToPixelSnappedLayerCoords(flowThreadLayer, flowDelta);
-        parentRegion->adjustRegionBoundsFromFlowThreadPortionRect(ancestorCompositingBounds);
-        RenderBoxModelObject& layerOwner = downcast<RenderBoxModelObject>(parentRegion->layerOwner());
-        RenderLayerBacking* layerOwnerBacking = layerOwner.layer()->backing();
-        if (!layerOwnerBacking)
-            return;
-
-        // Make sure that the region propagates its borders, paddings, outlines or box-shadows to layers inside it.
-        // Note that the composited bounds of the RenderRegion are already calculated because
-        // RenderLayerCompositor::rebuildCompositingLayerTree will only iterate on the content of the region after the
-        // region itself is computed.
-        ancestorCompositingBounds.moveBy(roundedIntPoint(layerOwnerBacking->compositedBounds().location()));
-        ancestorCompositingBounds.move(-layerOwner.borderAndPaddingStart(), -layerOwner.borderAndPaddingBefore());
-
-        // If there's a clipping GraphicsLayer on the hierarchy (region graphics layer -> clipping graphics layer ->
-        // composited content graphics layer), substract the offset of the clipping layer, since it's its parent
-        // that positions us (the graphics layer of the region).
-        if (layerOwnerBacking->clippingLayer())
-            ancestorCompositingBounds.moveBy(roundedIntPoint(layerOwnerBacking->clippingLayer()->position()));
     }
 }
 
@@ -2071,9 +2024,6 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (renderer().style().backgroundClip() == TextFillBox)
         return false;
     
-    if (renderer().isRenderNamedFlowFragmentContainer())
-        return false;
-
     if (renderer().isDocumentElementRenderer() && m_owningLayer.isolatesCompositedBlending())
         return false;
 

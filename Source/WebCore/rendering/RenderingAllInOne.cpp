@@ -95,7 +95,6 @@
 #include "RenderMultiColumnFlowThread.cpp"
 #include "RenderMultiColumnSet.cpp"
 #include "RenderMultiColumnSpannerPlaceholder.cpp"
-#include "RenderNamedFlowFragment.cpp"
 #include "RenderObject.cpp"
 #include "RenderProgress.cpp"
 #include "RenderQuote.cpp"

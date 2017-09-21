@@ -61,7 +61,6 @@ class BorderEdge;
 class ImageBuffer;
 class InlineFlowBox;
 class KeyframeList;
-class RenderNamedFlowFragment;
 class RenderTextFragment;
 class StickyPositionViewportConstraints;
 

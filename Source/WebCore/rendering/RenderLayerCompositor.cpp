@@ -51,7 +51,6 @@
 #include "RenderGeometryMap.h"
 #include "RenderIFrame.h"
 #include "RenderLayerBacking.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderReplica.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
@@ -1282,17 +1281,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     layer.updateDescendantDependentFlags();
     layer.updateLayerListsIfNeeded();
 
-    if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions()) {
-        auto& flowThread = downcast<RenderFlowThread>(layer.renderer());
-        layer.setHasCompositingDescendant(flowThread.hasCompositingRegionDescendant());
-
-        // Before returning, we need to update the lists of all child layers. This is required because,
-        // if this flow thread will not be painted (for instance because of having no regions, or only invalid regions),
-        // the child layers will never have their lists updated (which would normally happen during painting).
-        layer.updateDescendantsLayerListsIfNeeded(true);
-        return;
-    }
-
     // Clear the flag
     layer.setHasCompositingDescendant(false);
     layer.setIndirectCompositingReason(RenderLayer::IndirectCompositingReason::None);
@@ -1386,15 +1374,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
             }
         }
     }
-
-    if (layer.renderer().isRenderNamedFlowFragmentContainer()) {
-        // We are going to collect layers from the RenderFlowThread into the GraphicsLayer of the parent of the
-        // anonymous RenderRegion, but first we need to make sure that the parent itself of the region is going to
-        // have a composited layer. We only want to make regions composited when there's an actual layer that we
-        // need to move to that region.
-        computeRegionCompositingRequirements(downcast<RenderBlockFlow>(layer.renderer()).renderNamedFlowFragment(), overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
-    }
-
     
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         for (auto* renderLayer : *normalFlowList)
@@ -1504,25 +1483,6 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 }
 
-void RenderLayerCompositor::computeRegionCompositingRequirements(RenderNamedFlowFragment* region, OverlapMap& overlapMap, CompositingState& childState, bool& layersChanged, bool& anyDescendantHas3DTransform)
-{
-    if (!region->isValid())
-        return;
-
-    RenderFlowThread* flowThread = region->flowThread();
-    
-    overlapMap.geometryMap().pushRenderFlowThread(flowThread);
-
-    if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
-        for (auto* renderLayer : *layerList) {
-            ASSERT(flowThread->regionForCompositedLayer(*renderLayer) == region);
-            computeCompositingRequirements(flowThread->layer(), *renderLayer, overlapMap, childState, layersChanged, anyDescendantHas3DTransform);
-        }
-    }
-
-    overlapMap.geometryMap().popMappingsToAncestor(&region->layerOwner());
-}
-
 void RenderLayerCompositor::setCompositingParent(RenderLayer& childLayer, RenderLayer* parentLayer)
 {
     ASSERT(!parentLayer || childLayer.ancestorCompositingLayer() == parentLayer);
@@ -1565,10 +1525,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     // Make the layer compositing if necessary, and set up clipping and content layers.
     // Note that we can only do work here that is independent of whether the descendant layers
     // have been processed. computeCompositingRequirements() will already have done the repaint if necessary.
-
-    // Do not iterate the RenderFlowThread directly. We are going to collect composited layers as part of regions.
-    if (layer.isFlowThreadCollectingGraphicsLayersUnderRegions())
-        return;
 
     RenderLayerBacking* layerBacking = layer.backing();
     if (layerBacking) {
@@ -1618,9 +1574,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
             childList.append(layerBacking->foregroundLayer());
     }
 
-    if (layer.renderer().isRenderNamedFlowFragmentContainer())
-        rebuildRegionCompositingLayerTree(downcast<RenderBlockFlow>(layer.renderer()).renderNamedFlowFragment(), layerChildren, depth + 1);
-
     if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
         for (auto* renderLayer : *normalFlowList)
             rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
@@ -1665,21 +1618,6 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer& layer, Vect
     
     if (RenderLayerBacking* layerBacking = layer.backing())
         layerBacking->updateAfterDescendants();
-}
-
-void RenderLayerCompositor::rebuildRegionCompositingLayerTree(RenderNamedFlowFragment* region, Vector<GraphicsLayer*>& childList, int depth)
-{
-    if (!region->isValid())
-        return;
-
-    RenderFlowThread* flowThread = region->flowThread();
-    ASSERT(flowThread->collectsGraphicsLayersUnderRegions());
-    if (const RenderLayerList* layerList = flowThread->getLayerListForRegion(region)) {
-        for (auto* renderLayer : *layerList) {
-            ASSERT(flowThread->regionForCompositedLayer(*renderLayer) == region);
-            rebuildCompositingLayerTree(*renderLayer, childList, depth + 1);
-        }
-    }
 }
 
 void RenderLayerCompositor::frameViewDidChangeLocation(const IntPoint& contentsOffset)
@@ -2594,7 +2532,7 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
 
     // When a layer has composited descendants, some effects, like 2d transforms, filters, masks etc must be implemented
     // via compositing so that they also apply to those composited descendants.
-    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection() || renderer.isRenderNamedFlowFragmentContainer())) {
+    if (hasCompositedDescendants && (layer.isolatesCompositedBlending() || layer.transform() || renderer.createsGroup() || renderer.hasReflection())) {
         reason = RenderLayer::IndirectCompositingReason::GraphicalEffect;
         return true;
     }
@@ -2619,9 +2557,6 @@ bool RenderLayerCompositor::requiresCompositingForIndirectReason(RenderLayerMode
 
 bool RenderLayerCompositor::styleChangeMayAffectIndirectCompositingReasons(const RenderLayerModelObject& renderer, const RenderStyle& oldStyle)
 {
-    if (renderer.isRenderNamedFlowFragmentContainer())
-        return true;
-
     auto& style = renderer.style();
     if (RenderElement::createsGroupForStyle(style) != RenderElement::createsGroupForStyle(oldStyle))
         return true;
@@ -2752,7 +2687,7 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderLayerModelObjec
 
     // Don't promote fixed position elements that are descendants of a non-view container, e.g. transformed elements.
     // They will stay fixed wrt the container rather than the enclosing frame.
-    if (container != &m_renderView && !renderer.fixedPositionedWithNamedFlowContainingBlock()) {
+    if (container != &m_renderView) {
         if (viewportConstrainedNotCompositedReason)
             *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNonViewContainer;
         return false;

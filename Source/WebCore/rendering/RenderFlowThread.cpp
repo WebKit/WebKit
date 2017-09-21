@@ -39,7 +39,6 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
@@ -53,7 +52,6 @@ namespace WebCore {
 RenderFlowThread::RenderFlowThread(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_previousRegionCount(0)
-    , m_autoLogicalHeightRegionsCount(0)
     , m_currentRegionMaintainer(nullptr)
     , m_regionsInvalidated(false)
     , m_regionsHaveUniformLogicalWidth(true)
@@ -61,10 +59,8 @@ RenderFlowThread::RenderFlowThread(Document& document, RenderStyle&& style)
     , m_pageLogicalSizeChanged(false)
     , m_layoutPhase(LayoutPhaseMeasureContent)
     , m_needsTwoPhasesLayout(false)
-    , m_layersToRegionMappingsDirty(true)
 {
     setIsRenderFlowThread(true);
-    setFlowThreadState(InsideOutOfFlowThread);
 }
 
 RenderStyle RenderFlowThread::createFlowThreadStyle(const RenderStyle* parentStyle)
@@ -116,13 +112,8 @@ void RenderFlowThread::invalidateRegions(MarkingBehavior markingParents)
     m_regionRangeMap.clear();
     m_breakBeforeToRegionMap.clear();
     m_breakAfterToRegionMap.clear();
-    if (m_layerToRegionMap)
-        m_layerToRegionMap->clear();
-    if (m_regionToLayerListMap)
-        m_regionToLayerListMap->clear();
     if (m_lineToRegionMap)
         m_lineToRegionMap->clear();
-    m_layersToRegionMappingsDirty = true;
     setNeedsLayout(markingParents);
 
     m_regionsInvalidated = true;
@@ -144,16 +135,6 @@ void RenderFlowThread::validateRegions()
                 ASSERT(!region->needsLayout() || region->isRenderRegionSet());
 
                 region->deleteAllRenderBoxRegionInfo();
-
-                // In the measure content layout phase we need to initialize the computedAutoHeight for auto-height regions.
-                // See initializeRegionsComputedAutoHeight for the explanation.
-                // Also, if we have auto-height regions we can't assume m_regionsHaveUniformLogicalHeight to be true in the first phase
-                // because the auto-height regions don't have their height computed yet.
-                if (inMeasureContentLayoutPhase() && region->hasAutoLogicalHeight()) {
-                    auto& namedFlowFragment = downcast<RenderNamedFlowFragment>(*region);
-                    namedFlowFragment.setComputedAutoHeight(namedFlowFragment.maxPageLogicalHeight());
-                    m_regionsHaveUniformLogicalHeight = false;
-                }
 
                 LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
                 LayoutUnit regionLogicalHeight = region->pageLogicalHeight();
@@ -184,146 +165,15 @@ void RenderFlowThread::layout()
 
     m_pageLogicalSizeChanged = m_regionsInvalidated && everHadLayout();
 
-    // In case this is the second pass of the measure content phase we need to update the auto-height regions to their initial value.
-    // If the region chain was invalidated this will happen anyway.
-    if (!m_regionsInvalidated && inMeasureContentLayoutPhase())
-        initializeRegionsComputedAutoHeight();
-
-    // This is the first phase of the layout and because we have auto-height regions we'll need a second
-    // pass to update the flow with the computed auto-height regions.
     // It's also possible to need a secondary layout if the overflow computation invalidated the region chain (e.g. overflow: auto scrollbars
     // shrunk some regions) so repropagation is required.
-    m_needsTwoPhasesLayout = (inMeasureContentLayoutPhase() && hasAutoLogicalHeightRegions()) || (inOverflowLayoutPhase() && m_regionsInvalidated);
+    m_needsTwoPhasesLayout = inOverflowLayoutPhase() && m_regionsInvalidated;
 
     validateRegions();
 
     RenderBlockFlow::layout();
 
     m_pageLogicalSizeChanged = false;
-
-    // If there are children layers in the RenderFlowThread then we need to make sure that the
-    // composited children layers will land in the right RenderRegions. Also, the parent RenderRegions
-    // will get RenderLayers and become composited as needed.
-    // Note that there's no need to do so for the inline multi-column as we are not moving layers into different
-    // containers, but just adjusting the position of the RenderLayerBacking.
-    if (!m_needsTwoPhasesLayout) {
-        // If we have layers that moved from one region to another, we trigger
-        // a composited layers rebuild in here to make sure that the regions will collect the right layers.
-        if (updateAllLayerToRegionMappings())
-            layer()->compositor().setCompositingLayersNeedRebuild();
-    }
-}
-
-bool RenderFlowThread::hasCompositingRegionDescendant() const
-{
-    for (auto& region : m_regionList) {
-        if (downcast<RenderNamedFlowFragment>(*region).layerOwner().layer()->hasCompositingDescendant())
-            return true;
-    }
-
-    return false;
-}
-
-const RenderLayerList* RenderFlowThread::getLayerListForRegion(RenderNamedFlowFragment* region) const
-{
-    ASSERT(m_regionToLayerListMap);
-    auto iterator = m_regionToLayerListMap->find(region);
-    return iterator == m_regionToLayerListMap->end() ? nullptr : &iterator->value;
-}
-
-RenderNamedFlowFragment* RenderFlowThread::regionForCompositedLayer(RenderLayer& childLayer) const
-{
-    if (childLayer.renderer().fixedPositionedWithNamedFlowContainingBlock())
-        return nullptr;
-
-    if (childLayer.renderBox()) {
-        RenderRegion* startRegion = nullptr;
-        RenderRegion* endRegion = nullptr;
-        if (getRegionRangeForBox(childLayer.renderBox(), startRegion, endRegion))
-            return downcast<RenderNamedFlowFragment>(startRegion);
-    }
-
-    // FIXME: remove this when we'll have region ranges for inlines as well.
-    LayoutPoint flowThreadOffset = flooredLayoutPoint(childLayer.renderer().localToContainerPoint(LayoutPoint(), this, ApplyContainerFlip));
-    return downcast<RenderNamedFlowFragment>(regionAtBlockOffset(0, flipForWritingMode(isHorizontalWritingMode() ? flowThreadOffset.y() : flowThreadOffset.x()), true));
-}
-
-RenderNamedFlowFragment* RenderFlowThread::cachedRegionForCompositedLayer(RenderLayer& childLayer) const
-{
-    if (!m_layerToRegionMap) {
-        ASSERT(needsLayout());
-        ASSERT(m_layersToRegionMappingsDirty);
-        return nullptr;
-    }
-
-    RenderNamedFlowFragment* namedFlowFragment = m_layerToRegionMap->get(&childLayer);
-    ASSERT(!namedFlowFragment || m_regionList.contains(namedFlowFragment));
-    return namedFlowFragment;
-}
-
-void RenderFlowThread::updateLayerToRegionMappings(RenderLayer& layer, LayerToRegionMap& layerToRegionMap, RegionToLayerListMap& regionToLayerListMap, bool& needsLayerUpdate)
-{
-    RenderNamedFlowFragment* region = regionForCompositedLayer(layer);
-    if (!needsLayerUpdate) {
-        // Figure out if we moved this layer from a region to the other.
-        RenderNamedFlowFragment* previousRegion = cachedRegionForCompositedLayer(layer);
-        if (previousRegion != region)
-            needsLayerUpdate = true;
-    }
-
-    if (!region)
-        return;
-
-    layerToRegionMap.set(&layer, region);
-
-    auto iterator = regionToLayerListMap.find(region);
-    RenderLayerList& list = iterator == regionToLayerListMap.end() ? regionToLayerListMap.set(region, RenderLayerList()).iterator->value : iterator->value;
-    ASSERT(!list.contains(&layer));
-    list.append(&layer);
-}
-
-bool RenderFlowThread::updateAllLayerToRegionMappings()
-{
-    if (!collectsGraphicsLayersUnderRegions())
-        return false;
-
-    // If the RenderFlowThread had a z-index layer update, then we need to update the composited layers too.
-    bool needsLayerUpdate = layer()->isDirtyRenderFlowThread() || m_layersToRegionMappingsDirty || !m_layerToRegionMap.get();
-    layer()->updateLayerListsIfNeeded();
-
-    LayerToRegionMap layerToRegionMap;
-    RegionToLayerListMap regionToLayerListMap;
-
-    RenderLayerList* lists[] = { layer()->negZOrderList(), layer()->normalFlowList(), layer()->posZOrderList() };
-    for (size_t listIndex = 0; listIndex < sizeof(lists) / sizeof(lists[0]); ++listIndex) {
-        if (RenderLayerList* list = lists[listIndex]) {
-            for (size_t i = 0, listSize = list->size(); i < listSize; ++i)
-                updateLayerToRegionMappings(*list->at(i), layerToRegionMap, regionToLayerListMap, needsLayerUpdate);
-        }
-    }
-
-    if (needsLayerUpdate) {
-        if (!m_layerToRegionMap)
-            m_layerToRegionMap = std::make_unique<LayerToRegionMap>();
-        m_layerToRegionMap->swap(layerToRegionMap);
-
-        if (!m_regionToLayerListMap)
-            m_regionToLayerListMap = std::make_unique<RegionToLayerListMap>();
-        m_regionToLayerListMap->swap(regionToLayerListMap);
-    }
-
-    m_layersToRegionMappingsDirty = false;
-
-    return needsLayerUpdate;
-}
-
-bool RenderFlowThread::collectsGraphicsLayersUnderRegions() const
-{
-    // We only need to map layers to regions for named flow threads.
-    // Multi-column threads are displayed on top of the regions and do not require
-    // distributing the layers.
-
-    return false;
 }
 
 void RenderFlowThread::updateLogicalWidth()
@@ -425,7 +275,7 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
     RenderRegion* startRegion = regionAtBlockOffset(objContainingBlock, referencePoint.y());
     if (startRegion) {
         // Take into account the offset coordinates of the region.
-        RenderBoxModelObject* startRegionBox = is<RenderNamedFlowFragment>(*startRegion) ? downcast<RenderBoxModelObject>(startRegion->parent()) : startRegion;
+        RenderBoxModelObject* startRegionBox = startRegion;
         RenderBoxModelObject* currObject = startRegionBox;
         RenderBoxModelObject* currOffsetParent;
         while ((currOffsetParent = currObject->offsetParent())) {
@@ -713,8 +563,6 @@ void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox& b
             insideNewRegionRange = true;
 
         if (!(insideOldRegionRange && insideNewRegionRange)) {
-            if (is<RenderNamedFlowFragment>(*region))
-                downcast<RenderNamedFlowFragment>(*region).clearObjectStyleInRegion(box);
             if (region->renderBoxRegionInfo(&box))
                 region->removeRenderBoxRegionInfo(box);
         }
@@ -912,19 +760,6 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
     return false;
 }
 
-#ifndef NDEBUG
-bool RenderFlowThread::isAutoLogicalHeightRegionsCountConsistent() const
-{
-    unsigned autoLogicalHeightRegions = 0;
-    for (const auto& region : m_regionList) {
-        if (region->hasAutoLogicalHeight())
-            autoLogicalHeightRegions++;
-    }
-
-    return autoLogicalHeightRegions == m_autoLogicalHeightRegionsCount;
-}
-#endif
-
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow& removedBlock) const
 {
@@ -964,38 +799,6 @@ void RenderFlowThread::willBeDestroyed()
     RenderBlockFlow::willBeDestroyed();
 }
 
-// During the measure content layout phase of the named flow the regions are initialized with a height equal to their max-height.
-// This way unforced breaks are automatically placed when a region is full and the content height/position correctly estimated.
-// Also, the region where a forced break falls is exactly the region found at the forced break offset inside the flow content.
-void RenderFlowThread::initializeRegionsComputedAutoHeight(RenderRegion* startRegion)
-{
-    ASSERT(inMeasureContentLayoutPhase());
-    if (!hasAutoLogicalHeightRegions())
-        return;
-
-    for (auto regionIter = startRegion ? m_regionList.find(startRegion) : m_regionList.begin(), end = m_regionList.end(); regionIter != end; ++regionIter) {
-        RenderRegion& region = **regionIter;
-        if (region.hasAutoLogicalHeight()) {
-            auto& namedFlowFragment = downcast<RenderNamedFlowFragment>(region);
-            namedFlowFragment.setComputedAutoHeight(namedFlowFragment.maxPageLogicalHeight());
-        }
-    }
-}
-
-void RenderFlowThread::markAutoLogicalHeightRegionsForLayout()
-{
-    ASSERT(hasAutoLogicalHeightRegions());
-
-    for (auto& region : m_regionList) {
-        if (!region->hasAutoLogicalHeight())
-            continue;
-
-        // FIXME: We need to find a way to avoid marking all the regions ancestors for layout
-        // as we are already inside layout.
-        region->setNeedsLayout();
-    }
-}
-
 void RenderFlowThread::markRegionsForOverflowLayoutIfNeeded()
 {
     if (!hasRegions())
@@ -1007,16 +810,12 @@ void RenderFlowThread::markRegionsForOverflowLayoutIfNeeded()
 
 void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* lastRegionWithContent)
 {
-    ASSERT(!lastRegionWithContent || (inMeasureContentLayoutPhase() && hasAutoLogicalHeightRegions()));
+    ASSERT(!lastRegionWithContent);
     LayoutUnit logicalHeight = 0;
     bool emptyRegionsSegment = false;
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
     m_regionIntervalTree.clear();
     for (auto& region : m_regionList) {
-        // If we find an empty auto-height region, clear the computedAutoHeight value.
-        if (emptyRegionsSegment && region->hasAutoLogicalHeight())
-            downcast<RenderNamedFlowFragment>(*region).clearComputedAutoHeight();
-
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
         LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
 
@@ -1039,7 +838,7 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
 // Even if we require the break to occur at offsetBreakInFlowThread, because regions may have min/max-height values,
 // it is possible that the break will occur at a different offset than the original one required.
 // offsetBreakAdjustment measures the different between the requested break offset and the current break offset.
-bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment)
+bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderBox*, bool, LayoutUnit* offsetBreakAdjustment)
 {
     // We take breaks into account for height computation for auto logical height regions
     // only in the layout phase in which we lay out the flows threads unconstrained
@@ -1048,21 +847,9 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
     if (!inMeasureContentLayoutPhase())
         return false;
 
-    // Breaks can come before or after some objects. We need to track these objects, so that if we get
-    // multiple breaks for the same object (for example because of multiple layouts on the same object),
-    // we need to invalidate every other region after the old one and start computing from fresh.
-    RenderBoxToRegionMap& mapToUse = isBefore ? m_breakBeforeToRegionMap : m_breakAfterToRegionMap;
-    auto iter = mapToUse.find(breakChild);
-    if (iter != mapToUse.end()) {
-        auto regionIter = m_regionList.find(iter->value);
-        ASSERT(regionIter != m_regionList.end());
-        ASSERT((*regionIter)->hasAutoLogicalHeight());
-        initializeRegionsComputedAutoHeight(*regionIter);
-
-        // We need to update the regions flow thread portion rect because we are going to process
-        // a break on these regions.
-        updateRegionsFlowThreadPortionRect();
-    }
+    // We need to update the regions flow thread portion rect because we are going to process
+    // a break on these regions.
+    updateRegionsFlowThreadPortionRect();
 
     // Simulate a region break at offsetBreakInFlowThread. If it points inside an auto logical height region,
     // then it determines the region computed auto height.
@@ -1070,58 +857,14 @@ bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit
     if (!region)
         return false;
 
-    bool lastBreakAfterContent = breakChild == this;
-    bool hasComputedAutoHeight = false;
-
     LayoutUnit currentRegionOffsetInFlowThread = isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x();
-    LayoutUnit offsetBreakInCurrentRegion = offsetBreakInFlowThread - currentRegionOffsetInFlowThread;
 
-    if (region->hasAutoLogicalHeight()) {
-        auto& namedFlowFragment = downcast<RenderNamedFlowFragment>(*region);
-
-        // A forced break can appear only in an auto-height region that didn't have a forced break before.
-        // This ASSERT is a good-enough heuristic to verify the above condition.
-        ASSERT(namedFlowFragment.maxPageLogicalHeight() == namedFlowFragment.computedAutoHeight());
-
-        mapToUse.set(breakChild, &namedFlowFragment);
-
-        hasComputedAutoHeight = true;
-
-        // Compute the region height pretending that the offsetBreakInCurrentRegion is the logicalHeight for the auto-height region.
-        LayoutUnit regionComputedAutoHeight = namedFlowFragment.constrainContentBoxLogicalHeightByMinMax(offsetBreakInCurrentRegion, std::nullopt);
-
-        // The new height of this region needs to be smaller than the initial value, the max height. A forced break is the only way to change the initial
-        // height of an auto-height region besides content ending.
-        ASSERT(regionComputedAutoHeight <= namedFlowFragment.maxPageLogicalHeight());
-
-        namedFlowFragment.setComputedAutoHeight(regionComputedAutoHeight);
-
-        currentRegionOffsetInFlowThread += regionComputedAutoHeight;
-    } else
-        currentRegionOffsetInFlowThread += isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
-
-    // If the break was found inside an auto-height region its size changed so we need to recompute the flow thread portion rectangles.
-    // Also, if this is the last break after the content we need to clear the computedAutoHeight value on the last empty regions.
-    if (hasAutoLogicalHeightRegions() && lastBreakAfterContent)
-        updateRegionsFlowThreadPortionRect(region);
-    else if (hasComputedAutoHeight)
-        updateRegionsFlowThreadPortionRect();
+    currentRegionOffsetInFlowThread += isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
 
     if (offsetBreakAdjustment)
         *offsetBreakAdjustment = std::max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
 
-    return hasComputedAutoHeight;
-}
-
-void RenderFlowThread::incrementAutoLogicalHeightRegions()
-{
-    ++m_autoLogicalHeightRegionsCount;
-}
-
-void RenderFlowThread::decrementAutoLogicalHeightRegions()
-{
-    ASSERT(m_autoLogicalHeightRegionsCount > 0);
-    --m_autoLogicalHeightRegionsCount;
+    return false;
 }
 
 void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)

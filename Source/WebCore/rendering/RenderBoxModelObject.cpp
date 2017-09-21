@@ -48,7 +48,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderRegion.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
@@ -688,10 +687,6 @@ void RenderBoxModelObject::paintMaskForTextFillBox(ImageBuffer* maskImage, const
     if (box) {
         const RootInlineBox& rootBox = box->root();
         box->paint(info, LayoutPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), rootBox.lineTop(), rootBox.lineBottom());
-    } else if (isRenderNamedFlowFragmentContainer()) {
-        RenderNamedFlowFragment& region = *downcast<RenderBlockFlow>(*this).renderNamedFlowFragment();
-        if (region.isValid())
-            region.flowThread()->layer()->paintNamedFlowThreadInsideRegion(maskImageContext, &region, maskRect, maskRect.location(), PaintBehaviorForceBlackText, RenderLayer::PaintLayerTemporaryClipRects);
     } else {
         LayoutSize localOffset = is<RenderBox>(*this) ? downcast<RenderBox>(*this).locationOffset() : LayoutSize();
         paint(info, scrolledPaintRect.location() - localOffset);
@@ -802,7 +797,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     if (clippedWithLocalScrolling) {
         // Clip to the overflow area.
         auto& thisBox = downcast<RenderBox>(*this);
-        context.clip(thisBox.overflowClipRect(rect.location(), currentRenderNamedFlowFragment()));
+        context.clip(thisBox.overflowClipRect(rect.location()));
         
         // Adjust the paint rect to reflect a scrolled content box with borders at the ends.
         scrolledPaintRect.moveBy(-thisBox.scrollPosition());

@@ -71,7 +71,6 @@ class RenderGeometryMap;
 class RenderLayerBacking;
 class RenderLayerCompositor;
 class RenderMarquee;
-class RenderNamedFlowFragment;
 class RenderReplica;
 class RenderScrollbarPart;
 class RenderStyle;
@@ -513,8 +512,6 @@ public:
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext&, const LayoutRect& damageRect, PaintBehavior, RenderObject* subtreePaintRoot = nullptr);
 
-    void paintNamedFlowThreadInsideRegion(GraphicsContext&, RenderNamedFlowFragment*, LayoutRect, LayoutPoint, PaintBehavior = PaintBehaviorNormal, PaintLayerFlags = 0);
-
     struct ClipRectsContext {
         ClipRectsContext(const RenderLayer* inRootLayer, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
             : rootLayer(inRootLayer)
@@ -707,14 +704,11 @@ public:
     bool isRenderFlowThread() const { return renderer().isRenderFlowThread(); }
     bool isOutOfFlowRenderFlowThread() const { return renderer().isOutOfFlowRenderFlowThread(); }
     bool isInsideFlowThread() const { return renderer().flowThreadState() != RenderObject::NotInsideFlowThread; }
-    bool isInsideOutOfFlowThread() const { return renderer().flowThreadState() == RenderObject::InsideOutOfFlowThread; }
     bool isDirtyRenderFlowThread() const
     {
         ASSERT(isRenderFlowThread());
         return m_zOrderListsDirty || m_normalFlowListDirty;
     }
-
-    bool isFlowThreadCollectingGraphicsLayersUnderRegions() const;
 
     RenderLayer* enclosingFlowThreadAncestor() const;
 
@@ -868,14 +862,6 @@ private:
         const LayoutRect& hitTestRect, const HitTestLocation&,
         const HitTestingTransformState*, double* zOffsetForDescendants, double* zOffset,
         const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
-
-    RenderLayer* hitTestFixedLayersInNamedFlows(RenderLayer* rootLayer,
-        const HitTestRequest&, HitTestResult&,
-        const LayoutRect& hitTestRect, const HitTestLocation&,
-        const HitTestingTransformState*,
-        double* zOffsetForDescendants, double* zOffset,
-        const HitTestingTransformState* unflattenedTransformState,
-        bool depthSortDescendants);
 
     Ref<HitTestingTransformState> createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
         const LayoutRect& hitTestRect, const HitTestLocation&,
@@ -1033,14 +1019,6 @@ private:
     LayoutUnit horizontalScrollbarStart(int minX) const;
 
     bool overflowControlsIntersectRect(const IntRect& localRect) const;
-
-    RenderLayer* hitTestFlowThreadIfRegionForFragments(const LayerFragments&, RenderLayer*, const HitTestRequest&, HitTestResult&,
-        const LayoutRect&, const HitTestLocation&,
-        const HitTestingTransformState*, double* zOffsetForDescendants,
-        double* zOffset, const HitTestingTransformState* unflattenedTransformState, bool depthSortDescendants);
-    bool mapLayerClipRectsToFragmentationLayer(ClipRects&) const;
-
-    RenderNamedFlowFragment* currentRenderNamedFlowFragment() const;
 
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
 

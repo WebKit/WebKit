@@ -2708,7 +2708,6 @@ set(WebCore_SOURCES
     rendering/RenderMultiColumnFlowThread.cpp
     rendering/RenderMultiColumnSet.cpp
     rendering/RenderMultiColumnSpannerPlaceholder.cpp
-    rendering/RenderNamedFlowFragment.cpp
     rendering/RenderObject.cpp
     rendering/RenderProgress.cpp
     rendering/RenderQuote.cpp

@@ -45,7 +45,6 @@
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSet.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderTableCell.h"
 #include "RenderText.h"
 #include "RenderView.h"
@@ -145,14 +144,10 @@ RenderBlockFlow::~RenderBlockFlow()
 void RenderBlockFlow::insertedIntoTree()
 {
     RenderBlock::insertedIntoTree();
-    createRenderNamedFlowFragmentIfNeeded();
 }
 
 void RenderBlockFlow::willBeDestroyed()
 {
-    if (renderNamedFlowFragment())
-        setRenderNamedFlowFragment(nullptr);
-
     // Make sure to destroy anonymous children first while they are still connected to the rest of the tree, so that they will
     // properly dirty line boxes that they are removed from. Effects that do :before/:after only on hover could crash otherwise.
     destroyLeftoverChildren();
@@ -496,8 +491,6 @@ void RenderBlockFlow::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalH
     LayoutStateMaintainer statePusher(view(), *this, locationOffset(), hasTransform() || hasReflection() || styleToUse.isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged);
 
     preparePaginationBeforeBlockLayout(relayoutChildren);
-    if (!relayoutChildren)
-        relayoutChildren = namedFlowFragmentNeedsUpdate();
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins. These values are used when we
@@ -2045,9 +2038,6 @@ void RenderBlockFlow::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (noLongerAffectsParentBlock() && style().isFloating() && previousSibling() && previousSibling()->isAnonymousBlock())
         downcast<RenderBoxModelObject>(*parent()).moveChildTo(&downcast<RenderBoxModelObject>(*previousSibling()), this);
 
-    if (auto fragment = renderNamedFlowFragment())
-        fragment->setStyle(RenderNamedFlowFragment::createStyle(style()));
-
     if (diff >= StyleDifferenceRepaint) {
         // FIXME: This could use a cheaper style-only test instead of SimpleLineLayout::canUseFor.
         if (selfNeedsLayout() || !m_simpleLineLayout || !SimpleLineLayout::canUseFor(*this))
@@ -3151,20 +3141,6 @@ GapRects RenderBlockFlow::inlineSelectionGaps(RenderBlock& rootBlock, const Layo
     return result;
 }
 
-void RenderBlockFlow::createRenderNamedFlowFragmentIfNeeded()
-{
-    if (renderNamedFlowFragment() || isRenderNamedFlowFragment())
-        return;
-
-    // FIXME: Multicolumn regions not yet supported (http://dev.w3.org/csswg/css-regions/#multi-column-regions)
-    if (style().isDisplayRegionType() && style().hasFlowFrom() && !style().specifiesColumns()) {
-        RenderNamedFlowFragment* flowFragment = new RenderNamedFlowFragment(document(), RenderNamedFlowFragment::createStyle(style()));
-        flowFragment->initializeStyle();
-        addChild(flowFragment);
-        setRenderNamedFlowFragment(flowFragment);
-    }
-}
-
 bool RenderBlockFlow::needsLayoutAfterRegionRangeChange() const
 {
     // A block without floats or that expands to enclose them won't need a relayout
@@ -3176,40 +3152,9 @@ bool RenderBlockFlow::needsLayoutAfterRegionRangeChange() const
     return true;
 }
 
-bool RenderBlockFlow::canHaveChildren() const
-{
-    return !renderNamedFlowFragment() ? RenderBlock::canHaveChildren() : renderNamedFlowFragment()->canHaveChildren();
-}
-
-bool RenderBlockFlow::canHaveGeneratedChildren() const
-{
-    return !renderNamedFlowFragment() ? RenderBlock::canHaveGeneratedChildren() : renderNamedFlowFragment()->canHaveGeneratedChildren();
-}
-
-bool RenderBlockFlow::namedFlowFragmentNeedsUpdate() const
-{
-    if (!isRenderNamedFlowFragmentContainer())
-        return false;
-
-    return hasRelativeLogicalHeight() && !isRenderView();
-}
-
 void RenderBlockFlow::updateLogicalHeight()
 {
     RenderBlock::updateLogicalHeight();
-
-    if (renderNamedFlowFragment()) {
-        renderNamedFlowFragment()->setLogicalHeight(std::max<LayoutUnit>(0, logicalHeight() - borderAndPaddingLogicalHeight()));
-        renderNamedFlowFragment()->invalidateRegionIfNeeded();
-    }
-}
-
-void RenderBlockFlow::setRenderNamedFlowFragment(RenderNamedFlowFragment* flowFragment)
-{
-    RenderBlockFlowRareData& rareData = ensureRareBlockFlowData();
-    if (auto* flowFragmentOnFlow = std::exchange(rareData.m_renderNamedFlowFragment, nullptr))
-        flowFragmentOnFlow->destroy();
-    rareData.m_renderNamedFlowFragment = flowFragment;
 }
 
 void RenderBlockFlow::setMultiColumnFlowThread(RenderMultiColumnFlowThread* flowThread)
@@ -3533,11 +3478,9 @@ Position RenderBlockFlow::positionForPoint(const LayoutPoint& point)
     return downcast<RenderText>(*firstChild()).positionForPoint(point);
 }
 
-VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
+VisiblePosition RenderBlockFlow::positionForPoint(const LayoutPoint& point, const RenderRegion*)
 {
-    if (auto fragment = renderNamedFlowFragment())
-        return fragment->positionForPoint(point, region);
-    return RenderBlock::positionForPoint(point, region);
+    return RenderBlock::positionForPoint(point, nullptr);
 }
 
 void RenderBlockFlow::addFocusRingRectsForInlineChildren(Vector<LayoutRect>& rects, const LayoutPoint& additionalOffset, const RenderLayerModelObject*)

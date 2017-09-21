@@ -186,8 +186,6 @@ public:
 
     // Renderer that paints the root background has background-images which all have background-attachment: fixed.
     bool rootBackgroundIsEntirelyFixed() const;
-    
-    bool checkTwoPassLayoutForAutoHeightRegions() const;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -274,7 +272,6 @@ private:
         if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.flowThreadContainingBlock()
             || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
             m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
-            pushLayoutStateForCurrentFlowThread(renderer);
             return true;
         }
         return false;
@@ -282,7 +279,6 @@ private:
 
     void popLayoutState()
     {
-        popLayoutStateForCurrentFlowThread();
         m_layoutState = WTFMove(m_layoutState->m_next);
     }
 
@@ -306,13 +302,9 @@ private:
     void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
 
     void layoutContent(const LayoutState&);
-    void layoutContentInAutoLogicalHeightRegions(const LayoutState&);
 #ifndef NDEBUG
     void checkLayoutState(const LayoutState&);
 #endif
-
-    void pushLayoutStateForCurrentFlowThread(const RenderObject&);
-    void popLayoutStateForCurrentFlowThread();
 
     friend class LayoutStateMaintainer;
     friend class LayoutStateDisabler;

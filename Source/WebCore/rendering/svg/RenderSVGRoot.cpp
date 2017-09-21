@@ -31,7 +31,6 @@
 #include "Page.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
-#include "RenderNamedFlowFragment.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceContainer.h"
 #include "RenderSVGResourceFilter.h"
@@ -241,7 +240,7 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
 
     // Apply initial viewport clip
     if (shouldApplyViewportClip())
-        childPaintInfo.context().clip(snappedIntRect(overflowClipRect(paintOffset, currentRenderNamedFlowFragment())));
+        childPaintInfo.context().clip(snappedIntRect(overflowClipRect(paintOffset)));
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
