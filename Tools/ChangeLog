@@ -1,3 +1,50 @@
+2017-09-20  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL needs a way to verify that structs are not cyclic
+        https://bugs.webkit.org/show_bug.cgi?id=177044
+
+        Reviewed by Myles Maxfield.
+        
+        This adds a recursive type checking phase. Even before adding this phase, the compiler would
+        successfully detect recursive types - but at the cost of also rejecting programs that had
+        recursive types indirectly through pointers. To make both things work, I had to change Visitor
+        to no longer visit TypeRef.type by default. This resulted in some other changes in a few other
+        parts of the code that previously relied on that behavior.
+
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/CheckRecursiveTypes.js: Added.
+        (checkRecursiveTypes):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitArrayRefType):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitPtrType):
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitTypeRef):
+        (Checker.prototype._checkShaderType.NonNumericSearcher):
+        (Checker.prototype._checkShaderType):
+        (Checker.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/RecursiveTypeChecker.js: Added.
+        (RecursiveTypeChecker):
+        (RecursiveTypeChecker.prototype.visitFuncDef):
+        (RecursiveTypeChecker.prototype.visitNativeFunc):
+        (RecursiveTypeChecker.prototype.visitStructType):
+        (RecursiveTypeChecker.prototype.visitReferenceType):
+        (RecursiveTypeChecker.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js:
+        (StructLayoutBuilder.prototype.visitTypeRef):
+        (StructLayoutBuilder):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_simpleRecursiveStruct):
+        * WebGPUShadingLanguageRI/TypeDefResolver.js:
+        (TypeDefResolver.prototype.visitTypeRef):
+        (TypeDefResolver):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestResultsServer for iOS 11 queues.

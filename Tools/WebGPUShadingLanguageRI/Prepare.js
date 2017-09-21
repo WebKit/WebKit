@@ -45,8 +45,7 @@ let prepare = (() => {
         resolveNamesInProtocols(program, nameResolver);
         resolveTypeDefsInTypes(program);
         resolveTypeDefsInProtocols(program);
-        // FIXME: Need to verify that structre are not cyclic.
-        // https://bugs.webkit.org/show_bug.cgi?id=177044
+        checkRecursiveTypes(program);
         synthesizeStructAccessors(program);
         synthesizeEnumFunctions(program);
         resolveNamesInFunctions(program, nameResolver);

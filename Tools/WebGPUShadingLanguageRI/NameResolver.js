@@ -211,8 +211,6 @@ class NameResolver extends Visitor {
             if (!parameterIsType && argumentIsType)
                 throw new WTypeError(node.origin.originString, "Expected value, but got type at argument #" + i);
         }
-
-        super.visitTypeRef(node);
     }
     
     visitReferenceType(node)

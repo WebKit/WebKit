@@ -26,6 +26,5 @@
 
 const BreakException = Symbol("BreakException");
 const ContinueException = Symbol("ContinueException");
-const TrapException = Symbol("TrapException");
 
 

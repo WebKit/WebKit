@@ -95,7 +95,6 @@ class Visitor {
     {
         for (let typeArgument of node.typeArguments)
             typeArgument.visit(this);
-        Node.visit(node.type, this);
     }
     
     visitNativeType(node)

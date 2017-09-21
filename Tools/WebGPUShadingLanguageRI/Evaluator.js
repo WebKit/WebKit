@@ -256,7 +256,7 @@ class Evaluator extends Visitor {
 
     visitTrapStatement(node)
     {
-        throw TrapException;
+        throw new WTrapError(node.origin.originString, "Trap statement");
     }
     
     visitAnonymousVariable(node)

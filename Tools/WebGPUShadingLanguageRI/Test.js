@@ -4352,14 +4352,16 @@ function TEST_trap()
             trap;
         }
     `);
-    checkInt(program, callFunction(program, "foo", [], []), 0);
+    checkFail(
+        () => callFunction(program, "foo", [], []),
+        e => e instanceof WTrapError);
     checkInt(program, callFunction(program, "foo2", [], [makeInt(program, 1)]), 4);
-    checkInt(program, callFunction(program, "foo2", [], [makeInt(program, 3)]), 0);
-    let foo3 = callFunction(program, "foo3", [], []);
-    for (let value of foo3.ePtr.buffer._array) {
-        if (value != undefined && value != 0)
-            throw new Error("Trap returned a non-zero value");
-    }
+    checkFail(
+        () => callFunction(program, "foo2", [], [makeInt(program, 3)]),
+        e => e instanceof WTrapError);
+    checkFail(
+        () => callFunction(program, "foo3", [], []),
+        e => e instanceof WTrapError);
 }
 
 function TEST_swizzle()
@@ -4385,6 +4387,102 @@ function TEST_swizzle()
     checkFloat(program, callFunction(program, "foo", [], []), 3);
     checkFloat(program, callFunction(program, "foo2", [], []), 6);
     checkFloat(program, callFunction(program, "foo3", [], []), 4);
+}
+
+function TEST_simpleRecursiveStruct()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                Foo foo;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_mutuallyRecursiveStruct()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                Bar bar;
+            }
+            struct Bar {
+                Foo foo;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+function TEST_mutuallyRecursiveStructWithPointersBroken()
+{
+    let program = doPrep(`
+        struct Foo {
+            thread Bar^ bar;
+            int foo;
+        }
+        struct Bar {
+            thread Foo^ foo;
+            int bar;
+        }
+        int foo()
+        {
+            Foo foo;
+            Bar bar;
+            foo.foo = 564;
+            bar.bar = 53;
+            return foo.bar->bar - bar.foo->foo;
+        }
+    `);
+    checkFail(
+        () => checkInt(program, callFunction(program, "foo", [], []), -511),
+        e => e instanceof WTrapError);
+}
+
+function TEST_mutuallyRecursiveStructWithPointers()
+{
+    let program = doPrep(`
+        struct Foo {
+            thread Bar^ bar;
+            int foo;
+        }
+        struct Bar {
+            thread Foo^ foo;
+            int bar;
+        }
+        int foo()
+        {
+            Foo foo;
+            Bar bar;
+            foo.bar = &bar;
+            bar.foo = &foo;
+            foo.foo = 564;
+            bar.bar = 53;
+            return foo.bar->bar - bar.foo->foo;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), -511);
+}
+
+function TEST_linkedList()
+{
+    let program = doPrep(`
+        struct Node {
+            thread Node^ next;
+            int value;
+        }
+        int foo()
+        {
+            Node x, y, z;
+            x.next = &y;
+            y.next = &z;
+            x.value = 1;
+            y.value = 2;
+            z.value = 3;
+            return x.next->next->value;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 3);
 }
 
 let filter = /.*/; // run everything by default
@@ -4424,7 +4522,10 @@ function* doTest(object)
     print("That took " + (after - before) * 1000 + " ms.");
 }
 
-if (!this.window)
+if (!this.window) {
+    Error.stackTraceLimit = Infinity;
     for (let _ of doTest(this)) { }
+}
+
 
 
