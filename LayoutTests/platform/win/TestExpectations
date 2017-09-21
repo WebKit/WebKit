@@ -3946,6 +3946,7 @@ webkit.org/b/176661 http/tests/misc/object-embedding-svg-delayed-size-negotiatio
 webkit.org/b/157916 http/tests/misc/slow-loading-animated-image.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176465 http/tests/preload/single_download_preload.html [ Pass Failure Crash ]
 webkit.org/b/176866 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html [ Pass Crash ]
+webkit.org/b/177282 http/wpt/resource-timing/rt-resource-errors.html [ Pass Failure ]
 webkit.org/b/176693 storage/indexeddb/modern/idbtransaction-objectstore-failures-private.html [ Pass Failure ]
 webkit.org/b/176880 storage/indexeddb/modern/idbtransaction-objectstore-failures.html [ Pass Failure ]
 webkit.org/b/176660 svg/animations/animations-paused-in-background-page-iframe.html [ Pass Timeout ]
