@@ -1036,6 +1036,11 @@ void DocumentLoader::clearMainResourceLoader()
         checkLoadComplete();
 }
 
+void DocumentLoader::setCustomHeaderFields(Vector<HTTPHeaderField>&& fields)
+{
+    m_customHeaderFields = WTFMove(fields);
+}
+
 bool DocumentLoader::isLoadingInAPISense() const
 {
     // Once a frame has loaded, we no longer need to consider subresources,

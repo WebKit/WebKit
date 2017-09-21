@@ -1,3 +1,14 @@
+2017-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        Fix ASAN build after r222306
+        https://bugs.webkit.org/show_bug.cgi?id=177255
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setCustomHeaderFields):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomHeaderFields): Deleted.
+        Moving a Vector of a type requires more than just a forward declaration of the type, but only in ASAN builds.  Weird.
+
 2017-09-21  Zhifei FANG  <facetothefate@gmail.com>
 
         In regular block layout, the width of a child's margin box should always be equal to that of its containing block
