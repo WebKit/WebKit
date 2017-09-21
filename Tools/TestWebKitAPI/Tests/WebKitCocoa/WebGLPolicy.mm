@@ -43,6 +43,20 @@ static RetainPtr<NSString> alert;
 static bool testComplete { false };
 static RetainPtr<NSURL> htmlURL;
 
+static NSString *data = @"<script>"
+    "var canvas = document.createElement('canvas');"
+    "var context = canvas.getContext('webgl');"
+    "if (context) {"
+        "var framebuffer = context.createFramebuffer();"
+        "var status = context.checkFramebufferStatus(context.FRAMEBUFFER);"
+        "if (status == context.FRAMEBUFFER_UNSUPPORTED)"
+            "alert('doing stuff with webgl context failed');"
+        "else if (status == context.FRAMEBUFFER_COMPLETE)"
+            "alert('doing stuff with webgl context succeeded');"
+        "else alert('unexpected status');"
+    "} else alert('webgl context creation failed');"
+"</script>";
+
 @interface WebGLTestDelegate : NSObject <WKNavigationDelegatePrivate, WKUIDelegate, WKURLSchemeHandler>
 @end
     
@@ -50,19 +64,6 @@ static RetainPtr<NSURL> htmlURL;
 
 - (void)webView:(WKWebView *)webView startURLSchemeTask:(id <WKURLSchemeTask>)urlSchemeTask
 {
-    NSString *data = @"<script>"
-        "var canvas = document.createElement('canvas');"
-        "var context = canvas.getContext('webgl');"
-        "if (context) {"
-            "var framebuffer = context.createFramebuffer();"
-            "var status = context.checkFramebufferStatus(context.FRAMEBUFFER);"
-            "if (status == context.FRAMEBUFFER_UNSUPPORTED)"
-                "alert('doing stuff with webgl context failed');"
-            "else if (status == context.FRAMEBUFFER_COMPLETE)"
-                "alert('doing stuff with webgl context succeeded');"
-            "else alert('unexpected status');"
-        "} else alert('webgl context creation failed');"
-    "</script>";
     [urlSchemeTask didReceiveResponse:[[[NSURLResponse alloc] initWithURL:urlSchemeTask.request.URL MIMEType:@"text/html" expectedContentLength:data.length textEncodingName:nil] autorelease]];
     [urlSchemeTask didReceiveData:[data dataUsingEncoding:NSUTF8StringEncoding]];
     [urlSchemeTask didFinish];
@@ -138,6 +139,30 @@ TEST(WebKit, WebGLPolicy)
     EXPECT_STREQ([alert UTF8String], "doing stuff with webgl context failed");
     EXPECT_TRUE([htmlURL isEqual:firstURL.get()]);
     EXPECT_TRUE([htmlURL isEqual:secondURL.get()]);
+}
+
+@interface DelegateWithoutWebGL : NSObject <WKUIDelegate>
+@end
+
+@implementation DelegateWithoutWebGL
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    alert = message;
+    testComplete = true;
+    completionHandler();
+}
+
+@end
+
+TEST(WebKit, WebGLPolicyNoDelegate)
+{
+    auto delegate = adoptNS([[DelegateWithoutWebGL alloc] init]);
+    auto webView = adoptNS([[WKWebView alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+    [webView loadHTMLString:data baseURL:[NSURL URLWithString:@"http://example.com/"]];
+    TestWebKitAPI::Util::run(&testComplete);
+    EXPECT_STREQ([alert UTF8String], "doing stuff with webgl context succeeded");
 }
 
 #endif // WK_API_ENABLED

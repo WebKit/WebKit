@@ -1,3 +1,16 @@
+2017-09-21  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r221465) WKWebViews without WebGL delegate callbacks crash when WebGL contexts are created
+        https://bugs.webkit.org/show_bug.cgi?id=177306
+        <rdar://problem/34351988>
+
+        Reviewed by Chris Dumez.
+
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::webGLLoadPolicy const):
+        (WebKit::NavigationState::NavigationClient::resolveWebGLLoadPolicy const):
+        I forgot to early return after calling the default completion handler if there's no delegate selector.
+
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, temporarily disable assertion added in r222308 while I investigate.
