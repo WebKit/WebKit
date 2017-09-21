@@ -116,6 +116,28 @@
     }
 }
 
+- (NSArray<NSString *> *)customHeaderFields
+{
+    const auto& fields = _websitePolicies->customHeaderFields();
+    NSMutableArray *array = [[[NSMutableArray alloc] initWithCapacity:fields.size()] autorelease];
+    for (const auto& field : fields)
+        [array addObject:field.field()];
+    return array;
+}
+
+- (void)setCustomHeaderFields:(NSArray<NSString *> *)fields
+{
+    Vector<WebCore::HTTPHeaderField> parsedFields;
+    parsedFields.reserveInitialCapacity(fields.count);
+    for (NSString *string in fields) {
+        WebCore::HTTPHeaderField parsedField(string);
+        if (!parsedField.field().isNull()
+            && parsedField.field().startsWithIgnoringASCIICase("X-")) // Let's just pretend RFC6648 never happened.
+            parsedFields.uncheckedAppend(WTFMove(parsedField));
+    }
+    _websitePolicies->setCustomHeaderFields(WTFMove(parsedFields));
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; contentBlockersEnabled = %d>", NSStringFromClass(self.class), self, self.contentBlockersEnabled];

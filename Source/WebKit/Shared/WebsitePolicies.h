@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include <WebCore/HTTPHeaderField.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Optional.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -48,6 +50,7 @@ struct WebsitePolicies {
     bool contentBlockersEnabled { true };
     OptionSet<WebsiteAutoplayQuirk> allowedAutoplayQuirks;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
+    Vector<WebCore::HTTPHeaderField> customHeaderFields;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<WebsitePolicies> decode(Decoder&);
@@ -76,6 +79,7 @@ template<class Encoder> void WebsitePolicies::encode(Encoder& encoder) const
     encoder << contentBlockersEnabled;
     encoder << autoplayPolicy;
     encoder << allowedAutoplayQuirks;
+    encoder << customHeaderFields;
 }
 
 template<class Decoder> std::optional<WebsitePolicies> WebsitePolicies::decode(Decoder& decoder)
@@ -94,11 +98,17 @@ template<class Decoder> std::optional<WebsitePolicies> WebsitePolicies::decode(D
     decoder >> allowedAutoplayQuirks;
     if (!allowedAutoplayQuirks)
         return std::nullopt;
+    
+    std::optional<Vector<WebCore::HTTPHeaderField>> customHeaderFields;
+    decoder >> customHeaderFields;
+    if (!customHeaderFields)
+        return std::nullopt;
 
     return { {
         WTFMove(*contentBlockersEnabled),
         WTFMove(*allowedAutoplayQuirks),
         WTFMove(*autoplayPolicy),
+        WTFMove(*customHeaderFields),
     } };
 }
 

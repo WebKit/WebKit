@@ -69,6 +69,7 @@ class ContentFilter;
 class FormState;
 class Frame;
 class FrameLoader;
+class HTTPHeaderField;
 class IconLoader;
 class Page;
 class PreviewConverter;
@@ -295,6 +296,8 @@ public:
 
     const Vector<LinkIcon>& linkIcons() const { return m_linkIcons; }
 
+    void setCustomHeaderFields(Vector<HTTPHeaderField>&& fields) { m_customHeaderFields = WTFMove(fields); }
+    
 protected:
     WEBCORE_EXPORT DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -452,6 +455,8 @@ private:
     HashMap<std::unique_ptr<IconLoader>, uint64_t> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
+    Vector<HTTPHeaderField> m_customHeaderFields;
+    
     bool m_subresourceLoadersArePageCacheAcceptable { false };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
 

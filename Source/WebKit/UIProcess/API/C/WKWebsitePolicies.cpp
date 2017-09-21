@@ -26,8 +26,10 @@
 #include "config.h"
 #include "WKWebsitePolicies.h"
 
+#include "APIArray.h"
 #include "APIWebsitePolicies.h"
 #include "WKAPICast.h"
+#include "WKArray.h"
 #include "WebsitePolicies.h"
 
 using namespace WebKit;
@@ -50,6 +52,30 @@ void WKWebsitePoliciesSetContentBlockersEnabled(WKWebsitePoliciesRef websitePoli
 bool WKWebsitePoliciesGetContentBlockersEnabled(WKWebsitePoliciesRef websitePolicies)
 {
     return toImpl(websitePolicies)->contentBlockersEnabled();
+}
+
+WK_EXPORT WKArrayRef WKWebsitePoliciesCopyCustomHeaderFields(WKWebsitePoliciesRef websitePolicies)
+{
+    const auto& fields = toImpl(websitePolicies)->customHeaderFields();
+    Vector<RefPtr<API::Object>> strings;
+    strings.reserveInitialCapacity(fields.size());
+    for (const auto& field : fields)
+        strings.uncheckedAppend(API::String::create(field.field()));
+    return toAPI(API::Array::create(WTFMove(strings)).ptr());
+}
+
+WK_EXPORT void WKWebsitePoliciesSetCustomHeaderFields(WKWebsitePoliciesRef websitePolicies, WKArrayRef array)
+{
+    size_t length = WKArrayGetSize(array);
+    Vector<WebCore::HTTPHeaderField> fields;
+    fields.reserveInitialCapacity(length);
+    for (size_t i = 0; i < length; ++i) {
+        WebCore::HTTPHeaderField parsedField(toImpl(static_cast<WKStringRef>(WKArrayGetItemAtIndex(array, i)))->string());
+        if (!parsedField.field().isNull()
+            && parsedField.field().startsWithIgnoringASCIICase("X-")) // Let's just pretend RFC6648 never happened.
+            fields.uncheckedAppend(WTFMove(parsedField));
+    }
+    toImpl(websitePolicies)->setCustomHeaderFields(WTFMove(fields));
 }
 
 void WKWebsitePoliciesSetAllowedAutoplayQuirks(WKWebsitePoliciesRef websitePolicies, WKWebsiteAutoplayQuirk allowedQuirks)

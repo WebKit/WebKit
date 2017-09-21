@@ -2102,6 +2102,7 @@ set(WebCore_SOURCES
     loader/FrameLoadRequest.cpp
     loader/FrameLoader.cpp
     loader/FrameLoaderStateMachine.cpp
+    loader/HTTPHeaderField.cpp
     loader/HistoryController.cpp
     loader/ImageLoader.cpp
     loader/LinkHeader.cpp

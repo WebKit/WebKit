@@ -1,3 +1,34 @@
+2017-09-20  Alex Christensen  <achristensen@webkit.org>
+
+        Add infrastructure for adding custom headers to requests per website
+        https://bugs.webkit.org/show_bug.cgi?id=177255
+
+        Reviewed by Geoffrey Garen.
+
+        Covered by API tests.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.cpp:
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::setCustomHeaderFields):
+        * loader/HTTPHeaderField.cpp: Added.
+        (WebCore::RFC7230::isTokenCharacter):
+        (WebCore::RFC7230::isDelimiter):
+        (WebCore::RFC7230::isVisibleCharacter):
+        (WebCore::RFC7230::isWhitespace):
+        (WebCore::RFC7230::isInRange):
+        (WebCore::RFC7230::isOBSText):
+        (WebCore::RFC7230::isQuotedTextCharacter):
+        (WebCore::RFC7230::isQuotedPairSecondOctet):
+        (WebCore::RFC7230::isCommentText):
+        (WebCore::RFC7230::isValidName):
+        (WebCore::RFC7230::isValidValue):
+        (WebCore::HTTPHeaderField::HTTPHeaderField):
+        * loader/HTTPHeaderField.h: Added.
+        (WebCore::HTTPHeaderField::encode const):
+        (WebCore::HTTPHeaderField::decode):
+
 2017-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         REGRESSION(r191731): SVGPatternElement can only reference another SVGPatternElement in the same SVG document

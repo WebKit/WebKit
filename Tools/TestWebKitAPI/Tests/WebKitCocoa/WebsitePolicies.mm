@@ -622,6 +622,18 @@ TEST(WebKit, WebsitePoliciesAutoplayQuirks)
     [webView stringByEvaluatingJavaScript:@"play()"];
     [webView waitForMessage:@"playing"];
 }
-#endif
+#endif // PLATFORM(MAC)
 
-#endif
+TEST(WebKit, InvalidCustomHeaders)
+{
+    auto websitePolicies = adoptNS([[_WKWebsitePolicies alloc] init]);
+    [websitePolicies setCustomHeaderFields:@[@"invalidheader:", @"noncustom: header", @"X-custom: header", @"    x-Custom :  Needs Canonicalization\t "]];
+    NSArray<NSString *> *canonicalized = [websitePolicies customHeaderFields];
+    EXPECT_EQ(canonicalized.count, 2u);
+    EXPECT_STREQ([canonicalized objectAtIndex:0].UTF8String, "X-custom: header");
+    EXPECT_STREQ([canonicalized objectAtIndex:1].UTF8String, "x-Custom: Needs Canonicalization");
+}
+
+// FIXME: Apply the custom headers from the DocumentLoader to each request and test that they are sent on main resource and subresources.
+
+#endif // WK_API_ENABLED

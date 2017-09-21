@@ -46,6 +46,9 @@ public:
     WebKit::WebsiteAutoplayPolicy autoplayPolicy() const { return m_websitePolicies.autoplayPolicy; }
     void setAutoplayPolicy(WebKit::WebsiteAutoplayPolicy policy) { m_websitePolicies.autoplayPolicy = policy; }
 
+    void setCustomHeaderFields(Vector<WebCore::HTTPHeaderField>&& customHeaderFields) { m_websitePolicies.customHeaderFields = WTFMove(customHeaderFields); };
+    const Vector<WebCore::HTTPHeaderField> customHeaderFields() { return m_websitePolicies.customHeaderFields; }
+
     const WebKit::WebsitePolicies& websitePolicies() { return m_websitePolicies; }
     
 private:
