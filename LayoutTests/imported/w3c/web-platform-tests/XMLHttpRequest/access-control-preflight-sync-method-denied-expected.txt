@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 25: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-denied.py?token=b70429f0-0dd0-44b0-a5e8-dc0b7d355e72&command=method. Method DELETE is not allowed by Access-Control-Allow-Methods.
+
+PASS Sync request denied at preflight because of non-CORS-safelisted method 
+

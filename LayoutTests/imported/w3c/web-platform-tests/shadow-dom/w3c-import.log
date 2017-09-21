@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/MouseEvent-prototype-offsetX-offsetY.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Node-prototype-cloneNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Range-prototype-insertNode.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/ShadowRoot-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/Slotable-interface.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-composed-path-with-related-target.html
@@ -33,6 +34,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-inside-slotted-node.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/event-with-related-target.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/scroll-to-the-fragment-in-shadow-tree.html
+/LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-customelements.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange-event.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slotchange.html
 /LayoutTests/imported/w3c/web-platform-tests/shadow-dom/slots-fallback-in-document.html

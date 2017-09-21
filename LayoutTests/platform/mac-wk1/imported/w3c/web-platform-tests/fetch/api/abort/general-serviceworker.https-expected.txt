@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 14: Unhandled Promise Rejection: TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+
+FAIL General fetch abort tests in a service worker undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')
+

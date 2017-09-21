@@ -5,4 +5,5 @@ FAIL Origin-clean check in cross-origin CSSOM Stylesheets assert_throws: Cross o
                     crossorigin.cssRules;
                 }" threw object "TypeError: null is not an object (evaluating 'crossorigin.cssRules')" that is not a DOMException SecurityError: property "code" is equal to undefined, expected 18
 PASS Origin-clean check in same-origin CSSOM Stylesheets 
+FAIL Origin-clean check in data:css CSSOM Stylesheets null is not an object (evaluating 'sheet.cssRules.length')
 

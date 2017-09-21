@@ -1,0 +1,9 @@
+
+PASS large typed array 
+PASS blob with large typed array 
+FAIL blob with large typed array with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
+PASS array of blobs and large typed arrays 
+FAIL array of blobs and large typed arrays with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
+PASS object with blobs and large typed arrays 
+FAIL object with blobs and large typed arrays with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
+

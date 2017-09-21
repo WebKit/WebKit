@@ -1,0 +1,63 @@
+Linkfoo
+
+FAIL innerHTML before setter: 1680 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 1680 
+FAIL innerHTML after setter: 1680 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 1680 assert_equals: expected "http://localhost:8800/domparsing/%E1%9A%80javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2000 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2000 
+FAIL innerHTML after setter: 2000 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2000 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%80javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2001 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2001 
+FAIL innerHTML after setter: 2001 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2001 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%81javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2002 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2002 
+FAIL innerHTML after setter: 2002 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2002 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%82javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2003 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2003 
+FAIL innerHTML after setter: 2003 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2003 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%83javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2004 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2004 
+FAIL innerHTML after setter: 2004 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2004 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%84javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2005 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2005 
+FAIL innerHTML after setter: 2005 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2005 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%85javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2006 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2006 
+FAIL innerHTML after setter: 2006 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2006 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%86javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2007 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2007 
+FAIL innerHTML after setter: 2007 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2007 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%87javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2008 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2008 
+FAIL innerHTML after setter: 2008 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2008 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%88javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2009 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2009 
+FAIL innerHTML after setter: 2009 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2009 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%89javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 200a assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 200a 
+FAIL innerHTML after setter: 200a assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 200a assert_equals: expected "http://localhost:8800/domparsing/%E2%80%8Ajavascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 2028 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 2028 
+FAIL innerHTML after setter: 2028 assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 2028 assert_equals: expected "http://localhost:8800/domparsing/%E2%80%A8javascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 205f assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 205f 
+FAIL innerHTML after setter: 205f assert_equals: expected "<a href=\" javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 205f assert_equals: expected "http://localhost:8800/domparsing/%E2%81%9Fjavascript:alert(1)" but got "javascript:alert(1)"
+FAIL innerHTML before setter: 3000 assert_equals: expected "<a href=\"　javascript:alert(1)\">Link</a>" but got "<a href=\"javascript:alert(1)\">Link</a>"
+PASS href before setter: 3000 
+FAIL innerHTML after setter: 3000 assert_equals: expected "<a href=\"　javascript:alert(1)\">Link</a>foo" but got "<a href=\"javascript:alert(1)\">Link</a>foo"
+FAIL href after setter: 3000 assert_equals: expected "http://localhost:8800/domparsing/%E3%80%80javascript:alert(1)" but got "javascript:alert(1)"
+

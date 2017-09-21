@@ -29,6 +29,10 @@ class IncludeManifest(ManifestItem):
         node = DataNode(None)
         return cls(node)
 
+    def set_defaults(self):
+        if not self.has_key("skip"):
+            self.set("skip", "False")
+
     def append(self, child):
         ManifestItem.append(self, child)
         self.child_map[child.name] = child
@@ -93,7 +97,8 @@ class IncludeManifest(ManifestItem):
                 for manifest, data in test_manifests.iteritems():
                     found = False
                     rel_path = os.path.relpath(path, data["tests_path"])
-                    for test in manifest.iterpath(rel_path):
+                    iterator = manifest.iterpath if os.path.isfile(path) else manifest.iterdir
+                    for test in iterator(rel_path):
                         if not hasattr(test, "url"):
                             continue
                         url = test.url

@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/lint/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/fnmatch.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/lint/lint.py

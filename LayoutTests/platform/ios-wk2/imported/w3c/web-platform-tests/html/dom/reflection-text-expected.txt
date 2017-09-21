@@ -2764,6 +2764,747 @@ PASS abbr.tabIndex: IDL set to 0
 PASS abbr.tabIndex: IDL set to 1 
 PASS abbr.tabIndex: IDL set to 2147483647 
 PASS abbr.tabIndex: IDL set to -2147483648 
+PASS ruby.title: typeof IDL attribute 
+PASS ruby.title: IDL get with DOM attribute unset 
+PASS ruby.title: setAttribute() to "" 
+PASS ruby.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.title: setAttribute() to undefined 
+PASS ruby.title: setAttribute() to 7 
+PASS ruby.title: setAttribute() to 1.5 
+PASS ruby.title: setAttribute() to true 
+PASS ruby.title: setAttribute() to false 
+PASS ruby.title: setAttribute() to object "[object Object]" 
+PASS ruby.title: setAttribute() to NaN 
+PASS ruby.title: setAttribute() to Infinity 
+PASS ruby.title: setAttribute() to -Infinity 
+PASS ruby.title: setAttribute() to "\0" 
+PASS ruby.title: setAttribute() to null 
+PASS ruby.title: setAttribute() to object "test-toString" 
+PASS ruby.title: setAttribute() to object "test-valueOf" 
+PASS ruby.title: IDL set to "" 
+PASS ruby.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.title: IDL set to undefined 
+PASS ruby.title: IDL set to 7 
+PASS ruby.title: IDL set to 1.5 
+PASS ruby.title: IDL set to true 
+PASS ruby.title: IDL set to false 
+PASS ruby.title: IDL set to object "[object Object]" 
+PASS ruby.title: IDL set to NaN 
+PASS ruby.title: IDL set to Infinity 
+PASS ruby.title: IDL set to -Infinity 
+PASS ruby.title: IDL set to "\0" 
+PASS ruby.title: IDL set to null 
+PASS ruby.title: IDL set to object "test-toString" 
+PASS ruby.title: IDL set to object "test-valueOf" 
+PASS ruby.lang: typeof IDL attribute 
+PASS ruby.lang: IDL get with DOM attribute unset 
+PASS ruby.lang: setAttribute() to "" 
+PASS ruby.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.lang: setAttribute() to undefined 
+PASS ruby.lang: setAttribute() to 7 
+PASS ruby.lang: setAttribute() to 1.5 
+PASS ruby.lang: setAttribute() to true 
+PASS ruby.lang: setAttribute() to false 
+PASS ruby.lang: setAttribute() to object "[object Object]" 
+PASS ruby.lang: setAttribute() to NaN 
+PASS ruby.lang: setAttribute() to Infinity 
+PASS ruby.lang: setAttribute() to -Infinity 
+PASS ruby.lang: setAttribute() to "\0" 
+PASS ruby.lang: setAttribute() to null 
+PASS ruby.lang: setAttribute() to object "test-toString" 
+PASS ruby.lang: setAttribute() to object "test-valueOf" 
+PASS ruby.lang: IDL set to "" 
+PASS ruby.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.lang: IDL set to undefined 
+PASS ruby.lang: IDL set to 7 
+PASS ruby.lang: IDL set to 1.5 
+PASS ruby.lang: IDL set to true 
+PASS ruby.lang: IDL set to false 
+PASS ruby.lang: IDL set to object "[object Object]" 
+PASS ruby.lang: IDL set to NaN 
+PASS ruby.lang: IDL set to Infinity 
+PASS ruby.lang: IDL set to -Infinity 
+PASS ruby.lang: IDL set to "\0" 
+PASS ruby.lang: IDL set to null 
+PASS ruby.lang: IDL set to object "test-toString" 
+PASS ruby.lang: IDL set to object "test-valueOf" 
+PASS ruby.dir: typeof IDL attribute 
+PASS ruby.dir: IDL get with DOM attribute unset 
+PASS ruby.dir: setAttribute() to "" 
+PASS ruby.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.dir: setAttribute() to undefined 
+PASS ruby.dir: setAttribute() to 7 
+PASS ruby.dir: setAttribute() to 1.5 
+PASS ruby.dir: setAttribute() to true 
+PASS ruby.dir: setAttribute() to false 
+PASS ruby.dir: setAttribute() to object "[object Object]" 
+PASS ruby.dir: setAttribute() to NaN 
+PASS ruby.dir: setAttribute() to Infinity 
+PASS ruby.dir: setAttribute() to -Infinity 
+PASS ruby.dir: setAttribute() to "\0" 
+PASS ruby.dir: setAttribute() to null 
+PASS ruby.dir: setAttribute() to object "test-toString" 
+PASS ruby.dir: setAttribute() to object "test-valueOf" 
+PASS ruby.dir: setAttribute() to "ltr" 
+PASS ruby.dir: setAttribute() to "xltr" 
+PASS ruby.dir: setAttribute() to "ltr\0" 
+PASS ruby.dir: setAttribute() to "tr" 
+PASS ruby.dir: setAttribute() to "LTR" 
+PASS ruby.dir: setAttribute() to "rtl" 
+PASS ruby.dir: setAttribute() to "xrtl" 
+PASS ruby.dir: setAttribute() to "rtl\0" 
+PASS ruby.dir: setAttribute() to "tl" 
+PASS ruby.dir: setAttribute() to "RTL" 
+PASS ruby.dir: setAttribute() to "auto" 
+PASS ruby.dir: setAttribute() to "xauto" 
+PASS ruby.dir: setAttribute() to "auto\0" 
+PASS ruby.dir: setAttribute() to "uto" 
+PASS ruby.dir: setAttribute() to "AUTO" 
+PASS ruby.dir: IDL set to "" 
+PASS ruby.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.dir: IDL set to undefined 
+PASS ruby.dir: IDL set to 7 
+PASS ruby.dir: IDL set to 1.5 
+PASS ruby.dir: IDL set to true 
+PASS ruby.dir: IDL set to false 
+PASS ruby.dir: IDL set to object "[object Object]" 
+PASS ruby.dir: IDL set to NaN 
+PASS ruby.dir: IDL set to Infinity 
+PASS ruby.dir: IDL set to -Infinity 
+PASS ruby.dir: IDL set to "\0" 
+PASS ruby.dir: IDL set to null 
+PASS ruby.dir: IDL set to object "test-toString" 
+PASS ruby.dir: IDL set to object "test-valueOf" 
+PASS ruby.dir: IDL set to "ltr" 
+PASS ruby.dir: IDL set to "xltr" 
+PASS ruby.dir: IDL set to "ltr\0" 
+PASS ruby.dir: IDL set to "tr" 
+PASS ruby.dir: IDL set to "LTR" 
+PASS ruby.dir: IDL set to "rtl" 
+PASS ruby.dir: IDL set to "xrtl" 
+PASS ruby.dir: IDL set to "rtl\0" 
+PASS ruby.dir: IDL set to "tl" 
+PASS ruby.dir: IDL set to "RTL" 
+PASS ruby.dir: IDL set to "auto" 
+PASS ruby.dir: IDL set to "xauto" 
+PASS ruby.dir: IDL set to "auto\0" 
+PASS ruby.dir: IDL set to "uto" 
+PASS ruby.dir: IDL set to "AUTO" 
+PASS ruby.className (<ruby class>): typeof IDL attribute 
+PASS ruby.className (<ruby class>): IDL get with DOM attribute unset 
+PASS ruby.className (<ruby class>): setAttribute() to "" 
+PASS ruby.className (<ruby class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.className (<ruby class>): setAttribute() to undefined 
+PASS ruby.className (<ruby class>): setAttribute() to 7 
+PASS ruby.className (<ruby class>): setAttribute() to 1.5 
+PASS ruby.className (<ruby class>): setAttribute() to true 
+PASS ruby.className (<ruby class>): setAttribute() to false 
+PASS ruby.className (<ruby class>): setAttribute() to object "[object Object]" 
+PASS ruby.className (<ruby class>): setAttribute() to NaN 
+PASS ruby.className (<ruby class>): setAttribute() to Infinity 
+PASS ruby.className (<ruby class>): setAttribute() to -Infinity 
+PASS ruby.className (<ruby class>): setAttribute() to "\0" 
+PASS ruby.className (<ruby class>): setAttribute() to null 
+PASS ruby.className (<ruby class>): setAttribute() to object "test-toString" 
+PASS ruby.className (<ruby class>): setAttribute() to object "test-valueOf" 
+PASS ruby.className (<ruby class>): IDL set to "" 
+PASS ruby.className (<ruby class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.className (<ruby class>): IDL set to undefined 
+PASS ruby.className (<ruby class>): IDL set to 7 
+PASS ruby.className (<ruby class>): IDL set to 1.5 
+PASS ruby.className (<ruby class>): IDL set to true 
+PASS ruby.className (<ruby class>): IDL set to false 
+PASS ruby.className (<ruby class>): IDL set to object "[object Object]" 
+PASS ruby.className (<ruby class>): IDL set to NaN 
+PASS ruby.className (<ruby class>): IDL set to Infinity 
+PASS ruby.className (<ruby class>): IDL set to -Infinity 
+PASS ruby.className (<ruby class>): IDL set to "\0" 
+PASS ruby.className (<ruby class>): IDL set to null 
+PASS ruby.className (<ruby class>): IDL set to object "test-toString" 
+PASS ruby.className (<ruby class>): IDL set to object "test-valueOf" 
+PASS ruby.hidden: typeof IDL attribute 
+PASS ruby.hidden: IDL get with DOM attribute unset 
+PASS ruby.hidden: setAttribute() to "" 
+PASS ruby.hidden: setAttribute() to " foo " 
+PASS ruby.hidden: setAttribute() to undefined 
+PASS ruby.hidden: setAttribute() to null 
+PASS ruby.hidden: setAttribute() to 7 
+PASS ruby.hidden: setAttribute() to 1.5 
+PASS ruby.hidden: setAttribute() to true 
+PASS ruby.hidden: setAttribute() to false 
+PASS ruby.hidden: setAttribute() to object "[object Object]" 
+PASS ruby.hidden: setAttribute() to NaN 
+PASS ruby.hidden: setAttribute() to Infinity 
+PASS ruby.hidden: setAttribute() to -Infinity 
+PASS ruby.hidden: setAttribute() to "\0" 
+PASS ruby.hidden: setAttribute() to object "test-toString" 
+PASS ruby.hidden: setAttribute() to object "test-valueOf" 
+PASS ruby.hidden: setAttribute() to "hidden" 
+PASS ruby.hidden: IDL set to "" 
+PASS ruby.hidden: IDL set to " foo " 
+PASS ruby.hidden: IDL set to undefined 
+PASS ruby.hidden: IDL set to null 
+PASS ruby.hidden: IDL set to 7 
+PASS ruby.hidden: IDL set to 1.5 
+PASS ruby.hidden: IDL set to true 
+PASS ruby.hidden: IDL set to false 
+PASS ruby.hidden: IDL set to object "[object Object]" 
+PASS ruby.hidden: IDL set to NaN 
+PASS ruby.hidden: IDL set to Infinity 
+PASS ruby.hidden: IDL set to -Infinity 
+PASS ruby.hidden: IDL set to "\0" 
+PASS ruby.hidden: IDL set to object "test-toString" 
+PASS ruby.hidden: IDL set to object "test-valueOf" 
+PASS ruby.accessKey: typeof IDL attribute 
+PASS ruby.accessKey: IDL get with DOM attribute unset 
+PASS ruby.accessKey: setAttribute() to "" 
+PASS ruby.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.accessKey: setAttribute() to undefined 
+PASS ruby.accessKey: setAttribute() to 7 
+PASS ruby.accessKey: setAttribute() to 1.5 
+PASS ruby.accessKey: setAttribute() to true 
+PASS ruby.accessKey: setAttribute() to false 
+PASS ruby.accessKey: setAttribute() to object "[object Object]" 
+PASS ruby.accessKey: setAttribute() to NaN 
+PASS ruby.accessKey: setAttribute() to Infinity 
+PASS ruby.accessKey: setAttribute() to -Infinity 
+PASS ruby.accessKey: setAttribute() to "\0" 
+PASS ruby.accessKey: setAttribute() to null 
+PASS ruby.accessKey: setAttribute() to object "test-toString" 
+PASS ruby.accessKey: setAttribute() to object "test-valueOf" 
+PASS ruby.accessKey: IDL set to "" 
+PASS ruby.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS ruby.accessKey: IDL set to undefined 
+PASS ruby.accessKey: IDL set to 7 
+PASS ruby.accessKey: IDL set to 1.5 
+PASS ruby.accessKey: IDL set to true 
+PASS ruby.accessKey: IDL set to false 
+PASS ruby.accessKey: IDL set to object "[object Object]" 
+PASS ruby.accessKey: IDL set to NaN 
+PASS ruby.accessKey: IDL set to Infinity 
+PASS ruby.accessKey: IDL set to -Infinity 
+PASS ruby.accessKey: IDL set to "\0" 
+PASS ruby.accessKey: IDL set to null 
+PASS ruby.accessKey: IDL set to object "test-toString" 
+PASS ruby.accessKey: IDL set to object "test-valueOf" 
+PASS ruby.tabIndex: typeof IDL attribute 
+PASS ruby.tabIndex: setAttribute() to -36 
+PASS ruby.tabIndex: setAttribute() to -1 
+PASS ruby.tabIndex: setAttribute() to 0 
+PASS ruby.tabIndex: setAttribute() to 1 
+PASS ruby.tabIndex: setAttribute() to 2147483647 
+PASS ruby.tabIndex: setAttribute() to -2147483648 
+PASS ruby.tabIndex: setAttribute() to "-1" 
+PASS ruby.tabIndex: setAttribute() to "-0" 
+PASS ruby.tabIndex: setAttribute() to "0" 
+PASS ruby.tabIndex: setAttribute() to "1" 
+PASS ruby.tabIndex: setAttribute() to "\t7" 
+PASS ruby.tabIndex: setAttribute() to "\f7" 
+PASS ruby.tabIndex: setAttribute() to " 7" 
+PASS ruby.tabIndex: setAttribute() to "\n7" 
+PASS ruby.tabIndex: setAttribute() to "\r7" 
+PASS ruby.tabIndex: setAttribute() to 1.5 
+PASS ruby.tabIndex: setAttribute() to object "2" 
+PASS ruby.tabIndex: IDL set to -36 
+PASS ruby.tabIndex: IDL set to -1 
+PASS ruby.tabIndex: IDL set to 0 
+PASS ruby.tabIndex: IDL set to 1 
+PASS ruby.tabIndex: IDL set to 2147483647 
+PASS ruby.tabIndex: IDL set to -2147483648 
+PASS rt.title: typeof IDL attribute 
+PASS rt.title: IDL get with DOM attribute unset 
+PASS rt.title: setAttribute() to "" 
+PASS rt.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.title: setAttribute() to undefined 
+PASS rt.title: setAttribute() to 7 
+PASS rt.title: setAttribute() to 1.5 
+PASS rt.title: setAttribute() to true 
+PASS rt.title: setAttribute() to false 
+PASS rt.title: setAttribute() to object "[object Object]" 
+PASS rt.title: setAttribute() to NaN 
+PASS rt.title: setAttribute() to Infinity 
+PASS rt.title: setAttribute() to -Infinity 
+PASS rt.title: setAttribute() to "\0" 
+PASS rt.title: setAttribute() to null 
+PASS rt.title: setAttribute() to object "test-toString" 
+PASS rt.title: setAttribute() to object "test-valueOf" 
+PASS rt.title: IDL set to "" 
+PASS rt.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.title: IDL set to undefined 
+PASS rt.title: IDL set to 7 
+PASS rt.title: IDL set to 1.5 
+PASS rt.title: IDL set to true 
+PASS rt.title: IDL set to false 
+PASS rt.title: IDL set to object "[object Object]" 
+PASS rt.title: IDL set to NaN 
+PASS rt.title: IDL set to Infinity 
+PASS rt.title: IDL set to -Infinity 
+PASS rt.title: IDL set to "\0" 
+PASS rt.title: IDL set to null 
+PASS rt.title: IDL set to object "test-toString" 
+PASS rt.title: IDL set to object "test-valueOf" 
+PASS rt.lang: typeof IDL attribute 
+PASS rt.lang: IDL get with DOM attribute unset 
+PASS rt.lang: setAttribute() to "" 
+PASS rt.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.lang: setAttribute() to undefined 
+PASS rt.lang: setAttribute() to 7 
+PASS rt.lang: setAttribute() to 1.5 
+PASS rt.lang: setAttribute() to true 
+PASS rt.lang: setAttribute() to false 
+PASS rt.lang: setAttribute() to object "[object Object]" 
+PASS rt.lang: setAttribute() to NaN 
+PASS rt.lang: setAttribute() to Infinity 
+PASS rt.lang: setAttribute() to -Infinity 
+PASS rt.lang: setAttribute() to "\0" 
+PASS rt.lang: setAttribute() to null 
+PASS rt.lang: setAttribute() to object "test-toString" 
+PASS rt.lang: setAttribute() to object "test-valueOf" 
+PASS rt.lang: IDL set to "" 
+PASS rt.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.lang: IDL set to undefined 
+PASS rt.lang: IDL set to 7 
+PASS rt.lang: IDL set to 1.5 
+PASS rt.lang: IDL set to true 
+PASS rt.lang: IDL set to false 
+PASS rt.lang: IDL set to object "[object Object]" 
+PASS rt.lang: IDL set to NaN 
+PASS rt.lang: IDL set to Infinity 
+PASS rt.lang: IDL set to -Infinity 
+PASS rt.lang: IDL set to "\0" 
+PASS rt.lang: IDL set to null 
+PASS rt.lang: IDL set to object "test-toString" 
+PASS rt.lang: IDL set to object "test-valueOf" 
+PASS rt.dir: typeof IDL attribute 
+PASS rt.dir: IDL get with DOM attribute unset 
+PASS rt.dir: setAttribute() to "" 
+PASS rt.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.dir: setAttribute() to undefined 
+PASS rt.dir: setAttribute() to 7 
+PASS rt.dir: setAttribute() to 1.5 
+PASS rt.dir: setAttribute() to true 
+PASS rt.dir: setAttribute() to false 
+PASS rt.dir: setAttribute() to object "[object Object]" 
+PASS rt.dir: setAttribute() to NaN 
+PASS rt.dir: setAttribute() to Infinity 
+PASS rt.dir: setAttribute() to -Infinity 
+PASS rt.dir: setAttribute() to "\0" 
+PASS rt.dir: setAttribute() to null 
+PASS rt.dir: setAttribute() to object "test-toString" 
+PASS rt.dir: setAttribute() to object "test-valueOf" 
+PASS rt.dir: setAttribute() to "ltr" 
+PASS rt.dir: setAttribute() to "xltr" 
+PASS rt.dir: setAttribute() to "ltr\0" 
+PASS rt.dir: setAttribute() to "tr" 
+PASS rt.dir: setAttribute() to "LTR" 
+PASS rt.dir: setAttribute() to "rtl" 
+PASS rt.dir: setAttribute() to "xrtl" 
+PASS rt.dir: setAttribute() to "rtl\0" 
+PASS rt.dir: setAttribute() to "tl" 
+PASS rt.dir: setAttribute() to "RTL" 
+PASS rt.dir: setAttribute() to "auto" 
+PASS rt.dir: setAttribute() to "xauto" 
+PASS rt.dir: setAttribute() to "auto\0" 
+PASS rt.dir: setAttribute() to "uto" 
+PASS rt.dir: setAttribute() to "AUTO" 
+PASS rt.dir: IDL set to "" 
+PASS rt.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.dir: IDL set to undefined 
+PASS rt.dir: IDL set to 7 
+PASS rt.dir: IDL set to 1.5 
+PASS rt.dir: IDL set to true 
+PASS rt.dir: IDL set to false 
+PASS rt.dir: IDL set to object "[object Object]" 
+PASS rt.dir: IDL set to NaN 
+PASS rt.dir: IDL set to Infinity 
+PASS rt.dir: IDL set to -Infinity 
+PASS rt.dir: IDL set to "\0" 
+PASS rt.dir: IDL set to null 
+PASS rt.dir: IDL set to object "test-toString" 
+PASS rt.dir: IDL set to object "test-valueOf" 
+PASS rt.dir: IDL set to "ltr" 
+PASS rt.dir: IDL set to "xltr" 
+PASS rt.dir: IDL set to "ltr\0" 
+PASS rt.dir: IDL set to "tr" 
+PASS rt.dir: IDL set to "LTR" 
+PASS rt.dir: IDL set to "rtl" 
+PASS rt.dir: IDL set to "xrtl" 
+PASS rt.dir: IDL set to "rtl\0" 
+PASS rt.dir: IDL set to "tl" 
+PASS rt.dir: IDL set to "RTL" 
+PASS rt.dir: IDL set to "auto" 
+PASS rt.dir: IDL set to "xauto" 
+PASS rt.dir: IDL set to "auto\0" 
+PASS rt.dir: IDL set to "uto" 
+PASS rt.dir: IDL set to "AUTO" 
+PASS rt.className (<rt class>): typeof IDL attribute 
+PASS rt.className (<rt class>): IDL get with DOM attribute unset 
+PASS rt.className (<rt class>): setAttribute() to "" 
+PASS rt.className (<rt class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.className (<rt class>): setAttribute() to undefined 
+PASS rt.className (<rt class>): setAttribute() to 7 
+PASS rt.className (<rt class>): setAttribute() to 1.5 
+PASS rt.className (<rt class>): setAttribute() to true 
+PASS rt.className (<rt class>): setAttribute() to false 
+PASS rt.className (<rt class>): setAttribute() to object "[object Object]" 
+PASS rt.className (<rt class>): setAttribute() to NaN 
+PASS rt.className (<rt class>): setAttribute() to Infinity 
+PASS rt.className (<rt class>): setAttribute() to -Infinity 
+PASS rt.className (<rt class>): setAttribute() to "\0" 
+PASS rt.className (<rt class>): setAttribute() to null 
+PASS rt.className (<rt class>): setAttribute() to object "test-toString" 
+PASS rt.className (<rt class>): setAttribute() to object "test-valueOf" 
+PASS rt.className (<rt class>): IDL set to "" 
+PASS rt.className (<rt class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.className (<rt class>): IDL set to undefined 
+PASS rt.className (<rt class>): IDL set to 7 
+PASS rt.className (<rt class>): IDL set to 1.5 
+PASS rt.className (<rt class>): IDL set to true 
+PASS rt.className (<rt class>): IDL set to false 
+PASS rt.className (<rt class>): IDL set to object "[object Object]" 
+PASS rt.className (<rt class>): IDL set to NaN 
+PASS rt.className (<rt class>): IDL set to Infinity 
+PASS rt.className (<rt class>): IDL set to -Infinity 
+PASS rt.className (<rt class>): IDL set to "\0" 
+PASS rt.className (<rt class>): IDL set to null 
+PASS rt.className (<rt class>): IDL set to object "test-toString" 
+PASS rt.className (<rt class>): IDL set to object "test-valueOf" 
+PASS rt.hidden: typeof IDL attribute 
+PASS rt.hidden: IDL get with DOM attribute unset 
+PASS rt.hidden: setAttribute() to "" 
+PASS rt.hidden: setAttribute() to " foo " 
+PASS rt.hidden: setAttribute() to undefined 
+PASS rt.hidden: setAttribute() to null 
+PASS rt.hidden: setAttribute() to 7 
+PASS rt.hidden: setAttribute() to 1.5 
+PASS rt.hidden: setAttribute() to true 
+PASS rt.hidden: setAttribute() to false 
+PASS rt.hidden: setAttribute() to object "[object Object]" 
+PASS rt.hidden: setAttribute() to NaN 
+PASS rt.hidden: setAttribute() to Infinity 
+PASS rt.hidden: setAttribute() to -Infinity 
+PASS rt.hidden: setAttribute() to "\0" 
+PASS rt.hidden: setAttribute() to object "test-toString" 
+PASS rt.hidden: setAttribute() to object "test-valueOf" 
+PASS rt.hidden: setAttribute() to "hidden" 
+PASS rt.hidden: IDL set to "" 
+PASS rt.hidden: IDL set to " foo " 
+PASS rt.hidden: IDL set to undefined 
+PASS rt.hidden: IDL set to null 
+PASS rt.hidden: IDL set to 7 
+PASS rt.hidden: IDL set to 1.5 
+PASS rt.hidden: IDL set to true 
+PASS rt.hidden: IDL set to false 
+PASS rt.hidden: IDL set to object "[object Object]" 
+PASS rt.hidden: IDL set to NaN 
+PASS rt.hidden: IDL set to Infinity 
+PASS rt.hidden: IDL set to -Infinity 
+PASS rt.hidden: IDL set to "\0" 
+PASS rt.hidden: IDL set to object "test-toString" 
+PASS rt.hidden: IDL set to object "test-valueOf" 
+PASS rt.accessKey: typeof IDL attribute 
+PASS rt.accessKey: IDL get with DOM attribute unset 
+PASS rt.accessKey: setAttribute() to "" 
+PASS rt.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.accessKey: setAttribute() to undefined 
+PASS rt.accessKey: setAttribute() to 7 
+PASS rt.accessKey: setAttribute() to 1.5 
+PASS rt.accessKey: setAttribute() to true 
+PASS rt.accessKey: setAttribute() to false 
+PASS rt.accessKey: setAttribute() to object "[object Object]" 
+PASS rt.accessKey: setAttribute() to NaN 
+PASS rt.accessKey: setAttribute() to Infinity 
+PASS rt.accessKey: setAttribute() to -Infinity 
+PASS rt.accessKey: setAttribute() to "\0" 
+PASS rt.accessKey: setAttribute() to null 
+PASS rt.accessKey: setAttribute() to object "test-toString" 
+PASS rt.accessKey: setAttribute() to object "test-valueOf" 
+PASS rt.accessKey: IDL set to "" 
+PASS rt.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rt.accessKey: IDL set to undefined 
+PASS rt.accessKey: IDL set to 7 
+PASS rt.accessKey: IDL set to 1.5 
+PASS rt.accessKey: IDL set to true 
+PASS rt.accessKey: IDL set to false 
+PASS rt.accessKey: IDL set to object "[object Object]" 
+PASS rt.accessKey: IDL set to NaN 
+PASS rt.accessKey: IDL set to Infinity 
+PASS rt.accessKey: IDL set to -Infinity 
+PASS rt.accessKey: IDL set to "\0" 
+PASS rt.accessKey: IDL set to null 
+PASS rt.accessKey: IDL set to object "test-toString" 
+PASS rt.accessKey: IDL set to object "test-valueOf" 
+PASS rt.tabIndex: typeof IDL attribute 
+PASS rt.tabIndex: setAttribute() to -36 
+PASS rt.tabIndex: setAttribute() to -1 
+PASS rt.tabIndex: setAttribute() to 0 
+PASS rt.tabIndex: setAttribute() to 1 
+PASS rt.tabIndex: setAttribute() to 2147483647 
+PASS rt.tabIndex: setAttribute() to -2147483648 
+PASS rt.tabIndex: setAttribute() to "-1" 
+PASS rt.tabIndex: setAttribute() to "-0" 
+PASS rt.tabIndex: setAttribute() to "0" 
+PASS rt.tabIndex: setAttribute() to "1" 
+PASS rt.tabIndex: setAttribute() to "\t7" 
+PASS rt.tabIndex: setAttribute() to "\f7" 
+PASS rt.tabIndex: setAttribute() to " 7" 
+PASS rt.tabIndex: setAttribute() to "\n7" 
+PASS rt.tabIndex: setAttribute() to "\r7" 
+PASS rt.tabIndex: setAttribute() to 1.5 
+PASS rt.tabIndex: setAttribute() to object "2" 
+PASS rt.tabIndex: IDL set to -36 
+PASS rt.tabIndex: IDL set to -1 
+PASS rt.tabIndex: IDL set to 0 
+PASS rt.tabIndex: IDL set to 1 
+PASS rt.tabIndex: IDL set to 2147483647 
+PASS rt.tabIndex: IDL set to -2147483648 
+PASS rp.title: typeof IDL attribute 
+PASS rp.title: IDL get with DOM attribute unset 
+PASS rp.title: setAttribute() to "" 
+PASS rp.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.title: setAttribute() to undefined 
+PASS rp.title: setAttribute() to 7 
+PASS rp.title: setAttribute() to 1.5 
+PASS rp.title: setAttribute() to true 
+PASS rp.title: setAttribute() to false 
+PASS rp.title: setAttribute() to object "[object Object]" 
+PASS rp.title: setAttribute() to NaN 
+PASS rp.title: setAttribute() to Infinity 
+PASS rp.title: setAttribute() to -Infinity 
+PASS rp.title: setAttribute() to "\0" 
+PASS rp.title: setAttribute() to null 
+PASS rp.title: setAttribute() to object "test-toString" 
+PASS rp.title: setAttribute() to object "test-valueOf" 
+PASS rp.title: IDL set to "" 
+PASS rp.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.title: IDL set to undefined 
+PASS rp.title: IDL set to 7 
+PASS rp.title: IDL set to 1.5 
+PASS rp.title: IDL set to true 
+PASS rp.title: IDL set to false 
+PASS rp.title: IDL set to object "[object Object]" 
+PASS rp.title: IDL set to NaN 
+PASS rp.title: IDL set to Infinity 
+PASS rp.title: IDL set to -Infinity 
+PASS rp.title: IDL set to "\0" 
+PASS rp.title: IDL set to null 
+PASS rp.title: IDL set to object "test-toString" 
+PASS rp.title: IDL set to object "test-valueOf" 
+PASS rp.lang: typeof IDL attribute 
+PASS rp.lang: IDL get with DOM attribute unset 
+PASS rp.lang: setAttribute() to "" 
+PASS rp.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.lang: setAttribute() to undefined 
+PASS rp.lang: setAttribute() to 7 
+PASS rp.lang: setAttribute() to 1.5 
+PASS rp.lang: setAttribute() to true 
+PASS rp.lang: setAttribute() to false 
+PASS rp.lang: setAttribute() to object "[object Object]" 
+PASS rp.lang: setAttribute() to NaN 
+PASS rp.lang: setAttribute() to Infinity 
+PASS rp.lang: setAttribute() to -Infinity 
+PASS rp.lang: setAttribute() to "\0" 
+PASS rp.lang: setAttribute() to null 
+PASS rp.lang: setAttribute() to object "test-toString" 
+PASS rp.lang: setAttribute() to object "test-valueOf" 
+PASS rp.lang: IDL set to "" 
+PASS rp.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.lang: IDL set to undefined 
+PASS rp.lang: IDL set to 7 
+PASS rp.lang: IDL set to 1.5 
+PASS rp.lang: IDL set to true 
+PASS rp.lang: IDL set to false 
+PASS rp.lang: IDL set to object "[object Object]" 
+PASS rp.lang: IDL set to NaN 
+PASS rp.lang: IDL set to Infinity 
+PASS rp.lang: IDL set to -Infinity 
+PASS rp.lang: IDL set to "\0" 
+PASS rp.lang: IDL set to null 
+PASS rp.lang: IDL set to object "test-toString" 
+PASS rp.lang: IDL set to object "test-valueOf" 
+PASS rp.dir: typeof IDL attribute 
+PASS rp.dir: IDL get with DOM attribute unset 
+PASS rp.dir: setAttribute() to "" 
+PASS rp.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.dir: setAttribute() to undefined 
+PASS rp.dir: setAttribute() to 7 
+PASS rp.dir: setAttribute() to 1.5 
+PASS rp.dir: setAttribute() to true 
+PASS rp.dir: setAttribute() to false 
+PASS rp.dir: setAttribute() to object "[object Object]" 
+PASS rp.dir: setAttribute() to NaN 
+PASS rp.dir: setAttribute() to Infinity 
+PASS rp.dir: setAttribute() to -Infinity 
+PASS rp.dir: setAttribute() to "\0" 
+PASS rp.dir: setAttribute() to null 
+PASS rp.dir: setAttribute() to object "test-toString" 
+PASS rp.dir: setAttribute() to object "test-valueOf" 
+PASS rp.dir: setAttribute() to "ltr" 
+PASS rp.dir: setAttribute() to "xltr" 
+PASS rp.dir: setAttribute() to "ltr\0" 
+PASS rp.dir: setAttribute() to "tr" 
+PASS rp.dir: setAttribute() to "LTR" 
+PASS rp.dir: setAttribute() to "rtl" 
+PASS rp.dir: setAttribute() to "xrtl" 
+PASS rp.dir: setAttribute() to "rtl\0" 
+PASS rp.dir: setAttribute() to "tl" 
+PASS rp.dir: setAttribute() to "RTL" 
+PASS rp.dir: setAttribute() to "auto" 
+PASS rp.dir: setAttribute() to "xauto" 
+PASS rp.dir: setAttribute() to "auto\0" 
+PASS rp.dir: setAttribute() to "uto" 
+PASS rp.dir: setAttribute() to "AUTO" 
+PASS rp.dir: IDL set to "" 
+PASS rp.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.dir: IDL set to undefined 
+PASS rp.dir: IDL set to 7 
+PASS rp.dir: IDL set to 1.5 
+PASS rp.dir: IDL set to true 
+PASS rp.dir: IDL set to false 
+PASS rp.dir: IDL set to object "[object Object]" 
+PASS rp.dir: IDL set to NaN 
+PASS rp.dir: IDL set to Infinity 
+PASS rp.dir: IDL set to -Infinity 
+PASS rp.dir: IDL set to "\0" 
+PASS rp.dir: IDL set to null 
+PASS rp.dir: IDL set to object "test-toString" 
+PASS rp.dir: IDL set to object "test-valueOf" 
+PASS rp.dir: IDL set to "ltr" 
+PASS rp.dir: IDL set to "xltr" 
+PASS rp.dir: IDL set to "ltr\0" 
+PASS rp.dir: IDL set to "tr" 
+PASS rp.dir: IDL set to "LTR" 
+PASS rp.dir: IDL set to "rtl" 
+PASS rp.dir: IDL set to "xrtl" 
+PASS rp.dir: IDL set to "rtl\0" 
+PASS rp.dir: IDL set to "tl" 
+PASS rp.dir: IDL set to "RTL" 
+PASS rp.dir: IDL set to "auto" 
+PASS rp.dir: IDL set to "xauto" 
+PASS rp.dir: IDL set to "auto\0" 
+PASS rp.dir: IDL set to "uto" 
+PASS rp.dir: IDL set to "AUTO" 
+PASS rp.className (<rp class>): typeof IDL attribute 
+PASS rp.className (<rp class>): IDL get with DOM attribute unset 
+PASS rp.className (<rp class>): setAttribute() to "" 
+PASS rp.className (<rp class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.className (<rp class>): setAttribute() to undefined 
+PASS rp.className (<rp class>): setAttribute() to 7 
+PASS rp.className (<rp class>): setAttribute() to 1.5 
+PASS rp.className (<rp class>): setAttribute() to true 
+PASS rp.className (<rp class>): setAttribute() to false 
+PASS rp.className (<rp class>): setAttribute() to object "[object Object]" 
+PASS rp.className (<rp class>): setAttribute() to NaN 
+PASS rp.className (<rp class>): setAttribute() to Infinity 
+PASS rp.className (<rp class>): setAttribute() to -Infinity 
+PASS rp.className (<rp class>): setAttribute() to "\0" 
+PASS rp.className (<rp class>): setAttribute() to null 
+PASS rp.className (<rp class>): setAttribute() to object "test-toString" 
+PASS rp.className (<rp class>): setAttribute() to object "test-valueOf" 
+PASS rp.className (<rp class>): IDL set to "" 
+PASS rp.className (<rp class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.className (<rp class>): IDL set to undefined 
+PASS rp.className (<rp class>): IDL set to 7 
+PASS rp.className (<rp class>): IDL set to 1.5 
+PASS rp.className (<rp class>): IDL set to true 
+PASS rp.className (<rp class>): IDL set to false 
+PASS rp.className (<rp class>): IDL set to object "[object Object]" 
+PASS rp.className (<rp class>): IDL set to NaN 
+PASS rp.className (<rp class>): IDL set to Infinity 
+PASS rp.className (<rp class>): IDL set to -Infinity 
+PASS rp.className (<rp class>): IDL set to "\0" 
+PASS rp.className (<rp class>): IDL set to null 
+PASS rp.className (<rp class>): IDL set to object "test-toString" 
+PASS rp.className (<rp class>): IDL set to object "test-valueOf" 
+PASS rp.hidden: typeof IDL attribute 
+PASS rp.hidden: IDL get with DOM attribute unset 
+PASS rp.hidden: setAttribute() to "" 
+PASS rp.hidden: setAttribute() to " foo " 
+PASS rp.hidden: setAttribute() to undefined 
+PASS rp.hidden: setAttribute() to null 
+PASS rp.hidden: setAttribute() to 7 
+PASS rp.hidden: setAttribute() to 1.5 
+PASS rp.hidden: setAttribute() to true 
+PASS rp.hidden: setAttribute() to false 
+PASS rp.hidden: setAttribute() to object "[object Object]" 
+PASS rp.hidden: setAttribute() to NaN 
+PASS rp.hidden: setAttribute() to Infinity 
+PASS rp.hidden: setAttribute() to -Infinity 
+PASS rp.hidden: setAttribute() to "\0" 
+PASS rp.hidden: setAttribute() to object "test-toString" 
+PASS rp.hidden: setAttribute() to object "test-valueOf" 
+PASS rp.hidden: setAttribute() to "hidden" 
+PASS rp.hidden: IDL set to "" 
+PASS rp.hidden: IDL set to " foo " 
+PASS rp.hidden: IDL set to undefined 
+PASS rp.hidden: IDL set to null 
+PASS rp.hidden: IDL set to 7 
+PASS rp.hidden: IDL set to 1.5 
+PASS rp.hidden: IDL set to true 
+PASS rp.hidden: IDL set to false 
+PASS rp.hidden: IDL set to object "[object Object]" 
+PASS rp.hidden: IDL set to NaN 
+PASS rp.hidden: IDL set to Infinity 
+PASS rp.hidden: IDL set to -Infinity 
+PASS rp.hidden: IDL set to "\0" 
+PASS rp.hidden: IDL set to object "test-toString" 
+PASS rp.hidden: IDL set to object "test-valueOf" 
+PASS rp.accessKey: typeof IDL attribute 
+PASS rp.accessKey: IDL get with DOM attribute unset 
+PASS rp.accessKey: setAttribute() to "" 
+PASS rp.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.accessKey: setAttribute() to undefined 
+PASS rp.accessKey: setAttribute() to 7 
+PASS rp.accessKey: setAttribute() to 1.5 
+PASS rp.accessKey: setAttribute() to true 
+PASS rp.accessKey: setAttribute() to false 
+PASS rp.accessKey: setAttribute() to object "[object Object]" 
+PASS rp.accessKey: setAttribute() to NaN 
+PASS rp.accessKey: setAttribute() to Infinity 
+PASS rp.accessKey: setAttribute() to -Infinity 
+PASS rp.accessKey: setAttribute() to "\0" 
+PASS rp.accessKey: setAttribute() to null 
+PASS rp.accessKey: setAttribute() to object "test-toString" 
+PASS rp.accessKey: setAttribute() to object "test-valueOf" 
+PASS rp.accessKey: IDL set to "" 
+PASS rp.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS rp.accessKey: IDL set to undefined 
+PASS rp.accessKey: IDL set to 7 
+PASS rp.accessKey: IDL set to 1.5 
+PASS rp.accessKey: IDL set to true 
+PASS rp.accessKey: IDL set to false 
+PASS rp.accessKey: IDL set to object "[object Object]" 
+PASS rp.accessKey: IDL set to NaN 
+PASS rp.accessKey: IDL set to Infinity 
+PASS rp.accessKey: IDL set to -Infinity 
+PASS rp.accessKey: IDL set to "\0" 
+PASS rp.accessKey: IDL set to null 
+PASS rp.accessKey: IDL set to object "test-toString" 
+PASS rp.accessKey: IDL set to object "test-valueOf" 
+PASS rp.tabIndex: typeof IDL attribute 
+PASS rp.tabIndex: setAttribute() to -36 
+PASS rp.tabIndex: setAttribute() to -1 
+PASS rp.tabIndex: setAttribute() to 0 
+PASS rp.tabIndex: setAttribute() to 1 
+PASS rp.tabIndex: setAttribute() to 2147483647 
+PASS rp.tabIndex: setAttribute() to -2147483648 
+PASS rp.tabIndex: setAttribute() to "-1" 
+PASS rp.tabIndex: setAttribute() to "-0" 
+PASS rp.tabIndex: setAttribute() to "0" 
+PASS rp.tabIndex: setAttribute() to "1" 
+PASS rp.tabIndex: setAttribute() to "\t7" 
+PASS rp.tabIndex: setAttribute() to "\f7" 
+PASS rp.tabIndex: setAttribute() to " 7" 
+PASS rp.tabIndex: setAttribute() to "\n7" 
+PASS rp.tabIndex: setAttribute() to "\r7" 
+PASS rp.tabIndex: setAttribute() to 1.5 
+PASS rp.tabIndex: setAttribute() to object "2" 
+PASS rp.tabIndex: IDL set to -36 
+PASS rp.tabIndex: IDL set to -1 
+PASS rp.tabIndex: IDL set to 0 
+PASS rp.tabIndex: IDL set to 1 
+PASS rp.tabIndex: IDL set to 2147483647 
+PASS rp.tabIndex: IDL set to -2147483648 
 PASS data.title: typeof IDL attribute 
 PASS data.title: IDL get with DOM attribute unset 
 PASS data.title: setAttribute() to "" 
@@ -5792,747 +6533,6 @@ PASS mark.tabIndex: IDL set to 0
 PASS mark.tabIndex: IDL set to 1 
 PASS mark.tabIndex: IDL set to 2147483647 
 PASS mark.tabIndex: IDL set to -2147483648 
-PASS ruby.title: typeof IDL attribute 
-PASS ruby.title: IDL get with DOM attribute unset 
-PASS ruby.title: setAttribute() to "" 
-PASS ruby.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.title: setAttribute() to undefined 
-PASS ruby.title: setAttribute() to 7 
-PASS ruby.title: setAttribute() to 1.5 
-PASS ruby.title: setAttribute() to true 
-PASS ruby.title: setAttribute() to false 
-PASS ruby.title: setAttribute() to object "[object Object]" 
-PASS ruby.title: setAttribute() to NaN 
-PASS ruby.title: setAttribute() to Infinity 
-PASS ruby.title: setAttribute() to -Infinity 
-PASS ruby.title: setAttribute() to "\0" 
-PASS ruby.title: setAttribute() to null 
-PASS ruby.title: setAttribute() to object "test-toString" 
-PASS ruby.title: setAttribute() to object "test-valueOf" 
-PASS ruby.title: IDL set to "" 
-PASS ruby.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.title: IDL set to undefined 
-PASS ruby.title: IDL set to 7 
-PASS ruby.title: IDL set to 1.5 
-PASS ruby.title: IDL set to true 
-PASS ruby.title: IDL set to false 
-PASS ruby.title: IDL set to object "[object Object]" 
-PASS ruby.title: IDL set to NaN 
-PASS ruby.title: IDL set to Infinity 
-PASS ruby.title: IDL set to -Infinity 
-PASS ruby.title: IDL set to "\0" 
-PASS ruby.title: IDL set to null 
-PASS ruby.title: IDL set to object "test-toString" 
-PASS ruby.title: IDL set to object "test-valueOf" 
-PASS ruby.lang: typeof IDL attribute 
-PASS ruby.lang: IDL get with DOM attribute unset 
-PASS ruby.lang: setAttribute() to "" 
-PASS ruby.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.lang: setAttribute() to undefined 
-PASS ruby.lang: setAttribute() to 7 
-PASS ruby.lang: setAttribute() to 1.5 
-PASS ruby.lang: setAttribute() to true 
-PASS ruby.lang: setAttribute() to false 
-PASS ruby.lang: setAttribute() to object "[object Object]" 
-PASS ruby.lang: setAttribute() to NaN 
-PASS ruby.lang: setAttribute() to Infinity 
-PASS ruby.lang: setAttribute() to -Infinity 
-PASS ruby.lang: setAttribute() to "\0" 
-PASS ruby.lang: setAttribute() to null 
-PASS ruby.lang: setAttribute() to object "test-toString" 
-PASS ruby.lang: setAttribute() to object "test-valueOf" 
-PASS ruby.lang: IDL set to "" 
-PASS ruby.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.lang: IDL set to undefined 
-PASS ruby.lang: IDL set to 7 
-PASS ruby.lang: IDL set to 1.5 
-PASS ruby.lang: IDL set to true 
-PASS ruby.lang: IDL set to false 
-PASS ruby.lang: IDL set to object "[object Object]" 
-PASS ruby.lang: IDL set to NaN 
-PASS ruby.lang: IDL set to Infinity 
-PASS ruby.lang: IDL set to -Infinity 
-PASS ruby.lang: IDL set to "\0" 
-PASS ruby.lang: IDL set to null 
-PASS ruby.lang: IDL set to object "test-toString" 
-PASS ruby.lang: IDL set to object "test-valueOf" 
-PASS ruby.dir: typeof IDL attribute 
-PASS ruby.dir: IDL get with DOM attribute unset 
-PASS ruby.dir: setAttribute() to "" 
-PASS ruby.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.dir: setAttribute() to undefined 
-PASS ruby.dir: setAttribute() to 7 
-PASS ruby.dir: setAttribute() to 1.5 
-PASS ruby.dir: setAttribute() to true 
-PASS ruby.dir: setAttribute() to false 
-PASS ruby.dir: setAttribute() to object "[object Object]" 
-PASS ruby.dir: setAttribute() to NaN 
-PASS ruby.dir: setAttribute() to Infinity 
-PASS ruby.dir: setAttribute() to -Infinity 
-PASS ruby.dir: setAttribute() to "\0" 
-PASS ruby.dir: setAttribute() to null 
-PASS ruby.dir: setAttribute() to object "test-toString" 
-PASS ruby.dir: setAttribute() to object "test-valueOf" 
-PASS ruby.dir: setAttribute() to "ltr" 
-PASS ruby.dir: setAttribute() to "xltr" 
-PASS ruby.dir: setAttribute() to "ltr\0" 
-PASS ruby.dir: setAttribute() to "tr" 
-PASS ruby.dir: setAttribute() to "LTR" 
-PASS ruby.dir: setAttribute() to "rtl" 
-PASS ruby.dir: setAttribute() to "xrtl" 
-PASS ruby.dir: setAttribute() to "rtl\0" 
-PASS ruby.dir: setAttribute() to "tl" 
-PASS ruby.dir: setAttribute() to "RTL" 
-PASS ruby.dir: setAttribute() to "auto" 
-PASS ruby.dir: setAttribute() to "xauto" 
-PASS ruby.dir: setAttribute() to "auto\0" 
-PASS ruby.dir: setAttribute() to "uto" 
-PASS ruby.dir: setAttribute() to "AUTO" 
-PASS ruby.dir: IDL set to "" 
-PASS ruby.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.dir: IDL set to undefined 
-PASS ruby.dir: IDL set to 7 
-PASS ruby.dir: IDL set to 1.5 
-PASS ruby.dir: IDL set to true 
-PASS ruby.dir: IDL set to false 
-PASS ruby.dir: IDL set to object "[object Object]" 
-PASS ruby.dir: IDL set to NaN 
-PASS ruby.dir: IDL set to Infinity 
-PASS ruby.dir: IDL set to -Infinity 
-PASS ruby.dir: IDL set to "\0" 
-PASS ruby.dir: IDL set to null 
-PASS ruby.dir: IDL set to object "test-toString" 
-PASS ruby.dir: IDL set to object "test-valueOf" 
-PASS ruby.dir: IDL set to "ltr" 
-PASS ruby.dir: IDL set to "xltr" 
-PASS ruby.dir: IDL set to "ltr\0" 
-PASS ruby.dir: IDL set to "tr" 
-PASS ruby.dir: IDL set to "LTR" 
-PASS ruby.dir: IDL set to "rtl" 
-PASS ruby.dir: IDL set to "xrtl" 
-PASS ruby.dir: IDL set to "rtl\0" 
-PASS ruby.dir: IDL set to "tl" 
-PASS ruby.dir: IDL set to "RTL" 
-PASS ruby.dir: IDL set to "auto" 
-PASS ruby.dir: IDL set to "xauto" 
-PASS ruby.dir: IDL set to "auto\0" 
-PASS ruby.dir: IDL set to "uto" 
-PASS ruby.dir: IDL set to "AUTO" 
-PASS ruby.className (<ruby class>): typeof IDL attribute 
-PASS ruby.className (<ruby class>): IDL get with DOM attribute unset 
-PASS ruby.className (<ruby class>): setAttribute() to "" 
-PASS ruby.className (<ruby class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.className (<ruby class>): setAttribute() to undefined 
-PASS ruby.className (<ruby class>): setAttribute() to 7 
-PASS ruby.className (<ruby class>): setAttribute() to 1.5 
-PASS ruby.className (<ruby class>): setAttribute() to true 
-PASS ruby.className (<ruby class>): setAttribute() to false 
-PASS ruby.className (<ruby class>): setAttribute() to object "[object Object]" 
-PASS ruby.className (<ruby class>): setAttribute() to NaN 
-PASS ruby.className (<ruby class>): setAttribute() to Infinity 
-PASS ruby.className (<ruby class>): setAttribute() to -Infinity 
-PASS ruby.className (<ruby class>): setAttribute() to "\0" 
-PASS ruby.className (<ruby class>): setAttribute() to null 
-PASS ruby.className (<ruby class>): setAttribute() to object "test-toString" 
-PASS ruby.className (<ruby class>): setAttribute() to object "test-valueOf" 
-PASS ruby.className (<ruby class>): IDL set to "" 
-PASS ruby.className (<ruby class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.className (<ruby class>): IDL set to undefined 
-PASS ruby.className (<ruby class>): IDL set to 7 
-PASS ruby.className (<ruby class>): IDL set to 1.5 
-PASS ruby.className (<ruby class>): IDL set to true 
-PASS ruby.className (<ruby class>): IDL set to false 
-PASS ruby.className (<ruby class>): IDL set to object "[object Object]" 
-PASS ruby.className (<ruby class>): IDL set to NaN 
-PASS ruby.className (<ruby class>): IDL set to Infinity 
-PASS ruby.className (<ruby class>): IDL set to -Infinity 
-PASS ruby.className (<ruby class>): IDL set to "\0" 
-PASS ruby.className (<ruby class>): IDL set to null 
-PASS ruby.className (<ruby class>): IDL set to object "test-toString" 
-PASS ruby.className (<ruby class>): IDL set to object "test-valueOf" 
-PASS ruby.hidden: typeof IDL attribute 
-PASS ruby.hidden: IDL get with DOM attribute unset 
-PASS ruby.hidden: setAttribute() to "" 
-PASS ruby.hidden: setAttribute() to " foo " 
-PASS ruby.hidden: setAttribute() to undefined 
-PASS ruby.hidden: setAttribute() to null 
-PASS ruby.hidden: setAttribute() to 7 
-PASS ruby.hidden: setAttribute() to 1.5 
-PASS ruby.hidden: setAttribute() to true 
-PASS ruby.hidden: setAttribute() to false 
-PASS ruby.hidden: setAttribute() to object "[object Object]" 
-PASS ruby.hidden: setAttribute() to NaN 
-PASS ruby.hidden: setAttribute() to Infinity 
-PASS ruby.hidden: setAttribute() to -Infinity 
-PASS ruby.hidden: setAttribute() to "\0" 
-PASS ruby.hidden: setAttribute() to object "test-toString" 
-PASS ruby.hidden: setAttribute() to object "test-valueOf" 
-PASS ruby.hidden: setAttribute() to "hidden" 
-PASS ruby.hidden: IDL set to "" 
-PASS ruby.hidden: IDL set to " foo " 
-PASS ruby.hidden: IDL set to undefined 
-PASS ruby.hidden: IDL set to null 
-PASS ruby.hidden: IDL set to 7 
-PASS ruby.hidden: IDL set to 1.5 
-PASS ruby.hidden: IDL set to true 
-PASS ruby.hidden: IDL set to false 
-PASS ruby.hidden: IDL set to object "[object Object]" 
-PASS ruby.hidden: IDL set to NaN 
-PASS ruby.hidden: IDL set to Infinity 
-PASS ruby.hidden: IDL set to -Infinity 
-PASS ruby.hidden: IDL set to "\0" 
-PASS ruby.hidden: IDL set to object "test-toString" 
-PASS ruby.hidden: IDL set to object "test-valueOf" 
-PASS ruby.accessKey: typeof IDL attribute 
-PASS ruby.accessKey: IDL get with DOM attribute unset 
-PASS ruby.accessKey: setAttribute() to "" 
-PASS ruby.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.accessKey: setAttribute() to undefined 
-PASS ruby.accessKey: setAttribute() to 7 
-PASS ruby.accessKey: setAttribute() to 1.5 
-PASS ruby.accessKey: setAttribute() to true 
-PASS ruby.accessKey: setAttribute() to false 
-PASS ruby.accessKey: setAttribute() to object "[object Object]" 
-PASS ruby.accessKey: setAttribute() to NaN 
-PASS ruby.accessKey: setAttribute() to Infinity 
-PASS ruby.accessKey: setAttribute() to -Infinity 
-PASS ruby.accessKey: setAttribute() to "\0" 
-PASS ruby.accessKey: setAttribute() to null 
-PASS ruby.accessKey: setAttribute() to object "test-toString" 
-PASS ruby.accessKey: setAttribute() to object "test-valueOf" 
-PASS ruby.accessKey: IDL set to "" 
-PASS ruby.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS ruby.accessKey: IDL set to undefined 
-PASS ruby.accessKey: IDL set to 7 
-PASS ruby.accessKey: IDL set to 1.5 
-PASS ruby.accessKey: IDL set to true 
-PASS ruby.accessKey: IDL set to false 
-PASS ruby.accessKey: IDL set to object "[object Object]" 
-PASS ruby.accessKey: IDL set to NaN 
-PASS ruby.accessKey: IDL set to Infinity 
-PASS ruby.accessKey: IDL set to -Infinity 
-PASS ruby.accessKey: IDL set to "\0" 
-PASS ruby.accessKey: IDL set to null 
-PASS ruby.accessKey: IDL set to object "test-toString" 
-PASS ruby.accessKey: IDL set to object "test-valueOf" 
-PASS ruby.tabIndex: typeof IDL attribute 
-PASS ruby.tabIndex: setAttribute() to -36 
-PASS ruby.tabIndex: setAttribute() to -1 
-PASS ruby.tabIndex: setAttribute() to 0 
-PASS ruby.tabIndex: setAttribute() to 1 
-PASS ruby.tabIndex: setAttribute() to 2147483647 
-PASS ruby.tabIndex: setAttribute() to -2147483648 
-PASS ruby.tabIndex: setAttribute() to "-1" 
-PASS ruby.tabIndex: setAttribute() to "-0" 
-PASS ruby.tabIndex: setAttribute() to "0" 
-PASS ruby.tabIndex: setAttribute() to "1" 
-PASS ruby.tabIndex: setAttribute() to "\t7" 
-PASS ruby.tabIndex: setAttribute() to "\f7" 
-PASS ruby.tabIndex: setAttribute() to " 7" 
-PASS ruby.tabIndex: setAttribute() to "\n7" 
-PASS ruby.tabIndex: setAttribute() to "\r7" 
-PASS ruby.tabIndex: setAttribute() to 1.5 
-PASS ruby.tabIndex: setAttribute() to object "2" 
-PASS ruby.tabIndex: IDL set to -36 
-PASS ruby.tabIndex: IDL set to -1 
-PASS ruby.tabIndex: IDL set to 0 
-PASS ruby.tabIndex: IDL set to 1 
-PASS ruby.tabIndex: IDL set to 2147483647 
-PASS ruby.tabIndex: IDL set to -2147483648 
-PASS rt.title: typeof IDL attribute 
-PASS rt.title: IDL get with DOM attribute unset 
-PASS rt.title: setAttribute() to "" 
-PASS rt.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.title: setAttribute() to undefined 
-PASS rt.title: setAttribute() to 7 
-PASS rt.title: setAttribute() to 1.5 
-PASS rt.title: setAttribute() to true 
-PASS rt.title: setAttribute() to false 
-PASS rt.title: setAttribute() to object "[object Object]" 
-PASS rt.title: setAttribute() to NaN 
-PASS rt.title: setAttribute() to Infinity 
-PASS rt.title: setAttribute() to -Infinity 
-PASS rt.title: setAttribute() to "\0" 
-PASS rt.title: setAttribute() to null 
-PASS rt.title: setAttribute() to object "test-toString" 
-PASS rt.title: setAttribute() to object "test-valueOf" 
-PASS rt.title: IDL set to "" 
-PASS rt.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.title: IDL set to undefined 
-PASS rt.title: IDL set to 7 
-PASS rt.title: IDL set to 1.5 
-PASS rt.title: IDL set to true 
-PASS rt.title: IDL set to false 
-PASS rt.title: IDL set to object "[object Object]" 
-PASS rt.title: IDL set to NaN 
-PASS rt.title: IDL set to Infinity 
-PASS rt.title: IDL set to -Infinity 
-PASS rt.title: IDL set to "\0" 
-PASS rt.title: IDL set to null 
-PASS rt.title: IDL set to object "test-toString" 
-PASS rt.title: IDL set to object "test-valueOf" 
-PASS rt.lang: typeof IDL attribute 
-PASS rt.lang: IDL get with DOM attribute unset 
-PASS rt.lang: setAttribute() to "" 
-PASS rt.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.lang: setAttribute() to undefined 
-PASS rt.lang: setAttribute() to 7 
-PASS rt.lang: setAttribute() to 1.5 
-PASS rt.lang: setAttribute() to true 
-PASS rt.lang: setAttribute() to false 
-PASS rt.lang: setAttribute() to object "[object Object]" 
-PASS rt.lang: setAttribute() to NaN 
-PASS rt.lang: setAttribute() to Infinity 
-PASS rt.lang: setAttribute() to -Infinity 
-PASS rt.lang: setAttribute() to "\0" 
-PASS rt.lang: setAttribute() to null 
-PASS rt.lang: setAttribute() to object "test-toString" 
-PASS rt.lang: setAttribute() to object "test-valueOf" 
-PASS rt.lang: IDL set to "" 
-PASS rt.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.lang: IDL set to undefined 
-PASS rt.lang: IDL set to 7 
-PASS rt.lang: IDL set to 1.5 
-PASS rt.lang: IDL set to true 
-PASS rt.lang: IDL set to false 
-PASS rt.lang: IDL set to object "[object Object]" 
-PASS rt.lang: IDL set to NaN 
-PASS rt.lang: IDL set to Infinity 
-PASS rt.lang: IDL set to -Infinity 
-PASS rt.lang: IDL set to "\0" 
-PASS rt.lang: IDL set to null 
-PASS rt.lang: IDL set to object "test-toString" 
-PASS rt.lang: IDL set to object "test-valueOf" 
-PASS rt.dir: typeof IDL attribute 
-PASS rt.dir: IDL get with DOM attribute unset 
-PASS rt.dir: setAttribute() to "" 
-PASS rt.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.dir: setAttribute() to undefined 
-PASS rt.dir: setAttribute() to 7 
-PASS rt.dir: setAttribute() to 1.5 
-PASS rt.dir: setAttribute() to true 
-PASS rt.dir: setAttribute() to false 
-PASS rt.dir: setAttribute() to object "[object Object]" 
-PASS rt.dir: setAttribute() to NaN 
-PASS rt.dir: setAttribute() to Infinity 
-PASS rt.dir: setAttribute() to -Infinity 
-PASS rt.dir: setAttribute() to "\0" 
-PASS rt.dir: setAttribute() to null 
-PASS rt.dir: setAttribute() to object "test-toString" 
-PASS rt.dir: setAttribute() to object "test-valueOf" 
-PASS rt.dir: setAttribute() to "ltr" 
-PASS rt.dir: setAttribute() to "xltr" 
-PASS rt.dir: setAttribute() to "ltr\0" 
-PASS rt.dir: setAttribute() to "tr" 
-PASS rt.dir: setAttribute() to "LTR" 
-PASS rt.dir: setAttribute() to "rtl" 
-PASS rt.dir: setAttribute() to "xrtl" 
-PASS rt.dir: setAttribute() to "rtl\0" 
-PASS rt.dir: setAttribute() to "tl" 
-PASS rt.dir: setAttribute() to "RTL" 
-PASS rt.dir: setAttribute() to "auto" 
-PASS rt.dir: setAttribute() to "xauto" 
-PASS rt.dir: setAttribute() to "auto\0" 
-PASS rt.dir: setAttribute() to "uto" 
-PASS rt.dir: setAttribute() to "AUTO" 
-PASS rt.dir: IDL set to "" 
-PASS rt.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.dir: IDL set to undefined 
-PASS rt.dir: IDL set to 7 
-PASS rt.dir: IDL set to 1.5 
-PASS rt.dir: IDL set to true 
-PASS rt.dir: IDL set to false 
-PASS rt.dir: IDL set to object "[object Object]" 
-PASS rt.dir: IDL set to NaN 
-PASS rt.dir: IDL set to Infinity 
-PASS rt.dir: IDL set to -Infinity 
-PASS rt.dir: IDL set to "\0" 
-PASS rt.dir: IDL set to null 
-PASS rt.dir: IDL set to object "test-toString" 
-PASS rt.dir: IDL set to object "test-valueOf" 
-PASS rt.dir: IDL set to "ltr" 
-PASS rt.dir: IDL set to "xltr" 
-PASS rt.dir: IDL set to "ltr\0" 
-PASS rt.dir: IDL set to "tr" 
-PASS rt.dir: IDL set to "LTR" 
-PASS rt.dir: IDL set to "rtl" 
-PASS rt.dir: IDL set to "xrtl" 
-PASS rt.dir: IDL set to "rtl\0" 
-PASS rt.dir: IDL set to "tl" 
-PASS rt.dir: IDL set to "RTL" 
-PASS rt.dir: IDL set to "auto" 
-PASS rt.dir: IDL set to "xauto" 
-PASS rt.dir: IDL set to "auto\0" 
-PASS rt.dir: IDL set to "uto" 
-PASS rt.dir: IDL set to "AUTO" 
-PASS rt.className (<rt class>): typeof IDL attribute 
-PASS rt.className (<rt class>): IDL get with DOM attribute unset 
-PASS rt.className (<rt class>): setAttribute() to "" 
-PASS rt.className (<rt class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.className (<rt class>): setAttribute() to undefined 
-PASS rt.className (<rt class>): setAttribute() to 7 
-PASS rt.className (<rt class>): setAttribute() to 1.5 
-PASS rt.className (<rt class>): setAttribute() to true 
-PASS rt.className (<rt class>): setAttribute() to false 
-PASS rt.className (<rt class>): setAttribute() to object "[object Object]" 
-PASS rt.className (<rt class>): setAttribute() to NaN 
-PASS rt.className (<rt class>): setAttribute() to Infinity 
-PASS rt.className (<rt class>): setAttribute() to -Infinity 
-PASS rt.className (<rt class>): setAttribute() to "\0" 
-PASS rt.className (<rt class>): setAttribute() to null 
-PASS rt.className (<rt class>): setAttribute() to object "test-toString" 
-PASS rt.className (<rt class>): setAttribute() to object "test-valueOf" 
-PASS rt.className (<rt class>): IDL set to "" 
-PASS rt.className (<rt class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.className (<rt class>): IDL set to undefined 
-PASS rt.className (<rt class>): IDL set to 7 
-PASS rt.className (<rt class>): IDL set to 1.5 
-PASS rt.className (<rt class>): IDL set to true 
-PASS rt.className (<rt class>): IDL set to false 
-PASS rt.className (<rt class>): IDL set to object "[object Object]" 
-PASS rt.className (<rt class>): IDL set to NaN 
-PASS rt.className (<rt class>): IDL set to Infinity 
-PASS rt.className (<rt class>): IDL set to -Infinity 
-PASS rt.className (<rt class>): IDL set to "\0" 
-PASS rt.className (<rt class>): IDL set to null 
-PASS rt.className (<rt class>): IDL set to object "test-toString" 
-PASS rt.className (<rt class>): IDL set to object "test-valueOf" 
-PASS rt.hidden: typeof IDL attribute 
-PASS rt.hidden: IDL get with DOM attribute unset 
-PASS rt.hidden: setAttribute() to "" 
-PASS rt.hidden: setAttribute() to " foo " 
-PASS rt.hidden: setAttribute() to undefined 
-PASS rt.hidden: setAttribute() to null 
-PASS rt.hidden: setAttribute() to 7 
-PASS rt.hidden: setAttribute() to 1.5 
-PASS rt.hidden: setAttribute() to true 
-PASS rt.hidden: setAttribute() to false 
-PASS rt.hidden: setAttribute() to object "[object Object]" 
-PASS rt.hidden: setAttribute() to NaN 
-PASS rt.hidden: setAttribute() to Infinity 
-PASS rt.hidden: setAttribute() to -Infinity 
-PASS rt.hidden: setAttribute() to "\0" 
-PASS rt.hidden: setAttribute() to object "test-toString" 
-PASS rt.hidden: setAttribute() to object "test-valueOf" 
-PASS rt.hidden: setAttribute() to "hidden" 
-PASS rt.hidden: IDL set to "" 
-PASS rt.hidden: IDL set to " foo " 
-PASS rt.hidden: IDL set to undefined 
-PASS rt.hidden: IDL set to null 
-PASS rt.hidden: IDL set to 7 
-PASS rt.hidden: IDL set to 1.5 
-PASS rt.hidden: IDL set to true 
-PASS rt.hidden: IDL set to false 
-PASS rt.hidden: IDL set to object "[object Object]" 
-PASS rt.hidden: IDL set to NaN 
-PASS rt.hidden: IDL set to Infinity 
-PASS rt.hidden: IDL set to -Infinity 
-PASS rt.hidden: IDL set to "\0" 
-PASS rt.hidden: IDL set to object "test-toString" 
-PASS rt.hidden: IDL set to object "test-valueOf" 
-PASS rt.accessKey: typeof IDL attribute 
-PASS rt.accessKey: IDL get with DOM attribute unset 
-PASS rt.accessKey: setAttribute() to "" 
-PASS rt.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.accessKey: setAttribute() to undefined 
-PASS rt.accessKey: setAttribute() to 7 
-PASS rt.accessKey: setAttribute() to 1.5 
-PASS rt.accessKey: setAttribute() to true 
-PASS rt.accessKey: setAttribute() to false 
-PASS rt.accessKey: setAttribute() to object "[object Object]" 
-PASS rt.accessKey: setAttribute() to NaN 
-PASS rt.accessKey: setAttribute() to Infinity 
-PASS rt.accessKey: setAttribute() to -Infinity 
-PASS rt.accessKey: setAttribute() to "\0" 
-PASS rt.accessKey: setAttribute() to null 
-PASS rt.accessKey: setAttribute() to object "test-toString" 
-PASS rt.accessKey: setAttribute() to object "test-valueOf" 
-PASS rt.accessKey: IDL set to "" 
-PASS rt.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rt.accessKey: IDL set to undefined 
-PASS rt.accessKey: IDL set to 7 
-PASS rt.accessKey: IDL set to 1.5 
-PASS rt.accessKey: IDL set to true 
-PASS rt.accessKey: IDL set to false 
-PASS rt.accessKey: IDL set to object "[object Object]" 
-PASS rt.accessKey: IDL set to NaN 
-PASS rt.accessKey: IDL set to Infinity 
-PASS rt.accessKey: IDL set to -Infinity 
-PASS rt.accessKey: IDL set to "\0" 
-PASS rt.accessKey: IDL set to null 
-PASS rt.accessKey: IDL set to object "test-toString" 
-PASS rt.accessKey: IDL set to object "test-valueOf" 
-PASS rt.tabIndex: typeof IDL attribute 
-PASS rt.tabIndex: setAttribute() to -36 
-PASS rt.tabIndex: setAttribute() to -1 
-PASS rt.tabIndex: setAttribute() to 0 
-PASS rt.tabIndex: setAttribute() to 1 
-PASS rt.tabIndex: setAttribute() to 2147483647 
-PASS rt.tabIndex: setAttribute() to -2147483648 
-PASS rt.tabIndex: setAttribute() to "-1" 
-PASS rt.tabIndex: setAttribute() to "-0" 
-PASS rt.tabIndex: setAttribute() to "0" 
-PASS rt.tabIndex: setAttribute() to "1" 
-PASS rt.tabIndex: setAttribute() to "\t7" 
-PASS rt.tabIndex: setAttribute() to "\f7" 
-PASS rt.tabIndex: setAttribute() to " 7" 
-PASS rt.tabIndex: setAttribute() to "\n7" 
-PASS rt.tabIndex: setAttribute() to "\r7" 
-PASS rt.tabIndex: setAttribute() to 1.5 
-PASS rt.tabIndex: setAttribute() to object "2" 
-PASS rt.tabIndex: IDL set to -36 
-PASS rt.tabIndex: IDL set to -1 
-PASS rt.tabIndex: IDL set to 0 
-PASS rt.tabIndex: IDL set to 1 
-PASS rt.tabIndex: IDL set to 2147483647 
-PASS rt.tabIndex: IDL set to -2147483648 
-PASS rp.title: typeof IDL attribute 
-PASS rp.title: IDL get with DOM attribute unset 
-PASS rp.title: setAttribute() to "" 
-PASS rp.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.title: setAttribute() to undefined 
-PASS rp.title: setAttribute() to 7 
-PASS rp.title: setAttribute() to 1.5 
-PASS rp.title: setAttribute() to true 
-PASS rp.title: setAttribute() to false 
-PASS rp.title: setAttribute() to object "[object Object]" 
-PASS rp.title: setAttribute() to NaN 
-PASS rp.title: setAttribute() to Infinity 
-PASS rp.title: setAttribute() to -Infinity 
-PASS rp.title: setAttribute() to "\0" 
-PASS rp.title: setAttribute() to null 
-PASS rp.title: setAttribute() to object "test-toString" 
-PASS rp.title: setAttribute() to object "test-valueOf" 
-PASS rp.title: IDL set to "" 
-PASS rp.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.title: IDL set to undefined 
-PASS rp.title: IDL set to 7 
-PASS rp.title: IDL set to 1.5 
-PASS rp.title: IDL set to true 
-PASS rp.title: IDL set to false 
-PASS rp.title: IDL set to object "[object Object]" 
-PASS rp.title: IDL set to NaN 
-PASS rp.title: IDL set to Infinity 
-PASS rp.title: IDL set to -Infinity 
-PASS rp.title: IDL set to "\0" 
-PASS rp.title: IDL set to null 
-PASS rp.title: IDL set to object "test-toString" 
-PASS rp.title: IDL set to object "test-valueOf" 
-PASS rp.lang: typeof IDL attribute 
-PASS rp.lang: IDL get with DOM attribute unset 
-PASS rp.lang: setAttribute() to "" 
-PASS rp.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.lang: setAttribute() to undefined 
-PASS rp.lang: setAttribute() to 7 
-PASS rp.lang: setAttribute() to 1.5 
-PASS rp.lang: setAttribute() to true 
-PASS rp.lang: setAttribute() to false 
-PASS rp.lang: setAttribute() to object "[object Object]" 
-PASS rp.lang: setAttribute() to NaN 
-PASS rp.lang: setAttribute() to Infinity 
-PASS rp.lang: setAttribute() to -Infinity 
-PASS rp.lang: setAttribute() to "\0" 
-PASS rp.lang: setAttribute() to null 
-PASS rp.lang: setAttribute() to object "test-toString" 
-PASS rp.lang: setAttribute() to object "test-valueOf" 
-PASS rp.lang: IDL set to "" 
-PASS rp.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.lang: IDL set to undefined 
-PASS rp.lang: IDL set to 7 
-PASS rp.lang: IDL set to 1.5 
-PASS rp.lang: IDL set to true 
-PASS rp.lang: IDL set to false 
-PASS rp.lang: IDL set to object "[object Object]" 
-PASS rp.lang: IDL set to NaN 
-PASS rp.lang: IDL set to Infinity 
-PASS rp.lang: IDL set to -Infinity 
-PASS rp.lang: IDL set to "\0" 
-PASS rp.lang: IDL set to null 
-PASS rp.lang: IDL set to object "test-toString" 
-PASS rp.lang: IDL set to object "test-valueOf" 
-PASS rp.dir: typeof IDL attribute 
-PASS rp.dir: IDL get with DOM attribute unset 
-PASS rp.dir: setAttribute() to "" 
-PASS rp.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.dir: setAttribute() to undefined 
-PASS rp.dir: setAttribute() to 7 
-PASS rp.dir: setAttribute() to 1.5 
-PASS rp.dir: setAttribute() to true 
-PASS rp.dir: setAttribute() to false 
-PASS rp.dir: setAttribute() to object "[object Object]" 
-PASS rp.dir: setAttribute() to NaN 
-PASS rp.dir: setAttribute() to Infinity 
-PASS rp.dir: setAttribute() to -Infinity 
-PASS rp.dir: setAttribute() to "\0" 
-PASS rp.dir: setAttribute() to null 
-PASS rp.dir: setAttribute() to object "test-toString" 
-PASS rp.dir: setAttribute() to object "test-valueOf" 
-PASS rp.dir: setAttribute() to "ltr" 
-PASS rp.dir: setAttribute() to "xltr" 
-PASS rp.dir: setAttribute() to "ltr\0" 
-PASS rp.dir: setAttribute() to "tr" 
-PASS rp.dir: setAttribute() to "LTR" 
-PASS rp.dir: setAttribute() to "rtl" 
-PASS rp.dir: setAttribute() to "xrtl" 
-PASS rp.dir: setAttribute() to "rtl\0" 
-PASS rp.dir: setAttribute() to "tl" 
-PASS rp.dir: setAttribute() to "RTL" 
-PASS rp.dir: setAttribute() to "auto" 
-PASS rp.dir: setAttribute() to "xauto" 
-PASS rp.dir: setAttribute() to "auto\0" 
-PASS rp.dir: setAttribute() to "uto" 
-PASS rp.dir: setAttribute() to "AUTO" 
-PASS rp.dir: IDL set to "" 
-PASS rp.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.dir: IDL set to undefined 
-PASS rp.dir: IDL set to 7 
-PASS rp.dir: IDL set to 1.5 
-PASS rp.dir: IDL set to true 
-PASS rp.dir: IDL set to false 
-PASS rp.dir: IDL set to object "[object Object]" 
-PASS rp.dir: IDL set to NaN 
-PASS rp.dir: IDL set to Infinity 
-PASS rp.dir: IDL set to -Infinity 
-PASS rp.dir: IDL set to "\0" 
-PASS rp.dir: IDL set to null 
-PASS rp.dir: IDL set to object "test-toString" 
-PASS rp.dir: IDL set to object "test-valueOf" 
-PASS rp.dir: IDL set to "ltr" 
-PASS rp.dir: IDL set to "xltr" 
-PASS rp.dir: IDL set to "ltr\0" 
-PASS rp.dir: IDL set to "tr" 
-PASS rp.dir: IDL set to "LTR" 
-PASS rp.dir: IDL set to "rtl" 
-PASS rp.dir: IDL set to "xrtl" 
-PASS rp.dir: IDL set to "rtl\0" 
-PASS rp.dir: IDL set to "tl" 
-PASS rp.dir: IDL set to "RTL" 
-PASS rp.dir: IDL set to "auto" 
-PASS rp.dir: IDL set to "xauto" 
-PASS rp.dir: IDL set to "auto\0" 
-PASS rp.dir: IDL set to "uto" 
-PASS rp.dir: IDL set to "AUTO" 
-PASS rp.className (<rp class>): typeof IDL attribute 
-PASS rp.className (<rp class>): IDL get with DOM attribute unset 
-PASS rp.className (<rp class>): setAttribute() to "" 
-PASS rp.className (<rp class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.className (<rp class>): setAttribute() to undefined 
-PASS rp.className (<rp class>): setAttribute() to 7 
-PASS rp.className (<rp class>): setAttribute() to 1.5 
-PASS rp.className (<rp class>): setAttribute() to true 
-PASS rp.className (<rp class>): setAttribute() to false 
-PASS rp.className (<rp class>): setAttribute() to object "[object Object]" 
-PASS rp.className (<rp class>): setAttribute() to NaN 
-PASS rp.className (<rp class>): setAttribute() to Infinity 
-PASS rp.className (<rp class>): setAttribute() to -Infinity 
-PASS rp.className (<rp class>): setAttribute() to "\0" 
-PASS rp.className (<rp class>): setAttribute() to null 
-PASS rp.className (<rp class>): setAttribute() to object "test-toString" 
-PASS rp.className (<rp class>): setAttribute() to object "test-valueOf" 
-PASS rp.className (<rp class>): IDL set to "" 
-PASS rp.className (<rp class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.className (<rp class>): IDL set to undefined 
-PASS rp.className (<rp class>): IDL set to 7 
-PASS rp.className (<rp class>): IDL set to 1.5 
-PASS rp.className (<rp class>): IDL set to true 
-PASS rp.className (<rp class>): IDL set to false 
-PASS rp.className (<rp class>): IDL set to object "[object Object]" 
-PASS rp.className (<rp class>): IDL set to NaN 
-PASS rp.className (<rp class>): IDL set to Infinity 
-PASS rp.className (<rp class>): IDL set to -Infinity 
-PASS rp.className (<rp class>): IDL set to "\0" 
-PASS rp.className (<rp class>): IDL set to null 
-PASS rp.className (<rp class>): IDL set to object "test-toString" 
-PASS rp.className (<rp class>): IDL set to object "test-valueOf" 
-PASS rp.hidden: typeof IDL attribute 
-PASS rp.hidden: IDL get with DOM attribute unset 
-PASS rp.hidden: setAttribute() to "" 
-PASS rp.hidden: setAttribute() to " foo " 
-PASS rp.hidden: setAttribute() to undefined 
-PASS rp.hidden: setAttribute() to null 
-PASS rp.hidden: setAttribute() to 7 
-PASS rp.hidden: setAttribute() to 1.5 
-PASS rp.hidden: setAttribute() to true 
-PASS rp.hidden: setAttribute() to false 
-PASS rp.hidden: setAttribute() to object "[object Object]" 
-PASS rp.hidden: setAttribute() to NaN 
-PASS rp.hidden: setAttribute() to Infinity 
-PASS rp.hidden: setAttribute() to -Infinity 
-PASS rp.hidden: setAttribute() to "\0" 
-PASS rp.hidden: setAttribute() to object "test-toString" 
-PASS rp.hidden: setAttribute() to object "test-valueOf" 
-PASS rp.hidden: setAttribute() to "hidden" 
-PASS rp.hidden: IDL set to "" 
-PASS rp.hidden: IDL set to " foo " 
-PASS rp.hidden: IDL set to undefined 
-PASS rp.hidden: IDL set to null 
-PASS rp.hidden: IDL set to 7 
-PASS rp.hidden: IDL set to 1.5 
-PASS rp.hidden: IDL set to true 
-PASS rp.hidden: IDL set to false 
-PASS rp.hidden: IDL set to object "[object Object]" 
-PASS rp.hidden: IDL set to NaN 
-PASS rp.hidden: IDL set to Infinity 
-PASS rp.hidden: IDL set to -Infinity 
-PASS rp.hidden: IDL set to "\0" 
-PASS rp.hidden: IDL set to object "test-toString" 
-PASS rp.hidden: IDL set to object "test-valueOf" 
-PASS rp.accessKey: typeof IDL attribute 
-PASS rp.accessKey: IDL get with DOM attribute unset 
-PASS rp.accessKey: setAttribute() to "" 
-PASS rp.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.accessKey: setAttribute() to undefined 
-PASS rp.accessKey: setAttribute() to 7 
-PASS rp.accessKey: setAttribute() to 1.5 
-PASS rp.accessKey: setAttribute() to true 
-PASS rp.accessKey: setAttribute() to false 
-PASS rp.accessKey: setAttribute() to object "[object Object]" 
-PASS rp.accessKey: setAttribute() to NaN 
-PASS rp.accessKey: setAttribute() to Infinity 
-PASS rp.accessKey: setAttribute() to -Infinity 
-PASS rp.accessKey: setAttribute() to "\0" 
-PASS rp.accessKey: setAttribute() to null 
-PASS rp.accessKey: setAttribute() to object "test-toString" 
-PASS rp.accessKey: setAttribute() to object "test-valueOf" 
-PASS rp.accessKey: IDL set to "" 
-PASS rp.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS rp.accessKey: IDL set to undefined 
-PASS rp.accessKey: IDL set to 7 
-PASS rp.accessKey: IDL set to 1.5 
-PASS rp.accessKey: IDL set to true 
-PASS rp.accessKey: IDL set to false 
-PASS rp.accessKey: IDL set to object "[object Object]" 
-PASS rp.accessKey: IDL set to NaN 
-PASS rp.accessKey: IDL set to Infinity 
-PASS rp.accessKey: IDL set to -Infinity 
-PASS rp.accessKey: IDL set to "\0" 
-PASS rp.accessKey: IDL set to null 
-PASS rp.accessKey: IDL set to object "test-toString" 
-PASS rp.accessKey: IDL set to object "test-valueOf" 
-PASS rp.tabIndex: typeof IDL attribute 
-PASS rp.tabIndex: setAttribute() to -36 
-PASS rp.tabIndex: setAttribute() to -1 
-PASS rp.tabIndex: setAttribute() to 0 
-PASS rp.tabIndex: setAttribute() to 1 
-PASS rp.tabIndex: setAttribute() to 2147483647 
-PASS rp.tabIndex: setAttribute() to -2147483648 
-PASS rp.tabIndex: setAttribute() to "-1" 
-PASS rp.tabIndex: setAttribute() to "-0" 
-PASS rp.tabIndex: setAttribute() to "0" 
-PASS rp.tabIndex: setAttribute() to "1" 
-PASS rp.tabIndex: setAttribute() to "\t7" 
-PASS rp.tabIndex: setAttribute() to "\f7" 
-PASS rp.tabIndex: setAttribute() to " 7" 
-PASS rp.tabIndex: setAttribute() to "\n7" 
-PASS rp.tabIndex: setAttribute() to "\r7" 
-PASS rp.tabIndex: setAttribute() to 1.5 
-PASS rp.tabIndex: setAttribute() to object "2" 
-PASS rp.tabIndex: IDL set to -36 
-PASS rp.tabIndex: IDL set to -1 
-PASS rp.tabIndex: IDL set to 0 
-PASS rp.tabIndex: IDL set to 1 
-PASS rp.tabIndex: IDL set to 2147483647 
-PASS rp.tabIndex: IDL set to -2147483648 
 PASS bdi.title: typeof IDL attribute 
 PASS bdi.title: IDL get with DOM attribute unset 
 PASS bdi.title: setAttribute() to "" 

@@ -136,6 +136,13 @@ FAIL Invisible <p> doesn't induce extra line breaks ("<div style='visibility:hid
 FAIL No blank lines around <div> with margin ("<div>abc<div style='margin:2em'>def") assert_equals: expected "abc\ndef" but got "abc\ndef\n"
 PASS No newlines at display:inline-block boundary ("<div>123<span style='display:inline-block'>abc</span>def") 
 FAIL Leading/trailing space removal at display:inline-block boundary ("<div>123<span style='display:inline-block'> abc </span>def") assert_equals: expected "123abcdef" but got "123abc def"
+FAIL Blank lines around <p> even without margin ("<div>123<p style='margin:0px'>abc</p>def") assert_equals: expected "123\n\nabc\n\ndef" but got "123\nabc\ndef"
+FAIL No blank lines around <h1> ("<div>123<h1>abc</h1>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
+FAIL No blank lines around <h2> ("<div>123<h2>abc</h2>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
+FAIL No blank lines around <h3> ("<div>123<h3>abc</h3>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
+FAIL No blank lines around <h4> ("<div>123<h4>abc</h4>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
+FAIL No blank lines around <h5> ("<div>123<h5>abc</h5>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
+FAIL No blank lines around <h6> ("<div>123<h6>abc</h6>def") assert_equals: expected "123\nabc\ndef" but got "123\nabc\n\ndef"
 PASS <span> boundaries are irrelevant ("<div>123<span>abc</span>def") 
 PASS <span> boundaries are irrelevant ("<div>123 <span>abc</span> def") 
 PASS <span> boundaries are irrelevant ("<div style='width:0'>123 <span>abc</span> def") 

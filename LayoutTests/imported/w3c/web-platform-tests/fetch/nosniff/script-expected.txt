@@ -1,9 +1,9 @@
 
+PASS URL query: null 
 PASS URL query:  
-PASS URL query: ?type= 
-PASS URL query: ?type=x 
-PASS URL query: ?type=x/x 
-PASS URL query: ?type=text/javascript 
-PASS URL query: ?type=text/ecmascript 
-PASS URL query: ?type=text/ecmascript;blah 
+PASS URL query: x 
+PASS URL query: x/x 
+PASS URL query: text/javascript 
+PASS URL query: text/ecmascript 
+PASS URL query: text/ecmascript;blah 
 

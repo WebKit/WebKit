@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-denied.py?token=e3414997-b8d9-44c5-ac25-b008d36bee33&command=header. Request header field x-test is not allowed by Access-Control-Allow-Headers.
+
+PASS Async request denied at preflight 
+

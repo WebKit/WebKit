@@ -1,3 +1,0 @@
-
-FAIL A script with empty type should run assert_equals: expected true but got false
-

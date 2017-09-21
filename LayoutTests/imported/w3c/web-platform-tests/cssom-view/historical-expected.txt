@@ -1,3 +1,4 @@
 
-PASS Support for DOMRectList 
+PASS Support for ClientRectList 
+PASS Support for ClientRect 
 

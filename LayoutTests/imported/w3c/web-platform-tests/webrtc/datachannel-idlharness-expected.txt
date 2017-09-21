@@ -30,30 +30,32 @@ PASS RTCDataChannel interface: operation send(USVString)
 PASS RTCDataChannel interface: operation send(Blob) 
 PASS RTCDataChannel interface: operation send(ArrayBuffer) 
 PASS RTCDataChannel interface: operation send(ArrayBufferView) 
-PASS RTCDataChannel interface: channel must inherit property "label" with the proper type (0) 
-PASS RTCDataChannel interface: channel must inherit property "ordered" with the proper type (1) 
-PASS RTCDataChannel interface: channel must inherit property "maxPacketLifeTime" with the proper type (2) 
-PASS RTCDataChannel interface: channel must inherit property "maxRetransmits" with the proper type (3) 
-PASS RTCDataChannel interface: channel must inherit property "protocol" with the proper type (4) 
-PASS RTCDataChannel interface: channel must inherit property "negotiated" with the proper type (5) 
-FAIL RTCDataChannel interface: channel must inherit property "id" with the proper type (6) assert_equals: expected "number" but got "object"
-FAIL RTCDataChannel interface: channel must inherit property "priority" with the proper type (7) assert_inherits: property "priority" not found in prototype chain
-PASS RTCDataChannel interface: channel must inherit property "readyState" with the proper type (8) 
-PASS RTCDataChannel interface: channel must inherit property "bufferedAmount" with the proper type (9) 
-PASS RTCDataChannel interface: channel must inherit property "bufferedAmountLowThreshold" with the proper type (10) 
-FAIL RTCDataChannel interface: channel must inherit property "onopen" with the proper type (11) Unrecognized type EventHandler
-FAIL RTCDataChannel interface: channel must inherit property "onbufferedamountlow" with the proper type (12) Unrecognized type EventHandler
-FAIL RTCDataChannel interface: channel must inherit property "onerror" with the proper type (13) Unrecognized type EventHandler
-FAIL RTCDataChannel interface: channel must inherit property "onclose" with the proper type (14) Unrecognized type EventHandler
-PASS RTCDataChannel interface: channel must inherit property "close" with the proper type (15) 
-FAIL RTCDataChannel interface: channel must inherit property "onmessage" with the proper type (16) Unrecognized type EventHandler
-PASS RTCDataChannel interface: channel must inherit property "binaryType" with the proper type (17) 
-PASS RTCDataChannel interface: channel must inherit property "send" with the proper type (18) 
+PASS RTCDataChannel must be primary interface of channel 
+FAIL Stringification of channel undefined is not an object (evaluating 'this.array.members[this.base].has_stringifier')
+PASS RTCDataChannel interface: channel must inherit property "label" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "ordered" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "maxPacketLifeTime" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "maxRetransmits" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "protocol" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "negotiated" with the proper type 
+FAIL RTCDataChannel interface: channel must inherit property "id" with the proper type assert_equals: expected "number" but got "object"
+FAIL RTCDataChannel interface: channel must inherit property "priority" with the proper type assert_inherits: property "priority" not found in prototype chain
+PASS RTCDataChannel interface: channel must inherit property "readyState" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "bufferedAmount" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "bufferedAmountLowThreshold" with the proper type 
+FAIL RTCDataChannel interface: channel must inherit property "onopen" with the proper type Unrecognized type EventHandler
+FAIL RTCDataChannel interface: channel must inherit property "onbufferedamountlow" with the proper type Unrecognized type EventHandler
+FAIL RTCDataChannel interface: channel must inherit property "onerror" with the proper type Unrecognized type EventHandler
+FAIL RTCDataChannel interface: channel must inherit property "onclose" with the proper type Unrecognized type EventHandler
+PASS RTCDataChannel interface: channel must inherit property "close()" with the proper type 
+FAIL RTCDataChannel interface: channel must inherit property "onmessage" with the proper type Unrecognized type EventHandler
+PASS RTCDataChannel interface: channel must inherit property "binaryType" with the proper type 
+PASS RTCDataChannel interface: channel must inherit property "send(USVString)" with the proper type 
 PASS RTCDataChannel interface: calling send(USVString) on channel with too few arguments must throw TypeError 
-PASS RTCDataChannel interface: channel must inherit property "send" with the proper type (19) 
+PASS RTCDataChannel interface: channel must inherit property "send(Blob)" with the proper type 
 PASS RTCDataChannel interface: calling send(Blob) on channel with too few arguments must throw TypeError 
-PASS RTCDataChannel interface: channel must inherit property "send" with the proper type (20) 
+PASS RTCDataChannel interface: channel must inherit property "send(ArrayBuffer)" with the proper type 
 PASS RTCDataChannel interface: calling send(ArrayBuffer) on channel with too few arguments must throw TypeError 
-PASS RTCDataChannel interface: channel must inherit property "send" with the proper type (21) 
+PASS RTCDataChannel interface: channel must inherit property "send(ArrayBufferView)" with the proper type 
 PASS RTCDataChannel interface: calling send(ArrayBufferView) on channel with too few arguments must throw TypeError 
 

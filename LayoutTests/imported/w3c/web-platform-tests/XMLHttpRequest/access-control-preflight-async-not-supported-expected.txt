@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-denied.py?token=9eb4bbeb-4ea2-4594-a908-491a02378bd9. Method PUT is not allowed by Access-Control-Allow-Methods.
+
+PASS Async PUT request denied at preflight 
+

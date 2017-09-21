@@ -16,6 +16,12 @@ by executing the following command from this directory:
 
     tox
 
+Currently, the tests should be run with Firefox Nightly.
+
+In order to specify the path to Firefox Nightly, use the following command-line option:
+
+    tox -- --binary=/path/to/FirefoxNightly
+
 ## Authoring Tests
 
 Test cases are expressed as `.html` files located within the `tests/`
@@ -34,8 +40,8 @@ This should be followed by one or more `<script>` tags that interface with the
       }, 'This test is expected to fail.');
     </script>
 
-Finally, each test should include a summary of the expected results as a JSON
-string within a `<script>` tag with an `id` of expected, e.g.:
+Finally, each test may include a summary of the expected results as a JSON
+string within a `<script>` tag with an `id` of `"expected"`, e.g.:
 
     <script type="text/json" id="expected">
     {
@@ -56,3 +62,6 @@ string within a `<script>` tag with an `id` of expected, e.g.:
       "type": "complete"
     }
     </script>
+
+This is useful to test, for example, whether asserations that should fail or
+throw actually do.

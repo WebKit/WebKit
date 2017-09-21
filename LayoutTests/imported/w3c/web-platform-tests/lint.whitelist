@@ -28,6 +28,7 @@ INDENT TABS: XMLHttpRequest/*
 INDENT TABS: encoding/legacy*/*
 INDENT TABS: encrypted-media/polyfill/Makefile
 
+TRAILING WHITESPACE: 2dcontext/tools/current-work-canvas.xhtml
 TRAILING WHITESPACE: app-uri/*
 TRAILING WHITESPACE: battery-status/*
 TRAILING WHITESPACE: conformance-checkers/*
@@ -88,7 +89,6 @@ W3C-TEST.ORG:tools/*
 PRINT STATEMENT:tools/*
 W3C-TEST.ORG:*/tools/*
 PRINT STATEMENT:*/tools/*
-PRINT STATEMENT:wptrun.py
 
 ### Test exclusions ##
 
@@ -152,7 +152,7 @@ SET TIMEOUT: cookies/resources/testharness-helpers.js
 SET TIMEOUT: common/reftest-wait.js
 SET TIMEOUT: conformance-checkers/*
 SET TIMEOUT: content-security-policy/*
-SET TIMEOUT: css-font-display/font-display.html
+SET TIMEOUT: css-fonts/font-display/font-display.html
 SET TIMEOUT: encrypted-media/Google/migrated_to_root_disabled/encrypted-media-utils.js
 SET TIMEOUT: encrypted-media/polyfill/chrome-polyfill.js
 SET TIMEOUT: encrypted-media/polyfill/clearkey-polyfill.js
@@ -161,7 +161,6 @@ SET TIMEOUT: eventsource/eventsource-close.htm
 SET TIMEOUT: eventsource/eventsource-request-cancellation.htm
 SET TIMEOUT: html/*
 SET TIMEOUT: IndexedDB/*
-SET TIMEOUT: longtask-timing/longtask-in-parentiframe.html
 SET TIMEOUT: infrastructure/*
 SET TIMEOUT: media-source/mediasource-util.js
 SET TIMEOUT: media-source/URL-createObjectURL-revoke.html
@@ -179,6 +178,7 @@ SET TIMEOUT: payment-request/payment-request-response-id.html
 SET TIMEOUT: pointerevents/pointerevent_support.js
 SET TIMEOUT: preload/single-download-preload.html
 SET TIMEOUT: resource-timing/resource-timing.js
+SET TIMEOUT: resource-timing/single-entry-per-resource.html
 SET TIMEOUT: screen-orientation/lock-bad-argument.html
 SET TIMEOUT: screen-orientation/onchange-event.html
 SET TIMEOUT: screen-orientation/resources/sandboxed-iframe-locking.html
@@ -191,7 +191,8 @@ SET TIMEOUT: service-workers/service-worker/update-recovery.https.html
 SET TIMEOUT: service-workers/service-worker/resources/extendable-event-async-waituntil.js
 SET TIMEOUT: service-workers/service-worker/resources/fetch-event-async-respond-with-worker.js
 SET TIMEOUT: service-workers/service-worker/resources/fetch-event-test-worker.js
-SET TIMEOUT: service-workers/service-worker/resources/opaque-response-preloaded-iframe.html
+SET TIMEOUT: service-workers/service-worker/resources/opaque-response-being-preloaded-xhr.html
+SET TIMEOUT: service-workers/service-worker/resources/opaque-response-preloaded-xhr.html
 SET TIMEOUT: service-workers/service-worker/resources/performance-timeline-worker.js
 SET TIMEOUT: service-workers/service-worker/resources/register-foreign-fetch-errors-worker.js
 SET TIMEOUT: shadow-dom/Document-prototype-currentScript.html
@@ -219,6 +220,44 @@ SET TIMEOUT: XMLHttpRequest/open-url-multi-window-6.htm
 SET TIMEOUT: XMLHttpRequest/xmlhttprequest-timeout-reused.html
 SET TIMEOUT: XMLHttpRequest/resources/init.htm
 SET TIMEOUT: XMLHttpRequest/resources/xmlhttprequest-timeout.js
+
+# generate_tests usage (should be got rid of)
+GENERATE_TESTS: 2dcontext/drawing-images-to-the-canvas/*
+GENERATE_TESTS: css/css-shapes-1/shape-outside/values/*
+GENERATE_TESTS: css/work-in-progress/microsoft/css-tables/*
+GENERATE_TESTS: css/work-in-progress/ttwf_sf/divya/index-002.html
+GENERATE_TESTS: cssom/index-002.html
+GENERATE_TESTS: dom/nodes/case.js
+GENERATE_TESTS: dom/ranges/Range-cloneRange.html
+GENERATE_TESTS: dom/ranges/Range-collapse.html
+GENERATE_TESTS: dom/ranges/Range-mutations.js
+GENERATE_TESTS: dom/ranges/Range-selectNode.html
+GENERATE_TESTS: dom/ranges/Range-set.html
+GENERATE_TESTS: dom/traversal/NodeIterator.html
+GENERATE_TESTS: dom/traversal/TreeWalker.html
+GENERATE_TESTS: domparsing/createContextualFragment.html
+GENERATE_TESTS: domxpath/001.html
+GENERATE_TESTS: domxpath/002.html
+GENERATE_TESTS: html/semantics/scripting-1/the-template-element/template-element/template-as-a-descendant.html
+GENERATE_TESTS: html/syntax/parsing/Document.getElementsByTagName-foreign-01.html
+GENERATE_TESTS: html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html
+GENERATE_TESTS: html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-context.html
+GENERATE_TESTS: html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html
+GENERATE_TESTS: html/syntax/parsing/template/creating-an-element-for-the-token/template-owner-document.html
+GENERATE_TESTS: html/syntax/serializing-html-fragments/serializing.html
+GENERATE_TESTS: html/webappapis/atob/base64.html
+GENERATE_TESTS: mediacapture-fromelement/capture.html
+GENERATE_TESTS: mediacapture-fromelement/creation.html
+GENERATE_TESTS: mediacapture-fromelement/ended.html
+GENERATE_TESTS: offscreen-canvas/filter/offscreencanvas.filter.html
+GENERATE_TESTS: pointerevents/pointerevent_constructor.html
+GENERATE_TESTS: pointerevents/extension/pointerevent_constructor.html
+GENERATE_TESTS: selection/collapse.js
+GENERATE_TESTS: shadow-dom/leaktests/html-collection.html
+GENERATE_TESTS: shadow-dom/untriaged/shadow-trees/upper-boundary-encapsulation/dom-tree-accessors-001.html
+GENERATE_TESTS: shadow-dom/untriaged/shadow-trees/upper-boundary-encapsulation/ownerdocument-002.html
+GENERATE_TESTS: shadow-dom/untriaged/shadow-trees/upper-boundary-encapsulation/window-named-properties-002.html
+GENERATE_TESTS: shadow-dom/untriaged/shadow-trees/upper-boundary-encapsulation/window-named-properties-003.html
 
 # Intentional use of setTimeout
 SET TIMEOUT: html/webappapis/timers/*
@@ -467,7 +506,7 @@ SET TIMEOUT: css/css-transitions-2/transitioncancel-001.html
 SET TIMEOUT: css/css-values-3/reference/vh_not_refreshing_on_chrome-ref.html
 SET TIMEOUT: css/css-values-3/reference/vh_not_refreshing_on_chrome_iframe-ref.html
 SET TIMEOUT: css/css-values-3/vh_not_refreshing_on_chrome.html
-SET TIMEOUT: css/css-values-3/vh_not_refreshing_on_chrome_iframe.html
+SET TIMEOUT: css/css-values-3/support/vh_not_refreshing_on_chrome_iframe.html
 SET TIMEOUT: css/css-writing-modes-3/orthogonal-parent-shrink-to-fit-001.html
 SET TIMEOUT: css/css-writing-modes-3/orthogonal-parent-shrink-to-fit-001a.html
 SET TIMEOUT: css/css-writing-modes-3/orthogonal-parent-shrink-to-fit-001b.html

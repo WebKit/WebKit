@@ -6,4 +6,5 @@ PASS ByteLengthQueuingStrategy size behaves as expected with strange arguments
 PASS ByteLengthQueuingStrategy.prototype.size should work generically on its this and its arguments 
 PASS ByteLengthQueuingStrategy instances have the correct properties 
 PASS ByteLengthQueuingStrategy's highWaterMark property can be set to anything 
+PASS ByteLengthQueuingStrategy.name is correct 
 

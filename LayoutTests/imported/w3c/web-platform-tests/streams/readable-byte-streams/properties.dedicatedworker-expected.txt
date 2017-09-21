@@ -1,0 +1,7 @@
+
+PASS Can get the ReadableStreamBYOBReader constructor indirectly 
+PASS ReadableStreamBYOBReader constructor should get a ReadableStream object as argument 
+PASS ReadableStreamBYOBReader instances should have the correct list of properties 
+PASS ReadableStreamBYOBRequest instances should have the correct list of properties 
+PASS ReadableByteStreamController instances should have the correct list of properties 
+

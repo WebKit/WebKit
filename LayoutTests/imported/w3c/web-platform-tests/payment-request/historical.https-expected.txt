@@ -5,4 +5,5 @@ PASS careOf in PaymentAddress
 PASS totalAmount in PaymentResponse 
 PASS paymentRequestId in PaymentRequest 
 PASS paymentRequestId in PaymentResponse 
+PASS supportedMethods must not support sequence<DOMString> 
 

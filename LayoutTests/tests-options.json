@@ -53,6 +53,15 @@
     "imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html": [
         "slow"
     ],
@@ -362,6 +371,9 @@
     "imported/w3c/web-platform-tests/XMLHttpRequest/xmlhttprequest-timeout-worker-twice.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/audio-output/setSinkId-manual.https.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/beacon/beacon-basic-blob.html": [
         "slow"
     ],
@@ -617,7 +629,13 @@
     "imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constructor-non-same-origin.htm": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/eventsource/eventsource-constructor-non-same-origin.htm": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/eventsource/shared-worker/eventsource-constructor-non-same-origin.htm": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/fetch/api/headers/header-values-normalize.html": [
@@ -770,6 +788,15 @@
     "imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-iframe.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode-path-changes.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/decode/image-decode.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/sizes/parse-a-sizes-attribute.html": [
         "slow"
     ],
@@ -777,6 +804,9 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/html/semantics/tabular-data/processing-model-1/span-limits.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_adoption01.html": [
@@ -1005,6 +1035,126 @@
         "slow"
     ],
     "imported/w3c/web-platform-tests/media-source/mediasource-redundant-seek.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/payment-request/payment-request-constructor-crash.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/common.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-add.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-delete.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-matchAll.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-put.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-storage.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-add.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-delete.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-matchAll.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-put.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-storage.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/window/sandboxed-iframes.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-add.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-delete.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-matchAll.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-put.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-keys.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage-match.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/cache-storage/worker/cache-storage.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-redirect.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-inscope.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-mixed-content-to-outscope.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/service-workers/service-worker/register-closed-window.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange-long.html": [
         "slow"
     ]
 }

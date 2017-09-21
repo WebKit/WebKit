@@ -1,0 +1,3 @@
+
+PASS Tests body from CORS preflight response and actual response with sync request 
+

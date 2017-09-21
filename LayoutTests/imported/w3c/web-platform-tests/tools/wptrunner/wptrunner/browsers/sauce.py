@@ -161,7 +161,7 @@ class SauceConnect():
         if self.sc_process.returncode is not None and self.sc_process.returncode > 0:
             raise SauceException("Unable to start Sauce Connect Proxy. Process exited with code %s", self.sc_process.returncode)
 
-    def __exit__(self, *args):
+    def __exit__(self, exc_type, exc_val, exc_tb):
         self.sc_process.terminate()
         if os.path.exists(self.temp_dir):
             try:

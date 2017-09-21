@@ -1,0 +1,15 @@
+CONSOLE MESSAGE: Cross-origin redirection to http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-star.py denied by Cross-Origin Resource Sharing policy: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/redirect-cors.py?location=http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-star.py& due to access control checks.
+CONSOLE MESSAGE: Cross-origin redirection to foo://bar.cgi denied by Cross-Origin Resource Sharing policy: URL is either a non-HTTP URL or contains credentials.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/redirect-cors.py?location=foo://bar.cgi&allow_origin=true due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/redirect-cors.py?location=http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-star.py&allow_origin=true&redirect_preflight=true. Preflight response is not successful
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/redirect-cors.py?location=http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-star.py&allow_origin=true&allow_header=x-test&redirect_preflight=true. Preflight response is not successful
+
+PASS Request is redirected without CORS headers to a response with Access-Control-Allow-Origin=* 
+PASS Request is redirected to a response with Access-Control-Allow-Origin=* 
+FAIL Request with user info is redirected to a response with Access-Control-Allow-Origin=* assert_true: expected true got false
+PASS Request is redirect to a bad URL 
+PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=* 
+PASS Preflighted request is redirected to a response with Access-Control-Allow-Origin=* and header allowed 
+PASS Request is redirected to a same-origin resource file 
+

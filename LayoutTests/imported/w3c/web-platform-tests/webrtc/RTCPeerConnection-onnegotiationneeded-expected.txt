@@ -2,8 +2,6 @@
 Harness Error (TIMEOUT), message = null
 
 PASS Creating first data channel should fire negotiationneeded event 
-PASS task for negotiationneeded event should be enqueued for next tick 
-PASS negotiationneeded event should not fire if connection is closed 
 PASS calling createDataChannel twice should fire negotiationneeded event once 
 TIMEOUT addTransceiver() should fire negotiationneeded event Test timed out
 PASS Calling addTransceiver() twice should fire negotiationneeded event once 

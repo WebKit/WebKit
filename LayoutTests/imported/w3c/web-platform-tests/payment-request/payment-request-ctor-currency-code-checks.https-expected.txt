@@ -1,0 +1,12 @@
+
+PASS Check and canonicalize valid details.total.amount 
+PASS Check and canonicalize invalid details.total.amount and rethrow any exceptions. 
+PASS Check and canonicalize valid details.displayItems amount 
+PASS Check and canonicalize invalid details.displayItems amount and rethrow RangeError. 
+PASS Check and canonicalize valid details.shippingOptions amount. 
+PASS Check and canonicalize invalid details.shippingOptions amount and rethrow RangeError. 
+PASS Check and canonicalize valid modifiers[n].total amount. 
+PASS Check and canonicalize invalid modifiers[n].total amount and rethrow RangeError. 
+PASS Check and canonicalize valid modifiers[n].additionaDisplayItem amount. 
+PASS Check and canonicalize invalid modifiers[n].additionaDisplayItem amount and rethrow RangeError. 
+

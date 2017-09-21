@@ -14,4 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-fromelement/idlharness.html

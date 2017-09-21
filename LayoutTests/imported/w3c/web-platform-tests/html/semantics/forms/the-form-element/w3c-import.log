@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-submission-with-base-url.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-action-submission.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-autocomplete.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-interfaces-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-matches.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-nameditem-01.html

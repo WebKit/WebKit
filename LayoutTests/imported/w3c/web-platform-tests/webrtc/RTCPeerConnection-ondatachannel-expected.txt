@@ -1,0 +1,5 @@
+
+PASS datachannel event should fire when new data channel is announced to the remote peer 
+FAIL Data channel created on remote peer should match the same configuration as local peer assert_equals: expected (string) "high" but got (undefined) undefined
+PASS Data channel created with negotiated set to true should not fire datachannel event on remote peer 
+

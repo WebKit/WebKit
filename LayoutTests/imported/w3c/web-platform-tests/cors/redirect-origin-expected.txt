@@ -66,24 +66,24 @@ Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-ma
 CONSOLE MESSAGE: line 168: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://www1.localhost:8800&location=http%3A%2F%2Fwww1.localhost%3A8800%2Fcors%2Fresources%2Fcors-makeheader.py%3Forigin%3D*%26get_value%3Dlast%2642_1&42_0 due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&0_1
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&0_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1 due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&6_1
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&6_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1 due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&8_1
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&8_1 due to access control checks.
 Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&9_1
 CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&9_1 due to access control checks.
-Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&7_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=null&get_value=last&2_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&get_value=last&4_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=none&get_value=last&3_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&1_1 due to access control checks.
+Blocked access to external URL http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=http://localhost:8800&get_value=last&5_1 due to access control checks.
 CORS redirect handling
 
 

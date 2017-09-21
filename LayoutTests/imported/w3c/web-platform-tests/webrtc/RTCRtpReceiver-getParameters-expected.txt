@@ -1,0 +1,3 @@
+
+FAIL RTCRtpReceiver.prototype.getParameters pc.getParameters is not a function. (In 'pc.getParameters()', 'pc.getParameters' is undefined)
+

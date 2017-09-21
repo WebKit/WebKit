@@ -11,13 +11,15 @@ PASS DOMPointReadOnly interface: attribute y
 PASS DOMPointReadOnly interface: attribute z 
 PASS DOMPointReadOnly interface: attribute w 
 PASS DOMPointReadOnly interface: operation matrixTransform(DOMMatrixInit) 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint" with the proper type (0) 
+PASS DOMPointReadOnly must be primary interface of new DOMPointReadOnly() 
+PASS Stringification of new DOMPointReadOnly() 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "fromPoint(DOMPointInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling fromPoint(DOMPointInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "x" with the proper type (1) 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "y" with the proper type (2) 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "z" with the proper type (3) 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "w" with the proper type (4) 
-PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "matrixTransform" with the proper type (5) 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "x" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "y" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "z" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "w" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPointReadOnly() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPointReadOnly() with too few arguments must throw TypeError 
 PASS DOMPoint interface: existence and properties of interface object 
 PASS DOMPoint interface object length 
@@ -30,19 +32,21 @@ PASS DOMPoint interface: attribute x
 PASS DOMPoint interface: attribute y 
 PASS DOMPoint interface: attribute z 
 PASS DOMPoint interface: attribute w 
-PASS DOMPoint interface: new DOMPoint() must inherit property "fromPoint" with the proper type (0) 
+PASS DOMPoint must be primary interface of new DOMPoint() 
+PASS Stringification of new DOMPoint() 
+PASS DOMPoint interface: new DOMPoint() must inherit property "fromPoint(DOMPointInit)" with the proper type 
 PASS DOMPoint interface: calling fromPoint(DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
-PASS DOMPoint interface: new DOMPoint() must inherit property "x" with the proper type (1) 
-PASS DOMPoint interface: new DOMPoint() must inherit property "y" with the proper type (2) 
-PASS DOMPoint interface: new DOMPoint() must inherit property "z" with the proper type (3) 
-PASS DOMPoint interface: new DOMPoint() must inherit property "w" with the proper type (4) 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "fromPoint" with the proper type (0) 
+PASS DOMPoint interface: new DOMPoint() must inherit property "x" with the proper type 
+PASS DOMPoint interface: new DOMPoint() must inherit property "y" with the proper type 
+PASS DOMPoint interface: new DOMPoint() must inherit property "z" with the proper type 
+PASS DOMPoint interface: new DOMPoint() must inherit property "w" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "fromPoint(DOMPointInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling fromPoint(DOMPointInit) on new DOMPoint() with too few arguments must throw TypeError 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "x" with the proper type (1) 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "y" with the proper type (2) 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "z" with the proper type (3) 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "w" with the proper type (4) 
-PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "matrixTransform" with the proper type (5) 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "x" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "y" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "z" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "w" with the proper type 
+PASS DOMPointReadOnly interface: new DOMPoint() must inherit property "matrixTransform(DOMMatrixInit)" with the proper type 
 PASS DOMPointReadOnly interface: calling matrixTransform(DOMMatrixInit) on new DOMPoint() with too few arguments must throw TypeError 
 PASS DOMRectReadOnly interface: existence and properties of interface object 
 PASS DOMRectReadOnly interface object length 
@@ -58,16 +62,18 @@ PASS DOMRectReadOnly interface: attribute top
 PASS DOMRectReadOnly interface: attribute right 
 PASS DOMRectReadOnly interface: attribute bottom 
 PASS DOMRectReadOnly interface: attribute left 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect" with the proper type (0) 
+PASS DOMRectReadOnly must be primary interface of new DOMRectReadOnly() 
+PASS Stringification of new DOMRectReadOnly() 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "fromRect(DOMRectInit)" with the proper type 
 PASS DOMRectReadOnly interface: calling fromRect(DOMRectInit) on new DOMRectReadOnly() with too few arguments must throw TypeError 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "x" with the proper type (1) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "y" with the proper type (2) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "width" with the proper type (3) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "height" with the proper type (4) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "top" with the proper type (5) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "right" with the proper type (6) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "bottom" with the proper type (7) 
-PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "left" with the proper type (8) 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "x" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "y" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "width" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "height" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "top" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "right" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "bottom" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRectReadOnly() must inherit property "left" with the proper type 
 PASS DOMRect interface: existence and properties of interface object 
 PASS DOMRect interface object length 
 PASS DOMRect interface object name 
@@ -79,22 +85,24 @@ PASS DOMRect interface: attribute x
 PASS DOMRect interface: attribute y 
 PASS DOMRect interface: attribute width 
 PASS DOMRect interface: attribute height 
-PASS DOMRect interface: new DOMRect() must inherit property "fromRect" with the proper type (0) 
+PASS DOMRect must be primary interface of new DOMRect() 
+PASS Stringification of new DOMRect() 
+PASS DOMRect interface: new DOMRect() must inherit property "fromRect(DOMRectInit)" with the proper type 
 PASS DOMRect interface: calling fromRect(DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
-PASS DOMRect interface: new DOMRect() must inherit property "x" with the proper type (1) 
-PASS DOMRect interface: new DOMRect() must inherit property "y" with the proper type (2) 
-PASS DOMRect interface: new DOMRect() must inherit property "width" with the proper type (3) 
-PASS DOMRect interface: new DOMRect() must inherit property "height" with the proper type (4) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "fromRect" with the proper type (0) 
+PASS DOMRect interface: new DOMRect() must inherit property "x" with the proper type 
+PASS DOMRect interface: new DOMRect() must inherit property "y" with the proper type 
+PASS DOMRect interface: new DOMRect() must inherit property "width" with the proper type 
+PASS DOMRect interface: new DOMRect() must inherit property "height" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "fromRect(DOMRectInit)" with the proper type 
 PASS DOMRectReadOnly interface: calling fromRect(DOMRectInit) on new DOMRect() with too few arguments must throw TypeError 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "x" with the proper type (1) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "y" with the proper type (2) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "width" with the proper type (3) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "height" with the proper type (4) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "top" with the proper type (5) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "right" with the proper type (6) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "bottom" with the proper type (7) 
-PASS DOMRectReadOnly interface: new DOMRect() must inherit property "left" with the proper type (8) 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "x" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "y" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "width" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "height" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "top" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "right" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "bottom" with the proper type 
+PASS DOMRectReadOnly interface: new DOMRect() must inherit property "left" with the proper type 
 PASS DOMQuad interface: existence and properties of interface object 
 PASS DOMQuad interface object length 
 PASS DOMQuad interface object name 
@@ -107,15 +115,17 @@ PASS DOMQuad interface: attribute p2
 PASS DOMQuad interface: attribute p3 
 PASS DOMQuad interface: attribute p4 
 PASS DOMQuad interface: operation getBounds() 
-PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect" with the proper type (0) 
+PASS DOMQuad must be primary interface of new DOMQuad() 
+PASS Stringification of new DOMQuad() 
+PASS DOMQuad interface: new DOMQuad() must inherit property "fromRect(DOMRectInit)" with the proper type 
 PASS DOMQuad interface: calling fromRect(DOMRectInit) on new DOMQuad() with too few arguments must throw TypeError 
-PASS DOMQuad interface: new DOMQuad() must inherit property "fromQuad" with the proper type (1) 
+PASS DOMQuad interface: new DOMQuad() must inherit property "fromQuad(DOMQuadInit)" with the proper type 
 PASS DOMQuad interface: calling fromQuad(DOMQuadInit) on new DOMQuad() with too few arguments must throw TypeError 
-PASS DOMQuad interface: new DOMQuad() must inherit property "p1" with the proper type (2) 
-PASS DOMQuad interface: new DOMQuad() must inherit property "p2" with the proper type (3) 
-PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper type (4) 
-PASS DOMQuad interface: new DOMQuad() must inherit property "p4" with the proper type (5) 
-PASS DOMQuad interface: new DOMQuad() must inherit property "getBounds" with the proper type (6) 
+PASS DOMQuad interface: new DOMQuad() must inherit property "p1" with the proper type 
+PASS DOMQuad interface: new DOMQuad() must inherit property "p2" with the proper type 
+PASS DOMQuad interface: new DOMQuad() must inherit property "p3" with the proper type 
+PASS DOMQuad interface: new DOMQuad() must inherit property "p4" with the proper type 
+PASS DOMQuad interface: new DOMQuad() must inherit property "getBounds()" with the proper type 
 PASS DOMMatrixReadOnly interface: existence and properties of interface object 
 PASS DOMMatrixReadOnly interface object length 
 PASS DOMMatrixReadOnly interface object name 
@@ -148,12 +158,12 @@ PASS DOMMatrixReadOnly interface: attribute m43
 PASS DOMMatrixReadOnly interface: attribute m44 
 PASS DOMMatrixReadOnly interface: attribute is2D 
 PASS DOMMatrixReadOnly interface: attribute isIdentity 
-PASS DOMMatrixReadOnly interface: operation translate(unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double,unrestricted double) 
-PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation translate(unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotate(unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateFromVector(unrestricted double, unrestricted double) 
+PASS DOMMatrixReadOnly interface: operation rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation skewX(unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation skewY(unrestricted double) 
 PASS DOMMatrixReadOnly interface: operation multiply(DOMMatrixInit) 
@@ -164,117 +174,121 @@ PASS DOMMatrixReadOnly interface: operation transformPoint(DOMPointInit)
 PASS DOMMatrixReadOnly interface: operation toFloat32Array() 
 PASS DOMMatrixReadOnly interface: operation toFloat64Array() 
 PASS DOMMatrixReadOnly interface: member undefined 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly must be primary interface of new DOMMatrixReadOnly() 
+PASS Stringification of new DOMMatrixReadOnly() 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "a" with the proper type (3) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "b" with the proper type (4) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "c" with the proper type (5) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "d" with the proper type (6) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "e" with the proper type (7) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "f" with the proper type (8) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m11" with the proper type (9) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m12" with the proper type (10) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m13" with the proper type (11) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m14" with the proper type (12) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m21" with the proper type (13) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m22" with the proper type (14) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m23" with the proper type (15) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m24" with the proper type (16) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m31" with the proper type (17) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m32" with the proper type (18) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m33" with the proper type (19) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m34" with the proper type (20) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m41" with the proper type (21) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m42" with the proper type (22) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m43" with the proper type (23) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m44" with the proper type (24) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "is2D" with the proper type (25) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "isIdentity" with the proper type (26) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate" with the proper type (27) 
-PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale" with the proper type (28) 
-PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d" with the proper type (29) 
-PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate" with the proper type (30) 
-PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector" with the proper type (31) 
-PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle" with the proper type (32) 
-PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "a" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "b" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "c" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "d" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "e" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "f" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m11" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m12" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m13" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m14" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m21" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m22" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m23" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m24" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m31" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m32" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m33" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m34" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m41" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m42" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m43" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "m44" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "is2D" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "isIdentity" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "translate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateFromVector(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewX(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "skewY(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "multiply(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipX" with the proper type (36) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipY" with the proper type (37) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "inverse" with the proper type (38) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipX()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "flipY()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "inverse()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "transformPoint(DOMPointInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrixReadOnly() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array" with the proper type (40) 
-PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat32Array()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrixReadOnly() must inherit property "toFloat64Array()" with the proper type 
 PASS DOMMatrixReadOnlyinterface: new DOMMatrixReadOnly()must not have property "undefined" 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly must be primary interface of DOMMatrixReadOnly.fromMatrix({is2D: false}) 
+PASS Stringification of DOMMatrixReadOnly.fromMatrix({is2D: false}) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) 
-PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) 
-PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) 
-PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) 
-PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) 
-PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) 
-PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "a" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "b" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "c" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "d" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "e" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "f" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m11" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m12" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m13" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m14" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m21" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m22" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m23" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m24" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m31" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m32" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m33" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m34" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m41" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m42" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m43" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "m44" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "translate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateFromVector(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewX(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "skewY(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "multiply(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipX()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "flipY()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "inverse()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "transformPoint(DOMPointInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrixReadOnly.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) 
-PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat32Array()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrixReadOnly.fromMatrix({is2D: false}) must inherit property "toFloat64Array()" with the proper type 
 PASS DOMMatrixReadOnlyinterface: DOMMatrixReadOnly.fromMatrix({is2D: false})must not have property "undefined" 
 PASS DOMMatrix interface: existence and properties of interface object 
 PASS DOMMatrix interface object length 
@@ -309,226 +323,230 @@ PASS DOMMatrix interface: attribute m43
 PASS DOMMatrix interface: attribute m44 
 PASS DOMMatrix interface: operation multiplySelf(DOMMatrixInit) 
 PASS DOMMatrix interface: operation preMultiplySelf(DOMMatrixInit) 
-PASS DOMMatrix interface: operation translateSelf(unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrix interface: operation scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrix interface: operation scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrix interface: operation rotateSelf(unrestricted double,unrestricted double,unrestricted double) 
-PASS DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double,unrestricted double) 
-PASS DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) 
+PASS DOMMatrix interface: operation translateSelf(unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrix interface: operation scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrix interface: operation scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrix interface: operation rotateSelf(unrestricted double, unrestricted double, unrestricted double) 
+PASS DOMMatrix interface: operation rotateFromVectorSelf(unrestricted double, unrestricted double) 
+PASS DOMMatrix interface: operation rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
 PASS DOMMatrix interface: operation skewXSelf(unrestricted double) 
 PASS DOMMatrix interface: operation skewYSelf(unrestricted double) 
 PASS DOMMatrix interface: operation invertSelf() 
 PASS DOMMatrix interface: member setMatrixValue 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrix must be primary interface of new DOMMatrix() 
+PASS Stringification of new DOMMatrix() 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrix interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrix interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "a" with the proper type (3) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "b" with the proper type (4) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "c" with the proper type (5) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "d" with the proper type (6) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "e" with the proper type (7) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "f" with the proper type (8) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m11" with the proper type (9) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m12" with the proper type (10) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m13" with the proper type (11) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m14" with the proper type (12) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m21" with the proper type (13) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m22" with the proper type (14) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m23" with the proper type (15) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m24" with the proper type (16) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m31" with the proper type (17) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m32" with the proper type (18) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m33" with the proper type (19) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m34" with the proper type (20) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m41" with the proper type (21) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m42" with the proper type (22) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m43" with the proper type (23) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "m44" with the proper type (24) 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf" with the proper type (25) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "a" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "b" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "c" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "d" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "e" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "f" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m11" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m12" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m13" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m14" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m21" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m22" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m23" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m24" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m31" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m32" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m33" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m34" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m41" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m42" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m43" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "m44" with the proper type 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "multiplySelf(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf" with the proper type (26) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "preMultiplySelf(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf" with the proper type (27) 
-PASS DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf" with the proper type (28) 
-PASS DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf" with the proper type (29) 
-PASS DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf" with the proper type (30) 
-PASS DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf" with the proper type (31) 
-PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf" with the proper type (32) 
-PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf" with the proper type (33) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "translateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling translateSelf(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateSelf(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateFromVectorSelf(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewXSelf(unrestricted double)" with the proper type 
 PASS DOMMatrix interface: calling skewXSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf" with the proper type (34) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "skewYSelf(unrestricted double)" with the proper type 
 PASS DOMMatrix interface: calling skewYSelf(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf" with the proper type (35) 
+PASS DOMMatrix interface: new DOMMatrix() must inherit property "invertSelf()" with the proper type 
 PASS DOMMatrixinterface: new DOMMatrix()must not have property "setMatrixValue" 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "a" with the proper type (3) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "b" with the proper type (4) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "c" with the proper type (5) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "d" with the proper type (6) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "e" with the proper type (7) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "f" with the proper type (8) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m11" with the proper type (9) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m12" with the proper type (10) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m13" with the proper type (11) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m14" with the proper type (12) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m21" with the proper type (13) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m22" with the proper type (14) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m23" with the proper type (15) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m24" with the proper type (16) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m31" with the proper type (17) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m32" with the proper type (18) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m33" with the proper type (19) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m34" with the proper type (20) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m41" with the proper type (21) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m42" with the proper type (22) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m43" with the proper type (23) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m44" with the proper type (24) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "is2D" with the proper type (25) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "isIdentity" with the proper type (26) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "translate" with the proper type (27) 
-PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale" with the proper type (28) 
-PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale3d" with the proper type (29) 
-PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotate" with the proper type (30) 
-PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateFromVector" with the proper type (31) 
-PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateAxisAngle" with the proper type (32) 
-PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "a" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "b" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "c" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "d" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "e" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "f" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m11" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m12" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m13" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m14" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m21" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m22" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m23" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m24" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m31" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m32" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m33" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m34" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m41" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m42" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m43" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "m44" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "is2D" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "isIdentity" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "translate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateFromVector(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewX(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "skewY(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "multiply(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipX" with the proper type (36) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipY" with the proper type (37) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "inverse" with the proper type (38) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipX()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "flipY()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "inverse()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "transformPoint(DOMPointInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on new DOMMatrix() with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat32Array" with the proper type (40) 
-PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat32Array()" with the proper type 
+PASS DOMMatrixReadOnly interface: new DOMMatrix() must inherit property "toFloat64Array()" with the proper type 
 PASS DOMMatrixReadOnlyinterface: new DOMMatrix()must not have property "undefined" 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrix must be primary interface of DOMMatrix.fromMatrix({is2D: false}) 
+PASS Stringification of DOMMatrix.fromMatrix({is2D: false}) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrix interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrix interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiplySelf" with the proper type (25) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiplySelf(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling multiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "preMultiplySelf" with the proper type (26) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "preMultiplySelf(DOMMatrixInit)" with the proper type 
 PASS DOMMatrix interface: calling preMultiplySelf(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translateSelf" with the proper type (27) 
-PASS DOMMatrix interface: calling translateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scaleSelf" with the proper type (28) 
-PASS DOMMatrix interface: calling scaleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3dSelf" with the proper type (29) 
-PASS DOMMatrix interface: calling scale3dSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateSelf" with the proper type (30) 
-PASS DOMMatrix interface: calling rotateSelf(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVectorSelf" with the proper type (31) 
-PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngleSelf" with the proper type (32) 
-PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewXSelf" with the proper type (33) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling translateSelf(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scaleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling scale3dSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateSelf(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateSelf(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVectorSelf(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateFromVectorSelf(unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrix interface: calling rotateAxisAngleSelf(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewXSelf(unrestricted double)" with the proper type 
 PASS DOMMatrix interface: calling skewXSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewYSelf" with the proper type (34) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewYSelf(unrestricted double)" with the proper type 
 PASS DOMMatrix interface: calling skewYSelf(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "invertSelf" with the proper type (35) 
+PASS DOMMatrix interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "invertSelf()" with the proper type 
 PASS DOMMatrixinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "setMatrixValue" 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix" with the proper type (0) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromMatrix(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromMatrix(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array" with the proper type (1) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat32Array(Float32Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat32Array(Float32Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array" with the proper type (2) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "fromFloat64Array(Float64Array)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling fromFloat64Array(Float64Array) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type (3) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type (4) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type (5) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type (6) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type (7) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type (8) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type (9) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type (10) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type (11) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type (12) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type (13) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type (14) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type (15) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type (16) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type (17) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type (18) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type (19) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type (20) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type (21) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type (22) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type (23) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type (24) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type (25) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type (26) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translate" with the proper type (27) 
-PASS DOMMatrixReadOnly interface: calling translate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale" with the proper type (28) 
-PASS DOMMatrixReadOnly interface: calling scale(unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3d" with the proper type (29) 
-PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotate" with the proper type (30) 
-PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVector" with the proper type (31) 
-PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle" with the proper type (32) 
-PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double,unrestricted double,unrestricted double,unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewX" with the proper type (33) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "a" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "b" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "c" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "d" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "e" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "f" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m11" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m12" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m13" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m14" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m21" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m22" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m23" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m24" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m31" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m32" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m33" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m34" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m41" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m42" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m43" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "m44" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "is2D" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "isIdentity" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "translate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling translate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling scale3d(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotate(unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotate(unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateFromVector(unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateFromVector(unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
+PASS DOMMatrixReadOnly interface: calling rotateAxisAngle(unrestricted double, unrestricted double, unrestricted double, unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewX(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewX(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewY" with the proper type (34) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "skewY(unrestricted double)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling skewY(unrestricted double) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiply" with the proper type (35) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "multiply(DOMMatrixInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling multiply(DOMMatrixInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipX" with the proper type (36) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipY" with the proper type (37) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "inverse" with the proper type (38) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "transformPoint" with the proper type (39) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipX()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "flipY()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "inverse()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "transformPoint(DOMPointInit)" with the proper type 
 PASS DOMMatrixReadOnly interface: calling transformPoint(DOMPointInit) on DOMMatrix.fromMatrix({is2D: false}) with too few arguments must throw TypeError 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat32Array" with the proper type (40) 
-PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat64Array" with the proper type (41) 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat32Array()" with the proper type 
+PASS DOMMatrixReadOnly interface: DOMMatrix.fromMatrix({is2D: false}) must inherit property "toFloat64Array()" with the proper type 
 PASS DOMMatrixReadOnlyinterface: DOMMatrix.fromMatrix({is2D: false})must not have property "undefined" 
 

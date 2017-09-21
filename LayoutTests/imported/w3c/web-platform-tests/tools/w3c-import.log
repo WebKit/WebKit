@@ -21,4 +21,3 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/localpaths.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/pytest.ini
 /LayoutTests/imported/w3c/web-platform-tests/tools/tox.ini
-/LayoutTests/imported/w3c/web-platform-tests/tools/wptrun.py

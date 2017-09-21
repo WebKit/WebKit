@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/webidl2.js
+/LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/webidl2.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/resources/webidl2/lib/writer.js

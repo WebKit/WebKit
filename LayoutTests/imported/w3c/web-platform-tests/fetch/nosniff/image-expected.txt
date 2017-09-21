@@ -1,9 +1,9 @@
 
+PASS URL query: null 
 PASS URL query:  
-PASS URL query: ?type= 
-PASS URL query: ?type=x 
-PASS URL query: ?type=x/x 
-PASS URL query: ?type=image/gif 
-PASS URL query: ?type=image/png 
-PASS URL query: ?type=image/png;blah 
+PASS URL query: x 
+PASS URL query: x/x 
+PASS URL query: image/gif 
+PASS URL query: image/png 
+PASS URL query: image/png;blah 
 

@@ -1,0 +1,3 @@
+
+FAIL share with an invalid URL navigator.share is not a function. (In 'navigator.share({url})', 'navigator.share' is undefined)
+

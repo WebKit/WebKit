@@ -159,7 +159,7 @@
   promise_test(t => {
     return generateCertificate()
     .then(cert => {
-      assert_own_property(cert, 'getFingerprints');
+      assert_idl_attribute(cert, 'getFingerprints');
 
       const fingerprints = cert.getFingerprints();
       assert_true(Array.isArray(fingerprints),

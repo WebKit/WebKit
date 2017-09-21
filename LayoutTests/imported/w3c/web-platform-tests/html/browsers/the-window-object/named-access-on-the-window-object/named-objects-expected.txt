@@ -1,6 +1,6 @@
 
 PASS Check if the first nested browsing context is returned by window['c'] 
-PASS Check if window['a'] contains all applet, embed, form, img, and object elements, and their order 
+PASS Check if window['a'] contains all embed, form, img, and object elements, and their order 
 PASS Check that window['fs'] does not return the frameset element with name='fs' (historical) 
 PASS Check if window['b'] returns the elements with the id='b' 
 PASS Check if window['d'] returns the element with id='d' 

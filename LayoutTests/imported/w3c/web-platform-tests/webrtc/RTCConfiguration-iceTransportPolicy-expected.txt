@@ -1,0 +1,18 @@
+
+PASS new RTCPeerConnection() should have default iceTransportPolicy all 
+PASS new RTCPeerConnection({ iceTransportPolicy: undefined }) should have default iceTransportPolicy all 
+PASS new RTCPeerConnection({ iceTransportPolicy: 'all' }) should succeed 
+PASS new RTCPeerConnection({ iceTransportPolicy: 'relay' }) should succeed 
+FAIL setConfiguration({ iceTransportPolicy: 'relay' }) with initial iceTransportPolicy all should succeed Can't find variable: iceTransportPolicy
+FAIL setConfiguration({ iceTransportPolicy: 'all' }) with initial iceTransportPolicy relay should succeed Can't find variable: iceTransportPolicy
+FAIL setConfiguration({}) with initial iceTransportPolicy relay should set new value to all Can't find variable: iceTransportPolicy
+PASS new RTCPeerConnection(config) - with invalid iceTransportPolicy should throw TypeError 
+PASS setConfiguration(config) - with invalid iceTransportPolicy should throw TypeError 
+PASS new RTCPeerConnection(config) - with none iceTransportPolicy should throw TypeError 
+PASS setConfiguration(config) - with none iceTransportPolicy should throw TypeError 
+PASS new RTCPeerConnection(config) - with null iceTransportPolicy should throw TypeError 
+PASS setConfiguration(config) - with null iceTransportPolicy should throw TypeError 
+PASS new RTCPeerConnection({ iceTransports: 'relay' }) should have no effect 
+PASS new RTCPeerConnection({ iceTransports: 'invalid' }) should have no effect 
+PASS new RTCPeerConnection({ iceTransports: null }) should have no effect 
+

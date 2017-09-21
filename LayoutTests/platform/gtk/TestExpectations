@@ -1235,7 +1235,6 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/def
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/floating-point-total-queue-size.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/garbage-collection.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/general.serviceworker.https.html [ Failure ]
-webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/readable-stream-reader.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/tee.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-streams/templated.serviceworker.https.html [ Failure ]

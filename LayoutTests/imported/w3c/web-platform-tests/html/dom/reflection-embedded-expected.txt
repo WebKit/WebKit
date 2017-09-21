@@ -6,35 +6,282 @@ Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
 Blocked access to external URL http://site.example/
 Blocked access to external URL http://site.example/path???@#l
-CONSOLE MESSAGE: line 790: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'undefined' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language '7' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language '1.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'true' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'false' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language '[object Object]' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language '-Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'null' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'test-toString' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 790: The language 'test-valueOf' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'undefined' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '7' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '1.5' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'true' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'false' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '[object Object]' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language '-Infinity' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language contains a null character and is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'null' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'test-toString' is not a valid BCP 47 language tag.
-CONSOLE MESSAGE: line 1409: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 816: The language 'test-valueOf' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'undefined' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language '7' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language '1.5' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'true' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'false' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language '[object Object]' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language '-Infinity' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language contains a null character and is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'null' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'test-toString' is not a valid BCP 47 language tag.
+CONSOLE MESSAGE: line 1485: The language 'test-valueOf' is not a valid BCP 47 language tag.
 Implementers looking to fix bugs might want to use the original version of this suite's test framework, which conveniently aggregates similar errors and only reports failures. This file is (part of) the authoritative conformance test suite, and is suitable for incorporation into automated test suites.
 
 
+PASS picture.title: typeof IDL attribute 
+PASS picture.title: IDL get with DOM attribute unset 
+PASS picture.title: setAttribute() to "" 
+PASS picture.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.title: setAttribute() to undefined 
+PASS picture.title: setAttribute() to 7 
+PASS picture.title: setAttribute() to 1.5 
+PASS picture.title: setAttribute() to true 
+PASS picture.title: setAttribute() to false 
+PASS picture.title: setAttribute() to object "[object Object]" 
+PASS picture.title: setAttribute() to NaN 
+PASS picture.title: setAttribute() to Infinity 
+PASS picture.title: setAttribute() to -Infinity 
+PASS picture.title: setAttribute() to "\0" 
+PASS picture.title: setAttribute() to null 
+PASS picture.title: setAttribute() to object "test-toString" 
+PASS picture.title: setAttribute() to object "test-valueOf" 
+PASS picture.title: IDL set to "" 
+PASS picture.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.title: IDL set to undefined 
+PASS picture.title: IDL set to 7 
+PASS picture.title: IDL set to 1.5 
+PASS picture.title: IDL set to true 
+PASS picture.title: IDL set to false 
+PASS picture.title: IDL set to object "[object Object]" 
+PASS picture.title: IDL set to NaN 
+PASS picture.title: IDL set to Infinity 
+PASS picture.title: IDL set to -Infinity 
+PASS picture.title: IDL set to "\0" 
+PASS picture.title: IDL set to null 
+PASS picture.title: IDL set to object "test-toString" 
+PASS picture.title: IDL set to object "test-valueOf" 
+PASS picture.lang: typeof IDL attribute 
+PASS picture.lang: IDL get with DOM attribute unset 
+PASS picture.lang: setAttribute() to "" 
+PASS picture.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.lang: setAttribute() to undefined 
+PASS picture.lang: setAttribute() to 7 
+PASS picture.lang: setAttribute() to 1.5 
+PASS picture.lang: setAttribute() to true 
+PASS picture.lang: setAttribute() to false 
+PASS picture.lang: setAttribute() to object "[object Object]" 
+PASS picture.lang: setAttribute() to NaN 
+PASS picture.lang: setAttribute() to Infinity 
+PASS picture.lang: setAttribute() to -Infinity 
+PASS picture.lang: setAttribute() to "\0" 
+PASS picture.lang: setAttribute() to null 
+PASS picture.lang: setAttribute() to object "test-toString" 
+PASS picture.lang: setAttribute() to object "test-valueOf" 
+PASS picture.lang: IDL set to "" 
+PASS picture.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.lang: IDL set to undefined 
+PASS picture.lang: IDL set to 7 
+PASS picture.lang: IDL set to 1.5 
+PASS picture.lang: IDL set to true 
+PASS picture.lang: IDL set to false 
+PASS picture.lang: IDL set to object "[object Object]" 
+PASS picture.lang: IDL set to NaN 
+PASS picture.lang: IDL set to Infinity 
+PASS picture.lang: IDL set to -Infinity 
+PASS picture.lang: IDL set to "\0" 
+PASS picture.lang: IDL set to null 
+PASS picture.lang: IDL set to object "test-toString" 
+PASS picture.lang: IDL set to object "test-valueOf" 
+PASS picture.dir: typeof IDL attribute 
+PASS picture.dir: IDL get with DOM attribute unset 
+PASS picture.dir: setAttribute() to "" 
+PASS picture.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.dir: setAttribute() to undefined 
+PASS picture.dir: setAttribute() to 7 
+PASS picture.dir: setAttribute() to 1.5 
+PASS picture.dir: setAttribute() to true 
+PASS picture.dir: setAttribute() to false 
+PASS picture.dir: setAttribute() to object "[object Object]" 
+PASS picture.dir: setAttribute() to NaN 
+PASS picture.dir: setAttribute() to Infinity 
+PASS picture.dir: setAttribute() to -Infinity 
+PASS picture.dir: setAttribute() to "\0" 
+PASS picture.dir: setAttribute() to null 
+PASS picture.dir: setAttribute() to object "test-toString" 
+PASS picture.dir: setAttribute() to object "test-valueOf" 
+PASS picture.dir: setAttribute() to "ltr" 
+PASS picture.dir: setAttribute() to "xltr" 
+PASS picture.dir: setAttribute() to "ltr\0" 
+PASS picture.dir: setAttribute() to "tr" 
+PASS picture.dir: setAttribute() to "LTR" 
+PASS picture.dir: setAttribute() to "rtl" 
+PASS picture.dir: setAttribute() to "xrtl" 
+PASS picture.dir: setAttribute() to "rtl\0" 
+PASS picture.dir: setAttribute() to "tl" 
+PASS picture.dir: setAttribute() to "RTL" 
+PASS picture.dir: setAttribute() to "auto" 
+PASS picture.dir: setAttribute() to "xauto" 
+PASS picture.dir: setAttribute() to "auto\0" 
+PASS picture.dir: setAttribute() to "uto" 
+PASS picture.dir: setAttribute() to "AUTO" 
+PASS picture.dir: IDL set to "" 
+PASS picture.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.dir: IDL set to undefined 
+PASS picture.dir: IDL set to 7 
+PASS picture.dir: IDL set to 1.5 
+PASS picture.dir: IDL set to true 
+PASS picture.dir: IDL set to false 
+PASS picture.dir: IDL set to object "[object Object]" 
+PASS picture.dir: IDL set to NaN 
+PASS picture.dir: IDL set to Infinity 
+PASS picture.dir: IDL set to -Infinity 
+PASS picture.dir: IDL set to "\0" 
+PASS picture.dir: IDL set to null 
+PASS picture.dir: IDL set to object "test-toString" 
+PASS picture.dir: IDL set to object "test-valueOf" 
+PASS picture.dir: IDL set to "ltr" 
+PASS picture.dir: IDL set to "xltr" 
+PASS picture.dir: IDL set to "ltr\0" 
+PASS picture.dir: IDL set to "tr" 
+PASS picture.dir: IDL set to "LTR" 
+PASS picture.dir: IDL set to "rtl" 
+PASS picture.dir: IDL set to "xrtl" 
+PASS picture.dir: IDL set to "rtl\0" 
+PASS picture.dir: IDL set to "tl" 
+PASS picture.dir: IDL set to "RTL" 
+PASS picture.dir: IDL set to "auto" 
+PASS picture.dir: IDL set to "xauto" 
+PASS picture.dir: IDL set to "auto\0" 
+PASS picture.dir: IDL set to "uto" 
+PASS picture.dir: IDL set to "AUTO" 
+PASS picture.className (<picture class>): typeof IDL attribute 
+PASS picture.className (<picture class>): IDL get with DOM attribute unset 
+PASS picture.className (<picture class>): setAttribute() to "" 
+PASS picture.className (<picture class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.className (<picture class>): setAttribute() to undefined 
+PASS picture.className (<picture class>): setAttribute() to 7 
+PASS picture.className (<picture class>): setAttribute() to 1.5 
+PASS picture.className (<picture class>): setAttribute() to true 
+PASS picture.className (<picture class>): setAttribute() to false 
+PASS picture.className (<picture class>): setAttribute() to object "[object Object]" 
+PASS picture.className (<picture class>): setAttribute() to NaN 
+PASS picture.className (<picture class>): setAttribute() to Infinity 
+PASS picture.className (<picture class>): setAttribute() to -Infinity 
+PASS picture.className (<picture class>): setAttribute() to "\0" 
+PASS picture.className (<picture class>): setAttribute() to null 
+PASS picture.className (<picture class>): setAttribute() to object "test-toString" 
+PASS picture.className (<picture class>): setAttribute() to object "test-valueOf" 
+PASS picture.className (<picture class>): IDL set to "" 
+PASS picture.className (<picture class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.className (<picture class>): IDL set to undefined 
+PASS picture.className (<picture class>): IDL set to 7 
+PASS picture.className (<picture class>): IDL set to 1.5 
+PASS picture.className (<picture class>): IDL set to true 
+PASS picture.className (<picture class>): IDL set to false 
+PASS picture.className (<picture class>): IDL set to object "[object Object]" 
+PASS picture.className (<picture class>): IDL set to NaN 
+PASS picture.className (<picture class>): IDL set to Infinity 
+PASS picture.className (<picture class>): IDL set to -Infinity 
+PASS picture.className (<picture class>): IDL set to "\0" 
+PASS picture.className (<picture class>): IDL set to null 
+PASS picture.className (<picture class>): IDL set to object "test-toString" 
+PASS picture.className (<picture class>): IDL set to object "test-valueOf" 
+PASS picture.hidden: typeof IDL attribute 
+PASS picture.hidden: IDL get with DOM attribute unset 
+PASS picture.hidden: setAttribute() to "" 
+PASS picture.hidden: setAttribute() to " foo " 
+PASS picture.hidden: setAttribute() to undefined 
+PASS picture.hidden: setAttribute() to null 
+PASS picture.hidden: setAttribute() to 7 
+PASS picture.hidden: setAttribute() to 1.5 
+PASS picture.hidden: setAttribute() to true 
+PASS picture.hidden: setAttribute() to false 
+PASS picture.hidden: setAttribute() to object "[object Object]" 
+PASS picture.hidden: setAttribute() to NaN 
+PASS picture.hidden: setAttribute() to Infinity 
+PASS picture.hidden: setAttribute() to -Infinity 
+PASS picture.hidden: setAttribute() to "\0" 
+PASS picture.hidden: setAttribute() to object "test-toString" 
+PASS picture.hidden: setAttribute() to object "test-valueOf" 
+PASS picture.hidden: setAttribute() to "hidden" 
+PASS picture.hidden: IDL set to "" 
+PASS picture.hidden: IDL set to " foo " 
+PASS picture.hidden: IDL set to undefined 
+PASS picture.hidden: IDL set to null 
+PASS picture.hidden: IDL set to 7 
+PASS picture.hidden: IDL set to 1.5 
+PASS picture.hidden: IDL set to true 
+PASS picture.hidden: IDL set to false 
+PASS picture.hidden: IDL set to object "[object Object]" 
+PASS picture.hidden: IDL set to NaN 
+PASS picture.hidden: IDL set to Infinity 
+PASS picture.hidden: IDL set to -Infinity 
+PASS picture.hidden: IDL set to "\0" 
+PASS picture.hidden: IDL set to object "test-toString" 
+PASS picture.hidden: IDL set to object "test-valueOf" 
+PASS picture.accessKey: typeof IDL attribute 
+PASS picture.accessKey: IDL get with DOM attribute unset 
+PASS picture.accessKey: setAttribute() to "" 
+PASS picture.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.accessKey: setAttribute() to undefined 
+PASS picture.accessKey: setAttribute() to 7 
+PASS picture.accessKey: setAttribute() to 1.5 
+PASS picture.accessKey: setAttribute() to true 
+PASS picture.accessKey: setAttribute() to false 
+PASS picture.accessKey: setAttribute() to object "[object Object]" 
+PASS picture.accessKey: setAttribute() to NaN 
+PASS picture.accessKey: setAttribute() to Infinity 
+PASS picture.accessKey: setAttribute() to -Infinity 
+PASS picture.accessKey: setAttribute() to "\0" 
+PASS picture.accessKey: setAttribute() to null 
+PASS picture.accessKey: setAttribute() to object "test-toString" 
+PASS picture.accessKey: setAttribute() to object "test-valueOf" 
+PASS picture.accessKey: IDL set to "" 
+PASS picture.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS picture.accessKey: IDL set to undefined 
+PASS picture.accessKey: IDL set to 7 
+PASS picture.accessKey: IDL set to 1.5 
+PASS picture.accessKey: IDL set to true 
+PASS picture.accessKey: IDL set to false 
+PASS picture.accessKey: IDL set to object "[object Object]" 
+PASS picture.accessKey: IDL set to NaN 
+PASS picture.accessKey: IDL set to Infinity 
+PASS picture.accessKey: IDL set to -Infinity 
+PASS picture.accessKey: IDL set to "\0" 
+PASS picture.accessKey: IDL set to null 
+PASS picture.accessKey: IDL set to object "test-toString" 
+PASS picture.accessKey: IDL set to object "test-valueOf" 
+PASS picture.tabIndex: typeof IDL attribute 
+PASS picture.tabIndex: setAttribute() to -36 
+PASS picture.tabIndex: setAttribute() to -1 
+PASS picture.tabIndex: setAttribute() to 0 
+PASS picture.tabIndex: setAttribute() to 1 
+PASS picture.tabIndex: setAttribute() to 2147483647 
+PASS picture.tabIndex: setAttribute() to -2147483648 
+PASS picture.tabIndex: setAttribute() to "-1" 
+PASS picture.tabIndex: setAttribute() to "-0" 
+PASS picture.tabIndex: setAttribute() to "0" 
+PASS picture.tabIndex: setAttribute() to "1" 
+PASS picture.tabIndex: setAttribute() to "\t7" 
+PASS picture.tabIndex: setAttribute() to "\f7" 
+PASS picture.tabIndex: setAttribute() to " 7" 
+PASS picture.tabIndex: setAttribute() to "\n7" 
+PASS picture.tabIndex: setAttribute() to "\r7" 
+PASS picture.tabIndex: setAttribute() to 1.5 
+PASS picture.tabIndex: setAttribute() to object "2" 
+PASS picture.tabIndex: IDL set to -36 
+PASS picture.tabIndex: IDL set to -1 
+PASS picture.tabIndex: IDL set to 0 
+PASS picture.tabIndex: IDL set to 1 
+PASS picture.tabIndex: IDL set to 2147483647 
+PASS picture.tabIndex: IDL set to -2147483648 
 PASS img.title: typeof IDL attribute 
 PASS img.title: IDL get with DOM attribute unset 
 PASS img.title: setAttribute() to "" 
@@ -3874,38 +4121,6 @@ PASS video.loop: IDL set to -Infinity
 PASS video.loop: IDL set to "\0" 
 PASS video.loop: IDL set to object "test-toString" 
 PASS video.loop: IDL set to object "test-valueOf" 
-PASS video.mediaGroup: typeof IDL attribute 
-PASS video.mediaGroup: IDL get with DOM attribute unset 
-PASS video.mediaGroup: setAttribute() to "" 
-PASS video.mediaGroup: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS video.mediaGroup: setAttribute() to undefined 
-PASS video.mediaGroup: setAttribute() to 7 
-PASS video.mediaGroup: setAttribute() to 1.5 
-PASS video.mediaGroup: setAttribute() to true 
-PASS video.mediaGroup: setAttribute() to false 
-PASS video.mediaGroup: setAttribute() to object "[object Object]" 
-PASS video.mediaGroup: setAttribute() to NaN 
-PASS video.mediaGroup: setAttribute() to Infinity 
-PASS video.mediaGroup: setAttribute() to -Infinity 
-PASS video.mediaGroup: setAttribute() to "\0" 
-PASS video.mediaGroup: setAttribute() to null 
-PASS video.mediaGroup: setAttribute() to object "test-toString" 
-PASS video.mediaGroup: setAttribute() to object "test-valueOf" 
-PASS video.mediaGroup: IDL set to "" 
-PASS video.mediaGroup: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS video.mediaGroup: IDL set to undefined 
-PASS video.mediaGroup: IDL set to 7 
-PASS video.mediaGroup: IDL set to 1.5 
-PASS video.mediaGroup: IDL set to true 
-PASS video.mediaGroup: IDL set to false 
-PASS video.mediaGroup: IDL set to object "[object Object]" 
-PASS video.mediaGroup: IDL set to NaN 
-PASS video.mediaGroup: IDL set to Infinity 
-PASS video.mediaGroup: IDL set to -Infinity 
-PASS video.mediaGroup: IDL set to "\0" 
-PASS video.mediaGroup: IDL set to null 
-PASS video.mediaGroup: IDL set to object "test-toString" 
-PASS video.mediaGroup: IDL set to object "test-valueOf" 
 PASS video.controls: typeof IDL attribute 
 PASS video.controls: IDL get with DOM attribute unset 
 PASS video.controls: setAttribute() to "" 
@@ -4574,38 +4789,6 @@ PASS audio.loop: IDL set to -Infinity
 PASS audio.loop: IDL set to "\0" 
 PASS audio.loop: IDL set to object "test-toString" 
 PASS audio.loop: IDL set to object "test-valueOf" 
-PASS audio.mediaGroup: typeof IDL attribute 
-PASS audio.mediaGroup: IDL get with DOM attribute unset 
-PASS audio.mediaGroup: setAttribute() to "" 
-PASS audio.mediaGroup: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS audio.mediaGroup: setAttribute() to undefined 
-PASS audio.mediaGroup: setAttribute() to 7 
-PASS audio.mediaGroup: setAttribute() to 1.5 
-PASS audio.mediaGroup: setAttribute() to true 
-PASS audio.mediaGroup: setAttribute() to false 
-PASS audio.mediaGroup: setAttribute() to object "[object Object]" 
-PASS audio.mediaGroup: setAttribute() to NaN 
-PASS audio.mediaGroup: setAttribute() to Infinity 
-PASS audio.mediaGroup: setAttribute() to -Infinity 
-PASS audio.mediaGroup: setAttribute() to "\0" 
-PASS audio.mediaGroup: setAttribute() to null 
-PASS audio.mediaGroup: setAttribute() to object "test-toString" 
-PASS audio.mediaGroup: setAttribute() to object "test-valueOf" 
-PASS audio.mediaGroup: IDL set to "" 
-PASS audio.mediaGroup: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS audio.mediaGroup: IDL set to undefined 
-PASS audio.mediaGroup: IDL set to 7 
-PASS audio.mediaGroup: IDL set to 1.5 
-PASS audio.mediaGroup: IDL set to true 
-PASS audio.mediaGroup: IDL set to false 
-PASS audio.mediaGroup: IDL set to object "[object Object]" 
-PASS audio.mediaGroup: IDL set to NaN 
-PASS audio.mediaGroup: IDL set to Infinity 
-PASS audio.mediaGroup: IDL set to -Infinity 
-PASS audio.mediaGroup: IDL set to "\0" 
-PASS audio.mediaGroup: IDL set to null 
-PASS audio.mediaGroup: IDL set to object "test-toString" 
-PASS audio.mediaGroup: IDL set to object "test-valueOf" 
 PASS audio.controls: typeof IDL attribute 
 PASS audio.controls: IDL get with DOM attribute unset 
 PASS audio.controls: setAttribute() to "" 
@@ -4989,6 +5172,70 @@ PASS source.type: IDL set to "\0"
 PASS source.type: IDL set to null 
 PASS source.type: IDL set to object "test-toString" 
 PASS source.type: IDL set to object "test-valueOf" 
+PASS source.srcset: typeof IDL attribute 
+PASS source.srcset: IDL get with DOM attribute unset 
+PASS source.srcset: setAttribute() to "" 
+PASS source.srcset: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS source.srcset: setAttribute() to undefined 
+PASS source.srcset: setAttribute() to 7 
+PASS source.srcset: setAttribute() to 1.5 
+PASS source.srcset: setAttribute() to true 
+PASS source.srcset: setAttribute() to false 
+PASS source.srcset: setAttribute() to object "[object Object]" 
+PASS source.srcset: setAttribute() to NaN 
+PASS source.srcset: setAttribute() to Infinity 
+PASS source.srcset: setAttribute() to -Infinity 
+PASS source.srcset: setAttribute() to "\0" 
+PASS source.srcset: setAttribute() to null 
+PASS source.srcset: setAttribute() to object "test-toString" 
+PASS source.srcset: setAttribute() to object "test-valueOf" 
+PASS source.srcset: IDL set to "" 
+PASS source.srcset: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS source.srcset: IDL set to undefined 
+PASS source.srcset: IDL set to 7 
+PASS source.srcset: IDL set to 1.5 
+PASS source.srcset: IDL set to true 
+PASS source.srcset: IDL set to false 
+PASS source.srcset: IDL set to object "[object Object]" 
+PASS source.srcset: IDL set to NaN 
+PASS source.srcset: IDL set to Infinity 
+PASS source.srcset: IDL set to -Infinity 
+PASS source.srcset: IDL set to "\0" 
+PASS source.srcset: IDL set to null 
+PASS source.srcset: IDL set to object "test-toString" 
+PASS source.srcset: IDL set to object "test-valueOf" 
+PASS source.sizes: typeof IDL attribute 
+PASS source.sizes: IDL get with DOM attribute unset 
+PASS source.sizes: setAttribute() to "" 
+PASS source.sizes: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS source.sizes: setAttribute() to undefined 
+PASS source.sizes: setAttribute() to 7 
+PASS source.sizes: setAttribute() to 1.5 
+PASS source.sizes: setAttribute() to true 
+PASS source.sizes: setAttribute() to false 
+PASS source.sizes: setAttribute() to object "[object Object]" 
+PASS source.sizes: setAttribute() to NaN 
+PASS source.sizes: setAttribute() to Infinity 
+PASS source.sizes: setAttribute() to -Infinity 
+PASS source.sizes: setAttribute() to "\0" 
+PASS source.sizes: setAttribute() to null 
+PASS source.sizes: setAttribute() to object "test-toString" 
+PASS source.sizes: setAttribute() to object "test-valueOf" 
+PASS source.sizes: IDL set to "" 
+PASS source.sizes: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS source.sizes: IDL set to undefined 
+PASS source.sizes: IDL set to 7 
+PASS source.sizes: IDL set to 1.5 
+PASS source.sizes: IDL set to true 
+PASS source.sizes: IDL set to false 
+PASS source.sizes: IDL set to object "[object Object]" 
+PASS source.sizes: IDL set to NaN 
+PASS source.sizes: IDL set to Infinity 
+PASS source.sizes: IDL set to -Infinity 
+PASS source.sizes: IDL set to "\0" 
+PASS source.sizes: IDL set to null 
+PASS source.sizes: IDL set to object "test-toString" 
+PASS source.sizes: IDL set to object "test-valueOf" 
 PASS source.media: typeof IDL attribute 
 PASS source.media: IDL get with DOM attribute unset 
 PASS source.media: setAttribute() to "" 

@@ -3,14 +3,11 @@ Blocked access to external URL http://some.nonexistant.test/fail
 CONSOLE MESSAGE: line 1: SyntaxError: Unexpected end of script
 CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: undefinedfn
 
-Harness Error (TIMEOUT), message = null
-
 PASS Script parse-inline 
 PASS Script parse-ext 
 PASS Script dom-inline 
 PASS Script dom-ext 
 PASS Script nested 
-NOTRUN Script script-exec 
 PASS Script script-load-error 
 PASS Script script-window-error 
 PASS Script timeout 

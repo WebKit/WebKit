@@ -15,4 +15,5 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/__init__.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/serve/commands.json
 /LayoutTests/imported/w3c/web-platform-tests/tools/serve/serve.py

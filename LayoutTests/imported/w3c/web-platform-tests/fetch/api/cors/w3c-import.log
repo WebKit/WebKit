@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-multiple-origins.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-no-preflight.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.js
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-cache.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-referrer.any.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-star.any.js

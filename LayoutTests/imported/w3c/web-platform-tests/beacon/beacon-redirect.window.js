@@ -1,5 +1,5 @@
 // META: script=/common/utils.js
-// META: script=beacon-common.js?pipe=sub
+// META: script=beacon-common.sub.js
 
 "use strict";
 

@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&ident=fail_1489438122639 due to access control checks.
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=custom-header&origin=*&token=6de9061c-4017-44fc-a211-22e46653293f due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?origin=*&ident=fail_1505770043965 due to access control checks.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://www1.localhost:8800/cors/resources/cors-makeheader.py?headers=custom-header&origin=*&token=bb20ebf3-f3f0-4195-971d-46ed5a82c80b due to access control checks.
 Preflight after redirect
 
 

@@ -253,6 +253,11 @@ webkit.org/b/156069 imported/w3c/web-platform-tests/html/semantics/embedded-cont
 
 webkit.org/b/169523 [ Debug ] imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Failure ]
 
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Pass Failure ]
+imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
+
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
 fast/dom/HTMLAnchorElement/anchor-file-blob-convert-to-download.html [ Skip ]
 
@@ -359,6 +364,8 @@ webkit.org/b/170830 inspector/sampling-profiler/named-function-expression.html [
 css3/viewport-percentage-lengths/vh-auto-size.html [ Skip ]
 
 webkit.org/b/170877 [ Debug ] webgl/1.0.2/conformance/glsl/misc/shader-with-reserved-words.html [ Pass Timeout ]
+
+imported/w3c/web-platform-tests/XMLHttpRequest/event-upload-progress-crossorigin.htm [ Pass Crash ]
 
 # Beacon is not supported on WK1.
 http/tests/blink/sendbeacon/ [ Skip ]

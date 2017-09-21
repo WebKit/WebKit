@@ -1,5 +1,3 @@
 
-FAIL PaymentRequestUpdateEvent constructor throws in a non-secure context assert_throws: function "() => {
-    new PaymentRequestUpdateEvent("test");
-  }" did not throw
+PASS PaymentRequestUpdateEvent constructor must not be exposed in insecure context 
 

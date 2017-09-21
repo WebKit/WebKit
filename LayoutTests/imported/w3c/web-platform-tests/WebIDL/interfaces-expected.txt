@@ -1,0 +1,25 @@
+
+FAIL Test driver promise_test: Unhandled rejection with value: object "Unrecognised tokens, line 1 (tokens: '{"error": {')
+[
+    {
+        "type": "other",
+        "value": "{"
+    },
+    {
+        "type": "string",
+        "value": "\"error\""
+    },
+    {
+        "type": "other",
+        "value": ":"
+    },
+    {
+        "type": "whitespace",
+        "value": " "
+    },
+    {
+        "type": "other",
+        "value": "{"
+    }
+]"
+

@@ -9,4 +9,5 @@ PASS Parse and sort: é&e�&é
 PASS URL parse and sort: é&e�&é 
 PASS Parse and sort: z=z&a=a&z=y&a=b&z=x&a=c&z=w&a=d&z=v&a=e&z=u&a=f&z=t&a=g 
 PASS URL parse and sort: z=z&a=a&z=y&a=b&z=x&a=c&z=w&a=d&z=v&a=e&z=u&a=f&z=t&a=g 
+PASS Sorting non-existent params removes ? from URL 
 

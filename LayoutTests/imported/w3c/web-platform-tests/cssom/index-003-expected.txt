@@ -1,9 +1,0 @@
-
-PASS Namespace rule is expected to be @namespace svg "http://www.w3.org/2000/svg" 
-PASS @import rule is expected to be @import url("main.css") 
-PASS Style Rule is expected to be h1 
-PASS Style Rule is expected to be svg|a 
-PASS @font-face rule is expected to be @font-face 
-PASS media rule is expected to be @media (min-width: 200px) 
-PASS page rule is expected to be @page :first 
-

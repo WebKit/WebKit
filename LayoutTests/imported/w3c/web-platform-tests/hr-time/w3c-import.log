@@ -19,4 +19,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/idlharness.html
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/monotonic-clock.any.js
 /LayoutTests/imported/w3c/web-platform-tests/hr-time/test_cross_frame_start.html
-/LayoutTests/imported/w3c/web-platform-tests/hr-time/window-worker-time-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/hr-time/timeOrigin.html
+/LayoutTests/imported/w3c/web-platform-tests/hr-time/timing-attack.html
+/LayoutTests/imported/w3c/web-platform-tests/hr-time/window-worker-timeOrigin.window.js

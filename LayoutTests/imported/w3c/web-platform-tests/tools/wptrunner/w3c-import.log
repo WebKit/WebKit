@@ -22,6 +22,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_chrome.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_edge.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_firefox.txt
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_ie.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_sauce.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/requirements_servo.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/setup.py

@@ -326,10 +326,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_invalid.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/keypath_maxsize.htm
-/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/large-nested-cloning.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/large-requests-abort.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/list_ordering.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/name-scopes.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/nested-cloning-common.js
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/nested-cloning-large.html
+/LayoutTests/imported/w3c/web-platform-tests/IndexedDB/nested-cloning-small.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/objectstore_keyorder.htm
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/open-request-queue.html
 /LayoutTests/imported/w3c/web-platform-tests/IndexedDB/parallel-cursors-upgrade.html

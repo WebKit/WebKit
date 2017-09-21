@@ -111,6 +111,8 @@ PASS Document.querySelector: Invalid namespace: ^|div
 PASS Document.querySelectorAll: Invalid namespace: ^|div 
 PASS Document.querySelector: Invalid namespace: $|div 
 PASS Document.querySelectorAll: Invalid namespace: $|div 
+PASS Document.querySelector: Relative selector: >* 
+PASS Document.querySelectorAll: Relative selector: >* 
 PASS Detached Element.querySelector: Empty String:  
 PASS Detached Element.querySelectorAll: Empty String:  
 PASS Detached Element.querySelector: Invalid character: [ 
@@ -173,6 +175,8 @@ PASS Detached Element.querySelector: Invalid namespace: ^|div
 PASS Detached Element.querySelectorAll: Invalid namespace: ^|div 
 PASS Detached Element.querySelector: Invalid namespace: $|div 
 PASS Detached Element.querySelectorAll: Invalid namespace: $|div 
+PASS Detached Element.querySelector: Relative selector: >* 
+PASS Detached Element.querySelectorAll: Relative selector: >* 
 PASS Fragment.querySelector: Empty String:  
 PASS Fragment.querySelectorAll: Empty String:  
 PASS Fragment.querySelector: Invalid character: [ 
@@ -235,6 +239,8 @@ PASS Fragment.querySelector: Invalid namespace: ^|div
 PASS Fragment.querySelectorAll: Invalid namespace: ^|div 
 PASS Fragment.querySelector: Invalid namespace: $|div 
 PASS Fragment.querySelectorAll: Invalid namespace: $|div 
+PASS Fragment.querySelector: Relative selector: >* 
+PASS Fragment.querySelectorAll: Relative selector: >* 
 PASS In-document Element.querySelector: Empty String:  
 PASS In-document Element.querySelectorAll: Empty String:  
 PASS In-document Element.querySelector: Invalid character: [ 
@@ -297,6 +303,8 @@ PASS In-document Element.querySelector: Invalid namespace: ^|div
 PASS In-document Element.querySelectorAll: Invalid namespace: ^|div 
 PASS In-document Element.querySelector: Invalid namespace: $|div 
 PASS In-document Element.querySelectorAll: Invalid namespace: $|div 
+PASS In-document Element.querySelector: Relative selector: >* 
+PASS In-document Element.querySelectorAll: Relative selector: >* 
 PASS Document.querySelectorAll: Type selector, matching html element: html 
 PASS Document.querySelector: Type selector, matching html element: html 
 PASS Document.querySelectorAll: Type selector, matching body element: body 
@@ -601,20 +609,6 @@ PASS Document.querySelectorAll: Descendant combinator, whitespace characters: #d
 #descendant-div2 
 PASS Document.querySelector: Descendant combinator, whitespace characters: #descendant	\r
 #descendant-div2 
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Document.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
-FAIL Document.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
 PASS Document.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Document.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Document.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1027,18 +1021,6 @@ PASS Detached Element.querySelectorAll: Descendant combinator, whitespace charac
 #descendant-div2 
 PASS Detached Element.querySelector: Descendant combinator, whitespace characters: #descendant	\r
 #descendant-div2 
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Detached Element.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
-FAIL Detached Element.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
 PASS Detached Element.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Detached Element.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Detached Element.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1451,18 +1433,6 @@ PASS Fragment.querySelectorAll: Descendant combinator, whitespace characters: #d
 #descendant-div2 
 PASS Fragment.querySelector: Descendant combinator, whitespace characters: #descendant	\r
 #descendant-div2 
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL Fragment.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
-FAIL Fragment.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
 PASS Fragment.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Fragment.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS Fragment.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 
@@ -1877,20 +1847,6 @@ PASS In-document Element.querySelectorAll: Descendant combinator, whitespace cha
 #descendant-div2 
 PASS In-document Element.querySelector: Descendant combinator, whitespace characters: #descendant	\r
 #descendant-div2 
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element that is a descendant of an element with id: #descendant>>div The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: body>>#descendant-div1 The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element: div>>#descendant-div1 The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element with id that is a descendant of an element with id: #descendant>>#descendant-div2 The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with id: #descendant>>.descendant-div2 The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', matching element with class that is a descendant of an element with class: .descendant-div1>>.descendant-div3 The string did not match the expected pattern.
-FAIL In-document Element.querySelectorAll: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
-FAIL In-document Element.querySelector: Descendant combinator '>>', not matching element with id that is not a descendant of an element with id: #descendant-div1>>#descendant-div4 The string did not match the expected pattern.
 PASS In-document Element.querySelectorAll: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS In-document Element.querySelector: Child combinator, matching element that is a child of an element with id: #child>div 
 PASS In-document Element.querySelectorAll: Child combinator, matching element with id that is a child of an element: div>#child-div1 

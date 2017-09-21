@@ -5,4 +5,6 @@ PASS Check if button.formAction is the document's address when formaction conten
 PASS Check if input.formAction is the document's address when formaction content attribute value is empty string 
 PASS Check if button.formAction is the document's address when formaction content attribute value is not assigned 
 PASS Check if input.formAction is the document's address when formaction content attribute value is not assigned 
+PASS Check if button.formAction is the document's new address when formaction content attribute is missing and pushState has been used 
+PASS Check if input.formAction is the document's new address when formaction content attribute is missing and pushState has been used 
 

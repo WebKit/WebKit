@@ -21,6 +21,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSRuleList.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleRule.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/CSSStyleSheet.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom/GetBoundingRect.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/MediaList.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/OWNERS
 /LayoutTests/imported/w3c/web-platform-tests/cssom/StyleSheetList.html
@@ -32,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-cssstyledeclaration-set.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-fontfacerule-constructors.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-fontfacerule.html
+/LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-ruleTypeAndOrder.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssom-setProperty-shorthand.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-csstext.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/cssstyledeclaration-mutability.html
@@ -40,7 +42,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cssom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/index-001.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/index-002.html
-/LayoutTests/imported/w3c/web-platform-tests/cssom/index-003.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/inline-style-001.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-charset-no-index.html
 /LayoutTests/imported/w3c/web-platform-tests/cssom/insertRule-import-no-index.html

@@ -1122,6 +1122,532 @@ PASS noscript.tabIndex: IDL set to 0
 PASS noscript.tabIndex: IDL set to 1 
 PASS noscript.tabIndex: IDL set to 2147483647 
 PASS noscript.tabIndex: IDL set to -2147483648 
+PASS template.title: typeof IDL attribute 
+PASS template.title: IDL get with DOM attribute unset 
+PASS template.title: setAttribute() to "" 
+PASS template.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.title: setAttribute() to undefined 
+PASS template.title: setAttribute() to 7 
+PASS template.title: setAttribute() to 1.5 
+PASS template.title: setAttribute() to true 
+PASS template.title: setAttribute() to false 
+PASS template.title: setAttribute() to object "[object Object]" 
+PASS template.title: setAttribute() to NaN 
+PASS template.title: setAttribute() to Infinity 
+PASS template.title: setAttribute() to -Infinity 
+PASS template.title: setAttribute() to "\0" 
+PASS template.title: setAttribute() to null 
+PASS template.title: setAttribute() to object "test-toString" 
+PASS template.title: setAttribute() to object "test-valueOf" 
+PASS template.title: IDL set to "" 
+PASS template.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.title: IDL set to undefined 
+PASS template.title: IDL set to 7 
+PASS template.title: IDL set to 1.5 
+PASS template.title: IDL set to true 
+PASS template.title: IDL set to false 
+PASS template.title: IDL set to object "[object Object]" 
+PASS template.title: IDL set to NaN 
+PASS template.title: IDL set to Infinity 
+PASS template.title: IDL set to -Infinity 
+PASS template.title: IDL set to "\0" 
+PASS template.title: IDL set to null 
+PASS template.title: IDL set to object "test-toString" 
+PASS template.title: IDL set to object "test-valueOf" 
+PASS template.lang: typeof IDL attribute 
+PASS template.lang: IDL get with DOM attribute unset 
+PASS template.lang: setAttribute() to "" 
+PASS template.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.lang: setAttribute() to undefined 
+PASS template.lang: setAttribute() to 7 
+PASS template.lang: setAttribute() to 1.5 
+PASS template.lang: setAttribute() to true 
+PASS template.lang: setAttribute() to false 
+PASS template.lang: setAttribute() to object "[object Object]" 
+PASS template.lang: setAttribute() to NaN 
+PASS template.lang: setAttribute() to Infinity 
+PASS template.lang: setAttribute() to -Infinity 
+PASS template.lang: setAttribute() to "\0" 
+PASS template.lang: setAttribute() to null 
+PASS template.lang: setAttribute() to object "test-toString" 
+PASS template.lang: setAttribute() to object "test-valueOf" 
+PASS template.lang: IDL set to "" 
+PASS template.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.lang: IDL set to undefined 
+PASS template.lang: IDL set to 7 
+PASS template.lang: IDL set to 1.5 
+PASS template.lang: IDL set to true 
+PASS template.lang: IDL set to false 
+PASS template.lang: IDL set to object "[object Object]" 
+PASS template.lang: IDL set to NaN 
+PASS template.lang: IDL set to Infinity 
+PASS template.lang: IDL set to -Infinity 
+PASS template.lang: IDL set to "\0" 
+PASS template.lang: IDL set to null 
+PASS template.lang: IDL set to object "test-toString" 
+PASS template.lang: IDL set to object "test-valueOf" 
+PASS template.dir: typeof IDL attribute 
+PASS template.dir: IDL get with DOM attribute unset 
+PASS template.dir: setAttribute() to "" 
+PASS template.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.dir: setAttribute() to undefined 
+PASS template.dir: setAttribute() to 7 
+PASS template.dir: setAttribute() to 1.5 
+PASS template.dir: setAttribute() to true 
+PASS template.dir: setAttribute() to false 
+PASS template.dir: setAttribute() to object "[object Object]" 
+PASS template.dir: setAttribute() to NaN 
+PASS template.dir: setAttribute() to Infinity 
+PASS template.dir: setAttribute() to -Infinity 
+PASS template.dir: setAttribute() to "\0" 
+PASS template.dir: setAttribute() to null 
+PASS template.dir: setAttribute() to object "test-toString" 
+PASS template.dir: setAttribute() to object "test-valueOf" 
+PASS template.dir: setAttribute() to "ltr" 
+PASS template.dir: setAttribute() to "xltr" 
+PASS template.dir: setAttribute() to "ltr\0" 
+PASS template.dir: setAttribute() to "tr" 
+PASS template.dir: setAttribute() to "LTR" 
+PASS template.dir: setAttribute() to "rtl" 
+PASS template.dir: setAttribute() to "xrtl" 
+PASS template.dir: setAttribute() to "rtl\0" 
+PASS template.dir: setAttribute() to "tl" 
+PASS template.dir: setAttribute() to "RTL" 
+PASS template.dir: setAttribute() to "auto" 
+PASS template.dir: setAttribute() to "xauto" 
+PASS template.dir: setAttribute() to "auto\0" 
+PASS template.dir: setAttribute() to "uto" 
+PASS template.dir: setAttribute() to "AUTO" 
+PASS template.dir: IDL set to "" 
+PASS template.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.dir: IDL set to undefined 
+PASS template.dir: IDL set to 7 
+PASS template.dir: IDL set to 1.5 
+PASS template.dir: IDL set to true 
+PASS template.dir: IDL set to false 
+PASS template.dir: IDL set to object "[object Object]" 
+PASS template.dir: IDL set to NaN 
+PASS template.dir: IDL set to Infinity 
+PASS template.dir: IDL set to -Infinity 
+PASS template.dir: IDL set to "\0" 
+PASS template.dir: IDL set to null 
+PASS template.dir: IDL set to object "test-toString" 
+PASS template.dir: IDL set to object "test-valueOf" 
+PASS template.dir: IDL set to "ltr" 
+PASS template.dir: IDL set to "xltr" 
+PASS template.dir: IDL set to "ltr\0" 
+PASS template.dir: IDL set to "tr" 
+PASS template.dir: IDL set to "LTR" 
+PASS template.dir: IDL set to "rtl" 
+PASS template.dir: IDL set to "xrtl" 
+PASS template.dir: IDL set to "rtl\0" 
+PASS template.dir: IDL set to "tl" 
+PASS template.dir: IDL set to "RTL" 
+PASS template.dir: IDL set to "auto" 
+PASS template.dir: IDL set to "xauto" 
+PASS template.dir: IDL set to "auto\0" 
+PASS template.dir: IDL set to "uto" 
+PASS template.dir: IDL set to "AUTO" 
+PASS template.className (<template class>): typeof IDL attribute 
+PASS template.className (<template class>): IDL get with DOM attribute unset 
+PASS template.className (<template class>): setAttribute() to "" 
+PASS template.className (<template class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.className (<template class>): setAttribute() to undefined 
+PASS template.className (<template class>): setAttribute() to 7 
+PASS template.className (<template class>): setAttribute() to 1.5 
+PASS template.className (<template class>): setAttribute() to true 
+PASS template.className (<template class>): setAttribute() to false 
+PASS template.className (<template class>): setAttribute() to object "[object Object]" 
+PASS template.className (<template class>): setAttribute() to NaN 
+PASS template.className (<template class>): setAttribute() to Infinity 
+PASS template.className (<template class>): setAttribute() to -Infinity 
+PASS template.className (<template class>): setAttribute() to "\0" 
+PASS template.className (<template class>): setAttribute() to null 
+PASS template.className (<template class>): setAttribute() to object "test-toString" 
+PASS template.className (<template class>): setAttribute() to object "test-valueOf" 
+PASS template.className (<template class>): IDL set to "" 
+PASS template.className (<template class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.className (<template class>): IDL set to undefined 
+PASS template.className (<template class>): IDL set to 7 
+PASS template.className (<template class>): IDL set to 1.5 
+PASS template.className (<template class>): IDL set to true 
+PASS template.className (<template class>): IDL set to false 
+PASS template.className (<template class>): IDL set to object "[object Object]" 
+PASS template.className (<template class>): IDL set to NaN 
+PASS template.className (<template class>): IDL set to Infinity 
+PASS template.className (<template class>): IDL set to -Infinity 
+PASS template.className (<template class>): IDL set to "\0" 
+PASS template.className (<template class>): IDL set to null 
+PASS template.className (<template class>): IDL set to object "test-toString" 
+PASS template.className (<template class>): IDL set to object "test-valueOf" 
+PASS template.hidden: typeof IDL attribute 
+PASS template.hidden: IDL get with DOM attribute unset 
+PASS template.hidden: setAttribute() to "" 
+PASS template.hidden: setAttribute() to " foo " 
+PASS template.hidden: setAttribute() to undefined 
+PASS template.hidden: setAttribute() to null 
+PASS template.hidden: setAttribute() to 7 
+PASS template.hidden: setAttribute() to 1.5 
+PASS template.hidden: setAttribute() to true 
+PASS template.hidden: setAttribute() to false 
+PASS template.hidden: setAttribute() to object "[object Object]" 
+PASS template.hidden: setAttribute() to NaN 
+PASS template.hidden: setAttribute() to Infinity 
+PASS template.hidden: setAttribute() to -Infinity 
+PASS template.hidden: setAttribute() to "\0" 
+PASS template.hidden: setAttribute() to object "test-toString" 
+PASS template.hidden: setAttribute() to object "test-valueOf" 
+PASS template.hidden: setAttribute() to "hidden" 
+PASS template.hidden: IDL set to "" 
+PASS template.hidden: IDL set to " foo " 
+PASS template.hidden: IDL set to undefined 
+PASS template.hidden: IDL set to null 
+PASS template.hidden: IDL set to 7 
+PASS template.hidden: IDL set to 1.5 
+PASS template.hidden: IDL set to true 
+PASS template.hidden: IDL set to false 
+PASS template.hidden: IDL set to object "[object Object]" 
+PASS template.hidden: IDL set to NaN 
+PASS template.hidden: IDL set to Infinity 
+PASS template.hidden: IDL set to -Infinity 
+PASS template.hidden: IDL set to "\0" 
+PASS template.hidden: IDL set to object "test-toString" 
+PASS template.hidden: IDL set to object "test-valueOf" 
+PASS template.accessKey: typeof IDL attribute 
+PASS template.accessKey: IDL get with DOM attribute unset 
+PASS template.accessKey: setAttribute() to "" 
+PASS template.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.accessKey: setAttribute() to undefined 
+PASS template.accessKey: setAttribute() to 7 
+PASS template.accessKey: setAttribute() to 1.5 
+PASS template.accessKey: setAttribute() to true 
+PASS template.accessKey: setAttribute() to false 
+PASS template.accessKey: setAttribute() to object "[object Object]" 
+PASS template.accessKey: setAttribute() to NaN 
+PASS template.accessKey: setAttribute() to Infinity 
+PASS template.accessKey: setAttribute() to -Infinity 
+PASS template.accessKey: setAttribute() to "\0" 
+PASS template.accessKey: setAttribute() to null 
+PASS template.accessKey: setAttribute() to object "test-toString" 
+PASS template.accessKey: setAttribute() to object "test-valueOf" 
+PASS template.accessKey: IDL set to "" 
+PASS template.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS template.accessKey: IDL set to undefined 
+PASS template.accessKey: IDL set to 7 
+PASS template.accessKey: IDL set to 1.5 
+PASS template.accessKey: IDL set to true 
+PASS template.accessKey: IDL set to false 
+PASS template.accessKey: IDL set to object "[object Object]" 
+PASS template.accessKey: IDL set to NaN 
+PASS template.accessKey: IDL set to Infinity 
+PASS template.accessKey: IDL set to -Infinity 
+PASS template.accessKey: IDL set to "\0" 
+PASS template.accessKey: IDL set to null 
+PASS template.accessKey: IDL set to object "test-toString" 
+PASS template.accessKey: IDL set to object "test-valueOf" 
+PASS template.tabIndex: typeof IDL attribute 
+PASS template.tabIndex: setAttribute() to -36 
+PASS template.tabIndex: setAttribute() to -1 
+PASS template.tabIndex: setAttribute() to 0 
+PASS template.tabIndex: setAttribute() to 1 
+PASS template.tabIndex: setAttribute() to 2147483647 
+PASS template.tabIndex: setAttribute() to -2147483648 
+PASS template.tabIndex: setAttribute() to "-1" 
+PASS template.tabIndex: setAttribute() to "-0" 
+PASS template.tabIndex: setAttribute() to "0" 
+PASS template.tabIndex: setAttribute() to "1" 
+PASS template.tabIndex: setAttribute() to "\t7" 
+PASS template.tabIndex: setAttribute() to "\f7" 
+PASS template.tabIndex: setAttribute() to " 7" 
+PASS template.tabIndex: setAttribute() to "\n7" 
+PASS template.tabIndex: setAttribute() to "\r7" 
+PASS template.tabIndex: setAttribute() to 1.5 
+PASS template.tabIndex: setAttribute() to object "2" 
+PASS template.tabIndex: IDL set to -36 
+PASS template.tabIndex: IDL set to -1 
+PASS template.tabIndex: IDL set to 0 
+PASS template.tabIndex: IDL set to 1 
+PASS template.tabIndex: IDL set to 2147483647 
+PASS template.tabIndex: IDL set to -2147483648 
+PASS slot.title: typeof IDL attribute 
+PASS slot.title: IDL get with DOM attribute unset 
+PASS slot.title: setAttribute() to "" 
+PASS slot.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.title: setAttribute() to undefined 
+PASS slot.title: setAttribute() to 7 
+PASS slot.title: setAttribute() to 1.5 
+PASS slot.title: setAttribute() to true 
+PASS slot.title: setAttribute() to false 
+PASS slot.title: setAttribute() to object "[object Object]" 
+PASS slot.title: setAttribute() to NaN 
+PASS slot.title: setAttribute() to Infinity 
+PASS slot.title: setAttribute() to -Infinity 
+PASS slot.title: setAttribute() to "\0" 
+PASS slot.title: setAttribute() to null 
+PASS slot.title: setAttribute() to object "test-toString" 
+PASS slot.title: setAttribute() to object "test-valueOf" 
+PASS slot.title: IDL set to "" 
+PASS slot.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.title: IDL set to undefined 
+PASS slot.title: IDL set to 7 
+PASS slot.title: IDL set to 1.5 
+PASS slot.title: IDL set to true 
+PASS slot.title: IDL set to false 
+PASS slot.title: IDL set to object "[object Object]" 
+PASS slot.title: IDL set to NaN 
+PASS slot.title: IDL set to Infinity 
+PASS slot.title: IDL set to -Infinity 
+PASS slot.title: IDL set to "\0" 
+PASS slot.title: IDL set to null 
+PASS slot.title: IDL set to object "test-toString" 
+PASS slot.title: IDL set to object "test-valueOf" 
+PASS slot.lang: typeof IDL attribute 
+PASS slot.lang: IDL get with DOM attribute unset 
+PASS slot.lang: setAttribute() to "" 
+PASS slot.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.lang: setAttribute() to undefined 
+PASS slot.lang: setAttribute() to 7 
+PASS slot.lang: setAttribute() to 1.5 
+PASS slot.lang: setAttribute() to true 
+PASS slot.lang: setAttribute() to false 
+PASS slot.lang: setAttribute() to object "[object Object]" 
+PASS slot.lang: setAttribute() to NaN 
+PASS slot.lang: setAttribute() to Infinity 
+PASS slot.lang: setAttribute() to -Infinity 
+PASS slot.lang: setAttribute() to "\0" 
+PASS slot.lang: setAttribute() to null 
+PASS slot.lang: setAttribute() to object "test-toString" 
+PASS slot.lang: setAttribute() to object "test-valueOf" 
+PASS slot.lang: IDL set to "" 
+PASS slot.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.lang: IDL set to undefined 
+PASS slot.lang: IDL set to 7 
+PASS slot.lang: IDL set to 1.5 
+PASS slot.lang: IDL set to true 
+PASS slot.lang: IDL set to false 
+PASS slot.lang: IDL set to object "[object Object]" 
+PASS slot.lang: IDL set to NaN 
+PASS slot.lang: IDL set to Infinity 
+PASS slot.lang: IDL set to -Infinity 
+PASS slot.lang: IDL set to "\0" 
+PASS slot.lang: IDL set to null 
+PASS slot.lang: IDL set to object "test-toString" 
+PASS slot.lang: IDL set to object "test-valueOf" 
+PASS slot.dir: typeof IDL attribute 
+PASS slot.dir: IDL get with DOM attribute unset 
+PASS slot.dir: setAttribute() to "" 
+PASS slot.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.dir: setAttribute() to undefined 
+PASS slot.dir: setAttribute() to 7 
+PASS slot.dir: setAttribute() to 1.5 
+PASS slot.dir: setAttribute() to true 
+PASS slot.dir: setAttribute() to false 
+PASS slot.dir: setAttribute() to object "[object Object]" 
+PASS slot.dir: setAttribute() to NaN 
+PASS slot.dir: setAttribute() to Infinity 
+PASS slot.dir: setAttribute() to -Infinity 
+PASS slot.dir: setAttribute() to "\0" 
+PASS slot.dir: setAttribute() to null 
+PASS slot.dir: setAttribute() to object "test-toString" 
+PASS slot.dir: setAttribute() to object "test-valueOf" 
+PASS slot.dir: setAttribute() to "ltr" 
+PASS slot.dir: setAttribute() to "xltr" 
+PASS slot.dir: setAttribute() to "ltr\0" 
+PASS slot.dir: setAttribute() to "tr" 
+PASS slot.dir: setAttribute() to "LTR" 
+PASS slot.dir: setAttribute() to "rtl" 
+PASS slot.dir: setAttribute() to "xrtl" 
+PASS slot.dir: setAttribute() to "rtl\0" 
+PASS slot.dir: setAttribute() to "tl" 
+PASS slot.dir: setAttribute() to "RTL" 
+PASS slot.dir: setAttribute() to "auto" 
+PASS slot.dir: setAttribute() to "xauto" 
+PASS slot.dir: setAttribute() to "auto\0" 
+PASS slot.dir: setAttribute() to "uto" 
+PASS slot.dir: setAttribute() to "AUTO" 
+PASS slot.dir: IDL set to "" 
+PASS slot.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.dir: IDL set to undefined 
+PASS slot.dir: IDL set to 7 
+PASS slot.dir: IDL set to 1.5 
+PASS slot.dir: IDL set to true 
+PASS slot.dir: IDL set to false 
+PASS slot.dir: IDL set to object "[object Object]" 
+PASS slot.dir: IDL set to NaN 
+PASS slot.dir: IDL set to Infinity 
+PASS slot.dir: IDL set to -Infinity 
+PASS slot.dir: IDL set to "\0" 
+PASS slot.dir: IDL set to null 
+PASS slot.dir: IDL set to object "test-toString" 
+PASS slot.dir: IDL set to object "test-valueOf" 
+PASS slot.dir: IDL set to "ltr" 
+PASS slot.dir: IDL set to "xltr" 
+PASS slot.dir: IDL set to "ltr\0" 
+PASS slot.dir: IDL set to "tr" 
+PASS slot.dir: IDL set to "LTR" 
+PASS slot.dir: IDL set to "rtl" 
+PASS slot.dir: IDL set to "xrtl" 
+PASS slot.dir: IDL set to "rtl\0" 
+PASS slot.dir: IDL set to "tl" 
+PASS slot.dir: IDL set to "RTL" 
+PASS slot.dir: IDL set to "auto" 
+PASS slot.dir: IDL set to "xauto" 
+PASS slot.dir: IDL set to "auto\0" 
+PASS slot.dir: IDL set to "uto" 
+PASS slot.dir: IDL set to "AUTO" 
+PASS slot.className (<slot class>): typeof IDL attribute 
+PASS slot.className (<slot class>): IDL get with DOM attribute unset 
+PASS slot.className (<slot class>): setAttribute() to "" 
+PASS slot.className (<slot class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.className (<slot class>): setAttribute() to undefined 
+PASS slot.className (<slot class>): setAttribute() to 7 
+PASS slot.className (<slot class>): setAttribute() to 1.5 
+PASS slot.className (<slot class>): setAttribute() to true 
+PASS slot.className (<slot class>): setAttribute() to false 
+PASS slot.className (<slot class>): setAttribute() to object "[object Object]" 
+PASS slot.className (<slot class>): setAttribute() to NaN 
+PASS slot.className (<slot class>): setAttribute() to Infinity 
+PASS slot.className (<slot class>): setAttribute() to -Infinity 
+PASS slot.className (<slot class>): setAttribute() to "\0" 
+PASS slot.className (<slot class>): setAttribute() to null 
+PASS slot.className (<slot class>): setAttribute() to object "test-toString" 
+PASS slot.className (<slot class>): setAttribute() to object "test-valueOf" 
+PASS slot.className (<slot class>): IDL set to "" 
+PASS slot.className (<slot class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.className (<slot class>): IDL set to undefined 
+PASS slot.className (<slot class>): IDL set to 7 
+PASS slot.className (<slot class>): IDL set to 1.5 
+PASS slot.className (<slot class>): IDL set to true 
+PASS slot.className (<slot class>): IDL set to false 
+PASS slot.className (<slot class>): IDL set to object "[object Object]" 
+PASS slot.className (<slot class>): IDL set to NaN 
+PASS slot.className (<slot class>): IDL set to Infinity 
+PASS slot.className (<slot class>): IDL set to -Infinity 
+PASS slot.className (<slot class>): IDL set to "\0" 
+PASS slot.className (<slot class>): IDL set to null 
+PASS slot.className (<slot class>): IDL set to object "test-toString" 
+PASS slot.className (<slot class>): IDL set to object "test-valueOf" 
+PASS slot.hidden: typeof IDL attribute 
+PASS slot.hidden: IDL get with DOM attribute unset 
+PASS slot.hidden: setAttribute() to "" 
+PASS slot.hidden: setAttribute() to " foo " 
+PASS slot.hidden: setAttribute() to undefined 
+PASS slot.hidden: setAttribute() to null 
+PASS slot.hidden: setAttribute() to 7 
+PASS slot.hidden: setAttribute() to 1.5 
+PASS slot.hidden: setAttribute() to true 
+PASS slot.hidden: setAttribute() to false 
+PASS slot.hidden: setAttribute() to object "[object Object]" 
+PASS slot.hidden: setAttribute() to NaN 
+PASS slot.hidden: setAttribute() to Infinity 
+PASS slot.hidden: setAttribute() to -Infinity 
+PASS slot.hidden: setAttribute() to "\0" 
+PASS slot.hidden: setAttribute() to object "test-toString" 
+PASS slot.hidden: setAttribute() to object "test-valueOf" 
+PASS slot.hidden: setAttribute() to "hidden" 
+PASS slot.hidden: IDL set to "" 
+PASS slot.hidden: IDL set to " foo " 
+PASS slot.hidden: IDL set to undefined 
+PASS slot.hidden: IDL set to null 
+PASS slot.hidden: IDL set to 7 
+PASS slot.hidden: IDL set to 1.5 
+PASS slot.hidden: IDL set to true 
+PASS slot.hidden: IDL set to false 
+PASS slot.hidden: IDL set to object "[object Object]" 
+PASS slot.hidden: IDL set to NaN 
+PASS slot.hidden: IDL set to Infinity 
+PASS slot.hidden: IDL set to -Infinity 
+PASS slot.hidden: IDL set to "\0" 
+PASS slot.hidden: IDL set to object "test-toString" 
+PASS slot.hidden: IDL set to object "test-valueOf" 
+PASS slot.accessKey: typeof IDL attribute 
+PASS slot.accessKey: IDL get with DOM attribute unset 
+PASS slot.accessKey: setAttribute() to "" 
+PASS slot.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.accessKey: setAttribute() to undefined 
+PASS slot.accessKey: setAttribute() to 7 
+PASS slot.accessKey: setAttribute() to 1.5 
+PASS slot.accessKey: setAttribute() to true 
+PASS slot.accessKey: setAttribute() to false 
+PASS slot.accessKey: setAttribute() to object "[object Object]" 
+PASS slot.accessKey: setAttribute() to NaN 
+PASS slot.accessKey: setAttribute() to Infinity 
+PASS slot.accessKey: setAttribute() to -Infinity 
+PASS slot.accessKey: setAttribute() to "\0" 
+PASS slot.accessKey: setAttribute() to null 
+PASS slot.accessKey: setAttribute() to object "test-toString" 
+PASS slot.accessKey: setAttribute() to object "test-valueOf" 
+PASS slot.accessKey: IDL set to "" 
+PASS slot.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.accessKey: IDL set to undefined 
+PASS slot.accessKey: IDL set to 7 
+PASS slot.accessKey: IDL set to 1.5 
+PASS slot.accessKey: IDL set to true 
+PASS slot.accessKey: IDL set to false 
+PASS slot.accessKey: IDL set to object "[object Object]" 
+PASS slot.accessKey: IDL set to NaN 
+PASS slot.accessKey: IDL set to Infinity 
+PASS slot.accessKey: IDL set to -Infinity 
+PASS slot.accessKey: IDL set to "\0" 
+PASS slot.accessKey: IDL set to null 
+PASS slot.accessKey: IDL set to object "test-toString" 
+PASS slot.accessKey: IDL set to object "test-valueOf" 
+PASS slot.tabIndex: typeof IDL attribute 
+PASS slot.tabIndex: setAttribute() to -36 
+PASS slot.tabIndex: setAttribute() to -1 
+PASS slot.tabIndex: setAttribute() to 0 
+PASS slot.tabIndex: setAttribute() to 1 
+PASS slot.tabIndex: setAttribute() to 2147483647 
+PASS slot.tabIndex: setAttribute() to -2147483648 
+PASS slot.tabIndex: setAttribute() to "-1" 
+PASS slot.tabIndex: setAttribute() to "-0" 
+PASS slot.tabIndex: setAttribute() to "0" 
+PASS slot.tabIndex: setAttribute() to "1" 
+PASS slot.tabIndex: setAttribute() to "\t7" 
+PASS slot.tabIndex: setAttribute() to "\f7" 
+PASS slot.tabIndex: setAttribute() to " 7" 
+PASS slot.tabIndex: setAttribute() to "\n7" 
+PASS slot.tabIndex: setAttribute() to "\r7" 
+PASS slot.tabIndex: setAttribute() to 1.5 
+PASS slot.tabIndex: setAttribute() to object "2" 
+PASS slot.tabIndex: IDL set to -36 
+PASS slot.tabIndex: IDL set to -1 
+PASS slot.tabIndex: IDL set to 0 
+PASS slot.tabIndex: IDL set to 1 
+PASS slot.tabIndex: IDL set to 2147483647 
+PASS slot.tabIndex: IDL set to -2147483648 
+PASS slot.name: typeof IDL attribute 
+PASS slot.name: IDL get with DOM attribute unset 
+PASS slot.name: setAttribute() to "" 
+PASS slot.name: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.name: setAttribute() to undefined 
+PASS slot.name: setAttribute() to 7 
+PASS slot.name: setAttribute() to 1.5 
+PASS slot.name: setAttribute() to true 
+PASS slot.name: setAttribute() to false 
+PASS slot.name: setAttribute() to object "[object Object]" 
+PASS slot.name: setAttribute() to NaN 
+PASS slot.name: setAttribute() to Infinity 
+PASS slot.name: setAttribute() to -Infinity 
+PASS slot.name: setAttribute() to "\0" 
+PASS slot.name: setAttribute() to null 
+PASS slot.name: setAttribute() to object "test-toString" 
+PASS slot.name: setAttribute() to object "test-valueOf" 
+PASS slot.name: IDL set to "" 
+PASS slot.name: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS slot.name: IDL set to undefined 
+PASS slot.name: IDL set to 7 
+PASS slot.name: IDL set to 1.5 
+PASS slot.name: IDL set to true 
+PASS slot.name: IDL set to false 
+PASS slot.name: IDL set to object "[object Object]" 
+PASS slot.name: IDL set to NaN 
+PASS slot.name: IDL set to Infinity 
+PASS slot.name: IDL set to -Infinity 
+PASS slot.name: IDL set to "\0" 
+PASS slot.name: IDL set to null 
+PASS slot.name: IDL set to object "test-toString" 
+PASS slot.name: IDL set to object "test-valueOf" 
 PASS ins.title: typeof IDL attribute 
 PASS ins.title: IDL get with DOM attribute unset 
 PASS ins.title: setAttribute() to "" 

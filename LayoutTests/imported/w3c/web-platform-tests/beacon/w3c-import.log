@@ -22,9 +22,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-formdataMax.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-string.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-basic-stringMax.html
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-common.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.window.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-common.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-cors.sub.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-error.window.js
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-navigate.html
 /LayoutTests/imported/w3c/web-platform-tests/beacon/beacon-redirect.window.js
-/LayoutTests/imported/w3c/web-platform-tests/beacon/fetch-keepalive-navigate.iFrame.html
+/LayoutTests/imported/w3c/web-platform-tests/beacon/navigate.iFrame.sub.html

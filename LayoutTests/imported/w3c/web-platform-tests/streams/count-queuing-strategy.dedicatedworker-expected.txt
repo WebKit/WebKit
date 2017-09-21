@@ -6,4 +6,5 @@ PASS CountQueuingStrategy.prototype.size should work generically on its this and
 PASS CountQueuingStrategy size behaves as expected with strange arguments 
 PASS CountQueuingStrategy instances have the correct properties 
 PASS CountQueuingStrategy's highWaterMark property can be set to anything 
+PASS CountQueuingStrategy.name is correct 
 

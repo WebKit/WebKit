@@ -1,0 +1,3 @@
+
+FAIL sender.getStats() should return stats report containing outbound-rtp stats sender.getStats is not a function. (In 'sender.getStats()', 'sender.getStats' is undefined)
+

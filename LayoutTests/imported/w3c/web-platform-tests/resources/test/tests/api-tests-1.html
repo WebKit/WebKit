@@ -74,6 +74,12 @@
     }
     test(basicAssertObjectEquals, "basic assert_object_equals test");
 
+    function basicAssertArrayApproxEquals()
+    {
+        assert_array_approx_equals([10, 11], [11, 10], 1, "[10, 11] is approximately (+/- 1) [11, 10]")
+    }
+    test(basicAssertArrayApproxEquals, "basic assert_array_approx_equals test");
+
     function basicAssertApproxEquals()
     {
         assert_approx_equals(10, 11, 1, "10 is approximately (+/- 1) 11")
@@ -298,12 +304,19 @@
       }
     }, 
     {
-      "status_string": "PASS", 
-      "name": "basic assert_approx_equals test", 
-      "stack": null, 
-      "message": null, 
+      "status_string": "PASS",
+      "name": "basic assert_approx_equals test",
+      "stack": null,
+      "message": null,
       "properties": {}
-    }, 
+    },
+    {
+      "status_string": "PASS",
+      "name": "basic assert_array_approx_equals test",
+      "stack": null,
+      "message": null,
+      "properties": {}
+    },
     {
       "status_string": "PASS", 
       "name": "basic assert_array_equals test", 

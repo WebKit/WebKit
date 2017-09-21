@@ -1,0 +1,6 @@
+
+FAIL bufferedAmount should increase to byte length of encoded unicode string sent assert_equals: Expect bufferedAmount to be the byte length of the unicode string expected 12 but got 0
+FAIL bufferedAmount should increase to byte length of buffer sent assert_equals: Expect bufferedAmount to increase to byte length of sent buffer expected 5 but got 0
+FAIL bufferedAmount should increase to size of blob sent promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL bufferedAmount should increase by byte length for each message sent assert_unreached: Unexpected promise rejection: Error: assert_equals: Expect bufferedAmount to be the total length of all messages queued to send expected 5 but got 0 Reached unreachable code
+

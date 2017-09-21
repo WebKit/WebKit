@@ -27,11 +27,6 @@ PASS Check mode init value of cors and associated getter
 PASS Check credentials init value of omit and associated getter 
 PASS Check credentials init value of same-origin and associated getter 
 PASS Check credentials init value of include and associated getter 
-PASS Check cache init value of default and associated getter 
-PASS Check cache init value of no-store and associated getter 
-PASS Check cache init value of reload and associated getter 
-PASS Check cache init value of no-cache and associated getter 
-PASS Check cache init value of force-cache and associated getter 
 PASS Check redirect init value of follow and associated getter 
 PASS Check redirect init value of error and associated getter 
 PASS Check redirect init value of manual and associated getter 

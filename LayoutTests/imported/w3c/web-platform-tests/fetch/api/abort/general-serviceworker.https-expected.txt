@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 14: Unhandled Promise Rejection: UnknownError: serviceWorker.getRegistration() is not yet implemented
+
+FAIL General fetch abort tests in a service worker serviceWorker.getRegistration() is not yet implemented
+

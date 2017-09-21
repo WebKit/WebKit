@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 26: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-denied.py. Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+
+PASS Same-origin request accepted 
+PASS Cross-origin request denied 
+

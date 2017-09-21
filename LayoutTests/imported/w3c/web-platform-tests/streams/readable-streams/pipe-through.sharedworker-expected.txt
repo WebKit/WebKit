@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 10: ReferenceError: Can't find variable: SharedWorker
-
-FAIL pipe-through.js shared worker wrapper file ReferenceError: Can't find variable: SharedWorker
-

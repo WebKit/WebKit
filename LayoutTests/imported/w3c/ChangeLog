@@ -1,3 +1,15 @@
+2017-09-20  Youenn Fablet  <youenn@apple.com>
+
+        Refresh WPT tests up to f65af411d63ec13ee8fe208b4effd730a4a8b7fe
+        https://bugs.webkit.org/show_bug.cgi?id=170713
+
+        Reviewed by Alex Christensen.
+
+        * resources/TestRepositories:
+        * resources/import-expectations.json:
+        * resources/resource-files.json:
+        * web-platform-tests: Refreshed by importer.
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         Video errors should be instances of Error

@@ -9,13 +9,18 @@ PASS Performance interface object name
 PASS Performance interface: existence and properties of interface prototype object 
 PASS Performance interface: existence and properties of interface prototype object's "constructor" property 
 PASS Performance interface: operation now() 
-PASS Performance interface: window.performance must inherit property "now" with the proper type (0) 
+FAIL Performance interface: operation toJSON() assert_own_property: interface prototype object missing non-static operation expected property "toJSON" missing
+PASS Performance must be primary interface of window.performance 
+PASS Stringification of window.performance 
+PASS Performance interface: window.performance must inherit property "now()" with the proper type 
+FAIL Performance interface: window.performance must inherit property "toJSON()" with the proper type assert_inherits: property "toJSON" not found in prototype chain
+FAIL Test default toJSON operation of Performance memberHolderObject.toJSON is not a function. (In 'memberHolderObject.toJSON()', 'memberHolderObject.toJSON' is undefined)
 typedef double DOMHighResTimeStamp;
 
 [Exposed=(Window,Worker)]
 interface Performance : EventTarget {
     DOMHighResTimeStamp now();
-    serializer = {attribute};
+    [Default] object toJSON();
 };
 
 [NoInterfaceObject,

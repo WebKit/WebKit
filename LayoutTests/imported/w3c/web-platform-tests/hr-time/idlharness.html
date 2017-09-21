@@ -34,7 +34,7 @@ typedef double DOMHighResTimeStamp;
 [Exposed=(Window,Worker)]
 interface Performance : EventTarget {
     DOMHighResTimeStamp now();
-    serializer = {attribute};
+    [Default] object toJSON();
 };
 
 [NoInterfaceObject,

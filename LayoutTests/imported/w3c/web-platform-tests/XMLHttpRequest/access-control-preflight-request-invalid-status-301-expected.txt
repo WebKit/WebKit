@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-preflight-request-invalid-status.py?code=301. Preflight response is not successful
+
+PASS Request with 301 preflight response 
+

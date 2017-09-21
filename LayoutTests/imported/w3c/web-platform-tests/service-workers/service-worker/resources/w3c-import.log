@@ -22,7 +22,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/blank.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/bytecheck-worker-imported-script.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/bytecheck-worker.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-shared-worker-fetch-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-shared-worker-fetch-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-with-redirect-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-worker-fetch-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-worker-fetch-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/claim-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/client-id-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/client-navigate-frame.html
@@ -119,6 +123,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/frame-for-getregistrations.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/http-to-https-redirect-and-register-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/iframe-register-link-element.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/immutable-prototype-serviceworker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-mime-type-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-echo.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/import-scripts-resource-map-worker.js
@@ -127,8 +132,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/indexeddb-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/install-event-type-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/install-worker-helper.html
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/interfaces-idls.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/interfaces-worker.sub.js
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/interfaces.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/invalid-blobtype-iframe.https.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/invalid-blobtype-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/invalid-chunked-encoding-with-flush.py
@@ -182,7 +187,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-closed-window-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-foreign-fetch-errors-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/register-iframe.html
-/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-basic.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-mime-types.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-scope.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-script-url.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-script.js
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-tests-security-error.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/registration-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/reject-install-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/reply-to-message.html
@@ -208,6 +218,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/testharness-helpers.js
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/unregister-controller-page.html
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-claim-worker.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-max-aged-worker-imported-script.py
+/LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-max-aged-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-nocookie-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-recovery-worker.py
 /LayoutTests/imported/w3c/web-platform-tests/service-workers/service-worker/resources/update-worker.py

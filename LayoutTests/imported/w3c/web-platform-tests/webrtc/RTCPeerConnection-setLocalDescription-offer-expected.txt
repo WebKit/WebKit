@@ -1,0 +1,9 @@
+
+PASS setLocalDescription with valid offer should succeed 
+FAIL setLocalDescription with type offer and null sdp should use lastOffer generated from createOffer promise_test: Unhandled rejection with value: object "OperationError: Expect line: v="
+FAIL setLocalDescription() with offer not created by own createOffer() should reject with InvalidModificationError assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL Set created offer other than last offer should reject with InvalidModificationError assert_false: Expect both session descriptions to have different count of media lines expected false got true
+FAIL Creating and setting offer multiple times should succeed assert_not_equals: Expect session description to be defined got disallowed value undefined
+PASS Test onsignalingstatechange event for setLocalDescription with valid offer should succeed 
+PASS Test onsignalingstatechange event for Creating and setting offer multiple times should succeed 
+

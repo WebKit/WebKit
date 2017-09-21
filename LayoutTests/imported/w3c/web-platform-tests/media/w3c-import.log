@@ -29,5 +29,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/media/poster.png
 /LayoutTests/imported/w3c/web-platform-tests/media/sound_5.mp3
 /LayoutTests/imported/w3c/web-platform-tests/media/sound_5.oga
+/LayoutTests/imported/w3c/web-platform-tests/media/test-a-128k-44100Hz-1ch.webm
+/LayoutTests/imported/w3c/web-platform-tests/media/test-av-384k-44100Hz-1ch-320x240-30fps-10kfr.webm
+/LayoutTests/imported/w3c/web-platform-tests/media/test-v-128k-320x240-24fps-8kfr.webm
 /LayoutTests/imported/w3c/web-platform-tests/media/white.mp4
 /LayoutTests/imported/w3c/web-platform-tests/media/white.webm

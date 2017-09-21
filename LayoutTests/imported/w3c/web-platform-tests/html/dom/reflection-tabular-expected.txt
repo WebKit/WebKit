@@ -3668,6 +3668,38 @@ PASS td.rowSpan: IDL set to 2147483648
 PASS td.rowSpan: IDL set to 4294967295 
 PASS td.rowSpan: IDL set to 65534 
 PASS td.rowSpan: IDL set to 65535 
+PASS td.headers: typeof IDL attribute 
+PASS td.headers: IDL get with DOM attribute unset 
+PASS td.headers: setAttribute() to "" 
+PASS td.headers: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS td.headers: setAttribute() to undefined 
+PASS td.headers: setAttribute() to 7 
+PASS td.headers: setAttribute() to 1.5 
+PASS td.headers: setAttribute() to true 
+PASS td.headers: setAttribute() to false 
+PASS td.headers: setAttribute() to object "[object Object]" 
+PASS td.headers: setAttribute() to NaN 
+PASS td.headers: setAttribute() to Infinity 
+PASS td.headers: setAttribute() to -Infinity 
+PASS td.headers: setAttribute() to "\0" 
+PASS td.headers: setAttribute() to null 
+PASS td.headers: setAttribute() to object "test-toString" 
+PASS td.headers: setAttribute() to object "test-valueOf" 
+PASS td.headers: IDL set to "" 
+PASS td.headers: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS td.headers: IDL set to undefined 
+PASS td.headers: IDL set to 7 
+PASS td.headers: IDL set to 1.5 
+PASS td.headers: IDL set to true 
+PASS td.headers: IDL set to false 
+PASS td.headers: IDL set to object "[object Object]" 
+PASS td.headers: IDL set to NaN 
+PASS td.headers: IDL set to Infinity 
+PASS td.headers: IDL set to -Infinity 
+PASS td.headers: IDL set to "\0" 
+PASS td.headers: IDL set to null 
+PASS td.headers: IDL set to object "test-toString" 
+PASS td.headers: IDL set to object "test-valueOf" 
 PASS td.scope: typeof IDL attribute 
 PASS td.scope: IDL get with DOM attribute unset 
 PASS td.scope: setAttribute() to "" 
@@ -4438,6 +4470,38 @@ PASS th.rowSpan: IDL set to 2147483648
 PASS th.rowSpan: IDL set to 4294967295 
 PASS th.rowSpan: IDL set to 65534 
 PASS th.rowSpan: IDL set to 65535 
+PASS th.headers: typeof IDL attribute 
+PASS th.headers: IDL get with DOM attribute unset 
+PASS th.headers: setAttribute() to "" 
+PASS th.headers: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS th.headers: setAttribute() to undefined 
+PASS th.headers: setAttribute() to 7 
+PASS th.headers: setAttribute() to 1.5 
+PASS th.headers: setAttribute() to true 
+PASS th.headers: setAttribute() to false 
+PASS th.headers: setAttribute() to object "[object Object]" 
+PASS th.headers: setAttribute() to NaN 
+PASS th.headers: setAttribute() to Infinity 
+PASS th.headers: setAttribute() to -Infinity 
+PASS th.headers: setAttribute() to "\0" 
+PASS th.headers: setAttribute() to null 
+PASS th.headers: setAttribute() to object "test-toString" 
+PASS th.headers: setAttribute() to object "test-valueOf" 
+PASS th.headers: IDL set to "" 
+PASS th.headers: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS th.headers: IDL set to undefined 
+PASS th.headers: IDL set to 7 
+PASS th.headers: IDL set to 1.5 
+PASS th.headers: IDL set to true 
+PASS th.headers: IDL set to false 
+PASS th.headers: IDL set to object "[object Object]" 
+PASS th.headers: IDL set to NaN 
+PASS th.headers: IDL set to Infinity 
+PASS th.headers: IDL set to -Infinity 
+PASS th.headers: IDL set to "\0" 
+PASS th.headers: IDL set to null 
+PASS th.headers: IDL set to object "test-toString" 
+PASS th.headers: IDL set to object "test-valueOf" 
 PASS th.scope: typeof IDL attribute 
 PASS th.scope: IDL get with DOM attribute unset 
 PASS th.scope: setAttribute() to "" 
@@ -4831,4 +4895,4 @@ PASS th.bgColor: IDL set to "\0"
 PASS th.bgColor: IDL set to null 
 PASS th.bgColor: IDL set to object "test-toString" 
 PASS th.bgColor: IDL set to object "test-valueOf" 
-(Note: missing tests for types tokenlist, settable tokenlist.)
+(Note: missing tests for types tokenlist.)

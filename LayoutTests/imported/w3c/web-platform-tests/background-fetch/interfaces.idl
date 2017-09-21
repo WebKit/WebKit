@@ -8,9 +8,9 @@ partial interface ServiceWorkerRegistration {
 
 [Exposed=(Window,Worker)]
 interface BackgroundFetchManager {
-  Promise<BackgroundFetchRegistration> fetch(DOMString tag, (RequestInfo or sequence<RequestInfo>) requests, optional BackgroundFetchOptions options);
-  Promise<BackgroundFetchRegistration?> get(DOMString tag);
-  Promise<FrozenArray<DOMString>> getTags();
+  Promise<BackgroundFetchRegistration> fetch(DOMString id, (RequestInfo or sequence<RequestInfo>) requests, optional BackgroundFetchOptions options);
+  Promise<BackgroundFetchRegistration?> get(DOMString id);
+  Promise<FrozenArray<DOMString>> getIds();
   // TODO: in future this should become an async iterator for BackgroundFetchRegistration objects
 };
 
@@ -32,7 +32,7 @@ dictionary IconDefinition {
 
 [Exposed=(Window,Worker)]
 interface BackgroundFetchRegistration {
-  readonly attribute DOMString tag;
+  readonly attribute DOMString id;
   readonly attribute FrozenArray<IconDefinition> icons;
   readonly attribute long totalDownloadSize;
   readonly attribute DOMString title;
@@ -65,11 +65,11 @@ partial interface ServiceWorkerGlobalScope {
 
 [Constructor(DOMString type, BackgroundFetchEventInit init), Exposed=ServiceWorker]
 interface BackgroundFetchEvent : ExtendableEvent {
-  readonly attribute DOMString tag;
+  readonly attribute DOMString id;
 };
 
 dictionary BackgroundFetchEventInit : ExtendableEventInit {
-  required DOMString tag;
+  required DOMString id;
 };
 
 // 3.4.2. BackgroundFetchEndEvent

@@ -1,0 +1,4 @@
+
+FAIL setParameters() with modified rtcp.cname should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+FAIL setParameters() with modified rtcp.reducedSize should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+

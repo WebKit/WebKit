@@ -13,12 +13,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WPT_ROOT = os.path.normpath(os.path.join(HERE, '..', '..'))
 HARNESS = os.path.join(HERE, 'harness.html')
 
+def pytest_addoption(parser):
+    parser.addoption("--binary", action="store", default=None, help="path to browser binary")
+
 def pytest_collect_file(path, parent):
     if path.ext.lower() == '.html':
         return HTMLItem(str(path), parent)
 
 def pytest_configure(config):
-    config.driver = webdriver.Firefox()
+    config.driver = webdriver.Firefox(firefox_binary=config.getoption("--binary"))
     config.server = WPTServer(WPT_ROOT)
     config.server.start()
     config.add_cleanup(lambda: config.server.stop())
@@ -44,9 +47,6 @@ class HTMLItem(pytest.Item, pytest.Collector):
 
         if not name:
             raise ValueError('No name found in file: %s' % filename)
-
-        if not self.expected:
-            raise ValueError('Expected JSON not found in file: %s' % filename)
 
         super(HTMLItem, self).__init__(name, parent)
 
@@ -77,7 +77,13 @@ class HTMLItem(pytest.Item, pytest.Collector):
         summarized[u'summarized_tests'].sort(key=lambda test_obj: test_obj.get('name'))
         summarized[u'type'] = actual['type']
 
-        assert summarized == self.expected
+        if not self.expected:
+            assert summarized[u'summarized_status'][u'status_string'] == u'OK', summarized[u'summarized_status'][u'message']
+            for test in summarized[u'summarized_tests']:
+                msg = "%s\n%s:\n%s" % (test[u'name'], test[u'message'], test[u'stack'])
+                assert test[u'status_string'] == u'PASS', msg
+        else:
+            assert summarized == self.expected
 
     @staticmethod
     def _assert_sequence(nums):

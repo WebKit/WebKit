@@ -57,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_undefined.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero-1.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_zero.html
+/LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_properties_only_fully_active.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_err.html
 /LayoutTests/imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_pushstate_nooptionalparam.html

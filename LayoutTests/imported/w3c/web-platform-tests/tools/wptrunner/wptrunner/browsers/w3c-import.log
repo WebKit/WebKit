@@ -19,6 +19,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/chrome.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/edge.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/firefox.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/ie.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/sauce.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/server-locations.txt
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/browsers/servo.py

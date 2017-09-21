@@ -9,4 +9,3 @@ def main(request, response):
       return "data: " + last_event_id + "\n\n"
   else:
     return "id: " + value + "\nretry: 200\ndata: hello\n\n"
-

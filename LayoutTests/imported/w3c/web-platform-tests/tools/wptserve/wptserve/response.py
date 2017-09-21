@@ -2,7 +2,6 @@ from collections import OrderedDict
 from datetime import datetime, timedelta
 import Cookie
 import json
-import traceback
 import types
 import uuid
 import socket
@@ -206,11 +205,9 @@ class Response(object):
 
     def write_content(self):
         """Write out the response content"""
-        response_size = 0
         if self.request.method != "HEAD" or self.send_body_for_head_request:
             for item in self.iter_content():
-                response_size += self.writer.write_content(item)
-        self.logger.debug(" %s - Wrote content of size %d for %s" % (datetime.now(), response_size, self.request.request_path))
+                self.writer.write_content(item)
 
     def write(self):
         """Write the whole response"""
@@ -371,7 +368,6 @@ class ResponseWriter(object):
         self.content_written = False
         self.request = response.request
         self.file_chunk_size = 32 * 1024
-        self.logger = get_logger()
 
     def write_status(self, code, message=None):
         """Write out the status line of a response.
@@ -428,45 +424,36 @@ class ResponseWriter(object):
 
     def write_content(self, data):
         """Write the body of the response."""
-        response_size = 0
         if isinstance(data, types.StringTypes):
-            response_size = self.write(data)
+            self.write(data)
         else:
-            response_size = self.write_content_file(data)
+            self.write_content_file(data)
         if not self._response.explicit_flush:
             self.flush()
-        return response_size
 
     def write(self, data):
         """Write directly to the response, converting unicode to bytes
         according to response.encoding. Does not flush."""
         self.content_written = True
         try:
-            buffer = self.encode(data)
-            self._wfile.write(buffer)
-            return len(buffer)
+            self._wfile.write(self.encode(data))
         except socket.error:
             # This can happen if the socket got closed by the remote end
-            self.logger.debug(" %s - Got exception when writing response for %s: %s" % (datetime.now(), self._response.request.request_path, traceback.format_exc()))
             pass
 
     def write_content_file(self, data):
         """Write a file-like object directly to the response in chunks.
         Does not flush."""
         self.content_written = True
-        written_size = 0
         while True:
             buf = data.read(self.file_chunk_size)
-            written_size += len(buf)
             if not buf:
                 break
             try:
                 self._wfile.write(buf)
             except socket.error:
-                self.logger.debug(" %s - Got exception when writing response for %s: %s" % (datetime.now(), self._response.request.request_path, traceback.format_exc()))
                 break
         data.close()
-        return written_size
 
     def encode(self, data):
         """Convert unicode to bytes according to response.encoding."""
@@ -478,9 +465,11 @@ class ResponseWriter(object):
             raise ValueError
 
     def flush(self):
-        """Flush the output."""
+        """Flush the output. Returns False if the flush failed due to
+        the socket being closed by the remote end."""
         try:
             self._wfile.flush()
+            return True
         except socket.error:
             # This can happen if the socket got closed by the remote end
-            pass
+            return False

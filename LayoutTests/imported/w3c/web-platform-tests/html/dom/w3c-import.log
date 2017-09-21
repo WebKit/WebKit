@@ -24,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-sections.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-tabular.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/elements-text.js
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/historical.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/interfaces.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/interfaces.worker.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/new-harness.js

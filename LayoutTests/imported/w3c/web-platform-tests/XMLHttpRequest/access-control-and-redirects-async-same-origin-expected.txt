@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-star.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow.py due to access control checks.
+CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin.
+CONSOLE MESSAGE: XMLHttpRequest cannot load http://127.0.0.1:8800/XMLHttpRequest/resources/access-control-basic-allow-no-credentials.py due to access control checks.
+
+PASS Request without credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star) 
+PASS Request with credentials is redirected to a cross-origin response with Access-Control-Allow-Origin=* (with star) 
+PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin 
+FAIL Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin assert_false: expected false got true
+PASS Request without credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials) 
+PASS Request with credentials is redirected to a cross-origin response with a specific Access-Control-Allow-Origin (no credentials) 
+

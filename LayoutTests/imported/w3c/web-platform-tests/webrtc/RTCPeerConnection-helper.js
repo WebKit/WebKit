@@ -61,7 +61,7 @@ function assert_is_session_description(sessionDesc) {
   }
 
   assert_not_equals(sessionDesc, undefined,
-    'Expect session description to be defined, but got undefined');
+    'Expect session description to be defined');
 
   assert_true(typeof(sessionDesc) === 'object',
     'Expect sessionDescription to be either a RTCSessionDescription or an object');
@@ -69,7 +69,7 @@ function assert_is_session_description(sessionDesc) {
   assert_true(typeof(sessionDesc.type) === 'string',
     'Expect sessionDescription.type to be a string');
 
-  assert_true(typeof(sessionDesc.type) === 'string',
+  assert_true(typeof(sessionDesc.sdp) === 'string',
     'Expect sessionDescription.sdp to be a string');
 }
 
@@ -107,21 +107,27 @@ function assert_session_desc_not_equals(sessionDesc1, sessionDesc2) {
 // object with any audio, video, data media lines present
 function generateOffer(options={}) {
   const {
-    audio=false,
-    video=false,
-    data=false
+    audio = false,
+    video = false,
+    data = false,
+    pc,
   } = options;
 
-  const pc = new RTCPeerConnection();
-
-  if(data) {
+  if (data) {
     pc.createDataChannel('test');
   }
 
-  return pc.createOffer({
-    offerToReceiveAudio: audio,
-    offerToReceiveVideo: video
-  }).then(offer => {
+  const setup = {};
+
+  if (audio) {
+    setup.offerToReceiveAudio = true;
+  }
+
+  if (video) {
+    setup.offerToReceiveVideo = true;
+  }
+
+  return pc.createOffer(setup).then(offer => {
     // Guard here to ensure that the generated offer really
     // contain the number of media lines we want
     const { sdp } = offer;
@@ -209,4 +215,182 @@ function test_never_resolve(testFunc, testName) {
 
     t.step_timeout(t.step_func_done(), 100)
   }, testName);
+}
+
+// Helper function to exchange ice candidates between
+// two local peer connections
+function exchangeIceCandidates(pc1, pc2) {
+  // private function
+  function doExchange(localPc, remotePc) {
+    localPc.addEventListener('icecandidate', event => {
+      const { candidate } = event;
+
+      // candidate may be null to indicate end of candidate gathering.
+      // There is ongoing discussion on w3c/webrtc-pc#1213
+      // that there should be an empty candidate string event
+      // for end of candidate for each m= section.
+      if(candidate) {
+        remotePc.addIceCandidate(candidate);
+      }
+    });
+  }
+
+  doExchange(pc1, pc2);
+  doExchange(pc2, pc1);
+}
+
+// Helper function for doing one round of offer/answer exchange
+// betweeen two local peer connections
+function doSignalingHandshake(localPc, remotePc) {
+  return localPc.createOffer()
+  .then(offer => Promise.all([
+    localPc.setLocalDescription(offer),
+    remotePc.setRemoteDescription(offer)]))
+  .then(() => remotePc.createAnswer())
+  .then(answer => Promise.all([
+    remotePc.setLocalDescription(answer),
+    localPc.setRemoteDescription(answer)]))
+}
+
+// Helper function to create a pair of connected data channel.
+// On success the promise resolves to an array with two data channels.
+// It does the heavy lifting of performing signaling handshake,
+// ICE candidate exchange, and waiting for data channel at two
+// end points to open.
+function createDataChannelPair(
+  pc1=new RTCPeerConnection(),
+  pc2=new RTCPeerConnection())
+{
+  const channel1 = pc1.createDataChannel('');
+
+  exchangeIceCandidates(pc1, pc2);
+
+  return new Promise((resolve, reject) => {
+    let channel2;
+    let opened1 = false;
+    let opened2 = false;
+
+    function onBothOpened() {
+      resolve([channel1, channel2]);
+    }
+
+    function onOpen1() {
+      opened1 = true;
+      if(opened2) onBothOpened();
+    }
+
+    function onOpen2() {
+      opened2 = true;
+      if(opened1) onBothOpened();
+    }
+
+    function onDataChannel(event) {
+      channel2 = event.channel;
+      channel2.addEventListener('error', reject);
+      const { readyState } = channel2;
+
+      if(readyState === 'open') {
+        onOpen2();
+      } else if(readyState === 'connecting') {
+        channel2.addEventListener('open', onOpen2);
+      } else {
+        reject(new Error(`Unexpected ready state ${readyState}`));
+      }
+    }
+
+    channel1.addEventListener('open', onOpen1);
+    channel1.addEventListener('error', reject);
+
+    pc2.addEventListener('datachannel', onDataChannel);
+
+    doSignalingHandshake(pc1, pc2);
+  });
+}
+
+// Wait for a single message event and return
+// a promise that resolve when the event fires
+function awaitMessage(channel) {
+  return new Promise((resolve, reject) => {
+    channel.addEventListener('message',
+      event => resolve(event.data),
+      { once: true });
+
+    channel.addEventListener('error', reject, { once: true });
+  });
+}
+
+// Helper to convert a blob to array buffer so that
+// we can read the content
+function blobToArrayBuffer(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener('load', () => {
+      resolve(reader.result);
+    });
+
+    reader.addEventListener('error', reject);
+
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
+// Assert that two ArrayBuffer objects have the same byte values
+function assert_equals_array_buffer(buffer1, buffer2) {
+  assert_true(buffer1 instanceof ArrayBuffer,
+    'Expect buffer to be instance of ArrayBuffer');
+
+  assert_true(buffer2 instanceof ArrayBuffer,
+    'Expect buffer to be instance of ArrayBuffer');
+
+  assert_equals(buffer1.byteLength, buffer2.byteLength,
+    'Expect both array buffers to be of the same byte length');
+
+  const byteLength = buffer1.byteLength;
+  const byteArray1 = new Uint8Array(buffer1);
+  const byteArray2 = new Uint8Array(buffer2);
+
+  for(let i=0; i<byteLength; i++) {
+    assert_equals(byteArray1[i], byteArray2[i],
+      `Expect byte at buffer position ${i} to be equal`);
+  }
+}
+
+// Generate a MediaStreamTrack for testing use.
+// We generate it by creating an anonymous RTCPeerConnection,
+// call addTransceiver(), and use the remote track
+// from RTCRtpReceiver. This track is supposed to
+// receive media from a remote peer and be played locally.
+// We use this approach instead of getUserMedia()
+// to bypass the permission dialog and fake media devices,
+// as well as being able to generate many unique tracks.
+function generateMediaStreamTrack(kind) {
+  const pc = new RTCPeerConnection();
+
+  assert_idl_attribute(pc, 'addTransceiver',
+    'Expect pc to have addTransceiver() method');
+
+  const transceiver = pc.addTransceiver(kind);
+  const { receiver } = transceiver;
+  const { track } = receiver;
+
+  assert_true(track instanceof MediaStreamTrack,
+    'Expect receiver track to be instance of MediaStreamTrack');
+
+  return track;
+}
+
+// Obtain a MediaStreamTrack of kind using getUserMedia.
+// Return Promise of pair of track and associated mediaStream.
+// Assumes that there is at least one available device
+// to generate the track.
+function getTrackFromUserMedia(kind) {
+  return navigator.mediaDevices.getUserMedia({ [kind]: true })
+  .then(mediaStream => {
+    const tracks = mediaStream.getTracks();
+    assert_greater_than(tracks.length, 0,
+      `Expect getUserMedia to return at least one track of kind ${kind}`);
+    const [ track ] = tracks;
+    return [track, mediaStream];
+  });
 }

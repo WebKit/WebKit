@@ -1,7 +1,7 @@
 
-PASS Test seek starts on duration truncation below currentTime 
-FAIL Test appendBuffer completes previous seek to truncated duration assert_true: mediaElement.seeking while seeking to truncatedDuration expected true got false
-PASS Test endOfStream completes previous seek to truncated duration 
+FAIL Test seek starts on duration truncation below currentTime The object is in an invalid state.
+FAIL Test appendBuffer completes previous seek to truncated duration The object is in an invalid state.
+FAIL Test endOfStream completes previous seek to truncated duration The object is in an invalid state.
 PASS Test setting same duration multiple times does not fire duplicate durationchange 
 PASS Test setting the duration to less than the highest starting presentation timestamp will throw 
 PASS Truncating the duration throws an InvalidStateError exception when new duration is less than the highest buffered range start time of one of the track buffers 

@@ -19,18 +19,20 @@ PASS Notification interface: attribute body
 PASS Notification interface: attribute tag 
 PASS Notification interface: attribute icon 
 PASS Notification interface: operation close() 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "permission" with the proper type (0) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "requestPermission" with the proper type (1) 
+PASS Notification must be primary interface of new Notification("Running idlharness.") 
+PASS Stringification of new Notification("Running idlharness.") 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "permission" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "requestPermission(NotificationPermissionCallback)" with the proper type 
 PASS Notification interface: calling requestPermission(NotificationPermissionCallback) on new Notification("Running idlharness.") with too few arguments must throw TypeError 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "onclick" with the proper type (2) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "onshow" with the proper type (3) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "onerror" with the proper type (4) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "onclose" with the proper type (5) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "title" with the proper type (6) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "dir" with the proper type (7) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "lang" with the proper type (8) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "body" with the proper type (9) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "tag" with the proper type (10) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "icon" with the proper type (11) 
-PASS Notification interface: new Notification("Running idlharness.") must inherit property "close" with the proper type (12) 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "onclick" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "onshow" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "onerror" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "onclose" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "title" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "dir" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "lang" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "body" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "tag" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "icon" with the proper type 
+PASS Notification interface: new Notification("Running idlharness.") must inherit property "close()" with the proper type 
 

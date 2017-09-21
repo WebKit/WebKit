@@ -14,8 +14,18 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.dedicatedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.serviceworker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/general.sharedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.dedicatedworker.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.js
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https.html
+/LayoutTests/imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.sharedworker.html

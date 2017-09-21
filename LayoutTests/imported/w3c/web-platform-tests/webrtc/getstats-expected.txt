@@ -1,11 +1,84 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Can get stats from a basic WebRTC call. Test timed out
+FAIL Can get stats from a basic WebRTC call. assert_unreached: Error: assert_not_equals: Did not find peer-connection stats got disallowed value null:  Reached unreachable code
 Retrieved stats info
 
   
-
-  
+{
+  "RTCCertificate_5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33": {
+    "id": "RTCCertificate_5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33",
+    "timestamp": 1505771060940.004,
+    "type": "certificate",
+    "base64Certificate": "MIIBFTCBvaADAgECAgkAjcVsWPv41wMwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE3MDkxNzIxNDQyMFoXDTE3MTAxODIxNDQyMFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE+F4eBpG4uZSn+9xPgKNx9ZBmaBKcqQXgAufprkRJDJYkaPQIMCUqO7nmKVTrV3D+aZqWSRA9B5JCDC5rJFXB5jAKBggqhkjOPQQDAgNHADBEAiBhFpe8vrePuJ3CaCfTLC6V6LdD+n0Af3fLsuTRVqncngIgWfkvcunJihscgpepdsUeyuOyTemMoAOFxKNwz0P1uZg=",
+    "fingerprint": "5C:3F:12:18:3A:A5:67:9E:89:0F:94:74:B7:A5:23:86:7E:69:58:6B:78:51:34:A0:A3:94:03:A2:6F:C7:81:33",
+    "fingerprintAlgorithm": "sha-256"
+  },
+  "RTCCertificate_D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4": {
+    "id": "RTCCertificate_D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4",
+    "timestamp": 1505771060940.004,
+    "type": "certificate",
+    "base64Certificate": "MIIBFjCBvaADAgECAgkAyd5b1f+Ab0wwCgYIKoZIzj0EAwIwETEPMA0GA1UEAwwGV2ViUlRDMB4XDTE3MDkxNzIxNDQyMFoXDTE3MTAxODIxNDQyMFowETEPMA0GA1UEAwwGV2ViUlRDMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAExpo/Zj4AP0jQ9oCm4g2IaD3kRbHLE6r1AOq4OgET8GhNEc+SS6s0xcug0tcYeWrT4ICHVK6+nM2ka/obc0XxgjAKBggqhkjOPQQDAgNIADBFAiEAz3FuV0oX4DJLyQl+2bfB3S3d17aRZqqHvno/vx3G0/ACIEeubsNjpeDHkPcvdW8yRNGNpcnnXKQixoupFxYuyoHD",
+    "fingerprint": "D1:61:CA:CB:0B:21:F3:9A:AA:F4:87:50:A3:E8:25:24:D9:E7:91:D8:06:9D:1C:BD:FB:57:C7:C2:42:20:E4:E4",
+    "fingerprintAlgorithm": "sha-256"
+  },
+  "RTCDataChannel_1": {
+    "id": "RTCDataChannel_1",
+    "timestamp": 1505771060940.004,
+    "type": "data-channel",
+    "bytesReceived": 0,
+    "bytesSent": 0,
+    "datachannelid": 1,
+    "label": "channel",
+    "messagesReceived": 0,
+    "messagesSent": 0,
+    "protocol": "",
+    "state": "connecting"
+  },
+  "RTCIceCandidatePair_00DQoFZZ_UUZjeNZI": {
+    "id": "RTCIceCandidatePair_00DQoFZZ_UUZjeNZI",
+    "timestamp": 1505771060940.004,
+    "type": "candidate-pair",
+    "availableIncomingBitrate": 0,
+    "availableOutgoingBitrate": 0,
+    "bytesReceived": 0,
+    "bytesSent": 0,
+    "currentRoundTripTime": 0,
+    "localCandidateId": "RTCIceCandidate_00DQoFZZ",
+    "nominated": false,
+    "priority": 9079301928688570000,
+    "readable": false,
+    "remoteCandidateId": "RTCIceCandidate_UUZjeNZI",
+    "requestsReceived": 0,
+    "requestsSent": 0,
+    "responsesReceived": 0,
+    "responsesSent": 0,
+    "state": "waiting",
+    "totalRoundTripTime": 0,
+    "transportId": "RTCTransport_data_1",
+    "writable": false
+  },
+  "RTCIceCandidatePair_C7DL4R9N_0Azcj1Da": {
+    "id": "RTCIceCandidatePair_C7DL4R9N_0Azcj1Da",
+    "timestamp": 1505771060940.004,
+    "type": "candidate-pair",
+    "availableIncomingBitrate": 0,
+    "availableOutgoingBitrate": 300000,
+    "bytesReceived": 694,
+    "bytesSent": 1308,
+    "currentRoundTripTime": 0.001,
+    "localCandidateId": "RTCIceCandidate_C7DL4R9N",
+    "nominated": false,
+    "priority": 9079290933572287000,
+    "readable": false,
+    "remoteCandidateId": "RTCIceCandidate_0Azcj1Da",
+    "requestsReceived": 1,
+    "requestsSent": 1,
+    "responsesReceived": 1,
+    "responsesSent": 1,
+    "state": "succeeded",
+    "totalRoundTripTime": 0.001,
+    "transportId": "RTCTransport_data_1",
+    "writable": true
+  }
+}
 
   

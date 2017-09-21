@@ -14,5 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/fonts/Ahem.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fonts/CanvasTest.ttf
 /LayoutTests/imported/w3c/web-platform-tests/fonts/OWNERS
+/LayoutTests/imported/w3c/web-platform-tests/fonts/README.md

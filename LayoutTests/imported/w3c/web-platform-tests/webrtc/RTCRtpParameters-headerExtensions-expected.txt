@@ -1,0 +1,3 @@
+
+FAIL setParameters() with modified headerExtensions should reject with InvalidModificationError assert_equals: Expect dictionary.rtcp to be plain object expected "object" but got "undefined"
+

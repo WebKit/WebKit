@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/add_cleanup.html
+/LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/add_cleanup_count.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/add_cleanup_err.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/add_cleanup_err_multi.html
 /LayoutTests/imported/w3c/web-platform-tests/resources/test/tests/api-tests-1.html

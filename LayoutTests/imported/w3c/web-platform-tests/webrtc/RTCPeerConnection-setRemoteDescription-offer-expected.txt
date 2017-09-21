@@ -1,0 +1,8 @@
+
+PASS setRemoteDescription with valid offer should succeed 
+PASS Setting remote description multiple times with different offer should succeed 
+FAIL setRemoteDescription(offer) with invalid SDP should reject with RTCError assert_equals: Expect error detail field to set to sdp-syntax-error expected (string) "sdp-syntax-error" but got (undefined) undefined
+PASS Calling setRemoteDescription(offer) from have-local-offer state should reject with InvalidStateError 
+PASS Test onsignalingstatechange event for setRemoteDescription with valid offer should succeed 
+PASS Test onsignalingstatechange event for Setting remote description multiple times with different offer should succeed 
+

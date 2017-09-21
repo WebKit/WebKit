@@ -1,8 +1,9 @@
 
+PASS URL query: null 
 PASS URL query:  
-PASS URL query: ?type= 
-PASS URL query: ?type=x 
-PASS URL query: ?type=x/x 
-PASS URL query: ?type=text/css 
-PASS URL query: ?type=text/css;blah 
+PASS URL query: x 
+PASS URL query: x/x 
+PASS URL query: text/css 
+PASS URL query: text/css;charset=utf-8 
+PASS URL query: text/css;blah 
 

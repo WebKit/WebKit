@@ -1,5 +1,5 @@
 
-FAIL HTTP cache stores partial content and reuses it. assert_equals: Response body expected "3e5b8a86-d5f7-419c-9232-2ae3ac5941ab" but got "01234"
+FAIL HTTP cache stores partial content and reuses it. assert_equals: Response body expected "42984cca-6ce2-4a68-9cf8-4edc87e810c0" but got "01234"
 FAIL HTTP cache stores complete response and serves smaller ranges from it. assert_less_than: Response used expected a number less than 2 but got 2
 FAIL HTTP cache stores partial response and serves smaller ranges from it. assert_less_than: Response used expected a number less than 2 but got 2
 FAIL HTTP cache stores partial content and completes it. assert_equals: expected (string) "bytes=5-" but got (undefined) undefined

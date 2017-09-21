@@ -4,12 +4,10 @@ Resource Timing IDL tests
 PASS Performance interface: operation clearResourceTimings() 
 PASS Performance interface: operation setResourceTimingBufferSize(unsigned long) 
 PASS Performance interface: attribute onresourcetimingbufferfull 
-PASS Performance must be primary interface of window.performance 
-PASS Stringification of window.performance 
-PASS Performance interface: window.performance must inherit property "clearResourceTimings" with the proper type (3) 
-PASS Performance interface: window.performance must inherit property "setResourceTimingBufferSize" with the proper type (4) 
+PASS Performance interface: window.performance must inherit property "clearResourceTimings()" with the proper type 
+PASS Performance interface: window.performance must inherit property "setResourceTimingBufferSize(unsigned long)" with the proper type 
 PASS Performance interface: calling setResourceTimingBufferSize(unsigned long) on window.performance with too few arguments must throw TypeError 
-PASS Performance interface: window.performance must inherit property "onresourcetimingbufferfull" with the proper type (5) 
+PASS Performance interface: window.performance must inherit property "onresourcetimingbufferfull" with the proper type 
 PASS PerformanceResourceTiming interface: existence and properties of interface object 
 PASS PerformanceResourceTiming interface object length 
 PASS PerformanceResourceTiming interface object name 
@@ -27,6 +25,7 @@ PASS PerformanceResourceTiming interface: attribute secureConnectionStart
 PASS PerformanceResourceTiming interface: attribute requestStart 
 PASS PerformanceResourceTiming interface: attribute responseStart 
 PASS PerformanceResourceTiming interface: attribute responseEnd 
+PASS PerformanceResourceTiming interface: operation toJSON() 
 [Exposed=(Window)]
 interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMString           initiatorType;
@@ -41,7 +40,7 @@ interface PerformanceResourceTiming : PerformanceEntry {
     readonly attribute DOMHighResTimeStamp requestStart;
     readonly attribute DOMHighResTimeStamp responseStart;
     readonly attribute DOMHighResTimeStamp responseEnd;
-    serializer = {inherit, attribute};
+    [Default] object toJSON();
 };
 partial interface Performance {
     void clearResourceTimings();

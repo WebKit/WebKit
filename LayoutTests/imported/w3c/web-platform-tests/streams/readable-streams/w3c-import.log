@@ -59,11 +59,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.js
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.serviceworker.https.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/general.sharedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.dedicatedworker.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.js
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.serviceworker.https.html
-/LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/pipe-through.sharedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.dedicatedworker.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.html
 /LayoutTests/imported/w3c/web-platform-tests/streams/readable-streams/tee.js

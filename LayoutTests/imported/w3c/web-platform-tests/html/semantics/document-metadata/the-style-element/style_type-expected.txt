@@ -1,0 +1,7 @@
+
+PASS With no type attribute, the style should apply 
+PASS With an empty type attribute, the style should apply 
+PASS With a mixed-case type attribute, the style should apply 
+PASS With a whitespace-surrounded type attribute, the style should not apply 
+PASS With a charset parameter in the type attribute, the style should not apply 
+

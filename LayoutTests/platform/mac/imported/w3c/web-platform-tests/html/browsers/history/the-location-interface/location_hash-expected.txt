@@ -1,4 +1,4 @@
 
 PASS location hash 
-FAIL Setting location.hash on srcdoc iframe assert_true: Should have scrolled by more than one viewport height expected true got false
+PASS Setting location.hash on srcdoc iframe 
 

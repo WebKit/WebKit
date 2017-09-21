@@ -16,16 +16,22 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/authentication.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/bad-chunk-encoding.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/basic.html
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/cache.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/clean-stash.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/data.json
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/echo-content.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/empty.txt
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/infinite-slow-response.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/inspect-headers.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/method.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/preflight.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/script-with-header.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-put.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/stash-take.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/status.py
+/LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/sw-intercept.js
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/top.txt
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/trickle.py
 /LayoutTests/imported/w3c/web-platform-tests/fetch/api/resources/utils.js

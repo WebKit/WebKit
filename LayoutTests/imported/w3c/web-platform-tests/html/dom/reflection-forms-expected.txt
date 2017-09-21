@@ -280,6 +280,44 @@ PASS form.acceptCharset (<form accept-charset>): IDL set to "\0"
 PASS form.acceptCharset (<form accept-charset>): IDL set to null 
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-toString" 
 PASS form.acceptCharset (<form accept-charset>): IDL set to object "test-valueOf" 
+PASS form.action: typeof IDL attribute 
+FAIL form.action: IDL get with DOM attribute unset assert_equals: expected "http://localhost:8800/html/dom/reflection-forms.html" but got ""
+PASS form.action: setAttribute() to "" 
+PASS form.action: setAttribute() to " foo " 
+PASS form.action: setAttribute() to "http://site.example/" 
+PASS form.action: setAttribute() to "//site.example/path???@#l" 
+PASS form.action: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS form.action: setAttribute() to undefined 
+PASS form.action: setAttribute() to 7 
+PASS form.action: setAttribute() to 1.5 
+PASS form.action: setAttribute() to true 
+PASS form.action: setAttribute() to false 
+PASS form.action: setAttribute() to object "[object Object]" 
+PASS form.action: setAttribute() to NaN 
+PASS form.action: setAttribute() to Infinity 
+PASS form.action: setAttribute() to -Infinity 
+PASS form.action: setAttribute() to "\0" 
+PASS form.action: setAttribute() to null 
+PASS form.action: setAttribute() to object "test-toString" 
+PASS form.action: setAttribute() to object "test-valueOf" 
+PASS form.action: IDL set to "" 
+PASS form.action: IDL set to " foo " 
+PASS form.action: IDL set to "http://site.example/" 
+PASS form.action: IDL set to "//site.example/path???@#l" 
+PASS form.action: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS form.action: IDL set to undefined 
+PASS form.action: IDL set to 7 
+PASS form.action: IDL set to 1.5 
+PASS form.action: IDL set to true 
+PASS form.action: IDL set to false 
+PASS form.action: IDL set to object "[object Object]" 
+PASS form.action: IDL set to NaN 
+PASS form.action: IDL set to Infinity 
+PASS form.action: IDL set to -Infinity 
+PASS form.action: IDL set to "\0" 
+PASS form.action: IDL set to null 
+PASS form.action: IDL set to object "test-toString" 
+PASS form.action: IDL set to object "test-valueOf" 
 PASS form.autocomplete: typeof IDL attribute 
 PASS form.autocomplete: IDL get with DOM attribute unset 
 PASS form.autocomplete: setAttribute() to "" 
@@ -1796,6 +1834,23 @@ PASS input.alt: IDL set to "\0"
 PASS input.alt: IDL set to null 
 PASS input.alt: IDL set to object "test-toString" 
 PASS input.alt: IDL set to object "test-valueOf" 
+PASS input.autocomplete: typeof IDL attribute 
+PASS input.autocomplete: IDL get with DOM attribute unset 
+PASS input.autocomplete: IDL set to "" 
+PASS input.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS input.autocomplete: IDL set to undefined 
+PASS input.autocomplete: IDL set to 7 
+PASS input.autocomplete: IDL set to 1.5 
+PASS input.autocomplete: IDL set to true 
+PASS input.autocomplete: IDL set to false 
+PASS input.autocomplete: IDL set to object "[object Object]" 
+PASS input.autocomplete: IDL set to NaN 
+PASS input.autocomplete: IDL set to Infinity 
+PASS input.autocomplete: IDL set to -Infinity 
+PASS input.autocomplete: IDL set to "\0" 
+PASS input.autocomplete: IDL set to null 
+PASS input.autocomplete: IDL set to object "test-toString" 
+PASS input.autocomplete: IDL set to object "test-valueOf" 
 PASS input.autofocus: typeof IDL attribute 
 PASS input.autofocus: IDL get with DOM attribute unset 
 PASS input.autofocus: setAttribute() to "" 
@@ -1927,6 +1982,44 @@ PASS input.disabled: IDL set to -Infinity
 PASS input.disabled: IDL set to "\0" 
 PASS input.disabled: IDL set to object "test-toString" 
 PASS input.disabled: IDL set to object "test-valueOf" 
+PASS input.formAction: typeof IDL attribute 
+PASS input.formAction: IDL get with DOM attribute unset 
+PASS input.formAction: setAttribute() to "" 
+PASS input.formAction: setAttribute() to " foo " 
+PASS input.formAction: setAttribute() to "http://site.example/" 
+PASS input.formAction: setAttribute() to "//site.example/path???@#l" 
+PASS input.formAction: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS input.formAction: setAttribute() to undefined 
+PASS input.formAction: setAttribute() to 7 
+PASS input.formAction: setAttribute() to 1.5 
+PASS input.formAction: setAttribute() to true 
+PASS input.formAction: setAttribute() to false 
+PASS input.formAction: setAttribute() to object "[object Object]" 
+PASS input.formAction: setAttribute() to NaN 
+PASS input.formAction: setAttribute() to Infinity 
+PASS input.formAction: setAttribute() to -Infinity 
+PASS input.formAction: setAttribute() to "\0" 
+PASS input.formAction: setAttribute() to null 
+PASS input.formAction: setAttribute() to object "test-toString" 
+PASS input.formAction: setAttribute() to object "test-valueOf" 
+PASS input.formAction: IDL set to "" 
+PASS input.formAction: IDL set to " foo " 
+PASS input.formAction: IDL set to "http://site.example/" 
+PASS input.formAction: IDL set to "//site.example/path???@#l" 
+PASS input.formAction: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS input.formAction: IDL set to undefined 
+PASS input.formAction: IDL set to 7 
+PASS input.formAction: IDL set to 1.5 
+PASS input.formAction: IDL set to true 
+PASS input.formAction: IDL set to false 
+PASS input.formAction: IDL set to object "[object Object]" 
+PASS input.formAction: IDL set to NaN 
+PASS input.formAction: IDL set to Infinity 
+PASS input.formAction: IDL set to -Infinity 
+PASS input.formAction: IDL set to "\0" 
+PASS input.formAction: IDL set to null 
+PASS input.formAction: IDL set to object "test-toString" 
+PASS input.formAction: IDL set to object "test-valueOf" 
 PASS input.formEnctype: typeof IDL attribute 
 PASS input.formEnctype: IDL get with DOM attribute unset 
 PASS input.formEnctype: setAttribute() to "" 
@@ -2106,6 +2199,15 @@ PASS input.formTarget: IDL set to "\0"
 PASS input.formTarget: IDL set to null 
 PASS input.formTarget: IDL set to object "test-toString" 
 PASS input.formTarget: IDL set to object "test-valueOf" 
+PASS input.height: typeof IDL attribute 
+PASS input.height: IDL get with DOM attribute unset 
+PASS input.height: IDL set to 0 
+PASS input.height: IDL set to 1 
+PASS input.height: IDL set to 257 
+PASS input.height: IDL set to 2147483647 
+PASS input.height: IDL set to "-0" 
+PASS input.height: IDL set to 2147483648 
+PASS input.height: IDL set to 4294967295 
 FAIL input.inputMode: typeof IDL attribute assert_equals: expected "string" but got "undefined"
 FAIL input.inputMode: IDL get with DOM attribute unset assert_equals: expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -2154,6 +2256,12 @@ FAIL input.inputMode: setAttribute() to "kana\0" assert_equals: IDL get expected
 FAIL input.inputMode: setAttribute() to "ana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "KANA" assert_equals: IDL get expected (string) "kana" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "Kana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "kana-name" assert_equals: IDL get expected (string) "kana-name" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "xkana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "kana-name\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "ana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "KANA-NAME" assert_equals: IDL get expected (string) "kana-name" but got (undefined) undefined
+FAIL input.inputMode: setAttribute() to "Kana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "katakana" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "xkatakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL input.inputMode: setAttribute() to "katakana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -2226,6 +2334,12 @@ FAIL input.inputMode: IDL set to "kana\0" assert_equals: getAttribute() expected
 FAIL input.inputMode: IDL set to "ana" assert_equals: getAttribute() expected "ana" but got "URL"
 FAIL input.inputMode: IDL set to "KANA" assert_equals: getAttribute() expected "KANA" but got "URL"
 FAIL input.inputMode: IDL set to "Kana" assert_equals: getAttribute() expected "Kana" but got "URL"
+FAIL input.inputMode: IDL set to "kana-name" assert_equals: getAttribute() expected "kana-name" but got "URL"
+FAIL input.inputMode: IDL set to "xkana-name" assert_equals: getAttribute() expected "xkana-name" but got "URL"
+FAIL input.inputMode: IDL set to "kana-name\0" assert_equals: getAttribute() expected "kana-name\0" but got "URL"
+FAIL input.inputMode: IDL set to "ana-name" assert_equals: getAttribute() expected "ana-name" but got "URL"
+FAIL input.inputMode: IDL set to "KANA-NAME" assert_equals: getAttribute() expected "KANA-NAME" but got "URL"
+FAIL input.inputMode: IDL set to "Kana-name" assert_equals: getAttribute() expected "Kana-name" but got "URL"
 FAIL input.inputMode: IDL set to "katakana" assert_equals: getAttribute() expected "katakana" but got "URL"
 FAIL input.inputMode: IDL set to "xkatakana" assert_equals: getAttribute() expected "xkatakana" but got "URL"
 FAIL input.inputMode: IDL set to "katakana\0" assert_equals: getAttribute() expected "katakana\0" but got "URL"
@@ -2377,6 +2491,67 @@ PASS input.min: IDL set to "\0"
 PASS input.min: IDL set to null 
 PASS input.min: IDL set to object "test-toString" 
 PASS input.min: IDL set to object "test-valueOf" 
+PASS input.minLength: typeof IDL attribute 
+PASS input.minLength: IDL get with DOM attribute unset 
+PASS input.minLength: setAttribute() to -2147483649 
+PASS input.minLength: setAttribute() to -2147483648 
+PASS input.minLength: setAttribute() to -36 
+PASS input.minLength: setAttribute() to -1 
+PASS input.minLength: setAttribute() to -0 
+PASS input.minLength: setAttribute() to 0 
+PASS input.minLength: setAttribute() to 1 
+PASS input.minLength: setAttribute() to 2147483647 
+PASS input.minLength: setAttribute() to 2147483648 
+PASS input.minLength: setAttribute() to 4294967295 
+PASS input.minLength: setAttribute() to 4294967296 
+PASS input.minLength: setAttribute() to "" 
+PASS input.minLength: setAttribute() to "-1" 
+PASS input.minLength: setAttribute() to "-0" 
+PASS input.minLength: setAttribute() to "0" 
+PASS input.minLength: setAttribute() to "1" 
+PASS input.minLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS input.minLength: setAttribute() to "\t7" 
+PASS input.minLength: setAttribute() to "\v7" 
+PASS input.minLength: setAttribute() to "\f7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to "﻿7" 
+PASS input.minLength: setAttribute() to "\n7" 
+PASS input.minLength: setAttribute() to "\r7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to "᠎7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to " 7" 
+PASS input.minLength: setAttribute() to "　7" 
+PASS input.minLength: setAttribute() to undefined 
+PASS input.minLength: setAttribute() to 1.5 
+PASS input.minLength: setAttribute() to true 
+PASS input.minLength: setAttribute() to false 
+PASS input.minLength: setAttribute() to object "[object Object]" 
+PASS input.minLength: setAttribute() to NaN 
+PASS input.minLength: setAttribute() to Infinity 
+PASS input.minLength: setAttribute() to -Infinity 
+PASS input.minLength: setAttribute() to "\0" 
+PASS input.minLength: setAttribute() to object "2" 
+PASS input.minLength: setAttribute() to object "3" 
+PASS input.minLength: IDL set to -2147483648 
+PASS input.minLength: IDL set to -36 
+PASS input.minLength: IDL set to -1 
+PASS input.minLength: IDL set to 0 
+PASS input.minLength: IDL set to 1 
+PASS input.minLength: IDL set to 2147483647 
 PASS input.multiple: typeof IDL attribute 
 PASS input.multiple: IDL get with DOM attribute unset 
 PASS input.multiple: setAttribute() to "" 
@@ -2753,11 +2928,6 @@ PASS input.type: setAttribute() to "xpassword"
 PASS input.type: setAttribute() to "password\0" 
 PASS input.type: setAttribute() to "assword" 
 PASS input.type: setAttribute() to "PASSWORD" 
-FAIL input.type: setAttribute() to "datetime" assert_equals: IDL get expected "datetime" but got "text"
-PASS input.type: setAttribute() to "xdatetime" 
-PASS input.type: setAttribute() to "datetime\0" 
-PASS input.type: setAttribute() to "atetime" 
-FAIL input.type: setAttribute() to "DATETIME" assert_equals: IDL get expected "datetime" but got "text"
 FAIL input.type: setAttribute() to "date" assert_equals: IDL get expected "date" but got "text"
 PASS input.type: setAttribute() to "xdate" 
 PASS input.type: setAttribute() to "date\0" 
@@ -2885,11 +3055,6 @@ PASS input.type: IDL set to "xpassword"
 PASS input.type: IDL set to "password\0" 
 PASS input.type: IDL set to "assword" 
 PASS input.type: IDL set to "PASSWORD" 
-FAIL input.type: IDL set to "datetime" assert_equals: IDL get expected "datetime" but got "text"
-PASS input.type: IDL set to "xdatetime" 
-PASS input.type: IDL set to "datetime\0" 
-PASS input.type: IDL set to "atetime" 
-FAIL input.type: IDL set to "DATETIME" assert_equals: IDL get expected "datetime" but got "text"
 FAIL input.type: IDL set to "date" assert_equals: IDL get expected "date" but got "text"
 PASS input.type: IDL set to "xdate" 
 PASS input.type: IDL set to "date\0" 
@@ -2967,6 +3132,15 @@ PASS input.type: IDL set to "xbutton"
 PASS input.type: IDL set to "button\0" 
 PASS input.type: IDL set to "utton" 
 PASS input.type: IDL set to "BUTTON" 
+PASS input.width: typeof IDL attribute 
+PASS input.width: IDL get with DOM attribute unset 
+PASS input.width: IDL set to 0 
+PASS input.width: IDL set to 1 
+PASS input.width: IDL set to 257 
+PASS input.width: IDL set to 2147483647 
+PASS input.width: IDL set to "-0" 
+PASS input.width: IDL set to 2147483648 
+PASS input.width: IDL set to 4294967295 
 PASS input.defaultValue (<input value>): typeof IDL attribute 
 PASS input.defaultValue (<input value>): IDL get with DOM attribute unset 
 PASS input.defaultValue (<input value>): setAttribute() to "" 
@@ -3376,6 +3550,44 @@ PASS button.disabled: IDL set to -Infinity
 PASS button.disabled: IDL set to "\0" 
 PASS button.disabled: IDL set to object "test-toString" 
 PASS button.disabled: IDL set to object "test-valueOf" 
+PASS button.formAction: typeof IDL attribute 
+PASS button.formAction: IDL get with DOM attribute unset 
+PASS button.formAction: setAttribute() to "" 
+PASS button.formAction: setAttribute() to " foo " 
+PASS button.formAction: setAttribute() to "http://site.example/" 
+PASS button.formAction: setAttribute() to "//site.example/path???@#l" 
+PASS button.formAction: setAttribute() to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS button.formAction: setAttribute() to undefined 
+PASS button.formAction: setAttribute() to 7 
+PASS button.formAction: setAttribute() to 1.5 
+PASS button.formAction: setAttribute() to true 
+PASS button.formAction: setAttribute() to false 
+PASS button.formAction: setAttribute() to object "[object Object]" 
+PASS button.formAction: setAttribute() to NaN 
+PASS button.formAction: setAttribute() to Infinity 
+PASS button.formAction: setAttribute() to -Infinity 
+PASS button.formAction: setAttribute() to "\0" 
+PASS button.formAction: setAttribute() to null 
+PASS button.formAction: setAttribute() to object "test-toString" 
+PASS button.formAction: setAttribute() to object "test-valueOf" 
+PASS button.formAction: IDL set to "" 
+PASS button.formAction: IDL set to " foo " 
+PASS button.formAction: IDL set to "http://site.example/" 
+PASS button.formAction: IDL set to "//site.example/path???@#l" 
+PASS button.formAction: IDL set to "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f " 
+PASS button.formAction: IDL set to undefined 
+PASS button.formAction: IDL set to 7 
+PASS button.formAction: IDL set to 1.5 
+PASS button.formAction: IDL set to true 
+PASS button.formAction: IDL set to false 
+PASS button.formAction: IDL set to object "[object Object]" 
+PASS button.formAction: IDL set to NaN 
+PASS button.formAction: IDL set to Infinity 
+PASS button.formAction: IDL set to -Infinity 
+PASS button.formAction: IDL set to "\0" 
+PASS button.formAction: IDL set to null 
+PASS button.formAction: IDL set to object "test-toString" 
+PASS button.formAction: IDL set to object "test-valueOf" 
 PASS button.formEnctype: typeof IDL attribute 
 PASS button.formEnctype: IDL get with DOM attribute unset 
 PASS button.formEnctype: setAttribute() to "" 
@@ -3938,6 +4150,23 @@ PASS select.tabIndex: IDL set to 0
 PASS select.tabIndex: IDL set to 1 
 PASS select.tabIndex: IDL set to 2147483647 
 PASS select.tabIndex: IDL set to -2147483648 
+PASS select.autocomplete: typeof IDL attribute 
+PASS select.autocomplete: IDL get with DOM attribute unset 
+PASS select.autocomplete: IDL set to "" 
+PASS select.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS select.autocomplete: IDL set to undefined 
+PASS select.autocomplete: IDL set to 7 
+PASS select.autocomplete: IDL set to 1.5 
+PASS select.autocomplete: IDL set to true 
+PASS select.autocomplete: IDL set to false 
+PASS select.autocomplete: IDL set to object "[object Object]" 
+PASS select.autocomplete: IDL set to NaN 
+PASS select.autocomplete: IDL set to Infinity 
+PASS select.autocomplete: IDL set to -Infinity 
+PASS select.autocomplete: IDL set to "\0" 
+PASS select.autocomplete: IDL set to null 
+PASS select.autocomplete: IDL set to object "test-toString" 
+PASS select.autocomplete: IDL set to object "test-valueOf" 
 PASS select.autofocus: typeof IDL attribute 
 PASS select.autofocus: IDL get with DOM attribute unset 
 PASS select.autofocus: setAttribute() to "" 
@@ -5006,7 +5235,7 @@ PASS option.disabled: IDL set to object "test-valueOf"
 PASS option.label: typeof IDL attribute 
 PASS option.label: IDL get with DOM attribute unset 
 PASS option.label: IDL set to "" 
-FAIL option.label: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: IDL get expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "\0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo"
+PASS option.label: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
 PASS option.label: IDL set to undefined 
 PASS option.label: IDL set to 7 
 PASS option.label: IDL set to 1.5 
@@ -5317,6 +5546,23 @@ PASS textarea.tabIndex: IDL set to 0
 PASS textarea.tabIndex: IDL set to 1 
 PASS textarea.tabIndex: IDL set to 2147483647 
 PASS textarea.tabIndex: IDL set to -2147483648 
+PASS textarea.autocomplete: typeof IDL attribute 
+PASS textarea.autocomplete: IDL get with DOM attribute unset 
+PASS textarea.autocomplete: IDL set to "" 
+PASS textarea.autocomplete: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS textarea.autocomplete: IDL set to undefined 
+PASS textarea.autocomplete: IDL set to 7 
+PASS textarea.autocomplete: IDL set to 1.5 
+PASS textarea.autocomplete: IDL set to true 
+PASS textarea.autocomplete: IDL set to false 
+PASS textarea.autocomplete: IDL set to object "[object Object]" 
+PASS textarea.autocomplete: IDL set to NaN 
+PASS textarea.autocomplete: IDL set to Infinity 
+PASS textarea.autocomplete: IDL set to -Infinity 
+PASS textarea.autocomplete: IDL set to "\0" 
+PASS textarea.autocomplete: IDL set to null 
+PASS textarea.autocomplete: IDL set to object "test-toString" 
+PASS textarea.autocomplete: IDL set to object "test-valueOf" 
 PASS textarea.autofocus: typeof IDL attribute 
 PASS textarea.autofocus: IDL get with DOM attribute unset 
 PASS textarea.autofocus: setAttribute() to "" 
@@ -5522,6 +5768,12 @@ FAIL textarea.inputMode: setAttribute() to "kana\0" assert_equals: IDL get expec
 FAIL textarea.inputMode: setAttribute() to "ana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "KANA" assert_equals: IDL get expected (string) "kana" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "Kana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "kana-name" assert_equals: IDL get expected (string) "kana-name" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "xkana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "kana-name\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "ana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "KANA-NAME" assert_equals: IDL get expected (string) "kana-name" but got (undefined) undefined
+FAIL textarea.inputMode: setAttribute() to "Kana-name" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "katakana" assert_equals: IDL get expected (string) "katakana" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "xkatakana" assert_equals: IDL get expected (string) "" but got (undefined) undefined
 FAIL textarea.inputMode: setAttribute() to "katakana\0" assert_equals: IDL get expected (string) "" but got (undefined) undefined
@@ -5594,6 +5846,12 @@ FAIL textarea.inputMode: IDL set to "kana\0" assert_equals: getAttribute() expec
 FAIL textarea.inputMode: IDL set to "ana" assert_equals: getAttribute() expected "ana" but got "URL"
 FAIL textarea.inputMode: IDL set to "KANA" assert_equals: getAttribute() expected "KANA" but got "URL"
 FAIL textarea.inputMode: IDL set to "Kana" assert_equals: getAttribute() expected "Kana" but got "URL"
+FAIL textarea.inputMode: IDL set to "kana-name" assert_equals: getAttribute() expected "kana-name" but got "URL"
+FAIL textarea.inputMode: IDL set to "xkana-name" assert_equals: getAttribute() expected "xkana-name" but got "URL"
+FAIL textarea.inputMode: IDL set to "kana-name\0" assert_equals: getAttribute() expected "kana-name\0" but got "URL"
+FAIL textarea.inputMode: IDL set to "ana-name" assert_equals: getAttribute() expected "ana-name" but got "URL"
+FAIL textarea.inputMode: IDL set to "KANA-NAME" assert_equals: getAttribute() expected "KANA-NAME" but got "URL"
+FAIL textarea.inputMode: IDL set to "Kana-name" assert_equals: getAttribute() expected "Kana-name" but got "URL"
 FAIL textarea.inputMode: IDL set to "katakana" assert_equals: getAttribute() expected "katakana" but got "URL"
 FAIL textarea.inputMode: IDL set to "xkatakana" assert_equals: getAttribute() expected "xkatakana" but got "URL"
 FAIL textarea.inputMode: IDL set to "katakana\0" assert_equals: getAttribute() expected "katakana\0" but got "URL"
@@ -5681,6 +5939,67 @@ PASS textarea.maxLength: IDL set to -1
 PASS textarea.maxLength: IDL set to 0 
 PASS textarea.maxLength: IDL set to 1 
 PASS textarea.maxLength: IDL set to 2147483647 
+PASS textarea.minLength: typeof IDL attribute 
+PASS textarea.minLength: IDL get with DOM attribute unset 
+PASS textarea.minLength: setAttribute() to -2147483649 
+PASS textarea.minLength: setAttribute() to -2147483648 
+PASS textarea.minLength: setAttribute() to -36 
+PASS textarea.minLength: setAttribute() to -1 
+PASS textarea.minLength: setAttribute() to -0 
+PASS textarea.minLength: setAttribute() to 0 
+PASS textarea.minLength: setAttribute() to 1 
+PASS textarea.minLength: setAttribute() to 2147483647 
+PASS textarea.minLength: setAttribute() to 2147483648 
+PASS textarea.minLength: setAttribute() to 4294967295 
+PASS textarea.minLength: setAttribute() to 4294967296 
+PASS textarea.minLength: setAttribute() to "" 
+PASS textarea.minLength: setAttribute() to "-1" 
+PASS textarea.minLength: setAttribute() to "-0" 
+PASS textarea.minLength: setAttribute() to "0" 
+PASS textarea.minLength: setAttribute() to "1" 
+PASS textarea.minLength: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
+PASS textarea.minLength: setAttribute() to "\t7" 
+PASS textarea.minLength: setAttribute() to "\v7" 
+PASS textarea.minLength: setAttribute() to "\f7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to "﻿7" 
+PASS textarea.minLength: setAttribute() to "\n7" 
+PASS textarea.minLength: setAttribute() to "\r7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to "᠎7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to " 7" 
+PASS textarea.minLength: setAttribute() to "　7" 
+PASS textarea.minLength: setAttribute() to undefined 
+PASS textarea.minLength: setAttribute() to 1.5 
+PASS textarea.minLength: setAttribute() to true 
+PASS textarea.minLength: setAttribute() to false 
+PASS textarea.minLength: setAttribute() to object "[object Object]" 
+PASS textarea.minLength: setAttribute() to NaN 
+PASS textarea.minLength: setAttribute() to Infinity 
+PASS textarea.minLength: setAttribute() to -Infinity 
+PASS textarea.minLength: setAttribute() to "\0" 
+PASS textarea.minLength: setAttribute() to object "2" 
+PASS textarea.minLength: setAttribute() to object "3" 
+PASS textarea.minLength: IDL set to -2147483648 
+PASS textarea.minLength: IDL set to -36 
+PASS textarea.minLength: IDL set to -1 
+PASS textarea.minLength: IDL set to 0 
+PASS textarea.minLength: IDL set to 1 
+PASS textarea.minLength: IDL set to 2147483647 
 PASS textarea.name: typeof IDL attribute 
 PASS textarea.name: IDL get with DOM attribute unset 
 PASS textarea.name: setAttribute() to "" 
@@ -5902,406 +6221,6 @@ PASS textarea.wrap: IDL set to "\0"
 PASS textarea.wrap: IDL set to null 
 PASS textarea.wrap: IDL set to object "test-toString" 
 PASS textarea.wrap: IDL set to object "test-valueOf" 
-PASS keygen.title: typeof IDL attribute 
-PASS keygen.title: IDL get with DOM attribute unset 
-PASS keygen.title: setAttribute() to "" 
-PASS keygen.title: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.title: setAttribute() to undefined 
-PASS keygen.title: setAttribute() to 7 
-PASS keygen.title: setAttribute() to 1.5 
-PASS keygen.title: setAttribute() to true 
-PASS keygen.title: setAttribute() to false 
-PASS keygen.title: setAttribute() to object "[object Object]" 
-PASS keygen.title: setAttribute() to NaN 
-PASS keygen.title: setAttribute() to Infinity 
-PASS keygen.title: setAttribute() to -Infinity 
-PASS keygen.title: setAttribute() to "\0" 
-PASS keygen.title: setAttribute() to null 
-PASS keygen.title: setAttribute() to object "test-toString" 
-PASS keygen.title: setAttribute() to object "test-valueOf" 
-PASS keygen.title: IDL set to "" 
-PASS keygen.title: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.title: IDL set to undefined 
-PASS keygen.title: IDL set to 7 
-PASS keygen.title: IDL set to 1.5 
-PASS keygen.title: IDL set to true 
-PASS keygen.title: IDL set to false 
-PASS keygen.title: IDL set to object "[object Object]" 
-PASS keygen.title: IDL set to NaN 
-PASS keygen.title: IDL set to Infinity 
-PASS keygen.title: IDL set to -Infinity 
-PASS keygen.title: IDL set to "\0" 
-PASS keygen.title: IDL set to null 
-PASS keygen.title: IDL set to object "test-toString" 
-PASS keygen.title: IDL set to object "test-valueOf" 
-PASS keygen.lang: typeof IDL attribute 
-PASS keygen.lang: IDL get with DOM attribute unset 
-PASS keygen.lang: setAttribute() to "" 
-PASS keygen.lang: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.lang: setAttribute() to undefined 
-PASS keygen.lang: setAttribute() to 7 
-PASS keygen.lang: setAttribute() to 1.5 
-PASS keygen.lang: setAttribute() to true 
-PASS keygen.lang: setAttribute() to false 
-PASS keygen.lang: setAttribute() to object "[object Object]" 
-PASS keygen.lang: setAttribute() to NaN 
-PASS keygen.lang: setAttribute() to Infinity 
-PASS keygen.lang: setAttribute() to -Infinity 
-PASS keygen.lang: setAttribute() to "\0" 
-PASS keygen.lang: setAttribute() to null 
-PASS keygen.lang: setAttribute() to object "test-toString" 
-PASS keygen.lang: setAttribute() to object "test-valueOf" 
-PASS keygen.lang: IDL set to "" 
-PASS keygen.lang: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.lang: IDL set to undefined 
-PASS keygen.lang: IDL set to 7 
-PASS keygen.lang: IDL set to 1.5 
-PASS keygen.lang: IDL set to true 
-PASS keygen.lang: IDL set to false 
-PASS keygen.lang: IDL set to object "[object Object]" 
-PASS keygen.lang: IDL set to NaN 
-PASS keygen.lang: IDL set to Infinity 
-PASS keygen.lang: IDL set to -Infinity 
-PASS keygen.lang: IDL set to "\0" 
-PASS keygen.lang: IDL set to null 
-PASS keygen.lang: IDL set to object "test-toString" 
-PASS keygen.lang: IDL set to object "test-valueOf" 
-PASS keygen.dir: typeof IDL attribute 
-PASS keygen.dir: IDL get with DOM attribute unset 
-PASS keygen.dir: setAttribute() to "" 
-PASS keygen.dir: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.dir: setAttribute() to undefined 
-PASS keygen.dir: setAttribute() to 7 
-PASS keygen.dir: setAttribute() to 1.5 
-PASS keygen.dir: setAttribute() to true 
-PASS keygen.dir: setAttribute() to false 
-PASS keygen.dir: setAttribute() to object "[object Object]" 
-PASS keygen.dir: setAttribute() to NaN 
-PASS keygen.dir: setAttribute() to Infinity 
-PASS keygen.dir: setAttribute() to -Infinity 
-PASS keygen.dir: setAttribute() to "\0" 
-PASS keygen.dir: setAttribute() to null 
-PASS keygen.dir: setAttribute() to object "test-toString" 
-PASS keygen.dir: setAttribute() to object "test-valueOf" 
-PASS keygen.dir: setAttribute() to "ltr" 
-PASS keygen.dir: setAttribute() to "xltr" 
-PASS keygen.dir: setAttribute() to "ltr\0" 
-PASS keygen.dir: setAttribute() to "tr" 
-PASS keygen.dir: setAttribute() to "LTR" 
-PASS keygen.dir: setAttribute() to "rtl" 
-PASS keygen.dir: setAttribute() to "xrtl" 
-PASS keygen.dir: setAttribute() to "rtl\0" 
-PASS keygen.dir: setAttribute() to "tl" 
-PASS keygen.dir: setAttribute() to "RTL" 
-PASS keygen.dir: setAttribute() to "auto" 
-PASS keygen.dir: setAttribute() to "xauto" 
-PASS keygen.dir: setAttribute() to "auto\0" 
-PASS keygen.dir: setAttribute() to "uto" 
-PASS keygen.dir: setAttribute() to "AUTO" 
-PASS keygen.dir: IDL set to "" 
-PASS keygen.dir: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.dir: IDL set to undefined 
-PASS keygen.dir: IDL set to 7 
-PASS keygen.dir: IDL set to 1.5 
-PASS keygen.dir: IDL set to true 
-PASS keygen.dir: IDL set to false 
-PASS keygen.dir: IDL set to object "[object Object]" 
-PASS keygen.dir: IDL set to NaN 
-PASS keygen.dir: IDL set to Infinity 
-PASS keygen.dir: IDL set to -Infinity 
-PASS keygen.dir: IDL set to "\0" 
-PASS keygen.dir: IDL set to null 
-PASS keygen.dir: IDL set to object "test-toString" 
-PASS keygen.dir: IDL set to object "test-valueOf" 
-PASS keygen.dir: IDL set to "ltr" 
-PASS keygen.dir: IDL set to "xltr" 
-PASS keygen.dir: IDL set to "ltr\0" 
-PASS keygen.dir: IDL set to "tr" 
-PASS keygen.dir: IDL set to "LTR" 
-PASS keygen.dir: IDL set to "rtl" 
-PASS keygen.dir: IDL set to "xrtl" 
-PASS keygen.dir: IDL set to "rtl\0" 
-PASS keygen.dir: IDL set to "tl" 
-PASS keygen.dir: IDL set to "RTL" 
-PASS keygen.dir: IDL set to "auto" 
-PASS keygen.dir: IDL set to "xauto" 
-PASS keygen.dir: IDL set to "auto\0" 
-PASS keygen.dir: IDL set to "uto" 
-PASS keygen.dir: IDL set to "AUTO" 
-PASS keygen.className (<keygen class>): typeof IDL attribute 
-PASS keygen.className (<keygen class>): IDL get with DOM attribute unset 
-PASS keygen.className (<keygen class>): setAttribute() to "" 
-PASS keygen.className (<keygen class>): setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.className (<keygen class>): setAttribute() to undefined 
-PASS keygen.className (<keygen class>): setAttribute() to 7 
-PASS keygen.className (<keygen class>): setAttribute() to 1.5 
-PASS keygen.className (<keygen class>): setAttribute() to true 
-PASS keygen.className (<keygen class>): setAttribute() to false 
-PASS keygen.className (<keygen class>): setAttribute() to object "[object Object]" 
-PASS keygen.className (<keygen class>): setAttribute() to NaN 
-PASS keygen.className (<keygen class>): setAttribute() to Infinity 
-PASS keygen.className (<keygen class>): setAttribute() to -Infinity 
-PASS keygen.className (<keygen class>): setAttribute() to "\0" 
-PASS keygen.className (<keygen class>): setAttribute() to null 
-PASS keygen.className (<keygen class>): setAttribute() to object "test-toString" 
-PASS keygen.className (<keygen class>): setAttribute() to object "test-valueOf" 
-PASS keygen.className (<keygen class>): IDL set to "" 
-PASS keygen.className (<keygen class>): IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.className (<keygen class>): IDL set to undefined 
-PASS keygen.className (<keygen class>): IDL set to 7 
-PASS keygen.className (<keygen class>): IDL set to 1.5 
-PASS keygen.className (<keygen class>): IDL set to true 
-PASS keygen.className (<keygen class>): IDL set to false 
-PASS keygen.className (<keygen class>): IDL set to object "[object Object]" 
-PASS keygen.className (<keygen class>): IDL set to NaN 
-PASS keygen.className (<keygen class>): IDL set to Infinity 
-PASS keygen.className (<keygen class>): IDL set to -Infinity 
-PASS keygen.className (<keygen class>): IDL set to "\0" 
-PASS keygen.className (<keygen class>): IDL set to null 
-PASS keygen.className (<keygen class>): IDL set to object "test-toString" 
-PASS keygen.className (<keygen class>): IDL set to object "test-valueOf" 
-PASS keygen.hidden: typeof IDL attribute 
-PASS keygen.hidden: IDL get with DOM attribute unset 
-PASS keygen.hidden: setAttribute() to "" 
-PASS keygen.hidden: setAttribute() to " foo " 
-PASS keygen.hidden: setAttribute() to undefined 
-PASS keygen.hidden: setAttribute() to null 
-PASS keygen.hidden: setAttribute() to 7 
-PASS keygen.hidden: setAttribute() to 1.5 
-PASS keygen.hidden: setAttribute() to true 
-PASS keygen.hidden: setAttribute() to false 
-PASS keygen.hidden: setAttribute() to object "[object Object]" 
-PASS keygen.hidden: setAttribute() to NaN 
-PASS keygen.hidden: setAttribute() to Infinity 
-PASS keygen.hidden: setAttribute() to -Infinity 
-PASS keygen.hidden: setAttribute() to "\0" 
-PASS keygen.hidden: setAttribute() to object "test-toString" 
-PASS keygen.hidden: setAttribute() to object "test-valueOf" 
-PASS keygen.hidden: setAttribute() to "hidden" 
-PASS keygen.hidden: IDL set to "" 
-PASS keygen.hidden: IDL set to " foo " 
-PASS keygen.hidden: IDL set to undefined 
-PASS keygen.hidden: IDL set to null 
-PASS keygen.hidden: IDL set to 7 
-PASS keygen.hidden: IDL set to 1.5 
-PASS keygen.hidden: IDL set to true 
-PASS keygen.hidden: IDL set to false 
-PASS keygen.hidden: IDL set to object "[object Object]" 
-PASS keygen.hidden: IDL set to NaN 
-PASS keygen.hidden: IDL set to Infinity 
-PASS keygen.hidden: IDL set to -Infinity 
-PASS keygen.hidden: IDL set to "\0" 
-PASS keygen.hidden: IDL set to object "test-toString" 
-PASS keygen.hidden: IDL set to object "test-valueOf" 
-PASS keygen.accessKey: typeof IDL attribute 
-PASS keygen.accessKey: IDL get with DOM attribute unset 
-PASS keygen.accessKey: setAttribute() to "" 
-PASS keygen.accessKey: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.accessKey: setAttribute() to undefined 
-PASS keygen.accessKey: setAttribute() to 7 
-PASS keygen.accessKey: setAttribute() to 1.5 
-PASS keygen.accessKey: setAttribute() to true 
-PASS keygen.accessKey: setAttribute() to false 
-PASS keygen.accessKey: setAttribute() to object "[object Object]" 
-PASS keygen.accessKey: setAttribute() to NaN 
-PASS keygen.accessKey: setAttribute() to Infinity 
-PASS keygen.accessKey: setAttribute() to -Infinity 
-PASS keygen.accessKey: setAttribute() to "\0" 
-PASS keygen.accessKey: setAttribute() to null 
-PASS keygen.accessKey: setAttribute() to object "test-toString" 
-PASS keygen.accessKey: setAttribute() to object "test-valueOf" 
-PASS keygen.accessKey: IDL set to "" 
-PASS keygen.accessKey: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.accessKey: IDL set to undefined 
-PASS keygen.accessKey: IDL set to 7 
-PASS keygen.accessKey: IDL set to 1.5 
-PASS keygen.accessKey: IDL set to true 
-PASS keygen.accessKey: IDL set to false 
-PASS keygen.accessKey: IDL set to object "[object Object]" 
-PASS keygen.accessKey: IDL set to NaN 
-PASS keygen.accessKey: IDL set to Infinity 
-PASS keygen.accessKey: IDL set to -Infinity 
-PASS keygen.accessKey: IDL set to "\0" 
-PASS keygen.accessKey: IDL set to null 
-PASS keygen.accessKey: IDL set to object "test-toString" 
-PASS keygen.accessKey: IDL set to object "test-valueOf" 
-PASS keygen.tabIndex: typeof IDL attribute 
-PASS keygen.tabIndex: setAttribute() to -36 
-PASS keygen.tabIndex: setAttribute() to -1 
-PASS keygen.tabIndex: setAttribute() to 0 
-PASS keygen.tabIndex: setAttribute() to 1 
-PASS keygen.tabIndex: setAttribute() to 2147483647 
-PASS keygen.tabIndex: setAttribute() to -2147483648 
-PASS keygen.tabIndex: setAttribute() to "-1" 
-PASS keygen.tabIndex: setAttribute() to "-0" 
-PASS keygen.tabIndex: setAttribute() to "0" 
-PASS keygen.tabIndex: setAttribute() to "1" 
-PASS keygen.tabIndex: setAttribute() to "\t7" 
-PASS keygen.tabIndex: setAttribute() to "\f7" 
-PASS keygen.tabIndex: setAttribute() to " 7" 
-PASS keygen.tabIndex: setAttribute() to "\n7" 
-PASS keygen.tabIndex: setAttribute() to "\r7" 
-PASS keygen.tabIndex: setAttribute() to 1.5 
-PASS keygen.tabIndex: setAttribute() to object "2" 
-PASS keygen.tabIndex: IDL set to -36 
-PASS keygen.tabIndex: IDL set to -1 
-PASS keygen.tabIndex: IDL set to 0 
-PASS keygen.tabIndex: IDL set to 1 
-PASS keygen.tabIndex: IDL set to 2147483647 
-PASS keygen.tabIndex: IDL set to -2147483648 
-PASS keygen.autofocus: typeof IDL attribute 
-PASS keygen.autofocus: IDL get with DOM attribute unset 
-PASS keygen.autofocus: setAttribute() to "" 
-PASS keygen.autofocus: setAttribute() to " foo " 
-PASS keygen.autofocus: setAttribute() to undefined 
-PASS keygen.autofocus: setAttribute() to null 
-PASS keygen.autofocus: setAttribute() to 7 
-PASS keygen.autofocus: setAttribute() to 1.5 
-PASS keygen.autofocus: setAttribute() to true 
-PASS keygen.autofocus: setAttribute() to false 
-PASS keygen.autofocus: setAttribute() to object "[object Object]" 
-PASS keygen.autofocus: setAttribute() to NaN 
-PASS keygen.autofocus: setAttribute() to Infinity 
-PASS keygen.autofocus: setAttribute() to -Infinity 
-PASS keygen.autofocus: setAttribute() to "\0" 
-PASS keygen.autofocus: setAttribute() to object "test-toString" 
-PASS keygen.autofocus: setAttribute() to object "test-valueOf" 
-PASS keygen.autofocus: setAttribute() to "autofocus" 
-PASS keygen.autofocus: IDL set to "" 
-PASS keygen.autofocus: IDL set to " foo " 
-PASS keygen.autofocus: IDL set to undefined 
-PASS keygen.autofocus: IDL set to null 
-PASS keygen.autofocus: IDL set to 7 
-PASS keygen.autofocus: IDL set to 1.5 
-PASS keygen.autofocus: IDL set to true 
-PASS keygen.autofocus: IDL set to false 
-PASS keygen.autofocus: IDL set to object "[object Object]" 
-PASS keygen.autofocus: IDL set to NaN 
-PASS keygen.autofocus: IDL set to Infinity 
-PASS keygen.autofocus: IDL set to -Infinity 
-PASS keygen.autofocus: IDL set to "\0" 
-PASS keygen.autofocus: IDL set to object "test-toString" 
-PASS keygen.autofocus: IDL set to object "test-valueOf" 
-PASS keygen.challenge: typeof IDL attribute 
-PASS keygen.challenge: IDL get with DOM attribute unset 
-PASS keygen.challenge: setAttribute() to "" 
-PASS keygen.challenge: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.challenge: setAttribute() to undefined 
-PASS keygen.challenge: setAttribute() to 7 
-PASS keygen.challenge: setAttribute() to 1.5 
-PASS keygen.challenge: setAttribute() to true 
-PASS keygen.challenge: setAttribute() to false 
-PASS keygen.challenge: setAttribute() to object "[object Object]" 
-PASS keygen.challenge: setAttribute() to NaN 
-PASS keygen.challenge: setAttribute() to Infinity 
-PASS keygen.challenge: setAttribute() to -Infinity 
-PASS keygen.challenge: setAttribute() to "\0" 
-PASS keygen.challenge: setAttribute() to null 
-PASS keygen.challenge: setAttribute() to object "test-toString" 
-PASS keygen.challenge: setAttribute() to object "test-valueOf" 
-PASS keygen.challenge: IDL set to "" 
-PASS keygen.challenge: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.challenge: IDL set to undefined 
-PASS keygen.challenge: IDL set to 7 
-PASS keygen.challenge: IDL set to 1.5 
-PASS keygen.challenge: IDL set to true 
-PASS keygen.challenge: IDL set to false 
-PASS keygen.challenge: IDL set to object "[object Object]" 
-PASS keygen.challenge: IDL set to NaN 
-PASS keygen.challenge: IDL set to Infinity 
-PASS keygen.challenge: IDL set to -Infinity 
-PASS keygen.challenge: IDL set to "\0" 
-PASS keygen.challenge: IDL set to null 
-PASS keygen.challenge: IDL set to object "test-toString" 
-PASS keygen.challenge: IDL set to object "test-valueOf" 
-PASS keygen.disabled: typeof IDL attribute 
-PASS keygen.disabled: IDL get with DOM attribute unset 
-PASS keygen.disabled: setAttribute() to "" 
-PASS keygen.disabled: setAttribute() to " foo " 
-PASS keygen.disabled: setAttribute() to undefined 
-PASS keygen.disabled: setAttribute() to null 
-PASS keygen.disabled: setAttribute() to 7 
-PASS keygen.disabled: setAttribute() to 1.5 
-PASS keygen.disabled: setAttribute() to true 
-PASS keygen.disabled: setAttribute() to false 
-PASS keygen.disabled: setAttribute() to object "[object Object]" 
-PASS keygen.disabled: setAttribute() to NaN 
-PASS keygen.disabled: setAttribute() to Infinity 
-PASS keygen.disabled: setAttribute() to -Infinity 
-PASS keygen.disabled: setAttribute() to "\0" 
-PASS keygen.disabled: setAttribute() to object "test-toString" 
-PASS keygen.disabled: setAttribute() to object "test-valueOf" 
-PASS keygen.disabled: setAttribute() to "disabled" 
-PASS keygen.disabled: IDL set to "" 
-PASS keygen.disabled: IDL set to " foo " 
-PASS keygen.disabled: IDL set to undefined 
-PASS keygen.disabled: IDL set to null 
-PASS keygen.disabled: IDL set to 7 
-PASS keygen.disabled: IDL set to 1.5 
-PASS keygen.disabled: IDL set to true 
-PASS keygen.disabled: IDL set to false 
-PASS keygen.disabled: IDL set to object "[object Object]" 
-PASS keygen.disabled: IDL set to NaN 
-PASS keygen.disabled: IDL set to Infinity 
-PASS keygen.disabled: IDL set to -Infinity 
-PASS keygen.disabled: IDL set to "\0" 
-PASS keygen.disabled: IDL set to object "test-toString" 
-PASS keygen.disabled: IDL set to object "test-valueOf" 
-PASS keygen.keytype: typeof IDL attribute 
-PASS keygen.keytype: setAttribute() to "rsa" 
-PASS keygen.keytype: setAttribute() to "RSA" 
-PASS keygen.keytype: IDL set to "" 
-PASS keygen.keytype: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.keytype: IDL set to undefined 
-PASS keygen.keytype: IDL set to 7 
-PASS keygen.keytype: IDL set to 1.5 
-PASS keygen.keytype: IDL set to true 
-PASS keygen.keytype: IDL set to false 
-PASS keygen.keytype: IDL set to object "[object Object]" 
-PASS keygen.keytype: IDL set to NaN 
-PASS keygen.keytype: IDL set to Infinity 
-PASS keygen.keytype: IDL set to -Infinity 
-PASS keygen.keytype: IDL set to "\0" 
-PASS keygen.keytype: IDL set to null 
-PASS keygen.keytype: IDL set to object "test-toString" 
-PASS keygen.keytype: IDL set to object "test-valueOf" 
-PASS keygen.keytype: IDL set to "rsa" 
-PASS keygen.keytype: IDL set to "xrsa" 
-PASS keygen.keytype: IDL set to "rsa\0" 
-PASS keygen.keytype: IDL set to "sa" 
-PASS keygen.keytype: IDL set to "RSA" 
-PASS keygen.name: typeof IDL attribute 
-PASS keygen.name: IDL get with DOM attribute unset 
-PASS keygen.name: setAttribute() to "" 
-PASS keygen.name: setAttribute() to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.name: setAttribute() to undefined 
-PASS keygen.name: setAttribute() to 7 
-PASS keygen.name: setAttribute() to 1.5 
-PASS keygen.name: setAttribute() to true 
-PASS keygen.name: setAttribute() to false 
-PASS keygen.name: setAttribute() to object "[object Object]" 
-PASS keygen.name: setAttribute() to NaN 
-PASS keygen.name: setAttribute() to Infinity 
-PASS keygen.name: setAttribute() to -Infinity 
-PASS keygen.name: setAttribute() to "\0" 
-PASS keygen.name: setAttribute() to null 
-PASS keygen.name: setAttribute() to object "test-toString" 
-PASS keygen.name: setAttribute() to object "test-valueOf" 
-PASS keygen.name: IDL set to "" 
-PASS keygen.name: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " 
-PASS keygen.name: IDL set to undefined 
-PASS keygen.name: IDL set to 7 
-PASS keygen.name: IDL set to 1.5 
-PASS keygen.name: IDL set to true 
-PASS keygen.name: IDL set to false 
-PASS keygen.name: IDL set to object "[object Object]" 
-PASS keygen.name: IDL set to NaN 
-PASS keygen.name: IDL set to Infinity 
-PASS keygen.name: IDL set to -Infinity 
-PASS keygen.name: IDL set to "\0" 
-PASS keygen.name: IDL set to null 
-PASS keygen.name: IDL set to object "test-toString" 
-PASS keygen.name: IDL set to object "test-valueOf" 
 PASS output.title: typeof IDL attribute 
 PASS output.title: IDL get with DOM attribute unset 
 PASS output.title: setAttribute() to "" 
@@ -7075,4 +6994,52 @@ PASS meter.tabIndex: IDL set to 0
 PASS meter.tabIndex: IDL set to 1 
 PASS meter.tabIndex: IDL set to 2147483647 
 PASS meter.tabIndex: IDL set to -2147483648 
+PASS meter.value: typeof IDL attribute 
+PASS meter.value: IDL get with DOM attribute unset 
+FAIL meter.value: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.value: IDL set to -1 
+PASS meter.value: IDL set to -0 
+PASS meter.value: IDL set to 0 
+PASS meter.value: IDL set to 1 
+FAIL meter.value: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.min: typeof IDL attribute 
+PASS meter.min: IDL get with DOM attribute unset 
+FAIL meter.min: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.min: IDL set to -1 
+PASS meter.min: IDL set to -0 
+PASS meter.min: IDL set to 0 
+PASS meter.min: IDL set to 1 
+FAIL meter.min: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.max: typeof IDL attribute 
+FAIL meter.max: IDL get with DOM attribute unset assert_equals: expected 0 but got 1
+FAIL meter.max: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.max: IDL set to -1 
+PASS meter.max: IDL set to -0 
+PASS meter.max: IDL set to 0 
+PASS meter.max: IDL set to 1 
+FAIL meter.max: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.low: typeof IDL attribute 
+PASS meter.low: IDL get with DOM attribute unset 
+FAIL meter.low: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.low: IDL set to -1 
+PASS meter.low: IDL set to -0 
+PASS meter.low: IDL set to 0 
+PASS meter.low: IDL set to 1 
+FAIL meter.low: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.high: typeof IDL attribute 
+FAIL meter.high: IDL get with DOM attribute unset assert_equals: expected 0 but got 1
+FAIL meter.high: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.high: IDL set to -1 
+PASS meter.high: IDL set to -0 
+PASS meter.high: IDL set to 0 
+PASS meter.high: IDL set to 1 
+FAIL meter.high: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
+PASS meter.optimum: typeof IDL attribute 
+FAIL meter.optimum: IDL get with DOM attribute unset assert_equals: expected 0 but got 0.5
+FAIL meter.optimum: IDL set to -10000000000 assert_equals: getAttribute() expected "-10000000000" but got "-1.00000e+1"
+PASS meter.optimum: IDL set to -1 
+PASS meter.optimum: IDL set to -0 
+PASS meter.optimum: IDL set to 0 
+PASS meter.optimum: IDL set to 1 
+FAIL meter.optimum: IDL set to 10000000000 assert_equals: getAttribute() expected "10000000000" but got "1.00000e+1"
 (Note: missing tests for types tokenlist, settable tokenlist, limited double.)

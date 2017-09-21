@@ -1,130 +1,35 @@
 
-PASS If details.id is missing, assign a identifier 
+PASS If details.id is missing, assign an identifier 
 PASS If details.id is missing, assign a unique identifier 
 PASS If the same id is provided, then use it 
 PASS Use ids even if they are strange 
 PASS Use provided request ID 
 PASS If the length of the methodData sequence is zero, then throw a TypeError 
-PASS If the length of the paymentMethod.supportedMethods sequence is zero, then throw a TypeError 
-PASS Method data must be JSON-serializable object (a list in this case) 
-PASS Method data must be JSON-serializable object (an object in this case) 
+PASS Modifier method data must be JSON-serializable object 
 PASS Rethrow any exceptions of JSON-serializing paymentMethod.data into a string 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-1"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-1.0"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-1.00"), then throw a TypeError 
-PASS If details.total.amount.value is not a valid decimal monetary value (in this case "-1000.000"), then throw a TypeError 
-PASS PaymentDetailsBase.0 can be 0 length 
-PASS PaymentDetailsBase.1 can be 0 length 
-PASS PaymentDetailsBase.2 can be 0 length 
+PASS If details.total.amount.value is not a valid decimal monetary value, then throw a TypeError 
+PASS PaymentDetailsBase members can be 0 length 
 PASS If the first character of details.total.amount.value is U+002D HYPHEN-MINUS, then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError 
-PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError 
+PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value, then throw a TypeError 
 PASS Negative values are allowed for displayItems.amount.value, irrespective of total amount 
 PASS it handles high precision currency values without throwing 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError 
-PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError 
+FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value, then throw a TypeError "-" is not a valid decimal monetary value.
 PASS If there is no selected shipping option, then PaymentRequest.shippingOption remains null 
-PASS If there is a selected shipping option, then it becomes synchronously selected 
-PASS If there is a multiple selected shipping options, only the last is selected 
-PASS If there are any duplicate shipping option ids, then there are no shipping options 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "10."), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case ".99"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-10."), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "10-"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case ""), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "null"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1.0"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1.00"), then throw a TypeError 
-PASS If modifier.total.amount.value is not a valid decimal monetary value (in this case "-1000.000"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "notdigits"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "ALSONOTDIGITS"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "10."), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case ".99"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-10."), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "-.99"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "10-"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1-0"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1.0.0"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1/3"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case ""), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "null"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0  "), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0 "), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "1.0 "), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "USD$1.0"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case "$1.0"), then throw a TypeError 
-PASS If amount.value of additionalDisplayItems is is not a valid decimal monetary value (in this case " 1.0"), then throw a TypeError 
-PASS Modifier data must be JSON-serializable object (a list in this case) 
-PASS Modifier data must be JSON-serializable object (a object in this case) 
-PASS Rethrow any exceptions of JSON-serializing modifier.data into a string 
+FAIL If there is a selected shipping option, and requestShipping is set, then that option becomes synchronously selected assert_equals: Must be null when no shipping is requested (defaults to false) expected (object) null but got (string) "the-id"
+FAIL If requestShipping is set, and if there is a multiple selected shipping options, only the last is selected. assert_equals: shippingOption must be null, as requestShipping is false expected (object) null but got (string) "the-id"
+FAIL If there are any duplicate shipping option ids, and shipping is requested, then throw a TypeError Test bug: unrecognized DOMException code "() => {
+    const request = new PaymentRequest(defaultMethods, details, {
+      requestShipping: true,
+    });
+  }" passed to assert_throws()
+FAIL Throw when there are duplicate shippingOption ids, even if other values are different assert_throws: Expected to throw a TypeError because duplicate IDs function "() => {
+      new PaymentRequest(defaultMethods, details, { requestShipping: true });
+    }" did not throw
+PASS Throw TypeError if modifier.total.amount.value is not a valid decimal monetary value 
+PASS If amount.value of additionalDisplayItems is not a valid decimal monetary value, then throw a TypeError 
+PASS Modifier data must be JSON-serializable object (an Array in this case) 
+PASS Modifier data must be JSON-serializable object (an Object in this case) 
+PASS Rethrow any exceptions of JSON-serializing modifier.data 
 PASS Shipping type should be valid 
 PASS PaymentRequest.shippingAddress must initially be null 
 PASS If options.requestShipping is not set, then request.shippingType attribute is null. 

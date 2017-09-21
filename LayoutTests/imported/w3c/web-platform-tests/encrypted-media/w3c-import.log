@@ -113,4 +113,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-mp4-waiting-for-a-key.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-not-callable-after-createsession.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/drm-temporary-license-type.html
+/LayoutTests/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/encrypted-media/idlharness.html

@@ -1,4 +1,0 @@
-
-
-PASS Test for PaymentRequest identifier usage 
-

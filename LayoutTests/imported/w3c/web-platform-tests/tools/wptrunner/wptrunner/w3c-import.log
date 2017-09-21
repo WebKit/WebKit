@@ -19,6 +19,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/config.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/environment.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/expected.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/font.py
+/LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/formatters.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/hosts.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestexpected.py
 /LayoutTests/imported/w3c/web-platform-tests/tools/wptrunner/wptrunner/manifestinclude.py
