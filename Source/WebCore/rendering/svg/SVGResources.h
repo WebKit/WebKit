@@ -155,7 +155,7 @@ private:
     std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
     std::unique_ptr<MarkerData> m_markerData;
     std::unique_ptr<FillStrokeData> m_fillStrokeData;
-    RenderSVGResourceContainer* m_linkedResource;
+    RenderSVGResourceContainer* m_linkedResource { nullptr };
 };
 
 } // namespace WebCore

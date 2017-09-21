@@ -64,6 +64,7 @@ void RenderSVGResourcePattern::collectPatternAttributes(PatternAttributes& attri
         pattern.collectPatternAttributes(attributes);
 
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
+        ASSERT_IMPLIES(resources && resources->linkedResource(), is<RenderSVGResourcePattern>(resources->linkedResource()));
         current = resources ? downcast<RenderSVGResourcePattern>(resources->linkedResource()) : nullptr;
     }
 }
