@@ -1,5 +1,22 @@
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
+        Regression(r222308): new API tests are failing for !NETWORK_SESSION
+        https://bugs.webkit.org/show_bug.cgi?id=177321
+
+        Reviewed by Alex Christensen.
+
+        When a load is redirected and then converted into a download, CFNetwork
+        seems to call [NSURLDownloadDelegate willSendRequest:] on the download
+        with a non-nil redirectResponse, which was unexpected.
+
+        To address the issue, we now ignore the willSendRequest call if the
+        new request's URL is the same as the redirectResponse one.
+
+        * NetworkProcess/Downloads/mac/DownloadMac.mm:
+        (-[WKDownloadAsDelegate download:willSendRequest:redirectResponse:]):
+
+2017-09-21  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, drop assertion added in r222308.
 
         The assertion is hit by a couple of tests still but there is no bad effect

@@ -525,8 +525,7 @@ TEST(_WKDownload, RedirectedDownload)
     [TestProtocol unregister];
 }
 
-// FIXME: Re-enable once it passes on El Capitan (https://bugs.webkit.org/show_bug.cgi?id=177321).
-TEST(_WKDownload, DISABLED_RedirectedLoadConvertedToDownload)
+TEST(_WKDownload, RedirectedLoadConvertedToDownload)
 {
     [TestProtocol registerWithScheme:@"http"];
 
@@ -548,8 +547,7 @@ TEST(_WKDownload, DISABLED_RedirectedLoadConvertedToDownload)
     [TestProtocol unregister];
 }
 
-// FIXME: Re-enable once it passes on El Capitan (https://bugs.webkit.org/show_bug.cgi?id=177321).
-TEST(_WKDownload, DISABLED_RedirectedSubframeLoadConvertedToDownload)
+TEST(_WKDownload, RedirectedSubframeLoadConvertedToDownload)
 {
     [TestProtocol registerWithScheme:@"http"];
 
