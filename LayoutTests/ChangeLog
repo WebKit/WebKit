@@ -1,3 +1,12 @@
+2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Rebaseline some tests for macOS.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/compositing/repaint/iframes/composited-iframe-with-fixed-background-doc-repaint-expected.txt: Added.
+        * platform/mac-wk2/js/dom/global-constructors-attributes-expected.txt:
+
 2017-09-21  Zhifei FANG  <facetothefate@gmail.com>
 
         In regular block layout, the width of a child's margin box should always be equal to that of its containing block
