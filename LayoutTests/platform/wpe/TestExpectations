@@ -836,6 +836,7 @@ webkit.org/b/172815 imported/w3c/i18n/bidi/bidi-plaintext-011.html [ ImageOnlyFa
 webkit.org/b/176174 media/event-queue-crash.html [ Pass Failure ]
 
 webkit.org/b/176358 imported/w3c/web-platform-tests/WebCryptoAPI/encrypt_decrypt/rsa.worker.html [ Failure Pass ]
+webkit.org/b/177226 imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
 
 # Apparently fails on Mac, but I don't know for what reasons. It passes on GTK/WPE.
 webkit.org/b/138676 imported/w3c/canvas/2d.line.cap.round.html [ Pass ]
