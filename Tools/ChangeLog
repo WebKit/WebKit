@@ -1,3 +1,18 @@
+2017-09-21  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r222272.
+        https://bugs.webkit.org/show_bug.cgi?id=177316
+
+        This patch broke builds on some Win EWS bots. (Requested by
+        perarne on #webkit).
+
+        Reverted changeset:
+
+        "[Win] Cygwin 64-bit EWS process cannot find Visual Studio
+        installation."
+        https://bugs.webkit.org/show_bug.cgi?id=177244
+        http://trac.webkit.org/changeset/222272
+
 2017-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix a bug in the interactive app that was introduced by bad merging.
