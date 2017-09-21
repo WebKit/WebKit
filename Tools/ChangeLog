@@ -1,3 +1,20 @@
+2017-09-21  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Ignore failure to get updated selenium version
+        https://bugs.webkit.org/show_bug.cgi?id=177205
+        <rdar://problem/34531669>
+
+        Reviewed by Lucas Forschler.
+
+        Sometime asking PyPI for the latest version of Selenium fails. We should try and
+        fallback to, at a minimum, version 3.5.0 or a newer installed version.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        (AutoinstallImportHook.greater_than_equal_to_version): Return true if the second
+        version string is greater than or equal to the first version string.
+        (AutoinstallImportHook._install_selenium): If we can't get the latest PyPI url,
+        fallback to version 3.5.0 or a newer installed version.
+
 2017-09-21  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should have some post-instantiation type checking

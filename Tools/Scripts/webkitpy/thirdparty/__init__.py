@@ -166,9 +166,31 @@ class AutoinstallImportHook(object):
         installer.install(url="https://pypi.python.org/packages/source/T/Twisted/Twisted-15.5.0.tar.bz2#md5=0831d7c90d0020062de0f7287530a285", url_subpath="Twisted-15.5.0/twisted")
         installer.install(url="https://pypi.python.org/packages/source/z/zope.interface/zope.interface-4.1.3.tar.gz#md5=9ae3d24c0c7415deb249dd1a132f0f79", url_subpath="zope.interface-4.1.3/src/zope")
 
+    @staticmethod
+    def greater_than_equal_to_version(minimum, version):
+        for i in xrange(len(minimum.split('.'))):
+            if int(version.split('.')[i]) > int(minimum.split('.')[i]):
+                return True
+            if int(version.split('.')[i]) < int(minimum.split('.')[i]):
+                return False
+        return True
+
     def _install_selenium(self):
         self._ensure_autoinstalled_dir_is_in_sys_path()
-        url, url_subpath = self.get_latest_pypi_url('selenium')
+        try:
+            url, url_subpath = self.get_latest_pypi_url('selenium')
+        except urllib2.URLError:
+            minimum_version = '3.5.0'
+            if os.path.isfile(os.path.join(_AUTOINSTALLED_DIR, 'selenium', '__init__.py')):
+                import selenium.webdriver
+                if AutoinstallImportHook.greater_than_equal_to_version(minimum_version, selenium.webdriver.__version__):
+                    sys.stderr.write('\nFailed to find latest selenium, falling back to existing {} version\n'.format(selenium.webdriver.__version__))
+                    return
+
+            # URL for installing the minimum required version.
+            url = 'https://pypi.python.org/packages/ac/d7/1928416439d066c60f26c87a8d1b78a8edd64c7d05a0aa917fa97a8ee02d/selenium-3.5.0.tar.gz#986702fdd0e2aec6a4eda134678b8b3f'
+            url_subpath = 'selenium-{}/selenium'.format(minimum_version)
+            sys.stderr.write('\nFailed to find latest selenium, falling back to minimum {} version\n'.format(minimum_version))
         self._install(url=url, url_subpath=url_subpath)
 
     def install_chromedriver(self):
