@@ -541,8 +541,8 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
 
     _generateCSSCompletions(mainToken, base, suffix)
     {
-        // We only support completion inside CSS block context.
-        if (mainToken.state.state === "media" || mainToken.state.state === "top" || mainToken.state.state === "parens")
+        // We support completion inside CSS block context and functions.
+        if (mainToken.state.state === "media" || mainToken.state.state === "top")
             return [];
 
         // Don't complete in the middle of a property name.
@@ -552,19 +552,46 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
         var token = mainToken;
         var lineNumber = this._lineNumber;
 
-        // Scan backwards looking for the current property.
-        while (token.state.state === "prop") {
+        let getPreviousToken = () => {
             // Found the beginning of the line. Go to the previous line.
             if (!token.start) {
                 --lineNumber;
 
                 // No more lines, stop.
                 if (lineNumber < 0)
-                    break;
+                    return null;
             }
 
-            // Get the previous token.
-            token = this._codeMirror.getTokenAt({line: lineNumber, ch: token.start ? token.start : Number.MAX_VALUE});
+            return this._codeMirror.getTokenAt({line: lineNumber, ch: token.start ? token.start : Number.MAX_VALUE});
+        }
+
+        // Inside a function, determine the function name.
+        if (token.state.state === "parens") {
+            // Scan backwards looking for the function paren boundary.
+            while (token && token.state.state === "parens" && token.string !== "(")
+                token = getPreviousToken();
+
+            // The immediately preceding token should have the function name.
+            if (token)
+                token = getPreviousToken();
+
+            // No completions if no function name found.
+            if (!token)
+                return [];
+
+            let functionName = token.string;
+            if (!functionName)
+                return [];
+
+            return WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
+        }
+
+        // Scan backwards looking for the current property.
+        while (token.state.state === "prop") {
+            let previousToken = getPreviousToken();
+            if (!previousToken)
+                break;
+            token = previousToken;
         }
 
         // If we have a property token and it's not the main token, then we are working on

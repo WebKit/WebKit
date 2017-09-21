@@ -1,5 +1,27 @@
 2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Add autocompletion suggestions for CSS functions (constant(), linear-gradient(), etc)
+        https://bugs.webkit.org/show_bug.cgi?id=177264
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WI.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        Detect when we are inside of functions and provide completion suggestions
+        for the relevant function.
+
+        * UserInterface/Models/CSSCompletions.js:
+        Syntax highlight "constant()" like we do for "var()".
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forProperty):
+        Always suggest "constant()" everywhere, like we do for "var()".
+
+        (WI.CSSKeywordCompletions.forFunction):
+        Provide suggestions for some CSS functions.
+
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Remove support for CSS Regions
         https://bugs.webkit.org/show_bug.cgi?id=177287
 

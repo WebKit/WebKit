@@ -33,7 +33,7 @@ WI.CSSKeywordCompletions = {};
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    let acceptedKeywords = ["initial", "unset", "revert", "var()"];
+    let acceptedKeywords = ["initial", "unset", "revert", "var()", "constant()"];
     let isNotPrefixed = propertyName.charAt(0) !== "-";
 
     if (propertyName in WI.CSSKeywordCompletions._propertyKeywordMap)
@@ -61,6 +61,26 @@ WI.CSSKeywordCompletions.forProperty = function(propertyName)
 
     return new WI.CSSCompletions(acceptedKeywords, true);
 };
+
+WI.CSSKeywordCompletions.forFunction = function(functionName)
+{
+    let suggestions = ["var()"];
+
+    if (functionName === "var")
+        suggestions = [];
+    else if (functionName === "constant")
+        suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
+    else if (functionName === "image-set")
+        suggestions.push("url()");
+    else if (functionName === "repeat")
+        suggestions = suggestions.concat(["auto", "auto-fill", "auto-fit", "min-content", "max-content"]);
+    else if (functionName.endsWith("gradient")) {
+        suggestions = suggestions.concat(["to", "left", "right", "top", "bottom"]);
+        suggestions = suggestions.concat(WI.CSSKeywordCompletions._colors);
+    }
+
+    return new WI.CSSCompletions(suggestions, true);
+}
 
 WI.CSSKeywordCompletions.addCustomCompletions = function(properties)
 {
