@@ -1099,10 +1099,6 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         || representedObject instanceof WI.ShaderProgram)
         return WI.ResourcesTabContentView;
 
-    // FIXME: Move Content Flows to the Elements tab?
-    if (representedObject instanceof WI.ContentFlow)
-        return WI.ResourcesTabContentView;
-
     // FIXME: Move these to a Storage tab.
     if (representedObject instanceof WI.DOMStorageObject || representedObject instanceof WI.CookieStorageObject ||
         representedObject instanceof WI.DatabaseTableObject || representedObject instanceof WI.DatabaseObject ||

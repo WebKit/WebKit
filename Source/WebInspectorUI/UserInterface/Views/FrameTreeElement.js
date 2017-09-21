@@ -42,15 +42,10 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
         frame.addEventListener(WI.Frame.Event.ChildFrameWasAdded, this._childFrameWasAdded, this);
         frame.addEventListener(WI.Frame.Event.ChildFrameWasRemoved, this._childFrameWasRemoved, this);
 
-        frame.domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasAdded, this._childContentFlowWasAdded, this);
-        frame.domTree.addEventListener(WI.DOMTree.Event.ContentFlowWasRemoved, this._childContentFlowWasRemoved, this);
-        frame.domTree.addEventListener(WI.DOMTree.Event.RootDOMNodeInvalidated, this._rootDOMNodeInvalidated, this);
-
         this.shouldRefreshChildren = true;
         this.folderSettingsKey = this._frame.url.hash;
 
         this.registerFolderizeSettings("frames", WI.UIString("Frames"), this._frame.childFrameCollection, WI.FrameTreeElement);
-        this.registerFolderizeSettings("flows", WI.UIString("Flows"), this._frame.domTree.contentFlowCollection, WI.ContentFlowTreeElement);
         this.registerFolderizeSettings("extra-scripts", WI.UIString("Extra Scripts"), this._frame.extraScriptCollection, WI.ScriptTreeElement);
 
         if (window.CanvasAgent && WI.settings.experimentalShowCanvasContextsInResources.value)
@@ -191,9 +186,6 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
                 this.addChildForRepresentedObject(sourceMap.resources[j]);
         }
 
-        for (let contentFlow of this._frame.domTree.contentFlowCollection.items)
-            this.addChildForRepresentedObject(contentFlow);
-
         for (let extraScript of this._frame.extraScriptCollection.items) {
             if (extraScript.sourceURL || extraScript.sourceMappingURL)
                 this.addChildForRepresentedObject(extraScript);
@@ -211,7 +203,6 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
     onexpand()
     {
         this._expandedSetting.value = true;
-        this._frame.domTree.requestContentFlowList();
     }
 
     oncollapse()
@@ -272,22 +263,6 @@ WI.FrameTreeElement = class FrameTreeElement extends WI.ResourceTreeElement
     _childFrameWasRemoved(event)
     {
         this.removeChildForRepresentedObject(event.data.childFrame);
-    }
-
-    _childContentFlowWasAdded(event)
-    {
-        this.addRepresentedObjectToNewChildQueue(event.data.flow);
-    }
-
-    _childContentFlowWasRemoved(event)
-    {
-        this.removeChildForRepresentedObject(event.data.flow);
-    }
-
-    _rootDOMNodeInvalidated()
-    {
-        if (this.expanded)
-            this._frame.domTree.requestContentFlowList();
     }
 
     _styleSheetAdded(event)

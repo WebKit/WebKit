@@ -1,3 +1,21 @@
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove support for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=177287
+
+        Reviewed by Matt Baker.
+
+        * inspector/dom/content-flow-content-nodes-expected.txt: Removed.
+        * inspector/dom/content-flow-content-nodes.html: Removed.
+        * inspector/dom/content-flow-content-removal-expected.txt: Removed.
+        * inspector/dom/content-flow-content-removal.html: Removed.
+        * inspector/dom/content-flow-list-expected.txt: Removed.
+        * inspector/dom/content-flow-list.html: Removed.
+        * inspector/dom/content-node-region-info-expected.txt: Removed.
+        * inspector/dom/content-node-region-info.html: Removed.
+        * inspector/dom/highlight-flow-with-no-region-expected.txt: Removed.
+        * inspector/dom/highlight-flow-with-no-region.html: Removed.
+
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
         eventInitDict parameter to GamepadEvent constructor should be optional

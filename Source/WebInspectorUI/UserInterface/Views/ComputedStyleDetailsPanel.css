@@ -27,19 +27,6 @@
     background-color: white;
 }
 
-.details-section > .content > .group > .row.simple.content-flow-link > .value > span > .icon {
-    width: 12px;
-    height: 12px;
-    content: url(../Images/ContentFlow.svg);
-    margin-right: 4px;
-    -webkit-user-select: none;
-}
-
-.details-section > .content > .group > .row.simple.content-flow-link span
-{
-    vertical-align: top;
-}
-
 .details-section > .content > .group > .row .CodeMirror-code pre .go-to-arrow {
     display: none;
     position: absolute;

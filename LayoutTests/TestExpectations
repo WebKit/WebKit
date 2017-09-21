@@ -1504,7 +1504,6 @@ webkit.org/b/175597 http/tests/xmlhttprequest/gzip-content-type-no-content-encod
 fast/regions [ Skip ]
 compositing/regions [ Skip ]
 fast/ruby/ruby-rt-with-region-crash.html [ Skip ]
-inspector/dom/content-node-region-info.html [ Skip ]
 fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html [ Skip ]
 
 webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]

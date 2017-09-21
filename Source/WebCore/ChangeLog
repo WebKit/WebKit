@@ -1,3 +1,29 @@
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove support for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=177287
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getNamedFlowCollection): Deleted.
+        * inspector/InspectorCSSAgent.h:
+        * inspector/InspectorOverlay.cpp:
+        (WebCore::buildRendererHighlight):
+        (WebCore::buildNodeHighlight):
+        (WebCore::InspectorOverlay::getHighlight const):
+        (WebCore::buildArrayForRendererFragments):
+        (WebCore::buildQuadObjectForCSSRegionContentClip): Deleted.
+        * inspector/InspectorOverlayPage.js:
+        (_createElementTitle):
+        (_drawElementTitle):
+        (_drawFragmentHighlight):
+        (drawNodeHighlight):
+        (_drawRegionNumber): Deleted.
+        (_quadMidPoint): Deleted.
+        (_drawRegionLink): Deleted.
+        (_drawRegionsHighlight): Deleted.
+
 2017-09-21  Antti Koivisto  <antti@apple.com>
 
         Remove some more code from RenderFlowThread

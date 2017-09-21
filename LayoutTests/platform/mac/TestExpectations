@@ -1775,11 +1775,6 @@ webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.ht
 # <rdar://problem/34507977>
 webkit.org/b/177119 webgl/1.0.2/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Pass Failure ]
 
-webkit.org/b/177249 inspector/dom/content-flow-content-nodes.html [ Skip ]
-webkit.org/b/177249 inspector/dom/content-flow-content-removal.html [ Skip ]
-webkit.org/b/177249 inspector/dom/content-flow-list.html [ Skip ]
-webkit.org/b/177249 inspector/dom/content-node-region-info.html [ Skip ]
-
 webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
 
 webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/document-metadata/the-meta-element/pragma-directives/attr-meta-http-equiv-refresh/parsing.html [ Pass Failure ]

@@ -112,7 +112,6 @@ WI.Collection = class Collection extends WI.Object
 
  WI.Collection.TypeVerifier = {
     Any: (object) => true,
-    ContentFlow: (object) => object instanceof WI.ContentFlow,
     Frame: (object) => object instanceof WI.Frame,
     Resource: (object) => object instanceof WI.Resource,
     Script: (object) => object instanceof WI.Script,

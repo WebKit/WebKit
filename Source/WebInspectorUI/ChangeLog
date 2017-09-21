@@ -1,3 +1,99 @@
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove support for CSS Regions
+        https://bugs.webkit.org/show_bug.cgi?id=177287
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Protocol/CSSObserver.js:
+        (WI.CSSObserver.prototype.namedFlowCreated):
+        (WI.CSSObserver.prototype.namedFlowRemoved):
+        (WI.CSSObserver.prototype.regionLayoutUpdated):
+        (WI.CSSObserver.prototype.regionOversetChanged):
+        (WI.CSSObserver.prototype.registeredNamedFlowContentElement):
+        (WI.CSSObserver.prototype.unregisteredNamedFlowContentElement):
+        Leave observer functions in for older backends that will send
+        these messages, but we just ignore them.
+
+        * UserInterface/Base/Main.js:
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager):
+        (WI.DOMTreeManager.prototype._unbind):
+        (WI.DOMTreeManager._flowPayloadHashKey): Deleted.
+        (WI.DOMTreeManager.prototype._createContentFlowFromPayload): Deleted.
+        (WI.DOMTreeManager.prototype._updateContentFlowFromPayload): Deleted.
+        (WI.DOMTreeManager.prototype.getNamedFlowCollection.onNamedFlowCollectionAvailable): Deleted.
+        (WI.DOMTreeManager.prototype.getNamedFlowCollection): Deleted.
+        (WI.DOMTreeManager.prototype.namedFlowCreated): Deleted.
+        (WI.DOMTreeManager.prototype.namedFlowRemoved): Deleted.
+        (WI.DOMTreeManager.prototype._sendNamedFlowUpdateEvents): Deleted.
+        (WI.DOMTreeManager.prototype.regionOversetChanged): Deleted.
+        (WI.DOMTreeManager.prototype.registeredNamedFlowContentElement): Deleted.
+        (WI.DOMTreeManager.prototype._removeContentNodeFromFlowIfNeeded): Deleted.
+        (WI.DOMTreeManager.prototype.unregisteredNamedFlowContentElement): Deleted.
+        (WI.DOMTreeManager.prototype._coerceRemoteArrayOfDOMNodes.nodeRequested): Deleted.
+        (WI.DOMTreeManager.prototype._coerceRemoteArrayOfDOMNodes): Deleted.
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo.regionNodesAvailable): Deleted.
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo.remoteObjectPropertiesAvailable): Deleted.
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo.inspectedPage_node_getFlowInfo.getComputedProperty): Deleted.
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo.inspectedPage_node_getFlowInfo.getContentFlowName): Deleted.
+        (WI.DOMTreeManager.prototype.getNodeContentFlowInfo): Deleted.
+        * UserInterface/Images/ContentFlow.svg: Removed.
+        * UserInterface/Images/gtk/ContentFlow.svg: Removed.
+        * UserInterface/Main.html:
+        * UserInterface/Models/Collection.js:
+        * UserInterface/Models/ContentFlow.js: Removed.
+        * UserInterface/Models/DOMTree.js:
+        (WI.DOMTree):
+        (WI.DOMTree.prototype.get frame):
+        (WI.DOMTree.prototype._framePageExecutionContextChanged):
+        (WI.DOMTree.prototype.get contentFlowCollection): Deleted.
+        (WI.DOMTree.prototype.requestContentFlowList): Deleted.
+        (WI.DOMTree.prototype._isContentFlowInCurrentDocument): Deleted.
+        (WI.DOMTree.prototype._contentFlowListWasUpdated): Deleted.
+        (WI.DOMTree.prototype._contentFlowWasAdded): Deleted.
+        (WI.DOMTree.prototype._contentFlowWasRemoved): Deleted.
+        * UserInterface/Test.html:
+        * UserInterface/Views/CollectionContentView.js:
+        (WI.CollectionContentView):
+        * UserInterface/Views/ComputedStyleDetailsPanel.css:
+        (.details-section > .content > .group > .row.simple.content-flow-link > .value > span > .icon): Deleted.
+        * UserInterface/Views/ComputedStyleDetailsPanel.js:
+        (WI.ComputedStyleDetailsPanel.prototype.refresh):
+        (WI.ComputedStyleDetailsPanel.prototype.initialLayout):
+        (WI.ComputedStyleDetailsPanel.prototype._handleVariablesSectionCollapsedStateChanged):
+        (WI.ComputedStyleDetailsPanel):
+        (WI.ComputedStyleDetailsPanel.prototype.get regionFlow): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.set regionFlow): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.get contentFlow): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.set contentFlow): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.get containerRegions): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.set containerRegions): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype.sizeDidChange): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._updateFlowNamesSectionVisibility): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._resetFlowDetails): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._refreshFlowDetails.contentFlowInfoReady): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._refreshFlowDetails): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._goToRegionFlowArrowWasClicked): Deleted.
+        (WI.ComputedStyleDetailsPanel.prototype._goToContentFlowArrowWasClicked): Deleted.
+        * UserInterface/Views/ContentFlowDOMTreeContentView.js: Removed.
+        * UserInterface/Views/ContentFlowIcon.css: Removed.
+        * UserInterface/Views/ContentFlowTreeElement.js: Removed.
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        (WI.ContentView.isViewable):
+        * UserInterface/Views/FrameTreeElement.js:
+        (WI.FrameTreeElement.prototype.onpopulate):
+        (WI.FrameTreeElement.prototype.onexpand):
+        (WI.FrameTreeElement.prototype._childContentFlowWasAdded): Deleted.
+        (WI.FrameTreeElement.prototype._childContentFlowWasRemoved): Deleted.
+        (WI.FrameTreeElement.prototype._rootDOMNodeInvalidated): Deleted.
+        * UserInterface/Views/ResourceSidebarPanel.js:
+        (WI.ResourceSidebarPanel.prototype._treeSelectionDidChange):
+        * UserInterface/Views/ResourcesTabContentView.js:
+        (WI.ResourcesTabContentView):
+        (WI.ResourcesTabContentView.prototype.canShowRepresentedObject):
+
 2017-09-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Add details sidebar to Layers tab.

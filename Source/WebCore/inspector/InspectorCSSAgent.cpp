@@ -777,17 +777,6 @@ void InspectorCSSAgent::forcePseudoState(ErrorString& errorString, int nodeId, c
     element->document().styleScope().didChangeStyleSheetEnvironment();
 }
 
-void InspectorCSSAgent::getNamedFlowCollection(ErrorString& errorString, int documentNodeId, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>>& result)
-{
-    Document* document = m_domAgent->assertDocument(errorString, documentNodeId);
-    if (!document)
-        return;
-
-    auto namedFlows = Inspector::Protocol::Array<Inspector::Protocol::CSS::NamedFlow>::create();
-
-    result = WTFMove(namedFlows);
-}
-
 InspectorStyleSheetForInlineStyle& InspectorCSSAgent::asInspectorStyleSheet(StyledElement& element)
 {
     auto it = m_nodeToInspectorStyleSheet.find(&element);

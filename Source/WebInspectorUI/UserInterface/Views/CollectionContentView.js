@@ -44,10 +44,6 @@ WI.CollectionContentView = class CollectionContentView extends WI.ContentView
             title = WI.UIString("Frames");
             break;
 
-        case WI.Collection.TypeVerifier.ContentFlow:
-            title = WI.UIString("Flows");
-            break;
-
         case WI.Collection.TypeVerifier.Script:
             title = WI.UIString("Extra Scripts");
             break;

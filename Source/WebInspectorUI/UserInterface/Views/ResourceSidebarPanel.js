@@ -465,7 +465,6 @@ WI.ResourceSidebarPanel = class ResourceSidebarPanel extends WI.NavigationSideba
             || treeElement instanceof WI.ResourceTreeElement
             || treeElement instanceof WI.ScriptTreeElement
             || treeElement instanceof WI.CSSStyleSheetTreeElement
-            || treeElement instanceof WI.ContentFlowTreeElement
             || treeElement instanceof WI.CanvasTreeElement
             || treeElement instanceof WI.ShaderProgramTreeElement) {
             const cookie = null;

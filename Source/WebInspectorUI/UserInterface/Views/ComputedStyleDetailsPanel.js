@@ -36,43 +36,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
     // Public
 
-    get regionFlow() { return this._regionFlow; }
-    set regionFlow(regionFlow)
-    {
-        this._regionFlow = regionFlow;
-        this._regionFlowNameLabelValue.textContent = regionFlow ? regionFlow.name : "";
-        this._regionFlowNameRow.value = regionFlow ? this._regionFlowFragment : null;
-        this._updateFlowNamesSectionVisibility();
-    }
-
-    get contentFlow() { return this._contentFlow; }
-    set contentFlow(contentFlow)
-    {
-        this._contentFlow = contentFlow;
-        this._contentFlowNameLabelValue.textContent = contentFlow ? contentFlow.name : "";
-        this._contentFlowNameRow.value = contentFlow ? this._contentFlowFragment : null;
-        this._updateFlowNamesSectionVisibility();
-    }
-
-    get containerRegions() { return this._containerRegions; }
-    set containerRegions(regions)
-    {
-        this._containerRegions = regions;
-
-        if (!regions || !regions.length) {
-            this._containerRegionsFlowSection.element.classList.add("hidden");
-            return;
-        }
-
-        this._containerRegionsDataGrid.removeChildren();
-        for (var regionNode of regions)
-            this._containerRegionsDataGrid.appendChild(new WI.DOMTreeDataGridNode(regionNode));
-
-        this._containerRegionsFlowSection.element.classList.remove("hidden");
-
-        this._containerRegionsDataGrid.updateLayoutIfNeeded();
-    }
-
     cssStyleDeclarationTextEditorShowProperty(property, showSource)
     {
         function delegateShowProperty() {
@@ -121,7 +84,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         this._propertiesTextEditor.style = this.nodeStyles.computedStyle;
         this._variablesTextEditor.style = this.nodeStyles.computedStyle;
-        this._refreshFlowDetails(this.nodeStyles.node);
         this._boxModelDiagramRow.nodeStyles = this.nodeStyles;
 
         super.refresh();
@@ -177,44 +139,8 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
 
         variablesRow.element.appendChild(this._variablesTextEditor.element);
 
-        // Region flow name is used to display the "flow-from" property of the Region Containers.
-        this._regionFlowFragment = document.createElement("span");
-        this._regionFlowFragment.appendChild(document.createElement("img")).className = "icon";
-        this._regionFlowNameLabelValue = this._regionFlowFragment.appendChild(document.createElement("span"));
-
-        let goToRegionFlowButton = this._regionFlowFragment.appendChild(WI.createGoToArrowButton());
-        goToRegionFlowButton.addEventListener("click", this._goToRegionFlowArrowWasClicked.bind(this));
-
-        this._regionFlowNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Region Flow"));
-        this._regionFlowNameRow.element.classList.add("content-flow-link");
-
-        // Content flow name is used to display the "flow-into" property of the Content nodes.
-        this._contentFlowFragment = document.createElement("span");
-        this._contentFlowFragment.appendChild(document.createElement("img")).className = "icon";
-        this._contentFlowNameLabelValue = this._contentFlowFragment.appendChild(document.createElement("span"));
-
-        let goToContentFlowButton = this._contentFlowFragment.appendChild(WI.createGoToArrowButton());
-        goToContentFlowButton.addEventListener("click", this._goToContentFlowArrowWasClicked.bind(this));
-
-        this._contentFlowNameRow = new WI.DetailsSectionSimpleRow(WI.UIString("Content Flow"));
-        this._contentFlowNameRow.element.classList.add("content-flow-link");
-
-        let flowNamesGroup = new WI.DetailsSectionGroup([this._regionFlowNameRow, this._contentFlowNameRow]);
-        this._flowNamesSection = new WI.DetailsSection("content-flow", WI.UIString("Flows"), [flowNamesGroup]);
-
-        this._containerRegionsDataGrid = new WI.DOMTreeDataGrid;
-        this._containerRegionsDataGrid.headerVisible = false;
-
-        this._containerRegionsRow = new WI.DetailsSectionDataGridRow(this._containerRegionsDataGrid);
-        let containerRegionsGroup = new WI.DetailsSectionGroup([this._containerRegionsRow]);
-        this._containerRegionsFlowSection = new WI.DetailsSection("container-regions", WI.UIString("Container Regions"), [containerRegionsGroup]);
-
         this.element.appendChild(propertiesSection.element);
         this.element.appendChild(this._variablesSection.element);
-        this.element.appendChild(this._flowNamesSection.element);
-        this.element.appendChild(this._containerRegionsFlowSection.element);
-
-        this._resetFlowDetails();
 
         this._boxModelDiagramRow = new WI.BoxModelDetailsSectionRow;
 
@@ -222,14 +148,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
         let boxModelSection = new WI.DetailsSection("style-box-model", WI.UIString("Box Model"), [boxModelGroup]);
 
         this.element.appendChild(boxModelSection.element);
-    }
-
-    sizeDidChange()
-    {
-        super.sizeDidChange();
-
-        // FIXME: <https://webkit.org/b/152269> Web Inspector: Convert DetailsSection classes to use View
-        this._containerRegionsRow.sizeDidChange();
     }
 
     // Private
@@ -252,50 +170,6 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     {
         if (event && event.data && !event.data.collapsed)
             this._variablesTextEditor.refresh();
-    }
-
-    _updateFlowNamesSectionVisibility()
-    {
-        this._flowNamesSection.element.classList.toggle("hidden", !this._contentFlow && !this._regionFlow);
-    }
-
-    _resetFlowDetails ()
-    {
-        this.regionFlow = null;
-        this.contentFlow = null;
-        this.containerRegions = null;
-    }
-
-    _refreshFlowDetails(domNode)
-    {
-        this._resetFlowDetails();
-        if (!domNode)
-            return;
-
-        function contentFlowInfoReady(error, flowData)
-        {
-            // Element is not part of any flow.
-            if (error || !flowData) {
-                this._resetFlowDetails();
-                return;
-            }
-
-            this.regionFlow = flowData.regionFlow;
-            this.contentFlow = flowData.contentFlow;
-            this.containerRegions = flowData.regions;
-        }
-
-        WI.domTreeManager.getNodeContentFlowInfo(domNode, contentFlowInfoReady.bind(this));
-    }
-
-    _goToRegionFlowArrowWasClicked()
-    {
-        WI.showRepresentedObject(this._regionFlow);
-    }
-
-    _goToContentFlowArrowWasClicked()
-    {
-        WI.showRepresentedObject(this._contentFlow, {nodeToSelect: this.nodeStyles.node});
     }
 };
 

@@ -33,7 +33,6 @@ WI.DOMTree = class DOMTree extends WI.Object
 
         this._rootDOMNode = null;
         this._requestIdentifier = 0;
-        this._contentFlowCollection = new WI.Collection(WI.Collection.TypeVerifier.ContentFlow);
 
         this._frame.addEventListener(WI.Frame.Event.PageExecutionContextChanged, this._framePageExecutionContextChanged, this);
 
@@ -44,16 +43,11 @@ WI.DOMTree = class DOMTree extends WI.Object
             WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.NodeRemoved, this._nodeRemoved, this);
             this._frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._frameMainResourceDidChange, this);
         }
-
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.ContentFlowListWasUpdated, this._contentFlowListWasUpdated, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.ContentFlowWasAdded, this._contentFlowWasAdded, this);
-        WI.domTreeManager.addEventListener(WI.DOMTreeManager.Event.ContentFlowWasRemoved, this._contentFlowWasRemoved, this);
     }
 
     // Public
 
     get frame() { return this._frame; }
-    get contentFlowCollection() { return this._contentFlowCollection; }
 
     disconnect()
     {
@@ -110,14 +104,6 @@ WI.DOMTree = class DOMTree extends WI.Object
 
         this._pendingRootDOMNodeRequests = [callback];
         this._requestRootDOMNode();
-    }
-
-    requestContentFlowList()
-    {
-        this.requestRootDOMNode(function(rootNode) {
-            // Let the backend know we are interested about the named flow events for this document.
-            WI.domTreeManager.getNamedFlowCollection(rootNode.id);
-        });
     }
 
     // Private
@@ -239,71 +225,8 @@ WI.DOMTree = class DOMTree extends WI.Object
             this._requestRootDOMNode();
         }
     }
-
-    _isContentFlowInCurrentDocument(flow)
-    {
-        return this._rootDOMNode && this._rootDOMNode.id === flow.documentNodeIdentifier;
-    }
-
-    _contentFlowListWasUpdated(event)
-    {
-        if (!this._rootDOMNode || this._rootDOMNode.id !== event.data.documentNodeIdentifier)
-            return;
-
-        // Assume that all the flows have been removed.
-        let deletedFlows = new Set(this._contentFlowCollection.items);
-        let newFlows = new Set;
-        for (let flow of event.data.flows) {
-            // All the flows received from WebKit are part of the same document.
-            console.assert(this._isContentFlowInCurrentDocument(flow));
-
-            if (this._contentFlowCollection.items.has(flow)) {
-                // Remove the flow name from the deleted list.
-                console.assert(deletedFlows.has(flow));
-                deletedFlows.delete(flow);
-            } else {
-                this._contentFlowCollection.add(flow);
-                newFlows.add(flow);
-            }
-        }
-
-        for (let flow of deletedFlows)
-            this._contentFlowCollection.remove(flow);
-
-        // Send update events to listeners.
-
-        for (let flow of deletedFlows)
-            this.dispatchEventToListeners(WI.DOMTree.Event.ContentFlowWasRemoved, {flow});
-
-        for (let flow of newFlows)
-            this.dispatchEventToListeners(WI.DOMTree.Event.ContentFlowWasAdded, {flow});
-    }
-
-    _contentFlowWasAdded(event)
-    {
-        let flow = event.data.flow;
-        if (!this._isContentFlowInCurrentDocument(flow))
-            return;
-
-        this._contentFlowCollection.add(flow);
-
-        this.dispatchEventToListeners(WI.DOMTree.Event.ContentFlowWasAdded, {flow});
-    }
-
-    _contentFlowWasRemoved(event)
-    {
-        let flow = event.data.flow;
-        if (!this._isContentFlowInCurrentDocument(flow))
-            return;
-
-        this._contentFlowCollection.remove(flow);
-
-        this.dispatchEventToListeners(WI.DOMTree.Event.ContentFlowWasRemoved, {flow});
-    }
 };
 
 WI.DOMTree.Event = {
     RootDOMNodeInvalidated: "dom-tree-root-dom-node-invalidated",
-    ContentFlowWasAdded: "dom-tree-content-flow-was-added",
-    ContentFlowWasRemoved: "dom-tree-content-flow-was-removed"
 };

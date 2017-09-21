@@ -3,21 +3,6 @@ const darkGridColor = "rgba(0,0,0,0.5)";
 const transparentColor = "rgba(0, 0, 0, 0)";
 const gridBackgroundColor = "rgba(255, 255, 255, 0.6)";
 
-// CSS Regions highlight colors.
-const highlightedRegionBackgroundColor = "rgba(127, 211, 248, 0.1)";
-const regionBackgroundColor = "rgba(127, 211, 248, 0.45)";
-const regionStrokeColor = "rgba(98, 207, 255, 0.85)";
-
-// CSS Regions chain highlight colors.
-const regionLinkBoxBackgroundColor = "rgba(255, 255, 255, 0.71)";
-const regionLinkBoxStrokeColor = "rgba(98, 207, 255, 0.85)";
-const regionChainStrokeColor = "rgba(98, 207, 255, 0.85)";
-
-// CSS Region number style.
-const regionNumberFont = "bold 40pt sans-serif";
-const regionNumberFillColor = "rgba(255, 255, 255, 0.9)";
-const regionNumberStrokeColor = "rgb(61, 127, 204)";
-
 // CSS Shapes highlight colors
 const shapeHighlightColor = "rgba(96, 82, 127, 0.8)";
 const shapeMarginHighlightColor = "rgba(96, 82, 127, 0.6)";
@@ -30,21 +15,6 @@ function drawPausedInDebuggerMessage(message)
     pausedInDebugger.textContent = message;
     pausedInDebugger.style.visibility = "visible";
     document.body.classList.add("dimmed");
-}
-
-function _drawRegionNumber(quad, number)
-{
-    context.save();
-    var midPoint = _quadMidPoint(quad);
-    context.font = regionNumberFont;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
-    context.fillStyle = regionNumberFillColor;
-    context.fillText(number, midPoint.x, midPoint.y);
-    context.strokeWidth = 4;
-    context.strokeStyle = regionNumberStrokeColor;
-    context.strokeText(number, midPoint.x, midPoint.y);
-    context.restore();
 }
 
 function quadToPath(quad)
@@ -281,8 +251,6 @@ function _createElementTitle(elementData)
     builder.appendSpan("px", "px");
 
     builder.appendPropertyIfNotNull("role-name", "Role", elementData.role);
-    builder.appendPropertyIfNotNull("region-flow-name", "Region Flow", elementData.regionFlowData ? elementData.regionFlowData.name : null);
-    builder.appendPropertyIfNotNull("content-flow-name", "Content Flow", elementData.contentFlowData ? elementData.contentFlowData.name : null);
 
     document.getElementById("element-title-container").appendChild(builder.element);
 
@@ -309,15 +277,6 @@ function _drawElementTitle(elementData, fragmentHighlight, scroll)
     var renderArrowDown = false;
 
     var boxX = marginQuad[0].x;
-
-    var clipQuad = fragmentHighlight.regionClippingArea;
-    if (clipQuad) {
-        // Restrict the position of the title box to the area of the containing region.
-        anchorTop = Math.max(anchorTop, Math.min(clipQuad[0].y, clipQuad[1].y, clipQuad[2].y, clipQuad[3].y));
-        anchorBottom = Math.min(anchorBottom, Math.max(clipQuad[0].y, clipQuad[1].y, clipQuad[2].y, clipQuad[3].y));
-        boxX = Math.max(boxX, Math.min(clipQuad[0].x, clipQuad[1].x, clipQuad[2].x, clipQuad[3].x));
-        boxX = Math.min(boxX, Math.max(clipQuad[0].x, clipQuad[1].x, clipQuad[2].x, clipQuad[3].x));
-    }
 
     boxX = Math.max(2, boxX - scroll.x);
     anchorTop -= scroll.y;
@@ -371,49 +330,6 @@ function _drawElementTitle(elementData, fragmentHighlight, scroll)
     elementTitle.style.left = (boxX + 3) + "px";
 }
 
-function _quadMidPoint(quad)
-{
-    return {
-        x: (quad[0].x + quad[1].x + quad[2].x + quad[3].x) / 4,
-        y: (quad[0].y + quad[1].y + quad[2].y + quad[3].y) / 4,
-    };
-}
-
-function _drawRegionLink(pointA, pointB)
-{
-    context.save();
-    context.lineWidth = 2;
-    context.strokeStyle = regionChainStrokeColor;
-    context.beginPath();
-    context.moveTo(pointA.x, pointA.y);
-    context.lineTo(pointB.x, pointB.y);
-    context.stroke();
-    context.restore();
-}
-
-function _drawRegionsHighlight(regions)
-{
-    for (var i = 0; i < regions.length; ++i) {
-        var region = regions[i];
-        drawOutlinedQuad(region.borderQuad, region.isHighlighted ? highlightedRegionBackgroundColor : regionBackgroundColor, regionStrokeColor);
-        _drawRegionNumber(region.borderQuad, i + 1);
-    }
-
-    for (var i = 1; i < regions.length; ++i) {
-        var regionA = regions[i - 1],
-            regionB = regions[i];
-        _drawRegionLink(_quadMidPoint(regionA.outgoingQuad), _quadMidPoint(regionB.incomingQuad));
-    }
-
-    for (var i = 0; i < regions.length; ++i) {
-        var region = regions[i];
-        if (i > 0)
-            drawOutlinedQuad(region.incomingQuad, regionLinkBoxBackgroundColor, regionLinkBoxStrokeColor);
-        if (i !== regions.length - 1)
-            drawOutlinedQuad(region.outgoingQuad, regionLinkBoxBackgroundColor, regionLinkBoxStrokeColor);
-    }
-}
-
 function _drawShapeHighlight(shapeInfo)
 {
     if (shapeInfo.marginShape)
@@ -432,11 +348,6 @@ function _drawFragmentHighlight(highlight)
         return;
 
     context.save();
-
-    if (highlight.regionClippingArea) {
-        // Clip to the containing region to avoid showing fragments that are not rendered by this region.
-        quadToPath(highlight.regionClippingArea).clip();
-    }
 
     var quads = highlight.quads.slice();
     var contentQuad = quads.pop();
@@ -503,9 +414,6 @@ function drawNodeHighlight(allHighlights)
 
         for (var fragment of highlight.fragments)
             _drawFragmentHighlight(fragment);
-
-        if (highlight.elementData && highlight.elementData.regionFlowData)
-            _drawRegionsHighlight(highlight.elementData.regionFlowData.regions);
 
         if (highlight.elementData && highlight.elementData.shapeOutsideData)
             _drawShapeHighlight(highlight.elementData.shapeOutsideData);

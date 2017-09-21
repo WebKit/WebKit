@@ -152,9 +152,6 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.LogObject)
             return new WI.LogContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WI.ContentFlow)
-            return new WI.ContentFlowDOMTreeContentView(representedObject, extraArguments);
-
         if (representedObject instanceof WI.CallingContextTree)
             return new WI.ProfileView(representedObject, extraArguments);
 
@@ -281,8 +278,6 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.SourceCodeSearchMatchObject)
             return true;
         if (representedObject instanceof WI.LogObject)
-            return true;
-        if (representedObject instanceof WI.ContentFlow)
             return true;
         if (representedObject instanceof WI.CallingContextTree)
             return true;

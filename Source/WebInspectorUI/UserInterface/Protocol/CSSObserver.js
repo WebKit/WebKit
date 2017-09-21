@@ -49,32 +49,31 @@ WI.CSSObserver = class CSSObserver
 
     namedFlowCreated(namedFlow)
     {
-        WI.domTreeManager.namedFlowCreated(namedFlow);
+        // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 
     namedFlowRemoved(documentNodeId, flowName)
     {
-        WI.domTreeManager.namedFlowRemoved(documentNodeId, flowName);
+        // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 
-    // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged.
     regionLayoutUpdated(namedFlow)
     {
-        this.regionOversetChanged(namedFlow);
+        // COMPATIBILITY (iOS 7): regionLayoutUpdated was removed and replaced by regionOversetChanged. Ignore.
     }
 
     regionOversetChanged(namedFlow)
     {
-        WI.domTreeManager.regionOversetChanged(namedFlow);
+        // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 
     registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId)
     {
-        WI.domTreeManager.registeredNamedFlowContentElement(documentNodeId, flowName, contentNodeId, nextContentElementNodeId);
+        // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 
     unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId)
     {
-        WI.domTreeManager.unregisteredNamedFlowContentElement(documentNodeId, flowName, contentNodeId);
+        // COMPATIBILITY (iOS 10): Removed after iOS 10. Ignore for iOS 10 and earlier.
     }
 };
