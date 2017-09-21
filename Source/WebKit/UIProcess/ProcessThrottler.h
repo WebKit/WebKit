@@ -28,6 +28,7 @@
 
 #include "ProcessAssertion.h"
 
+#include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
@@ -56,7 +57,7 @@ public:
     inline ForegroundActivityToken foregroundActivityToken() const;
     inline BackgroundActivityToken backgroundActivityToken() const;
     
-    void didConnectToProcess(pid_t);
+    void didConnectToProcess(ProcessID);
     void processReadyToSuspend();
     void didCancelProcessSuspension();
 

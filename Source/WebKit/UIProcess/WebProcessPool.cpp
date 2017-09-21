@@ -1085,7 +1085,7 @@ void WebProcessPool::refreshPlugins()
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
-pid_t WebProcessPool::networkProcessIdentifier()
+ProcessID WebProcessPool::networkProcessIdentifier()
 {
     if (!m_networkProcess)
         return 0;
@@ -1093,7 +1093,7 @@ pid_t WebProcessPool::networkProcessIdentifier()
     return m_networkProcess->processIdentifier();
 }
 
-pid_t WebProcessPool::storageProcessIdentifier()
+ProcessID WebProcessPool::storageProcessIdentifier()
 {
     if (!m_storageProcess)
         return 0;

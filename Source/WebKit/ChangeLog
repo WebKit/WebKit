@@ -1,3 +1,42 @@
+2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] WTF: Add alias for process id to use in place of direct uses of pid_t
+        https://bugs.webkit.org/show_bug.cgi?id=177017
+
+        Reviewed by Alex Christensen.
+
+        * NetworkProcess/NetworkProcessCreationParameters.h:
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/API/APIProcessPoolConfiguration.h:
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetNetworkProcessIdentifier):
+        (WKContextGetDatabaseProcessIdentifier):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetProcessIdentifier):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/ChildProcessProxy.h:
+        (WebKit::ChildProcessProxy::processIdentifier const):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::didFinishLaunchingProcess):
+        * UIProcess/Launcher/ProcessLauncher.h:
+        (WebKit::ProcessLauncher::processIdentifier const):
+        * UIProcess/ProcessAssertion.cpp:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        (WebKit::ProcessAndUIAssertion::ProcessAndUIAssertion):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::ProcessAssertion):
+        * UIProcess/ProcessThrottler.cpp:
+        (WebKit::ProcessThrottler::didConnectToProcess):
+        * UIProcess/ProcessThrottler.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processIdentifier const):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebProcessPool.cpp:
+        (WebKit::WebProcessPool::networkProcessIdentifier):
+        (WebKit::WebProcessPool::storageProcessIdentifier):
+        * UIProcess/WebProcessPool.h:
+
 2017-09-20  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add API to get the redirect chain of a WKDownload

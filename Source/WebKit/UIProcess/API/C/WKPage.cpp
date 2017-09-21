@@ -2741,7 +2741,7 @@ void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportSca
 #endif
 }
 
-pid_t WKPageGetProcessIdentifier(WKPageRef page)
+ProcessID WKPageGetProcessIdentifier(WKPageRef page)
 {
     return toImpl(page)->processIdentifier();
 }

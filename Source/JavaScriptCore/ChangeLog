@@ -1,3 +1,15 @@
+2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] WTF: Add alias for process id to use in place of direct uses of pid_t
+        https://bugs.webkit.org/show_bug.cgi?id=177017
+
+        Reviewed by Alex Christensen.
+
+        * API/JSRemoteInspector.cpp:
+        (JSRemoteInspectorSetParentProcessInformation):
+        * API/JSRemoteInspector.h:
+        * inspector/remote/RemoteInspector.h:
+
 2017-09-20  Keith Miller  <keith_miller@apple.com>
 
         Rename source list file to Sources.txt

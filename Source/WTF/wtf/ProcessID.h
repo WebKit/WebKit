@@ -36,7 +36,13 @@
 
 namespace WTF {
 
-inline int getCurrentProcessID()
+#if OS(WINDOWS)
+using ProcessID = int;
+#else
+using ProcessID = pid_t;
+#endif
+
+inline ProcessID getCurrentProcessID()
 {
 #if OS(WINDOWS)
     return GetCurrentProcessId();
@@ -48,6 +54,7 @@ inline int getCurrentProcessID()
 } // namespace WTF
 
 using WTF::getCurrentProcessID;
+using WTF::ProcessID;
 
 #endif // ProcessID_h
 

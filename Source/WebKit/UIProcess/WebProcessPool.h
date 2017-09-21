@@ -49,6 +49,7 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RefCounter.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/StringHash.h>
@@ -199,8 +200,8 @@ public:
     const HashMap<String, HashMap<String, HashMap<String, uint8_t>>>& pluginLoadClientPolicies() const { return m_pluginLoadClientPolicies; }
 #endif
 
-    pid_t networkProcessIdentifier();
-    pid_t storageProcessIdentifier();
+    ProcessID networkProcessIdentifier();
+    ProcessID storageProcessIdentifier();
 
     void setAlwaysUsesComplexTextCodePath(bool);
     void setShouldUseFontSmoothing(bool);

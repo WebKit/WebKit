@@ -28,6 +28,7 @@
 #include "Attachment.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include <wtf/ProcessID.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -78,7 +79,7 @@ struct NetworkProcessCreationParameters {
     Seconds loadThrottleLatency;
 
     Vector<String> urlSchemesRegisteredForCustomProtocols;
-    pid_t presentingApplicationPID { 0 };
+    ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
     String parentProcessName;

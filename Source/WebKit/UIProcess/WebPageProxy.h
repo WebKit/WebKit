@@ -84,6 +84,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/ProcessID.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -875,7 +876,7 @@ public:
 #endif
 
     WebProcessProxy& process() { return m_process; }
-    pid_t processIdentifier() const;
+    ProcessID processIdentifier() const;
 
     WebPreferences& preferences() { return m_preferences; }
     void setPreferences(WebPreferences&);

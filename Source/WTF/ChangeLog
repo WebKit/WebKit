@@ -1,3 +1,13 @@
+2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
+
+        [Win] WTF: Add alias for process id to use in place of direct uses of pid_t
+        https://bugs.webkit.org/show_bug.cgi?id=177017
+
+        Reviewed by Alex Christensen.
+
+        * wtf/ProcessID.h:
+        (WTF::getCurrentProcessID):
+
 2017-09-20  Keith Miller  <keith_miller@apple.com>
 
         JSC Xcode build should use unified sources for platform independent files

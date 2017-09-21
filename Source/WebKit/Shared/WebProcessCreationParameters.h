@@ -30,6 +30,7 @@
 #include "TextCheckerState.h"
 #include "UserData.h"
 #include <pal/SessionID.h>
+#include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
@@ -136,7 +137,7 @@ struct WebProcessCreationParameters {
     String uiProcessBundleIdentifier;
 #endif
 
-    pid_t presentingApplicationPID { 0 };
+    ProcessID presentingApplicationPID { 0 };
 
 #if PLATFORM(COCOA)
     WebCore::MachSendRight acceleratedCompositingPort;

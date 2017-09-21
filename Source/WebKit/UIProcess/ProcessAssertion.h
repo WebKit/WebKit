@@ -28,6 +28,7 @@
 
 #include <unistd.h>
 #include <wtf/Function.h>
+#include <wtf/ProcessID.h>
 
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
 #include <wtf/RetainPtr.h>
@@ -51,7 +52,7 @@ public:
 
 class ProcessAssertion {
 public:
-    ProcessAssertion(pid_t, AssertionState, Function<void()>&& invalidationCallback = { });
+    ProcessAssertion(ProcessID, AssertionState, Function<void()>&& invalidationCallback = { });
     virtual ~ProcessAssertion();
 
     virtual void setClient(ProcessAssertionClient& client) { m_client = &client; }
@@ -82,7 +83,7 @@ private:
     
 class ProcessAndUIAssertion final : public ProcessAssertion {
 public:
-    ProcessAndUIAssertion(pid_t, AssertionState);
+    ProcessAndUIAssertion(ProcessID, AssertionState);
     ~ProcessAndUIAssertion();
 
     void setClient(ProcessAssertionClient&) final;

@@ -29,7 +29,12 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKContext.h>
 
+#if defined(WIN32) || defined(_WIN32)
+typedef int WKProcessID;
+#else
 #include <unistd.h>
+typedef pid_t WKProcessID;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -100,8 +105,8 @@ WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
 WK_EXPORT void WKContextSetFontWhitelist(WKContextRef, WKArrayRef);
 
-WK_EXPORT pid_t WKContextGetNetworkProcessIdentifier(WKContextRef context);
-WK_EXPORT pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef context);
+WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context);
+WK_EXPORT WKProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef context);
 
 #ifdef __cplusplus
 }

@@ -599,12 +599,12 @@ void WKContextTerminateNetworkProcess(WKContextRef context)
     toImpl(context)->terminateNetworkProcess();
 }
 
-pid_t WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
+ProcessID WKContextGetNetworkProcessIdentifier(WKContextRef contextRef)
 {
     return toImpl(contextRef)->networkProcessIdentifier();
 }
 
-pid_t WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
+ProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef contextRef)
 {
     return toImpl(contextRef)->storageProcessIdentifier();
 }

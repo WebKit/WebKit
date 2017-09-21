@@ -29,7 +29,12 @@
 #include <WebKit/WKBase.h>
 #include <WebKit/WKPage.h>
 
+#if defined(WIN32) || defined(_WIN32)
+typedef int WKProcessID;
+#else
 #include <unistd.h>
+typedef pid_t WKProcessID;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -171,7 +176,7 @@ WK_EXPORT void WKPageRestoreFromSessionStateWithoutNavigation(WKPageRef page, WK
 
 WK_EXPORT void WKPageSetIgnoresViewportScaleLimits(WKPageRef page, bool ignoresViewportScaleLimits);
 
-WK_EXPORT pid_t WKPageGetProcessIdentifier(WKPageRef page);
+WK_EXPORT WKProcessID WKPageGetProcessIdentifier(WKPageRef page);
 
 #ifdef __cplusplus
 }

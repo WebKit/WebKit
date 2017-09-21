@@ -91,7 +91,7 @@ void ProcessThrottler::updateAssertion()
     updateAssertionNow();
 }
 
-void ProcessThrottler::didConnectToProcess(pid_t pid)
+void ProcessThrottler::didConnectToProcess(ProcessID pid)
 {
     RELEASE_LOG(ProcessSuspension, "%p - ProcessThrottler::didConnectToProcess(%d)", this, pid);
 

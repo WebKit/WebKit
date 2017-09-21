@@ -29,6 +29,7 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 
+#include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -72,7 +73,7 @@ public:
     };
     State state() const;
 
-    pid_t processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
+    ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(std::unique_ptr<IPC::Encoder>, OptionSet<IPC::SendOption>);

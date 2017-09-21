@@ -29,7 +29,12 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
 
+#if defined(WIN32) || defined(_WIN32)
+typedef int JSProcessID;
+#else
 #include <unistd.h>
+typedef pid_t JSProcessID;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,7 +42,7 @@ extern "C" {
 
 JS_EXPORT void JSRemoteInspectorDisableAutoStart(void) CF_AVAILABLE(10_11, 9_0);
 JS_EXPORT void JSRemoteInspectorStart(void) CF_AVAILABLE(10_11, 9_0);
-JS_EXPORT void JSRemoteInspectorSetParentProcessInformation(pid_t, const uint8_t* auditData, size_t auditLength) CF_AVAILABLE(10_11, 9_0);
+JS_EXPORT void JSRemoteInspectorSetParentProcessInformation(JSProcessID, const uint8_t* auditData, size_t auditLength) CF_AVAILABLE(10_11, 9_0);
 
 JS_EXPORT void JSRemoteInspectorSetLogToSystemConsole(bool) CF_AVAILABLE(10_11, 9_0);
 
