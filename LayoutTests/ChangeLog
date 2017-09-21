@@ -1,3 +1,12 @@
+2017-09-21  Miguel Gomez  <magomez@igalia.com>
+
+        Unreviewed GTK+ gardening. Update expectations and rebaseline several tests failing at r222312.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/text/atsui-rtl-override-selection-expected.txt:
+        * platform/gtk/fast/text/hyphenate-limit-lines-expected.txt:
+        * platform/gtk/fast/text/selection-in-initial-advance-region-expected.txt:
+
 2017-09-20  Youenn Fablet  <youenn@apple.com>
 
         Refresh WPT tests up to f65af411d63ec13ee8fe208b4effd730a4a8b7fe

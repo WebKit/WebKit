@@ -4,5 +4,5 @@ This tests for a drag select crasher.
 PASS sel.rangeCount is 1
 PASS r.startContainer is r.endContainer
 PASS r.startOffset is 0
-FAIL r.endOffset should be 3. Was 1.
+PASS r.endOffset is 3
 
