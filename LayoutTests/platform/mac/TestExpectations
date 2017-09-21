@@ -1779,3 +1779,5 @@ webkit.org/b/177249 inspector/dom/content-flow-content-nodes.html [ Skip ]
 webkit.org/b/177249 inspector/dom/content-flow-content-removal.html [ Skip ]
 webkit.org/b/177249 inspector/dom/content-flow-list.html [ Skip ]
 webkit.org/b/177249 inspector/dom/content-node-region-info.html [ Skip ]
+
+webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]

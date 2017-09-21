@@ -255,7 +255,6 @@ webkit.org/b/169523 [ Debug ] imported/w3c/web-platform-tests/html/dom/interface
 
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_no_argument.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/webappapis/system-state-and-capabilities/the-navigator-object/navigator-pluginarray.html [ Pass Failure ]
-imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/history_go_to_uri.html [ Pass Failure ]
 
 # testRunner.setShouldDownloadUndisplayableMIMETypes() is not supported on WK1.
