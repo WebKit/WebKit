@@ -1,3 +1,15 @@
+2017-09-21  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] Compile error, generate-webkitversion.pl script not found.
+        https://bugs.webkit.org/show_bug.cgi?id=177310
+
+        Reviewed by Brent Fulgham.
+
+        The script is located using the WebKitLegacy folder cmake variable, which needs
+        to be set in the project file. 
+ 
+        * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2017-09-18  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         [CMake] Rename WebKit target to WebKitLegacy and rename WebKit2 target to WebKit
