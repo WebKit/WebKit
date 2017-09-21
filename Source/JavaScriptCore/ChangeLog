@@ -1,3 +1,35 @@
+2017-09-20  Keith Miller  <keith_miller@apple.com>
+
+        JSC should use unified sources for platform specific files.
+        https://bugs.webkit.org/show_bug.cgi?id=177290
+
+        Reviewed by Michael Saboff.
+
+        Add a list of platform specific source files and update the
+        Generate Unified Sources phase of the Xcode build. I skipped WPE
+        since that seems to have failed for some reason that I didn't
+        fully understand. See:
+        https://webkit-queues.webkit.org/results/4611260
+
+        Also, fix duplicate symbols in Glib remote inspector files.
+
+        * CMakeLists.txt:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * PlatformGTK.cmake:
+        * PlatformMac.cmake:
+        * SourcesGTK.txt: Added.
+        * SourcesMac.txt: Added.
+        * inspector/remote/glib/RemoteInspectorServer.cpp:
+        (Inspector::RemoteInspectorServer::interfaceInfo):
+        (Inspector::RemoteInspectorServer::setTargetList):
+        (Inspector::RemoteInspectorServer::setupInspectorClient):
+        (Inspector::RemoteInspectorServer::setup):
+        (Inspector::RemoteInspectorServer::close):
+        (Inspector::RemoteInspectorServer::connectionClosed):
+        (Inspector::RemoteInspectorServer::sendMessageToBackend):
+        (Inspector::RemoteInspectorServer::sendMessageToFrontend):
+        (Inspector::dbusConnectionCallAsyncReadyCallback): Deleted.
+
 2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win] WTF: Add alias for process id to use in place of direct uses of pid_t

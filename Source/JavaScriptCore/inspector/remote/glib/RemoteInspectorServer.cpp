@@ -49,6 +49,7 @@ static uint64_t generateConnectionID()
     return ++connectionID;
 }
 
+namespace RemoteInspectorServerInternal {
 static const char introspectionXML[] =
     "<node>"
     "  <interface name='" INSPECTOR_DBUS_INTERFACE "'>"
@@ -84,6 +85,7 @@ static const char introspectionXML[] =
     "    </method>"
     "  </interface>"
     "</node>";
+}
 
 const GDBusInterfaceVTable RemoteInspectorServer::s_interfaceVTable = {
     // method_call
@@ -156,7 +158,7 @@ RemoteInspectorServer::~RemoteInspectorServer()
 GDBusInterfaceInfo* RemoteInspectorServer::interfaceInfo()
 {
     if (!m_introspectionData) {
-        m_introspectionData = g_dbus_node_info_new_for_xml(introspectionXML, nullptr);
+        m_introspectionData = g_dbus_node_info_new_for_xml(RemoteInspectorServerInternal::introspectionXML, nullptr);
         ASSERT(m_introspectionData);
     }
     return m_introspectionData->interfaces[0];
@@ -203,12 +205,14 @@ void RemoteInspectorServer::newConnection(GDBusConnection* connection)
     g_dbus_connection_register_object(connection, INSPECTOR_DBUS_OBJECT_PATH, interfaceInfo(), &s_interfaceVTable, this, nullptr, nullptr);
 }
 
+namespace RemoteInspectorServerInternal {
 static void dbusConnectionCallAsyncReadyCallback(GObject* source, GAsyncResult* result, gpointer)
 {
     GUniqueOutPtr<GError> error;
     GRefPtr<GVariant> resultVariant = adoptGRef(g_dbus_connection_call_finish(G_DBUS_CONNECTION(source), result, &error.outPtr()));
     if (!resultVariant && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_CANCELLED))
         WTFLogAlways("RemoteInspectorServer failed to send DBus message: %s", error->message);
+}
 }
 
 void RemoteInspectorServer::setTargetList(GDBusConnection* remoteInspectorConnection, GVariant* parameters)
@@ -233,7 +237,7 @@ void RemoteInspectorServer::setTargetList(GDBusConnection* remoteInspectorConnec
         "SetTargetList",
         g_variant_new("(t@a(tsssb))", m_remoteInspectorConnectionToIDMap.get(remoteInspectorConnection), targetList.get()),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
 }
 
 void RemoteInspectorServer::clientConnectionClosedCallback(GDBusConnection* connection, gboolean /*remotePeerVanished*/, GError*, RemoteInspectorServer* server)
@@ -262,7 +266,7 @@ GVariant* RemoteInspectorServer::setupInspectorClient(GDBusConnection* clientCon
             "GetTargetList",
             nullptr,
             nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-            -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+            -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
     }
 
     return backendCommands;
@@ -286,7 +290,7 @@ void RemoteInspectorServer::setup(GDBusConnection* clientConnection, uint64_t co
         "Setup",
         g_variant_new("(t)", targetID),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
 }
 
 void RemoteInspectorServer::close(GDBusConnection* clientConnection, uint64_t connectionID, uint64_t targetID)
@@ -306,7 +310,7 @@ void RemoteInspectorServer::close(GDBusConnection* clientConnection, uint64_t co
         "FrontendDidClose",
         g_variant_new("(t)", targetID),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
     m_inspectionTargets.remove(std::make_pair(connectionID, targetID));
 }
 
@@ -342,7 +346,7 @@ void RemoteInspectorServer::connectionClosed(GDBusConnection* remoteInspectorCon
                 "SetTargetList",
                 g_variant_new("(t@a(tsssb))", connectionID, g_variant_new_array(G_VARIANT_TYPE("(tsssb)"), nullptr, 0)),
                 nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-                -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+                -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
         }
     }
     m_connections.remove(remoteInspectorConnection);
@@ -364,7 +368,7 @@ void RemoteInspectorServer::sendMessageToBackend(GDBusConnection* clientConnecti
         "SendMessageToTarget",
         g_variant_new("(t&s)", targetID, message),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
 }
 
 void RemoteInspectorServer::sendMessageToFrontend(GDBusConnection* remoteInspectorConnection, uint64_t targetID, const char* message)
@@ -384,7 +388,7 @@ void RemoteInspectorServer::sendMessageToFrontend(GDBusConnection* remoteInspect
         "SendMessageToFrontend",
         g_variant_new("(tt&s)", m_remoteInspectorConnectionToIDMap.get(remoteInspectorConnection), targetID, message),
         nullptr, G_DBUS_CALL_FLAGS_NO_AUTO_START,
-        -1, m_cancellable.get(), dbusConnectionCallAsyncReadyCallback, nullptr);
+        -1, m_cancellable.get(), RemoteInspectorServerInternal::dbusConnectionCallAsyncReadyCallback, nullptr);
 }
 
 void RemoteInspectorServer::startAutomationSession(GDBusConnection* automationConnection, const char* sessionID)

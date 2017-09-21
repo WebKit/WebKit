@@ -46,7 +46,7 @@ set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
     "${ICU_INCLUDE_DIRS}"
 )
 
-WEBKIT_COMPUTE_SOURCES_FROM_FILE(JavaScriptCore "${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt")
+WEBKIT_COMPUTE_SOURCES(JavaScriptCore)
 
 set(JavaScriptCore_OBJECT_LUT_SOURCES
     runtime/ArrayConstructor.cpp

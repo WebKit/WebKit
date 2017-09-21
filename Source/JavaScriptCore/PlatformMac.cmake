@@ -1,23 +1,3 @@
-list(APPEND JavaScriptCore_SOURCES
-    API/JSAPIWrapperObject.mm
-    API/JSContext.mm
-    API/JSManagedValue.mm
-    API/JSRemoteInspector.cpp
-    API/JSStringRefCF.cpp
-    API/JSValue.mm
-    API/JSVirtualMachine.mm
-    API/JSWrapperMap.mm
-    API/ObjCCallbackFunction.mm
-
-    inspector/remote/RemoteAutomationTarget.cpp
-    inspector/remote/RemoteControllableTarget.cpp
-    inspector/remote/RemoteInspectionTarget.cpp
-    inspector/remote/RemoteInspector.cpp
-
-    inspector/remote/cocoa/RemoteConnectionToTargetCocoa.mm
-    inspector/remote/cocoa/RemoteInspectorCocoa.mm
-    inspector/remote/cocoa/RemoteInspectorXPCConnection.mm
-)
 add_definitions(-DSTATICALLY_LINKED_WITH_WTF -D__STDC_WANT_LIB_EXT1__)
 
 find_library(SECURITY_LIBRARY Security)

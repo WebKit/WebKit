@@ -1,3 +1,23 @@
+2017-09-20  Keith Miller  <keith_miller@apple.com>
+
+        JSC should use unified sources for platform specific files.
+        https://bugs.webkit.org/show_bug.cgi?id=177290
+
+        Reviewed by Michael Saboff.
+
+        The unified source bundler script can now handle more than one
+        list of sources. Sources will not be bundled across source file
+        lists. We want to ensure that changing one platform's sources
+        doesn't break another platform's build, as much as
+        possible. Additionally, it means that there won't be weird
+        performance changes when files are added to an unrelated platform.
+
+        Remove stale reference to generate-unified-source-bundles.rb script
+        from Xcode.
+
+        * Scripts/generate-unified-source-bundles.rb:
+        * WTF.xcodeproj/project.pbxproj:
+
 2017-09-20  Stephan Szabo  <stephan.szabo@sony.com>
 
         [Win] WTF: Add alias for process id to use in place of direct uses of pid_t

@@ -29,10 +29,9 @@ SCRIPT_NAME = File.basename($0)
 COMMENT_REGEXP = /#/
 
 def usage
-    puts "usage: #{SCRIPT_NAME} [options] -p <desination-path> -s <sources-file>"
+    puts "usage: #{SCRIPT_NAME} [options] -p <desination-path> <sources-file>"
     puts "--help                          (-h) Print this message"
     puts "--verbose                       (-v) Adds extra logging to stderr."
-    puts "--sources-file                  (-s) Path to the file containing the for the unified source build. This argument is required."
     puts "--print-bundled-sources              Print bundled sources rather than generating sources"
     puts
     puts "Generation options:"
@@ -44,10 +43,8 @@ end
 
 MAX_BUNDLE_SIZE = 8
 $derivedSourcesPath = nil
-$sourcesFile = nil
 $verbose = false
 $mode = :GenerateBundles
-# FIXME: Use these when Xcode uses unified sources.
 $maxCppBundleCount = 100000
 $maxObjCBundleCount = 100000
 
@@ -59,7 +56,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
                ['--print-bundled-sources', GetoptLong::NO_ARGUMENT],
                ['--derived-sources-path', '-p', GetoptLong::REQUIRED_ARGUMENT],
-               ['--sources-file', '-s', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-cpp-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
@@ -73,8 +69,6 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     when '--derived-sources-path'
         $derivedSourcesPath = Pathname.new(arg) + Pathname.new("unified-souces")
         FileUtils.mkdir($derivedSourcesPath) if !$derivedSourcesPath.exist?
-    when '--sources-file'
-        $sourcesFile = Pathname.new(arg)
     when '--max-cpp-bundle-count'
         $maxCppBundleCount = arg.to_i
     when '--max-obj-c-bundle-count'
@@ -83,22 +77,11 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
 }
 
 if $mode == :GenerateBundles
-    log("#{$derivedSourcesPath} and #{$sourcesFile}")
-    usage if !$derivedSourcesPath || !$sourcesFile
+    usage if !$derivedSourcesPath
+    log("putting unified sources in #{$derivedSourcesPath}")
 end
-
-log("reading #{$sourcesFile}")
-$sources = File.read($sourcesFile).split($/).keep_if {
-    | line |
-    # Only strip lines if they start with a comment since sources we don't
-    # want to bundle have an attribute, which starts with a comment.
-    !((line =~ COMMENT_REGEXP) == 0 || line.empty?)
-}
-
-log("found #{$sources.length} source files")
-usage if $sources.empty?
+usage if ARGV.length == 0
 $generatedSources = []
-
 
 class SourceFile < Pathname
     attr_reader :unifiable
@@ -188,20 +171,33 @@ $bundleManagers = {
     ".mm" => BundleManager.new("mm", $maxObjCBundleCount)
 }
 
-$currentDirectory = nil
-$sources.sort.each {
-    | file |
+ARGV.each {
+    | sourcesFile |
+    log("reading #{sourcesFile}")
+    sources = File.read(sourcesFile).split($/).keep_if {
+        | line |
+        # Only strip lines if they start with a comment since sources we don't
+        # want to bundle have an attribute, which starts with a comment.
+        !((line =~ COMMENT_REGEXP) == 0 || line.empty?)
+    }
 
-    path = SourceFile.new(file)
-    case $mode
-    when :GenerateBundles
-        ProcessFileForUnifiedSourceGeneration(path)
-    when :PrintBundledSources
-        $generatedSources << path if $bundleManagers[path.extname] && path.unifiable
-    end
+    log("found #{sources.length} source files in #{sourcesFile}")
+
+    currentDirectory = nil
+    sources.sort.each {
+        | file |
+
+        path = SourceFile.new(file)
+        case $mode
+        when :GenerateBundles
+            ProcessFileForUnifiedSourceGeneration(path)
+        when :PrintBundledSources
+            $generatedSources << path if $bundleManagers[path.extname] && path.unifiable
+        end
+    }
+
+    $bundleManagers.each_value { |x| x.flush } if $mode == :GenerateBundles
 }
-
-$bundleManagers.each_value { |x| x.flush } if $mode == :GenerateBundles
 
 # We use stdout to report our unified source list to CMake.
 # Add trailing semicolon since CMake seems dislikes not having it.

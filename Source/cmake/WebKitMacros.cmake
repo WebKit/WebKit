@@ -2,7 +2,13 @@
 # exclusively needed in only one subdirectory of Source (e.g. only needed by
 # WebCore), then put it there instead.
 
-macro(WEBKIT_COMPUTE_SOURCES_FROM_FILE _framework _file)
+macro(WEBKIT_COMPUTE_SOURCES _framework)
+    set(_platformSourcesFile ${CMAKE_CURRENT_SOURCE_DIR}/Sources${PORT}.txt)
+    if (EXISTS ${_platformSourcesFile})
+        message(STATUS "Using platform specific source list file: ${_platformSourcesFile}")
+    else ()
+        unset(_platformSourcesFile)
+    endif ()
 
     if (WIN32 AND INTERNAL_BUILD)
         set(WTF_SCRIPTS_DIR "${CMAKE_BINARY_DIR}/../include/private/WTF/Scripts")
@@ -12,7 +18,8 @@ macro(WEBKIT_COMPUTE_SOURCES_FROM_FILE _framework _file)
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
         "--print-bundled-sources"
-        "--sources-file" ${_file}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
+        ${_platformSourcesFile}
         RESULT_VARIABLE _resultTmp
         OUTPUT_VARIABLE _outputTmp)
 
@@ -28,7 +35,8 @@ macro(WEBKIT_COMPUTE_SOURCES_FROM_FILE _framework _file)
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
         "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
-        "--sources-file" ${_file}
+        ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
+        ${_platformSourcesFile}
         RESULT_VARIABLE  _resultTmp
         OUTPUT_VARIABLE _outputTmp)
 
@@ -37,6 +45,7 @@ macro(WEBKIT_COMPUTE_SOURCES_FROM_FILE _framework _file)
     endif ()
 
     list(APPEND ${_framework}_SOURCES ${_outputTmp})
+    unset(_platformSourcesFile)
     unset(_resultTmp)
     unset(_outputTmp)
 endmacro()
