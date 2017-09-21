@@ -58,11 +58,6 @@ class LexerToken {
         return this.lexer.originKind;
     }
     
-    get isInternal()
-    {
-        return false;
-    }
-    
     get index()
     {
         return this._index;

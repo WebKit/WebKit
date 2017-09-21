@@ -955,18 +955,11 @@ function parse(program, origin, originKind, lineNumberOffset, text)
     function parseNative()
     {
         let origin = consume("native");
-        let isType = lexer.backtrackingScope(() => {
-            if (tryConsume("typedef"))
-                return "normal";
-            consume("Primitive");
-            consume("typedef");
-            return "primitive";
-        });
-        if (isType) {
+        if (tryConsume("typedef")) {
             let name = consumeKind("identifier");
             let parameters = parseTypeParameters();
             consume(";");
-            return new NativeType(origin, name.text, isType == "primitive", parameters);
+            return new NativeType(origin, name.text, parameters);
         }
         return parseNativeFunc();
     }

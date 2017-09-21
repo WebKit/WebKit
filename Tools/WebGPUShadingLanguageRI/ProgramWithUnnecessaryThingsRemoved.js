@@ -51,10 +51,8 @@ function programWithUnnecessaryThingsRemoved(program)
     
     let result = new Program();
     for (let name of nameFinder.set) {
-        for (let thing of program.globalNameContext.underlyingThings(Anything, name)) {
-            if (!thing.origin.isInternal)
-                result.add(thing);
-        }
+        for (let thing of program.globalNameContext.underlyingThings(Anything, name))
+            result.add(thing);
     }
     
     return result;

@@ -39,7 +39,6 @@ class ReferenceType extends Type {
     get origin() { return this._origin; }
     get addressSpace() { return this._addressSpace; }
     get elementType() { return this._elementType; }
-    get isPrimitive() { return false; }
 
     get size() { return 1; }
 

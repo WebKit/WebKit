@@ -102,7 +102,8 @@ class FuncInstantiator {
                     func.returnType.visit(substitution).visit(instantiateImmediates),
                     [], // We're instantiated so we no longer take type parameters.
                     func.parameters.map(parameter => parameter.visit(substitution).visit(instantiateImmediates)),
-                    func.body.visit(substitution).visit(instantiateImmediates));
+                    func.body.visit(substitution).visit(instantiateImmediates),
+                    func.isCast, func.shaderType);
             }
             
             visitNativeFunc(func)

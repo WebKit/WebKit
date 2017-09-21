@@ -100,6 +100,7 @@ load("InstantiateImmediates.js");
 load("IntLiteral.js");
 load("IntLiteralType.js");
 load("Intrinsics.js");
+load("LateChecker.js");
 load("Lexer.js");
 load("LexerToken.js");
 load("LiteralTypeChecker.js");

@@ -154,11 +154,9 @@ function synthesizeStructAccessors(program)
             }
             
             setupAnder("thread");
-            if (type.instantiate().isPrimitive) {
-                setupAnder("threadgroup");
-                setupAnder("device");
-                setupAnder("constant");
-            }
+            setupAnder("threadgroup");
+            setupAnder("device");
+            setupAnder("constant");
         }
     }
 }

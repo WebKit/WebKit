@@ -53,8 +53,7 @@ class StatementCloner extends Rewriter {
     visitNativeType(node)
     {
         return new NativeType(
-            node.origin, node.name, node.isPrimitive,
-            node.typeParameters.map(typeParameter => typeParameter.visit(this)));
+            node.origin, node.name, node.typeParameters.map(typeParameter => typeParameter.visit(this)));
     }
     
     visitTypeDef(node)

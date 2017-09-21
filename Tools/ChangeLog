@@ -1,3 +1,82 @@
+2017-09-21  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should have some post-instantiation type checking
+        https://bugs.webkit.org/show_bug.cgi?id=177303
+
+        Reviewed by Keith Miller.
+        
+        This patch removes the Primitive protocol! Yay!
+        
+        The Primitive protocol was an attempt to handle the fact that Metal wouldn't allow us to point a
+        non-thread pointer at data structures that have pointers. This type checking rule interacts badly with
+        generics. I was able to get it to mostly work by making Primitive into a dynamic protocol - a type
+        belongs to it if it happens to be isPrimitive.
+        
+        But that was a mistake, since it makes it hard to create pointers that are generic over address space.
+        Also, it's not an appropriate rule for targeting SPIR-V logical mode. That rule will be different, and
+        possibly more complicated.
+        
+        All of these kinds of rules are easier to implement of we run them after instantiation, since then they
+        don't get in the way of generics. That's what this patch does.
+        
+        This means that we get all of the same type checking power as before, and we still can catch the errors
+        that Metal requires us to check for. It's easier to do those checks now.
+        
+        Finally, this removes the shader type checker's incomplete reimplementation of isPrimitive (which was
+        called NonNumericSearcher). The shader type checker calls isPrimitive now.
+
+        * WebGPUShadingLanguageRI/AddressSpace.js:
+        (needsPrimitiveProtocol): Deleted.
+        (protocolSuffix): Deleted.
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype._checkShaderType):
+        (Checker.prototype._checkShaderType.NonNumericSearcher): Deleted.
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitArrayRefType): Deleted.
+        (Checker.prototype._checkShaderType.NonNumericSearcher.prototype.visitPtrType): Deleted.
+        (Checker.prototype.visitReferenceType): Deleted.
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitFuncDef):
+        * WebGPUShadingLanguageRI/Inline.js:
+        (_inlineFunction):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LateChecker.js: Added.
+        (LateChecker):
+        (LateChecker.prototype.visitReferenceType):
+        (LateChecker.prototype._checkShaderType):
+        (LateChecker.prototype.visitFuncDef):
+        * WebGPUShadingLanguageRI/LexerToken.js:
+        (LexerToken.prototype.get isInternal): Deleted.
+        * WebGPUShadingLanguageRI/NativeType.js:
+        (NativeType):
+        (NativeType.prototype.get name):
+        (NativeType.prototype.get isPrimitive):
+        (NativeType.prototype.set isPrimitive):
+        (NativeType.prototype.toString):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseNative):
+        * WebGPUShadingLanguageRI/ProgramWithUnnecessaryThingsRemoved.js:
+        (programWithUnnecessaryThingsRemoved):
+        * WebGPUShadingLanguageRI/ProtocolDecl.js:
+        * WebGPUShadingLanguageRI/ReferenceType.js:
+        (ReferenceType.prototype.get elementType):
+        (ReferenceType.prototype.get isPrimitive): Deleted.
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/StatementCloner.js:
+        (StatementCloner.prototype.visitNativeType):
+        * WebGPUShadingLanguageRI/SynthesizeStructAccessors.js:
+        (synthesizeStructAccessors):
+        * WebGPUShadingLanguageRI/Test.js:
+        (TEST_passNullAndNotNullFullPoly):
+        (TEST_passNullAndNotNullFullPolyReverse):
+        (TEST_nullTypeVariableUnify):
+        (TEST_chainStructNewlyValid):
+        (TEST_chainStructDevice):
+        (TEST_chainStructInvalid): Deleted.
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isPrimitive):
+
 2017-09-21  Chris Dumez  <cdumez@apple.com>
 
         Unreviewed, temporarily disable new API tests introduced in r222308 until they pass on El Capitan

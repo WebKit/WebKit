@@ -27,10 +27,6 @@
 class Intrinsics {
     constructor(nameContext)
     {
-        this.primitive = new ProtocolDecl({origin: "<internal>", originString: "native", isInternal: true}, "Primitive");
-        this.primitive.isPrimitive = true;
-        nameContext.add(this.primitive);
-        
         this._map = new Map();
 
         // NOTE: Intrinsic resolution happens before type name resolution, so the strings we use here
@@ -39,7 +35,7 @@ class Intrinsics {
         // use "int" here, since we don't yet know that they are the same type.
         
         this._map.set(
-            "native Primitive type void<>",
+            "native typedef void<>",
             type => {
                 this.void = type;
                 type.size = 0;
@@ -61,9 +57,10 @@ class Intrinsics {
         }
 
         this._map.set(
-            "native Primitive type int32<>",
+            "native typedef int32<>",
             type => {
                 this.int32 = type;
+                type.isPrimitive = true;
                 type.isInt = true;
                 type.isNumber = true;
                 type.isSigned = true;
@@ -85,9 +82,10 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native Primitive type uint32<>",
+            "native typedef uint32<>",
             type => {
                 this.uint32 = type;
+                type.isPrimitive = true;
                 type.isInt = true;
                 type.isNumber = true;
                 type.isSigned = false;
@@ -107,7 +105,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native Primitive type uint8<>",
+            "native typedef uint8<>",
             type => {
                 this.uint8 = type;
                 type.isInt = true;
@@ -129,9 +127,10 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native Primitive type float<>",
+            "native typedef float<>",
             type => {
                 this.float = type;
+                type.isPrimitive = true;
                 type.size = 1;
                 type.isFloating = true;
                 type.isNumber = true;
@@ -144,9 +143,10 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native Primitive type double<>",
+            "native typedef double<>",
             type => {
                 this.double = type;
+                type.isPrimitive = true;
                 type.size = 1;
                 type.isFloating = true;
                 type.isNumber = true;
@@ -159,9 +159,10 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native Primitive type bool<>",
+            "native typedef bool<>",
             type => {
                 this.bool = type;
+                type.isPrimitive = true;
                 type.size = 1;
                 type.populateDefaultValue = (buffer, offset) => buffer.set(offset, false);
             });
@@ -557,7 +558,7 @@ class Intrinsics {
         
         for (let addressSpace of addressSpaces) {
             this._map.set(
-                `native T^ ${addressSpace} operator&[]<T${protocolSuffix(addressSpace)}>(T[] ${addressSpace},uint)`,
+                `native T^ ${addressSpace} operator&[]<T>(T[] ${addressSpace},uint)`,
                 func => {
                     func.implementation = ([ref, index], node) => {
                         ref = ref.loadValue();
@@ -571,7 +572,7 @@ class Intrinsics {
                 });
 
             this._map.set(
-                `native uint operator.length<T${protocolSuffix(addressSpace)}>(T[] ${addressSpace})`,
+                `native uint operator.length<T>(T[] ${addressSpace})`,
                 func => {
                     func.implementation = ([ref], node) => {
                         ref = ref.loadValue();

@@ -968,7 +968,7 @@ function TEST_badIntLiteralForDouble()
 function TEST_passNullAndNotNull()
 {
     let program = doPrep(`
-        T bar<T:Primitive>(device T^ p, device T^)
+        T bar<T>(device T^ p, device T^)
         {
             return ^p;
         }
@@ -985,7 +985,7 @@ function TEST_passNullAndNotNull()
 function TEST_passNullAndNotNullFullPoly()
 {
     let program = doPrep(`
-        T bar<T:Primitive>(T p, T)
+        T bar<T>(T p, T)
         {
             return p;
         }
@@ -1002,7 +1002,7 @@ function TEST_passNullAndNotNullFullPoly()
 function TEST_passNullAndNotNullFullPolyReverse()
 {
     let program = doPrep(`
-        T bar<T:Primitive>(T, T p)
+        T bar<T>(T, T p)
         {
             return p;
         }
@@ -1060,7 +1060,7 @@ function TEST_nullTypeVariableUnify()
             let types = {};
             types.nullType = new NullType(null);
             types.variableType = new TypeVariable(null, "T", null);
-            types.ptrType = new PtrType(null, "constant", new NativeType(null, "foo_t", true, []));
+            types.ptrType = new PtrType(null, "constant", new NativeType(null, "foo_t", []));
             let unificationContext = new UnificationContext([types.variableType]);
             for (let [leftName, rightName] of order) {
                 let left = types[leftName];
@@ -2032,28 +2032,29 @@ function TEST_chainStruct()
     checkInt(program, callFunction(program, "bar", [], [makeInt(program, 4657)]), 4657);
 }
 
-function TEST_chainStructInvalid()
+function TEST_chainStructNewlyValid()
 {
-    checkFail(
-        () => doPrep(`
-            struct Foo<T> {
-                T f;
-            }
-            struct Bar<T> {
-                Foo<device T^> f;
-            }
-            int foo(thread Bar<int>^ x)
-            {
-                return ^x->f.f;
-            }
-            int bar(device int^ a)
-            {
-                Bar<int> x;
-                x.f.f = a;
-                return foo(&x);
-            }
-        `),
-        (e) => e instanceof WTypeError);
+    let program = doPrep(`
+        struct Foo<T> {
+            T f;
+        }
+        struct Bar<T> {
+            Foo<device T^> f;
+        }
+        int foo(thread Bar<int>^ x)
+        {
+            return ^x->f.f;
+        }
+        int bar(device int^ a)
+        {
+            Bar<int> x;
+            x.f.f = a;
+            return foo(&x);
+        }
+    `);
+    let buffer = new EBuffer(1);
+    buffer.set(0, 78453);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 78453);
 }
 
 function TEST_chainStructDevice()
@@ -2062,7 +2063,7 @@ function TEST_chainStructDevice()
         struct Foo<T> {
             T f;
         }
-        struct Bar<T:Primitive> {
+        struct Bar<T> {
             Foo<device T^> f;
         }
         int foo(thread Bar<int>^ x)
