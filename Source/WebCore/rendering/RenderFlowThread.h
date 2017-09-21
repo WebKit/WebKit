@@ -125,9 +125,6 @@ public:
     RenderRegion* firstRegion() const;
     RenderRegion* lastRegion() const;
 
-    bool previousRegionCountChanged() const { return m_previousRegionCount != m_regionList.size(); };
-    void updatePreviousRegionCount() { m_previousRegionCount = m_regionList.size(); };
-
     virtual void setRegionRangeForBox(const RenderBox&, RenderRegion*, RenderRegion*);
     bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
     bool computedRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
@@ -150,24 +147,6 @@ public:
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect);
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox);
 
-    // A flow thread goes through different states during layout.
-    enum LayoutPhase {
-        LayoutPhaseMeasureContent = 0, // The initial phase, used to measure content for the auto-height regions.
-        LayoutPhaseConstrained, // In this phase the regions are laid out using the sizes computed in the normal phase.
-        LayoutPhaseOverflow, // In this phase the layout overflow is propagated from the content to the regions.
-        LayoutPhaseFinal // In case scrollbars have resized the regions, content is laid out one last time to respect the change.
-    };
-    bool inMeasureContentLayoutPhase() const { return m_layoutPhase == LayoutPhaseMeasureContent; }
-    bool inConstrainedLayoutPhase() const { return m_layoutPhase == LayoutPhaseConstrained; }
-    bool inOverflowLayoutPhase() const { return m_layoutPhase == LayoutPhaseOverflow; }
-    bool inFinalLayoutPhase() const { return m_layoutPhase == LayoutPhaseFinal; }
-    void setLayoutPhase(LayoutPhase phase) { m_layoutPhase = phase; }
-
-    bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
-    void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
-
-    void pushFlowThreadLayoutState(const RenderObject&);
-    void popFlowThreadLayoutState();
     LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
     void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox&, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
 
@@ -223,15 +202,8 @@ protected:
 
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 
-    void updateRegionsFlowThreadPortionRect(const RenderRegion* = nullptr);
+    void updateRegionsFlowThreadPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
-
-    inline bool hasCachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
-    inline LayoutUnit cachedOffsetFromLogicalTopOfFirstRegion(const RenderBox*) const;
-    inline void setOffsetFromLogicalTopOfFirstRegion(const RenderBox*, LayoutUnit);
-    inline void clearOffsetFromLogicalTopOfFirstRegion(const RenderBox*);
-
-    inline const RenderBox* currentActiveRenderBox() const;
 
     bool getRegionRangeForBoxFromCachedInfo(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
 
@@ -239,7 +211,6 @@ protected:
     void removeLineRegionInfo(const RenderBlockFlow&);
 
     RenderRegionList m_regionList;
-    unsigned short m_previousRegionCount;
 
     class RenderRegionRange {
     public:
@@ -305,12 +276,6 @@ protected:
     RenderBoxToRegionMap m_breakBeforeToRegionMap;
     RenderBoxToRegionMap m_breakAfterToRegionMap;
 
-    typedef Vector<const RenderObject*> RenderObjectStack;
-    RenderObjectStack m_activeObjectsStack;
-
-    typedef HashMap<const RenderBox*, LayoutUnit> RenderBoxToOffsetMap;
-    RenderBoxToOffsetMap m_boxesToOffsetMap;
-
     RegionIntervalTree m_regionIntervalTree;
 
     CurrentRenderRegionMaintainer* m_currentRegionMaintainer;
@@ -319,8 +284,6 @@ protected:
     bool m_regionsHaveUniformLogicalWidth : 1;
     bool m_regionsHaveUniformLogicalHeight : 1;
     bool m_pageLogicalSizeChanged : 1;
-    unsigned m_layoutPhase : 2;
-    bool m_needsTwoPhasesLayout : 1;
 };
 
 } // namespace WebCore
