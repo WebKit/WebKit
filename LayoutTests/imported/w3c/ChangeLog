@@ -1,3 +1,12 @@
+2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add missing expectation file.
+        https://bugs.webkit.org/show_bug.cgi?id=170713
+
+        Unreviewed test gardening.
+
+        * web-platform-tests/IndexedDB/nested-cloning-large-multiple-expected.txt: Added.
+
 2017-09-20  Youenn Fablet  <youenn@apple.com>
 
         Refresh WPT tests up to f65af411d63ec13ee8fe208b4effd730a4a8b7fe

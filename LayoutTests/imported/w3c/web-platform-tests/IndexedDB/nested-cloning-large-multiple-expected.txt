@@ -1,0 +1,4 @@
+
+PASS multiple requests of objects with blobs and large typed arrays 
+FAIL multiple requests of objects with blobs and large typed arrays with key generator assert_equals: IndexedDB result class should match put() argument expected "[object Blob]" but got "[object Null]"
+
