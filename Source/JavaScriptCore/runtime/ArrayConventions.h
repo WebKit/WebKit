@@ -77,6 +77,8 @@ static_assert(MAX_STORAGE_VECTOR_INDEX <= MAX_ARRAY_INDEX, "MAX_STORAGE_VECTOR_I
 // for an array that was created with a sepcified length (e.g. a = new Array(123))
 #define BASE_CONTIGUOUS_VECTOR_LEN 3U
 #define BASE_CONTIGUOUS_VECTOR_LEN_EMPTY 5U
+#define BASE_CONTIGUOUS_VECTOR_LEN_MIN 3U
+#define BASE_CONTIGUOUS_VECTOR_LEN_MAX 25U
 #define BASE_ARRAY_STORAGE_VECTOR_LEN 4U
 
 // The upper bound to the size we'll grow a zero length array when the first element

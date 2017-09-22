@@ -1,3 +1,76 @@
+2017-09-21  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG][FTL] Profile array vector length for array allocation
+        https://bugs.webkit.org/show_bug.cgi?id=177051
+
+        Reviewed by Saam Barati.
+
+        Currently, NewArrayBuffer allocation is penalized by JSC: While empty array gets 25 vector size (BASE_CONTIGUOUS_VECTOR_LEN),
+        new_array_buffer case gets 3 vector size (BASE_CONTIGUOUS_VECTOR_LEN). Surely, new_array_buffer can get larger vector size
+        if the number of its constant elements is larger than 3. But these created array may be grown by `push()` operation after
+        the allocation. In this case, new_array_buffer is penalized compared to empty array allocation.
+
+            empty array allocation,
+
+            var array = [];
+            array.push(0);
+            array.push(1);
+            array.push(2);
+            array.push(3);
+            array.push(4);
+
+            v.s. new_array_buffer case,
+
+            var array = [0];
+            array.push(1);
+            array.push(2);
+            array.push(3);
+            array.push(4);
+
+        In this case, the latter becomes slow. While we have a chance to reduce memory usage if new_array_buffer is not grown (and a bit likely),
+        we should allocate 3 to 25 vector size if it is likely grown. So we should get profile on the resulted array.
+
+        We select 25 to make it fit to one of size classes.
+
+        In this patch, we extend ArrayAllocationProfile to record vector length. And use this information when allocating array for new_array_buffer.
+        If the number of new_array_buffer constants is <= 25, array vector size would become 3 to 25 based on profiling. If the number of its constants
+        is larger than 25, we just use it for allocation as before.
+
+        Added microbenchmark and SixSpeed spread-literal.es5 shows improvement.
+
+            new-array-buffer-vector-profile       67.4706+-3.7625     ^     28.4249+-1.9025        ^ definitely 2.3736x faster
+            spread-literal.es5                   133.1443+-9.2253     ^     95.2667+-0.5740        ^ definitely 1.3976x faster
+
+        * bytecode/ArrayAllocationProfile.cpp:
+        (JSC::ArrayAllocationProfile::updateProfile):
+        (JSC::ArrayAllocationProfile::updateIndexingType): Deleted.
+        * bytecode/ArrayAllocationProfile.h:
+        (JSC::ArrayAllocationProfile::selectIndexingType):
+        (JSC::ArrayAllocationProfile::vectorLengthHint):
+        (JSC::ArrayAllocationProfile::ArrayAllocationProfile): Deleted.
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::updateAllArrayPredictions):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::vectorLengthHint):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArraySlice):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayBuffer):
+        (JSC::FTL::DFG::LowerDFGToB3::compileNewArrayWithSize):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateJSArray):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateUninitializedContiguousJSArrayInternal):
+        (JSC::FTL::DFG::LowerDFGToB3::allocateUninitializedContiguousJSArray):
+        * runtime/ArrayConventions.h:
+        * runtime/JSArray.h:
+        (JSC::JSArray::tryCreate):
+
 2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove support for CSS Regions

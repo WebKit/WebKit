@@ -99,6 +99,7 @@ struct MultiPutByOffsetData {
 struct NewArrayBufferData {
     unsigned startConstant;
     unsigned numConstants;
+    unsigned vectorLengthHint;
     IndexingType indexingType;
 };
 
@@ -1114,6 +1115,11 @@ public:
     unsigned numConstants()
     {
         return newArrayBufferData()->numConstants;
+    }
+
+    unsigned vectorLengthHint()
+    {
+        return newArrayBufferData()->vectorLengthHint;
     }
     
     bool hasIndexingType()

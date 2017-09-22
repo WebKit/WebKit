@@ -4238,6 +4238,8 @@ void SpeculativeJIT::compile(Node* node)
         IndexingType indexingType = node->indexingType();
         if (!globalObject->isHavingABadTime() && !hasAnyArrayStorage(indexingType)) {
             unsigned numElements = node->numConstants();
+            unsigned vectorLengthHint = node->vectorLengthHint();
+            ASSERT(vectorLengthHint >= numElements);
             
             GPRTemporary result(this);
             GPRTemporary storage(this);
@@ -4245,7 +4247,7 @@ void SpeculativeJIT::compile(Node* node)
             GPRReg resultGPR = result.gpr();
             GPRReg storageGPR = storage.gpr();
 
-            emitAllocateRawObject(resultGPR, m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), storageGPR, numElements, numElements);
+            emitAllocateRawObject(resultGPR, m_jit.graph().registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), storageGPR, numElements, vectorLengthHint);
             
             DFG_ASSERT(m_jit.graph(), node, indexingType & IsArray);
             JSValue* data = m_jit.codeBlock()->constantBuffer(node->startConstant());
