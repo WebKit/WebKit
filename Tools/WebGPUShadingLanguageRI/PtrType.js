@@ -29,7 +29,7 @@ class PtrType extends ReferenceType {
     
     unifyImpl(unificationContext, other)
     {
-        if (!(other instanceof PtrType))
+        if (!other.isPtr)
             return false;
         if (this.addressSpace != other.addressSpace)
             return false;

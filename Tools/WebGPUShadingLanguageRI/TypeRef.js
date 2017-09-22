@@ -38,7 +38,8 @@ class TypeRef extends Type {
     {
         if (type instanceof TypeRef && !type.typeArguments)
             return type;
-        let result = new TypeRef(type.origin, null, []);
+        let name = type.name;
+        let result = new TypeRef(type.origin, name, []);
         result.type = type;
         return result;
     }

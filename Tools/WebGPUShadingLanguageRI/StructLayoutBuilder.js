@@ -71,5 +71,20 @@ class StructLayoutBuilder extends Visitor {
         super.visitTypeRef(node);
         node.type.visit(this);
     }
+    
+    visitCallExpression(node)
+    {
+        for (let argument of node.argumentList)
+            Node.visit(argument, this);
+        let handleTypeArguments = actualTypeArguments => {
+            if (actualTypeArguments) {
+                for (let argument of actualTypeArguments)
+                    argument.visit(this);
+            }
+        };
+        handleTypeArguments(node.instantiatedActualTypeArguments);
+        Node.visit(node.nativeFuncInstance, this);
+        Node.visit(node.resultType, this);
+    }
 }
 

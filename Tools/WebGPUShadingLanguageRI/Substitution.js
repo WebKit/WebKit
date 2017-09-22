@@ -43,7 +43,8 @@ class Substitution extends Rewriter {
         if (replacement) {
             if (node.typeArguments.length)
                 throw new Error("Unexpected type arguments on type variable");
-            return replacement.visit(new AutoWrapper());
+            let result = replacement.visit(new AutoWrapper());
+            return result;
         }
         
         let result = super.visitTypeRef(node);

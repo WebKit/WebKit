@@ -41,12 +41,17 @@ class TypeVariableTracker extends Visitor {
     
     visitTypeRef(node)
     {
+        if (node.typeArguments.length) {
+            for (let typeArgument of node.typeArguments)
+                typeArgument.visit(this);
+            return;
+        }
         this._consider(node.type);
     }
     
     visitVariableRef(node)
     {
-        this._consider(this.variable);
+        this._consider(node.variable);
     }
 }
 

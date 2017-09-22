@@ -31,7 +31,7 @@ class LateChecker extends Visitor {
             return;
         
         if (!node.elementType.isPrimitive)
-            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node.elementType);
+            throw new WTypeError(node.origin.originString, "Illegal pointer to non-primitive type: " + node);
     }
     
     _checkShaderType(node)
@@ -41,25 +41,25 @@ class LateChecker extends Visitor {
                 throw new WTypeError(node.origin.originString, "Shader signature cannot include non-primitive type: " + type);
         }
         assertPrimitive(node.returnType);
-        if (!(node.returnType.type instanceof StructType))
+        if (!(node.returnType.unifyNode instanceof StructType))
             throw new WTypeError(node.origin.originString, "Vertex shader " + node.name + " must return a struct.");
         switch (node.shaderType) {
         case "vertex":
             for (let parameter of node.parameters) {
-                if (parameter.type.type instanceof StructType)
+                if (parameter.type.unifyNode instanceof StructType)
                     assertPrimitive(parameter.type);
-                else if (!(parameter.type.type instanceof ArrayRefType))
+                else if (!parameter.type.unifyNode.isArrayRef)
                     throw new WTypeError(node.origin.originString, node.name + " accepts a parameter " + parameter.name + " which isn't a struct and isn't an ArrayRef.");
             }
             break;
         case "fragment":
             for (let parameter of node.parameters) {
                 if (parameter.name == "stageIn") {
-                    if (!(parameter.type.type instanceof StructType))
+                    if (!(parameter.type.unifyNode instanceof StructType))
                         throw new WTypeError(node.origin.originString, "Fragment entry points' stageIn parameter (of " + node.name + ") must be a struct type.");
                     assertPrimitive(parameter.type);
                 } else {
-                    if (!(parameter.type.type instanceof ArrayRefType))
+                    if (!parameter.type.unifyNode.isArrayRef)
                         throw new WTypeError(node.origin.originString, "Fragment entry point's " + parameter.name + " parameter is not an array reference.");
                 }
             }

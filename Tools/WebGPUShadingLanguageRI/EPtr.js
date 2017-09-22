@@ -27,6 +27,8 @@
 class EPtr {
     constructor(buffer, offset)
     {
+        if (offset == null || offset != offset)
+            throw new Error("Bad offset: " + offset);
         this._buffer = buffer;
         this._offset = offset;
     }

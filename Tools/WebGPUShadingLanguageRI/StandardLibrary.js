@@ -24,23 +24,7 @@
  */
 "use strict";
 
-function intToString(x)
-{
-    switch (x) {
-    case 0:
-        return "x";
-    case 1:
-        return "y";
-    case 2:
-        return "z";
-    case 3:
-        return "w";
-    default:
-        throw new Error("Could not generate standard library.");
-    }
-}
-
-// NOTE: The next line is line 72, and we rely on this in Prepare.js.
+// NOTE: The next line is line 28, and we rely on this in Prepare.js.
 let standardLibrary = `
 // This is the WSL standard library. Implementations of all of these things are in
 // Intrinsics.js.
@@ -55,17 +39,31 @@ native typedef bool;
 typedef int = int32;
 typedef uint = uint32;
 
-native typedef float;
-native typedef double;
+native typedef float32;
+native typedef float64;
+typedef float = float32;
+typedef double = float64;
 
 native operator int32(uint32);
 native operator int32(uint8);
+native operator int32(float);
+native operator int32(double);
 native operator uint32(int32);
 native operator uint32(uint8);
+native operator uint32(float);
+native operator uint32(double);
 native operator uint8(int32);
 native operator uint8(uint32);
+native operator uint8(float);
+native operator uint8(double);
+native operator float(int32);
+native operator float(uint32);
+native operator float(uint8);
 native operator float(double);
 native operator double(float);
+native operator double(int32);
+native operator double(uint32);
+native operator double(uint8);
 
 native int operator+(int, int);
 native uint operator+(uint, uint);
@@ -391,6 +389,22 @@ uint operator.length<T, uint length>(T[length])
     return length;
 }
 `;
+
+function intToString(x)
+{
+    switch (x) {
+    case 0:
+        return "x";
+    case 1:
+        return "y";
+    case 2:
+        return "z";
+    case 3:
+        return "w";
+    default:
+        throw new Error("Could not generate standard library.");
+    }
+}
 
 // There are 481 swizzle operators. Let's not list them explicitly.
 function _generateSwizzle(maxDepth, maxItems, array)

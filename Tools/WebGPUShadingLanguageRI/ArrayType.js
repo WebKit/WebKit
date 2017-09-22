@@ -39,6 +39,7 @@ class ArrayType extends Type {
     get elementType() { return this._elementType; }
     get numElements() { return this._numElements; }
     get isPrimitive() { return this.elementType.isPrimitive; }
+    get isArray() { return true; }
     
     get numElementsValue()
     {

@@ -1,3 +1,539 @@
+2017-09-22  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should report an error if you try to create an operator overload that will never be called
+        https://bugs.webkit.org/show_bug.cgi?id=177092
+
+        Reviewed by JF Bastien.
+        
+        This adds all kinds of checks to ensure that your operator overloads make sense. This adds all
+        kinds of tests for those checks.
+        
+        In the process of writing those tests, I hit an awesome bug: function instantiation was
+        instantiating all types, which meant that if that instantiated function needed to resolve calls
+        to protocol functions, we'd fail because we would have cloned top-level struct types. We need
+        to preserve the uninstantiated argument types, type arguments, and return type (for casts) in
+        order to be able to resolve protocol calls. But we also need the instantiated version of the
+        type arguments for execution. So, this adds some more stuff to the CallExpression class.
+        
+        * WebGPUShadingLanguageRI/All.js:
+        * WebGPUShadingLanguageRI/ArrayRefType.js:
+        (ArrayRefType.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/ArrayType.js:
+        (ArrayType.prototype.get isArray):
+        * WebGPUShadingLanguageRI/CallExpression.js:
+        (CallExpression.resolve):
+        (CallExpression.prototype.resolve):
+        (CallExpression.prototype.resolveToOverload):
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype._checkOperatorOverload):
+        (Checker.prototype.visitFuncDef):
+        (Checker.prototype.visitProtocolDecl):
+        (Checker.prototype.visitMakeArrayRefExpression):
+        * WebGPUShadingLanguageRI/EBufferBuilder.js:
+        (EBufferBuilder.prototype._createEPtr):
+        * WebGPUShadingLanguageRI/EPtr.js:
+        (EPtr):
+        * WebGPUShadingLanguageRI/Evaluator.js:
+        (Evaluator.prototype._snapshot):
+        (Evaluator.prototype._runBody):
+        (Evaluator.prototype.visitFunctionLikeBlock):
+        (Evaluator.prototype.visitCallExpression):
+        (Evaluator):
+        (Evaluator.prototype.runFunc): Deleted.
+        * WebGPUShadingLanguageRI/ExternalOrigin.js: Added.
+        * WebGPUShadingLanguageRI/Func.js:
+        (Func.prototype.toDeclString):
+        * WebGPUShadingLanguageRI/FuncInstantiator.js:
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution.prototype.visitCallExpression):
+        (FuncInstantiator.prototype.getUnique.InstantiationSubstitution):
+        (FuncInstantiator.prototype.getUnique.InstantiationInstantiateImmediates.prototype.visitCallExpression):
+        (FuncInstantiator.prototype.getUnique.InstantiationInstantiateImmediates):
+        (FuncInstantiator.prototype.getUnique.Instantiate.prototype.visitFuncDef):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/LateChecker.js:
+        (LateChecker.prototype.visitReferenceType):
+        (LateChecker.prototype._checkShaderType):
+        * WebGPUShadingLanguageRI/Lexer.js:
+        (Lexer._textIsIdentifierImpl):
+        (Lexer.textIsIdentifier):
+        (Lexer.prototype.next):
+        (Lexer):
+        * WebGPUShadingLanguageRI/NameResolver.js:
+        (NameResolver.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseType.getAddressSpace):
+        (parseType):
+        * WebGPUShadingLanguageRI/Prepare.js:
+        (let.prepare):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.unifyImpl):
+        * WebGPUShadingLanguageRI/ReferenceType.js:
+        (ReferenceType):
+        * WebGPUShadingLanguageRI/Rewriter.js:
+        (Rewriter.prototype.visitReferenceType):
+        (Rewriter.prototype.processDerivedCallData):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        (intToString):
+        * WebGPUShadingLanguageRI/StatementCloner.js:
+        (StatementCloner.prototype.visitFuncDef):
+        * WebGPUShadingLanguageRI/StructLayoutBuilder.js:
+        (StructLayoutBuilder.prototype.visitCallExpression):
+        (StructLayoutBuilder):
+        * WebGPUShadingLanguageRI/Substitution.js:
+        (Substitution.prototype.visitTypeRef):
+        * WebGPUShadingLanguageRI/Test.html:
+        * WebGPUShadingLanguageRI/Test.js:
+        (checkNumber):
+        (set target):
+        (tests.literalBool):
+        (tests.identityBool):
+        (tests.intSimpleMath):
+        (tests.uintSimpleMath):
+        (tests.uint8SimpleMath):
+        (tests.equality):
+        (tests.logicalNegation):
+        (tests.notEquality):
+        (tests.equalityTypeFailure):
+        (tests.generalNegation):
+        (tests.add1):
+        (tests.simpleGeneric):
+        (tests.nameResolutionFailure):
+        (tests.simpleVariable):
+        (tests.simpleAssignment):
+        (tests.simpleDefault):
+        (tests.simpleDereference):
+        (tests.dereferenceStore):
+        (tests.simpleMakePtr):
+        (tests.threadArrayLoad):
+        (tests.threadArrayLoadIntLiteral):
+        (tests.deviceArrayLoad):
+        (tests.threadArrayStore):
+        (tests.deviceArrayStore):
+        (tests.deviceArrayStoreIntLiteral):
+        (tests.simpleProtocol):
+        (tests.typeMismatchReturn):
+        (tests.typeMismatchVariableDecl):
+        (tests.typeMismatchAssignment):
+        (tests.typeMismatchReturnParam):
+        (tests.badAdd):
+        (tests.lexerKeyword):
+        (tests.simpleNoReturn):
+        (tests.simpleUnreachableCode):
+        (tests.simpleStruct):
+        (tests.genericStructInstance):
+        (tests.doubleGenericCallsDoubleGeneric):
+        (tests.doubleGenericCallsSingleGeneric):
+        (tests.loadNull):
+        (tests.storeNull):
+        (tests.returnNull):
+        (tests.dereferenceDefaultNull):
+        (tests.defaultInitializedNull):
+        (tests.passNullToPtrMonomorphic):
+        (tests.passNullToPtrPolymorphic):
+        (tests.passNullToPolymorphic):
+        (tests.loadNullArrayRef):
+        (tests.storeNullArrayRef):
+        (tests.returnNullArrayRef):
+        (tests.dereferenceDefaultNullArrayRef):
+        (tests.defaultInitializedNullArrayRef):
+        (tests.defaultInitializedNullArrayRefIntLiteral):
+        (tests.passNullToPtrMonomorphicArrayRef):
+        (tests.passNullToPtrPolymorphicArrayRef):
+        (tests.returnIntLiteralUint):
+        (tests.returnIntLiteralDouble):
+        (tests.badIntLiteralForInt):
+        (tests.badIntLiteralForUint):
+        (tests.badIntLiteralForDouble):
+        (tests.passNullAndNotNull):
+        (tests.passNullAndNotNullFullPoly):
+        (tests.passNullAndNotNullFullPolyReverse):
+        (tests.nullTypeVariableUnify):
+        (tests.doubleNot):
+        (tests.simpleRecursion):
+        (tests.protocolMonoSigPolyDef):
+        (tests.protocolPolySigPolyDef):
+        (tests.protocolDoublePolySigDoublePolyDef):
+        (tests.protocolDoublePolySigDoublePolyDefExplicit):
+        (tests.variableShadowing):
+        (tests.ifStatement):
+        (tests.ifElseStatement):
+        (tests.ifElseIfStatement):
+        (tests.ifElseIfElseStatement):
+        (tests.returnIf):
+        (tests.simpleWhile):
+        (tests.protocolMonoPolySigDoublePolyDefExplicit):
+        (tests.ambiguousOverloadSimple):
+        (tests.ambiguousOverloadOverlapping):
+        (tests.ambiguousOverloadTieBreak):
+        (tests.intOverloadResolution):
+        (tests.intOverloadResolutionReverseOrder):
+        (tests.intOverloadResolutionGeneric):
+        (tests.intLiteralGeneric):
+        (tests.intLiteralGenericWithProtocols):
+        (tests.uintLiteralGeneric):
+        (tests.uintLiteralGenericWithProtocols):
+        (tests.intLiteralGenericSpecific):
+        (tests.simpleConstexpr):
+        (tests.break):
+        (tests.continue):
+        (tests.doWhile):
+        (tests.forLoop):
+        (tests.chainConstexpr):
+        (tests.chainGeneric):
+        (tests.chainStruct):
+        (tests.chainStructNewlyValid):
+        (tests.chainStructDevice):
+        (tests.paramChainStructDevice):
+        (tests.simpleProtocolExtends):
+        (tests.protocolExtendsTwo):
+        (tests.prefixPlusPlus):
+        (tests.prefixPlusPlusResult):
+        (tests.postfixPlusPlus):
+        (tests.postfixPlusPlusResult):
+        (tests.prefixMinusMinus):
+        (tests.prefixMinusMinusResult):
+        (tests.postfixMinusMinus):
+        (tests.postfixMinusMinusResult):
+        (tests.plusEquals):
+        (tests.plusEqualsResult):
+        (tests.minusEquals):
+        (tests.minusEqualsResult):
+        (tests.timesEquals):
+        (tests.timesEqualsResult):
+        (tests.divideEquals):
+        (tests.divideEqualsResult):
+        (tests.twoIntLiterals):
+        (tests.unifyDifferentLiterals):
+        (tests.unifyDifferentLiteralsBackwards):
+        (tests.unifyVeryDifferentLiterals):
+        (tests.unifyVeryDifferentLiteralsBackwards):
+        (tests.assignUintToInt):
+        (tests.buildArrayThenSumIt):
+        (tests.buildArrayThenSumItUsingArrayReference):
+        (tests.overrideSubscriptStruct):
+        (tests.overrideSubscriptStructAndDoStores):
+        (tests.overrideSubscriptStructAndUsePointers):
+        (tests.overrideSubscriptStructAndUsePointersIncorrectly):
+        (tests.makeArrayRefFromLocal):
+        (tests.makeArrayRefFromPointer):
+        (tests.makeArrayRefFromArrayRef):
+        (tests.simpleLength):
+        (tests.nonArrayRefArrayLengthSucceed):
+        (tests.nonArrayRefArrayLengthFail):
+        (tests.constexprIsNotLValuePtr):
+        (tests.constexprIsNotLValueAssign):
+        (tests.constexprIsNotLValueRMW):
+        (tests.assignLength):
+        (tests.assignLengthHelper):
+        (tests.simpleGetter):
+        (tests.simpleSetter):
+        (tests.genericAccessors):
+        (tests.bitSubscriptAccessor):
+        (tests.nestedSubscriptLValueEmulationSimple):
+        (tests.nestedSubscriptLValueEmulationGeneric):
+        (tests.boolBitAnd):
+        (tests.boolBitOr):
+        (tests.boolBitXor):
+        (tests.boolBitNot):
+        (tests.intBitAnd):
+        (tests.intBitOr):
+        (tests.intBitXor):
+        (tests.intBitNot):
+        (tests.intLShift):
+        (tests.intRShift):
+        (tests.uintBitAnd):
+        (tests.uintBitOr):
+        (tests.uintBitXor):
+        (tests.uintBitNot):
+        (tests.uintLShift):
+        (tests.uintRShift):
+        (tests.uint8BitAnd):
+        (tests.uint8BitOr):
+        (tests.uint8BitXor):
+        (tests.uint8BitNot):
+        (tests.uint8LShift):
+        (tests.uint8RShift):
+        (tests.floatMath):
+        (tests.genericCastInfer):
+        (tests.booleanMath):
+        (tests.typedefArray):
+        (tests.shaderTypes):
+        (tests.builtinVectors):
+        (tests.instantiateStructInStruct):
+        (tests.instantiateStructInStructWithInt2):
+        (tests.simpleEnum):
+        (tests.enumWithManualValues):
+        (tests.enumWithoutZero):
+        (tests.enumDuplicates):
+        (tests.enumWithSomeManualValues):
+        (tests.enumConstexprGenericFunction):
+        (tests.enumConstexprGenericStruct):
+        (tests.trap):
+        (tests.swizzle):
+        (tests.enumWithExplicitIntBase):
+        (tests.enumWithUintBase):
+        (tests.enumFloatBase):
+        (tests.enumPtrBase):
+        (tests.enumArrayRefBase):
+        (tests.emptyStruct):
+        (tests.enumStructBase):
+        (tests.enumNoMembers):
+        (tests.simpleSwitch):
+        (tests.exhaustiveUint8Switch):
+        (tests.notQuiteExhaustiveUint8Switch):
+        (tests.notQuiteExhaustiveUint8SwitchWithDefault):
+        (tests.switchFallThrough):
+        (tests.switchBreak):
+        (tests.enumSwitchBreakExhaustive):
+        (tests.enumSwitchBreakNotQuiteExhaustive):
+        (tests.enumSwitchBreakNotQuiteExhaustiveWithDefault):
+        (tests.simpleRecursiveStruct):
+        (tests.mutuallyRecursiveStruct):
+        (tests.mutuallyRecursiveStructWithPointersBroken):
+        (tests.mutuallyRecursiveStructWithPointers):
+        (tests.linkedList):
+        (tests.pointerToPointer):
+        (tests.arrayRefToArrayRef):
+        (tests.pointerGetter):
+        (tests.loneSetter):
+        (tests.setterWithMismatchedType):
+        (tests.setterWithMatchedType):
+        (tests.operatorWithUninferrableTypeVariable):
+        (tests.operatorWithoutUninferrableTypeVariable):
+        (tests.operatorCastWithUninferrableTypeVariable):
+        (tests.operatorCastWithTypeVariableInferredFromReturnType):
+        (tests.incWrongArgumentLength):
+        (tests.decWrongArgumentLength):
+        (tests.incWrongTypes):
+        (tests.decWrongTypes):
+        (tests.plusWrongArgumentLength):
+        (tests.minusWrongArgumentLength):
+        (tests.timesWrongArgumentLength):
+        (tests.divideWrongArgumentLength):
+        (tests.moduloWrongArgumentLength):
+        (tests.bitAndWrongArgumentLength):
+        (tests.bitOrWrongArgumentLength):
+        (tests.bitXorWrongArgumentLength):
+        (tests.lShiftWrongArgumentLength):
+        (tests.rShiftWrongArgumentLength):
+        (tests.bitNotWrongArgumentLength):
+        (tests.equalsWrongArgumentLength):
+        (tests.lessThanWrongArgumentLength):
+        (tests.lessEqualWrongArgumentLength):
+        (tests.greaterWrongArgumentLength):
+        (tests.greaterEqualWrongArgumentLength):
+        (tests.equalsWrongReturnType):
+        (tests.notEqualsOverload):
+        (tests.lessThanWrongReturnType):
+        (tests.lessEqualWrongReturnType):
+        (tests.greaterThanWrongReturnType):
+        (tests.greaterEqualWrongReturnType):
+        (tests.dotOperatorWrongArgumentLength):
+        (tests.dotOperatorSetterWrongArgumentLength):
+        (tests.loneSetterPointer):
+        (tests.setterWithNoGetterOverload):
+        (tests.setterWithNoGetterOverloadFixed):
+        (tests.anderWithNothingWrong):
+        (tests.anderWithWrongNumberOfArguments):
+        (tests.anderDoesntReturnPointer):
+        (tests.anderDoesntTakeReference):
+        (tests.anderWithArrayRef):
+        (tests.pointerIndexGetter):
+        (tests.loneIndexSetter):
+        (tests.notLoneIndexSetter):
+        (tests.indexSetterWithMismatchedType):
+        (tests.indexOperatorWrongArgumentLength):
+        (tests.indexOperatorSetterWrongArgumentLength):
+        (tests.loneIndexSetterPointer):
+        (tests.indexSetterWithNoGetterOverload):
+        (tests.indexSetterWithNoGetterOverloadFixed):
+        (tests.indexAnderWithNothingWrong):
+        (tests.indexAnderWithWrongNumberOfArguments):
+        (tests.indexAnderDoesntReturnPointer):
+        (tests.indexAnderDoesntTakeReference):
+        (tests.indexAnderWithArrayRef):
+        (tests.devicePtrPtr):
+        (tests.threadgroupPtrPtr):
+        (tests.constantPtrPtr):
+        (tests.pointerIndexGetterInProtocol):
+        (tests.loneIndexSetterInProtocol):
+        (tests.notLoneIndexSetterInProtocol):
+        (tests.indexSetterWithMismatchedTypeInProtocol):
+        (tests.indexOperatorWrongArgumentLengthInProtocol):
+        (tests.indexOperatorSetterWrongArgumentLengthInProtocol):
+        (tests.loneIndexSetterPointerInProtocol):
+        (tests.indexSetterWithNoGetterOverloadInProtocol):
+        (tests.indexSetterWithNoGetterOverloadFixedInProtocol):
+        (tests.indexAnderWithNothingWrongInProtocol):
+        (tests.indexAnderWithWrongNumberOfArgumentsInProtocol):
+        (tests.indexAnderDoesntReturnPointerInProtocol):
+        (tests.indexAnderDoesntTakeReferenceInProtocol):
+        (tests.indexAnderWithArrayRefInProtocol):
+        (doTest):
+        (this.window.let._.of.doTest):
+        (TEST_literalBool): Deleted.
+        (TEST_identityBool): Deleted.
+        (TEST_intSimpleMath): Deleted.
+        (TEST_uintSimpleMath): Deleted.
+        (TEST_uint8SimpleMath): Deleted.
+        (TEST_equality): Deleted.
+        (TEST_logicalNegation): Deleted.
+        (TEST_notEquality): Deleted.
+        (TEST_equalityTypeFailure): Deleted.
+        (): Deleted.
+        (TEST_add1): Deleted.
+        (TEST_simpleGeneric): Deleted.
+        (TEST_nameResolutionFailure): Deleted.
+        (TEST_simpleAssignment): Deleted.
+        (TEST_simpleDefault): Deleted.
+        (TEST_simpleDereference): Deleted.
+        (TEST_dereferenceStore): Deleted.
+        (TEST_simpleMakePtr): Deleted.
+        (TEST_threadArrayLoad): Deleted.
+        (TEST_threadArrayLoadIntLiteral): Deleted.
+        (TEST_deviceArrayLoad): Deleted.
+        (TEST_threadArrayStore): Deleted.
+        (TEST_deviceArrayStore): Deleted.
+        (TEST_deviceArrayStoreIntLiteral): Deleted.
+        (TEST_simpleProtocol): Deleted.
+        (TEST_typeMismatchReturn): Deleted.
+        (TEST_simpleNoReturn): Deleted.
+        (TEST_genericStructInstance): Deleted.
+        (TEST_doubleGenericCallsDoubleGeneric): Deleted.
+        (TEST_doubleGenericCallsSingleGeneric): Deleted.
+        (TEST_dereferenceDefaultNull): Deleted.
+        (TEST_dereferenceDefaultNullArrayRef): Deleted.
+        (TEST_returnIntLiteralDouble): Deleted.
+        (TEST_badIntLiteralForInt): Deleted.
+        (TEST_passNullAndNotNullFullPoly): Deleted.
+        (TEST_passNullAndNotNullFullPolyReverse): Deleted.
+        (TEST_nullTypeVariableUnify.recurse): Deleted.
+        (TEST_nullTypeVariableUnify.everyOrder): Deleted.
+        (TEST_nullTypeVariableUnify.everyPair): Deleted.
+        (TEST_nullTypeVariableUnify): Deleted.
+        (TEST_simpleRecursion): Deleted.
+        (TEST_protocolPolySigPolyDef): Deleted.
+        (TEST_protocolDoublePolySigDoublePolyDef): Deleted.
+        (TEST_protocolDoublePolySigDoublePolyDefExplicit): Deleted.
+        (TEST_variableShadowing): Deleted.
+        (TEST_ifStatement): Deleted.
+        (TEST_ifElseStatement): Deleted.
+        (TEST_ifElseIfStatement): Deleted.
+        (TEST_ifElseIfElseStatement): Deleted.
+        (TEST_returnIf): Deleted.
+        (TEST_simpleWhile): Deleted.
+        (TEST_protocolMonoPolySigDoublePolyDefExplicit): Deleted.
+        (TEST_intOverloadResolution): Deleted.
+        (TEST_intOverloadResolutionReverseOrder): Deleted.
+        (TEST_intOverloadResolutionGeneric): Deleted.
+        (TEST_intLiteralGeneric): Deleted.
+        (TEST_intLiteralGenericWithProtocols): Deleted.
+        (TEST_uintLiteralGeneric): Deleted.
+        (TEST_uintLiteralGenericWithProtocols): Deleted.
+        (TEST_intLiteralGenericSpecific): Deleted.
+        (TEST_simpleConstexpr): Deleted.
+        (TEST_break): Deleted.
+        (TEST_forLoop): Deleted.
+        (TEST_chainConstexpr): Deleted.
+        (TEST_chainGeneric): Deleted.
+        (TEST_chainStruct): Deleted.
+        (TEST_chainStructNewlyValid): Deleted.
+        (TEST_chainStructDevice): Deleted.
+        (TEST_paramChainStructDevice): Deleted.
+        (TEST_simpleProtocolExtends): Deleted.
+        (TEST_protocolExtendsTwo): Deleted.
+        (TEST_prefixPlusPlus): Deleted.
+        (TEST_prefixPlusPlusResult): Deleted.
+        (TEST_postfixPlusPlus): Deleted.
+        (TEST_postfixPlusPlusResult): Deleted.
+        (TEST_prefixMinusMinus): Deleted.
+        (TEST_prefixMinusMinusResult): Deleted.
+        (TEST_postfixMinusMinus): Deleted.
+        (TEST_postfixMinusMinusResult): Deleted.
+        (TEST_plusEquals): Deleted.
+        (TEST_plusEqualsResult): Deleted.
+        (TEST_minusEquals): Deleted.
+        (TEST_minusEqualsResult): Deleted.
+        (TEST_timesEquals): Deleted.
+        (TEST_timesEqualsResult): Deleted.
+        (TEST_divideEquals): Deleted.
+        (TEST_divideEqualsResult): Deleted.
+        (TEST_twoIntLiterals): Deleted.
+        (TEST_unifyDifferentLiterals): Deleted.
+        (TEST_buildArrayThenSumItUsingArrayReference): Deleted.
+        (TEST_overrideSubscriptStruct): Deleted.
+        (TEST_overrideSubscriptStructAndDoStores): Deleted.
+        (TEST_overrideSubscriptStructAndUsePointers): Deleted.
+        (TEST_overrideSubscriptStructAndUsePointersIncorrectly): Deleted.
+        (TEST_makeArrayRefFromPointer): Deleted.
+        (TEST_makeArrayRefFromArrayRef): Deleted.
+        (TEST_nonArrayRefArrayLengthSucceed): Deleted.
+        (TEST_nonArrayRefArrayLengthFail): Deleted.
+        (TEST_simpleSetter): Deleted.
+        (TEST_genericAccessors): Deleted.
+        (TEST_bitSubscriptAccessor): Deleted.
+        (TEST_nestedSubscriptLValueEmulationSimple): Deleted.
+        (TEST_nestedSubscriptLValueEmulationGeneric): Deleted.
+        (TEST_boolBitAnd): Deleted.
+        (TEST_boolBitOr): Deleted.
+        (TEST_boolBitXor): Deleted.
+        (TEST_boolBitNot): Deleted.
+        (TEST_intBitAnd): Deleted.
+        (TEST_intBitOr): Deleted.
+        (TEST_intBitXor): Deleted.
+        (TEST_intBitNot): Deleted.
+        (TEST_intLShift): Deleted.
+        (TEST_intRShift): Deleted.
+        (TEST_uintBitAnd): Deleted.
+        (TEST_uintBitOr): Deleted.
+        (TEST_uintBitXor): Deleted.
+        (TEST_uintBitNot): Deleted.
+        (TEST_uintLShift): Deleted.
+        (TEST_uintRShift): Deleted.
+        (TEST_uint8BitAnd): Deleted.
+        (TEST_uint8BitOr): Deleted.
+        (TEST_uint8BitXor): Deleted.
+        (TEST_uint8BitNot): Deleted.
+        (TEST_uint8LShift): Deleted.
+        (TEST_uint8RShift): Deleted.
+        (TEST_floatMath): Deleted.
+        (TEST_booleanMath): Deleted.
+        (TEST_typedefArray): Deleted.
+        (TEST_shaderTypes): Deleted.
+        (TEST_instantiateStructInStruct): Deleted.
+        (TEST_instantiateStructInStructWithInt2): Deleted.
+        (TEST_simpleEnum): Deleted.
+        (TEST_enumWithManualValues): Deleted.
+        (TEST_enumWithoutZero): Deleted.
+        (TEST_enumConstexprGenericFunction): Deleted.
+        (TEST_enumConstexprGenericStruct): Deleted.
+        (TEST_trap): Deleted.
+        (TEST_enumWithExplicitIntBase): Deleted.
+        (TEST_enumWithUintBase): Deleted.
+        (TEST_enumFloatBase): Deleted.
+        (TEST_enumStructBase): Deleted.
+        (TEST_simpleSwitch): Deleted.
+        (TEST_exhaustiveUint8Switch): Deleted.
+        (TEST_notQuiteExhaustiveUint8Switch): Deleted.
+        (TEST_switchFallThrough): Deleted.
+        (TEST_switchBreak): Deleted.
+        (TEST_enumSwitchBreakExhaustive): Deleted.
+        (TEST_enumSwitchBreakNotQuiteExhaustive): Deleted.
+        (TEST_simpleRecursiveStruct): Deleted.
+        (TEST_linkedList): Deleted.
+        * WebGPUShadingLanguageRI/Type.js:
+        (Type.prototype.get isArray):
+        * WebGPUShadingLanguageRI/TypeRef.js:
+        (TypeRef.wrap):
+        * WebGPUShadingLanguageRI/TypeVariableTracker.js:
+        (TypeVariableTracker.prototype.set get return):
+        (TypeVariableTracker.prototype.visitVariableRef):
+        (TypeVariableTracker):
+        * WebGPUShadingLanguageRI/Visitor.js:
+        (Visitor.prototype.visitProtocolDecl):
+        * WebGPUShadingLanguageRI/index.html:
+
 2017-09-22  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r222394.

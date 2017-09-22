@@ -139,7 +139,7 @@ class NameResolver extends Visitor {
         this.visitFunc(node);
         let funcs = this._nameContext.get(Func, node.name);
         if (!funcs)
-            throw new WTypeError(node.origin.originString, "Cannot find any functions named " + node.na,e);
+            throw new WTypeError(node.origin.originString, "Cannot find any functions named " + node.name);
         node.possibleOverloads = funcs;
     }
     
@@ -226,7 +226,7 @@ class NameResolver extends Visitor {
         if (node.initializer)
             node.initializer.visit(this);
     }
-    
+
     visitVariableRef(node)
     {
         if (node.variable)

@@ -127,7 +127,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native typedef float<>",
+            "native typedef float32<>",
             type => {
                 this.float = type;
                 type.isPrimitive = true;
@@ -143,7 +143,7 @@ class Intrinsics {
             });
 
         this._map.set(
-            "native typedef double<>",
+            "native typedef float64<>",
             type => {
                 this.double = type;
                 type.isPrimitive = true;
@@ -168,49 +168,121 @@ class Intrinsics {
             });
         
         this._map.set(
-            "native operator int32<>(uint32)",
+            "native operator<> int32(uint32)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
             });
         
         this._map.set(
-            "native operator int32<>(uint8)",
+            "native operator<> int32(uint8)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
             });
         
         this._map.set(
-            "native operator uint32<>(int32)",
+            "native operator<> int32(float)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
+            });
+        
+        this._map.set(
+            "native operator<> int32(double)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() | 0);
+            });
+        
+        this._map.set(
+            "native operator<> uint32(int32)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
             });
         
         this._map.set(
-            "native operator uint32<>(uint8)",
+            "native operator<> uint32(uint8)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
             });
         
         this._map.set(
-            "native operator uint8<>(int32)",
+            "native operator<> uint32(float)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+            });
+        
+        this._map.set(
+            "native operator<> uint32(double)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() >>> 0);
+            });
+        
+        this._map.set(
+            "native operator<> uint8(int32)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
             });
         
         this._map.set(
-            "native operator uint8<>(uint32)",
+            "native operator<> uint8(uint32)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
             });
         
         this._map.set(
-            "native operator float<>(double)",
+            "native operator<> uint8(float)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
+            });
+        
+        this._map.set(
+            "native operator<> uint8(double)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue() & 0xff);
+            });
+        
+        this._map.set(
+            "native operator<> float(double)",
             func => {
                 func.implementation = ([value]) => EPtr.box(Math.fround(value.loadValue()));
             });
         
         this._map.set(
-            "native operator double<>(float)",
+            "native operator<> float(int32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(Math.fround(value.loadValue()));
+            });
+        
+        this._map.set(
+            "native operator<> float(uint32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(Math.fround(value.loadValue()));
+            });
+        
+        this._map.set(
+            "native operator<> float(uint8)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(Math.fround(value.loadValue()));
+            });
+        
+        this._map.set(
+            "native operator<> double(float)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue());
+            });
+        
+        this._map.set(
+            "native operator<> double(int32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue());
+            });
+        
+        this._map.set(
+            "native operator<> double(uint32)",
+            func => {
+                func.implementation = ([value]) => EPtr.box(value.loadValue());
+            });
+        
+        this._map.set(
+            "native operator<> double(uint8)",
             func => {
                 func.implementation = ([value]) => EPtr.box(value.loadValue());
             });
@@ -567,7 +639,7 @@ class Intrinsics {
                         index = index.loadValue();
                         if (index > ref.length)
                             throw new WTrapError(node.origin.originString, "Array index " + index + " is out of bounds of " + ref);
-                        return EPtr.box(ref.ptr.plus(index * node.actualTypeArguments[0].size));
+                        return EPtr.box(ref.ptr.plus(index * node.instantiatedActualTypeArguments[0].size));
                     };
                 });
 

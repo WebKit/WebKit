@@ -38,8 +38,8 @@ class Evaluator extends Visitor {
     _snapshot(type, dstPtr, srcPtr)
     {
         let size = type.size;
-        if (!size)
-            throw new Error("Cannot get size of type: " + type);
+        if (size == null)
+            throw new Error("Cannot get size of type: " + type + " (size = " + size + ", constructor = " + type.constructor.name + ")");
         if (!dstPtr)
             dstPtr = new EPtr(new EBuffer(size), 0);
         dstPtr.copyFrom(srcPtr, size);
@@ -64,8 +64,10 @@ class Evaluator extends Visitor {
         } catch (e) {
             if (e == BreakException || e == ContinueException)
                 throw new Error("Should not see break/continue at function scope");
-            if (e instanceof ReturnException)
-                return this._snapshot(type, ptr, e.value);
+            if (e instanceof ReturnException) {
+                let result = this._snapshot(type, ptr, e.value);
+                return result;
+            }
             throw e;
         }
     }
@@ -77,7 +79,8 @@ class Evaluator extends Visitor {
                 node.argumentList[i].visit(this),
                 node.parameters[i].type.size);
         }
-        return this._runBody(node.returnType, node.returnEPtr, node.body);
+        let result = this._runBody(node.returnType, node.returnEPtr, node.body);
+        return result;
     }
     
     visitReturn(node)
@@ -311,7 +314,10 @@ class Evaluator extends Visitor {
             let argumentValue = argument.visit(this);
             if (!argumentValue)
                 throw new Error("Null argument value, i = " + i + ", node = " + node);
-            callArguments.push(() => this._snapshot(type, null, argumentValue));
+            callArguments.push(() => {
+                let result = this._snapshot(type, null, argumentValue);
+                return result;
+            });
         }
         
         // For simplicity, we allow intrinsics to just allocate new buffers, and we allocate new

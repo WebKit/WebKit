@@ -27,10 +27,11 @@
 class StatementCloner extends Rewriter {
     visitFuncDef(node)
     {
+        let typeParameters = node.typeParameters.map(typeParameter => typeParameter.visit(this));
         let result = new FuncDef(
             node.origin, node.name,
             node.returnType.visit(this),
-            node.typeParameters.map(typeParameter => typeParameter.visit(this)),
+            typeParameters,
             node.parameters.map(parameter => parameter.visit(this)),
             node.body.visit(this),
             node.isCast, node.shaderType);

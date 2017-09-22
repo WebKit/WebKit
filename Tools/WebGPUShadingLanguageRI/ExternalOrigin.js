@@ -24,39 +24,7 @@
  */
 "use strict";
 
-class Type extends Node {
-    get typeParameters() { return []; }
-    get kind() { return Type; }
-    get isPtr() { return false; }
-    get isArray() { return false; }
-    get isArrayRef() { return false; }
-    get isRef() { return this.isPtr || this.isArrayRef; }
-    get isNumber() { return false; }
-    get isInt() { return false; }
-    get isFloating() { return false; }
-    get isPrimitive() { return false; }
-    
-    inherits(protocol)
-    {
-        if (!protocol)
-            return {result: true};
-        return protocol.hasHeir(this);
-    }
-    
-    get instantiatedType() { return this.visit(new InstantiateImmediates()); }
-    
-    // Have to call these on the unifyNode.
-    argumentForAndOverload(origin, value)
-    {
-        return new MakePtrExpression(origin, value);
-    }
-    argumentTypeForAndOverload(origin)
-    {
-        return new PtrType(origin, "thread", this);
-    }
-    returnTypeFromAndOverload(origin)
-    {
-        throw new WTypeError(origin.originString, "By-pointer overload returned non-pointer type: " + this);
-    }
-}
-
+const externalOrigin = {
+    originString: "<external>",
+    originKind: "user"
+};

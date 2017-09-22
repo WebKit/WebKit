@@ -45,7 +45,8 @@ class CallExpression extends Expression {
     static resolve(origin, possibleOverloads, typeParametersInScope, name, typeArguments, argumentList, argumentTypes, returnType)
     {
         let call = new CallExpression(origin, name, typeArguments, argumentList);
-        call.argumentTypes = argumentTypes;
+        call.argumentTypes = argumentTypes.map(argument => argument.visit(new AutoWrapper()));
+        call.possibleOverloads = possibleOverloads;
         if (returnType)
             call.setCastData(returnType);
         return {call, resultType: call.resolve(possibleOverloads, typeParametersInScope, typeArguments)};
@@ -78,7 +79,7 @@ class CallExpression extends Expression {
                 possibleOverloads, this.typeArguments, this.argumentTypes, this.returnType);
             if (!overload.func) {
                 failures.push(...overload.failures);
-                let message = "Did not find function for call with ";
+                let message = "Did not find function named " + this.name + " for call with ";
                 if (this.typeArguments.length)
                     message += "type arguments <" + this.typeArguments + "> and ";
                 message += "argument types (" + this.argumentTypes + ")";
@@ -112,6 +113,7 @@ class CallExpression extends Expression {
     {
         this.func = overload.func;
         this.actualTypeArguments = overload.typeArguments.map(typeArgument => typeArgument instanceof Type ? typeArgument.visit(new AutoWrapper()) : typeArgument);
+        this.instantiatedActualTypeArguments = this.actualTypeArguments;
         let result = overload.func.returnType.substituteToUnification(
             overload.func.typeParameters, overload.unificationContext);
         if (!result)

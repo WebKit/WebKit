@@ -297,8 +297,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             addressSpaceConsumed = true;
             if (addressSpace)
                 return addressSpace;
-            addressSpace = consume(...addressSpaces);
-            return addressSpace;
+            return consume(...addressSpaces).text;
         }
         
         while (token = tryConsume("^", "[")) {

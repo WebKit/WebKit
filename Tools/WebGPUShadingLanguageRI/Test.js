@@ -58,14 +58,6 @@ function makeInt(program, value)
     return TypedValue.box(program.intrinsics.int32, value);
 }
 
-function checkNumber(program, result, expected)
-{
-    if (!result.type.isNumber)
-        throw new Error("Wrong result type; result: " + result);
-    if (result.value != expected)
-        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
-}
-
 function makeUint(program, value)
 {
     return TypedValue.box(program.intrinsics.uint32, value);
@@ -107,7 +99,7 @@ function checkNumber(program, result, expected)
     if (!result.type.unifyNode.isNumber)
         throw new Error("Wrong result type; result: " + result);
     if (result.value != expected)
-        throw new Error("Wrong result: " + result + " (expected " + expected + ")");
+        throw new Error("Wrong result: " + result.value + " (expected " + expected + ")");
 }
 
 function checkInt(program, result, expected)
@@ -189,18 +181,31 @@ function checkFail(callback, predicate)
     }
 }
 
-function TEST_literalBool() {
+let tests;
+let okToTest = false;
+
+tests = new Proxy({}, {
+    set(target, property, value, receiver)
+    {
+        if (property in target)
+            throw new Error("Trying to declare duplicate test: " + property);
+        target[property] = value;
+        return true;
+    }
+});
+
+tests.literalBool = function() {
     let program = doPrep("bool foo() { return true; }");
     checkBool(program, callFunction(program, "foo", [], []), true);
 }
 
-function TEST_identityBool() {
+tests.identityBool = function() {
     let program = doPrep("bool foo(bool x) { return x; }");
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), true);
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
 }
 
-function TEST_intSimpleMath() {
+tests.intSimpleMath = function() {
     let program = doPrep("int foo(int x, int y) { return x + y; }");
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, 5)]), 12);
     program = doPrep("int foo(int x, int y) { return x - y; }");
@@ -214,7 +219,7 @@ function TEST_intSimpleMath() {
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7), makeInt(program, -2)]), -3);
 }
 
-function TEST_uintSimpleMath() {
+tests.uintSimpleMath = function() {
     let program = doPrep("uint foo(uint x, uint y) { return x + y; }");
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), 12);
     program = doPrep("uint foo(uint x, uint y) { return x - y; }");
@@ -226,7 +231,7 @@ function TEST_uintSimpleMath() {
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 2)]), 3);
 }
 
-function TEST_uint8SimpleMath() {
+tests.uint8SimpleMath = function() {
     let program = doPrep("uint8 foo(uint8 x, uint8 y) { return x + y; }");
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 5)]), 12);
     program = doPrep("uint8 foo(uint8 x, uint8 y) { return x - y; }");
@@ -238,7 +243,7 @@ function TEST_uint8SimpleMath() {
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 7), makeUint8(program, 2)]), 3);
 }
 
-function TEST_equality() {
+tests.equality = function() {
     let program = doPrep("bool foo(uint x, uint y) { return x == y; }");
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), true);
@@ -255,14 +260,14 @@ function TEST_equality() {
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
 }
 
-function TEST_logicalNegation()
+tests.logicalNegation = function()
 {
     let program = doPrep("bool foo(bool x) { return !x; }");
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), true);
 }
 
-function TEST_notEquality() {
+tests.notEquality = function() {
     let program = doPrep("bool foo(uint x, uint y) { return x != y; }");
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 5)]), true);
     checkBool(program, callFunction(program, "foo", [], [makeUint(program, 7), makeUint(program, 7)]), false);
@@ -279,26 +284,26 @@ function TEST_notEquality() {
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
 }
 
-function TEST_equalityTypeFailure()
+tests.equalityTypeFailure = function()
 {
     checkFail(
         () => doPrep("bool foo(int x, uint y) { return x == y; }"),
         (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
-function TEST_generalNegation()
+tests.generalNegation = function()
 {
     let program = doPrep("bool foo(int x) { return !x; }");
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 7)]), false);
     checkBool(program, callFunction(program, "foo", [], [makeInt(program, 0)]), true);
 }
 
-function TEST_add1() {
+tests.add1 = function() {
     let program = doPrep("int foo(int x) { return x + 1; }");
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
-function TEST_simpleGeneric() {
+tests.simpleGeneric = function() {
     let program = doPrep(`
         T id<T>(T x) { return x; }
         int foo(int x) { return id(x) + 1; }
@@ -306,14 +311,14 @@ function TEST_simpleGeneric() {
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 43);
 }
 
-function TEST_nameResolutionFailure()
+tests.nameResolutionFailure = function()
 {
     checkFail(
         () => doPrep("int foo(int x) { return x + y; }"),
         (e) => e instanceof WTypeError && e.message.indexOf("/internal/test:1") != -1);
 }
 
-function TEST_simpleVariable()
+tests.simpleVariable = function()
 {
     let program = doPrep(`
         int foo(int p)
@@ -325,7 +330,7 @@ function TEST_simpleVariable()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
-function TEST_simpleAssignment()
+tests.simpleAssignment = function()
 {
     let program = doPrep(`
         int foo(int p)
@@ -338,7 +343,7 @@ function TEST_simpleAssignment()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 42)]), 42);
 }
 
-function TEST_simpleDefault()
+tests.simpleDefault = function()
 {
     let program = doPrep(`
         int foo()
@@ -350,7 +355,7 @@ function TEST_simpleDefault()
     checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
-function TEST_simpleDereference()
+tests.simpleDereference = function()
 {
     let program = doPrep(`
         int foo(device int^ p)
@@ -360,10 +365,10 @@ function TEST_simpleDereference()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
 }
 
-function TEST_dereferenceStore()
+tests.dereferenceStore = function()
 {
     let program = doPrep(`
         void foo(device int^ p)
@@ -373,12 +378,12 @@ function TEST_dereferenceStore()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]);
+    callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]);
     if (buffer.get(0) != 52)
         throw new Error("Expected buffer to contain 52 but it contains: " + buffer.get(0));
 }
 
-function TEST_simpleMakePtr()
+tests.simpleMakePtr = function()
 {
     let program = doPrep(`
         thread int^ foo()
@@ -399,7 +404,7 @@ function TEST_simpleMakePtr()
         throw new Error("Expected 42 but got: " + value);
 }
 
-function TEST_threadArrayLoad()
+tests.threadArrayLoad = function()
 {
     let program = doPrep(`
         int foo(thread int[] array)
@@ -409,11 +414,11 @@ function TEST_threadArrayLoad()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
-function TEST_threadArrayLoadIntLiteral()
+tests.threadArrayLoadIntLiteral = function()
 {
     let program = doPrep(`
         int foo(thread int[] array)
@@ -423,11 +428,11 @@ function TEST_threadArrayLoadIntLiteral()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
-function TEST_deviceArrayLoad()
+tests.deviceArrayLoad = function()
 {
     let program = doPrep(`
         int foo(device int[] array)
@@ -437,11 +442,11 @@ function TEST_deviceArrayLoad()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 89);
-    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(null, "device", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
+    let result = callFunction(program, "foo", [], [TypedValue.box(new ArrayRefType(externalOrigin, "device", program.intrinsics.int32), new EArrayRef(new EPtr(buffer, 0), 1))]);
     checkInt(program, result, 89);
 }
 
-function TEST_threadArrayStore()
+tests.threadArrayStore = function()
 {
     let program = doPrep(`
         void foo(thread int[] array, int value)
@@ -452,7 +457,7 @@ function TEST_threadArrayStore()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(null, "thread", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "thread", program.intrinsics.int32),
         new EArrayRef(new EPtr(buffer, 0), 1));
     callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
@@ -462,7 +467,7 @@ function TEST_threadArrayStore()
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
 
-function TEST_deviceArrayStore()
+tests.deviceArrayStore = function()
 {
     let program = doPrep(`
         void foo(device int[] array, int value)
@@ -473,7 +478,7 @@ function TEST_deviceArrayStore()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(null, "device", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "device", program.intrinsics.int32),
         new EArrayRef(new EPtr(buffer, 0), 1));
     callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
@@ -483,7 +488,7 @@ function TEST_deviceArrayStore()
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
 
-function TEST_deviceArrayStoreIntLiteral()
+tests.deviceArrayStoreIntLiteral = function()
 {
     let program = doPrep(`
         void foo(device int[] array, int value)
@@ -494,7 +499,7 @@ function TEST_deviceArrayStoreIntLiteral()
     let buffer = new EBuffer(1);
     buffer.set(0, 15);
     let arrayRef = TypedValue.box(
-        new ArrayRefType(null, "device", program.intrinsics.int32),
+        new ArrayRefType(externalOrigin, "device", program.intrinsics.int32),
         new EArrayRef(new EPtr(buffer, 0), 1));
     callFunction(program, "foo", [], [arrayRef, makeInt(program, 65)]);
     if (buffer.get(0) != 65)
@@ -504,7 +509,7 @@ function TEST_deviceArrayStoreIntLiteral()
         throw new Error("Bad value stored into buffer (expected -111): " + buffer.get(0));
 }
 
-function TEST_simpleProtocol()
+tests.simpleProtocol = function()
 {
     let program = doPrep(`
         protocol MyAddable {
@@ -522,7 +527,7 @@ function TEST_simpleProtocol()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 45)]), 45 + 73);
 }
 
-function TEST_typeMismatchReturn()
+tests.typeMismatchReturn = function()
 {
     checkFail(
         () => doPrep(`
@@ -534,7 +539,7 @@ function TEST_typeMismatchReturn()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_typeMismatchVariableDecl()
+tests.typeMismatchVariableDecl = function()
 {
     checkFail(
         () => doPrep(`
@@ -546,7 +551,7 @@ function TEST_typeMismatchVariableDecl()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_typeMismatchAssignment()
+tests.typeMismatchAssignment = function()
 {
     checkFail(
         () => doPrep(`
@@ -559,7 +564,7 @@ function TEST_typeMismatchAssignment()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_typeMismatchReturnParam()
+tests.typeMismatchReturnParam = function()
 {
     checkFail(
         () => doPrep(`
@@ -571,7 +576,7 @@ function TEST_typeMismatchReturnParam()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_badAdd()
+tests.badAdd = function()
 {
     checkFail(
         () => doPrep(`
@@ -584,7 +589,7 @@ function TEST_badAdd()
         (e) => e instanceof WTypeError && e.message.indexOf("native int32 operator+<>(int32,int32)") != -1);
 }
 
-function TEST_lexerKeyword()
+tests.lexerKeyword = function()
 {
     let result = doLex("ident for while 123 123u { } {asd asd{ 1a3 1.2 + 3.4 + 1. + .2 1.2d 0.d .3d && ||");
     if (result.length != 25)
@@ -616,14 +621,14 @@ function TEST_lexerKeyword()
     checkLexerToken(result[24], 79, "punctuation",   "||");
 }
 
-function TEST_simpleNoReturn()
+tests.simpleNoReturn = function()
 {
     checkFail(
         () => doPrep("int foo() { }"),
         (e) => e instanceof WTypeError);
 }
 
-function TEST_simpleUnreachableCode()
+tests.simpleUnreachableCode = function()
 {
     checkFail(
         () => doPrep(`
@@ -636,7 +641,7 @@ function TEST_simpleUnreachableCode()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_simpleStruct()
+tests.simpleStruct = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -668,7 +673,7 @@ function TEST_simpleStruct()
         throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
 }
 
-function TEST_genericStructInstance()
+tests.genericStructInstance = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -696,7 +701,7 @@ function TEST_genericStructInstance()
         throw new Error("Wrong result for y: " + y + " (x + " + x + ")");
 }
 
-function TEST_doubleGenericCallsDoubleGeneric()
+tests.doubleGenericCallsDoubleGeneric = function()
 {
     doPrep(`
         void foo<T, U>(T, U) { }
@@ -704,7 +709,7 @@ function TEST_doubleGenericCallsDoubleGeneric()
     `);
 }
 
-function TEST_doubleGenericCallsSingleGeneric()
+tests.doubleGenericCallsSingleGeneric = function()
 {
     checkFail(
         () => doPrep(`
@@ -714,7 +719,7 @@ function TEST_doubleGenericCallsSingleGeneric()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_loadNull()
+tests.loadNull = function()
 {
     checkFail(
         () => doPrep(`
@@ -724,7 +729,7 @@ function TEST_loadNull()
         (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
 }
 
-function TEST_storeNull()
+tests.storeNull = function()
 {
     checkFail(
         () => doPrep(`
@@ -733,7 +738,7 @@ function TEST_storeNull()
         (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
 }
 
-function TEST_returnNull()
+tests.returnNull = function()
 {
     let program = doPrep(`
         thread int^ foo() { return null; }
@@ -747,7 +752,7 @@ function TEST_returnNull()
         throw new Error("Return value is not null: " + result.value);
 }
 
-function TEST_dereferenceDefaultNull()
+tests.dereferenceDefaultNull = function()
 {
     let program = doPrep(`
         int foo()
@@ -761,7 +766,7 @@ function TEST_dereferenceDefaultNull()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_defaultInitializedNull()
+tests.defaultInitializedNull = function()
 {
     let program = doPrep(`
         int foo()
@@ -775,7 +780,7 @@ function TEST_defaultInitializedNull()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_passNullToPtrMonomorphic()
+tests.passNullToPtrMonomorphic = function()
 {
     let program = doPrep(`
         int foo(thread int^ ptr)
@@ -792,7 +797,7 @@ function TEST_passNullToPtrMonomorphic()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_passNullToPtrPolymorphic()
+tests.passNullToPtrPolymorphic = function()
 {
     checkFail(
         () => doPrep(`
@@ -808,7 +813,7 @@ function TEST_passNullToPtrPolymorphic()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_passNullToPolymorphic()
+tests.passNullToPolymorphic = function()
 {
     checkFail(
         () => doPrep(`
@@ -824,17 +829,17 @@ function TEST_passNullToPolymorphic()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_loadNullArrayRef()
+tests.loadNullArrayRef = function()
 {
     checkFail(
         () => doPrep(`
             void sink<T>(T) { }
             void foo() { sink(null[0u]); }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("Did not find function for call") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("Cannot resolve access") != -1);
 }
 
-function TEST_storeNullArrayRef()
+tests.storeNullArrayRef = function()
 {
     checkFail(
         () => doPrep(`
@@ -843,7 +848,7 @@ function TEST_storeNullArrayRef()
         (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
 }
 
-function TEST_returnNullArrayRef()
+tests.returnNullArrayRef = function()
 {
     let program = doPrep(`
         thread int[] foo() { return null; }
@@ -857,7 +862,7 @@ function TEST_returnNullArrayRef()
         throw new Error("Return value is not null: " + result.value);
 }
 
-function TEST_dereferenceDefaultNullArrayRef()
+tests.dereferenceDefaultNullArrayRef = function()
 {
     let program = doPrep(`
         int foo()
@@ -871,7 +876,7 @@ function TEST_dereferenceDefaultNullArrayRef()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_defaultInitializedNullArrayRef()
+tests.defaultInitializedNullArrayRef = function()
 {
     let program = doPrep(`
         int foo()
@@ -885,7 +890,7 @@ function TEST_defaultInitializedNullArrayRef()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_defaultInitializedNullArrayRefIntLiteral()
+tests.defaultInitializedNullArrayRefIntLiteral = function()
 {
     let program = doPrep(`
         int foo()
@@ -899,7 +904,7 @@ function TEST_defaultInitializedNullArrayRefIntLiteral()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_passNullToPtrMonomorphicArrayRef()
+tests.passNullToPtrMonomorphicArrayRef = function()
 {
     let program = doPrep(`
         int foo(thread int[] ptr)
@@ -916,7 +921,7 @@ function TEST_passNullToPtrMonomorphicArrayRef()
         (e) => e instanceof WTrapError);
 }
 
-function TEST_passNullToPtrPolymorphicArrayRef()
+tests.passNullToPtrPolymorphicArrayRef = function()
 {
     checkFail(
         () => doPrep(`
@@ -932,40 +937,40 @@ function TEST_passNullToPtrPolymorphicArrayRef()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_returnIntLiteralUint()
+tests.returnIntLiteralUint = function()
 {
     let program = doPrep("uint foo() { return 42; }");
     checkNumber(program, callFunction(program, "foo", [], []), 42);
 }
 
-function TEST_returnIntLiteralDouble()
+tests.returnIntLiteralDouble = function()
 {
     let program = doPrep("double foo() { return 42; }");
     checkNumber(program, callFunction(program, "foo", [], []), 42);
 }
 
-function TEST_badIntLiteralForInt()
+tests.badIntLiteralForInt = function()
 {
     checkFail(
         () => doPrep("void foo() { int x = 3000000000; }"),
         (e) => e instanceof WSyntaxError);
 }
 
-function TEST_badIntLiteralForUint()
+tests.badIntLiteralForUint = function()
 {
     checkFail(
         () => doPrep("void foo() { uint x = 5000000000; }"),
         (e) => e instanceof WSyntaxError);
 }
 
-function TEST_badIntLiteralForDouble()
+tests.badIntLiteralForDouble = function()
 {
     checkFail(
         () => doPrep("void foo() { double x = 5000000000000000000000000000000000000; }"),
         (e) => e instanceof WSyntaxError);
 }
 
-function TEST_passNullAndNotNull()
+tests.passNullAndNotNull = function()
 {
     let program = doPrep(`
         T bar<T>(device T^ p, device T^)
@@ -979,10 +984,10 @@ function TEST_passNullAndNotNull()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
 }
 
-function TEST_passNullAndNotNullFullPoly()
+tests.passNullAndNotNullFullPoly = function()
 {
     let program = doPrep(`
         T bar<T>(T p, T)
@@ -996,10 +1001,10 @@ function TEST_passNullAndNotNullFullPoly()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
 }
 
-function TEST_passNullAndNotNullFullPolyReverse()
+tests.passNullAndNotNullFullPolyReverse = function()
 {
     let program = doPrep(`
         T bar<T>(T, T p)
@@ -1013,13 +1018,13 @@ function TEST_passNullAndNotNullFullPolyReverse()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 13);
-    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
+    checkInt(program, callFunction(program, "foo", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 13);
 }
 
-function TEST_nullTypeVariableUnify()
+tests.nullTypeVariableUnify = function()
 {
-    let left = new NullType(null);
-    let right = new TypeVariable(null, "T", null);
+    let left = new NullType(externalOrigin);
+    let right = new TypeVariable(externalOrigin, "T", null);
     if (left.equals(right))
         throw new Error("Should not be equal but are: " + left + " and " + right);
     if (right.equals(left))
@@ -1058,9 +1063,9 @@ function TEST_nullTypeVariableUnify()
         everyPair(["nullType", "variableType", "ptrType"]),
         order => {
             let types = {};
-            types.nullType = new NullType(null);
-            types.variableType = new TypeVariable(null, "T", null);
-            types.ptrType = new PtrType(null, "constant", new NativeType(null, "foo_t", []));
+            types.nullType = new NullType(externalOrigin);
+            types.variableType = new TypeVariable(externalOrigin, "T", null);
+            types.ptrType = new PtrType(externalOrigin, "constant", new NativeType(externalOrigin, "foo_t", []));
             let unificationContext = new UnificationContext([types.variableType]);
             for (let [leftName, rightName] of order) {
                 let left = types[leftName];
@@ -1074,7 +1079,7 @@ function TEST_nullTypeVariableUnify()
         });
 }
 
-function TEST_doubleNot()
+tests.doubleNot = function()
 {
     let program = doPrep(`
         bool foo(bool x)
@@ -1086,7 +1091,7 @@ function TEST_doubleNot()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, false)]), false);
 }
 
-function TEST_simpleRecursion()
+tests.simpleRecursion = function()
 {
     checkFail(
         () => doPrep(`
@@ -1098,7 +1103,7 @@ function TEST_simpleRecursion()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_protocolMonoSigPolyDef()
+tests.protocolMonoSigPolyDef = function()
 {
     let program = doPrep(`
         struct IntAnd<T> {
@@ -1124,7 +1129,7 @@ function TEST_protocolMonoSigPolyDef()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
 }
 
-function TEST_protocolPolySigPolyDef()
+tests.protocolPolySigPolyDef = function()
 {
     let program = doPrep(`
         struct IntAnd<T> {
@@ -1150,7 +1155,7 @@ function TEST_protocolPolySigPolyDef()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12)]), 54 + 12);
 }
 
-function TEST_protocolDoublePolySigDoublePolyDef()
+tests.protocolDoublePolySigDoublePolyDef = function()
 {
     let program = doPrep(`
         struct IntAnd<T, U> {
@@ -1178,7 +1183,7 @@ function TEST_protocolDoublePolySigDoublePolyDef()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
 }
 
-function TEST_protocolDoublePolySigDoublePolyDefExplicit()
+tests.protocolDoublePolySigDoublePolyDefExplicit = function()
 {
     let program = doPrep(`
         struct IntAnd<T, U> {
@@ -1206,7 +1211,7 @@ function TEST_protocolDoublePolySigDoublePolyDefExplicit()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 54), makeInt(program, 12), makeInt(program, 39)]), 54 + 12 + 39);
 }
 
-function TEST_variableShadowing()
+tests.variableShadowing = function()
 {
     let program = doPrep(`
         int foo()
@@ -1236,7 +1241,7 @@ function TEST_variableShadowing()
     checkInt(program, callFunction(program, "foo", [], []), 7);
 }
 
-function TEST_ifStatement()
+tests.ifStatement = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1257,7 +1262,7 @@ function TEST_ifStatement()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
 }
 
-function TEST_ifElseStatement()
+tests.ifElseStatement = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1280,7 +1285,7 @@ function TEST_ifElseStatement()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 9);
 }
 
-function TEST_ifElseIfStatement()
+tests.ifElseIfStatement = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1303,7 +1308,7 @@ function TEST_ifElseIfStatement()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 6);
 }
 
-function TEST_ifElseIfElseStatement()
+tests.ifElseIfElseStatement = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1328,7 +1333,7 @@ function TEST_ifElseIfElseStatement()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 10);
 }
 
-function TEST_returnIf()
+tests.returnIf = function()
 {
     checkFail(
         () => doPrep(`
@@ -1443,7 +1448,7 @@ function TEST_returnIf()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 6);
 }
 
-function TEST_simpleWhile()
+tests.simpleWhile = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1456,7 +1461,7 @@ function TEST_simpleWhile()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 1)]), 16);
 }
 
-function TEST_protocolMonoPolySigDoublePolyDefExplicit()
+tests.protocolMonoPolySigDoublePolyDefExplicit = function()
 {
     checkFail(
         () => {
@@ -1488,7 +1493,7 @@ function TEST_protocolMonoPolySigDoublePolyDefExplicit()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_ambiguousOverloadSimple()
+tests.ambiguousOverloadSimple = function()
 {
     checkFail(
         () => doPrep(`
@@ -1499,7 +1504,7 @@ function TEST_ambiguousOverloadSimple()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_ambiguousOverloadOverlapping()
+tests.ambiguousOverloadOverlapping = function()
 {
     checkFail(
         () => doPrep(`
@@ -1510,7 +1515,7 @@ function TEST_ambiguousOverloadOverlapping()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_ambiguousOverloadTieBreak()
+tests.ambiguousOverloadTieBreak = function()
 {
     doPrep(`
         void foo<T>(int, T) { }
@@ -1520,7 +1525,7 @@ function TEST_ambiguousOverloadTieBreak()
     `);
 }
 
-function TEST_intOverloadResolution()
+tests.intOverloadResolution = function()
 {
     let program = doPrep(`
         int foo(int) { return 1; }
@@ -1531,7 +1536,7 @@ function TEST_intOverloadResolution()
     checkInt(program, callFunction(program, "bar", [], []), 1);
 }
 
-function TEST_intOverloadResolutionReverseOrder()
+tests.intOverloadResolutionReverseOrder = function()
 {
     let program = doPrep(`
         int foo(double) { return 3; }
@@ -1542,7 +1547,7 @@ function TEST_intOverloadResolutionReverseOrder()
     checkInt(program, callFunction(program, "bar", [], []), 1);
 }
 
-function TEST_intOverloadResolutionGeneric()
+tests.intOverloadResolutionGeneric = function()
 {
     let program = doPrep(`
         int foo(int) { return 1; }
@@ -1552,7 +1557,7 @@ function TEST_intOverloadResolutionGeneric()
     checkInt(program, callFunction(program, "bar", [], []), 1);
 }
 
-function TEST_intLiteralGeneric()
+tests.intLiteralGeneric = function()
 {
     let program = doPrep(`
         int foo<T>(T x) { return 3478; }
@@ -1561,7 +1566,7 @@ function TEST_intLiteralGeneric()
     checkInt(program, callFunction(program, "bar", [], []), 3478);
 }
 
-function TEST_intLiteralGenericWithProtocols()
+tests.intLiteralGenericWithProtocols = function()
 {
     let program = doPrep(`
         protocol MyConvertibleToInt {
@@ -1573,7 +1578,7 @@ function TEST_intLiteralGenericWithProtocols()
     checkInt(program, callFunction(program, "bar", [], []), 42);
 }
 
-function TEST_uintLiteralGeneric()
+tests.uintLiteralGeneric = function()
 {
     let program = doPrep(`
         int foo<T>(T x) { return 3478; }
@@ -1582,7 +1587,7 @@ function TEST_uintLiteralGeneric()
     checkInt(program, callFunction(program, "bar", [], []), 3478);
 }
 
-function TEST_uintLiteralGenericWithProtocols()
+tests.uintLiteralGenericWithProtocols = function()
 {
     let program = doPrep(`
         protocol MyConvertibleToUint {
@@ -1594,7 +1599,7 @@ function TEST_uintLiteralGenericWithProtocols()
     checkUint(program, callFunction(program, "bar", [], []), 42);
 }
 
-function TEST_intLiteralGenericSpecific()
+tests.intLiteralGenericSpecific = function()
 {
     let program = doPrep(`
         T foo<T>(T x) { return x; }
@@ -1603,7 +1608,7 @@ function TEST_intLiteralGenericSpecific()
     checkInt(program, callFunction(program, "bar", [], []), 42);
 }
 
-function TEST_simpleConstexpr()
+tests.simpleConstexpr = function()
 {
     let program = doPrep(`
         int foo<int a>(int b)
@@ -1618,7 +1623,7 @@ function TEST_simpleConstexpr()
     checkInt(program, callFunction(program, "bar", [], [makeInt(program, 58)]), 58 + 42);
 }
 
-function TEST_break()
+tests.break = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1719,7 +1724,7 @@ function TEST_break()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_continue()
+tests.continue = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1747,7 +1752,7 @@ function TEST_continue()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_doWhile()
+tests.doWhile = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1792,7 +1797,7 @@ function TEST_doWhile()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 9)]), 19);
 }
 
-function TEST_forLoop()
+tests.forLoop = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -1971,7 +1976,7 @@ function TEST_forLoop()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 7)]), 7);
 }
 
-function TEST_chainConstexpr()
+tests.chainConstexpr = function()
 {
     let program = doPrep(`
         int foo<int a>(int b)
@@ -1990,7 +1995,7 @@ function TEST_chainConstexpr()
     checkInt(program, callFunction(program, "baz", [], [makeInt(program, 58)]), 58 + 42);
 }
 
-function TEST_chainGeneric()
+tests.chainGeneric = function()
 {
     let program = doPrep(`
         T foo<T>(T x)
@@ -2009,7 +2014,7 @@ function TEST_chainGeneric()
     checkInt(program, callFunction(program, "baz", [], [makeInt(program, 37)]), 37);
 }
 
-function TEST_chainStruct()
+tests.chainStruct = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -2032,7 +2037,7 @@ function TEST_chainStruct()
     checkInt(program, callFunction(program, "bar", [], [makeInt(program, 4657)]), 4657);
 }
 
-function TEST_chainStructNewlyValid()
+tests.chainStructNewlyValid = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -2054,10 +2059,10 @@ function TEST_chainStructNewlyValid()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 78453);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 78453);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 78453);
 }
 
-function TEST_chainStructDevice()
+tests.chainStructDevice = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -2079,10 +2084,10 @@ function TEST_chainStructDevice()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 79201);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
 }
 
-function TEST_paramChainStructDevice()
+tests.paramChainStructDevice = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -2104,10 +2109,10 @@ function TEST_paramChainStructDevice()
     `);
     let buffer = new EBuffer(1);
     buffer.set(0, 79201);
-    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(null, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
+    checkInt(program, callFunction(program, "bar", [], [TypedValue.box(new PtrType(externalOrigin, "device", program.intrinsics.int32), new EPtr(buffer, 0))]), 79201);
 }
 
-function TEST_simpleProtocolExtends()
+tests.simpleProtocolExtends = function()
 {
     let program = doPrep(`
         protocol Foo {
@@ -2142,7 +2147,7 @@ function TEST_simpleProtocolExtends()
     checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91);
 }
 
-function TEST_protocolExtendsTwo()
+tests.protocolExtendsTwo = function()
 {
     let program = doPrep(`
         protocol Foo {
@@ -2189,7 +2194,7 @@ function TEST_protocolExtendsTwo()
     checkInt(program, callFunction(program, "thingy", [], [makeInt(program, 642)]), 642 + 743 + 91 + 39);
 }
 
-function TEST_prefixPlusPlus()
+tests.prefixPlusPlus = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2201,7 +2206,7 @@ function TEST_prefixPlusPlus()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
 }
 
-function TEST_prefixPlusPlusResult()
+tests.prefixPlusPlusResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2212,7 +2217,7 @@ function TEST_prefixPlusPlusResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
 }
 
-function TEST_postfixPlusPlus()
+tests.postfixPlusPlus = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2224,7 +2229,7 @@ function TEST_postfixPlusPlus()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 65);
 }
 
-function TEST_postfixPlusPlusResult()
+tests.postfixPlusPlusResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2235,7 +2240,7 @@ function TEST_postfixPlusPlusResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
 }
 
-function TEST_prefixMinusMinus()
+tests.prefixMinusMinus = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2247,7 +2252,7 @@ function TEST_prefixMinusMinus()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
 }
 
-function TEST_prefixMinusMinusResult()
+tests.prefixMinusMinusResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2258,7 +2263,7 @@ function TEST_prefixMinusMinusResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
 }
 
-function TEST_postfixMinusMinus()
+tests.postfixMinusMinus = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2270,7 +2275,7 @@ function TEST_postfixMinusMinus()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 63);
 }
 
-function TEST_postfixMinusMinusResult()
+tests.postfixMinusMinusResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2281,7 +2286,7 @@ function TEST_postfixMinusMinusResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 64)]), 64);
 }
 
-function TEST_plusEquals()
+tests.plusEquals = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2293,7 +2298,7 @@ function TEST_plusEquals()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
 }
 
-function TEST_plusEqualsResult()
+tests.plusEqualsResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2304,7 +2309,7 @@ function TEST_plusEqualsResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 + 42);
 }
 
-function TEST_minusEquals()
+tests.minusEquals = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2316,7 +2321,7 @@ function TEST_minusEquals()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
 }
 
-function TEST_minusEqualsResult()
+tests.minusEqualsResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2327,7 +2332,7 @@ function TEST_minusEqualsResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 - 42);
 }
 
-function TEST_timesEquals()
+tests.timesEquals = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2339,7 +2344,7 @@ function TEST_timesEquals()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
 }
 
-function TEST_timesEqualsResult()
+tests.timesEqualsResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2350,7 +2355,7 @@ function TEST_timesEqualsResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), 385 * 42);
 }
 
-function TEST_divideEquals()
+tests.divideEquals = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2362,7 +2367,7 @@ function TEST_divideEquals()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
 }
 
-function TEST_divideEqualsResult()
+tests.divideEqualsResult = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -2373,7 +2378,7 @@ function TEST_divideEqualsResult()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 385)]), (385 / 42) | 0);
 }
 
-function TEST_twoIntLiterals()
+tests.twoIntLiterals = function()
 {
     let program = doPrep(`
         bool foo()
@@ -2384,7 +2389,7 @@ function TEST_twoIntLiterals()
     checkBool(program, callFunction(program, "foo", [], []), true);
 }
 
-function TEST_unifyDifferentLiterals()
+tests.unifyDifferentLiterals = function()
 {
     checkFail(
         () => doPrep(`
@@ -2399,7 +2404,7 @@ function TEST_unifyDifferentLiterals()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_unifyDifferentLiteralsBackwards()
+tests.unifyDifferentLiteralsBackwards = function()
 {
     checkFail(
         () => doPrep(`
@@ -2414,7 +2419,7 @@ function TEST_unifyDifferentLiteralsBackwards()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_unifyVeryDifferentLiterals()
+tests.unifyVeryDifferentLiterals = function()
 {
     checkFail(
         () => doPrep(`
@@ -2429,7 +2434,7 @@ function TEST_unifyVeryDifferentLiterals()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_unifyVeryDifferentLiteralsBackwards()
+tests.unifyVeryDifferentLiteralsBackwards = function()
 {
     checkFail(
         () => doPrep(`
@@ -2444,7 +2449,7 @@ function TEST_unifyVeryDifferentLiteralsBackwards()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_assignUintToInt()
+tests.assignUintToInt = function()
 {
     checkFail(
         () => doPrep(`
@@ -2456,7 +2461,7 @@ function TEST_assignUintToInt()
         (e) => e instanceof WTypeError && e.message.indexOf("Type mismatch in variable initialization") != -1);
 }
 
-function TEST_buildArrayThenSumIt()
+tests.buildArrayThenSumIt = function()
 {
     let program = doPrep(`
         int foo()
@@ -2473,7 +2478,7 @@ function TEST_buildArrayThenSumIt()
     checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
 }
 
-function TEST_buildArrayThenSumItUsingArrayReference()
+tests.buildArrayThenSumItUsingArrayReference = function()
 {
     let program = doPrep(`
         int bar(thread int[] array)
@@ -2494,7 +2499,7 @@ function TEST_buildArrayThenSumItUsingArrayReference()
     checkInt(program, callFunction(program, "foo", [], []), 42 * 5 + 42 * 41 / 2);
 }
 
-function TEST_overrideSubscriptStruct()
+tests.overrideSubscriptStruct = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -2520,7 +2525,7 @@ function TEST_overrideSubscriptStruct()
     checkInt(program, callFunction(program, "foo", [], []), 498 + 19 * 3);
 }
 
-function TEST_overrideSubscriptStructAndDoStores()
+tests.overrideSubscriptStructAndDoStores = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -2546,7 +2551,7 @@ function TEST_overrideSubscriptStructAndDoStores()
     checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
 }
 
-function TEST_overrideSubscriptStructAndUsePointers()
+tests.overrideSubscriptStructAndUsePointers = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -2576,7 +2581,7 @@ function TEST_overrideSubscriptStructAndUsePointers()
     checkInt(program, callFunction(program, "foo", [], []), 498 + 19);
 }
 
-function TEST_overrideSubscriptStructAndUsePointersIncorrectly()
+tests.overrideSubscriptStructAndUsePointersIncorrectly = function()
 {
     checkFail(
         () => doPrep(`
@@ -2607,7 +2612,7 @@ function TEST_overrideSubscriptStructAndUsePointersIncorrectly()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_makeArrayRefFromLocal()
+tests.makeArrayRefFromLocal = function()
 {
     let program = doPrep(`
         int bar(thread int[] ref)
@@ -2623,7 +2628,7 @@ function TEST_makeArrayRefFromLocal()
     checkInt(program, callFunction(program, "foo", [], []), 48);
 }
 
-function TEST_makeArrayRefFromPointer()
+tests.makeArrayRefFromPointer = function()
 {
     let program = doPrep(`
         int bar(thread int[] ref)
@@ -2643,7 +2648,7 @@ function TEST_makeArrayRefFromPointer()
     checkInt(program, callFunction(program, "foo", [], []), 48);
 }
 
-function TEST_makeArrayRefFromArrayRef()
+tests.makeArrayRefFromArrayRef = function()
 {
     checkFail(
         () => doPrep(`
@@ -2664,7 +2669,7 @@ function TEST_makeArrayRefFromArrayRef()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_simpleLength()
+tests.simpleLength = function()
 {
     let program = doPrep(`
         uint foo()
@@ -2676,7 +2681,7 @@ function TEST_simpleLength()
     checkUint(program, callFunction(program, "foo", [], []), 754);
 }
 
-function TEST_nonArrayRefArrayLengthSucceed()
+tests.nonArrayRefArrayLengthSucceed = function()
 {
     let program = doPrep(`
         uint foo()
@@ -2688,7 +2693,7 @@ function TEST_nonArrayRefArrayLengthSucceed()
     checkUint(program, callFunction(program, "foo", [], []), 754);
 }
 
-function TEST_nonArrayRefArrayLengthFail()
+tests.nonArrayRefArrayLengthFail = function()
 {
     checkFail(
         () => doPrep(`
@@ -2701,7 +2706,7 @@ function TEST_nonArrayRefArrayLengthFail()
         e => e instanceof WTypeError);
 }
 
-function TEST_constexprIsNotLValuePtr()
+tests.constexprIsNotLValuePtr = function()
 {
     checkFail(
         () => doPrep(`
@@ -2713,7 +2718,7 @@ function TEST_constexprIsNotLValuePtr()
         e => e instanceof WTypeError);
 }
 
-function TEST_constexprIsNotLValueAssign()
+tests.constexprIsNotLValueAssign = function()
 {
     checkFail(
         () => doPrep(`
@@ -2725,7 +2730,7 @@ function TEST_constexprIsNotLValueAssign()
         e => e instanceof WTypeError);
 }
 
-function TEST_constexprIsNotLValueRMW()
+tests.constexprIsNotLValueRMW = function()
 {
     checkFail(
         () => doPrep(`
@@ -2737,7 +2742,7 @@ function TEST_constexprIsNotLValueRMW()
         e => e instanceof WTypeError);
 }
 
-function TEST_assignLength()
+tests.assignLength = function()
 {
     checkFail(
         () => doPrep(`
@@ -2750,7 +2755,7 @@ function TEST_assignLength()
         (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
 }
 
-function TEST_assignLengthHelper()
+tests.assignLengthHelper = function()
 {
     checkFail(
         () => doPrep(`
@@ -2767,7 +2772,7 @@ function TEST_assignLengthHelper()
         (e) => e instanceof WTypeError && e.message.indexOf("Cannot emit set because: Did not find any functions named operator.length=") != -1);
 }
 
-function TEST_simpleGetter()
+tests.simpleGetter = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -2787,7 +2792,7 @@ function TEST_simpleGetter()
     checkInt(program, callFunction(program, "foo", [], []), 7804);
 }
 
-function TEST_simpleSetter()
+tests.simpleSetter = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -2812,7 +2817,7 @@ function TEST_simpleSetter()
     checkInt(program, callFunction(program, "foo", [], []), 7804);
 }
 
-function TEST_genericAccessors()
+tests.genericAccessors = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -2901,7 +2906,7 @@ function TEST_genericAccessors()
     checkInt(program, callFunction(program, "testLValueEmulation", [], []), 1 + 2 + 3 * 5 + 4);
 }
 
-function TEST_bitSubscriptAccessor()
+tests.bitSubscriptAccessor = function()
 {
     let program = doPrep(`
         protocol MyBitmaskable : Equatable {
@@ -3041,7 +3046,7 @@ function TEST_bitSubscriptAccessor()
     checkInt(program, callFunction(program, "testCrazyLValueEmulation", [], []), 43696);
 }
 
-function TEST_nestedSubscriptLValueEmulationSimple()
+tests.nestedSubscriptLValueEmulationSimple = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -3145,7 +3150,7 @@ function TEST_nestedSubscriptLValueEmulationSimple()
     checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
 }
 
-function TEST_nestedSubscriptLValueEmulationGeneric()
+tests.nestedSubscriptLValueEmulationGeneric = function()
 {
     let program = doPrep(`
         struct Foo<T> {
@@ -3256,7 +3261,7 @@ function TEST_nestedSubscriptLValueEmulationGeneric()
     checkInt(program, callFunction(program, "testSetValuesMutateValuesAndSum", [], []), 5565);
 }
 
-function TEST_boolBitAnd()
+tests.boolBitAnd = function()
 {
     let program = doPrep(`
         bool foo(bool a, bool b)
@@ -3270,7 +3275,7 @@ function TEST_boolBitAnd()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
 }
 
-function TEST_boolBitOr()
+tests.boolBitOr = function()
 {
     let program = doPrep(`
         bool foo(bool a, bool b)
@@ -3284,7 +3289,7 @@ function TEST_boolBitOr()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), true);
 }
 
-function TEST_boolBitXor()
+tests.boolBitXor = function()
 {
     let program = doPrep(`
         bool foo(bool a, bool b)
@@ -3298,7 +3303,7 @@ function TEST_boolBitXor()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true), makeBool(program, true)]), false);
 }
 
-function TEST_boolBitNot()
+tests.boolBitNot = function()
 {
     let program = doPrep(`
         bool foo(bool a)
@@ -3310,7 +3315,7 @@ function TEST_boolBitNot()
     checkBool(program, callFunction(program, "foo", [], [makeBool(program, true)]), false);
 }
 
-function TEST_intBitAnd()
+tests.intBitAnd = function()
 {
     let program = doPrep(`
         int foo(int a, int b)
@@ -3324,7 +3329,7 @@ function TEST_intBitAnd()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 0);
 }
 
-function TEST_intBitOr()
+tests.intBitOr = function()
 {
     let program = doPrep(`
         int foo(int a, int b)
@@ -3338,7 +3343,7 @@ function TEST_intBitOr()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
 }
 
-function TEST_intBitXor()
+tests.intBitXor = function()
 {
     let program = doPrep(`
         int foo(int a, int b)
@@ -3352,7 +3357,7 @@ function TEST_intBitXor()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeInt(program, 85732)]), 85732);
 }
 
-function TEST_intBitNot()
+tests.intBitNot = function()
 {
     let program = doPrep(`
         int foo(int a)
@@ -3366,7 +3371,7 @@ function TEST_intBitNot()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), -1);
 }
 
-function TEST_intLShift()
+tests.intLShift = function()
 {
     let program = doPrep(`
         int foo(int a, uint b)
@@ -3380,7 +3385,7 @@ function TEST_intLShift()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_intRShift()
+tests.intRShift = function()
 {
     let program = doPrep(`
         int foo(int a, uint b)
@@ -3394,7 +3399,7 @@ function TEST_intRShift()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_uintBitAnd()
+tests.uintBitAnd = function()
 {
     let program = doPrep(`
         uint foo(uint a, uint b)
@@ -3408,7 +3413,7 @@ function TEST_uintBitAnd()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 0);
 }
 
-function TEST_uintBitOr()
+tests.uintBitOr = function()
 {
     let program = doPrep(`
         uint foo(uint a, uint b)
@@ -3422,7 +3427,7 @@ function TEST_uintBitOr()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
-function TEST_uintBitXor()
+tests.uintBitXor = function()
 {
     let program = doPrep(`
         uint foo(uint a, uint b)
@@ -3436,7 +3441,7 @@ function TEST_uintBitXor()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 85732)]), 85732);
 }
 
-function TEST_uintBitNot()
+tests.uintBitNot = function()
 {
     let program = doPrep(`
         uint foo(uint a)
@@ -3450,7 +3455,7 @@ function TEST_uintBitNot()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0)]), 4294967295);
 }
 
-function TEST_uintLShift()
+tests.uintLShift = function()
 {
     let program = doPrep(`
         uint foo(uint a, uint b)
@@ -3464,7 +3469,7 @@ function TEST_uintLShift()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_uintRShift()
+tests.uintRShift = function()
 {
     let program = doPrep(`
         uint foo(uint a, uint b)
@@ -3478,7 +3483,7 @@ function TEST_uintRShift()
     checkUint(program, callFunction(program, "foo", [], [makeUint(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_uint8BitAnd()
+tests.uint8BitAnd = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a, uint8 b)
@@ -3492,7 +3497,7 @@ function TEST_uint8BitAnd()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 0);
 }
 
-function TEST_uint8BitOr()
+tests.uint8BitOr = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a, uint8 b)
@@ -3506,7 +3511,7 @@ function TEST_uint8BitOr()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
 }
 
-function TEST_uint8BitXor()
+tests.uint8BitXor = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a, uint8 b)
@@ -3520,7 +3525,7 @@ function TEST_uint8BitXor()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint8(program, 85732)]), 228);
 }
 
-function TEST_uint8BitNot()
+tests.uint8BitNot = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a)
@@ -3534,7 +3539,7 @@ function TEST_uint8BitNot()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0)]), 255);
 }
 
-function TEST_uint8LShift()
+tests.uint8LShift = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a, uint b)
@@ -3548,7 +3553,7 @@ function TEST_uint8LShift()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_uint8RShift()
+tests.uint8RShift = function()
 {
     let program = doPrep(`
         uint8 foo(uint8 a, uint b)
@@ -3562,7 +3567,7 @@ function TEST_uint8RShift()
     checkUint8(program, callFunction(program, "foo", [], [makeUint8(program, 0), makeUint(program, 3)]), 0);
 }
 
-function TEST_floatMath()
+tests.floatMath = function()
 {
     let program = doPrep(`
         bool foo()
@@ -3750,7 +3755,7 @@ function TEST_floatMath()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_genericCastInfer()
+tests.genericCastInfer = function()
 {
     let program = doPrep(`
         struct Complex<T> {
@@ -3773,7 +3778,7 @@ function TEST_genericCastInfer()
     checkInt(program, callFunction(program, "foo", [], []), 3);
 }
 
-function TEST_booleanMath()
+tests.booleanMath = function()
 {
     let program = doPrep(`
         bool foo()
@@ -3819,7 +3824,7 @@ function TEST_booleanMath()
     checkBool(program, callFunction(program, "foo8", [], []), false);
 }
 
-function TEST_typedefArray()
+tests.typedefArray = function()
 {
     let program = doPrep(`
         typedef ArrayTypedef = int[2];
@@ -3832,7 +3837,7 @@ function TEST_typedefArray()
     checkInt(program, callFunction(program, "foo", [], []), 0);
 }
 
-function TEST_shaderTypes()
+tests.shaderTypes = function()
 {
     checkFail(
         () => doPrep(`
@@ -3963,7 +3968,7 @@ function TEST_shaderTypes()
         (e) => e instanceof WTypeError);
 }
 
-function TEST_builtinVectors()
+tests.builtinVectors = function()
 {
     let program = doPrep(`
         int foo()
@@ -4145,7 +4150,7 @@ function TEST_builtinVectors()
     checkBool(program, callFunction(program, "food6", [], []), false);
 }
 
-function TEST_instantiateStructInStruct()
+tests.instantiateStructInStruct = function()
 {
     let program = doPrep(`
         struct Bar<T> {
@@ -4165,7 +4170,7 @@ function TEST_instantiateStructInStruct()
     checkInt(program, callFunction(program, "foo", [], []), 43);
 }
 
-function TEST_instantiateStructInStructWithInt2()
+tests.instantiateStructInStructWithInt2 = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -4182,7 +4187,7 @@ function TEST_instantiateStructInStructWithInt2()
     checkInt(program, callFunction(program, "foo", [], []), 43);
 }
 
-function TEST_simpleEnum()
+tests.simpleEnum = function()
 {
     let program = doPrep(`
         enum Foo {
@@ -4332,7 +4337,7 @@ function TEST_simpleEnum()
     checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
 }
 
-function TEST_enumWithManualValues()
+tests.enumWithManualValues = function()
 {
     let program = doPrep(`
         enum Foo {
@@ -4364,7 +4369,7 @@ function TEST_enumWithManualValues()
     checkEnum(program, callFunction(program, "death", [], []), -42);
 }
 
-function TEST_enumWithoutZero()
+tests.enumWithoutZero = function()
 {
     checkFail(
         () => doPrep(`
@@ -4378,7 +4383,7 @@ function TEST_enumWithoutZero()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumDuplicates()
+tests.enumDuplicates = function()
 {
     checkFail(
         () => doPrep(`
@@ -4392,7 +4397,7 @@ function TEST_enumDuplicates()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumWithSomeManualValues()
+tests.enumWithSomeManualValues = function()
 {
     let program = doPrep(`
         enum Foo {
@@ -4424,7 +4429,7 @@ function TEST_enumWithSomeManualValues()
     checkEnum(program, callFunction(program, "death", [], []), 1);
 }
 
-function TEST_enumConstexprGenericFunction()
+tests.enumConstexprGenericFunction = function()
 {
     let program = doPrep(`
         enum Axis { X, Y }
@@ -4436,7 +4441,7 @@ function TEST_enumConstexprGenericFunction()
     checkInt(program, callFunction(program, "testY", [], []), 1);
 }
 
-function TEST_enumConstexprGenericStruct()
+tests.enumConstexprGenericStruct = function()
 {
     let program = doPrep(`
         enum Axis { X, Y }
@@ -4457,7 +4462,7 @@ function TEST_enumConstexprGenericStruct()
     checkInt(program, callFunction(program, "testY", [], []), 1);
 }
 
-function TEST_trap()
+tests.trap = function()
 {
     let program = doPrep(`
         int foo()
@@ -4491,7 +4496,7 @@ function TEST_trap()
         e => e instanceof WTrapError);
 }
 
-function TEST_swizzle()
+tests.swizzle = function()
 {
     let program = doPrep(`
         float foo() {
@@ -4516,7 +4521,7 @@ function TEST_swizzle()
     checkFloat(program, callFunction(program, "foo3", [], []), 4);
 }
 
-function TEST_enumWithExplicitIntBase()
+tests.enumWithExplicitIntBase = function()
 {
     let program = doPrep(`
         enum Foo : int {
@@ -4666,7 +4671,7 @@ function TEST_enumWithExplicitIntBase()
     checkEnum(program, callFunction(program, "intDeathBackwards", [], []), 3);
 }
 
-function TEST_enumWithUintBase()
+tests.enumWithUintBase = function()
 {
     let program = doPrep(`
         enum Foo : uint {
@@ -4816,7 +4821,7 @@ function TEST_enumWithUintBase()
     checkEnum(program, callFunction(program, "uintDeathBackwards", [], []), 3);
 }
 
-function TEST_enumFloatBase()
+tests.enumFloatBase = function()
 {
     checkFail(
         () => doPrep(`
@@ -4827,7 +4832,7 @@ function TEST_enumFloatBase()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumPtrBase()
+tests.enumPtrBase = function()
 {
     checkFail(
         () => doPrep(`
@@ -4838,7 +4843,7 @@ function TEST_enumPtrBase()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumArrayRefBase()
+tests.enumArrayRefBase = function()
 {
     checkFail(
         () => doPrep(`
@@ -4849,7 +4854,7 @@ function TEST_enumArrayRefBase()
         e => e instanceof WTypeError);
 }
 
-function TEST_emptyStruct()
+tests.emptyStruct = function()
 {
     let program = doPrep(`
         struct Thingy { }
@@ -4862,7 +4867,7 @@ function TEST_emptyStruct()
     checkInt(program, callFunction(program, "foo", [], []), 46);
 }
 
-function TEST_enumStructBase()
+tests.enumStructBase = function()
 {
     checkFail(
         () => doPrep(`
@@ -4874,7 +4879,7 @@ function TEST_enumStructBase()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumNoMembers()
+tests.enumNoMembers = function()
 {
     checkFail(
         () => doPrep(`
@@ -4883,7 +4888,7 @@ function TEST_enumNoMembers()
         e => e instanceof WTypeError);
 }
 
-function TEST_simpleSwitch()
+tests.simpleSwitch = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -4903,27 +4908,7 @@ function TEST_simpleSwitch()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
 }
 
-function TEST_simpleSwitch()
-{
-    let program = doPrep(`
-        int foo(int x)
-        {
-            switch (x) {
-            case 767:
-                return 27;
-            case 69:
-                return 7624;
-            default:
-                return 49;
-            }
-        }
-    `);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 767)]), 27);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 69)]), 7624);
-    checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
-}
-
-function TEST_exhaustiveUint8Switch()
+tests.exhaustiveUint8Switch = function()
 {
     let text = "double foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xff; ++i)
@@ -4934,7 +4919,7 @@ function TEST_exhaustiveUint8Switch()
         checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
 }
 
-function TEST_notQuiteExhaustiveUint8Switch()
+tests.notQuiteExhaustiveUint8Switch = function()
 {
     let text = "double foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
@@ -4943,7 +4928,7 @@ function TEST_notQuiteExhaustiveUint8Switch()
     checkFail(() => doPrep(text), e => e instanceof WTypeError);
 }
 
-function TEST_notQuiteExhaustiveUint8SwitchWithDefault()
+tests.notQuiteExhaustiveUint8SwitchWithDefault = function()
 {
     let text = "double foo(uint8 x) { switch (uint8(x)) {"
     for (let i = 0; i <= 0xfe; ++i)
@@ -4955,7 +4940,7 @@ function TEST_notQuiteExhaustiveUint8SwitchWithDefault()
         checkDouble(program, callFunction(program, "foo", [], [makeUint8(program, i)]), i * 1.5);
 }
 
-function TEST_switchFallThrough()
+tests.switchFallThrough = function()
 {
     // FIXME: This might become an error in future versions.
     // https://bugs.webkit.org/show_bug.cgi?id=177172
@@ -4979,7 +4964,7 @@ function TEST_switchFallThrough()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
 }
 
-function TEST_switchBreak()
+tests.switchBreak = function()
 {
     let program = doPrep(`
         int foo(int x)
@@ -5004,7 +4989,7 @@ function TEST_switchBreak()
     checkInt(program, callFunction(program, "foo", [], [makeInt(program, 0)]), 49);
 }
 
-function TEST_enumSwitchBreakExhaustive()
+tests.enumSwitchBreakExhaustive = function()
 {
     let program = doPrep(`
         enum Foo {
@@ -5032,7 +5017,7 @@ function TEST_enumSwitchBreakExhaustive()
     checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
 }
 
-function TEST_enumSwitchBreakNotQuiteExhaustive()
+tests.enumSwitchBreakNotQuiteExhaustive = function()
 {
     checkFail(
         () => doPrep(`
@@ -5059,7 +5044,7 @@ function TEST_enumSwitchBreakNotQuiteExhaustive()
         e => e instanceof WTypeError);
 }
 
-function TEST_enumSwitchBreakNotQuiteExhaustiveWithDefault()
+tests.enumSwitchBreakNotQuiteExhaustiveWithDefault = function()
 {
     let program = doPrep(`
         enum Foo {
@@ -5087,7 +5072,7 @@ function TEST_enumSwitchBreakNotQuiteExhaustiveWithDefault()
     checkInt(program, callFunction(program, "foo", [], [makeEnum(program, "Foo", "C")]), 49);
 }
 
-function TEST_simpleRecursiveStruct()
+tests.simpleRecursiveStruct = function()
 {
     checkFail(
         () => doPrep(`
@@ -5098,7 +5083,7 @@ function TEST_simpleRecursiveStruct()
         e => e instanceof WTypeError);
 }
 
-function TEST_mutuallyRecursiveStruct()
+tests.mutuallyRecursiveStruct = function()
 {
     checkFail(
         () => doPrep(`
@@ -5112,7 +5097,7 @@ function TEST_mutuallyRecursiveStruct()
         e => e instanceof WTypeError);
 }
 
-function TEST_mutuallyRecursiveStructWithPointersBroken()
+tests.mutuallyRecursiveStructWithPointersBroken = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -5137,7 +5122,7 @@ function TEST_mutuallyRecursiveStructWithPointersBroken()
         e => e instanceof WTrapError);
 }
 
-function TEST_mutuallyRecursiveStructWithPointers()
+tests.mutuallyRecursiveStructWithPointers = function()
 {
     let program = doPrep(`
         struct Foo {
@@ -5162,7 +5147,7 @@ function TEST_mutuallyRecursiveStructWithPointers()
     checkInt(program, callFunction(program, "foo", [], []), -511);
 }
 
-function TEST_linkedList()
+tests.linkedList = function()
 {
     let program = doPrep(`
         struct Node {
@@ -5183,12 +5168,1399 @@ function TEST_linkedList()
     checkInt(program, callFunction(program, "foo", [], []), 3);
 }
 
-let filter = /.*/; // run everything by default
+tests.pointerToPointer = function()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int x;
+            thread int^ p = &x;
+            thread int^^ pp = &p;
+            int^thread^thread qq = pp;
+            int result = 0;
+            x = 42;
+            ^p = 76;
+            result += x;
+            ^^pp = 39;
+            result += x;
+            ^^qq = 83;
+            result += x;
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 76 + 39 + 83);
+}
+
+tests.arrayRefToArrayRef = function()
+{
+    let program = doPrep(`
+        int foo()
+        {
+            int x;
+            thread int[] p = @x;
+            thread int[][] pp = @p;
+            int[]thread[]thread qq = pp;
+            int result = 0;
+            x = 42;
+            p[0] = 76;
+            result += x;
+            pp[0][0] = 39;
+            result += x;
+            qq[0][0] = 83;
+            result += x;
+            return result;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 76 + 39 + 83);
+}
+
+tests.pointerGetter = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator.foo(device int^)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator.foo(thread int^)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator.foo(threadgroup int^)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator.foo(constant int^)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.loneSetter = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator.foo=(int, int)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.setterWithMismatchedType = function()
+{
+    checkFail(
+        () => doPrep(`
+            double operator.foo(int)
+            {
+                return 5.43;
+            }
+            int operator.foo=(int, int)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.setterWithMatchedType = function()
+{
+    doPrep(`
+        int operator.foo(int)
+        {
+            return 5;
+        }
+        int operator.foo=(int, int)
+        {
+            return 543;
+        }
+    `);
+}
+
+tests.operatorWithUninferrableTypeVariable = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            Foo operator+<T>(Foo a, Foo b)
+            {
+                Foo result;
+                result.x = a.x + b.x;
+                return result;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.operatorWithoutUninferrableTypeVariable = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        Foo operator+(Foo a, Foo b)
+        {
+            Foo result;
+            result.x = a.x + b.x;
+            return result;
+        }
+        int foo()
+        {
+            Foo a;
+            a.x = 645;
+            Foo b;
+            b.x = -35;
+            return (a + b).x;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 645 - 35);
+}
+
+tests.operatorCastWithUninferrableTypeVariable = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            operator<T> Foo(int x)
+            {
+                Foo result;
+                result.x = x;
+                return result;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.operatorCastWithTypeVariableInferredFromReturnType = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        protocol Barable {
+            void bar(thread Barable^, int);
+        }
+        void bar(thread double^ result, int value)
+        {
+            ^result = double(value);
+        }
+        operator<T:Barable> T(Foo foo)
+        {
+            T result;
+            bar(&result, foo.x);
+            return result;
+        }
+        int foo()
+        {
+            Foo foo;
+            foo.x = 75;
+            double x = double(foo);
+            return int(x * 1.5);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 112);
+}
+
+tests.incWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator++() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator++(int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.decWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator--() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator--(int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.incWrongTypes = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator++(double) { return 32; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.decWrongTypes = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator--(double) { return 32; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.plusWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator+() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator+(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.minusWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator-() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator-(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.timesWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator*() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator*(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator*(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.divideWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator/() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator/(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator/(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.moduloWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator%() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator%(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator%(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.bitAndWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator&() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator&(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator&(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.bitOrWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator|() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator|(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator|(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.bitXorWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator^() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator^(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator^(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.lShiftWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator<<() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator<<(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator<<(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.rShiftWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator>>() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator>>(int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator>>(int, int, int) { return 76; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.bitNotWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator~() { return 32; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator~(int, int) { return 534; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.equalsWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            bool operator==() { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator==(int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator==(int, int, int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.lessThanWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            bool operator<() { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator<(int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator<(int, int, int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.lessEqualWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            bool operator<=() { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator<=(int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator<=(int, int, int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.greaterWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            bool operator>() { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator>(int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator>(int, int, int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.greaterEqualWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            bool operator>=() { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator>=(int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            bool operator>=(int, int, int) { return true; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.equalsWrongReturnType = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator==(int a, int b) { return a + b; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.notEqualsOverload = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            bool operator!=(Foo, Foo) { return true; }
+        `),
+        e => e instanceof WSyntaxError);
+}
+
+tests.lessThanWrongReturnType = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator<(int a, int b) { return a + b; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.lessEqualWrongReturnType = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator<=(int a, int b) { return a + b; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.greaterThanWrongReturnType = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator>(int a, int b) { return a + b; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.greaterEqualWrongReturnType = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator>=(int a, int b) { return a + b; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.dotOperatorWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator.foo() { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            int operator.foo(Foo, int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.dotOperatorSetterWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            Foo operator.foo=() { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            Foo operator.foo=(Foo) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            Foo operator.foo=(Foo, int, int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.loneSetterPointer = function()
+{
+    checkFail(
+        () => doPrep(`
+            thread int^ operator.foo=(thread int^ ptr, int)
+            {
+                return ptr;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.setterWithNoGetterOverload = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            struct Bar { }
+            int operator.foo(Foo)
+            {
+                return 534;
+            }
+            Bar operator.foo=(Bar, int)
+            {
+                return Bar();
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.setterWithNoGetterOverloadFixed = function()
+{
+    doPrep(`
+        struct Bar { }
+        int operator.foo(Bar)
+        {
+            return 534;
+        }
+        Bar operator.foo=(Bar, int)
+        {
+            return Bar();
+        }
+    `);
+}
+
+tests.anderWithNothingWrong = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        thread int^ operator&.foo(thread Foo^ foo)
+        {
+            return &foo->x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x = 13;
+            return x.foo;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 13);
+}
+
+tests.anderWithWrongNumberOfArguments = function()
+{
+    checkFail(
+        () => doPrep(`
+            thread int^ operator&.foo()
+            {
+                int x;
+                return &x;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            thread int^ operator&.foo(thread Foo^ foo, int blah)
+            {
+                return &foo->x;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.anderDoesntReturnPointer = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            int operator&.foo(thread Foo^ foo)
+            {
+                return foo->x;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.anderDoesntTakeReference = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            thread int^ operator&.foo(Foo foo)
+            {
+                return &foo.x;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.anderWithArrayRef = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        thread int^ operator&.foo(thread Foo[] foo)
+        {
+            return &foo[0].x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x = 13;
+            return (@x).foo;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 13);
+}
+
+tests.pointerIndexGetter = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator[](device int^, uint)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[](thread int^, uint)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[](threadgroup int^, uint)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[](constant int^, uint)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.loneIndexSetter = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator[]=(int, uint, int)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.notLoneIndexSetter = function()
+{
+    doPrep(`
+        int operator[](int, uint)
+        {
+            return 65;
+        }
+        int operator[]=(int, uint, int)
+        {
+            return 543;
+        }
+    `);
+}
+
+tests.indexSetterWithMismatchedType = function()
+{
+    checkFail(
+        () => doPrep(`
+            double operator[](int, uint)
+            {
+                return 5.43;
+            }
+            int operator[]=(int, uint, int)
+            {
+                return 543;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Setter and getter must agree on value type") != -1);
+}
+
+tests.indexOperatorWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator[]() { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[](int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[](int, int, int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.indexOperatorSetterWrongArgumentLength = function()
+{
+    checkFail(
+        () => doPrep(`
+            int operator[]=() { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[]=(int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[]=(int, int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            int operator[]=(int, int, int, int) { return 42; }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.loneIndexSetterPointer = function()
+{
+    checkFail(
+        () => doPrep(`
+            thread int^ operator[]=(thread int^ ptr, uint, int)
+            {
+                return ptr;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.indexSetterWithNoGetterOverload = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo { }
+            struct Bar { }
+            int operator[](Foo, uint)
+            {
+                return 534;
+            }
+            Bar operator[]=(Bar, uint, int)
+            {
+                return Bar();
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.indexSetterWithNoGetterOverloadFixed = function()
+{
+    doPrep(`
+        struct Bar { }
+        int operator[](Bar, uint)
+        {
+            return 534;
+        }
+        Bar operator[]=(Bar, uint, int)
+        {
+            return Bar();
+        }
+    `);
+}
+
+tests.indexAnderWithNothingWrong = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        thread int^ operator&[](thread Foo^ foo, uint)
+        {
+            return &foo->x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x = 13;
+            return x[666];
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 13);
+}
+
+tests.indexAnderWithWrongNumberOfArguments = function()
+{
+    checkFail(
+        () => doPrep(`
+            thread int^ operator&[]()
+            {
+                int x;
+                return &x;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            thread int^ operator&[](thread Foo^ foo)
+            {
+                return &foo->x;
+            }
+        `),
+        e => e instanceof WTypeError);
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            thread int^ operator&[](thread Foo^ foo, uint, uint)
+            {
+                return &foo->x;
+            }
+        `),
+        e => e instanceof WTypeError);
+}
+
+tests.indexAnderDoesntReturnPointer = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            int operator&[](thread Foo^ foo, uint)
+            {
+                return foo->x;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Return type of ander is not a pointer") != -1);
+}
+
+tests.indexAnderDoesntTakeReference = function()
+{
+    checkFail(
+        () => doPrep(`
+            struct Foo {
+                int x;
+            }
+            thread int^ operator&[](Foo foo, uint)
+            {
+                return &foo.x;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Parameter to ander is not a reference") != -1);
+}
+
+tests.indexAnderWithArrayRef = function()
+{
+    let program = doPrep(`
+        struct Foo {
+            int x;
+        }
+        thread int^ operator&[](thread Foo[] array, double index)
+        {
+            return &array[uint(index + 1)].x;
+        }
+        int foo()
+        {
+            Foo x;
+            x.x = 13;
+            return (@x)[double(-1)];
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 13);
+}
+
+tests.devicePtrPtr = function()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                device int^^ p;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ device^ device") != -1);
+}
+
+tests.threadgroupPtrPtr = function()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                threadgroup int^^ p;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ threadgroup^ threadgroup") != -1);
+}
+
+tests.constantPtrPtr = function()
+{
+    checkFail(
+        () => doPrep(`
+            void foo()
+            {
+                constant int^^ p;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ constant^ constant") != -1);
+}
+
+tests.pointerIndexGetterInProtocol = function()
+{
+    for (let addressSpace of addressSpaces) {
+        checkFail(
+            () => doPrep(`
+                protocol Foo {
+                    int operator[](${addressSpace} Foo^, uint);
+                }
+                struct Bar { }
+                int operator[](Bar, uint) { return 42; }
+            `),
+            e => e instanceof WTypeError && e.message.indexOf("Cannot have getter for pointer type") != -1);
+    }
+}
+
+tests.loneIndexSetterInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                Foo operator[]=(Foo, uint, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Every setter must have a matching getter") != -1);
+}
+
+tests.notLoneIndexSetterInProtocol = function()
+{
+    doPrep(`
+        protocol Foo {
+            int operator[](Foo, uint);
+            Foo operator[]=(Foo, uint, int);
+        }
+        struct Bar { }
+        int operator[](Bar, uint) { return 42; }
+        Bar operator[]=(Bar, uint, int) { return Bar(); }
+    `);
+}
+
+tests.indexSetterWithMismatchedTypeInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                double operator[](Foo, uint);
+                Foo operator[]=(Foo, uint, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Setter and getter must agree on value type") != -1);
+}
+
+tests.indexOperatorWrongArgumentLengthInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[]();
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[](Foo);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[](Foo, int, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
+}
+
+tests.indexOperatorSetterWrongArgumentLengthInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[]=();
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[]=(Foo);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[]=(Foo, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[]=(Foo, int, int, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters") != -1);
+}
+
+tests.loneIndexSetterPointerInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                thread int^ operator[]=(thread Foo^ ptr, uint, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Cannot have setter for pointer type") != -1);
+}
+
+tests.indexSetterWithNoGetterOverloadInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator[](int, Foo);
+                Foo operator[]=(Foo, uint, int);
+            }
+            struct Bar { }
+            int operator[](Bar, uint) { return 42; }
+            Bar operator[]=(Bar, uint, int) { return Bar(); }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Did not find function named operator[]= with arguments Foo,uint32") != -1);
+}
+
+tests.indexSetterWithNoGetterOverloadFixedInProtocol = function()
+{
+    doPrep(`
+        protocol Foo {
+            int operator[](Foo, uint);
+            Foo operator[]=(Foo, uint, int);
+        }
+        struct Bar { }
+        int operator[](Bar, uint) { return 42; }
+        Bar operator[]=(Bar, uint, int) { return Bar(); }
+    `);
+}
+
+tests.indexAnderWithNothingWrongInProtocol = function()
+{
+    let program = doPrep(`
+        protocol Foo {
+            thread int^ operator&[](thread Foo^ foo, uint);
+        }
+        int bar<T:Foo>(T x)
+        {
+            return x[42];
+        }
+        struct Bar { }
+        thread int^ operator&[](thread Bar^, uint)
+        {
+            int result = 1234;
+            return &result;
+        }
+        int foo()
+        {
+            return bar(Bar());
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 1234);
+}
+
+tests.indexAnderWithWrongNumberOfArgumentsInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                thread int^ operator&[]();
+            }
+            struct Bar { }
+            thread int^ operator&[](thread Bar^, uint)
+            {
+                int result = 1234;
+                return &result;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Protocol's type variable (Foo) not mentioned in signature") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                thread int^ operator&[](thread Foo^ foo);
+            }
+            struct Bar { }
+            thread int^ operator&[](thread Bar^, uint)
+            {
+                int result = 1234;
+                return &result;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters for operator&[]") != -1);
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                thread int^ operator&[](thread Foo^ foo, uint, uint);
+            }
+            struct Bar { }
+            thread int^ operator&[](thread Bar^, uint)
+            {
+                int result = 1234;
+                return &result;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Incorrect number of parameters for operator&[]") != -1);
+}
+
+tests.indexAnderDoesntReturnPointerInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                int operator&[](thread Foo^ foo, uint);
+            }
+            struct Bar { }
+            thread int^ operator&[](thread Bar^, uint)
+            {
+                int result = 1234;
+                return &result;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Return type of ander is not a pointer") != -1);
+}
+
+tests.indexAnderDoesntTakeReferenceInProtocol = function()
+{
+    checkFail(
+        () => doPrep(`
+            protocol Foo {
+                thread int^ operator&[](Foo foo, uint);
+            }
+            struct Bar { }
+            thread int^ operator&[](thread Bar^, uint)
+            {
+                int result = 1234;
+                return &result;
+            }
+        `),
+        e => e instanceof WTypeError && e.message.indexOf("Parameter to ander is not a reference") != -1);
+}
+
+tests.indexAnderWithArrayRefInProtocol = function()
+{
+    let program = doPrep(`
+        protocol Foo {
+            thread int^ operator&[](thread Foo[] array, double index);
+        }
+        int bar<T:Foo>(thread T[] x)
+        {
+            return x[1.5];
+        }
+        struct Bar { }
+        thread int^ operator&[](thread Bar[], double)
+        {
+            int result = 1234;
+            return &result;
+        }
+        int foo()
+        {
+            Bar x;
+            return bar(@x);
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 1234);
+}
+
+okToTest = true;
+
+let testFilter = /.*/; // run everything by default
 if (this["arguments"]) {
     for (let i = 0; i < arguments.length; i++) {
         switch (arguments[0]) {
         case "--filter":
-            filter = new RegExp(arguments[++i]);
+            testFilter = new RegExp(arguments[++i]);
             break;
         default:
             throw new Error("Unknown argument: ", arguments[i]);
@@ -5196,8 +6568,10 @@ if (this["arguments"]) {
     }
 }
 
-function* doTest(object)
+function* doTest(testFilter)
 {
+    if (!okToTest)
+        throw new Error("Test setup is incomplete.");
     let before = preciseTime();
     
     print("Compiling standard library...");
@@ -5206,14 +6580,14 @@ function* doTest(object)
     print("    OK!");
 
     let names = [];
-    for (let s in object)
+    for (let s in tests)
         names.push(s);
     names.sort();
     for (let s of names) {
-        if (s.startsWith("TEST_") && s.match(filter)) {
-            print(s + "...");
+        if (s.match(testFilter)) {
+            print("TEST: " + s + "...");
             yield;
-            object[s]();
+            tests[s]();
             print("    OK!");
         }
     }
@@ -5226,8 +6600,6 @@ function* doTest(object)
 
 if (!this.window) {
     Error.stackTraceLimit = Infinity;
-    for (let _ of doTest(this)) { }
+    for (let _ of doTest(testFilter)) { }
 }
-
-
 

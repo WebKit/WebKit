@@ -340,11 +340,14 @@ class Visitor {
             typeArgument.visit(this);
         for (let argument of node.argumentList)
             Node.visit(argument, this);
-        let actualTypeArguments = node.actualTypeArguments;
-        if (actualTypeArguments) {
-            for (let argument of actualTypeArguments)
-                argument.visit(this);
-        }
+        let handleTypeArguments = actualTypeArguments => {
+            if (actualTypeArguments) {
+                for (let argument of actualTypeArguments)
+                    argument.visit(this);
+            }
+        };
+        handleTypeArguments(node.actualTypeArguments);
+        handleTypeArguments(node.instantiatedActualTypeArguments);
         Node.visit(node.nativeFuncInstance, this);
         Node.visit(node.returnType, this);
         Node.visit(node.resultType, this);

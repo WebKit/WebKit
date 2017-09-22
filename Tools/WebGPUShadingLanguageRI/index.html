@@ -53,6 +53,7 @@
 <script src="EvaluationCommon.js"></script>
 <script src="Evaluator.js"></script>
 <script src="ExpressionFinder.js"></script>
+<script src="ExternalOrigin.js"></script>
 <script src="Field.js"></script>
 <script src="FindHighZombies.js"></script>
 <script src="FlattenProtocolExtends.js"></script>
@@ -391,11 +392,11 @@ function runShaders() {
         let argumentInfo = allArgumentInfos[index];
         let type = argumentInfo.type;
         switch (type) {
-        case "float":
+        case "float32":
             value = Math.fround(parseFloat(value));
             argumentInfo.ePtr.set(argumentInfo.offset, value);
             break;
-        case "double":
+        case "float64":
             value = parseFloat(value);
             break;
         case "int32":

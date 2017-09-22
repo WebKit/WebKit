@@ -60,13 +60,14 @@ class Func extends Node {
     
     toDeclString()
     {
-        let type = "";
+        let result = "";
         if (this.shaderType)
-            type = this.shaderType + " ";
-        let returnAndName = this.returnType + " " + this.name;
+            result += this.shaderType + " ";
         if (this.isCast)
-            returnAndName = "operator " + this.returnType;
-        return type + returnAndName + "<" + this.typeParameters + ">(" + this.parameters + ")";
+            result += "operator<" + this.typeParameters + "> " + this.returnType;
+        else
+            result += this.returnType + " " + this.name + "<" + this.typeParameters + ">";
+        return result + "(" + this.parameters + ")";
     }
     
     toString()

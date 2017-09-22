@@ -29,13 +29,15 @@ let prepare = (() => {
     return function(origin, lineNumberOffset, text) {
         if (!standardProgram) {
             standardProgram = new Program();
-            parse(standardProgram, "/internal/stdlib", "native", 72, standardLibrary);
+            let firstLineOfStandardLibrary = 28; // See StandardLibrary.js.
+            parse(standardProgram, "/internal/stdlib", "native", firstLineOfStandardLibrary - 1, standardLibrary);
         }
         
         let program = cloneProgram(standardProgram);
-        if (arguments.length)
+        if (arguments.length) {
             parse(program, origin, "user", lineNumberOffset, text);
-        program = programWithUnnecessaryThingsRemoved(program);
+            program = programWithUnnecessaryThingsRemoved(program);
+        }
         
         foldConstexprs(program);
         let nameResolver = createNameResolver(program);

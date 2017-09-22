@@ -76,10 +76,134 @@ class Checker extends Visitor {
         }
     }
 
+    _checkOperatorOverload(func, resolveFuncs)
+    {
+        if (Lexer.textIsIdentifier(func.name))
+            return; // Not operator!
+
+        if (!func.name.startsWith("operator"))
+            throw new Error("Bad operator overload name: " + func.name);
+        
+        let typeVariableTracker = new TypeVariableTracker();
+        for (let parameterType of func.parameterTypes)
+            parameterType.visit(typeVariableTracker);
+        Node.visit(func.returnTypeForOverloadResolution, typeVariableTracker);
+        for (let typeParameter of func.typeParameters) {
+            if (!typeVariableTracker.set.has(typeParameter))
+                throw new WTypeError(typeParameter.origin.originString, "Type parameter " + typeParameter + " to operator " + func.toDeclString() + " is not inferrable from value parameters");
+        }
+        
+        let checkGetter = (kind) => {
+            let numExpectedParameters = kind == "index" ? 2 : 1;
+            if (func.parameters.length != numExpectedParameters)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected " + numExpectedParameters + ", got " + func.parameters.length + ")");
+            if (func.parameterTypes[0].unifyNode.isPtr)
+                throw new WTypeError(func.origin.originString, "Cannot have getter for pointer type: " + func.parameterTypes[0]);
+        };
+        
+        let checkSetter = (kind) => {
+            let numExpectedParameters = kind == "index" ? 3 : 2;
+            if (func.parameters.length != numExpectedParameters)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected " + numExpectedParameters + ", got " + func.parameters.length + ")");
+            if (func.parameterTypes[0].unifyNode.isPtr)
+                throw new WTypeError(func.origin.originString, "Cannot have setter for pointer type: " + func.parameterTypes[0]);
+            if (!func.returnType.equals(func.parameterTypes[0]))
+                throw new WTypeError(func.origin.originString, "First parameter type and return type of setter must match (parameter was " + func.parameterTypes[0] + " but return was " + func.returnType + ")");
+            let valueType = func.parameterTypes[numExpectedParameters - 1];
+            let getterName = func.name.substr(0, func.name.length - 1);
+            let getterFuncs = resolveFuncs(getterName);
+            if (!getterFuncs)
+                throw new WTypeError(func.origin.originString, "Every setter must have a matching getter, but did not find any function named " + getterName + " to match " + func.name);
+            let argumentTypes = func.parameterTypes.slice(0, numExpectedParameters - 1);
+            let overload = resolveOverloadImpl(getterFuncs, [], argumentTypes, null);
+            if (!overload.func)
+                throw new WTypeError(func.origin.originString, "Did not find function named " + func.name + " with arguments " + argumentTypes + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
+            let resultType = overload.func.returnType.substituteToUnification(
+                overload.func.typeParameters, overload.unificationContext);
+            if (!resultType.equals(valueType))
+                throw new WTypeError(func.origin.originString, "Setter and getter must agree on value type (getter at " + overload.func.origin.originString + " says " + resultType + " while this setter says " + valueType + ")");
+        };
+        
+        let checkAnder = (kind) => {
+            let numExpectedParameters = kind == "index" ? 2 : 1;
+            if (func.parameters.length != numExpectedParameters)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected " + numExpectedParameters + ", got " + func.parameters.length + ")");
+            if (!func.returnType.unifyNode.isPtr)
+                throw new WTypeError(func.origin.originString, "Return type of ander is not a pointer: " + func.returnType);
+            if (!func.parameterTypes[0].unifyNode.isRef)
+                throw new WTypeError(func.origin.originString, "Parameter to ander is not a reference: " + func.parameterTypes[0]);
+        };
+        
+        switch (func.name) {
+        case "operator cast":
+            break;
+        case "operator++":
+        case "operator--":
+            if (func.parameters.length != 1)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected 1, got " + func.parameters.length + ")");
+            if (!func.parameterTypes[0].equals(func.returnType))
+                throw new WTypeError(func.origin.originString, "Parameter type and return type must match for " + func.name + " (parameter is " + func.parameterTypes[0] + " while return is " + func.returnType + ")");
+            break;
+        case "operator+":
+        case "operator-":
+            if (func.parameters.length != 1 && func.parameters.length != 2)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected 1 or 2, got " + func.parameters.length + ")");
+            break;
+        case "operator*":
+        case "operator/":
+        case "operator%":
+        case "operator&":
+        case "operator|":
+        case "operator^":
+        case "operator<<":
+        case "operator>>":
+            if (func.parameters.length != 2)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected 2, got " + func.parameters.length + ")");
+            break;
+        case "operator~":
+            if (func.parameters.length != 1)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected 1, got " + func.parameters.length + ")");
+            break;
+        case "operator==":
+        case "operator<":
+        case "operator<=":
+        case "operator>":
+        case "operator>=":
+            if (func.parameters.length != 2)
+                throw new WTypeError(func.origin.originString, "Incorrect number of parameters for " + func.name + " (expected 2, got " + func.parameters.length + ")");
+            if (!func.returnType.equals(this._program.intrinsics.bool))
+                throw new WTypeError(func.origin.originString, "Return type of " + func.name + " must be bool but was " + func.returnType);
+            break;
+        case "operator[]":
+            checkGetter("index");
+            break;
+        case "operator[]=":
+            checkSetter("index");
+            break;
+        case "operator&[]":
+            checkAnder("index");
+            break;
+        default:
+            if (func.name.startsWith("operator.")) {
+                if (func.name.endsWith("="))
+                    checkSetter("dot");
+                else
+                    checkGetter("dot");
+                break;
+            }
+            if (func.name.startsWith("operator&.")) {
+                checkAnder("dot");
+                break;
+            }
+            throw new Error("Parser accepted unrecognized operator: " + func.name);
+        }
+    }
+    
     visitFuncDef(node)
     {
         if (node.shaderType)
             this._checkShaderType(node);
+        this._checkOperatorOverload(node, name => this._program.functions.get(name));
         node.body.visit(this);
     }
     
@@ -100,6 +224,7 @@ class Checker extends Visitor {
             }
             if (!typeVariableTracker.set.has(node.typeVariable))
                 throw new WTypeError(signature.origin.originString, "Protocol's type variable (" + node.name + ") not mentioned in signature: " + signature);
+            this._checkOperatorOverload(signature, name => node.signaturesByName(name));
         }
     }
     
@@ -265,7 +390,7 @@ class Checker extends Visitor {
     visitMakeArrayRefExpression(node)
     {
         let elementType = node.lValue.visit(this).unifyNode;
-        if (elementType instanceof PtrType) {
+        if (elementType.isPtr) {
             node.become(new ConvertPtrToArrayRefExpression(node.origin, node.lValue));
             return new ArrayRefType(node.origin, elementType.addressSpace, elementType.elementType);
         }
@@ -273,10 +398,7 @@ class Checker extends Visitor {
         if (!node.lValue.isLValue)
             throw new WTypeError(node.origin.originString, "Operand to @ is not an LValue: " + node.lValue);
         
-        if (elementType instanceof ArrayRefType)
-            throw new WTypeError(node.origin.originStrimg, "Operand to @ is an array reference: " + elementType);
-        
-        if (elementType instanceof ArrayType) {
+        if (elementType.isArray) {
             node.numElements = elementType.numElements;
             elementType = elementType.elementType;
         } else

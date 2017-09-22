@@ -53,6 +53,7 @@
 <script src="EvaluationCommon.js"></script>
 <script src="Evaluator.js"></script>
 <script src="ExpressionFinder.js"></script>
+<script src="ExternalOrigin.js"></script>
 <script src="Field.js"></script>
 <script src="FindHighZombies.js"></script>
 <script src="FlattenProtocolExtends.js"></script>
@@ -154,7 +155,7 @@
 <script>
 function doTestInBrowser()
 {
-    var tester = doTest(window);
+    var tester = doTest(/.*/);
     var lastTime;
     function next()
     {

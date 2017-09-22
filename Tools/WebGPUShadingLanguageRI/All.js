@@ -76,6 +76,7 @@ load("EnumType.js");
 load("EvaluationCommon.js");
 load("Evaluator.js");
 load("ExpressionFinder.js");
+load("ExternalOrigin.js");
 load("Field.js");
 load("FindHighZombies.js");
 load("FlattenProtocolExtends.js");

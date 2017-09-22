@@ -156,7 +156,7 @@ class Rewriter {
     
     visitReferenceType(node)
     {
-        return new node.constructor(node.rogiin, node.addressSpace, node.elementType.visit(this));
+        return new node.constructor(node.origin, node.addressSpace, node.elementType.visit(this));
     }
     
     visitPtrType(node)
@@ -317,11 +317,14 @@ class Rewriter {
 
     processDerivedCallData(node, result)
     {
-        let actualTypeArguments = node.actualTypeArguments;
-        if (actualTypeArguments) {
-            result.actualTypeArguments =
-                actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
+        let handleTypeArguments = actualTypeArguments => {
+            if (actualTypeArguments)
+                return actualTypeArguments.map(actualTypeArgument => actualTypeArgument.visit(this));
+            else
+                return null;
         }
+        result.actualTypeArguments = handleTypeArguments(node.actualTypeArguments);
+        result.instantiatedActualTypeArguments = handleTypeArguments(node.instantiatedActualTypeArguments);
         let argumentTypes = node.argumentTypes;
         if (argumentTypes)
             result.argumentTypes = argumentTypes.map(argumentType => argumentType.visit(this));

@@ -70,6 +70,7 @@ class FuncInstantiator {
         }
         
         let thisInstantiator = this;
+        
         class InstantiationSubstitution extends Substitution {
             visitCallExpression(node)
             {
@@ -78,7 +79,7 @@ class FuncInstantiator {
                 // We may have to re-resolve the function call, if it was a call to a protocol
                 // signature.
                 if (result.func instanceof ProtocolFuncDecl) {
-                    let overload = resolveOverloadImpl(result.possibleOverloads, result.typeArguments, result.argumentTypes, result.returnTypeForOverloadResolution);
+                    let overload = resolveOverloadImpl(result.possibleOverloads, result.typeArguments, result.argumentTypes, result.returnType);
                     if (!overload.func)
                         throw new Error("Could not resolve protocol signature function call during instantiation: " + result.func + (overload.failures.length ? "; tried:\n" + overload.failures.join("\n") : ""));
                     result.resolveToOverload(overload);
@@ -92,18 +93,42 @@ class FuncInstantiator {
         }
         
         let substitution = new InstantiationSubstitution(func.typeParameters, typeArguments);
-        let instantiateImmediates = new InstantiateImmediates();
+
+        class InstantiationInstantiateImmediates extends InstantiateImmediates {
+            visitCallExpression(node)
+            {
+                // We need to preserve certain things that would have instantiated, but that we cannot
+                // instantiate without breaking chain-instantiations (generic function calls generic
+                // function so therefore the instantiated generic function must still have the original
+                // (uninstantiated) types to instantiate the generic function that it calls).
+                let result = new CallExpression(
+                    node.origin, node.name, node.typeArguments,
+                    node.argumentList.map(argument => Node.visit(argument, this)));
+                result = this.processDerivedCallData(node, result);
+                
+                result.argumentTypes = Array.from(node.argumentTypes);
+                if (node.isCast)
+                    result.setCastData(node.returnType);
+                result.actualTypeArguments = Array.from(node.actualTypeArguments);
+                
+                return result;
+            }
+        }
+
+        let instantiateImmediates = new InstantiationInstantiateImmediates();
         
         class Instantiate {
             visitFuncDef(func)
             {
+                let returnType = func.returnType.visit(substitution);
+                returnType = returnType.visit(instantiateImmediates);
+                let parameters = func.parameters.map(parameter => parameter.visit(substitution));
+                parameters = parameters.map(parameter => parameter.visit(instantiateImmediates));
+                let body = func.body.visit(substitution);
+                body = body.visit(instantiateImmediates);
                 return new FuncDef(
-                    func.origin, func.name,
-                    func.returnType.visit(substitution).visit(instantiateImmediates),
-                    [], // We're instantiated so we no longer take type parameters.
-                    func.parameters.map(parameter => parameter.visit(substitution).visit(instantiateImmediates)),
-                    func.body.visit(substitution).visit(instantiateImmediates),
-                    func.isCast, func.shaderType);
+                    func.origin, func.name, returnType, [], parameters, body, func.isCast,
+                    func.shaderType);
             }
             
             visitNativeFunc(func)
