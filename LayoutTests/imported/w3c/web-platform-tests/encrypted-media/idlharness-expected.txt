@@ -3,7 +3,7 @@ Description
 This test verifies that implementations of the Encrypted Media Extensions API match its WebIDL definition.
 
 
-PASS Navigator interface: operation requestMediaKeySystemAccess(DOMString,[object Object]) 
+PASS Navigator interface: operation requestMediaKeySystemAccess(DOMString, [object Object]) 
 PASS HTMLMediaElement interface: attribute mediaKeys 
 PASS HTMLMediaElement interface: attribute onencrypted 
 PASS HTMLMediaElement interface: attribute onwaitingforkey 
@@ -34,7 +34,7 @@ PASS MediaKeySession interface: attribute closed
 PASS MediaKeySession interface: attribute keyStatuses 
 PASS MediaKeySession interface: attribute onkeystatuseschange 
 PASS MediaKeySession interface: attribute onmessage 
-PASS MediaKeySession interface: operation generateRequest(DOMString,BufferSource) 
+PASS MediaKeySession interface: operation generateRequest(DOMString, BufferSource) 
 PASS MediaKeySession interface: operation load(DOMString) 
 PASS MediaKeySession interface: operation update(BufferSource) 
 PASS MediaKeySession interface: operation close() 
@@ -52,7 +52,7 @@ PASS MediaKeyStatusMap interface: operation get(BufferSource)
 PASS MediaKeyStatusMap interface: operation entries() 
 PASS MediaKeyStatusMap interface: operation keys() 
 PASS MediaKeyStatusMap interface: operation values() 
-PASS MediaKeyStatusMap interface: operation forEach(function,any) 
+PASS MediaKeyStatusMap interface: operation forEach(function, any) 
 PASS MediaKeyMessageEvent interface: existence and properties of interface object 
 PASS MediaKeyMessageEvent interface object length 
 PASS MediaKeyMessageEvent interface object name 

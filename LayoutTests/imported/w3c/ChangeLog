@@ -1,3 +1,12 @@
+2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Updating the WPT EME idlharness.html
+        baseline -- it's not port-specific since there should be no
+        differences in the Web-exposed APIs for this feature across
+        ports.
+
+        * web-platform-tests/encrypted-media/idlharness-expected.txt:
+
 2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add missing expectation file.

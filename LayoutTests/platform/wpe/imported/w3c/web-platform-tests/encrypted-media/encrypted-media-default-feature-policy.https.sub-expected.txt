@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 9: ReferenceError: Can't find variable: run_all_fp_tests_allow_self
+
+FAIL Untitled ReferenceError: Can't find variable: run_all_fp_tests_allow_self
+

@@ -1,3 +1,14 @@
+2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening. Updating a couple of css2.1 baselines,
+        adding a missing baseline for a new imported WPT test.
+
+        * platform/wpe/css2.1/t100801-c548-ln-ht-02-b-ag-expected.txt:
+        * platform/wpe/css2.1/t1507-c526-font-sz-02-b-a-expected.txt:
+        * platform/wpe/css2.1/t1601-c547-indent-00-b-a-expected.txt:
+        * platform/wpe/css2.1/t1604-c542-letter-sp-00-b-a-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub-expected.txt: Added.
+
 2017-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r221017): iCloud mail logs me out after looking at a few messages
