@@ -59,11 +59,11 @@ enum class ShouldClearFirst;
 
 class WebResourceLoadStatisticsStore final : public IPC::Connection::WorkQueueMessageReceiver {
 public:
-    using UpdatePrevalentDomainsWithAndWithoutInteractionHandler = WTF::Function<void(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, ShouldClearFirst)>;
+    using UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler = WTF::Function<void(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst)>;
     using RemovePrevalentDomainsHandler = WTF::Function<void (const Vector<String>&)>;
-    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsWithAndWithoutInteractionHandler&& updateCookiePartitioningForDomainsHandler = [](const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
+    static Ref<WebResourceLoadStatisticsStore> create(const String& resourceLoadStatisticsDirectory, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&& updatePrevalentDomainsToPartitionOrBlockCookiesHandler = [](const Vector<String>&, const Vector<String>&, const Vector<String>&, ShouldClearFirst) { }, RemovePrevalentDomainsHandler&& removeDomainsHandler = [] (const Vector<String>&) { })
     {
-        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updateCookiePartitioningForDomainsHandler), WTFMove(removeDomainsHandler)));
+        return adoptRef(*new WebResourceLoadStatisticsStore(resourceLoadStatisticsDirectory, WTFMove(testingCallback), WTFMove(updatePrevalentDomainsToPartitionOrBlockCookiesHandler), WTFMove(removeDomainsHandler)));
     }
 
     ~WebResourceLoadStatisticsStore();
@@ -96,7 +96,7 @@ public:
     void setSubresourceUnderTopFrameOrigin(const WebCore::URL& subresource, const WebCore::URL& topFrame);
     void setSubresourceUniqueRedirectTo(const WebCore::URL& subresource, const WebCore::URL& hostNameRedirectedTo);
     void scheduleCookiePartitioningUpdate();
-    void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
+    void scheduleCookiePartitioningUpdateForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
     void scheduleClearPartitioningStateForDomains(const Vector<String>& domains);
     void scheduleStatisticsAndDataRecordsProcessing();
     void submitTelemetry();
@@ -132,7 +132,7 @@ public:
     void logTestingEvent(const String&);
 
 private:
-    WebResourceLoadStatisticsStore(const String&, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsWithAndWithoutInteractionHandler&&, RemovePrevalentDomainsHandler&&);
+    WebResourceLoadStatisticsStore(const String&, Function<void (const String&)>&& testingCallback, UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler&&, RemovePrevalentDomainsHandler&&);
 
     void removeDataRecords();
 
@@ -144,12 +144,13 @@ private:
     void setDataRecordsBeingRemoved(bool);
 
     bool shouldPartitionCookies(const WebCore::ResourceLoadStatistics&) const;
+    bool shouldBlockCookies(const WebCore::ResourceLoadStatistics&) const;
     bool hasStatisticsExpired(const WebCore::ResourceLoadStatistics&) const;
     bool hasHadUnexpiredRecentUserInteraction(WebCore::ResourceLoadStatistics&) const;
     void includeTodayAsOperatingDateIfNecessary();
     Vector<String> topPrivatelyControlledDomainsToRemoveWebsiteDataFor();
     void updateCookiePartitioning();
-    void updateCookiePartitioningForDomains(const Vector<String>& domainsToRemove, const Vector<String>& domainsToAdd, ShouldClearFirst);
+    void updateCookiePartitioningForDomains(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst);
     void clearPartitioningStateForDomains(const Vector<String>& domains);
     void mergeStatistics(Vector<WebCore::ResourceLoadStatistics>&&);
     WebCore::ResourceLoadStatistics& ensureResourceStatisticsForPrimaryDomain(const String&);
@@ -183,7 +184,7 @@ private:
     ResourceLoadStatisticsPersistentStorage m_persistentStorage;
     Vector<OperatingDate> m_operatingDates;
 
-    UpdatePrevalentDomainsWithAndWithoutInteractionHandler m_updatePrevalentDomainsWithAndWithoutInteractionHandler;
+    UpdatePrevalentDomainsToPartitionOrBlockCookiesHandler m_updatePrevalentDomainsToPartitionOrBlockCookiesHandler;
     RemovePrevalentDomainsHandler m_removeDomainsHandler;
 
     WallTime m_endOfGrandfatheringTimestamp;

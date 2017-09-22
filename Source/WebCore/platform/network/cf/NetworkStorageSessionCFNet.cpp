@@ -205,15 +205,15 @@ bool NetworkStorageSession::shouldPartitionCookies(const String& topPrivatelyCon
     if (topPrivatelyControlledDomain.isEmpty())
         return false;
 
-    return m_prevalentTopPrivatelyControlledDomainsWithoutInteraction.contains(topPrivatelyControlledDomain);
+    return m_topPrivatelyControlledDomainsToPartition.contains(topPrivatelyControlledDomain);
 }
 
-bool NetworkStorageSession::shouldAllowThirdPartyCookies(const String& topPrivatelyControlledDomain) const
+bool NetworkStorageSession::shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const
 {
     if (topPrivatelyControlledDomain.isEmpty())
         return false;
 
-    return m_prevalentTopPrivatelyControlledDomainsWithInteraction.contains(topPrivatelyControlledDomain);
+    return m_topPrivatelyControlledDomainsToBlock.contains(topPrivatelyControlledDomain);
 }
 
 bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request) const
@@ -221,48 +221,60 @@ bool NetworkStorageSession::shouldBlockCookies(const ResourceRequest& request) c
     if (!cookieStoragePartitioningEnabled)
         return false;
 
-    auto firstPartyDomain = getPartitioningDomain(request.firstPartyForCookies());
+    return shouldBlockCookies(request.firstPartyForCookies(), request.url());
+}
+    
+bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const
+{
+    if (!cookieStoragePartitioningEnabled)
+        return false;
+    
+    auto firstPartyDomain = getPartitioningDomain(firstPartyForCookies);
     if (firstPartyDomain.isEmpty())
         return false;
 
-    auto resourceDomain = getPartitioningDomain(request.url());
+    auto resourceDomain = getPartitioningDomain(resource);
     if (resourceDomain.isEmpty())
         return false;
 
     if (firstPartyDomain == resourceDomain)
         return false;
 
-    if (shouldPartitionCookies(resourceDomain))
-        return false;
-
-    return !shouldAllowThirdPartyCookies(resourceDomain);
+    return shouldBlockThirdPartyCookies(resourceDomain);
 }
 
-void NetworkStorageSession::setPrevalentDomainsWithAndWithoutInteraction(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, bool clearFirst)
+void NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst)
 {
     if (clearFirst) {
-        m_prevalentTopPrivatelyControlledDomainsWithoutInteraction.clear();
-        m_prevalentTopPrivatelyControlledDomainsWithInteraction.clear();
+        m_topPrivatelyControlledDomainsToPartition.clear();
+        m_topPrivatelyControlledDomainsToBlock.clear();
     }
 
-    for (auto& domain : domainsWithInteraction) {
+    for (auto& domain : domainsToPartition) {
+        m_topPrivatelyControlledDomainsToPartition.add(domain);
         if (!clearFirst)
-            m_prevalentTopPrivatelyControlledDomainsWithoutInteraction.remove(domain);
-        m_prevalentTopPrivatelyControlledDomainsWithInteraction.add(domain);
+            m_topPrivatelyControlledDomainsToBlock.remove(domain);
     }
 
-    for (auto& domain : domainsWithoutInteraction) {
-        m_prevalentTopPrivatelyControlledDomainsWithoutInteraction.add(domain);
+    for (auto& domain : domainsToBlock) {
+        m_topPrivatelyControlledDomainsToBlock.add(domain);
         if (!clearFirst)
-            m_prevalentTopPrivatelyControlledDomainsWithInteraction.remove(domain);
+            m_topPrivatelyControlledDomainsToPartition.remove(domain);
+    }
+    
+    if (!clearFirst) {
+        for (auto& domain : domainsToNeitherPartitionNorBlock) {
+            m_topPrivatelyControlledDomainsToPartition.remove(domain);
+            m_topPrivatelyControlledDomainsToBlock.remove(domain);
+        }
     }
 }
 
 void NetworkStorageSession::removePrevalentDomains(const Vector<String>& domains)
 {
     for (auto& domain : domains) {
-        m_prevalentTopPrivatelyControlledDomainsWithoutInteraction.remove(domain);
-        m_prevalentTopPrivatelyControlledDomainsWithInteraction.remove(domain);
+        m_topPrivatelyControlledDomainsToPartition.remove(domain);
+        m_topPrivatelyControlledDomainsToBlock.remove(domain);
     }
 }
 

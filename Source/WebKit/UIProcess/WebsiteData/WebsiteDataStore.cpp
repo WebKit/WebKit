@@ -1114,10 +1114,10 @@ void WebsiteDataStore::removeDataForTopPrivatelyControlledDomains(OptionSet<Webs
 }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-void WebsiteDataStore::updatePrevalentDomainsWithAndWithoutInteraction(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, ShouldClearFirst shouldClearFirst)
+void WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst)
 {
     for (auto& processPool : processPools())
-        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdatePrevalentDomainsWithAndWithoutInteraction(m_sessionID, domainsWithInteraction, domainsWithoutInteraction, shouldClearFirst == ShouldClearFirst::Yes));
+        processPool->sendToNetworkingProcess(Messages::NetworkProcess::UpdatePrevalentDomainsToPartitionOrBlockCookies(m_sessionID, domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst == ShouldClearFirst::Yes));
 }
 
 void WebsiteDataStore::removePrevalentDomains(const Vector<String>& domains)
@@ -1311,8 +1311,8 @@ void WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback(Functio
     }
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, ShouldClearFirst shouldClearFirst) {
-        updatePrevalentDomainsWithAndWithoutInteraction(domainsWithInteraction, domainsWithoutInteraction, shouldClearFirst);
+    m_resourceLoadStatistics = WebResourceLoadStatisticsStore::create(m_configuration.resourceLoadStatisticsDirectory, WTFMove(callback), [this] (const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, ShouldClearFirst shouldClearFirst) {
+        updatePrevalentDomainsToPartitionOrBlockCookies(domainsToPartition, domainsToBlock, domainsToNeitherPartitionNorBlock, shouldClearFirst);
     }, [this] (const Vector<String>& domainsToRemove) {
         removePrevalentDomains(domainsToRemove);
     });

@@ -86,6 +86,7 @@ struct ResourceLoadStatistics {
 
     // In-memory only
     bool isMarkedForCookiePartitioning { false };
+    bool isMarkedForCookieBlocking { false };
 };
 
 } // namespace WebCore

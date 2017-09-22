@@ -1,3 +1,42 @@
+2017-09-22  John Wilander  <wilander@apple.com>
+
+        Non-prevalent resources should be allowed access to existing cookies in a third-party context
+        https://bugs.webkit.org/show_bug.cgi?id=177336
+        <rdar://problem/34578257>
+
+        Reviewed by Brent Fulgham.
+
+        No new tests. I will update existing tests and add at least
+        one new test in a follow-up patch,
+        see https://bugs.webkit.org/show_bug.cgi?id=177337. Need to
+        land this to meet submission deadline and fix the regression.
+
+        This patch restructures what is communicated to the network process,
+        from two vectors - with user interaction and without user interaction -
+        to three vectors - to partition, to block, to neither partition nor block.
+        The previous two vectors did not allow proper categorization into which
+        domains should be partitioned, blocked, or left alone. That was the cause
+        of the regression where non-prevalent third-party domains erroneously had
+        their cookies blocked when they should fall back to the old behavior of
+        access but no new cookies allowed to be set.
+
+        * loader/ResourceLoadStatistics.cpp:
+        (WebCore::ResourceLoadStatistics::toString const):
+        (WebCore::ResourceLoadStatistics::merge):
+        * loader/ResourceLoadStatistics.h:
+        * platform/network/NetworkStorageSession.h:
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::shouldPartitionCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockThirdPartyCookies const):
+        (WebCore::NetworkStorageSession::shouldBlockCookies const):
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies):
+        (WebCore::NetworkStorageSession::removePrevalentDomains):
+        (WebCore::NetworkStorageSession::shouldAllowThirdPartyCookies const): Deleted.
+        (WebCore::NetworkStorageSession::setPrevalentDomainsWithAndWithoutInteraction): Deleted.
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesInBlockedForURL):
+        (WebCore::cookiesForURL):
+
 2017-09-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [CMake][Win] EventTargetInterfaces.h are generated twice

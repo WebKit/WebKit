@@ -77,7 +77,7 @@
                 });
                 if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
                     testFailed("Host was no longer prevalent resource.");
-                testRunner.statisticsFireDataModificationHandler();
+                testRunner.statisticsProcessStatisticsAndDataRecords();
                 break;
             case "#step7":
                 // Set first-party cookie for prevalent resource.
@@ -97,7 +97,7 @@
 
     if (document.location.host === partitionHost && document.location.hash === "" && window.testRunner && window.internals) {
 
-        testRunner.statisticsFireShouldPartitionCookiesHandlerForOneDomain("localhost", true);
+        testRunner.statisticsSetShouldPartitionCookiesForHost("localhost", true);
         testRunner.setStatisticsPrevalentResource("http://localhost", true);
         if (!testRunner.isStatisticsPrevalentResource("http://localhost"))
             testFailed("Host did not get set as prevalent resource.");

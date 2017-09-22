@@ -101,6 +101,11 @@ static NSArray *applyPartitionToCookies(NSString *partition, NSArray *cookies)
     return partitionedCookies;
 }
 
+static bool cookiesAreBlockedForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
+{
+    return session.shouldBlockCookies(firstParty, url);
+}
+
 static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
     String partition = session.cookieStoragePartition(firstParty, url);
@@ -130,6 +135,9 @@ static NSArray *cookiesInPartitionForURL(const NetworkStorageSession& session, c
 static NSArray *cookiesForURL(const NetworkStorageSession& session, const URL& firstParty, const URL& url)
 {
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
+    if (cookiesAreBlockedForURL(session, firstParty, url))
+        return nil;
+    
     if (NSArray *cookies = cookiesInPartitionForURL(session, firstParty, url))
         return cookies;
 #endif

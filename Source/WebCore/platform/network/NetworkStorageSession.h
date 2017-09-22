@@ -91,8 +91,9 @@ public:
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     WEBCORE_EXPORT String cookieStoragePartition(const ResourceRequest&) const;
     WEBCORE_EXPORT bool shouldBlockCookies(const ResourceRequest&) const;
+    bool shouldBlockCookies(const URL& firstPartyForCookies, const URL& resource) const;
     String cookieStoragePartition(const URL& firstPartyForCookies, const URL& resource) const;
-    WEBCORE_EXPORT void setPrevalentDomainsWithAndWithoutInteraction(const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, bool clearFirst);
+    WEBCORE_EXPORT void setPrevalentDomainsToPartitionOrBlockCookies(const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool clearFirst);
     WEBCORE_EXPORT void removePrevalentDomains(const Vector<String>& domains);
 #endif
 #elif USE(SOUP)
@@ -148,9 +149,9 @@ private:
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     bool shouldPartitionCookies(const String& topPrivatelyControlledDomain) const;
-    bool shouldAllowThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
-    HashSet<String> m_prevalentTopPrivatelyControlledDomainsWithoutInteraction;
-    HashSet<String> m_prevalentTopPrivatelyControlledDomainsWithInteraction;
+    bool shouldBlockThirdPartyCookies(const String& topPrivatelyControlledDomain) const;
+    HashSet<String> m_topPrivatelyControlledDomainsToPartition;
+    HashSet<String> m_topPrivatelyControlledDomainsToBlock;
 #endif
 
 #if PLATFORM(COCOA)

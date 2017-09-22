@@ -130,7 +130,7 @@ public:
     void grantSandboxExtensionsToStorageProcessForBlobs(const Vector<String>& filenames, Function<void ()>&& completionHandler);
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    void updatePrevalentDomainsWithAndWithoutInteraction(PAL::SessionID, const Vector<String>& domainsWithInteraction, const Vector<String>& domainsWithoutInteraction, bool shouldClearFirst);
+    void updatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID, const Vector<String>& domainsToPartition, const Vector<String>& domainsToBlock, const Vector<String>& domainsToNeitherPartitionNorBlock, bool shouldClearFirst);
     void removePrevalentDomains(PAL::SessionID, const Vector<String>& domains);
 #endif
 

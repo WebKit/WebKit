@@ -229,6 +229,7 @@ String ResourceLoadStatistics::toString() const
 
     // In-memory only
     appendBoolean(builder, "isMarkedForCookiePartitioning", isMarkedForCookiePartitioning);
+    appendBoolean(builder, "isMarkedForCookieBlocking", isMarkedForCookieBlocking);
     builder.append('\n');
 
     builder.append('\n');
@@ -287,6 +288,7 @@ void ResourceLoadStatistics::merge(const ResourceLoadStatistics& other)
     
     // In-memory only
     isMarkedForCookiePartitioning |= other.isMarkedForCookiePartitioning;
+    isMarkedForCookieBlocking |= other.isMarkedForCookieBlocking;
 }
 
 String ResourceLoadStatistics::primaryDomain(const URL& url)

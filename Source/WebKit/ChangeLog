@@ -1,3 +1,45 @@
+2017-09-22  John Wilander  <wilander@apple.com>
+
+        Non-prevalent resources should be allowed access to existing cookies in a third-party context
+        https://bugs.webkit.org/show_bug.cgi?id=177336
+        <rdar://problem/34578257>
+
+        Reviewed by Brent Fulgham.
+
+        This patch restructures what is communicated to the network process,
+        from two vectors - with user interaction and without user interaction -
+        to three vectors - to partition, to block, to neither partition nor block.
+        The previous two vectors did not allow proper categorization into which
+        domains should be partitioned, blocked, or left alone. That was the cause
+        of the regression where non-prevalent third-party domains erroneously had
+        their cookies blocked when they should fall back to the old behavior of
+        access but no new cookies allowed to be set.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::updatePrevalentDomainsToPartitionOrBlockCookies):
+        (WebKit::NetworkProcess::updatePrevalentDomainsWithAndWithoutInteraction): Deleted.
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * UIProcess/API/Cocoa/WKWebsiteDataStore.mm:
+        (-[WKWebsiteDataStore _resourceLoadStatisticsSetShouldPartitionCookies:forHost:]):
+        * UIProcess/WebResourceLoadStatisticsStore.cpp:
+        (WebKit::WebResourceLoadStatisticsStore::WebResourceLoadStatisticsStore):
+        (WebKit::WebResourceLoadStatisticsStore::logUserInteraction):
+        (WebKit::WebResourceLoadStatisticsStore::scheduleCookiePartitioningUpdateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::clearInMemory):
+        (WebKit::WebResourceLoadStatisticsStore::shouldPartitionCookies const):
+        (WebKit::WebResourceLoadStatisticsStore::shouldBlockCookies const):
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioning):
+        (WebKit::WebResourceLoadStatisticsStore::updateCookiePartitioningForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::clearPartitioningStateForDomains):
+        (WebKit::WebResourceLoadStatisticsStore::resetCookiePartitioningState):
+        * UIProcess/WebResourceLoadStatisticsStore.h:
+        * UIProcess/WebsiteData/WebsiteDataStore.cpp:
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsToPartitionOrBlockCookies):
+        (WebKit::WebsiteDataStore::enableResourceLoadStatisticsAndSetTestingCallback):
+        (WebKit::WebsiteDataStore::updatePrevalentDomainsWithAndWithoutInteraction): Deleted.
+        * UIProcess/WebsiteData/WebsiteDataStore.h:
+
 2017-09-22  Tim Horton <timothy_horton@apple.com> and Michael Catanzaro <mcatanzaro@igalia.com>
 
         Remove build-webkit's notion of feature flags having a default value

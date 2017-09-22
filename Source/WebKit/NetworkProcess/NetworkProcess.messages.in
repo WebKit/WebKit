@@ -83,7 +83,7 @@ messages -> NetworkProcess LegacyReceiver {
     DidGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID)
 
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
-    UpdatePrevalentDomainsWithAndWithoutInteraction(PAL::SessionID sessionID, Vector<String> domainsWithInteraction, Vector<String> domainsWithoutInteraction, bool shouldClearFirst)
+    UpdatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, Vector<String> domainsToPartition, Vector<String> domainsToBlock, Vector<String> domainsToNeitherPartitionNorBlock, bool shouldClearFirst)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction);
 #endif
 }
