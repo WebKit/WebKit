@@ -1,3 +1,17 @@
+2017-09-21  Tim Horton  <timothy_horton@apple.com>
+
+        Add some blog post resources
+        https://bugs.webkit.org/show_bug.cgi?id=177333
+
+        Reviewed by Sam Weinig.
+
+        * demos/safe-area-insets/1-default.html: Added.
+        * demos/safe-area-insets/2-viewport-fit.html: Added.
+        * demos/safe-area-insets/3-safe-area-constants.html: Added.
+        * demos/safe-area-insets/4-min-max.html: Added.
+        * demos/safe-area-insets/safe-areas.html: Added.
+        * demos/safe-area-insets/style.css: Added.
+
 2017-08-21  Ross Kirsling  <ross.kirsling@sony.com>
 
         Add Sony to domain affiliations on team page
