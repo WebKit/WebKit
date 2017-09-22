@@ -3461,6 +3461,7 @@ webkit.org/b/176648 svg/transforms/transformed-text-fill-gradient.html [ ImageOn
 webkit.org/b/176649 fast/text/international/synthesized-italic-vertical.html [ ImageOnlyFailure ]
 
 webkit.org/b/176652 http/tests/cache-storage/cache-origins.https.html [ Failure ]
+webkit.org/b/176652 http/tests/cache-storage/cache-records-persistency.https.html [ Failure ]
 
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
@@ -3469,6 +3470,15 @@ webkit.org/b/177295 editing/pasteboard/copy-without-selection.html [ Failure ]
 webkit.org/b/177295 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
 
 webkit.org/b/177296 editing/deleting/smart-delete-002.html [ Failure ]
+
+webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
+
+webkit.org/b/177362 imported/w3c/web-platform-tests/css/css-pseudo-4/marker-font-properties.html [ ImageOnlyFailure ]
+
+webkit.org/b/177363 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-022.html [ ImageOnlyFailure ]
+
+webkit.org/b/177364 fast/text/international/iso-8859-8.html [ Failure ]
+webkit.org/b/177364 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing

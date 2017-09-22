@@ -1,5 +1,15 @@
 2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK+ gardening. Adding failure expectations for failure tests
+        that mostly originate from recent font code changes and WPT updates.
+        Updating baselines for two tests that aren't failing otherwise.
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/imported/w3c/web-platform-tests/media-source/interfaces-expected.txt:
+        * platform/gtk/js/dom/global-constructors-attributes-expected.txt:
+
+2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK+ and WPE gardening. Adding baselines for the
         imported W3C WebCryptoAPI pbkdf2.worker.html where the
         libgcrypt-based implementation is exhibiting somewhat different
