@@ -133,19 +133,20 @@ void Pasteboard::writeString(const String& type, const String& data)
     case ClipboardDataTypeURIList:
     case ClipboardDataTypeURL:
         m_selectionData->setURIList(data);
-        return;
+        break;
     case ClipboardDataTypeMarkup:
         m_selectionData->setMarkup(data);
-        return;
+        break;
     case ClipboardDataTypeText:
         m_selectionData->setText(data);
-        return;
+        break;
     case ClipboardDataTypeUnknown:
         m_selectionData->setUnknownTypeData(type, data);
-        return;
+        break;
     case ClipboardDataTypeImage:
         break;
     }
+    writeToClipboard();
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)

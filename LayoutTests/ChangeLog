@@ -1,3 +1,12 @@
+2017-09-22  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Couple of pasteboard related tests are failing after r222228
+        https://bugs.webkit.org/show_bug.cgi?id=177295
+
+        Reviewed by Michael Catanzaro.
+
+        * platform/gtk/TestExpectations: mark the tests as passing again.
+
 2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK+ gardening. Adding failure expectations for failure tests

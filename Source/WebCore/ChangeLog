@@ -1,3 +1,23 @@
+2017-09-22  Ms2ger  <Ms2ger@igalia.com>
+
+        [GTK] Couple of pasteboard related tests are failing after r222228
+        https://bugs.webkit.org/show_bug.cgi?id=177295
+
+        Reviewed by Michael Catanzaro.
+
+        Call writeToClipboard() from Pasteboard::writeString() on GTK.
+
+        When writePasteboard was replaced by commitToPasteboard in r222228,
+        the call to writeToClipboard() did not make it into the
+        platform-neutral code. This attempts to find another place in the
+        GTK-specific code to make the call.
+
+        Tests: editing/pasteboard/copy-without-selection.html
+               editing/pasteboard/pasting-empty-html-falls-back-to-text.html
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeString):
+
 2017-09-21  Brent Fulgham  <bfulgham@apple.com>
 
         REGRESSION (r221017): iCloud mail logs me out after looking at a few messages

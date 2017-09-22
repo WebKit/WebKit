@@ -3466,9 +3466,6 @@ webkit.org/b/176652 http/tests/cache-storage/cache-records-persistency.https.htm
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 
-webkit.org/b/177295 editing/pasteboard/copy-without-selection.html [ Failure ]
-webkit.org/b/177295 editing/pasteboard/pasting-empty-html-falls-back-to-text.html [ Failure ]
-
 webkit.org/b/177296 editing/deleting/smart-delete-002.html [ Failure ]
 
 webkit.org/b/177319 imported/w3c/web-platform-tests/html/semantics/forms/the-form-element/form-elements-filter.html [ Failure ]
