@@ -913,6 +913,8 @@ def runTest262(mode, exception, includeFiles, flags)
     when :failDueToOutdatedOrBadTest
         errorHandler = expectedFailErrorHandler
         outputHandler = noisyOutputHandler
+    when :skip
+        return
     else
         raise "Invalid mode: #{mode}"
     end
@@ -946,6 +948,8 @@ def runES6(mode)
         errorHandler = expectedFailErrorHandler
     when :failDueToOutdatedOrBadTest
         errorHandler = expectedFailErrorHandler
+    when :skip
+        return
     else
         raise "Invalid mode: #{mode}"
     end

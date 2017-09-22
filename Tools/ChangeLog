@@ -1,3 +1,10 @@
+2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Unreviewed, add the ability to skip a test262 test.
+
+        * Scripts/run-jsc-stress-tests:
+        Other handlers have :skip but a few didn't.
+
 2017-09-21  Ryan Haddad  <ryanhaddad@apple.com>
 
         Change architecture for ios-ews queue to arm64.
