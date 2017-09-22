@@ -1,5 +1,15 @@
 2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed GTK+ and WPE gardening. Adding baselines for the
+        imported W3C WebCryptoAPI pbkdf2.worker.html where the
+        libgcrypt-based implementation is exhibiting somewhat different
+        behavior than what's expected in the generic baseline.
+
+        * platform/gtk/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt: Added.
+        * platform/wpe/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt: Added.
+
+2017-09-22  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed WPE gardening. Updating a couple of css2.1 baselines,
         adding a missing baseline for a new imported WPT test.
 
