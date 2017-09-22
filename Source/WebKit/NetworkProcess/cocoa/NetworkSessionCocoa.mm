@@ -601,8 +601,9 @@ NetworkSessionCocoa::NetworkSessionCocoa(PAL::SessionID sessionID, LegacyCustomP
 
     configuration.URLCredentialStorage = nil;
     configuration._shouldSkipPreferredClientCertificateLookup = YES;
-    configuration.HTTPCookieStorage = nil;
-    configuration.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=177394
+    // configuration.HTTPCookieStorage = nil;
+    // configuration.HTTPCookieAcceptPolicy = NSHTTPCookieAcceptPolicyNever;
 
     m_statelessSessionDelegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:*this withCredentials:false]);
     m_statelessSession = [NSURLSession sessionWithConfiguration:configuration delegate:static_cast<id>(m_statelessSessionDelegate.get()) delegateQueue:[NSOperationQueue mainQueue]];
