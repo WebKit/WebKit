@@ -704,7 +704,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
     layer.updateLayerListsIfNeeded();
 
     bool shouldPaint = (behavior & RenderAsTextShowAllLayers) ? true : layer.intersectsDamageRect(layerBounds, damageRect.rect(), &rootLayer, layer.offsetFromAncestor(&rootLayer));
-    Vector<RenderLayer*>* negativeZOrderList = layer.negZOrderList();
+    auto* negativeZOrderList = layer.negZOrderList();
     bool paintsBackgroundSeparately = negativeZOrderList && negativeZOrderList->size() > 0;
     if (shouldPaint && paintsBackgroundSeparately) {
         writeLayer(ts, layer, layerBounds, damageRect.rect(), clipRectToApply.rect(), LayerPaintPhaseBackground, indent, behavior);
@@ -742,7 +742,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
         writeLayerRenderers(ts, layer, paintsBackgroundSeparately ? LayerPaintPhaseForeground : LayerPaintPhaseAll, indent, behavior);
     }
     
-    if (Vector<RenderLayer*>* normalFlowList = layer.normalFlowList()) {
+    if (auto* normalFlowList = layer.normalFlowList()) {
         int currIndent = indent;
         if (behavior & RenderAsTextShowLayerNesting) {
             writeIndent(ts, indent);
@@ -754,7 +754,7 @@ static void writeLayers(TextStream& ts, const RenderLayer& rootLayer, RenderLaye
             writeLayers(ts, rootLayer, *currLayer, paintDirtyRect, currIndent, behavior);
     }
 
-    if (Vector<RenderLayer*>* positiveZOrderList = layer.posZOrderList()) {
+    if (auto* positiveZOrderList = layer.posZOrderList()) {
         size_t layerCount = positiveZOrderList->size();
 
         if (layerCount) {

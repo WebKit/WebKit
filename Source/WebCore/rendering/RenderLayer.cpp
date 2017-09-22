@@ -1292,13 +1292,13 @@ bool RenderLayer::update3DTransformedDescendantStatus()
 
         // Transformed or preserve-3d descendants can only be in the z-order lists, not
         // in the normal flow list, so we only need to check those.
-        if (Vector<RenderLayer*>* positiveZOrderList = posZOrderList()) {
+        if (auto* positiveZOrderList = posZOrderList()) {
             for (auto* layer : *positiveZOrderList)
                 m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
         }
 
         // Now check our negative z-index children.
-        if (Vector<RenderLayer*>* negativeZOrderList = negZOrderList()) {
+        if (auto* negativeZOrderList = negZOrderList()) {
             for (auto* layer : *negativeZOrderList)
                 m_has3DTransformedDescendant |= layer->update3DTransformedDescendantStatus();
         }
@@ -5832,17 +5832,17 @@ LayoutRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, c
         unionBounds.checkedUnite(childBounds);
     };
 
-    if (Vector<RenderLayer*>* negZOrderList = this->negZOrderList()) {
+    if (auto* negZOrderList = this->negZOrderList()) {
         for (auto* childLayer : *negZOrderList)
             computeLayersUnion(*childLayer);
     }
 
-    if (Vector<RenderLayer*>* posZOrderList = this->posZOrderList()) {
+    if (auto* posZOrderList = this->posZOrderList()) {
         for (auto* childLayer : *posZOrderList)
             computeLayersUnion(*childLayer);
     }
 
-    if (Vector<RenderLayer*>* normalFlowList = this->normalFlowList()) {
+    if (auto* normalFlowList = this->normalFlowList()) {
         for (auto* childLayer : *normalFlowList)
             computeLayersUnion(*childLayer);
     }
@@ -6184,23 +6184,19 @@ void RenderLayer::updateDescendantsLayerListsIfNeeded(bool recursive)
 {
     Vector<RenderLayer*> layersToUpdate;
     
-    if (isStackingContainer()) {
-        if (Vector<RenderLayer*>* list = negZOrderList()) {
-            for (auto* childLayer : *list)
-                layersToUpdate.append(childLayer);
-        }
-    }
-    
-    if (Vector<RenderLayer*>* list = normalFlowList()) {
+    if (auto* list = negZOrderList()) {
         for (auto* childLayer : *list)
             layersToUpdate.append(childLayer);
     }
     
-    if (isStackingContainer()) {
-        if (Vector<RenderLayer*>* list = posZOrderList()) {
-            for (auto* childLayer : *list)
-                layersToUpdate.append(childLayer);
-        }
+    if (auto* list = normalFlowList()) {
+        for (auto* childLayer : *list)
+            layersToUpdate.append(childLayer);
+    }
+    
+    if (auto* list = posZOrderList()) {
+        for (auto* childLayer : *list)
+            layersToUpdate.append(childLayer);
     }
     
     for (auto* childLayer : layersToUpdate) {

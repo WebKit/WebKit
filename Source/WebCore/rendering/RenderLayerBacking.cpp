@@ -2078,35 +2078,33 @@ static LayerTraversal traverseVisibleNonCompositedDescendantLayers(RenderLayer& 
         }
     }
 
-    if (parent.isStackingContainer()) {
-        if (!parent.hasVisibleDescendant())
-            return LayerTraversal::Continue;
+    if (parent.isStackingContainer() && !parent.hasVisibleDescendant())
+        return LayerTraversal::Continue;
 
-        // Use the m_hasCompositingDescendant bit to optimize?
-        if (auto* negZOrderList = parent.negZOrderList()) {
-            for (auto* childLayer : *negZOrderList) {
-                if (compositedWithOwnBackingStore(*childLayer))
-                    continue;
+    // Use the m_hasCompositingDescendant bit to optimize?
+    if (auto* negZOrderList = parent.negZOrderList()) {
+        for (auto* childLayer : *negZOrderList) {
+            if (compositedWithOwnBackingStore(*childLayer))
+                continue;
 
-                if (layerFunc(*childLayer) == LayerTraversal::Stop)
-                    return LayerTraversal::Stop;
+            if (layerFunc(*childLayer) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
 
-                if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
-                    return LayerTraversal::Stop;
-            }
+            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
         }
+    }
 
-        if (auto* posZOrderList = parent.posZOrderList()) {
-            for (auto* childLayer : *posZOrderList) {
-                if (compositedWithOwnBackingStore(*childLayer))
-                    continue;
+    if (auto* posZOrderList = parent.posZOrderList()) {
+        for (auto* childLayer : *posZOrderList) {
+            if (compositedWithOwnBackingStore(*childLayer))
+                continue;
 
-                if (layerFunc(*childLayer) == LayerTraversal::Stop)
-                    return LayerTraversal::Stop;
+            if (layerFunc(*childLayer) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
 
-                if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
-                    return LayerTraversal::Stop;
-            }
+            if (traverseVisibleNonCompositedDescendantLayers(*childLayer, layerFunc) == LayerTraversal::Stop)
+                return LayerTraversal::Stop;
         }
     }
 
