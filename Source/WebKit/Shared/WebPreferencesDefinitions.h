@@ -348,8 +348,9 @@
 #define FOR_EACH_WEBKIT_DEBUG_UINT32_PREFERENCE(macro) \
     macro(VisibleDebugOverlayRegions, visibleDebugOverlayRegions, UInt32, uint32_t, 0, "", "")
 
+// Our Xcode build system does not currently have any concept of DEVELOPER_MODE.
 // Cocoa ports must disable experimental features on release branches for now.
-#if ENABLE(EXPERIMENTAL_FEATURES) || PLATFORM(COCOA)
+#if ENABLE(DEVELOPER_MODE) || PLATFORM(COCOA)
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED true
 #else
 #define DEFAULT_EXPERIMENTAL_FEATURES_ENABLED false
@@ -357,16 +358,13 @@
 
 // For experimental features:
 // - The type should be boolean.
-// - You must provide the last two parameters for all experimental features.
-//   They are the text exposed to the user from the WebKit client.
-// - They should be *alphabetically ordered* by the human readable text (the
-//   first string).
-// - The default value may be either false (for really unstable features) or
+// - You must provide the last two parameters for all experimental features. They
+//   are the text exposed to the user from the WebKit client.
+// - They should be alphabetically ordered by the human readable text (the first string).
+// - The default value may be either false (for unstable features) or
 //   DEFAULT_EXPERIMENTAL_FEATURES_ENABLED (for features that are ready for
-//   wider testing). *The default value may not be true*. That would no longer
-//   be experimental.
-//
-// Actually read the comment above before modifying this list!
+//   wider testing).
+
 #define FOR_EACH_WEBKIT_EXPERIMENTAL_FEATURE_PREFERENCE(macro) \
     macro(ConstantPropertiesEnabled, constantPropertiesEnabled, Bool, bool, true, "Constant Properties", "Enable CSS constant() properties") \
     macro(DisplayContentsEnabled, displayContentsEnabled, Bool, bool, false, "CSS display: contents", "Enable CSS display: contents support") \
