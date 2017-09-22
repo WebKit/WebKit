@@ -39,8 +39,8 @@
 #include "MultipartHandle.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "SharedBuffer.h"
 #include "TextEncoding.h"
-#include "ThreadSafeDataBuffer.h"
 #include "URL.h"
 #include <wtf/MainThread.h>
 #include <wtf/text/Base64.h>
@@ -386,21 +386,18 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(long httpCode, long long c
     }
 }
 
-void ResourceHandleCurlDelegate::didReceiveContentData(ThreadSafeDataBuffer buffer)
+void ResourceHandleCurlDelegate::didReceiveContentData(Ref<SharedBuffer>&& buffer)
 {
     ASSERT(isMainThread());
 
     if (!response().responseFired())
         handleLocalReceiveResponse();
 
-    const char* ptr = reinterpret_cast<const char*>(buffer.data()->begin());
-    size_t size = buffer.size();
-
     if (m_multipartHandle)
-        m_multipartHandle->contentReceived(ptr, size);
+        m_multipartHandle->contentReceived(buffer->data(), buffer->size());
     else if (m_handle->client()) {
-        CurlCacheManager::getInstance().didReceiveData(*m_handle, ptr, size);
-        m_handle->client()->didReceiveData(m_handle, ptr, size, 0);
+        CurlCacheManager::getInstance().didReceiveData(*m_handle, buffer->data(), buffer->size());
+        m_handle->client()->didReceiveBuffer(m_handle, WTFMove(buffer), buffer->size());
     }
 }
 
@@ -495,6 +492,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
 
     String mediaType = url.substring(5, index - 5);
     String data = url.substring(index + 1);
+    auto originalSize = data.length();
 
     bool base64 = mediaType.endsWith(";base64", false);
     if (base64)
@@ -522,7 +520,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
         if (m_handle->client()) {
             Vector<char> out;
             if (base64Decode(data, out, Base64IgnoreSpacesAndNewLines) && out.size() > 0)
-                m_handle->client()->didReceiveData(m_handle, out.data(), out.size(), 0);
+                m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(out.data(), out.size()), originalSize);
         }
     } else {
         TextEncoding encoding(charset);
@@ -533,7 +531,7 @@ void ResourceHandleCurlDelegate::handleDataURL()
         if (m_handle->client()) {
             CString encodedData = encoding.encode(data, URLEncodedEntitiesForUnencodables);
             if (encodedData.length())
-                m_handle->client()->didReceiveData(m_handle, encodedData.data(), encodedData.length(), 0);
+                m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::create(encodedData.data(), encodedData.length()), originalSize);
         }
     }
 
@@ -748,7 +746,7 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
 }
 
 // called with data after all headers have been processed via headerCallback
-size_t ResourceHandleCurlDelegate::didReceiveData(ThreadSafeDataBuffer data)
+size_t ResourceHandleCurlDelegate::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
     if (!m_handle)
         return 0;
@@ -756,28 +754,29 @@ size_t ResourceHandleCurlDelegate::didReceiveData(ThreadSafeDataBuffer data)
     if (m_defersLoading)
         return 0;
 
+    size_t receiveBytes = buffer->size();
+
     // this shouldn't be necessary but apparently is. CURL writes the data
     // of html page even if it is a redirect that was handled internally
     // can be observed e.g. on gmail.com
     if (auto httpCode = m_curlHandle.getResponseCode()) {
         if (*httpCode >= 300 && *httpCode < 400)
-            return data.size();
+            return receiveBytes;
     }
 
-    if (!data.size())
-        return 0;
-
-    if (isMainThread())
-        didReceiveContentData(data);
-    else {
-        callOnMainThread([protectedThis = makeRef(*this), data] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->didReceiveContentData(data);
-        });
+    if (receiveBytes) {
+        if (isMainThread())
+            didReceiveContentData(WTFMove(buffer));
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), buf = WTFMove(buffer)]() mutable {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->didReceiveContentData(WTFMove(buf));
+            });
+        }
     }
 
-    return data.size();
+    return receiveBytes;
 }
 
 /* This is called to obtain HTTP POST or PUT data.
@@ -832,7 +831,7 @@ size_t ResourceHandleCurlDelegate::didReceiveHeaderCallback(char* ptr, size_t bl
 
 size_t ResourceHandleCurlDelegate::didReceiveDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data)
 {
-    return static_cast<ResourceHandleCurlDelegate*>(const_cast<void*>(data))->didReceiveData(ThreadSafeDataBuffer::copyData(static_cast<const char*>(ptr), blockSize * numberOfBlocks));
+    return static_cast<ResourceHandleCurlDelegate*>(const_cast<void*>(data))->didReceiveData(SharedBuffer::create(ptr, blockSize * numberOfBlocks));
 }
 
 size_t ResourceHandleCurlDelegate::willSendDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* data)

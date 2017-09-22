@@ -44,7 +44,7 @@ class MultipartHandle;
 class ProtectionSpace;
 class ResourceError;
 class ResourceHandle;
-class ThreadSafeDataBuffer;
+class SharedBuffer;
 
 class ResourceHandleCurlDelegate final : public ThreadSafeRefCounted<ResourceHandleCurlDelegate>, public CurlJobClient {
 public:
@@ -76,7 +76,7 @@ private:
     void setupAuthentication();
 
     void didReceiveAllHeaders(long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth);
-    void didReceiveContentData(ThreadSafeDataBuffer);
+    void didReceiveContentData(Ref<SharedBuffer>&&);
     void handleLocalReceiveResponse();
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
 
@@ -95,7 +95,7 @@ private:
 
     CURLcode willSetupSslCtx(void*);
     size_t didReceiveHeader(String&&);
-    size_t didReceiveData(ThreadSafeDataBuffer);
+    size_t didReceiveData(Ref<SharedBuffer>&&);
     size_t willSendData(char*, size_t blockSize, size_t numberOfBlocks);
 
     static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);

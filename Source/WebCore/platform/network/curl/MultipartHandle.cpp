@@ -33,6 +33,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/StringExtras.h>
 
 namespace WebCore {
@@ -329,7 +330,7 @@ void MultipartHandle::didReceiveData(size_t length)
 
     if (d->client()) {
         const char* data = m_buffer.data();
-        d->client()->didReceiveData(m_resourceHandle, data, length, length);
+        d->client()->didReceiveBuffer(m_resourceHandle, SharedBuffer::create(data, length), length);
     }
 }
 

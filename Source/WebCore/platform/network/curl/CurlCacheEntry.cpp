@@ -39,6 +39,7 @@
 #include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/DateMath.h>
 #include <wtf/HexNumber.h>
@@ -117,7 +118,7 @@ bool CurlCacheEntry::readCachedData(ResourceHandle* job)
         return false;
 
     if (buffer.size())
-        job->getInternal()->client()->didReceiveData(job, buffer.data(), buffer.size(), 0);
+        job->getInternal()->client()->didReceiveBuffer(job, SharedBuffer::create(buffer.data(), buffer.size()), buffer.size());
 
     return true;
 }
