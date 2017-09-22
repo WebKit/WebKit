@@ -1,3 +1,12 @@
+2017-09-22  Per Arne Vollan  <pvollan@apple.com>
+
+        Mark fast/forms/listbox-typeahead-cyrillic.html as failing on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=177378
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-22  Tim Horton  <timothy_horton@apple.com>
 
         Add env() as an alias of constant()
