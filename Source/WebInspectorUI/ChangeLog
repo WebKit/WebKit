@@ -1,3 +1,39 @@
+2017-09-22  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: support toggling properties
+        https://bugs.webkit.org/show_bug.cgi?id=176643
+
+        Reviewed by Joseph Pecoraro.
+
+        Add a primitive UI to make CSS property names and values editable. Autocomplete, syntax highlighting,
+        and proper keyboard navigation will be added later.
+
+        Display !important when it's specified. Before this patch !important wasn't shown in the redesigned
+        styles sidebar.
+
+        * UserInterface/Models/CSSProperty.js:
+        (WI.CSSProperty.prototype.update):
+        (WI.CSSProperty.prototype.get name):
+        (WI.CSSProperty.prototype.set name):
+        (WI.CSSProperty.prototype.get value):
+        (WI.CSSProperty.prototype.get rawValue):
+        (WI.CSSProperty.prototype.set rawValue):
+        CSSProperty.prototype.value returns the same value as before. !important remains stripped.
+        CSSProperty.prototype.rawValue returns a raw value from the payload. It may include !important.
+
+        (WI.CSSProperty.prototype._updateStyle):
+        (WI.CSSProperty.prototype._updateOwnerStyleText):
+        (WI.CSSProperty):
+        * UserInterface/Models/DOMNodeStyles.js:
+        (WI.DOMNodeStyles.prototype._parseStylePropertyPayload):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor :matches(.name, .value):focus):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetStyleProperty.prototype._update):
+        (WI.SpreadsheetStyleProperty.prototype._handleNameChange):
+        (WI.SpreadsheetStyleProperty.prototype._handleValueChange):
+        (WI.SpreadsheetStyleProperty):
+
 2017-09-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: NavigationBar should coalesce consecutive dividers when items are hidden

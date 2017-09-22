@@ -83,7 +83,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         var changed = false;
 
         if (!dontFireEvents) {
-            changed = this._name !== name || this._value !== value || this._priority !== priority ||
+            changed = this._name !== name || this._rawValue !== value || this._priority !== priority ||
                 this._enabled !== enabled || this._implicit !== implicit || this._anonymous !== anonymous || this._valid !== valid;
         }
 
@@ -96,7 +96,7 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
         this._text = text;
         this._name = name;
-        this._value = value;
+        this._rawValue = value;
         this._priority = priority;
         this._enabled = enabled;
         this._implicit = implicit;
@@ -156,7 +156,19 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         this._text = newText;
     }
 
-    get name() { return this._name; }
+    get name()
+    {
+        return this._name;
+    }
+
+    set name(name)
+    {
+        if (name === this._name)
+            return;
+
+        this._name = name;
+        this._updateStyle();
+    }
 
     get canonicalName()
     {
@@ -168,7 +180,29 @@ WI.CSSProperty = class CSSProperty extends WI.Object
         return this._canonicalName;
     }
 
-    get value() { return this._value; }
+    // FIXME: Remove current value getter and rename rawValue to value once the old styles sidebar is removed.
+    get value()
+    {
+        if (!this._value)
+            this._value = this._rawValue.replace(/\s*!important\s*$/, "");
+
+        return this._value;
+    }
+
+    get rawValue()
+    {
+        return this._rawValue;
+    }
+
+    set rawValue(value)
+    {
+        if (value === this._rawValue)
+            return;
+
+        this._rawValue = value;
+        this._value = undefined;
+        this._updateStyle();
+    }
 
     get important()
     {
@@ -285,8 +319,18 @@ WI.CSSProperty = class CSSProperty extends WI.Object
 
     // Private
 
+    _updateStyle()
+    {
+        let text = this._name + ": " + this._rawValue + ";";
+        this._updateOwnerStyleText(this._text, text);
+    }
+
     _updateOwnerStyleText(oldText, newText)
     {
+        console.assert(oldText !== newText, `Style text did not change ${oldText}`);
+        if (oldText === newText)
+            return;
+
         let styleText = this._ownerStyle.text || "";
 
         // _styleSheetTextRange is the position of the property within the stylesheet.

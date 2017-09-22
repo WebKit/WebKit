@@ -523,7 +523,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
     {
         var text = payload.text || "";
         var name = payload.name;
-        var value = (payload.value || "").replace(/\s*!important\s*$/, "");
+        var value = payload.value || "";
         var priority = payload.priority || "";
 
         var enabled = true;

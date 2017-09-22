@@ -116,19 +116,39 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         if (!this._property.enabled)
             this.element.append("/* ");
 
-        let nameElement = this.element.appendChild(document.createElement("span"));
-        nameElement.classList.add("name");
-        nameElement.textContent = this._property.name;
+        this._nameElement = this.element.appendChild(document.createElement("span"));
+        this._nameElement.classList.add("name");
+        this._nameElement.textContent = this._property.name;
 
         this.element.append(": ");
 
-        let valueElement = this.element.appendChild(document.createElement("span"));
-        valueElement.classList.add("value");
-        valueElement.textContent = this._property.value;
+        this._valueElement = this.element.appendChild(document.createElement("span"));
+        this._valueElement.classList.add("value");
+        this._valueElement.textContent = this._property.rawValue;
+
+        if (this._property.editable && this._property.enabled) {
+            this._nameElement.contentEditable = "plaintext-only";
+            this._nameElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleNameChange);
+
+            this._valueElement.contentEditable = "plaintext-only";
+            this._valueElement.addEventListener("input", this.debounce(WI.SpreadsheetStyleProperty.CommitCoalesceDelay)._handleValueChange);
+        }
 
         this.element.append(";");
 
         if (!this._property.enabled)
             this.element.append(" */");
     }
+
+    _handleNameChange()
+    {
+        this._property.name = this._nameElement.textContent.trim();
+    }
+
+    _handleValueChange()
+    {
+        this._property.rawValue = this._valueElement.textContent.trim();
+    }
 };
+
+WI.SpreadsheetStyleProperty.CommitCoalesceDelay = 250;
