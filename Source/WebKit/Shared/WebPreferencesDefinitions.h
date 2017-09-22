@@ -136,8 +136,10 @@
 
 #if PLATFORM(COCOA)
 #define DEFAULT_DATA_TRANSFER_ITEMS_ENABLED true
+#define DEFAULT_DIRECTORY_UPLOAD_ENABLED true
 #else
 #define DEFAULT_DATA_TRANSFER_ITEMS_ENABLED false
+#define DEFAULT_DIRECTORY_UPLOAD_ENABLED false
 #endif
 
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
@@ -298,6 +300,8 @@
     macro(LegacyEncryptedMediaAPIEnabled, legacyEncryptedMediaAPIEnabled, Bool, bool, DEFAULT_LEGACY_ENCRYPTED_MEDIA_API_ENABLED, "Enable Legacy EME API", "Enable legacy EME API") \
     macro(AllowMediaContentTypesRequiringHardwareSupportAsFallback, allowMediaContentTypesRequiringHardwareSupportAsFallback, Bool, bool, DEFAULT_ALLOW_MEDIA_CONTENT_TYPES_REQUIRING_HARDWARE_SUPPORT_AS_FALLBACK, "Allow Media Content Types Requirining Hardware As Fallback", "Allow Media Content Types Requirining Hardware As Fallback") \
     macro(InspectorAdditionsEnabled, inspectorAdditionsEnabled, Bool, bool, false, "Web Inspector Additions", "Enable additional page APIs used by the Web Inspector frontend page") \
+    macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, DEFAULT_DIRECTORY_UPLOAD_ENABLED, "Directory Upload", "input.webkitdirectory / dataTransferItem.webkitGetAsEntry()") \
+    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, DEFAULT_DATA_TRANSFER_ITEMS_ENABLED, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(WebVREnabled, webVREnabled, Bool, bool, false, "WebVR", "WebVR Module support") \
     \
 
@@ -381,8 +385,6 @@
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
-    macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, false, "Directory Upload", "input.webkitdirectory") \
-    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, DEFAULT_DATA_TRANSFER_ITEMS_ENABLED, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(AsyncFrameScrollingEnabled, asyncFrameScrollingEnabled, Bool, bool, false, "Async Frame Scrolling", "Perform frame scrolling in a dedicated thread or process") \
     \
 
