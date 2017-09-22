@@ -508,6 +508,8 @@ void RenderElement::destroyLeftoverChildren()
 
 void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* beforeChild, NotifyChildrenType notifyChildren)
 {
+    RELEASE_ASSERT_WITH_MESSAGE(!view().layoutState(), "Layout must not mutate render tree");
+
     ASSERT(canHaveChildren() || canHaveGeneratedChildren());
     ASSERT(!newChild->parent());
     ASSERT(!isRenderBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
@@ -565,6 +567,8 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
 
 void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
 {
+    RELEASE_ASSERT_WITH_MESSAGE(!view().layoutState(), "Layout must not mutate render tree");
+
     ASSERT(canHaveChildren() || canHaveGeneratedChildren());
     ASSERT(oldChild.parent() == this);
 
