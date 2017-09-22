@@ -1,3 +1,11 @@
+2017-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed test gardening for iOS.
+
+        * platform/ios-simulator/TestExpectations:
+        * platform/ios-wk2/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt: Removed.
+        * platform/ios/TestExpectations:
+
 2017-09-22  John Wilander  <wilander@apple.com>
 
         Non-prevalent resources should be allowed access to existing cookies in a third-party context
