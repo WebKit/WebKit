@@ -1,3 +1,12 @@
+2017-09-22  Timothy Horton  <timothy_horton@apple.com>
+
+        Update some links in demos
+
+        * demos/safe-area-insets/1-default.html:
+        * demos/safe-area-insets/2-viewport-fit.html:
+        * demos/safe-area-insets/3-safe-area-constants.html:
+        * demos/safe-area-insets/4-min-max.html:
+
 2017-09-21  Tim Horton  <timothy_horton@apple.com>
 
         Add some blog post resources
