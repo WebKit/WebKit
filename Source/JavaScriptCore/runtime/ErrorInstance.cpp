@@ -115,7 +115,13 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     if (!message.isNull())
         putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
 
-    m_stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
+    {
+        auto locker = holdLock(*this);
+        m_stackTrace = WTFMove(stackTrace);
+    }
+    vm.heap.writeBarrier(this);
+
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         unsigned bytecodeOffset;
         CallFrame* callFrame;
@@ -202,7 +208,10 @@ void ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
         return;
     
     addErrorInfo(vm, m_stackTrace.get(), this);
-    m_stackTrace = nullptr;
+    {
+        auto locker = holdLock(*this);
+        m_stackTrace = nullptr;
+    }
     
     m_errorInfoMaterialized = true;
 }
@@ -222,9 +231,12 @@ void ErrorInstance::visitChildren(JSCell* cell, SlotVisitor& visitor)
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
     Base::visitChildren(thisObject, visitor);
 
-    if (thisObject->m_stackTrace) {
-        for (StackFrame& frame : *thisObject->m_stackTrace)
-            frame.visitChildren(visitor);
+    {
+        auto locker = holdLock(*thisObject);
+        if (thisObject->m_stackTrace) {
+            for (StackFrame& frame : *thisObject->m_stackTrace)
+                frame.visitChildren(visitor);
+        }
     }
 }
 
