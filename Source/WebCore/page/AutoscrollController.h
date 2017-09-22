@@ -27,6 +27,7 @@
 
 #include "IntPoint.h"
 #include "Timer.h"
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ public:
     void startAutoscrollForSelection(RenderObject*);
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     void updateAutoscrollRenderer();
-    void updateDragAndDrop(Node* targetNode, const IntPoint& eventPosition, double eventTime);
+    void updateDragAndDrop(Node* targetNode, const IntPoint& eventPosition, WallTime eventTime);
 #if ENABLE(PAN_SCROLLING)
     void didPanScrollStart();
     void didPanScrollStop();
@@ -79,7 +80,7 @@ private:
     RenderBox* m_autoscrollRenderer;
     AutoscrollType m_autoscrollType;
     IntPoint m_dragAndDropAutoscrollReferencePosition;
-    double m_dragAndDropAutoscrollStartTime;
+    WallTime m_dragAndDropAutoscrollStartTime;
 #if ENABLE(PAN_SCROLLING)
     IntPoint m_panScrollStartPos;
 #endif

@@ -1,7 +1,7 @@
 
-FAIL Constructed MouseEvent timestamp should be high resolution and have the same time origin as performance.now() assert_less_than_equal: Event timestamp should be less than performance.now() timestamp taken after its creation expected a number less than or equal to 523.8000000000001 but got 1505770152566
-FAIL Constructed KeyboardEvent timestamp should be high resolution and have the same time origin as performance.now() assert_less_than_equal: Event timestamp should be less than performance.now() timestamp taken after its creation expected a number less than or equal to 524.4 but got 1505770152566
-FAIL Constructed WheelEvent timestamp should be high resolution and have the same time origin as performance.now() assert_less_than_equal: Event timestamp should be less than performance.now() timestamp taken after its creation expected a number less than or equal to 524.5000000000001 but got 1505770152566
-FAIL Constructed GamepadEvent timestamp should be high resolution and have the same time origin as performance.now() Not enough arguments
-FAIL Constructed FocusEvent timestamp should be high resolution and have the same time origin as performance.now() assert_less_than_equal: Event timestamp should be less than performance.now() timestamp taken after its creation expected a number less than or equal to 524.6 but got 1505770152566
+PASS Constructed MouseEvent timestamp should be high resolution and have the same time origin as performance.now() 
+PASS Constructed KeyboardEvent timestamp should be high resolution and have the same time origin as performance.now() 
+PASS Constructed WheelEvent timestamp should be high resolution and have the same time origin as performance.now() 
+PASS Constructed GamepadEvent timestamp should be high resolution and have the same time origin as performance.now() 
+PASS Constructed FocusEvent timestamp should be high resolution and have the same time origin as performance.now() 
 

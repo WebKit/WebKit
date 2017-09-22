@@ -23,11 +23,12 @@
 
 #pragma once
 
-#include "DOMTimeStamp.h"
+#include "DOMHighResTimeStamp.h"
 #include "EventInit.h"
 #include "EventInterfaces.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/AtomicString.h>
@@ -96,7 +97,8 @@ public:
     bool cancelable() const { return m_cancelable; }
     WEBCORE_EXPORT bool composed() const;
 
-    DOMTimeStamp timeStamp() const { return m_createTime; }
+    DOMHighResTimeStamp timeStampForBindings(ScriptExecutionContext&) const;
+    MonotonicTime timeStamp() const { return m_createTime; }
 
     void setEventPath(const EventPath& path) { m_eventPath = &path; }
     void clearEventPath() { m_eventPath = nullptr; }
@@ -170,7 +172,7 @@ public:
 protected:
     Event(IsTrusted = IsTrusted::No);
     WEBCORE_EXPORT Event(const AtomicString& type, bool canBubble, bool cancelable);
-    Event(const AtomicString& type, bool canBubble, bool cancelable, double timestamp);
+    Event(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp);
     Event(const AtomicString& type, const EventInit&, IsTrusted);
 
     virtual void receivedTarget();
@@ -195,7 +197,7 @@ private:
     RefPtr<EventTarget> m_currentTarget;
     const EventPath* m_eventPath { nullptr };
     RefPtr<EventTarget> m_target;
-    DOMTimeStamp m_createTime;
+    MonotonicTime m_createTime;
 
     RefPtr<Event> m_underlyingEvent;
 };

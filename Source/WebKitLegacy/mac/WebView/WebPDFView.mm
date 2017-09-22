@@ -1018,14 +1018,14 @@ static BOOL isFrameInRange(WebFrame *frame, DOMRange *range)
     case NSEventTypeKeyDown: {
         PlatformKeyboardEvent pe = PlatformEventFactory::createPlatformKeyboardEvent(nsEvent);
         pe.disambiguateKeyDownEvent(PlatformEvent::RawKeyDown);
-        event = KeyboardEvent::create(pe, 0);
+        event = KeyboardEvent::create(pe, nullptr);
         break;
     }
     default:
         break;
     }
     if (button != noButton) {
-        event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, [nsEvent clickCount], 0, 0, 0, 0,
+        event = MouseEvent::create(eventNames().clickEvent, true, true, MonotonicTime::now(), 0, [nsEvent clickCount], 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
             0, 0,
 #endif

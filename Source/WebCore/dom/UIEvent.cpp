@@ -39,7 +39,7 @@ UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelab
 {
 }
 
-UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, double timestamp, DOMWindow* viewArg, int detailArg)
+UIEvent::UIEvent(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg, MonotonicTime timestamp, DOMWindow* viewArg, int detailArg)
     : Event(eventType, canBubbleArg, cancelableArg, timestamp)
     , m_view(viewArg)
     , m_detail(detailArg)

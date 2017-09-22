@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/OptionSet.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -86,29 +87,27 @@ public:
 
     OptionSet<Modifier> modifiers() const { return m_modifiers; }
 
-    double timestamp() const { return m_timestamp; }
+    WallTime timestamp() const { return m_timestamp; }
 
 protected:
     PlatformEvent()
         : m_type(NoType)
-        , m_timestamp(0)
     {
     }
 
     explicit PlatformEvent(Type type)
         : m_type(type)
-        , m_timestamp(0)
     {
     }
 
-    PlatformEvent(Type type, OptionSet<Modifier> modifiers, double timestamp)
+    PlatformEvent(Type type, OptionSet<Modifier> modifiers, WallTime timestamp)
         : m_type(type)
         , m_modifiers(modifiers)
         , m_timestamp(timestamp)
     {
     }
 
-    PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, double timestamp)
+    PlatformEvent(Type type, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey, WallTime timestamp)
         : m_type(type)
         , m_timestamp(timestamp)
     {
@@ -130,7 +129,7 @@ protected:
 
     unsigned m_type;
     OptionSet<Modifier> m_modifiers;
-    double m_timestamp;
+    WallTime m_timestamp;
 };
 
 } // namespace WebCore

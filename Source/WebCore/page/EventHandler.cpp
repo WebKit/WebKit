@@ -135,7 +135,7 @@ const int ImageDragHysteresis = 5;
 const int TextDragHysteresis = 3;
 const int GeneralDragHysteresis = 3;
 #if PLATFORM(COCOA)
-const double EventHandler::TextDragDelay = 0.15;
+const Seconds EventHandler::TextDragDelay { 150_ms };
 #endif
 #endif // ENABLE(DRAG_SUPPORT)
 
@@ -2190,7 +2190,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Element& dra
 
     view->disableLayerFlushThrottlingTemporarilyForInteraction();
     Ref<MouseEvent> me = MouseEvent::create(eventType,
-        true, true, event.timestamp(), m_frame.document()->defaultView(),
+        true, true, event.timestamp().approximateMonotonicTime(), m_frame.document()->defaultView(),
         0, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),
@@ -2939,7 +2939,7 @@ bool EventHandler::sendContextMenuEventForKey()
     PlatformEvent::Type eventType = PlatformEvent::MousePressed;
 #endif
 
-    PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WTF::currentTime(), ForceAtClick, NoTap);
+    PlatformMouseEvent platformMouseEvent(position, globalPosition, RightButton, eventType, 1, false, false, false, false, WallTime::now(), ForceAtClick, NoTap);
 
     return sendContextMenuEvent(platformMouseEvent);
 }
@@ -3021,7 +3021,7 @@ void EventHandler::fakeMouseMoveEventTimerFired()
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    PlatformMouseEvent fakeMouseMoveEvent(m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime(), 0, NoTap);
+    PlatformMouseEvent fakeMouseMoveEvent(m_lastKnownMousePosition, m_lastKnownMouseGlobalPosition, NoButton, PlatformEvent::MouseMoved, 0, shiftKey, ctrlKey, altKey, metaKey, WallTime::now(), 0, NoTap);
     mouseMoved(fakeMouseMoveEvent);
 }
 #endif // !ENABLE(IOS_TOUCH_EVENTS)

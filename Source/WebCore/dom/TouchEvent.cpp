@@ -31,7 +31,6 @@
 #include "TouchEvent.h"
 
 #include "EventDispatcher.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -43,7 +42,7 @@ TouchEvent::TouchEvent(TouchList* touches, TouchList* targetTouches,
         TouchList* changedTouches, const AtomicString& type, 
         DOMWindow* view, int screenX, int screenY, int pageX, int pageY,
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-    : MouseRelatedEvent(type, true, true, currentTime(), view, 0, IntPoint(screenX, screenY),
+    : MouseRelatedEvent(type, true, true, MonotonicTime::now(), view, 0, IntPoint(screenX, screenY),
                         IntPoint(pageX, pageY),
 #if ENABLE(POINTER_LOCK)
                         IntPoint(0, 0),

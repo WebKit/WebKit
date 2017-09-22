@@ -34,7 +34,6 @@
 #include "JSEventTargetCustom.h"
 #include "PlatformMouseEvent.h"
 #include "RuntimeApplicationChecks.h"
-#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -51,7 +50,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* vie
     bool isCancelable = eventType != eventNames().mousemoveEvent && !isMouseEnterOrLeave;
     bool canBubble = !isMouseEnterOrLeave;
 
-    return MouseEvent::create(eventType, canBubble, isCancelable, event.timestamp(), view,
+    return MouseEvent::create(eventType, canBubble, isCancelable, event.timestamp().approximateMonotonicTime(), view,
         detail, event.globalPosition().x(), event.globalPosition().y(), event.position().x(), event.position().y(),
 #if ENABLE(POINTER_LOCK)
         event.movementDelta().x(), event.movementDelta().y(),
@@ -60,7 +59,7 @@ Ref<MouseEvent> MouseEvent::create(const AtomicString& eventType, DOMWindow* vie
         relatedTarget, event.force(), event.syntheticClickType());
 }
 
-Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow* view, int detail, int screenX, int screenY, int pageX, int pageY,
+Ref<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* view, int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
     int movementX, int movementY,
 #endif
@@ -83,7 +82,7 @@ MouseEvent::MouseEvent()
 {
 }
 
-MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
+MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,
 #endif
@@ -103,7 +102,7 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
 }
 
 MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cancelable, DOMWindow* view, int detail, const IntPoint& screenLocation, const IntPoint& clientLocation, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button, unsigned short syntheticClickType, EventTarget* relatedTarget)
-    : MouseRelatedEvent(eventType, canBubble, cancelable, WTF::currentTime(), view, detail, screenLocation, { },
+    : MouseRelatedEvent(eventType, canBubble, cancelable, MonotonicTime::now(), view, detail, screenLocation, { },
 #if ENABLE(POINTER_LOCK)
         { },
 #endif

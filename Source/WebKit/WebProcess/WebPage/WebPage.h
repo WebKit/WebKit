@@ -66,6 +66,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(GTK)
@@ -806,9 +807,9 @@ public:
 #endif
 
     // For testing purpose.
-    void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
-    void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, double time);
-    void simulateMouseMotion(WebCore::IntPoint, double time);
+    void simulateMouseDown(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
+    void simulateMouseUp(int button, WebCore::IntPoint, int clickCount, WKEventModifiers, WallTime);
+    void simulateMouseMotion(WebCore::IntPoint, WallTime);
 
 #if ENABLE(CONTEXT_MENUS)
     void contextMenuShowing() { m_isShowingContextMenu = true; }

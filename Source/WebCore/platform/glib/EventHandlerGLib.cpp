@@ -49,7 +49,7 @@
 namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
-const double EventHandler::TextDragDelay = 0.0;
+const Seconds EventHandler::TextDragDelay { 0_s };
 #endif
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent&) const

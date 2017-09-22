@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, double timestamp, DOMWindow* DOMWindow,
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* DOMWindow,
                                      int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
                                      const IntPoint& movementDelta,

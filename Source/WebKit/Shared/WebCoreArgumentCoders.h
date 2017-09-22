@@ -43,6 +43,7 @@
 namespace WTF {
 class MonotonicTime;
 class Seconds;
+class WallTime;
 }
 
 namespace WebCore {
@@ -160,6 +161,11 @@ namespace IPC {
 template<> struct ArgumentCoder<WTF::MonotonicTime> {
     static void encode(Encoder&, const WTF::MonotonicTime&);
     static bool decode(Decoder&, WTF::MonotonicTime&);
+};
+
+template<> struct ArgumentCoder<WTF::WallTime> {
+    static void encode(Encoder&, const WTF::WallTime&);
+    static bool decode(Decoder&, WTF::WallTime&);
 };
 
 template<> struct ArgumentCoder<WTF::Seconds> {

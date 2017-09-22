@@ -73,7 +73,7 @@ static int verticalScrollLines()
 }
 
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const FloatPoint& location)
-    : PlatformEvent(PlatformEvent::Wheel, false, false, false, false, ::GetTickCount() * 0.001)
+    : PlatformEvent(PlatformEvent::Wheel, false, false, false, false, WallTime::fromRawSeconds(::GetTickCount() * 0.001))
     , m_directionInvertedFromDevice(false)
 {
     m_deltaX = delta.width();
@@ -95,7 +95,7 @@ PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, const FloatSize& delta, const 
 }
 
 PlatformWheelEvent::PlatformWheelEvent(HWND hWnd, WPARAM wParam, LPARAM lParam, bool isMouseHWheel)
-    : PlatformEvent(PlatformEvent::Wheel, wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, ::GetTickCount() * 0.001)
+    : PlatformEvent(PlatformEvent::Wheel, wParam & MK_SHIFT, wParam & MK_CONTROL, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, GetKeyState(VK_MENU) & HIGH_BIT_MASK_SHORT, WallTime::fromRawSeconds(::GetTickCount() * 0.001))
     , m_position(positionForEvent(hWnd, lParam))
     , m_globalPosition(globalPositionForEvent(hWnd, lParam))
     , m_directionInvertedFromDevice(false)

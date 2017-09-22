@@ -72,7 +72,7 @@ namespace WebCore {
 #if ENABLE(KEYBOARD_CODE_ATTRIBUTE)
         const String& code,
 #endif
-        const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, double timestamp)
+        const String& keyIdentifier, int windowsVirtualKeyCode, bool isAutoRepeat, bool isKeypad, bool isSystemKey, OptionSet<Modifier> modifiers, WallTime timestamp)
             : PlatformEvent(type, modifiers, timestamp)
             , m_text(text)
             , m_unmodifiedText(unmodifiedText)

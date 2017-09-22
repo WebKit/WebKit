@@ -140,7 +140,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(const GdkEvent* event, int cu
                          0 /* deltaZ */,
                          currentClickCount,
                          modifiersForEvent(event),
-                         gdk_event_get_time(event));
+                         WallTime::fromRawSeconds(gdk_event_get_time(event)));
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event)
@@ -210,7 +210,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(const GdkEvent* event, WebWhe
         momentumPhase,
         WebWheelEvent::ScrollByPixelWheelEvent,
         modifiersForEvent(event),
-        gdk_event_get_time(event));
+        WallTime::fromRawSeconds(gdk_event_get_time(event)));
 }
 
 WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, const WebCore::CompositionResults& compositionResults, Vector<String>&& commands)
@@ -227,7 +227,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(const GdkEvent* event, 
         WTFMove(commands),
         isGdkKeyCodeFromKeyPad(event->key.keyval),
         modifiersForEvent(event),
-        gdk_event_get_time(event));
+        WallTime::fromRawSeconds(gdk_event_get_time(event)));
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -249,7 +249,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(const GdkEvent* event, Vector
         ASSERT_NOT_REACHED();
     }
 
-    return WebTouchEvent(type, WTFMove(touchPoints), modifiersForEvent(event), gdk_event_get_time(event));
+    return WebTouchEvent(type, WTFMove(touchPoints), modifiersForEvent(event), WallTime::fromRawSeconds(gdk_event_get_time(event)));
 #else
     return WebTouchEvent();
 #endif // GTK_API_VERSION_2

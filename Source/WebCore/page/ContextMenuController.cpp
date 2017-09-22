@@ -68,6 +68,7 @@
 #include "UserTypingGestureIndicator.h"
 #include "WindowFeatures.h"
 #include "markup.h"
+#include <wtf/WallTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace WTF;
@@ -1440,7 +1441,7 @@ void ContextMenuController::showContextMenuAt(Frame& frame, const IntPoint& clic
     clearContextMenu();
     
     // Simulate a click in the middle of the accessibility object.
-    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime(), ForceAtClick, NoTap);
+    PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, WallTime::now(), ForceAtClick, NoTap);
     frame.eventHandler().handleMousePressEvent(mouseEvent);
     bool handled = frame.eventHandler().sendContextMenuEvent(mouseEvent);
     if (handled)

@@ -81,7 +81,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(struct wpe_input_keyboa
         singleCharacterString, singleCharacterString, identifierString,
         wpe_input_windows_key_code_for_key_event(wpe_input_key_mapper_get_singleton(), event),
         event->keyCode, 0, false, false, false,
-        modifiersForEvent(event), event->time);
+        modifiersForEvent(event), WallTime::fromRawSeconds(event->time));
 }
 
 WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_event* event, float deviceScaleFactor)
@@ -119,7 +119,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(struct wpe_input_pointer_even
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebMouseEvent(type, button, position, position,
-        0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(0), event->time);
+        0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(0), WallTime::fromRawSeconds(event->time));
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* event, float deviceScaleFactor)
@@ -154,7 +154,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
     WebCore::IntPoint position(event->x, event->y);
     position.scale(1 / deviceScaleFactor);
     return WebWheelEvent(WebEvent::Wheel, position, position,
-        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, static_cast<WebEvent::Modifiers>(0), event->time);
+        delta, wheelTicks, WebWheelEvent::ScrollByPixelWheelEvent, static_cast<WebEvent::Modifiers>(0), WallTime::fromRawSeconds(event->time));
 }
 
 static WebKit::WebPlatformTouchPoint::TouchPointState stateForTouchPoint(int mainEventId, const struct wpe_input_touch_event_raw* point)
@@ -209,7 +209,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event*
                 pointCoordinates, pointCoordinates));
     }
 
-    return WebTouchEvent(type, WTFMove(touchPoints), WebEvent::Modifiers(0), event->time);
+    return WebTouchEvent(type, WTFMove(touchPoints), WebEvent::Modifiers(0), WallTime::fromRawSeconds(event->time));
 }
 
 } // namespace WebKit

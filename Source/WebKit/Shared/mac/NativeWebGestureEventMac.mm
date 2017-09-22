@@ -31,7 +31,7 @@
 #import "WebEvent.h"
 #import "WebGestureEvent.h"
 #import <WebCore/IntPoint.h>
-#import <wtf/CurrentTime.h>
+#import <WebCore/PlatformEventFactoryMac.h>
 
 namespace WebKit {
 
@@ -63,7 +63,7 @@ NativeWebGestureEvent::NativeWebGestureEvent(NSEvent *event, NSView *view)
     : WebGestureEvent(
         webEventTypeForNSEvent(event),
         static_cast<Modifiers>(0),
-        event.timestamp,
+        WebCore::eventTimeStampSince1970(event),
         WebCore::IntPoint(pointForEvent(event, view)),
         event.type == NSEventTypeMagnify ? event.magnification : 0,
         event.type == NSEventTypeRotate ? event.rotation : 0)

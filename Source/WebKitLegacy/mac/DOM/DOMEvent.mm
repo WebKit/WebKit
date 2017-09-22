@@ -97,7 +97,7 @@
 - (DOMTimeStamp)timeStamp
 {
     WebCore::JSMainThreadNullState state;
-    return IMPL->timeStamp();
+    return IMPL->timeStamp().approximateWallTime().secondsSinceEpoch().milliseconds();
 }
 
 - (BOOL)defaultPrevented

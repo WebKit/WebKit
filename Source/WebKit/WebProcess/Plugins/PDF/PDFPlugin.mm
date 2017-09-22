@@ -1576,7 +1576,7 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 {
     FrameView* frameView = webFrame()->coreFrame()->view();
     IntPoint contentsPoint = frameView->contentsToRootView(point);
-    WebMouseEvent event(WebEvent::MouseDown, WebMouseEvent::RightButton, contentsPoint, contentsPoint, 0, 0, 0, 1, static_cast<WebEvent::Modifiers>(0), monotonicallyIncreasingTime(), WebCore::ForceAtClick);
+    WebMouseEvent event(WebEvent::MouseDown, WebMouseEvent::RightButton, contentsPoint, contentsPoint, 0, 0, 0, 1, static_cast<WebEvent::Modifiers>(0), WallTime::now(), WebCore::ForceAtClick);
     return handleContextMenuEvent(event);
 }
 

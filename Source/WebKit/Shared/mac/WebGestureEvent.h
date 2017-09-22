@@ -45,7 +45,7 @@ namespace WebKit {
 class WebGestureEvent : public WebEvent {
 public:
     WebGestureEvent() { }
-    WebGestureEvent(WebEvent::Type type, Modifiers modifiers, double timestamp, WebCore::IntPoint position, float gestureScale, float gestureRotation)
+    WebGestureEvent(WebEvent::Type type, Modifiers modifiers, WallTime timestamp, WebCore::IntPoint position, float gestureScale, float gestureRotation)
         : WebEvent(type, modifiers, timestamp)
         , m_position(position)
         , m_gestureScale(gestureScale)

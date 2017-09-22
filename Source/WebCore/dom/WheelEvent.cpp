@@ -50,7 +50,7 @@ WheelEvent::WheelEvent(const AtomicString& type, const Init& initializer, IsTrus
 }
 
 WheelEvent::WheelEvent(const PlatformWheelEvent& event, DOMWindow* view)
-    : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp(), view, 0, event.globalPosition(), event.position()
+    : MouseEvent(eventNames().wheelEvent, true, true, event.timestamp().approximateMonotonicTime(), view, 0, event.globalPosition(), event.position()
 #if ENABLE(POINTER_LOCK)
         , { }
 #endif

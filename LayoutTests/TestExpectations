@@ -176,7 +176,6 @@ imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-012.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-015.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-017.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-021.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
 imported/w3c/web-platform-tests/dom/nodes/Document-constructor-svg.svg [ Timeout ]
 imported/w3c/web-platform-tests/fetch/security/dangling-markup-mitigation.tentative.html [ Pass Failure ]
 imported/w3c/web-platform-tests/hr-time/timeOrigin.html [ Failure ]

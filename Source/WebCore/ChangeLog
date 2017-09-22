@@ -1,3 +1,101 @@
+2017-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Use high resolution timestamp for event time
+        https://bugs.webkit.org/show_bug.cgi?id=154246
+        <rdar://problem/34333304>
+
+        Reviewed by Ryosuke Niwa.
+
+        Have event.timeStamp return a DOMHighResTimeStamp instead of a DOMResTimeStamp. It now
+        has better precision, is monotonic and is relative to PerformanceTiming.navigationStart.
+
+        This is as per:
+        - https://dom.spec.whatwg.org/#interface-event
+
+        Chrome, Firefox and Edge all already ship this so the compatibility risk should be low.
+
+        Also use WallTime / MonotonicTime instead of double type for clarity.
+
+        Test: imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMHighResTimeStamp.h: Copied from Source/WebKit/Shared/WebTouchEvent.cpp.
+        * dom/Element.cpp:
+        (WebCore::Element::dispatchMouseForceWillBegin):
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        (WebCore::Event::timeStampForBindings const):
+        * dom/Event.h:
+        (WebCore::Event::timeStamp const):
+        * dom/Event.idl:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEvent::KeyboardEvent):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::create):
+        (WebCore::MouseEvent::MouseEvent):
+        * dom/MouseEvent.h:
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/SimulatedClick.cpp:
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        * dom/UIEvent.h:
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        * html/TypeAhead.cpp:
+        (WebCore::TypeAhead::TypeAhead):
+        (WebCore::TypeAhead::handleEvent):
+        * html/TypeAhead.h:
+        * page/AutoscrollController.cpp:
+        (WebCore::AutoscrollController::AutoscrollController):
+        (WebCore::AutoscrollController::updateDragAndDrop):
+        (WebCore::AutoscrollController::autoscrollTimerFired):
+        * page/AutoscrollController.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::showContextMenuAt):
+        * page/DragController.cpp:
+        (WebCore::createMouseEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+        (WebCore::EventHandler::fakeMouseMoveEventTimerFired):
+        * page/EventHandler.h:
+        * page/Performance.cpp:
+        (WebCore::Performance::now const):
+        (WebCore::Performance::relativeTimeFromTimeOriginInReducedResolution const):
+        * page/Performance.h:
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::tryToBeginDataInteractionAtPoint):
+        * page/win/EventHandlerWin.cpp:
+        * platform/PlatformEvent.h:
+        (WebCore::PlatformEvent::timestamp const):
+        (WebCore::PlatformEvent::PlatformEvent):
+        * platform/PlatformKeyboardEvent.h:
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        * platform/PlatformMouseEvent.h:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/cocoa/ScrollController.mm:
+        (WebCore::ScrollController::handleWheelEvent):
+        * platform/glib/EventHandlerGLib.cpp:
+        * platform/gtk/ScrollAnimatorGtk.cpp:
+        (WebCore::ScrollAnimatorGtk::computeVelocity):
+        (WebCore::ScrollAnimatorGtk::handleWheelEvent):
+        * platform/ios/PlatformEventFactoryIOS.mm:
+        (WebCore::PlatformMouseEventBuilder::PlatformMouseEventBuilder):
+        (WebCore::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebCore::PlatformKeyboardEventBuilder::PlatformKeyboardEventBuilder):
+        (WebCore::PlatformTouchEventBuilder::PlatformTouchEventBuilder):
+        * platform/mac/PlatformEventFactoryMac.h:
+        * platform/mac/PlatformEventFactoryMac.mm:
+        (WebCore::eventTimeStampSince1970):
+
 2017-09-22  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         [GTK] HTMLMediaElement resize event not fired when video size changes

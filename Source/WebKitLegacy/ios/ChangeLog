@@ -1,3 +1,16 @@
+2017-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Use high resolution timestamp for event time
+        https://bugs.webkit.org/show_bug.cgi?id=154246
+        <rdar://problem/34333304>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use WallTime / MonotonicTime instead of double type for clarity.
+
+        * WebView/WebPDFViewPlaceholder.mm:
+        (-[WebPDFViewPlaceholder simulateClickOnLinkToURL:]):
+
 2017-08-09  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move spi/cocoa and spi/cg directories into PAL

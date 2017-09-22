@@ -179,14 +179,14 @@ bool ScrollController::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
     if (!m_momentumScrollInProgress && (momentumPhase == PlatformWheelEventPhaseBegan || momentumPhase == PlatformWheelEventPhaseChanged))
         m_momentumScrollInProgress = true;
 
-    CFTimeInterval timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
+    CFTimeInterval timeDelta = wheelEvent.timestamp().secondsSinceEpoch().value() - m_lastMomentumScrollTimestamp;
     if (m_inScrollGesture || m_momentumScrollInProgress) {
         if (m_lastMomentumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
             m_momentumVelocity.setWidth(eventCoalescedDeltaX / (float)timeDelta);
             m_momentumVelocity.setHeight(eventCoalescedDeltaY / (float)timeDelta);
-            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp().secondsSinceEpoch().value();
         } else {
-            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp().secondsSinceEpoch().value();
             m_momentumVelocity = FloatSize();
         }
 

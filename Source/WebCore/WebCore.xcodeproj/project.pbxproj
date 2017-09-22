@@ -1957,6 +1957,7 @@
 		460BB6161D0A1BF000221812 /* Base64Utilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 460BB6141D0A1BEC00221812 /* Base64Utilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		460CBF351D4BCD0E0092E88E /* JSDOMWindowProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 460CBF331D4BCCFE0092E88E /* JSDOMWindowProperties.cpp */; };
 		460CBF361D4BCD0E0092E88E /* JSDOMWindowProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 460CBF341D4BCCFE0092E88E /* JSDOMWindowProperties.h */; };
+		46218ACB1F72D64E00574FBE /* DOMHighResTimeStamp.h in Headers */ = {isa = PBXBuildFile; fileRef = 46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4634592C1AC2271000ECB71C /* PowerObserverMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4634592B1AC2271000ECB71C /* PowerObserverMac.cpp */; };
 		463EB6221B8789E00096ED51 /* TagCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 463EB6201B8789CB0096ED51 /* TagCollection.cpp */; };
 		463EB6231B8789E00096ED51 /* TagCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 463EB6211B8789CB0096ED51 /* TagCollection.h */; };
@@ -9836,6 +9837,7 @@
 		46DFF4971DC2601300B80B48 /* ShadowRootMode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ShadowRootMode.idl; sourceTree = "<group>"; };
 		46DFF4991DC261F900B80B48 /* JSShadowRootMode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSShadowRootMode.cpp; sourceTree = "<group>"; };
 		46DFF49A1DC261F900B80B48 /* JSShadowRootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSShadowRootMode.h; sourceTree = "<group>"; };
+		46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHighResTimeStamp.h; sourceTree = "<group>"; };
 		46EBEA011B7D4D5D00BE4941 /* CollectionTraversal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionTraversal.h; sourceTree = "<group>"; };
 		46EFAF0D1E5FB9C200E7F34B /* LowPowerModeNotifierIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LowPowerModeNotifierIOS.mm; sourceTree = "<group>"; };
 		46EFAF0F1E5FB9E100E7F34B /* LowPowerModeNotifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LowPowerModeNotifier.cpp; sourceTree = "<group>"; };
@@ -26241,6 +26243,7 @@
 				BC60D6E80D28D83400B9918F /* DOMException.h */,
 				BC60D6EB0D28D99900B9918F /* DOMException.idl */,
 				BC9A6141146859D9006057FD /* DOMExceptions.in */,
+				46E016AD1F72D61E00282B2C /* DOMHighResTimeStamp.h */,
 				A8185F3609765765005826D9 /* DOMImplementation.cpp */,
 				A8185F3309765765005826D9 /* DOMImplementation.h */,
 				93EEC1E909C2877700C515D1 /* DOMImplementation.idl */,
@@ -27692,6 +27695,7 @@
 				BC60D6E90D28D83400B9918F /* DOMException.h in Headers */,
 				8399470C1F50B63E00E9D86B /* DOMFileSystem.h in Headers */,
 				2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */,
+				46218ACB1F72D64E00574FBE /* DOMHighResTimeStamp.h in Headers */,
 				A8185F3B09765766005826D9 /* DOMImplementation.h in Headers */,
 				E3C99A091DC3D41C00794AD3 /* DOMJITCheckDOM.h in Headers */,
 				E3150EA71DA7219300194012 /* DOMJITHelpers.h in Headers */,

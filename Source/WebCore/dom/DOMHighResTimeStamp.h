@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,56 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebEvent.h"
+#pragma once
 
-#include "Decoder.h"
-#include "Encoder.h"
-#include "WebCoreArgumentCoders.h"
+namespace WebCore {
 
-namespace WebKit {
+using DOMHighResTimeStamp = double;
 
-WebEvent::WebEvent()
-    : m_type(static_cast<uint32_t>(NoType))
-    , m_modifiers(0)
-{
 }
-
-WebEvent::WebEvent(Type type, Modifiers modifiers, WallTime timestamp)
-    : m_type(type)
-    , m_modifiers(modifiers)
-    , m_timestamp(timestamp)
-{
-}
-
-void WebEvent::encode(IPC::Encoder& encoder) const
-{
-    encoder << m_type;
-    encoder << m_modifiers;
-    encoder << m_timestamp;
-}
-
-bool WebEvent::decode(IPC::Decoder& decoder, WebEvent& result)
-{
-    if (!decoder.decode(result.m_type))
-        return false;
-    if (!decoder.decode(result.m_modifiers))
-        return false;
-    if (!decoder.decode(result.m_timestamp))
-        return false;
-    return true;
-}
-
-#if ENABLE(TOUCH_EVENTS)
-bool WebTouchEvent::allTouchPointsAreReleased() const
-{
-    for (const auto& touchPoint : touchPoints()) {
-        if (touchPoint.state() != WebPlatformTouchPoint::TouchReleased && touchPoint.state() != WebPlatformTouchPoint::TouchCancelled)
-            return false;
-    }
-
-    return true;
-}
-#endif
-
-} // namespace WebKit

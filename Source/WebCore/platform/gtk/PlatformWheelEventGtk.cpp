@@ -33,7 +33,7 @@
 #include "Scrollbar.h"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
-#include <wtf/CurrentTime.h>
+#include <wtf/WallTime.h>
 
 namespace WebCore {
 
@@ -43,7 +43,7 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     static const float delta = 1;
 
     m_type = PlatformEvent::Wheel;
-    m_timestamp = currentTime();
+    m_timestamp = WallTime::now();
 
     if (event->state & GDK_SHIFT_MASK)
         m_modifiers |= Modifier::ShiftKey;

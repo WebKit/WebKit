@@ -1,3 +1,74 @@
+2017-09-22  Chris Dumez  <cdumez@apple.com>
+
+        Use high resolution timestamp for event time
+        https://bugs.webkit.org/show_bug.cgi?id=154246
+        <rdar://problem/34333304>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use WallTime / MonotonicTime instead of double type for clarity.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<WallTime>::encode):
+        (IPC::ArgumentCoder<WallTime>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebEvent.cpp:
+        (WebKit::WebEvent::WebEvent):
+        * Shared/WebEvent.h:
+        (WebKit::WebEvent::timestamp const):
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::WebKeyboardEvent):
+        * Shared/WebMouseEvent.cpp:
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        * Shared/WebTouchEvent.cpp:
+        (WebKit::WebTouchEvent::WebTouchEvent):
+        * Shared/WebWheelEvent.cpp:
+        (WebKit::WebWheelEvent::WebWheelEvent):
+        * Shared/gtk/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * Shared/ios/NativeWebTouchEventIOS.mm:
+        (WebKit::NativeWebTouchEvent::NativeWebTouchEvent):
+        * Shared/ios/WebIOSEventFactory.mm:
+        (WebIOSEventFactory::createWebKeyboardEvent):
+        * Shared/mac/NativeWebGestureEventMac.mm:
+        (WebKit::NativeWebGestureEvent::NativeWebGestureEvent):
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/mac/WebGestureEvent.h:
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * Shared/wpe/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebTouchEvent):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSimulateMouseDown):
+        (WKBundlePageSimulateMouseUp):
+        (WKBundlePageSimulateMouseMotion):
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::showContextMenuAtPoint):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::createWebEvent const):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::navigateToPDFLinkWithSimulatedClick):
+        (WebKit::WebPage::contextMenuAtPointInWindow):
+        (WebKit::WebPage::dragEnded):
+        (WebKit::WebPage::simulateMouseDown):
+        (WebKit::WebPage::simulateMouseUp):
+        (WebKit::WebPage::simulateMouseMotion):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::handleSyntheticClick):
+        (WebKit::WebPage::completeSyntheticClick):
+        (WebKit::WebPage::requestAdditionalItemsForDragSession):
+        (WebKit::WebPage::inspectorNodeSearchMovedToPosition):
+
 2017-09-22  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Can't load three.js

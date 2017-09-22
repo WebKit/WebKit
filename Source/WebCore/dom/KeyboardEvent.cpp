@@ -95,7 +95,7 @@ KeyboardEvent::KeyboardEvent() = default;
 
 KeyboardEvent::KeyboardEvent(const PlatformKeyboardEvent& key, DOMWindow* view)
     : UIEventWithKeyState(eventTypeForKeyboardEventType(key.type())
-        , true, true, key.timestamp(), view, 0, key.ctrlKey(), key.altKey(), key.shiftKey()
+        , true, true, key.timestamp().approximateMonotonicTime(), view, 0, key.ctrlKey(), key.altKey(), key.shiftKey()
         , key.metaKey(), false, key.modifiers().contains(PlatformEvent::Modifier::CapsLockKey))
     , m_keyEvent(std::make_unique<PlatformKeyboardEvent>(key))
 #if ENABLE(KEYBOARD_KEY_ATTRIBUTE)

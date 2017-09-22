@@ -69,7 +69,7 @@ void Performance::contextDestroyed()
     ContextDestructionObserver::contextDestroyed();
 }
 
-double Performance::now() const
+DOMHighResTimeStamp Performance::now() const
 {
     Seconds now = MonotonicTime::now() - m_timeOrigin;
     return reduceTimeResolution(now).milliseconds();
@@ -80,6 +80,12 @@ Seconds Performance::reduceTimeResolution(Seconds seconds)
     double resolution = (100_us).seconds();
     double reduced = std::floor(seconds.seconds() / resolution) * resolution;
     return Seconds(reduced);
+}
+
+DOMHighResTimeStamp Performance::relativeTimeFromTimeOriginInReducedResolution(MonotonicTime timestamp) const
+{
+    Seconds seconds = timestamp - m_timeOrigin;
+    return reduceTimeResolution(seconds).milliseconds();
 }
 
 PerformanceNavigation* Performance::navigation()

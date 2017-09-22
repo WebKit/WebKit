@@ -360,7 +360,7 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(NSEvent *event, NSEvent *last
     float deltaZ = [event deltaZ];
     int clickCount = clickCountForEvent(event);
     WebEvent::Modifiers modifiers = modifiersForEvent(event);
-    double timestamp = eventTimeStampSince1970(event);
+    auto timestamp = eventTimeStampSince1970(event);
     int eventNumber = [event eventNumber];
     int menuTypeForEvent = typeForEvent(event);
 
@@ -418,7 +418,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(NSEvent *event, NSView *windo
     }
 
     WebEvent::Modifiers modifiers           = modifiersForEvent(event);
-    double timestamp                        = eventTimeStampSince1970(event);
+    auto timestamp                          = eventTimeStampSince1970(event);
     
     return WebWheelEvent(WebEvent::Wheel, IntPoint(position), IntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity, directionInvertedFromDevice, phase, momentumPhase, hasPreciseScrollingDeltas, scrollCount, unacceleratedScrollingDelta, modifiers, timestamp);
 }
@@ -438,7 +438,7 @@ WebKeyboardEvent WebEventFactory::createWebKeyboardEvent(NSEvent *event, bool ha
     bool isKeypad                   = isKeypadEvent(event);
     bool isSystemKey                = false; // SystemKey is always false on the Mac.
     WebEvent::Modifiers modifiers   = modifiersForEvent(event);
-    double timestamp                = eventTimeStampSince1970(event);
+    auto timestamp                  = eventTimeStampSince1970(event);
 
     // Always use 13 for Enter/Return -- we don't want to use AppKit's different character for Enter.
     if (windowsVirtualKeyCode == VK_RETURN) {

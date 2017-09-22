@@ -361,7 +361,7 @@ guint32 webkit_dom_event_get_time_stamp(WebKitDOMEvent* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(self), 0);
     WebCore::Event* item = WebKit::core(self);
-    guint32 result = item->timeStamp();
+    guint32 result = item->timeStamp().approximateWallTime().secondsSinceEpoch().milliseconds();
     return result;
 }
 

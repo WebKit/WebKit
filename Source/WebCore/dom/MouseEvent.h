@@ -33,7 +33,7 @@ class PlatformMouseEvent;
 
 class MouseEvent : public MouseRelatedEvent {
 public:
-    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*, int detail, int screenX, int screenY, int pageX, int pageY,
+    WEBCORE_EXPORT static Ref<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow*, int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
 #endif
@@ -71,7 +71,7 @@ public:
     int which() const final;
 
 protected:
-    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow*,
+    MouseEvent(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow*,
         int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
 #if ENABLE(POINTER_LOCK)
         const IntPoint& movementDelta,

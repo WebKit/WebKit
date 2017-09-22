@@ -49,7 +49,7 @@ protected:
     {
     }
 
-    UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, double timestamp, DOMWindow* view,
+    UIEventWithKeyState(const AtomicString& type, bool canBubble, bool cancelable, MonotonicTime timestamp, DOMWindow* view,
         int detail, bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey, bool capsLockKey)
             : UIEvent(type, canBubble, cancelable, timestamp, view, detail)
             , m_ctrlKey(ctrlKey)

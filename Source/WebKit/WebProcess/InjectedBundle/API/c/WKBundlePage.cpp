@@ -478,17 +478,17 @@ void WKBundlePageForceRepaint(WKBundlePageRef page)
 
 void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time)
 {
-    toImpl(page)->simulateMouseDown(button, toIntPoint(position), clickCount, modifiers, time);
+    toImpl(page)->simulateMouseDown(button, toIntPoint(position), clickCount, modifiers, WallTime::fromRawSeconds(time));
 }
 
 void WKBundlePageSimulateMouseUp(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time)
 {
-    toImpl(page)->simulateMouseUp(button, toIntPoint(position), clickCount, modifiers, time);
+    toImpl(page)->simulateMouseUp(button, toIntPoint(position), clickCount, modifiers, WallTime::fromRawSeconds(time));
 }
 
 void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint position, double time)
 {
-    toImpl(page)->simulateMouseMotion(toIntPoint(position), time);
+    toImpl(page)->simulateMouseMotion(toIntPoint(position), WallTime::fromRawSeconds(time));
 }
 
 uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)

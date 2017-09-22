@@ -48,7 +48,7 @@
 #import <WebKitLegacy/WebNSViewExtras.h>
 #import <WebKitLegacy/WebPDFDocumentExtras.h>
 #import <WebKitLegacy/WebViewPrivate.h>
-#import <wtf/CurrentTime.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/Vector.h>
 
@@ -479,7 +479,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     // Construct an event to simulate a click.
-    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, currentTime(), 0, 1, 0, 0, 0, 0,
+    RefPtr<Event> event = MouseEvent::create(eventNames().clickEvent, true, true, MonotonicTime::now(), 0, 1, 0, 0, 0, 0,
 #if ENABLE(POINTER_LOCK)
         0, 0,
 #endif
