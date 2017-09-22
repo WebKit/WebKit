@@ -249,20 +249,20 @@ WI.NavigationBar = class NavigationBar extends WI.View
             item.updateLayout(false);
 
         totalItemWidth = calculateVisibleItemWidth();
-        if (totalItemWidth <= barWidth)
-            return;
 
-        // Hide visible items, starting with the lowest priority item, until the
-        // bar fits the available width.
-        visibleNavigationItems.sort((a, b) => a.visibilityPriority - b.visibilityPriority);
+        if (totalItemWidth > barWidth) {
+            // Hide visible items, starting with the lowest priority item, until
+            // the bar fits the available width.
+            visibleNavigationItems.sort((a, b) => a.visibilityPriority - b.visibilityPriority);
 
-        while (totalItemWidth > barWidth && visibleNavigationItems.length) {
-            let navigationItem = visibleNavigationItems.shift();
-            totalItemWidth -= navigationItem.width;
-            forceItemHidden(navigationItem, true);
+            while (totalItemWidth > barWidth && visibleNavigationItems.length) {
+                let navigationItem = visibleNavigationItems.shift();
+                totalItemWidth -= navigationItem.width;
+                forceItemHidden(navigationItem, true);
+            }
+
+            visibleNavigationItems = this._visibleNavigationItems;
         }
-
-        visibleNavigationItems = this._visibleNavigationItems;
 
         // Hide leading, trailing, and consecutive dividers.
         let previousItem = null;

@@ -1,3 +1,13 @@
+2017-09-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: NavigationBar should coalesce consecutive dividers when items are hidden
+        https://bugs.webkit.org/show_bug.cgi?id=177379
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/NavigationBar.js:
+        (WI.NavigationBar.prototype.layout):
+
 2017-09-22  Tim Horton  <timothy_horton@apple.com>
 
         Add env() as an alias of constant()
