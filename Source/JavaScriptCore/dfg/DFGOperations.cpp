@@ -1311,25 +1311,6 @@ char* JIT_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
     return bitwise_cast<char*>(result);
 }
 
-char* JIT_OPERATION operationNewArrayWithSizeAndHint(ExecState* exec, Structure* arrayStructure, int32_t size, int32_t vectorLengthHint, Butterfly* butterfly)
-{
-    VM& vm = exec->vm();
-    NativeCallFrameTracer tracer(&vm, exec);
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (UNLIKELY(size < 0))
-        return bitwise_cast<char*>(throwException(exec, scope, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
-
-    JSArray* result;
-    if (butterfly)
-        result = JSArray::createWithButterfly(vm, nullptr, arrayStructure, butterfly);
-    else {
-        result = JSArray::tryCreate(vm, arrayStructure, size, vectorLengthHint);
-        ASSERT(result);
-    }
-    return bitwise_cast<char*>(result);
-}
-
 char* JIT_OPERATION operationNewArrayBuffer(ExecState* exec, Structure* arrayStructure, size_t start, size_t size)
 {
     VM& vm = exec->vm();

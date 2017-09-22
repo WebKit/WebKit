@@ -321,7 +321,6 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node, DumpContext* 
         for (unsigned i = 0; i < node->numConstants(); ++i)
             out.print(anotherComma, pointerDumpInContext(freeze(m_codeBlock->constantBuffer(node->startConstant())[i]), context));
         out.print("]");
-        out.print(comma, "vectorLengthHint = ", node->vectorLengthHint());
     }
     if (node->hasLazyJSValue())
         out.print(comma, node->lazyJSValue());

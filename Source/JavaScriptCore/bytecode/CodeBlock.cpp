@@ -2568,7 +2568,7 @@ void CodeBlock::updateAllArrayPredictions()
     
     // Don't count these either, for similar reasons.
     for (unsigned i = m_arrayAllocationProfiles.size(); i--;)
-        m_arrayAllocationProfiles[i].updateProfile();
+        m_arrayAllocationProfiles[i].updateIndexingType();
 }
 
 void CodeBlock::updateAllPredictions()
