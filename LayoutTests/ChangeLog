@@ -1,3 +1,11 @@
+2017-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Mark imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-022.html as an image failure.
+
+        Unreviewed test gardening.
+
+        * platform/ios-wk2/TestExpectations:
+
 2017-09-22  Per Arne Vollan  <pvollan@apple.com>
 
         Mark fast/forms/listbox-typeahead-greek.html as failing on Windows.
