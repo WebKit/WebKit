@@ -58,7 +58,7 @@ String cookies(Document& document, const URL& url)
 {
     TraceScope scope(FetchCookiesStart, FetchCookiesEnd);
 
-    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent().contains(SecurityContext::MixedContentType::Active)) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
     auto result = platformStrategies()->cookiesStrategy()->cookiesForDOM(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookies);
     if (result.second)
         document.setSecureCookiesAccessed();
@@ -78,7 +78,7 @@ bool cookiesEnabled(const Document& document)
 
 String cookieRequestHeaderFieldValue(Document& document, const URL& url)
 {
-    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent()) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
+    auto includeSecureCookies = (url.protocolIs("https") && !document.foundMixedContent().contains(SecurityContext::MixedContentType::Active)) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No;
     auto result = platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(storageSession(document), document.firstPartyForCookies(), url, includeSecureCookies);
     if (result.second)
         document.setSecureCookiesAccessed();

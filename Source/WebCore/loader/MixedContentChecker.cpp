@@ -78,7 +78,7 @@ bool MixedContentChecker::canDisplayInsecureContent(SecurityOrigin& securityOrig
     logWarning(allowed, "display", url);
 
     if (allowed) {
-        m_frame.document()->setFoundMixedContent();
+        m_frame.document()->setFoundMixedContent(SecurityContext::MixedContentType::Inactive);
         client().didDisplayInsecureContent();
     }
 
@@ -97,7 +97,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin& securityOrigin, 
     logWarning(allowed, "run", url);
 
     if (allowed) {
-        m_frame.document()->setFoundMixedContent();
+        m_frame.document()->setFoundMixedContent(SecurityContext::MixedContentType::Active);
         client().didRunInsecureContent(securityOrigin, url);
     }
 

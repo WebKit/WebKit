@@ -29,6 +29,7 @@
 
 #include <memory>
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
@@ -82,8 +83,13 @@ public:
     static SandboxFlags parseSandboxPolicy(const String& policy, String& invalidTokensErrorMessage);
     static bool isSupportedSandboxPolicy(StringView);
 
-    bool foundMixedContent() const { return m_foundMixedContent; }
-    void setFoundMixedContent() { m_foundMixedContent = true; }
+    enum MixedContentType {
+        Inactive = 1 << 0,
+        Active = 1 << 1,
+    };
+
+    const OptionSet<MixedContentType>& foundMixedContent() const { return m_mixedContentTypes; }
+    void setFoundMixedContent(MixedContentType type) { m_mixedContentTypes |= type; }
     bool geolocationAccessed() const { return m_geolocationAccessed; }
     void setGeolocationAccessed() { m_geolocationAccessed = true; }
     bool secureCookiesAccessed() const { return m_secureCookiesAccessed; }
@@ -113,8 +119,8 @@ private:
     RefPtr<SecurityOriginPolicy> m_securityOriginPolicy;
     std::unique_ptr<ContentSecurityPolicy> m_contentSecurityPolicy;
     SandboxFlags m_sandboxFlags { SandboxNone };
+    OptionSet<MixedContentType> m_mixedContentTypes;
     bool m_haveInitializedSecurityOrigin { false };
-    bool m_foundMixedContent { false };
     bool m_geolocationAccessed { false };
     bool m_secureCookiesAccessed { false };
     bool m_isStrictMixedContentMode { false };

@@ -1,3 +1,19 @@
+2017-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r221017): iCloud mail logs me out after looking at a few messages
+        https://bugs.webkit.org/show_bug.cgi?id=177328
+
+        Reviewed by Daniel Bates.
+        <rdar://problem/34288629>
+
+        Reviewed by Dan Bates.
+
+        Rebaseline tests for revised behavior.
+
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-block-expected.txt:
+        * http/tests/security/mixedContent/insecure-image-with-securecookie-block.html:
+        * http/tests/security/mixedContent/redirect-https-to-http-image-secure-cookies-block-expected.txt:
+
 2017-09-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         DataTransfer.items should contain text/html and text/uri-list

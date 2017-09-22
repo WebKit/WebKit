@@ -1,3 +1,36 @@
+2017-09-21  Brent Fulgham  <bfulgham@apple.com>
+
+        REGRESSION (r221017): iCloud mail logs me out after looking at a few messages
+        https://bugs.webkit.org/show_bug.cgi?id=177328
+
+        Reviewed by Daniel Bates.
+        <rdar://problem/34288629>
+
+        Reviewed by Dan Bates.
+
+        This site was triggering a log-out because the page was loading insecure images. We don't treat that as a security
+        issue for deciding to display mixed content since it can only affect pixels on screen, not trigger a change in
+        program logic or persistent storage.
+
+        Consequently, we can correct thsi compatibility problem without relaxing the security fix by not blocking Secure cookies
+        when we have merely displayed mixed content (i.e., encountered 'Inactive' mixed content), as opposed to executing mixed
+        content (i.e., loaded 'Active' mixed content).
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::shouldBlockGeolocationRequests): Revise for new API.
+        * dom/SecurityContext.h:
+        (WebCore::SecurityContext::foundMixedContent const): Change to return an OptionSet of
+        mixed content types.
+        (WebCore::SecurityContext::setFoundMixedContent): Accept an enum stating the type of mixed content found.
+        * loader/CookieJar.cpp:
+        (WebCore::cookies): Only block Secure cookies for Active mixed content.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        * loader/MixedContentChecker.cpp:
+        (WebCore::MixedContentChecker::canDisplayInsecureContent const): Mark the context as having found 'Inactive'
+        mixed content.
+        (WebCore::MixedContentChecker::canRunInsecureContent const): Mark the context as having found 'Active'
+        mixed content.
+
 2017-09-21  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up RenderLayer z-order traversal code
