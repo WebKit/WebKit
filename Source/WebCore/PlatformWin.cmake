@@ -156,7 +156,6 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
     inspector
     loader
     page
-    pal
     platform
     plugins
     rendering
