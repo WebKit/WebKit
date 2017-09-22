@@ -4399,6 +4399,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             data.startConstant = m_inlineStackTop->m_constantBufferRemap[startConstant];
             data.numConstants = numConstants;
             data.indexingType = profile->selectIndexingType();
+            data.vectorLengthHint = std::max<unsigned>(profile->vectorLengthHint(), numConstants);
 
             // If this statement has never executed, we'll have the wrong indexing type in the profile.
             for (int i = 0; i < numConstants; ++i) {
@@ -4408,7 +4409,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                         m_codeBlock->constantBuffer(data.startConstant)[i]);
             }
             
-            m_graph.m_newArrayBufferData.append(data);
+            m_graph.m_newArrayBufferData.append(WTFMove(data));
             set(VirtualRegister(currentInstruction[1].u.operand), addToGraph(NewArrayBuffer, OpInfo(&m_graph.m_newArrayBufferData.last())));
             NEXT_OPCODE(op_new_array_buffer);
         }
