@@ -33,7 +33,7 @@ WI.CSSKeywordCompletions = {};
 
 WI.CSSKeywordCompletions.forProperty = function(propertyName)
 {
-    let acceptedKeywords = ["initial", "unset", "revert", "var()", "constant()"];
+    let acceptedKeywords = ["initial", "unset", "revert", "var()", "constant()", "env()"];
     let isNotPrefixed = propertyName.charAt(0) !== "-";
 
     if (propertyName in WI.CSSKeywordCompletions._propertyKeywordMap)
@@ -68,7 +68,7 @@ WI.CSSKeywordCompletions.forFunction = function(functionName)
 
     if (functionName === "var")
         suggestions = [];
-    else if (functionName === "constant")
+    else if (functionName === "constant" || functionName == "env")
         suggestions = suggestions.concat(["safe-area-inset-top", "safe-area-inset-right", "safe-area-inset-bottom", "safe-area-inset-left"]);
     else if (functionName === "image-set")
         suggestions.push("url()");

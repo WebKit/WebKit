@@ -1,3 +1,15 @@
+2017-09-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add env() as an alias of constant()
+        https://bugs.webkit.org/show_bug.cgi?id=177371
+
+        Reviewed by Simon Fraser.
+
+        * UserInterface/Models/CSSKeywordCompletions.js:
+        (WI.CSSKeywordCompletions.forProperty):
+        (WI.CSSKeywordCompletions.forFunction):
+        Add autocomplete support for env().
+
 2017-09-21  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add autocompletion suggestions for CSS functions (constant(), linear-gradient(), etc)

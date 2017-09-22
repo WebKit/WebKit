@@ -1,3 +1,18 @@
+2017-09-22  Tim Horton  <timothy_horton@apple.com>
+
+        Add env() as an alias of constant()
+        https://bugs.webkit.org/show_bug.cgi?id=177371
+
+        Reviewed by Simon Fraser.
+
+        * css/CSSValueKeywords.in:
+        * css/CSSVariableData.cpp:
+        (WebCore::CSSVariableData::checkVariablesForCyclesWithRange const):
+        (WebCore::CSSVariableData::resolveTokenRange const):
+        * css/parser/CSSVariableParser.cpp:
+        (WebCore::classifyBlock):
+        Add env() as an alias of constant() everywhere it is mentioned.
+
 2017-09-22  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Use didReceiveBuffer instead of didReceiveData
