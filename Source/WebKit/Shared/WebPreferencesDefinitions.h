@@ -134,6 +134,12 @@
 #define DEFAULT_RESOURCE_TIMING_ENABLED true
 #endif
 
+#if PLATFORM(COCOA)
+#define DEFAULT_DATA_TRANSFER_ITEMS_ENABLED true
+#else
+#define DEFAULT_DATA_TRANSFER_ITEMS_ENABLED false
+#endif
+
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue, HumanReadableName, HumanReadableDescription)
 
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
@@ -376,7 +382,7 @@
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
     macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, false, "Directory Upload", "input.webkitdirectory") \
-    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, false, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
+    macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, DEFAULT_DATA_TRANSFER_ITEMS_ENABLED, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(AsyncFrameScrollingEnabled, asyncFrameScrollingEnabled, Bool, bool, false, "Async Frame Scrolling", "Perform frame scrolling in a dedicated thread or process") \
     \
 
