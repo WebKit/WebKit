@@ -66,15 +66,15 @@
             log(`${b}`);
 
             iterProto.next = oldNext;
-            ctx.setLineDash([1,2,4]);
+            ctx.setLineDash([1,2,3]);
             a = ctx.getLineDash();
             log(a);
             if (a.toString() !== b.toString())
                 throw new Error("Bad result. They should be equal.");
 
             log(`callCount: ${callCount}`);
-            if (callCount !== 2)
-                throw new Error("Bad result. callCount should be 2.");
+            if (callCount !== 0)
+                throw new Error("Bad result. callCount should be 0.");
 
         </script>
 

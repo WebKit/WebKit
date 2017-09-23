@@ -586,6 +586,8 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
     if (!iterator)
         return jsUndefined();
 
+    IterationRecord iterationRecord = { iterator, iterator.get(exec, vm.propertyNames->next) };
+
     unsigned numberToFetch = 5;
     JSValue numberToFetchArg = exec->argument(1);
     double fetchDouble = numberToFetchArg.toInteger(exec);
@@ -597,7 +599,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, { });
 
     for (unsigned i = 0; i < numberToFetch; ++i) {
-        JSValue next = iteratorStep(exec, iterator);
+        JSValue next = iteratorStep(exec, iterationRecord);
         if (UNLIKELY(scope.exception()) || next.isFalse())
             break;
 
@@ -609,7 +611,7 @@ JSValue JSInjectedScriptHost::iteratorEntries(ExecState* exec)
         array->putDirectIndex(exec, i, entry);
         if (UNLIKELY(scope.exception())) {
             scope.release();
-            iteratorClose(exec, iterator);
+            iteratorClose(exec, iterationRecord);
             break;
         }
     }

@@ -780,8 +780,8 @@ namespace JSC {
         RegisterID* emitIsDerivedArray(RegisterID* dst, RegisterID* src) { return emitIsCellWithType(dst, src, DerivedArrayType); }
         void emitRequireObjectCoercible(RegisterID* value, const String& error);
 
-        RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* iterator, const ThrowableExpressionData* node, JSC::EmitAwait = JSC::EmitAwait::No);
-        RegisterID* emitIteratorNextWithValue(RegisterID* dst, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node);
+        RegisterID* emitIteratorNext(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, const ThrowableExpressionData* node, JSC::EmitAwait = JSC::EmitAwait::No);
+        RegisterID* emitIteratorNextWithValue(RegisterID* dst, RegisterID* nextMethod, RegisterID* iterator, RegisterID* value, const ThrowableExpressionData* node);
         void emitIteratorClose(RegisterID* iterator, const ThrowableExpressionData* node, EmitAwait = EmitAwait::No);
 
         RegisterID* emitRestParameter(RegisterID* result, unsigned numParametersToSkip);
