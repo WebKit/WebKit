@@ -1,2 +1,0 @@
-Bug 90865:[CSSRegions]Crash when moving anonymous block children inside a named flow. Test passes if it does not CRASH or ASSERT.
-

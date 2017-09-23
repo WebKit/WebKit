@@ -280,11 +280,6 @@ webkit.org/b/142208 inspector/timeline/exception-in-injected-script-while-record
 # Debugger stepping tests can timeout if they run slowly due to a short timer scheduled in the frontend.
 webkit.org/b/161951 [ Debug ] inspector/debugger/paused-scopes.html [ Skip ]
 
-# Collecting region's children in a named flow not supported yet
-webkit.org/b/74144 fast/regions/flow-body-in-html.html [ Skip ]
-webkit.org/b/74144 fast/regions/universal-selector-children-to-the-same-region.html [ Skip ]
-webkit.org/b/74144 fast/regions/region-content-flown-into-region.html [ Skip ]
-
 # These conformance tests are no longer in sync with the latest specification
 # and expect compareDocumentPosition() to return:
 # DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_DISCONNECTED
@@ -1499,12 +1494,6 @@ webkit.org/b/175288 imported/w3c/web-platform-tests/css/css-ui-3/outline-019.htm
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-005.html [ ImageOnlyFailure ]
 
 webkit.org/b/175597 http/tests/xmlhttprequest/gzip-content-type-no-content-encoding.html [ Failure ]
-
-# CSS Regions are being phased out.
-fast/regions [ Skip ]
-compositing/regions [ Skip ]
-fast/ruby/ruby-rt-with-region-crash.html [ Skip ]
-fast/shapes/shape-outside-floats/shape-outside-floats-layout-after-initial-layout-pass.html [ Skip ]
 
 webkit.org/b/171945 perf/class-list-remove.html [ Pass Failure Timeout ]
 

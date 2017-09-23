@@ -1,5 +1,0 @@
-PASS: this is inline
-PASS: and block content inside a region that is flowed into the same region
-
-PASS: button
-Bug 74144 - [CSS Regions] Elements in a region should be assignable to a named flow

@@ -456,12 +456,6 @@ webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-contain.html
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-position.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/patterns/direct-pattern-compositing-size.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/regions/floated-region-with-transformed-child.html [ ImageOnlyFailure Pass ]
-webkit.org/b/169918 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/regions/propagate-region-box-shadow-border-padding.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/regions/transform-transparent-positioned-video-inside-region.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/regions/z-index-update.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/regions/z-index.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
@@ -968,8 +962,6 @@ webkit.org/b/118126 css3/flexbox/image-percent-max-height.html [ ImageOnlyFailur
 webkit.org/b/142268 editing/pasteboard/copy-paste-attachment.html [ Failure ]
 webkit.org/b/142269 fast/attachment/attachment-dom.html [ Failure ]
 webkit.org/b/142270 fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
-
-webkit.org/b/142283 fast/regions/overflow/overflow-first-and-last-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/142819 fast/text/baseline-inline-block.html [ ImageOnlyFailure ]
 
@@ -1684,11 +1676,6 @@ webkit.org/b/132266 js/slow-stress/Int32Array-alloc-large-long-lived.html [ Time
 webkit.org/b/132266 js/slow-stress/array-prototype-filter.html [ Timeout Pass ]
 webkit.org/b/132266 js/slow-stress/Int32Array-alloc-huge.html [ Timeout Pass ]
 
-#Regions
-webkit.org/b/132273 fast/regions/simplified-layout-no-regions.html [ Failure Pass ]
-webkit.org/b/132273 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Failure Pass ]
-webkit.org/b/132273 fast/regions/assert-hit-test-image.html [ Failure Pass Crash ]
-
 #Image map
 webkit.org/b/132277 fast/images/image-map-multiple-xhtml.xhtml [ Failure Pass ]
 webkit.org/b/132277 fast/images/image-map-multiple.html [ Failure Pass ]
@@ -1750,8 +1737,6 @@ webkit.org/b/135088 media/video-colorspace-yuv420.html [ Crash Pass ]
 
 webkit.org/b/135089 animations/animation-welcome-safari.html [ Failure Timeout Pass Crash ]
 
-webkit.org/b/135090 fast/regions/repaint/fixed-in-named-flow-cb-changed2.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/135534 animations/animation-matrix-negative-scale-unmatrix.html [ Failure Timeout Pass ]
 webkit.org/b/135534 animations/fill-mode-forwards.html [ Crash Timeout Pass ]
 
@@ -1797,7 +1782,6 @@ webkit.org/b/144582 fast/inline/layout-after-inserting-nested-br.html [ ImageOnl
 
 webkit.org/b/144730 fast/css/text-overflow-input-focus-value.html [ ImageOnlyFailure Pass ]
 webkit.org/b/144733 fast/forms/number/number-change-type-on-focus.html [ Failure Pass ]
-webkit.org/b/144734 fast/regions/hover-on-child-in-region.html [ Failure Pass ]
 
 webkit.org/b/144864 fast/events/clear-edit-drag-state.html [ Failure Pass ]
 webkit.org/b/144864 fast/events/clear-drag-state.html [ Failure Pass ]
@@ -1812,15 +1796,6 @@ webkit.org/b/145170 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html [
 webkit.org/b/145170 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure Pass ]
 
 webkit.org/b/145258 media/video-controller-child-rate.html [ Failure Pass ]
-
-# Some tests will fail after the visual overflow patch, they will be fixed shortly.
-webkit.org/b/118665 fast/regions/counters/extract-ordered-lists-in-regions-explicit-counters-005.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/floats-basic-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow/overflow-nested-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow/overflow-not-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/overflow/overflow-region-transform.html [ ImageOnlyFailure Pass ]
-webkit.org/b/118665 fast/regions/top-overflow-out-of-second-region.html [ ImageOnlyFailure Pass Missing ]
-webkit.org/b/118665 fast/regions/webkit-flow-float-unable-to-push.html [ ImageOnlyFailure Pass ]
 
 # Regressions in svg/clip-path
 webkit.org/b/115440 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure Pass ]
@@ -2736,7 +2711,6 @@ webkit.org/b/115025 fast/events/constructors/mouse-event-constructor.html [ Fail
 webkit.org/b/115025 fast/events/constructors/wheel-event-constructor.html [ Failure ]
 
 webkit.org/b/115437 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
-webkit.org/b/115437 fast/regions/region-content-flown-into-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/115437 fast/text/complex-initial-advance.html [ ImageOnlyFailure ]
 
@@ -2765,12 +2739,7 @@ webkit.org/b/120596 css3/background/background-repeat-space-padding.html [ Image
 webkit.org/b/120596 css3/masking/mask-repeat-space-border.html [ ImageOnlyFailure ]
 webkit.org/b/120596 css3/masking/mask-repeat-space-content.html [ ImageOnlyFailure ]
 
-webkit.org/b/120836 fast/regions/text-region-split-vertical-rl.html [ Failure ]
-
 webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailure ]
-
-webkit.org/b/120842 fast/regions/overflow/overflow-in-uniform-regions-dynamic.html [ ImageOnlyFailure ]
-webkit.org/b/120842 fast/regions/overflow/overflow-moving-below-floats-in-variable-width-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/121905 fast/images/exif-orientation.html [ Failure ]
 
@@ -2785,13 +2754,6 @@ webkit.org/b/124509 media/video-controls-captions-trackmenu-hide-on-click.html [
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
 webkit.org/b/124834 fast/block/float/clear-negative-margin-top.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-bt.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-continuation.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-lr.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline-rl.html [ ImageOnlyFailure ]
-webkit.org/b/124834 fast/regions/overflow/overflow-in-variable-width-regions-inline.html [ ImageOnlyFailure ]
-
-webkit.org/b/125406 fast/regions/relative-in-absolute-borders-overflow.html [ ImageOnlyFailure ]
 
 webkit.org/b/128061 svg/custom/svg-fonts-in-html.html [ Failure ]
 webkit.org/b/128061 svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ]
@@ -2817,12 +2779,6 @@ webkit.org/b/120665 media/track/in-band [ Skip ]
 
 # About using <img> to display PDF with annotations
 webkit.org/b/120844 fast/images/pdf-as-image-with-annotations.html [ Skip ]
-
-# Text rendering overflowing region it should not
-webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-ignoring-region-vert-lr.html [ ImageOnlyFailure ]
-webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-horiz-bt.html [ ImageOnlyFailure ]
-webkit.org/b/122511 webkit.org/b/120401 fast/regions/selection/selecting-text-in-2-regions-vert-lr.html [ ImageOnlyFailure ]
 
 # PasteBoard::plainText() does not support file names.
 webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element-as-attachment.html [ Skip ]
@@ -2866,10 +2822,6 @@ webkit.org/b/131498 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-or
 webkit.org/b/131501 fast/css3-text/css3-text-decoration/text-decoration-skip/glyph-inside-underline.html [ ImageOnlyFailure ]
 
 webkit.org/b/132056 webaudio/codec-tests/mp3/128kbps-44khz.html  [ Failure ]
-
-webkit.org/b/132233 fast/regions/clip-to-padding-box-vertical-lr.html [ ImageOnlyFailure ]
-
-webkit.org/b/132234 fast/regions/scrolling/wheel-scrollable-single-region.html [ ImageOnlyFailure ]
 
 webkit.org/b/132235 fast/shapes/shape-outside-floats/shape-outside-floats-shape-margin-percent.html [ ImageOnlyFailure ]
 
@@ -2986,8 +2938,6 @@ webkit.org/b/139361 fast/css/readonly-attribute-style-sharing-7.html [ ImageOnly
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-5.html [ ImageOnlyFailure ]
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-6.html [ ImageOnlyFailure ]
 webkit.org/b/139361 fast/css/type-attribute-style-sharing-7.html [ ImageOnlyFailure ]
-
-webkit.org/b/139479 fast/regions/overflow/overflow-region-inline.html [ ImageOnlyFailure ]
 
 webkit.org/b/139492 fast/text/space-width.html [ ImageOnlyFailure ]
 
@@ -3578,8 +3528,6 @@ webkit.org/b/160119 fast/forms/search/search-cancel-button-visible-when-input-be
 webkit.org/b/160139 fast/history/page-cache-geolocation-active-oneshot.html [ Crash Timeout Pass ]
 
 webkit.org/b/160119 fast/images/composited-animated-gif-outside-viewport.html [ Timeout Pass ]
-
-webkit.org/b/160119 fast/regions/fullscreen/full-screen-video-from-region.html [ Crash Pass ]
 
 webkit.org/b/160119 fast/repaint/selection-gap-fixed-child.html [ Failure ]
 webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failure ]

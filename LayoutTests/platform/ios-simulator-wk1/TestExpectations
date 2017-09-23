@@ -5,7 +5,5 @@
 
 fast/events/offsetX-offsetY.html [ Timeout ]
 
-compositing/regions/composited-content-fixed-region-scrolled.html [ Skip ]
-
 # Untriage pasteboard test failures
 editing/pasteboard/

@@ -1,3 +1,0 @@
-Test for hit-testing of floats inside CSS Regions.
-
-PASS

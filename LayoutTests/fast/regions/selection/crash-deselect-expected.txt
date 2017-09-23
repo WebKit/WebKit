@@ -1,5 +1,0 @@
-CONSOLE MESSAGE: line 66: HierarchyRequestError: The operation would yield an incorrect node tree.
-
-Errlog selectionTest: HierarchyRequestError: The operation would yield an incorrect node tree. : index 1 
-Errlog webtest_fn_24: 
-

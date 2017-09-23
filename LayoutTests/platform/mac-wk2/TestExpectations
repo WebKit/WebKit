@@ -494,8 +494,6 @@ webkit.org/b/138736 http/tests/appcache/auth.html [ Skip ]
 
 media/video-background-tab-playback.html [ Pass Failure ]
 
-webkit.org/b/139979 [ Yosemite+ ] fast/regions/layers/region-removed-during-animation.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/140607 [ Yosemite+ ] http/tests/navigation/navigation-interrupted-by-fragment.html [ Pass Timeout ]
 
 webkit.org/b/141322 [ Debug Yosemite+ ] fast/images/destroyed-image-load-event.html [ Pass Timeout ]
@@ -674,8 +672,6 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 
 [ Release ] js/dom/global-constructors-attributes.html [ Skip ]
 
-webkit.org/b/168933 fast/regions/inline-block-inside-anonymous-overflow-with-covered-controls.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/169621 imported/w3c/web-platform-tests/IndexedDB/fire-error-event-exception.html [ Pass Failure ]
 webkit.org/b/169760 imported/w3c/web-platform-tests/IndexedDB/fire-success-event-exception.html [ Pass Failure ]
 
@@ -759,9 +755,6 @@ webkit.org/b/173861 [ Release ] http/tests/webrtc/filtering-ice-candidate-cross-
 webkit.org/b/172148 tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical.html [ Pass Failure ]
 
 webkit.org/b/173946 [ Debug ] media/modern-media-controls/fullscreen-support/fullscreen-support-press.html [ Pass Failure ]
-
-# CSS Regions are being phased out.
-tiled-drawing/scrolling/non-fast-region/wheel-handler-in-region.html [ Skip ]
 
 webkit.org/b/175341 accessibility/mac/select-element-selection-with-optgroups.html [ Pass Failure ]
 

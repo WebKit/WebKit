@@ -1,7 +1,0 @@
-Test for [CSS Regions] Regions auto-height and absolute positioning bug.
-
-On success you should see PASS below.
-
-this is some body copy.
-this is some body copy.
-PASS

@@ -1,3 +1,0 @@
-Pass if no assert or crash in debug.
-foobar
-foobar

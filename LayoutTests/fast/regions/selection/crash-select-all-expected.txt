@@ -1,3 +1,0 @@
-Bug 132493: REGRESSION (r167652): SelectionState is not set properly for non leaf objects in pages with regions
-
-This test has PASSED if it doesn't CRASH in debug.

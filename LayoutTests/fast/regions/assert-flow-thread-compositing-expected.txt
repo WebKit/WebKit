@@ -1,3 +1,0 @@
-This test passes if it does not trigger an assert in debug mode. There should be two green rectangles on the screen.
-
-

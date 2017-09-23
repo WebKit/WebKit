@@ -1,9 +1,0 @@
-Test for [CSS Regions] Selecting text inside an empty region causes selection outside the region area.
-
-The blue border box is a region without flowed content.
-
-To test manually, move the mouse in the top left corner of the region and try to select the region content.
-
-You should not see any selected text: PASS
-
-

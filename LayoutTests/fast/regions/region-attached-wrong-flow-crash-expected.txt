@@ -1,5 +1,0 @@
-Test for WebKit Bug 93204 Region attached to the removed flow thread crash.
-
-The test passes if it does not crash or assert.
-
-PASS

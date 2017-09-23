@@ -11,7 +11,6 @@
 
 webkit.org/b/156717 editing/pasteboard/gtk/middle-click-onpaste.html [ Failure ]
 webkit.org/b/156717 editing/pasteboard/paste-global-selection.html [ Failure ]
-webkit.org/b/156717 fast/regions/overflow/overflow-3dtransformed-region.html [ Failure ]
 webkit.org/b/156717 fast/repaint/animation-after-layer-scroll.html [ Failure ]
 webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-has-ancestor-clipping-layer.html [ ImageOnlyFailure ]
 webkit.org/b/156717 imported/blink/css3/blending/mix-blend-mode-multiply.html [ ImageOnlyFailure ]
@@ -94,11 +93,6 @@ webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ Pass ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ Pass ]
 webkit.org/b/169918 compositing/masks/compositing-clip-path-mask-change.html [ Pass ]
 webkit.org/b/169918 compositing/masks/mask-with-preserve-3d.html [ Pass ]
-webkit.org/b/169918 compositing/regions/propagate-region-box-shadow-border-padding-for-video.html [ Pass ]
-webkit.org/b/169918 compositing/regions/propagate-region-box-shadow-border-padding.html [ Pass ]
-webkit.org/b/169918 compositing/regions/transform-transparent-positioned-video-inside-region.html [ Pass ]
-webkit.org/b/169918 compositing/regions/z-index.html [ Pass ]
-webkit.org/b/169918 compositing/regions/z-index-update.html [ Pass ]
 webkit.org/b/169918 compositing/video/video-clip-change-src.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -244,8 +238,6 @@ webkit.org/b/156717 fast/media/print-restores-previous-mediatype.html [ Timeout 
 webkit.org/b/156717 plugins/mouse-events.html [ Timeout Crash ]
 
 # Fullscreen related issues
-webkit.org/b/169281 fast/regions/fullscreen/full-screen-video-from-region.html [ Timeout ]
-webkit.org/b/169281 fast/regions/fullscreen/full-screen-video-in-region-crash.html [ Timeout ]
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-shadow-fullscreenElement.html [ Timeout ]
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-shadow-webkitCurrentFullScreenElement.html [ Timeout ]
 webkit.org/b/169281 fast/shadow-dom/fullscreen-in-slot-fullscreenElement.html [ Timeout ]
