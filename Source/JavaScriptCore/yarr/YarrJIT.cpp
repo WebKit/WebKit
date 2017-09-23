@@ -2852,6 +2852,8 @@ class YarrGenerator : private MacroAssembler {
 #if OS(WINDOWS)
         if (compileMode == IncludeSubpatterns)
             loadPtr(Address(X86Registers::ebp, 6 * sizeof(void*)), output);
+        // rcx is the pointer to the allocated space for result in x64 Windows.
+        push(X86Registers::ecx);
 #endif
 #elif CPU(X86)
         push(X86Registers::ebp);
@@ -2901,6 +2903,7 @@ class YarrGenerator : private MacroAssembler {
 #if CPU(X86_64)
 #if OS(WINDOWS)
         // Store the return value in the allocated space pointed by rcx.
+        pop(X86Registers::ecx);
         store64(returnRegister, Address(X86Registers::ecx));
         store64(returnRegister2, Address(X86Registers::ecx, sizeof(void*)));
         move(X86Registers::ecx, returnRegister);
