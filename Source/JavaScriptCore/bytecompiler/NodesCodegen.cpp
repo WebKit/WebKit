@@ -3602,7 +3602,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
             generator.emitPutGeneratorFields(next.get());
         else {
             ASSERT(isAsyncGeneratorFunctionParseMode(generator.parseMode()));
-            generator.emitPutAsyncGeneratorFields(next.get(), JSTextPosition(startLine(), startStartOffset(), startLineStartOffset()));
+            generator.emitPutAsyncGeneratorFields(next.get());
         }
         
         ASSERT(startOffset() >= lineStartOffset());

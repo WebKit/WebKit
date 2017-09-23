@@ -24,70 +24,47 @@
  */
 
 @globalPrivate
-function createAsyncGeneratorQueue()
+function asyncGeneratorQueueIsEmpty(generator)
 {
     "use strict";
 
-    return { first: null, last: null };
+    return generator.@asyncGeneratorQueueLast === null;
 }
 
 @globalPrivate
-function asyncGeneratorQueueIsEmpty(queue)
+function asyncGeneratorQueueEnqueue(generator, item)
 {
     "use strict";
 
-    return queue.last === null;
-}
+    @assert(item.@asyncGeneratorQueueItemNext === null && item.@asyncGeneratorQueueItemPrevious === null);
 
-@globalPrivate
-function asyncGeneratorQueueCreateItem(value, previous)
-{
-    "use strict";
+    if (generator.@asyncGeneratorQueueFirst === null) {
+        @assert(generator.@asyncGeneratorQueueLast === null);
 
-    return { value, previous, next: null };
-}
-
-@globalPrivate
-function asyncGeneratorQueueEnqueue(queue, value)
-{
-    "use strict";
-
-    if (queue.first === null && queue.last === null) {
-        queue.first = @asyncGeneratorQueueCreateItem(value, null);
-        queue.last = queue.first;
+        generator.@asyncGeneratorQueueFirst = item;
+        generator.@asyncGeneratorQueueLast = item;
     } else {
-        const item = @asyncGeneratorQueueCreateItem(value, queue.last);
-
-        queue.last.next = item;
-        queue.last = item;
+        item.@asyncGeneratorQueueItemPrevious = generator.@asyncGeneratorQueueLast;
+        generator.@asyncGeneratorQueueLast.@asyncGeneratorQueueItemNext = item;
+        generator.@asyncGeneratorQueueLast = item;
     }
-
 }
 
 @globalPrivate
-function asyncGeneratorQueueDequeue(queue)
+function asyncGeneratorQueueDequeue(generator)
 {
     "use strict";
 
-    if (queue.first === null)
+    if (generator.@asyncGeneratorQueueFirst === null)
         return null;
 
-    const result = queue.first;
-    queue.first = result.next;
+    const result = generator.@asyncGeneratorQueueFirst;
+    generator.@asyncGeneratorQueueFirst = result.@asyncGeneratorQueueItemNext;
 
-    if (queue.first === null)
-        queue.last = null;
+    if (generator.@asyncGeneratorQueueFirst === null)
+        generator.@asyncGeneratorQueueLast = null;
 
-    return result.value;
-}
-
-
-@globalPrivate
-function asyncGeneratorQueueGetFirstValue(queue)
-{
-    "use strict";
-
-    return queue.first !== null ? queue.first.value : @undefined;
+    return result;
 }
 
 @globalPrivate
@@ -97,9 +74,9 @@ function asyncGeneratorDequeue(generator)
 
     const queue = generator.@asyncGeneratorQueue;
 
-    @assert(queue !== @undefined && !@asyncGeneratorQueueIsEmpty(queue), "Async genetator's Queue is an empty List.");
+    @assert(!@asyncGeneratorQueueIsEmpty(generator), "Async genetator's Queue is an empty List.");
     
-    return @asyncGeneratorQueueDequeue(queue);
+    return @asyncGeneratorQueueDequeue(generator);
 }
 
 @globalPrivate
@@ -118,7 +95,7 @@ function isSuspendYieldState(generator)
     "use strict";
 
     return (generator.@generatorState > 0 && generator.@asyncGeneratorSuspendReason === @AsyncGeneratorSuspendReasonYield)
-         || generator.@generatorState === @AsyncGeneratorStateSuspendedYield;
+        || generator.@generatorState === @AsyncGeneratorStateSuspendedYield;
 }
 
 @globalPrivate
@@ -235,12 +212,10 @@ function asyncGeneratorResumeNext(generator)
     if (state === @AsyncGeneratorStateAwaitingReturn)
         return @undefined;
 
-    const queue = generator.@asyncGeneratorQueue;
-
-    if (@asyncGeneratorQueueIsEmpty(queue))
+    if (@asyncGeneratorQueueIsEmpty(generator))
         return @undefined;
 
-    const next = @asyncGeneratorQueueGetFirstValue(queue);
+    const next = generator.@asyncGeneratorQueueFirst;
 
     if (next.resumeMode !== @GeneratorResumeModeNormal) {
         if (state === @AsyncGeneratorStateSuspendedStart) {
@@ -289,7 +264,7 @@ function asyncGeneratorEnqueue(generator, value, resumeMode)
         return promiseCapability.@promise;
     }
 
-    @asyncGeneratorQueueEnqueue(generator.@asyncGeneratorQueue, {resumeMode, value, promiseCapability});
+    @asyncGeneratorQueueEnqueue(generator, {resumeMode, value, promiseCapability, @asyncGeneratorQueueItemNext: null, @asyncGeneratorQueueItemPrevious: null});
 
     if (!@isExecutionState(generator))
         @asyncGeneratorResumeNext(generator);

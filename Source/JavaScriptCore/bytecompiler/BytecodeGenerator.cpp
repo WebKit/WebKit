@@ -2871,23 +2871,7 @@ void BytecodeGenerator::emitPutGeneratorFields(RegisterID* nextFunction)
     emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().generatorFramePrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
 }
 
-RegisterID* BytecodeGenerator::emitCreateAsyncGeneratorQueue(const JSTextPosition& divot)
-{
-    auto varCreateAsyncGeneratorQueue = variable(propertyNames().builtinNames().createAsyncGeneratorQueuePrivateName());
-    RefPtr<RegisterID> scope = newTemporary();
-    RefPtr<RegisterID> queue = newTemporary();
-    moveToDestinationIfNeeded(scope.get(), emitResolveScope(scope.get(), varCreateAsyncGeneratorQueue));
-    RefPtr<RegisterID> createAsyncGeneratorQueue = emitGetFromScope(newTemporary(), scope.get(), varCreateAsyncGeneratorQueue, ThrowIfNotFound);
-
-    CallArguments args(*this, nullptr, 0);
-    emitLoad(args.thisRegister(), jsUndefined());
-
-    emitCall(queue.get(), createAsyncGeneratorQueue.get(), NoExpectedFunction, args, divot, divot, divot, DebuggableCall::No);
-
-    return queue.get();
-}
-
-void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction, const JSTextPosition& divot)
+void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 {
     ASSERT(isAsyncGeneratorFunctionParseMode(parseMode()));
 
@@ -2901,8 +2885,8 @@ void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction, co
 
     emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorSuspendReasonPrivateName(), emitLoad(nullptr, jsNumber(static_cast<int32_t>(JSAsyncGeneratorFunction::AsyncGeneratorSuspendReason::None))), PropertyNode::KnownDirect);
 
-
-    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorQueuePrivateName(), emitCreateAsyncGeneratorQueue(divot), PropertyNode::KnownDirect);
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorQueueFirstPrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
+    emitDirectPutById(m_generatorRegister, propertyNames().builtinNames().asyncGeneratorQueueLastPrivateName(), emitLoad(nullptr, jsNull()), PropertyNode::KnownDirect);
 }
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)

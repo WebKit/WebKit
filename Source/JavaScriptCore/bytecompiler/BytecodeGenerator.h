@@ -607,7 +607,6 @@ namespace JSC {
 
     private:
         void emitTypeProfilerExpressionInfo(const JSTextPosition& startDivot, const JSTextPosition& endDivot);
-        RegisterID* emitCreateAsyncGeneratorQueue(const JSTextPosition&);
     public:
 
         // This doesn't emit expression info. If using this, make sure you shouldn't be emitting text offset.
@@ -704,7 +703,7 @@ namespace JSC {
         // Initialize object with generator fields (@generatorThis, @generatorNext, @generatorState, @generatorFrame)
         void emitPutGeneratorFields(RegisterID* nextFunction);
         
-        void emitPutAsyncGeneratorFields(RegisterID* nextFunction, const JSTextPosition&);
+        void emitPutAsyncGeneratorFields(RegisterID* nextFunction);
 
         ExpectedFunction expectedFunctionForIdentifier(const Identifier&);
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, ExpectedFunction, CallArguments&, const JSTextPosition& divot, const JSTextPosition& divotStart, const JSTextPosition& divotEnd, DebuggableCall);

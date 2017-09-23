@@ -126,6 +126,10 @@ namespace JSC {
     macro(asyncGeneratorState) \
     macro(asyncGeneratorSuspendReason) \
     macro(asyncGeneratorQueue) \
+    macro(asyncGeneratorQueueFirst) \
+    macro(asyncGeneratorQueueLast) \
+    macro(asyncGeneratorQueueItemNext) \
+    macro(asyncGeneratorQueueItemPrevious) \
     macro(promiseCapability) \
     macro(generatorResumeMode) \
     macro(Collator) \

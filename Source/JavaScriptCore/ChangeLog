@@ -1,3 +1,31 @@
+2017-09-23  Oleksandr Skachkov  <gskachkov@gmail.com>
+
+        [ESNext] Async iteration - Implement Async Generator - optimization
+        https://bugs.webkit.org/show_bug.cgi?id=175891
+
+        Reviewed by Yusuke Suzuki.
+
+        Add small optimization for async generators:
+        1. merging async generator queue to async generator itself
+        generator.@first / generator.@last is enough, by doing so,
+          we remove one unnecessary object alloc.
+        2. merging request with queue.
+
+        * builtins/AsyncGeneratorPrototype.js:
+        (globalPrivate.asyncGeneratorQueueIsEmpty):
+        (globalPrivate.asyncGeneratorQueueCreateItem):
+        (globalPrivate.asyncGeneratorQueueEnqueue):
+        (globalPrivate.asyncGeneratorQueueDequeue):
+        (globalPrivate.asyncGeneratorDequeue):
+        (globalPrivate.isSuspendYieldState):
+        (globalPrivate.asyncGeneratorEnqueue):
+        * builtins/BuiltinNames.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitPutAsyncGeneratorFields):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::FunctionNode::emitBytecode):
+
 2017-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: $.agent became $262.agent in test262 update
