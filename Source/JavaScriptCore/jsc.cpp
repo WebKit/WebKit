@@ -1441,6 +1441,7 @@ protected:
         
         JSObject* dollar = JSFinalObject::create(vm, plainObjectStructure);
         putDirect(vm, Identifier::fromString(globalExec(), "$"), dollar);
+        putDirect(vm, Identifier::fromString(globalExec(), "$262"), dollar);
         
         addFunction(vm, dollar, "createRealm", functionDollarCreateRealm, 0);
         addFunction(vm, dollar, "detachArrayBuffer", functionDollarDetachArrayBuffer, 1);

@@ -1,3 +1,14 @@
+2017-09-23  Joseph Pecoraro  <pecoraro@apple.com>
+
+        test262: $.agent became $262.agent in test262 update
+        https://bugs.webkit.org/show_bug.cgi?id=177407
+
+        Reviewed by Yusuke Suzuki.
+
+        * jsc.cpp:
+        (GlobalObject::finishCreation):
+        Alias `$` and `$262` for now.
+
 2017-09-22  Keith Miller  <keith_miller@apple.com>
 
         Speculatively change iteration protocall to use the same next function
