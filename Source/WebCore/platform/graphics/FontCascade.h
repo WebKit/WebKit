@@ -195,7 +195,7 @@ public:
 
     bool primaryFontIsSystemFont() const;
 
-    WeakPtr<FontCascade> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<FontCascade> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<FontCascade*>(this)); }
 
 private:
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };

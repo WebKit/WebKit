@@ -125,8 +125,6 @@ static void CMTimebaseEffectiveRateChangedCallback(CMNotificationCenterRef, cons
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
-    , m_weakPtrFactory(this)
-    , m_sizeChangeObserverWeakPtrFactory(this)
     , m_synchronizer(adoptNS([allocAVSampleBufferRenderSynchronizerInstance() init]))
     , m_seekTimer(*this, &MediaPlayerPrivateMediaSourceAVFObjC::seekInternal)
     , m_session(nullptr)
@@ -890,7 +888,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime& time, const FloatSize& size)
 {
-    auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr();
+    auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr(*this);
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
     RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis, size] {
         if (!weakThis)

@@ -71,7 +71,7 @@ public:
 
     bool requiresAcceleratedCompositing() const;
 
-    WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<RenderWidget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     void ref() { ++m_refCount; }
     void deref();

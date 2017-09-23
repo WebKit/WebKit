@@ -158,7 +158,7 @@ public:
     void removeSession(CDMSession&);
 #endif
 
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaPlayerPrivateAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     // engine support

@@ -195,7 +195,6 @@ static WebViewInsertAction kit(EditorInsertAction action)
 WebEditorClient::WebEditorClient(WebView *webView)
     : m_webView(webView)
     , m_undoTarget(adoptNS([[WebEditorUndoTarget alloc] init]))
-    , m_weakPtrFactory(this)
 {
 }
 
@@ -1247,7 +1246,7 @@ void WebEditorClient::requestCandidatesForSelection(const VisibleSelection& sele
     m_paragraphContextForCandidateRequest = plainText(frame->editor().contextRangeForCandidateRequest().get());
 
     NSTextCheckingTypes checkingTypes = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-    auto weakEditor = m_weakPtrFactory.createWeakPtr();
+    auto weakEditor = m_weakPtrFactory.createWeakPtr(*this);
     m_lastCandidateRequestSequenceNumber = [[NSSpellChecker sharedSpellChecker] requestCandidatesForSelectedRange:m_rangeForCandidates inString:m_paragraphContextForCandidateRequest.get() types:checkingTypes options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() completionHandler:[weakEditor](NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakEditor)

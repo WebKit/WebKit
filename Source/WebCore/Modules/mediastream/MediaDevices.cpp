@@ -47,7 +47,6 @@ namespace WebCore {
 inline MediaDevices::MediaDevices(Document& document)
     : ContextDestructionObserver(&document)
     , m_scheduledEventTimer(*this, &MediaDevices::scheduledEventTimerFired)
-    , m_weakPtrFactory(this)
 {
     m_deviceChangedToken = RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver([weakThis = createWeakPtr(), this]() {
 

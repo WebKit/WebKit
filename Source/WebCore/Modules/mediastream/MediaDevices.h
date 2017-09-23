@@ -82,7 +82,7 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    WeakPtr<MediaDevices> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaDevices> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     Timer m_scheduledEventTimer;
     std::optional<RealtimeMediaSourceCenter::DevicesChangedObserverToken> m_deviceChangedToken;

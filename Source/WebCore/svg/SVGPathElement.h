@@ -97,7 +97,7 @@ public:
 
     bool isAnimValObserved() const { return m_isAnimValObserved; }
 
-    WeakPtr<SVGPathElement> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<SVGPathElement> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<SVGPathElement*>(this)); }
 
     void animatedPropertyWillBeDeleted();
 

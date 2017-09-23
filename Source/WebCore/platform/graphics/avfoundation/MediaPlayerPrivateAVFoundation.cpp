@@ -55,7 +55,6 @@ namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
     : m_player(player)
-    , m_weakPtrFactory(this)
     , m_queuedNotifications()
     , m_queueMutex()
     , m_networkState(MediaPlayer::Empty)

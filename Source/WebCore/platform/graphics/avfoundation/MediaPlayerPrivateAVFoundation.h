@@ -163,7 +163,7 @@ protected:
     explicit MediaPlayerPrivateAVFoundation(MediaPlayer*);
     virtual ~MediaPlayerPrivateAVFoundation();
 
-    WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaPlayerPrivateAVFoundation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     // MediaPlayerPrivatePrivateInterface overrides.
     void load(const String& url) override;

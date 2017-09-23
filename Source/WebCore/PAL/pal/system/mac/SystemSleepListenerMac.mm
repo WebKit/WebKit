@@ -40,14 +40,13 @@ std::unique_ptr<SystemSleepListener> SystemSleepListener::create(Client& client)
 
 SystemSleepListenerMac::SystemSleepListenerMac(Client& client)
     : SystemSleepListener(client)
-    , m_weakPtrFactory(this)
     , m_sleepObserver(nil)
     , m_wakeObserver(nil)
 {
     NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
     NSOperationQueue *queue = [NSOperationQueue mainQueue];
 
-    auto weakThis = m_weakPtrFactory.createWeakPtr();
+    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
 
     m_sleepObserver = [center addObserverForName:NSWorkspaceWillSleepNotification object:nil queue:queue usingBlock:^(NSNotification *) {
         callOnMainThread([weakThis] {

@@ -165,7 +165,7 @@ private:
     void trackSettingsChanged(MediaStreamTrackPrivate&) final;
     void trackEnabledChanged(MediaStreamTrackPrivate&) final;
 
-    WeakPtr<MediaStreamTrack> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaStreamTrack> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     Vector<Observer*> m_observers;
     Ref<MediaStreamTrackPrivate> m_private;

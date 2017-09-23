@@ -70,14 +70,12 @@ template <typename T>
 class GenericTaskQueue {
 public:
     GenericTaskQueue()
-        : m_weakPtrFactory(this)
-        , m_dispatcher()
+        : m_dispatcher()
     {
     }
 
     GenericTaskQueue(T& t)
-        : m_weakPtrFactory(this)
-        , m_dispatcher(t)
+        : m_dispatcher(t)
     {
     }
 
@@ -89,7 +87,7 @@ public:
             return;
 
         ++m_pendingTasks;
-        auto weakThis = m_weakPtrFactory.createWeakPtr();
+        auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
         m_dispatcher.postTask([weakThis, task = WTFMove(task)] {
             if (!weakThis)
                 return;

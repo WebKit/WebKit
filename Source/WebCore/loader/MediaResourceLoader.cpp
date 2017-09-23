@@ -45,7 +45,6 @@ MediaResourceLoader::MediaResourceLoader(Document& document, HTMLMediaElement& m
     , m_document(&document)
     , m_mediaElement(mediaElement.createWeakPtr())
     , m_crossOriginMode(crossOriginMode)
-    , m_weakFactory(this)
 {
 }
 

@@ -43,14 +43,14 @@ public:
 
     bool viewportChangeAffectedPicture() const;
 
-    WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<HTMLPictureElement> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
 private:
     HTMLPictureElement(const QualifiedName&, Document&);
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
-    WeakPtrFactory<HTMLPictureElement> m_weakFactory { this };
+    WeakPtrFactory<HTMLPictureElement> m_weakFactory;
     Vector<MediaQueryResult> m_viewportDependentMediaQueryResults;
 };
 

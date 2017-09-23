@@ -479,9 +479,7 @@ RefPtr<SourceBufferPrivateAVFObjC> SourceBufferPrivateAVFObjC::create(MediaSourc
 }
 
 SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC(MediaSourcePrivateAVFObjC* parent)
-    : m_weakFactory(this)
-    , m_appendWeakFactory(this)
-    , m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
+    : m_parser(adoptNS([allocAVStreamDataParserInstance() init]))
     , m_delegate(adoptNS([[WebAVStreamDataParserListener alloc] initWithParser:m_parser.get() parent:createWeakPtr()]))
     , m_errorListener(adoptNS([[WebAVSampleBufferErrorListener alloc] initWithParent:this]))
     , m_isAppendingGroup(adoptOSObject(dispatch_group_create()))
@@ -675,7 +673,7 @@ void SourceBufferPrivateAVFObjC::append(const unsigned char* data, unsigned leng
     LOG(MediaSource, "SourceBufferPrivateAVFObjC::append(%p) - data:%p, length:%d", this, data, length);
 
     RetainPtr<NSData> nsData = adoptNS([[NSData alloc] initWithBytes:data length:length]);
-    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = m_appendWeakFactory.createWeakPtr();
+    WeakPtr<SourceBufferPrivateAVFObjC> weakThis = m_appendWeakFactory.createWeakPtr(*this);
     RetainPtr<AVStreamDataParser> parser = m_parser;
     RetainPtr<WebAVStreamDataParserListener> delegate = m_delegate;
 
@@ -715,7 +713,7 @@ void SourceBufferPrivateAVFObjC::abort()
         dispatch_semaphore_signal(m_hasSessionSemaphore.get());
     dispatch_group_wait(m_isAppendingGroup.get(), DISPATCH_TIME_FOREVER);
     m_appendWeakFactory.revokeAll();
-    m_delegate.get().parent = m_appendWeakFactory.createWeakPtr();
+    m_delegate.get().parent = m_appendWeakFactory.createWeakPtr(*this);
 }
 
 void SourceBufferPrivateAVFObjC::resetParserState()

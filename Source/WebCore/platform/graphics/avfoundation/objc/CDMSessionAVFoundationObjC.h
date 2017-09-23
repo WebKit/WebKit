@@ -53,7 +53,7 @@ public:
 
     void playerDidReceiveError(NSError *);
 
-    WeakPtr<CDMSessionAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<CDMSessionAVFoundationObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 protected:
     WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;

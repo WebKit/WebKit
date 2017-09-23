@@ -79,7 +79,6 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     , m_didFinishSnapshottingAfterEnteringBackgroundSelector(didFinishSnapshottingAfterEnteringBackgroundSelector)
     , m_willEnterForegroundSelector(willEnterForegroundSelector)
     , m_isInBackground(true)
-    , m_weakPtrFactory(this)
     , m_didEnterBackgroundObserver(nullptr)
     , m_didCreateWindowContextObserver(nullptr)
     , m_didFinishSnapshottingAfterEnteringBackgroundObserver(nullptr)
@@ -94,7 +93,7 @@ ApplicationStateTracker::ApplicationStateTracker(UIView *view, SEL didEnterBackg
     ASSERT(window);
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    auto weakThis = m_weakPtrFactory.createWeakPtr();
+    auto weakThis = m_weakPtrFactory.createWeakPtr(*this);
     m_didCreateWindowContextObserver = [notificationCenter addObserverForName:@"_UIWindowDidCreateWindowContextNotification" object:window queue:nil usingBlock:[weakThis](NSNotification *) {
         auto applicationStateTracker = weakThis.get();
         if (!applicationStateTracker)

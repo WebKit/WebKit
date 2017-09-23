@@ -74,7 +74,7 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState);
 
-    WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaPlayerPrivateMediaStreamAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     void ensureLayers();
     void destroyLayers();

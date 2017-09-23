@@ -233,7 +233,7 @@ public:
         bool m_wasAccumulatingRepaintRegion;
     };
 
-    WeakPtr<RenderView> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<RenderView> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
     void scheduleLazyRepaint(RenderBox&);
     void unscheduleLazyRepaint(RenderBox&);

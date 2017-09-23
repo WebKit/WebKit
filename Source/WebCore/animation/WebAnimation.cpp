@@ -60,7 +60,6 @@ RefPtr<WebAnimation> WebAnimation::create(AnimationEffect* effect, AnimationTime
 WebAnimation::WebAnimation(AnimationEffect* effect, AnimationTimeline* timeline)
     : m_effect(effect)
     , m_timeline(timeline)
-    , m_weakPtrFactory(this)
 {
     if (m_effect)
         m_effect->setAnimation(this);

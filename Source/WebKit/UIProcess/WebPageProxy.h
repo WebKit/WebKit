@@ -1190,7 +1190,7 @@ public:
     void gamepadActivity(const Vector<GamepadData>&, bool shouldMakeGamepadsVisible);
 #endif
         
-    WeakPtr<WebPageProxy> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<WebPageProxy> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(*const_cast<WebPageProxy*>(this)); }
 
     void isLoadingChanged() { activityStateDidChange(WebCore::ActivityState::IsLoading); }
 

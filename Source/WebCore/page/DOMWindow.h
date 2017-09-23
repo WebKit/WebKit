@@ -325,7 +325,7 @@ public:
     void enableSuddenTermination();
     void disableSuddenTermination();
 
-    WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<DOMWindow> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     explicit DOMWindow(Document&);

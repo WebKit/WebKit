@@ -65,7 +65,7 @@ public:
         EGLImageKHR createImage() const;
         WebCore::IntSize size() const;
 
-        WeakPtr<Buffer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+        WeakPtr<Buffer> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     private:
         Buffer(struct wl_resource*);

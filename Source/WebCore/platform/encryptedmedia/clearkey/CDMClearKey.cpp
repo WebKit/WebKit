@@ -304,7 +304,6 @@ std::optional<String> CDMPrivateClearKey::sanitizeSessionId(const String& sessio
 }
 
 CDMInstanceClearKey::CDMInstanceClearKey()
-    : m_weakPtrFactory(this)
 {
 }
 
@@ -340,7 +339,7 @@ void CDMInstanceClearKey::requestLicense(LicenseType, const AtomicString&, Ref<S
     ++s_sessionIdValue;
 
     callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback), initData = WTFMove(initData), sessionIdValue = s_sessionIdValue]() mutable {
+        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), initData = WTFMove(initData), sessionIdValue = s_sessionIdValue]() mutable {
             if (!weakThis)
                 return;
 
@@ -355,7 +354,7 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
     auto dispatchCallback =
         [this, &callback](bool sessionWasClosed, std::optional<KeyStatusVector>&& changedKeys, SuccessValue succeeded) {
             callOnMainThread(
-                [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
+                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), sessionWasClosed, changedKeys = WTFMove(changedKeys), succeeded] () mutable {
                     if (!weakThis)
                         return;
 
@@ -456,7 +455,7 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
 void CDMInstanceClearKey::loadSession(LicenseType, const String&, const String&, LoadSessionCallback callback)
 {
     callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback)] {
+        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback)] {
             if (!weakThis)
                 return;
 
@@ -467,7 +466,7 @@ void CDMInstanceClearKey::loadSession(LicenseType, const String&, const String&,
 void CDMInstanceClearKey::closeSession(const String&, CloseSessionCallback callback)
 {
     callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback)] {
+        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback)] {
             if (!weakThis)
                 return;
 
@@ -478,7 +477,7 @@ void CDMInstanceClearKey::closeSession(const String&, CloseSessionCallback callb
 void CDMInstanceClearKey::removeSessionData(const String&, LicenseType, RemoveSessionDataCallback callback)
 {
     callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(), callback = WTFMove(callback)] {
+        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback)] {
             if (!weakThis)
                 return;
 

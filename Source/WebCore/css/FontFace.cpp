@@ -120,16 +120,14 @@ Ref<FontFace> FontFace::create(CSSFontFace& face)
 }
 
 FontFace::FontFace(CSSFontSelector& fontSelector)
-    : m_weakPtrFactory(this)
-    , m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
+    : m_backing(CSSFontFace::create(&fontSelector, nullptr, this))
     , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
 {
     m_backing->addClient(*this);
 }
 
 FontFace::FontFace(CSSFontFace& face)
-    : m_weakPtrFactory(this)
-    , m_backing(face)
+    : m_backing(face)
     , m_loadedPromise(*this, &FontFace::loadedPromiseResolve)
 {
     m_backing->addClient(*this);
@@ -140,9 +138,9 @@ FontFace::~FontFace()
     m_backing->removeClient(*this);
 }
 
-WeakPtr<FontFace> FontFace::createWeakPtr() const
+WeakPtr<FontFace> FontFace::createWeakPtr()
 {
-    return m_weakPtrFactory.createWeakPtr();
+    return m_weakPtrFactory.createWeakPtr(*this);
 }
 
 RefPtr<CSSValue> FontFace::parseString(const String& string, CSSPropertyID propertyID)

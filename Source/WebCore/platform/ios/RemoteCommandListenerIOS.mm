@@ -47,7 +47,6 @@ std::unique_ptr<RemoteCommandListener> RemoteCommandListener::create(RemoteComma
 
 RemoteCommandListenerIOS::RemoteCommandListenerIOS(RemoteCommandListenerClient& client)
     : RemoteCommandListener(client)
-    , m_weakPtrFactory(this)
 {
     MPRemoteCommandCenter *center = [getMPRemoteCommandCenterClass() sharedCommandCenter];
     auto weakThis = createWeakPtr();

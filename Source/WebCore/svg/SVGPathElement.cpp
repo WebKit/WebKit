@@ -81,7 +81,6 @@ END_REGISTER_ANIMATED_PROPERTIES
 inline SVGPathElement::SVGPathElement(const QualifiedName& tagName, Document& document)
     : SVGGraphicsElement(tagName, document)
     , m_pathSegList(PathSegUnalteredRole)
-    , m_weakPtrFactory(this)
     , m_isAnimValObserved(false)
 {
     ASSERT(hasTagName(SVGNames::pathTag));

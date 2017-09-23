@@ -48,7 +48,7 @@ public:
     AnimationEffect* effect() const { return m_effect.get(); }
     AnimationTimeline* timeline() const { return m_timeline.get(); }
 
-    WeakPtr<WebAnimation> createWeakPtr() const { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<WebAnimation> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     WebAnimation(AnimationEffect*, AnimationTimeline*);

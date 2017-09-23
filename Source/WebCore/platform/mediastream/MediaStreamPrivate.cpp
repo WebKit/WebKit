@@ -59,8 +59,7 @@ Ref<MediaStreamPrivate> MediaStreamPrivate::create(const Vector<Ref<RealtimeMedi
 }
 
 MediaStreamPrivate::MediaStreamPrivate(const MediaStreamTrackPrivateVector& tracks, String&& id)
-    : m_weakPtrFactory(this)
-    , m_id(WTFMove(id))
+    : m_id(WTFMove(id))
 {
     ASSERT(!m_id.isEmpty());
 

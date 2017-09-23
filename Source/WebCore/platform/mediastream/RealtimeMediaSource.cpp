@@ -47,8 +47,7 @@
 namespace WebCore {
 
 RealtimeMediaSource::RealtimeMediaSource(const String& id, Type type, const String& name)
-    : m_weakPtrFactory(this)
-    , m_id(id)
+    : m_id(id)
     , m_type(type)
     , m_name(name)
 {

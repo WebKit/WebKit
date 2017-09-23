@@ -1,3 +1,13 @@
+2017-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        WeakPtrFactory should populate m_ref lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=177375
+
+        Reviewed by Geoffrey Garen.
+
+        * pal/system/mac/SystemSleepListenerMac.mm:
+        (PAL::SystemSleepListenerMac::SystemSleepListenerMac):
+
 2017-09-21  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
 
         [PAL] Move MediaTimeAVFoundation into PAL

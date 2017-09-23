@@ -78,13 +78,11 @@ FontCascade::CodePath FontCascade::s_codePath = Auto;
 // ============================================================================================
 
 FontCascade::FontCascade()
-    : m_weakPtrFactory(this)
 {
 }
 
 FontCascade::FontCascade(const FontCascadeDescription& fd, float letterSpacing, float wordSpacing)
     : m_fontDescription(fd)
-    , m_weakPtrFactory(this)
     , m_letterSpacing(letterSpacing)
     , m_wordSpacing(wordSpacing)
     , m_useBackslashAsYenSymbol(useBackslashAsYenSignForFamily(fd.firstFamily()))
@@ -96,7 +94,6 @@ FontCascade::FontCascade(const FontCascadeDescription& fd, float letterSpacing, 
 // FIXME: We should make this constructor platform-independent.
 FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
     : m_fonts(FontCascadeFonts::createForPlatformFont(fontData))
-    , m_weakPtrFactory(this)
     , m_enableKerning(computeEnableKerning())
     , m_requiresShaping(computeRequiresShaping())
 {
@@ -112,7 +109,6 @@ FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fon
 FontCascade::FontCascade(const FontCascade& other)
     : m_fontDescription(other.m_fontDescription)
     , m_fonts(other.m_fonts)
-    , m_weakPtrFactory(this)
     , m_letterSpacing(other.m_letterSpacing)
     , m_wordSpacing(other.m_wordSpacing)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)

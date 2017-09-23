@@ -45,7 +45,7 @@ public:
     virtual ~RemoteCommandListenerIOS();
 
 protected:
-    WeakPtr<RemoteCommandListenerIOS> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<RemoteCommandListenerIOS> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     void updateSupportedCommands() override;
 
     WeakPtrFactory<RemoteCommandListenerIOS> m_weakPtrFactory;

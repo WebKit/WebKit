@@ -77,7 +77,6 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     , m_suppressInvalidation(false)
     , m_isAlphaLocked(false)
     , m_isCustomScrollbar(isCustomScrollbar)
-    , m_weakPtrFactory(this)
 {
     theme().registerScrollbar(*this);
 

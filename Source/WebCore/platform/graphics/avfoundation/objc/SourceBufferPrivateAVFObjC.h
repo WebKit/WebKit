@@ -153,7 +153,7 @@ private:
     void flush(AVSampleBufferAudioRenderer *);
 #pragma clang diagnostic pop
 
-    WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<SourceBufferPrivateAVFObjC> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
     Vector<RefPtr<VideoTrackPrivateMediaSourceAVFObjC>> m_videoTracks;
     Vector<RefPtr<AudioTrackPrivateMediaSourceAVFObjC>> m_audioTracks;

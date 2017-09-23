@@ -99,7 +99,7 @@ private:
     std::optional<MediaKeySystemConfiguration>  getSupportedConfiguration(const MediaKeySystemConfiguration& candidateConfiguration, MediaKeysRestrictions&);
     std::optional<Vector<MediaKeySystemMediaCapability>> getSupportedCapabilitiesForAudioVideoType(AudioVideoType, const Vector<MediaKeySystemMediaCapability>& requestedCapabilities, const MediaKeySystemConfiguration& partialConfiguration, MediaKeysRestrictions&);
 
-    WeakPtr<CDM> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<CDM> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     using ConsentStatusCallback = WTF::Function<void(ConsentStatus, MediaKeySystemConfiguration&&, MediaKeysRestrictions&&)>;
     void getConsentStatus(MediaKeySystemConfiguration&& accumulatedConfiguration, MediaKeysRestrictions&&, ConsentStatusCallback&&);

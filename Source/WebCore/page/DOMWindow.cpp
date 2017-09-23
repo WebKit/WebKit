@@ -394,7 +394,6 @@ void DOMWindow::setCanShowModalDialogOverride(bool allow)
 DOMWindow::DOMWindow(Document& document)
     : ContextDestructionObserver(&document)
     , FrameDestructionObserver(document.frame())
-    , m_weakPtrFactory(this)
 {
     ASSERT(frame());
     addLanguageChangeObserver(this, &languagesChangedCallback);

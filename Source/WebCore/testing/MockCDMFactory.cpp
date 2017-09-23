@@ -38,7 +38,6 @@ namespace WebCore {
 
 MockCDMFactory::MockCDMFactory()
     : m_supportedSessionTypes({ MediaKeySessionType::Temporary, MediaKeySessionType::PersistentUsageRecord, MediaKeySessionType::PersistentLicense })
-    , m_weakPtrFactory(this)
 {
     CDMFactory::registerFactory(*this);
 }
@@ -98,12 +97,11 @@ void MockCDMFactory::setSupportedDataTypes(Vector<String>&& types)
 
 std::unique_ptr<CDMPrivate> MockCDMFactory::createCDM(const String&)
 {
-    return std::make_unique<MockCDM>(m_weakPtrFactory.createWeakPtr());
+    return std::make_unique<MockCDM>(m_weakPtrFactory.createWeakPtr(*this));
 }
 
 MockCDM::MockCDM(WeakPtr<MockCDMFactory> factory)
     : m_factory(WTFMove(factory))
-    , m_weakPtrFactory(this)
 {
 }
 
@@ -167,7 +165,7 @@ RefPtr<CDMInstance> MockCDM::createInstance()
 {
     if (m_factory && !m_factory->canCreateInstances())
         return nullptr;
-    return adoptRef(new MockCDMInstance(m_weakPtrFactory.createWeakPtr()));
+    return adoptRef(new MockCDMInstance(m_weakPtrFactory.createWeakPtr(*this)));
 }
 
 void MockCDM::loadAndInitialize()

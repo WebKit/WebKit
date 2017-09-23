@@ -41,8 +41,7 @@ static bool isSupportedType(const String& type)
 }
 
 DataTransferItemList::DataTransferItemList(DataTransfer& dataTransfer)
-    : m_weakPtrFactory(this)
-    , m_dataTransfer(dataTransfer)
+    : m_dataTransfer(dataTransfer)
 {
 }
 
@@ -81,7 +80,7 @@ ExceptionOr<RefPtr<DataTransferItem>> DataTransferItemList::add(const String& da
 
     m_dataTransfer.pasteboard().writeString(lowercasedType, data);
     ASSERT(m_items);
-    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), lowercasedType));
+    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), lowercasedType));
     return RefPtr<DataTransferItem> { m_items->last().copyRef() };
 }
 
@@ -129,13 +128,13 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
     for (auto& type : m_dataTransfer.types()) {
         auto lowercasedType = type.convertToASCIILowercase();
         if (isSupportedType(lowercasedType))
-            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), lowercasedType));
+            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), lowercasedType));
     }
 
     for (auto& file : m_dataTransfer.files().files()) {
         auto type = File::contentTypeForFile(file->path()).convertToASCIILowercase();
         if (isSupportedType(type) || file->isDirectory())
-            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), type, file.copyRef()));
+            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), type, file.copyRef()));
     }
 
     m_items = WTFMove(items);
@@ -181,7 +180,7 @@ void DataTransferItemList::didSetStringData(const String& type)
     String lowercasedType = type.convertToASCIILowercase();
     removeStringItemOfLowercasedType(*m_items, type.convertToASCIILowercase());
 
-    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(), lowercasedType));
+    m_items->append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*this), lowercasedType));
 }
 
 }

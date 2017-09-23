@@ -186,7 +186,7 @@ void ProcessLauncher::launchProcess()
 
     xpc_dictionary_set_value(bootstrapMessage.get(), "extra-initialization-data", extraInitializationData.get());
 
-    auto weakProcessLauncher = m_weakPtrFactory.createWeakPtr();
+    auto weakProcessLauncher = m_weakPtrFactory.createWeakPtr(*this);
     xpc_connection_set_event_handler(m_xpcConnection.get(), [weakProcessLauncher, listeningPort](xpc_object_t event) {
         ASSERT(xpc_get_type(event) == XPC_TYPE_ERROR);
 

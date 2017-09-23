@@ -85,7 +85,7 @@ public:
 
     void fontStateChanged(CSSFontFace&, CSSFontFace::Status oldState, CSSFontFace::Status newState) final;
 
-    WeakPtr<FontFace> createWeakPtr() const;
+    WeakPtr<FontFace> createWeakPtr();
 
     void ref() final { RefCounted::ref(); }
     void deref() final { RefCounted::deref(); }

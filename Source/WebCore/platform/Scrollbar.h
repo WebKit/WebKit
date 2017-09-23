@@ -133,7 +133,7 @@ public:
 
     bool supportsUpdateOnSecondaryThread() const;
 
-    WeakPtr<Scrollbar> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<Scrollbar> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 protected:
     Scrollbar(ScrollableArea&, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0, bool isCustomScrollbar = false);

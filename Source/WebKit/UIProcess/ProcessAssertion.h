@@ -69,7 +69,7 @@ protected:
 
 private:
 #if PLATFORM(IOS) && !PLATFORM(IOS_SIMULATOR)
-    WeakPtr<ProcessAssertion> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<ProcessAssertion> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
     void markAsInvalidated();
 
     RetainPtr<BKSProcessAssertion> m_assertion;

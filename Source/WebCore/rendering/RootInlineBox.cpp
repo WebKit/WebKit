@@ -61,8 +61,6 @@ RootInlineBox::RootInlineBox(RenderBlockFlow& block)
     : InlineFlowBox(block)
     , m_lineBreakPos(0)
     , m_lineBreakObj(nullptr)
-    , m_weakPtrFactory(this)
-
 {
     setIsHorizontal(block.isHorizontalWritingMode());
 }

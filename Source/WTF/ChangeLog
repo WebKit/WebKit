@@ -1,3 +1,25 @@
+2017-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        WeakPtrFactory should populate m_ref lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=177375
+
+        Reviewed by Geoffrey Garen.
+
+        This helps us with the overhead of initializing WeakPtrFactory for
+        objects that rarely end up creating the weak reference.
+        -This is in preparation for introducing WeakPtr to RenderObject.
+
+        All credit to Geoffrey Garen.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakReference::get const):
+        (WTF::WeakReference::clear):
+        (WTF::WeakReference::WeakReference):
+        (WTF::WeakPtrFactory::~WeakPtrFactory):
+        (WTF::WeakPtrFactory::createWeakPtr const):
+        (WTF::WeakPtrFactory::revokeAll):
+        (WTF::WeakPtrFactory::WeakPtrFactory): Deleted.
+
 2017-09-21  Alex Christensen  <achristensen@webkit.org>
 
         Make StringBuilder movable

@@ -58,7 +58,7 @@ public:
     Vector<ResourceResponse> responsesForTesting() const { return m_responsesForTesting; }
     void addResponseForTesting(const ResourceResponse&);
 
-    WeakPtr<const MediaResourceLoader> createWeakPtr() const { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<const MediaResourceLoader> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
 private:
     void contextDestroyed() override;

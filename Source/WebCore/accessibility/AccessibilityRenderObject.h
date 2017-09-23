@@ -200,7 +200,7 @@ public:
 
     String passwordFieldValue() const override;
     
-    WeakPtr<AccessibilityRenderObject> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<AccessibilityRenderObject> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);

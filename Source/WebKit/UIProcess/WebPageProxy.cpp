@@ -365,7 +365,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, uin
 #endif
     , m_pageLoadState(*this)
     , m_configurationPreferenceValues(m_configuration->preferenceValues())
-    , m_weakPtrFactory(this)
 {
     m_webProcessLifetimeTracker.addObserver(m_visitedLinkStore);
     m_webProcessLifetimeTracker.addObserver(m_websiteDataStore);

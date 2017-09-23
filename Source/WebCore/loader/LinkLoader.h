@@ -58,7 +58,7 @@ public:
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
     static bool isSupportedType(CachedResource::Type, const String& mimeType);
 
-    WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<LinkLoader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
     void triggerEvents(const CachedResource&);
     void cancelLoad();
 

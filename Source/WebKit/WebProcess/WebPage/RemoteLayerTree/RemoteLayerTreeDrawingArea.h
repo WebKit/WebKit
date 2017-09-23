@@ -54,7 +54,7 @@ public:
     uint64_t nextTransactionID() const { return m_currentTransactionID + 1; }
     uint64_t lastCommittedTransactionID() const { return m_currentTransactionID; }
 
-    WeakPtr<RemoteLayerTreeDrawingArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<RemoteLayerTreeDrawingArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     // DrawingArea

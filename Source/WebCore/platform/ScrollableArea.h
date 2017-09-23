@@ -64,7 +64,7 @@ public:
 
     WEBCORE_EXPORT bool handleWheelEvent(const PlatformWheelEvent&);
 
-    WeakPtr<ScrollableArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<ScrollableArea> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 #if ENABLE(CSS_SCROLL_SNAP)
     WEBCORE_EXPORT const Vector<LayoutUnit>* horizontalSnapOffsets() const;
@@ -354,7 +354,7 @@ private:
 
     mutable std::unique_ptr<ScrollAnimator> m_scrollAnimator;
 
-    WeakPtrFactory<ScrollableArea> m_weakPtrFactory { this };
+    WeakPtrFactory<ScrollableArea> m_weakPtrFactory;
 
 #if ENABLE(CSS_SCROLL_SNAP)
     std::unique_ptr<ScrollSnapOffsetsInfo<LayoutUnit>> m_snapOffsetsInfo;

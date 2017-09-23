@@ -30,7 +30,7 @@ public:
     {
         ASSERT_UNUSED(value, &parent.propertyReference().svgMatrix() == &value);
         Ref<SVGMatrixTearOff> result = adoptRef(*new SVGMatrixTearOff(parent));
-        parent.addChild(result->m_weakFactory.createWeakPtr());
+        parent.addChild(result->m_weakFactory.createWeakPtr(result));
         return result;
     }
 
@@ -48,7 +48,6 @@ private:
     SVGMatrixTearOff(SVGTransform& parent)
         : SVGMatrix(nullptr)
         , m_parent(&parent)
-        , m_weakFactory(this)
     {
     }
 

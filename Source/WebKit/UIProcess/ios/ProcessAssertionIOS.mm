@@ -161,8 +161,7 @@ static BKSProcessAssertionFlags flagsForState(AssertionState assertionState)
 }
 
 ProcessAssertion::ProcessAssertion(pid_t pid, AssertionState assertionState, Function<void()>&& invalidationCallback)
-    : m_weakFactory(this)
-    , m_invalidationCallback(WTFMove(invalidationCallback))
+    : m_invalidationCallback(WTFMove(invalidationCallback))
     , m_assertionState(assertionState)
 {
     auto weakThis = createWeakPtr();

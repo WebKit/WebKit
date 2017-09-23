@@ -48,7 +48,7 @@ public:
     RefPtr<AudioBus> createBus(float sampleRate, bool mixToMono);
 
 private:
-    WeakPtr<AudioFileReader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<AudioFileReader> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     static void deinterleavePadAddedCallback(AudioFileReader*, GstPad*);
     static void deinterleaveReadyCallback(AudioFileReader*);
@@ -108,15 +108,13 @@ void AudioFileReader::decodebinPadAddedCallback(AudioFileReader* reader, GstPad*
 }
 
 AudioFileReader::AudioFileReader(const char* filePath)
-    : m_weakPtrFactory(this)
-    , m_runLoop(RunLoop::current())
+    : m_runLoop(RunLoop::current())
     , m_filePath(filePath)
 {
 }
 
 AudioFileReader::AudioFileReader(const void* data, size_t dataSize)
-    : m_weakPtrFactory(this)
-    , m_runLoop(RunLoop::current())
+    : m_runLoop(RunLoop::current())
     , m_data(data)
     , m_dataSize(dataSize)
 {

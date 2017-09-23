@@ -89,7 +89,6 @@ namespace WebCore {
 
 CDMSessionAVStreamSession::CDMSessionAVStreamSession(const Vector<int>& protocolVersions, CDMPrivateMediaSourceAVFObjC& cdm, CDMSessionClient* client)
     : CDMSessionMediaSourceAVFObjC(cdm, client)
-    , m_weakPtrFactory(this)
     , m_dataParserObserver(adoptNS([[WebCDMSessionAVStreamSessionObserver alloc] initWithParent:this]))
     , m_protocolVersions(protocolVersions)
     , m_mode(Normal)

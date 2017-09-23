@@ -39,7 +39,7 @@ class RootInlineBox : public InlineFlowBox {
 public:
     explicit RootInlineBox(RenderBlockFlow&);
     virtual ~RootInlineBox();
-    WeakPtr<RootInlineBox> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<RootInlineBox> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     RenderBlockFlow& blockFlow() const;
 

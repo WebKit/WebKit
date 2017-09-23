@@ -1272,7 +1272,7 @@ public:
     bool isCapturing() const { return MediaProducer::isCapturing(m_mediaState); }
     WEBCORE_EXPORT void updateIsPlayingMedia(uint64_t = HTMLMediaElementInvalidID);
     void pageMutedStateDidChange();
-    WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<Document> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(MediaPlaybackTargetClient&);

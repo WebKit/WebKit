@@ -32,10 +32,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 
-#if USE(WEB_THREAD)
-#include <wtf/MainThread.h>
-#endif
-
 namespace WTF {
 
 template<typename T> class WeakPtr;
@@ -47,25 +43,9 @@ class WeakReference : public ThreadSafeRefCounted<WeakReference<T>> {
     WTF_MAKE_NONCOPYABLE(WeakReference<T>);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    T* get() const
-    {
-#if USE(WEB_THREAD)
-        ASSERT(canAccessThreadLocalDataForThread(m_boundThread));
-#else
-        ASSERT(m_boundThread == currentThread());
-#endif
-        return m_ptr;
-    }
+    T* get() const { return m_ptr; }
 
-    void clear()
-    {
-#if USE(WEB_THREAD)
-        ASSERT(canAccessThreadLocalDataForThread(m_boundThread));
-#else
-        ASSERT(m_boundThread == currentThread());
-#endif
-        m_ptr = nullptr;
-    }
+    void clear() { m_ptr = nullptr; }
 
 private:
     friend class WeakPtr<T>;
@@ -75,16 +55,10 @@ private:
 
     explicit WeakReference(T* ptr)
         : m_ptr(ptr)
-#ifndef NDEBUG
-        , m_boundThread(currentThread())
-#endif
     {
     }
 
     T* m_ptr;
-#ifndef NDEBUG
-    ThreadIdentifier m_boundThread;
-#endif
 };
 
 template<typename T>
@@ -118,23 +92,33 @@ class WeakPtrFactory {
     WTF_MAKE_NONCOPYABLE(WeakPtrFactory<T>);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit WeakPtrFactory(T* ptr) : m_ref(WeakReference<T>::create(ptr)) { }
+    WeakPtrFactory() = default;
+    ~WeakPtrFactory()
+    {
+        if (!m_ref)
+            return;
+        m_ref->clear();
+    }
 
-    ~WeakPtrFactory() { m_ref->clear(); }
-
-    // We should consider having createWeakPtr populate m_ref the first time createWeakPtr is called.
-    WeakPtr<T> createWeakPtr() const { return WeakPtr<T>(m_ref.copyRef()); }
+    WeakPtr<T> createWeakPtr(T& ptr) const
+    {
+        if (!m_ref)
+            m_ref = WeakReference<T>::create(&ptr);
+        ASSERT(&ptr == m_ref->get());
+        return WeakPtr<T>(Ref<WeakReference<T>>(*m_ref));
+    }
 
     void revokeAll()
     {
-        T* ptr = m_ref->get();
+        if (!m_ref)
+            return;
+
         m_ref->clear();
-        // We create a new WeakReference so that future calls to createWeakPtr() create nonzero WeakPtrs.
-        m_ref = WeakReference<T>::create(ptr);
+        m_ref = nullptr;
     }
 
 private:
-    Ref<WeakReference<T>> m_ref;
+    mutable RefPtr<WeakReference<T>> m_ref;
 };
 
 template<typename T, typename U> inline bool operator==(const WeakPtr<T>& a, const WeakPtr<U>& b)

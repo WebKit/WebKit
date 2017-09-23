@@ -53,7 +53,6 @@ CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFound
     : m_parent(parent->createWeakPtr())
     , m_client(client)
     , m_sessionId(createCanonicalUUIDString())
-    , m_weakPtrFactory(this)
 {
 }
 

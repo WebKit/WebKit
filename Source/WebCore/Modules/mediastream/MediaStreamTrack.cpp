@@ -53,7 +53,6 @@ Ref<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext& context, 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStreamTrackPrivate>&& privateTrack)
     : ActiveDOMObject(&context)
     , m_private(WTFMove(privateTrack))
-    , m_weakPtrFactory(this)
     , m_taskQueue(context)
 {
     suspendIfNeeded();

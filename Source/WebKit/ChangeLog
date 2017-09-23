@@ -1,3 +1,38 @@
+2017-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        WeakPtrFactory should populate m_ref lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=177375
+
+        Reviewed by Geoffrey Garen.
+
+        * UIProcess/ApplePay/WebPaymentCoordinatorProxy.cpp:
+        (WebKit::WebPaymentCoordinatorProxy::WebPaymentCoordinatorProxy):
+        (WebKit::WebPaymentCoordinatorProxy::canMakePaymentsWithActiveCard):
+        (WebKit::WebPaymentCoordinatorProxy::openPaymentSetup):
+        * UIProcess/ApplePay/mac/WebPaymentCoordinatorProxyMac.mm:
+        (WebKit::WebPaymentCoordinatorProxy::platformShowPaymentUI):
+        * UIProcess/ApplicationStateTracker.mm:
+        (WebKit::ApplicationStateTracker::ApplicationStateTracker):
+        * UIProcess/Cocoa/WebViewImpl.h:
+        (WebKit::WebViewImpl::createWeakPtr):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        (WebKit::WebViewImpl::WebViewImpl):
+        * UIProcess/Launcher/ProcessLauncher.cpp:
+        (WebKit::ProcessLauncher::ProcessLauncher):
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * UIProcess/ProcessAssertion.h:
+        (WebKit::ProcessAssertion::createWeakPtr):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::m_configurationPreferenceValues):
+        (WebKit::m_weakPtrFactory): Deleted.
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::createWeakPtr const):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.h:
+        (WebKit::RemoteLayerTreeDrawingArea::createWeakPtr):
+        * WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::RemoteLayerTreeDrawingArea):
+
 2017-09-22  John Wilander  <wilander@apple.com>
 
         Re-enable configuration.HTTPCookieStorage on session without credentials

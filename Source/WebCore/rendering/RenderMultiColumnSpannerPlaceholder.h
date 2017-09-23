@@ -43,7 +43,7 @@ public:
 
     RenderBox* spanner() const { return m_spanner; }
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
-    WeakPtr<RenderMultiColumnSpannerPlaceholder> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<RenderMultiColumnSpannerPlaceholder> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlowThread*, RenderBox& spanner, RenderStyle&&);

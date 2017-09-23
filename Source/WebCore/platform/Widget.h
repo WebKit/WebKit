@@ -193,7 +193,7 @@ public:
     WEBCORE_EXPORT virtual IntPoint convertToContainingView(const IntPoint&) const;
     WEBCORE_EXPORT virtual IntPoint convertFromContainingView(const IntPoint&) const;
 
-    WeakPtr<Widget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<Widget> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     void init(PlatformWidget); // Must be called by all Widget constructors to initialize cross-platform data.
@@ -216,7 +216,7 @@ private:
 #else
     RetainPtr<NSView> m_widget;
 #endif
-    WeakPtrFactory<Widget> m_weakPtrFactory { this };
+    WeakPtrFactory<Widget> m_weakPtrFactory;
     bool m_selfVisible;
     bool m_parentVisible;
 

@@ -77,14 +77,13 @@ class HTMLResourcePreloader {
 public:
     explicit HTMLResourcePreloader(Document& document)
         : m_document(document)
-        , m_weakFactory(this)
     {
     }
 
     void preload(PreloadRequestStream);
     void preload(std::unique_ptr<PreloadRequest>);
 
-    WeakPtr<HTMLResourcePreloader> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    WeakPtr<HTMLResourcePreloader> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
 
 private:
     Document& m_document;

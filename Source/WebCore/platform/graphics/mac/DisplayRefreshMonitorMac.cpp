@@ -36,7 +36,6 @@ namespace WebCore {
 
 DisplayRefreshMonitorMac::DisplayRefreshMonitorMac(PlatformDisplayID displayID)
     : DisplayRefreshMonitor(displayID)
-    , m_weakFactory(this)
     , m_displayLink(nullptr)
 {
 }
@@ -92,8 +91,7 @@ void DisplayRefreshMonitorMac::displayLinkFired()
 
     setIsPreviousFrameDone(false);
 
-    // FIXME: Is it really okay to create a weakPtr on a background thread and then use it on the main thread?
-    RunLoop::main().dispatch([weakPtr = m_weakFactory.createWeakPtr()] {
+    RunLoop::main().dispatch([weakPtr = m_weakFactory.createWeakPtr(*this)] {
         if (auto* monitor = weakPtr.get())
             handleDisplayRefreshedNotificationOnMainThread(monitor);
     });

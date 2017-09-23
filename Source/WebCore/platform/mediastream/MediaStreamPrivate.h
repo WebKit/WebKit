@@ -107,7 +107,7 @@ public:
 
     FloatSize intrinsicSize() const;
 
-    WeakPtr<MediaStreamPrivate> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaStreamPrivate> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     void monitorOrientation(OrientationNotifier&);
 

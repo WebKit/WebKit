@@ -130,7 +130,7 @@ public:
     const Vector<ContentType>& mediaContentTypesRequiringHardwareSupport() const;
     bool shouldCheckHardwareSupport() const;
 
-    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     // MediaPlayerPrivateInterface

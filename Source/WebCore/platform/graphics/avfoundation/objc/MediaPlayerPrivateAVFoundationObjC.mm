@@ -541,7 +541,6 @@ void MediaPlayerPrivateAVFoundationObjC::clearMediaCacheForOrigins(const String&
 
 MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlayer* player)
     : MediaPlayerPrivateAVFoundation(player)
-    , m_weakPtrFactory(this)
 #if PLATFORM(IOS) || (PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE))
     , m_videoFullscreenLayerManager(VideoFullscreenLayerManager::create())
     , m_videoFullscreenGravity(MediaPlayer::VideoGravityResizeAspect)

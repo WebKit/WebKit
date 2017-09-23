@@ -143,7 +143,7 @@ public:
 
     void shrinkToFit();
 
-    WeakPtr<StyleSheetContents> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<StyleSheetContents> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     WEBCORE_EXPORT StyleSheetContents(StyleRuleImport* ownerRule, const String& originalURL, const CSSParserContext&);
@@ -175,7 +175,7 @@ private:
 
     Vector<CSSStyleSheet*> m_clients;
     
-    WeakPtrFactory<StyleSheetContents> m_weakPtrFactory { this };
+    WeakPtrFactory<StyleSheetContents> m_weakPtrFactory;
 };
 
 } // namespace WebCore

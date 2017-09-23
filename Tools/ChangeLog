@@ -1,3 +1,13 @@
+2017-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        WeakPtrFactory should populate m_ref lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=177375
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::TEST):
+
 2017-09-22  Filip Pizlo  <fpizlo@apple.com>
 
         WSL should report an error if you try to create an operator overload that will never be called

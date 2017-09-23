@@ -121,7 +121,6 @@ private:
 RenderView::RenderView(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
     , m_frameView(*document.view())
-    , m_weakFactory(this)
     , m_lazyRepaintTimer(*this, &RenderView::lazyRepaintTimerFired)
 #if ENABLE(SERVICE_CONTROLS)
     , m_selectionRectGatherer(*this)

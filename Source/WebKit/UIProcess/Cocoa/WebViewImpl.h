@@ -574,7 +574,7 @@ private:
 #endif // ENABLE(WEB_PLAYBACK_CONTROLS_MANAGER)
 #endif // HAVE(TOUCH_BAR)
 
-    WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(); }
+    WeakPtr<WebViewImpl> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
     bool supportsArbitraryLayoutModes() const;
     float intrinsicDeviceScaleFactor() const;

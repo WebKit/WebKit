@@ -226,8 +226,7 @@ private:
 #endif // USE(GSTREAMER_GL)
 
 MediaPlayerPrivateGStreamerBase::MediaPlayerPrivateGStreamerBase(MediaPlayer* player)
-    : m_weakPtrFactory(this)
-    , m_notifier(MainThreadNotifier<MainThreadNotification>::create())
+    : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_player(player)
     , m_fpsSink(nullptr)
     , m_readyState(MediaPlayer::HaveNothing)
@@ -364,7 +363,7 @@ bool MediaPlayerPrivateGStreamerBase::handleSyncMessage(GstMessage* message)
         if (concatenatedInitDataChunksNumber > 1)
             eventKeySystemIdString = emptyString();
 
-        RunLoop::main().dispatch([weakThis = m_weakPtrFactory.createWeakPtr(), eventKeySystemIdString, initData = WTFMove(concatenatedInitDataChunks)] {
+        RunLoop::main().dispatch([weakThis = m_weakPtrFactory.createWeakPtr(*this), eventKeySystemIdString, initData = WTFMove(concatenatedInitDataChunks)] {
             if (!weakThis)
                 return;
 

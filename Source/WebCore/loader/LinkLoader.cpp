@@ -57,7 +57,6 @@ namespace WebCore {
 
 LinkLoader::LinkLoader(LinkLoaderClient& client)
     : m_client(client)
-    , m_weakPtrFactory(this)
 {
 }
 

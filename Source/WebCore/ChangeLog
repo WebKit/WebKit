@@ -1,3 +1,166 @@
+2017-09-22  Zalan Bujtas  <zalan@apple.com>
+
+        WeakPtrFactory should populate m_ref lazily.
+        https://bugs.webkit.org/show_bug.cgi?id=177375
+
+        Reviewed by Geoffrey Garen.
+
+        * Modules/encryptedmedia/CDM.cpp:
+        (WebCore::CDM::CDM):
+        * Modules/encryptedmedia/CDM.h:
+        (WebCore::CDM::createWeakPtr):
+        * Modules/encryptedmedia/MediaKeySession.cpp:
+        (WebCore::MediaKeySession::MediaKeySession):
+        (WebCore::MediaKeySession::generateRequest):
+        (WebCore::MediaKeySession::load):
+        (WebCore::MediaKeySession::update):
+        (WebCore::MediaKeySession::close):
+        (WebCore::MediaKeySession::remove):
+        * Modules/encryptedmedia/MediaKeys.cpp:
+        (WebCore::MediaKeys::MediaKeys):
+        (WebCore::MediaKeys::createSession):
+        * Modules/mediastream/MediaDevices.cpp:
+        (WebCore::MediaDevices::MediaDevices):
+        * Modules/mediastream/MediaDevices.h:
+        (WebCore::MediaDevices::createWeakPtr):
+        * Modules/mediastream/MediaStreamTrack.cpp:
+        (WebCore::MediaStreamTrack::MediaStreamTrack):
+        * Modules/mediastream/MediaStreamTrack.h:
+        (WebCore::MediaStreamTrack::createWeakPtr):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::AccessibilityRenderObject):
+        * accessibility/AccessibilityRenderObject.h:
+        (WebCore::AccessibilityRenderObject::createWeakPtr):
+        * animation/WebAnimation.cpp:
+        (WebCore::WebAnimation::WebAnimation):
+        * animation/WebAnimation.h:
+        * css/FontFace.cpp:
+        (WebCore::FontFace::FontFace):
+        (WebCore::FontFace::createWeakPtr):
+        (WebCore::FontFace::createWeakPtr const): Deleted.
+        * css/FontFace.h:
+        * css/StyleSheetContents.h:
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::DataTransferItemList):
+        (WebCore::DataTransferItemList::add):
+        (WebCore::DataTransferItemList::ensureItems const):
+        (WebCore::DataTransferItemList::didSetStringData):
+        * dom/Document.cpp:
+        (WebCore::Document::postTask):
+        * dom/Document.h:
+        (WebCore::Document::createWeakPtr):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::createWeakPtr):
+        * html/HTMLPictureElement.h:
+        * html/parser/HTMLResourcePreloader.h:
+        (WebCore::HTMLResourcePreloader::HTMLResourcePreloader):
+        (WebCore::HTMLResourcePreloader::createWeakPtr):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::LinkLoader):
+        * loader/LinkLoader.h:
+        (WebCore::LinkLoader::createWeakPtr):
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::MediaResourceLoader):
+        * loader/MediaResourceLoader.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::DOMWindow):
+        * page/DOMWindow.h:
+        * platform/GenericTaskQueue.cpp:
+        (WebCore::TaskDispatcher<Timer>::TaskDispatcher):
+        (WebCore::TaskDispatcher<Timer>::postTask):
+        * platform/GenericTaskQueue.h:
+        (WebCore::GenericTaskQueue::GenericTaskQueue):
+        (WebCore::GenericTaskQueue::enqueueTask):
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::createWeakPtr):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/Scrollbar.h:
+        (WebCore::Scrollbar::createWeakPtr):
+        * platform/Widget.h:
+        (WebCore::Widget::createWeakPtr):
+        * platform/audio/mac/AudioHardwareListenerMac.cpp:
+        (WebCore::AudioHardwareListenerMac::AudioHardwareListenerMac):
+        * platform/graphics/FontCascade.cpp:
+        (WebCore::FontCascade::FontCascade):
+        * platform/graphics/FontCascade.h:
+        (WebCore::FontCascade::createWeakPtr const):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::createWeakPtr):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.h:
+        (WebCore::CDMSessionAVFoundationObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/CDMSessionAVFoundationObjC.mm:
+        (WebCore::CDMSessionAVFoundationObjC::CDMSessionAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/CDMSessionAVStreamSession.mm:
+        (WebCore::CDMSessionAVStreamSession::CDMSessionAVStreamSession):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.h:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::createWeakPtr):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC):
+        (WebCore::MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.h:
+        * platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm:
+        (WebCore::SourceBufferPrivateAVFObjC::SourceBufferPrivateAVFObjC):
+        (WebCore::SourceBufferPrivateAVFObjC::append):
+        (WebCore::SourceBufferPrivateAVFObjC::abort):
+        * platform/graphics/cv/TextureCacheCV.mm:
+        (WebCore::TextureCacheCV::TextureCacheCV):
+        (WebCore::TextureCacheCV::textureFromImage):
+        * platform/graphics/mac/DisplayRefreshMonitorMac.cpp:
+        (WebCore::DisplayRefreshMonitorMac::DisplayRefreshMonitorMac):
+        (WebCore::DisplayRefreshMonitorMac::displayLinkFired):
+        * platform/ios/RemoteCommandListenerIOS.h:
+        (WebCore::RemoteCommandListenerIOS::createWeakPtr):
+        * platform/ios/RemoteCommandListenerIOS.mm:
+        (WebCore::RemoteCommandListenerIOS::RemoteCommandListenerIOS):
+        * platform/mac/RemoteCommandListenerMac.h:
+        (WebCore::RemoteCommandListenerMac::createWeakPtr):
+        * platform/mediastream/MediaStreamPrivate.cpp:
+        (WebCore::MediaStreamPrivate::MediaStreamPrivate):
+        * platform/mediastream/MediaStreamPrivate.h:
+        (WebCore::MediaStreamPrivate::createWeakPtr):
+        * platform/mediastream/RealtimeMediaSource.cpp:
+        (WebCore::RealtimeMediaSource::RealtimeMediaSource):
+        * platform/mediastream/RealtimeMediaSource.h:
+        * platform/mock/MockMediaEndpoint.cpp:
+        (WebCore::MockMediaEndpoint::MockMediaEndpoint):
+        (WebCore::MockMediaEndpoint::generateDtlsInfo):
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::RenderWidget):
+        * rendering/RenderWidget.h:
+        (WebCore::RenderWidget::createWeakPtr):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::createWeakPtr):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::SVGPathElement):
+        * svg/SVGPathElement.h:
+        * svg/properties/SVGMatrixTearOff.h:
+        * testing/MockCDMFactory.cpp:
+        (WebCore::MockCDMFactory::MockCDMFactory):
+        (WebCore::MockCDMFactory::createCDM):
+        (WebCore::MockCDM::MockCDM):
+        (WebCore::MockCDM::createInstance):
+        (WebCore::m_weakPtrFactory): Deleted.
+
 2017-09-22  Tim Horton  <timothy_horton@apple.com>
 
         Add env() as an alias of constant()

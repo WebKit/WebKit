@@ -33,10 +33,10 @@ namespace TestWebKitAPI {
 TEST(WTF_WeakPtr, Basic)
 {
     int dummy = 5;
-    WeakPtrFactory<int>* factory = new WeakPtrFactory<int>(&dummy);
-    WeakPtr<int> weakPtr1 = factory->createWeakPtr();
-    WeakPtr<int> weakPtr2 = factory->createWeakPtr();
-    WeakPtr<int> weakPtr3 = factory->createWeakPtr();
+    WeakPtrFactory<int>* factory = new WeakPtrFactory<int>();
+    WeakPtr<int> weakPtr1 = factory->createWeakPtr(dummy);
+    WeakPtr<int> weakPtr2 = factory->createWeakPtr(dummy);
+    WeakPtr<int> weakPtr3 = factory->createWeakPtr(dummy);
     EXPECT_EQ(weakPtr1.get(), &dummy);
     EXPECT_EQ(weakPtr2.get(), &dummy);
     EXPECT_EQ(weakPtr3.get(), &dummy);
@@ -60,9 +60,9 @@ TEST(WTF_WeakPtr, Assignment)
     int dummy = 5;
     WeakPtr<int> weakPtr;
     {
-        WeakPtrFactory<int> factory(&dummy);
+        WeakPtrFactory<int> factory;
         EXPECT_NULL(weakPtr.get());
-        weakPtr = factory.createWeakPtr();
+        weakPtr = factory.createWeakPtr(dummy);
         EXPECT_EQ(weakPtr.get(), &dummy);
     }
     EXPECT_NULL(weakPtr.get());
@@ -72,10 +72,10 @@ TEST(WTF_WeakPtr, MultipleFactories)
 {
     int dummy1 = 5;
     int dummy2 = 7;
-    WeakPtrFactory<int>* factory1 = new WeakPtrFactory<int>(&dummy1);
-    WeakPtrFactory<int>* factory2 = new WeakPtrFactory<int>(&dummy2);
-    WeakPtr<int> weakPtr1 = factory1->createWeakPtr();
-    WeakPtr<int> weakPtr2 = factory2->createWeakPtr();
+    WeakPtrFactory<int>* factory1 = new WeakPtrFactory<int>();
+    WeakPtrFactory<int>* factory2 = new WeakPtrFactory<int>();
+    WeakPtr<int> weakPtr1 = factory1->createWeakPtr(dummy1);
+    WeakPtr<int> weakPtr2 = factory2->createWeakPtr(dummy2);
     EXPECT_EQ(weakPtr1.get(), &dummy1);
     EXPECT_EQ(weakPtr2.get(), &dummy2);
     EXPECT_TRUE(weakPtr1 != weakPtr2);
@@ -91,10 +91,10 @@ TEST(WTF_WeakPtr, MultipleFactories)
 TEST(WTF_WeakPtr, RevokeAll)
 {
     int dummy = 5;
-    WeakPtrFactory<int> factory(&dummy);
-    WeakPtr<int> weakPtr1 = factory.createWeakPtr();
-    WeakPtr<int> weakPtr2 = factory.createWeakPtr();
-    WeakPtr<int> weakPtr3 = factory.createWeakPtr();
+    WeakPtrFactory<int> factory;
+    WeakPtr<int> weakPtr1 = factory.createWeakPtr(dummy);
+    WeakPtr<int> weakPtr2 = factory.createWeakPtr(dummy);
+    WeakPtr<int> weakPtr3 = factory.createWeakPtr(dummy);
     EXPECT_EQ(weakPtr1.get(), &dummy);
     EXPECT_EQ(weakPtr2.get(), &dummy);
     EXPECT_EQ(weakPtr3.get(), &dummy);
@@ -104,15 +104,6 @@ TEST(WTF_WeakPtr, RevokeAll)
     EXPECT_NULL(weakPtr3.get());
 }
 
-TEST(WTF_WeakPtr, NullFactory)
-{
-    WeakPtrFactory<int> factory(nullptr);
-    WeakPtr<int> weakPtr = factory.createWeakPtr();
-    EXPECT_NULL(weakPtr.get());
-    factory.revokeAll();
-    EXPECT_NULL(weakPtr.get());
-}
-
 struct Foo {
     void bar() { };
 };
@@ -120,8 +111,8 @@ struct Foo {
 TEST(WTF_WeakPtr, Dereference)
 {
     Foo f;
-    WeakPtrFactory<Foo> factory(&f);
-    WeakPtr<Foo> weakPtr = factory.createWeakPtr();
+    WeakPtrFactory<Foo> factory;
+    WeakPtr<Foo> weakPtr = factory.createWeakPtr(f);
     weakPtr->bar();
 }
 
@@ -130,13 +121,13 @@ TEST(WTF_WeakPtr, Forget)
     int dummy = 5;
     int dummy2 = 7;
 
-    WeakPtrFactory<int> outerFactory(&dummy2);
+    WeakPtrFactory<int> outerFactory;
     WeakPtr<int> weakPtr1, weakPtr2, weakPtr3, weakPtr4;
     {
-        WeakPtrFactory<int> innerFactory(&dummy);
-        weakPtr1 = innerFactory.createWeakPtr();
-        weakPtr2 = innerFactory.createWeakPtr();
-        weakPtr3 = innerFactory.createWeakPtr();
+        WeakPtrFactory<int> innerFactory;
+        weakPtr1 = innerFactory.createWeakPtr(dummy);
+        weakPtr2 = innerFactory.createWeakPtr(dummy);
+        weakPtr3 = innerFactory.createWeakPtr(dummy);
         EXPECT_EQ(weakPtr1.get(), &dummy);
         EXPECT_EQ(weakPtr2.get(), &dummy);
         EXPECT_EQ(weakPtr3.get(), &dummy);
@@ -166,7 +157,7 @@ TEST(WTF_WeakPtr, Forget)
         EXPECT_NULL(weakPtr5.get());
         EXPECT_EQ(weakPtr2.get(), &dummy);
 
-        weakPtr4 = outerFactory.createWeakPtr();
+        weakPtr4 = outerFactory.createWeakPtr(dummy2);
         EXPECT_EQ(weakPtr2.get(), &dummy);
         EXPECT_EQ(weakPtr4.get(), &dummy2);
     }
@@ -184,7 +175,7 @@ TEST(WTF_WeakPtr, Forget)
     EXPECT_NULL(weakPtr6.get());
     EXPECT_EQ(weakPtr5.get(), weakPtr6.get());
 
-    WeakPtr<int> weakPtr7 = outerFactory.createWeakPtr();
+    WeakPtr<int> weakPtr7 = outerFactory.createWeakPtr(dummy2);
     EXPECT_EQ(weakPtr7.get(), &dummy2);
     weakPtr7 = nullptr;
     EXPECT_NULL(weakPtr7.get());
