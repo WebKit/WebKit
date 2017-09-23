@@ -1,3 +1,39 @@
+2017-09-22  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: View should automatically layout when it becomes attached to the DOM
+        https://bugs.webkit.org/show_bug.cgi?id=177189
+
+        Reviewed by Devin Rousso.
+
+        This guarantees that a layout is always scheduled as soon as a view is
+        attached to the DOM. Now that nearly all views are created lazily, it
+        is safe to make this change even without having a visibility concept in
+        the View class that would prevent layouts for background views.
+
+        * UserInterface/Views/View.js:
+        (WI.View):
+        Remove `this._needsLayoutWhenAttachedToRoot` flag, which is now implicit.
+        This was set if a layout was requested before the view had been attached
+        to the DOM.
+
+        (WI.View.prototype.get element):
+        (WI.View.prototype.get layoutPending):
+        (WI.View.prototype.get parentView):
+        (WI.View.prototype.get subviews):
+        (WI.View.prototype.get isAttached):
+        (WI.View.prototype.insertSubviewBefore):
+        (WI.View.prototype.removeSubview):
+        (WI.View.prototype.removeAllSubviews):
+        (WI.View.prototype.attached):
+        (WI.View.prototype.detached):
+        Hooks for subclasses to define behavior added or removed from the DOM.
+        (WI.View.prototype._didMoveToParent):
+        (WI.View.prototype._didMoveToWindow):
+        (WI.View._scheduleLayoutForView):
+        (WI.View.prototype.didMoveToWindow): Deleted.
+        (WI.View.prototype.didMoveToParent): Deleted.
+        These were only used by View, and have been made private.
+
 2017-09-22  Nikita Vasilyev  <nvasilyev@apple.com>
 
         Web Inspector: Styles Redesign: support toggling properties
