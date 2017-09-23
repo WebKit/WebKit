@@ -1,5 +1,13 @@
 2017-09-22  Ryan Haddad  <ryanhaddad@apple.com>
 
+        WebRTC test gardening for iOS.
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2017-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
         Move flaky expectation for imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html.
         https://bugs.webkit.org/show_bug.cgi?id=177391
 

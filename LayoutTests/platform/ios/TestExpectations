@@ -439,7 +439,6 @@ fast/css/caret-color.html [ Skip ]
 fast/history/visited-link-caret-color.html [ Skip ]
 
 # Run webrtc tests on iOS 11
-webrtc [ Pass ]
 imported/w3c/web-platform-tests/webrtc [ Pass ]
 fast/events/constructors/media-stream-event-constructor.html [ Pass ]
 fast/mediastream/RTCIceCandidate.html [ Pass ]
@@ -3180,3 +3179,5 @@ http/tests/multipart/load-last-non-html-frame.php [ Failure  ]
 webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navigation-with-user-gesture-1.html [ Pass Timeout ]
 
 webkit.org/b/177395 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Failure ]
+
+webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
