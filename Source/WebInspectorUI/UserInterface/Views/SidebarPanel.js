@@ -92,38 +92,6 @@ WI.SidebarPanel = class SidebarPanel extends WI.View
         return 0;
     }
 
-    show()
-    {
-        if (!this.parentSidebar)
-            return;
-
-        this.parentSidebar.collapsed = false;
-        this.parentSidebar.selectedSidebarPanel = this;
-    }
-
-    hide()
-    {
-        if (!this.parentSidebar)
-            return;
-
-        this.parentSidebar.collapsed = true;
-        this.parentSidebar.selectedSidebarPanel = null;
-    }
-
-    added()
-    {
-        console.assert(this.parentSidebar);
-
-        // Implemented by subclasses.
-    }
-
-    removed()
-    {
-        console.assert(!this.parentSidebar);
-
-        // Implemented by subclasses.
-    }
-
     shown()
     {
         this._contentView.element.scrollTop = this._savedScrollPosition;

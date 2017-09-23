@@ -1,5 +1,25 @@
 2017-09-22  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Remove SidebarPanel show/hide and added/removed
+        https://bugs.webkit.org/show_bug.cgi?id=177387
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/DebuggerTabContentView.js:
+        (WI.DebuggerTabContentView.prototype.showDetailsSidebarPanels):
+        * UserInterface/Views/SearchSidebarPanel.js:
+        (WI.SearchSidebarPanel.prototype.focusSearchField):
+        * UserInterface/Views/Sidebar.js:
+        (WI.Sidebar.prototype.insertSidebarPanel):
+        (WI.Sidebar.prototype.removeSidebarPanel):
+        * UserInterface/Views/SidebarPanel.js:
+        (WI.SidebarPanel.prototype.show): Deleted.
+        (WI.SidebarPanel.prototype.hide): Deleted.
+        (WI.SidebarPanel.prototype.added): Deleted.
+        (WI.SidebarPanel.prototype.removed): Deleted.
+
+2017-09-22  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: View should automatically layout when it becomes attached to the DOM
         https://bugs.webkit.org/show_bug.cgi?id=177189
 

@@ -73,10 +73,12 @@ WI.DebuggerTabContentView = class DebuggerTabContentView extends WI.ContentBrows
             return;
 
         let scopeChainDetailsSidebarPanel = WI.instanceForClass(WI.ScopeChainDetailsSidebarPanel);
-        if (!scopeChainDetailsSidebarPanel.parentSidebar)
+        let sidebar = scopeChainDetailsSidebarPanel.parentSidebar;
+        if (!sidebar)
             return;
 
-        scopeChainDetailsSidebarPanel.show();
+        sidebar.selectedSidebarPanel = scopeChainDetailsSidebarPanel;
+        sidebar.collapsed = false;
 
         this._showScopeChainDetailsSidebarPanel = false;
     }

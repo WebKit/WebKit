@@ -64,7 +64,11 @@ WI.SearchSidebarPanel = class SearchSidebarPanel extends WI.NavigationSidebarPan
 
     focusSearchField(performSearch)
     {
-        this.show();
+        if (!this.parentSidebar)
+            return;
+
+        this.parentSidebar.selectedSidebarPanel = this;
+        this.parentSidebar.collapsed = false;
 
         this._inputElement.select();
 

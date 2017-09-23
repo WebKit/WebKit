@@ -85,8 +85,6 @@ WI.Sidebar = class Sidebar extends WI.View
             console.assert(sidebarPanel.navigationItem);
             this._navigationBar.insertNavigationItem(sidebarPanel.navigationItem, index);
         }
-
-        sidebarPanel.added();
     }
 
     removeSidebarPanel(sidebarPanelOrIdentifierOrIndex)
@@ -114,8 +112,6 @@ WI.Sidebar = class Sidebar extends WI.View
             console.assert(sidebarPanel.navigationItem);
             this._navigationBar.removeNavigationItem(sidebarPanel.navigationItem);
         }
-
-        sidebarPanel.removed();
     }
 
     get selectedSidebarPanel()
