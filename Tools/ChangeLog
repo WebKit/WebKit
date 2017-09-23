@@ -1,3 +1,9 @@
+2017-09-23  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Unreviewed Mac CMake build fixup after r222194
+
+        * DumpRenderTree/PlatformMac.cmake:
+
 2017-09-22  Zalan Bujtas  <zalan@apple.com>
 
         WeakPtrFactory should populate m_ref lazily.
