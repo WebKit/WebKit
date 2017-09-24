@@ -973,8 +973,9 @@ public:
     void ariaTreeItemContent(AccessibilityChildrenVector&);
     
     // ARIA live-region features.
-    bool supportsARIALiveRegion() const;
-    bool isInsideARIALiveRegion() const;
+    bool supportsARIALiveRegion(bool excludeIfOff = true) const;
+    bool isInsideARIALiveRegion(bool excludeIfOff = true) const;
+    AccessibilityObject* ariaLiveRegionAncestor(bool excludeIfOff = true) const;
     virtual const String ariaLiveRegionStatus() const { return String(); }
     virtual const AtomicString& ariaLiveRegionRelevant() const { return nullAtom(); }
     virtual bool ariaLiveRegionAtomic() const { return false; }

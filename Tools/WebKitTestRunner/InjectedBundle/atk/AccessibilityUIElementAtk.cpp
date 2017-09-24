@@ -82,6 +82,10 @@ enum AttributesIndex {
     PlaceholderNameIndex,
     SortNameIndex,
     CurrentNameIndex,
+    AriaLiveNameIndex,
+    AriaAtomicNameIndex,
+    AriaRelevantNameIndex,
+    BusyNameIndex,
 
     // Attribute values.
     SortAscendingValueIndex,
@@ -106,6 +110,10 @@ const String attributesMap[][2] = {
     { "AXPlaceholderValue", "placeholder-text" } ,
     { "AXSortDirection", "sort" },
     { "AXARIACurrent", "current" },
+    { "AXARIALive", "live" },
+    { "AXARIAAtomic", "atomic" },
+    { "AXARIARelevant", "relevant" },
+    { "AXElementBusy", "busy" },
 
     // Attribute values.
     { "AXAscendingSortDirection", "ascending" },
@@ -1216,6 +1224,11 @@ bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
     if (attributeString == "AXInterfaceTableCell")
         return ATK_IS_TABLE_CELL(m_element.get());
 
+    if (attributeString == "AXARIAAtomic") {
+        String atkAttribute = coreAttributeToAtkAttribute(attribute);
+        return getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttribute) == "true";
+    }
+
     return false;
 }
 
@@ -1283,10 +1296,18 @@ bool AccessibilityUIElement::isAttributeSupported(JSStringRef attribute)
     if (atkAttributeName.isEmpty())
         return false;
 
+    // In ATK, "busy" is a state and is supported on all AtkObject instances.
+    if (atkAttributeName == "busy")
+        return true;
+
     // For now, an attribute is supported whether it's exposed as a object or a text attribute.
     String attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), ObjectAttributeType, atkAttributeName);
     if (attributeValue.isEmpty())
         attributeValue = getAttributeSetValueForId(ATK_OBJECT(m_element.get()), TextAttributeType, atkAttributeName);
+
+    // When the aria-live value is "off", we expose that value via the "live" object attribute.
+    if (atkAttributeName == "live" && attributeValue == "off")
+        return false;
 
     return !attributeValue.isEmpty();
 }

@@ -45,6 +45,8 @@ accessibility/win [ Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 accessibility/media-emits-object-replacement.html [ Failure ]
+accessibility/aria-liveregions-attributes.html [ Failure ]
+accessibility/aria-liveregion-marquee-default.html [ Failure ]
 
 
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
