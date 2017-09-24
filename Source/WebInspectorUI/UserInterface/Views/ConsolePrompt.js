@@ -144,7 +144,8 @@ WI.ConsolePrompt = class ConsolePrompt extends WI.View
 
     layout()
     {
-        this._codeMirror.refresh();
+        if (this.layoutReason === WI.View.LayoutReason.Resize && this.text)
+            this._codeMirror.refresh();
     }
 
     // Private

@@ -1,3 +1,14 @@
+2017-09-24  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Reduce work during resizing
+        https://bugs.webkit.org/show_bug.cgi?id=177402
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/ConsolePrompt.js:
+        (WI.ConsolePrompt.prototype.layout):
+        In the most common case there is no text so avoid doing work in CodeMirror.
+
 2017-09-22  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Remove SidebarPanel show/hide and added/removed
