@@ -1,3 +1,48 @@
+2017-09-23  Alex Christensen  <achristensen@webkit.org>
+
+        REGRESSION(r214201): WebProcess hangs during policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=177411
+        <rdar://problem/33362929>
+
+        Reviewed by Geoffrey Garen.
+
+        decidePolicyForNavigationAction and decidePolicyForNavigationResponse used to have
+        a shortcut path for if you called the decisionHandler synchronously and a different path
+        for asynchronous decisionHandler calling.  r214201 made it so there is one path but the
+        WebProcess hangs, which prevents us from executing JavaScript in the WebProcess where we
+        could before.  This patch effectively reverts r214201 on the branch and pipes the WebsitePolicies
+        through the asynchronous decisionHandler path to be used only for decidePolicyForNavigationAction,
+        which is the only such callback that can set the WebsitePolicies.
+        
+        This patch is for the safari-604-branch branch.  I'll fix this problem on trunk by making all
+        policy messages async and using different message types for each policy check, and then I'll
+        get this same API test working on trunk.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebKit::WebFrameLoaderClient::dispatchWillSubmitForm):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setUpPolicyListener):
+        (WebKit::WebFrame::invalidatePolicyListener):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
 2017-09-14  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r221647. rdar://problem/34439121
