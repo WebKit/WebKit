@@ -23,6 +23,9 @@ invocationCount = 0;
 for (var x of iterable) {
   assert.sameValue(x, 45);
 
+  if (iterationCount != 0)
+    $ERROR("iterated too many times");
+
   iterator.next = function() {
     invocationCount++;
 

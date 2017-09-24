@@ -1,3 +1,17 @@
+2017-09-23  Keith Miller  <keith_miller@apple.com>
+
+        Fix infinite looping test262 test
+        https://bugs.webkit.org/show_bug.cgi?id=177412
+
+        Reviewed by Yusuke Suzuki.
+
+        This test was poorly designed since failing it would cause the vm
+        to inifinite loop. I've fixed it locally and will fix it on github pending
+        the results of next weeks tc39 meeting.
+
+        * test262.yaml:
+        * test262/test/language/statements/for-of/iterator-next-reference.js:
+
 2017-09-23  Joseph Pecoraro  <pecoraro@apple.com>
 
         test262: $.agent became $262.agent in test262 update
