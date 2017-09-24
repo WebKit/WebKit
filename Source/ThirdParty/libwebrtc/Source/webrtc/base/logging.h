@@ -58,7 +58,6 @@
 #endif
 
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/thread_annotations.h"
 
@@ -176,7 +175,7 @@ class LogMessage {
 
   // These are the available logging channels
   //  Debug: Debug console on Windows, otherwise stderr
-  WEBRTC_DYLIB_EXPORT static void LogToDebug(LoggingSeverity min_sev);
+  static void LogToDebug(LoggingSeverity min_sev);
   static LoggingSeverity GetLogToDebug() { return dbg_sev_; }
 
   // Sets whether logs will be directed to stderr in debug mode.

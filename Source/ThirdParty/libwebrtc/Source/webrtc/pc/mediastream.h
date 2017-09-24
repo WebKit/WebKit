@@ -22,7 +22,7 @@
 
 namespace webrtc {
 
-class WEBRTC_DYLIB_EXPORT MediaStream : public Notifier<MediaStreamInterface> {
+class MediaStream : public Notifier<MediaStreamInterface> {
  public:
   static rtc::scoped_refptr<MediaStream> Create(const std::string& label);
 

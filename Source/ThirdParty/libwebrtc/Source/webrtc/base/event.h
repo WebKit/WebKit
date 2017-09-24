@@ -12,7 +12,6 @@
 #define WEBRTC_BASE_EVENT_H__
 
 #include "webrtc/base/constructormagic.h"
-#include "webrtc/base/export.h"
 #if defined(WEBRTC_WIN)
 #include "webrtc/base/win32.h"  // NOLINT: consider this a system header.
 #elif defined(WEBRTC_POSIX)
@@ -23,7 +22,7 @@
 
 namespace rtc {
 
-class WEBRTC_DYLIB_EXPORT Event {
+class Event {
  public:
   static const int kForever = -1;
 

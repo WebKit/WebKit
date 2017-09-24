@@ -13,7 +13,6 @@
 
 #include <string>
 #include "webrtc/base/cryptstring.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/socketaddress.h"
 
 namespace rtc {
@@ -26,7 +25,7 @@ enum ProxyType {
 };
 const char * ProxyToString(ProxyType proxy);
 
-struct WEBRTC_DYLIB_EXPORT ProxyInfo {
+struct ProxyInfo {
   ProxyType type;
   SocketAddress address;
   std::string autoconfig_url;

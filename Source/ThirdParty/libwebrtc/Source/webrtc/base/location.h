@@ -14,7 +14,6 @@
 #include <string>
 
 #include "webrtc/base/event.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/stringize_macros.h"
 
 namespace rtc {
@@ -23,7 +22,7 @@ namespace rtc {
 // significantly brought to life.
 // This is a stripped down version of:
 // https://code.google.com/p/chromium/codesearch#chromium/src/base/location.h
-class WEBRTC_DYLIB_EXPORT Location {
+class Location {
  public:
   // Constructor should be called with a long-lived char*, such as __FILE__.
   // It assumes the provided value will persist as a global constant, and it

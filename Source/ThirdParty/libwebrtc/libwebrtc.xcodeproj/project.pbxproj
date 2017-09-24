@@ -36,6 +36,7 @@
 		412455531EF887B700F11809 /* httpcommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 412455511EF887B700F11809 /* httpcommon.h */; };
 		412455561EF887FB00F11809 /* packetlossestimator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 412455541EF887FA00F11809 /* packetlossestimator.cc */; };
 		412455571EF887FB00F11809 /* packetlossestimator.h in Headers */ = {isa = PBXBuildFile; fileRef = 412455551EF887FA00F11809 /* packetlossestimator.h */; };
+		4128ED4B1F74C794002D0F28 /* libwebrtc.exp in Sources */ = {isa = PBXBuildFile; fileRef = 4128ED4A1F74C793002D0F28 /* libwebrtc.exp */; };
 		413091F31EF8CF9200757C55 /* rtp_video_stream_receiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 413091F11EF8CF9100757C55 /* rtp_video_stream_receiver.h */; };
 		413091F41EF8CF9200757C55 /* rtp_video_stream_receiver.cc in Sources */ = {isa = PBXBuildFile; fileRef = 413091F21EF8CF9100757C55 /* rtp_video_stream_receiver.cc */; };
 		413091F71EF8CFBD00757C55 /* iceserverparsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 413091F51EF8CFBD00757C55 /* iceserverparsing.h */; };
@@ -2740,6 +2741,7 @@
 		412455511EF887B700F11809 /* httpcommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = httpcommon.h; sourceTree = "<group>"; };
 		412455541EF887FA00F11809 /* packetlossestimator.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = packetlossestimator.cc; sourceTree = "<group>"; };
 		412455551EF887FA00F11809 /* packetlossestimator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = packetlossestimator.h; sourceTree = "<group>"; };
+		4128ED4A1F74C793002D0F28 /* libwebrtc.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = libwebrtc.exp; sourceTree = "<group>"; };
 		413091F11EF8CF9100757C55 /* rtp_video_stream_receiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtp_video_stream_receiver.h; sourceTree = "<group>"; };
 		413091F21EF8CF9100757C55 /* rtp_video_stream_receiver.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_video_stream_receiver.cc; sourceTree = "<group>"; };
 		413091F51EF8CFBD00757C55 /* iceserverparsing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iceserverparsing.h; sourceTree = "<group>"; };
@@ -9614,6 +9616,7 @@
 				5C08848A1E4A978C00403995 /* libyuv.xcconfig */,
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
 				5C11A0331E4576A9004F0987 /* usrsctp.xcconfig */,
+				4128ED4A1F74C793002D0F28 /* libwebrtc.exp */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -11777,6 +11780,7 @@
 				5CDD89441E43BF3A00621E92 /* compound_packet.cc in Sources */,
 				5CDD8FEB1E43CDCA00621E92 /* config.cc in Sources */,
 				5C6CDD4D1E413598009754E3 /* config.cc in Sources */,
+				4128ED4B1F74C794002D0F28 /* libwebrtc.exp in Sources */,
 				5CDD8FB21E43CD0700621E92 /* congestion_controller.cc in Sources */,
 				5CDD8A931E43C00F00621E92 /* constant_pcm_packet_source.cc in Sources */,
 				5CDD8B891E43C2B500621E92 /* constants.c in Sources */,

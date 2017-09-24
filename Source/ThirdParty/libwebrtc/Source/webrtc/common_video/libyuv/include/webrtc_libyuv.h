@@ -19,7 +19,6 @@
 #include <vector>
 
 #include "webrtc/api/video/video_frame.h"
-#include "webrtc/base/export.h"
 #include "webrtc/common_types.h"  // VideoTypes.
 #include "webrtc/typedefs.h"
 
@@ -83,7 +82,7 @@ int ExtractBuffer(const VideoFrame& input_frame, size_t size, uint8_t* buffer);
 // remember to delete the I420Buffer forward declaration above. The only
 // exception at the time of this writing is VideoCaptureImpl::IncomingFrame,
 // which still needs libyuv::ConvertToI420.
-WEBRTC_DYLIB_EXPORT int ConvertToI420(VideoType src_video_type,
+int ConvertToI420(VideoType src_video_type,
                   const uint8_t* src_frame,
                   int crop_x,
                   int crop_y,

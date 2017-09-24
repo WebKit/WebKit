@@ -15,12 +15,11 @@
 
 #include <vector>
 
-#include "webrtc/base/export.h"
 #include "webrtc/common_video/include/video_frame_buffer.h"
 
 namespace webrtc {
 
-class WEBRTC_DYLIB_EXPORT CoreVideoFrameBuffer : public VideoFrameBuffer {
+class CoreVideoFrameBuffer : public VideoFrameBuffer {
  public:
   explicit CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer);
   CoreVideoFrameBuffer(CVPixelBufferRef pixel_buffer,

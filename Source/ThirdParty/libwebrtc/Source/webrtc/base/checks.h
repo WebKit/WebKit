@@ -37,7 +37,6 @@ NO_RETURN void rtc_FatalMessage(const char* file, int line, const char* msg);
 #include <string>
 
 #include "webrtc/base/safe_compare.h"
-#include "webrtc/base/export.h"
 
 // The macros here print a message to stderr and abort under various
 // conditions. All will accept additional stream messages. For example:
@@ -227,7 +226,7 @@ class FatalMessageVoidify {
 // can match the Chromium behavior.
 
 // Like a stripped-down LogMessage from logging.h, except that it aborts.
-class WEBRTC_DYLIB_EXPORT FatalMessage {
+class FatalMessage {
  public:
   FatalMessage(const char* file, int line);
   // Used for RTC_CHECK_EQ(), etc. Takes ownership of the given string.

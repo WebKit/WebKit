@@ -22,7 +22,7 @@ class VideoEncoder;
 
 namespace cricket {
 
-class WEBRTC_DYLIB_EXPORT WebRtcVideoEncoderFactory {
+class WebRtcVideoEncoderFactory {
  public:
   virtual ~WebRtcVideoEncoderFactory() {}
 

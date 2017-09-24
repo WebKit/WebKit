@@ -22,7 +22,6 @@
 #endif
 #include "webrtc/base/constructormagic.h"
 #include "webrtc/base/event.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/messagequeue.h"
 #include "webrtc/base/platform_thread_types.h"
 
@@ -101,7 +100,7 @@ class Runnable {
 
 // WARNING! SUBCLASSES MUST CALL Stop() IN THEIR DESTRUCTORS!  See ~Thread().
 
-class WEBRTC_DYLIB_EXPORT LOCKABLE Thread : public MessageQueue {
+class LOCKABLE Thread : public MessageQueue {
  public:
   // Create a new Thread and optionally assign it to the passed SocketServer.
   Thread();

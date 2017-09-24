@@ -15,7 +15,6 @@
 #include <vector>
 #include <iosfwd>
 #include "webrtc/base/basictypes.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/ipaddress.h"
 
 #undef SetPort
@@ -26,7 +25,7 @@ struct sockaddr_storage;
 namespace rtc {
 
 // Records an IP address and port.
-class WEBRTC_DYLIB_EXPORT SocketAddress {
+class SocketAddress {
  public:
   // Creates a nil address.
   SocketAddress();

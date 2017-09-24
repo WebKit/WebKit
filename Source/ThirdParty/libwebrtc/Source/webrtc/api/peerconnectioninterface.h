@@ -84,7 +84,6 @@
 #include "webrtc/api/stats/rtcstatscollectorcallback.h"
 #include "webrtc/api/statstypes.h"
 #include "webrtc/api/umametrics.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/fileutils.h"
 #include "webrtc/base/network.h"
 #include "webrtc/base/rtccertificate.h"
@@ -1073,7 +1072,7 @@ rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
 
 // Deprecated variant of the above.
 // TODO(kwiberg): Remove.
-WEBRTC_DYLIB_EXPORT rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
+rtc::scoped_refptr<PeerConnectionFactoryInterface> CreatePeerConnectionFactory(
     rtc::Thread* network_thread,
     rtc::Thread* worker_thread,
     rtc::Thread* signaling_thread,

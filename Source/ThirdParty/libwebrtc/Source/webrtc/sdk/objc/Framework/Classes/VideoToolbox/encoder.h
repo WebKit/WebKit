@@ -14,7 +14,6 @@
 
 #include "webrtc/api/video/video_rotation.h"
 #include "webrtc/base/criticalsection.h"
-#include "webrtc/base/export.h"
 #include "webrtc/common_video/h264/h264_bitstream_parser.h"
 #include "webrtc/common_video/include/bitrate_adjuster.h"
 #include "webrtc/media/base/codec.h"
@@ -31,7 +30,7 @@
 
 namespace webrtc {
 
-class WEBRTC_DYLIB_EXPORT H264VideoToolboxEncoder : public H264Encoder {
+class H264VideoToolboxEncoder : public H264Encoder {
  public:
   explicit H264VideoToolboxEncoder(const cricket::VideoCodec& codec);
 

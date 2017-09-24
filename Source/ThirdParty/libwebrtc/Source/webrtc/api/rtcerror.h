@@ -16,7 +16,6 @@
 #include <utility>  // For std::move.
 
 #include "webrtc/base/checks.h"
-#include "webrtc/base/export.h"
 #include "webrtc/base/logging.h"
 
 namespace webrtc {
@@ -78,7 +77,7 @@ enum class RTCErrorType {
 //
 // Doesn't contain anything beyond a type and message now, but will in the
 // future as more errors are implemented.
-class WEBRTC_DYLIB_EXPORT RTCError {
+class RTCError {
  public:
   // Constructors.
 

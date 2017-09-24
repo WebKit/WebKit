@@ -15,11 +15,10 @@
 
 #include "webrtc/api/video/video_rotation.h"
 #include "webrtc/api/video/video_frame_buffer.h"
-#include "webrtc/base/export.h"
 
 namespace webrtc {
 
-class WEBRTC_DYLIB_EXPORT VideoFrame {
+class VideoFrame {
  public:
   // TODO(nisse): This constructor is consistent with the now deleted
   // cricket::WebRtcVideoFrame. We should consider whether or not we

@@ -18,7 +18,6 @@
 #include <vector>
 
 #include "webrtc/base/checks.h"
-#include "webrtc/base/export.h"
 
 namespace webrtc {
 
@@ -75,7 +74,7 @@ class RTCStats {
 
   // Creates a human readable string representation of the stats object, listing
   // all of its members (names and values).
-  WEBRTC_DYLIB_EXPORT std::string ToString() const;
+  std::string ToString() const;
 
   // Downcasts the stats object to an |RTCStats| subclass |T|. DCHECKs that the
   // object is of type |T|.
@@ -141,7 +140,7 @@ class RTCStats {
 //
 #define WEBRTC_RTCSTATS_DECL()                                                 \
  public:                                                                       \
-  WEBRTC_DYLIB_EXPORT static const char kType[];                                                   \
+  static const char kType[];                                                   \
                                                                                \
   std::unique_ptr<webrtc::RTCStats> copy() const override;                     \
   const char* type() const override;                                           \

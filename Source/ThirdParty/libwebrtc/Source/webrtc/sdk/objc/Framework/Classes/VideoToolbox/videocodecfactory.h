@@ -16,7 +16,7 @@
 
 namespace webrtc {
 
-class WEBRTC_DYLIB_EXPORT VideoToolboxVideoEncoderFactory
+class VideoToolboxVideoEncoderFactory
     : public cricket::WebRtcVideoEncoderFactory {
  public:
   VideoToolboxVideoEncoderFactory();
@@ -35,7 +35,7 @@ class WEBRTC_DYLIB_EXPORT VideoToolboxVideoEncoderFactory
   mutable std::vector<cricket::VideoCodec> supported_codecs_;
 };
 
-class WEBRTC_DYLIB_EXPORT VideoToolboxVideoDecoderFactory
+class VideoToolboxVideoDecoderFactory
     : public cricket::WebRtcVideoDecoderFactory {
  public:
   VideoToolboxVideoDecoderFactory();

@@ -1,3 +1,68 @@
+2017-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Export libwebrtc symbols through an export file
+        https://bugs.webkit.org/show_bug.cgi?id=177344
+
+        Reviewed by Darin Adler.
+
+        Removing export changes made to libwebrtc.
+        Exporting based on libwebrtc.exp file.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/libwebrtc.exp: Added.
+        * Configurations/libwebrtc.xcconfig:
+        * Source/webrtc/api/jsep.h:
+        (): Deleted.
+        * Source/webrtc/api/mediatypes.h:
+        * Source/webrtc/api/peerconnectioninterface.h:
+        * Source/webrtc/api/rtcerror.h:
+        * Source/webrtc/api/stats/rtcstats.h:
+        * Source/webrtc/api/stats/rtcstatsreport.h:
+        (): Deleted.
+        * Source/webrtc/api/video/i420_buffer.h:
+        * Source/webrtc/api/video/video_frame.h:
+        (): Deleted.
+        * Source/webrtc/api/video/video_frame_buffer.h:
+        * Source/webrtc/base/asyncpacketsocket.h:
+        * Source/webrtc/base/asyncresolverinterface.h:
+        (): Deleted.
+        * Source/webrtc/base/checks.h:
+        (): Deleted.
+        * Source/webrtc/base/copyonwritebuffer.h:
+        (): Deleted.
+        * Source/webrtc/base/event.h:
+        (): Deleted.
+        * Source/webrtc/base/export.h: Removed.
+        * Source/webrtc/base/helpers.h:
+        * Source/webrtc/base/ipaddress.h:
+        * Source/webrtc/base/location.h:
+        (): Deleted.
+        * Source/webrtc/base/logging.h:
+        * Source/webrtc/base/messagehandler.h:
+        * Source/webrtc/base/network.h:
+        * Source/webrtc/base/proxyinfo.h:
+        * Source/webrtc/base/socketaddress.h:
+        (): Deleted.
+        * Source/webrtc/base/thread.h:
+        * Source/webrtc/common_video/include/i420_buffer_pool.h:
+        (): Deleted.
+        * Source/webrtc/common_video/include/video_frame_buffer.h:
+        (): Deleted.
+        * Source/webrtc/common_video/libyuv/include/webrtc_libyuv.h:
+        * Source/webrtc/media/engine/webrtcvideoencoderfactory.h:
+        (): Deleted.
+        * Source/webrtc/p2p/base/basicpacketsocketfactory.h:
+        (): Deleted.
+        * Source/webrtc/p2p/client/basicportallocator.h:
+        * Source/webrtc/pc/mediastream.h:
+        * Source/webrtc/sdk/objc/Framework/Classes/Video/corevideo_frame_buffer.h:
+        (): Deleted.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/encoder.h:
+        (): Deleted.
+        * Source/webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h:
+        (): Deleted.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
 2017-09-20  Youenn Fablet  <youenn@apple.com>
 
         Upstream googletest framework
