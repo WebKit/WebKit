@@ -2410,12 +2410,6 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
     return right;
 }
 
-bool RenderBlock::avoidsFloats() const
-{
-    // Floats can't intrude into our box if we have a non-auto column count or width.
-    return RenderBox::avoidsFloats() || style().hasFlowFrom();
-}
-
 bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset)
 {
     if (!scrollsOverflow())

@@ -1835,7 +1835,7 @@ bool RenderBlockFlow::hasNextPage(LayoutUnit logicalOffset, PageBoundaryRule pag
         return false;
 
     if (region->isLastRegion())
-        return region->isRenderRegionSet() || region->style().regionFragment() == BreakRegionFragment
+        return region->isRenderRegionSet()
             || (pageBoundaryRule == IncludePageBoundary && pageOffset == region->logicalTopForFlowThreadContent());
 
     RenderRegion* startRegion = nullptr;

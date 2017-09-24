@@ -6275,7 +6275,6 @@ static bool createsStackingContext(const RenderLayer& layer)
 #endif
         || renderer.isTransparent()
         || renderer.isPositioned()
-        || renderer.style().hasFlowFrom()
         || renderer.hasReflection()
         || renderer.style().hasIsolation()
         || layer.needsCompositedScrolling()

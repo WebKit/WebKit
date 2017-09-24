@@ -463,8 +463,6 @@ private:
     void paintSelection(PaintInfo&, const LayoutPoint&);
     void paintCaret(PaintInfo&, const LayoutPoint&, CaretType);
 
-    bool avoidsFloats() const override;
-
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     // FIXME-BLOCKFLOW: Remove virtualization when all callers have moved to RenderBlockFlow
     virtual bool hitTestFloats(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&) { return false; }

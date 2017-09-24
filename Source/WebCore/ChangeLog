@@ -1,3 +1,42 @@
+2017-09-24  Antti Koivisto  <antti@apple.com>
+
+        Remove CSS regions related fields from RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=177415
+
+        Reviewed by Sam Weinig.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator RegionFragment const): Deleted.
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::avoidsFloats const): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::hasNextPage const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::changeRequiresLayout const):
+        * rendering/style/RenderStyle.h:
+        (WebCore::pseudoElementRendererIsNeeded):
+        (WebCore::RenderStyle::hasFlowInto const): Deleted.
+        (WebCore::RenderStyle::flowThread const): Deleted.
+        (WebCore::RenderStyle::hasFlowFrom const): Deleted.
+        (WebCore::RenderStyle::regionThread const): Deleted.
+        (WebCore::RenderStyle::regionFragment const): Deleted.
+        (WebCore::RenderStyle::setFlowThread): Deleted.
+        (WebCore::RenderStyle::setRegionThread): Deleted.
+        (WebCore::RenderStyle::setRegionFragment): Deleted.
+        (WebCore::RenderStyle::initialFlowThread): Deleted.
+        (WebCore::RenderStyle::initialRegionThread): Deleted.
+        (WebCore::RenderStyle::initialRegionFragment): Deleted.
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator== const):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Object attributes are missing for ARIA live region roles

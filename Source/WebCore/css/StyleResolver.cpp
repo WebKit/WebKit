@@ -919,7 +919,6 @@ void StyleResolver::adjustRenderStyle(RenderStyle& style, const RenderStyle& par
             || style.hasIsolation()
             || style.position() == StickyPosition
             || style.position() == FixedPosition
-            || style.hasFlowFrom()
             || style.willChangeCreatesStackingContext())
             style.setZIndex(0);
     }
