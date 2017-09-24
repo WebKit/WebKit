@@ -4923,7 +4923,7 @@ sub GenerateAttributeSetterBodyDefinition
         }
 
         my $functionString = "${functionName}(" . join(", ", @arguments) . ")";
-        push(@$outputArray, "    AttributeSetter<decltype($functionString)>::call(state, throwScope, [&] {\n");
+        push(@$outputArray, "    AttributeSetter::call(state, throwScope, [&] {\n");
         push(@$outputArray, "        return $functionString;\n");
         push(@$outputArray, "    });\n");
         push(@$outputArray, "    return true;\n");

@@ -45,7 +45,7 @@
 
     readonly attribute unsigned short type;
 
-    [SetterMayThrowException] attribute DOMString? cssText;
+    attribute DOMString? cssText;
 
     readonly attribute CSSStyleSheet? parentStyleSheet;
     readonly attribute CSSRule? parentRule;

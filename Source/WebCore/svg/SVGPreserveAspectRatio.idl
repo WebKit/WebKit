@@ -44,6 +44,6 @@
     const unsigned short SVG_MEETORSLICE_MEET = 1;
     const unsigned short SVG_MEETORSLICE_SLICE = 2;
 
-    [SetterMayThrowException] attribute unsigned short align;
-    [SetterMayThrowException] attribute unsigned short meetOrSlice;
+    attribute unsigned short align;
+    attribute unsigned short meetOrSlice;
 };

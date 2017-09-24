@@ -44,8 +44,8 @@
     attribute boolean indeterminate;
     [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
     [Reflect] attribute DOMString max;
-    [SetterMayThrowException] attribute long minLength;
-    [SetterMayThrowException] attribute long maxLength;
+    attribute long minLength;
+    attribute long maxLength;
     [Reflect] attribute DOMString min;
     [Reflect] attribute boolean multiple;
     [Reflect] attribute DOMString name;
@@ -53,15 +53,15 @@
     [Reflect] attribute DOMString placeholder;
     [Reflect] attribute boolean readOnly;
     [Reflect] attribute boolean required;
-    [SetterMayThrowException] attribute unsigned long size;
+    attribute unsigned long size;
     [Reflect, URL] attribute USVString src;
     [Reflect] attribute DOMString step;
     attribute DOMString type; // readonly dropped as part of DOM level 2
     attribute DOMString defaultValue;
     // See the discussion in https://bugs.webkit.org/show_bug.cgi?id=100085
-    [SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString value;
-    [SetterMayThrowException] attribute Date? valueAsDate;
-    [SetterMayThrowException] attribute unrestricted double valueAsNumber;
+    attribute [TreatNullAs=EmptyString] DOMString value;
+    attribute Date? valueAsDate;
+    attribute unrestricted double valueAsNumber;
 
     [MayThrowException] void stepUp(optional long n = 1);
     [MayThrowException] void stepDown(optional long n = 1);
@@ -77,9 +77,9 @@
     readonly attribute NodeList labels;
 
     void select();
-    [ImplementedAs=selectionStartForBindings, GetterMayThrowException, SetterMayThrowException] attribute long selectionStart;
-    [ImplementedAs=selectionEndForBindings, GetterMayThrowException, SetterMayThrowException]  attribute long selectionEnd;
-    [ImplementedAs=selectionDirectionForBindings, GetterMayThrowException, SetterMayThrowException]  attribute DOMString selectionDirection;
+    [ImplementedAs=selectionStartForBindings, GetterMayThrowException] attribute long selectionStart;
+    [ImplementedAs=selectionEndForBindings, GetterMayThrowException]  attribute long selectionEnd;
+    [ImplementedAs=selectionDirectionForBindings, GetterMayThrowException]  attribute DOMString selectionDirection;
 
     [MayThrowException] void setRangeText(DOMString replacement);
     [MayThrowException] void setRangeText(DOMString replacement, unsigned long start, unsigned long end, optional DOMString selectionMode);

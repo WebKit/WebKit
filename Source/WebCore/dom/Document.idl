@@ -81,16 +81,16 @@ typedef (
 
     // Extensions from HTML specification (https://html.spec.whatwg.org/#the-document-object).
     [PutForwards=href, Unforgeable] readonly attribute Location? location;
-    [SetterMayThrowException] attribute USVString domain;
+    attribute USVString domain;
     readonly attribute USVString referrer;
-    [GetterMayThrowException, SetterMayThrowException] attribute USVString cookie;
+    [GetterMayThrowException] attribute USVString cookie;
     readonly attribute DOMString lastModified;
     readonly attribute DocumentReadyState readyState;
 
     // DOM tree accessors.
     [CEReactions] attribute DOMString title;
     [CEReactions] attribute DOMString dir;
-    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset, SetterMayThrowException] attribute HTMLElement? body;
+    [CEReactions, DOMJIT=Getter, ImplementedAs=bodyOrFrameset] attribute HTMLElement? body;
     readonly attribute HTMLHeadElement? head;
     readonly attribute HTMLCollection images; // Should be [SameObject].
     readonly attribute HTMLCollection embeds; // Should be [SameObject].
@@ -173,7 +173,7 @@ typedef (
 
     // FIXME: Those have been dropped from the DOM specification.
     readonly attribute DOMString? xmlEncoding;
-    [SetterMayThrowException] attribute DOMString? xmlVersion;
+    attribute DOMString? xmlVersion;
     attribute boolean xmlStandalone;
 
     // FIXME: Blink has already dropped this (https://groups.google.com/a/chromium.org/forum/#!topic/blink-dev/s3ezjTuC8ig).

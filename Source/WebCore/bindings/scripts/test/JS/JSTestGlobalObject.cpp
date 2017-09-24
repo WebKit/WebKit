@@ -262,7 +262,7 @@ static inline bool setJSTestGlobalObjectRegularAttributeSetter(ExecState& state,
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setRegularAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setRegularAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -293,7 +293,7 @@ static inline bool setJSTestGlobalObjectPublicAndPrivateAttributeSetter(ExecStat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setPublicAndPrivateAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setPublicAndPrivateAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -328,7 +328,7 @@ static inline bool setJSTestGlobalObjectPublicAndPrivateConditionalAttributeSett
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setPublicAndPrivateConditionalAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -365,7 +365,7 @@ static inline bool setJSTestGlobalObjectEnabledAtRuntimeAttributeSetter(ExecStat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
     });
     return true;

@@ -27,7 +27,7 @@
     GenerateIsReachable=ImplFrame,
 ] interface History {
     readonly attribute unsigned long length;
-    [SetterMayThrowException, GetterMayThrowException] attribute ScrollRestoration scrollRestoration;
+    [GetterMayThrowException] attribute ScrollRestoration scrollRestoration;
     [CachedAttribute, Custom] readonly attribute SerializedScriptValue state;
 
     [CallWith=Document, ForwardDeclareInHeader] void back();

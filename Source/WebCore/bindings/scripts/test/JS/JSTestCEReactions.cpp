@@ -206,7 +206,7 @@ static inline bool setJSTestCEReactionsAttributeWithCEReactionsSetter(ExecState&
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithCEReactions(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithCEReactions(WTFMove(nativeValue));
     });
     return true;
@@ -238,7 +238,7 @@ static inline bool setJSTestCEReactionsReflectAttributeWithCEReactionsSetter(Exe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr, WTFMove(nativeValue));
     });
     return true;

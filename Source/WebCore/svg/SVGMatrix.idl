@@ -26,12 +26,12 @@
 ] interface SVGMatrix {
     // FIXME: these attributes should all be floats but since we implement
     // AffineTransform with doubles setting these as doubles makes more sense.
-    [SetterMayThrowException] attribute unrestricted double a;
-    [SetterMayThrowException] attribute unrestricted double b;
-    [SetterMayThrowException] attribute unrestricted double c;
-    [SetterMayThrowException] attribute unrestricted double d;
-    [SetterMayThrowException] attribute unrestricted double e;
-    [SetterMayThrowException] attribute unrestricted double f;
+    attribute unrestricted double a;
+    attribute unrestricted double b;
+    attribute unrestricted double c;
+    attribute unrestricted double d;
+    attribute unrestricted double e;
+    attribute unrestricted double f;
 
     [MayThrowException] SVGMatrix multiply(SVGMatrix secondMatrix);
     [MayThrowException] SVGMatrix inverse();

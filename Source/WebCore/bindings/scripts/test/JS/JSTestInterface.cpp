@@ -494,7 +494,7 @@ static inline bool setJSTestInterfaceConstructorImplementsStaticAttrSetter(ExecS
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(TestInterface::setImplementsStaticAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return TestInterface::setImplementsStaticAttr(WTFMove(nativeValue));
     });
     return true;
@@ -548,7 +548,7 @@ static inline bool setJSTestInterfaceImplementsStr2Setter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setImplementsStr2(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setImplementsStr2(WTFMove(nativeValue));
     });
     return true;
@@ -615,7 +615,7 @@ static inline bool setJSTestInterfaceImplementsNodeSetter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "implementsNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setImplementsNode(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setImplementsNode(*nativeValue);
     });
     return true;
@@ -666,7 +666,7 @@ static inline bool setJSTestInterfaceConstructorSupplementalStaticAttrSetter(Exe
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStaticAttr(WTFMove(nativeValue));
     });
     return true;
@@ -720,7 +720,7 @@ static inline bool setJSTestInterfaceSupplementalStr2Setter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalStr2(impl, WTFMove(nativeValue));
     });
     return true;
@@ -787,7 +787,7 @@ static inline bool setJSTestInterfaceSupplementalNodeSetter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestInterface", "supplementalNode", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return WebCore::TestSupplemental::setSupplementalNode(impl, *nativeValue);
     });
     return true;
@@ -824,7 +824,7 @@ static inline bool setJSTestInterfaceReflectAttributeSetter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr, WTFMove(nativeValue));
     });
     return true;

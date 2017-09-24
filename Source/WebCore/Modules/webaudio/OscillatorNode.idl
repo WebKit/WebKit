@@ -35,7 +35,7 @@ enum OscillatorType {
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
 ] interface OscillatorNode : AudioNode {
-    [SetterMayThrowException] attribute OscillatorType type;
+    attribute OscillatorType type;
 
     // Playback state constants.
     const unsigned short UNSCHEDULED_STATE = 0;

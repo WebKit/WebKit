@@ -44,6 +44,6 @@
     attribute unrestricted double defaultPlaybackRate;
     attribute unrestricted double playbackRate;
 
-    [SetterMayThrowException] attribute unrestricted double volume;
+    attribute unrestricted double volume;
     attribute boolean muted;
 };

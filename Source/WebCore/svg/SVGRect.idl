@@ -21,9 +21,9 @@
  */
 
 interface SVGRect {
-    [SetterMayThrowException] attribute unrestricted float x;
-    [SetterMayThrowException] attribute unrestricted float y;
-    [SetterMayThrowException] attribute unrestricted float width;
-    [SetterMayThrowException] attribute unrestricted float height;
+    attribute unrestricted float x;
+    attribute unrestricted float y;
+    attribute unrestricted float width;
+    attribute unrestricted float height;
 };
 

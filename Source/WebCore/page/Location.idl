@@ -42,20 +42,20 @@
     IsImmutablePrototypeExoticObject,
     Unforgeable
 ] interface Location {
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
+    [SetterCallWith=ActiveWindow&FirstWindow, DoNotCheckSecurityOnSetter] stringifier attribute USVString href;
 
     [CallWith=ActiveWindow&FirstWindow, MayThrowException, ForwardDeclareInHeader] void assign(USVString url);
     [DoNotCheckSecurity, CallWith=ActiveWindow&FirstWindow, ForwardDeclareInHeader] void replace(USVString url);
     [CallWith=ActiveWindow, ForwardDeclareInHeader] void reload();
 
     // URI decomposition attributes
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString protocol;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString host;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString hostname;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString port;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString pathname;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString search;
-    [SetterCallWith=ActiveWindow&FirstWindow, SetterMayThrowException] attribute USVString hash;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString protocol;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString host;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString hostname;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString port;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString pathname;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString search;
+    [SetterCallWith=ActiveWindow&FirstWindow] attribute USVString hash;
 
     readonly attribute USVString origin;
 

@@ -34,7 +34,7 @@
     readonly attribute DOMString type;
 
     /* [SameObject] */ readonly attribute HTMLOptionsCollection options;
-    [CEReactions, SetterMayThrowException] attribute unsigned long length;
+    [CEReactions] attribute unsigned long length;
     getter HTMLOptionElement? item(unsigned long index); // FIXME: The spec has this returning Element?.
     HTMLOptionElement? namedItem(DOMString name);
     [CEReactions, MayThrowException] void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);

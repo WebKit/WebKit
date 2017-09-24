@@ -243,7 +243,7 @@ static inline bool setJSTestCallTracerTestAttributeInterfaceSetter(ExecState& st
         callTracerParameters.append(nativeValue);
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeInterface"), WTFMove(callTracerParameters));
     }
-    AttributeSetter<decltype(impl.setTestAttributeInterface(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTestAttributeInterface(WTFMove(nativeValue));
     });
     return true;
@@ -281,7 +281,7 @@ static inline bool setJSTestCallTracerTestAttributeSpecifiedSetter(ExecState& st
         callTracerParameters.append(nativeValue);
         CallTracer::testCallTracerAttribute(impl, ASCIILiteral("testAttributeSpecified"), WTFMove(callTracerParameters));
     }
-    AttributeSetter<decltype(impl.setTestAttributeSpecified(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTestAttributeSpecified(WTFMove(nativeValue));
     });
     return true;
@@ -319,7 +319,7 @@ static inline bool setJSTestCallTracerTestAttributeWithVariantSetter(ExecState& 
         WTF::visit([&] (auto& value) { callTracerParameters.append(value); }, nativeValue);
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeWithVariant"), WTFMove(callTracerParameters));
     }
-    AttributeSetter<decltype(impl.setTestAttributeWithVariant(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTestAttributeWithVariant(WTFMove(nativeValue));
     });
     return true;

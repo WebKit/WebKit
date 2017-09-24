@@ -33,7 +33,7 @@ typedef (DOMString or sequence<DOMString>) IDBKeyPath;
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface IDBObjectStore {
-    [SetterMayThrowException] attribute DOMString name;
+    attribute DOMString name;
     readonly attribute IDBKeyPath? keyPath;
     readonly attribute DOMStringList indexNames;
     readonly attribute IDBTransaction transaction;

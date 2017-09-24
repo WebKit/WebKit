@@ -417,9 +417,6 @@
             "contextsAllowed": ["attribute"],
             "values": ["ScriptExecutionContext", "ScriptState", "GlobalObject", "ActiveWindow", "FirstWindow"]
         },
-        "SetterMayThrowException": {
-            "contextsAllowed": ["attribute"]
-        },
         "SkipCallbackInvokeCheck": {
             "contextsAllowed": ["operation", "callback-function"]
         },

@@ -266,7 +266,7 @@ static inline bool setJSTestNodeNameSetter(ExecState& state, JSTestNode& thisObj
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setName(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setName(WTFMove(nativeValue));
     });
     return true;

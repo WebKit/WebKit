@@ -30,12 +30,12 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] interface VTTCue : TextTrackCue {
-    [SetterMayThrowException] attribute DOMString vertical;
+    attribute DOMString vertical;
     attribute boolean snapToLines;
-    [SetterMayThrowException] attribute double line;
-    [SetterMayThrowException] attribute double position;
-    [SetterMayThrowException] attribute double size;
-    [SetterMayThrowException] attribute DOMString align;
+    attribute double line;
+    attribute double position;
+    attribute double size;
+    attribute DOMString align;
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
 

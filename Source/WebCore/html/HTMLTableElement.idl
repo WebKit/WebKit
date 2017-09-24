@@ -19,9 +19,9 @@
  */
 
 interface HTMLTableElement : HTMLElement {
-    [CEReactions, SetterMayThrowException] attribute HTMLTableCaptionElement? caption;
-    [CEReactions, SetterMayThrowException] attribute HTMLTableSectionElement? tHead;
-    [CEReactions, SetterMayThrowException] attribute HTMLTableSectionElement? tFoot;
+    [CEReactions] attribute HTMLTableCaptionElement? caption;
+    [CEReactions] attribute HTMLTableSectionElement? tHead;
+    [CEReactions] attribute HTMLTableSectionElement? tFoot;
 
     readonly attribute HTMLCollection rows;
     readonly attribute HTMLCollection tBodies;

@@ -187,7 +187,7 @@ static inline bool setJSTestSerializationInheritInheritLongAttributeSetter(ExecS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setInheritLongAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setInheritLongAttribute(WTFMove(nativeValue));
     });
     return true;

@@ -1307,12 +1307,8 @@ JSC::EncodedJSValue jsTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue
 bool setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjAttributeWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjAttributeWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjStringAttrWithSetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1639,9 +1635,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
 #endif
     { "typedArrayAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTypedArrayAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTypedArrayAttr) } },
     { "attributeWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithGetterException) } },
-    { "attributeWithSetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithSetterException) } },
     { "stringAttrWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) } },
-    { "stringAttrWithSetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithSetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithSetterException) } },
     { "customAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
 #if ENABLE(Condition4)
     { "jsBuiltinAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testObjJsBuiltinAttributeCodeGenerator), (intptr_t) (setTestObjJsBuiltinAttributeCodeGenerator) } },
@@ -2236,7 +2230,7 @@ static inline bool setJSTestObjConstructorStaticStringAttrSetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(TestObj::setStaticStringAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return TestObj::setStaticStringAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2282,7 +2276,7 @@ static inline bool setJSTestObjEnumAttrSetter(ExecState& state, JSTestObj& thisO
     if (UNLIKELY(!optionalNativeValue))
         return false;
     auto nativeValue = optionalNativeValue.value();
-    AttributeSetter<decltype(impl.setEnumAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setEnumAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2313,7 +2307,7 @@ static inline bool setJSTestObjByteAttrSetter(ExecState& state, JSTestObj& thisO
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLByte>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setByteAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setByteAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2344,7 +2338,7 @@ static inline bool setJSTestObjOctetAttrSetter(ExecState& state, JSTestObj& this
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLOctet>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setOctetAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setOctetAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2375,7 +2369,7 @@ static inline bool setJSTestObjShortAttrSetter(ExecState& state, JSTestObj& this
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLShort>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setShortAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setShortAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2406,7 +2400,7 @@ static inline bool setJSTestObjClampedShortAttrSetter(ExecState& state, JSTestOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLClampAdaptor<IDLShort>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setClampedShortAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setClampedShortAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2437,7 +2431,7 @@ static inline bool setJSTestObjEnforceRangeShortAttrSetter(ExecState& state, JST
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLEnforceRangeAdaptor<IDLShort>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setEnforceRangeShortAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setEnforceRangeShortAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2468,7 +2462,7 @@ static inline bool setJSTestObjUnsignedShortAttrSetter(ExecState& state, JSTestO
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedShort>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUnsignedShortAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUnsignedShortAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2499,7 +2493,7 @@ static inline bool setJSTestObjLongAttrSetter(ExecState& state, JSTestObj& thisO
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setLongAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setLongAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2530,7 +2524,7 @@ static inline bool setJSTestObjLongLongAttrSetter(ExecState& state, JSTestObj& t
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLongLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setLongLongAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setLongLongAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2561,7 +2555,7 @@ static inline bool setJSTestObjUnsignedLongLongAttrSetter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLongLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUnsignedLongLongAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUnsignedLongLongAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2592,7 +2586,7 @@ static inline bool setJSTestObjStringAttrSetter(ExecState& state, JSTestObj& thi
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2623,7 +2617,7 @@ static inline bool setJSTestObjUsvstringAttrSetter(ExecState& state, JSTestObj& 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUsvstringAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUsvstringAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2654,7 +2648,7 @@ static inline bool setJSTestObjTestObjAttrSetter(ExecState& state, JSTestObj& th
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "testObjAttr", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setTestObjAttr(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTestObjAttr(*nativeValue);
     });
     return true;
@@ -2685,7 +2679,7 @@ static inline bool setJSTestObjTestNullableObjAttrSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLInterface<TestObj>>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "testNullableObjAttr", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setTestNullableObjAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTestNullableObjAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2716,7 +2710,7 @@ static inline bool setJSTestObjLenientTestObjAttrSetter(ExecState& state, JSTest
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "lenientTestObjAttr", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setLenientTestObjAttr(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setLenientTestObjAttr(*nativeValue);
     });
     return true;
@@ -2761,7 +2755,7 @@ static inline bool setJSTestObjStringAttrTreatingNullAsEmptyStringSetter(ExecSta
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringAttrTreatingNullAsEmptyString(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringAttrTreatingNullAsEmptyString(WTFMove(nativeValue));
     });
     return true;
@@ -2792,7 +2786,7 @@ static inline bool setJSTestObjUsvstringAttrTreatingNullAsEmptyStringSetter(Exec
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLUSVString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUsvstringAttrTreatingNullAsEmptyString(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUsvstringAttrTreatingNullAsEmptyString(WTFMove(nativeValue));
     });
     return true;
@@ -2823,7 +2817,7 @@ static inline bool setJSTestObjByteStringAttrTreatingNullAsEmptyStringSetter(Exe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLTreatNullAsEmptyAdaptor<IDLByteString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setByteStringAttrTreatingNullAsEmptyString(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setByteStringAttrTreatingNullAsEmptyString(WTFMove(nativeValue));
     });
     return true;
@@ -2854,7 +2848,7 @@ static inline bool setJSTestObjStringLongRecordAttrSetter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringLongRecordAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringLongRecordAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2885,7 +2879,7 @@ static inline bool setJSTestObjUsvstringLongRecordAttrSetter(ExecState& state, J
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLUSVString, IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUsvstringLongRecordAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUsvstringLongRecordAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2916,7 +2910,7 @@ static inline bool setJSTestObjUsvstringLongRecordAttrSetter(ExecState& state, J
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLByteString, IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUsvstringLongRecordAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUsvstringLongRecordAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2947,7 +2941,7 @@ static inline bool setJSTestObjStringObjRecordAttrSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLInterface<TestObj>>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringObjRecordAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringObjRecordAttr(WTFMove(nativeValue));
     });
     return true;
@@ -2978,7 +2972,7 @@ static inline bool setJSTestObjStringNullableObjRecordAttrSetter(ExecState& stat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLRecord<IDLDOMString, IDLNullable<IDLInterface<TestObj>>>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringNullableObjRecordAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringNullableObjRecordAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3009,7 +3003,7 @@ static inline bool setJSTestObjDictionaryAttrSetter(ExecState& state, JSTestObj&
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDictionary<TestObj::Dictionary>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setDictionaryAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setDictionaryAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3040,7 +3034,7 @@ static inline bool setJSTestObjNullableDictionaryAttrSetter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLDictionary<TestObj::Dictionary>>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableDictionaryAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableDictionaryAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3071,7 +3065,7 @@ static inline bool setJSTestObjAnnotatedTypeInUnionAttrSetter(ExecState& state, 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAnnotatedTypeInUnionAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAnnotatedTypeInUnionAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3102,7 +3096,7 @@ static inline bool setJSTestObjAnnotatedTypeInSequenceAttrSetter(ExecState& stat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAnnotatedTypeInSequenceAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAnnotatedTypeInSequenceAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3136,7 +3130,7 @@ static inline bool setJSTestObjImplementationEnumAttrSetter(ExecState& state, JS
     if (UNLIKELY(!optionalNativeValue))
         return false;
     auto nativeValue = optionalNativeValue.value();
-    AttributeSetter<decltype(impl.setImplementationEnumAttr(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setImplementationEnumAttr(WTFMove(nativeValue));
     });
     return true;
@@ -3167,7 +3161,7 @@ static inline bool setJSTestObjXMLObjAttrSetter(ExecState& state, JSTestObj& thi
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "XMLObjAttr", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setXMLObjAttr(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setXMLObjAttr(*nativeValue);
     });
     return true;
@@ -3198,7 +3192,7 @@ static inline bool setJSTestObjCreateSetter(ExecState& state, JSTestObj& thisObj
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setCreate(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setCreate(WTFMove(nativeValue));
     });
     return true;
@@ -3229,7 +3223,7 @@ static inline bool setJSTestObjReflectedStringAttrSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3260,7 +3254,7 @@ static inline bool setJSTestObjReflectedUSVStringAttrSetter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3291,7 +3285,7 @@ static inline bool setJSTestObjReflectedIntegralAttrSetter(ExecState& state, JST
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3322,7 +3316,7 @@ static inline bool setJSTestObjReflectedUnsignedIntegralAttrSetter(ExecState& st
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnsignedLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3353,7 +3347,7 @@ static inline bool setJSTestObjReflectedBooleanAttrSetter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3384,7 +3378,7 @@ static inline bool setJSTestObjReflectedURLAttrSetter(ExecState& state, JSTestOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedurlattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3415,7 +3409,7 @@ static inline bool setJSTestObjReflectedUSVURLAttrSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvurlattrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvurlattrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3446,7 +3440,7 @@ static inline bool setJSTestObjReflectedStringAttrSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3477,7 +3471,7 @@ static inline bool setJSTestObjReflectedCustomIntegralAttrSetter(ExecState& stat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3508,7 +3502,7 @@ static inline bool setJSTestObjReflectedCustomBooleanAttrSetter(ExecState& state
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLBoolean>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3539,7 +3533,7 @@ static inline bool setJSTestObjReflectedCustomURLAttrSetter(ExecState& state, JS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithoutSynchronization(WebCore::HTMLNames::customContentURLAttrAttr, WTFMove(nativeValue));
     });
     return true;
@@ -3574,7 +3568,7 @@ static inline bool setJSTestObjEnabledAtRuntimeAttributeSetter(ExecState& state,
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setEnabledAtRuntimeAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -3607,7 +3601,7 @@ static inline bool setJSTestObjTypedArrayAttrSetter(ExecState& state, JSTestObj&
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLFloat32Array>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "typedArrayAttr", "Float32Array"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setTypedArrayAttr(nativeValue.releaseNonNull()))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setTypedArrayAttr(nativeValue.releaseNonNull());
     });
     return true;
@@ -3638,7 +3632,7 @@ static inline bool setJSTestObjAttributeWithGetterExceptionSetter(ExecState& sta
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithGetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithGetterException(WTFMove(nativeValue));
     });
     return true;
@@ -3647,37 +3641,6 @@ static inline bool setJSTestObjAttributeWithGetterExceptionSetter(ExecState& sta
 bool setJSTestObjAttributeWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjAttributeWithGetterExceptionSetter>(*state, thisValue, encodedValue, "attributeWithGetterException");
-}
-
-static inline JSValue jsTestObjAttributeWithSetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.attributeWithSetterException());
-    return result;
-}
-
-EncodedJSValue jsTestObjAttributeWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjAttributeWithSetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attributeWithSetterException");
-}
-
-static inline bool setJSTestObjAttributeWithSetterExceptionSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAttributeWithSetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
-        return impl.setAttributeWithSetterException(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestObjAttributeWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjAttributeWithSetterExceptionSetter>(*state, thisValue, encodedValue, "attributeWithSetterException");
 }
 
 static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
@@ -3700,7 +3663,7 @@ static inline bool setJSTestObjStringAttrWithGetterExceptionSetter(ExecState& st
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringAttrWithGetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringAttrWithGetterException(WTFMove(nativeValue));
     });
     return true;
@@ -3709,37 +3672,6 @@ static inline bool setJSTestObjStringAttrWithGetterExceptionSetter(ExecState& st
 bool setJSTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjStringAttrWithGetterExceptionSetter>(*state, thisValue, encodedValue, "stringAttrWithGetterException");
-}
-
-static inline JSValue jsTestObjStringAttrWithSetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.stringAttrWithSetterException());
-    return result;
-}
-
-EncodedJSValue jsTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjStringAttrWithSetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringAttrWithSetterException");
-}
-
-static inline bool setJSTestObjStringAttrWithSetterExceptionSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringAttrWithSetterException(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
-        return impl.setStringAttrWithSetterException(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestObjStringAttrWithSetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjStringAttrWithSetterExceptionSetter>(*state, thisValue, encodedValue, "stringAttrWithSetterException");
 }
 
 static inline JSValue jsTestObjCustomAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
@@ -3834,7 +3766,7 @@ static inline bool setJSTestObjWithScriptStateAttributeSetter(ExecState& state, 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setWithScriptStateAttribute(state, WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptStateAttribute(state, WTFMove(nativeValue));
     });
     return true;
@@ -3865,7 +3797,7 @@ static inline bool setJSTestObjWithCallWithAndSetterCallWithAttributeSetter(Exec
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setWithCallWithAndSetterCallWithAttribute(state, activeDOMWindow(state), firstDOMWindow(state), WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithCallWithAndSetterCallWithAttribute(state, activeDOMWindow(state), firstDOMWindow(state), WTFMove(nativeValue));
     });
     return true;
@@ -3902,7 +3834,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAttributeSetter(ExecSta
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return false;
-    AttributeSetter<decltype(impl.setWithScriptExecutionContextAttribute(*context, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptExecutionContextAttribute(*context, *nativeValue);
     });
     return true;
@@ -3933,7 +3865,7 @@ static inline bool setJSTestObjWithScriptStateAttributeRaisesSetter(ExecState& s
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptStateAttributeRaises", "TestObj"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setWithScriptStateAttributeRaises(state, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptStateAttributeRaises(state, *nativeValue);
     });
     return true;
@@ -3970,7 +3902,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAttributeRaisesSetter(E
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return false;
-    AttributeSetter<decltype(impl.setWithScriptExecutionContextAttributeRaises(*context, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptExecutionContextAttributeRaises(*context, *nativeValue);
     });
     return true;
@@ -4007,7 +3939,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return false;
-    AttributeSetter<decltype(impl.setWithScriptExecutionContextAndScriptStateAttribute(state, *context, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptExecutionContextAndScriptStateAttribute(state, *context, *nativeValue);
     });
     return true;
@@ -4044,7 +3976,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return false;
-    AttributeSetter<decltype(impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(state, *context, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(state, *context, *nativeValue);
     });
     return true;
@@ -4081,7 +4013,7 @@ static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpace
     auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
     if (UNLIKELY(!context))
         return false;
-    AttributeSetter<decltype(impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context, *nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context, *nativeValue);
     });
     return true;
@@ -4116,7 +4048,7 @@ static inline bool setJSTestObjConditionalAttr1Setter(ExecState& state, JSTestOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionalAttr1(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionalAttr1(WTFMove(nativeValue));
     });
     return true;
@@ -4153,7 +4085,7 @@ static inline bool setJSTestObjConditionalAttr2Setter(ExecState& state, JSTestOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionalAttr2(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionalAttr2(WTFMove(nativeValue));
     });
     return true;
@@ -4190,7 +4122,7 @@ static inline bool setJSTestObjConditionalAttr3Setter(ExecState& state, JSTestOb
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionalAttr3(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionalAttr3(WTFMove(nativeValue));
     });
     return true;
@@ -4347,7 +4279,7 @@ static inline bool setJSTestObjAnyAttributeSetter(ExecState& state, JSTestObj& t
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLAny>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setAnyAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAnyAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4378,7 +4310,7 @@ static inline bool setJSTestObjObjectAttributeSetter(ExecState& state, JSTestObj
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLObject>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setObjectAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setObjectAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4423,7 +4355,7 @@ static inline bool setJSTestObjMutablePointSetter(ExecState& state, JSTestObj& t
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<SVGPoint>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "mutablePoint", "SVGPoint"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setMutablePoint(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setMutablePoint(*nativeValue);
     });
     return true;
@@ -4454,7 +4386,7 @@ static inline bool setJSTestObjStrawberrySetter(ExecState& state, JSTestObj& thi
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setBlueberry(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setBlueberry(WTFMove(nativeValue));
     });
     return true;
@@ -4499,7 +4431,7 @@ static inline bool setJSTestObjIdSetter(ExecState& state, JSTestObj& thisObject,
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setId(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setId(WTFMove(nativeValue));
     });
     return true;
@@ -4626,7 +4558,7 @@ static inline bool setJSTestObjNullableLongSettableAttributeSetter(ExecState& st
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableLongSettableAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableLongSettableAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4657,7 +4589,7 @@ static inline bool setJSTestObjNullableStringSettableAttributeSetter(ExecState& 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLDOMString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableStringSettableAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableStringSettableAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4688,7 +4620,7 @@ static inline bool setJSTestObjNullableUSVStringSettableAttributeSetter(ExecStat
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLUSVString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableUSVStringSettableAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableUSVStringSettableAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4719,7 +4651,7 @@ static inline bool setJSTestObjNullableByteStringSettableAttributeSetter(ExecSta
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLByteString>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableByteStringSettableAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableByteStringSettableAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4750,7 +4682,7 @@ static inline bool setJSTestObjNullableStringValueSetter(ExecState& state, JSTes
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLNullable<IDLLong>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setNullableStringValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setNullableStringValue(WTFMove(nativeValue));
     });
     return true;
@@ -4798,7 +4730,7 @@ static inline bool setJSTestObjAttributeWithReservedEnumTypeSetter(ExecState& st
     if (UNLIKELY(!optionalNativeValue))
         return false;
     auto nativeValue = optionalNativeValue.value();
-    AttributeSetter<decltype(impl.setAttributeWithReservedEnumType(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setAttributeWithReservedEnumType(WTFMove(nativeValue));
     });
     return true;
@@ -4929,7 +4861,7 @@ static inline bool setJSTestObjStringifierAttributeSetter(ExecState& state, JSTe
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUSVString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setStringifierAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setStringifierAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -4961,7 +4893,7 @@ static inline bool setJSTestObjConditionallyReadWriteAttributeSetter(ExecState& 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionallyReadWriteAttribute", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionallyReadWriteAttribute(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionallyReadWriteAttribute(*nativeValue);
     });
     return true;
@@ -4999,7 +4931,7 @@ static inline bool setJSTestObjConditionalAndConditionallyReadWriteAttributeSett
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<Node>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "conditionalAndConditionallyReadWriteAttribute", "Node"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionalAndConditionallyReadWriteAttribute(*nativeValue);
     });
     return true;
@@ -5034,7 +4966,7 @@ static inline bool setJSTestObjConditionallyExposedToWindowAttributeSetter(ExecS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionallyExposedToWindowAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionallyExposedToWindowAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -5065,7 +4997,7 @@ static inline bool setJSTestObjConditionallyExposedToWorkerAttributeSetter(ExecS
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionallyExposedToWorkerAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionallyExposedToWorkerAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -5096,7 +5028,7 @@ static inline bool setJSTestObjConditionallyExposedToWindowAndWorkerAttributeSet
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setConditionallyExposedToWindowAndWorkerAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setConditionallyExposedToWindowAndWorkerAttribute(WTFMove(nativeValue));
     });
     return true;

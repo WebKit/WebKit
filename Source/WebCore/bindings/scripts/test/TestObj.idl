@@ -168,9 +168,7 @@ enum TestConfidence { "high", "kinda-low" };
     [MayThrowException] long methodWithExceptionReturningLong();
     [MayThrowException] TestObj methodWithExceptionReturningObject();
     [GetterMayThrowException] attribute long attributeWithGetterException;
-    [SetterMayThrowException] attribute long attributeWithSetterException;
     [GetterMayThrowException] attribute DOMString stringAttrWithGetterException;
-    [SetterMayThrowException] attribute DOMString stringAttrWithSetterException;
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;

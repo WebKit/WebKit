@@ -26,7 +26,7 @@
     JSCustomMarkFunction,
     SkipVTableValidation,
 ] interface CSSStyleDeclaration {
-    [CEReactions, SetterMayThrowException] attribute DOMString cssText;
+    [CEReactions] attribute DOMString cssText;
 
     DOMString getPropertyValue(DOMString propertyName);
 

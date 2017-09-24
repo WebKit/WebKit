@@ -194,7 +194,7 @@ static inline bool setJSTestStringifierReadWriteAttributeIdentifierSetter(ExecSt
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setIdentifier(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setIdentifier(WTFMove(nativeValue));
     });
     return true;

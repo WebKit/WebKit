@@ -222,7 +222,7 @@ static inline bool setJSTestSerializationFirstStringAttributeSetter(ExecState& s
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setFirstStringAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setFirstStringAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -253,7 +253,7 @@ static inline bool setJSTestSerializationSecondLongAttributeSetter(ExecState& st
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setSecondLongAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setSecondLongAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -284,7 +284,7 @@ static inline bool setJSTestSerializationThirdUnserializableAttributeSetter(Exec
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestException>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestSerialization", "thirdUnserializableAttribute", "TestException"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setThirdUnserializableAttribute(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setThirdUnserializableAttribute(*nativeValue);
     });
     return true;
@@ -315,7 +315,7 @@ static inline bool setJSTestSerializationFourthUnrestrictedDoubleAttributeSetter
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLUnrestrictedDouble>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setFourthUnrestrictedDoubleAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setFourthUnrestrictedDoubleAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -346,7 +346,7 @@ static inline bool setJSTestSerializationFifthLongAttributeSetter(ExecState& sta
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setFifthLongAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setFifthLongAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -377,7 +377,7 @@ static inline bool setJSTestSerializationSixthTypedefAttributeSetter(ExecState& 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDouble>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setSixthTypedefAttribute(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setSixthTypedefAttribute(WTFMove(nativeValue));
     });
     return true;
@@ -408,7 +408,7 @@ static inline bool setJSTestSerializationSeventhDirectlySerializableAttributeSet
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestSerializationInheritFinal>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestSerialization", "seventhDirectlySerializableAttribute", "TestSerializationInheritFinal"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setSeventhDirectlySerializableAttribute(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setSeventhDirectlySerializableAttribute(*nativeValue);
     });
     return true;
@@ -439,7 +439,7 @@ static inline bool setJSTestSerializationEighthIndirectlyAttributeSetter(ExecSta
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLInterface<TestSerializationIndirectInheritance>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestSerialization", "eighthIndirectlyAttribute", "TestSerializationIndirectInheritance"); });
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setEighthIndirectlyAttribute(*nativeValue))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setEighthIndirectlyAttribute(*nativeValue);
     });
     return true;

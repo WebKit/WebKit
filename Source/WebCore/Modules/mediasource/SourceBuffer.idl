@@ -38,7 +38,7 @@
     Conditional=MEDIA_SOURCE,
     ExportMacro=WEBCORE_EXPORT,
 ] interface SourceBuffer : EventTarget {
-    [SetterMayThrowException] attribute AppendMode mode;
+    attribute AppendMode mode;
 
     readonly attribute boolean updating;
   
@@ -46,15 +46,15 @@
     [GetterMayThrowException] readonly attribute TimeRanges buffered;
 
     // Applies an offset to media segment timestamps.
-    [SetterMayThrowException] attribute double timestampOffset;
+    attribute double timestampOffset;
 
     // Track support
     [Conditional=VIDEO_TRACK] readonly attribute AudioTrackList audioTracks;
     [Conditional=VIDEO_TRACK] readonly attribute VideoTrackList videoTracks;
     [Conditional=VIDEO_TRACK] readonly attribute TextTrackList textTracks;
 
-    [SetterMayThrowException] attribute double appendWindowStart;
-    [SetterMayThrowException] attribute unrestricted double appendWindowEnd;
+    attribute double appendWindowStart;
+    attribute unrestricted double appendWindowEnd;
 
     // Append segment data.
     [MayThrowException] void appendBuffer(BufferSource data);

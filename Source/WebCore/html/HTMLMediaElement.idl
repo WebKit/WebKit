@@ -71,7 +71,7 @@ typedef (
     readonly attribute boolean seeking;
 
     // playback state
-    [ImplementedAs=currentTimeForBindings, SetterMayThrowException] attribute unrestricted double currentTime;
+    [ImplementedAs=currentTimeForBindings] attribute unrestricted double currentTime;
     readonly attribute unrestricted double duration;
     Date getStartDate();
     readonly attribute boolean paused;
@@ -88,7 +88,7 @@ typedef (
 
     // controls
     attribute boolean controls;
-    [SetterMayThrowException] attribute double volume;
+    attribute double volume;
     attribute boolean muted;
     [Reflect=muted] attribute boolean defaultMuted;
 

@@ -56,8 +56,8 @@
     [DOMJIT=Getter] readonly attribute Node? previousSibling;
     [DOMJIT=Getter] readonly attribute Node? nextSibling;
 
-    [CEReactions, SetterMayThrowException] attribute DOMString? nodeValue;
-    [CEReactions, SetterMayThrowException] attribute DOMString? textContent;
+    [CEReactions] attribute DOMString? nodeValue;
+    [CEReactions] attribute DOMString? textContent;
     [CEReactions] void normalize();
 
     [CEReactions, ImplementedAs=cloneNodeForBindings, MayThrowException, NewObject] Node cloneNode(optional boolean deep = false);

@@ -63,8 +63,8 @@ enum XMLHttpRequestResponseType {
     [MayThrowException] void open(ByteString method, DOMString url); // FIXME: url should be a USVString.
     [MayThrowException] void open(ByteString method, DOMString url, boolean async, optional DOMString? user = null, optional DOMString? password = null); // FIXME: url/user/password should all be a USVStrings.
     [MayThrowException] void setRequestHeader(ByteString header, ByteString value);
-    [SetterMayThrowException] attribute unsigned long timeout;
-    [SetterMayThrowException] attribute boolean withCredentials;
+    attribute unsigned long timeout;
+    attribute boolean withCredentials;
     readonly attribute XMLHttpRequestUpload upload;
     [CallWith=ScriptState, MayThrowException] void send(optional (Document or BodyInit)? body = null);
     void abort();
@@ -76,7 +76,7 @@ enum XMLHttpRequestResponseType {
     ByteString? getResponseHeader(ByteString name);
     ByteString getAllResponseHeaders();
     [MayThrowException] void overrideMimeType(DOMString mime);
-    [SetterMayThrowException] attribute XMLHttpRequestResponseType responseType;
+    attribute XMLHttpRequestResponseType responseType;
     [CachedAttribute, CustomGetter] readonly attribute any response;
     [GetterMayThrowException] readonly attribute USVString responseText;
     // FIXME: responseXML should be annotated with [Exposed=Window].

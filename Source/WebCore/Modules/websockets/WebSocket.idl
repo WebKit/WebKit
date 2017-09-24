@@ -56,7 +56,7 @@
     readonly attribute DOMString? protocol;
     readonly attribute DOMString? extensions;
 
-    [SetterMayThrowException] attribute DOMString binaryType;
+    attribute DOMString binaryType;
 
     [MayThrowException] void send(ArrayBuffer data);
     [MayThrowException] void send(ArrayBufferView data);

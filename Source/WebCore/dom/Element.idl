@@ -88,8 +88,8 @@
 
     // Extensions to Element from DOM Parsing and Serialization specification.
     // https://w3c.github.io/DOM-Parsing/#extensions-to-the-element-interface
-    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
-    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString outerHTML;
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerHTML;
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerHTML;
     [CEReactions, MayThrowException] void insertAdjacentHTML(DOMString position, DOMString text);
 
     // Extensions from Full Screen API (https://fullscreen.spec.whatwg.org/#api).

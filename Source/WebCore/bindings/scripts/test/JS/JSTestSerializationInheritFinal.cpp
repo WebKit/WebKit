@@ -190,7 +190,7 @@ static inline bool setJSTestSerializationInheritFinalFinalLongAttributeFooSetter
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setFinalLongAttributeFoo(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setFinalLongAttributeFoo(WTFMove(nativeValue));
     });
     return true;
@@ -221,7 +221,7 @@ static inline bool setJSTestSerializationInheritFinalFinalLongAttributeBarSetter
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLLong>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setFinalLongAttributeBar(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setFinalLongAttributeBar(WTFMove(nativeValue));
     });
     return true;

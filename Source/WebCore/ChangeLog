@@ -1,3 +1,87 @@
+2017-09-23  Youenn Fablet  <youenn@apple.com>
+
+        Remove SetterMayThrowException
+        https://bugs.webkit.org/show_bug.cgi?id=177408
+
+        Reviewed by Sam Weinig.
+
+        No change of behavior.
+
+        Updating IDLs to remove SetterMayThrowException as it is no longer needed.
+        Updating AttributeSetter to compute the return type using Functor.
+
+        * Modules/indexeddb/IDBIndex.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/mediasource/MediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediastream/RTCDataChannel.idl:
+        * Modules/webaudio/AnalyserNode.idl:
+        * Modules/webaudio/AudioNode.idl:
+        * Modules/webaudio/ConvolverNode.idl:
+        * Modules/webaudio/OscillatorNode.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/js/JSDOMAttribute.h:
+        (WebCore::AttributeSetter::call):
+        (WebCore::AttributeSetter<ExceptionOr<void>>::call): Deleted.
+        (WebCore::AttributeSetter<void>::call): Deleted.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateAttributeSetterBodyDefinition):
+        * bindings/scripts/IDLAttributes.json:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/DeprecatedCSSOMValue.idl:
+        * css/FontFace.idl:
+        * css/MediaList.idl:
+        * dom/Document.idl:
+        * dom/Element.idl:
+        * dom/Node.idl:
+        * dom/ShadowRoot.idl:
+        * html/DOMURL.idl:
+        * html/HTMLElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMarqueeElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTableElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * html/MediaController.idl:
+        * html/track/VTTCue.idl:
+        * html/track/VTTRegion.idl:
+        * page/History.idl:
+        * page/Location.idl:
+        * svg/SVGAltGlyphElement.idl:
+        * svg/SVGAngle.idl:
+        * svg/SVGAnimatedBoolean.idl:
+        * svg/SVGAnimatedEnumeration.idl:
+        * svg/SVGAnimatedInteger.idl:
+        * svg/SVGAnimatedNumber.idl:
+        * svg/SVGAnimatedString.idl:
+        * svg/SVGLength.idl:
+        * svg/SVGMatrix.idl:
+        * svg/SVGNumber.idl:
+        * svg/SVGPoint.idl:
+        * svg/SVGPreserveAspectRatio.idl:
+        * svg/SVGRect.idl:
+        * svg/SVGViewSpec.idl:
+        * xml/XMLHttpRequest.idl:
+
 2017-09-23  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Images may render partial frames even after loading all the encoded data

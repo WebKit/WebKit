@@ -196,7 +196,7 @@ static inline bool setJSTestCEReactionsStringifierValueSetter(ExecState& state, 
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLDOMString>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setValue(WTFMove(nativeValue));
     });
     return true;

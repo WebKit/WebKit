@@ -214,7 +214,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceValueSetter(ExecState&
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setValue(WTFMove(nativeValue));
     });
     return true;
@@ -262,7 +262,7 @@ static inline bool setJSTestSerializedScriptValueInterfaceCachedValueSetter(Exec
     auto& impl = thisObject.wrapped();
     auto nativeValue = convert<IDLSerializedScriptValue<SerializedScriptValue>>(state, value);
     RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter<decltype(impl.setCachedValue(WTFMove(nativeValue)))>::call(state, throwScope, [&] {
+    AttributeSetter::call(state, throwScope, [&] {
         return impl.setCachedValue(WTFMove(nativeValue));
     });
     return true;

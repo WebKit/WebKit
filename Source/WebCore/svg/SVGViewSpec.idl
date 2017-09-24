@@ -37,7 +37,7 @@
     readonly attribute DOMString viewTargetString;
 
     // SVGZoomAndPan
-    [SetterMayThrowException] attribute unsigned short zoomAndPan;
+    attribute unsigned short zoomAndPan;
 };
 
 SVGViewSpec implements SVGFitToViewBox;

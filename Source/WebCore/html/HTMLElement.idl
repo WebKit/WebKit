@@ -44,11 +44,11 @@
     [CEReactions] attribute boolean spellcheck;
     // void forceSpellCheck(); // FIXME: Not supported.
 
-    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString innerText;
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString innerText;
 
     // FIXME: Should be in a separate ElementContentEditable interface.
     // https://html.spec.whatwg.org/#elementcontenteditable
-    [CEReactions, SetterMayThrowException] attribute DOMString contentEditable;
+    [CEReactions] attribute DOMString contentEditable;
     readonly attribute boolean isContentEditable;
 
     // Extensions from CSSOM-view specification (https://drafts.csswg.org/cssom-view/#extensions-to-the-htmlelement-interface).
@@ -59,7 +59,7 @@
     readonly attribute double offsetHeight; // FIXME: Should be of type long.
 
     // Non Standard but may get added to the specification (https://github.com/whatwg/html/issues/668).
-    [CEReactions, SetterMayThrowException] attribute [TreatNullAs=EmptyString] DOMString outerText;
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString outerText;
 
     // iOS autocorrect / autocapitalization extensions.
     [Conditional=IOS_AUTOCORRECT_AND_AUTOCAPITALIZE] attribute boolean autocorrect;
