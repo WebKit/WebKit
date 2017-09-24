@@ -1,3 +1,23 @@
+2017-09-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebKit] Changing EME setting through InjectedBundle should update WebPreferencesStore
+        https://bugs.webkit.org/show_bug.cgi?id=177312
+
+        Reviewed by Carlos Garcia Campos.
+
+        When enabling EME through the InjectedBundle for testing purposes, it's
+        only enabled in RuntimeEnabledFeatures, but not in WebPreferencesStore.
+        This causes failures on imported W3C tests that cover EME persistent
+        state licenses and perform parts of that test in a new window, where
+        the original RuntimeEnabledFeatures state doesn't have any effect.
+
+        To avoid those failures, when enabling EME feature for testing purposes
+        through InjectedBundle, the feature should also be enabled in the
+        WebPreferencesStore.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+
 2017-09-22  Zalan Bujtas  <zalan@apple.com>
 
         WeakPtrFactory should populate m_ref lazily.
