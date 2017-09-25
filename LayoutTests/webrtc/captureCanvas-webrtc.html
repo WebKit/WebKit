@@ -10,16 +10,23 @@
         <script>
 
 var color = "green";
-function printRectangle()
+
+function printCanvas()
 {
     var context = canvas1.getContext("2d");
     context.fillStyle = color;
-    context.fillRect(0, 0, 320, 240);
-    setTimeout(printRectangle, 50);
+    context.fillRect(0, 0, canvas1.width, canvas1.height);
 }
 
-function testCanvas(testName, array1, isSame, count)
+function printRectangleEvery50ms()
 {
+    printCanvas();
+    setTimeout(printRectangleEvery50ms, 50);
+}
+
+function testCanvas(testName, canvas, isSame, count)
+{
+    var array1 = canvas.getContext("2d").getImageData(20, 20, 60, 60).data;
     if (count === undefined)
         count = 0;
     canvas2.getContext("2d").drawImage(video, 0 ,0);
@@ -29,24 +36,24 @@ function testCanvas(testName, array1, isSame, count)
     for (index = 0; index < array1.length; ++index) {
         // Rough comparison since we are compressing data.
         // This test still catches errors since we are going from green to blue to red.
-        if (Math.abs(array1[index] - array2[index]) > 40) {
+        if (Math.abs(array1[index] - array2[index]) > 100) {
             isEqual = false;
             continue;
         }
     }
     if (isEqual === isSame)
-        return;
+        return Promise.resolve();
 
     if (count === 20)
         return Promise.reject(testName + " failed, expected " + JSON.stringify(array1) + " but got " + JSON.stringify(array2));
 
     return waitFor(100).then(() => {
-        return testCanvas(testName, array1, isSame, ++count);
+        return testCanvas(testName, canvas, isSame, ++count);
     });
 }
 
 promise_test((test) => {
-    printRectangle();
+    printRectangleEvery50ms();
     return new Promise((resolve, reject) => {
         createConnections((firstConnection) => {
             var stream = canvas1.captureStream();
@@ -68,29 +75,26 @@ promise_test((test) => {
 }, "Setting up the connection");
 
 promise_test((test) => {
-    return waitFor(100).then(() => {
-        return testCanvas("test 1", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
-    });
+    return testCanvas("test 1", canvas1, true);
 }, "Checking canvas is green");
 
 promise_test((test) => {
     color = "red";
-    return waitFor(300).then(() => {
-        return testCanvas("test 2", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
-    });
+    printCanvas()
+    return testCanvas("test 2", canvas1, true);
 }, "Checking canvas is red");
 
 
 promise_test((test) => {
     color = "green";
-    return waitFor(300).then(() => {
-        return testCanvas("test 3", canvas1.getContext("2d").getImageData(20, 20, 60, 60).data, true);
-    });
+    printCanvas();
+    return testCanvas("test 3", canvas1, true);
 }, "Checking canvas is green again");
 
 promise_test((test) => {
     canvas1.width = 640;
     canvas1.height = 480;
+    printCanvas();
     return waitForVideoSize(video, 640, 480);
 }, "Checking canvas size change");
         </script>

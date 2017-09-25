@@ -1,5 +1,18 @@
 2017-09-25  Youenn Fablet  <youenn@apple.com>
 
+        Make captureCanvas-webrtc.html more robust
+        https://bugs.webkit.org/show_bug.cgi?id=177334
+
+        Reviewed by Darin Adler.
+
+        Making test more robust by printing synchronously the canvas and increasing.
+        the threshold for pixel comparison.
+        Minor refactoring for improving the readability.
+
+        * webrtc/captureCanvas-webrtc.html:
+
+2017-09-25  Youenn Fablet  <youenn@apple.com>
+
         LayoutTest webrtc/video-mute.html is very often failing
         https://bugs.webkit.org/show_bug.cgi?id=177331
 
