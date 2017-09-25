@@ -1,3 +1,15 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Fix branch test build after r222431.
+        https://bugs.webkit.org/show_bug.cgi?id=177411
+
+        * TestWebKitAPI/Tests/WebKit2Cocoa/JavaScriptDuringNavigation.mm:
+        (-[JSNavigationDelegate webView:decidePolicyForNavigationAction:decisionHandler:]):
+        (-[JSNavigationDelegate webView:decidePolicyForNavigationResponse:decisionHandler:]):
+        Just do string comparison to avoid this error on some OSes:
+        error: instance method '-isEqualTo:' not found (return type defaults to 'id')
+        
+
 2017-09-23  Alex Christensen  <achristensen@webkit.org>
 
         REGRESSION(r214201): WebProcess hangs during policy decisions
