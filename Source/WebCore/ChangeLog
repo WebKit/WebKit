@@ -1,3 +1,17 @@
+2017-09-25  Brent Fulgham  <bfulgham@apple.com>
+
+        Switch back to partitioning (rather than blocking) prevalent origins without interaction
+        https://bugs.webkit.org/show_bug.cgi?id=177452
+        <rdar://problem/34632618>
+
+        Reviewed by Chris Dumez.
+
+        Temporarily revert to "partition-only" behavior, due to site compatibility issues with
+        full blocking.
+
+        * platform/network/cf/NetworkStorageSessionCFNet.cpp:
+        (WebCore::NetworkStorageSession::setPrevalentDomainsToPartitionOrBlockCookies):
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Separate form submission from PolicyChecker infrastructure
