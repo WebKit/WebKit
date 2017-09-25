@@ -1,3 +1,20 @@
+2017-09-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        REGRESSION(r222160) [GTK] [Debug] Internal compiler error on the buildbot (huge memory usage by GCC)
+        https://bugs.webkit.org/show_bug.cgi?id=177223
+
+        Reviewed by Carlos Garcia Campos.
+
+        When the user environment sets the variable NUMBER_OF_PROCESSORS
+        this should be passed down to the build system (ninja or make) always.
+
+        Playing with the number of this variable is needed when using icecc
+        (as you usually want to launch more parallel build process than your
+        number of cores), or when you want to limit the number of parallel
+        build process for hardware capacity reasons.
+
+        * Scripts/build-webkit:
+
 2017-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Incremental builds fail every time Web Inspector icons are removed

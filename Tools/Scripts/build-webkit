@@ -239,10 +239,10 @@ if (isInspectorFrontend()) {
 }
 
 if (isCMakeBuild() && !isAnyWindows()) {
-    if (!canUseNinja()) {
-        # By default we build using all of the available CPUs.
-        # Ninja will automatically determine the number of jobs to run in parallel,
-        # so don't override the number of jobs if building with Ninja.
+    if (!canUseNinja() || defined($ENV{NUMBER_OF_PROCESSORS})) {
+        # If the user environment is not setting a specific number of process,
+        # then don't pass the number of jobs to Ninja. Because Ninja will
+        # automatically determine the number of jobs to run in parallel.
         $makeArgs .= ($makeArgs ? " " : "") . "-j" . numberOfCPUs() if $makeArgs !~ /-j\s*\d+/;
     }
 
