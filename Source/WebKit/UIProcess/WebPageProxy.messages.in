@@ -458,6 +458,7 @@ messages -> WebPageProxy {
     HandleSynchronousMessage(String messageName, WebKit::UserData messageBody) -> (WebKit::UserData returnData) WantsConnection
 
     HandleAutoFillButtonClick(WebKit::UserData userData);
+    ContentRuleListNotification(WebCore::URL url, Vector<String> identifiers, Vector<String> notifications)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS)
     AddPlaybackTargetPickerClient(uint64_t contextId)

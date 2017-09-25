@@ -58,6 +58,7 @@ enum class ContentExtensionError {
     JSONInvalidAction,
     JSONInvalidActionType,
     JSONInvalidCSSDisplayNoneActionType,
+    JSONInvalidNotification,
     JSONInvalidRegex,
 };
 

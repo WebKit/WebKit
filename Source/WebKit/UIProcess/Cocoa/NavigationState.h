@@ -121,6 +121,7 @@ private:
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
 #endif
 
+        void contentRuleListNotification(WebPageProxy&, WebCore::URL&&, Vector<String>&&, Vector<String>&&) final;
         void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
         void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
 
@@ -201,6 +202,7 @@ private:
         bool webViewDidEndNavigationGestureWithNavigationToBackForwardListItem : 1;
         bool webViewWillSnapshotBackForwardListItem : 1;
         bool webViewNavigationGestureSnapshotWasRemoved : 1;
+        bool webViewURLContentRuleListIdentifiersNotifications : 1;
 #if USE(QUICK_LOOK)
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;

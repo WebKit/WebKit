@@ -345,11 +345,11 @@ void ResourceLoader::willSendRequestInternal(ResourceRequest& request, const Res
     }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    if (frameLoader()) {
+    if (!redirectResponse.isNull() && frameLoader()) {
         Page* page = frameLoader()->frame().page();
         if (page && m_documentLoader) {
             auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), m_resourceType, *m_documentLoader);
-            applyBlockedStatusToRequest(blockedStatus, request);
+            applyBlockedStatusToRequest(blockedStatus, page, request);
             if (blockedStatus.blockedLoad) {
                 request = { };
                 didFail(blockedByContentBlockerError());

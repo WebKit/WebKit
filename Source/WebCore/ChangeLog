@@ -1,3 +1,46 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKContentRuleList notify action type
+        https://bugs.webkit.org/show_bug.cgi?id=177013
+        <rdar://problem/31073936>
+
+        Reviewed by Darin Adler.
+
+        Covered by new API tests.
+
+        * contentextensions/ContentExtensionActions.h:
+        (WebCore::ContentExtensions::hasStringArgument):
+        * contentextensions/ContentExtensionCompiler.cpp:
+        (WebCore::ContentExtensions::resolvePendingDisplayNoneActions):
+        (WebCore::ContentExtensions::serializeActions):
+        * contentextensions/ContentExtensionError.cpp:
+        (WebCore::ContentExtensions::contentExtensionErrorCategory):
+        * contentextensions/ContentExtensionError.h:
+        * contentextensions/ContentExtensionParser.cpp:
+        (WebCore::ContentExtensions::loadAction):
+        * contentextensions/ContentExtensionRule.cpp:
+        (WebCore::ContentExtensions::Action::deserialize):
+        (WebCore::ContentExtensions::Action::deserializeType):
+        (WebCore::ContentExtensions::Action::serializedLength):
+        * contentextensions/ContentExtensionRule.h:
+        (WebCore::ContentExtensions::Action::Action):
+        * contentextensions/ContentExtensionsBackend.cpp:
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForLoad):
+        (WebCore::ContentExtensions::ContentExtensionsBackend::processContentExtensionRulesForPingLoad):
+        (WebCore::ContentExtensions::applyBlockedStatusToRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/PingLoader.cpp:
+        (WebCore::processContentExtensionRulesForLoad):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::willSendRequestInternal):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::applyBlockedStatus):
+        * loader/cache/CachedResourceRequest.h:
+        * page/ChromeClient.h:
+
 2017-09-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Remove GetterMayThrowException

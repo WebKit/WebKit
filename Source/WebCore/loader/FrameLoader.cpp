@@ -2804,7 +2804,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         if (auto* page = m_frame.page()) {
             if (m_documentLoader) {
                 auto blockedStatus = page->userContentProvider().processContentExtensionRulesForLoad(newRequest.url(), ResourceType::Raw, *m_documentLoader);
-                applyBlockedStatusToRequest(blockedStatus, newRequest);
+                applyBlockedStatusToRequest(blockedStatus, page, newRequest);
                 if (blockedStatus.blockedLoad) {
                     newRequest = { };
                     error = ResourceError(errorDomainWebKitInternal, 0, initialRequest.url(), emptyString());

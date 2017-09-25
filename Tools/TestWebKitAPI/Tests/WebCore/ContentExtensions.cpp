@@ -56,6 +56,8 @@ inline std::ostream& operator<<(std::ostream& os, const ActionType& action)
         return os << "ActionType::BlockCookies";
     case ActionType::CSSDisplayNoneSelector:
         return os << "ActionType::CSSDisplayNone";
+    case ActionType::Notify:
+        return os << "ActionType::Notify";
     case ActionType::IgnorePreviousRules:
         return os << "ActionType::IgnorePreviousRules";
     case ActionType::MakeHTTPS:
@@ -97,6 +99,7 @@ public:
         EXPECT_EQ(data.topURLFilters.size(), 0ull);
     }
 
+private:
     void writeSource(const String&) final { }
 
     void writeActions(Vector<ContentExtensions::SerializedActionByte>&& actions, bool conditionsApplyOnlyToDomain) final
@@ -137,35 +140,27 @@ public:
         finalized = true;
     }
 
-private:
     CompiledContentExtensionData& m_data;
     bool finalized { false };
 };
 
 class InMemoryCompiledContentExtension : public ContentExtensions::CompiledContentExtension {
 public:
-    static Ref<InMemoryCompiledContentExtension> createFromFilter(String&& filter)
+    static Ref<InMemoryCompiledContentExtension> create(String&& filter)
     {
         CompiledContentExtensionData extensionData;
         InMemoryContentExtensionCompilationClient client(extensionData);
         auto compilerError = ContentExtensions::compileRuleList(client, WTFMove(filter));
-        if (compilerError) {
-            // Compiling should always succeed here. We have other tests for compile failures.
-            EXPECT_TRUE(false);
-        }
 
-        return InMemoryCompiledContentExtension::create(WTFMove(extensionData));
+        // Compiling should always succeed here. We have other tests for compile failures.
+        EXPECT_FALSE(compilerError);
+
+        return adoptRef(*new InMemoryCompiledContentExtension(WTFMove(extensionData)));
     }
 
-    static Ref<InMemoryCompiledContentExtension> create(CompiledContentExtensionData&& data)
-    {
-        return adoptRef(*new InMemoryCompiledContentExtension(WTFMove(data)));
-    }
+    const CompiledContentExtensionData& data() { return m_data; };
 
-    virtual ~InMemoryCompiledContentExtension()
-    {
-    }
-
+private:
     const ContentExtensions::SerializedActionByte* actions() const final { return m_data.actions.data(); }
     unsigned actionsLength() const final { return m_data.actions.size(); }
     const ContentExtensions::DFABytecode* filtersWithoutConditionsBytecode() const final { return m_data.filtersWithoutConditions.data(); }
@@ -176,11 +171,9 @@ public:
     unsigned topURLFiltersBytecodeLength() const final { return m_data.topURLFilters.size(); }
     bool conditionsApplyOnlyToDomain() const final { return m_data.conditionsApplyOnlyToDomain; }
 
-private:
     InMemoryCompiledContentExtension(CompiledContentExtensionData&& data)
         : m_data(WTFMove(data))
-    {
-    }
+    { }
 
     CompiledContentExtensionData m_data;
 };
@@ -211,7 +204,7 @@ static ResourceLoadInfo subResourceRequest(const char* url, const char* mainDocu
 ContentExtensions::ContentExtensionsBackend makeBackend(const char* json)
 {
     AtomicString::init();
-    auto extension = InMemoryCompiledContentExtension::createFromFilter(json);
+    auto extension = InMemoryCompiledContentExtension::create(json);
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter", WTFMove(extension));
     return backend;
@@ -856,8 +849,8 @@ TEST_F(ContentExtensionTest, TopURL)
 
 TEST_F(ContentExtensionTest, MultipleExtensions)
 {
-    auto extension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");
-    auto extension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]");
+    auto extension1 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}}]");
+    auto extension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}}]");
     ContentExtensions::ContentExtensionsBackend backend;
     backend.addContentExtension("testFilter1", WTFMove(extension1));
     backend.addContentExtension("testFilter2", WTFMove(extension2));
@@ -868,9 +861,9 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     testRequest(backend, mainDocumentRequest("http://webkit.org/block_load/block_cookies.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad }, 2);
     testRequest(backend, mainDocumentRequest("http://webkit.org/block_cookies/block_load.html"), { ContentExtensions::ActionType::BlockCookies, ContentExtensions::ActionType::BlockLoad }, 2);
     
-    auto ignoreExtension1 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}},"
+    auto ignoreExtension1 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"block_load\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore1\"}}]");
-    auto ignoreExtension2 = InMemoryCompiledContentExtension::createFromFilter("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
+    auto ignoreExtension2 = InMemoryCompiledContentExtension::create("[{\"action\":{\"type\":\"block-cookies\"},\"trigger\":{\"url-filter\":\"block_cookies\"}},"
         "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"ignore2\"}}]");
     ContentExtensions::ContentExtensionsBackend backendWithIgnore;
     backendWithIgnore.addContentExtension("testFilter1", WTFMove(ignoreExtension1));
@@ -882,6 +875,121 @@ TEST_F(ContentExtensionTest, MultipleExtensions)
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/ignore2.html"), { ContentExtensions::ActionType::BlockLoad }, 1);
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_cookies/ignore2.html"), { }, 1);
     testRequest(backendWithIgnore, mainDocumentRequest("http://webkit.org/block_load/block_cookies/ignore1/ignore2.html"), { }, 0);
+}
+
+static bool actionsEqual(const std::pair<Vector<WebCore::ContentExtensions::Action>, Vector<String>>& actual, Vector<WebCore::ContentExtensions::Action>&& expected, bool ignorePreviousRules = false)
+{
+    if (ignorePreviousRules) {
+        if (actual.second.size())
+            return false;
+    } else {
+        if (actual.second.size() != 1)
+            return false;
+        if (actual.second[0] != "testFilter")
+            return false;
+    }
+
+    if (actual.first.size() != expected.size())
+        return false;
+    for (size_t i = 0; i < expected.size(); ++i) {
+        if (actual.first[i].type() != expected[i].type())
+            return false;
+        if (actual.first[i].stringArgument() != expected[i].stringArgument())
+            return false;
+    }
+    return true;
+}
+
+static const char* jsonWithStringsToCombine = "["
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"BBB\"},\"trigger\":{\"url-filter\":\"B\"}},"
+    "{\"action\":{\"type\":\"css-display-none\",\"selector\":\"CCC\"},\"trigger\":{\"url-filter\":\"C\"}},"
+    "{\"action\":{\"type\":\"css-display-none\",\"selector\":\"selectorCombinedWithC\"},\"trigger\":{\"url-filter\":\"C\"}},"
+    "{\"action\":{\"type\":\"css-display-none\",\"selector\":\"DDD\"},\"trigger\":{\"url-filter\":\"D\"}},"
+    "{\"action\":{\"type\":\"ignore-previous-rules\"},\"trigger\":{\"url-filter\":\"E\"}},"
+    "{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"F\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"GGG\"},\"trigger\":{\"url-filter\":\"G\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"GGG\"},\"trigger\":{\"url-filter\":\"I\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"J\"}},"
+    "{\"action\":{\"type\":\"notify\",\"notification\":\"GGG\"},\"trigger\":{\"url-filter\":\"K\"}}"
+"]";
+
+TEST_F(ContentExtensionTest, StringParameters)
+{
+    auto backend1 = makeBackend("[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"matches\"}}]");
+    ASSERT_TRUE(actionsEqual(backend1.actionsForResourceLoad(mainDocumentRequest("test:///matches")), {{ ContentExtensions::ActionType::Notify, "testnotification" }}));
+
+    auto backend2 = makeBackend(jsonWithStringsToCombine);
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://A")), {{ ContentExtensions::ActionType::Notify, "AAA" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://B")), {{ ContentExtensions::ActionType::Notify, "BBB" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://C")), {{ ContentExtensions::ActionType::CSSDisplayNoneSelector, "CCC,selectorCombinedWithC" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://D")), {{ ContentExtensions::ActionType::CSSDisplayNoneSelector, "DDD" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://E")), { }, true));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://F")), { ContentExtensions::ActionType::BlockLoad }));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://G")), {{ ContentExtensions::ActionType::Notify, "GGG" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://GIK")), {{ ContentExtensions::ActionType::Notify, "GGG" }}));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://AJ")), {
+        { ContentExtensions::ActionType::Notify, "AAA" },
+        { ContentExtensions::ActionType::Notify, "AAA" } // ignore-previous-rules makes the AAA actions need to be unique.
+    }));
+    // FIXME: Add a test that matches actions with AAA with ignore-previous-rules between them and makes sure we only get one notification.
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://AE")), { }, true));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://ABCDE")), { }, true));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://ABCDEFG")), {
+        { ContentExtensions::ActionType::Notify, "GGG" },
+        { ContentExtensions::ActionType::BlockLoad }
+    }, true));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://FG")), {
+        { ContentExtensions::ActionType::Notify, "GGG" },
+        { ContentExtensions::ActionType::BlockLoad }
+    }));
+    ASSERT_TRUE(actionsEqual(backend2.actionsForResourceLoad(mainDocumentRequest("http://EFG")), {
+        { ContentExtensions::ActionType::Notify, "GGG" },
+        { ContentExtensions::ActionType::BlockLoad }
+    }, true));
+}
+
+template<typename T, size_t cStringLength>
+static int sequenceInstances(const Vector<T> vector, const char (&sequence)[cStringLength])
+{
+    static_assert(sizeof(T) == sizeof(char), "sequenceInstances should only be used for various byte vectors.");
+
+    size_t sequenceLength = cStringLength - 1;
+    size_t instances = 0;
+    for (size_t i = 0; i <= vector.size() - sequenceLength; ++i) {
+        for (size_t j = 0; j < sequenceLength; j++) {
+            if (vector[i + j] != sequence[j])
+                break;
+            if (j == sequenceLength - 1)
+                instances++;
+        }
+    }
+    return instances;
+}
+
+TEST_F(ContentExtensionTest, StringCombining)
+{
+    auto extension = InMemoryCompiledContentExtension::create(jsonWithStringsToCombine);
+    const auto& data = extension->data();
+
+    ASSERT_EQ(sequenceInstances(data.actions, "AAA"), 2);
+    ASSERT_EQ(sequenceInstances(data.actions, "GGG"), 1);
+
+    ASSERT_EQ(data.actions.size(), 78u);
+    ASSERT_EQ(data.filtersWithoutConditions.size(),  313u);
+    ASSERT_EQ(data.filtersWithConditions.size(),  5u);
+    ASSERT_EQ(data.topURLFilters.size(),  5u);
+    ASSERT_FALSE(data.conditionsApplyOnlyToDomain);
+
+    auto extensionWithFlags = InMemoryCompiledContentExtension::create("["
+        "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\"}},"
+        "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"C\"}},"
+        "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\",\"resource-type\":[\"document\"]}},"
+        "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"A\",\"resource-type\":[\"document\",\"font\"]}},"
+        "{\"action\":{\"type\":\"notify\",\"notification\":\"AAA\"},\"trigger\":{\"url-filter\":\"B\",\"resource-type\":[\"document\"]}}"
+    "]");
+    ASSERT_EQ(sequenceInstances(extensionWithFlags->data().actions, "AAA"), 3); // There are 3 sets of unique flags for AAA actions.
 }
 
 TEST_F(ContentExtensionTest, TermsKnownToMatchAnything)
@@ -1376,6 +1484,12 @@ TEST_F(ContentExtensionTest, InvalidJSON)
         ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
     checkCompilerError("[{\"action\":{\"type\":\"block\"},\"trigger\":{\"url-filter\":\"webkit.org\",\"resource-type\":false}}]",
         ContentExtensions::ContentExtensionError::JSONInvalidTriggerFlagsArray);
+    
+    checkCompilerError("[{\"action\":{\"type\":\"notify\"},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":5},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":[]},\"trigger\":{\"url-filter\":\".*\"}}]", ContentExtensions::ContentExtensionError::JSONInvalidNotification);
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"here's my notification\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
+    checkCompilerError("[{\"action\":{\"type\":\"notify\",\"notification\":\"\\u1234\"},\"trigger\":{\"url-filter\":\".*\"}}]", { });
     
     StringBuilder rules;
     rules.append("[");

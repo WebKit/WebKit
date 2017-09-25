@@ -3787,6 +3787,12 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
     m_formClient->willSubmitForm(*this, *frame, *sourceFrame, textFieldValues, m_process->transformHandlesToObjects(userData.object()).get(), listener.get());
 }
 
+void WebPageProxy::contentRuleListNotification(WebCore::URL&& url, Vector<String>&& identifiers, Vector<String>&& notifications)
+{
+    if (m_navigationClient)
+        m_navigationClient->contentRuleListNotification(*this, WTFMove(url), WTFMove(identifiers), WTFMove(notifications));
+}
+    
 void WebPageProxy::didNavigateWithNavigationData(const WebNavigationDataStore& store, uint64_t frameID) 
 {
     PageClientProtector protector(m_pageClient);

@@ -28,6 +28,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CompiledContentExtension.h"
 #include "ContentExtension.h"
 #include "ContentExtensionsDebugging.h"
@@ -38,6 +40,7 @@
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "MainFrame.h"
+#include "Page.h"
 #include "ResourceLoadInfo.h"
 #include "URL.h"
 #include "UserContentController.h"
@@ -170,6 +173,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
     bool willBlockLoad = false;
     bool willBlockCookies = false;
     bool willMakeHTTPS = false;
+    HashSet<std::pair<String, String>> notifications;
     for (const auto& action : actions.first) {
         switch (action.type()) {
         case ContentExtensions::ActionType::BlockLoad:
@@ -183,6 +187,9 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
                 initiatingDocumentLoader.addPendingContentExtensionDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
             else if (currentDocument)
                 currentDocument->extensionStyleSheets().addDisplayNoneSelector(action.extensionIdentifier(), action.stringArgument(), action.actionID());
+            break;
+        case ContentExtensions::ActionType::Notify:
+            notifications.add(std::make_pair(action.extensionIdentifier(), action.stringArgument()));
             break;
         case ContentExtensions::ActionType::MakeHTTPS: {
             if ((url.protocolIs("http") || url.protocolIs("ws"))
@@ -213,7 +220,7 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForLoad(cons
         if (willBlockLoad)
             currentDocument->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, makeString("Content blocker prevented frame displaying ", mainDocumentURL.string(), " from loading a resource from ", url.string()));
     }
-    return { willBlockLoad, willBlockCookies, willMakeHTTPS };
+    return { willBlockLoad, willBlockCookies, willMakeHTTPS, WTFMove(notifications) };
 }
 
 BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(const URL& url, const URL& mainDocumentURL)
@@ -240,13 +247,14 @@ BlockedStatus ContentExtensionsBackend::processContentExtensionRulesForPingLoad(
                 willMakeHTTPS = true;
             break;
         case ContentExtensions::ActionType::CSSDisplayNoneSelector:
+        case ContentExtensions::ActionType::Notify:
             break;
         case ContentExtensions::ActionType::IgnorePreviousRules:
             RELEASE_ASSERT_NOT_REACHED();
         }
     }
 
-    return { willBlockLoad, willBlockCookies, willMakeHTTPS };
+    return { willBlockLoad, willBlockCookies, willMakeHTTPS, { } };
 }
 
 const String& ContentExtensionsBackend::displayNoneCSSRule()
@@ -255,8 +263,11 @@ const String& ContentExtensionsBackend::displayNoneCSSRule()
     return rule;
 }
 
-void applyBlockedStatusToRequest(const BlockedStatus& status, ResourceRequest& request)
+void applyBlockedStatusToRequest(const BlockedStatus& status, Page* page, ResourceRequest& request)
 {
+    if (page && !status.notifications.isEmpty())
+        page->chrome().client().contentRuleListNotification(request.url(), status.notifications);
+
     if (status.blockedCookies)
         request.setAllowCookies(false);
 
