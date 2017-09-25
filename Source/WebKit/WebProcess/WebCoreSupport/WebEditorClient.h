@@ -96,7 +96,6 @@ private:
     void overflowScrollPositionChanged() final;
 
 #if PLATFORM(COCOA)
-    NSString *userVisibleString(NSURL *) final;
     void setInsertionPasteboard(const String& pasteboardName) final;
     NSURL *canonicalizeURL(NSURL *) final;
     NSURL *canonicalizeURLString(NSString *) final;

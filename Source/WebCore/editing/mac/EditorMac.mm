@@ -32,7 +32,6 @@
 #import "DataTransfer.h"
 #import "DocumentFragment.h"
 #import "Editing.h"
-#import "Editor.h"
 #import "EditorClient.h"
 #import "Frame.h"
 #import "FrameView.h"
@@ -50,6 +49,7 @@
 #import "RuntimeEnabledFeatures.h"
 #import "StyleProperties.h"
 #import "WebContentReader.h"
+#import "WebCoreNSURLExtras.h"
 #import "WebNSAttributedStringExtras.h"
 #import "markup.h"
 #import <AppKit/AppKit.h>
@@ -239,11 +239,6 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
     cachedImage = tentativeCachedImage;
 }
 
-String Editor::userVisibleString(const URL& url)
-{
-    return client()->userVisibleString(url);
-}
-
 void Editor::selectionWillChange()
 {
     if (!hasComposition() || ignoreSelectionChanges() || m_frame.selection().isNone())
@@ -255,12 +250,12 @@ void Editor::selectionWillChange()
 
 String Editor::plainTextFromPasteboard(const PasteboardPlainText& text)
 {
-    String string = text.text;
+    auto string = text.text;
 
     // FIXME: It's not clear this is 100% correct since we know -[NSURL URLWithString:] does not handle
     // all the same cases we handle well in the URL code for creating an NSURL.
     if (text.isURL)
-        string = client()->userVisibleString([NSURL URLWithString:string]);
+        string = userVisibleString([NSURL URLWithString:string]);
 
     // FIXME: WTF should offer a non-Mac-specific way to convert string to precomposed form so we can do it for all platforms.
     return [(NSString *)string precomposedStringWithCanonicalMapping];
@@ -279,7 +274,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     pasteboardImage.dataInWebArchiveFormat = imageInWebArchiveFormat(imageElement);
     pasteboardImage.url.url = url;
     pasteboardImage.url.title = title;
-    pasteboardImage.url.userVisibleForm = client()->userVisibleString(pasteboardImage.url.url);
+    pasteboardImage.url.userVisibleForm = userVisibleString(pasteboardImage.url.url);
     pasteboardImage.resourceData = cachedImage->resourceBuffer();
     pasteboardImage.resourceMIMEType = cachedImage->response().mimeType();
 

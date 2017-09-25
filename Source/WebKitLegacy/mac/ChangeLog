@@ -1,3 +1,16 @@
+2017-09-25  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary userVisibleString EditorClient function
+        https://bugs.webkit.org/show_bug.cgi?id=177456
+
+        Reviewed by Dan Bernstein.
+
+        * WebCoreSupport/WebEditorClient.h:
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::userVisibleString): Deleted.
+
+            Remove userVisibleString client function.
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Separate form submission from PolicyChecker infrastructure

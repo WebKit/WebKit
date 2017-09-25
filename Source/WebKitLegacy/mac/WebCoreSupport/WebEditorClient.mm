@@ -418,11 +418,6 @@ void WebEditorClient::getClientPasteboardDataForRange(WebCore::Range*, Vector<St
     // Not implemented WebKit, only WebKit2.
 }
 
-NSString *WebEditorClient::userVisibleString(NSURL *URL)
-{
-    return [URL _web_userVisibleString];
-}
-
 NSURL *WebEditorClient::canonicalizeURL(NSURL *URL)
 {
     return [URL _webkit_canonicalize];

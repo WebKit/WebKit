@@ -48,12 +48,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     notImplemented();
 }
 
-NSString *WebEditorClient::userVisibleString(NSURL *)
-{
-    notImplemented();
-    return nil;
-}
-
 NSURL *WebEditorClient::canonicalizeURL(NSURL *)
 {
     notImplemented();

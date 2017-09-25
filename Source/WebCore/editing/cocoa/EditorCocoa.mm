@@ -49,6 +49,7 @@
 #import "RenderStyle.h"
 #import "Text.h"
 #import "WebContentReader.h"
+#import "WebCoreNSURLExtras.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -224,6 +225,11 @@ void Editor::replaceSelectionWithAttributedString(NSAttributedString *attributed
         if (shouldInsertText(text, selectedRange().get(), EditorInsertAction::Pasted))
             pasteAsPlainText(text, false);
     }
+}
+
+String Editor::userVisibleString(const URL& url)
+{
+    return WebCore::userVisibleString(url);
 }
 
 RefPtr<SharedBuffer> Editor::dataInRTFDFormat(NSAttributedString *string)

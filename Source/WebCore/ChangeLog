@@ -1,3 +1,43 @@
+2017-09-25  Sam Weinig  <sam@webkit.org>
+
+        Remove unnecessary userVisibleString EditorClient function
+        https://bugs.webkit.org/show_bug.cgi?id=177456
+
+        Reviewed by Dan Bernstein.
+
+        The implementation of userVisibleString has been in WebCore for sometime (in WebCoreNSURLExtras)
+        so there is no need to call through the EditorClient, just for it to call back to WebCore.
+
+        * editing/Editor.h:
+
+            Keep userVisibleString helper function but make it static, as it no longer needs
+            any state. It is useful to have this helper, so non-ObjC code in Editor can get a
+            userVisibleString.
+
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::userVisibleString):
+
+            Call through to the WebCoreNSURLExtras implementation.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::plainTextFromPasteboard):
+        (WebCore::Editor::writeImageToPasteboard):
+        (WebCore::Editor::userVisibleString): Deleted.
+        * editing/mac/WebContentReaderMac.mm:
+        (WebCore::WebContentReader::readFilenames):
+
+            Replace client calls with direct calls.
+
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+
+            Remove client function.
+
+        * testing/Internals.mm:
+        (WebCore::Internals::userVisibleString):
+
+            Replace client call with direct call.
+
 2017-09-25  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the build with <attachment> disabled

@@ -57,11 +57,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     if (event->handledByInputMethod())
         event->setDefaultHandled();
 }
-    
-NSString *WebEditorClient::userVisibleString(NSURL *url)
-{
-    return WebCore::userVisibleString(url);
-}
 
 NSURL *WebEditorClient::canonicalizeURL(NSURL *url)
 {

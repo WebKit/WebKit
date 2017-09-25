@@ -217,7 +217,6 @@ private:
     bool performTwoStepDrop(DocumentFragment&, Range&, bool) final { return false; }
 
 #if PLATFORM(COCOA)
-    NSString *userVisibleString(NSURL *) final { return nullptr; }
     void setInsertionPasteboard(const String&) final { };
     NSURL *canonicalizeURL(NSURL *) final { return nullptr; }
     NSURL *canonicalizeURLString(NSString *) final { return nullptr; }

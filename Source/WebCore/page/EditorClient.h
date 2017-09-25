@@ -142,7 +142,6 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    virtual NSString *userVisibleString(NSURL *) = 0;
     virtual void setInsertionPasteboard(const String& pasteboardName) = 0;
     virtual NSURL *canonicalizeURL(NSURL *) = 0;
     virtual NSURL *canonicalizeURLString(NSString *) = 0;

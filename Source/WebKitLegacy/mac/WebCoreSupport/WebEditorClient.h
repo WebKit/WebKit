@@ -79,7 +79,6 @@ private:
     void didWriteSelectionToPasteboard() final;
     void getClientPasteboardDataForRange(WebCore::Range*, Vector<String>& pasteboardTypes, Vector<RefPtr<WebCore::SharedBuffer>>& pasteboardData) final;
 
-    NSString *userVisibleString(NSURL *) final;
     void setInsertionPasteboard(const String&) final;
     NSURL *canonicalizeURL(NSURL *) final;
     NSURL *canonicalizeURLString(NSString *) final;
