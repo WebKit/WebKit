@@ -1,3 +1,21 @@
+2017-09-25  Youenn Fablet  <youenn@apple.com>
+
+        Adding per-platform libwebrtc export files
+        https://bugs.webkit.org/show_bug.cgi?id=177465
+
+        Reviewed by Alex Christensen.
+
+        Using per platform export symbol files for libwebrtc.dylib.
+        This allows exporting platform-specific symbols that are used by libwebrtc unit tests.
+
+        * Configurations/libwebrtc.iOS.exp: Added.
+        * Configurations/libwebrtc.iOSsim.exp: Added.
+        * Configurations/libwebrtc.mac.exp: Added.
+        * Configurations/libwebrtc.exp: Removed.
+        * Configurations/libwebrtc.xcconfig:
+        * libwebrtc.xcodeproj/project.pbxproj: Adding ISAC/fix codec files used for
+        by audio codec unit tests to libwebrtc.dylib. This files will allow us to add support to the ISAC/fix codec.
+
 2017-09-23  Youenn Fablet  <youenn@apple.com>
 
         Export libwebrtc symbols through an export file
