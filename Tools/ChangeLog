@@ -1,3 +1,15 @@
+2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Add High Sierra bots to buildbot and dashboard.
+        https://bugs.webkit.org/show_bug.cgi?id=177437
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add High Sierra queues, move Leaks and JSC queues over from Sierra.
+        * BuildSlaveSupport/build.webkit.org-config/mastercfg_unittest.py: Update expected results.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/dashboard/Scripts/WebKitBuildbot.js: Add High Sierra.
+        (WebKitBuildbot):
+
 2017-09-25  Chris Dumez  <cdumez@apple.com>
 
         [WK2] Add API to query if a download was user-initiated
