@@ -61,7 +61,7 @@
 
     // Abort the current segment append sequence.
     [MayThrowException] void abort();
-    [MayThrowException] void remove(unrestricted double start, unrestricted double end);
+    [MayThrowException] void remove(double start, unrestricted double end);
 
     attribute EventHandler onupdatestart;
     attribute EventHandler onupdate;

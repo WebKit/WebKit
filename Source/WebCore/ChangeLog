@@ -1,3 +1,18 @@
+2017-09-25  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
+
+        Align Media Source Extension IDL with spec
+        https://bugs.webkit.org/show_bug.cgi?id=177369
+
+        Reviewed by Sam Weinig.
+
+        Align IDL as per specification:
+         - https://www.w3.org/TR/media-source/
+
+        * Modules/mediasource/AudioTrackMediaSource.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/mediasource/TextTrackMediaSource.idl:
+        * Modules/mediasource/VideoTrackMediaSource.idl:
+
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] Small refactoring adding RenderGrid::contentAlignment()
