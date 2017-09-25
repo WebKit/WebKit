@@ -48,18 +48,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
     notImplemented();
 }
 
-NSURL *WebEditorClient::canonicalizeURL(NSURL *)
-{
-    notImplemented();
-    return nil;
-}
-
-NSURL *WebEditorClient::canonicalizeURLString(NSString *)
-{
-    notImplemented();
-    return nil;
-}
-
 void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.
@@ -74,23 +62,6 @@ void WebEditorClient::startDelayingAndCoalescingContentChangeNotifications()
 void WebEditorClient::stopDelayingAndCoalescingContentChangeNotifications()
 {
     notImplemented();
-}
-
-void WebEditorClient::writeDataToPasteboard(NSDictionary*)
-{
-    notImplemented();
-}
-
-NSArray* WebEditorClient::supportedPasteboardTypesForCurrentSelection()
-{
-    notImplemented();
-    return 0;
-}
-
-NSArray* WebEditorClient::readDataFromPasteboard(NSString*, int)
-{
-    notImplemented();
-    return 0;
 }
 
 bool WebEditorClient::hasRichlyEditableSelection()
@@ -114,12 +85,6 @@ bool WebEditorClient::performsTwoStepPaste(WebCore::DocumentFragment*)
 {
     notImplemented();
     return false;
-}
-
-int WebEditorClient::pasteboardChangeCount()
-{
-    notImplemented();
-    return 0;
 }
 
 void WebEditorClient::overflowScrollPositionChanged()

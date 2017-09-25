@@ -58,19 +58,6 @@ void WebEditorClient::handleInputMethodKeydown(KeyboardEvent* event)
         event->setDefaultHandled();
 }
 
-NSURL *WebEditorClient::canonicalizeURL(NSURL *url)
-{
-    return URLByCanonicalizingURL(url);
-}
-
-NSURL *WebEditorClient::canonicalizeURLString(NSString *URLString)
-{
-    NSURL *URL = nil;
-    if (looksLikeAbsoluteURL(URLString))
-        URL = URLByCanonicalizingURL(URLWithUserTypedString(URLString, nil));
-    return URL;
-}
-
 void WebEditorClient::setInsertionPasteboard(const String&)
 {
     // This is used only by Mail, no need to implement it now.

@@ -33,33 +33,18 @@
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
-#if PLATFORM(COCOA)
-OBJC_CLASS NSString;
-OBJC_CLASS NSURL;
-#endif
-
-#if PLATFORM(IOS)
-OBJC_CLASS NSArray;
-OBJC_CLASS NSDictionary;
-#endif
-
 namespace WebCore {
 
-class ArchiveResource;
 class DocumentFragment;
-class Editor;
 class Element;
 class Frame;
-class HTMLElement;
 class KeyboardEvent;
-class LayoutRect;
 class Node;
 class Range;
 class SharedBuffer;
 class StyleProperties;
 class TextCheckerClient;
 class VisibleSelection;
-class VisiblePosition;
 
 struct GapRects;
 struct GrammarDetail;
@@ -131,20 +116,14 @@ public:
 #if PLATFORM(IOS)
     virtual void startDelayingAndCoalescingContentChangeNotifications() = 0;
     virtual void stopDelayingAndCoalescingContentChangeNotifications() = 0;
-    virtual void writeDataToPasteboard(NSDictionary*) = 0;
-    virtual NSArray* supportedPasteboardTypesForCurrentSelection() = 0;
-    virtual NSArray* readDataFromPasteboard(NSString* type, int index) = 0;
     virtual bool hasRichlyEditableSelection() = 0;
     virtual int getPasteboardItemsCount() = 0;
     virtual RefPtr<DocumentFragment> documentFragmentFromDelegate(int index) = 0;
     virtual bool performsTwoStepPaste(DocumentFragment*) = 0;
-    virtual int pasteboardChangeCount() = 0;
 #endif
 
 #if PLATFORM(COCOA)
     virtual void setInsertionPasteboard(const String& pasteboardName) = 0;
-    virtual NSURL *canonicalizeURL(NSURL *) = 0;
-    virtual NSURL *canonicalizeURLString(NSString *) = 0;
 #endif
 
 #if USE(APPKIT)

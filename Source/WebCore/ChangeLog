@@ -1,3 +1,15 @@
+2017-09-25  Sam Weinig  <sam@webkit.org>
+
+        Remove unused EditorClient functions
+        https://bugs.webkit.org/show_bug.cgi?id=177463
+
+        Reviewed by Alex Christensen.
+
+        Remove unused EditorClient functions.
+
+        * loader/EmptyClients.cpp:
+        * page/EditorClient.h:
+
 2017-09-25  Per Arne Vollan  <pvollan@apple.com>
 
         Crash in WebCore::TreeScope::documentScope
