@@ -1,5 +1,55 @@
 2017-09-25  Chris Dumez  <cdumez@apple.com>
 
+        [WK2] Add API to query if a download was user-initiated
+        https://bugs.webkit.org/show_bug.cgi?id=177435
+        <rdar://problem/34498422>
+
+        Reviewed by Alex Christensen.
+
+        Add C and Cocoa private API to query if a download was user-initiated.
+
+        For clarity, we now construct navigation object for subframe loads
+        as well (we used to do so only for main frame loads). This allows us
+        to store the user-intiated flag and the redirect chain on the navigation
+        object instead of the WebFrameProxy.
+
+        * UIProcess/API/APINavigation.cpp:
+        (API::Navigation::Navigation):
+        (API::Navigation::appendRedirectionURL):
+        * UIProcess/API/APINavigation.h:
+        (API::Navigation::takeRedirectChain):
+        (API::Navigation::setWasUserInitiated):
+        (API::Navigation::wasUserInitiated const):
+        * UIProcess/API/C/WKDownload.cpp:
+        (WKDownloadGetWasUserInitiated):
+        * UIProcess/API/C/WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.h:
+        * UIProcess/API/Cocoa/_WKDownload.mm:
+        (-[_WKDownload wasUserInitiated]):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (WebKit::DownloadProxy::setWasUserInitiated):
+        (WebKit::DownloadProxy::wasUserInitiated const):
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+        (WebKit::WebFrameProxy::didReceiveServerRedirectForProvisionalLoad):
+        (WebKit::WebFrameProxy::didFailProvisionalLoad):
+        (WebKit::WebFrameProxy::didFinishLoad):
+        (WebKit::WebFrameProxy::didFailLoad):
+        * UIProcess/WebFrameProxy.h:
+        (WebKit::WebFrameProxy::title const):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::didReceiveServerRedirectForProvisionalLoadForFrame):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponse):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+
+2017-09-25  Chris Dumez  <cdumez@apple.com>
+
         Make StoredCredentials an enum class and rename its header
         https://bugs.webkit.org/show_bug.cgi?id=177455
 

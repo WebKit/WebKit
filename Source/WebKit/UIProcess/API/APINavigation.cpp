@@ -39,10 +39,17 @@ Navigation::Navigation(WebKit::WebNavigationState& state, WebCore::ResourceReque
     : m_navigationID(state.generateNavigationID())
     , m_request(WTFMove(request))
 {
+    m_redirectChain.append(m_request.url());
 }
 
 Navigation::~Navigation()
 {
+}
+
+void Navigation::appendRedirectionURL(const WebCore::URL& url)
+{
+    if (m_redirectChain.isEmpty() || m_redirectChain.last() != url)
+        m_redirectChain.append(url);
 }
 
 } // namespace WebKit

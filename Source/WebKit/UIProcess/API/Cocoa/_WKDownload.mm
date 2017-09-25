@@ -69,6 +69,11 @@
     return nsURLs;
 }
 
+- (BOOL)wasUserInitiated
+{
+    return _download->wasUserInitiated();
+}
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
