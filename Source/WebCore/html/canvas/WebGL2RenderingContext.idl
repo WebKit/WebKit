@@ -337,7 +337,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     const GLenum TEXTURE_IMMUTABLE_LEVELS                      = 0x82DF;
     const GLenum VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE             = 0x88FE;
 
-    const GLuint64 TIMEOUT_IGNORED                             = 0xFFFFFFFFFFFFFFFF;
+    const GLint64 TIMEOUT_IGNORED                              = -1;
 
     /* Buffer objects */
     void bufferData(GLenum target, ArrayBufferView data, GLenum usage, GLuint srcOffset, optional GLuint length = 0);
@@ -432,7 +432,7 @@ typedef (ImageData or HTMLImageElement or HTMLCanvasElement or HTMLVideoElement)
     GLboolean isSync(WebGLSync? sync);
     void deleteSync(WebGLSync? sync);
     GLenum clientWaitSync(WebGLSync sync, GLbitfield flags, GLuint64 timeout);
-    void waitSync(WebGLSync sync, GLbitfield flags, GLuint64 timeout);
+    void waitSync(WebGLSync sync, GLbitfield flags, GLint64 timeout);
     [OverrideIDLType=IDLWebGLAny] any getSyncParameter(WebGLSync sync, GLenum pname);
 
     /* Transform Feedback */

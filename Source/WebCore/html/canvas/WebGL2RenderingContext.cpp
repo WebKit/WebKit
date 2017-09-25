@@ -838,7 +838,7 @@ GC3Denum WebGL2RenderingContext::clientWaitSync(WebGLSync&, GC3Dbitfield, GC3Dui
     return 0;
 }
 
-void WebGL2RenderingContext::waitSync(WebGLSync&, GC3Dbitfield, GC3Duint64)
+void WebGL2RenderingContext::waitSync(WebGLSync&, GC3Dbitfield, GC3Dint64)
 {
 }
 

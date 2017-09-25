@@ -1,3 +1,15 @@
+2017-09-25  Ms2ger  <Ms2ger@igalia.com>
+
+        Update waitSync and the TIMEOUT_IGNORED constant to use signed integers.
+        https://bugs.webkit.org/show_bug.cgi?id=177239
+
+        Reviewed by Žan Doberšek.
+
+        This matches the specification.
+
+        * fast/canvas/webgl/webgl2/constants-expected.txt: Added.
+        * fast/canvas/webgl/webgl2/constants.html: Added.
+
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] fit-content() tracks shouldn't stretch

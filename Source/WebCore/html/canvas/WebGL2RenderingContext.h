@@ -138,7 +138,7 @@ public:
     GC3Dboolean isSync(WebGLSync*);
     void deleteSync(WebGLSync*);
     GC3Denum clientWaitSync(WebGLSync&, GC3Dbitfield flags, GC3Duint64 timeout);
-    void waitSync(WebGLSync&, GC3Dbitfield flags, GC3Duint64 timeout);
+    void waitSync(WebGLSync&, GC3Dbitfield flags, GC3Dint64 timeout);
     WebGLAny getSyncParameter(WebGLSync&, GC3Denum pname);
     
     // Transform feedback

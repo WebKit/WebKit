@@ -1,3 +1,19 @@
+2017-09-25  Ms2ger  <Ms2ger@igalia.com>
+
+        Update waitSync and the TIMEOUT_IGNORED constant to use signed integers.
+        https://bugs.webkit.org/show_bug.cgi?id=177239
+
+        Reviewed by Žan Doberšek.
+
+        This matches the specification.
+
+        Test: fast/canvas/webgl/webgl2/constants.html
+
+        * html/canvas/WebGL2RenderingContext.cpp:
+        (WebCore::WebGL2RenderingContext::waitSync):
+        * html/canvas/WebGL2RenderingContext.h:
+        * html/canvas/WebGL2RenderingContext.idl:
+
 2017-09-25  Nael Ouedraogo  <nael.ouedraogo@crf.canon.fr>
 
         Align Media Source Extension IDL with spec
