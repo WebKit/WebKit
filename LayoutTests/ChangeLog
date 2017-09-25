@@ -1,5 +1,14 @@
 2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
+        Mark http/tests/cache-storage/cache-representation.https.html as flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=177438
+
+        Unreviewed test gardening.
+
+        * platform/ios/TestExpectations:
+
+2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
         Update TestExpectations for WPT LayoutTests that crash.
 
         Unreviewed test gardening.

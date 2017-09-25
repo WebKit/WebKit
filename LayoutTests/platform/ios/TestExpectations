@@ -2936,3 +2936,5 @@ webkit.org/b/177366 http/tests/security/frameNavigation/sandbox-ALLOWED-top-navi
 webkit.org/b/177395 fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass Failure ]
 
 webkit.org/b/177401 webrtc/captureCanvas-webrtc.html [ Pass Timeout Failure ]
+
+webkit.org/b/177438 http/tests/cache-storage/cache-representation.https.html [ Pass Failure ]
