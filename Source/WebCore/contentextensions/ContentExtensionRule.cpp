@@ -66,7 +66,6 @@ Action Action::deserialize(const SerializedActionByte* actions, const uint32_t a
     case ActionType::MakeHTTPS:
         return Action(actionType, location);
     case ActionType::CSSDisplayNoneSelector:
-    case ActionType::Notify:
         return Action(actionType, deserializeString(actions, actionsLength, location + sizeof(ActionType)), location);
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -79,7 +78,6 @@ ActionType Action::deserializeType(const SerializedActionByte* actions, const ui
     switch (type) {
     case ActionType::BlockCookies:
     case ActionType::BlockLoad:
-    case ActionType::Notify:
     case ActionType::IgnorePreviousRules:
     case ActionType::CSSDisplayNoneSelector:
     case ActionType::MakeHTTPS:
@@ -97,7 +95,6 @@ uint32_t Action::serializedLength(const SerializedActionByte* actions, const uin
     case ActionType::IgnorePreviousRules:
     case ActionType::MakeHTTPS:
         return sizeof(ActionType);
-    case ActionType::Notify:
     case ActionType::CSSDisplayNoneSelector: {
         uint32_t prefixLength = sizeof(ActionType) + sizeof(uint32_t) + sizeof(bool);
         uint32_t stringStartIndex = location + prefixLength;

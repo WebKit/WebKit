@@ -102,7 +102,7 @@ template<> struct ClientTraits<WKPageLoaderClientBase> {
 };
 
 template<> struct ClientTraits<WKPageNavigationClientBase> {
-    typedef std::tuple<WKPageNavigationClientV0, WKPageNavigationClientV1, WKPageNavigationClientV2> Versions;
+    typedef std::tuple<WKPageNavigationClientV0, WKPageNavigationClientV1> Versions;
 };
 
 template<> struct ClientTraits<WKPagePolicyClientBase> {
@@ -2295,21 +2295,6 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
             m_client.didRemoveNavigationGestureSnapshot(toAPI(&page), m_client.base.clientInfo);
         }
         
-        void contentRuleListNotification(WebPageProxy& page, URL&& url, Vector<String>&& listIdentifiers, Vector<String>&& notifications) final
-        {
-            if (!m_client.contentRuleListNotification)
-                return;
-
-            Vector<RefPtr<API::Object>> apiListIdentifiers;
-            for (const auto& identifier : listIdentifiers)
-                apiListIdentifiers.append(API::String::create(identifier));
-
-            Vector<RefPtr<API::Object>> apiNotifications;
-            for (const auto& notification : notifications)
-                apiNotifications.append(API::String::create(notification));
-
-            m_client.contentRuleListNotification(toAPI(&page), toURLRef(url.string().impl()), toAPI(API::Array::create(WTFMove(apiListIdentifiers)).ptr()), toAPI(API::Array::create(WTFMove(apiNotifications)).ptr()), m_client.base.clientInfo);
-        }
 #if ENABLE(NETSCAPE_PLUGIN_API)
         PluginModuleLoadPolicy decidePolicyForPluginLoad(WebPageProxy& page, PluginModuleLoadPolicy currentPluginLoadPolicy, API::Dictionary* pluginInformation, String& unavailabilityDescription) override
         {

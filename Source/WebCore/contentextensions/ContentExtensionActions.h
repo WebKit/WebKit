@@ -27,12 +27,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-#include <wtf/HashSet.h>
-#include <wtf/text/WTFString.h>
-
 namespace WebCore {
 
-class Page;
 class ResourceRequest;
 
 namespace ContentExtensions {
@@ -43,35 +39,17 @@ enum class ActionType : uint8_t {
     BlockLoad,
     BlockCookies,
     CSSDisplayNoneSelector,
-    Notify,
-    IgnorePreviousRules,
-    MakeHTTPS,
+    IgnorePreviousRules = 3,
+    MakeHTTPS = 4,
 };
-
-static inline bool hasStringArgument(ActionType actionType)
-{
-    switch (actionType) {
-    case ActionType::CSSDisplayNoneSelector:
-    case ActionType::Notify:
-        return true;
-    case ActionType::BlockLoad:
-    case ActionType::BlockCookies:
-    case ActionType::IgnorePreviousRules:
-    case ActionType::MakeHTTPS:
-        return false;
-    }
-    ASSERT_NOT_REACHED();
-    return false;
-}
 
 struct BlockedStatus {
     bool blockedLoad { false };
     bool blockedCookies { false };
     bool madeHTTPS { false };
-    HashSet<std::pair<String, String>> notifications;
 };
 
-WEBCORE_EXPORT void applyBlockedStatusToRequest(const BlockedStatus&, Page*, ResourceRequest&);
+WEBCORE_EXPORT void applyBlockedStatusToRequest(const BlockedStatus&, ResourceRequest&);
 
 } // namespace ContentExtensions
 

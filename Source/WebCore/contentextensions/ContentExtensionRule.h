@@ -135,14 +135,14 @@ struct Action {
         , m_actionID(actionID)
         , m_stringArgument(stringArgument)
     {
-        ASSERT(hasStringArgument(type));
+        ASSERT(type == ActionType::CSSDisplayNoneSelector);
     }
 
     Action(ActionType type, uint32_t actionID = std::numeric_limits<uint32_t>::max())
         : m_type(type)
         , m_actionID(actionID)
     {
-        ASSERT(!hasStringArgument(type));
+        ASSERT(type != ActionType::CSSDisplayNoneSelector);
     }
 
     bool operator==(const Action& other) const

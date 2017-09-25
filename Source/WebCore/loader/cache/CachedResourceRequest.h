@@ -76,7 +76,7 @@ public:
     void updateAccordingCacheMode();
     void removeFragmentIdentifierIfNeeded();
 #if ENABLE(CONTENT_EXTENSIONS)
-    void applyBlockedStatus(const ContentExtensions::BlockedStatus&, Page*);
+    void applyBlockedStatus(const ContentExtensions::BlockedStatus&);
 #endif
     void setDomainForCachePartition(Document&);
     void setDomainForCachePartition(const String&);

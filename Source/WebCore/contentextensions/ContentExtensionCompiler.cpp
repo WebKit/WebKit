@@ -68,41 +68,48 @@ static void serializeString(Vector<SerializedActionByte>& actions, const String&
     }
 }
 
-// css-display-none combining is special because we combine the string arguments with commas because we know they are css selectors.
 struct PendingDisplayNoneActions {
-    StringBuilder combinedSelectors;
-    Vector<uint32_t> clientLocations;
+    Vector<String> selectors;
+    Vector<unsigned> clientLocations;
 };
-
 using PendingDisplayNoneActionsMap = HashMap<Trigger, PendingDisplayNoneActions, TriggerHash, TriggerHashTraits>;
 
-static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<uint32_t>& actionLocations, PendingDisplayNoneActionsMap& map)
+static void resolvePendingDisplayNoneActions(Vector<SerializedActionByte>& actions, Vector<unsigned>& actionLocations, PendingDisplayNoneActionsMap& pendingDisplayNoneActionsMap)
 {
-    for (auto& pendingDisplayNoneActions : map.values()) {
-        uint32_t actionLocation = actions.size();
+    for (auto& slot : pendingDisplayNoneActionsMap) {
+        PendingDisplayNoneActions& pendingActions = slot.value;
+
+        StringBuilder combinedSelectors;
+        for (unsigned i = 0; i < pendingActions.selectors.size(); ++i) {
+            if (i)
+                combinedSelectors.append(',');
+            combinedSelectors.append(pendingActions.selectors[i]);
+        }
+
+        unsigned actionLocation = actions.size();
         actions.append(static_cast<SerializedActionByte>(ActionType::CSSDisplayNoneSelector));
-        serializeString(actions, pendingDisplayNoneActions.combinedSelectors.toString());
-        for (uint32_t clientLocation : pendingDisplayNoneActions.clientLocations)
+        serializeString(actions, combinedSelectors.toString());
+        for (unsigned clientLocation : pendingActions.clientLocations)
             actionLocations[clientLocation] = actionLocation;
     }
-    map.clear();
+    pendingDisplayNoneActionsMap.clear();
 }
 
 static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& ruleList, Vector<SerializedActionByte>& actions)
 {
     ASSERT(!actions.size());
 
-    Vector<uint32_t> actionLocations;
+    Vector<unsigned> actionLocations;
 
+    // Order only matters because of IgnorePreviousRules. All other identical actions can be combined between each IgnorePreviousRules
+    // and CSSDisplayNone strings can be combined if their triggers are identical.
     using ActionLocation = uint32_t;
     using ActionMap = HashMap<ResourceFlags, ActionLocation, DefaultHash<ResourceFlags>::Hash, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>;
-    using StringActionMap = HashMap<std::pair<String, ResourceFlags>, ActionLocation, DefaultHash<std::pair<String, ResourceFlags>>::Hash, PairHashTraits<HashTraits<String>, WTF::UnsignedWithZeroKeyHashTraits<ResourceFlags>>>;
     ActionMap blockLoadActionsMap;
     ActionMap blockCookiesActionsMap;
     PendingDisplayNoneActionsMap cssDisplayNoneActionsMap;
     ActionMap ignorePreviousRuleActionsMap;
     ActionMap makeHTTPSActionsMap;
-    StringActionMap notifyActionsMap;
 
     for (unsigned ruleIndex = 0; ruleIndex < ruleList.size(); ++ruleIndex) {
         const ContentExtensionRule& rule = ruleList[ruleIndex];
@@ -115,7 +122,6 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             blockCookiesActionsMap.clear();
             cssDisplayNoneActionsMap.clear();
             makeHTTPSActionsMap.clear();
-            notifyActionsMap.clear();
         } else
             ignorePreviousRuleActionsMap.clear();
 
@@ -125,17 +131,16 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             actionLocations.append(actions.size());
 
             actions.append(static_cast<SerializedActionByte>(actionType));
-            if (hasStringArgument(actionType))
+            if (actionType == ActionType::CSSDisplayNoneSelector)
                 serializeString(actions, rule.action().stringArgument());
-            else
-                ASSERT(rule.action().stringArgument().isNull());
             continue;
         }
 
         ResourceFlags flags = rule.trigger().flags;
         unsigned actionLocation = std::numeric_limits<unsigned>::max();
         
-        auto findOrMakeActionLocation = [&] (ActionMap& map) {
+        auto findOrMakeActionLocation = [&] (ActionMap& map) 
+        {
             const auto existingAction = map.find(flags);
             if (existingAction == map.end()) {
                 actionLocation = actions.size();
@@ -144,27 +149,13 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             } else
                 actionLocation = existingAction->value;
         };
-        
-        auto findOrMakeStringActionLocation = [&] (StringActionMap& map) {
-            const String& argument = rule.action().stringArgument();
-            auto existingAction = map.find(std::make_pair(argument, flags));
-            if (existingAction == map.end()) {
-                actionLocation = actions.size();
-                actions.append(static_cast<SerializedActionByte>(actionType));
-                serializeString(actions, argument);
-                map.set(std::make_pair(argument, flags), actionLocation);
-            } else
-                actionLocation = existingAction->value;
-        };
 
         switch (actionType) {
         case ActionType::CSSDisplayNoneSelector: {
             const auto addResult = cssDisplayNoneActionsMap.add(rule.trigger(), PendingDisplayNoneActions());
-            auto& pendingStringActions = addResult.iterator->value;
-            if (!pendingStringActions.combinedSelectors.isEmpty())
-                pendingStringActions.combinedSelectors.append(',');
-            pendingStringActions.combinedSelectors.append(rule.action().stringArgument());
-            pendingStringActions.clientLocations.append(actionLocations.size());
+            PendingDisplayNoneActions& pendingDisplayNoneActions = addResult.iterator->value;
+            pendingDisplayNoneActions.selectors.append(rule.action().stringArgument());
+            pendingDisplayNoneActions.clientLocations.append(actionLocations.size());
 
             actionLocation = std::numeric_limits<unsigned>::max();
             break;
@@ -180,9 +171,6 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
             break;
         case ActionType::MakeHTTPS:
             findOrMakeActionLocation(makeHTTPSActionsMap);
-            break;
-        case ActionType::Notify:
-            findOrMakeStringActionLocation(notifyActionsMap);
             break;
         }
 

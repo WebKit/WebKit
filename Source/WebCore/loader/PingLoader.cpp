@@ -75,7 +75,7 @@ static bool processContentExtensionRulesForLoad(const Frame& frame, ResourceRequ
     if (!page)
         return false;
     auto status = page->userContentProvider().processContentExtensionRulesForLoad(request.url(), resourceType, *documentLoader);
-    applyBlockedStatusToRequest(status, page, request);
+    applyBlockedStatusToRequest(status, request);
     return status.blockedLoad;
 }
 
