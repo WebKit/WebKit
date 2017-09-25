@@ -194,7 +194,7 @@ bool InbandTextTrackPrivateAVCF::readNativeSampleBuffer(CFArrayRef nativeSamples
     if (!sampleBuffer)
         return false;
 
-    duration = toMediaTime(sampleBuffer->duration);
+    duration = PAL::toMediaTime(sampleBuffer->duration);
     formatDescription = sampleBuffer->formatDescription;
 
     size_t bufferLength = CFDataGetLength(sampleBuffer->buffer);
