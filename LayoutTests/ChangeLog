@@ -1,3 +1,17 @@
+2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [css-grid] fit-content() tracks shouldn't stretch
+        https://bugs.webkit.org/show_bug.cgi?id=177300
+
+        Reviewed by Sergio Villar Senin.
+
+        Added new case to an existent test and also modified
+        the expected result in another one.
+
+        * fast/css-grid-layout/grid-content-alignment-stretch-only-valid-for-auto-sized-tracks-expected.txt:
+        * fast/css-grid-layout/grid-content-alignment-stretch-only-valid-for-auto-sized-tracks.html:
+        * fast/css-grid-layout/grid-intrinsic-maximums-expected.html:
+
 2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Object attributes are missing for ARIA live region roles
