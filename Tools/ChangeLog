@@ -1,5 +1,17 @@
 2017-09-25  Per Arne Vollan  <pvollan@apple.com>
 
+        [Win] run-api-tests is failing.
+        https://bugs.webkit.org/show_bug.cgi?id=177454
+
+        Reviewed by Brent Fulgham.
+
+        TestWebKit.exe has changed name to TestWebKitLegacy.exe.
+
+        * Scripts/run-api-tests:
+        (testToolPaths):
+
+2017-09-25  Per Arne Vollan  <pvollan@apple.com>
+
         [Win] Cygwin 64-bit EWS process cannot find Visual Studio installation.
         https://bugs.webkit.org/show_bug.cgi?id=177244
 

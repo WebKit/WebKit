@@ -419,7 +419,7 @@ sub testToolPaths()
     my $binDir = isWin64() ? "bin64" : "bin32";
     my $pathWTF = File::Spec->catfile(productDir(), $binDir, "TestWTF");
     my $pathWebCore = File::Spec->catfile(productDir(), $binDir, "TestWebCore");
-    my $pathWebKit = File::Spec->catfile(productDir(), $binDir, "TestWebKit");
+    my $pathWebKit = File::Spec->catfile(productDir(), $binDir, "TestWebKitLegacy");
 
     my $suffix;
     if (configuration() eq "Debug_All") {
