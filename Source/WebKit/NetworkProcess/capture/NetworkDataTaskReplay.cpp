@@ -46,7 +46,7 @@ namespace NetworkCapture {
 static const char* const webKitRelayDomain = "WebKitReplay";
 
 NetworkDataTaskReplay::NetworkDataTaskReplay(NetworkSession& session, NetworkDataTaskClient& client, const NetworkLoadParameters& parameters, Resource* resource)
-    : NetworkDataTask(session, client, parameters.request, parameters.allowStoredCredentials, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
+    : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_currentRequest(m_firstRequest)
     , m_resource(resource)
 {

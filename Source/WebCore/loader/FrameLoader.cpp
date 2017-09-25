@@ -2755,7 +2755,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
     }
 }
 
-unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
+unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, RefPtr<SharedBuffer>& data)
 {
     ASSERT(m_frame.document());
     String referrer = SecurityPolicy::generateReferrerHeader(m_frame.document()->referrerPolicy(), request.url(), outgoingReferrer());
@@ -2799,7 +2799,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
         if (!documentLoader()->applicationCacheHost().maybeLoadSynchronously(newRequest, error, response, data)) {
             Vector<char> buffer;
-            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentials, clientCredentialPolicy, error, response, buffer);
+            platformStrategies()->loaderStrategy()->loadResourceSynchronously(networkingContext(), identifier, newRequest, storedCredentialsPolicy, clientCredentialPolicy, error, response, buffer);
             data = SharedBuffer::create(WTFMove(buffer));
             documentLoader()->applicationCacheHost().maybeLoadFallbackSynchronously(newRequest, error, response, data);
             ResourceLoadObserver::shared().logSubresourceLoading(&m_frame, newRequest, response);

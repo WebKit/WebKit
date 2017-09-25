@@ -53,7 +53,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& frameID, con
 
     NetworkLoadParameters parameters;
     parameters.sessionID = PAL::SessionID::defaultSessionID();
-    parameters.allowStoredCredentials = AllowStoredCredentials;
+    parameters.storedCredentialsPolicy = StoredCredentialsPolicy::Use;
     parameters.contentSniffingPolicy = DoNotSniffContent;
     parameters.request = m_originalRequest;
 #if USE(NETWORK_SESSION)

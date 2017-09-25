@@ -71,7 +71,7 @@ void IconLoader::startLoading()
     auto resourceRequestURL = resourceRequest.url();
 #endif
 
-    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
+    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::DoNotUse, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
 
     request.setInitiator(cachedResourceRequestInitiators().icon);
 

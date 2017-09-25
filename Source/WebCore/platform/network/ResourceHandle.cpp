@@ -130,14 +130,14 @@ void ResourceHandle::failureTimerFired()
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (auto constructor = builtinResourceHandleSynchronousLoaderMap().get(request.url().protocol().toStringWithoutCopying())) {
-        constructor(context, request, storedCredentials, error, response, data);
+        constructor(context, request, storedCredentialsPolicy, error, response, data);
         return;
     }
 
-    platformLoadResourceSynchronously(context, request, storedCredentials, error, response, data);
+    platformLoadResourceSynchronously(context, request, storedCredentialsPolicy, error, response, data);
 }
 
 ResourceHandleClient* ResourceHandle::client() const

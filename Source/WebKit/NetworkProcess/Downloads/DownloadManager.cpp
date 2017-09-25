@@ -58,7 +58,7 @@ void DownloadManager::startDownload(NetworkConnectionToWebProcess* connection, P
     parameters.clientCredentialPolicy = ClientCredentialPolicy::MayAskClientForCredentials;
     if (request.url().protocolIsBlob() && connection)
         parameters.blobFileReferences = NetworkBlobRegistry::singleton().filesInBlob(*connection, request.url());
-    parameters.allowStoredCredentials = sessionID.isEphemeral() ? DoNotAllowStoredCredentials : AllowStoredCredentials;
+    parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
     m_pendingDownloads.add(downloadID, std::make_unique<PendingDownload>(WTFMove(parameters), downloadID, *networkSession, suggestedName));
 #else

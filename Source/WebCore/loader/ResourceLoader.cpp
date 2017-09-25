@@ -673,7 +673,7 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
 
 bool ResourceLoader::shouldUseCredentialStorage()
 {
-    if (m_options.allowCredentials == DoNotAllowStoredCredentials)
+    if (m_options.storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return false;
 
     Ref<ResourceLoader> protectedThis(*this);
@@ -695,7 +695,7 @@ void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChall
     // anything including possibly derefing this; one example of this is Radar 3266216.
     Ref<ResourceLoader> protectedThis(*this);
 
-    if (m_options.allowCredentials == AllowStoredCredentials) {
+    if (m_options.storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         if (isAllowedToAskUserForCredentials()) {
             frameLoader()->notifier().didReceiveAuthenticationChallenge(this, challenge);
             return;

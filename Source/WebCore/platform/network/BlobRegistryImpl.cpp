@@ -58,7 +58,7 @@ static Ref<ResourceHandle> createBlobResourceHandle(const ResourceRequest& reque
     return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
 }
 
-static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+static void loadBlobResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     BlobData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);

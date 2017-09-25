@@ -50,7 +50,7 @@ public:
     WebResourceLoadScheduler();
 
     RefPtr<WebCore::SubresourceLoader> loadResource(WebCore::Frame&, WebCore::CachedResource&, const WebCore::ResourceRequest&, const WebCore::ResourceLoaderOptions&) final;
-    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) final;
+    void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ClientCredentialPolicy, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>&) final;
     void remove(WebCore::ResourceLoader*) final;
     void setDefersLoading(WebCore::ResourceLoader*, bool) final;
     void crossOriginRedirectReceived(WebCore::ResourceLoader*, const WebCore::URL& redirectURL) final;

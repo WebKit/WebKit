@@ -78,7 +78,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.sendLoadCallbacks = this->sendLoadCallbacks;
     copy.sniffContent = this->sniffContent;
     copy.dataBufferingPolicy = this->dataBufferingPolicy;
-    copy.allowCredentials = this->allowCredentials;
+    copy.storedCredentialsPolicy = this->storedCredentialsPolicy;
     copy.securityCheck = this->securityCheck;
     copy.certificateInfoPolicy = this->certificateInfoPolicy;
     copy.contentSecurityPolicyImposition = this->contentSecurityPolicyImposition;

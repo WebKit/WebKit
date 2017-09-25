@@ -389,14 +389,14 @@ CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
     return CFSTR("WebCoreSynchronousLoaderRunLoopMode");
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%@ allowStoredCredentials:%u", request.nsURLRequest(DoNotUpdateHTTPBody), storedCredentials);
+    LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%@ storedCredentialsPolicy:%u", request.nsURLRequest(DoNotUpdateHTTPBody), static_cast<unsigned>(storedCredentialsPolicy));
 
     ASSERT(!request.isEmpty());
     
     SynchronousLoaderClient client;
-    client.setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
+    client.setAllowStoredCredentials(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false /*defersLoading*/, true /*shouldContentSniff*/));
 
@@ -407,7 +407,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         return;
     }
 
-    bool shouldUseCredentialStorage = storedCredentials == AllowStoredCredentials;
+    bool shouldUseCredentialStorage = storedCredentialsPolicy == StoredCredentialsPolicy::Use;
 #if !PLATFORM(IOS)
     handle->createNSURLConnection(
         handle->makeDelegate(shouldUseCredentialStorage),

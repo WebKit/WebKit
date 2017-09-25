@@ -99,8 +99,8 @@ void CachedResourceRequest::setAsPotentiallyCrossOrigin(const String& mode, Docu
         ? FetchOptions::Credentials::Omit : equalLettersIgnoringASCIICase(mode, "use-credentials")
         ? FetchOptions::Credentials::Include : FetchOptions::Credentials::SameOrigin;
     m_options.credentials = credentials;
-    m_options.allowCredentials = credentials == FetchOptions::Credentials::Include ? AllowStoredCredentials : DoNotAllowStoredCredentials;
-    WebCore::updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.allowCredentials);
+    m_options.storedCredentialsPolicy = credentials == FetchOptions::Credentials::Include ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
+    WebCore::updateRequestForAccessControl(m_resourceRequest, document.securityOrigin(), m_options.storedCredentialsPolicy);
 }
 
 void CachedResourceRequest::updateForAccessControl(Document& document)
@@ -108,7 +108,7 @@ void CachedResourceRequest::updateForAccessControl(Document& document)
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     m_origin = &document.securityOrigin();
-    WebCore::updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.allowCredentials);
+    WebCore::updateRequestForAccessControl(m_resourceRequest, *m_origin, m_options.storedCredentialsPolicy);
 }
 
 void upgradeInsecureResourceRequestIfNeeded(ResourceRequest& request, Document& document)

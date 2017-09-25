@@ -49,8 +49,8 @@ namespace WebKit {
 
 static const size_t gDefaultReadBufferSize = 8192;
 
-NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentials storedCredentials, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
-    : NetworkDataTask(session, client, requestWithCredentials, storedCredentials, shouldClearReferrerOnHTTPSToHTTPRedirect)
+NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTaskClient& client, const ResourceRequest& requestWithCredentials, StoredCredentialsPolicy storedCredentialsPolicy, ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    : NetworkDataTask(session, client, requestWithCredentials, storedCredentialsPolicy, shouldClearReferrerOnHTTPSToHTTPRedirect)
     , m_shouldContentSniff(shouldContentSniff)
     , m_timeoutSource(RunLoop::main(), this, &NetworkDataTaskSoup::timeoutFired)
 {
@@ -62,7 +62,7 @@ NetworkDataTaskSoup::NetworkDataTaskSoup(NetworkSession& session, NetworkDataTas
     if (request.url().protocolIsInHTTPFamily()) {
         m_startTime = MonotonicTime::now();
         auto url = request.url();
-        if (m_storedCredentials == AllowStoredCredentials) {
+        if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
             m_user = url.user();
             m_password = url.pass();
             request.removeCredentials();
@@ -136,7 +136,7 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request)
     m_currentRequest.updateSoupMessage(soupMessage.get());
     if (m_shouldContentSniff == DoNotSniffContent)
         soup_message_disable_feature(soupMessage.get(), SOUP_TYPE_CONTENT_SNIFFER);
-    if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentials == DoNotAllowStoredCredentials) {
+    if (m_user.isEmpty() && m_password.isEmpty() && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse) {
 #if SOUP_CHECK_VERSION(2, 57, 1)
         messageFlags |= SOUP_MESSAGE_DO_NOT_USE_AUTH_CACHE;
 #else
@@ -469,7 +469,7 @@ static inline bool isAuthenticationFailureStatusCode(int httpStatusCode)
 void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
 {
     ASSERT(m_soupMessage);
-    if (m_storedCredentials == AllowStoredCredentials) {
+    if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         if (!m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it. There is a race condition
             // here, since a different credential might have already been stored by another
@@ -498,7 +498,7 @@ void NetworkDataTaskSoup::authenticate(AuthenticationChallenge&& challenge)
     // of all request latency, versus a one-time latency for the small subset of requests that
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
-    if (m_storedCredentials == AllowStoredCredentials) {
+    if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         auto protectionSpace = challenge.protectionSpace();
         m_session->networkStorageSession().getCredentialFromPersistentStorage(protectionSpace,
             [this, protectedThis = makeRef(*this), authChallenge = WTFMove(challenge)] (Credential&& credential) mutable {
@@ -529,7 +529,7 @@ void NetworkDataTaskSoup::continueAuthenticate(AuthenticationChallenge&& challen
         }
 
         if (disposition == AuthenticationChallengeDisposition::UseCredential && !credential.isEmpty()) {
-            if (m_storedCredentials == AllowStoredCredentials) {
+            if (m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
                 // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,
                 // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
                 // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
@@ -665,7 +665,7 @@ void NetworkDataTaskSoup::continueHTTPRedirection()
         // we want to strip here because the redirect is cross-origin.
         request.clearHTTPAuthorization();
         request.clearHTTPOrigin();
-    } else if (url.protocolIsInHTTPFamily() && m_storedCredentials == AllowStoredCredentials) {
+    } else if (url.protocolIsInHTTPFamily() && m_storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         if (m_user.isEmpty() && m_password.isEmpty()) {
             auto credential = m_session->networkStorageSession().credentialStorage().get(m_partition, request.url());
             if (!credential.isEmpty())

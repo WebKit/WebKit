@@ -575,9 +575,9 @@ CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
     return CFSTR("WebCoreSynchronousLoaderRunLoopMode");
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%s allowStoredCredentials:%u", request.url().string().utf8().data(), storedCredentials);
+    LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%s sstoredCredentialsPolicy:%u", request.url().string().utf8().data(), static_cast<unsigned>(storedCredentialsPolicy));
 
     ASSERT(!request.isEmpty());
 
@@ -585,7 +585,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     ASSERT(error.isNull());
 
     SynchronousLoaderClient client;
-    client.setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
+    client.setAllowStoredCredentials(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &client, false /*defersLoading*/, true /*shouldContentSniff*/));
 
@@ -596,7 +596,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
         return;
     }
 
-    handle->createCFURLConnection(storedCredentials == AllowStoredCredentials, ResourceHandle::shouldContentSniffURL(request.url()),
+    handle->createCFURLConnection(storedCredentialsPolicy == StoredCredentialsPolicy::Use, ResourceHandle::shouldContentSniffURL(request.url()),
         SchedulingBehavior::Synchronous, handle->client()->connectionProperties(handle.get()).get());
 
     CFURLConnectionScheduleWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), synchronousLoadRunLoopMode());

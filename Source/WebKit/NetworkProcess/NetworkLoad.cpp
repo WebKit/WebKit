@@ -557,7 +557,7 @@ bool NetworkLoad::shouldUseCredentialStorage(ResourceHandle* handle)
 
     // We still need this sync version, because ResourceHandle itself uses it internally, even when the delegate uses an async one.
 
-    return m_parameters.allowStoredCredentials == AllowStoredCredentials;
+    return m_parameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use;
 }
 
 void NetworkLoad::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)

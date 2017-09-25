@@ -139,12 +139,12 @@ bool CrossOriginPreflightResultCacheItem::allowsCrossOriginHeaders(const HTTPHea
     return true;
 }
 
-bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders) const
+bool CrossOriginPreflightResultCacheItem::allowsRequest(StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders) const
 {
     String ignoredExplanation;
     if (m_absoluteExpiryTime < std::chrono::steady_clock::now())
         return false;
-    if (includeCredentials == AllowStoredCredentials && m_credentials == DoNotAllowStoredCredentials)
+    if (storedCredentialsPolicy == StoredCredentialsPolicy::Use && m_storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return false;
     if (!allowsCrossOriginMethod(method, ignoredExplanation))
         return false;
@@ -167,14 +167,14 @@ void CrossOriginPreflightResultCache::appendEntry(const String& origin, const UR
     m_preflightHashMap.set(std::make_pair(origin, url), WTFMove(preflightResult));
 }
 
-bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const URL& url, StoredCredentials includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)
+bool CrossOriginPreflightResultCache::canSkipPreflight(const String& origin, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, const String& method, const HTTPHeaderMap& requestHeaders)
 {
     ASSERT(isMainThread());
     auto it = m_preflightHashMap.find(std::make_pair(origin, url));
     if (it == m_preflightHashMap.end())
         return false;
 
-    if (it->value->allowsRequest(includeCredentials, method, requestHeaders))
+    if (it->value->allowsRequest(storedCredentialsPolicy, method, requestHeaders))
         return true;
 
     m_preflightHashMap.remove(it);

@@ -245,7 +245,7 @@ void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loa
     RefPtr<NetworkingContext> context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(context.get(), loadParameters.request, loadParameters.allowStoredCredentials == AllowStoredCredentials, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects, [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error) {
+    new PingHandle(context.get(), loadParameters.request, loadParameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects, [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error) {
         didFinishPingLoad(identifier, error);
     });
 #endif

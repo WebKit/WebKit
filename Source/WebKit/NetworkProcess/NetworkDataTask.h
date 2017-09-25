@@ -32,9 +32,9 @@
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/NetworkLoadMetrics.h>
-#include <WebCore/ResourceHandleTypes.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/StoredCredentialsPolicy.h>
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/text/WTFString.h>
@@ -130,7 +130,7 @@ public:
     const String& partition() { return m_partition; }
 
 protected:
-    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    NetworkDataTask(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     enum FailureType {
         NoFailure,
@@ -152,7 +152,7 @@ protected:
 #if USE(CREDENTIAL_STORAGE_WITH_NETWORK_SESSION)
     WebCore::Credential m_initialCredential;
 #endif
-    WebCore::StoredCredentials m_storedCredentials { WebCore::DoNotAllowStoredCredentials };
+    WebCore::StoredCredentialsPolicy m_storedCredentialsPolicy { WebCore::StoredCredentialsPolicy::DoNotUse };
     String m_lastHTTPMethod;
     String m_pendingDownloadLocation;
     WebCore::ResourceRequest m_firstRequest;

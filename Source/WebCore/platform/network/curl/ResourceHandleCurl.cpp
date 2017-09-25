@@ -230,7 +230,7 @@ void ResourceHandle::receivedChallengeRejection(const AuthenticationChallenge&)
     ASSERT_NOT_REACHED();
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentialsPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     ASSERT(isMainThread());
 

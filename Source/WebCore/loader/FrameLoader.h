@@ -36,11 +36,11 @@
 #include "FrameLoaderTypes.h"
 #include "LayoutMilestones.h"
 #include "MixedContentChecker.h"
-#include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequestBase.h"
 #include "SecurityContext.h"
+#include "StoredCredentialsPolicy.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -115,7 +115,7 @@ public:
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     WEBCORE_EXPORT void loadArchive(Ref<Archive>&&);
 #endif
-    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ClientCredentialPolicy, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
+    unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentialsPolicy, ClientCredentialPolicy, ResourceError&, ResourceResponse&, RefPtr<SharedBuffer>& data);
 
     void changeLocation(FrameLoadRequest&&);
     WEBCORE_EXPORT void urlSelected(const URL&, const String& target, Event*, LockHistory, LockBackForwardList, ShouldSendReferrer, ShouldOpenExternalURLsPolicy, std::optional<NewFrameOpenerPolicy> = std::nullopt, const AtomicString& downloadAttribute = nullAtom());

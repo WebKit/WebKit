@@ -40,9 +40,9 @@ class NetworkSessionCocoa;
 class NetworkDataTaskCocoa final : public NetworkDataTask {
     friend class NetworkSessionCocoa;
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(*new NetworkDataTaskCocoa(session, client, request, storedCredentials, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect));
+        return adoptRef(*new NetworkDataTaskCocoa(session, client, request, storedCredentialsPolicy, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
 
     ~NetworkDataTaskCocoa();
@@ -71,7 +71,7 @@ public:
     WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
 
 private:
-    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    NetworkDataTaskCocoa(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
 

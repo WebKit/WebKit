@@ -74,7 +74,7 @@ void WebCoreAVCFResourceLoader::startLoading()
     resourceRequest.setPriority(ResourceLoadPriority::Low);
 
     // ContentSecurityPolicyImposition::DoPolicyCheck is a placeholder value. It does not affect the request since Content Security Policy does not apply to raw resources.
-    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, DoNotAllowStoredCredentials, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
+    CachedResourceRequest request(WTFMove(resourceRequest), ResourceLoaderOptions(SendCallbacks, DoNotSniffContent, BufferData, StoredCredentialsPolicy::DoNotUse, ClientCredentialPolicy::CannotAskClientForCredentials, FetchOptions::Credentials::Omit, DoSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::DoPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::DisallowCaching));
 
     CachedResourceLoader* loader = m_parent->player()->cachedResourceLoader();
     m_resource = loader ? loader->requestRawResource(WTFMove(request)).valueOr(nullptr) : nullptr;

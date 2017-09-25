@@ -1,3 +1,92 @@
+2017-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Make StoredCredentials an enum class and rename its header
+        https://bugs.webkit.org/show_bug.cgi?id=177455
+
+        Reviewed by Youenn Fablet.
+
+        Make StoredCredentials an enum class and rename its header for clarity. This was error-prone because 0 meant
+        "allow" and and 1 meant "do not allow". It was trivial to convert it to a boolean by mistake and get the
+        opposite behavior.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::updateRequestForAccessControl):
+        (WebCore::createAccessControlPreflightRequest):
+        (WebCore::passesAccessControlCheck):
+        (WebCore::validatePreflightResponse):
+        * loader/CrossOriginAccessControl.h:
+        * loader/CrossOriginPreflightChecker.cpp:
+        (WebCore::CrossOriginPreflightChecker::validatePreflightResponse):
+        (WebCore::CrossOriginPreflightChecker::doPreflight):
+        * loader/CrossOriginPreflightResultCache.cpp:
+        (WebCore::CrossOriginPreflightResultCacheItem::allowsRequest const):
+        (WebCore::CrossOriginPreflightResultCache::canSkipPreflight):
+        * loader/CrossOriginPreflightResultCache.h:
+        (WebCore::CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::startLoadingMainResource):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::redirectReceived):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+        * loader/FrameLoader.h:
+        * loader/LoaderStrategy.h:
+        * loader/MediaResourceLoader.cpp:
+        (WebCore::MediaResourceLoader::requestResource):
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::NetscapePlugInStreamLoader):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge):
+        * loader/ResourceLoaderOptions.h:
+        (WebCore::ResourceLoaderOptions::ResourceLoaderOptions):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::checkResponseCrossOriginAccessControl):
+        (WebCore::SubresourceLoader::checkRedirectionCrossOriginAccessControl):
+        * loader/ThreadableLoader.cpp:
+        (WebCore::ThreadableLoaderOptions::isolatedCopy const):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::loadFrom):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::defaultCachedResourceOptions):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setAsPotentiallyCrossOrigin):
+        (WebCore::CachedResourceRequest::updateForAccessControl):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        * platform/graphics/avfoundation/cf/WebCoreAVCFResourceLoader.cpp:
+        (WebCore::WebCoreAVCFResourceLoader::startLoading):
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        (WebCore::WebCoreAVFResourceLoader::startLoading):
+        * platform/network/BlobRegistryImpl.cpp:
+        (WebCore::loadBlobResourceSynchronously):
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        * platform/network/ResourceHandle.h:
+        * platform/network/StoredCredentialsPolicy.h: Renamed from Source/WebCore/platform/network/ResourceHandleTypes.h.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::platformLoadResourceSynchronously):
+        * style/StylePendingResources.cpp:
+        (WebCore::Style::loadPendingImage):
+        * xml/XSLTProcessorLibxslt.cpp:
+        (WebCore::docLoaderFunc):
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::openFunc):
+
 2017-09-25  Sam Weinig  <sam@webkit.org>
 
         Remove unnecessary userVisibleString EditorClient function

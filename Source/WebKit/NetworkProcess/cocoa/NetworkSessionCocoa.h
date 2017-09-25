@@ -57,7 +57,7 @@ public:
     static void setCTDataConnectionServiceType(const String&);
 #endif
 
-    NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentials);
+    NetworkDataTaskCocoa* dataTaskForIdentifier(NetworkDataTaskCocoa::TaskIdentifier, WebCore::StoredCredentialsPolicy);
 
     void addDownloadID(NetworkDataTaskCocoa::TaskIdentifier, DownloadID);
     DownloadID downloadID(NetworkDataTaskCocoa::TaskIdentifier);

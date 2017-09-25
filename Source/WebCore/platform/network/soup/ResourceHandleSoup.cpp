@@ -964,7 +964,7 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     }
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>&)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext*, const ResourceRequest&, StoredCredentialsPolicy, ResourceError&, ResourceResponse&, Vector<char>&)
 {
     ASSERT_NOT_REACHED();
 }

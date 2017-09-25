@@ -59,10 +59,10 @@ bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&
     return true;
 }
 
-void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentials allowCredentials)
+void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin& securityOrigin, StoredCredentialsPolicy storedCredentialsPolicy)
 {
     request.removeCredentials();
-    request.setAllowCookies(allowCredentials == AllowStoredCredentials);
+    request.setAllowCookies(storedCredentialsPolicy == StoredCredentialsPolicy::Use);
     request.setHTTPOrigin(securityOrigin.toString());
 }
 
@@ -71,7 +71,7 @@ ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& reque
     ResourceRequest preflightRequest(request.url());
     static const double platformDefaultTimeout = 0;
     preflightRequest.setTimeoutInterval(platformDefaultTimeout);
-    updateRequestForAccessControl(preflightRequest, securityOrigin, DoNotAllowStoredCredentials);
+    updateRequestForAccessControl(preflightRequest, securityOrigin, StoredCredentialsPolicy::DoNotUse);
     preflightRequest.setHTTPMethod("OPTIONS");
     preflightRequest.setHTTPHeaderField(HTTPHeaderName::AccessControlRequestMethod, request.httpMethod());
     preflightRequest.setPriority(request.priority());
@@ -127,12 +127,12 @@ void cleanRedirectedRequestForAccessControl(ResourceRequest& request)
     request.clearHTTPAcceptEncoding();
 }
 
-bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin& securityOrigin, String& errorDescription)
+bool passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)
 {
     // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
     // even with Access-Control-Allow-Credentials set to true.
     const String& accessControlOriginString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowOrigin);
-    if (accessControlOriginString == "*" && includeCredentials == DoNotAllowStoredCredentials)
+    if (accessControlOriginString == "*" && storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse)
         return true;
 
     String securityOriginString = securityOrigin.toString();
@@ -146,7 +146,7 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
         return false;
     }
 
-    if (includeCredentials == AllowStoredCredentials) {
+    if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
         const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
         if (accessControlCredentialsString != "true") {
             errorDescription = "Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\".";
@@ -157,17 +157,17 @@ bool passesAccessControlCheck(const ResourceResponse& response, StoredCredential
     return true;
 }
 
-bool validatePreflightResponse(const ResourceRequest& request, const ResourceResponse& response, StoredCredentials includeCredentials, SecurityOrigin& securityOrigin, String& errorDescription)
+bool validatePreflightResponse(const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, SecurityOrigin& securityOrigin, String& errorDescription)
 {
     if (!response.isSuccessful()) {
         errorDescription = ASCIILiteral("Preflight response is not successful");
         return false;
     }
 
-    if (!passesAccessControlCheck(response, includeCredentials, securityOrigin, errorDescription))
+    if (!passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, errorDescription))
         return false;
 
-    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(includeCredentials);
+    auto result = std::make_unique<CrossOriginPreflightResultCacheItem>(storedCredentialsPolicy);
     if (!result->parse(response, errorDescription)
         || !result->allowsCrossOriginMethod(request.httpMethod(), errorDescription)
         || !result->allowsCrossOriginHeaders(request.httpHeaderFields(), errorDescription)) {

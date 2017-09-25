@@ -1,3 +1,18 @@
+2017-09-25  Chris Dumez  <cdumez@apple.com>
+
+        Make StoredCredentials an enum class and rename its header
+        https://bugs.webkit.org/show_bug.cgi?id=177455
+
+        Reviewed by Youenn Fablet.
+
+        Make StoredCredentials an enum class and rename its header for clarity. This was error-prone because 0 meant
+        "allow" and and 1 meant "do not allow". It was trivial to convert it to a boolean by mistake and get the
+        opposite behavior.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::loadResourceSynchronously):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2017-09-25  Timothy Horton  <timothy_horton@apple.com>
 
         Make progress on getting Mac CMake building again

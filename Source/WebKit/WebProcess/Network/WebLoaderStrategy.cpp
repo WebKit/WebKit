@@ -218,7 +218,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     LOG(NetworkScheduling, "(WebProcess) WebLoaderStrategy::scheduleLoad, url '%s' will be scheduled with the NetworkProcess with priority %d", resourceLoader.url().string().latin1().data(), static_cast<int>(resourceLoader.request().priority()));
 
     ContentSniffingPolicy contentSniffingPolicy = resourceLoader.shouldSniffContent() ? SniffContent : DoNotSniffContent;
-    StoredCredentials allowStoredCredentials = resourceLoader.shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    StoredCredentialsPolicy storedCredentialsPolicy = resourceLoader.shouldUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
 
     NetworkResourceLoadParameters loadParameters;
     loadParameters.identifier = identifier;
@@ -227,7 +227,7 @@ void WebLoaderStrategy::scheduleLoad(ResourceLoader& resourceLoader, CachedResou
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.request = resourceLoader.request();
     loadParameters.contentSniffingPolicy = contentSniffingPolicy;
-    loadParameters.allowStoredCredentials = allowStoredCredentials;
+    loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
     // If there is no WebFrame then this resource cannot be authenticated with the client.
     loadParameters.clientCredentialPolicy = (webFrame && webPage && resourceLoader.isAllowedToAskUserForCredentials()) ? ClientCredentialPolicy::MayAskClientForCredentials : ClientCredentialPolicy::CannotAskClientForCredentials;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = shouldClearReferrerOnHTTPSToHTTPRedirect;
@@ -358,7 +358,7 @@ void WebLoaderStrategy::networkProcessCrashed()
         pingLoadCompletionHandler(internalError(URL()));
 }
 
-void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentials storedCredentials, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, unsigned long resourceLoadIdentifier, const ResourceRequest& request, StoredCredentialsPolicy storedCredentialsPolicy, ClientCredentialPolicy clientCredentialPolicy, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     WebFrameNetworkingContext* webContext = static_cast<WebFrameNetworkingContext*>(context);
     // FIXME: Some entities in WebCore use WebCore's "EmptyFrameLoaderClient" instead of having a proper WebFrameLoaderClient.
@@ -375,7 +375,7 @@ void WebLoaderStrategy::loadResourceSynchronously(NetworkingContext* context, un
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
     loadParameters.request = request;
     loadParameters.contentSniffingPolicy = SniffContent;
-    loadParameters.allowStoredCredentials = storedCredentials;
+    loadParameters.storedCredentialsPolicy = storedCredentialsPolicy;
     loadParameters.clientCredentialPolicy = clientCredentialPolicy;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = context->shouldClearReferrerOnHTTPSToHTTPRedirect();
 
@@ -426,7 +426,7 @@ void WebLoaderStrategy::startPingLoad(Frame& frame, ResourceRequest& request, co
     loadParameters.request = request;
     loadParameters.sourceOrigin = &document->securityOrigin();
     loadParameters.sessionID = webPage ? webPage->sessionID() : PAL::SessionID::defaultSessionID();
-    loadParameters.allowStoredCredentials = options.credentials == FetchOptions::Credentials::Omit ? DoNotAllowStoredCredentials : AllowStoredCredentials;
+    loadParameters.storedCredentialsPolicy = options.credentials == FetchOptions::Credentials::Omit ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
     loadParameters.mode = options.mode;
     loadParameters.shouldFollowRedirects = options.redirect == FetchOptions::Redirect::Follow;
     loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect = networkingContext->shouldClearReferrerOnHTTPSToHTTPRedirect();

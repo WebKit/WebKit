@@ -36,15 +36,15 @@ namespace WebKit {
 
 class NetworkDataTaskSoup final : public NetworkDataTask {
 public:
-    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentials storedCredentials, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
+    static Ref<NetworkDataTask> create(NetworkSession& session, NetworkDataTaskClient& client, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WebCore::ContentSniffingPolicy shouldContentSniff, bool shouldClearReferrerOnHTTPSToHTTPRedirect)
     {
-        return adoptRef(*new NetworkDataTaskSoup(session, client, request, storedCredentials, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect));
+        return adoptRef(*new NetworkDataTaskSoup(session, client, request, storedCredentialsPolicy, shouldContentSniff, shouldClearReferrerOnHTTPSToHTTPRedirect));
     }
 
     ~NetworkDataTaskSoup();
 
 private:
-    NetworkDataTaskSoup(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
+    NetworkDataTaskSoup(NetworkSession&, NetworkDataTaskClient&, const WebCore::ResourceRequest&, WebCore::StoredCredentialsPolicy, WebCore::ContentSniffingPolicy, bool shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     void suspend() override;
     void cancel() override;

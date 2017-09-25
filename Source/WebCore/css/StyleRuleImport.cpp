@@ -120,7 +120,7 @@ void StyleRuleImport::requestStyleSheet()
     if (m_cachedSheet)
         m_cachedSheet->removeClient(m_styleSheetClient);
     if (m_parentStyleSheet->isUserStyleSheet()) {
-        request.setOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, AllowStoredCredentials, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
+        request.setOptions(ResourceLoaderOptions(DoNotSendCallbacks, SniffContent, BufferData, StoredCredentialsPolicy::Use, ClientCredentialPolicy::MayAskClientForCredentials, FetchOptions::Credentials::Include, SkipSecurityCheck, FetchOptions::Mode::NoCors, DoNotIncludeCertificateInfo, ContentSecurityPolicyImposition::SkipPolicyCheck, DefersLoadingPolicy::AllowDefersLoading, CachingPolicy::AllowCaching));
         m_cachedSheet = document->cachedResourceLoader().requestUserCSSStyleSheet(WTFMove(request));
     } else
         m_cachedSheet = document->cachedResourceLoader().requestCSSStyleSheet(WTFMove(request)).valueOr(nullptr);
