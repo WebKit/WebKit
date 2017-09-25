@@ -1,3 +1,367 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Make Attribute an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=177414
+
+        Reviewed by Yusuke Suzuki.
+
+        I've had enough of these naming collisions.  This is what enum classes are for.
+        Unfortunately a lot of static_cast<unsigned> is necessary until those functions take
+        an OptionSet<Attribute> instead of an unsigned parameter, but this is a big step
+        towards where we ought to be.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::JSCallbackObject<Parent>::getOwnPropertySlot):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeConstructor):
+        * Scripts/builtins/builtins_generate_internals_wrapper_implementation.py:
+        (BuiltinsInternalsWrapperImplementationGenerator.property_macro):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFromLLInt):
+        (JSC::GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback):
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PropertyCondition.cpp:
+        (JSC::PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint const):
+        (JSC::PropertyCondition::isValidValueForAttributes):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::instantiateLexicalVariables):
+        (JSC::BytecodeGenerator::variable):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::Variable::isReadOnly const):
+        (JSC::Variable::setIsReadOnly):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PropertyListNode::emitBytecode):
+        * create_hash_table:
+        * debugger/DebuggerScope.cpp:
+        (JSC::DebuggerScope::getOwnPropertySlot):
+        * dfg/DFGOperations.cpp:
+        * inspector/JSInjectedScriptHostPrototype.cpp:
+        (Inspector::JSInjectedScriptHostPrototype::finishCreation):
+        * inspector/JSJavaScriptCallFramePrototype.cpp:
+        (Inspector::JSJavaScriptCallFramePrototype::finishCreation):
+        * jit/Repatch.cpp:
+        (JSC::tryCacheGetByID):
+        * jsc.cpp:
+        (WTF::CustomGetter::getOwnPropertySlot):
+        (WTF::RuntimeArray::getOwnPropertySlot):
+        (WTF::RuntimeArray::getOwnPropertySlotByIndex):
+        (WTF::DOMJITGetter::finishCreation):
+        (WTF::DOMJITGetterComplex::finishCreation):
+        (WTF::DOMJITFunctionObject::finishCreation):
+        (WTF::DOMJITCheckSubClassObject::finishCreation):
+        (GlobalObject::finishCreation):
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::finishCreation):
+        * runtime/ArrayIteratorPrototype.cpp:
+        (JSC::ArrayIteratorPrototype::finishCreation):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::finishCreation):
+        * runtime/AsyncFromSyncIteratorPrototype.cpp:
+        (JSC::AsyncFromSyncIteratorPrototype::finishCreation):
+        * runtime/AsyncFunctionConstructor.cpp:
+        (JSC::AsyncFunctionConstructor::finishCreation):
+        * runtime/AsyncFunctionPrototype.cpp:
+        (JSC::AsyncFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorFunctionConstructor.cpp:
+        (JSC::AsyncGeneratorFunctionConstructor::finishCreation):
+        * runtime/AsyncGeneratorFunctionPrototype.cpp:
+        (JSC::AsyncGeneratorFunctionPrototype::finishCreation):
+        * runtime/AsyncGeneratorPrototype.cpp:
+        (JSC::AsyncGeneratorPrototype::finishCreation):
+        * runtime/AsyncIteratorPrototype.cpp:
+        (JSC::AsyncIteratorPrototype::finishCreation):
+        * runtime/AtomicsObject.cpp:
+        (JSC::AtomicsObject::finishCreation):
+        * runtime/BooleanConstructor.cpp:
+        (JSC::BooleanConstructor::finishCreation):
+        * runtime/ClonedArguments.cpp:
+        (JSC::ClonedArguments::createStructure):
+        (JSC::ClonedArguments::getOwnPropertySlot):
+        (JSC::ClonedArguments::materializeSpecials):
+        * runtime/CommonSlowPaths.cpp:
+        (JSC::SLOW_PATH_DECL):
+        * runtime/ConsoleObject.cpp:
+        (JSC::ConsoleObject::finishCreation):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::finishCreation):
+        * runtime/DatePrototype.cpp:
+        (JSC::DatePrototype::finishCreation):
+        * runtime/DirectArguments.cpp:
+        (JSC::DirectArguments::overrideThings):
+        * runtime/Error.cpp:
+        (JSC::addErrorInfo):
+        * runtime/ErrorConstructor.cpp:
+        (JSC::ErrorConstructor::finishCreation):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::finishCreation):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::finishCreation):
+        * runtime/FunctionConstructor.cpp:
+        (JSC::FunctionConstructor::finishCreation):
+        * runtime/FunctionPrototype.cpp:
+        (JSC::FunctionPrototype::finishCreation):
+        (JSC::FunctionPrototype::addFunctionProperties):
+        (JSC::FunctionPrototype::initRestrictedProperties):
+        * runtime/GeneratorFunctionConstructor.cpp:
+        (JSC::GeneratorFunctionConstructor::finishCreation):
+        * runtime/GeneratorFunctionPrototype.cpp:
+        (JSC::GeneratorFunctionPrototype::finishCreation):
+        * runtime/GeneratorPrototype.cpp:
+        (JSC::GeneratorPrototype::finishCreation):
+        * runtime/GenericArgumentsInlines.h:
+        (JSC::GenericArguments<Type>::getOwnPropertySlot):
+        (JSC::GenericArguments<Type>::getOwnPropertySlotByIndex):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::finishCreation):
+        * runtime/IntlCollatorConstructor.cpp:
+        (JSC::IntlCollatorConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatConstructor.cpp:
+        (JSC::IntlDateTimeFormatConstructor::finishCreation):
+        * runtime/IntlDateTimeFormatPrototype.cpp:
+        (JSC::IntlDateTimeFormatPrototype::finishCreation):
+        * runtime/IntlNumberFormatConstructor.cpp:
+        (JSC::IntlNumberFormatConstructor::finishCreation):
+        * runtime/IntlObject.cpp:
+        (JSC::IntlObject::finishCreation):
+        * runtime/IteratorPrototype.cpp:
+        (JSC::IteratorPrototype::finishCreation):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::getOwnPropertySlot):
+        (JSC::JSArray::setLengthWithArrayStorage):
+        * runtime/JSArrayBufferConstructor.cpp:
+        (JSC::JSArrayBufferConstructor::finishCreation):
+        * runtime/JSArrayBufferPrototype.cpp:
+        (JSC::JSArrayBufferPrototype::finishCreation):
+        * runtime/JSBoundFunction.cpp:
+        (JSC::JSBoundFunction::finishCreation):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::putToPrimitive):
+        * runtime/JSDataView.cpp:
+        (JSC::JSDataView::getOwnPropertySlot):
+        * runtime/JSDataViewPrototype.cpp:
+        (JSC::JSDataViewPrototype::finishCreation):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::finishCreation):
+        (JSC::JSFunction::getOwnPropertySlot):
+        (JSC::JSFunction::defineOwnProperty):
+        (JSC::JSFunction::reifyLength):
+        (JSC::JSFunction::reifyName):
+        (JSC::JSFunction::reifyLazyBoundNameIfNeeded):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::JSGenericTypedArrayViewConstructor<ViewClass>::finishCreation):
+        * runtime/JSGenericTypedArrayViewInlines.h:
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot):
+        (JSC::JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex):
+        * runtime/JSGenericTypedArrayViewPrototypeInlines.h:
+        (JSC::JSGenericTypedArrayViewPrototype<ViewClass>::finishCreation):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        * runtime/JSLexicalEnvironment.cpp:
+        (JSC::JSLexicalEnvironment::getOwnNonIndexPropertyNames):
+        * runtime/JSModuleNamespaceObject.cpp:
+        (JSC::JSModuleNamespaceObject::finishCreation):
+        (JSC::JSModuleNamespaceObject::getOwnPropertySlotCommon):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONObject::finishCreation):
+        * runtime/JSObject.cpp:
+        (JSC::getClassPropertyNames):
+        (JSC::JSObject::getOwnPropertySlotByIndex):
+        (JSC::ordinarySetSlow):
+        (JSC::JSObject::putInlineSlow):
+        (JSC::JSObject::putGetter):
+        (JSC::JSObject::putSetter):
+        (JSC::JSObject::putDirectAccessor):
+        (JSC::JSObject::putDirectCustomAccessor):
+        (JSC::JSObject::putDirectNonIndexAccessor):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::deletePropertyByIndex):
+        (JSC::JSObject::getOwnPropertyNames):
+        (JSC::JSObject::putIndexedDescriptor):
+        (JSC::JSObject::defineOwnIndexedProperty):
+        (JSC::JSObject::attemptToInterceptPutByIndexOnHoleForPrototype):
+        (JSC::JSObject::putDirectIndexSlowOrBeyondVectorLength):
+        (JSC::JSObject::getOwnPropertyDescriptor):
+        (JSC::putDescriptor):
+        (JSC::validateAndApplyPropertyDescriptor):
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirect):
+        * runtime/JSObjectInlines.h:
+        (JSC::JSObject::putDirectWithoutTransition):
+        (JSC::JSObject::putDirectInternal):
+        * runtime/JSPromiseConstructor.cpp:
+        (JSC::JSPromiseConstructor::finishCreation):
+        (JSC::JSPromiseConstructor::addOwnInternalSlots):
+        * runtime/JSPromisePrototype.cpp:
+        (JSC::JSPromisePrototype::finishCreation):
+        (JSC::JSPromisePrototype::addOwnInternalSlots):
+        * runtime/JSString.cpp:
+        (JSC::JSString::getStringPropertyDescriptor):
+        * runtime/JSString.h:
+        (JSC::JSString::getStringPropertySlot):
+        * runtime/JSSymbolTableObject.cpp:
+        (JSC::JSSymbolTableObject::getOwnNonIndexPropertyNames):
+        * runtime/JSSymbolTableObject.h:
+        (JSC::symbolTableGet):
+        * runtime/JSTypedArrayViewConstructor.cpp:
+        (JSC::JSTypedArrayViewConstructor::finishCreation):
+        * runtime/JSTypedArrayViewPrototype.cpp:
+        (JSC::JSTypedArrayViewPrototype::finishCreation):
+        * runtime/LazyClassStructure.cpp:
+        (JSC::LazyClassStructure::Initializer::setConstructor):
+        * runtime/Lookup.cpp:
+        (JSC::reifyStaticAccessor):
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/Lookup.h:
+        (JSC::HashTableValue::intrinsic const):
+        (JSC::HashTableValue::builtinGenerator const):
+        (JSC::HashTableValue::function const):
+        (JSC::HashTableValue::functionLength const):
+        (JSC::HashTableValue::propertyGetter const):
+        (JSC::HashTableValue::propertyPutter const):
+        (JSC::HashTableValue::domJIT const):
+        (JSC::HashTableValue::signature const):
+        (JSC::HashTableValue::accessorGetter const):
+        (JSC::HashTableValue::accessorSetter const):
+        (JSC::HashTableValue::constantInteger const):
+        (JSC::HashTableValue::lazyCellPropertyOffset const):
+        (JSC::HashTableValue::lazyClassStructureOffset const):
+        (JSC::HashTableValue::lazyPropertyCallback const):
+        (JSC::HashTableValue::builtinAccessorGetterGenerator const):
+        (JSC::HashTableValue::builtinAccessorSetterGenerator const):
+        (JSC::getStaticPropertySlotFromTable):
+        (JSC::putEntry):
+        (JSC::reifyStaticProperty):
+        * runtime/MapConstructor.cpp:
+        (JSC::MapConstructor::finishCreation):
+        * runtime/MapIteratorPrototype.cpp:
+        (JSC::MapIteratorPrototype::finishCreation):
+        * runtime/MapPrototype.cpp:
+        (JSC::MapPrototype::finishCreation):
+        * runtime/MathObject.cpp:
+        (JSC::MathObject::finishCreation):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::finishCreation):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::finishCreation):
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::finishCreation):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::finishCreation):
+        * runtime/ObjectConstructor.cpp:
+        (JSC::ObjectConstructor::finishCreation):
+        (JSC::objectConstructorAssign):
+        (JSC::objectConstructorValues):
+        (JSC::objectConstructorDefineProperty):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        (JSC::objectProtoFuncLookupGetter):
+        (JSC::objectProtoFuncLookupSetter):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::PropertyDescriptor::writable const):
+        (JSC::PropertyDescriptor::enumerable const):
+        (JSC::PropertyDescriptor::configurable const):
+        (JSC::PropertyDescriptor::setUndefined):
+        (JSC::PropertyDescriptor::setDescriptor):
+        (JSC::PropertyDescriptor::setCustomDescriptor):
+        (JSC::PropertyDescriptor::setAccessorDescriptor):
+        (JSC::PropertyDescriptor::setWritable):
+        (JSC::PropertyDescriptor::setEnumerable):
+        (JSC::PropertyDescriptor::setConfigurable):
+        (JSC::PropertyDescriptor::setSetter):
+        (JSC::PropertyDescriptor::setGetter):
+        (JSC::PropertyDescriptor::attributesEqual const):
+        (JSC::PropertyDescriptor::attributesOverridingCurrent const):
+        * runtime/PropertySlot.cpp:
+        (JSC::PropertySlot::customGetter const):
+        * runtime/PropertySlot.h:
+        (JSC::operator| ):
+        (JSC::operator&):
+        (JSC::operator<):
+        (JSC::operator~):
+        (JSC::operator|=):
+        (JSC::PropertySlot::setUndefined):
+        * runtime/ProxyConstructor.cpp:
+        (JSC::makeRevocableProxy):
+        (JSC::ProxyConstructor::finishCreation):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::performHasProperty):
+        * runtime/ProxyRevoke.cpp:
+        (JSC::ProxyRevoke::finishCreation):
+        * runtime/ReflectObject.cpp:
+        (JSC::ReflectObject::finishCreation):
+        (JSC::reflectObjectDefineProperty):
+        * runtime/RegExpConstructor.cpp:
+        (JSC::RegExpConstructor::finishCreation):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::getOwnPropertySlot):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::finishCreation):
+        * runtime/ScopedArguments.cpp:
+        (JSC::ScopedArguments::overrideThings):
+        * runtime/SetConstructor.cpp:
+        (JSC::SetConstructor::finishCreation):
+        * runtime/SetIteratorPrototype.cpp:
+        (JSC::SetIteratorPrototype::finishCreation):
+        * runtime/SetPrototype.cpp:
+        (JSC::SetPrototype::finishCreation):
+        * runtime/SparseArrayValueMap.cpp:
+        (JSC::SparseArrayValueMap::putDirect):
+        (JSC::SparseArrayEntry::put):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::finishCreation):
+        * runtime/StringIteratorPrototype.cpp:
+        (JSC::StringIteratorPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+        * runtime/Structure.cpp:
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::prototypeChainMayInterceptStoreTo):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::add):
+        * runtime/SymbolConstructor.cpp:
+        (JSC::SymbolConstructor::finishCreation):
+        * runtime/SymbolPrototype.cpp:
+        (JSC::SymbolPrototype::finishCreation):
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::Fast::getAttributes const):
+        (JSC::SymbolTableEntry::SymbolTableEntry):
+        (JSC::SymbolTableEntry::setAttributes):
+        * runtime/TemplateRegistry.cpp:
+        (JSC::TemplateRegistry::getTemplateObject):
+        * runtime/WeakMapConstructor.cpp:
+        (JSC::WeakMapConstructor::finishCreation):
+        * runtime/WeakMapPrototype.cpp:
+        (JSC::WeakMapPrototype::finishCreation):
+        * runtime/WeakSetConstructor.cpp:
+        (JSC::WeakSetConstructor::finishCreation):
+        * runtime/WeakSetPrototype.cpp:
+        (JSC::WeakSetPrototype::finishCreation):
+        * tools/JSDollarVMPrototype.cpp:
+        (JSC::JSDollarVMPrototype::finishCreation):
+        * wasm/js/WebAssemblyCompileErrorConstructor.cpp:
+        (JSC::WebAssemblyCompileErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyInstanceConstructor.cpp:
+        (JSC::WebAssemblyInstanceConstructor::finishCreation):
+        * wasm/js/WebAssemblyLinkErrorConstructor.cpp:
+        (JSC::WebAssemblyLinkErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyMemoryConstructor.cpp:
+        (JSC::WebAssemblyMemoryConstructor::finishCreation):
+        * wasm/js/WebAssemblyMemoryPrototype.cpp:
+        * wasm/js/WebAssemblyModuleConstructor.cpp:
+        (JSC::WebAssemblyModuleConstructor::finishCreation):
+        * wasm/js/WebAssemblyRuntimeErrorConstructor.cpp:
+        (JSC::WebAssemblyRuntimeErrorConstructor::finishCreation):
+        * wasm/js/WebAssemblyTableConstructor.cpp:
+        (JSC::WebAssemblyTableConstructor::finishCreation):
+
 2017-09-23  Oleksandr Skachkov  <gskachkov@gmail.com>
 
         [ESNext] Async iteration - Implement Async Generator - optimization

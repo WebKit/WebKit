@@ -299,13 +299,13 @@ bool JSNPObject::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyN
 
     // First, check if the NPObject has a property with this name.
     if (thisObject->m_npObject->_class->hasProperty && thisObject->m_npObject->_class->hasProperty(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, DontDelete, thisObject->propertyGetter);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::DontDelete), thisObject->propertyGetter);
         return true;
     }
 
     // Second, check if the NPObject has a method with this name.
     if (thisObject->m_npObject->_class->hasMethod && thisObject->m_npObject->_class->hasMethod(thisObject->m_npObject, npIdentifier)) {
-        slot.setCustom(thisObject, DontDelete | ReadOnly, thisObject->methodGetter);
+        slot.setCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, thisObject->methodGetter);
         return true;
     }
     

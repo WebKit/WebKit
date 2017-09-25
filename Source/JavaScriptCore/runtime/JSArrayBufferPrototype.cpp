@@ -124,12 +124,12 @@ void JSArrayBufferPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
 {
     Base::finishCreation(vm);
     
-    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, DontEnum, 2);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, arrayBufferSharingModeName(m_sharingMode)), DontEnum | ReadOnly);
+    JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->slice, arrayBufferProtoFuncSlice, static_cast<unsigned>(PropertyAttribute::DontEnum), 2);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, arrayBufferSharingModeName(m_sharingMode)), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     if (m_sharingMode == ArrayBufferSharingMode::Default)
-        JSC_NATIVE_GETTER(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, DontEnum | ReadOnly);
+        JSC_NATIVE_GETTER(vm.propertyNames->byteLength, arrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     else
-        JSC_NATIVE_GETTER(vm.propertyNames->byteLength, sharedArrayBufferProtoGetterFuncByteLength, DontEnum | ReadOnly);
+        JSC_NATIVE_GETTER(vm.propertyNames->byteLength, sharedArrayBufferProtoGetterFuncByteLength, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 JSArrayBufferPrototype* JSArrayBufferPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ArrayBufferSharingMode sharingMode)

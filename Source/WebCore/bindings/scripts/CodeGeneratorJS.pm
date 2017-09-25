@@ -533,9 +533,9 @@ sub GenerateIndexedGetter
     # 1.2.8 Return desc.
     
     my @attributes = ();
-    push(@attributes, "ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
+    push(@attributes, "JSC::PropertyAttribute::ReadOnly") if !GetIndexedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
     
-    my $attributeString = ((@attributes > 0) ? join(" | ", @attributes) : "0");
+    my $attributeString = "static_cast<unsigned>(" . ((@attributes > 0) ? join(" | ", @attributes) : "0") . ")";
 
     my $indexedGetterFunctionName = $indexedGetterOperation->extendedAttributes->{ImplementedAs} || $indexedGetterOperation->name || "item";
     my $nativeToJSConversion = NativeToJSValueUsingPointers($indexedGetterOperation, $interface, "thisObject->wrapped().${indexedGetterFunctionName}(${indexExpression})", "*thisObject->globalObject()");
@@ -570,10 +570,10 @@ sub GenerateNamedGetter
     # 2.10 Return desc.
     
     my @attributes = ();
-    push(@attributes, "ReadOnly") if !GetNamedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
-    push(@attributes, "DontEnum") if $interface->extendedAttributes->{LegacyUnenumerableNamedProperties};
+    push(@attributes, "JSC::PropertyAttribute::ReadOnly") if !GetNamedSetterOperation($interface) && !$interface->extendedAttributes->{Plugin};
+    push(@attributes, "JSC::PropertyAttribute::DontEnum") if $interface->extendedAttributes->{LegacyUnenumerableNamedProperties};
     
-    my $attributeString = ((@attributes > 0) ? join(" | ", @attributes) : "0");
+    my $attributeString = "static_cast<unsigned>(" . ((@attributes > 0) ? join(" | ", @attributes) : "0") . ")";
     my $nativeToJSConversion = NativeToJSValueUsingPointers($namedGetterOperation, $interface, $namedPropertyExpression, "*thisObject->globalObject()");
     
     return ($nativeToJSConversion, $attributeString);
@@ -1753,17 +1753,17 @@ sub GetJSCAttributesForAttribute
     my $attribute = shift;
 
     my @specials = ();
-    push(@specials, "DontDelete") if IsUnforgeable($interface, $attribute);
+    push(@specials, "JSC::PropertyAttribute::DontDelete") if IsUnforgeable($interface, $attribute);
 
     # As per Web IDL specification, constructor properties on the ECMAScript global object should not be enumerable.
     my $isGlobalConstructor = $codeGenerator->IsConstructorType($attribute->type);
-    push(@specials, "DontEnum") if ($attribute->extendedAttributes->{NotEnumerable} || $isGlobalConstructor);
-    push(@specials, "ReadOnly") if IsReadonly($attribute);
-    push(@specials, "CustomAccessor") unless $isGlobalConstructor or IsJSBuiltin($interface, $attribute);
-    push(@specials, "DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
-    push(@specials, "DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
-    push(@specials, "Accessor | Builtin") if  IsJSBuiltin($interface, $attribute);
-    return (@specials > 0) ? join(" | ", @specials) : "0";
+    push(@specials, "JSC::PropertyAttribute::DontEnum") if ($attribute->extendedAttributes->{NotEnumerable} || $isGlobalConstructor);
+    push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
+    push(@specials, "JSC::PropertyAttribute::CustomAccessor") unless $isGlobalConstructor or IsJSBuiltin($interface, $attribute);
+    push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
+    push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
+    push(@specials, "JSC::PropertyAttribute::Accessor | JSC::PropertyAttribute::Builtin") if  IsJSBuiltin($interface, $attribute);
+    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
 }
 
 sub GetIndexedGetterOperation
@@ -3016,7 +3016,7 @@ sub GeneratePropertiesHashTable
 
         my $setter = "setJS" . $interfaceName . "Constructor";
         push(@$hashValue2, $setter);
-        push(@$hashSpecials, "DontEnum");
+        push(@$hashSpecials, "static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)");
     }
 
     return 0 if !$propertyCount;
@@ -3714,7 +3714,7 @@ sub addUnscopableProperties
     foreach my $unscopable (@unscopables) {
         push(@implContent, "    unscopables.putDirect(vm, Identifier::fromString(&vm, \"$unscopable\"), jsBoolean(true));\n");
     }
-    push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, DontEnum | ReadOnly);\n");
+    push(@implContent, "    putDirectWithoutTransition(vm, vm.propertyNames->unscopablesSymbol, &unscopables, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);\n");
 }
 
 sub GetUnsafeArgumentType
@@ -3989,7 +3989,7 @@ sub GenerateImplementation
             push(@hashKeys, $name);
             push(@hashValue1, $constant->value);
             push(@hashValue2, "0");
-            push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
+            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
 
             my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
             $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
@@ -4006,11 +4006,11 @@ sub GenerateImplementation
             push(@hashKeys, $name);
 
             my @specials = ();
-            push(@specials, "DontDelete") if IsUnforgeable($interface, $attribute);
-            push(@specials, "ReadOnly") if IsReadonly($attribute);
-            push(@specials, "DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
-            push(@specials, "DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
-            my $special = (@specials > 0) ? join(" | ", @specials) : "0";
+            push(@specials, "JSC::PropertyAttribute::DontDelete") if IsUnforgeable($interface, $attribute);
+            push(@specials, "JSC::PropertyAttribute::ReadOnly") if IsReadonly($attribute);
+            push(@specials, "JSC::PropertyAttribute::DOMAttribute") if IsAcceleratedDOMAttribute($interface, $attribute);
+            push(@specials, "JSC::PropertyAttribute::DOMJITAttribute") if $attribute->extendedAttributes->{DOMJIT};
+            my $special = "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
             push(@hashSpecials, $special);
 
             if ($attribute->extendedAttributes->{DOMJIT}) {
@@ -4099,7 +4099,7 @@ sub GenerateImplementation
         push(@hashKeys, $name);
         push(@hashValue1, $constant->value);
         push(@hashValue2, "0");
-        push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
+        push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
 
         my $conditional = $constant->extendedAttributes->{Conditional};
         $conditionals{$name} = $conditional if $conditional;
@@ -4143,17 +4143,17 @@ sub GenerateImplementation
             AddToImplIncludes("WebCoreJSClientData.h");
             my $conditionalString = $codeGenerator->GenerateConditionalString($operation);
             push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $operation->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $operation) . "), ReadOnly | DontEnum);\n");
+            push(@implContent, "    putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $operation->name . "PrivateName(), JSFunction::create(vm, globalObject(), 0, String(), " . GetFunctionName($interface, $className, $operation) . "), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
             push(@implContent, "#endif\n") if $conditionalString;
         }
 
         if (InterfaceNeedsIterator($interface)) {
             AddToImplIncludes("<builtins/BuiltinNames.h>");
             if (IsKeyValueIterableInterface($interface) or $interface->mapLike) {
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);\n");
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             } else {
                 AddToImplIncludes("<runtime/ArrayPrototype.h>");
-                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), DontEnum);\n");
+                push(@implContent, "    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayPrototype()->getDirect(vm, vm.propertyNames->builtinNames().valuesPrivateName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));\n");
             }
         }
         push(@implContent, "    addValueIterableMethods(*globalObject(), *this);\n") if $interface->iterable and !IsKeyValueIterableInterface($interface);
@@ -4223,8 +4223,8 @@ sub GenerateImplementation
     }
 
     if ($interfaceName eq "Location") {
-        push(@implContent, "    putDirect(vm, vm.propertyNames->valueOf, globalObject()->objectProtoValueOfFunction(), DontDelete | ReadOnly | DontEnum);\n");
-        push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), DontDelete | ReadOnly | DontEnum);\n");
+        push(@implContent, "    putDirect(vm, vm.propertyNames->valueOf, globalObject()->objectProtoValueOfFunction(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+        push(@implContent, "    putDirect(vm, vm.propertyNames->toPrimitiveSymbol, jsUndefined(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
     if ($interface->mapLike) {
@@ -4261,7 +4261,7 @@ sub GenerateImplementation
         my $getter = GetAttributeGetterName($interface, $className, $attribute);
 
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-        push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(DontDelete | ReadOnly));\n");
+        push(@implContent, "    putDirectCustomAccessor(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames()." . $attributeName . "PrivateName(), CustomGetterSetter::create(vm, $getter, nullptr), attributesForStructure(JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly));\n");
         push(@implContent, "#endif\n") if $conditionalString;
     }
 
@@ -4406,7 +4406,7 @@ sub GenerateImplementation
         } else {
             push(@implContent, "    JSValue constructor = ${className}Constructor::create(state->vm(), ${className}Constructor::createStructure(state->vm(), *prototype->globalObject(), prototype->globalObject()->objectPrototype()), *jsCast<JSDOMGlobalObject*>(prototype->globalObject()));\n");
             push(@implContent, "    // Shadowing constructor property to ensure reusing the same constructor object\n");
-            push(@implContent, "    prototype->putDirect(vm, vm.propertyNames->constructor, constructor, DontEnum | ReadOnly);\n");
+            push(@implContent, "    prototype->putDirect(vm, vm.propertyNames->constructor, constructor, JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);\n");
             push(@implContent, "    return JSValue::encode(constructor);\n");
         }
         push(@implContent, "}\n\n");
@@ -5945,7 +5945,7 @@ sub GenerateCallbackImplementationContent
             push(@hashKeys, $name);
             push(@hashValue1, $constant->value);
             push(@hashValue2, "0");
-            push(@hashSpecials, "DontDelete | ReadOnly | ConstantInteger");
+            push(@hashSpecials, "JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::ConstantInteger");
 
             my $implementedBy = $constant->extendedAttributes->{ImplementedBy};
             $implIncludes{"${implementedBy}.h"} = 1 if $implementedBy;
@@ -6665,7 +6665,7 @@ sub GenerateHashTableValueArray
 
             if ($readWriteConditional) {
                 push(@implContent, "#else\n") ;
-                push(@implContent, "    { \"$key\", ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
+                push(@implContent, "    { \"$key\", JSC::PropertyAttribute::ReadOnly | @$specials[$i], NoIntrinsic, { (intptr_t)" . $firstTargetType . "(@$value1[$i]), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },\n");
                 push(@implContent, "#endif\n");
             }
         }
@@ -7111,15 +7111,15 @@ sub GenerateConstructorHelperMethods
     # of whether the interface was declared with the [NoInterfaceObject] extended attribute.
     # https://heycam.github.io/webidl/#interface-prototype-object
     if (ShouldUseGlobalObjectPrototype($interface)) {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), DontDelete | ReadOnly | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, globalObject.getPrototypeDirect(), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     } elsif ($interface->isCallback) {
         push(@$outputArray, "    UNUSED_PARAM(globalObject);\n");
     } else {
-        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);\n");
+        push(@$outputArray, "    putDirect(vm, vm.propertyNames->prototype, ${className}::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
     }
 
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), ReadOnly | DontEnum);\n");
-    push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), ReadOnly | DontEnum);\n") if defined $leastConstructorLength;
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral(\"$visibleInterfaceName\"))), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n");
+    push(@$outputArray, "    putDirect(vm, vm.propertyNames->length, jsNumber(${leastConstructorLength}), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);\n") if defined $leastConstructorLength;
 
     my $classForThis = "${className}::info()";
     if ($interface->isCallback) {
@@ -7207,17 +7207,17 @@ sub ComputeFunctionSpecial
     my ($interface, $operation) = @_;
 
     my @specials = ();
-    push(@specials, ("DontDelete", "ReadOnly")) if IsUnforgeable($interface, $operation);
-    push(@specials, "DontEnum") if $operation->extendedAttributes->{NotEnumerable};
+    push(@specials, ("JSC::PropertyAttribute::DontDelete", "JSC::PropertyAttribute::ReadOnly")) if IsUnforgeable($interface, $operation);
+    push(@specials, "JSC::PropertyAttribute::DontEnum") if $operation->extendedAttributes->{NotEnumerable};
     if (IsJSBuiltin($interface, $operation)) {
-        push(@specials, "JSC::Builtin");
+        push(@specials, "JSC::PropertyAttribute::Builtin");
     } else {
-        push(@specials, "JSC::Function");
+        push(@specials, "JSC::PropertyAttribute::Function");
     }
     if ($operation->extendedAttributes->{DOMJIT}) {
-        push(@specials, "DOMJITFunction") if $operation->extendedAttributes->{DOMJIT};
+        push(@specials, "JSC::PropertyAttribute::DOMJITFunction") if $operation->extendedAttributes->{DOMJIT};
     }
-    return (@specials > 0) ? join(" | ", @specials) : "0";
+    return "static_cast<unsigned>(" . ((@specials > 0) ? join(" | ", @specials) : "0") . ")";
 }
 
 sub IsJSBuiltin

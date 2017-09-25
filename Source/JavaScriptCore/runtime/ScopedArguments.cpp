@@ -124,9 +124,9 @@ void ScopedArguments::overrideThings(VM& vm)
 {
     RELEASE_ASSERT(!m_overrodeThings);
     
-    putDirect(vm, vm.propertyNames->length, jsNumber(m_table->length()), DontEnum);
-    putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(m_table->length()), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     m_overrodeThings = true;
 }

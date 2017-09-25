@@ -92,9 +92,9 @@ template<> JSValue JSMapLikeConstructor::prototypeForStructure(JSC::VM& vm, cons
 
 template<> void JSMapLikeConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSMapLike::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("MapLike"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSMapLike::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("MapLike"))), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
 template<> const ClassInfo JSMapLikeConstructor::s_info = { "MapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLikeConstructor) };
@@ -103,17 +103,17 @@ template<> const ClassInfo JSMapLikeConstructor::s_info = { "MapLike", &Base::s_
 
 static const HashTableValue JSMapLikePrototypeTableValues[] =
 {
-    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSMapLikeConstructor) } },
-    { "size", DontEnum | ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsMapLikeSize), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
-    { "get", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionGet), (intptr_t) (1) } },
-    { "has", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionHas), (intptr_t) (1) } },
-    { "entries", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionEntries), (intptr_t) (0) } },
-    { "keys", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionKeys), (intptr_t) (0) } },
-    { "values", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionValues), (intptr_t) (0) } },
-    { "forEach", JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionForEach), (intptr_t) (1) } },
-    { "add", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionAdd), (intptr_t) (1) } },
-    { "clear", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionClear), (intptr_t) (0) } },
-    { "delete", DontEnum | JSC::Function, NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionDelete), (intptr_t) (1) } },
+    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsMapLikeConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSMapLikeConstructor) } },
+    { "size", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsMapLikeSize), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
+    { "get", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionGet), (intptr_t) (1) } },
+    { "has", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionHas), (intptr_t) (1) } },
+    { "entries", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionEntries), (intptr_t) (0) } },
+    { "keys", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionKeys), (intptr_t) (0) } },
+    { "values", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionValues), (intptr_t) (0) } },
+    { "forEach", static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionForEach), (intptr_t) (1) } },
+    { "add", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionAdd), (intptr_t) (1) } },
+    { "clear", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionClear), (intptr_t) (0) } },
+    { "delete", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::Function), NoIntrinsic, { (intptr_t)static_cast<NativeFunction>(jsMapLikePrototypeFunctionDelete), (intptr_t) (1) } },
 };
 
 const ClassInfo JSMapLikePrototype::s_info = { "MapLikePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLikePrototype) };
@@ -122,7 +122,7 @@ void JSMapLikePrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     reifyStaticProperties(vm, JSMapLike::info(), JSMapLikePrototypeTableValues, *this);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, getDirect(vm, vm.propertyNames->builtinNames().entriesPublicName()), static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
 }
 
 const ClassInfo JSMapLike::s_info = { "MapLike", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapLike) };

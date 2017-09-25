@@ -76,7 +76,7 @@ void JSLexicalEnvironment::getOwnNonIndexPropertyNames(JSObject* object, ExecSta
         ConcurrentJSLocker locker(thisObject->symbolTable()->m_lock);
         SymbolTable::Map::iterator end = thisObject->symbolTable()->end(locker);
         for (SymbolTable::Map::iterator it = thisObject->symbolTable()->begin(locker); it != end; ++it) {
-            if (it->value.getAttributes() & DontEnum && !mode.includeDontEnumProperties())
+            if (it->value.getAttributes() & PropertyAttribute::DontEnum && !mode.includeDontEnumProperties())
                 continue;
             if (!thisObject->isValidScopeOffset(it->value.scopeOffset()))
                 continue;

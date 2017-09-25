@@ -124,7 +124,7 @@ bool pluginElementCustomGetOwnPropertySlot(JSHTMLElement* element, ExecState* ex
     if (!scriptObject->hasProperty(exec, propertyName))
         return false;
 
-    slot.setCustom(element, DontDelete | DontEnum, pluginElementPropertyGetter);
+    slot.setCustom(element, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum, pluginElementPropertyGetter);
     return true;
 }
 

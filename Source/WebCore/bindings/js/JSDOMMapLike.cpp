@@ -40,7 +40,7 @@ static inline JSC::JSObject& getBackingMap(JSC::ExecState& state, JSC::JSObject&
 
 void initializeBackingMap(JSC::VM& vm, JSC::JSObject& mapLike, JSC::JSMap& backingMap)
 {
-    mapLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName(), &backingMap, JSC::DontEnum);
+    mapLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName(), &backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
 }
 
 JSC::JSMap& createBackingMap(JSC::ExecState& state, JSC::JSGlobalObject& globalObject, JSC::JSObject& mapLike)
@@ -51,7 +51,7 @@ JSC::JSMap& createBackingMap(JSC::ExecState& state, JSC::JSGlobalObject& globalO
     ASSERT(mapLike.get(&state, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName()).isUndefined());
     auto backingMap = JSC::JSMap::create(&state, vm, globalObject.mapStructure());
     scope.releaseAssertNoException();
-    mapLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName(), backingMap, JSC::DontEnum);
+    mapLike.putDirect(vm, static_cast<JSVMClientData*>(vm.clientData)->builtinNames().backingMapPrivateName(), backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
     return *backingMap;
 }
 

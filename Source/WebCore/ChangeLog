@@ -1,5 +1,239 @@
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
+        Make Attribute an enum class
+        https://bugs.webkit.org/show_bug.cgi?id=177414
+
+        Reviewed by Yusuke Suzuki.
+
+        No change in behavior.
+
+        * bindings/js/JSDOMGlobalObject.cpp:
+        (WebCore::JSDOMGlobalObject::addBuiltinGlobals):
+        * bindings/js/JSDOMMapLike.cpp:
+        (WebCore::initializeBackingMap):
+        (WebCore::createBackingMap):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::finishCreation):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::jsDOMWindowGetOwnPropertySlotRestrictedAccess):
+        (WebCore::JSDOMWindow::getOwnPropertySlot):
+        (WebCore::JSDOMWindow::getOwnPropertySlotByIndex):
+        * bindings/js/JSDOMWindowProperties.cpp:
+        (WebCore::jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter):
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::getOwnPropertySlotCommon):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::pluginElementCustomGetOwnPropertySlot):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateIndexedGetter):
+        (GenerateNamedGetter):
+        (GetJSCAttributesForAttribute):
+        (GeneratePropertiesHashTable):
+        (addUnscopableProperties):
+        (GenerateImplementation):
+        (GenerateCallbackImplementationContent):
+        (GenerateHashTableValueArray):
+        (GenerateConstructorHelperMethods):
+        (ComputeFunctionSpecial):
+        * bindings/scripts/test/JS/JSInterfaceName.cpp:
+        (WebCore::JSInterfaceNameConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        (WebCore::JSMapLikeConstructor::initializeProperties):
+        (WebCore::JSMapLikePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        (WebCore::JSReadOnlyMapLikeConstructor::initializeProperties):
+        (WebCore::JSReadOnlyMapLikePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        (WebCore::JSTestActiveDOMObjectConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        (WebCore::JSTestCEReactionsConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        (WebCore::JSTestCEReactionsStringifierConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        (WebCore::JSTestCallTracerConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestCallbackInterface.cpp:
+        (WebCore::JSTestCallbackInterfaceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestClassWithJSBuiltinConstructor.cpp:
+        (WebCore::JSTestClassWithJSBuiltinConstructorConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestCustomConstructorWithNoInterfaceObject.cpp:
+        (WebCore::JSTestCustomConstructorWithNoInterfaceObjectConstructor::initializeProperties):
+        (WebCore::jsTestCustomConstructorWithNoInterfaceObjectConstructor):
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        (WebCore::JSTestDOMJITConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        (WebCore::JSTestEnabledBySettingConstructor::initializeProperties):
+        (WebCore::JSTestEnabledBySetting::finishCreation):
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        (WebCore::JSTestEventConstructorConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestEventTarget.cpp:
+        (WebCore::JSTestEventTargetConstructor::initializeProperties):
+        (WebCore::JSTestEventTarget::getOwnPropertySlot):
+        (WebCore::JSTestEventTarget::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        (WebCore::JSTestExceptionConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        (WebCore::JSTestGenerateIsReachableConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        (WebCore::JSTestGlobalObjectConstructor::initializeProperties):
+        (WebCore::JSTestGlobalObject::finishCreation):
+        * bindings/scripts/test/JS/JSTestIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterNoIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestIndexedSetterNoIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestIndexedSetterNoIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestIndexedSetterThrowingExceptionConstructor::initializeProperties):
+        (WebCore::JSTestIndexedSetterThrowingException::getOwnPropertySlot):
+        (WebCore::JSTestIndexedSetterThrowingException::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestIndexedSetterWithIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestIndexedSetterWithIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestIndexedSetterWithIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        (WebCore::JSTestInterfaceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        (WebCore::JSTestInterfaceLeadingUnderscoreConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestIterable.cpp:
+        (WebCore::JSTestIterableConstructor::initializeProperties):
+        (WebCore::JSTestIterablePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestJSBuiltinConstructor.cpp:
+        (WebCore::JSTestJSBuiltinConstructorConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        (WebCore::JSTestMediaQueryListListenerConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedAndIndexedSetterNoIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterThrowingExceptionConstructor::initializeProperties):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlot):
+        (WebCore::JSTestNamedAndIndexedSetterThrowingException::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedAndIndexedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedAndIndexedSetterWithIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.cpp:
+        (WebCore::JSTestNamedConstructorConstructor::initializeProperties):
+        (WebCore::JSTestNamedConstructorNamedConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestNamedDeleterNoIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterNoIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedDeleterNoIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedDeleterNoIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedDeleterThrowingException.cpp:
+        (WebCore::JSTestNamedDeleterThrowingExceptionConstructor::initializeProperties):
+        (WebCore::JSTestNamedDeleterThrowingException::getOwnPropertySlot):
+        (WebCore::JSTestNamedDeleterThrowingException::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIdentifier.cpp:
+        (WebCore::JSTestNamedDeleterWithIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedDeleterWithIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedDeleterWithIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedDeleterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedDeleterWithIndexedGetterConstructor::initializeProperties):
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::getOwnPropertySlot):
+        (WebCore::JSTestNamedDeleterWithIndexedGetter::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedGetterCallWith.cpp:
+        (WebCore::JSTestNamedGetterCallWithConstructor::initializeProperties):
+        (WebCore::JSTestNamedGetterCallWith::getOwnPropertySlot):
+        (WebCore::JSTestNamedGetterCallWith::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedGetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedGetterNoIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedGetterNoIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedGetterNoIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedGetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedGetterWithIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedGetterWithIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedGetterWithIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterNoIdentifier.cpp:
+        (WebCore::JSTestNamedSetterNoIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterNoIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterNoIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterThrowingException.cpp:
+        (WebCore::JSTestNamedSetterThrowingExceptionConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterThrowingException::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterThrowingException::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIdentifier.cpp:
+        (WebCore::JSTestNamedSetterWithIdentifierConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithIdentifier::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithIdentifier::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithIndexedGetter::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithIndexedGetterAndSetter.cpp:
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetterConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithIndexedGetterAndSetter::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithOverrideBuiltinsConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithOverrideBuiltins::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithOverrideBuiltins::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithUnforgableProperties::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltinsConstructor::initializeProperties):
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::getOwnPropertySlot):
+        (WebCore::JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        (WebCore::JSTestNodeConstructor::initializeProperties):
+        (WebCore::JSTestNodePrototype::finishCreation):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::JSTestObjConstructor::initializeProperties):
+        (WebCore::JSTestObjPrototype::finishCreation):
+        (WebCore::JSTestObj::getOwnPropertySlot):
+        (WebCore::JSTestObj::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.cpp:
+        (WebCore::JSTestOverloadedConstructorsConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructorsWithSequence.cpp:
+        (WebCore::JSTestOverloadedConstructorsWithSequenceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestOverrideBuiltins.cpp:
+        (WebCore::JSTestOverrideBuiltinsConstructor::initializeProperties):
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertySlot):
+        (WebCore::JSTestOverrideBuiltins::getOwnPropertySlotByIndex):
+        * bindings/scripts/test/JS/JSTestPluginInterface.cpp:
+        (WebCore::JSTestPluginInterfaceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        (WebCore::JSTestPromiseRejectionEventConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        (WebCore::JSTestSerializationConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestSerializationIndirectInheritance.cpp:
+        (WebCore::JSTestSerializationIndirectInheritanceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        (WebCore::JSTestSerializationInheritConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        (WebCore::JSTestSerializationInheritFinalConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        (WebCore::JSTestSerializedScriptValueInterfaceConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifier.cpp:
+        (WebCore::JSTestStringifierConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierAnonymousOperation.cpp:
+        (WebCore::JSTestStringifierAnonymousOperationConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierNamedOperation.cpp:
+        (WebCore::JSTestStringifierNamedOperationConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierOperationImplementedAs.cpp:
+        (WebCore::JSTestStringifierOperationImplementedAsConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierOperationNamedToString.cpp:
+        (WebCore::JSTestStringifierOperationNamedToStringConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        (WebCore::JSTestStringifierReadOnlyAttributeConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        (WebCore::JSTestStringifierReadWriteAttributeConstructor::initializeProperties):
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+        (WebCore::JSTestTypedefsConstructor::initializeProperties):
+        * bridge/runtime_array.cpp:
+        (JSC::RuntimeArray::getOwnPropertySlot):
+        (JSC::RuntimeArray::getOwnPropertySlotByIndex):
+        * bridge/runtime_method.cpp:
+        (JSC::RuntimeMethod::getOwnPropertySlot):
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::getOwnPropertySlot):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didAddUserAgentShadowRoot):
+
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
         Stop using PolicyCallback
         https://bugs.webkit.org/show_bug.cgi?id=176088
 

@@ -36,9 +36,9 @@ NativeErrorPrototype::NativeErrorPrototype(VM& vm, Structure* structure)
 void NativeErrorPrototype::finishCreation(VM& vm, const WTF::String& nameAndMessage, NativeErrorConstructor* constructor)
 {
     Base::finishCreation(vm);
-    putDirect(vm, vm.propertyNames->name, jsString(&vm, nameAndMessage), DontEnum);
-    putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), DontEnum);
-    putDirect(vm, vm.propertyNames->constructor, constructor, DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsString(&vm, nameAndMessage), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->message, jsEmptyString(&vm), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->constructor, constructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 } // namespace JSC

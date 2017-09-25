@@ -48,7 +48,7 @@ void GeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Generator"), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Generator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     vm.prototypeMap.addPrototype(this);
 }
 

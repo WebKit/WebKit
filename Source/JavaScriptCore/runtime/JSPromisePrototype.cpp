@@ -76,12 +76,12 @@ JSPromisePrototype::JSPromisePrototype(VM& vm, Structure* structure)
 void JSPromisePrototype::finishCreation(VM& vm, Structure*)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Promise"), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Promise"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 void JSPromisePrototype::addOwnInternalSlots(VM& vm, JSGlobalObject* globalObject)
 {
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().thenPrivateName(), promisePrototypeThenCodeGenerator, DontEnum | DontDelete | ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().thenPrivateName(), promisePrototypeThenCodeGenerator, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 }
 
 } // namespace JSC

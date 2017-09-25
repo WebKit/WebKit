@@ -249,7 +249,7 @@ bool JSArray::getOwnPropertySlot(JSObject* object, ExecState* exec, PropertyName
     VM& vm = exec->vm();
     JSArray* thisObject = jsCast<JSArray*>(object);
     if (propertyName == vm.propertyNames->length) {
-        unsigned attributes = thisObject->isLengthWritable() ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly;
+        unsigned attributes = thisObject->isLengthWritable() ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(thisObject, attributes, jsNumber(thisObject->length()));
         return true;
     }
@@ -462,7 +462,7 @@ bool JSArray::setLengthWithArrayStorage(ExecState* exec, unsigned newLength, boo
                     unsigned index = keys[--i];
                     SparseArrayValueMap::iterator it = map->find(index);
                     ASSERT(it != map->notFound());
-                    if (it->value.attributes & DontDelete) {
+                    if (it->value.attributes & PropertyAttribute::DontDelete) {
                         storage->setLength(index + 1);
                         return typeError(exec, scope, throwException, ASCIILiteral(UnableToDeletePropertyError));
                     }

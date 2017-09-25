@@ -32,7 +32,7 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
     GetterSetter* accessor = GetterSetter::create(vm, globalObject);
     if (value.accessorGetter()) {
         JSFunction* function = nullptr;
-        if (value.attributes() & Builtin)
+        if (value.attributes() & PropertyAttribute::Builtin)
             function = JSFunction::create(vm, value.builtinAccessorGetterGenerator()(vm), globalObject);
         else {
             String getterName = tryMakeString(ASCIILiteral("get "), String(*propertyName.publicName()));
@@ -48,9 +48,9 @@ void reifyStaticAccessor(VM& vm, const HashTableValue& value, JSObject& thisObje
 bool setUpStaticFunctionSlot(VM& vm, const ClassInfo* classInfo, const HashTableValue* entry, JSObject* thisObject, PropertyName propertyName, PropertySlot& slot)
 {
     ASSERT(thisObject->globalObject());
-    ASSERT(entry->attributes() & BuiltinOrFunctionOrAccessorOrLazyProperty);
+    ASSERT(entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty);
     unsigned attributes;
-    bool isAccessor = entry->attributes() & Accessor;
+    bool isAccessor = entry->attributes() & PropertyAttribute::Accessor;
     PropertyOffset offset = thisObject->getDirectOffset(vm, propertyName, attributes);
 
     if (!isValidOffset(offset)) {

@@ -175,7 +175,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
         unsigned attributes;
         PropertyOffset offset = obj->structure()->get(vm, propertyName, attributes);
         if (offset != invalidOffset) {
-            if (attributes & ReadOnly)
+            if (attributes & PropertyAttribute::ReadOnly)
                 return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
             JSValue gs = obj->getDirect(offset);
@@ -185,7 +185,7 @@ bool JSValue::putToPrimitive(ExecState* exec, PropertyName propertyName, JSValue
             }
 
             if (gs.isCustomGetterSetter())
-                return callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
+                return callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.

@@ -319,10 +319,10 @@ namespace JSC {
         bool isLocal() const { return m_offset.isStack(); }
         RegisterID* local() const { return m_local; }
 
-        bool isReadOnly() const { return m_attributes & ReadOnly; }
+        bool isReadOnly() const { return m_attributes & PropertyAttribute::ReadOnly; }
         bool isSpecial() const { return m_kind != NormalVariable; }
         bool isConst() const { return isReadOnly() && m_isLexicallyScoped; }
-        void setIsReadOnly() { m_attributes |= ReadOnly; }
+        void setIsReadOnly() { m_attributes |= PropertyAttribute::ReadOnly; }
 
         void dump(PrintStream&) const;
 

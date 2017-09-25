@@ -46,8 +46,8 @@ void NativeErrorConstructor::finishCreation(VM& vm, JSGlobalObject* globalObject
     
     NativeErrorPrototype* prototype = NativeErrorPrototype::create(vm, prototypeStructure, name, this);
     
-    putDirect(vm, vm.propertyNames->length, jsNumber(1), DontEnum | ReadOnly);
-    putDirect(vm, vm.propertyNames->prototype, prototype, DontDelete | ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
+    putDirect(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
     m_errorStructure.set(vm, this, ErrorInstance::createStructure(vm, globalObject, prototype));
     ASSERT(m_errorStructure);
     ASSERT(m_errorStructure->isObject());

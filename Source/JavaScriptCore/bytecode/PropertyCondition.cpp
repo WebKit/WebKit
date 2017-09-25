@@ -136,7 +136,7 @@ bool PropertyCondition::isStillValidAssumingImpurePropertyWatchpoint(
         unsigned currentAttributes;
         PropertyOffset currentOffset = structure->getConcurrently(uid(), currentAttributes);
         if (currentOffset != invalidOffset) {
-            if (currentAttributes & (ReadOnly | Accessor | CustomAccessor)) {
+            if (currentAttributes & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor)) {
                 if (PropertyConditionInternal::verbose) {
                     dataLog(
                         "Invalid because we expected not to have a setter, but we have one at offset ",
@@ -319,7 +319,7 @@ void PropertyCondition::validateReferences(const TrackedReferences& tracked) con
 
 bool PropertyCondition::isValidValueForAttributes(VM& vm, JSValue value, unsigned attributes)
 {
-    bool attributesClaimAccessor = !!(attributes & Accessor);
+    bool attributesClaimAccessor = !!(attributes & PropertyAttribute::Accessor);
     bool valueClaimsAccessor = !!jsDynamicCast<GetterSetter*>(vm, value);
     return attributesClaimAccessor == valueClaimsAccessor;
 }

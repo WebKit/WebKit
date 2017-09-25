@@ -46,9 +46,9 @@ void AsyncFromSyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* glob
     ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", asyncFromSyncIteratorPrototypeNextCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("return", asyncFromSyncIteratorPrototypeReturnCodeGenerator, DontEnum);
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("throw", asyncFromSyncIteratorPrototypeThrowCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", asyncFromSyncIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("return", asyncFromSyncIteratorPrototypeReturnCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("throw", asyncFromSyncIteratorPrototypeThrowCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 AsyncFromSyncIteratorPrototype* AsyncFromSyncIteratorPrototype::create(VM& vm, JSGlobalObject* globalObject, Structure* structure)

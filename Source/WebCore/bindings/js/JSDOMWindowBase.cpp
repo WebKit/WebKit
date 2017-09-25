@@ -94,8 +94,8 @@ void JSDOMWindowBase::finishCreation(VM& vm, JSDOMWindowProxy* proxy)
     auto& builtinNames = static_cast<JSVMClientData*>(vm.clientData)->builtinNames();
 
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(builtinNames.documentPublicName(), jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(builtinNames.windowPublicName(), m_proxy, DontDelete | ReadOnly),
+        GlobalPropertyInfo(builtinNames.documentPublicName(), jsNull(), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
+        GlobalPropertyInfo(builtinNames.windowPublicName(), m_proxy, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };
 
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));

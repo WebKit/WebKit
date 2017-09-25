@@ -70,7 +70,7 @@ bool RuntimeMethod::getOwnPropertySlot(JSObject* object, ExecState* exec, Proper
     VM& vm = exec->vm();
     RuntimeMethod* thisObject = jsCast<RuntimeMethod*>(object);
     if (propertyName == vm.propertyNames->length) {
-        slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum, thisObject->lengthGetter);
+        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->lengthGetter);
         return true;
     }
     

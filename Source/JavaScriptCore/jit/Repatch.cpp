@@ -304,7 +304,7 @@ static InlineCacheAction tryCacheGetByID(const GCSafeConcurrentJSLocker& locker,
                 AccessCase::AccessType type;
                 if (slot.isCacheableGetter())
                     type = AccessCase::Getter;
-                else if (slot.attributes() & CustomAccessor)
+                else if (slot.attributes() & PropertyAttribute::CustomAccessor)
                     type = AccessCase::CustomAccessorGetter;
                 else
                     type = AccessCase::CustomValueGetter;

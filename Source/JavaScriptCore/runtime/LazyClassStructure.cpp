@@ -68,9 +68,9 @@ void LazyClassStructure::Initializer::setConstructor(PropertyName propertyName, 
     
     this->constructor = constructor;
 
-    prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructor, DontEnum);
+    prototype->putDirectWithoutTransition(vm, vm.propertyNames->constructor, constructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     if (!propertyName.isNull())
-        global->putDirect(vm, propertyName, constructor, DontEnum);
+        global->putDirect(vm, propertyName, constructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
     classStructure.m_constructor.set(vm, global, constructor);
 }
 

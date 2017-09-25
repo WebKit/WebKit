@@ -312,7 +312,7 @@ bool ProxyObject::performHasProperty(ExecState* exec, PropertyName propertyName,
         return false;
     }
     JSObject* target = this->target();
-    slot.setValue(this, None, jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
+    slot.setValue(this, static_cast<unsigned>(PropertyAttribute::None), jsUndefined()); // Nobody should rely on our value, but be safe and protect against any bad actors reading our value.
 
     auto performDefaultHasProperty = [&] {
         return target->methodTable(vm)->getOwnPropertySlot(target, exec, propertyName, slot);

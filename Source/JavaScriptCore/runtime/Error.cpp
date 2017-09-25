@@ -220,12 +220,12 @@ bool addErrorInfo(VM& vm, Vector<StackFrame>* stackTrace, JSObject* obj)
         if (!sourceURL.isEmpty())
             obj->putDirect(vm, vm.propertyNames->sourceURL, jsString(&vm, sourceURL));
 
-        obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, *stackTrace), DontEnum);
+        obj->putDirect(vm, vm.propertyNames->stack, Interpreter::stackTraceAsString(vm, *stackTrace), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
         return true;
     }
 
-    obj->putDirect(vm, vm.propertyNames->stack, vm.smallStrings.emptyString(), DontEnum);
+    obj->putDirect(vm, vm.propertyNames->stack, vm.smallStrings.emptyString(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     return false;
 }
 

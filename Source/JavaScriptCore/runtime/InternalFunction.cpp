@@ -49,7 +49,7 @@ void InternalFunction::finishCreation(VM& vm, const String& name, NameVisibility
     JSString* nameString = jsString(&vm, name);
     m_originalName.set(vm, this, nameString);
     if (nameVisibility == NameVisibility::Visible)
-        putDirect(vm, vm.propertyNames->name, nameString, ReadOnly | DontEnum);
+        putDirect(vm, vm.propertyNames->name, nameString, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 void InternalFunction::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -81,7 +81,7 @@ void AtomicsObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     
 #define PUT_DIRECT_NATIVE_FUNC(lowerName, upperName, count) \
-    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, #lowerName), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, DontEnum);
+    putDirectNativeFunctionWithoutTransition(vm, globalObject, Identifier::fromString(&vm, #lowerName), count, atomicsFunc ## upperName, Atomics ## upperName ## Intrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     FOR_EACH_ATOMICS_FUNC(PUT_DIRECT_NATIVE_FUNC)
 #undef PUT_DIRECT_NATIVE_FUNC
 }

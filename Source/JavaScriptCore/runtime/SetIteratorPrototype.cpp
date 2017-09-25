@@ -39,8 +39,8 @@ void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", setIteratorPrototypeNextCodeGenerator, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set Iterator"), DontEnum | ReadOnly);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("next", setIteratorPrototypeNextCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Set Iterator"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 }

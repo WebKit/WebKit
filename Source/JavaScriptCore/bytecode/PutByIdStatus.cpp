@@ -318,10 +318,10 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalObject* globalObject, const Stru
         unsigned attributes;
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (isValidOffset(offset)) {
-            if (attributes & CustomAccessor)
+            if (attributes & PropertyAttribute::CustomAccessor)
                 return PutByIdStatus(MakesCalls);
 
-            if (attributes & (Accessor | ReadOnly))
+            if (attributes & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))
                 return PutByIdStatus(TakesSlowPath);
             
             WatchpointSet* replaceSet = structure->propertyReplacementWatchpointSet(offset);

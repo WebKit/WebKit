@@ -104,7 +104,7 @@ GetByIdStatus GetByIdStatus::computeFromLLInt(CodeBlock* profiledBlock, unsigned
     PropertyOffset offset = structure->getConcurrently(uid, attributes);
     if (!isValidOffset(offset))
         return GetByIdStatus(NoInformation, false);
-    if (attributes & CustomAccessor)
+    if (attributes & PropertyAttribute::CustomAccessor)
         return GetByIdStatus(NoInformation, false);
     
     return GetByIdStatus(Simple, false, GetByIdVariant(StructureSet(structure), offset));
@@ -195,7 +195,7 @@ GetByIdStatus GetByIdStatus::computeForStubInfoWithoutExitSiteFeedback(
         variant.m_offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(variant.m_offset))
             return GetByIdStatus(slowPathState, true);
-        if (attributes & CustomAccessor)
+        if (attributes & PropertyAttribute::CustomAccessor)
             return GetByIdStatus(slowPathState, true);
         
         variant.m_structureSet.add(structure);
@@ -381,9 +381,9 @@ GetByIdStatus GetByIdStatus::computeFor(const StructureSet& set, UniquedStringIm
         PropertyOffset offset = structure->getConcurrently(uid, attributes);
         if (!isValidOffset(offset))
             return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
-        if (attributes & Accessor)
+        if (attributes & PropertyAttribute::Accessor)
             return GetByIdStatus(MakesCalls); // We could be smarter here, like strength-reducing this to a Call.
-        if (attributes & CustomAccessor)
+        if (attributes & PropertyAttribute::CustomAccessor)
             return GetByIdStatus(TakesSlowPath);
         
         if (!result.appendVariant(GetByIdVariant(structure, offset)))

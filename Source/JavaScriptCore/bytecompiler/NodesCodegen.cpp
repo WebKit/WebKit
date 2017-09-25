@@ -547,7 +547,7 @@ RegisterID* PropertyListNode::emitBytecode(BytecodeGenerator& generator, Registe
             if (needsSuperBinding)
                 emitPutHomeObject(generator, value.get(), dst);
 
-            unsigned attributes = node->isClassProperty() ? (Accessor | DontEnum) : Accessor;
+            unsigned attributes = node->isClassProperty() ? (PropertyAttribute::Accessor | PropertyAttribute::DontEnum) : static_cast<unsigned>(PropertyAttribute::Accessor);
 
             ASSERT(node->m_type & (PropertyNode::Getter | PropertyNode::Setter));
 

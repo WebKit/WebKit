@@ -48,15 +48,15 @@ bool GenericArguments<Type>::getOwnPropertySlot(JSObject* object, ExecState* exe
     
     if (!thisObject->overrodeThings()) {
         if (ident == vm.propertyNames->length) {
-            slot.setValue(thisObject, DontEnum, jsNumber(thisObject->internalLength()));
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), jsNumber(thisObject->internalLength()));
             return true;
         }
         if (ident == vm.propertyNames->callee) {
-            slot.setValue(thisObject, DontEnum, thisObject->callee().get());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->callee().get());
             return true;
         }
         if (ident == vm.propertyNames->iteratorSymbol) {
-            slot.setValue(thisObject, DontEnum, thisObject->globalObject()->arrayProtoValuesFunction());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->globalObject()->arrayProtoValuesFunction());
             return true;
         }
     }
@@ -73,7 +73,7 @@ bool GenericArguments<Type>::getOwnPropertySlotByIndex(JSObject* object, ExecSta
     Type* thisObject = jsCast<Type*>(object);
     
     if (!thisObject->isModifiedArgumentDescriptor(index) && thisObject->isMappedArgument(index)) {
-        slot.setValue(thisObject, None, thisObject->getIndexQuickly(index));
+        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), thisObject->getIndexQuickly(index));
         return true;
     }
     

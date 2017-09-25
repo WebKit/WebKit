@@ -77,8 +77,8 @@ IntlNumberFormatConstructor::IntlNumberFormatConstructor(VM& vm, Structure* stru
 void IntlNumberFormatConstructor::finishCreation(VM& vm, IntlNumberFormatPrototype* numberFormatPrototype, Structure* numberFormatStructure)
 {
     Base::finishCreation(vm, ASCIILiteral("NumberFormat"));
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, numberFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
     m_numberFormatStructure.set(vm, this, numberFormatStructure);
 }
 

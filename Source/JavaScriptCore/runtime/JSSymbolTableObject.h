@@ -93,7 +93,7 @@ inline bool symbolTableGet(
     if (!object->isValidScopeOffset(offset))
         return false;
 
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(offset).get());
+    slot.setValue(object, entry.getAttributes() | PropertyAttribute::DontDelete, object->variableAt(offset).get());
     return true;
 }
 
@@ -114,7 +114,7 @@ inline bool symbolTableGet(
     if (!object->isValidScopeOffset(offset))
         return false;
 
-    descriptor.setDescriptor(object->variableAt(offset).get(), entry.getAttributes() | DontDelete);
+    descriptor.setDescriptor(object->variableAt(offset).get(), entry.getAttributes() | PropertyAttribute::DontDelete);
     return true;
 }
 
@@ -136,7 +136,7 @@ inline bool symbolTableGet(
     if (!object->isValidScopeOffset(offset))
         return false;
 
-    slot.setValue(object, entry.getAttributes() | DontDelete, object->variableAt(offset).get());
+    slot.setValue(object, entry.getAttributes() | PropertyAttribute::DontDelete, object->variableAt(offset).get());
     slotIsWriteable = !entry.isReadOnly();
     return true;
 }

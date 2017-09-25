@@ -70,8 +70,8 @@ static EncodedJSValue JSC_HOST_CALL makeRevocableProxy(ExecState* exec)
 
     JSObject* result = constructEmptyObject(exec);
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
-    result->putDirect(vm, makeIdentifier(vm, "proxy"), proxy, None);
-    result->putDirect(vm, makeIdentifier(vm, "revoke"), revoke, None);
+    result->putDirect(vm, makeIdentifier(vm, "proxy"), proxy, static_cast<unsigned>(PropertyAttribute::None));
+    result->putDirect(vm, makeIdentifier(vm, "revoke"), revoke, static_cast<unsigned>(PropertyAttribute::None));
 
     return JSValue::encode(result);
 }
@@ -86,7 +86,7 @@ void ProxyConstructor::finishCreation(VM& vm, const char* name, JSGlobalObject* 
 {
     Base::finishCreation(vm, name);
 
-    putDirect(vm, vm.propertyNames->length, jsNumber(2), DontEnum | ReadOnly);
+    putDirect(vm, vm.propertyNames->length, jsNumber(2), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     putDirect(vm, makeIdentifier(vm, "revocable"), JSFunction::create(vm, globalObject, 2, ASCIILiteral("revocable"), makeRevocableProxy, NoIntrinsic, proxyRevocableConstructorThrowError));
 }
 

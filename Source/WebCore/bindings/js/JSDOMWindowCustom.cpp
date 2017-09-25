@@ -91,11 +91,11 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // access below; we should try to find a way to merge the two.
     if (!frame) {
         if (propertyName == builtinNames.closedPublicName()) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete, jsDOMWindowClosed);
+            slot.setCustom(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete, jsDOMWindowClosed);
             return true;
         }
         if (propertyName == builtinNames.closePublicName()) {
-            slot.setCustom(thisObject, ReadOnly | DontDelete, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
+            slot.setCustom(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
             return true;
         }
 
@@ -107,26 +107,26 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
     if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
-        slot.setValue(thisObject, ReadOnly | DontEnum, jsUndefined());
+        slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum, jsUndefined());
         return true;
     }
 
     // These are the functions we allow access to cross-origin (DoNotCheckSecurity in IDL).
     // Always provide the original function, on a fresh uncached function object.
     if (propertyName == builtinNames.blurPublicName()) {
-        slot.setCustom(thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionBlur, 0>);
         return true;
     }
     if (propertyName == builtinNames.closePublicName()) {
-        slot.setCustom(thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionClose, 0>);
         return true;
     }
     if (propertyName == builtinNames.focusPublicName()) {
-        slot.setCustom(thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionFocus, 0>);
         return true;
     }
     if (propertyName == builtinNames.postMessagePublicName()) {
-        slot.setCustom(thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
+        slot.setCustom(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsDOMWindowInstanceFunctionPostMessage, 2>);
         return true;
     }
 
@@ -146,7 +146,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
             || propertyName == builtinNames.topPublicName()) {
             bool shouldExposeSetter = propertyName == builtinNames.locationPublicName();
             CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, entry->propertyGetter(), shouldExposeSetter ? entry->propertyPutter() : nullptr);
-            slot.setCustomGetterSetter(thisObject, CustomAccessor, customGetterSetter);
+            slot.setCustomGetterSetter(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), customGetterSetter);
             return true;
         }
 
@@ -163,7 +163,7 @@ static bool jsDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMWindow* thisObjec
     // properties that are in Moz but not IE. Since we have some of these, we have to do it
     // the Moz way.
     if (auto* scopedChild = frame->tree().scopedChild(propertyNameToAtomicString(propertyName))) {
-        slot.setValue(thisObject, ReadOnly | DontDelete, toJS(exec, scopedChild->document()->domWindow()));
+        slot.setValue(thisObject, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontDelete, toJS(exec, scopedChild->document()->domWindow()));
         return true;
     }
 
@@ -210,7 +210,7 @@ bool JSDOMWindow::getOwnPropertySlot(JSObject* object, ExecState* state, Propert
 
 #if ENABLE(USER_MESSAGE_HANDLERS)
     if (propertyName == static_cast<JSVMClientData*>(state->vm().clientData)->builtinNames().webkitPublicName() && thisObject->wrapped().shouldHaveWebKitNamespaceForWorld(thisObject->world())) {
-        slot.setCacheableCustom(thisObject, DontDelete | ReadOnly, jsDOMWindowWebKit);
+        slot.setCacheableCustom(thisObject, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly, jsDOMWindowWebKit);
         return true;
     }
 #endif
@@ -233,7 +233,7 @@ bool JSDOMWindow::getOwnPropertySlotByIndex(JSObject* object, ExecState* state, 
     // (1) First, indexed properties.
     // These are also allowed cross-orgin, so come before the access check.
     if (frame && index < frame->tree().scopedChildCount()) {
-        slot.setValue(thisObject, ReadOnly, toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
+        slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(state, frame->tree().scopedChild(index)->document()->domWindow()));
         return true;
     }
 

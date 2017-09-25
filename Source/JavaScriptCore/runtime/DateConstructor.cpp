@@ -76,8 +76,8 @@ DateConstructor::DateConstructor(VM& vm, Structure* structure)
 void DateConstructor::finishCreation(VM& vm, DatePrototype* datePrototype)
 {
     Base::finishCreation(vm, "Date");
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), ReadOnly | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, datePrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(7), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 static double millisecondsFromComponents(ExecState* exec, const ArgList& args, WTF::TimeType timeType)

@@ -109,7 +109,7 @@ JSDataViewPrototype* JSDataViewPrototype::create(VM& vm, Structure* structure)
 void JSDataViewPrototype::finishCreation(JSC::VM& vm)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "DataView"), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "DataView"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 Structure* JSDataViewPrototype::createStructure(

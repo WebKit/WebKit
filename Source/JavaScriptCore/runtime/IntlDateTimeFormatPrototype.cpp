@@ -83,7 +83,7 @@ void IntlDateTimeFormatPrototype::finishCreation(VM& vm, JSGlobalObject* globalO
     Base::finishCreation(vm);
 #if JSC_ICU_HAS_UFIELDPOSITER
     JSFunction* formatToPartsFunction = JSFunction::create(vm, globalObject, 0, vm.propertyNames->formatToParts.string(), IntlDateTimeFormatPrototypeFuncFormatToParts);
-    putDirectWithoutTransition(vm, vm.propertyNames->formatToParts, formatToPartsFunction, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->formatToParts, formatToPartsFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 #else
     UNUSED_PARAM(globalObject);
 #endif

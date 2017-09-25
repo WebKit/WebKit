@@ -60,11 +60,11 @@ SymbolPrototype::SymbolPrototype(VM& vm, Structure* structure)
 void SymbolPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);
-    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Symbol"), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
     ASSERT(inherits(vm, info()));
 
     JSFunction* toPrimitiveFunction = JSFunction::create(vm, globalObject, 1, ASCIILiteral("[Symbol.toPrimitive]"), symbolProtoFuncValueOf, NoIntrinsic);
-    putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->toPrimitiveSymbol, toPrimitiveFunction, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 }
 
 // ------------------------------ Functions ---------------------------

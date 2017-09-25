@@ -44,8 +44,8 @@ AsyncFunctionConstructor::AsyncFunctionConstructor(VM& vm, Structure* structure)
 void AsyncFunctionConstructor::finishCreation(VM& vm, AsyncFunctionPrototype* prototype)
 {
     Base::finishCreation(vm, "AsyncFunction");
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, prototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 static EncodedJSValue JSC_HOST_CALL callAsyncFunctionConstructor(ExecState* exec)

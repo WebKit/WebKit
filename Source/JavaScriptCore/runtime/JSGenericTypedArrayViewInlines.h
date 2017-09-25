@@ -355,14 +355,14 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlot(
 
     if (std::optional<uint32_t> index = parseIndex(propertyName)) {
         if (thisObject->isNeutered()) {
-            slot.setCustom(thisObject, None, throwNeuteredTypedArrayTypeError);
+            slot.setCustom(thisObject, static_cast<unsigned>(PropertyAttribute::None), throwNeuteredTypedArrayTypeError);
             return true;
         }
 
         if (thisObject->canGetIndexQuickly(index.value()))
-            slot.setValue(thisObject, DontDelete | ReadOnly, thisObject->getIndexQuickly(index.value()));
+            slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, thisObject->getIndexQuickly(index.value()));
         else
-            slot.setValue(thisObject, DontDelete | ReadOnly, jsUndefined());
+            slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, jsUndefined());
         return true;
     }
     
@@ -446,7 +446,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
     JSGenericTypedArrayView* thisObject = jsCast<JSGenericTypedArrayView*>(object);
 
     if (thisObject->isNeutered()) {
-        slot.setCustom(thisObject, None, throwNeuteredTypedArrayTypeError);
+        slot.setCustom(thisObject, static_cast<unsigned>(PropertyAttribute::None), throwNeuteredTypedArrayTypeError);
         return true;
     }
 
@@ -458,7 +458,7 @@ bool JSGenericTypedArrayView<Adaptor>::getOwnPropertySlotByIndex(
     if (!thisObject->canGetIndexQuickly(propertyName))
         return false;
     
-    slot.setValue(thisObject, DontDelete, thisObject->getIndexQuickly(propertyName));
+    slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete), thisObject->getIndexQuickly(propertyName));
     return true;
 }
 

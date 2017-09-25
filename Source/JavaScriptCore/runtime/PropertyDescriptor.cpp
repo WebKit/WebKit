@@ -33,22 +33,22 @@
 #include "JSCInlines.h"
 
 namespace JSC {
-unsigned PropertyDescriptor::defaultAttributes = DontDelete | DontEnum | ReadOnly;
+unsigned PropertyDescriptor::defaultAttributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
 
 bool PropertyDescriptor::writable() const
 {
     ASSERT(!isAccessorDescriptor());
-    return !(m_attributes & ReadOnly);
+    return !(m_attributes & PropertyAttribute::ReadOnly);
 }
 
 bool PropertyDescriptor::enumerable() const
 {
-    return !(m_attributes & DontEnum);
+    return !(m_attributes & PropertyAttribute::DontEnum);
 }
 
 bool PropertyDescriptor::configurable() const
 {
-    return !(m_attributes & DontDelete);
+    return !(m_attributes & PropertyAttribute::DontDelete);
 }
 
 bool PropertyDescriptor::isDataDescriptor() const
@@ -69,7 +69,7 @@ bool PropertyDescriptor::isAccessorDescriptor() const
 void PropertyDescriptor::setUndefined()
 {
     m_value = jsUndefined();
-    m_attributes = ReadOnly | DontDelete | DontEnum;
+    m_attributes = PropertyAttribute::ReadOnly | PropertyAttribute::DontDelete | PropertyAttribute::DontEnum;
 }
 
 GetterSetter* PropertyDescriptor::slowGetterSetter(ExecState* exec)
@@ -118,7 +118,7 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 
     m_attributes = attributes;
     if (value.isGetterSetter()) {
-        m_attributes &= ~ReadOnly; // FIXME: we should be able to ASSERT this!
+        m_attributes &= ~PropertyAttribute::ReadOnly; // FIXME: we should be able to ASSERT this!
 
         GetterSetter* accessor = asGetterSetter(value);
         m_getter = !accessor->isGetterNull() ? accessor->getter() : jsUndefined();
@@ -132,8 +132,8 @@ void PropertyDescriptor::setDescriptor(JSValue value, unsigned attributes)
 
 void PropertyDescriptor::setCustomDescriptor(unsigned attributes)
 {
-    m_attributes = attributes | Accessor | CustomAccessor;
-    m_attributes &= ~ReadOnly;
+    m_attributes = attributes | PropertyAttribute::Accessor | PropertyAttribute::CustomAccessor;
+    m_attributes &= ~PropertyAttribute::ReadOnly;
     m_seenAttributes = EnumerablePresent | ConfigurablePresent;
     setGetter(jsUndefined());
     setSetter(jsUndefined());
@@ -142,8 +142,8 @@ void PropertyDescriptor::setCustomDescriptor(unsigned attributes)
 
 void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned attributes)
 {
-    ASSERT(attributes & Accessor);
-    attributes &= ~ReadOnly; // FIXME: we should be able to ASSERT this!
+    ASSERT(attributes & PropertyAttribute::Accessor);
+    attributes &= ~PropertyAttribute::ReadOnly; // FIXME: we should be able to ASSERT this!
 
     m_attributes = attributes;
     m_getter = !accessor->isGetterNull() ? accessor->getter() : jsUndefined();
@@ -154,42 +154,42 @@ void PropertyDescriptor::setAccessorDescriptor(GetterSetter* accessor, unsigned 
 void PropertyDescriptor::setWritable(bool writable)
 {
     if (writable)
-        m_attributes &= ~ReadOnly;
+        m_attributes &= ~PropertyAttribute::ReadOnly;
     else
-        m_attributes |= ReadOnly;
+        m_attributes |= PropertyAttribute::ReadOnly;
     m_seenAttributes |= WritablePresent;
 }
 
 void PropertyDescriptor::setEnumerable(bool enumerable)
 {
     if (enumerable)
-        m_attributes &= ~DontEnum;
+        m_attributes &= ~PropertyAttribute::DontEnum;
     else
-        m_attributes |= DontEnum;
+        m_attributes |= PropertyAttribute::DontEnum;
     m_seenAttributes |= EnumerablePresent;
 }
 
 void PropertyDescriptor::setConfigurable(bool configurable)
 {
     if (configurable)
-        m_attributes &= ~DontDelete;
+        m_attributes &= ~PropertyAttribute::DontDelete;
     else
-        m_attributes |= DontDelete;
+        m_attributes |= PropertyAttribute::DontDelete;
     m_seenAttributes |= ConfigurablePresent;
 }
 
 void PropertyDescriptor::setSetter(JSValue setter)
 {
     m_setter = setter;
-    m_attributes |= Accessor;
-    m_attributes &= ~ReadOnly;
+    m_attributes |= PropertyAttribute::Accessor;
+    m_attributes &= ~PropertyAttribute::ReadOnly;
 }
 
 void PropertyDescriptor::setGetter(JSValue getter)
 {
     m_getter = getter;
-    m_attributes |= Accessor;
-    m_attributes &= ~ReadOnly;
+    m_attributes |= PropertyAttribute::Accessor;
+    m_attributes &= ~PropertyAttribute::ReadOnly;
 }
 
 bool PropertyDescriptor::equalTo(ExecState* exec, const PropertyDescriptor& other) const
@@ -208,11 +208,11 @@ bool PropertyDescriptor::attributesEqual(const PropertyDescriptor& other) const
 {
     unsigned mismatch = other.m_attributes ^ m_attributes;
     unsigned sharedSeen = other.m_seenAttributes & m_seenAttributes;
-    if (sharedSeen & WritablePresent && mismatch & ReadOnly)
+    if (sharedSeen & WritablePresent && mismatch & PropertyAttribute::ReadOnly)
         return false;
-    if (sharedSeen & ConfigurablePresent && mismatch & DontDelete)
+    if (sharedSeen & ConfigurablePresent && mismatch & PropertyAttribute::DontDelete)
         return false;
-    if (sharedSeen & EnumerablePresent && mismatch & DontEnum)
+    if (sharedSeen & EnumerablePresent && mismatch & PropertyAttribute::DontEnum)
         return false;
     return true;
 }
@@ -221,17 +221,17 @@ unsigned PropertyDescriptor::attributesOverridingCurrent(const PropertyDescripto
 {
     unsigned currentAttributes = current.m_attributes;
     if (isDataDescriptor() && current.isAccessorDescriptor())
-        currentAttributes |= ReadOnly;
+        currentAttributes |= PropertyAttribute::ReadOnly;
     unsigned overrideMask = 0;
     if (writablePresent())
-        overrideMask |= ReadOnly;
+        overrideMask |= PropertyAttribute::ReadOnly;
     if (enumerablePresent())
-        overrideMask |= DontEnum;
+        overrideMask |= PropertyAttribute::DontEnum;
     if (configurablePresent())
-        overrideMask |= DontDelete;
+        overrideMask |= PropertyAttribute::DontDelete;
     if (isAccessorDescriptor())
-        overrideMask |= Accessor;
-    return (m_attributes & overrideMask) | (currentAttributes & ~overrideMask & ~CustomAccessor);
+        overrideMask |= PropertyAttribute::Accessor;
+    return (m_attributes & overrideMask) | (currentAttributes & ~overrideMask & ~PropertyAttribute::CustomAccessor);
 }
 
 }

@@ -145,7 +145,7 @@ bool SparseArrayValueMap::putDirect(ExecState* exec, JSObject* array, unsigned i
         return typeError(exec, scope, shouldThrow, ASCIILiteral(NonExtensibleObjectPropertyDefineError));
     }
 
-    if (entry.attributes & ReadOnly)
+    if (entry.attributes & PropertyAttribute::ReadOnly)
         return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 
     entry.attributes = attributes;
@@ -176,8 +176,8 @@ bool SparseArrayEntry::put(ExecState* exec, JSValue thisValue, SparseArrayValueM
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!(attributes & Accessor)) {
-        if (attributes & ReadOnly)
+    if (!(attributes & PropertyAttribute::Accessor)) {
+        if (attributes & PropertyAttribute::ReadOnly)
             return typeError(exec, scope, shouldThrow, ASCIILiteral(ReadonlyPropertyWriteError));
 
         set(vm, map, value);

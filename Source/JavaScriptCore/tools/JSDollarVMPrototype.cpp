@@ -452,7 +452,7 @@ void JSDollarVMPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     
     addFunction(vm, globalObject, "crash", functionCrash, 0);
     
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, DontEnum);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "dfgTrue"), 0, functionDFGTrue, DFGTrueIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     addFunction(vm, globalObject, "llintTrue", functionLLintTrue, 0);
     addFunction(vm, globalObject, "jitTrue", functionJITTrue, 0);

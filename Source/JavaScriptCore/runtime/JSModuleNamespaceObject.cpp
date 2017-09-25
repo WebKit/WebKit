@@ -73,7 +73,7 @@ void JSModuleNamespaceObject::finishCreation(ExecState* exec, JSGlobalObject*, A
         }
     }
 
-    putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), DontEnum | DontDelete | ReadOnly);
+    putDirect(vm, vm.propertyNames->toStringTagSymbol, jsString(&vm, "Module"), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
 
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-getprototypeof
     // http://www.ecma-international.org/ecma-262/6.0/#sec-module-namespace-exotic-objects-setprototypeof-v
@@ -145,7 +145,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, Property
             return false;
         }
 
-        slot.setValueModuleNamespace(this, DontDelete, value, environment, scopeOffset);
+        slot.setValueModuleNamespace(this, static_cast<unsigned>(PropertyAttribute::DontDelete), value, environment, scopeOffset);
         return true;
     }
 
@@ -153,7 +153,7 @@ bool JSModuleNamespaceObject::getOwnPropertySlotCommon(ExecState* exec, Property
         // Do not perform [[Get]] for [[HasProperty]].
         // [[Get]] / [[GetOwnProperty]] onto namespace object could throw an error while [[HasProperty]] just returns true here.
         // https://tc39.github.io/ecma262/#sec-module-namespace-exotic-objects-hasproperty-p
-        slot.setValue(this, DontDelete, jsUndefined());
+        slot.setValue(this, static_cast<unsigned>(PropertyAttribute::DontDelete), jsUndefined());
         return true;
     }
 

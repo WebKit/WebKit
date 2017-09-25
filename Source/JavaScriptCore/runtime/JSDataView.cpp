@@ -108,11 +108,11 @@ bool JSDataView::getOwnPropertySlot(
     VM& vm = exec->vm();
     JSDataView* thisObject = jsCast<JSDataView*>(object);
     if (propertyName == vm.propertyNames->byteLength) {
-        slot.setValue(thisObject, DontEnum | ReadOnly, jsNumber(thisObject->m_length));
+        slot.setValue(thisObject, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, jsNumber(thisObject->m_length));
         return true;
     }
     if (propertyName == vm.propertyNames->byteOffset) {
-        slot.setValue(thisObject, DontEnum | ReadOnly, jsNumber(thisObject->byteOffset()));
+        slot.setValue(thisObject, PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly, jsNumber(thisObject->byteOffset()));
         return true;
     }
 

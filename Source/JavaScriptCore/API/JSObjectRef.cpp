@@ -129,7 +129,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
     JSCallbackConstructor* constructor = JSCallbackConstructor::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackConstructorStructure(), jsClass, callAsConstructor);
-    constructor->putDirect(vm, vm.propertyNames->prototype, jsPrototype, DontEnum | DontDelete | ReadOnly);
+    constructor->putDirect(vm, vm.propertyNames->prototype, jsPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
     return toRef(constructor);
 }
 

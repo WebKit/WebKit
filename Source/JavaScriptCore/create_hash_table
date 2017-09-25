@@ -84,29 +84,29 @@ while (<IN>) {
         my $intrinsic = $5;
 
         push(@keys, $key);
-        push(@attrs, length($att) > 0 ? $att : "0");
+        push(@attrs, length($att) > 0 ? $att : "None");
 
         if ($val eq "JSBuiltin") {
             $includeBuiltin = 1;
         }
 
         if ($att =~ m/Function/) {
-            push(@values, { "type" => "Function", "function" => $val, "params" => (length($param) ? $param : ""), "intrinsic" => (length($intrinsic) ? $intrinsic : "NoIntrinsic") });
+            push(@values, { "type" => "PropertyAttribute::Function", "function" => $val, "params" => (length($param) ? $param : ""), "intrinsic" => (length($intrinsic) ? $intrinsic : "NoIntrinsic") });
             #printf STDERR "WARNING: Number of arguments missing for $key/$val\n" if (length($param) == 0);
         } elsif ($att =~ m/Accessor/) {
             my $get = $val;
             my $put = "nullptr";
             $hasSetter = "true";
-            push(@values, { "type" => "Accessor", "get" => $get, "put" => $put });
+            push(@values, { "type" => "PropertyAttribute::Accessor", "get" => $get, "put" => $put });
         } elsif ($att =~ m/CellProperty/) {
             my $property = $val;
-            push(@values, { "type" => "CellProperty", "property" => $property });
+            push(@values, { "type" => "PropertyAttribute::CellProperty", "property" => $property });
         } elsif ($att =~ m/ClassStructure/) {
             my $property = $val;
-            push(@values, { "type" => "ClassStructure", "property" => $property });
+            push(@values, { "type" => "PropertyAttribute::ClassStructure", "property" => $property });
         } elsif ($att =~ m/PropertyCallback/) {
             my $cback = $val;
-            push(@values, { "type" => "PropertyCallback", "cback" => $cback });
+            push(@values, { "type" => "PropertyAttribute::PropertyCallback", "cback" => $cback });
         } elsif (length($att)) {
             my $get = $val;
             my $put = "0";
@@ -114,9 +114,9 @@ while (<IN>) {
                 $put = "set" . jsc_ucfirst($val);
             }
             $hasSetter = "true";
-            push(@values, { "type" => "Property", "get" => $get, "put" => $put });
+            push(@values, { "type" => "PropertyAttribute::Property", "get" => $get, "put" => $put });
         } else {
-            push(@values, { "type" => "Lexer", "value" => $val });        
+            push(@values, { "type" => "Lexer", "value" => $val });
         }
         push(@hashes, hashValue($key));
     } elsif ($inside) {
@@ -304,17 +304,17 @@ sub output() {
         my $secondCastStr = "";
         my $intrinsic = "NoIntrinsic";
 
-        if ($values[$i]{"type"} eq "Function") {
+        if ($values[$i]{"type"} eq "PropertyAttribute::Function") {
             $firstCastStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"function"};
             $secondValue = $values[$i]{"params"};
             $intrinsic = $values[$i]{"intrinsic"};
-        } elsif ($values[$i]{"type"} eq "Accessor") {
+        } elsif ($values[$i]{"type"} eq "PropertyAttribute::Accessor") {
             $firstCastStr = "static_cast<NativeFunction>";
             $secondCastStr = "static_cast<NativeFunction>";
             $firstValue = $values[$i]{"get"};
             $secondValue = $values[$i]{"put"};
-        } elsif ($values[$i]{"type"} eq "Property") {
+        } elsif ($values[$i]{"type"} eq "PropertyAttribute::Property") {
             $firstCastStr = "static_cast<PropertySlot::GetValueFunc>";
             $secondCastStr = "static_cast<PutPropertySlot::PutValueFunc>";
             $firstValue = $values[$i]{"get"};
@@ -322,23 +322,26 @@ sub output() {
         } elsif ($values[$i]{"type"} eq "Lexer") {
             $firstValue = $values[$i]{"value"};
             $secondValue = "0";
-        } elsif ($values[$i]{"type"} eq "CellProperty" || $values[$i]{"type"} eq "ClassStructure") {
+        } elsif ($values[$i]{"type"} eq "PropertyAttribute::CellProperty" || $values[$i]{"type"} eq "PropertyAttribute::ClassStructure") {
             $values[$i]{"property"} =~ /\A([a-zA-Z0-9_]+)::(.*)\Z/ or die;
             $firstValue = "OBJECT_OFFSETOF($1, $2)";
             $secondValue = "0";
-        } elsif ($values[$i]{"type"} eq "PropertyCallback") {
+        } elsif ($values[$i]{"type"} eq "PropertyAttribute::PropertyCallback") {
             $firstCastStr = "static_cast<LazyPropertyCallback>";
             $firstValue = $values[$i]{"cback"};
             $secondValue = "0";
         }
 
-        if ($values[$i]{"type"} eq "Function" && $firstValue eq "JSBuiltin")  {
+        my $attributes = "PropertyAttribute::" . $attrs[$i];
+        $attributes =~ s/\|/\|PropertyAttribute::/g;
+        $attributes = "static_cast<unsigned>(" . $attributes . ")";
+        if ($values[$i]{"type"} eq "PropertyAttribute::Function" && $firstValue eq "JSBuiltin")  {
             my $tableHead = $name;
             $tableHead =~ s/Table$//;
-            print "   { \"$key\", (($attrs[$i]) & ~Function) | Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
+            print "   { \"$key\", (($attributes) & ~PropertyAttribute::Function) | PropertyAttribute::Builtin, $intrinsic, { (intptr_t)static_cast<BuiltinGenerator>(" . $tableHead . ucfirst($key) . "CodeGenerator), (intptr_t)$secondValue } },\n";
         }
         else {
-            print "   { \"$key\", $attrs[$i], $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
+            print "   { \"$key\", $attributes, $intrinsic, { (intptr_t)" . $firstCastStr . "($firstValue), (intptr_t)" . $secondCastStr . "($secondValue) } },\n";
         }
         $i++;
     }

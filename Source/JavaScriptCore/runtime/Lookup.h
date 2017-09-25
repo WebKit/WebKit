@@ -73,35 +73,35 @@ struct HashTableValue {
 
     unsigned attributes() const { return m_attributes; }
 
-    Intrinsic intrinsic() const { ASSERT(m_attributes & Function); return m_intrinsic; }
-    BuiltinGenerator builtinGenerator() const { ASSERT(m_attributes & Builtin); return reinterpret_cast<BuiltinGenerator>(m_values.value1); }
-    NativeFunction function() const { ASSERT(m_attributes & Function); return reinterpret_cast<NativeFunction>(m_values.value1); }
+    Intrinsic intrinsic() const { ASSERT(m_attributes & PropertyAttribute::Function); return m_intrinsic; }
+    BuiltinGenerator builtinGenerator() const { ASSERT(m_attributes & PropertyAttribute::Builtin); return reinterpret_cast<BuiltinGenerator>(m_values.value1); }
+    NativeFunction function() const { ASSERT(m_attributes & PropertyAttribute::Function); return reinterpret_cast<NativeFunction>(m_values.value1); }
     unsigned char functionLength() const
     {
-        ASSERT(m_attributes & Function);
-        if (m_attributes & DOMJITFunction)
+        ASSERT(m_attributes & PropertyAttribute::Function);
+        if (m_attributes & PropertyAttribute::DOMJITFunction)
             return signature()->argumentCount;
         return static_cast<unsigned char>(m_values.value2);
     }
 
-    GetFunction propertyGetter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<GetFunction>(m_values.value1); }
-    PutFunction propertyPutter() const { ASSERT(!(m_attributes & BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<PutFunction>(m_values.value2); }
+    GetFunction propertyGetter() const { ASSERT(!(m_attributes & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<GetFunction>(m_values.value1); }
+    PutFunction propertyPutter() const { ASSERT(!(m_attributes & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyPropertyOrConstant)); return reinterpret_cast<PutFunction>(m_values.value2); }
 
-    const DOMJIT::GetterSetter* domJIT() const { ASSERT(m_attributes & DOMJITAttribute); return reinterpret_cast<const DOMJIT::GetterSetter*>(m_values.value1); }
-    const DOMJIT::Signature* signature() const { ASSERT(m_attributes & DOMJITFunction); return reinterpret_cast<const DOMJIT::Signature*>(m_values.value2); }
+    const DOMJIT::GetterSetter* domJIT() const { ASSERT(m_attributes & PropertyAttribute::DOMJITAttribute); return reinterpret_cast<const DOMJIT::GetterSetter*>(m_values.value1); }
+    const DOMJIT::Signature* signature() const { ASSERT(m_attributes & PropertyAttribute::DOMJITFunction); return reinterpret_cast<const DOMJIT::Signature*>(m_values.value2); }
 
-    NativeFunction accessorGetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value1); }
-    NativeFunction accessorSetter() const { ASSERT(m_attributes & Accessor); return reinterpret_cast<NativeFunction>(m_values.value2); }
+    NativeFunction accessorGetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return reinterpret_cast<NativeFunction>(m_values.value1); }
+    NativeFunction accessorSetter() const { ASSERT(m_attributes & PropertyAttribute::Accessor); return reinterpret_cast<NativeFunction>(m_values.value2); }
     BuiltinGenerator builtinAccessorGetterGenerator() const;
     BuiltinGenerator builtinAccessorSetterGenerator() const;
 
-    long long constantInteger() const { ASSERT(m_attributes & ConstantInteger); return m_values.constant; }
+    long long constantInteger() const { ASSERT(m_attributes & PropertyAttribute::ConstantInteger); return m_values.constant; }
 
     intptr_t lexerValue() const { ASSERT(!m_attributes); return m_values.value1; }
     
-    ptrdiff_t lazyCellPropertyOffset() const { ASSERT(m_attributes & CellProperty); return m_values.value1; }
-    ptrdiff_t lazyClassStructureOffset() const { ASSERT(m_attributes & ClassStructure); return m_values.value1; }
-    LazyPropertyCallback lazyPropertyCallback() const { ASSERT(m_attributes & PropertyCallback); return reinterpret_cast<LazyPropertyCallback>(m_values.value1); }
+    ptrdiff_t lazyCellPropertyOffset() const { ASSERT(m_attributes & PropertyAttribute::CellProperty); return m_values.value1; }
+    ptrdiff_t lazyClassStructureOffset() const { ASSERT(m_attributes & PropertyAttribute::ClassStructure); return m_values.value1; }
+    LazyPropertyCallback lazyPropertyCallback() const { ASSERT(m_attributes & PropertyAttribute::PropertyCallback); return reinterpret_cast<LazyPropertyCallback>(m_values.value1); }
 };
 
 struct HashTable {
@@ -208,15 +208,15 @@ JS_EXPORT_PRIVATE void reifyStaticAccessor(VM&, const HashTableValue&, JSObject&
 
 inline BuiltinGenerator HashTableValue::builtinAccessorGetterGenerator() const
 {
-    ASSERT(m_attributes & Accessor);
-    ASSERT(m_attributes & Builtin);
+    ASSERT(m_attributes & PropertyAttribute::Accessor);
+    ASSERT(m_attributes & PropertyAttribute::Builtin);
     return reinterpret_cast<BuiltinGenerator>(m_values.value1);
 }
 
 inline BuiltinGenerator HashTableValue::builtinAccessorSetterGenerator() const
 {
-    ASSERT(m_attributes & Accessor);
-    ASSERT(m_attributes & Builtin);
+    ASSERT(m_attributes & PropertyAttribute::Accessor);
+    ASSERT(m_attributes & PropertyAttribute::Builtin);
     return reinterpret_cast<BuiltinGenerator>(m_values.value2);
 }
 
@@ -229,21 +229,21 @@ inline bool getStaticPropertySlotFromTable(VM& vm, const ClassInfo* classInfo, c
     if (!entry)
         return false;
 
-    if (entry->attributes() & BuiltinOrFunctionOrAccessorOrLazyProperty)
+    if (entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrAccessorOrLazyProperty)
         return setUpStaticFunctionSlot(vm, classInfo, entry, thisObject, propertyName, slot);
 
-    if (entry->attributes() & ConstantInteger) {
+    if (entry->attributes() & PropertyAttribute::ConstantInteger) {
         slot.setValue(thisObject, attributesForStructure(entry->attributes()), jsNumber(entry->constantInteger()));
         return true;
     }
 
-    if (entry->attributes() & DOMJITAttribute) {
+    if (entry->attributes() & PropertyAttribute::DOMJITAttribute) {
         const DOMJIT::GetterSetter* domJIT = entry->domJIT();
         slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), domJIT->getter(), DOMAttributeAnnotation { classInfo, domJIT });
         return true;
     }
 
-    if (entry->attributes() & DOMAttribute) {
+    if (entry->attributes() & PropertyAttribute::DOMAttribute) {
         slot.setCacheableCustom(thisObject, attributesForStructure(entry->attributes()), entry->propertyGetter(), DOMAttributeAnnotation { classInfo, nullptr });
         return true;
     }
@@ -271,8 +271,8 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
     VM& vm = exec->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (entry->attributes() & BuiltinOrFunctionOrLazyProperty) {
-        if (!(entry->attributes() & ReadOnly)) {
+    if (entry->attributes() & PropertyAttribute::BuiltinOrFunctionOrLazyProperty) {
+        if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
             // If this is a function or lazy property put then we just do the put because
             // logically the object already had the property, so this is just a replace.
             if (JSObject* thisObject = jsDynamicCast<JSObject*>(vm, thisValue))
@@ -282,13 +282,13 @@ inline bool putEntry(ExecState* exec, const ClassInfo*, const HashTableValue* en
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
     }
 
-    if (entry->attributes() & Accessor)
+    if (entry->attributes() & PropertyAttribute::Accessor)
         return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
 
-    if (!(entry->attributes() & ReadOnly)) {
-        ASSERT_WITH_MESSAGE(!(entry->attributes() & DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
-        bool isAccessor = entry->attributes() & CustomAccessor;
-        JSValue updateThisValue = entry->attributes() & CustomAccessor ? slot.thisValue() : JSValue(base);
+    if (!(entry->attributes() & PropertyAttribute::ReadOnly)) {
+        ASSERT_WITH_MESSAGE(!(entry->attributes() & PropertyAttribute::DOMJITAttribute), "DOMJITAttribute supports readonly attributes currently.");
+        bool isAccessor = entry->attributes() & PropertyAttribute::CustomAccessor;
+        JSValue updateThisValue = entry->attributes() & PropertyAttribute::CustomAccessor ? slot.thisValue() : JSValue(base);
         bool result = callCustomSetter(exec, entry->propertyPutter(), isAccessor, updateThisValue, value);
         RETURN_IF_EXCEPTION(scope, false);
         if (isAccessor)
@@ -319,16 +319,16 @@ inline bool lookupPut(ExecState* exec, PropertyName propertyName, JSObject* base
 
 inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const PropertyName& propertyName, const HashTableValue& value, JSObject& thisObj)
 {
-    if (value.attributes() & Builtin) {
-        if (value.attributes() & Accessor)
+    if (value.attributes() & PropertyAttribute::Builtin) {
+        if (value.attributes() & PropertyAttribute::Accessor)
             reifyStaticAccessor(vm, value, thisObj, propertyName);
         else
             thisObj.putDirectBuiltinFunction(vm, thisObj.globalObject(), propertyName, value.builtinGenerator()(vm), attributesForStructure(value.attributes()));
         return;
     }
 
-    if (value.attributes() & Function) {
-        if (value.attributes() & DOMJITFunction) {
+    if (value.attributes() & PropertyAttribute::Function) {
+        if (value.attributes() & PropertyAttribute::DOMJITFunction) {
             thisObj.putDirectNativeFunction(
                 vm, thisObj.globalObject(), propertyName, value.functionLength(),
                 value.function(), value.intrinsic(), value.signature(), attributesForStructure(value.attributes()));
@@ -340,17 +340,17 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         return;
     }
 
-    if (value.attributes() & ConstantInteger) {
+    if (value.attributes() & PropertyAttribute::ConstantInteger) {
         thisObj.putDirect(vm, propertyName, jsNumber(value.constantInteger()), attributesForStructure(value.attributes()));
         return;
     }
 
-    if (value.attributes() & Accessor) {
+    if (value.attributes() & PropertyAttribute::Accessor) {
         reifyStaticAccessor(vm, value, thisObj, propertyName);
         return;
     }
     
-    if (value.attributes() & CellProperty) {
+    if (value.attributes() & PropertyAttribute::CellProperty) {
         LazyCellProperty* property = bitwise_cast<LazyCellProperty*>(
             bitwise_cast<char*>(&thisObj) + value.lazyCellPropertyOffset());
         JSCell* result = property->get(&thisObj);
@@ -358,20 +358,20 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         return;
     }
     
-    if (value.attributes() & ClassStructure) {
+    if (value.attributes() & PropertyAttribute::ClassStructure) {
         LazyClassStructure* structure = bitwise_cast<LazyClassStructure*>(
             bitwise_cast<char*>(&thisObj) + value.lazyClassStructureOffset());
         structure->get(jsCast<JSGlobalObject*>(&thisObj));
         return;
     }
     
-    if (value.attributes() & PropertyCallback) {
+    if (value.attributes() & PropertyAttribute::PropertyCallback) {
         JSValue result = value.lazyPropertyCallback()(vm, &thisObj);
         thisObj.putDirect(vm, propertyName, result, attributesForStructure(value.attributes()));
         return;
     }
 
-    if (value.attributes() & DOMJITAttribute) {
+    if (value.attributes() & PropertyAttribute::DOMJITAttribute) {
         ASSERT_WITH_MESSAGE(classInfo, "DOMJITAttribute should have class info for type checking.");
         const DOMJIT::GetterSetter* domJIT = value.domJIT();
         auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, domJIT->getter(), value.propertyPutter(), DOMAttributeAnnotation { classInfo, domJIT });
@@ -379,7 +379,7 @@ inline void reifyStaticProperty(VM& vm, const ClassInfo* classInfo, const Proper
         return;
     }
 
-    if (value.attributes() & DOMAttribute) {
+    if (value.attributes() & PropertyAttribute::DOMAttribute) {
         ASSERT_WITH_MESSAGE(classInfo, "DOMAttribute should have class info for type checking.");
         auto* customGetterSetter = DOMAttributeGetterSetter::create(vm, value.propertyGetter(), value.propertyPutter(), DOMAttributeAnnotation { classInfo, nullptr });
         thisObj.putDirectCustomAccessor(vm, propertyName, customGetterSetter, attributesForStructure(value.attributes()));

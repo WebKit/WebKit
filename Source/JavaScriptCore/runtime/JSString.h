@@ -671,13 +671,13 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName
 {
     VM& vm = exec->vm();
     if (propertyName == vm.propertyNames->length) {
-        slot.setValue(this, DontEnum | DontDelete | ReadOnly, jsNumber(length()));
+        slot.setValue(this, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, jsNumber(length()));
         return true;
     }
 
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < length()) {
-        slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, index.value()));
+        slot.setValue(this, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, getIndex(exec, index.value()));
         return true;
     }
 
@@ -687,7 +687,7 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, PropertyName
 ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     if (propertyName < length()) {
-        slot.setValue(this, DontDelete | ReadOnly, getIndex(exec, propertyName));
+        slot.setValue(this, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly, getIndex(exec, propertyName));
         return true;
     }
 

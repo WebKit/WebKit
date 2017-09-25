@@ -104,13 +104,13 @@ void IntlObject::finishCreation(VM& vm, JSGlobalObject* globalObject)
 
     // Constructor Properties of the Intl Object
     // https://tc39.github.io/ecma402/#sec-constructor-properties-of-the-intl-object
-    putDirectWithoutTransition(vm, vm.propertyNames->Collator, collatorConstructor, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->NumberFormat, numberFormatConstructor, DontEnum);
-    putDirectWithoutTransition(vm, vm.propertyNames->DateTimeFormat, dateTimeFormatConstructor, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->Collator, collatorConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->NumberFormat, numberFormatConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirectWithoutTransition(vm, vm.propertyNames->DateTimeFormat, dateTimeFormatConstructor, static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     // Function Properties of the Intl Object
     // https://tc39.github.io/ecma402/#sec-function-properties-of-the-intl-object
-    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "getCanonicalLocales"), 1, intlObjectFuncGetCanonicalLocales, NoIntrinsic, DontEnum);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(&vm, "getCanonicalLocales"), 1, intlObjectFuncGetCanonicalLocales, NoIntrinsic, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 Structure* IntlObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

@@ -163,7 +163,7 @@ ALWAYS_INLINE bool JSObject::getNonIndexPropertySlot(ExecState* exec, PropertyNa
 
 inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes)
 {
-    ASSERT(!value.isGetterSetter() && !(attributes & Accessor));
+    ASSERT(!value.isGetterSetter() && !(attributes & PropertyAttribute::Accessor));
     ASSERT(!value.isCustomGetterSetter());
     StructureID structureID = this->structureID();
     Structure* structure = vm.heap.structureIDTable().get(structureID);
@@ -171,7 +171,7 @@ inline void JSObject::putDirectWithoutTransition(VM& vm, PropertyName propertyNa
     bool shouldOptimize = false;
     structure->willStoreValueForNewTransition(vm, propertyName, value, shouldOptimize);
     putDirect(vm, offset, value);
-    if (attributes & ReadOnly)
+    if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 }
 
@@ -256,7 +256,7 @@ template<JSObject::PutMode mode>
 ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName, JSValue value, unsigned attributes, PutPropertySlot& slot)
 {
     ASSERT(value);
-    ASSERT(value.isGetterSetter() == !!(attributes & Accessor));
+    ASSERT(value.isGetterSetter() == !!(attributes & PropertyAttribute::Accessor));
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
     ASSERT(!parseIndex(propertyName));
 
@@ -268,15 +268,15 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         unsigned currentAttributes;
         PropertyOffset offset = structure->get(vm, propertyName, currentAttributes);
         if (offset != invalidOffset) {
-            if ((mode == PutModePut) && currentAttributes & ReadOnly)
+            if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnly)
                 return false;
 
             putDirect(vm, offset, value);
             structure->didReplaceProperty(offset);
             slot.setExistingProperty(this, offset);
 
-            if ((attributes & Accessor) != (currentAttributes & Accessor) || (attributes & CustomAccessor) != (currentAttributes & CustomAccessor)) {
-                ASSERT(!(attributes & ReadOnly));
+            if ((attributes & PropertyAttribute::Accessor) != (currentAttributes & PropertyAttribute::Accessor) || (attributes & PropertyAttribute::CustomAccessor) != (currentAttributes & PropertyAttribute::CustomAccessor)) {
+                ASSERT(!(attributes & PropertyAttribute::ReadOnly));
                 setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
             }
             return true;
@@ -289,7 +289,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         validateOffset(offset);
         putDirect(vm, offset, value);
         slot.setNewProperty(this, offset);
-        if (attributes & ReadOnly)
+        if (attributes & PropertyAttribute::ReadOnly)
             this->structure()->setContainsReadOnlyProperties();
         return true;
     }
@@ -321,7 +321,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     bool hasInferredType;
     offset = structure->get(vm, propertyName, currentAttributes, hasInferredType);
     if (offset != invalidOffset) {
-        if ((mode == PutModePut) && currentAttributes & ReadOnly)
+        if ((mode == PutModePut) && currentAttributes & PropertyAttribute::ReadOnly)
             return false;
 
         structure->didReplaceProperty(offset);
@@ -333,8 +333,8 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
         slot.setExistingProperty(this, offset);
         putDirect(vm, offset, value);
 
-        if ((attributes & Accessor) != (currentAttributes & Accessor) || (attributes & CustomAccessor) != (currentAttributes & CustomAccessor)) {
-            ASSERT(!(attributes & ReadOnly));
+        if ((attributes & PropertyAttribute::Accessor) != (currentAttributes & PropertyAttribute::Accessor) || (attributes & PropertyAttribute::CustomAccessor) != (currentAttributes & PropertyAttribute::CustomAccessor)) {
+            ASSERT(!(attributes & PropertyAttribute::ReadOnly));
             setStructure(vm, Structure::attributeChangeTransition(vm, structure, propertyName, attributes));
         }
         return true;
@@ -365,7 +365,7 @@ ALWAYS_INLINE bool JSObject::putDirectInternal(VM& vm, PropertyName propertyName
     putDirect(vm, offset, value);
     setStructure(vm, newStructure);
     slot.setNewProperty(this, offset);
-    if (attributes & ReadOnly)
+    if (attributes & PropertyAttribute::ReadOnly)
         newStructure->setContainsReadOnlyProperties();
     return true;
 }

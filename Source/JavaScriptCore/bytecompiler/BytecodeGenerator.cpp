@@ -2036,7 +2036,7 @@ bool BytecodeGenerator::instantiateLexicalVariables(const VariableEnvironment& l
                 varOffset = VarOffset(local->virtualRegister());
             }
 
-            SymbolTableEntry newEntry(varOffset, entry.value.isConst() ? ReadOnly : None);
+            SymbolTableEntry newEntry(varOffset, static_cast<unsigned>(entry.value.isConst() ? PropertyAttribute::ReadOnly : PropertyAttribute::None));
             symbolTable->add(NoLockingNecessary, entry.key.get(), newEntry);
         }
     }
@@ -2392,10 +2392,8 @@ void BytecodeGenerator::prepareLexicalScopeForNextForLoopIteration(VariableEnvir
 
 Variable BytecodeGenerator::variable(const Identifier& property, ThisResolutionType thisResolutionType)
 {
-    if (property == propertyNames().thisIdentifier && thisResolutionType == ThisResolutionType::Local) {
-        return Variable(property, VarOffset(thisRegister()->virtualRegister()), thisRegister(),
-            ReadOnly, Variable::SpecialVariable, 0, false);
-    }
+    if (property == propertyNames().thisIdentifier && thisResolutionType == ThisResolutionType::Local)
+        return Variable(property, VarOffset(thisRegister()->virtualRegister()), thisRegister(), static_cast<unsigned>(PropertyAttribute::ReadOnly), Variable::SpecialVariable, 0, false);
     
     // We can optimize lookups if the lexical variable is found before a "with" or "catch"
     // scope because we're guaranteed static resolution. If we have to pass through

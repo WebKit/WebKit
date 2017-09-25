@@ -65,7 +65,7 @@ bool RegExpObject::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     VM& vm = exec->vm();
     if (propertyName == vm.propertyNames->lastIndex) {
         RegExpObject* regExp = asRegExpObject(object);
-        unsigned attributes = regExp->m_lastIndexIsWritable ? DontDelete | DontEnum : DontDelete | DontEnum | ReadOnly;
+        unsigned attributes = regExp->m_lastIndexIsWritable ? PropertyAttribute::DontDelete | PropertyAttribute::DontEnum : PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         slot.setValue(regExp, attributes, regExp->getLastIndex());
         return true;
     }

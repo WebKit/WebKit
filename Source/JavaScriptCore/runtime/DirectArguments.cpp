@@ -114,9 +114,9 @@ void DirectArguments::overrideThings(VM& vm)
 {
     RELEASE_ASSERT(!m_mappedArguments);
     
-    putDirect(vm, vm.propertyNames->length, jsNumber(m_length), DontEnum);
-    putDirect(vm, vm.propertyNames->callee, m_callee.get(), DontEnum);
-    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(m_length), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->callee, m_callee.get(), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     void* backingStore = vm.gigacageAuxiliarySpace(m_mappedArguments.kind).tryAllocate(mappedArgumentsSize());
     RELEASE_ASSERT(backingStore);

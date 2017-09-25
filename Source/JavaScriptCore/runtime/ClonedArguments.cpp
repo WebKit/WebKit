@@ -153,7 +153,7 @@ Structure* ClonedArguments::createStructure(VM& vm, JSGlobalObject* globalObject
 {
     Structure* structure = Structure::create(vm, globalObject, prototype, TypeInfo(ClonedArgumentsType, StructureFlags), info(), indexingType);
     PropertyOffset offset;
-    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, DontEnum, offset);
+    structure = structure->addPropertyTransition(vm, structure, vm.propertyNames->length, static_cast<unsigned>(PropertyAttribute::DontEnum), offset);
     ASSERT(offset == clonedArgumentsLengthPropertyOffset);
     return structure;
 }
@@ -180,7 +180,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
 
         if (ident == vm.propertyNames->callee) {
             if (isStrictMode) {
-                slot.setGetterSlot(thisObject, DontDelete | DontEnum | Accessor, thisObject->globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter());
+                slot.setGetterSlot(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor, thisObject->globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter());
                 return true;
             }
             slot.setValue(thisObject, 0, thisObject->m_callee.get());
@@ -188,7 +188,7 @@ bool ClonedArguments::getOwnPropertySlot(JSObject* object, ExecState* exec, Prop
         }
 
         if (ident == vm.propertyNames->iteratorSymbol) {
-            slot.setValue(thisObject, DontEnum, thisObject->globalObject()->arrayProtoValuesFunction());
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), thisObject->globalObject()->arrayProtoValuesFunction());
             return true;
         }
     }
@@ -251,11 +251,11 @@ void ClonedArguments::materializeSpecials(ExecState* exec)
     bool isStrictMode = executable->isStrictMode();
     
     if (isStrictMode)
-        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), DontDelete | DontEnum | Accessor);
+        putDirectAccessor(exec, vm.propertyNames->callee, globalObject()->throwTypeErrorArgumentsCalleeAndCallerGetterSetter(), PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::Accessor);
     else
         putDirect(vm, vm.propertyNames->callee, JSValue(m_callee.get()));
 
-    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), DontEnum);
+    putDirect(vm, vm.propertyNames->iteratorSymbol, globalObject()->arrayProtoValuesFunction(), static_cast<unsigned>(PropertyAttribute::DontEnum));
     
     m_callee.clear();
 }

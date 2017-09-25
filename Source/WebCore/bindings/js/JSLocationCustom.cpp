@@ -56,13 +56,13 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
 
     // https://html.spec.whatwg.org/#crossorigingetownpropertyhelper-(-o,-p-)
     if (propertyName == vm.propertyNames->toStringTagSymbol || propertyName == vm.propertyNames->hasInstanceSymbol || propertyName == vm.propertyNames->isConcatSpreadableSymbol) {
-        slot.setValue(&thisObject, ReadOnly | DontEnum, jsUndefined());
+        slot.setValue(&thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsUndefined());
         return true;
     }
 
     // We only allow access to Location.replace() cross origin.
     if (propertyName == vm.propertyNames->replace) {
-        slot.setCustom(&thisObject, ReadOnly, nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
+        slot.setCustom(&thisObject, static_cast<unsigned>(PropertyAttribute::ReadOnly), nonCachingStaticFunctionGetter<jsLocationInstanceFunctionReplace, 1>);
         return true;
     }
 
@@ -71,7 +71,7 @@ static bool getOwnPropertySlotCommon(JSLocation& thisObject, ExecState& state, P
     if (slot.internalMethodType() == PropertySlot::InternalMethodType::GetOwnProperty && propertyName == vm.propertyNames->href) {
         auto* entry = JSLocation::info()->staticPropHashTable->entry(propertyName);
         CustomGetterSetter* customGetterSetter = CustomGetterSetter::create(vm, nullptr, entry->propertyPutter());
-        slot.setCustomGetterSetter(&thisObject, CustomAccessor, customGetterSetter);
+        slot.setCustomGetterSetter(&thisObject, static_cast<unsigned>(JSC::PropertyAttribute::CustomAccessor), customGetterSetter);
         return true;
     }
 

@@ -42,7 +42,7 @@ void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     vm.prototypeMap.addPrototype(this);
 
     JSFunction* asyncIteratorPrototypeFunction = JSFunction::create(vm, asyncIteratorPrototypeSymbolAsyncIteratorGetterCodeGenerator(vm), globalObject);
-    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorPrototypeFunction, DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorPrototypeFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 } // namespace JSC

@@ -113,7 +113,7 @@ void ErrorInstance::finishCreation(ExecState* exec, VM& vm, const String& messag
     Base::finishCreation(vm);
     ASSERT(inherits(vm, info()));
     if (!message.isNull())
-        putDirect(vm, vm.propertyNames->message, jsString(&vm, message), DontEnum);
+        putDirect(vm, vm.propertyNames->message, jsString(&vm, message), static_cast<unsigned>(PropertyAttribute::DontEnum));
 
     std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(exec, vm, this, useCurrentFrame);
     {

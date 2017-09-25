@@ -60,8 +60,8 @@ StringConstructor::StringConstructor(VM& vm, Structure* structure)
 void StringConstructor::finishCreation(VM& vm, StringPrototype* stringPrototype)
 {
     Base::finishCreation(vm, stringPrototype->classInfo()->className);
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), ReadOnly | DontEnum);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, stringPrototype, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum);
 }
 
 // ------------------------------ Functions --------------------------------

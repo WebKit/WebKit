@@ -1187,7 +1187,7 @@ void JIT_OPERATION operationPutByValWithThis(ExecState* exec, EncodedJSValue enc
 ALWAYS_INLINE static void defineDataProperty(ExecState* exec, VM& vm, JSObject* base, const Identifier& propertyName, JSValue value, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(value, jsUndefined(), jsUndefined(), DefinePropertyAttributes(attributes));
-    ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
+    ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
     if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
         JSObject::defineOwnProperty(base, exec, propertyName, descriptor, true);
     else
@@ -1235,7 +1235,7 @@ void JIT_OPERATION operationDefineDataPropertySymbol(ExecState* exec, JSObject* 
 ALWAYS_INLINE static void defineAccessorProperty(ExecState* exec, VM& vm, JSObject* base, const Identifier& propertyName, JSObject* getter, JSObject* setter, int32_t attributes)
 {
     PropertyDescriptor descriptor = toPropertyDescriptor(jsUndefined(), getter, setter, DefinePropertyAttributes(attributes));
-    ASSERT((descriptor.attributes() & Accessor) || (!descriptor.isAccessorDescriptor()));
+    ASSERT((descriptor.attributes() & PropertyAttribute::Accessor) || (!descriptor.isAccessorDescriptor()));
     if (base->methodTable(vm)->defineOwnProperty == JSObject::defineOwnProperty)
         JSObject::defineOwnProperty(base, exec, propertyName, descriptor, true);
     else

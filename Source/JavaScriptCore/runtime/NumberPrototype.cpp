@@ -78,9 +78,9 @@ void NumberPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     Base::finishCreation(vm);
     setInternalValue(vm, jsNumber(0));
 
-    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, numberProtoFuncToString, DontEnum, 1, NumberPrototypeToStringIntrinsic);
+    JSC_NATIVE_INTRINSIC_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->toString, numberProtoFuncToString, static_cast<unsigned>(PropertyAttribute::DontEnum), 1, NumberPrototypeToStringIntrinsic);
 #if ENABLE(INTL)
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("toLocaleString", numberPrototypeToLocaleStringCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 #endif // ENABLE(INTL)
 
     ASSERT(inherits(vm, info()));

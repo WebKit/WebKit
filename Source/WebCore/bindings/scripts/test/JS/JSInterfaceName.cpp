@@ -73,9 +73,9 @@ template<> JSValue JSInterfaceNameConstructor::prototypeForStructure(JSC::VM& vm
 
 template<> void JSInterfaceNameConstructor::initializeProperties(VM& vm, JSDOMGlobalObject& globalObject)
 {
-    putDirect(vm, vm.propertyNames->prototype, JSInterfaceName::prototype(vm, globalObject), DontDelete | ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("InterfaceName"))), ReadOnly | DontEnum);
-    putDirect(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum);
+    putDirect(vm, vm.propertyNames->prototype, JSInterfaceName::prototype(vm, globalObject), JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->name, jsNontrivialString(&vm, String(ASCIILiteral("InterfaceName"))), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
+    putDirect(vm, vm.propertyNames->length, jsNumber(0), JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::DontEnum);
 }
 
 template<> const ClassInfo JSInterfaceNameConstructor::s_info = { "InterfaceName", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceNameConstructor) };
@@ -84,7 +84,7 @@ template<> const ClassInfo JSInterfaceNameConstructor::s_info = { "InterfaceName
 
 static const HashTableValue JSInterfaceNamePrototypeTableValues[] =
 {
-    { "constructor", DontEnum, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsInterfaceNameConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSInterfaceNameConstructor) } },
+    { "constructor", static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsInterfaceNameConstructor), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSInterfaceNameConstructor) } },
 };
 
 const ClassInfo JSInterfaceNamePrototype::s_info = { "InterfaceNamePrototype", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSInterfaceNamePrototype) };

@@ -42,12 +42,12 @@ void ErrorConstructor::finishCreation(VM& vm, ErrorPrototype* errorPrototype)
 {
     Base::finishCreation(vm, ASCIILiteral("Error"));
     // ECMA 15.11.3.1 Error.prototype
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), DontEnum | ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, errorPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(1), PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly);
 
     unsigned defaultStackTraceLimit = Options::defaultErrorStackTraceLimit();
     m_stackTraceLimit = defaultStackTraceLimit;
-    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(defaultStackTraceLimit), None);
+    putDirectWithoutTransition(vm, vm.propertyNames->stackTraceLimit, jsNumber(defaultStackTraceLimit), static_cast<unsigned>(PropertyAttribute::None));
 }
 
 // ECMA 15.9.3

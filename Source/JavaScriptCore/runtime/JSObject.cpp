@@ -85,7 +85,7 @@ static inline void getClassPropertyNames(ExecState* exec, const ClassInfo* class
             continue;
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
-            if (!(iter->attributes() & DontEnum) || mode.includeDontEnumProperties())
+            if (!(iter->attributes() & PropertyAttribute::DontEnum) || mode.includeDontEnumProperties())
                 propertyNames.add(Identifier::fromString(&vm, iter.key()));
         }
     }
@@ -592,7 +592,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         
         JSValue value = butterfly->contiguous()[i].get();
         if (value) {
-            slot.setValue(thisObject, None, value);
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
             return true;
         }
         
@@ -606,7 +606,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         
         double value = butterfly->contiguousDouble()[i];
         if (value == value) {
-            slot.setValue(thisObject, None, JSValue(JSValue::EncodeAsDouble, value));
+            slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), JSValue(JSValue::EncodeAsDouble, value));
             return true;
         }
         
@@ -621,7 +621,7 @@ bool JSObject::getOwnPropertySlotByIndex(JSObject* thisObject, ExecState* exec, 
         if (i < storage->vectorLength()) {
             JSValue value = storage->m_vector[i].get();
             if (value) {
-                slot.setValue(thisObject, None, value);
+                slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::None), value);
                 return true;
             }
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
@@ -679,7 +679,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
                 continue;
             }
             // 9.1.9.1-3-c-i Let ownDesc be the PropertyDescriptor{[[Value]]: undefined, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}.
-            ownDescriptor = PropertyDescriptor(jsUndefined(), None);
+            ownDescriptor = PropertyDescriptor(jsUndefined(), static_cast<unsigned>(PropertyAttribute::None));
         }
         break;
     }
@@ -725,7 +725,7 @@ bool ordinarySetSlow(ExecState* exec, JSObject* object, PropertyName propertyNam
         // 9.1.9.1-4-e Else Receiver does not currently have a property P,
         // 9.1.9.1-4-e-i Return ? CreateDataProperty(Receiver, P, V).
         scope.release();
-        return receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, exec, propertyName, PropertyDescriptor(value, None), shouldThrow);
+        return receiverObject->methodTable(vm)->defineOwnProperty(receiverObject, exec, propertyName, PropertyDescriptor(value, static_cast<unsigned>(PropertyAttribute::None)), shouldThrow);
     }
 
     // 9.1.9.1-5 Assert: IsAccessorDescriptor(ownDesc) is true.
@@ -769,7 +769,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
         unsigned attributes;
         PropertyOffset offset = obj->structure(vm)->get(vm, propertyName, attributes);
         if (isValidOffset(offset)) {
-            if (attributes & ReadOnly) {
+            if (attributes & PropertyAttribute::ReadOnly) {
                 ASSERT(structure(vm)->prototypeChainMayInterceptStoreTo(vm, propertyName) || obj == this);
                 return typeError(exec, scope, slot.isStrictMode(), ASCIILiteral(ReadonlyPropertyWriteError));
             }
@@ -783,14 +783,14 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
                 return result;
             }
             if (gs.isCustomGetterSetter()) {
-                bool result = callCustomSetter(exec, gs, attributes & CustomAccessor, obj, slot.thisValue(), value);
-                if (attributes & CustomAccessor)
+                bool result = callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+                if (attributes & PropertyAttribute::CustomAccessor)
                     slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
                 else
                     slot.setCustomValue(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
                 return result;
             }
-            ASSERT(!(attributes & Accessor));
+            ASSERT(!(attributes & PropertyAttribute::Accessor));
 
             // If there's an existing property on the object or one of its 
             // prototypes it should be replaced, so break here.
@@ -1712,10 +1712,10 @@ bool JSObject::putGetter(ExecState* exec, PropertyName propertyName, JSValue get
     PropertyDescriptor descriptor;
     descriptor.setGetter(getter);
 
-    ASSERT(attributes & Accessor);
-    if (!(attributes & ReadOnly))
+    ASSERT(attributes & PropertyAttribute::Accessor);
+    if (!(attributes & PropertyAttribute::ReadOnly))
         descriptor.setConfigurable(true);
-    if (!(attributes & DontEnum))
+    if (!(attributes & PropertyAttribute::DontEnum))
         descriptor.setEnumerable(true);
 
     return defineOwnProperty(this, exec, propertyName, descriptor, true);
@@ -1726,10 +1726,10 @@ bool JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue set
     PropertyDescriptor descriptor;
     descriptor.setSetter(setter);
 
-    ASSERT(attributes & Accessor);
-    if (!(attributes & ReadOnly))
+    ASSERT(attributes & PropertyAttribute::Accessor);
+    if (!(attributes & PropertyAttribute::ReadOnly))
         descriptor.setConfigurable(true);
-    if (!(attributes & DontEnum))
+    if (!(attributes & PropertyAttribute::DontEnum))
         descriptor.setEnumerable(true);
 
     return defineOwnProperty(this, exec, propertyName, descriptor, true);
@@ -1737,7 +1737,7 @@ bool JSObject::putSetter(ExecState* exec, PropertyName propertyName, JSValue set
 
 bool JSObject::putDirectAccessor(ExecState* exec, PropertyName propertyName, JSValue value, unsigned attributes)
 {
-    ASSERT(value.isGetterSetter() && (attributes & Accessor));
+    ASSERT(value.isGetterSetter() && (attributes & PropertyAttribute::Accessor));
 
     if (std::optional<uint32_t> index = parseIndex(propertyName))
         return putDirectIndex(exec, index.value(), value, attributes, PutDirectIndexLikePutDirect);
@@ -1755,7 +1755,7 @@ bool JSObject::putDirectCustomAccessor(VM& vm, PropertyName propertyName, JSValu
     ASSERT(slot.type() == PutPropertySlot::NewProperty);
 
     Structure* structure = this->structure(vm);
-    if (attributes & ReadOnly)
+    if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
     structure->setHasCustomGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
     return result;
@@ -1767,7 +1767,7 @@ bool JSObject::putDirectNonIndexAccessor(VM& vm, PropertyName propertyName, JSVa
     bool result = putDirectInternal<PutModeDefineOwnProperty>(vm, propertyName, value, attributes, slot);
 
     Structure* structure = this->structure(vm);
-    if (attributes & ReadOnly)
+    if (attributes & PropertyAttribute::ReadOnly)
         structure->setContainsReadOnlyProperties();
 
     structure->setHasGetterSetterPropertiesWithProtoCheck(propertyName == vm.propertyNames->underscoreProto);
@@ -1814,8 +1814,8 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
             // If the static table contains a non-configurable (DontDelete) property then we can return early;
             // if there is a property in the storage array it too must be non-configurable (the language does
             // not allow repacement of a non-configurable property with a configurable one).
-            if (entry->value->attributes() & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
-                ASSERT(!isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes)) || attributes & DontDelete);
+            if (entry->value->attributes() & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable) {
+                ASSERT(!isValidOffset(thisObject->structure(vm)->get(vm, propertyName, attributes)) || attributes & PropertyAttribute::DontDelete);
                 return false;
             }
             thisObject->reifyAllStaticProperties(exec);
@@ -1826,7 +1826,7 @@ bool JSObject::deleteProperty(JSCell* cell, ExecState* exec, PropertyName proper
 
     bool propertyIsPresent = isValidOffset(structure->get(vm, propertyName, attributes));
     if (propertyIsPresent) {
-        if (attributes & DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
+        if (attributes & PropertyAttribute::DontDelete && vm.deletePropertyMode() != VM::DeletePropertyMode::IgnoreConfigurable)
             return false;
 
         PropertyOffset offset;
@@ -1883,7 +1883,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, ExecState* exec, unsigned i)
         } else if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             SparseArrayValueMap::iterator it = map->find(i);
             if (it != map->notFound()) {
-                if (it->value.attributes & DontDelete)
+                if (it->value.attributes & PropertyAttribute::DontDelete)
                     return false;
                 map->remove(it);
             }
@@ -2199,7 +2199,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
                 
                 SparseArrayValueMap::const_iterator end = map->end();
                 for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
-                    if (mode.includeDontEnumProperties() || !(it->value.attributes & DontEnum))
+                    if (mode.includeDontEnumProperties() || !(it->value.attributes & PropertyAttribute::DontEnum))
                         keys.uncheckedAppend(static_cast<unsigned>(it->key));
                 }
                 
@@ -2350,7 +2350,7 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
             entryInMap->set(vm, map, descriptor.value());
         else if (oldDescriptor.isAccessorDescriptor())
             entryInMap->set(vm, map, jsUndefined());
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~Accessor;
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::Accessor;
         return true;
     }
 
@@ -2373,7 +2373,7 @@ bool JSObject::putIndexedDescriptor(ExecState* exec, SparseArrayEntry* entryInMa
             accessor->setSetter(vm, exec->lexicalGlobalObject(), setter);
 
         entryInMap->set(vm, map, accessor);
-        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~ReadOnly;
+        entryInMap->attributes = descriptor.attributesOverridingCurrent(oldDescriptor) & ~PropertyAttribute::ReadOnly;
         return true;
     }
 
@@ -2411,7 +2411,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
         ensureArrayStorageExistsAndEnterDictionaryIndexingMode(vm);
     }
 
-    if (descriptor.attributes() & (ReadOnly | Accessor))
+    if (descriptor.attributes() & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))
         notifyPresenceOfIndexedAccessors(vm);
 
     SparseArrayValueMap* map = m_butterfly->arrayStorage()->m_sparseMap.get();
@@ -2442,7 +2442,7 @@ bool JSObject::defineOwnIndexedProperty(ExecState* exec, unsigned index, const P
 
         PropertyDescriptor defaults;
         entryInMap->setWithoutWriteBarrier(jsUndefined());
-        entryInMap->attributes = DontDelete | DontEnum | ReadOnly;
+        entryInMap->attributes = PropertyAttribute::DontDelete | PropertyAttribute::DontEnum | PropertyAttribute::ReadOnly;
         entryInMap->get(defaults);
 
         putIndexedDescriptor(exec, entryInMap, descriptor, defaults);
@@ -2542,7 +2542,7 @@ bool JSObject::attemptToInterceptPutByIndexOnHoleForPrototype(ExecState* exec, J
         ArrayStorage* storage = current->arrayStorageOrNull();
         if (storage && storage->m_sparseMap) {
             SparseArrayValueMap::iterator iter = storage->m_sparseMap->find(i);
-            if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes & (Accessor | ReadOnly))) {
+            if (iter != storage->m_sparseMap->notFound() && (iter->value.attributes & (PropertyAttribute::Accessor | PropertyAttribute::ReadOnly))) {
                 putResult = iter->value.put(exec, thisValue, storage->m_sparseMap.get(), value, shouldThrow);
                 return true;
             }
@@ -2864,7 +2864,7 @@ bool JSObject::putDirectIndexSlowOrBeyondVectorLength(ExecState* exec, unsigned 
     // i should be a valid array index that is outside of the current vector.
     ASSERT(i <= MAX_ARRAY_INDEX);
     
-    if (attributes & (ReadOnly | Accessor))
+    if (attributes & (PropertyAttribute::ReadOnly | PropertyAttribute::Accessor))
         notifyPresenceOfIndexedAccessors(vm);
     
     switch (indexingType()) {
@@ -3271,7 +3271,7 @@ bool JSObject::getOwnPropertyDescriptor(ExecState* exec, PropertyName propertyNa
 
     if (slot.isAccessor())
         descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
-    else if (slot.attributes() & CustomAccessor) {
+    else if (slot.attributes() & PropertyAttribute::CustomAccessor) {
         descriptor.setCustomDescriptor(slot.attributes());
 
         JSObject* thisObject = this;
@@ -3314,7 +3314,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
                 accessor->setGetter(vm, exec->lexicalGlobalObject(), oldDescriptor.getterObject());
             if (oldDescriptor.setterPresent())
                 accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
-            target->putDirectAccessor(exec, propertyName, accessor, attributes | Accessor);
+            target->putDirectAccessor(exec, propertyName, accessor, attributes | PropertyAttribute::Accessor);
             return true;
         }
         JSValue newValue = jsUndefined();
@@ -3322,12 +3322,12 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
             newValue = descriptor.value();
         else if (oldDescriptor.value())
             newValue = oldDescriptor.value();
-        target->putDirect(vm, propertyName, newValue, attributes & ~Accessor);
-        if (attributes & ReadOnly)
+        target->putDirect(vm, propertyName, newValue, attributes & ~PropertyAttribute::Accessor);
+        if (attributes & PropertyAttribute::ReadOnly)
             target->structure(vm)->setContainsReadOnlyProperties();
         return true;
     }
-    attributes &= ~ReadOnly;
+    attributes &= ~PropertyAttribute::ReadOnly;
     GetterSetter* accessor = GetterSetter::create(vm, exec->lexicalGlobalObject());
 
     if (descriptor.getterPresent())
@@ -3339,7 +3339,7 @@ static bool putDescriptor(ExecState* exec, JSObject* target, PropertyName proper
     else if (oldDescriptor.setterPresent())
         accessor->setSetter(vm, exec->lexicalGlobalObject(), oldDescriptor.setterObject());
 
-    target->putDirectAccessor(exec, propertyName, accessor, attributes | Accessor);
+    target->putDirectAccessor(exec, propertyName, accessor, attributes | PropertyAttribute::Accessor);
     return true;
 }
 
@@ -3444,7 +3444,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
             return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the setter of an unconfigurable property."));
         if (descriptor.getterPresent() && !(current.getterPresent() && JSValue::strictEqual(exec, current.getter(), descriptor.getter())))
             return typeError(exec, scope, throwException, ASCIILiteral("Attempting to change the getter of an unconfigurable property."));
-        if (current.attributes() & CustomAccessor)
+        if (current.attributes() & PropertyAttribute::CustomAccessor)
             return typeError(exec, scope, throwException, ASCIILiteral(UnconfigurablePropertyChangeAccessMechanismError));
     }
 
@@ -3480,7 +3480,7 @@ bool validateAndApplyPropertyDescriptor(ExecState* exec, JSObject* object, Prope
     object->methodTable(vm)->deleteProperty(object, exec, propertyName);
     RETURN_IF_EXCEPTION(scope, false);
     unsigned attrs = descriptor.attributesOverridingCurrent(current);
-    object->putDirectAccessor(exec, propertyName, getterSetter, attrs | Accessor);
+    object->putDirectAccessor(exec, propertyName, getterSetter, attrs | PropertyAttribute::Accessor);
     return true;
 }
 

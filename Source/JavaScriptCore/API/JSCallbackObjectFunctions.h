@@ -159,7 +159,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                     propertyNameRef = OpaqueJSString::create(name);
                 JSLock::DropAllLocks dropAllLocks(exec);
                 if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
-                    slot.setCustom(thisObject, ReadOnly | DontEnum, callbackGetter);
+                    slot.setCustom(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, callbackGetter);
                     return true;
                 }
             } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
@@ -173,11 +173,11 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                 }
                 if (exception) {
                     throwException(exec, scope, toJS(exec, exception));
-                    slot.setValue(thisObject, ReadOnly | DontEnum, jsUndefined());
+                    slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, jsUndefined());
                     return true;
                 }
                 if (value) {
-                    slot.setValue(thisObject, ReadOnly | DontEnum, toJS(exec, value));
+                    slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(exec, value));
                     return true;
                 }
             }
@@ -186,7 +186,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
                 if (staticValues->contains(name)) {
                     JSValue value = thisObject->getStaticValue(exec, propertyName);
                     if (value) {
-                        slot.setValue(thisObject, ReadOnly | DontEnum, value);
+                        slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, value);
                         return true;
                     }
                 }
@@ -194,7 +194,7 @@ bool JSCallbackObject<Parent>::getOwnPropertySlot(JSObject* object, ExecState* e
             
             if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
                 if (staticFunctions->contains(name)) {
-                    slot.setCustom(thisObject, ReadOnly | DontEnum, staticFunctionGetter);
+                    slot.setCustom(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, staticFunctionGetter);
                     return true;
                 }
             }

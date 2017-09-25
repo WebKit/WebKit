@@ -90,13 +90,13 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, ExecState* exec, Propert
     VM& vm = exec->vm();
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (propertyName == vm.propertyNames->length) {
-        slot.setCacheableCustom(thisObject, DontDelete | ReadOnly | DontEnum, thisObject->lengthGetter);
+        slot.setCacheableCustom(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, thisObject->lengthGetter);
         return true;
     }
     
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->getLength()) {
-        slot.setValue(thisObject, DontDelete | DontEnum,
+        slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum,
             thisObject->getConcreteArray()->valueAt(exec, index.value()));
         return true;
     }
@@ -108,7 +108,7 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, ExecState *exec, 
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
-        slot.setValue(thisObject, DontDelete | DontEnum,
+        slot.setValue(thisObject, PropertyAttribute::DontDelete | PropertyAttribute::DontEnum,
             thisObject->getConcreteArray()->valueAt(exec, index));
         return true;
     }

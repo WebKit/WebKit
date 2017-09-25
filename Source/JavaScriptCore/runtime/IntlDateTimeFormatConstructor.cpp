@@ -77,8 +77,8 @@ IntlDateTimeFormatConstructor::IntlDateTimeFormatConstructor(VM& vm, Structure* 
 void IntlDateTimeFormatConstructor::finishCreation(VM& vm, IntlDateTimeFormatPrototype* dateTimeFormatPrototype, Structure* dateTimeFormatStructure)
 {
     Base::finishCreation(vm, ASCIILiteral("DateTimeFormat"));
-    putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, DontEnum | DontDelete | ReadOnly);
-    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), ReadOnly | DontEnum | DontDelete);
+    putDirectWithoutTransition(vm, vm.propertyNames->prototype, dateTimeFormatPrototype, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    putDirectWithoutTransition(vm, vm.propertyNames->length, jsNumber(0), PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum | PropertyAttribute::DontDelete);
     m_dateTimeFormatStructure.set(vm, this, dateTimeFormatStructure);
 }
 

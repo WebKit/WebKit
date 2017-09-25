@@ -190,7 +190,7 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
                     continue;
             }
             ScopeOffset offset = symbolTable->takeNextScopeOffset(locker);
-            SymbolTableEntry newEntry(VarOffset(offset), entry.value.isConst() ? ReadOnly : None);
+            SymbolTableEntry newEntry(VarOffset(offset), static_cast<unsigned>(entry.value.isConst() ? PropertyAttribute::ReadOnly : PropertyAttribute::None));
             newEntry.prepareToWatch();
             symbolTable->add(locker, entry.key.get(), newEntry);
             

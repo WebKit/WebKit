@@ -41,7 +41,7 @@ void IteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
     ASSERT(inherits(vm, info()));
     vm.prototypeMap.addPrototype(this);
 
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, iteratorPrototypeSymbolIteratorGetterCodeGenerator, DontEnum);
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->iteratorSymbol, iteratorPrototypeSymbolIteratorGetterCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
 } // namespace JSC

@@ -143,9 +143,9 @@ public:
         {
             unsigned attributes = 0;
             if (isReadOnly())
-                attributes |= ReadOnly;
+                attributes |= PropertyAttribute::ReadOnly;
             if (isDontEnum())
-                attributes |= DontEnum;
+                attributes |= PropertyAttribute::DontEnum;
             return attributes;
         }
 
@@ -175,7 +175,7 @@ public:
         : m_bits(SlimFlag)
     {
         ASSERT(isValidVarOffset(offset));
-        pack(offset, true, attributes & ReadOnly, attributes & DontEnum);
+        pack(offset, true, attributes & PropertyAttribute::ReadOnly, attributes & PropertyAttribute::DontEnum);
     }
     
     ~SymbolTableEntry()
@@ -261,7 +261,7 @@ public:
     
     void setAttributes(unsigned attributes)
     {
-        pack(varOffset(), isWatchable(), attributes & ReadOnly, attributes & DontEnum);
+        pack(varOffset(), isWatchable(), attributes & PropertyAttribute::ReadOnly, attributes & PropertyAttribute::DontEnum);
     }
 
     bool isReadOnly() const
