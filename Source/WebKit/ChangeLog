@@ -1,5 +1,14 @@
 2017-09-24  Michael Catanzaro  <mcatanzaro@igalia.com>
 
+        Viewport fit is no longer experimental
+        https://bugs.webkit.org/show_bug.cgi?id=177417
+
+        Reviewed by Darin Adler.
+
+        * Shared/WebPreferencesDefinitions.h:
+
+2017-09-24  Michael Catanzaro  <mcatanzaro@igalia.com>
+
         [GTK] Unreviewed, move webkit_hit_test_result_context_is_scrollbar in documentation
 
         * UIProcess/API/gtk/docs/webkit2gtk-4.0-sections.txt:

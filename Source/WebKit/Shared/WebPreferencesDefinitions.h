@@ -303,6 +303,7 @@
     macro(DirectoryUploadEnabled, directoryUploadEnabled, Bool, bool, DEFAULT_DIRECTORY_UPLOAD_ENABLED, "Directory Upload", "input.webkitdirectory / dataTransferItem.webkitGetAsEntry()") \
     macro(DataTransferItemsEnabled, dataTransferItemsEnabled, Bool, bool, DEFAULT_DATA_TRANSFER_ITEMS_ENABLED, "Data Transfer Items", "Enables DataTransferItem in the clipboard API") \
     macro(WebVREnabled, webVREnabled, Bool, bool, false, "WebVR", "WebVR Module support") \
+    macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, true, "Viewport Fit", "Enable viewport-fit viewport parameter") \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \
@@ -382,7 +383,6 @@
     macro(ServiceWorkersEnabled, serviceWorkersEnabled, Bool, bool, false, "ServiceWorkers", "Enable ServiceWorkers") \
     macro(StorageAccessAPIEnabled, storageAccessAPIEnabled, Bool, bool, false, "Storage Access API", "Enable Storage Access API") \
     macro(SubresourceIntegrityEnabled, subresourceIntegrityEnabled, Bool, bool, DEFAULT_EXPERIMENTAL_FEATURES_ENABLED, "SubresourceIntegrity", "Enable SubresourceIntegrity") \
-    macro(ViewportFitEnabled, viewportFitEnabled, Bool, bool, true, "Viewport Fit", "Enable viewport-fit viewport parameter") \
     macro(WebAnimationsEnabled, webAnimationsEnabled, Bool, bool, false, "Web Animations", "Web Animations prototype") \
     macro(WebGL2Enabled, webGL2Enabled, Bool, bool, false, "WebGL 2.0", "WebGL 2 prototype") \
     macro(WebGPUEnabled, webGPUEnabled, Bool, bool, false, "WebGPU", "WebGPU prototype") \
