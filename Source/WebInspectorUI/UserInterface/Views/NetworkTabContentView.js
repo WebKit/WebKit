@@ -57,6 +57,29 @@ WI.NetworkTabContentView = class NetworkTabContentView extends WI.TabContentView
         return !!window.NetworkAgent && !!window.PageAgent && WI.settings.experimentalEnableNewNetworkTab.value;
     }
 
+    // Protected
+
+    shown()
+    {
+        super.shown();
+
+        this._contentBrowser.shown();
+    }
+
+    hidden()
+    {
+        this._contentBrowser.hidden();
+
+        super.hidden();
+    }
+
+    closed()
+    {
+        this._contentBrowser.contentViewContainer.closeAllContentViews();
+
+        super.closed();
+    }
+
     // Public
 
     get contentBrowser() { return this._contentBrowser; }

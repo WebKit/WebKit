@@ -1,3 +1,209 @@
+2017-09-22  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Include a table in New Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=177206
+
+        Reviewed by Matt Baker and Brian Burg.
+
+        This includes an initial implementation of the NetworkTableContentView,
+        and a generic Table / TableColumn implementation ported from DataGrid.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New strings and files.
+
+        * UserInterface/Views/NetworkGridContentView.css:
+        (.content-view:matches(.network, .network-grid) > .data-grid .cache-type):
+        (.cache-type): Deleted.
+        * UserInterface/Views/ResourceDetailsSidebarPanel.css:
+        (.sidebar > .panel.resource-details .cache-type):
+        Make the .cache-type selector more specific for the legacy cases.
+
+        * UserInterface/Views/NetworkTabContentView.css: Copied from Source/WebInspectorUI/UserInterface/Views/NetworkGridContentView.css.
+        (.content-view.network > .content-browser):
+        * UserInterface/Views/NetworkTabContentView.js:
+        (WI.NetworkTabContentView.prototype.shown):
+        (WI.NetworkTabContentView.prototype.hidden):
+        (WI.NetworkTabContentView.prototype.closed):
+        NetworkTabContentView has a ContentBrowser so it should be passing
+        ContentBrowser lifecycle events (shown, hidden, closed) through to
+        the sub-content browser.
+
+        * UserInterface/Views/TableColumn.js: Added.
+        (WI.TableColumn.prototype.get identifier):
+        (WI.TableColumn.prototype.get name):
+        (WI.TableColumn.prototype.get width):
+        (WI.TableColumn.prototype.get minWidth):
+        (WI.TableColumn.prototype.get maxWidth):
+        (WI.TableColumn.prototype.get hidden):
+        (WI.TableColumn.prototype.get defaultHidden):
+        (WI.TableColumn.prototype.get sortable):
+        (WI.TableColumn.prototype.get align):
+        (WI.TableColumn.prototype.get locked):
+        (WI.TableColumn.prototype.get flexible):
+        (WI.TableColumn.prototype.setWidth):
+        (WI.TableColumn.prototype.setHidden):
+        Model object for a column. Values are getter only. Columns may express
+        size constraints (min width / max width) that are respected as much as
+        possible. When a column is resized it dispatches an event.
+
+        * UserInterface/Views/Table.js: Added.
+        (WI.Table):
+        (WI.Table.prototype.get element):
+        (WI.Table.prototype.get identifier):
+        (WI.Table.prototype.get dataSource):
+        (WI.Table.prototype.get delegate):
+        (WI.Table.prototype.get rowHeight):
+        (WI.Table.prototype.get selectedRow):
+        (WI.Table.prototype.get sortOrder):
+        (WI.Table.prototype.set sortOrder):
+        (WI.Table.prototype.get sortColumnIdentifier):
+        (WI.Table.prototype.set sortColumnIdentifier):
+        (WI.Table.prototype.resize):
+        (WI.Table.prototype.reloadData):
+        (WI.Table.prototype.reloadDataAddedToEndOnly):
+        (WI.Table.prototype.reloadRow):
+        (WI.Table.prototype.reloadCell):
+        (WI.Table.prototype.selectRow):
+        (WI.Table.prototype.clearSelectedRow):
+        (WI.Table.prototype.columnWithIdentifier):
+        (WI.Table.prototype.addColumn):
+        (WI.Table.prototype.showColumn):
+        (WI.Table.prototype.hideColumn):
+        (WI.Table.prototype.restoreScrollPosition):
+        (WI.Table.prototype.initialLayout):
+        (WI.Table.prototype.layout):
+        (WI.Table.prototype.resizerDragStarted):
+        (WI.Table.prototype.resizerDragging.growableSize):
+        (WI.Table.prototype.resizerDragging.shrinkableSize):
+        (WI.Table.prototype.resizerDragging.canGrow):
+        (WI.Table.prototype.resizerDragging.canShrink):
+        (WI.Table.prototype.resizerDragging.columnToResize):
+        (WI.Table.prototype.resizerDragging):
+        (WI.Table.prototype.resizerDragEnded):
+        (WI.Table.prototype._needsLayout):
+        (WI.Table.prototype._createHeaderCell):
+        (WI.Table.prototype._createFillerCell):
+        (WI.Table.prototype._createCell):
+        (WI.Table.prototype._getOrCreateRow):
+        (WI.Table.prototype._populatedCellForColumnAndRow):
+        (WI.Table.prototype._populateRow):
+        (WI.Table.prototype._resizeColumnsAndFiller.distributeRemainingPixels):
+        (WI.Table.prototype._resizeColumnsAndFiller.bestFit):
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype._applyColumnWidths):
+        (WI.Table.prototype._positionResizerElements):
+        (WI.Table.prototype._isRowVisible):
+        (WI.Table.prototype._indexToInsertColumn):
+        (WI.Table.prototype._handleScroll):
+        (WI.Table.prototype._handleKeyDown):
+        (WI.Table.prototype._handleClick):
+        (WI.Table.prototype._handleContextMenu):
+        (WI.Table.prototype._handleHeaderCellClicked):
+        (WI.Table.prototype._handleHeaderContextMenu):
+        Table is mostly a re-implementation of DataGrid. Much of its functionality
+        was a direct copy that was then modified and simplified for a smaller
+        and simpler feature set.
+        
+        Table behaves more like Cocoa's NSTableView. A datasource supplies the
+        number of rows, which Table uses to resize appropriately. A delegate is
+        then called to populate cells in a row when they become visible. Table
+        does minimal caching, and in the event of data source changes
+        (resorting, adding rows, modifying rows, etc) the visible rows are
+        simply recreated from scratch. Clients should therefore make generating
+        a cell's contents as simple and performant as possible.
+
+        Unlike DataGrid, rows are just an <li> with a bunch of cells. Since the
+        number of rows are limited to (roughly) those that are visible, most
+        operations, like resizing, creates / modifies each of the visible cells.
+
+        Finally, Table's resizing operations behave more like flexible content
+        than DataGrid's neighbor only approach. This makes resizing the table
+        generally easier to do, but may need refinement to decide which columns
+        we would prefer to distribute columns during resizing.
+
+        * UserInterface/Views/Table.css: Added.
+        (.table):
+        (.table > .header):
+        (.table > .header > .sortable:active):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)):
+        (.table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        (body[dir=ltr] .table > .header > :matches(.sort-ascending, .sort-descending)):
+        (body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)):
+        (body[dir=ltr] .table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        (body[dir=rtl] .table > .header > :matches(.sort-ascending, .sort-descending)::after):
+        (.table > .header > .sort-ascending::after):
+        (.table > .header > .sort-descending::after):
+        (.table > .data-container):
+        (.table > .data-container.not-scrollable):
+        (.table > .data-container > .data-list):
+        (.table > .data-container > .data-list.odd-first-zebra-stripe):
+        (.table > .data-container > .data-list > li):
+        (.table > .data-container > .data-list > li.selected):
+        (.table:focus > .data-container > .data-list li.selected):
+        (.table .cell):
+        (body[dir=ltr] .table .cell:not(:last-child)):
+        (body[dir=rtl] .table .cell:not(:last-child)):
+        (body[dir=ltr] .table .cell:first-child):
+        (body[dir=rtl] .table .cell:first-child):
+        (.table :not(.header) .cell:first-of-type):
+        (.table .cell.align-right):
+        (.table .cell.align-left):
+        (.table .cell.align-center):
+        Styles mostly taken from DataGrid with a few minor tweaks.
+
+        * UserInterface/Views/NetworkTableContentView.css: Copied from Source/WebInspectorUI/UserInterface/Views/NetworkGridContentView.css.
+        (.content-view.network .table .icon):
+        (body[dir=ltr] .content-view.network .table .icon):
+        (body[dir=rtl] .content-view.network .table .icon):
+        (.content-view.network .table li:not(.filler) .cell.name):
+        (.content-view.network .table .cache-type):
+        (.content-view.network .table .error):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView):
+        (WI.NetworkTableContentView.shortDisplayNameForResourceType):
+        (WI.NetworkTableContentView.prototype.get navigationItems):
+        (WI.NetworkTableContentView.prototype.shown):
+        (WI.NetworkTableContentView.prototype.closed):
+        (WI.NetworkTableContentView.prototype.reset):
+        (WI.NetworkTableContentView.prototype.tableNumberOfRows):
+        (WI.NetworkTableContentView.prototype.tableSortChanged):
+        (WI.NetworkTableContentView.prototype.tableCellClicked):
+        (WI.NetworkTableContentView.prototype.tableCellContextMenuClicked):
+        (WI.NetworkTableContentView.prototype.tableSelectedRowChanged):
+        (WI.NetworkTableContentView.prototype.tablePopulateCell):
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        (WI.NetworkTableContentView.prototype._populateTransferSizeCell):
+        (WI.NetworkTableContentView.prototype._generateSortComparator):
+        (WI.NetworkTableContentView.prototype.initialLayout):
+        (WI.NetworkTableContentView.prototype.layout):
+        (WI.NetworkTableContentView.prototype._processPendingEntries):
+        (WI.NetworkTableContentView.prototype._rowIndexForResource):
+        (WI.NetworkTableContentView.prototype._updateEntryForResource):
+        (WI.NetworkTableContentView.prototype._mainResourceDidChange):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFinish):
+        (WI.NetworkTableContentView.prototype._resourceLoadingDidFail):
+        (WI.NetworkTableContentView.prototype._resourceTransferSizeDidChange):
+        (WI.NetworkTableContentView.prototype._networkTimelineRecordAdded):
+        (WI.NetworkTableContentView.prototype._isDefaultSort):
+        (WI.NetworkTableContentView.prototype._insertResourceAndReloadTable):
+        (WI.NetworkTableContentView.prototype._displayType):
+        (WI.NetworkTableContentView.prototype._entryForResource):
+        (WI.NetworkTableContentView.prototype._passFilter):
+        (WI.NetworkTableContentView.prototype._updateSortAndFilteredEntries):
+        (WI.NetworkTableContentView.prototype._updateFilteredEntries):
+        (WI.NetworkTableContentView.prototype._generateTypeFilter):
+        (WI.NetworkTableContentView.prototype._areFilterListsIdentical):
+        (WI.NetworkTableContentView.prototype._typeFilterScopeBarSelectionChanged):
+        (WI.NetworkTableContentView.prototype._tableNameColumnDidChangeWidth):
+        The NetworkTableContentView has a Table and it is the table's data source
+        and delegate. It contains a complete list of entries, and a filtered list
+        of entries, which is the backing list of rows for the table. As entries
+        are created, updated, or filters modified, this generally modifies
+        entries, sorts, filters, and reloads the table. As much as possible it
+        batches operations in the usual layout loop.
+
 2017-09-24  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Reduce work during resizing
