@@ -98,7 +98,7 @@ public:
         String deviceId;
         String groupId;
     };
-    WEBCORE_EXPORT TrackSettings getSettings() const;
+    TrackSettings getSettings(Document&) const;
 
     struct TrackCapabilities {
         std::optional<LongRange> width;
