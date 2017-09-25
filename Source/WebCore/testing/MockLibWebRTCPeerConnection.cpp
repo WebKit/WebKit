@@ -47,23 +47,25 @@ static inline webrtc::PeerConnectionFactoryInterface* realPeerConnectionFactory(
     return getRealPeerConnectionFactory().get();
 }
 
-void useRealRTCPeerConnectionFactory()
+void useRealRTCPeerConnectionFactory(LibWebRTCProvider& provider)
 {
     auto& factory = getRealPeerConnectionFactory();
     if (!factory)
         return;
-    LibWebRTCProvider::setPeerConnectionFactory(factory.get());
+    provider.setPeerConnectionFactory(factory.get());
     factory = nullptr;
 }
 
 void useMockRTCPeerConnectionFactory(LibWebRTCProvider* provider, const String& testCase)
 {
-    if (provider && !realPeerConnectionFactory()) {
+    if (!provider)
+        return;
+
+    if (!realPeerConnectionFactory()) {
         auto& factory = getRealPeerConnectionFactory();
         factory = provider->factory();
     }
-
-    LibWebRTCProvider::setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(String(testCase)));
+    provider->setPeerConnectionFactory(MockLibWebRTCPeerConnectionFactory::create(String(testCase)));
 }
 
 class MockLibWebRTCPeerConnectionForIceCandidates : public MockLibWebRTCPeerConnection {

@@ -45,12 +45,18 @@ class PeerConnectionFactoryInterface;
 
 namespace WebCore {
 
+class VideoToolboxVideoDecoderFactory;
+class VideoToolboxVideoEncoderFactory;
+
 class WEBCORE_EXPORT LibWebRTCProvider {
 public:
     LibWebRTCProvider() = default;
     virtual ~LibWebRTCProvider() = default;
 
     static bool webRTCAvailable();
+
+    void setActive(bool);
+
 #if USE(LIBWEBRTC)
     WEBCORE_EXPORT virtual rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
@@ -59,11 +65,9 @@ public:
     // FIXME: Make these methods not static.
     static WEBCORE_EXPORT void callOnWebRTCNetworkThread(Function<void()>&&);
     static WEBCORE_EXPORT void callOnWebRTCSignalingThread(Function<void()>&&);
-    static WEBCORE_EXPORT void setDecoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoDecoderFactory>()>&&);
-    static WEBCORE_EXPORT void setEncoderFactoryGetter(Function<std::unique_ptr<cricket::WebRtcVideoEncoderFactory>()>&&);
 
     // Used for mock testing
-    static void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
+    void setPeerConnectionFactory(rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface>&&);
 
     void disableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = false; }
     void enableEnumeratingAllNetworkInterfaces() { m_enableEnumeratingAllNetworkInterfaces = true; }
@@ -72,7 +76,12 @@ protected:
     WEBCORE_EXPORT rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&);
 
     bool m_enableEnumeratingAllNetworkInterfaces { false };
+    // FIXME: Remove m_useNetworkThreadWithSocketServer member variable and make it a global.
     bool m_useNetworkThreadWithSocketServer { true };
+
+    rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> m_factory;
+    VideoToolboxVideoDecoderFactory* m_decoderFactory { nullptr };
+    VideoToolboxVideoEncoderFactory* m_encoderFactory { nullptr };
 #endif
 };
 

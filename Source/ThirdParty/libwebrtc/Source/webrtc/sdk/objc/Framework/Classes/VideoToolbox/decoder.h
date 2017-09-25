@@ -43,6 +43,8 @@ class H264VideoToolboxDecoder : public H264Decoder {
 
   const char* ImplementationName() const override;
 
+  void SetActive(bool is_active) { is_active_ = is_active; }
+
  private:
   int ResetDecompressionSession();
   void ConfigureDecompressionSession();
@@ -52,6 +54,7 @@ class H264VideoToolboxDecoder : public H264Decoder {
   DecodedImageCallback* callback_;
   CMVideoFormatDescriptionRef video_format_;
   VTDecompressionSessionRef decompression_session_;
+  bool is_active_ { true };
 };  // H264VideoToolboxDecoder
 
 }  // namespace webrtc

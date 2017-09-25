@@ -463,7 +463,7 @@ void Internals::resetToConsistentState(Page& page)
     printContextForTesting() = nullptr;
 
 #if USE(LIBWEBRTC)
-    WebCore::useRealRTCPeerConnectionFactory();
+    WebCore::useRealRTCPeerConnectionFactory(page.libWebRTCProvider());
 #endif
 
     page.settings().setStorageAccessAPIEnabled(false);

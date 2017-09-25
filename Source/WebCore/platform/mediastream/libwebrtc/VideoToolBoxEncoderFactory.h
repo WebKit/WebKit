@@ -29,16 +29,24 @@
 
 #include "LibWebRTCMacros.h"
 #include <webrtc/sdk/objc/Framework/Classes/VideoToolbox/videocodecfactory.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class H264VideoToolboxEncoder;
 
 class VideoToolboxVideoEncoderFactory final : public webrtc::VideoToolboxVideoEncoderFactory {
 public:
     VideoToolboxVideoEncoderFactory() = default;
 
+    void setActive(bool isActive);
+
 private:
     webrtc::VideoEncoder* CreateSupportedVideoEncoder(const cricket::VideoCodec&) final;
     void DestroyVideoEncoder(webrtc::VideoEncoder*) final;
+
+    Vector<std::reference_wrapper<H264VideoToolboxEncoder>> m_encoders;
+    bool m_isActive { true };
 };
 
 }
