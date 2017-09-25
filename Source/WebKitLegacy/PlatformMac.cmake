@@ -421,7 +421,7 @@ add_custom_command(
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostServer.c
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c
-    MAIN_DEPENDENCY mac/Plugins/Hosted/WebKitPluginAgent.defs
+    DEPENDS mac/Plugins/Hosted/WebKitPluginAgent.defs mac/Plugins/Hosted/WebKitPluginHost.defs
     WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
     COMMAND mig -I.. WebKitPluginAgent.defs WebKitPluginAgentReply.defs WebKitPluginHost.defs
     VERBATIM)
@@ -429,11 +429,11 @@ add_custom_command(
     OUTPUT
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
         ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientUser.c
-    MAIN_DEPENDENCY mac/Plugins/Hosted/WebKitPluginAgent.defs
+    DEPENDS mac/Plugins/Hosted/WebKitPluginClient.defs
     WORKING_DIRECTORY ${DERIVED_SOURCES_WEBKITLEGACY_DIR}
     COMMAND mig -I.. -sheader WebKitPluginClientServer.h WebKitPluginClient.defs
     VERBATIM)
-list(APPEND WebKit_SOURCES
+list(APPEND WebKitLegacy_SOURCES
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginAgentUser.c
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginClientServer.c
     ${DERIVED_SOURCES_WEBKITLEGACY_DIR}/WebKitPluginHostUser.c

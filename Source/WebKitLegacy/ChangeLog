@@ -1,3 +1,17 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Make progress on getting Mac CMake building again
+        https://bugs.webkit.org/show_bug.cgi?id=177443
+
+        Unreviewed, just "fixing" the build.
+
+        * PlatformMac.cmake:
+        Set up dependencies correctly for our mig-generated files.
+        MAIN_DEPENDENCY is for VS, not what it sounds like.
+
+        Add mig-generated files to WebKitLegacy, not WebKit (I think this was
+        missed in the WebKit2 rename).
+
 2017-09-21  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] Compile error, generate-webkitversion.pl script not found.

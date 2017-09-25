@@ -1,3 +1,15 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Make progress on getting Mac CMake building again
+        https://bugs.webkit.org/show_bug.cgi?id=177443
+
+        Unreviewed, just "fixing" the build.
+
+        * Source/cmake/OptionsMac.cmake:
+        Turn on WEB_CRYPTO on Mac. We need to do a bigger cleanup of feature
+        defines, but this one is important because we have SUBTLE_CRYPTO on
+        and there is some amount of interdependency.
+
 2017-09-22  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] WebKit is built as a static library, and not as a dll.

@@ -1,3 +1,13 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Make progress on getting Mac CMake building again
+        https://bugs.webkit.org/show_bug.cgi?id=177443
+
+        Unreviewed, just "fixing" the build.
+
+        * pal/PlatformMac.cmake:
+        Add some missing files and include paths.
+
 2017-09-22  Zalan Bujtas  <zalan@apple.com>
 
         WeakPtrFactory should populate m_ref lazily.

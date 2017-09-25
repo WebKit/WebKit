@@ -405,6 +405,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Platform/cg"
     "${WEBKIT_DIR}/Platform/classifier"
     "${WEBKIT_DIR}/Platform/classifier/cocoa"
+    "${WEBKIT_DIR}/Platform/cocoa"
     "${WEBKIT_DIR}/Platform/mac"
     "${WEBKIT_DIR}/Platform/unix"
     "${WEBKIT_DIR}/Platform/spi/Cocoa"
@@ -467,6 +468,8 @@ set(WebKit_NetworkProcess_OUTPUT_NAME com.apple.WebKit.Networking.Development)
 add_definitions("-include WebKit2Prefix.h")
 
 set(WebKit_FORWARDING_HEADERS_FILES
+    Platform/cocoa/WKCrashReporter.h
+
     Shared/API/c/WKDiagnosticLoggingResultType.h
 
     UIProcess/API/C/WKPageDiagnosticLoggingClient.h
