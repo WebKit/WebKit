@@ -240,7 +240,8 @@ void WebFrame::invalidatePolicyListener()
 
     m_policyDownloadID = { };
     m_policyListenerID = 0;
-    m_policyFunction = nullptr;
+    if (auto function = std::exchange(m_policyFunction, nullptr))
+        function(PolicyIgnore);
 }
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)
@@ -254,7 +255,8 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
     if (listenerID != m_policyListenerID)
         return;
 
-    ASSERT(m_policyFunction);
+    if (!m_policyFunction)
+        return;
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
 

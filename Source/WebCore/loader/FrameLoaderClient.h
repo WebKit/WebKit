@@ -84,7 +84,6 @@ class MessageEvent;
 class NavigationAction;
 class Page;
 class PluginViewBase;
-class PolicyChecker;
 class PreviewLoaderClient;
 class ProtectionSpace;
 class RTCPeerConnectionHandler;

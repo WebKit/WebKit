@@ -1,3 +1,29 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Stop using PolicyCallback
+        https://bugs.webkit.org/show_bug.cgi?id=176088
+
+        Reviewed by Andy Estes.
+
+        This is what lambdas are for. No change in behavior.
+        Cancelling the callback is now the responsibility of the FrameLoaderClient, to whom we have given the lambda.
+        That is why there are changes in WebKit and WebKitLegacy where the FrameLoaderClient::cancelPolicyCheck finds the lambda it has stored.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/DocumentLoader.cpp:
+        * loader/FrameLoader.cpp:
+        * loader/FrameLoaderClient.h:
+        * loader/PolicyCallback.cpp: Removed.
+        * loader/PolicyCallback.h: Removed.
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::checkNavigationPolicy):
+        (WebCore::PolicyChecker::checkNewWindowPolicy):
+        (WebCore::PolicyChecker::stopCheck):
+        (WebCore::PolicyChecker::continueAfterNavigationPolicy): Deleted.
+        * loader/PolicyChecker.h:
+        (WebCore::PolicyChecker::setSuggestedFilename): Deleted.
+
 2017-09-25  Youenn Fablet  <youenn@apple.com>
 
         MediaStreamTrack.getSettings should compute its deviceId/groupId like enumerateDevices

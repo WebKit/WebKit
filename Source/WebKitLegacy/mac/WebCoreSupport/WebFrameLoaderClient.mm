@@ -2409,6 +2409,8 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
 - (void)invalidate
 {
     _frame = nullptr;
+    if (auto policyFunction = std::exchange(_policyFunction, nullptr))
+        policyFunction(PolicyIgnore);
 }
 
 - (void)dealloc
@@ -2425,11 +2427,8 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
     if (!frame)
         return;
 
-    FramePolicyFunction policyFunction = WTFMove(_policyFunction);
-    _policyFunction = nullptr;
-
-    ASSERT(policyFunction);
-    policyFunction(action);
+    if (auto policyFunction = std::exchange(_policyFunction, nullptr))
+        policyFunction(action);
 }
 
 - (void)ignore

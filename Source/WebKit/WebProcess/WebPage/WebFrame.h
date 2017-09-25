@@ -33,8 +33,8 @@
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/FrameLoaderClient.h>
 #include <WebCore/FrameLoaderTypes.h>
-#include <WebCore/PolicyChecker.h>
 #include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 

@@ -119,6 +119,7 @@
 #include "UserContentController.h"
 #include "WindowFeatures.h"
 #include "XMLDocumentParser.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>

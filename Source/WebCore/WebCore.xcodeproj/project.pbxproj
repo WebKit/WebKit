@@ -4105,8 +4105,6 @@
 		952076061F2675FE007D2AAB /* CallTracerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 952076021F2675F9007D2AAB /* CallTracerTypes.h */; };
 		96ABA42314BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */; };
 		9703E1BF15DC4E37001F24C8 /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E9EC8B15DC492F004F2E71 /* JSVoidCallback.cpp */; };
-		97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059973107D975200A50A7C /* PolicyCallback.cpp */; };
-		97059978107D975200A50A7C /* PolicyCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059974107D975200A50A7C /* PolicyCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97059975107D975200A50A7C /* PolicyChecker.cpp */; };
 		9705997A107D975200A50A7C /* PolicyChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97059976107D975200A50A7C /* PolicyChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		970B728A144FFAC600F00A37 /* EventInterfaces.h in Headers */ = {isa = PBXBuildFile; fileRef = 970B7289144FFAC600F00A37 /* EventInterfaces.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12470,8 +12468,6 @@
 		952076011F2675F9007D2AAB /* CallTracer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTracer.h; sourceTree = "<group>"; };
 		952076021F2675F9007D2AAB /* CallTracerTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CallTracerTypes.h; sourceTree = "<group>"; };
 		96ABA42214BCB80E00D56204 /* GraphicsContext3DOpenGLCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGLCommon.cpp; sourceTree = "<group>"; };
-		97059973107D975200A50A7C /* PolicyCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyCallback.cpp; sourceTree = "<group>"; };
-		97059974107D975200A50A7C /* PolicyCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyCallback.h; sourceTree = "<group>"; };
 		97059975107D975200A50A7C /* PolicyChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolicyChecker.cpp; sourceTree = "<group>"; };
 		97059976107D975200A50A7C /* PolicyChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolicyChecker.h; sourceTree = "<group>"; };
 		970B7289144FFAC600F00A37 /* EventInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventInterfaces.h; sourceTree = "<group>"; };
@@ -24463,8 +24459,6 @@
 				656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */,
 				D0FF2A5B11F8C45A007E74E0 /* PingLoader.cpp */,
 				D0FF2A5C11F8C45A007E74E0 /* PingLoader.h */,
-				97059973107D975200A50A7C /* PolicyCallback.cpp */,
-				97059974107D975200A50A7C /* PolicyCallback.h */,
 				97059975107D975200A50A7C /* PolicyChecker.cpp */,
 				97059976107D975200A50A7C /* PolicyChecker.h */,
 				1A2A68210B5BEDE70002A480 /* ProgressTracker.cpp */,
@@ -29587,7 +29581,6 @@
 				B2B1F7170D00CAA8004AEA64 /* PointerEventsHitRules.h in Headers */,
 				3FF813A71DBA8640009BF001 /* PointerLockController.h in Headers */,
 				84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */,
-				97059978107D975200A50A7C /* PolicyCallback.h in Headers */,
 				9705997A107D975200A50A7C /* PolicyChecker.h in Headers */,
 				FD45A957175D414C00C21EC8 /* PolygonShape.h in Headers */,
 				5174E20A10A1F44F00F95E6F /* PopStateEvent.h in Headers */,
@@ -33578,7 +33571,6 @@
 				B2B1F7160D00CAA8004AEA64 /* PointerEventsHitRules.cpp in Sources */,
 				5CFC4350192409E300A0D3B5 /* PointerLockController.cpp in Sources */,
 				A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */,
-				97059977107D975200A50A7C /* PolicyCallback.cpp in Sources */,
 				97059979107D975200A50A7C /* PolicyChecker.cpp in Sources */,
 				FD45A959175D417100C21EC8 /* PolygonShape.cpp in Sources */,
 				5189F0DE10B46B0E00F3C739 /* PopStateEvent.cpp in Sources */,

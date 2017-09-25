@@ -41,6 +41,7 @@
 #include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/InspectorPageAgent.h>
 #include <WebCore/MainFrame.h>
+#include <WebCore/NavigationAction.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/ScriptController.h>
