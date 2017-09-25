@@ -1,3 +1,17 @@
+2017-09-25  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Factor out IsExceptionOr check from toJS/toJSNewlyCreated signature
+        https://bugs.webkit.org/show_bug.cgi?id=177457
+
+        Reviewed by Youenn Fablet.
+
+        Add new type, IsExceptionOr, that factors out the previously repeated logic of determining
+        if a type is an ExceptionOr template type.
+
+        * bindings/js/JSDOMConvertBase.h:
+        (WebCore::toJS):
+        (WebCore::toJSNewlyCreated):
+
 2017-09-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Refactor and improve methods in the CurlHandle
