@@ -179,6 +179,7 @@ webkit.org/b/98936 fast/forms/week [ Skip ]
 
 # ENABLE_GAMEPAD not enabled.
 webkit.org/b/98937 gamepad [ Skip ]
+webkit.org/b/177447 imported/w3c/web-platform-tests/dom/events/Event-timestamp-high-resolution.html [ Failure ]
 
 # Requires WebP support.
 webkit.org/b/98939 fast/canvas/canvas-toDataURL-webp.html [ Skip ]
@@ -1250,9 +1251,8 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-stream
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/brand-checks.serviceworker.https.html [ Failure ]
 webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-streams/properties.serviceworker.https.html [ Failure ]
 
-webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
-
-webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
+# Loading MP4 as an image is not supported by GTK
+fast/images/animated-image-mp4.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -1362,6 +1362,7 @@ webkit.org/b/176798 accessibility/table-sections.html [ Crash ]
 webkit.org/b/176799 editing/deleting/delete-surrogatepair.html [ Crash ]
 
 webkit.org/b/176801 fast/mediastream/apply-constraints-audio.html [ Crash ]
+webkit.org/b/176801 fast/mediastream/argument-types.html [ Crash Pass ]
 
 webkit.org/b/176803 http/tests/local/blob/send-hybrid-blob-using-open-panel.html [ Crash ]
 
@@ -3424,6 +3425,20 @@ webkit.org/b/177363 imported/w3c/web-platform-tests/css/css-ui-3/text-overflow-0
 
 webkit.org/b/177364 fast/text/international/iso-8859-8.html [ Failure ]
 webkit.org/b/177364 fast/text/word-space-between-inlines.html [ ImageOnlyFailure ]
+
+webkit.org/b/175661 inspector/worker/resources-in-worker.html [ Failure ]
+
+webkit.org/b/175662 inspector/canvas/recording-2d.html [ Failure ]
+
+webkit.org/b/177449 fast/forms/ValidityState-valueMissing-002.html [ Failure ]
+webkit.org/b/177449 fast/forms/listbox-selection-after-typeahead.html [ Failure ]
+webkit.org/b/177449 fast/forms/listbox-typeahead-scroll.html [ Failure ]
+webkit.org/b/177449 fast/forms/onchange-select-check-validity.html [ Failure ]
+webkit.org/b/177449 fast/forms/select-double-onchange.html [ Failure ]
+webkit.org/b/177449 fast/forms/select-script-onchange.html [ Failure ]
+webkit.org/b/177449 fast/forms/select/menulist-oninput-fired.html [ Failure ]
+webkit.org/b/177449 fast/forms/select/select-disabled.html [ Failure ]
+webkit.org/b/177449 fast/events/popup-when-select-change.html [ Timeout Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of non-crashing, non-flaky tests failing
