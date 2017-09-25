@@ -1,5 +1,32 @@
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
+        [css-grid] Small refactoring adding RenderGrid::contentAlignment()
+        https://bugs.webkit.org/show_bug.cgi?id=177130
+
+        Reviewed by Sergio Villar Senin.
+
+        As a follow-up of r221931, this patch does a small refactoring
+        adding a new method RenderGrid::contentAlignment()
+        that is used from RenderGrid and GridTrackSizingAlgorithm.
+
+        No new tests, no change of behavior.
+
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::GridTrackSizingAlgorithm::stretchAutoTracks):
+        * rendering/RenderGrid.cpp:
+        (WebCore::contentAlignmentNormalBehaviorGrid):
+        (WebCore::RenderGrid::contentAlignment const):
+        (WebCore::RenderGrid::computeContentPositionAndDistributionOffset const):
+        (WebCore::RenderGrid::contentAlignmentNormalBehaviorGrid): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::resolvedContentAlignment):
+        (WebCore::RenderStyle::resolvedAlignContent const):
+        (WebCore::RenderStyle::resolvedJustifyContent const):
+        * rendering/style/RenderStyle.h:
+
+2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
+
         [css-grid] fit-content() tracks shouldn't stretch
         https://bugs.webkit.org/show_bug.cgi?id=177300
 

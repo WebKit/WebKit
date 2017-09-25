@@ -280,6 +280,23 @@ StyleSelfAlignmentData RenderStyle::resolvedJustifySelf(const RenderStyle* paren
     return parentStyle->resolvedJustifyItems(normalValueBehaviour);
 }
 
+static inline StyleContentAlignmentData resolvedContentAlignment(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
+{
+    return (value.position() == ContentPositionNormal && value.distribution() == ContentDistributionDefault) ? normalValueBehavior : value;
+}
+
+StyleContentAlignmentData RenderStyle::resolvedAlignContent(const StyleContentAlignmentData& normalValueBehavior) const
+{
+    // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
+    return resolvedContentAlignment(alignContent(), normalValueBehavior);
+}
+
+StyleContentAlignmentData RenderStyle::resolvedJustifyContent(const StyleContentAlignmentData& normalValueBehavior) const
+{
+    // We will return the behaviour of 'normal' value if needed, which is specific of each layout model.
+    return resolvedContentAlignment(justifyContent(), normalValueBehavior);
+}
+
 static inline ContentPosition resolvedContentAlignmentPosition(const StyleContentAlignmentData& value, const StyleContentAlignmentData& normalValueBehavior)
 {
     return (value.position() == ContentPositionNormal && value.distribution() == ContentDistributionDefault) ? normalValueBehavior.position() : value.position();

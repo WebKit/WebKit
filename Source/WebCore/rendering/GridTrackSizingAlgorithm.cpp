@@ -1071,14 +1071,11 @@ void GridTrackSizingAlgorithm::stretchFlexibleTracks(std::optional<LayoutUnit> f
 
 void GridTrackSizingAlgorithm::stretchAutoTracks()
 {
-    if (m_autoSizedTracksForStretchIndex.isEmpty())
-        return;
-
     auto currentFreeSpace = freeSpace(m_direction);
-    if (!currentFreeSpace
+    if (m_autoSizedTracksForStretchIndex.isEmpty()
+        || !currentFreeSpace
         || currentFreeSpace.value() <= 0
-        || (m_direction == ForColumns && m_renderGrid->style().resolvedJustifyContentDistribution(m_renderGrid->contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch)
-        || (m_direction == ForRows && m_renderGrid->style().resolvedAlignContentDistribution(m_renderGrid->contentAlignmentNormalBehaviorGrid()) != ContentDistributionStretch))
+        || (m_renderGrid->contentAlignment(m_direction).distribution() != ContentDistributionStretch))
         return;
 
     Vector<GridTrack>& allTracks = tracks(m_direction);

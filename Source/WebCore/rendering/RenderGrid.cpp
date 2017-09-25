@@ -877,7 +877,7 @@ Vector<LayoutUnit> RenderGrid::trackSizesForComputedStyle(GridTrackSizingDirecti
     return tracks;
 }
 
-const StyleContentAlignmentData& RenderGrid::contentAlignmentNormalBehaviorGrid()
+static const StyleContentAlignmentData& contentAlignmentNormalBehaviorGrid()
 {
     static const StyleContentAlignmentData normalBehavior = {ContentPositionNormal, ContentDistributionStretch};
     return normalBehavior;
@@ -1581,19 +1581,23 @@ static ContentAlignmentData contentDistributionOffset(const LayoutUnit& availabl
     return ContentAlignmentData::defaultOffsets();
 }
 
+StyleContentAlignmentData RenderGrid::contentAlignment(GridTrackSizingDirection direction) const
+{
+    return direction == ForColumns ? style().resolvedJustifyContent(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContent(contentAlignmentNormalBehaviorGrid());
+}
+
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
     bool isRowAxis = direction == ForColumns;
-    auto position = isRowAxis ? style().resolvedJustifyContentPosition(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContentPosition(contentAlignmentNormalBehaviorGrid());
-    auto distribution = isRowAxis ? style().resolvedJustifyContentDistribution(contentAlignmentNormalBehaviorGrid()) : style().resolvedAlignContentDistribution(contentAlignmentNormalBehaviorGrid());
+    auto contentAlignmentData = contentAlignment(direction);
+    auto position = contentAlignmentData.position();
     // If <content-distribution> value can't be applied, 'position' will become the associated
     // <content-position> fallback value.
-    auto contentAlignment = contentDistributionOffset(availableFreeSpace, position, distribution, numberOfGridTracks);
+    auto contentAlignment = contentDistributionOffset(availableFreeSpace, position, contentAlignmentData.distribution(), numberOfGridTracks);
     if (contentAlignment.isValid())
         return contentAlignment;
 
-    auto overflow = (isRowAxis ? style().justifyContent() : style().alignContent()).overflow();
-    if (availableFreeSpace <= 0 && overflow == OverflowAlignmentSafe)
+    if (availableFreeSpace <= 0 && contentAlignmentData.overflow() == OverflowAlignmentSafe)
         return {0, 0};
 
     switch (position) {
