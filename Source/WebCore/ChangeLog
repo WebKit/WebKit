@@ -1,3 +1,9 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the build with <attachment> disabled
+
+        * editing/mac/WebContentReaderMac.mm:
+
 2017-09-25  Per Arne Vollan  <pvollan@apple.com>
 
         Unreviewed Windows build fix.
