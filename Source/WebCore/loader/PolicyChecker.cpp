@@ -189,13 +189,6 @@ void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
     handleUnimplementablePolicy(m_frame.loader().client().cannotShowMIMETypeError(response));
 }
 
-void PolicyChecker::continueLoadAfterWillSubmitForm(PolicyAction)
-{
-    // See header file for an explaination of why this function
-    // isn't like the others.
-    m_frame.loader().continueLoadAfterWillSubmitForm();
-}
-
 void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
 {
     PolicyCallback callback = WTFMove(m_callback);

@@ -937,16 +937,16 @@ void WebFrameLoaderClient::dispatchWillSendSubmitEvent(Ref<WebCore::FormState>&&
     CallFormDelegate(getWebView(m_webFrame.get()), @selector(willSendSubmitEventToForm:inFrame:withValues:), formElement, m_webFrame.get(), values);
 }
 
-void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, FramePolicyFunction&& function)
+void WebFrameLoaderClient::dispatchWillSubmitForm(FormState& formState, WTF::Function<void(void)>&& function)
 {
     id <WebFormDelegate> formDelegate = [getWebView(m_webFrame.get()) _formDelegate];
     if (!formDelegate) {
-        function(PolicyUse);
+        function();
         return;
     }
 
     NSDictionary *values = makeFormFieldValuesDictionary(formState);
-    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState.sourceDocument().frame()), kit(&formState.form()), values, setUpPolicyListener(WTFMove(function)).get());
+    CallFormDelegate(getWebView(m_webFrame.get()), @selector(frame:sourceFrame:willSubmitForm:withValues:submissionListener:), m_webFrame.get(), kit(formState.sourceDocument().frame()), kit(&formState.form()), values, setUpPolicyListener([function = WTFMove(function)](PolicyAction) { function(); }).get());
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader* loader)

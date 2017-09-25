@@ -1,3 +1,14 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Separate form submission from PolicyChecker infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=177396
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchWillSubmitForm):
+
 2017-09-22  Zalan Bujtas  <zalan@apple.com>
 
         WeakPtrFactory should populate m_ref lazily.

@@ -220,6 +220,19 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
     return m_policyListenerID;
 }
 
+uint64_t WebFrame::setUpWillSubmitFormListener(WTF::Function<void(void)>&& completionHandler)
+{
+    uint64_t identifier = generateListenerID();
+    m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
+    return identifier;
+}
+
+void WebFrame::continueWillSubmitForm(uint64_t listenerID)
+{
+    if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
+        completionHandler();
+}
+
 void WebFrame::invalidatePolicyListener()
 {
     if (!m_policyListenerID)

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFormClient_h
-#define WebFormClient_h
+#pragma once
 
 #include "APIClient.h"
 #include "APIFormClient.h"
@@ -42,9 +41,7 @@ class WebFormClient : public API::FormClient, API::Client<WKPageFormClientBase> 
 public:
     explicit WebFormClient(const WKPageFormClientBase*);
 
-    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, Ref<WebFormSubmissionListenerProxy>&&) override;
+    void willSubmitForm(WebPageProxy&, WebFrameProxy&, WebFrameProxy&, const Vector<std::pair<String, String>>& textFieldValues, API::Object* userData, WTF::Function<void(void)>&&) override;
 };
 
 } // namespace WebKit
-
-#endif // WebFormClient_h
