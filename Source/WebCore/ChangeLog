@@ -1,3 +1,15 @@
+2017-09-25  Carlos Alberto Lopez Perez  <clopez@igalia.com>
+
+        Building release with -DLOG_DISABLED=0 fails
+        https://bugs.webkit.org/show_bug.cgi?id=177441
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests, it is a build fix.
+
+        * Modules/indexeddb/IDBKeyPath.cpp:
+        * Modules/indexeddb/IDBKeyPath.h:
+
 2017-09-25  Brent Fulgham  <bfulgham@apple.com>
 
         Switch back to partitioning (rather than blocking) prevalent origins without interaction

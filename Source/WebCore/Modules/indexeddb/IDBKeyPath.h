@@ -53,7 +53,7 @@ inline std::optional<IDBKeyPath> isolatedCopy(const std::optional<IDBKeyPath>& v
     return isolatedCopy(variant.value());
 }
 
-#ifndef NDEBUG
+#if !LOG_DISABLED
 String loggingString(const IDBKeyPath&);
 #endif
 
