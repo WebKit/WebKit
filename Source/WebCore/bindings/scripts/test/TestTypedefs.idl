@@ -68,8 +68,6 @@
 
     // Exceptions
     [MayThrowException] void methodWithException();
-    [GetterMayThrowException] attribute long attrWithGetterException;
-    [GetterMayThrowException] attribute DOMString stringAttrWithGetterException;
 
     // Builtin Typedefs
     attribute BufferSource bufferSourceAttr;

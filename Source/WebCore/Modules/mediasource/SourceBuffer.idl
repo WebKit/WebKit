@@ -43,7 +43,7 @@
     readonly attribute boolean updating;
   
     // Returns the time ranges buffered.
-    [GetterMayThrowException] readonly attribute TimeRanges buffered;
+    readonly attribute TimeRanges buffered;
 
     // Applies an offset to media segment timestamps.
     attribute double timestampOffset;

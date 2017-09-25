@@ -231,7 +231,7 @@ static inline JSValue jsTestPromiseRejectionEventPromiseGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLPromise<IDLAny>>(state, *thisObject.globalObject(), impl.promise());
+    JSValue result = toJS<IDLPromise<IDLAny>>(state, *thisObject.globalObject(), throwScope, impl.promise());
     return result;
 }
 
@@ -245,7 +245,7 @@ static inline JSValue jsTestPromiseRejectionEventReasonGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(impl.reason());
+    JSValue result = toJS<IDLAny>(state, throwScope, impl.reason());
     return result;
 }
 

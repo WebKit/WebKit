@@ -232,7 +232,7 @@ static inline JSValue jsTestEventConstructorAttr1Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attr1());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr1());
     return result;
 }
 
@@ -246,7 +246,7 @@ static inline JSValue jsTestEventConstructorAttr2Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attr2());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr2());
     return result;
 }
 
@@ -261,7 +261,7 @@ static inline JSValue jsTestEventConstructorAttr3Getter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attr3());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attr3());
     return result;
 }
 

@@ -190,7 +190,7 @@ static inline JSValue jsTestCEReactionsAttributeWithCEReactionsGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithCEReactions());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithCEReactions());
     return result;
 }
 
@@ -222,7 +222,7 @@ static inline JSValue jsTestCEReactionsReflectAttributeWithCEReactionsGetter(Exe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributewithcereactionsAttr));
     return result;
 }
 
@@ -254,7 +254,7 @@ static inline JSValue jsTestCEReactionsStringifierAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestCEReactionsStringifier>>(state, *thisObject.globalObject(), impl.stringifierAttribute());
+    JSValue result = toJS<IDLInterface<TestCEReactionsStringifier>>(state, *thisObject.globalObject(), throwScope, impl.stringifierAttribute());
     return result;
 }
 

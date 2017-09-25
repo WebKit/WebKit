@@ -199,7 +199,7 @@ static inline JSValue jsTestActiveDOMObjectExcitingAttrGetter(ExecState& state, 
     if (!BindingSecurity::shouldAllowAccessToFrame(&state, thisObject.wrapped().frame(), ThrowSecurityError))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.excitingAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.excitingAttr());
     return result;
 }
 

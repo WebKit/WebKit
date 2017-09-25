@@ -192,7 +192,7 @@ static inline JSValue jsReadOnlyMapLikeSizeGetter(ExecState& state, JSReadOnlyMa
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLAny>(forwardSizeToMapLike(state, thisObject));
+    JSValue result = toJS<IDLAny>(state, throwScope, forwardSizeToMapLike(state, thisObject));
     return result;
 }
 

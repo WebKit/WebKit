@@ -223,7 +223,7 @@ static inline JSValue jsTestCallTracerTestAttributeInterfaceGetter(ExecState& st
     auto& impl = thisObject.wrapped();
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeInterface"));
-    JSValue result = toJS<IDLBoolean>(impl.testAttributeInterface());
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.testAttributeInterface());
     return result;
 }
 
@@ -261,7 +261,7 @@ static inline JSValue jsTestCallTracerTestAttributeSpecifiedGetter(ExecState& st
     auto& impl = thisObject.wrapped();
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerAttribute(impl, ASCIILiteral("testAttributeSpecified"));
-    JSValue result = toJS<IDLBoolean>(impl.testAttributeSpecified());
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.testAttributeSpecified());
     return result;
 }
 
@@ -299,7 +299,7 @@ static inline JSValue jsTestCallTracerTestAttributeWithVariantGetter(ExecState& 
     auto& impl = thisObject.wrapped();
     if (UNLIKELY(impl.callTracingActive()))
         CallTracer::testCallTracerInterface(impl, ASCIILiteral("testAttributeWithVariant"));
-    JSValue result = toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(state, *thisObject.globalObject(), impl.testAttributeWithVariant());
+    JSValue result = toJS<IDLUnion<IDLBoolean, IDLFloat, IDLDOMString>>(state, *thisObject.globalObject(), throwScope, impl.testAttributeWithVariant());
     return result;
 }
 
@@ -335,7 +335,7 @@ static inline JSValue jsTestCallTracerTestReadonlyAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLBoolean>(impl.testReadonlyAttribute());
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.testReadonlyAttribute());
     return result;
 }
 

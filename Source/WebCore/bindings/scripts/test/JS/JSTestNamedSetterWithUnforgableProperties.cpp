@@ -311,7 +311,7 @@ static inline JSValue jsTestNamedSetterWithUnforgablePropertiesUnforgeableAttrib
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.unforgeableAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.unforgeableAttribute());
     return result;
 }
 

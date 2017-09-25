@@ -172,7 +172,7 @@ static inline JSValue jsTestSerializationInheritInheritLongAttributeGetter(ExecS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.inheritLongAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.inheritLongAttribute());
     return result;
 }
 

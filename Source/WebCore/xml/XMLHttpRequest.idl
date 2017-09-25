@@ -78,7 +78,7 @@ enum XMLHttpRequestResponseType {
     [MayThrowException] void overrideMimeType(DOMString mime);
     attribute XMLHttpRequestResponseType responseType;
     [CachedAttribute, CustomGetter] readonly attribute any response;
-    [GetterMayThrowException] readonly attribute USVString responseText;
+    readonly attribute USVString responseText;
     // FIXME: responseXML should be annotated with [Exposed=Window].
-    [GetterMayThrowException] readonly attribute Document? responseXML;
+    readonly attribute Document? responseXML;
 };

@@ -1,3 +1,77 @@
+2017-09-25  Sam Weinig  <sam@webkit.org>
+
+        [WebIDL] Remove GetterMayThrowException
+        https://bugs.webkit.org/show_bug.cgi?id=177422
+
+        Reviewed by Youenn Fablet.
+
+        * bindings/js/JSDOMConvertBase.h:
+        (WebCore::toJSNewlyCreated):
+        (WebCore::toJS):
+
+            Add overloads of toJS and toJSNewlyCreated that take ThrowScopes and a value that
+            is not an ExceptionOr (keeping the existing overloads that take an ExceptionOr).
+            This allows NativeToJSValue to not need to know of a conversion can throw, as the
+            c++ type system will now make the determination for it.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateSerializerDefinition):
+        (NativeToJSValueUsingReferences):
+        (NativeToJSValueUsingPointers):
+        (NativeToJSValue):
+
+            Always assume an exception can be thrown for attributes now that the converters will
+            do the right thing based on whether the value is an ExceptionOr or not. Also, remove 
+            $suppressExceptionCheck and $excludeNullability, they were never being set.
+
+        * bindings/scripts/IDLAttributes.json:
+
+            Remove GetterMayThrowException from the list of supported extended attributes.
+
+        * Modules/indexeddb/IDBRequest.idl:
+        * Modules/mediasource/SourceBuffer.idl:
+        * Modules/webdatabase/SQLResultSet.idl:
+        * bindings/scripts/test/TestObj.idl:
+        * bindings/scripts/test/TestTypedefs.idl:
+        * dom/Document.idl:
+        * html/HTMLInputElement.idl:
+        * page/DOMWindow.idl:
+        * page/History.idl:
+        * svg/SVGLength.idl:
+        * xml/XMLHttpRequest.idl:
+        * xml/XPathResult.idl:
+        
+            Remove GetterMayThrowException extended attribute from IDL files.
+
+        * bindings/scripts/test/JS/JSMapLike.cpp:
+        * bindings/scripts/test/JS/JSReadOnlyMapLike.cpp:
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactions.cpp:
+        * bindings/scripts/test/JS/JSTestCEReactionsStringifier.cpp:
+        * bindings/scripts/test/JS/JSTestCallTracer.cpp:
+        * bindings/scripts/test/JS/JSTestDOMJIT.cpp:
+        * bindings/scripts/test/JS/JSTestEnabledBySetting.cpp:
+        * bindings/scripts/test/JS/JSTestEventConstructor.cpp:
+        * bindings/scripts/test/JS/JSTestException.cpp:
+        * bindings/scripts/test/JS/JSTestGenerateIsReachable.cpp:
+        * bindings/scripts/test/JS/JSTestGlobalObject.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterfaceLeadingUnderscore.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgableProperties.cpp:
+        * bindings/scripts/test/JS/JSTestNamedSetterWithUnforgablePropertiesAndOverrideBuiltins.cpp:
+        * bindings/scripts/test/JS/JSTestNode.cpp:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestPromiseRejectionEvent.cpp:
+        * bindings/scripts/test/JS/JSTestSerialization.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInherit.cpp:
+        * bindings/scripts/test/JS/JSTestSerializationInheritFinal.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadOnlyAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestStringifierReadWriteAttribute.cpp:
+        * bindings/scripts/test/JS/JSTestTypedefs.cpp:
+
+            Update test results.
+
 2017-09-25  Timothy Horton  <timothy_horton@apple.com>
 
         Make progress on getting Mac CMake building again

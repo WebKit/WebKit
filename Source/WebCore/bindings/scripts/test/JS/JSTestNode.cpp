@@ -251,7 +251,7 @@ static inline JSValue jsTestNodeNameGetter(ExecState& state, JSTestNode& thisObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.name());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.name());
     return result;
 }
 

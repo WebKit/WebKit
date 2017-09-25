@@ -207,7 +207,7 @@ static inline JSValue jsTestSerializationFirstStringAttributeGetter(ExecState& s
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.firstStringAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.firstStringAttribute());
     return result;
 }
 
@@ -238,7 +238,7 @@ static inline JSValue jsTestSerializationSecondLongAttributeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.secondLongAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.secondLongAttribute());
     return result;
 }
 
@@ -269,7 +269,7 @@ static inline JSValue jsTestSerializationThirdUnserializableAttributeGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestException>>(state, *thisObject.globalObject(), impl.thirdUnserializableAttribute());
+    JSValue result = toJS<IDLInterface<TestException>>(state, *thisObject.globalObject(), throwScope, impl.thirdUnserializableAttribute());
     return result;
 }
 
@@ -300,7 +300,7 @@ static inline JSValue jsTestSerializationFourthUnrestrictedDoubleAttributeGetter
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnrestrictedDouble>(impl.fourthUnrestrictedDoubleAttribute());
+    JSValue result = toJS<IDLUnrestrictedDouble>(state, throwScope, impl.fourthUnrestrictedDoubleAttribute());
     return result;
 }
 
@@ -331,7 +331,7 @@ static inline JSValue jsTestSerializationFifthLongAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.fifthLongAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.fifthLongAttribute());
     return result;
 }
 
@@ -362,7 +362,7 @@ static inline JSValue jsTestSerializationSixthTypedefAttributeGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDouble>(impl.sixthTypedefAttribute());
+    JSValue result = toJS<IDLDouble>(state, throwScope, impl.sixthTypedefAttribute());
     return result;
 }
 
@@ -393,7 +393,7 @@ static inline JSValue jsTestSerializationSeventhDirectlySerializableAttributeGet
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestSerializationInheritFinal>>(state, *thisObject.globalObject(), impl.seventhDirectlySerializableAttribute());
+    JSValue result = toJS<IDLInterface<TestSerializationInheritFinal>>(state, *thisObject.globalObject(), throwScope, impl.seventhDirectlySerializableAttribute());
     return result;
 }
 
@@ -424,7 +424,7 @@ static inline JSValue jsTestSerializationEighthIndirectlyAttributeGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestSerializationIndirectInheritance>>(state, *thisObject.globalObject(), impl.eighthIndirectlyAttribute());
+    JSValue result = toJS<IDLInterface<TestSerializationIndirectInheritance>>(state, *thisObject.globalObject(), throwScope, impl.eighthIndirectlyAttribute());
     return result;
 }
 

@@ -175,7 +175,7 @@ static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeFooGetter
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.finalLongAttributeFoo());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.finalLongAttributeFoo());
     return result;
 }
 
@@ -206,7 +206,7 @@ static inline JSValue jsTestSerializationInheritFinalFinalLongAttributeBarGetter
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.finalLongAttributeBar());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.finalLongAttributeBar());
     return result;
 }
 

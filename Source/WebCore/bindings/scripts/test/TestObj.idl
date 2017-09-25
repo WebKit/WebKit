@@ -167,8 +167,6 @@ enum TestConfidence { "high", "kinda-low" };
     [MayThrowException] void methodWithException();
     [MayThrowException] long methodWithExceptionReturningLong();
     [MayThrowException] TestObj methodWithExceptionReturningObject();
-    [GetterMayThrowException] attribute long attributeWithGetterException;
-    [GetterMayThrowException] attribute DOMString stringAttrWithGetterException;
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
@@ -206,10 +204,7 @@ enum TestConfidence { "high", "kinda-low" };
     [CallWith=ScriptState] attribute long withScriptStateAttribute;
     [CallWith=ScriptState, SetterCallWith=ActiveWindow&FirstWindow] attribute long withCallWithAndSetterCallWithAttribute;
     [CallWith=ScriptExecutionContext] attribute TestObj withScriptExecutionContextAttribute;
-    [CallWith=ScriptState, GetterMayThrowException] attribute TestObj withScriptStateAttributeRaises;
-    [CallWith=ScriptExecutionContext, GetterMayThrowException] attribute TestObj withScriptExecutionContextAttributeRaises;
     [CallWith=ScriptExecutionContext&ScriptState] attribute TestObj withScriptExecutionContextAndScriptStateAttribute;
-    [CallWith=ScriptExecutionContext&ScriptState,GetterMayThrowException] attribute TestObj withScriptExecutionContextAndScriptStateAttributeRaises;
     [CallWith=  ScriptExecutionContext  &  ScriptState  ] attribute TestObj withScriptExecutionContextAndScriptStateWithSpacesAttribute;
 
     // Optional parameters.
@@ -392,8 +387,6 @@ enum TestConfidence { "high", "kinda-low" };
     attribute DOMString? nullableStringSettableAttribute;
     attribute USVString? nullableUSVStringSettableAttribute;
     attribute ByteString? nullableByteStringSettableAttribute;
-
-    [GetterMayThrowException] attribute long? nullableStringValue;
 
     // Identifiers with a leading underscore, which should be removed.
     const unsigned short               _readonly = 0;

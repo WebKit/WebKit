@@ -83,7 +83,7 @@ typedef (
     [PutForwards=href, Unforgeable] readonly attribute Location? location;
     attribute USVString domain;
     readonly attribute USVString referrer;
-    [GetterMayThrowException] attribute USVString cookie;
+    attribute USVString cookie;
     readonly attribute DOMString lastModified;
     readonly attribute DocumentReadyState readyState;
 

@@ -35,7 +35,7 @@ interface SVGLength {
     const unsigned short SVG_LENGTHTYPE_PC = 10;
 
     readonly attribute unsigned short unitType;
-    [GetterMayThrowException, ImplementedAs=valueForBindings] attribute unrestricted float value;
+    [ImplementedAs=valueForBindings] attribute unrestricted float value;
 
     attribute unrestricted float valueInSpecifiedUnits;
     attribute DOMString valueAsString;

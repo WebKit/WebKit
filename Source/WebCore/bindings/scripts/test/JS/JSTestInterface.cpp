@@ -461,7 +461,7 @@ static inline JSValue jsTestInterfaceConstructorImplementsStaticReadOnlyAttrGett
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLLong>(TestInterface::implementsStaticReadOnlyAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, TestInterface::implementsStaticReadOnlyAttr());
     return result;
 }
 
@@ -477,7 +477,7 @@ static inline JSValue jsTestInterfaceConstructorImplementsStaticAttrGetter(ExecS
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLDOMString>(state, TestInterface::implementsStaticAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, TestInterface::implementsStaticAttr());
     return result;
 }
 
@@ -513,7 +513,7 @@ static inline JSValue jsTestInterfaceImplementsStr1Getter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.implementsStr1());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.implementsStr1());
     return result;
 }
 
@@ -530,7 +530,7 @@ static inline JSValue jsTestInterfaceImplementsStr2Getter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.implementsStr2());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.implementsStr2());
     return result;
 }
 
@@ -597,7 +597,7 @@ static inline JSValue jsTestInterfaceImplementsNodeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.implementsNode());
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, impl.implementsNode());
     return result;
 }
 
@@ -633,7 +633,7 @@ static inline JSValue jsTestInterfaceConstructorSupplementalStaticReadOnlyAttrGe
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLLong>(WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, WebCore::TestSupplemental::supplementalStaticReadOnlyAttr());
     return result;
 }
 
@@ -649,7 +649,7 @@ static inline JSValue jsTestInterfaceConstructorSupplementalStaticAttrGetter(Exe
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStaticAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStaticAttr());
     return result;
 }
 
@@ -685,7 +685,7 @@ static inline JSValue jsTestInterfaceSupplementalStr1Getter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStr1(impl));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStr1(impl));
     return result;
 }
 
@@ -702,7 +702,7 @@ static inline JSValue jsTestInterfaceSupplementalStr2Getter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, WebCore::TestSupplemental::supplementalStr2(impl));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, WebCore::TestSupplemental::supplementalStr2(impl));
     return result;
 }
 
@@ -769,7 +769,7 @@ static inline JSValue jsTestInterfaceSupplementalNodeGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), WebCore::TestSupplemental::supplementalNode(impl));
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, WebCore::TestSupplemental::supplementalNode(impl));
     return result;
 }
 
@@ -806,7 +806,7 @@ static inline JSValue jsTestInterfaceReflectAttributeGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectattributeAttr));
     return result;
 }
 

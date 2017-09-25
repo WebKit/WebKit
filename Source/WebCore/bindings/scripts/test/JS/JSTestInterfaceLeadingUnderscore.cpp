@@ -167,7 +167,7 @@ static inline JSValue jsTestInterfaceLeadingUnderscoreReadonlyGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.readonly());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.readonly());
     return result;
 }
 

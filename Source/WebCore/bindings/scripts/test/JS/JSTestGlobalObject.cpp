@@ -247,7 +247,7 @@ static inline JSValue jsTestGlobalObjectRegularAttributeGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.regularAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.regularAttribute());
     return result;
 }
 
@@ -278,7 +278,7 @@ static inline JSValue jsTestGlobalObjectPublicAndPrivateAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.publicAndPrivateAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.publicAndPrivateAttribute());
     return result;
 }
 
@@ -310,7 +310,7 @@ static inline JSValue jsTestGlobalObjectPublicAndPrivateConditionalAttributeGett
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.publicAndPrivateConditionalAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.publicAndPrivateConditionalAttribute());
     return result;
 }
 
@@ -347,7 +347,7 @@ static inline JSValue jsTestGlobalObjectEnabledAtRuntimeAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.enabledAtRuntimeAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.enabledAtRuntimeAttribute());
     return result;
 }
 

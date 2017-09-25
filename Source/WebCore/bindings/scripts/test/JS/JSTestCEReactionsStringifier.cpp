@@ -180,7 +180,7 @@ static inline JSValue jsTestCEReactionsStringifierValueGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.value());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.value());
     return result;
 }
 

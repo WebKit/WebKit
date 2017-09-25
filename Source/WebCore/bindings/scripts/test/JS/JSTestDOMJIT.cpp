@@ -624,7 +624,7 @@ static inline JSValue jsTestDOMJITAnyAttrGetter(ExecState& state, JSTestDOMJIT& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(impl.anyAttr());
+    JSValue result = toJS<IDLAny>(state, throwScope, impl.anyAttr());
     return result;
 }
 
@@ -638,7 +638,7 @@ static inline JSValue jsTestDOMJITBooleanAttrGetter(ExecState& state, JSTestDOMJ
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLBoolean>(impl.booleanAttr());
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.booleanAttr());
     return result;
 }
 
@@ -652,7 +652,7 @@ static inline JSValue jsTestDOMJITByteAttrGetter(ExecState& state, JSTestDOMJIT&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLByte>(impl.byteAttr());
+    JSValue result = toJS<IDLByte>(state, throwScope, impl.byteAttr());
     return result;
 }
 
@@ -666,7 +666,7 @@ static inline JSValue jsTestDOMJITOctetAttrGetter(ExecState& state, JSTestDOMJIT
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLOctet>(impl.octetAttr());
+    JSValue result = toJS<IDLOctet>(state, throwScope, impl.octetAttr());
     return result;
 }
 
@@ -680,7 +680,7 @@ static inline JSValue jsTestDOMJITShortAttrGetter(ExecState& state, JSTestDOMJIT
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLShort>(impl.shortAttr());
+    JSValue result = toJS<IDLShort>(state, throwScope, impl.shortAttr());
     return result;
 }
 
@@ -694,7 +694,7 @@ static inline JSValue jsTestDOMJITUnsignedShortAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedShort>(impl.unsignedShortAttr());
+    JSValue result = toJS<IDLUnsignedShort>(state, throwScope, impl.unsignedShortAttr());
     return result;
 }
 
@@ -708,7 +708,7 @@ static inline JSValue jsTestDOMJITLongAttrGetter(ExecState& state, JSTestDOMJIT&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.longAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.longAttr());
     return result;
 }
 
@@ -722,7 +722,7 @@ static inline JSValue jsTestDOMJITUnsignedLongAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedLong>(impl.unsignedLongAttr());
+    JSValue result = toJS<IDLUnsignedLong>(state, throwScope, impl.unsignedLongAttr());
     return result;
 }
 
@@ -736,7 +736,7 @@ static inline JSValue jsTestDOMJITLongLongAttrGetter(ExecState& state, JSTestDOM
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLongLong>(impl.longLongAttr());
+    JSValue result = toJS<IDLLongLong>(state, throwScope, impl.longLongAttr());
     return result;
 }
 
@@ -750,7 +750,7 @@ static inline JSValue jsTestDOMJITUnsignedLongLongAttrGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedLongLong>(impl.unsignedLongLongAttr());
+    JSValue result = toJS<IDLUnsignedLongLong>(state, throwScope, impl.unsignedLongLongAttr());
     return result;
 }
 
@@ -764,7 +764,7 @@ static inline JSValue jsTestDOMJITFloatAttrGetter(ExecState& state, JSTestDOMJIT
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLFloat>(impl.floatAttr());
+    JSValue result = toJS<IDLFloat>(state, throwScope, impl.floatAttr());
     return result;
 }
 
@@ -778,7 +778,7 @@ static inline JSValue jsTestDOMJITUnrestrictedFloatAttrGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnrestrictedFloat>(impl.unrestrictedFloatAttr());
+    JSValue result = toJS<IDLUnrestrictedFloat>(state, throwScope, impl.unrestrictedFloatAttr());
     return result;
 }
 
@@ -792,7 +792,7 @@ static inline JSValue jsTestDOMJITDoubleAttrGetter(ExecState& state, JSTestDOMJI
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDouble>(impl.doubleAttr());
+    JSValue result = toJS<IDLDouble>(state, throwScope, impl.doubleAttr());
     return result;
 }
 
@@ -806,7 +806,7 @@ static inline JSValue jsTestDOMJITUnrestrictedDoubleAttrGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnrestrictedDouble>(impl.unrestrictedDoubleAttr());
+    JSValue result = toJS<IDLUnrestrictedDouble>(state, throwScope, impl.unrestrictedDoubleAttr());
     return result;
 }
 
@@ -820,7 +820,7 @@ static inline JSValue jsTestDOMJITDomStringAttrGetter(ExecState& state, JSTestDO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.domStringAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.domStringAttr());
     return result;
 }
 
@@ -834,7 +834,7 @@ static inline JSValue jsTestDOMJITByteStringAttrGetter(ExecState& state, JSTestD
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLByteString>(state, impl.byteStringAttr());
+    JSValue result = toJS<IDLByteString>(state, throwScope, impl.byteStringAttr());
     return result;
 }
 
@@ -848,7 +848,7 @@ static inline JSValue jsTestDOMJITUsvStringAttrGetter(ExecState& state, JSTestDO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUSVString>(state, impl.usvStringAttr());
+    JSValue result = toJS<IDLUSVString>(state, throwScope, impl.usvStringAttr());
     return result;
 }
 
@@ -862,7 +862,7 @@ static inline JSValue jsTestDOMJITNodeAttrGetter(ExecState& state, JSTestDOMJIT&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.nodeAttr());
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, impl.nodeAttr());
     return result;
 }
 
@@ -876,7 +876,7 @@ static inline JSValue jsTestDOMJITBooleanNullableAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLBoolean>>(impl.booleanNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLBoolean>>(state, throwScope, impl.booleanNullableAttr());
     return result;
 }
 
@@ -890,7 +890,7 @@ static inline JSValue jsTestDOMJITByteNullableAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLByte>>(impl.byteNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLByte>>(state, throwScope, impl.byteNullableAttr());
     return result;
 }
 
@@ -904,7 +904,7 @@ static inline JSValue jsTestDOMJITOctetNullableAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLOctet>>(impl.octetNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLOctet>>(state, throwScope, impl.octetNullableAttr());
     return result;
 }
 
@@ -918,7 +918,7 @@ static inline JSValue jsTestDOMJITShortNullableAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLShort>>(impl.shortNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLShort>>(state, throwScope, impl.shortNullableAttr());
     return result;
 }
 
@@ -932,7 +932,7 @@ static inline JSValue jsTestDOMJITUnsignedShortNullableAttrGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnsignedShort>>(impl.unsignedShortNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUnsignedShort>>(state, throwScope, impl.unsignedShortNullableAttr());
     return result;
 }
 
@@ -946,7 +946,7 @@ static inline JSValue jsTestDOMJITLongNullableAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLLong>>(impl.longNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLLong>>(state, throwScope, impl.longNullableAttr());
     return result;
 }
 
@@ -960,7 +960,7 @@ static inline JSValue jsTestDOMJITUnsignedLongNullableAttrGetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnsignedLong>>(impl.unsignedLongNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUnsignedLong>>(state, throwScope, impl.unsignedLongNullableAttr());
     return result;
 }
 
@@ -974,7 +974,7 @@ static inline JSValue jsTestDOMJITLongLongNullableAttrGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLLongLong>>(impl.longLongNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLLongLong>>(state, throwScope, impl.longLongNullableAttr());
     return result;
 }
 
@@ -988,7 +988,7 @@ static inline JSValue jsTestDOMJITUnsignedLongLongNullableAttrGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnsignedLongLong>>(impl.unsignedLongLongNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUnsignedLongLong>>(state, throwScope, impl.unsignedLongLongNullableAttr());
     return result;
 }
 
@@ -1002,7 +1002,7 @@ static inline JSValue jsTestDOMJITFloatNullableAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLFloat>>(impl.floatNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLFloat>>(state, throwScope, impl.floatNullableAttr());
     return result;
 }
 
@@ -1016,7 +1016,7 @@ static inline JSValue jsTestDOMJITUnrestrictedFloatNullableAttrGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnrestrictedFloat>>(impl.unrestrictedFloatNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUnrestrictedFloat>>(state, throwScope, impl.unrestrictedFloatNullableAttr());
     return result;
 }
 
@@ -1030,7 +1030,7 @@ static inline JSValue jsTestDOMJITDoubleNullableAttrGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLDouble>>(impl.doubleNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLDouble>>(state, throwScope, impl.doubleNullableAttr());
     return result;
 }
 
@@ -1044,7 +1044,7 @@ static inline JSValue jsTestDOMJITUnrestrictedDoubleNullableAttrGetter(ExecState
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnrestrictedDouble>>(impl.unrestrictedDoubleNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUnrestrictedDouble>>(state, throwScope, impl.unrestrictedDoubleNullableAttr());
     return result;
 }
 
@@ -1058,7 +1058,7 @@ static inline JSValue jsTestDOMJITDomStringNullableAttrGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, impl.domStringNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, throwScope, impl.domStringNullableAttr());
     return result;
 }
 
@@ -1072,7 +1072,7 @@ static inline JSValue jsTestDOMJITByteStringNullableAttrGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLByteString>>(state, impl.byteStringNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLByteString>>(state, throwScope, impl.byteStringNullableAttr());
     return result;
 }
 
@@ -1086,7 +1086,7 @@ static inline JSValue jsTestDOMJITUsvStringNullableAttrGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUSVString>>(state, impl.usvStringNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLUSVString>>(state, throwScope, impl.usvStringNullableAttr());
     return result;
 }
 
@@ -1100,7 +1100,7 @@ static inline JSValue jsTestDOMJITNodeNullableAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLInterface<Node>>>(state, *thisObject.globalObject(), impl.nodeNullableAttr());
+    JSValue result = toJS<IDLNullable<IDLInterface<Node>>>(state, *thisObject.globalObject(), throwScope, impl.nodeNullableAttr());
     return result;
 }
 

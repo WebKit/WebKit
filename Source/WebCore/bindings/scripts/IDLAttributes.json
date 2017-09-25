@@ -206,9 +206,6 @@
             "contextsAllowed": ["interface"],
             "values": ["", "Impl", "ImplWebGLRenderingContext", "ImplDocument", "ImplElementRoot", "ImplFrame", "ImplOwnerNodeRoot", "ImplScriptExecutionContext"]
         },
-        "GetterMayThrowException": {
-            "contextsAllowed": ["attribute"]
-        },
         "Global": {
             "contextsAllowed": ["interface"],
             "values": ["*"],

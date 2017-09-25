@@ -33,8 +33,8 @@
     GenerateIsReachable=Impl,
     SkipVTableValidation,
 ] interface IDBRequest : EventTarget {
-    [GetterMayThrowException] readonly attribute (IDBCursor or IDBDatabase or any)? result;
-    [GetterMayThrowException] readonly attribute DOMException? error;
+    readonly attribute (IDBCursor or IDBDatabase or any)? result;
+    readonly attribute DOMException? error;
     readonly attribute (IDBObjectStore or IDBIndex or IDBCursor)? source;
     readonly attribute IDBTransaction transaction;
     readonly attribute IDBRequestReadyState readyState;

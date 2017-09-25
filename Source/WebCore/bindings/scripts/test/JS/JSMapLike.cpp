@@ -198,7 +198,7 @@ static inline JSValue jsMapLikeSizeGetter(ExecState& state, JSMapLike& thisObjec
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLAny>(forwardSizeToMapLike(state, thisObject));
+    JSValue result = toJS<IDLAny>(state, throwScope, forwardSizeToMapLike(state, thisObject));
     return result;
 }
 

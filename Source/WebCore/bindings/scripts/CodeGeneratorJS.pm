@@ -5245,7 +5245,7 @@ sub GenerateSerializerDefinition
     push(@implContent, "\n");
 
     foreach my $attribute (@serializedAttributes) {
-        assert("Attributes that throw exceptions are not supported with serializers yet.") if $attribute->extendedAttributes->{GetterMayThrowException} || $attribute->extendedAttributes->{MayThrowException};
+        # FIXME: Attributes that throw exceptions are not supported with serializers yet.
 
         my $name = $attribute->name;
         my $getFunctionName = GetAttributeGetterName($interface, $className, $attribute);
@@ -6536,17 +6536,17 @@ sub NativeToJSValueDOMConvertNeedsGlobalObject
 
 sub NativeToJSValueUsingReferences
 {
-    my ($context, $interface, $value, $globalObjectReference, $suppressExceptionCheck, $excludeNullability) = @_;
+    my ($context, $interface, $value, $globalObjectReference) = @_;
 
-    return NativeToJSValue($context, $interface, $value, "state", $globalObjectReference, $suppressExceptionCheck, $excludeNullability);
+    return NativeToJSValue($context, $interface, $value, "state", $globalObjectReference);
 }
 
 # FIXME: We should remove NativeToJSValueUsingPointers and combine NativeToJSValueUsingReferences and NativeToJSValue
 sub NativeToJSValueUsingPointers
 {
-    my ($context, $interface, $value, $globalObjectReference, $suppressExceptionCheck, $excludeNullability) = @_;
+    my ($context, $interface, $value, $globalObjectReference) = @_;
 
-    return NativeToJSValue($context, $interface, $value, "*state", $globalObjectReference, $suppressExceptionCheck, $excludeNullability);
+    return NativeToJSValue($context, $interface, $value, "*state", $globalObjectReference);
 }
 
 sub IsValidContextForNativeToJSValue
@@ -6558,13 +6558,13 @@ sub IsValidContextForNativeToJSValue
 
 sub NativeToJSValue
 {
-    my ($context, $interface, $value, $stateReference, $globalObjectReference, $suppressExceptionCheck, $excludeNullability) = @_;
+    my ($context, $interface, $value, $stateReference, $globalObjectReference) = @_;
 
     assert("Invalid context type") if !IsValidContextForNativeToJSValue($context);
 
     my $conditional = $context->extendedAttributes->{Conditional};
     my $type = $context->type;
-    my $mayThrowException = $context->extendedAttributes->{GetterMayThrowException} || $context->extendedAttributes->{MayThrowException} && !$suppressExceptionCheck;
+    my $mayThrowException = ref($context) eq "IDLAttribute" || $context->extendedAttributes->{MayThrowException};
 
     # We could instead overload a function to work with optional as well as non-optional numbers, but this
     # is slightly better because it guarantees we will fail to compile if the IDL file doesn't match the C++.
@@ -6581,7 +6581,7 @@ sub NativeToJSValue
         $value = "BindingSecurity::checkSecurityForNode($stateReference, $value)";
     }
 
-    my $IDLType = $excludeNullability ? GetIDLTypeExcludingNullability($interface, $type) : GetIDLType($interface, $type);
+    my $IDLType = GetIDLType($interface, $type);
 
     my @conversionArguments = ();
     push(@conversionArguments, $stateReference) if NativeToJSValueDOMConvertNeedsState($type) || $mayThrowException;

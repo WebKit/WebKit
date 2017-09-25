@@ -34,13 +34,13 @@
     const unsigned short FIRST_ORDERED_NODE_TYPE = 9;
 
     readonly attribute unsigned short resultType;
-    [GetterMayThrowException] readonly attribute unrestricted double numberValue;
-    [GetterMayThrowException] readonly attribute DOMString stringValue;
-    [GetterMayThrowException] readonly attribute boolean booleanValue;
-    [GetterMayThrowException] readonly attribute Node singleNodeValue;
+    readonly attribute unrestricted double numberValue;
+    readonly attribute DOMString stringValue;
+    readonly attribute boolean booleanValue;
+    readonly attribute Node singleNodeValue;
 
     readonly attribute boolean invalidIteratorState;
-    [GetterMayThrowException] readonly attribute unsigned long snapshotLength;
+    readonly attribute unsigned long snapshotLength;
 
     [MayThrowException] Node iterateNext();
     [MayThrowException] Node snapshotItem(optional unsigned long index = 0);

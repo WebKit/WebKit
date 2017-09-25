@@ -99,10 +99,10 @@ typedef USVString CSSOMString;
     void releaseEvents(); // Not implemented. Also not in modern standards. Empty function may help compatibility with legacy content.
 
     // WebStorage (https://html.spec.whatwg.org/multipage/webstorage.html#the-sessionstorage-attribute).
-    [GetterMayThrowException] readonly attribute Storage sessionStorage;
+    readonly attribute Storage sessionStorage;
 
     // WebStorage (https://html.spec.whatwg.org/multipage/webstorage.html#the-localstorage-attribute).
-    [GetterMayThrowException] readonly attribute Storage localStorage;
+    readonly attribute Storage localStorage;
 
     // Extensions from the CSSOM specification (https://drafts.csswg.org/cssom/#extensions-to-the-window-interface).
     [NewObject] CSSStyleDeclaration getComputedStyle(Element element, optional CSSOMString? pseudoElement = null);

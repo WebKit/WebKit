@@ -1305,10 +1305,6 @@ bool setJSTestObjEnabledAtRuntimeAttribute(JSC::ExecState*, JSC::EncodedJSValue,
 #endif
 JSC::EncodedJSValue jsTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjTypedArrayAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjAttributeWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjStringAttrWithGetterException(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjCustomAttr(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjOnfoo(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
@@ -1321,14 +1317,8 @@ JSC::EncodedJSValue jsTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecSta
 bool setJSTestObjWithCallWithAndSetterCallWithAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjWithScriptExecutionContextAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjWithScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjWithScriptExecutionContextAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 #if ENABLE(Condition1)
@@ -1384,8 +1374,6 @@ JSC::EncodedJSValue jsTestObjNullableUSVStringSettableAttribute(JSC::ExecState*,
 bool setJSTestObjNullableUSVStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjNullableByteStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjNullableByteStringSettableAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
-JSC::EncodedJSValue jsTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
-bool setJSTestObjNullableStringValue(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
 JSC::EncodedJSValue jsTestObjAttribute(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 JSC::EncodedJSValue jsTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::PropertyName);
 bool setJSTestObjAttributeWithReservedEnumType(JSC::ExecState*, JSC::EncodedJSValue, JSC::EncodedJSValue);
@@ -1634,8 +1622,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { 0, 0, NoIntrinsic, { 0, 0 } },
 #endif
     { "typedArrayAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTypedArrayAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjTypedArrayAttr) } },
-    { "attributeWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithGetterException) } },
-    { "stringAttrWithGetterException", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjStringAttrWithGetterException), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjStringAttrWithGetterException) } },
     { "customAttr", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjCustomAttr), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjCustomAttr) } },
 #if ENABLE(Condition4)
     { "jsBuiltinAttribute", Accessor | Builtin, NoIntrinsic, { (intptr_t)static_cast<BuiltinGenerator>(testObjJsBuiltinAttributeCodeGenerator), (intptr_t) (setTestObjJsBuiltinAttributeCodeGenerator) } },
@@ -1652,10 +1638,7 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "withScriptStateAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttribute) } },
     { "withCallWithAndSetterCallWithAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithCallWithAndSetterCallWithAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithCallWithAndSetterCallWithAttribute) } },
     { "withScriptExecutionContextAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAttribute) } },
-    { "withScriptStateAttributeRaises", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptStateAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptStateAttributeRaises) } },
-    { "withScriptExecutionContextAttributeRaises", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAttributeRaises) } },
     { "withScriptExecutionContextAndScriptStateAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAndScriptStateAttribute) } },
-    { "withScriptExecutionContextAndScriptStateAttributeRaises", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises) } },
     { "withScriptExecutionContextAndScriptStateWithSpacesAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute) } },
 #if ENABLE(Condition1)
     { "conditionalAttr1", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConditionalAttr1), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjConditionalAttr1) } },
@@ -1691,7 +1674,6 @@ static const HashTableValue JSTestObjPrototypeTableValues[] =
     { "nullableStringSettableAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringSettableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringSettableAttribute) } },
     { "nullableUSVStringSettableAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableUSVStringSettableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableUSVStringSettableAttribute) } },
     { "nullableByteStringSettableAttribute", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableByteStringSettableAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableByteStringSettableAttribute) } },
-    { "nullableStringValue", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringValue), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjNullableStringValue) } },
     { "attribute", ReadOnly | CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
     { "attributeWithReservedEnumType", CustomAccessor | DOMAttribute, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjAttributeWithReservedEnumType), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(setJSTestObjAttributeWithReservedEnumType) } },
     { "testReadOnlyVoidPromiseAttribute", ReadOnly | CustomAccessor, NoIntrinsic, { (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjTestReadOnlyVoidPromiseAttribute), (intptr_t) static_cast<PutPropertySlot::PutValueFunc>(0) } },
@@ -2162,7 +2144,7 @@ static inline JSValue jsTestObjReadOnlyLongAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.readOnlyLongAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.readOnlyLongAttr());
     return result;
 }
 
@@ -2176,7 +2158,7 @@ static inline JSValue jsTestObjReadOnlyStringAttrGetter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.readOnlyStringAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.readOnlyStringAttr());
     return result;
 }
 
@@ -2190,7 +2172,7 @@ static inline JSValue jsTestObjReadOnlyTestObjAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.readOnlyTestObjAttr());
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.readOnlyTestObjAttr());
     return result;
 }
 
@@ -2203,7 +2185,7 @@ static inline JSValue jsTestObjConstructorStaticReadOnlyLongAttrGetter(ExecState
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLLong>(TestObj::staticReadOnlyLongAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, TestObj::staticReadOnlyLongAttr());
     return result;
 }
 
@@ -2216,7 +2198,7 @@ static inline JSValue jsTestObjConstructorStaticStringAttrGetter(ExecState& stat
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
-    JSValue result = toJS<IDLDOMString>(state, TestObj::staticStringAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, TestObj::staticStringAttr());
     return result;
 }
 
@@ -2258,7 +2240,7 @@ static inline JSValue jsTestObjEnumAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLEnumeration<TestObj::EnumType>>(state, impl.enumAttr());
+    JSValue result = toJS<IDLEnumeration<TestObj::EnumType>>(state, throwScope, impl.enumAttr());
     return result;
 }
 
@@ -2292,7 +2274,7 @@ static inline JSValue jsTestObjByteAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLByte>(impl.byteAttr());
+    JSValue result = toJS<IDLByte>(state, throwScope, impl.byteAttr());
     return result;
 }
 
@@ -2323,7 +2305,7 @@ static inline JSValue jsTestObjOctetAttrGetter(ExecState& state, JSTestObj& this
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLOctet>(impl.octetAttr());
+    JSValue result = toJS<IDLOctet>(state, throwScope, impl.octetAttr());
     return result;
 }
 
@@ -2354,7 +2336,7 @@ static inline JSValue jsTestObjShortAttrGetter(ExecState& state, JSTestObj& this
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLShort>(impl.shortAttr());
+    JSValue result = toJS<IDLShort>(state, throwScope, impl.shortAttr());
     return result;
 }
 
@@ -2385,7 +2367,7 @@ static inline JSValue jsTestObjClampedShortAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLClampAdaptor<IDLShort>>(impl.clampedShortAttr());
+    JSValue result = toJS<IDLClampAdaptor<IDLShort>>(state, throwScope, impl.clampedShortAttr());
     return result;
 }
 
@@ -2416,7 +2398,7 @@ static inline JSValue jsTestObjEnforceRangeShortAttrGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLEnforceRangeAdaptor<IDLShort>>(impl.enforceRangeShortAttr());
+    JSValue result = toJS<IDLEnforceRangeAdaptor<IDLShort>>(state, throwScope, impl.enforceRangeShortAttr());
     return result;
 }
 
@@ -2447,7 +2429,7 @@ static inline JSValue jsTestObjUnsignedShortAttrGetter(ExecState& state, JSTestO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedShort>(impl.unsignedShortAttr());
+    JSValue result = toJS<IDLUnsignedShort>(state, throwScope, impl.unsignedShortAttr());
     return result;
 }
 
@@ -2478,7 +2460,7 @@ static inline JSValue jsTestObjLongAttrGetter(ExecState& state, JSTestObj& thisO
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.longAttr());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.longAttr());
     return result;
 }
 
@@ -2509,7 +2491,7 @@ static inline JSValue jsTestObjLongLongAttrGetter(ExecState& state, JSTestObj& t
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLongLong>(impl.longLongAttr());
+    JSValue result = toJS<IDLLongLong>(state, throwScope, impl.longLongAttr());
     return result;
 }
 
@@ -2540,7 +2522,7 @@ static inline JSValue jsTestObjUnsignedLongLongAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedLongLong>(impl.unsignedLongLongAttr());
+    JSValue result = toJS<IDLUnsignedLongLong>(state, throwScope, impl.unsignedLongLongAttr());
     return result;
 }
 
@@ -2571,7 +2553,7 @@ static inline JSValue jsTestObjStringAttrGetter(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.stringAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.stringAttr());
     return result;
 }
 
@@ -2602,7 +2584,7 @@ static inline JSValue jsTestObjUsvstringAttrGetter(ExecState& state, JSTestObj& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUSVString>(state, impl.usvstringAttr());
+    JSValue result = toJS<IDLUSVString>(state, throwScope, impl.usvstringAttr());
     return result;
 }
 
@@ -2633,7 +2615,7 @@ static inline JSValue jsTestObjTestObjAttrGetter(ExecState& state, JSTestObj& th
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.testObjAttr());
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.testObjAttr());
     return result;
 }
 
@@ -2664,7 +2646,7 @@ static inline JSValue jsTestObjTestNullableObjAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLInterface<TestObj>>>(state, *thisObject.globalObject(), impl.testNullableObjAttr());
+    JSValue result = toJS<IDLNullable<IDLInterface<TestObj>>>(state, *thisObject.globalObject(), throwScope, impl.testNullableObjAttr());
     return result;
 }
 
@@ -2695,7 +2677,7 @@ static inline JSValue jsTestObjLenientTestObjAttrGetter(ExecState& state, JSTest
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.lenientTestObjAttr());
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.lenientTestObjAttr());
     return result;
 }
 
@@ -2726,7 +2708,7 @@ static inline JSValue jsTestObjUnforgeableAttrGetter(ExecState& state, JSTestObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.unforgeableAttr());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.unforgeableAttr());
     return result;
 }
 
@@ -2740,7 +2722,7 @@ static inline JSValue jsTestObjStringAttrTreatingNullAsEmptyStringGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, impl.stringAttrTreatingNullAsEmptyString());
+    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLDOMString>>(state, throwScope, impl.stringAttrTreatingNullAsEmptyString());
     return result;
 }
 
@@ -2771,7 +2753,7 @@ static inline JSValue jsTestObjUsvstringAttrTreatingNullAsEmptyStringGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLUSVString>>(state, impl.usvstringAttrTreatingNullAsEmptyString());
+    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLUSVString>>(state, throwScope, impl.usvstringAttrTreatingNullAsEmptyString());
     return result;
 }
 
@@ -2802,7 +2784,7 @@ static inline JSValue jsTestObjByteStringAttrTreatingNullAsEmptyStringGetter(Exe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLByteString>>(state, impl.byteStringAttrTreatingNullAsEmptyString());
+    JSValue result = toJS<IDLTreatNullAsEmptyAdaptor<IDLByteString>>(state, throwScope, impl.byteStringAttrTreatingNullAsEmptyString());
     return result;
 }
 
@@ -2833,7 +2815,7 @@ static inline JSValue jsTestObjStringLongRecordAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLRecord<IDLDOMString, IDLLong>>(state, *thisObject.globalObject(), impl.stringLongRecordAttr());
+    JSValue result = toJS<IDLRecord<IDLDOMString, IDLLong>>(state, *thisObject.globalObject(), throwScope, impl.stringLongRecordAttr());
     return result;
 }
 
@@ -2864,7 +2846,7 @@ static inline JSValue jsTestObjUsvstringLongRecordAttrGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLRecord<IDLUSVString, IDLLong>>(state, *thisObject.globalObject(), impl.usvstringLongRecordAttr());
+    JSValue result = toJS<IDLRecord<IDLUSVString, IDLLong>>(state, *thisObject.globalObject(), throwScope, impl.usvstringLongRecordAttr());
     return result;
 }
 
@@ -2895,7 +2877,7 @@ static inline JSValue jsTestObjUsvstringLongRecordAttrGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLRecord<IDLByteString, IDLLong>>(state, *thisObject.globalObject(), impl.usvstringLongRecordAttr());
+    JSValue result = toJS<IDLRecord<IDLByteString, IDLLong>>(state, *thisObject.globalObject(), throwScope, impl.usvstringLongRecordAttr());
     return result;
 }
 
@@ -2926,7 +2908,7 @@ static inline JSValue jsTestObjStringObjRecordAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLRecord<IDLDOMString, IDLInterface<TestObj>>>(state, *thisObject.globalObject(), impl.stringObjRecordAttr());
+    JSValue result = toJS<IDLRecord<IDLDOMString, IDLInterface<TestObj>>>(state, *thisObject.globalObject(), throwScope, impl.stringObjRecordAttr());
     return result;
 }
 
@@ -2957,7 +2939,7 @@ static inline JSValue jsTestObjStringNullableObjRecordAttrGetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLRecord<IDLDOMString, IDLNullable<IDLInterface<TestObj>>>>(state, *thisObject.globalObject(), impl.stringNullableObjRecordAttr());
+    JSValue result = toJS<IDLRecord<IDLDOMString, IDLNullable<IDLInterface<TestObj>>>>(state, *thisObject.globalObject(), throwScope, impl.stringNullableObjRecordAttr());
     return result;
 }
 
@@ -2988,7 +2970,7 @@ static inline JSValue jsTestObjDictionaryAttrGetter(ExecState& state, JSTestObj&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDictionary<TestObj::Dictionary>>(state, *thisObject.globalObject(), impl.dictionaryAttr());
+    JSValue result = toJS<IDLDictionary<TestObj::Dictionary>>(state, *thisObject.globalObject(), throwScope, impl.dictionaryAttr());
     return result;
 }
 
@@ -3019,7 +3001,7 @@ static inline JSValue jsTestObjNullableDictionaryAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLDictionary<TestObj::Dictionary>>>(state, *thisObject.globalObject(), impl.nullableDictionaryAttr());
+    JSValue result = toJS<IDLNullable<IDLDictionary<TestObj::Dictionary>>>(state, *thisObject.globalObject(), throwScope, impl.nullableDictionaryAttr());
     return result;
 }
 
@@ -3050,7 +3032,7 @@ static inline JSValue jsTestObjAnnotatedTypeInUnionAttrGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, *thisObject.globalObject(), impl.annotatedTypeInUnionAttr());
+    JSValue result = toJS<IDLUnion<IDLDOMString, IDLClampAdaptor<IDLLong>>>(state, *thisObject.globalObject(), throwScope, impl.annotatedTypeInUnionAttr());
     return result;
 }
 
@@ -3081,7 +3063,7 @@ static inline JSValue jsTestObjAnnotatedTypeInSequenceAttrGetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, *thisObject.globalObject(), impl.annotatedTypeInSequenceAttr());
+    JSValue result = toJS<IDLSequence<IDLClampAdaptor<IDLLong>>>(state, *thisObject.globalObject(), throwScope, impl.annotatedTypeInSequenceAttr());
     return result;
 }
 
@@ -3112,7 +3094,7 @@ static inline JSValue jsTestObjImplementationEnumAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLEnumeration<AlternateEnumName>>(state, impl.implementationEnumAttr());
+    JSValue result = toJS<IDLEnumeration<AlternateEnumName>>(state, throwScope, impl.implementationEnumAttr());
     return result;
 }
 
@@ -3146,7 +3128,7 @@ static inline JSValue jsTestObjXMLObjAttrGetter(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.xmlObjAttr());
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.xmlObjAttr());
     return result;
 }
 
@@ -3177,7 +3159,7 @@ static inline JSValue jsTestObjCreateGetter(ExecState& state, JSTestObj& thisObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLBoolean>(impl.isCreate());
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.isCreate());
     return result;
 }
 
@@ -3208,7 +3190,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedstringattrAttr));
     return result;
 }
 
@@ -3239,7 +3221,7 @@ static inline JSValue jsTestObjReflectedUSVStringAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUSVString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
+    JSValue result = toJS<IDLUSVString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::reflectedusvstringattrAttr));
     return result;
 }
 
@@ -3270,7 +3252,7 @@ static inline JSValue jsTestObjReflectedIntegralAttrGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr));
     return result;
 }
 
@@ -3301,7 +3283,7 @@ static inline JSValue jsTestObjReflectedUnsignedIntegralAttrGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUnsignedLong>(std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
+    JSValue result = toJS<IDLUnsignedLong>(state, throwScope, std::max(0, impl.getIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr)));
     return result;
 }
 
@@ -3332,7 +3314,7 @@ static inline JSValue jsTestObjReflectedBooleanAttrGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLBoolean>(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::reflectedbooleanattrAttr));
     return result;
 }
 
@@ -3363,7 +3345,7 @@ static inline JSValue jsTestObjReflectedURLAttrGetter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedurlattrAttr));
     return result;
 }
 
@@ -3394,7 +3376,7 @@ static inline JSValue jsTestObjReflectedUSVURLAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUSVString>(state, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
+    JSValue result = toJS<IDLUSVString>(state, throwScope, impl.getURLAttribute(WebCore::HTMLNames::reflectedusvurlattrAttr));
     return result;
 }
 
@@ -3425,7 +3407,7 @@ static inline JSValue jsTestObjReflectedStringAttrGetter(ExecState& state, JSTes
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attributeWithoutSynchronization(WebCore::HTMLNames::customContentStringAttrAttr));
     return result;
 }
 
@@ -3456,7 +3438,7 @@ static inline JSValue jsTestObjReflectedCustomIntegralAttrGetter(ExecState& stat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.getIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr));
     return result;
 }
 
@@ -3487,7 +3469,7 @@ static inline JSValue jsTestObjReflectedCustomBooleanAttrGetter(ExecState& state
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLBoolean>(impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
+    JSValue result = toJS<IDLBoolean>(state, throwScope, impl.hasAttributeWithoutSynchronization(WebCore::HTMLNames::customContentBooleanAttrAttr));
     return result;
 }
 
@@ -3518,7 +3500,7 @@ static inline JSValue jsTestObjReflectedCustomURLAttrGetter(ExecState& state, JS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.getURLAttribute(WebCore::HTMLNames::customContentURLAttrAttr));
     return result;
 }
 
@@ -3550,7 +3532,7 @@ static inline JSValue jsTestObjEnabledAtRuntimeAttributeGetter(ExecState& state,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.enabledAtRuntimeAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.enabledAtRuntimeAttribute());
     return result;
 }
 
@@ -3586,7 +3568,7 @@ static inline JSValue jsTestObjTypedArrayAttrGetter(ExecState& state, JSTestObj&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLFloat32Array>(state, *thisObject.globalObject(), impl.typedArrayAttr());
+    JSValue result = toJS<IDLFloat32Array>(state, *thisObject.globalObject(), throwScope, impl.typedArrayAttr());
     return result;
 }
 
@@ -3610,68 +3592,6 @@ static inline bool setJSTestObjTypedArrayAttrSetter(ExecState& state, JSTestObj&
 bool setJSTestObjTypedArrayAttr(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
 {
     return IDLAttribute<JSTestObj>::set<setJSTestObjTypedArrayAttrSetter>(*state, thisValue, encodedValue, "typedArrayAttr");
-}
-
-static inline JSValue jsTestObjAttributeWithGetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(state, throwScope, impl.attributeWithGetterException());
-    return result;
-}
-
-EncodedJSValue jsTestObjAttributeWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjAttributeWithGetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "attributeWithGetterException");
-}
-
-static inline bool setJSTestObjAttributeWithGetterExceptionSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLLong>(state, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setAttributeWithGetterException(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestObjAttributeWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjAttributeWithGetterExceptionSetter>(*state, thisValue, encodedValue, "attributeWithGetterException");
-}
-
-static inline JSValue jsTestObjStringAttrWithGetterExceptionGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.stringAttrWithGetterException());
-    return result;
-}
-
-EncodedJSValue jsTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjStringAttrWithGetterExceptionGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "stringAttrWithGetterException");
-}
-
-static inline bool setJSTestObjStringAttrWithGetterExceptionSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLDOMString>(state, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setStringAttrWithGetterException(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestObjStringAttrWithGetterException(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjStringAttrWithGetterExceptionSetter>(*state, thisValue, encodedValue, "stringAttrWithGetterException");
 }
 
 static inline JSValue jsTestObjCustomAttrGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
@@ -3751,7 +3671,7 @@ static inline JSValue jsTestObjWithScriptStateAttributeGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.withScriptStateAttribute(state));
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.withScriptStateAttribute(state));
     return result;
 }
 
@@ -3782,7 +3702,7 @@ static inline JSValue jsTestObjWithCallWithAndSetterCallWithAttributeGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.withCallWithAndSetterCallWithAttribute(state));
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.withCallWithAndSetterCallWithAttribute(state));
     return result;
 }
 
@@ -3816,7 +3736,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAttributeGetter(ExecSta
     if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAttribute(*context));
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAttribute(*context));
     return result;
 }
 
@@ -3845,74 +3765,6 @@ bool setJSTestObjWithScriptExecutionContextAttribute(ExecState* state, EncodedJS
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAttributeSetter>(*state, thisValue, encodedValue, "withScriptExecutionContextAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptStateAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptStateAttributeRaises(state));
-    return result;
-}
-
-EncodedJSValue jsTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptStateAttributeRaisesGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "withScriptStateAttributeRaises");
-}
-
-static inline bool setJSTestObjWithScriptStateAttributeRaisesSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptStateAttributeRaises", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setWithScriptStateAttributeRaises(state, *nativeValue);
-    });
-    return true;
-}
-
-bool setJSTestObjWithScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptStateAttributeRaisesSetter>(*state, thisValue, encodedValue, "withScriptStateAttributeRaises");
-}
-
-static inline JSValue jsTestObjWithScriptExecutionContextAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return jsUndefined();
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAttributeRaises(*context));
-    return result;
-}
-
-EncodedJSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptExecutionContextAttributeRaisesGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "withScriptExecutionContextAttributeRaises");
-}
-
-static inline bool setJSTestObjWithScriptExecutionContextAttributeRaisesSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAttributeRaises", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return false;
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setWithScriptExecutionContextAttributeRaises(*context, *nativeValue);
-    });
-    return true;
-}
-
-bool setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAttributeRaisesSetter>(*state, thisValue, encodedValue, "withScriptExecutionContextAttributeRaises");
-}
-
 static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -3921,7 +3773,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttribute
     if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateAttribute(state, *context));
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndScriptStateAttribute(state, *context));
     return result;
 }
 
@@ -3950,43 +3802,6 @@ bool setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* st
     return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAndScriptStateAttributeSetter>(*state, thisValue, encodedValue, "withScriptExecutionContextAndScriptStateAttribute");
 }
 
-static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return jsUndefined();
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndScriptStateAttributeRaises(state, *context));
-    return result;
-}
-
-EncodedJSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "withScriptExecutionContextAndScriptStateAttributeRaises");
-}
-
-static inline bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLInterface<TestObj>>(state, value, [](JSC::ExecState& state, JSC::ThrowScope& scope) { throwAttributeTypeError(state, scope, "TestObject", "withScriptExecutionContextAndScriptStateAttributeRaises", "TestObj"); });
-    RETURN_IF_EXCEPTION(throwScope, false);
-    auto* context = jsCast<JSDOMGlobalObject*>(state.lexicalGlobalObject())->scriptExecutionContext();
-    if (UNLIKELY(!context))
-        return false;
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setWithScriptExecutionContextAndScriptStateAttributeRaises(state, *context, *nativeValue);
-    });
-    return true;
-}
-
-bool setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaisesSetter>(*state, thisValue, encodedValue, "withScriptExecutionContextAndScriptStateAttributeRaises");
-}
-
 static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
@@ -3995,7 +3810,7 @@ static inline JSValue jsTestObjWithScriptExecutionContextAndScriptStateWithSpace
     if (UNLIKELY(!context))
         return jsUndefined();
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context));
+    JSValue result = toJS<IDLInterface<TestObj>>(state, *thisObject.globalObject(), throwScope, impl.withScriptExecutionContextAndScriptStateWithSpacesAttribute(state, *context));
     return result;
 }
 
@@ -4030,7 +3845,7 @@ static inline JSValue jsTestObjConditionalAttr1Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionalAttr1());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionalAttr1());
     return result;
 }
 
@@ -4067,7 +3882,7 @@ static inline JSValue jsTestObjConditionalAttr2Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionalAttr2());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionalAttr2());
     return result;
 }
 
@@ -4104,7 +3919,7 @@ static inline JSValue jsTestObjConditionalAttr3Getter(ExecState& state, JSTestOb
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionalAttr3());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionalAttr3());
     return result;
 }
 
@@ -4232,7 +4047,7 @@ static inline JSValue jsTestObjCachedAttribute1Getter(ExecState& state, JSTestOb
     if (JSValue cachedValue = thisObject.m_cachedAttribute1.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(impl.cachedAttribute1());
+    JSValue result = toJS<IDLAny>(state, throwScope, impl.cachedAttribute1());
     thisObject.m_cachedAttribute1.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -4249,7 +4064,7 @@ static inline JSValue jsTestObjCachedAttribute2Getter(ExecState& state, JSTestOb
     if (JSValue cachedValue = thisObject.m_cachedAttribute2.get())
         return cachedValue;
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(impl.cachedAttribute2());
+    JSValue result = toJS<IDLAny>(state, throwScope, impl.cachedAttribute2());
     thisObject.m_cachedAttribute2.set(state.vm(), &thisObject, result);
     return result;
 }
@@ -4264,7 +4079,7 @@ static inline JSValue jsTestObjAnyAttributeGetter(ExecState& state, JSTestObj& t
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLAny>(impl.anyAttribute());
+    JSValue result = toJS<IDLAny>(state, throwScope, impl.anyAttribute());
     return result;
 }
 
@@ -4295,7 +4110,7 @@ static inline JSValue jsTestObjObjectAttributeGetter(ExecState& state, JSTestObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLObject>(impl.objectAttribute());
+    JSValue result = toJS<IDLObject>(state, throwScope, impl.objectAttribute());
     return result;
 }
 
@@ -4326,7 +4141,7 @@ static inline JSValue jsTestObjContentDocumentGetter(ExecState& state, JSTestObj
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Document>>(state, *thisObject.globalObject(), BindingSecurity::checkSecurityForNode(state, impl.contentDocument()));
+    JSValue result = toJS<IDLInterface<Document>>(state, *thisObject.globalObject(), throwScope, BindingSecurity::checkSecurityForNode(state, impl.contentDocument()));
     return result;
 }
 
@@ -4340,7 +4155,7 @@ static inline JSValue jsTestObjMutablePointGetter(ExecState& state, JSTestObj& t
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<SVGPoint>>(state, *thisObject.globalObject(), impl.mutablePoint());
+    JSValue result = toJS<IDLInterface<SVGPoint>>(state, *thisObject.globalObject(), throwScope, impl.mutablePoint());
     return result;
 }
 
@@ -4371,7 +4186,7 @@ static inline JSValue jsTestObjStrawberryGetter(ExecState& state, JSTestObj& thi
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.blueberry());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.blueberry());
     return result;
 }
 
@@ -4402,7 +4217,7 @@ static inline JSValue jsTestObjDescriptionGetter(ExecState& state, JSTestObj& th
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.description());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.description());
     return result;
 }
 
@@ -4416,7 +4231,7 @@ static inline JSValue jsTestObjIdGetter(ExecState& state, JSTestObj& thisObject,
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.id());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.id());
     return result;
 }
 
@@ -4447,7 +4262,7 @@ static inline JSValue jsTestObjHashGetter(ExecState& state, JSTestObj& thisObjec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.hash());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.hash());
     return result;
 }
 
@@ -4461,7 +4276,7 @@ static inline JSValue jsTestObjReplaceableAttributeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.replaceableAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.replaceableAttribute());
     return result;
 }
 
@@ -4487,7 +4302,7 @@ static inline JSValue jsTestObjNullableDoubleAttributeGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUnrestrictedDouble>>(impl.nullableDoubleAttribute());
+    JSValue result = toJS<IDLNullable<IDLUnrestrictedDouble>>(state, throwScope, impl.nullableDoubleAttribute());
     return result;
 }
 
@@ -4501,7 +4316,7 @@ static inline JSValue jsTestObjNullableLongAttributeGetter(ExecState& state, JST
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLLong>>(impl.nullableLongAttribute());
+    JSValue result = toJS<IDLNullable<IDLLong>>(state, throwScope, impl.nullableLongAttribute());
     return result;
 }
 
@@ -4515,7 +4330,7 @@ static inline JSValue jsTestObjNullableBooleanAttributeGetter(ExecState& state, 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLBoolean>>(impl.nullableBooleanAttribute());
+    JSValue result = toJS<IDLNullable<IDLBoolean>>(state, throwScope, impl.nullableBooleanAttribute());
     return result;
 }
 
@@ -4529,7 +4344,7 @@ static inline JSValue jsTestObjNullableStringAttributeGetter(ExecState& state, J
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, impl.nullableStringAttribute());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, throwScope, impl.nullableStringAttribute());
     return result;
 }
 
@@ -4543,7 +4358,7 @@ static inline JSValue jsTestObjNullableLongSettableAttributeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLLong>>(impl.nullableLongSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLLong>>(state, throwScope, impl.nullableLongSettableAttribute());
     return result;
 }
 
@@ -4574,7 +4389,7 @@ static inline JSValue jsTestObjNullableStringSettableAttributeGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, impl.nullableStringSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLDOMString>>(state, throwScope, impl.nullableStringSettableAttribute());
     return result;
 }
 
@@ -4605,7 +4420,7 @@ static inline JSValue jsTestObjNullableUSVStringSettableAttributeGetter(ExecStat
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLUSVString>>(state, impl.nullableUSVStringSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLUSVString>>(state, throwScope, impl.nullableUSVStringSettableAttribute());
     return result;
 }
 
@@ -4636,7 +4451,7 @@ static inline JSValue jsTestObjNullableByteStringSettableAttributeGetter(ExecSta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLByteString>>(state, impl.nullableByteStringSettableAttribute());
+    JSValue result = toJS<IDLNullable<IDLByteString>>(state, throwScope, impl.nullableByteStringSettableAttribute());
     return result;
 }
 
@@ -4662,43 +4477,12 @@ bool setJSTestObjNullableByteStringSettableAttribute(ExecState* state, EncodedJS
     return IDLAttribute<JSTestObj>::set<setJSTestObjNullableByteStringSettableAttributeSetter>(*state, thisValue, encodedValue, "nullableByteStringSettableAttribute");
 }
 
-static inline JSValue jsTestObjNullableStringValueGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    UNUSED_PARAM(state);
-    auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLLong>>(state, throwScope, impl.nullableStringValue());
-    return result;
-}
-
-EncodedJSValue jsTestObjNullableStringValue(ExecState* state, EncodedJSValue thisValue, PropertyName)
-{
-    return IDLAttribute<JSTestObj>::get<jsTestObjNullableStringValueGetter, CastedThisErrorBehavior::Assert>(*state, thisValue, "nullableStringValue");
-}
-
-static inline bool setJSTestObjNullableStringValueSetter(ExecState& state, JSTestObj& thisObject, JSValue value, ThrowScope& throwScope)
-{
-    UNUSED_PARAM(throwScope);
-    auto& impl = thisObject.wrapped();
-    auto nativeValue = convert<IDLNullable<IDLLong>>(state, value);
-    RETURN_IF_EXCEPTION(throwScope, false);
-    AttributeSetter::call(state, throwScope, [&] {
-        return impl.setNullableStringValue(WTFMove(nativeValue));
-    });
-    return true;
-}
-
-bool setJSTestObjNullableStringValue(ExecState* state, EncodedJSValue thisValue, EncodedJSValue encodedValue)
-{
-    return IDLAttribute<JSTestObj>::set<setJSTestObjNullableStringValueSetter>(*state, thisValue, encodedValue, "nullableStringValue");
-}
-
 static inline JSValue jsTestObjAttributeGetter(ExecState& state, JSTestObj& thisObject, ThrowScope& throwScope)
 {
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.attribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.attribute());
     return result;
 }
 
@@ -4712,7 +4496,7 @@ static inline JSValue jsTestObjAttributeWithReservedEnumTypeGetter(ExecState& st
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLEnumeration<TestObj::Optional>>(state, impl.attributeWithReservedEnumType());
+    JSValue result = toJS<IDLEnumeration<TestObj::Optional>>(state, throwScope, impl.attributeWithReservedEnumType());
     return result;
 }
 
@@ -4746,7 +4530,7 @@ static inline JSValue jsTestObjTestReadOnlyVoidPromiseAttributeGetter(ExecState&
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLPromise<IDLVoid>>(state, *thisObject.globalObject(), impl.testReadOnlyVoidPromiseAttribute());
+    JSValue result = toJS<IDLPromise<IDLVoid>>(state, *thisObject.globalObject(), throwScope, impl.testReadOnlyVoidPromiseAttribute());
     return result;
 }
 
@@ -4760,7 +4544,7 @@ static inline JSValue jsTestObjTestReadOnlyPromiseAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLPromise<IDLInterface<TestNode>>>(state, *thisObject.globalObject(), impl.testReadOnlyPromiseAttribute());
+    JSValue result = toJS<IDLPromise<IDLInterface<TestNode>>>(state, *thisObject.globalObject(), throwScope, impl.testReadOnlyPromiseAttribute());
     return result;
 }
 
@@ -4774,7 +4558,7 @@ static inline JSValue jsTestObjPutForwardsAttributeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<TestNode>>(state, *thisObject.globalObject(), impl.putForwardsAttribute());
+    JSValue result = toJS<IDLInterface<TestNode>>(state, *thisObject.globalObject(), throwScope, impl.putForwardsAttribute());
     return result;
 }
 
@@ -4810,7 +4594,7 @@ static inline JSValue jsTestObjPutForwardsNullableAttributeGetter(ExecState& sta
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLNullable<IDLInterface<TestNode>>>(state, *thisObject.globalObject(), impl.putForwardsNullableAttribute());
+    JSValue result = toJS<IDLNullable<IDLInterface<TestNode>>>(state, *thisObject.globalObject(), throwScope, impl.putForwardsNullableAttribute());
     return result;
 }
 
@@ -4846,7 +4630,7 @@ static inline JSValue jsTestObjStringifierAttributeGetter(ExecState& state, JSTe
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLUSVString>(state, impl.stringifierAttribute());
+    JSValue result = toJS<IDLUSVString>(state, throwScope, impl.stringifierAttribute());
     return result;
 }
 
@@ -4877,7 +4661,7 @@ static inline JSValue jsTestObjConditionallyReadWriteAttributeGetter(ExecState& 
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.conditionallyReadWriteAttribute());
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, impl.conditionallyReadWriteAttribute());
     return result;
 }
 
@@ -4912,7 +4696,7 @@ static inline JSValue jsTestObjConditionalAndConditionallyReadWriteAttributeGett
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), impl.conditionalAndConditionallyReadWriteAttribute());
+    JSValue result = toJS<IDLInterface<Node>>(state, *thisObject.globalObject(), throwScope, impl.conditionalAndConditionallyReadWriteAttribute());
     return result;
 }
 
@@ -4951,7 +4735,7 @@ static inline JSValue jsTestObjConditionallyExposedToWindowAttributeGetter(ExecS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionallyExposedToWindowAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionallyExposedToWindowAttribute());
     return result;
 }
 
@@ -4982,7 +4766,7 @@ static inline JSValue jsTestObjConditionallyExposedToWorkerAttributeGetter(ExecS
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionallyExposedToWorkerAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionallyExposedToWorkerAttribute());
     return result;
 }
 
@@ -5013,7 +4797,7 @@ static inline JSValue jsTestObjConditionallyExposedToWindowAndWorkerAttributeGet
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLLong>(impl.conditionallyExposedToWindowAndWorkerAttribute());
+    JSValue result = toJS<IDLLong>(state, throwScope, impl.conditionallyExposedToWindowAndWorkerAttribute());
     return result;
 }
 

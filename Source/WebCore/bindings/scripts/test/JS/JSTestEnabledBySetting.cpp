@@ -241,7 +241,7 @@ static inline JSValue jsTestEnabledBySettingEnabledBySettingAttributeGetter(Exec
     UNUSED_PARAM(throwScope);
     UNUSED_PARAM(state);
     auto& impl = thisObject.wrapped();
-    JSValue result = toJS<IDLDOMString>(state, impl.enabledBySettingAttribute());
+    JSValue result = toJS<IDLDOMString>(state, throwScope, impl.enabledBySettingAttribute());
     return result;
 }
 
