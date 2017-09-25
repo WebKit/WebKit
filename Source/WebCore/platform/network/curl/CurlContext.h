@@ -204,18 +204,18 @@ class CurlHandle {
     WTF_MAKE_NONCOPYABLE(CurlHandle);
 
 public:
-    enum VerifyPeer {
-        VerifyPeerDisable = 0L,
-        VerifyPeerEnable = 1L
+    enum class VerifyPeer {
+        Disable = 0L,
+        Enable = 1L
     };
 
-    enum VerifyHost {
-        VerifyHostLooseNameCheck = 0,
-        VerifyHostStrictNameCheck = 2
+    enum class VerifyHost {
+        LooseNameCheck = 0,
+        StrictNameCheck = 2
     };
 
     CurlHandle();
-    ~CurlHandle();
+    virtual ~CurlHandle();
 
     CURL* handle() const { return m_handle; }
 
@@ -228,20 +228,15 @@ public:
     void setErrorCode(CURLcode errorCode) { m_errorCode = errorCode; }
 
     static const String errorDescription(CURLcode);
-    const String errorDescription() const;
 
     void enableShareHandle();
 
-    void* privateData() const { return m_privateData; }
-    void setPrivateData(void* userData) { m_privateData = userData; }
-
-    void setUrl(const String&);
-    const char* url() const { return m_url; }
+    void setUrl(const URL&);
 
     void appendRequestHeaders(const HTTPHeaderMap&);
-    void appendRequestHeader(const String&, const String&);
-    void appendRequestHeader(const String&);
-    void enableRequestHeaders();
+    void appendRequestHeader(const String& name, const String& value);
+    void appendRequestHeader(const String& name);
+    void removeRequestHeader(const String& name);
 
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
@@ -286,9 +281,9 @@ public:
     URL getEffectiveURL();
     std::optional<uint16_t> getPrimaryPort();
     std::optional<long> getResponseCode();
-    std::optional<long long> getContentLenghtDownload();
+    std::optional<long long> getContentLength();
     std::optional<long> getHttpAuthAvail();
-    std::optional<NetworkLoadMetrics> getTimes();
+    std::optional<NetworkLoadMetrics> getNetworkLoadMetrics();
 
     static long long maxCurlOffT();
 
@@ -298,16 +293,13 @@ public:
 #endif
 
 private:
-    void clearUrl();
-
+    void enableRequestHeaders();
     static int expectedSizeOfCurlOffT();
 
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
     CURLcode m_errorCode;
 
-    char* m_url { nullptr };
-    void* m_privateData { nullptr };
     CurlSList m_requestHeaders;
 };
 

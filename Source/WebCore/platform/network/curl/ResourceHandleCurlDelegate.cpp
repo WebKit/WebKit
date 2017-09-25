@@ -180,23 +180,7 @@ void ResourceHandleCurlDelegate::setupRequest()
 {
     CurlContext& context = CurlContext::singleton();
 
-    URL url = m_firstRequest.url();
-
-    // Remove any fragment part, otherwise curl will send it as part of the request.
-    url.removeFragmentIdentifier();
-
-    String urlString = url.string();
-
     m_curlHandle.initialize();
-
-    if (url.isLocalFile()) {
-        // Remove any query part sent to a local file.
-        if (!url.query().isEmpty()) {
-            // By setting the query to a null string it'll be removed.
-            url.setQuery(String());
-            urlString = url.string();
-        }
-    }
 
     if (m_defersLoading) {
         CURLcode error = m_curlHandle.pause(CURLPAUSE_ALL);
@@ -212,9 +196,8 @@ void ResourceHandleCurlDelegate::setupRequest()
 
     auto& sslHandle = CurlContext::singleton().sslHandle();
 
-    m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerEnable);
-    m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHostStrictNameCheck);
-    m_curlHandle.setPrivateData(this);
+    m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeer::Enable);
+    m_curlHandle.setSslVerifyHost(CurlHandle::VerifyHost::StrictNameCheck);
     m_curlHandle.setWriteCallbackFunction(didReceiveDataCallback, this);
     m_curlHandle.setHeaderCallbackFunction(didReceiveHeaderCallback, this);
     m_curlHandle.enableAutoReferer();
@@ -224,7 +207,7 @@ void ResourceHandleCurlDelegate::setupRequest()
     m_curlHandle.enableTimeout();
     m_curlHandle.enableAllowedProtocols();
 
-    auto sslClientCertificate = sslHandle.getSSLClientCertificate(url.host());
+    auto sslClientCertificate = sslHandle.getSSLClientCertificate(m_firstRequest.url().host());
     if (sslClientCertificate) {
         m_curlHandle.setSslCert(sslClientCertificate->first.utf8().data());
         m_curlHandle.setSslCertType("P12");
@@ -232,14 +215,14 @@ void ResourceHandleCurlDelegate::setupRequest()
     }
 
     if (sslHandle.shouldIgnoreSSLErrors())
-        m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
+        m_curlHandle.setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
     else
         m_curlHandle.setSslCtxCallbackFunction(willSetupSslCtxCallback, this);
 
     m_curlHandle.setCACertPath(sslHandle.getCACertPath());
 
     m_curlHandle.enableAcceptEncoding();
-    m_curlHandle.setUrl(urlString);
+    m_curlHandle.setUrl(m_firstRequest.url());
     m_curlHandle.enableCookieJarIfExists();
 
     if (m_customHTTPHeaderFields.size())
@@ -258,8 +241,6 @@ void ResourceHandleCurlDelegate::setupRequest()
         m_curlHandle.setHttpCustomRequest(method);
         setupPUT();
     }
-
-    m_curlHandle.enableRequestHeaders();
 
     applyAuthentication();
 
@@ -563,7 +544,7 @@ void ResourceHandleCurlDelegate::setupPUT()
     m_curlHandle.enableHttpPutRequest();
 
     // Disable the Expect: 100 continue header
-    m_curlHandle.appendRequestHeader("Expect:");
+    m_curlHandle.removeRequestHeader("Expect");
 
     size_t numElements = getFormElementsCount();
     if (!numElements)
@@ -651,7 +632,7 @@ void ResourceHandleCurlDelegate::applyAuthentication()
 NetworkLoadMetrics ResourceHandleCurlDelegate::getNetworkLoadMetrics()
 {
     NetworkLoadMetrics networkLoadMetrics;
-    if (auto metrics = m_curlHandle.getTimes())
+    if (auto metrics = m_curlHandle.getNetworkLoadMetrics())
         networkLoadMetrics = *metrics;
 
     return networkLoadMetrics;
@@ -699,6 +680,7 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
             // Comes here when receiving 200 Connection Established. Just return.
             return header.length();
         }
+
         if (isHttpInfo(httpCode)) {
             // Just return when receiving http info, e.g. HTTP/1.1 100 Continue.
             // If not, the request might be cancelled, because the MIME type will be empty for this response.
@@ -706,7 +688,7 @@ size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
         }
 
         long long contentLength = 0;
-        if (auto length = m_curlHandle.getContentLenghtDownload())
+        if (auto length = m_curlHandle.getContentLength())
             contentLength = *length;
 
         uint16_t connectPort = 0;

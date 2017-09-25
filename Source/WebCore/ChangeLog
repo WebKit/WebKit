@@ -1,3 +1,41 @@
+2017-09-25  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Refactor and improve methods in the CurlHandle
+        https://bugs.webkit.org/show_bug.cgi?id=177373
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlShareHandle::~CurlShareHandle):
+        (WebCore::CurlMultiHandle::~CurlMultiHandle):
+        (WebCore::CurlHandle::~CurlHandle):
+        (WebCore::CurlHandle::initialize):
+        (WebCore::CurlHandle::pause):
+        (WebCore::CurlHandle::setUrl):
+        (WebCore::CurlHandle::appendRequestHeaders):
+        (WebCore::CurlHandle::appendRequestHeader):
+        (WebCore::CurlHandle::removeRequestHeader):
+        (WebCore::CurlHandle::enableRequestHeaders):
+        (WebCore::CurlHandle::getContentLength):
+        (WebCore::CurlHandle::getNetworkLoadMetrics):
+        (WebCore::CurlHandle::errorDescription const): Deleted.
+        (WebCore::CurlHandle::clearUrl): Deleted.
+        (WebCore::CurlHandle::getContentLenghtDownload): Deleted.
+        (WebCore::CurlHandle::getTimes): Deleted.
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlHandle::privateData const): Deleted.
+        (WebCore::CurlHandle::setPrivateData): Deleted.
+        (WebCore::CurlHandle::url const): Deleted.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::setupRequest):
+        * platform/network/curl/CurlSSLVerifier.cpp:
+        (WebCore::CurlSSLVerifier::certVerifyCallback):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::setupRequest):
+        (WebCore::ResourceHandleCurlDelegate::setupPUT):
+        (WebCore::ResourceHandleCurlDelegate::getNetworkLoadMetrics):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader):
+
 2017-09-25  Youenn Fablet  <youenn@apple.com>
 
         WebRTC video does not resume receiving when switching back to Safari 11 on iOS

@@ -115,7 +115,6 @@ void CurlDownload::setupRequest()
     m_curlHandle.enableShareHandle();
 
     m_curlHandle.setUrl(m_url);
-    m_curlHandle.setPrivateData(this);
     m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
     m_curlHandle.setWriteCallbackFunction(writeCallback, this);
     m_curlHandle.enableFollowLocation();

@@ -72,7 +72,7 @@ int CurlSSLVerifier::certVerifyCallback(int ok, X509_STORE_CTX* storeCtx)
         // if the host and the certificate are stored for the current handle that means is enabled,
         // so don't need to curl verifies the authenticity of the peer's certificate
         if (verifier->m_curlHandle)
-            verifier->m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeerDisable);
+            verifier->m_curlHandle->setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
     }
 
     return ok;
