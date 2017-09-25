@@ -64,19 +64,38 @@ promise_test((test) => {
     return checkVideoBlack(true, canvas2, video);
 }, "Track is disabled, video should be black");
 
-promise_test((test) => {
-    if (!window.internals)
-        return Promise.reject("This test requires internals API");
-    internals.observeMediaStreamTrack(remoteTrack);
-    let counter = internals.trackVideoSampleCount;
-    return new Promise((resolve, reject) => {
-        setInterval(() => {
-            // Should get 1 frame per second.
-            if (internals.trackVideoSampleCount - counter >= 2)
-                resolve();
-        }, 300);
-        setTimeout(() => reject("did not get frames"), 5000);
+async function getInboundRTPStatsNumberOfDecodedFrames(connection)
+{
+    var report = await connection.getStats();
+    var framesDecoded;
+    report.forEach((statItem) => {
+        if (statItem.type === "inbound-rtp")
+            framesDecoded = statItem.framesDecoded;
     });
+    return framesDecoded;
+}
+
+async function testFrameDecodedIncreased(connection, count, previousFramesNumber)
+{
+    if (previousFramesNumber === undefined) {
+        let number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+        await waitFor(1000);
+        return testFrameDecodedIncreased(connection, 0, number);
+    }
+
+    var number = await getInboundRTPStatsNumberOfDecodedFrames(connection);
+    if (previousFramesNumber && number > previousFramesNumber)
+        return;
+
+    if (count >= 20)
+        return Promise.reject("test increasing frame encoded timed out");
+
+    await waitFor(1000);
+    return testFrameDecodedIncreased(connection, ++count, previousFramesNumber);
+}
+
+promise_test((test) => {
+    return testFrameDecodedIncreased(receivingConnection);
 }, "If disabled, black frames should still be coming");
 
 promise_test((test) => {

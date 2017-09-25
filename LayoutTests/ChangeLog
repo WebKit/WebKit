@@ -1,3 +1,12 @@
+2017-09-25  Youenn Fablet  <youenn@apple.com>
+
+        LayoutTest webrtc/video-mute.html is very often failing
+        https://bugs.webkit.org/show_bug.cgi?id=177331
+
+        Reviewed by Darin Adler.
+
+        * webrtc/video-mute.html: using getStats instead of internals to check whether black frames are received.
+
 2017-09-25  Ms2ger  <Ms2ger@igalia.com>
 
         Update waitSync and the TIMEOUT_IGNORED constant to use signed integers.
