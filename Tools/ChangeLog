@@ -1,3 +1,18 @@
+2017-09-24  Fujii Hironori  <Hironori.Fujii@sony.com>
+
+        [GTK] Incremental builds fail every time Web Inspector icons are removed
+        https://bugs.webkit.org/show_bug.cgi?id=177349
+
+        Reviewed by Carlos Garcia Campos.
+
+        Removing GTK WebInspector image files always breaks the GTK and
+        WPE ports incremental builds.
+
+        * Scripts/webkitdirs.pm:
+        (shouldRemoveCMakeCache): Check the timestamp of
+        Source/WebInspectorUI/UserInterface/Images/gtk directory if
+        isGtk() or isWPE().
+
 2017-09-24  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] Object attributes are missing for ARIA live region roles

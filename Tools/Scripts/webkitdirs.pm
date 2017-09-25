@@ -1969,6 +1969,13 @@ sub shouldRemoveCMakeCache(@)
         return 1;
     }
 
+    if (isGtk() or isWPE()) {
+        my $gtkImageDircetory = File::Spec->catdir(sourceDir(), "Source", "WebInspectorUI", "UserInterface", "Images", "gtk");
+        if ($cacheFileModifiedTime < stat($gtkImageDircetory)->mtime) {
+            return 1;
+        }
+    }
+
     if(isAnyWindows()) {
         my $winConfiguration = File::Spec->catdir(sourceDir(), "Source", "cmake", "OptionsWin.cmake");
         if ($cacheFileModifiedTime < stat($winConfiguration)->mtime) {
