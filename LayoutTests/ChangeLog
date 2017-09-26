@@ -1,3 +1,20 @@
+2017-09-26  Megan Gardner  <megan_gardner@apple.com>
+
+        Add helper functions to write better selection tests
+        https://bugs.webkit.org/show_bug.cgi?id=177403
+
+        Reviewed by Tim Horton.
+
+        Selection tests are finicky to write, so having some more helper functions
+        that can assist in double checking where we think we are selecting, or where we
+        think words are located in helpful.
+
+        * fast/events/touch/ios/resources/ui-debugging.js: Added.
+        (debugDot):
+        (removeDebugDot):
+        (debugRect):
+        (removeDebugRect):
+
 2017-09-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for http/tests/local/blob/send-hybrid-blob-using-open-panel.html.
