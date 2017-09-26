@@ -57,10 +57,8 @@ void CurlDownload::init(CurlDownloadListener* listener, const URL& url)
     if (!listener)
         return;
 
-    LockHolder locker(m_mutex);
-
     m_listener = listener;
-    m_url = url;
+    m_request.setURL(url);
 }
 
 void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const ResourceRequest& request, const ResourceResponse&)
@@ -68,11 +66,8 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
     if (!listener)
         return;
 
-    URL url(ParsedURLString, request.url());
-
-    init(listener, url);
-
-    addHeaders(request);
+    m_listener = listener;
+    m_request = request.isolatedCopy();
 }
 
 bool CurlDownload::start()
@@ -89,10 +84,7 @@ bool CurlDownload::cancel()
 
 ResourceResponse CurlDownload::getResponse() const
 {
-    LockHolder locker(m_mutex);
-    ResourceResponse response(m_responseUrl, m_responseMIMEType, 0, m_responseTextEncodingName);
-    response.setHTTPHeaderField(m_httpHeaderFieldName, m_httpHeaderFieldValue);
-    return response;
+    return m_response;
 }
 
 void CurlDownload::retain()
@@ -107,19 +99,19 @@ void CurlDownload::release()
 
 CURL* CurlDownload::setupTransfer()
 {
-    LockHolder locker(m_mutex);
+    m_curlHandle = std::make_unique<CurlHandle>();
+    m_curlHandle->initialize();
+    m_curlHandle->enableShareHandle();
 
-    m_curlHandle.initialize();
-    m_curlHandle.enableShareHandle();
+    m_curlHandle->setUrl(m_request.url());
+    m_curlHandle->appendRequestHeaders(m_request.httpHeaderFields());
+    m_curlHandle->setHeaderCallbackFunction(headerCallback, this);
+    m_curlHandle->setWriteCallbackFunction(writeCallback, this);
+    m_curlHandle->enableFollowLocation();
+    m_curlHandle->enableHttpAuthentication(CURLAUTH_ANY);
+    m_curlHandle->setCACertPath(CurlContext::singleton().sslHandle().getCACertPath());
 
-    m_curlHandle.setUrl(m_url);
-    m_curlHandle.setHeaderCallbackFunction(headerCallback, this);
-    m_curlHandle.setWriteCallbackFunction(writeCallback, this);
-    m_curlHandle.enableFollowLocation();
-    m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
-    m_curlHandle.setCACertPath(CurlContext::singleton().sslHandle().getCACertPath());
-
-    return m_curlHandle.handle();
+    return m_curlHandle->handle();
 }
 
 void CurlDownload::didCompleteTransfer(CURLcode result)
@@ -130,11 +122,13 @@ void CurlDownload::didCompleteTransfer(CURLcode result)
         else
             protectedThis->didFail();
     });
+
+    m_curlHandle = nullptr;
 }
 
 void CurlDownload::didCancelTransfer()
 {
-
+    m_curlHandle = nullptr;
 }
 
 void CurlDownload::closeFile()
@@ -166,27 +160,20 @@ void CurlDownload::writeDataToFile(const char* data, int size)
         writeToFile(m_tempHandle, data, size);
 }
 
-void CurlDownload::addHeaders(const ResourceRequest& request)
-{
-    LockHolder locker(m_mutex);
-    m_curlHandle.appendRequestHeaders(request.httpHeaderFields());
-}
-
 void CurlDownload::didReceiveHeader(const String& header)
 {
     LockHolder locker(m_mutex);
 
     if (header == "\r\n" || header == "\n") {
-
-        auto httpCode = m_curlHandle.getResponseCode();
+        auto httpCode = m_curlHandle->getResponseCode();
 
         if (httpCode && *httpCode >= 200 && *httpCode < 300) {
-            auto url = m_curlHandle.getEffectiveURL();
+            auto url = m_curlHandle->getEffectiveURL();
+
             callOnMainThread([protectedThis = makeRef(*this), url = url.isolatedCopy()] {
-                ResourceResponse localResponse = protectedThis->getResponse();
-                protectedThis->m_responseUrl = url;
-                protectedThis->m_responseMIMEType = extractMIMETypeFromMediaType(localResponse.httpHeaderField(HTTPHeaderName::ContentType));
-                protectedThis->m_responseTextEncodingName = extractCharsetFromMediaType(localResponse.httpHeaderField(HTTPHeaderName::ContentType));
+                protectedThis->m_response.setURL(url);
+                protectedThis->m_response.setMimeType(extractMIMETypeFromMediaType(protectedThis->m_response.httpHeaderField(HTTPHeaderName::ContentType)));
+                protectedThis->m_response.setTextEncodingName(extractCharsetFromMediaType(protectedThis->m_response.httpHeaderField(HTTPHeaderName::ContentType)));
 
                 protectedThis->didReceiveResponse();
             });
@@ -195,8 +182,7 @@ void CurlDownload::didReceiveHeader(const String& header)
         callOnMainThread([protectedThis = makeRef(*this), header = header.isolatedCopy()] {
             int splitPos = header.find(":");
             if (splitPos != -1)
-                protectedThis->m_httpHeaderFieldName = header.left(splitPos);
-                protectedThis->m_httpHeaderFieldValue = header.substring(splitPos + 1).stripWhiteSpace();
+                protectedThis->m_response.setHTTPHeaderField(header.left(splitPos), header.substring(splitPos + 1).stripWhiteSpace());
         });
     }
 }

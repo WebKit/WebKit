@@ -65,7 +65,7 @@ private:
     void retain() override;
     void release() override;
 
-    CURL* handle() override { return m_curlHandle.handle(); }
+    CURL* handle() override { return m_curlHandle ? m_curlHandle->handle() : nullptr; }
     CURL* setupTransfer() override;
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
@@ -77,7 +77,7 @@ private:
 
     void setupAuthentication();
 
-    void didReceiveAllHeaders(long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth);
+    void didReceiveAllHeaders(URL, long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth);
     void didReceiveContentData(Ref<SharedBuffer>&&);
     void handleLocalReceiveResponse();
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
@@ -120,7 +120,7 @@ private:
     bool m_defersLoading;
     bool m_addedCacheValidationHeaders { false };
     Vector<char> m_postBytes;
-    CurlHandle m_curlHandle;
+    std::unique_ptr<CurlHandle> m_curlHandle;
     CurlSSLVerifier m_sslVerifier;
     // Used by both threads.
     bool m_isSyncRequest { false };

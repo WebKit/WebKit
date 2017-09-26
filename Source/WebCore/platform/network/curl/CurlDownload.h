@@ -30,6 +30,7 @@
 #include "CurlJobManager.h"
 #include "FileSystem.h"
 #include "ResourceHandle.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/Lock.h>
 #include <wtf/Threading.h>
@@ -68,7 +69,7 @@ private:
     void retain() override;
     void release() override;
 
-    CURL* handle() override { return m_curlHandle.handle(); }
+    CURL* handle() override { return m_curlHandle ? m_curlHandle->handle() : nullptr; }
     CURL* setupTransfer() override;
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
@@ -76,8 +77,6 @@ private:
     void closeFile();
     void moveFileToDestination();
     void writeDataToFile(const char* data, int size);
-
-    void addHeaders(const ResourceRequest&);
 
     // Called on download thread.
     void didReceiveHeader(const String& header);
@@ -92,16 +91,13 @@ private:
     static size_t writeCallback(char* ptr, size_t, size_t nmemb, void* data);
     static size_t headerCallback(char* ptr, size_t, size_t nmemb, void* data);
 
-    CurlHandle m_curlHandle;
-    URL m_url;
+    std::unique_ptr<CurlHandle> m_curlHandle;
+    ResourceRequest m_request;
+    ResourceResponse m_response;
+
     String m_tempPath;
     String m_destination;
     PlatformFileHandle m_tempHandle { invalidPlatformFileHandle };
-    URL m_responseUrl;
-    String m_responseMIMEType;
-    String m_responseTextEncodingName;
-    String m_httpHeaderFieldName;
-    String m_httpHeaderFieldValue;
     bool m_deletesFileUponFailure { false };
     mutable Lock m_mutex;
     CurlDownloadListener* m_listener { nullptr };
