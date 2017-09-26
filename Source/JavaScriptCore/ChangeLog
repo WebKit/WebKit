@@ -1,3 +1,24 @@
+2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Support building JavaScriptCore with the Bionic C library
+        https://bugs.webkit.org/show_bug.cgi?id=177427
+
+        Reviewed by Michael Catanzaro.
+
+        When compiling with the Bionic C library, the MachineContext.h header
+        should enable the same code paths that are enabled for the GNU C library.
+
+        The Bionic C library defines the __BIONIC__ macro, but unlike other C
+        libraries that mimic the GNU one, it doesn't define __GLIBC__. So the
+        __BIONIC__ macro checks have to match the __GLIBC__ ones.
+
+        * runtime/MachineContext.h:
+        (JSC::MachineContext::stackPointer):
+        (JSC::MachineContext::framePointer):
+        (JSC::MachineContext::instructionPointer):
+        (JSC::MachineContext::argumentPointer<1>):
+        (JSC::MachineContext::llintInstructionPointer):
+
 2017-09-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode
