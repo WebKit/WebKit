@@ -816,14 +816,6 @@
       ],
       "status" : "committer"
    },
-   "Dean Johnson" : {
-      "emails" : [
-         "dean_johnson@apple.com"
-      ],
-      "nicks" : [
-         "deanj"
-      ]
-   },
    "Bem Jones-Bey" : {
       "emails" : [
          "bjonesbe@adobe.com"
@@ -1573,6 +1565,14 @@
       ],
       "status" : "reviewer"
    },
+   "Dean Johnson" : {
+      "emails" : [
+         "dean_johnson@apple.com"
+      ],
+      "nicks" : [
+         "deanj"
+      ]
+   },
    "Denis Nomiyama" : {
       "emails" : [
          "d.nomiyama@samsung.com"
@@ -2060,7 +2060,7 @@
       "nicks" : [
          "fredw"
       ],
-      "status" : "committer"
+      "status" : "reviewer"
    },
    "Fujii Hironori" : {
       "emails" : [
@@ -4832,7 +4832,7 @@
       ],
       "status" : "committer"
    },
-   "Ross Kirsling": {
+   "Ross Kirsling" : {
       "emails" : [
          "ross.kirsling@sony.com"
       ],

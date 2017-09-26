@@ -1,3 +1,11 @@
+2017-09-25  Frederic Wang  <fwang@igalia.com>
+
+        Change my status to reviewer and reformat with validate-committer-lists
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/contributors.json:
+
 2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Add High Sierra bots to buildbot and dashboard.
