@@ -1,3 +1,50 @@
+2017-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Improve Table scrolling performance
+        https://bugs.webkit.org/show_bug.cgi?id=177468
+
+        Reviewed by Brian Burg.
+
+        This reduces work during scrolling updates in two ways.
+
+        1. Avoid recalculating the width/height of the Table on scroll.
+          - We only need to recalculate sizes if the view changes size.
+        2. Avoid resetting sizes on all cells if the sizes did not change.
+          - Enumerating and setting style.width values was showing up in profiles.
+
+        * UserInterface/Views/Table.js:
+        (WI.Table):
+        New member variables for a cached width/height of the scrollable region.
+        _cachedWidth is the same as _cachedScrollableHeight but they could be
+        different so I just kept them separate for now. Also switch to
+        getBoundingClientRect which gets us a better value then
+        offsetWidth/offsetHeight.
+
+        (WI.Table.prototype.resize):
+        Clear cached size and relayout.
+
+        (WI.Table.prototype.layout):
+        If we did not resize, layout without recalculating sizes.
+
+        (WI.Table.prototype.resizerDragging):
+        (WI.Table.prototype._getOrCreateRow):
+        When column widths change increment the width generation. This will let
+        us quickly check if a row's cells are appropriately sized or not.
+
+        (WI.Table.prototype._resizeColumnsAndFiller):
+        Cache width values after recalculating. Provide a fast path if values
+        have not changed.
+
+        (WI.Table.prototype._updateVisibleRows):
+        (WI.Table.prototype._updateFillerRowWithNewHeight):
+        Factor out updating the filler row into a function.
+        
+        (WI.Table.prototype._applyColumnWidths):
+        Always update the width generation of a row after setting its cell widths.
+
+        (WI.Table.prototype._applyColumnWidthsToColumnsIfNeeded):
+        Fast path only updates row cell widths if they need to change.
+
 2017-09-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode
