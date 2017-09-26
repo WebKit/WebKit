@@ -1,3 +1,48 @@
+2017-09-26  Mathias Bynens  <mathias@qiwi.be>
+
+        Speedometer: ensure all TodoMVC tests use the complete latest CSS
+        https://bugs.webkit.org/show_bug.cgi?id=177358
+
+        Reviewed by Ryosuke Niwa.
+
+        * Speedometer/resources/todomvc/architecture-examples/angular/dist/*: Updated per build instructions.
+        * Speedometer/resources/todomvc/architecture-examples/angular/src/assets/css/todomvc-app.css: Updated to latest version.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/node_modules/*: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/package-lock.json: Added.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/angularjs/todomvc-index.html: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs-debug/assets/vendor.css: Manually updated to latest TodoMVC CSS, except with IDs instead of classes. (Build steps unknown.)
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/app/components/todo-list.js: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/app/templates/application.hbs: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/app/templates/components/todo-list.hbs: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/dist/*: Updated per build instructions.
+        * Speedometer/resources/todomvc/architecture-examples/emberjs/vendor/index.css: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/node_modules/*: Updated TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/inferno/package.json: Updated TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/index.html: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/node_modules/*: Updated TodoMVC CSS.
+        * Speedometer/resources/todomvc/architecture-examples/jquery/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/app/templates/stats.html: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/index.html: Updated to match new CSS classnames.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-app-css/index.css: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-app-css/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/node_modules/todomvc-common/*: Updated to latest version.
+        * Speedometer/resources/todomvc/dependency-examples/flight/flight/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/node_modules/todomvc-app-css/index.css: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/node_modules/todomvc-common/base.js: Updated to latest version.
+        * Speedometer/resources/todomvc/functional-prog-examples/elm/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/dist/*: Updated per build instructions.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/package-lock.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015-babel-webpack/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/index.css: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-app-css/readme.md: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/node_modules/todomvc-common/*: Updated to latest version.
+        * Speedometer/resources/todomvc/vanilla-examples/es2015/package.json: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/node_modules/todomvc-app-css/index.css: Updated to latest TodoMVC CSS.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/node_modules/todomvc-common/*: Updated to latest version.
+        * Speedometer/resources/todomvc/vanilla-examples/vanillajs/package.json: Updated to latest TodoMVC CSS.
+
 2017-09-25  Mathias Bynens  <mathias@qiwi.be>
 
         Speedometer: Add missing build scripts for Vue.js example

@@ -4,6 +4,7 @@ export default Ember.Component.extend({
     repo: Ember.inject.service(),
     tagName: 'section',
     elementId: 'main',
+    classNames: ['main'],
     canToggle: true,
     allCompleted: Ember.computed('todos.@each.completed', function () {
         return this.get('todos').isEvery('completed');

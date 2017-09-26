@@ -1,6 +1,6 @@
 {{#if todos.length}}
   {{#if canToggle}}
-    <input type="checkbox" id="toggle-all" checked={{allCompleted}} onchange={{action 'toggleAll'}}>
+    <input type="checkbox" id="toggle-all" class="toggle-all" checked={{allCompleted}} onchange={{action 'toggleAll'}}>
   {{/if}}
   <ul id="todo-list" class="todo-list">
     {{#each todos as |todo|}}
