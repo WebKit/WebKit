@@ -59,7 +59,7 @@ public:
 
     void setIsHorizontal(bool isHorizontal) { m_textBoxIsHorizontal = isHorizontal; }
 
-    void setEmphasisMark(const AtomicString& mark, float offset, RenderCombineText*);
+    void setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText*);
 
     void paintRange(const TextRun&, const FloatRect& boxRect, const FloatPoint& textOrigin, unsigned start, unsigned end);
     void paint(const TextRun&, unsigned length, const FloatRect& boxRect, const FloatPoint& textOrigin,
@@ -80,12 +80,12 @@ private:
     const ShadowData* m_shadow { nullptr };
     const ShadowData* m_selectionShadow { nullptr };
     AtomicString m_emphasisMark;
-    RenderCombineText* m_combinedText { nullptr };
+    const RenderCombineText* m_combinedText { nullptr };
     float m_emphasisMarkOffset { 0 };
     bool m_textBoxIsHorizontal { true };
 };
 
-inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset, RenderCombineText* combinedText)
+inline void TextPainter::setEmphasisMark(const AtomicString& mark, float offset, const RenderCombineText* combinedText)
 {
     m_emphasisMark = mark;
     m_emphasisMarkOffset = offset;

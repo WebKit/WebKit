@@ -461,7 +461,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     boxOrigin.moveBy(localPaintOffset);
     FloatRect boxRect(boxOrigin, FloatSize(logicalWidth(), logicalHeight()));
 
-    RenderCombineText* combinedText = lineStyle.hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
+    auto* combinedText = this->combinedText();
 
     bool shouldRotate = !isHorizontal() && !combinedText;
     if (shouldRotate)
@@ -488,9 +488,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
         if (containsComposition && !useCustomUnderlines)
-            paintCompositionBackground(context, boxOrigin, lineStyle, font);
+            paintCompositionBackground(context, boxOrigin, font);
 
-        paintDocumentMarkers(context, boxOrigin, lineStyle, font, true);
+        paintDocumentMarkers(context, boxOrigin, font, true);
 
         if (haveSelection && !useCustomUnderlines)
             paintSelection(context, boxOrigin, lineStyle, font, selectionPaintStyle.fillColor);
@@ -600,11 +600,11 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
                 textDecorationSelectionClipOutRect.setWidth(logicalSelectionWidth);
             }
         }
-        paintDecoration(context, font, combinedText, textRun, textOrigin, boxRect, textDecorations, textPaintStyle, textShadow, textDecorationSelectionClipOutRect);
+        paintDecoration(context, font, textRun, textOrigin, boxRect, textDecorations, textPaintStyle, textShadow, textDecorationSelectionClipOutRect);
     }
 
     if (paintInfo.phase == PaintPhaseForeground) {
-        paintDocumentMarkers(context, boxOrigin, lineStyle, font, false);
+        paintDocumentMarkers(context, boxOrigin, font, false);
 
         if (useCustomUnderlines) {
             const Vector<CompositionUnderline>& underlines = renderer().frame().editor().customCompositionUnderlines();
@@ -715,7 +715,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 #endif
 }
 
-inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const Color& color, unsigned startOffset, unsigned endOffset)
+inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font, const Color& color, unsigned startOffset, unsigned endOffset)
 {
     startOffset = clampedOffset(startOffset);
     endOffset = clampedOffset(endOffset);
@@ -731,22 +731,22 @@ inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context,
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
 
     // FIXME: Adjust text run for combined text and hyphenation.
-    TextRun textRun = constructTextRun(style);
+    TextRun textRun = constructTextRun(lineStyle());
     font.adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font)
+void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font)
 {
-    paintTextSubrangeBackground(context, boxOrigin, style, font, renderer().frame().editor().compositionStart(), renderer().frame().editor().compositionEnd(), Color::compositionFill);
+    paintTextSubrangeBackground(context, boxOrigin, font, renderer().frame().editor().compositionStart(), renderer().frame().editor().compositionEnd(), Color::compositionFill);
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const MarkerSubrange& subrange, bool isActiveMatch)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font, const MarkerSubrange& subrange, bool isActiveMatch)
 {
     if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
         return;
     auto highlightColor = isActiveMatch ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-    paintTextSubrangeBackground(context, boxOrigin, style, font, highlightColor, subrange.startOffset, subrange.endOffset);
+    paintTextSubrangeBackground(context, boxOrigin, font, highlightColor, subrange.startOffset, subrange.endOffset);
 }
 
 static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
@@ -756,14 +756,16 @@ static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction,
     start = logicalWidth - width - start;
 }
 
-void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, RenderCombineText* combinedText, const TextRun& textRun, const FloatPoint& textOrigin,
+void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade& font, const TextRun& textRun, const FloatPoint& textOrigin,
     const FloatRect& boxRect, TextDecoration decoration, TextPaintStyle textPaintStyle, const ShadowData* shadow, const FloatRect& clipOutRect)
 {
     if (m_truncation == cFullTruncation)
         return;
 
     updateGraphicsContext(context, textPaintStyle);
-    if (combinedText)
+
+    bool isCombinedText = combinedText();
+    if (isCombinedText)
         context.concatCTM(rotation(boxRect, Clockwise));
 
     float start = 0;
@@ -784,21 +786,20 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
     FloatPoint localOrigin = boxRect.location();
     localOrigin.move(start, 0);
 
-    if (!clipOutRect.isEmpty()) {
-        context.save();
-        context.clipOut(clipOutRect);
+    {
+        GraphicsContextStateSaver stateSaver { context, false };
+        if (!clipOutRect.isEmpty()) {
+            stateSaver.save();
+            context.clipOut(clipOutRect);
+        }
+        decorationPainter.paintTextDecoration(textRun, textOrigin, localOrigin);
     }
 
-    decorationPainter.paintTextDecoration(textRun, textOrigin, localOrigin);
-
-    if (!clipOutRect.isEmpty())
-        context.restore();
-
-    if (combinedText)
+    if (isCombinedText)
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const MarkerSubrange& subrange)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font, const MarkerSubrange& subrange)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -831,7 +832,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run = constructTextRun(style);
+        TextRun run = constructTextRun(lineStyle());
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
         font.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
@@ -881,7 +882,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
     context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForSubrangeType(subrange.type));
 }
 
-void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
+void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font, bool background)
 {
     if (!renderer().textNode())
         return;
@@ -975,9 +976,9 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
 
     for (auto& subrange : subdivide(subranges, OverlapStrategy::Frontmost)) {
         if (subrange.type == MarkerSubrange::TextMatch)
-            paintTextMatchMarker(context, boxOrigin, style, font, subrange, subrange.marker->isActiveMatch());
+            paintTextMatchMarker(context, boxOrigin, font, subrange, subrange.marker->isActiveMatch());
         else
-            paintDocumentMarker(context, boxOrigin, style, font, subrange);
+            paintDocumentMarker(context, boxOrigin, font, subrange);
     }
 }
 
@@ -1109,6 +1110,11 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView str
     run.setCharactersLength(maximumLength);
     ASSERT(run.charactersLength() >= run.length());
     return run;
+}
+
+const RenderCombineText* InlineTextBox::combinedText() const
+{
+    return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
 }
 
 ExpansionBehavior InlineTextBox::expansionBehavior() const

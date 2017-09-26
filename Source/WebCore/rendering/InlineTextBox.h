@@ -155,18 +155,20 @@ public:
     virtual float positionForOffset(unsigned offset) const;
 
 private:
-    void paintDecoration(GraphicsContext&, const FontCascade&, RenderCombineText*, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
+    void paintDecoration(GraphicsContext&, const FontCascade&, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
         TextDecoration, TextPaintStyle, const ShadowData*, const FloatRect& clipOutRect);
     void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color&);
 
-    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const MarkerSubrange&);
-    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, bool background);
-    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const MarkerSubrange&, bool isActiveMatch);
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const MarkerSubrange&);
+    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, bool background);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const MarkerSubrange&, bool isActiveMatch);
 
-    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&);
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&);
     void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
 
-    void paintTextSubrangeBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color&, unsigned startOffset, unsigned endOffset);
+    void paintTextSubrangeBackground(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const Color&, unsigned startOffset, unsigned endOffset);
+
+    const RenderCombineText* combinedText() const;
 
     ExpansionBehavior expansionBehavior() const;
 
