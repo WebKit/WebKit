@@ -1,3 +1,21 @@
+2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Add ClearKey support for persistent session data load and removal
+        https://bugs.webkit.org/show_bug.cgi?id=177442
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Update WPE baselines for EME tests affected by the addition of persistent
+        session data load and removal in the ClearKey implementation.
+
+        All the affected tests progress, but most of them still don't pass
+        entirely due to missing functionality in the GStreamer pipeline.
+
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-license-events-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license-expected.txt:
+        * platform/wpe/imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license-expected.txt:
+
 2017-09-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode

@@ -1,3 +1,32 @@
+2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        [EME] Add ClearKey support for persistent session data load and removal
+        https://bugs.webkit.org/show_bug.cgi?id=177442
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Implement the session data load and removal for persistent sessions
+        in the ClearKey implementation of the CDMInstance interface.
+
+        CDMInstanceClearKey::loadSession() finds data for the specified session
+        name, if any, and constructs a corresponding KeyStatusVector object that
+        holds information about all known keys associated with this session before
+        dispatching the LoadSessionCallback asynchronously.
+
+        CDMInstanceClearKey::removeSessionData() similarly finds the session data,
+        if any, and then removes it from the state tracker. The key data is still
+        reused to construct the KeyStatusVector object that holds information
+        about all the keys that were stored for this session. The key information
+        is also embedded in the 'license release' JSON message. Both key status
+        vector and message are then used in the RemoveSessionDataCallback dispatch
+        that is again done asynchronously.
+
+        No new tests -- affected tests have their baselines updated.
+
+        * platform/encryptedmedia/clearkey/CDMClearKey.cpp:
+        (WebCore::CDMInstanceClearKey::loadSession):
+        (WebCore::CDMInstanceClearKey::removeSessionData):
+
 2017-09-26  Ms2ger  <Ms2ger@igalia.com>
 
         Update compressedTexImage3D to match the signature in the specification.

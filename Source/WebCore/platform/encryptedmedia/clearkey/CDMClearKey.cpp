@@ -452,15 +452,37 @@ void CDMInstanceClearKey::updateLicense(const String& sessionId, LicenseType, co
     dispatchCallback(false, std::nullopt, SuccessValue::Failed);
 }
 
-void CDMInstanceClearKey::loadSession(LicenseType, const String&, const String&, LoadSessionCallback callback)
+void CDMInstanceClearKey::loadSession(LicenseType, const String& sessionId, const String&, LoadSessionCallback callback)
 {
-    callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback)] {
-            if (!weakThis)
-                return;
+    // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
+    auto dispatchCallback =
+        [this, &callback](std::optional<KeyStatusVector>&& existingKeys, SuccessValue success, SessionLoadFailure loadFailure) {
+            callOnMainThread(
+                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), existingKeys = WTFMove(existingKeys), success, loadFailure]() mutable {
+                    if (!weakThis)
+                        return;
 
-            callback(std::nullopt, std::nullopt, std::nullopt, Failed, SessionLoadFailure::Other);
-        });
+                    callback(WTFMove(existingKeys), std::nullopt, std::nullopt, success, loadFailure);
+                });
+        };
+
+    // Construct the KeyStatusVector object, representing all the known keys for this session.
+    KeyStatusVector keyStatusVector;
+    {
+        auto& keys = ClearKeyState::singleton().keys();
+        auto it = keys.find(sessionId);
+        if (it == keys.end()) {
+            dispatchCallback(std::nullopt, Failed, SessionLoadFailure::NoSessionData);
+            return;
+        }
+
+        auto& keyVector = it->value;
+        keyStatusVector.reserveInitialCapacity(keyVector.size());
+        for (auto& key : keyVector)
+            keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *key.keyIDData, key.status });
+    }
+
+    dispatchCallback(WTFMove(keyStatusVector), Succeeded, SessionLoadFailure::None);
 }
 
 void CDMInstanceClearKey::closeSession(const String&, CloseSessionCallback callback)
@@ -474,15 +496,62 @@ void CDMInstanceClearKey::closeSession(const String&, CloseSessionCallback callb
         });
 }
 
-void CDMInstanceClearKey::removeSessionData(const String&, LicenseType, RemoveSessionDataCallback callback)
+void CDMInstanceClearKey::removeSessionData(const String& sessionId, LicenseType, RemoveSessionDataCallback callback)
 {
-    callOnMainThread(
-        [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback)] {
-            if (!weakThis)
-                return;
+    // Use a helper functor that schedules the callback dispatch, avoiding duplicated callOnMainThread() calls.
+    auto dispatchCallback =
+        [this, &callback](KeyStatusVector&& keyStatusVector, std::optional<Ref<SharedBuffer>>&& message, SuccessValue success) {
+            callOnMainThread(
+                [weakThis = m_weakPtrFactory.createWeakPtr(*this), callback = WTFMove(callback), keyStatusVector = WTFMove(keyStatusVector), message = WTFMove(message), success]() mutable {
+                    if (!weakThis)
+                        return;
 
-            callback({ }, std::nullopt, Failed);
-        });
+                    callback(WTFMove(keyStatusVector), WTFMove(message), success);
+                });
+        };
+
+    // Construct the KeyStatusVector object, representing released keys, and the message in the
+    // 'license release' format.
+    KeyStatusVector keyStatusVector;
+    RefPtr<SharedBuffer> message;
+    {
+        // Retrieve information for the given session ID, bailing if none is found.
+        auto& keys = ClearKeyState::singleton().keys();
+        auto it = keys.find(sessionId);
+        if (it == keys.end()) {
+            dispatchCallback(KeyStatusVector { }, std::nullopt, SuccessValue::Failed);
+            return;
+        }
+
+        // Retrieve the Key vector, containing all the keys for this session, and
+        // then remove the key map entry for this session.
+        auto keyVector = WTFMove(it->value);
+        keys.remove(it);
+
+        // Construct the KeyStatusVector object, pairing key IDs with the 'released' status.
+        keyStatusVector.reserveInitialCapacity(keyVector.size());
+        for (auto& key : keyVector)
+            keyStatusVector.uncheckedAppend(std::pair<Ref<SharedBuffer>, KeyStatus> { *key.keyIDData, KeyStatus::Released });
+
+        // Construct JSON that represents the 'license release' format, creating a 'kids' array
+        // of base64URL-encoded key IDs for all keys that were associated with this session.
+        auto rootObject = InspectorObject::create();
+        {
+            auto array = InspectorArray::create();
+            for (auto& key : keyVector) {
+                ASSERT(key.keyIDData->size() <= std::numeric_limits<unsigned>::max());
+                array->pushString(WTF::base64URLEncode(key.keyIDData->data(), static_cast<unsigned>(key.keyIDData->size())));
+            }
+            rootObject->setArray("kids", WTFMove(array));
+        }
+
+        // Copy the JSON data into a SharedBuffer object.
+        String messageString = rootObject->toJSONString();
+        CString messageCString = messageString.utf8();
+        message = SharedBuffer::create(messageCString.data(), messageCString.length());
+    }
+
+    dispatchCallback(WTFMove(keyStatusVector), Ref<SharedBuffer>(*message), SuccessValue::Succeeded);
 }
 
 void CDMInstanceClearKey::storeRecordOfKeyUsage(const String&)
