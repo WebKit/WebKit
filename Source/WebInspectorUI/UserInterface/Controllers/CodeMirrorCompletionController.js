@@ -583,7 +583,12 @@ WI.CodeMirrorCompletionController = class CodeMirrorCompletionController extends
             if (!functionName)
                 return [];
 
-            return WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
+            let functionCompletions = WI.CSSKeywordCompletions.forFunction(functionName).startsWith(this._prefix);
+
+            if (this._delegate && typeof this._delegate.completionControllerCSSFunctionValuesNeeded)
+                functionCompletions = this._delegate.completionControllerCSSFunctionValuesNeeded(this, functionName, functionCompletions);
+
+            return functionCompletions;
         }
 
         // Scan backwards looking for the current property.

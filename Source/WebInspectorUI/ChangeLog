@@ -1,3 +1,20 @@
+2017-09-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: Add autocompletion suggestions for CSS attr based on the selected element's attributes
+        https://bugs.webkit.org/show_bug.cgi?id=177346
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WI.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        Provide a way for delegates to add completion items for CSS functions based on the name of
+        the function.
+
+        * UserInterface/Views/CSSStyleDeclarationTextEditor.js:
+        (WI.CSSStyleDeclarationTextEditor.prototype.completionControllerCSSFunctionValuesNeeded):
+        If the function name is "attr", also return a list of the names of all the selected node's
+        attributes.
+
 2017-09-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Unreviewed follow-up to r222470.

@@ -394,6 +394,16 @@ WI.CSSStyleDeclarationTextEditor = class CSSStyleDeclarationTextEditor extends W
         completionController.updateCompletions(defaultCompletions.concat(variableNames));
     }
 
+    completionControllerCSSFunctionValuesNeeded(completionController, functionName, defaultCompletions)
+    {
+        if (functionName === "attr") {
+            let attributes = this._style.node.attributes().map((attribute) => attribute.name);
+            return defaultCompletions.concat(attributes);
+        }
+
+        return defaultCompletions;
+    }
+
     layout()
     {
         this._codeMirror.refresh();
