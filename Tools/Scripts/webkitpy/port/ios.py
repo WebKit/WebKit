@@ -208,3 +208,8 @@ class IOSPort(DarwinPort):
                 _log.error('--------------------------------------------------')
 
             raise RuntimeError('Multiple failures when teardown devices')
+
+    def did_spawn_worker(self, worker_number):
+        super(IOSPort, self).did_spawn_worker(worker_number)
+
+        self.target_host(worker_number).release_worker_resources()

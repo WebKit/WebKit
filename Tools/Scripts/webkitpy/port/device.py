@@ -68,6 +68,11 @@ class Device(object):
             return self.platform_device.symbolicate_crash_log_if_needed(path)
         return self.filesystem.read_text_file(path)
 
+    def release_worker_resources(self):
+        if hasattr(self.platform_device, 'release_worker_resources'):
+            return self.platform_device.release_worker_resources()
+        return None
+
     @property
     def executive(self):
         return self.platform_device.executive

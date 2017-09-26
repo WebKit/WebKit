@@ -107,6 +107,8 @@ class _MessagePool(object):
             worker = _Worker(host, self._messages_to_manager, self._messages_to_worker, self._worker_factory, worker_number, self._running_inline, self if self._running_inline else None, self._worker_log_level())
             self._workers.append(worker)
             worker.start()
+            if not self._running_inline:
+                self._caller.handle('did_spawn_worker', worker_number)
             if self._worker_startup_delay_secs:
                 time.sleep(self._worker_startup_delay_secs)
 

@@ -141,6 +141,9 @@ class LayoutTestRunner(object):
             results_directory = self._filesystem.join(self._results_directory, 'retries')
         return Worker(worker_connection, results_directory, self._options)
 
+    def _handle_did_spawn_worker(self, worker_number):
+        self._port.did_spawn_worker(worker_number)
+
     def _mark_interrupted_tests_as_skipped(self, run_results):
         for test_input in self._test_inputs:
             if test_input.test_name not in run_results.results_by_name:

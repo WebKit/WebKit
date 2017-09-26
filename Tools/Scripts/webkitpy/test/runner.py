@@ -52,7 +52,10 @@ class Runner(object):
         with message_pool.get(self, self.worker_factory, num_workers) as pool:
             pool.run(('test', test_name) for test_name in test_names)
 
-    def handle(self, message_name, source, test_name, delay=None, failures=None, errors=None):
+    def handle(self, message_name, source, test_name=None, delay=None, failures=None, errors=None):
+        if message_name == 'did_spawn_worker':
+            return
+
         if message_name == 'started_test':
             self.printer.print_started_test(source, test_name)
             return

@@ -1,3 +1,34 @@
+2017-09-26  Jonathan Bedard  <jbedard@apple.com>
+
+        webkitpy: Notify parent process when a worker is spawned
+        https://bugs.webkit.org/show_bug.cgi?id=177467
+        <rdar://problem/34660194>
+
+        Reviewed by Daniel Bates.
+
+        When we fork the parent process, there may be resources in that process
+        which workers will take ownership of. Notify ports when a new worker is created
+        so that these resources can be correctly managed.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (_MessagePool._start_workers): After all workers are started, notify the caller
+        that a worker has been created, unless we are running inline, in which case the
+        parent process is still the worker.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner._handle_did_spawn_worker): Notify the port that a worker process
+        has been created.
+        * Scripts/webkitpy/port/base.py:
+        (Port.did_spawn_worker): Add function so that ports may manage any
+        resources created on the parent process but managed by the provided worker.
+        * Scripts/webkitpy/port/device.py:
+        (Device.release_worker_resources): Call release_worker_resources on the
+        platform_device if such a function is defined.
+        * Scripts/webkitpy/port/ios.py:
+        (IOSPort.did_spawn_worker): Release any worker resources on the iOS
+        device object associated with the spawned worker.
+        * Scripts/webkitpy/test/runner.py:
+        (Runner.handle): Ignore the did_spawn_worker message during testing.
+
 2017-09-26  Jer Noble  <jer.noble@apple.com>
 
         Thrown ObjC exception when right clicking on <img> containing mp4 link
