@@ -258,6 +258,16 @@ private:
     return _page.get();
 }
 
+- (BOOL)acceptsAutofilledLoginCredentials
+{
+    return _page->acceptsAutofilledLoginCredentials();
+}
+
+- (NSURL *)representingPageURL
+{
+    return _page->representingPageURL();
+}
+
 - (void)willMoveToWindow:(UIWindow *)newWindow
 {
     NSNotificationCenter *defaultCenter = [NSNotificationCenter defaultCenter];

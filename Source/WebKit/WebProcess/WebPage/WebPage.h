@@ -576,6 +576,7 @@ public:
     void stopInteraction();
     void performActionOnElement(uint32_t action);
     void focusNextAssistedNode(bool isForward, CallbackID);
+    void autofillLoginCredentials(const String&, const String&);
     void setAssistedNodeValue(const String&);
     void setAssistedNodeValueAsNumber(double);
     void setAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection);

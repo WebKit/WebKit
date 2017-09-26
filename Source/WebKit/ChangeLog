@@ -1,3 +1,44 @@
+2017-09-25  Frederik Riedel  <riedel@apple.com>
+
+        Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174394
+        <rdar://problem/33183504>
+
+        Reviewed by Ryosuke Niwa.
+
+        * Platform/spi/ios/UIKitSPI.h:
+        * Shared/AssistedNodeInformation.cpp:
+        (WebKit::AssistedNodeInformation::encode const):
+        Encodes additional node information, including if the node is part of a login screen.
+        (WebKit::AssistedNodeInformation::decode):
+        Decodes the additional assisted node information.
+        * Shared/AssistedNodeInformation.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/ios/WKContentView.mm:
+        (-[WKContentView acceptsAutofilledLoginCredentials]):
+        Determines if the WKContentView shows a login screen.
+        (-[WKContentView representingPageUrl]):
+        Returns the URL of the currently displayed web page.
+        * UIProcess/ios/WKContentViewInteraction.mm:
+        (-[WKContentView insertTextSuggestion:]):
+        Inserts the login credentials into the Web View.
+        * UIProcess/ios/WebPageProxyIOS.mm:
+        (WebKit::WebPageProxy::startAssistingNode):
+        Transfer the additional assistednode information (acceptsAutofilledLoginCredentials and representingPageUrl).
+        (WebKit::WebPageProxy::acceptsAutofilledLoginCredentials):
+        Returns if the Web View shows a login screen.
+        (WebKit::WebPageProxy::representingPageUrl):
+        Returns the Web View's URL.
+        (WebKit::WebPageProxy::autofillLoginCredentials):
+        Insert the credentials into the Web View.
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ios/WebPageIOS.mm:
+        (WebKit::WebPage::getAssistedNodeInformation): Transports the information if the currently
+        highlighted node accepts autofilled login credentials.
+        (WebKit::WebPage::autofillLoginCredentials): Fills the login credentials into the
+        WebPage.
+
 2017-09-25  Youenn Fablet  <youenn@apple.com>
 
         WebRTC video does not resume receiving when switching back to Safari 11 on iOS

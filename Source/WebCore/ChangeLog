@@ -1,3 +1,21 @@
+2017-09-25  Frederik Riedel  <riedel@apple.com>
+
+        Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174394
+        <rdar://problem/33183504>
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * editing/ios/AutofillElements.cpp: Added.
+        (WebCore::isAutofillableElement): Returns true if the element is of type text or email.
+        (WebCore::nextAutofillableElement): Returns the next focusable element that is autofillable.
+        (WebCore::previousAutofillableElement): Returns the previous focusable element that is autofillable.
+        (WebCore::AutofillElements::computeAutofillElements): Computes the autofill elements (username & password)
+        for a given input element.
+        (WebCore::AutofillElements::autofill): Fills the credentials into the pair of username/password elements.
+        * editing/ios/AutofillElements.h: Added.
+
 2017-09-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode

@@ -33,6 +33,23 @@
 #import "DOMInternal.h"
 #import "DOMPrivate.h"
 #import "ExceptionHandlers.h"
+
+// FIXME <radar:34583628>: Simplyfy this once the UIKit work is available in the build.
+#if USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE
+#if __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+#import <UIKit/UIKeyboardLoginCredentialsSuggestion.h>
+#else
+#import <UIKit/UITextInput_Private.h>
+@interface UIKeyboardLoginCredentialsSuggestion : UITextSuggestion
+
+@property (nonatomic, assign) NSString *username;
+@property (nonatomic, assign) NSString *password;
+
+@end
+#endif // __has_include(<UIKit/UIKeyboardLoginCredentialsSuggestion.h>)
+#endif // USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE
+
+#import <WebCore/AutofillElements.h>
 #import <WebCore/FileList.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLFormElement.h>
@@ -665,6 +682,29 @@
     WebCore::JSMainThreadNullState state;
     IMPL->setValueForUser(inValue);
 }
+
+- (BOOL)acceptsAutofilledLoginCredentials
+{
+    WebCore::JSMainThreadNullState state;
+    return !!WebCore::AutofillElements::computeAutofillElements(*IMPL);
+}
+
+- (NSURL *)representingPageURL
+{
+    WebCore::JSMainThreadNullState state;
+    return [NSURL URLWithString:self.ownerDocument.URL];
+}
+
+#if USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE
+- (void)insertTextSuggestion:(UIKeyboardLoginCredentialsSuggestion *)credentialsSuggestion
+{
+    WebCore::JSMainThreadNullState state;
+    if (is<WebCore::HTMLInputElement>(IMPL)) {
+        if (auto autofillElements = WebCore::AutofillElements::computeAutofillElements(*IMPL))
+            autofillElements->autofill(credentialsSuggestion.username, credentialsSuggestion.password);
+    }
+}
+#endif // USE(APPLE_INTERNAL_SDK) && TARGET_OS_IPHONE
 
 @end
 

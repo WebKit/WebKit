@@ -29,6 +29,7 @@
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/Autofill.h>
 #include <WebCore/IntRect.h>
+#include <WebCore/URL.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -109,6 +110,8 @@ struct AssistedNodeInformation {
     String value;
     double valueAsNumber { 0 };
     String title;
+    bool acceptsAutofilledLoginCredentials { false };
+    WebCore::URL representingPageURL;
     WebCore::AutofillFieldName autofillFieldName { WebCore::AutofillFieldName::None };
 
     void encode(IPC::Encoder&) const;

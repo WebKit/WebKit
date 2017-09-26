@@ -84,6 +84,7 @@ messages -> WebPage LegacyReceiver {
     PerformActionOnElement(uint32_t action)
     FocusNextAssistedNode(bool isForward, WebKit::CallbackID callbackID)
     SetAssistedNodeValue(String value)
+    AutofillLoginCredentials(String username, String password)
     SetAssistedNodeValueAsNumber(double value)
     SetAssistedNodeSelectedIndex(uint32_t index, bool allowMultipleSelection)
     ApplicationWillResignActive()

@@ -1,3 +1,17 @@
+2017-09-25  Frederik Riedel  <riedel@apple.com>
+
+        Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174394
+        <rdar://problem/33183504>
+
+        Reviewed by Ryosuke Niwa.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/ios/WKWebViewAutofillTests.mm: Added.
+        (-[WKWebView _privateTextInput]): Testing helpers.
+        (TestWebKitAPI::TEST): Added test cases to test AutoFill for web views.
+        * TestWebKitAPI/ios/UIKitSPI.h:
+
 2017-09-25  Frederic Wang  <fwang@igalia.com>
 
         Change my status to reviewer and reformat with validate-committer-lists

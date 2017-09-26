@@ -1,3 +1,20 @@
+2017-09-25  Frederik Riedel  <riedel@apple.com>
+
+        Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
+        https://bugs.webkit.org/show_bug.cgi?id=174394
+        <rdar://problem/33183504>
+
+        Reviewed by Ryosuke Niwa.
+
+        * DOM/DOMHTMLInputElement.h:
+        * DOM/DOMHTMLInputElement.mm:
+        (-[DOMHTMLInputElement acceptsAutofilledLoginCredentials]):
+        Determines if this HTMLInputElement is part of a login screen.
+        (-[DOMHTMLInputElement representingPageUrl]):
+        Returns the webpage's URL that is currently displayed in the Web View.
+        (-[DOMHTMLInputElement insertTextSuggestion:]):
+        Inserts login credentials into the Web View.
+
 2017-09-25  Sam Weinig  <sam@webkit.org>
 
         Remove unused EditorClient functions

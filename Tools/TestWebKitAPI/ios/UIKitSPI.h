@@ -25,6 +25,8 @@
 
 #if PLATFORM(IOS)
 
+#import <UIKit/UITextInputTraits.h>
+
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
 @protocol UIDragSession;
 @class UIDragInteraction;
@@ -35,6 +37,13 @@
 
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIDragInteraction_Private.h>
+#import <UIKit/UITextInputTraits_Private.h>
+#import <UIKit/UITextSuggestion.h>
+
+
+@protocol UITextInputTraits_Private_Staging_34583628 <NSObject, UITextInputTraits>
+@property (nonatomic, readonly) BOOL acceptsAutofilledLoginCredentials;
+@end
 
 #else
 
@@ -50,6 +59,10 @@ WTF_EXTERN_C_END
 - (void)_dragInteraction:(UIDragInteraction *)interaction prepareForSession:(id<UIDragSession>)session completion:(void(^)(void))completion;
 @end
 #endif // __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
+
+@protocol UITextInputTraits_Private <NSObject, UITextInputTraits>
+@property (nonatomic, readonly) BOOL acceptsAutofilledLoginCredentials;
+@end
 
 #endif
 
