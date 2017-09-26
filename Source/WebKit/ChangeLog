@@ -1,3 +1,16 @@
+2017-09-26  Jer Noble  <jer.noble@apple.com>
+
+        Thrown ObjC exception when right clicking on <img> containing mp4 link
+        https://bugs.webkit.org/show_bug.cgi?id=177370
+
+        Reviewed by Darin Adler.
+
+        Creating a NSImage from mp4 data will fail and return nil; do a nil-check before attempting
+        to put the results into a NSMutableArray.
+
+        * UIProcess/mac/WebContextMenuProxyMac.mm:
+        (WebKit::WebContextMenuProxyMac::createShareMenuItem):
+
 2017-09-26  Brian Burg  <bburg@apple.com>
 
         Web Automation: add commands to get and set user permissions for pages in an automation session

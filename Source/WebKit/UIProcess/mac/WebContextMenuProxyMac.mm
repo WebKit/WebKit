@@ -283,8 +283,8 @@ RetainPtr<NSMenuItem> WebContextMenuProxyMac::createShareMenuItem()
     }
 
     if (hitTestData.imageSharedMemory && hitTestData.imageSize) {
-        auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]);
-        [items addObject:image.get()];
+        if (auto image = adoptNS([[NSImage alloc] initWithData:[NSData dataWithBytes:(unsigned char*)hitTestData.imageSharedMemory->data() length:hitTestData.imageSize]]))
+            [items addObject:image.get()];
     }
 
     if (!m_context.selectedText().isEmpty())

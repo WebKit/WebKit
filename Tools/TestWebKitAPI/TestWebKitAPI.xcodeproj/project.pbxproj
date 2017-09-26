@@ -621,6 +621,8 @@
 		C9C60E651E53A9DC006DA181 /* autoplay-check-frame.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */; };
 		C9C60E661E53A9DC006DA181 /* autoplay-check-in-iframe.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */; };
 		C9E6DD351EA97D0800DD78AA /* FirstResponderSuppression.mm in Sources */ = {isa = PBXBuildFile; fileRef = C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */; };
+		CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */; };
+		CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */; };
 		CD321B041E3A85FA00EB21C8 /* video-with-muted-audio-and-webaudio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */; };
 		CD59F53419E9110D00CF1835 /* file-with-mse.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53219E910AA00CF1835 /* file-with-mse.html */; };
 		CD59F53519E9110D00CF1835 /* test-mse.mp4 in Copy Resources */ = {isa = PBXBuildFile; fileRef = CD59F53319E910BC00CF1835 /* test-mse.mp4 */; };
@@ -823,6 +825,7 @@
 				F4A32ECB1F0643370047C544 /* contenteditable-in-iframe.html in Copy Resources */,
 				A16F66BA1C40EB4F00BD4D24 /* ContentFiltering.html in Copy Resources */,
 				5142B2731517C8C800C32B19 /* ContextMenuCanCopyURL.html in Copy Resources */,
+				CD0BD0A81F79982D001AB2CF /* ContextMenuImgWithVideo.html in Copy Resources */,
 				5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */,
 				7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */,
 				F4AB578A1F65165400DB0DA1 /* custom-draggable-div.html in Copy Resources */,
@@ -1642,6 +1645,8 @@
 		C9C60E631E53A9BA006DA181 /* autoplay-check-frame.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-frame.html"; sourceTree = "<group>"; };
 		C9C60E641E53A9BA006DA181 /* autoplay-check-in-iframe.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "autoplay-check-in-iframe.html"; sourceTree = "<group>"; };
 		C9E6DD311EA972D800DD78AA /* FirstResponderSuppression.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FirstResponderSuppression.mm; sourceTree = "<group>"; };
+		CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuImgWithVideo.mm; sourceTree = "<group>"; };
+		CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = ContextMenuImgWithVideo.html; sourceTree = "<group>"; };
 		CD225C071C45A69200140761 /* ParsedContentRange.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentRange.cpp; sourceTree = "<group>"; };
 		CD321B031E3A84B700EB21C8 /* video-with-muted-audio-and-webaudio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "video-with-muted-audio-and-webaudio.html"; sourceTree = "<group>"; };
 		CD5393C71757BA9700C07123 /* MD5.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MD5.cpp; sourceTree = "<group>"; };
@@ -2812,6 +2817,8 @@
 			children = (
 				9BD423991E04BD9800200395 /* AttributedSubstringForProposedRangeWithImage.mm */,
 				8349D3C11DB96DDA004A9F65 /* ContextMenuDownload.mm */,
+				CD0BD0A71F7997C2001AB2CF /* ContextMenuImgWithVideo.html */,
+				CD0BD0A51F799220001AB2CF /* ContextMenuImgWithVideo.mm */,
 				BCAA485714A044D40088FAC4 /* EditorCommands.mm */,
 				C0C5D3BC14598B6F00A802A6 /* GetBackingScaleFactor.mm */,
 				C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */,
@@ -3162,6 +3169,7 @@
 				7CCE7EB81A411A7E00447C4C /* ContextMenuCanCopyURL.mm in Sources */,
 				37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */,
 				8349D3C21DB96DDE004A9F65 /* ContextMenuDownload.mm in Sources */,
+				CD0BD0A61F79924D001AB2CF /* ContextMenuImgWithVideo.mm in Sources */,
 				5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */,
 				51D1249B1E785425002B2820 /* CookieManager.cpp in Sources */,
 				9999108B1F393C96008AD455 /* Copying.mm in Sources */,

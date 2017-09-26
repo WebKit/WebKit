@@ -1,3 +1,16 @@
+2017-09-26  Jer Noble  <jer.noble@apple.com>
+
+        Thrown ObjC exception when right clicking on <img> containing mp4 link
+        https://bugs.webkit.org/show_bug.cgi?id=177370
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.html: Added.
+        * TestWebKitAPI/Tests/WebKit/mac/ContextMenuImgWithVideo.mm: Added.
+        (-[ContextMenuImgWithVideoDelegate _webView:contextMenu:forElement:]):
+        (TestWebKitAPI::TEST):
+
 2017-09-26  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] 'webkit-patch clean' is failing on bot.
