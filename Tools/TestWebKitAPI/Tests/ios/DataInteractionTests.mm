@@ -988,7 +988,6 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
     // The expected output is sorted by alphabetical order here for consistent behavior across different test environments.
     // See DataTransferItem-getAsEntry.html for more details.
     NSArray<NSString *> *expectedOutput = @[
-        @"Found data transfer item (kind: 'string', type: 'text/plain')",
         @"Found data transfer item (kind: 'file', type: '')",
         @"DIR: /somedirectory",
         @"DIR: /somedirectory/subdirectory1",
