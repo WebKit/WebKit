@@ -48,7 +48,7 @@ private:
 
     // ARIA treegrids and grids support selected rows.
     bool supportsSelectedRows() override { return true; }
-    bool isMultiSelectable() const override { return true; }
+    bool isMultiSelectable() const override;
     bool computeIsTableExposableThroughAccessibility() const override { return true; }
     bool isAriaTable() const override { return true; }
     
