@@ -1,3 +1,35 @@
+2017-09-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (222040): Google Maps Street View CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::PropertyWrapperAcceleratedTransform::blend const + 92
+        https://bugs.webkit.org/show_bug.cgi?id=177485
+
+        Reviewed by Zalan Bujtas.
+
+        We crash when animating between two different types of transforms because renderer is null for the first frame.
+
+        Test: fast/animation/animation-mixed-transform-crash.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::currentStyle const):
+
+            Add a way to get the current style from animations.
+            This is either the render style or the inital style.
+
+        * page/animation/AnimationBase.h:
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::blendFunc):
+
+            Renderer may be null when computing the first frame of the animation. Null check.
+
+        (WebCore::blendFilter):
+
+            Here too.
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.h:
+
 2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [EME] Add ClearKey support for persistent session data load and removal

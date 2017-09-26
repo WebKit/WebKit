@@ -90,6 +90,13 @@ AnimationBase::~AnimationBase()
 {
 }
 
+const RenderStyle& AnimationBase::currentStyle() const
+{
+    if (auto* renderer = this->renderer())
+        return renderer->style();
+    return unanimatedStyle();
+}
+
 RenderElement* AnimationBase::renderer() const
 {
     return m_element ? m_element->renderer() : nullptr;

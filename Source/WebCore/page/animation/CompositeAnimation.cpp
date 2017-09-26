@@ -122,7 +122,7 @@ void CompositeAnimation::updateTransitions(Element& element, const RenderStyle* 
                 // and we have to use the unanimatedStyle from the animation. We do the test
                 // against the unanimated style here, but we "override" the transition later.
                 auto* keyframeAnimation = animationForProperty(prop);
-                auto* fromStyle = keyframeAnimation ? keyframeAnimation->unanimatedStyle() : currentStyle;
+                auto* fromStyle = keyframeAnimation ? &keyframeAnimation->unanimatedStyle() : currentStyle;
 
                 // See if there is a current transition for this prop
                 ImplicitAnimation* implAnim = m_transitions.get(prop);

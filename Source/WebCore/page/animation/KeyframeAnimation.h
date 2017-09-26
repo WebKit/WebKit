@@ -59,7 +59,7 @@ public:
     bool dependsOnLayout() const { return m_dependsOnLayout; }
 
     void setUnanimatedStyle(std::unique_ptr<RenderStyle> style) { m_unanimatedStyle = WTFMove(style); }
-    RenderStyle* unanimatedStyle() const { return m_unanimatedStyle.get(); }
+    const RenderStyle& unanimatedStyle() const override { return *m_unanimatedStyle; }
 
     std::optional<Seconds> timeToNextService() override;
 

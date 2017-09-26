@@ -75,6 +75,8 @@ public:
     bool active() const { return m_active; }
     void setActive(bool b) { m_active = b; }
 
+    const RenderStyle& unanimatedStyle() const override { return *m_fromStyle; }
+
 protected:
     bool shouldSendEventForListener(Document::ListenerType) const;    
     bool sendTransitionEvent(const AtomicString&, double elapsedTime);

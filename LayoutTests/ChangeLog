@@ -1,3 +1,13 @@
+2017-09-26  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (222040): Google Maps Street View CrashTracer: [USER] com.apple.WebKit.WebContent.Development at com.apple.WebCore: WebCore::PropertyWrapperAcceleratedTransform::blend const + 92
+        https://bugs.webkit.org/show_bug.cgi?id=177485
+
+        Reviewed by Zalan Bujtas.
+
+        * fast/animation/animation-mixed-transform-crash-expected.html: Added.
+        * fast/animation/animation-mixed-transform-crash.html: Added.
+
 2017-09-26  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark compositing/masks/compositing-clip-path-change-no-repaint.html as flaky.

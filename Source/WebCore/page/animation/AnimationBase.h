@@ -52,6 +52,7 @@ public:
     virtual ~AnimationBase();
 
     Element* element() const { return m_element.get(); }
+    const RenderStyle& currentStyle() const;
     RenderElement* renderer() const;
     RenderBoxModelObject* compositedRenderer() const;
     void clear();
@@ -220,6 +221,8 @@ protected:
     // timeOffset is the time at which the animation is being paused.
     virtual void pauseAnimation(double /*timeOffset*/) { }
     virtual void endAnimation() { }
+
+    virtual const RenderStyle& unanimatedStyle() const = 0;
 
     void goIntoEndingOrLoopingState();
 
