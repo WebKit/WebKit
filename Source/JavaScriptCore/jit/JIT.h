@@ -460,6 +460,8 @@ namespace JSC {
 #endif // USE(JSVALUE32_64)
 
         void emit_compareAndJump(OpcodeID, int op1, int op2, unsigned target, RelationalCondition);
+        void emit_compareUnsigned(int dst, int op1, int op2, RelationalCondition);
+        void emit_compareUnsignedAndJump(int op1, int op2, unsigned target, RelationalCondition);
         void emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator&);
         
         void assertStackPointerOffset();
@@ -499,6 +501,8 @@ namespace JSC {
         void emit_op_get_scope(Instruction*);
         void emit_op_eq(Instruction*);
         void emit_op_eq_null(Instruction*);
+        void emit_op_below(Instruction*);
+        void emit_op_beloweq(Instruction*);
         void emit_op_try_get_by_id(Instruction*);
         void emit_op_get_by_id(Instruction*);
         void emit_op_get_by_id_with_this(Instruction*);
@@ -529,6 +533,8 @@ namespace JSC {
         void emit_op_jnlesseq(Instruction*);
         void emit_op_jngreater(Instruction*);
         void emit_op_jngreatereq(Instruction*);
+        void emit_op_jbelow(Instruction*);
+        void emit_op_jbeloweq(Instruction*);
         void emit_op_jtrue(Instruction*);
         void emit_op_loop_hint(Instruction*);
         void emit_op_check_traps(Instruction*);

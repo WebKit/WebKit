@@ -1140,6 +1140,7 @@ public:
                         relationshipForTrue = Relationship::safeCreate(
                             terminal->child1().node(), m_zero, Relationship::NotEqual, 0);
                     } else {
+                        // FIXME: Handle CompareBelow and CompareBelowEq.
                         Node* compare = terminal->child1().node();
                         switch (compare->op()) {
                         case CompareEq:

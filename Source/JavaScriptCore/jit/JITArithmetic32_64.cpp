@@ -92,6 +92,36 @@ void JIT::emit_compareAndJump(OpcodeID opcode, int op1, int op2, unsigned target
     end.link(this);
 }
 
+void JIT::emit_compareUnsignedAndJump(int op1, int op2, unsigned target, RelationalCondition condition)
+{
+    if (isOperandConstantInt(op1)) {
+        emitLoad(op2, regT3, regT2);
+        addJump(branch32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32())), target);
+    } else if (isOperandConstantInt(op2)) {
+        emitLoad(op1, regT1, regT0);
+        addJump(branch32(condition, regT0, Imm32(getConstantOperand(op2).asInt32())), target);
+    } else {
+        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        addJump(branch32(condition, regT0, regT2), target);
+    }
+}
+
+
+void JIT::emit_compareUnsigned(int dst, int op1, int op2, RelationalCondition condition)
+{
+    if (isOperandConstantInt(op1)) {
+        emitLoad(op2, regT3, regT2);
+        compare32(commute(condition), regT2, Imm32(getConstantOperand(op1).asInt32()), regT0);
+    } else if (isOperandConstantInt(op2)) {
+        emitLoad(op1, regT1, regT0);
+        compare32(condition, regT0, Imm32(getConstantOperand(op2).asInt32()), regT0);
+    } else {
+        emitLoad2(op1, regT1, regT0, op2, regT3, regT2);
+        compare32(condition, regT0, regT2, regT0);
+    }
+    emitStoreBool(dst, regT0);
+}
+
 void JIT::emit_compareAndJumpSlow(int op1, int op2, unsigned target, DoubleCondition, size_t (JIT_OPERATION *operation)(ExecState*, EncodedJSValue, EncodedJSValue), bool invert, Vector<SlowCaseEntry>::iterator& iter)
 {
     if (isOperandConstantChar(op1) || isOperandConstantChar(op2)) {
