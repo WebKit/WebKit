@@ -1,3 +1,19 @@
+2017-09-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode
+        https://bugs.webkit.org/show_bug.cgi?id=176827
+
+        Reviewed by Joseph Pecoraro.
+
+        * inspector/agents/InspectorConsoleAgent.h:
+
+        * inspector/agents/JSGlobalObjectConsoleAgent.h:
+        * inspector/agents/JSGlobalObjectConsoleAgent.cpp:
+        (Inspector::JSGlobalObjectConsoleAgent::addInspectedNode): Deleted.
+
+        * inspector/protocol/Console.json:
+        * inspector/protocol/DOM.json:
+
 2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Unreviewed, rebaseline builtins generator tests after r222473.

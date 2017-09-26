@@ -1,7 +1,7 @@
-Test for the Console.addInspectedNode command.
+Test for the DOM.setInspectedNode command.
 
 
-== Running test suite: Console.addInspectedNode
+== Running test suite: DOM.setInspectedNode
 -- Running test case: Check$0IsUndefined
 PASS: $0 should be undefined.
 

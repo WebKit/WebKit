@@ -54,27 +54,4 @@ void PageConsoleAgent::clearMessages(ErrorString& errorString)
     WebConsoleAgent::clearMessages(errorString);
 }
 
-class InspectableNode final : public CommandLineAPIHost::InspectableObject {
-public:
-    explicit InspectableNode(Node* node) : m_node(node) { }
-    JSC::JSValue get(JSC::ExecState& state) final
-    {
-        return InspectorDOMAgent::nodeAsScriptValue(state, m_node.get());
-    }
-private:
-    RefPtr<Node> m_node;
-};
-
-void PageConsoleAgent::addInspectedNode(ErrorString& errorString, int nodeId)
-{
-    Node* node = m_inspectorDOMAgent->nodeForId(nodeId);
-    if (!node || node->isInUserAgentShadowTree()) {
-        errorString = ASCIILiteral("nodeId is not valid");
-        return;
-    }
-
-    if (CommandLineAPIHost* commandLineAPIHost = static_cast<WebInjectedScriptManager&>(m_injectedScriptManager).commandLineAPIHost())
-        commandLineAPIHost->addInspectedObject(std::make_unique<InspectableNode>(node));
-}
-
 } // namespace WebCore

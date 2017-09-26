@@ -1378,7 +1378,7 @@ webkit.org/b/127116 [ Debug ] svg/custom/animate-initial-pause-unpause.html [ Pa
 
 webkit.org/b/161720 [ Debug ] storage/indexeddb/key-type-array.html [ Pass Timeout ]
 
-webkit.org/b/155138 [ Debug ] inspector/console/addInspectedNode.html [ Pass Timeout ]
+webkit.org/b/155138 [ Debug ] inspector/dom/setInspectedNode.html [ Pass Timeout ]
 
 webkit.org/b/163046 js/regress-141098.html [ Pass Failure ]
 

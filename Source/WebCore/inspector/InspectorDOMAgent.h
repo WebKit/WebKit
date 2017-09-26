@@ -141,12 +141,12 @@ public:
     void highlightNode(ErrorString&, const Inspector::InspectorObject& highlightConfig, const int* const nodeId, const String* const objectId) override;
     void highlightNodeList(ErrorString&, const Inspector::InspectorArray& nodeIds, const Inspector::InspectorObject& highlightConfig) override;
     void highlightFrame(ErrorString&, const String& frameId, const Inspector::InspectorObject* color, const Inspector::InspectorObject* outlineColor) override;
-
     void moveTo(ErrorString&, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId) override;
     void undo(ErrorString&) override;
     void redo(ErrorString&) override;
     void markUndoableState(ErrorString&) override;
     void focus(ErrorString&, int nodeId) override;
+    void setInspectedNode(ErrorString&, int nodeId) override;
 
     void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
 

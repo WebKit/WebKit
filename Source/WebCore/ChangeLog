@@ -1,3 +1,25 @@
+2017-09-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode
+        https://bugs.webkit.org/show_bug.cgi?id=176827
+
+        Reviewed by Joseph Pecoraro.
+
+        Tests: http/tests/inspector/dom/cross-domain-inspected-node-access.html
+               inspector/dom/setInspectedNode.html
+
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setInspectedNode):
+
+        * inspector/PageConsoleAgent.h:
+        * inspector/PageConsoleAgent.cpp:
+        (WebCore::PageConsoleAgent::addInspectedNode): Deleted.
+
+        * inspector/WorkerConsoleAgent.h:
+        * inspector/WorkerConsoleAgent.cpp:
+        (WebCore::WorkerConsoleAgent::addInspectedNode): Deleted.
+
 2017-09-25  Sam Weinig  <sam@webkit.org>
 
         [WebIDL] Factor out IsExceptionOr check from toJS/toJSNewlyCreated signature

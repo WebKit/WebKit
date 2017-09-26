@@ -11,7 +11,7 @@ function test()
 
     let nodeA, nodeB;
 
-    let suite = InspectorTest.createAsyncSuite("Console.addInspectedNode");
+    let suite = InspectorTest.createAsyncSuite("DOM.setInspectedNode");
 
     suite.addTestCase({
         name: "Check$0IsUndefined",
@@ -28,7 +28,7 @@ function test()
         name: "SetAndCheckNodeA",
         description: "Set the inspected node to be Node A and check that $0 is Node A.",
         test(resolve, reject) {
-            ConsoleAgent.addInspectedNode(nodeA.id);
+            DOMAgent.setInspectedNode(nodeA.id);
             evaluate$0((remoteObject) => {
                 remoteObject.pushNodeToFrontend((nodeId) => {
                     InspectorTest.expectThat(remoteObject.isNode(), "$0 should be a node.");
@@ -43,7 +43,7 @@ function test()
         name: "SetBadNodeId",
         description: "If an invalid inspected node is set, it should not be bound to $0.",
         test(resolve, reject) {
-            ConsoleAgent.addInspectedNode(999999, (error) => {
+            DOMAgent.setInspectedNode(999999, (error) => {
                 InspectorTest.expectThat(error, "Should be an error");
             });
             evaluate$0((remoteObject) => {
@@ -60,7 +60,7 @@ function test()
         name: "SetAndCheckNodeB",
         description: "Set the inspected node to be Node B and check that $0 is Node B.",
         test(resolve, reject) {
-            ConsoleAgent.addInspectedNode(nodeB.id);
+            DOMAgent.setInspectedNode(nodeB.id);
             evaluate$0((remoteObject) => {
                 remoteObject.pushNodeToFrontend((nodeId) => {
                     InspectorTest.expectThat(remoteObject.isNode(), "$0 should be a node.");
@@ -89,7 +89,7 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>Test for the Console.addInspectedNode command.</p>
+<p>Test for the DOM.setInspectedNode command.</p>
 <div style="display:none">
     <p id="a">Node A</p>
     <p id="b">Node B</p>

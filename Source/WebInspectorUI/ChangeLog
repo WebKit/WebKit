@@ -1,3 +1,17 @@
+2017-09-25  Devin Rousso  <webkit@devinrousso.com>
+
+        Web Inspector: move Console.addInspectedNode to DOM.setInspectedNode
+        https://bugs.webkit.org/show_bug.cgi?id=176827
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/DOMTreeManager.js:
+        (WI.DOMTreeManager):
+        (WI.DOMTreeManager.prototype.setInspectedNode):
+
+        * UserInterface/Views/DOMTreeContentView.js:
+        (WI.DOMTreeContentView.prototype._selectedNodeDidChange):
+
 2017-09-25  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Add loading indicator next to resources in the Network Tab

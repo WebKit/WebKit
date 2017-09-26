@@ -41,6 +41,7 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
         this._attributeLoadNodeIds = {};
         this._restoreSelectedNodeIsAllowed = true;
         this._loadNodeAttributesTimeout = 0;
+        this._inspectedNode = null;
 
         WI.Frame.addEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
     }
@@ -500,6 +501,29 @@ WI.DOMTreeManager = class DOMTreeManager extends WI.Object
             this._inspectModeEnabled = error ? false : enabled;
             this.dispatchEventToListeners(WI.DOMTreeManager.Event.InspectModeStateChanged);
         });
+    }
+
+    setInspectedNode(node)
+    {
+        console.assert(node instanceof WI.DOMNode);
+        if (node === this._inspectedNode)
+            return;
+
+        let callback = (error) => {
+            console.assert(!error, error);
+            if (error)
+                return;
+
+            this._inspectedNode = node;
+        };
+
+        // COMPATIBILITY (iOS 11): DOM.setInspectedNode did not exist.
+        if (!DOMAgent.setInspectedNode) {
+            ConsoleAgent.addInspectedNode(node.id, callback);
+            return;
+        }
+
+        DOMAgent.setInspectedNode(node.id, callback);
     }
 
     _buildHighlightConfig(mode = "all")

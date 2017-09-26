@@ -475,6 +475,13 @@
             "parameters": [
                 { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to focus." }
             ]
+        },
+        {
+            "name": "setInspectedNode",
+            "description": "Enables console to refer to the node with given id via $0 (see Command Line API for more details).",
+            "parameters": [
+                { "name": "nodeId", "$ref": "NodeId", "description": "DOM node id to be accessible by means of $0 command line API." }
+            ]
         }
     ],
     "events": [

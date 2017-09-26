@@ -36,9 +36,6 @@ class WorkerConsoleAgent final : public WebConsoleAgent {
 public:
     WorkerConsoleAgent(WorkerAgentContext&, Inspector::InspectorHeapAgent*);
     ~WorkerConsoleAgent() { }
-
-private:
-    void addInspectedNode(ErrorString&, int nodeId) override;
 };
 
 } // namespace WebCore

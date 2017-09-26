@@ -38,9 +38,4 @@ void JSGlobalObjectConsoleAgent::setMonitoringXHREnabled(ErrorString& errorStrin
     errorString = ASCIILiteral("Not supported for JavaScript context");
 }
 
-void JSGlobalObjectConsoleAgent::addInspectedNode(ErrorString& errorString, int)
-{
-    errorString = ASCIILiteral("Not supported for JavaScript context");
-}
-
 } // namespace Inspector

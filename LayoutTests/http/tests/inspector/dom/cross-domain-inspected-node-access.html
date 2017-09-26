@@ -19,7 +19,7 @@ function test()
         description: "Should not be able to access $0 node in different domain subframe from the main frame.",
         test(resolve, reject) {
             InspectorTest.log("Setting $0 to node within subframe.");
-            ConsoleAgent.addInspectedNode(nodeInSubFrameId);
+            DOMAgent.setInspectedNode(nodeInSubFrameId);
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true}, (error, remoteObjectPayload, wasThrown) => {    
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
@@ -35,7 +35,7 @@ function test()
         description: "Should be able to access $0 node in the same frame.",
         test(resolve, reject) {
             InspectorTest.log("Setting $0 to node within the main frame.");
-            ConsoleAgent.addInspectedNode(nodeInMainFrameId);
+            DOMAgent.setInspectedNode(nodeInMainFrameId);
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
@@ -51,7 +51,7 @@ function test()
         description: "Should not be able to access $0 node in different domain main frame from the subframe.",
         test(resolve, reject) {
             InspectorTest.log("Setting $0 to node within the main frame.");
-            ConsoleAgent.addInspectedNode(nodeInMainFrameId);
+            DOMAgent.setInspectedNode(nodeInMainFrameId);
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true, contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");
@@ -67,7 +67,7 @@ function test()
         description: "Should be able to access $0 node in the same frame.",
         test(resolve, reject) {
             InspectorTest.log("Setting $0 to node within the subframe.");
-            ConsoleAgent.addInspectedNode(nodeInSubFrameId);
+            DOMAgent.setInspectedNode(nodeInSubFrameId);
             RuntimeAgent.evaluate.invoke({expression: "$0", includeCommandLineAPI: true, contextId: childFrames[0].pageExecutionContext.id}, (error, remoteObjectPayload, wasThrown) => {
                 InspectorTest.assert(!error, "Should not be a protocol error.");
                 InspectorTest.assert(!wasThrown, "Should not be an exception.");

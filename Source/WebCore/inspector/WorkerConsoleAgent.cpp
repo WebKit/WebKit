@@ -35,9 +35,4 @@ WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context, InspectorHea
 {
 }
 
-void WorkerConsoleAgent::addInspectedNode(ErrorString& errorString, int)
-{
-    errorString = ASCIILiteral("Unsupported for Workers.");
-}
-
 } // namespace WebCore
