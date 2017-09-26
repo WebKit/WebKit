@@ -382,14 +382,6 @@ bool AccessibilityNodeObject::canHaveChildren() const
     case ScrollBarRole:
     case ProgressIndicatorRole:
     case SwitchRole:
-    case MenuItemCheckboxRole:
-    case MenuItemRadioRole:
-    case SplitterRole:
-        return false;
-    case DocumentMathRole:
-#if ENABLE(MATHML)
-        return node()->isMathMLElement();
-#endif
         return false;
     default:
         return true;
