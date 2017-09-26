@@ -169,6 +169,7 @@ private:
     void paintTextSubrangeBackground(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const Color&, unsigned startOffset, unsigned endOffset);
 
     const RenderCombineText* combinedText() const;
+    const FontCascade& lineFont() const;
 
     ExpansionBehavior expansionBehavior() const;
 

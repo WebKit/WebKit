@@ -185,14 +185,9 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     return state;
 }
 
-static const FontCascade& fontToUse(const RenderStyle& style, const RenderText& renderer)
+inline const FontCascade& InlineTextBox::lineFont() const
 {
-    if (style.hasTextCombine() && is<RenderCombineText>(renderer)) {
-        const auto& textCombineRenderer = downcast<RenderCombineText>(renderer);
-        if (textCombineRenderer.isCombined())
-            return textCombineRenderer.textCombineFont();
-    }
-    return style.fontCascade();
+    return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
 }
 
 LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
@@ -210,7 +205,7 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
     const RenderStyle& lineStyle = this->lineStyle();
-    const FontCascade& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = lineFont();
 
     String hyphenatedString;
     bool respectHyphen = ePos == m_len && hasHyphen();
@@ -483,7 +478,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     TextPaintStyle selectionPaintStyle = haveSelection && !useCustomUnderlines ? computeTextSelectionPaintStyle(textPaintStyle, renderer(), lineStyle, paintInfo, paintSelectedTextOnly, paintSelectedTextSeparately, paintNonSelectedTextOnly, selectionShadow) : textPaintStyle;
 
     // Set our font.
-    const FontCascade& font = fontToUse(lineStyle, renderer());
+    const FontCascade& font = lineFont();
     // 1. Paint backgrounds behind text if needed. Examples of such backgrounds include selection
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
@@ -1051,15 +1046,11 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
 {
     if (isLineBreak())
         return 0;
-
     if (lineOffset - logicalLeft() > logicalWidth())
         return isLeftToRightDirection() ? len() : 0;
     if (lineOffset - logicalLeft() < 0)
         return isLeftToRightDirection() ? 0 : len();
-
-    const RenderStyle& lineStyle = this->lineStyle();
-    const FontCascade& font = fontToUse(lineStyle, renderer());
-    return font.offsetForPosition(constructTextRun(lineStyle), lineOffset - logicalLeft(), includePartialGlyphs);
+    return lineFont().offsetForPosition(constructTextRun(lineStyle()), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 float InlineTextBox::positionForOffset(unsigned offset) const
@@ -1070,15 +1061,21 @@ float InlineTextBox::positionForOffset(unsigned offset) const
     if (isLineBreak())
         return logicalLeft();
 
-    const RenderStyle& lineStyle = this->lineStyle();
-    const FontCascade& font = fontToUse(lineStyle, renderer());
-    unsigned from = !isLeftToRightDirection() ? clampedOffset(offset) : 0;
-    unsigned to = !isLeftToRightDirection() ? m_len : clampedOffset(offset);
+    unsigned startOffset;
+    unsigned endOffset;
+    if (isLeftToRightDirection()) {
+        startOffset = 0;
+        endOffset = clampedOffset(offset);
+    } else {
+        startOffset = clampedOffset(offset);
+        endOffset = m_len;
+    }
+
     // FIXME: Do we need to add rightBearing here?
     LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
-    TextRun run = constructTextRun(lineStyle);
-    font.adjustSelectionRectForText(run, selectionRect, from, to);
-    return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()).maxX();
+    TextRun textRun = constructTextRun(lineStyle());
+    lineFont().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
+    return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }
 
 StringView InlineTextBox::substringToRender(std::optional<unsigned> overridingLength) const
@@ -1112,7 +1109,7 @@ TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView str
     return run;
 }
 
-const RenderCombineText* InlineTextBox::combinedText() const
+inline const RenderCombineText* InlineTextBox::combinedText() const
 {
     return lineStyle().hasTextCombine() && is<RenderCombineText>(renderer()) && downcast<RenderCombineText>(renderer()).isCombined() ? &downcast<RenderCombineText>(renderer()) : nullptr;
 }

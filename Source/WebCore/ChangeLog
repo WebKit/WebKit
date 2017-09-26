@@ -1,3 +1,26 @@
+2017-09-26  Daniel Bates  <dabates@apple.com>
+
+        Make fontToUse() a member function of InlineTextBox
+        https://bugs.webkit.org/show_bug.cgi?id=177495
+
+        Reviewed by Myles C. Maxfield.
+
+        Following bug #177493 we can write fontToUse() in terms of InlineTextBox::combinedText().
+
+        No functionality changed. So, no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::lineFont const): Added; extracted from fontToUse().
+        (WebCore::InlineTextBox::combinedText const): Mark inline to give a hint to the compiler
+        that this function is small and seems reasonable to inline.
+        (WebCore::InlineTextBox::localSelectionRect const): Modified to call lineFont().
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition const): Ditto.
+        (WebCore::InlineTextBox::positionForOffset const): Ditto. Remove an extraneous
+        if-statement while I am here.
+        (WebCore::fontToUse): Deleted; moved logic to InlineTextBox::lineFont().
+        * rendering/InlineTextBox.h:
+
 2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r222427): SynchronizedFixedQueue should not have a public constructor
