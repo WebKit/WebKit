@@ -29,8 +29,6 @@
 
 namespace WebKit {
 
-class WebFrameProxy;
-
 class WebFormSubmissionListenerProxy : public API::ObjectImpl<API::Object::Type::FormSubmissionListener> {
 public:
     static Ref<WebFormSubmissionListenerProxy> create(WTF::Function<void(void)>&& completionHandler)

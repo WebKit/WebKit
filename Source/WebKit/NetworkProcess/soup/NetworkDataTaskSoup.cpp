@@ -377,7 +377,7 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
         }
 
         switch (policyAction) {
-        case PolicyAction::PolicyUse:
+        case PolicyAction::Use:
             if (m_inputStream)
                 read();
             else if (m_multipartInputStream)
@@ -386,10 +386,10 @@ void NetworkDataTaskSoup::dispatchDidReceiveResponse()
                 ASSERT_NOT_REACHED();
 
             break;
-        case PolicyAction::PolicyIgnore:
+        case PolicyAction::Ignore:
             clearRequest();
             break;
-        case PolicyAction::PolicyDownload:
+        case PolicyAction::Download:
             download();
             break;
         }

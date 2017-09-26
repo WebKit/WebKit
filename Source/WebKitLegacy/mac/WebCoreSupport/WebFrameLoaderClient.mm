@@ -2410,7 +2410,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
 {
     _frame = nullptr;
     if (auto policyFunction = std::exchange(_policyFunction, nullptr))
-        policyFunction(PolicyIgnore);
+        policyFunction(PolicyAction::Ignore);
 }
 
 - (void)dealloc
@@ -2433,12 +2433,12 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
 
 - (void)ignore
 {
-    [self receivedPolicyDecision:PolicyIgnore];
+    [self receivedPolicyDecision:PolicyAction::Ignore];
 }
 
 - (void)download
 {
-    [self receivedPolicyDecision:PolicyDownload];
+    [self receivedPolicyDecision:PolicyAction::Download];
 }
 
 - (void)use
@@ -2448,21 +2448,21 @@ void WebFrameLoaderClient::finishedLoadingIcon(uint64_t callbackID, SharedBuffer
         [LSAppLink openWithURL:_appLinkURL.get() completionHandler:^(BOOL success, NSError *) {
             WebThreadRun(^{
                 if (success)
-                    [self receivedPolicyDecision:PolicyIgnore];
+                    [self receivedPolicyDecision:PolicyAction::Ignore];
                 else
-                    [self receivedPolicyDecision:PolicyUse];
+                    [self receivedPolicyDecision:PolicyAction::Use];
             });
         }];
         return;
     }
 #endif
 
-    [self receivedPolicyDecision:PolicyUse];
+    [self receivedPolicyDecision:PolicyAction::Use];
 }
 
 - (void)continue
 {
-    [self receivedPolicyDecision:PolicyUse];
+    [self receivedPolicyDecision:PolicyAction::Use];
 }
 
 @end

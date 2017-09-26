@@ -57,11 +57,11 @@ using namespace WebKit;
 static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore::PolicyAction disposition)
 {
     switch (disposition) {
-    case WebCore::PolicyAction::PolicyIgnore:
+    case WebCore::PolicyAction::Ignore:
         return NSURLSessionResponseCancel;
-    case WebCore::PolicyAction::PolicyUse:
+    case WebCore::PolicyAction::Use:
         return NSURLSessionResponseAllow;
-    case WebCore::PolicyAction::PolicyDownload:
+    case WebCore::PolicyAction::Download:
         return NSURLSessionResponseBecomeDownload;
     }
 }

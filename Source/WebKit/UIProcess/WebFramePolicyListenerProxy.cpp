@@ -38,17 +38,17 @@ WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, u
 
 void WebFramePolicyListenerProxy::use(const WebsitePolicies& websitePolicies)
 {
-    receivedPolicyDecision(WebCore::PolicyUse, websitePolicies);
+    receivedPolicyDecision(WebCore::PolicyAction::Use, websitePolicies);
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    receivedPolicyDecision(WebCore::PolicyDownload, { });
+    receivedPolicyDecision(WebCore::PolicyAction::Download, { });
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    receivedPolicyDecision(WebCore::PolicyIgnore, { });
+    receivedPolicyDecision(WebCore::PolicyAction::Ignore, { });
 }
 
 } // namespace WebKit

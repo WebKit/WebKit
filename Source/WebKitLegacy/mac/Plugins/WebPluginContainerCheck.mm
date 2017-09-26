@@ -87,9 +87,9 @@ using namespace WebCore;
 - (void)_continueWithPolicy:(PolicyAction)policy
 {
     if (_contextInfo)
-        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyUse), _contextInfo);
+        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use), _contextInfo);
     else     
-        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyUse));
+        wtfObjcMsgSend<void>(_resultObject, _resultSelector, (policy == PolicyAction::Use));
 
     // this will call indirectly call cancel
     [_controller _webPluginContainerCancelCheckIfAllowedToLoadRequest:self];
@@ -100,7 +100,7 @@ using namespace WebCore;
     Frame* coreFrame = core([_controller webFrame]);
     ASSERT(coreFrame);
     if (!coreFrame->document()->securityOrigin().canDisplay([_request URL])) {
-        [self _continueWithPolicy:PolicyIgnore];
+        [self _continueWithPolicy:PolicyAction::Ignore];
         return YES;
     }
 

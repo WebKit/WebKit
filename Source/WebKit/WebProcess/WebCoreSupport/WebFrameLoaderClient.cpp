@@ -679,12 +679,12 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
 {
     WebPage* webPage = m_frame->page();
     if (!webPage) {
-        function(PolicyIgnore);
+        function(PolicyAction::Ignore);
         return;
     }
 
     if (!request.url().string()) {
-        function(PolicyUse);
+        function(PolicyAction::Use);
         return;
     }
 
@@ -693,33 +693,33 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(const ResourceRespons
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForResponse(webPage, m_frame, response, request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        function(PolicyUse);
+        function(PolicyAction::Use);
         return;
     }
 
     bool canShowMIMEType = webPage->canShowMIMEType(response.mimeType());
 
     uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
-    uint64_t policyAction;
+    PolicyAction policyAction;
     DownloadID downloadID;
 
     Ref<WebFrame> protect(*m_frame);
     WebCore::Frame* coreFrame = m_frame->coreFrame();
     auto navigationID = static_cast<WebDocumentLoader&>(*coreFrame->loader().provisionalDocumentLoader()).navigationID();
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForResponseSync(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), navigationID, response, request, canShowMIMEType, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForResponseSync::Reply(policyAction, downloadID), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend)) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyAction::Ignore, 0, { });
         return;
     }
 
     // We call this synchronously because CFNetwork can only convert a loading connection to a download from its didReceiveResponse callback.
-    m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), 0, downloadID);
+    m_frame->didReceivePolicyDecision(listenerID, policyAction, 0, downloadID);
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const NavigationAction& navigationAction, const ResourceRequest& request, FormState* formState, const String& frameName, FramePolicyFunction&& function)
 {
     WebPage* webPage = m_frame->page();
     if (!webPage) {
-        function(PolicyIgnore);
+        function(PolicyAction::Ignore);
         return;
     }
 
@@ -730,7 +730,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Navigati
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNewWindowAction(webPage, m_frame, action.get(), request, frameName, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        function(PolicyUse);
+        function(PolicyAction::Use);
         return;
     }
 
@@ -755,13 +755,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 {
     WebPage* webPage = m_frame->page();
     if (!webPage) {
-        function(PolicyIgnore);
+        function(PolicyAction::Ignore);
         return;
     }
 
     // Always ignore requests with empty URLs. 
     if (request.isEmpty()) {
-        function(PolicyIgnore);
+        function(PolicyAction::Ignore);
         return;
     }
 
@@ -772,13 +772,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     // Notify the bundle client.
     WKBundlePagePolicyAction policy = webPage->injectedBundlePolicyClient().decidePolicyForNavigationAction(webPage, m_frame, action.get(), request, userData);
     if (policy == WKBundlePagePolicyActionUse) {
-        function(PolicyUse);
+        function(PolicyAction::Use);
         return;
     }
     
     uint64_t listenerID = m_frame->setUpPolicyListener(WTFMove(function));
     uint64_t newNavigationID;
-    uint64_t policyAction;
+    PolicyAction policyAction;
     DownloadID downloadID;
 
     ASSERT(navigationAction.sourceDocument());
@@ -818,7 +818,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     Ref<WebFrame> protect(*m_frame);
     WebsitePolicies websitePolicies;
     if (!webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationAction(m_frame->frameID(), SecurityOriginData::fromFrame(coreFrame), documentLoader->navigationID(), navigationActionData, originatingFrameInfoData, originatingFrame && originatingFrame->page() ? originatingFrame->page()->pageID() : 0, navigationAction.resourceRequest(), request, listenerID, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())), Messages::WebPageProxy::DecidePolicyForNavigationAction::Reply(newNavigationID, policyAction, downloadID, websitePolicies))) {
-        m_frame->didReceivePolicyDecision(listenerID, PolicyIgnore, 0, { });
+        m_frame->didReceivePolicyDecision(listenerID, PolicyAction::Ignore, 0, { });
         return;
     }
 
@@ -855,7 +855,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     // We call this synchronously because WebCore cannot gracefully handle a frame load without a synchronous navigation policy reply.
-    m_frame->didReceivePolicyDecision(listenerID, static_cast<PolicyAction>(policyAction), newNavigationID, downloadID);
+    m_frame->didReceivePolicyDecision(listenerID, policyAction, newNavigationID, downloadID);
 }
 
 void WebFrameLoaderClient::cancelPolicyCheck()

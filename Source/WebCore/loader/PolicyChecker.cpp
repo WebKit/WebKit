@@ -146,13 +146,13 @@ void PolicyChecker::checkNavigationPolicy(const ResourceRequest& request, bool d
     ResourceRequest requestCopy = request;
     m_frame.loader().client().dispatchDecidePolicyForNavigationAction(action, request, didReceiveRedirectResponse, formState, [this, function = WTFMove(function), request = WTFMove(requestCopy), formState = makeRefPtr(formState), suggestedFilename = WTFMove(suggestedFilename)](PolicyAction policyAction) mutable {
         switch (policyAction) {
-        case PolicyDownload:
+        case PolicyAction::Download:
             m_frame.loader().setOriginalURLForDownloadRequest(request);
             m_frame.loader().client().startDownload(request, suggestedFilename);
             FALLTHROUGH;
-        case PolicyIgnore:
+        case PolicyAction::Ignore:
             return function({ }, nullptr, false);
-        case PolicyUse:
+        case PolicyAction::Use:
             if (!m_frame.loader().client().canHandleRequest(request)) {
                 handleUnimplementablePolicy(m_frame.loader().client().cannotShowURLError(request));
                 return function({ }, nullptr, false);
@@ -174,13 +174,13 @@ void PolicyChecker::checkNewWindowPolicy(NavigationAction&& navigationAction, co
 
     m_frame.loader().client().dispatchDecidePolicyForNewWindowAction(navigationAction, request, formState, frameName, [frame = makeRef(m_frame), request, formState = makeRefPtr(formState), frameName, navigationAction, function = WTFMove(function)](PolicyAction policyAction) mutable {
         switch (policyAction) {
-        case PolicyDownload:
+        case PolicyAction::Download:
             frame->loader().client().startDownload(request);
             FALLTHROUGH;
-        case PolicyIgnore:
+        case PolicyAction::Ignore:
             function({ }, nullptr, { }, { }, false);
             return;
-        case PolicyUse:
+        case PolicyAction::Use:
             function(request, formState.get(), frameName, navigationAction, true);
             return;
         }

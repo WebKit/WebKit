@@ -1,3 +1,20 @@
+2017-09-25  Alex Christensen  <achristensen@webkit.org>
+
+        Make PolicyAction an encodable enum class
+        https://bugs.webkit.org/show_bug.cgi?id=177480
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebFramePolicyListener.cpp:
+        (WebFramePolicyListener::use):
+        (WebFramePolicyListener::download):
+        (WebFramePolicyListener::ignore):
+        (WebFramePolicyListener::continueSubmit):
+
 2017-09-07  Per Arne Vollan  <pvollan@apple.com>
 
         [Win] fast/canvas/2d.getPath.modification.html is failing.

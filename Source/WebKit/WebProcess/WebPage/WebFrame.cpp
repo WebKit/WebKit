@@ -241,7 +241,7 @@ void WebFrame::invalidatePolicyListener()
     m_policyDownloadID = { };
     m_policyListenerID = 0;
     if (auto function = std::exchange(m_policyFunction, nullptr))
-        function(PolicyIgnore);
+        function(PolicyAction::Ignore);
 }
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)

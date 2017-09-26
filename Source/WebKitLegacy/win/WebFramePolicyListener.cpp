@@ -93,19 +93,19 @@ ULONG WebFramePolicyListener::Release()
 
 HRESULT WebFramePolicyListener::use()
 {
-    receivedPolicyDecision(PolicyUse);
+    receivedPolicyDecision(PolicyAction::Use);
     return S_OK;
 }
 
 HRESULT WebFramePolicyListener::download()
 {
-    receivedPolicyDecision(PolicyDownload);
+    receivedPolicyDecision(PolicyAction::Download);
     return S_OK;
 }
 
 HRESULT WebFramePolicyListener::ignore()
 {
-    receivedPolicyDecision(PolicyIgnore);
+    receivedPolicyDecision(PolicyAction::Ignore);
     return S_OK;
 }
 
@@ -113,7 +113,7 @@ HRESULT WebFramePolicyListener::ignore()
 
 HRESULT WebFramePolicyListener::continueSubmit()
 {
-    receivedPolicyDecision(PolicyUse);
+    receivedPolicyDecision(PolicyAction::Use);
     return S_OK;
 }
 

@@ -249,13 +249,13 @@ void NetworkDataTaskReplay::didReceiveResponse(WebCore::ResourceResponse&& respo
         }
 
         switch (policyAction) {
-        case WebCore::PolicyAction::PolicyUse:
+        case WebCore::PolicyAction::Use:
             enqueueEventHandler();
             break;
-        case WebCore::PolicyAction::PolicyIgnore:
+        case WebCore::PolicyAction::Ignore:
             complete();
             break;
-        case WebCore::PolicyAction::PolicyDownload:
+        case WebCore::PolicyAction::Download:
             DEBUG_LOG_ERROR("WebCore::PolicyAction::PolicyDownload");
             break;
         }

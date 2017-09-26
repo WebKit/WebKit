@@ -144,7 +144,7 @@ void DownloadManager::continueDecidePendingDownloadDestination(DownloadID downlo
         ASSERT(m_pendingDownloads.contains(downloadID));
 
         networkDataTask->setPendingDownloadLocation(destination, sandboxExtensionHandle, allowOverwrite);
-        completionHandler(PolicyDownload);
+        completionHandler(PolicyAction::Download);
         if (networkDataTask->state() == NetworkDataTask::State::Canceling || networkDataTask->state() == NetworkDataTask::State::Completed)
             return;
 
@@ -196,7 +196,7 @@ void DownloadManager::cancelDownload(DownloadID downloadID)
         ASSERT(completionHandler);
 
         networkDataTask->cancel();
-        completionHandler(PolicyIgnore);
+        completionHandler(PolicyAction::Ignore);
         m_client.pendingDownloadCanceled(downloadID);
         return;
     }

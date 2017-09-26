@@ -2264,16 +2264,16 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy& fr
 
     auto transaction = m_pageLoadState.transaction();
 
-    if (action == PolicyIgnore)
+    if (action == PolicyAction::Ignore)
         m_pageLoadState.clearPendingAPIRequestURL(transaction);
 
 #if ENABLE(DOWNLOAD_ATTRIBUTE)
-    if (m_syncNavigationActionHasDownloadAttribute && action == PolicyUse)
-        action = PolicyDownload;
+    if (m_syncNavigationActionHasDownloadAttribute && action == PolicyAction::Use)
+        action = PolicyAction::Download;
 #endif
 
     DownloadID downloadID = { };
-    if (action == PolicyDownload) {
+    if (action == PolicyAction::Download) {
         // Create a download proxy.
         auto* download = m_process->processPool().createDownloadProxy(m_decidePolicyForResponseRequest, this);
         if (navigation) {
@@ -3686,7 +3686,7 @@ void WebPageProxy::decidePolicyForNavigationAction(uint64_t frameID, const Secur
 
 #if ENABLE(CONTENT_FILTERING)
     if (frame->didHandleContentFilterUnblockNavigation(request)) {
-        reply->send(m_newNavigationID, PolicyIgnore, { }, { });
+        reply->send(m_newNavigationID, PolicyAction::Ignore, { }, { });
         m_newNavigationID = 0;
         return;
     }

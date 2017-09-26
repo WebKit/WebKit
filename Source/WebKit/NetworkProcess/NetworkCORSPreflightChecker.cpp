@@ -89,7 +89,7 @@ void NetworkCORSPreflightChecker::didReceiveResponseNetworkSession(WebCore::Reso
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession");
     m_response = WTFMove(response);
-    completionHandler(PolicyAction::PolicyUse);
+    completionHandler(PolicyAction::Use);
 }
 
 void NetworkCORSPreflightChecker::didReceiveData(Ref<WebCore::SharedBuffer>&&)

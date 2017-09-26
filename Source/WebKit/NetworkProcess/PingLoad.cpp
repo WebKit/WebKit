@@ -175,7 +175,7 @@ void PingLoad::didReceiveChallenge(const AuthenticationChallenge&, ChallengeComp
 void PingLoad::didReceiveResponseNetworkSession(ResourceResponse&& response, ResponseCompletionHandler&& completionHandler)
 {
     RELEASE_LOG_IF_ALLOWED("didReceiveResponseNetworkSession - httpStatusCode: %d", response.httpStatusCode());
-    completionHandler(PolicyAction::PolicyIgnore);
+    completionHandler(PolicyAction::Ignore);
     didFinish();
 }
 

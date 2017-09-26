@@ -105,17 +105,17 @@ NSString *WebActionOriginalURLKey = @"WebActionOriginalURLKey";
 
 - (void)use
 {
-    [self _usePolicy:PolicyUse];
+    [self _usePolicy:PolicyAction::Use];
 }
 
 - (void)ignore
 {
-    [self _usePolicy:PolicyIgnore];
+    [self _usePolicy:PolicyAction::Ignore];
 }
 
 - (void)download
 {
-    [self _usePolicy:PolicyDownload];
+    [self _usePolicy:PolicyAction::Download];
 }
 
 @end

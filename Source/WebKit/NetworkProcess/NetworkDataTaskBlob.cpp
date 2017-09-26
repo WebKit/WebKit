@@ -315,13 +315,13 @@ void NetworkDataTaskBlob::dispatchDidReceiveResponse(Error errorCode)
         }
 
         switch (policyAction) {
-        case PolicyAction::PolicyUse:
+        case PolicyAction::Use:
             m_buffer.resize(bufferSize);
             read();
             break;
-        case PolicyAction::PolicyIgnore:
+        case PolicyAction::Ignore:
             break;
-        case PolicyAction::PolicyDownload:
+        case PolicyAction::Download:
             download();
             break;
         }

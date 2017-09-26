@@ -38,10 +38,10 @@ enum FrameState {
     FrameStateComplete
 };
 
-enum PolicyAction {
-    PolicyUse,
-    PolicyDownload,
-    PolicyIgnore
+enum class PolicyAction {
+    Use,
+    Download,
+    Ignore
 };
 
 enum class ReloadOption {
@@ -147,3 +147,19 @@ enum class HasInsecureContent {
 };
 
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename> struct EnumTraits;
+template<typename E, E...> struct EnumValues;
+
+template<> struct EnumTraits<WebCore::PolicyAction> {
+    using values = EnumValues<
+        WebCore::PolicyAction,
+        WebCore::PolicyAction::Use,
+        WebCore::PolicyAction::Download,
+        WebCore::PolicyAction::Ignore
+    >;
+};
+
+} // namespace WTF

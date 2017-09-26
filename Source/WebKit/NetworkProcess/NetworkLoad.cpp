@@ -134,7 +134,7 @@ NetworkLoad::~NetworkLoad()
     ASSERT(RunLoop::isMain());
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler)
-        m_responseCompletionHandler(PolicyIgnore);
+        m_responseCompletionHandler(PolicyAction::Ignore);
     if (m_redirectCompletionHandler)
         m_redirectCompletionHandler({ });
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
@@ -228,7 +228,7 @@ void NetworkLoad::continueDidReceiveResponse()
 #if USE(NETWORK_SESSION)
     if (m_responseCompletionHandler) {
         auto responseCompletionHandler = std::exchange(m_responseCompletionHandler, nullptr);
-        responseCompletionHandler(PolicyUse);
+        responseCompletionHandler(PolicyAction::Use);
     }
 #else
     if (m_handle)
@@ -403,7 +403,7 @@ void NetworkLoad::notifyDidReceiveResponse(ResourceResponse&& response, Response
         m_responseCompletionHandler = WTFMove(completionHandler);
         return;
     }
-    completionHandler(PolicyUse);
+    completionHandler(PolicyAction::Use);
 }
 
 void NetworkLoad::didReceiveData(Ref<SharedBuffer>&& buffer)
