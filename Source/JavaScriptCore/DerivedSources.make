@@ -56,13 +56,13 @@ all : \
     CombinedDomains.json \
     InitBytecodes.asm \
     InjectedScriptSource.h \
-    InspectorFrontendDispatchers.h \
+    inspector/InspectorFrontendDispatchers.h \
     JSCBuiltins.h \
     Lexer.lut.h \
     KeywordLookup.h \
     RegExpJitTables.h \
     AirOpcode.h \
-    YarrCanonicalizeUnicode.cpp \
+    yarr/YarrCanonicalizeUnicode.cpp \
     WasmOps.h \
     WasmValidateInlines.h \
     WasmB3IRGeneratorInlines.h \
@@ -196,7 +196,7 @@ Lexer.lut.h: Keywords.table $(JavaScriptCore)/create_hash_table
 
 # character tables for Yarr
 
-RegExpJitTables.h: create_regex_tables
+RegExpJitTables.h: yarr/create_regex_tables
 	$(PYTHON) $^ > $@
 
 KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
@@ -281,8 +281,8 @@ CombinedDomains.json : $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-combined-inspector-json.py $(INSPECTOR_DOMAINS) > ./CombinedDomains.json
 
 # Inspector Backend Dispatchers, Frontend Dispatchers, Type Builders
-InspectorFrontendDispatchers.h : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS)
-	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir . ./CombinedDomains.json
+inspector/InspectorFrontendDispatchers.h : CombinedDomains.json $(INSPECTOR_GENERATOR_SCRIPTS) inspector
+	$(PYTHON) $(JavaScriptCore)/inspector/scripts/generate-inspector-protocol-bindings.py --framework JavaScriptCore --outputDir inspector ./CombinedDomains.json
 
 InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRIPTS_DIR)/jsmin.py $(JavaScriptCore_SCRIPTS_DIR)/xxd.pl
 	echo "//# sourceURL=__InjectedScript_InjectedScriptSource.js" > ./InjectedScriptSource.min.js
@@ -293,8 +293,8 @@ InjectedScriptSource.h : inspector/InjectedScriptSource.js $(JavaScriptCore_SCRI
 AirOpcode.h: $(JavaScriptCore)/b3/air/opcode_generator.rb $(JavaScriptCore)/b3/air/AirOpcode.opcodes
 	$(RUBY) $^
 
-YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
-	$(PYTHON) $(JavaScriptCore)/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./YarrCanonicalizeUnicode.cpp
+yarr/YarrCanonicalizeUnicode.cpp: $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt
+	$(PYTHON) $(JavaScriptCore)/yarr/generateYarrCanonicalizeUnicode $(JavaScriptCore)/ucd/CaseFolding.txt ./yarr/YarrCanonicalizeUnicode.cpp
 
 WasmOps.h: $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/generateWasm.py $(JavaScriptCore)/wasm/wasm.json
 	$(PYTHON) $(JavaScriptCore)/wasm/generateWasmOpsHeader.py $(JavaScriptCore)/wasm/wasm.json ./WasmOps.h

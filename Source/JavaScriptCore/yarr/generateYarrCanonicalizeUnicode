@@ -28,6 +28,7 @@
 # "21.2.2.8.2 Runtime Semantics: Canonicalize()", step 2.
 
 import optparse
+import os
 import re
 import sys
 from sets import Set
@@ -74,6 +75,9 @@ commonAndSimpleLinesRE = re.compile(r"(?P<code>[0-9A-F]+)\s*;\s*[CS]\s*;\s*(?P<m
 
 def openOrExit(path, mode):
     try:
+        dirname = os.path.dirname(path)
+        if not os.path.isdir(dirname):
+            os.makedirs(dirname)
         return open(path, mode)
     except IOError as e:
         print "I/O error opening {0}, ({1}): {2}".format(path, e.errno, e.strerror)

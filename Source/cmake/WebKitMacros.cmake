@@ -17,6 +17,8 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
     endif ()
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
+        "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
+        "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
         "--print-bundled-sources"
         ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
         ${_platformSourcesFile}
@@ -35,6 +37,7 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
 
     execute_process(COMMAND ${RUBY_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.rb
         "--derived-sources-path" "${DERIVED_SOURCES_DIR}/${_framework}"
+        "--source-tree-path" ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt
         ${_platformSourcesFile}
         RESULT_VARIABLE  _resultTmp

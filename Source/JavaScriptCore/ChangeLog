@@ -1,3 +1,31 @@
+2017-09-24  Keith Miller  <keith_miller@apple.com>
+
+        JSC build should use unified sources for derived sources
+        https://bugs.webkit.org/show_bug.cgi?id=177421
+
+        Reviewed by JF Bastien.
+
+        This patch make a couple of changes:
+
+        1) Make derived sources added to relevant bundles. I was going to add JSCBuiltins.cpp
+        to runtime but that kept breaking the windows build. I'll get back to it later
+        2) Move the derived location of some sources both for clarity and for ease of use.
+        3) Make auto generator scripts able to create directories if needed.
+        4) Move some scripts from the top level of the JavaScriptCore directory to a
+        more appropriate directory.
+        5) Move some CMake generation commands around for clarity.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Scripts/lazywriter.py:
+        (LazyFileWriter.close):
+        * Sources.txt:
+        * inspector/scripts/generate-inspector-protocol-bindings.py:
+        (IncrementalFileWriter.close):
+        * yarr/create_regex_tables: Renamed from Source/JavaScriptCore/create_regex_tables.
+        * yarr/generateYarrCanonicalizeUnicode: Renamed from Source/JavaScriptCore/generateYarrCanonicalizeUnicode.
+
 2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Support building JavaScriptCore with the Bionic C library

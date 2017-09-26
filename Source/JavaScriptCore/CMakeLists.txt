@@ -40,6 +40,8 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${FORWARDING_HEADERS_DIR}"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/runtime"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr"
 )
 
 set(JavaScriptCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -356,23 +358,19 @@ GENERATE_HASH_LUT(${CMAKE_CURRENT_SOURCE_DIR}/parser/Keywords.table ${DERIVED_SO
 
 #GENERATOR: "RegExpJitTables.h": tables used by Yarr
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h
-    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/create_regex_tables
-    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/create_regex_tables > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h
+    MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/yarr/create_regex_tables ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h
     VERBATIM)
-list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
-WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
+list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h)
+WEBKIT_ADD_SOURCE_DEPENDENCIES(${CMAKE_CURRENT_SOURCE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/RegExpJitTables.h)
 
 add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
-    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/generateYarrCanonicalizeUnicode
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/YarrCanonicalizeUnicode.cpp
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode
     DEPENDS ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt
-    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/yarr/generateYarrCanonicalizeUnicode ${JAVASCRIPTCORE_DIR}/ucd/CaseFolding.txt ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/yarr/YarrCanonicalizeUnicode.cpp
     VERBATIM)
-
-list(APPEND JavaScriptCore_SOURCES
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/YarrCanonicalizeUnicode.cpp
-)
 
 #GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
 add_custom_command(
@@ -522,6 +520,20 @@ set(JavaScriptCore_BUILTINS_SOURCES
 )
 
 add_custom_command(
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+    MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
+    DEPENDS ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
+    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
+    VERBATIM)
+
+list(APPEND JavaScriptCore_HEADERS
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
+    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
+)
+
+add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcode.h ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcodeGenerated.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/b3/air/AirOpcode.opcodes
     DEPENDS ${JAVASCRIPTCORE_DIR}/b3/air/opcode_generator.rb
@@ -532,27 +544,6 @@ add_custom_command(
 list(APPEND JavaScriptCore_HEADERS
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcode.h
     ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/AirOpcodeGenerated.h
-)
-
-add_custom_command(
-    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
-    MAIN_DEPENDENCY ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py
-    DEPENDS ${JavaScriptCore_BUILTINS_SOURCES} ${BUILTINS_GENERATOR_SCRIPTS}
-    COMMAND ${PYTHON_EXECUTABLE} ${JavaScriptCore_SCRIPTS_DIR}/generate-js-builtins.py --framework JavaScriptCore --output-directory ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR} --combined ${JavaScriptCore_BUILTINS_SOURCES}
-    VERBATIM)
-
-list(APPEND JavaScriptCore_SOURCES
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.cpp
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.cpp
-)
-
-list(APPEND JavaScriptCore_HEADERS
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorBackendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorFrontendDispatchers.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/inspector/InspectorProtocolObjects.h
-    ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/JSCBuiltins.h
 )
 
 add_custom_command(

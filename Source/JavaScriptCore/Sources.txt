@@ -545,6 +545,11 @@ inspector/ScriptCallStack.cpp
 inspector/ScriptCallStackFactory.cpp
 inspector/ScriptDebugServer.cpp
 
+# Derived Sources
+inspector/InspectorBackendDispatchers.cpp
+inspector/InspectorFrontendDispatchers.cpp
+inspector/InspectorProtocolObjects.cpp
+
 inspector/agents/InspectorAgent.cpp
 inspector/agents/InspectorConsoleAgent.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
@@ -915,6 +920,10 @@ runtime/WeakMapPrototype.cpp
 runtime/WeakSetConstructor.cpp
 runtime/WeakSetPrototype.cpp
 
+# Derived Sources
+# FIXME: We should move this to runtime but it kept breaking the Windows build in weird ways... https://bugs.webkit.org/show_bug.cgi?id=177486
+JSCBuiltins.cpp
+
 tools/CellList.cpp
 tools/CodeProfile.cpp
 tools/CodeProfiling.cpp
@@ -989,3 +998,6 @@ yarr/YarrInterpreter.cpp
 yarr/YarrJIT.cpp
 yarr/YarrPattern.cpp
 yarr/YarrSyntaxChecker.cpp
+
+# Derived Sources
+yarr/YarrCanonicalizeUnicode.cpp

@@ -29,13 +29,17 @@ SCRIPT_NAME = File.basename($0)
 COMMENT_REGEXP = /#/
 
 def usage
-    puts "usage: #{SCRIPT_NAME} [options] -p <desination-path> <sources-file>"
+    puts "usage: #{SCRIPT_NAME} [options] <sources-file>"
     puts "--help                          (-h) Print this message"
     puts "--verbose                       (-v) Adds extra logging to stderr."
+    puts "Required arguments:"
+    puts "--source-tree-path              (-s) Path to the root of the source directory."
+    puts "--derived-sources-path          (-d) Path to the directory where the unified source files should be placed."
+    puts
+    puts "Optional arguments:"
     puts "--print-bundled-sources              Print bundled sources rather than generating sources"
     puts
     puts "Generation options:"
-    puts "--derived-sources-path          (-p) Path to the directory where the unified source files should be placed. This argument is required."
     puts "--max-cpp-bundle-count               Sets the limit on the number of cpp bundles that can be generated"
     puts "--max-obj-c-bundle-count             Sets the limit on the number of Obj-C bundles that can be generated"
     exit 1
@@ -43,6 +47,8 @@ end
 
 MAX_BUNDLE_SIZE = 8
 $derivedSourcesPath = nil
+$unifiedSourceOutputPath = nil
+$sourceTreePath = nil
 $verbose = false
 $mode = :GenerateBundles
 $maxCppBundleCount = 100000
@@ -54,8 +60,9 @@ end
 
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--verbose', '-v', GetoptLong::NO_ARGUMENT],
+               ['--derived-sources-path', '-d', GetoptLong::REQUIRED_ARGUMENT],
+               ['--source-tree-path', '-s', GetoptLong::REQUIRED_ARGUMENT],
                ['--print-bundled-sources', GetoptLong::NO_ARGUMENT],
-               ['--derived-sources-path', '-p', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-cpp-bundle-count', GetoptLong::REQUIRED_ARGUMENT],
                ['--max-obj-c-bundle-count', GetoptLong::REQUIRED_ARGUMENT]).each {
     | opt, arg |
@@ -64,11 +71,15 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         usage
     when '--verbose'
         $verbose = true
-    when "--print-bundled-sources"
-        $mode = :PrintBundledSources
     when '--derived-sources-path'
-        $derivedSourcesPath = Pathname.new(arg) + Pathname.new("unified-souces")
-        FileUtils.mkdir($derivedSourcesPath) if !$derivedSourcesPath.exist?
+        $derivedSourcesPath = Pathname.new(arg)
+        $unifiedSourceOutputPath = $derivedSourcesPath + Pathname.new("unified-sources")
+        FileUtils.mkdir($unifiedSourceOutputPath) if !$unifiedSourceOutputPath.exist?
+    when '--source-tree-path'
+        $sourceTreePath = Pathname.new(arg)
+        usage if !$sourceTreePath.exist?
+    when '--print-bundled-sources'
+        $mode = :PrintBundledSources
     when '--max-cpp-bundle-count'
         $maxCppBundleCount = arg.to_i
     when '--max-obj-c-bundle-count'
@@ -76,10 +87,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
     end
 }
 
-if $mode == :GenerateBundles
-    usage if !$derivedSourcesPath
-    log("putting unified sources in #{$derivedSourcesPath}")
-end
+usage if !$unifiedSourceOutputPath || !$sourceTreePath
+log("putting unified sources in #{$unifiedSourceOutputPath}")
+
 usage if ARGV.length == 0
 $generatedSources = []
 
@@ -104,6 +114,19 @@ class SourceFile < Pathname
 
         super(file)
     end
+
+    def derived?
+        return @derived if @derived != nil
+        @derived = !($sourceTreePath + self).exist?
+    end
+
+    def display
+        if $mode == :GenerateBundles || !derived?
+            self.to_s
+        else
+            ($derivedSourcesPath + self).to_s
+        end
+    end
 end
 
 class BundleManager
@@ -117,19 +140,18 @@ class BundleManager
         @maxCount = max
     end
 
+    def bundleFileName(number)
+        "UnifiedSource#{number}.#{extension}"
+    end
+
     def flush
         # No point in writing an empty bundle file
         return if @currentBundleText == ""
 
         @bundleCount += 1
-        bundleFileName = "UnifiedSource#{@bundleCount}.#{extension}"
-
-        if @bundleCount > @maxCount
-            raise "number of bundles for #{extension} sources, #{@bundleCount}, exceeded limit, #{@maxCount}. Please add #{bundleFileName} to Xcode then update UnifiedSource#{extension.capitalize}FileCount"
-        end
-
-        bundleFile = $derivedSourcesPath + bundleFileName
+        bundleFile = $unifiedSourceOutputPath + bundleFileName(@bundleCount)
         $generatedSources << bundleFile
+
         if (!bundleFile.exist? || IO::read(bundleFile) != @currentBundleText)
             log("writing bundle #{bundleFile} with: \n#{@currentBundleText}")
             IO::write(bundleFile, @currentBundleText)
@@ -183,7 +205,6 @@ ARGV.each {
 
     log("found #{sources.length} source files in #{sourcesFile}")
 
-    currentDirectory = nil
     sources.sort.each {
         | file |
 
@@ -199,7 +220,21 @@ ARGV.each {
     $bundleManagers.each_value { |x| x.flush } if $mode == :GenerateBundles
 }
 
+$bundleManagers.each_value {
+    | manager |
+
+    maxCount = manager.maxCount
+    bundleCount = manager.bundleCount
+    extension = manager.extension
+    if bundleCount > maxCount
+        filesToAdd = ((maxCount+1)..bundleCount).map { |x| manager.bundleFileName(x) }.join(", ")
+        raise "number of bundles for #{extension} sources, #{bundleCount}, exceeded limit, #{maxCount}. Please add #{filesToAdd} to Xcode then update UnifiedSource#{extension.capitalize}FileCount"
+    end
+}
+
 # We use stdout to report our unified source list to CMake.
 # Add trailing semicolon since CMake seems dislikes not having it.
 # Also, make sure we use print instead of puts because CMake will think the \n is a source file and fail to build.
+
+$generatedSources.map! { |path| path.display } if $mode == :PrintBundledSources
 print($generatedSources.join(";") + ";")

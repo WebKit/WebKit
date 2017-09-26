@@ -26,6 +26,7 @@
 
 # A writer that only updates file if it actually changed.
 
+import os
 
 class LazyFileWriter:
     def __init__(self, filepath, force_output):
@@ -53,6 +54,9 @@ class LazyFileWriter:
             pass
 
         if text_changed or self.force_output:
+            dirname = os.path.dirname(self._filepath)
+            if not os.path.isdir(dirname):
+                os.makedirs(dirname)
             out_file = open(self._filepath, "w")
             out_file.write(self._output)
             out_file.close()

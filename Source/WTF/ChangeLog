@@ -1,3 +1,23 @@
+2017-09-24  Keith Miller  <keith_miller@apple.com>
+
+        JSC build should use unified sources for derived sources
+        https://bugs.webkit.org/show_bug.cgi?id=177421
+
+        Reviewed by JF Bastien.
+
+        The script now needs to determine if a file is from a derived
+        source. This is only relevant for the CMake build since the
+        script needs to provide a list of the bundled source files. If the
+        script does not provide the full path for derived sources then
+        CMake will be unable to find them and the build will fail.
+
+        Additionally, I move the error message for the Xcode build outside
+        the main loop. This means that the error message will contain all
+        the files you need to add to Xcode and all those files will now be
+        written in DerivedSources so they should be easier to add.
+
+        * Scripts/generate-unified-source-bundles.rb:
+
 2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Support building JavaScriptCore with the Bionic C library
