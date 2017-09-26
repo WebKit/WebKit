@@ -1,3 +1,9 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the macOS WebCore CMake build
+
+        * PlatformMac.cmake:
+
 2017-09-25  Frederik Riedel  <riedel@apple.com>
 
         Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
