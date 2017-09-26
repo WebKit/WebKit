@@ -843,6 +843,11 @@ WI.Resource = class Resource extends WI.SourceCode
         this.markAsCached();
     }
 
+    isLoading()
+    {
+        return !this._finished && !this._failed;
+    }
+
     hadLoadingError()
     {
         return this._failed || this._canceled || this._statusCode >= 400;

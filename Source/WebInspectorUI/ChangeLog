@@ -1,3 +1,32 @@
+2017-09-25  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Add loading indicator next to resources in the Network Tab
+        https://bugs.webkit.org/show_bug.cgi?id=177469
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Models/Resource.js:
+        (WI.Resource.prototype.isLoading):
+        Provide a useful accessor to check if the Resource is considered loading or not.
+
+        * UserInterface/Views/NetworkGridContentView.js:
+        (WI.NetworkGridContentView.prototype._networkTimelineRecordAdded):
+        * UserInterface/Views/ResourceTimelineDataGridNode.js:
+        (WI.ResourceTimelineDataGridNode.prototype._updateStatus):
+        * UserInterface/Views/ResourceTreeElement.js:
+        (WI.ResourceTreeElement.prototype._updateStatus):
+        Switch existing code to use the new isLoading() function and make the similiar
+        code more consistent.
+
+        * UserInterface/Views/NetworkTableContentView.css:
+        (body[dir=ltr] .content-view.network .table .cell.name > .status):
+        (body[dir=rtl] .content-view.network .table .cell.name > .status):
+        (.content-view.network .table .cell.name > .status .indeterminate-progress-spinner):
+        * UserInterface/Views/NetworkTableContentView.js:
+        (WI.NetworkTableContentView.prototype._populateNameCell):
+        Add a loading indicator to the Name column in the Network tab.
+        It is sized the same as the loading indicator in the Resource tab.
+
 2017-09-25  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Elements tab's Layers sidebar should disappear when Layers tab is present.

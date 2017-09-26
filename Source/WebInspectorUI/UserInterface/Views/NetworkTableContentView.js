@@ -270,7 +270,15 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
     _populateNameCell(cell, entry)
     {
-        cell.removeChildren();
+        console.assert(!cell.firstChild, "We expect the cell to be empty.", cell, cell.firstChild);
+
+        let resource = entry.resource;
+        if (resource.isLoading()) {
+            let statusElement = cell.appendChild(document.createElement("div"));
+            statusElement.className = "status";
+            let spinner = new WI.IndeterminateProgressSpinner;
+            statusElement.appendChild(spinner.element);
+        }
 
         let iconElement = cell.appendChild(document.createElement("img"));
         iconElement.className = "icon";

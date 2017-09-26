@@ -310,17 +310,15 @@ WI.ResourceTimelineDataGridNode = class ResourceTimelineDataGridNode extends WI.
                 this.createGoToArrowButton(cell, this._dataGridNodeGoToArrowClicked.bind(this));
         }
 
-        if (this._spinner)
-            this._spinner.element.remove();
-
-        if (this._resource.finished || this._resource.failed)
-            return;
-
-        if (!this._spinner)
-            this._spinner = new WI.IndeterminateProgressSpinner;
-
-        let contentElement = cell.firstChild;
-        contentElement.appendChild(this._spinner.element);
+        if (this._resource.isLoading()) {
+            if (!this._spinner)
+                this._spinner = new WI.IndeterminateProgressSpinner;
+            let contentElement = cell.firstChild;
+            contentElement.appendChild(this._spinner.element);            
+        } else {
+            if (this._spinner)
+                this._spinner.element.remove();
+        }
     }
 
     _mouseoverRecordBar(event)

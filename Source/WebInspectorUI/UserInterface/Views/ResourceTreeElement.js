@@ -177,14 +177,15 @@ WI.ResourceTreeElement = class ResourceTreeElement extends WI.SourceCodeTreeElem
         else
             this.removeClassName(WI.ResourceTreeElement.FailedStyleClassName);
 
-        if (this._resource.finished || this._resource.failed) {
-            // Remove the spinner.
+        if (this._resource.isLoading()) {
+            if (!this.status || !this.status[WI.ResourceTreeElement.SpinnerSymbol]) {
+                let spinner = new WI.IndeterminateProgressSpinner;
+                this.status = spinner.element;
+                this.status[WI.ResourceTreeElement.SpinnerSymbol] = true;
+            }
+        } else {
             if (this.status && this.status[WI.ResourceTreeElement.SpinnerSymbol])
                 this.status = "";
-        } else {
-            let spinner = new WI.IndeterminateProgressSpinner;
-            this.status = spinner.element;
-            this.status[WI.ResourceTreeElement.SpinnerSymbol] = true;
         }
     }
 

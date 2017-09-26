@@ -43,3 +43,19 @@
 .content-view.network .table .error {
     color: var(--error-text-color);
 }
+
+body[dir=ltr] .content-view.network .table .cell.name > .status {
+    float: right;
+    margin-left: 4px;
+}
+
+body[dir=rtl] .content-view.network .table .cell.name > .status {
+    float: left;
+    margin-right: 4px;
+}
+
+.content-view.network .table .cell.name > .status .indeterminate-progress-spinner {
+    margin-top: 3px;
+    width: 14px;
+    height: 14px;
+}

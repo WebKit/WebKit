@@ -356,7 +356,7 @@ WI.NetworkGridContentView = class NetworkGridContentView extends WI.ContentView
         this.needsLayout();
 
         let resource = resourceTimelineRecord.resource;
-        if (resource.finished || resource.failed || resource.canceled)
+        if (!resource.isLoading())
             return;
 
         resource[WI.NetworkGridContentView.ResourceDidFinishOrFail] = false;
