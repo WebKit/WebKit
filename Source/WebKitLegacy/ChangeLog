@@ -1,3 +1,14 @@
+2017-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] WebKitCOMAPI.h is not copied after build has finished.
+        https://bugs.webkit.org/show_bug.cgi?id=177505
+
+        Reviewed by Brent Fulgham.
+
+        The file is located in the WebKitLegacy forwarding headers folder, not the WebKit folder.
+
+        * WebKitLegacy.vcxproj/WebKitLegacy.proj:
+
 2017-09-25  Timothy Horton  <timothy_horton@apple.com>
 
         Fix the macOS WebKit CMake build

@@ -65,7 +65,7 @@
     <Message Text="Moving $(CONFIG) build results to $(DSTROOT)" />
 
     <!-- Identify the files to copy over -->
-    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WebKit\**\*.*">
+    <CreateItem Include="$(ConfigurationBuildDir)\build32\DerivedSources\ForwardingHeaders\WebKitLegacy\**\*.*">
       <Output TaskParameter="Include" ItemName="IncFiles" />
     </CreateItem>
     <CreateItem Include="$(ConfigurationBuildDir)\build32\bin32\*">
