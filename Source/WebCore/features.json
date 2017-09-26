@@ -960,16 +960,6 @@
         "comment": "WebKit used to support MicroData. The feature never gained any traction and was eventually removed to clean up the codebase."
     },
     {
-        "name": "Navigator.hardwareConcurrency",
-        "status": {
-            "status": "Supported",
-            "enabled-by-default": true
-        },
-        "url": "https://wiki.whatwg.org/wiki/Navigator_HW_Concurrency",
-        "webkit-url": "http://trac.webkit.org/changeset/169017",
-        "description": "Navigator.hardwareConcurrency provides the total number of logical processors available to the user agent."
-    },
-    {
         "name": "Payment Request",
         "status": {
             "status": "In Development"
