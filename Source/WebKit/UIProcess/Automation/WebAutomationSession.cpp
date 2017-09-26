@@ -1222,6 +1222,50 @@ void WebAutomationSession::deleteAllCookies(ErrorString& errorString, const Stri
     cookieManager->deleteCookiesForHostname(page->websiteDataStore().sessionID(), activeURL.host());
 }
 
+void WebAutomationSession::getSessionPermissions(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions)
+{
+    auto permissionsObjectArray = Inspector::Protocol::Array<Inspector::Protocol::Automation::SessionPermissionData>::create();
+    auto getUserMediaPermissionObject = Inspector::Protocol::Automation::SessionPermissionData::create()
+        .setPermission(Inspector::Protocol::Automation::SessionPermission::GetUserMedia)
+        .setValue(m_permissionForGetUserMedia)
+        .release();
+
+    permissionsObjectArray->addItem(WTFMove(getUserMediaPermissionObject));
+    out_permissions = WTFMove(permissionsObjectArray);
+}
+
+void WebAutomationSession::setSessionPermissions(ErrorString& errorString, const Inspector::InspectorArray& permissions)
+{
+    for (auto it = permissions.begin(); it != permissions.end(); ++it) {
+        RefPtr<InspectorObject> permission;
+        if (!it->get()->asObject(permission))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permissions' is invalid.");
+
+        String permissionName;
+        if (!permission->getString(WTF::ASCIILiteral("permission"), permissionName))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' is missing or invalid.");
+
+        auto parsedPermissionName = Inspector::Protocol::AutomationHelpers::parseEnumValueFromString<Inspector::Protocol::Automation::SessionPermission>(permissionName);
+        if (!parsedPermissionName)
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'permission' has an unknown value.");
+
+        bool permissionValue;
+        if (!permission->getBoolean(WTF::ASCIILiteral("value"), permissionValue))
+            FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, "The parameter 'value' is missing or invalid.");
+
+        switch (parsedPermissionName.value()) {
+        case Inspector::Protocol::Automation::SessionPermission::GetUserMedia:
+            m_permissionForGetUserMedia = permissionValue;
+            break;
+        }
+    }
+}
+
+bool WebAutomationSession::shouldAllowGetUserMediaForPage(const WebPageProxy&) const
+{
+    return m_permissionForGetUserMedia;
+}
+
 #if USE(APPKIT) || PLATFORM(GTK)
 static WebEvent::Modifiers protocolModifierToWebEventModifier(Inspector::Protocol::Automation::KeyModifier modifier)
 {

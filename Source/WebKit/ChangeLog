@@ -1,3 +1,39 @@
+2017-09-26  Brian Burg  <bburg@apple.com>
+
+        Web Automation: add commands to get and set user permissions for pages in an automation session
+        https://bugs.webkit.org/show_bug.cgi?id=177405
+        <rdar://problem/34493846>
+
+        Reviewed by Joseph Pecoraro.
+
+        To test some Web APIs via WebDriver, it needs to be possible to simulate a user accepting or
+        denying requests for elevated permissions, such as getUserMedia() or geolocation.
+
+        This patch adds a generic way for a test to configure the automation session's
+        simulated user action that will happen every time a specific permission is requested.
+        A test can set a "session permission", trigger the permission request via Web API,
+        and then verify that the page behaves correctly when the user accepted or denied the request.
+
+        A proposal will follow shortly to expose this functionality via a new REST API endpoint.
+
+        * UIProcess/Automation/Automation.json: Add get/set commands.
+
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        (WebKit::WebAutomationSession::getSessionPermissions):
+        (WebKit::WebAutomationSession::setSessionPermissions):
+        For now, store the permission value in a member of the session. The getUserMedia
+        permission only needs a bool, but there is no reason we couldn't use more complicated
+        values for permissions (i.e., strings, numbers, arrays, objects) someday.
+
+        (WebKit::WebAutomationSession::shouldAllowGetUserMediaForPage const):
+        Expose the specific decision to be taken based on whether the request is allowed or denied.
+
+        * UIProcess/Automation/WebAutomationSession.h:
+        * UIProcess/UserMediaPermissionRequestManagerProxy.cpp:
+        (WebKit::UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame):
+        If the page is under automation, then simulate the user action according to the
+        current values of permissions set for the session.
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Make PolicyAction an encodable enum class

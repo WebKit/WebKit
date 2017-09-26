@@ -23,8 +23,10 @@
 #include "APISecurityOrigin.h"
 #include "APIUIClient.h"
 #include "UserMediaProcessManager.h"
+#include "WebAutomationSession.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessPool.h"
 #include "WebProcessProxy.h"
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
@@ -299,6 +301,17 @@ void UserMediaPermissionRequestManagerProxy::requestUserMediaPermissionForFrame(
         if (m_page.preferences().mockCaptureDevicesEnabled() && !m_page.preferences().mockCaptureDevicesPromptEnabled()) {
             allowRequest(request);
             return;
+        }
+        
+        if (m_page.isControlledByAutomation()) {
+            if (WebAutomationSession* automationSession = m_page.process().processPool().automationSession()) {
+                if (automationSession->shouldAllowGetUserMediaForPage(m_page))
+                    allowRequest(request);
+                else
+                    userMediaAccessWasDenied(userMediaID, UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::UserMediaDisabled);
+
+                return;
+            }
         }
 
         if (!m_page.uiClient().decidePolicyForUserMediaPermissionRequest(m_page, *m_page.process().webFrame(frameID), WTFMove(userMediaOrigin), WTFMove(topLevelOrigin), request.get()))

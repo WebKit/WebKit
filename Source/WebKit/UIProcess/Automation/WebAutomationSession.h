@@ -101,6 +101,8 @@ public:
     void handleRunOpenPanel(const WebPageProxy&, const WebFrameProxy&, const API::OpenPanelParameters&, WebOpenPanelResultListenerProxy&);
     void willShowJavaScriptDialog(WebPageProxy&);
 
+    bool shouldAllowGetUserMediaForPage(const WebPageProxy&) const;
+
 #if ENABLE(REMOTE_INSPECTOR)
     // Inspector::RemoteAutomationTarget API
     String name() const override { return m_sessionIdentifier; }
@@ -145,6 +147,8 @@ public:
     void deleteSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const String& cookieName, Ref<DeleteSingleCookieCallback>&&) override;
     void addSingleCookie(Inspector::ErrorString&, const String& browsingContextHandle, const Inspector::InspectorObject& cookie, Ref<AddSingleCookieCallback>&&) override;
     void deleteAllCookies(Inspector::ErrorString&, const String& browsingContextHandle) override;
+    void getSessionPermissions(Inspector::ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Automation::SessionPermissionData>>& out_permissions) override;
+    void setSessionPermissions(Inspector::ErrorString&, const Inspector::InspectorArray& in_permissions) override;
 
     // Platform: macOS
 #if PLATFORM(MAC)
@@ -252,6 +256,8 @@ private:
 
     RunLoop::Timer<WebAutomationSession> m_loadTimer;
     Vector<String> m_filesToSelectForFileUpload;
+
+    bool m_permissionForGetUserMedia { true };
 
 #if ENABLE(REMOTE_INSPECTOR)
     Inspector::FrontendChannel* m_remoteChannel { nullptr };
