@@ -262,7 +262,7 @@ void ImageFrameCache::cacheNativeImageAtIndexAsync(NativeImagePtr&& nativeImage,
         m_image->imageFrameAvailableAtIndex(index);
 }
 
-Ref<WorkQueue> ImageFrameCache::decodingQueue()
+WorkQueue& ImageFrameCache::decodingQueue()
 {
     if (!m_decodingQueue)
         m_decodingQueue = WorkQueue::create("org.webkit.ImageDecoder", WorkQueue::Type::Serial, WorkQueue::QOS::Default);
@@ -270,7 +270,7 @@ Ref<WorkQueue> ImageFrameCache::decodingQueue()
     return *m_decodingQueue;
 }
 
-Ref<ImageFrameCache::FrameRequestQueue> ImageFrameCache::frameRequestQueue()
+ImageFrameCache::FrameRequestQueue& ImageFrameCache::frameRequestQueue()
 {
     if (!m_frameRequestQueue)
         m_frameRequestQueue = FrameRequestQueue::create();
@@ -284,7 +284,7 @@ void ImageFrameCache::startAsyncDecodingQueue()
         return;
 
     // We need to protect this, m_decodingQueue and m_decoder from being deleted while we are in the decoding loop.
-    decodingQueue()->dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = decodingQueue(), protectedFrameRequestQueue = frameRequestQueue(), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
+    decodingQueue().dispatch([protectedThis = makeRef(*this), protectedDecodingQueue = makeRef(decodingQueue()), protectedFrameRequestQueue = makeRef(frameRequestQueue()), protectedDecoder = makeRef(*m_decoder), sourceURL = sourceURL().string().isolatedCopy()] {
         ImageFrameRequest frameRequest;
 
         while (protectedFrameRequestQueue->dequeue(frameRequest)) {
