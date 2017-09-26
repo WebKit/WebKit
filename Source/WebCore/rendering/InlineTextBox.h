@@ -123,6 +123,8 @@ protected:
     void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 
+    unsigned clampedOffset(unsigned) const;
+
 private:
     void deleteLine() final;
     void extractLine() final;
@@ -152,18 +154,19 @@ public:
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
     virtual float positionForOffset(unsigned offset) const;
 
-protected:
-    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, unsigned startPos, unsigned endPos);
-    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, bool background);
-    void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
-    unsigned clampedOffset(unsigned) const;
-
 private:
     void paintDecoration(GraphicsContext&, const FontCascade&, RenderCombineText*, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
         TextDecoration, TextPaintStyle, const ShadowData*, const FloatRect& clipOutRect);
-    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color& textColor);
-    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&, const RenderStyle&, const FontCascade&);
-    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const MarkerSubrange&, const RenderStyle&, const FontCascade&, bool isActiveMatch);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color&);
+
+    void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const MarkerSubrange&);
+    void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, bool background);
+    void paintTextMatchMarker(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const MarkerSubrange&, bool isActiveMatch);
+
+    void paintCompositionBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&);
+    void paintCompositionUnderline(GraphicsContext&, const FloatPoint& boxOrigin, const CompositionUnderline&);
+
+    void paintTextSubrangeBackground(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color&, unsigned startOffset, unsigned endOffset);
 
     ExpansionBehavior expansionBehavior() const;
 

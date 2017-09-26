@@ -1,3 +1,35 @@
+2017-09-26  Daniel Bates  <dabates@apple.com>
+
+        Cleanup: Consolidate non-selection background painting code for text
+        https://bugs.webkit.org/show_bug.cgi?id=177490
+
+        Reviewed by Zalan Bujtas.
+
+        Share code to paint the background of a text subrange instead of duplicating
+        it for text match markers and composition underlines.
+
+        Additionally standardize the argument order for various paint functions and
+        make more paint functions private.
+
+        No functionality changed. So, no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Updated code as needed for changes below.
+        (WebCore::InlineTextBox::paintSelection): Add FIXME comment to fix up this code for
+        combined text while I am in this file.
+        (WebCore::InlineTextBox::paintTextSubrangeBackground): Added. Extracted from the common code of
+        paintCompositionBackground() and paintTextMatchMarker().
+        (WebCore::InlineTextBox::paintCompositionBackground): Modified to use paintTextSubrangeBackground().
+        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
+        (WebCore::InlineTextBox::paintDocumentMarker): Add FIXME comment to fix up this code for
+        combined and hyphenated text while I am here.
+        (WebCore::InlineTextBox::paintDocumentMarkers): Update code as needed for changes
+        above.
+        * rendering/InlineTextBox.h: Change visibility of paintCompositionBackground(),
+        paintDocumentMarkers() and paintCompositionUnderline() from protected to private
+        as no derived class makes use of these functions. Group related functions to
+        improve readability.
+
 2017-09-26  Dean Jackson  <dino@apple.com>
 
         Unreviewed. Remove hardware concurrency from features list.

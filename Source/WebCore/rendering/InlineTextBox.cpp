@@ -488,9 +488,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     // and composition underlines.
     if (paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseTextClip && !isPrinting) {
         if (containsComposition && !useCustomUnderlines)
-            paintCompositionBackground(context, boxOrigin, lineStyle, font,
-                renderer().frame().editor().compositionStart(),
-                renderer().frame().editor().compositionEnd());
+            paintCompositionBackground(context, boxOrigin, lineStyle, font);
 
         paintDocumentMarkers(context, boxOrigin, lineStyle, font, true);
 
@@ -689,6 +687,7 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 
     unsigned length = m_truncation != cNoTruncation ? m_truncation : len();
 
+    // FIXME: Adjust text run for combined text.
     String hyphenatedString;
     bool respectHyphen = selectionEnd == length && hasHyphen();
     if (respectHyphen)
@@ -716,22 +715,38 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 #endif
 }
 
-void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, unsigned startPos, unsigned endPos)
+inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const Color& color, unsigned startOffset, unsigned endOffset)
 {
-    unsigned selectionStart = clampedOffset(startPos);
-    unsigned selectionEnd = clampedOffset(endPos);
-    if (selectionStart >= selectionEnd)
+    startOffset = clampedOffset(startOffset);
+    endOffset = clampedOffset(endOffset);
+    if (startOffset >= endOffset)
         return;
 
-    GraphicsContextStateSaver stateSaver(context);
-    Color compositionColor = Color::compositionFill;
-    updateGraphicsContext(context, TextPaintStyle(compositionColor)); // Don't draw text at all!
+    GraphicsContextStateSaver stateSaver { context };
+    updateGraphicsContext(context, TextPaintStyle { color }); // Don't draw text at all!
 
+    // Use same y positioning and height as for selection, so that when the selection and this subrange are on
+    // the same word there are no pieces sticking out.
     LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
+
+    // FIXME: Adjust text run for combined text and hyphenation.
     TextRun textRun = constructTextRun(style);
-    font.adjustSelectionRectForText(textRun, selectionRect, selectionStart, selectionEnd);
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), compositionColor);
+    font.adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
+    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
+}
+
+void InlineTextBox::paintCompositionBackground(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font)
+{
+    paintTextSubrangeBackground(context, boxOrigin, style, font, renderer().frame().editor().compositionStart(), renderer().frame().editor().compositionEnd(), Color::compositionFill);
+}
+
+void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const MarkerSubrange& subrange, bool isActiveMatch)
+{
+    if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
+        return;
+    auto highlightColor = isActiveMatch ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
+    paintTextSubrangeBackground(context, boxOrigin, style, font, highlightColor, subrange.startOffset, subrange.endOffset);
 }
 
 static inline void mirrorRTLSegment(float logicalWidth, TextDirection direction, float& start, float width)
@@ -783,7 +798,7 @@ void InlineTextBox::paintDecoration(GraphicsContext& context, const FontCascade&
         context.concatCTM(rotation(boxRect, Counterclockwise));
 }
 
-void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange, const RenderStyle& style, const FontCascade& font)
+void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const MarkerSubrange& subrange)
 {
     // Never print spelling/grammar markers (5327887)
     if (renderer().document().printing())
@@ -812,6 +827,7 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
             endPosition = std::min(endPosition, static_cast<unsigned>(m_truncation));
 
         // Calculate start & width
+        // FIXME: Adjust text run for combined text and hyphenation.
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
@@ -863,31 +879,6 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
         underlineOffset = baseline + 2;
     }
     context.drawLineForDocumentMarker(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, lineStyleForSubrangeType(subrange.type));
-}
-
-void InlineTextBox::paintTextMatchMarker(GraphicsContext& context, const FloatPoint& boxOrigin, const MarkerSubrange& subrange, const RenderStyle& style, const FontCascade& font, bool isActiveMatch)
-{
-    if (!renderer().frame().editor().markedTextMatchesAreHighlighted())
-        return;
-
-    auto color = isActiveMatch ? renderer().theme().platformActiveTextSearchHighlightColor() : renderer().theme().platformInactiveTextSearchHighlightColor();
-    GraphicsContextStateSaver stateSaver(context);
-    updateGraphicsContext(context, TextPaintStyle(color)); // Don't draw text at all!
-
-    // Use same y positioning and height as for selection, so that when the selection and this highlight are on
-    // the same word there are no pieces sticking out.
-    LayoutUnit deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
-    LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, this->selectionHeight());
-
-    unsigned sPos = clampedOffset(subrange.startOffset);
-    unsigned ePos = clampedOffset(subrange.endOffset);
-    TextRun run = constructTextRun(style);
-    font.adjustSelectionRectForText(run, selectionRect, sPos, ePos);
-
-    if (selectionRect.isEmpty())
-        return;
-
-    context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), run.ltr()), color);
 }
 
 void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, bool background)
@@ -984,9 +975,9 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext& context, const FloatPo
 
     for (auto& subrange : subdivide(subranges, OverlapStrategy::Frontmost)) {
         if (subrange.type == MarkerSubrange::TextMatch)
-            paintTextMatchMarker(context, boxOrigin, subrange, style, font, subrange.marker->isActiveMatch());
+            paintTextMatchMarker(context, boxOrigin, style, font, subrange, subrange.marker->isActiveMatch());
         else
-            paintDocumentMarker(context, boxOrigin, subrange, style, font);
+            paintDocumentMarker(context, boxOrigin, style, font, subrange);
     }
 }
 
