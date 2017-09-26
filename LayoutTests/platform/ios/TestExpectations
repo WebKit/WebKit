@@ -2942,3 +2942,5 @@ webkit.org/b/177438 http/tests/cache-storage/cache-representation.https.html [ P
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
 webkit.org/b/177445 fast/loader/form-submission-after-beforeunload-cancel.html [ Pass Timeout ]
+
+webkit.org/b/177397 compositing/masks/compositing-clip-path-change-no-repaint.html [ Pass Failure ]
