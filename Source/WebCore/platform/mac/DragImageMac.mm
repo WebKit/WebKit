@@ -38,7 +38,6 @@
 #import "Image.h"
 #import "StringTruncator.h"
 #import "TextIndicator.h"
-#import "TextRun.h"
 #import "URL.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/CoreTextSPI.h>

@@ -30,7 +30,6 @@
 #if PLATFORM(IOS)
 
 #import "FontCascade.h"
-#import "TextRun.h"
 #import <CoreFoundation/CFNotificationCenter.h>
 #import <math.h>
 #import <wtf/Assertions.h>
