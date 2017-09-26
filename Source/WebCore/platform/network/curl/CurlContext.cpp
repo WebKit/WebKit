@@ -270,14 +270,12 @@ void CurlHandle::initialize()
 
 CURLcode CurlHandle::perform()
 {
-    m_errorCode = curl_easy_perform(m_handle);
-    return m_errorCode;
+    return curl_easy_perform(m_handle);
 }
 
 CURLcode CurlHandle::pause(int bitmask)
 {
-    m_errorCode = curl_easy_pause(m_handle, bitmask);
-    return m_errorCode;
+    return curl_easy_pause(m_handle, bitmask);
 }
 
 void CurlHandle::enableShareHandle()
@@ -541,14 +539,12 @@ void CurlHandle::setSslCtxCallbackFunction(curl_ssl_ctx_callback callbackFunc, v
 
 URL CurlHandle::getEffectiveURL()
 {
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
+    if (!m_handle)
         return URL();
-    }
 
     char* url;
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_EFFECTIVE_URL, &url);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_EFFECTIVE_URL, &url);
+    if (errorCode != CURLE_OK)
         return URL();
 
     return URL(URL(), url);
@@ -556,14 +552,12 @@ URL CurlHandle::getEffectiveURL()
 
 std::optional<uint16_t> CurlHandle::getPrimaryPort()
 {
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
+    if (!m_handle)
         return std::nullopt;
-    }
 
     long port;
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_PRIMARY_PORT, &port);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
     /*
@@ -575,14 +569,12 @@ std::optional<uint16_t> CurlHandle::getPrimaryPort()
 
 std::optional<long> CurlHandle::getResponseCode()
 {
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
+    if (!m_handle)
         return std::nullopt;
-    }
 
     long responseCode;
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_RESPONSE_CODE, &responseCode);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_RESPONSE_CODE, &responseCode);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
     return responseCode;
@@ -590,15 +582,13 @@ std::optional<long> CurlHandle::getResponseCode()
 
 std::optional<long long> CurlHandle::getContentLength()
 {
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
+    if (!m_handle)
         return std::nullopt;
-    }
 
     double contentLength;
 
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &contentLength);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
     return static_cast<long long>(contentLength);
@@ -606,14 +596,12 @@ std::optional<long long> CurlHandle::getContentLength()
 
 std::optional<long> CurlHandle::getHttpAuthAvail()
 {
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
+    if (!m_handle)
         return std::nullopt;
-    }
 
     long httpAuthAvailable;
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTPAUTH_AVAIL, &httpAuthAvailable);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTPAUTH_AVAIL, &httpAuthAvailable);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
     return httpAuthAvailable;
@@ -626,25 +614,23 @@ std::optional<NetworkLoadMetrics> CurlHandle::getNetworkLoadMetrics()
     double appConnect = 0.0;
     double startTransfer = 0.0;
 
-    if (!m_handle) {
-        m_errorCode = CURLE_FAILED_INIT;
-        return std::nullopt;
-    }
-
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_NAMELOOKUP_TIME, &nameLookup);
-    if (m_errorCode != CURLE_OK)
+    if (!m_handle)
         return std::nullopt;
 
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONNECT_TIME, &connect);
-    if (m_errorCode != CURLE_OK)
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_NAMELOOKUP_TIME, &nameLookup);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_APPCONNECT_TIME, &appConnect);
-    if (m_errorCode != CURLE_OK)
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_CONNECT_TIME, &connect);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    m_errorCode = curl_easy_getinfo(m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfer);
-    if (m_errorCode != CURLE_OK)
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_APPCONNECT_TIME, &appConnect);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    errorCode = curl_easy_getinfo(m_handle, CURLINFO_STARTTRANSFER_TIME, &startTransfer);
+    if (errorCode != CURLE_OK)
         return std::nullopt;
 
     NetworkLoadMetrics networkLoadMetrics;

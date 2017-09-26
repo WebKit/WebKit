@@ -30,16 +30,7 @@
 
 #if USE(CURL)
 
-#include "ResourceHandleCurlDelegate.h"
-#include <iterator>
-#include <wtf/MainThread.h>
-#include <wtf/text/CString.h>
-
-using namespace WebCore;
-
 namespace WebCore {
-
-enum class CurlJobResult { Done, Error, Cancelled };
 
 /*
  * CurlJobList is used only in background so that no need to manage mutex
@@ -48,79 +39,82 @@ class CurlJobList : public CurlMultiHandle {
 public:
     bool isEmpty() const { return m_activeJobs.isEmpty(); }
 
-    void startJobs(HashMap<CurlJobTicket, CurlJobClient*>&& jobs)
+    void startJobs(HashSet<CurlJobClient*>&& jobs)
     {
         auto localJobs = WTFMove(jobs);
-        for (auto& job : localJobs) {
-            job.value->setupRequest();
-            m_activeJobs.add(job.key, job.value);
-            addHandle(job.key);
+        for (auto& client : localJobs) {
+            CURL* handle = client->setupTransfer();
+            if (!handle)
+                return;
+
+            m_activeJobs.add(handle, client);
+            addHandle(handle);
         }
     }
 
-    void finishJobs(HashSet<CurlJobTicket>&& tickets, CurlJobResult result)
+    void finishJobs(HashMap<CURL*, CURLcode>&& tickets, WTF::Function<void(CurlJobClient*, CURLcode)> completionHandler)
     {
         auto localTickets = WTFMove(tickets);
         for (auto& ticket : localTickets) {
-            if (!m_activeJobs.contains(ticket))
+            if (!m_activeJobs.contains(ticket.key))
                 continue;
-            removeHandle(ticket);
-            notifyResult(m_activeJobs.inlineGet(ticket), result);
-            m_activeJobs.remove(ticket);
+
+            CURL* handle = ticket.key;
+            CURLcode result = ticket.value;
+            CurlJobClient* client = m_activeJobs.inlineGet(handle);
+
+            removeHandle(handle);
+            m_activeJobs.remove(handle);
+            completionHandler(client, result);
+
+            callOnMainThread([client]() {
+                client->release();
+            });
         }
     }
 
 private:
-    void notifyResult(CurlJobClient* client, CurlJobResult result)
-    {
-        switch (result) {
-        case CurlJobResult::Done:
-            client->notifyFinish();
-            break;
-        case CurlJobResult::Error:
-            client->notifyFail();
-            break;
-        case CurlJobResult::Cancelled:
-            break;
-        }
-
-        client->release();
-    }
-
-    HashMap<CurlJobTicket, CurlJobClient*> m_activeJobs;
+    HashMap<CURL*, CurlJobClient*> m_activeJobs;
 };
 
-CurlJobTicket CurlJobManager::add(CurlHandle& curl, CurlJobClient& client)
+bool CurlJobManager::add(CurlJobClient* client)
 {
     ASSERT(isMainThread());
 
-    client.retain();
+    if (!client)
+        return false;
 
-    CurlJobTicket ticket = static_cast<CurlJobTicket>(curl.handle());
+    client->retain();
 
     {
         LockHolder locker(m_mutex);
-        m_cancelledTickets.remove(ticket);
-        m_pendingJobs.add(ticket, &client);
+        m_pendingJobs.add(client);
     }
 
     startThreadIfNeeded();
 
-    return ticket;
+    return true;
 }
 
-void CurlJobManager::cancel(CurlJobTicket job)
+void CurlJobManager::cancel(CurlJobClient* client)
 {
     ASSERT(isMainThread());
 
+    if (!client || !client->handle())
+        return;
+
     LockHolder locker(m_mutex);
-    m_cancelledTickets.add(job);
+    m_cancelledJobs.add(client->handle(), CURLE_OK);
 }
 
 void CurlJobManager::callOnJobThread(WTF::Function<void()>&& task)
 {
-    LockHolder locker(m_mutex);
-    m_taskQueue.append(WTFMove(task));
+    {
+        LockHolder locker(m_mutex);
+        m_taskQueue.append(WTFMove(task));
+    }
+
+    startThreadIfNeeded();
 }
 
 void CurlJobManager::startThreadIfNeeded()
@@ -164,25 +158,30 @@ void CurlJobManager::updateJobList(CurlJobList& jobs)
 {
     ASSERT(!isMainThread());
 
-    HashMap<CurlJobTicket, CurlJobClient*> pendingJobs;
-    HashSet<CurlJobTicket> cancelledTickets;
+    HashSet<CurlJobClient*> pendingJobs;
+    HashMap<CURL*, CURLcode> cancelledJobs;
     Vector<WTF::Function<void()>> taskQueue;
 
     {
         LockHolder locker(m_mutex);
 
         pendingJobs = WTFMove(m_pendingJobs);
-        cancelledTickets = WTFMove(m_cancelledTickets);
+        cancelledJobs = WTFMove(m_cancelledJobs);
         taskQueue = WTFMove(m_taskQueue);
     }
 
-    jobs.startJobs(WTFMove(pendingJobs));
-    jobs.finishJobs(WTFMove(cancelledTickets), CurlJobResult::Cancelled);
-    jobs.finishJobs(WTFMove(m_finishedTickets), CurlJobResult::Done);
-    jobs.finishJobs(WTFMove(m_failedTickets), CurlJobResult::Error);
-
     for (auto& task : taskQueue)
         task();
+
+    jobs.startJobs(WTFMove(pendingJobs));
+
+    jobs.finishJobs(WTFMove(cancelledJobs), [](CurlJobClient* client, CURLcode) {
+        client->didCancelTransfer();
+    });
+
+    jobs.finishJobs(WTFMove(m_finishedJobs), [](CurlJobClient* client, CURLcode result) {
+        client->didCompleteTransfer(result);
+    });
 }
 
 void CurlJobManager::workerThread()
@@ -229,11 +228,7 @@ void CurlJobManager::workerThread()
                 break;
 
             ASSERT(msg->msg == CURLMSG_DONE);
-            auto ticket = static_cast<CurlJobTicket>(msg->easy_handle);
-            if (msg->data.result == CURLE_OK)
-                m_finishedTickets.add(ticket);
-            else
-                m_failedTickets.add(ticket);
+            m_finishedJobs.add(msg->easy_handle, msg->data.result);
         }
 
         if (jobs.isEmpty())

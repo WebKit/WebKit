@@ -93,16 +93,31 @@ void ResourceHandleCurlDelegate::releaseHandle()
     m_handle = nullptr;
 }
 
-bool ResourceHandleCurlDelegate::start()
+void ResourceHandleCurlDelegate::start(bool isSyncRequest)
 {
-    m_job = CurlJobManager::singleton().add(m_curlHandle, *this);
-    return !!m_job;
+    m_isSyncRequest = isSyncRequest;
+
+    if (!m_isSyncRequest) {
+        // For asynchronous, use CurlJobManager. Curl processes runs on sub thread.
+        CurlJobManager::singleton().add(this);
+    } else {
+        // For synchronous, does not use CurlJobManager. Curl processes runs on main thread.
+        retain();
+        setupTransfer();
+
+        // curl_easy_perform blocks until the transfer is finished.
+        CURLcode resultCode = m_curlHandle.perform();
+        didCompleteTransfer(resultCode);
+        release();
+    }
 }
 
 void ResourceHandleCurlDelegate::cancel()
 {
     releaseHandle();
-    CurlJobManager::singleton().cancel(m_job);
+
+    if (!m_isSyncRequest)
+        CurlJobManager::singleton().cancel(this);
 }
 
 void ResourceHandleCurlDelegate::setDefersLoading(bool defers)
@@ -143,9 +158,7 @@ void ResourceHandleCurlDelegate::setAuthentication(const String& user, const Str
 
 void ResourceHandleCurlDelegate::dispatchSynchronousJob()
 {
-    URL kurl = m_firstRequest.url();
-
-    if (kurl.protocolIsData()) {
+    if (m_firstRequest.url().protocolIsData()) {
         handleDataURL();
         return;
     }
@@ -155,15 +168,7 @@ void ResourceHandleCurlDelegate::dispatchSynchronousJob()
     // and we would assert so force defersLoading to be false.
     m_defersLoading = false;
 
-    setupRequest();
-
-    // curl_easy_perform blocks until the transfer is finished.
-    CURLcode ret = m_curlHandle.perform();
-
-    if (ret != CURLE_OK)
-        notifyFail();
-    else
-        notifyFinish();
+    start(true);
 }
 
 void ResourceHandleCurlDelegate::retain()
@@ -176,7 +181,7 @@ void ResourceHandleCurlDelegate::release()
     deref();
 }
 
-void ResourceHandleCurlDelegate::setupRequest()
+CURL* ResourceHandleCurlDelegate::setupTransfer()
 {
     CurlContext& context = CurlContext::singleton();
 
@@ -245,38 +250,46 @@ void ResourceHandleCurlDelegate::setupRequest()
     applyAuthentication();
 
     m_curlHandle.enableProxyIfExists();
+
+    return m_curlHandle.handle();
 }
 
-void ResourceHandleCurlDelegate::notifyFinish()
+void ResourceHandleCurlDelegate::didCompleteTransfer(CURLcode result)
 {
-    NetworkLoadMetrics networkLoadMetrics = getNetworkLoadMetrics();
+    if (result == CURLE_OK) {
+        NetworkLoadMetrics networkLoadMetrics = getNetworkLoadMetrics();
 
-    if (isMainThread())
-        didFinish(networkLoadMetrics);
-    else {
-        callOnMainThread([protectedThis = makeRef(*this), metrics = networkLoadMetrics.isolatedCopy()] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->didFinish(metrics);
-        });
+        if (isMainThread())
+            didFinish(networkLoadMetrics);
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), metrics = networkLoadMetrics.isolatedCopy()] {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->didFinish(metrics);
+            });
+        }
+    } else {
+        ResourceError resourceError = ResourceError::httpError(result, m_firstRequest.url());
+        if (m_sslVerifier.sslErrors())
+            resourceError.setSslErrors(m_sslVerifier.sslErrors());
+
+        if (isMainThread())
+            didFail(resourceError);
+        else {
+            callOnMainThread([protectedThis = makeRef(*this), error = resourceError.isolatedCopy()] {
+                if (!protectedThis->m_handle)
+                    return;
+                protectedThis->didFail(error);
+            });
+        }
     }
+
+    m_formDataStream = nullptr;
 }
 
-void ResourceHandleCurlDelegate::notifyFail()
+void ResourceHandleCurlDelegate::didCancelTransfer()
 {
-    ResourceError resourceError = ResourceError::httpError(m_curlHandle.errorCode(), m_firstRequest.url());
-    if (m_sslVerifier.sslErrors())
-        resourceError.setSslErrors(m_sslVerifier.sslErrors());
-
-    if (isMainThread())
-        didFail(resourceError);
-    else {
-        callOnMainThread([protectedThis = makeRef(*this), error = resourceError.isolatedCopy()] {
-            if (!protectedThis->m_handle)
-                return;
-            protectedThis->didFail(error);
-        });
-    }
+    m_formDataStream = nullptr;
 }
 
 ResourceResponse& ResourceHandleCurlDelegate::response()
@@ -425,8 +438,6 @@ void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics
 {
     response().setDeprecatedNetworkLoadMetrics(networkLoadMetrics);
 
-    m_formDataStream = nullptr;
-
     if (!m_handle)
         return;
 
@@ -447,8 +458,6 @@ void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics
 
 void ResourceHandleCurlDelegate::didFail(const ResourceError& resourceError)
 {
-    m_formDataStream = nullptr;
-
     if (!m_handle)
         return;
 

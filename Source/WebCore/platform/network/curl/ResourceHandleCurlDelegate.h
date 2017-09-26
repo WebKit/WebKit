@@ -29,7 +29,6 @@
 #if USE(CURL)
 
 #include "Credential.h"
-#include "CurlContext.h"
 #include "CurlJobManager.h"
 #include "CurlSSLVerifier.h"
 #include "FormDataStreamCurl.h"
@@ -54,7 +53,7 @@ public:
     bool hasHandle() const;
     void releaseHandle();
 
-    bool start();
+    bool start() { start(false); return true; }
     void cancel();
 
     void setDefersLoading(bool);
@@ -66,12 +65,15 @@ private:
     void retain() override;
     void release() override;
 
-    void setupRequest() override;
-    void notifyFinish() override;
-    void notifyFail() override;
+    CURL* handle() override { return m_curlHandle.handle(); }
+    CURL* setupTransfer() override;
+    void didCompleteTransfer(CURLcode) override;
+    void didCancelTransfer() override;
 
     // Called from main thread.
     ResourceResponse& response();
+
+    void start(bool isSyncRequest);
 
     void setupAuthentication();
 
@@ -108,7 +110,6 @@ private:
     std::unique_ptr<FormDataStream> m_formDataStream;
     std::unique_ptr<MultipartHandle> m_multipartHandle;
     unsigned short m_authFailureCount { 0 };
-    CurlJobTicket m_job { nullptr };
     // Used by worker thread.
     ResourceRequest m_firstRequest;
     HTTPHeaderMap m_customHTTPHeaderFields;
@@ -122,6 +123,7 @@ private:
     CurlHandle m_curlHandle;
     CurlSSLVerifier m_sslVerifier;
     // Used by both threads.
+    bool m_isSyncRequest { false };
     Condition m_workerThreadConditionVariable;
     Lock m_workerThreadMutex;
     size_t m_sendBytes { 0 };

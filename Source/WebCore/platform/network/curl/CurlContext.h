@@ -224,9 +224,6 @@ public:
     CURLcode perform();
     CURLcode pause(int);
 
-    CURLcode errorCode() const { return m_errorCode; }
-    void setErrorCode(CURLcode errorCode) { m_errorCode = errorCode; }
-
     static const String errorDescription(CURLcode);
 
     void enableShareHandle();
@@ -298,7 +295,6 @@ private:
 
     CURL* m_handle { nullptr };
     char m_errorBuffer[CURL_ERROR_SIZE] { };
-    CURLcode m_errorCode;
 
     CurlSList m_requestHeaders;
 };

@@ -68,9 +68,10 @@ private:
     void retain() override;
     void release() override;
 
-    void setupRequest() override;
-    void notifyFinish() override;
-    void notifyFail() override;
+    CURL* handle() override { return m_curlHandle.handle(); }
+    CURL* setupTransfer() override;
+    void didCompleteTransfer(CURLcode) override;
+    void didCancelTransfer() override;
 
     void closeFile();
     void moveFileToDestination();
@@ -93,7 +94,6 @@ private:
 
     CurlHandle m_curlHandle;
     URL m_url;
-    CurlJobTicket m_job;
     String m_tempPath;
     String m_destination;
     PlatformFileHandle m_tempHandle { invalidPlatformFileHandle };

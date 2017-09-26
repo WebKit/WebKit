@@ -37,16 +37,16 @@
 namespace WebCore {
 
 class CurlJobList;
-using CurlJobTicket = void*;
 
 class CurlJobClient {
 public:
     virtual void retain() = 0;
     virtual void release() = 0;
 
-    virtual void setupRequest() = 0;
-    virtual void notifyFinish() = 0;
-    virtual void notifyFail() = 0;
+    virtual CURL* handle() = 0;
+    virtual CURL* setupTransfer() = 0;
+    virtual void didCompleteTransfer(CURLcode) = 0;
+    virtual void didCancelTransfer() = 0;
 };
 
 class CurlJobManager {
@@ -61,8 +61,8 @@ public:
     CurlJobManager() = default;
     ~CurlJobManager() { stopThread(); }
 
-    CurlJobTicket add(CurlHandle&, CurlJobClient&);
-    void cancel(CurlJobTicket);
+    bool add(CurlJobClient*);
+    void cancel(CurlJobClient*);
 
     void callOnJobThread(WTF::Function<void()>&&);
 
@@ -76,10 +76,9 @@ private:
     void workerThread();
 
     RefPtr<Thread> m_thread;
-    HashMap<CurlJobTicket, CurlJobClient*> m_pendingJobs;
-    HashSet<CurlJobTicket> m_cancelledTickets;
-    HashSet<CurlJobTicket> m_finishedTickets;
-    HashSet<CurlJobTicket> m_failedTickets;
+    HashSet<CurlJobClient*> m_pendingJobs;
+    HashMap<CURL*, CURLcode> m_finishedJobs;
+    HashMap<CURL*, CURLcode> m_cancelledJobs;
     Vector<WTF::Function<void()>> m_taskQueue;
     mutable Lock m_mutex;
     bool m_runThread { false };

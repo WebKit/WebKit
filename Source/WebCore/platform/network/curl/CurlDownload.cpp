@@ -77,15 +77,13 @@ void CurlDownload::init(CurlDownloadListener* listener, ResourceHandle*, const R
 
 bool CurlDownload::start()
 {
-    m_job = CurlJobManager::singleton().add(m_curlHandle, *this);
-    return !!m_job;
+    CurlJobManager::singleton().add(this);
+    return true;
 }
 
 bool CurlDownload::cancel()
 {
-    CurlJobTicket job = m_job;
-    m_job = nullptr;
-    CurlJobManager::singleton().cancel(job);
+    CurlJobManager::singleton().cancel(this);
     return true;
 }
 
@@ -107,7 +105,7 @@ void CurlDownload::release()
     deref();
 }
 
-void CurlDownload::setupRequest()
+CURL* CurlDownload::setupTransfer()
 {
     LockHolder locker(m_mutex);
 
@@ -121,24 +119,22 @@ void CurlDownload::setupRequest()
     m_curlHandle.enableHttpAuthentication(CURLAUTH_ANY);
     m_curlHandle.setCACertPath(CurlContext::singleton().sslHandle().getCACertPath());
 
+    return m_curlHandle.handle();
 }
 
-void CurlDownload::notifyFinish()
+void CurlDownload::didCompleteTransfer(CURLcode result)
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
-        if (!protectedThis->m_job)
-            return;
-        protectedThis->didFinish();
+    callOnMainThread([protectedThis = makeRef(*this), result] {
+        if (result == CURLE_OK)
+            protectedThis->didFinish();
+        else
+            protectedThis->didFail();
     });
 }
 
-void CurlDownload::notifyFail()
+void CurlDownload::didCancelTransfer()
 {
-    callOnMainThread([protectedThis = makeRef(*this)] {
-        if (!protectedThis->m_job)
-            return;
-        protectedThis->didFail();
-    });
+
 }
 
 void CurlDownload::closeFile()

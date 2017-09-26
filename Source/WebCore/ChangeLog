@@ -1,3 +1,58 @@
+2017-09-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Simplify JobManager's duty and move the tasks to client
+        for easy handling. Also simlify CurlHandle by not storing internal
+        error value as a member variable.
+        https://bugs.webkit.org/show_bug.cgi?id=177466
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::perform):
+        (WebCore::CurlHandle::pause):
+        (WebCore::CurlHandle::getEffectiveURL):
+        (WebCore::CurlHandle::getPrimaryPort):
+        (WebCore::CurlHandle::getResponseCode):
+        (WebCore::CurlHandle::getContentLength):
+        (WebCore::CurlHandle::getHttpAuthAvail):
+        (WebCore::CurlHandle::getNetworkLoadMetrics):
+        * platform/network/curl/CurlContext.h:
+        (WebCore::CurlHandle::errorCode const): Deleted.
+        (WebCore::CurlHandle::setErrorCode): Deleted.
+        * platform/network/curl/CurlDownload.cpp:
+        (WebCore::CurlDownload::start):
+        (WebCore::CurlDownload::cancel):
+        (WebCore::CurlDownload::setupTransfer):
+        (WebCore::CurlDownload::didCompleteTransfer):
+        (WebCore::CurlDownload::didCancelTransfer):
+        (WebCore::CurlDownload::setupRequest): Deleted.
+        (WebCore::CurlDownload::notifyFinish): Deleted.
+        (WebCore::CurlDownload::notifyFail): Deleted.
+        * platform/network/curl/CurlDownload.h:
+        * platform/network/curl/CurlJobManager.cpp:
+        (WebCore::CurlJobList::startJobs):
+        (WebCore::CurlJobList::finishJobs):
+        (WebCore::CurlJobManager::add):
+        (WebCore::CurlJobManager::cancel):
+        (WebCore::CurlJobManager::callOnJobThread):
+        (WebCore::CurlJobManager::updateJobList):
+        (WebCore::CurlJobManager::workerThread):
+        (WebCore::CurlJobList::notifyResult): Deleted.
+        * platform/network/curl/CurlJobManager.h:
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::start):
+        (WebCore::ResourceHandleCurlDelegate::cancel):
+        (WebCore::ResourceHandleCurlDelegate::dispatchSynchronousJob):
+        (WebCore::ResourceHandleCurlDelegate::setupTransfer):
+        (WebCore::ResourceHandleCurlDelegate::didCompleteTransfer):
+        (WebCore::ResourceHandleCurlDelegate::didCancelTransfer):
+        (WebCore::ResourceHandleCurlDelegate::didFinish):
+        (WebCore::ResourceHandleCurlDelegate::didFail):
+        (WebCore::ResourceHandleCurlDelegate::setupRequest): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::notifyFinish): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::notifyFail): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2017-09-26  Daniel Bates  <dabates@apple.com>
 
         Cleanup: Consolidate non-selection background painting code for text
