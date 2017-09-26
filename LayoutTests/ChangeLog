@@ -1,3 +1,17 @@
+2017-09-25  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222304. rdar://problem/34646370
+
+    2017-09-20  Said Abou-Hallawa  <sabouhallawa@apple.com>
+
+            REGRESSION(r191731): SVGPatternElement can only reference another SVGPatternElement in the same SVG document
+            https://bugs.webkit.org/show_bug.cgi?id=176221
+
+            Reviewed by Tim Horton.
+
+            * svg/custom/pattern-invalid-content-inheritance-expected.svg: Added.
+            * svg/custom/pattern-invalid-content-inheritance.svg: Added.
+
 2017-09-20  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222097. rdar://problem/34508516
