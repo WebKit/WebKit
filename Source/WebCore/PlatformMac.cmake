@@ -212,6 +212,8 @@ list(APPEND WebCore_SOURCES
     editing/cocoa/WebArchiveResourceWebResourceHandler.mm
     editing/cocoa/WebContentReaderCocoa.mm
 
+    editing/ios/AutofillElements.cpp
+
     editing/mac/AlternativeTextUIController.mm
     editing/mac/DictionaryLookup.mm
     editing/mac/EditorMac.mm
@@ -634,6 +636,7 @@ set(WebCore_FORWARDING_HEADERS_DIRECTORIES
 
     editing/cocoa
     editing/mac
+    editing/ios
 
     html/canvas
     html/forms
