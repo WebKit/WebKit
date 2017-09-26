@@ -29,12 +29,13 @@
 #if USE(CURL)
 
 #include "CurlContext.h"
+#include "CurlResponse.h"
 #include "ResourceError.h"
 
 namespace WebCore {
 
-AuthenticationChallenge::AuthenticationChallenge(uint16_t connectPort, long availableHttpAuth, unsigned previousFailureCount, const ResourceResponse& response, AuthenticationClient* client)
-    : AuthenticationChallengeBase(protectionSpaceFromHandle(connectPort, availableHttpAuth, response), Credential(), previousFailureCount, response, ResourceError())
+AuthenticationChallenge::AuthenticationChallenge(const CurlResponse& curlResponse, unsigned previousFailureCount, const ResourceResponse& response, AuthenticationClient* client)
+    : AuthenticationChallengeBase(protectionSpaceFromHandle(curlResponse, response), Credential(), previousFailureCount, response, ResourceError())
     , m_authenticationClient(client)
 {
 }
@@ -50,8 +51,11 @@ ProtectionSpaceServerType AuthenticationChallenge::protectionSpaceServerTypeFrom
     return ProtectionSpaceServerHTTP;
 }
 
-ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(uint16_t connectPort, long availableHttpAuth, const ResourceResponse& response)
+ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(const CurlResponse& curlResponse, const ResourceResponse& response)
 {
+    auto port = curlResponse.connectPort;
+    auto availableHttpAuth = curlResponse.availableHttpAuth;
+
     ProtectionSpaceAuthenticationScheme scheme = ProtectionSpaceAuthenticationSchemeUnknown;
     if (availableHttpAuth & CURLAUTH_BASIC)
         scheme = ProtectionSpaceAuthenticationSchemeHTTPBasic;
@@ -72,7 +76,7 @@ ProtectionSpace AuthenticationChallenge::protectionSpaceFromHandle(uint16_t conn
         removeLeadingAndTrailingQuotes(realm);
     }
 
-    return ProtectionSpace(response.url().host(), static_cast<int>(connectPort), protectionSpaceServerTypeFromURI(response.url()), realm, scheme);
+    return ProtectionSpace(response.url().host(), static_cast<int>(port), protectionSpaceServerTypeFromURI(response.url()), realm, scheme);
 }
 
 void AuthenticationChallenge::removeLeadingAndTrailingQuotes(String& value)

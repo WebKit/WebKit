@@ -32,21 +32,21 @@ typedef struct _CFURLResponse* CFURLResponseRef;
 
 namespace WebCore {
 
+class CurlResponse;
+
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : m_responseFired(false)
+        : ResourceResponseBase()
     {
     }
 
     ResourceResponse(const URL& url, const String& mimeType, long long expectedLength, const String& textEncodingName)
-        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName),
-          m_responseFired(false)
+        : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName)
     {
     }
 
-    void setResponseFired(bool fired) { m_responseFired = fired; }
-    bool responseFired() { return m_responseFired; }
+    ResourceResponse(const CurlResponse&);
 
     void appendHTTPHeaderField(const String&);
 
@@ -66,8 +66,6 @@ private:
     String platformSuggestedFilename() const;
 
     void setStatusLine(const String&);
-
-    bool m_responseFired;
 };
 
 } // namespace WebCore

@@ -580,6 +580,19 @@ std::optional<long> CurlHandle::getResponseCode()
     return responseCode;
 }
 
+std::optional<long> CurlHandle::getHttpConnectCode()
+{
+    if (!m_handle)
+        return std::nullopt;
+
+    long httpConnectCode;
+    CURLcode errorCode = curl_easy_getinfo(m_handle, CURLINFO_HTTP_CONNECTCODE, &httpConnectCode);
+    if (errorCode != CURLE_OK)
+        return std::nullopt;
+
+    return httpConnectCode;
+}
+
 std::optional<long long> CurlHandle::getContentLength()
 {
     if (!m_handle)

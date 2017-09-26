@@ -28,6 +28,7 @@
 #if USE(CURL)
 #include "ResourceResponse.h"
 
+#include "CurlResponse.h"
 #include "HTTPParsers.h"
 
 namespace WebCore {
@@ -75,12 +76,24 @@ bool ResourceResponse::isAppendableHeader(const String &key)
     return false;
 }
 
+ResourceResponse::ResourceResponse(const CurlResponse& response)
+    : ResourceResponseBase(response.url, "", response.expectedContentLength, "")
+{
+    setHTTPStatusCode(response.statusCode);
+
+    for (auto header : response.headers)
+        appendHTTPHeaderField(header);
+
+    setMimeType(extractMIMETypeFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
+    setTextEncodingName(extractCharsetFromMediaType(httpHeaderField(HTTPHeaderName::ContentType)));
+}
+
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
-    int splitPosistion = header.find(":");
+    auto splitPosistion = header.find(":");
     if (splitPosistion != notFound) {
-        String key = header.left(splitPosistion).stripWhiteSpace();
-        String value = header.substring(splitPosistion + 1).stripWhiteSpace();
+        auto key = header.left(splitPosistion).stripWhiteSpace();
+        auto value = header.substring(splitPosistion + 1).stripWhiteSpace();
 
         if (isAppendableHeader(key))
             addHTTPHeaderField(key, value);
@@ -94,14 +107,14 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
 
 void ResourceResponse::setStatusLine(const String& header)
 {
-    String statusLine = header.stripWhiteSpace();
+    auto statusLine = header.stripWhiteSpace();
 
-    int httpVersionEndPosition = statusLine.find(" ");
-    int statusCodeEndPosition = notFound;
+    auto httpVersionEndPosition = statusLine.find(" ");
+    auto statusCodeEndPosition = notFound;
 
     // Extract the http version
     if (httpVersionEndPosition != notFound) {
-        String httpVersion = statusLine.left(httpVersionEndPosition);
+        auto httpVersion = statusLine.left(httpVersionEndPosition);
         setHTTPVersion(httpVersion.stripWhiteSpace());
 
         statusLine = statusLine.substring(httpVersionEndPosition + 1).stripWhiteSpace();
@@ -110,7 +123,7 @@ void ResourceResponse::setStatusLine(const String& header)
 
     // Extract the http status text
     if (statusCodeEndPosition != notFound) {
-        String statusText = statusLine.substring(statusCodeEndPosition + 1);
+        auto statusText = statusLine.substring(statusCodeEndPosition + 1);
         setHTTPStatusText(statusText.stripWhiteSpace());
     }
 }

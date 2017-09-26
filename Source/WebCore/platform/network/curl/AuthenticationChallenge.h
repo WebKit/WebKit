@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class CurlResponse;
+
 class AuthenticationChallenge final : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge()
@@ -42,12 +44,12 @@ public:
     {
     }
 
-    AuthenticationChallenge(uint16_t, long, unsigned, const ResourceResponse&, AuthenticationClient* = nullptr);
+    AuthenticationChallenge(const CurlResponse&, unsigned, const ResourceResponse&, AuthenticationClient* = nullptr);
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
 
 private:
     ProtectionSpaceServerType protectionSpaceServerTypeFromURI(const URL&);
-    ProtectionSpace protectionSpaceFromHandle(uint16_t, long, const ResourceResponse&);
+    ProtectionSpace protectionSpaceFromHandle(const CurlResponse&, const ResourceResponse&);
     void removeLeadingAndTrailingQuotes(String&);
 
     RefPtr<AuthenticationClient> m_authenticationClient;

@@ -278,6 +278,7 @@ public:
     URL getEffectiveURL();
     std::optional<uint16_t> getPrimaryPort();
     std::optional<long> getResponseCode();
+    std::optional<long> getHttpConnectCode();
     std::optional<long long> getContentLength();
     std::optional<long> getHttpAuthAvail();
     std::optional<NetworkLoadMetrics> getNetworkLoadMetrics();

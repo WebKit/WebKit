@@ -317,20 +317,11 @@ void ResourceHandleCurlDelegate::setupAuthentication()
     }
 }
 
-inline static bool isHttpInfo(int statusCode)
-{
-    return 100 <= statusCode && statusCode < 200;
-}
-
-void ResourceHandleCurlDelegate::didReceiveAllHeaders(URL url, long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth)
+void ResourceHandleCurlDelegate::didReceiveAllHeaders(const CurlResponse& receivedResponse)
 {
     ASSERT(isMainThread());
 
-    response().setURL(url);
-    response().setExpectedContentLength(contentLength);
-    response().setHTTPStatusCode(httpCode);
-    response().setMimeType(extractMIMETypeFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType)).convertToASCIILowercase());
-    response().setTextEncodingName(extractCharsetFromMediaType(response().httpHeaderField(HTTPHeaderName::ContentType)));
+    m_handle->getInternal()->m_response = ResourceResponse(receivedResponse);
 
     if (response().isMultipart()) {
         String boundary;
@@ -356,13 +347,13 @@ void ResourceHandleCurlDelegate::didReceiveAllHeaders(URL url, long httpCode, lo
             return;
         }
     } else if (response().isUnauthorized()) {
-        AuthenticationChallenge challenge(connectPort, availableHttpAuth, m_authFailureCount, response(), m_handle);
+        AuthenticationChallenge challenge(receivedResponse, m_authFailureCount, response(), m_handle);
         m_handle->didReceiveAuthenticationChallenge(challenge);
         m_authFailureCount++;
         return;
     }
 
-    response().setResponseFired(true);
+    m_didNotifyResponse = true;
 
     if (m_handle->client()) {
         if (response().isNotModified()) {
@@ -383,7 +374,7 @@ void ResourceHandleCurlDelegate::didReceiveContentData(Ref<SharedBuffer>&& buffe
 {
     ASSERT(isMainThread());
 
-    if (!response().responseFired())
+    if (!m_didNotifyResponse)
         handleLocalReceiveResponse();
 
     if (m_multipartHandle)
@@ -409,7 +400,9 @@ void ResourceHandleCurlDelegate::handleLocalReceiveResponse()
 
     // Determine the MIME type based on the path.
     response().setMimeType(MIMETypeRegistry::getMIMETypeForPath(url));
-    response().setResponseFired(true);
+
+    m_didNotifyResponse = true;
+
     if (m_handle->client())
         m_handle->client()->didReceiveResponse(m_handle, ResourceResponse(response()));
 }
@@ -445,7 +438,7 @@ void ResourceHandleCurlDelegate::didFinish(NetworkLoadMetrics networkLoadMetrics
     if (!m_handle)
         return;
 
-    if (!response().responseFired()) {
+    if (!m_didNotifyResponse) {
         handleLocalReceiveResponse();
         if (!m_handle)
             return;
@@ -478,8 +471,8 @@ void ResourceHandleCurlDelegate::handleDataURL()
 
     ASSERT(m_handle->client());
 
-    int index = url.find(',');
-    if (index == -1) {
+    auto index = url.find(',');
+    if (index == notFound) {
         m_handle->client()->cannotShowURL(m_handle);
         return;
     }
@@ -671,75 +664,73 @@ CURLcode ResourceHandleCurlDelegate::willSetupSslCtx(void* sslCtx)
 */
 size_t ResourceHandleCurlDelegate::didReceiveHeader(String&& header)
 {
+    static const auto emptyLineCRLF = "\r\n";
+    static const auto emptyLineLF = "\n";
+
     if (!m_handle)
         return 0;
 
     if (m_defersLoading)
         return 0;
 
-    /*
-    * a) We can finish and send the ResourceResponse
-    * b) We will add the current header to the HTTPHeaderMap of the ResourceResponse
-    *
-    * The HTTP standard requires to use \r\n but for compatibility it recommends to
-    * accept also \n.
-    */
-    if (header == AtomicString("\r\n") || header == AtomicString("\n")) {
-        long httpCode = 0;
-        if (auto code = m_curlHandle->getResponseCode())
-            httpCode = *code;
+    size_t receiveBytes = header.length();
 
-        if (!httpCode) {
-            // Comes here when receiving 200 Connection Established. Just return.
-            return header.length();
-        }
-
-        if (isHttpInfo(httpCode)) {
-            // Just return when receiving http info, e.g. HTTP/1.1 100 Continue.
-            // If not, the request might be cancelled, because the MIME type will be empty for this response.
-            return header.length();
-        }
-
-        URL url = m_curlHandle->getEffectiveURL();
-
-        long long contentLength = 0;
-        if (auto length = m_curlHandle->getContentLength())
-            contentLength = *length;
-
-        uint16_t connectPort = 0;
-        if (auto port = m_curlHandle->getPrimaryPort())
-            connectPort = *port;
-
-        long availableAuth = CURLAUTH_NONE;
-        if (auto auth = m_curlHandle->getHttpAuthAvail())
-            availableAuth = *auth;
-
-        if (isMainThread())
-            didReceiveAllHeaders(url, httpCode, contentLength, connectPort, availableAuth);
-        else {
-            callOnMainThread([protectedThis = makeRef(*this), copyUrl = url.isolatedCopy(), httpCode, contentLength, connectPort, availableAuth] {
-                if (!protectedThis->m_handle)
-                    return;
-                protectedThis->didReceiveAllHeaders(copyUrl, httpCode, contentLength, connectPort, availableAuth);
-            });
-        }
-    } else {
-        // If the FOLLOWLOCATION option is enabled for the curl handle then
-        // curl will follow the redirections internally. Thus this header callback
-        // will be called more than one time with the line starting "HTTP" for one job.
-        if (isMainThread())
-            response().appendHTTPHeaderField(header);
-        else {
-            callOnMainThread([protectedThis = makeRef(*this), copyHeader = header.isolatedCopy() ] {
-                if (!protectedThis->m_handle)
-                    return;
-
-                protectedThis->response().appendHTTPHeaderField(copyHeader);
-            });
-        }
+    // The HTTP standard requires to use \r\n but for compatibility it recommends to accept also \n.
+    // We will add the current header to the CurlResponse.headers
+    if ((header != emptyLineCRLF) && (header != emptyLineLF)) {
+        m_response.headers.append(WTFMove(header));
+        return receiveBytes;
     }
 
-    return header.length();
+    // We can finish and send the ResourceResponse
+    long statusCode = 0;
+    if (auto code = m_curlHandle->getResponseCode())
+        statusCode = *code;
+
+    long httpConnectCode = 0;
+    if (auto code = m_curlHandle->getHttpConnectCode())
+        httpConnectCode = *code;
+
+    if ((100 <= statusCode) && (statusCode < 200)) {
+        // Just return when receiving http info, e.g. HTTP/1.1 100 Continue.
+        // If not, the request might be cancelled, because the MIME type will be empty for this response.
+        m_response = CurlResponse();
+        return receiveBytes;
+    }
+
+    if (!statusCode && (httpConnectCode == 200)) {
+        // Comes here when receiving 200 Connection Established. Just return.
+        m_response = CurlResponse();
+        return receiveBytes;
+    }
+
+    // If the FOLLOWLOCATION option is enabled for the curl handle then
+    // curl will follow the redirections internally. Thus this header callback
+    // will be called more than one time with the line starting "HTTP" for one job.
+
+    m_response.url = m_curlHandle->getEffectiveURL();
+    m_response.statusCode = statusCode;
+
+    if (auto length = m_curlHandle->getContentLength())
+        m_response.expectedContentLength = *length;
+
+    if (auto port = m_curlHandle->getPrimaryPort())
+        m_response.connectPort = *port;
+
+    if (auto auth = m_curlHandle->getHttpAuthAvail())
+        m_response.availableHttpAuth = *auth;
+
+    if (isMainThread())
+        didReceiveAllHeaders(m_response);
+    else {
+        callOnMainThread([protectedThis = makeRef(*this), response = m_response.isolatedCopy()] {
+            if (!protectedThis->m_handle)
+                return;
+            protectedThis->didReceiveAllHeaders(response);
+        });
+    }
+
+    return receiveBytes;
 }
 
 // called with data after all headers have been processed via headerCallback

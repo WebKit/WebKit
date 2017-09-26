@@ -1,3 +1,37 @@
+2017-09-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Introduce CurlResponse to hold response information among threads.
+        https://bugs.webkit.org/show_bug.cgi?id=177496
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/curl/AuthenticationChallenge.h:
+        * platform/network/curl/AuthenticationChallengeCurl.cpp:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        (WebCore::AuthenticationChallenge::protectionSpaceFromHandle):
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::getHttpConnectCode):
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlResponse.h: Added.
+        (WebCore::CurlResponse::isolatedCopy const):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::didReceiveAllHeaders):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveContentData):
+        (WebCore::ResourceHandleCurlDelegate::handleLocalReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::didFinish):
+        (WebCore::ResourceHandleCurlDelegate::handleDataURL):
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader):
+        (WebCore::isHttpInfo): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+        * platform/network/curl/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::setResponseFired): Deleted.
+        (WebCore::ResourceResponse::responseFired): Deleted.
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::ResourceResponse):
+        (WebCore::ResourceResponse::appendHTTPHeaderField):
+        (WebCore::ResourceResponse::setStatusLine):
+
 2017-09-26  Chris Dumez  <cdumez@apple.com>
 
         Make StoredCredentials an enum class and rename its header

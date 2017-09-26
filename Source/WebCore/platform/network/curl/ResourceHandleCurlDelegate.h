@@ -30,6 +30,7 @@
 
 #include "Credential.h"
 #include "CurlJobManager.h"
+#include "CurlResponse.h"
 #include "CurlSSLVerifier.h"
 #include "FormDataStreamCurl.h"
 #include "ResourceRequest.h"
@@ -77,7 +78,7 @@ private:
 
     void setupAuthentication();
 
-    void didReceiveAllHeaders(URL, long httpCode, long long contentLength, uint16_t connectPort, long availableHttpAuth);
+    void didReceiveAllHeaders(const CurlResponse&);
     void didReceiveContentData(Ref<SharedBuffer>&&);
     void handleLocalReceiveResponse();
     void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
@@ -122,6 +123,8 @@ private:
     Vector<char> m_postBytes;
     std::unique_ptr<CurlHandle> m_curlHandle;
     CurlSSLVerifier m_sslVerifier;
+    CurlResponse m_response;
+    bool m_didNotifyResponse { false };
     // Used by both threads.
     bool m_isSyncRequest { false };
     Condition m_workerThreadConditionVariable;
