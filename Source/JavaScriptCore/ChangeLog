@@ -1,3 +1,9 @@
+2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, rebaseline builtins generator tests after r222473.
+
+        * Scripts/tests/builtins/expected/WebCoreJSBuiltins.h-result:
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Make Attribute an enum class
