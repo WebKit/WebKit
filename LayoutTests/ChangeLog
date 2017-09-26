@@ -1,3 +1,13 @@
+2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Several ARIA roles with presentational children are exposing children
+        https://bugs.webkit.org/show_bug.cgi?id=177502
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/presentational-children-expected.txt: Added.
+        * accessibility/presentational-children.html: Added.
+
 2017-09-26  Megan Gardner  <megan_gardner@apple.com>
 
         Add helper functions to write better selection tests
