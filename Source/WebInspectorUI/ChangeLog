@@ -1,3 +1,13 @@
+2017-09-25  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Elements tab's Layers sidebar should disappear when Layers tab is present.
+        https://bugs.webkit.org/show_bug.cgi?id=177476
+
+        Reviewed by Devin Rousso.
+
+        * UserInterface/Views/ElementsTabContentView.js:
+        (WI.ElementsTabContentView):
+
 2017-09-25  Devin Rousso  <webkit@devinrousso.com>
 
         Web Inspector: Add autocompletion suggestions for CSS attr based on the selected element's attributes

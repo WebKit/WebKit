@@ -31,7 +31,7 @@ WI.ElementsTabContentView = class ElementsTabContentView extends WI.ContentBrows
         let tabBarItem = new WI.GeneralTabBarItem(image, title);
         let detailsSidebarPanelConstructors = [WI.DOMNodeDetailsSidebarPanel, WI.CSSStyleDetailsSidebarPanel];
 
-        if (window.LayerTreeAgent)
+        if (window.LayerTreeAgent && !WI.settings.experimentalEnableLayersTab.value)
             detailsSidebarPanelConstructors.push(WI.LayerTreeDetailsSidebarPanel);
 
         super(identifier || "elements", "elements", tabBarItem, null, detailsSidebarPanelConstructors, true);
