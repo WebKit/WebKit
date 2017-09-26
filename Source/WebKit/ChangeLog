@@ -1,3 +1,12 @@
+2017-09-25  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [WinCairo] Share default value of font family preferences among non-cocoa builds
+        https://bugs.webkit.org/show_bug.cgi?id=177479
+
+        Reviewed by Yusuke Suzuki.
+
+        * Shared/WebPreferencesDefinitions.h:
+
 2017-09-25  Frederik Riedel  <riedel@apple.com>
 
         Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
