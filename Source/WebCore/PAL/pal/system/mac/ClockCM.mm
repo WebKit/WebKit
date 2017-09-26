@@ -26,19 +26,23 @@
 #import "config.h"
 
 #if USE(COREMEDIA)
-
-#import "PlatformClockCM.h"
+#import "ClockCM.h"
 
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 
 #import "CoreMediaSoftLink.h"
 
-using namespace WebCore;
+using namespace PAL;
 
 // A default time scale of 1000 allows milli-second CMTime precision without scaling the timebase.
 static const int32_t DefaultTimeScale = 1000;
 
-PlatformClockCM::PlatformClockCM()
+std::unique_ptr<Clock> Clock::create()
+{
+    return std::make_unique<ClockCM>();
+}
+
+ClockCM::ClockCM()
     : m_timebase(0)
     , m_rate(1)
     , m_running(false)
@@ -53,43 +57,43 @@ PlatformClockCM::PlatformClockCM()
     initializeWithTimingSource(clock.get());
 }
 
-PlatformClockCM::PlatformClockCM(CMClockRef clock)
+ClockCM::ClockCM(CMClockRef clock)
     : m_timebase(0)
     , m_running(false)
 {
     initializeWithTimingSource(clock);
 }
 
-void PlatformClockCM::initializeWithTimingSource(CMClockRef clock)
+void ClockCM::initializeWithTimingSource(CMClockRef clock)
 {
     CMTimebaseRef rawTimebasePtr = 0;
     CMTimebaseCreateWithMasterClock(kCFAllocatorDefault, clock, &rawTimebasePtr);
     m_timebase = adoptCF(rawTimebasePtr);
 }
 
-void PlatformClockCM::setCurrentTime(double time)
+void ClockCM::setCurrentTime(double time)
 {
     CMTime cmTime = CMTimeMakeWithSeconds(time, DefaultTimeScale);
     CMTimebaseSetTime(m_timebase.get(), cmTime);
 }
 
-double PlatformClockCM::currentTime() const
+double ClockCM::currentTime() const
 {
     CMTime cmTime = CMTimebaseGetTime(m_timebase.get());
     return CMTimeGetSeconds(cmTime);
 }
 
-void PlatformClockCM::setCurrentMediaTime(const MediaTime& time)
+void ClockCM::setCurrentMediaTime(const MediaTime& time)
 {
     CMTimebaseSetTime(m_timebase.get(), PAL::toCMTime(time));
 }
 
-MediaTime PlatformClockCM::currentMediaTime() const
+MediaTime ClockCM::currentMediaTime() const
 {
     return PAL::toMediaTime(CMTimebaseGetTime(m_timebase.get()));
 }
 
-void PlatformClockCM::setPlayRate(double rate)
+void ClockCM::setPlayRate(double rate)
 {
     if (m_rate == rate)
         return;
@@ -99,7 +103,7 @@ void PlatformClockCM::setPlayRate(double rate)
         CMTimebaseSetRate(m_timebase.get(), rate);
 }
 
-void PlatformClockCM::start()
+void ClockCM::start()
 {
     if (m_running)
         return;
@@ -107,7 +111,7 @@ void PlatformClockCM::start()
     CMTimebaseSetRate(m_timebase.get(), m_rate);
 }
 
-void PlatformClockCM::stop()
+void ClockCM::stop()
 {
     if (!m_running)
         return;

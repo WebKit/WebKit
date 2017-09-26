@@ -1,3 +1,25 @@
+2017-09-26  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move Clock into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=174342
+
+        Reviewed by Myles C. Maxfield.
+
+        No new tests. No change in behavior.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/MediaController.cpp:
+        (MediaController::MediaController):
+        * html/MediaController.h:
+        * platform/Clock.cpp: Removed.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaSourceAVFObjC.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm:
+        (WebCore::MediaPlayerPrivateMediaStreamAVFObjC::MediaPlayerPrivateMediaStreamAVFObjC):
+        * platform/mac/PlatformClockCA.cpp: Removed. PlatformClockCA is no longer used.
+        * platform/mac/PlatformClockCA.h: Removed.
+
 2017-09-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Change member variable of CurlHandle to use std::unique_ptr

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc.  All rights reserved.
+ * Copyright (C) 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,64 +20,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ClockGeneric.h"
+#pragma once
 
-#include <wtf/CurrentTime.h>
+#if USE(COREMEDIA)
 
-using namespace WebCore;
+#include "../Clock.h"
+#include <wtf/MediaTime.h>
+#include <wtf/RetainPtr.h>
 
-ClockGeneric::ClockGeneric()
-    : m_running(false)
-    , m_rate(1)
-    , m_offset(0)
-{
-    m_startTime = m_lastTime = now();
+typedef struct OpaqueCMTimebase* CMTimebaseRef;
+typedef struct OpaqueCMClock* CMClockRef;
+
+namespace PAL {
+
+class ClockCM final : public Clock {
+public:
+    ClockCM();
+    ClockCM(CMClockRef);
+
+    void setCurrentTime(double) override;
+    double currentTime() const override;
+
+    void setCurrentMediaTime(const MediaTime&);
+    MediaTime currentMediaTime() const;
+
+    void setPlayRate(double) override;
+    double playRate() const override { return m_rate; }
+
+    void start() override;
+    void stop() override;
+    bool isRunning() const override { return m_running; }
+
+    CMTimebaseRef timebase() const { return m_timebase.get(); }
+
+private:
+    void initializeWithTimingSource(CMClockRef);
+
+    RetainPtr<CMTimebaseRef> m_timebase;
+    double m_rate;
+    bool m_running;
+};
+
 }
 
-void ClockGeneric::setCurrentTime(double time)
-{
-    m_startTime = m_lastTime = now();
-    m_offset = time;
-}
-
-double ClockGeneric::currentTime() const
-{
-    if (m_running)
-        m_lastTime = now();
-    return ((m_lastTime - m_startTime) * m_rate) + m_offset;
-}
-
-void ClockGeneric::setPlayRate(double rate)
-{
-    m_offset = currentTime();
-    m_lastTime = m_startTime = now();
-    m_rate = rate;
-}
-
-void ClockGeneric::start()
-{
-    if (m_running)
-        return;
-
-    m_lastTime = m_startTime = now();
-    m_running = true;
-}
-
-void ClockGeneric::stop()
-{
-    if (!m_running)
-        return;
-
-    m_offset = currentTime();
-    m_lastTime = m_startTime = now();
-    m_running = false;
-}
-
-double ClockGeneric::now() const
-{
-    return monotonicallyIncreasingTime();
-}
+#endif

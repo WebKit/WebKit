@@ -1,3 +1,33 @@
+2017-09-26  Yoshiaki Jitsukawa  <Yoshiaki.Jitsukawa@sony.com>
+
+        [PAL] Move Clock into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=174342
+
+        Reviewed by Myles C. Maxfield.
+
+        * PAL.xcodeproj/project.pbxproj:
+        * pal/PlatformGTK.cmake:
+        * pal/PlatformWin.cmake:
+        * pal/system/Clock.h: Renamed from Source/WebCore/platform/Clock.h.
+        * pal/system/ClockGeneric.cpp: Renamed from Source/WebCore/platform/ClockGeneric.cpp.
+        (PAL::Clock::create):
+        * pal/system/ClockGeneric.h: Renamed from Source/WebCore/platform/ClockGeneric.h.
+        * pal/system/mac/ClockCM.h: Renamed from Source/WebCore/platform/mac/PlatformClockCM.h.
+        * pal/system/mac/ClockCM.mm: Renamed from Source/WebCore/platform/mac/PlatformClockCM.mm.
+        (Clock::create):
+        (ClockCM::ClockCM):
+        (ClockCM::initializeWithTimingSource):
+        (ClockCM::setCurrentTime):
+        (ClockCM::currentTime const):
+        (ClockCM::setCurrentMediaTime):
+        (ClockCM::currentMediaTime const):
+        (ClockCM::setPlayRate):
+        (ClockCM::start):
+        (ClockCM::stop):
+
+        * pal/cf/CoreMediaSoftLink.cpp:
+        * pal/cf/CoreMediaSoftLink.h:
+        Add requrired functions.
 2017-09-26  Zan Dobersek  <zdobersek@igalia.com>
 
         [GCrypt] Only report libgcrypt errors when logging is enabled

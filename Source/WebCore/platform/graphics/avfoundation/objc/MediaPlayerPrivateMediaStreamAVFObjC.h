@@ -44,11 +44,14 @@ OBJC_CLASS NSNumber;
 OBJC_CLASS WebAVSampleBufferStatusChangeListener;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
 
+namespace PAL {
+class Clock;
+}
+
 namespace WebCore {
 
 class AudioTrackPrivateMediaStreamCocoa;
 class AVVideoCaptureSource;
-class Clock;
 class MediaSourcePrivateClient;
 class PixelBufferConformerCV;
 class VideoTrackPrivateMediaStream;
@@ -229,7 +232,7 @@ private:
     RetainPtr<WebAVSampleBufferStatusChangeListener> m_statusChangeListener;
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<PlatformLayer> m_backgroundLayer;
-    std::unique_ptr<Clock> m_clock;
+    std::unique_ptr<PAL::Clock> m_clock;
 
     MediaTime m_pausedTime;
 

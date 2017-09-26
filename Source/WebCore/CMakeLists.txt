@@ -2303,8 +2303,6 @@ set(WebCore_SOURCES
     page/scrolling/ThreadedScrollingTree.cpp
 
     platform/CalculationValue.cpp
-    platform/Clock.cpp
-    platform/ClockGeneric.cpp
     platform/ContentType.cpp
     platform/ContextMenu.cpp
     platform/ContextMenuItem.cpp

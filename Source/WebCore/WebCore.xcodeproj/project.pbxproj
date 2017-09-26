@@ -6376,7 +6376,6 @@
 		CDA98E0416039E1A00FEA3B1 /* JSWebKitMediaKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98DCE1601597900FEA3B1 /* JSWebKitMediaKeys.cpp */; };
 		CDA98E0616039E1F00FEA3B1 /* JSWebKitMediaKeySession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98DD01601597900FEA3B1 /* JSWebKitMediaKeySession.cpp */; };
 		CDA98E0B1603CD6000FEA3B1 /* LegacyCDM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98E091603CD5900FEA3B1 /* LegacyCDM.cpp */; };
-		CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */; };
 		CDAB6D2817C7DE6C00C60B34 /* MediaControlsHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D2617C7DE6C00C60B34 /* MediaControlsHost.cpp */; };
 		CDAB6D2917C7DE6C00C60B34 /* MediaControlsHost.h in Headers */ = {isa = PBXBuildFile; fileRef = CDAB6D2717C7DE6C00C60B34 /* MediaControlsHost.h */; };
 		CDAB6D2D17C814EE00C60B34 /* JSMediaControlsHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDAB6D2B17C814EE00C60B34 /* JSMediaControlsHost.cpp */; };
@@ -6437,9 +6436,6 @@
 		CDE8B5ED1A69777300B4B66A /* LegacyCDMPrivateClearKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE8B5EB1A69777300B4B66A /* LegacyCDMPrivateClearKey.h */; };
 		CDE8B5F01A69778B00B4B66A /* LegacyCDMSessionClearKey.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE8B5EE1A69778B00B4B66A /* LegacyCDMSessionClearKey.cpp */; };
 		CDE8B5F11A69778B00B4B66A /* LegacyCDMSessionClearKey.h in Headers */ = {isa = PBXBuildFile; fileRef = CDE8B5EF1A69778B00B4B66A /* LegacyCDMSessionClearKey.h */; };
-		CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */; };
-		CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */; };
-		CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA76331460B462008B31F1 /* Clock.cpp */; };
 		CDEA7C841276230400B846DD /* RenderFullScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = CDEA7C821276230400B846DD /* RenderFullScreen.h */; };
 		CDEA7C851276230400B846DD /* RenderFullScreen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDEA7C831276230400B846DD /* RenderFullScreen.cpp */; };
 		CDECA89A1EDF447D00DCB08B /* AVAssetTrackUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */; };
@@ -15132,8 +15128,6 @@
 		CDA98E091603CD5900FEA3B1 /* LegacyCDM.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCDM.cpp; sourceTree = "<group>"; };
 		CDA98E0A1603CD5900FEA3B1 /* LegacyCDM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyCDM.h; sourceTree = "<group>"; };
 		CDA98E0C1603CF3C00FEA3B1 /* LegacyCDMPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCDMPrivate.h; sourceTree = "<group>"; };
-		CDAA8D0714D385600061EA60 /* PlatformClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCM.h; sourceTree = "<group>"; };
-		CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformClockCM.mm; sourceTree = "<group>"; };
 		CDAAF45D1869094E003C1717 /* mediaControlsiOS.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsiOS.css; sourceTree = "<group>"; };
 		CDAB6D2517C7DE5700C60B34 /* MediaControlsHost.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaControlsHost.idl; sourceTree = "<group>"; };
 		CDAB6D2617C7DE6C00C60B34 /* MediaControlsHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlsHost.cpp; sourceTree = "<group>"; };
@@ -15209,12 +15203,6 @@
 		CDE8B5EB1A69777300B4B66A /* LegacyCDMPrivateClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCDMPrivateClearKey.h; sourceTree = "<group>"; };
 		CDE8B5EE1A69778B00B4B66A /* LegacyCDMSessionClearKey.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LegacyCDMSessionClearKey.cpp; sourceTree = "<group>"; };
 		CDE8B5EF1A69778B00B4B66A /* LegacyCDMSessionClearKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyCDMSessionClearKey.h; sourceTree = "<group>"; };
-		CDEA762C14608224008B31F1 /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
-		CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformClockCA.cpp; sourceTree = "<group>"; };
-		CDEA762F146084EE008B31F1 /* PlatformClockCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformClockCA.h; sourceTree = "<group>"; };
-		CDEA76311460AE1B008B31F1 /* ClockGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockGeneric.h; sourceTree = "<group>"; };
-		CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockGeneric.cpp; sourceTree = "<group>"; };
-		CDEA76331460B462008B31F1 /* Clock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clock.cpp; sourceTree = "<group>"; };
 		CDEA7C821276230400B846DD /* RenderFullScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFullScreen.h; sourceTree = "<group>"; };
 		CDEA7C831276230400B846DD /* RenderFullScreen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFullScreen.cpp; sourceTree = "<group>"; };
 		CDECA8981EDF447D00DCB08B /* AVAssetTrackUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AVAssetTrackUtilities.mm; sourceTree = "<group>"; };
@@ -19571,10 +19559,6 @@
 				4B2709810AF2E5E00065127F /* PasteboardMac.mm */,
 				1AF5E4E11E5779B1004A1F01 /* PasteboardWriter.h */,
 				1AF5E4E01E5779B1004A1F01 /* PasteboardWriter.mm */,
-				CDEA762E146084DE008B31F1 /* PlatformClockCA.cpp */,
-				CDEA762F146084EE008B31F1 /* PlatformClockCA.h */,
-				CDAA8D0714D385600061EA60 /* PlatformClockCM.h */,
-				CDAA8D0814D385600061EA60 /* PlatformClockCM.mm */,
 				BCAA486E14A052530088FAC4 /* PlatformEventFactoryMac.h */,
 				BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */,
 				C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */,
@@ -24575,10 +24559,6 @@
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
-				CDEA76331460B462008B31F1 /* Clock.cpp */,
-				CDEA762C14608224008B31F1 /* Clock.h */,
-				CDEA76321460AE29008B31F1 /* ClockGeneric.cpp */,
-				CDEA76311460AE1B008B31F1 /* ClockGeneric.h */,
 				C330A22113EC196B0000B45B /* ColorChooser.h */,
 				C37CDEBC149EF2030042090D /* ColorChooserClient.h */,
 				BCC8CFCA0986CD2400140BF2 /* ColorData.gperf */,
@@ -31449,8 +31429,6 @@
 				8348BFAB1B85729800912F36 /* ClassCollection.cpp in Sources */,
 				85031B3F0A44EFC700F992E0 /* ClipboardEvent.cpp in Sources */,
 				580371611A66F00A00BAF519 /* ClipRect.cpp in Sources */,
-				CDEA76351460B71A008B31F1 /* Clock.cpp in Sources */,
-				CDEA76341460B56F008B31F1 /* ClockGeneric.cpp in Sources */,
 				9BD8A95A18BEFC7600987E9A /* CollectionIndexCache.cpp in Sources */,
 				B27535660B053814002CE64F /* Color.cpp in Sources */,
 				0FCF33240F2B9715004B6795 /* ColorCG.cpp in Sources */,
@@ -33555,8 +33533,6 @@
 				0F13164016ED0CDE0035CC04 /* PlatformCAFiltersCocoa.mm in Sources */,
 				2D70BA1518074F860001908A /* PlatformCALayer.cpp in Sources */,
 				4958782212A57DDF007238AC /* PlatformCALayerCocoa.mm in Sources */,
-				CDEA763014608A53008B31F1 /* PlatformClockCA.cpp in Sources */,
-				CDAA8D0A14D71B2E0061EA60 /* PlatformClockCM.mm in Sources */,
 				26601EC014B3B9AD0012C0FE /* PlatformEventFactoryIOS.mm in Sources */,
 				BCAA486F14A052530088FAC4 /* PlatformEventFactoryMac.mm in Sources */,
 				F544F78815CFB2A800AF33A8 /* PlatformLocale.cpp in Sources */,

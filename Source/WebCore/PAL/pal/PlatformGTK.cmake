@@ -1,6 +1,8 @@
 list(APPEND PAL_SOURCES
     crypto/gcrypt/CryptoDigestGCrypt.cpp
 
+    system/ClockGeneric.cpp
+
     system/gtk/SoundGtk.cpp
 
     text/KillRing.cpp

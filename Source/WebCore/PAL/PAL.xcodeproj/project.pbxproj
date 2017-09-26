@@ -71,6 +71,9 @@
 		0C5AF9201F43A4C7002EAC02 /* QuickLookSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */; };
 		0C5AF9211F43A4C7002EAC02 /* SQLite3SPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */; };
 		0C5AF9221F43A4C7002EAC02 /* UIKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */; };
+		0C5FFF0C1F78D990009EFF1A /* Clock.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5FFF0B1F78D98F009EFF1A /* Clock.h */; };
+		0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */; };
+		0C5FFF101F78D9DA009EFF1A /* ClockCM.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */; };
 		0C7785891F45130F00F4EBB6 /* AVFoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */; };
 		0C77858A1F45130F00F4EBB6 /* DataDetectorsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */; };
 		0C77858B1F45130F00F4EBB6 /* LookupSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0C7785721F45130F00F4EBB6 /* LookupSPI.h */; };
@@ -198,6 +201,9 @@
 		0C5AF9161F43A4C7002EAC02 /* QuickLookSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuickLookSPI.h; sourceTree = "<group>"; };
 		0C5AF9171F43A4C7002EAC02 /* SQLite3SPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLite3SPI.h; sourceTree = "<group>"; };
 		0C5AF9181F43A4C7002EAC02 /* UIKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIKitSPI.h; sourceTree = "<group>"; };
+		0C5FFF0B1F78D98F009EFF1A /* Clock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Clock.h; sourceTree = "<group>"; };
+		0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClockCM.mm; sourceTree = "<group>"; };
+		0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockCM.h; sourceTree = "<group>"; };
 		0C7785701F45130F00F4EBB6 /* AVFoundationSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVFoundationSPI.h; sourceTree = "<group>"; };
 		0C7785711F45130F00F4EBB6 /* DataDetectorsSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsSPI.h; sourceTree = "<group>"; };
 		0C7785721F45130F00F4EBB6 /* LookupSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookupSPI.h; sourceTree = "<group>"; };
@@ -516,6 +522,7 @@
 			children = (
 				A3AB6E5D1F3D1E28009C14B1 /* cocoa */,
 				A3788EA01F05B7E200679425 /* mac */,
+				0C5FFF0B1F78D98F009EFF1A /* Clock.h */,
 				A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */,
 				A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */,
 				A3788E9B1F05B78200679425 /* Sound.cpp */,
@@ -529,6 +536,8 @@
 		A3788EA01F05B7E200679425 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				0C5FFF0E1F78D9DA009EFF1A /* ClockCM.h */,
+				0C5FFF0D1F78D9D8009EFF1A /* ClockCM.mm */,
 				A1175B561F6B470500C4B9F0 /* DefaultSearchProvider.cpp */,
 				A1175B551F6B470500C4B9F0 /* DefaultSearchProvider.h */,
 				A1175B4C1F6B337300C4B9F0 /* PopupMenu.h */,
@@ -565,6 +574,8 @@
 				0C2DA06F1F33CA8400DBC317 /* CFNetworkSPI.h in Headers */,
 				0C2DA13F1F3BEB4900DBC317 /* CFNSURLConnectionSPI.h in Headers */,
 				0C2DA0701F33CA8400DBC317 /* CFUtilitiesSPI.h in Headers */,
+				0C5FFF0C1F78D990009EFF1A /* Clock.h in Headers */,
+				0C5FFF101F78D9DA009EFF1A /* ClockCM.h in Headers */,
 				1C09D0581E31C57E00725F18 /* config.h in Headers */,
 				0C2DA0711F33CA8400DBC317 /* CoreAudioSPI.h in Headers */,
 				0C2DA11E1F3BE9E000DBC317 /* CoreGraphicsSPI.h in Headers */,
@@ -744,6 +755,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0C5FFF0F1F78D9DA009EFF1A /* ClockCM.mm in Sources */,
 				0CF99CA81F738437007EE793 /* CoreMediaSoftLink.cpp in Sources */,
 				1C09D0561E31C46500725F18 /* CryptoDigestCommonCrypto.cpp in Sources */,
 				A1175B581F6B470500C4B9F0 /* DefaultSearchProvider.cpp in Sources */,

@@ -33,7 +33,23 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(PAL, CoreMedia)
 
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
+
+#if PLATFORM(COCOA)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(IOS)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioClockCreate, OSStatus, (CFAllocatorRef allocator, CMClockRef *clockOut), (allocator, clockOut))
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
+#endif // PLATFORM(MAC)
 
 #endif // USE(AVFOUNDATION)

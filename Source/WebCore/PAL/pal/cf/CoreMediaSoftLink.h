@@ -33,9 +33,32 @@
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreMedia)
 
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimeGetSeconds, Float64, (CMTime time), (time))
+#define CMTimeGetSeconds softLink_CoreMedia_CMTimeGetSeconds
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimeMake, CMTime, (int64_t value, int32_t timescale), (value, timescale))
 #define CMTimeMake softLink_CoreMedia_CMTimeMake
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimeMakeWithSeconds, CMTime, (Float64 seconds, int32_t preferredTimeScale), (seconds, preferredTimeScale))
 #define CMTimeMakeWithSeconds softLink_CoreMedia_CMTimeMakeWithSeconds
+
+#if PLATFORM(COCOA)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimebaseCreateWithMasterClock, OSStatus, (CFAllocatorRef allocator, CMClockRef masterClock, CMTimebaseRef *timebaseOut), (allocator, masterClock, timebaseOut))
+#define CMTimebaseCreateWithMasterClock softLink_CoreMedia_CMTimebaseCreateWithMasterClock
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimebaseGetTime, CMTime, (CMTimebaseRef timebase), (timebase))
+#define CMTimebaseGetTime softLink_CoreMedia_CMTimebaseGetTime
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimebaseSetRate, OSStatus, (CMTimebaseRef timebase, Float64 rate), (timebase, rate))
+#define CMTimebaseSetRate softLink_CoreMedia_CMTimebaseSetRate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMTimebaseSetTime, OSStatus, (CMTimebaseRef timebase, CMTime time), (timebase, time))
+#define CMTimebaseSetTime softLink_CoreMedia_CMTimebaseSetTime
+#endif // PLATFORM(COCOA)
+
+#if PLATFORM(IOS)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioClockCreate, OSStatus, (CFAllocatorRef allocator, CMClockRef *clockOut), (allocator, clockOut))
+#define CMAudioClockCreate softLink_CoreMedia_CMAudioClockCreate
+#endif // PLATFORM(IOS)
+
+#if PLATFORM(MAC)
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMAudioDeviceClockCreate, OSStatus, (CFAllocatorRef allocator, CFStringRef deviceUID, CMClockRef *clockOut), (allocator, deviceUID, clockOut))
+#define CMAudioDeviceClockCreate  softLink_CoreMedia_CMAudioDeviceClockCreate
+#endif // PLATFORM(MAC)
 
 #endif // USE(AVFOUNDATION)
