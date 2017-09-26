@@ -3,9 +3,11 @@
 # WebCore), then put it there instead.
 
 macro(WEBKIT_COMPUTE_SOURCES _framework)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/Sources.txt" "${DERIVED_SOURCES_DIR}/${_framework}/Sources.txt" COPYONLY)
     set(_platformSourcesFile ${CMAKE_CURRENT_SOURCE_DIR}/Sources${PORT}.txt)
     if (EXISTS ${_platformSourcesFile})
         message(STATUS "Using platform specific source list file: ${_platformSourcesFile}")
+        configure_file("${_platformSourcesFile}" "${DERIVED_SOURCES_DIR}/${_framework}/${_platformSourcesFile}" COPYONLY)
     else ()
         unset(_platformSourcesFile)
     endif ()
