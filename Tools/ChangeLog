@@ -1,3 +1,15 @@
+2017-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win] 'webkit-patch clean' is failing on bot.
+        https://bugs.webkit.org/show_bug.cgi?id=177488
+
+        Reviewed by Brent Fulgham.
+
+        If 'os.remove' throws an exception, catch it.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.discard_working_directory_changes):
+
 2017-09-25  Frederik Riedel  <riedel@apple.com>
 
         Expose way to set values of classified form controls as {Legacy WebKit, WebKit} SPI
