@@ -1,3 +1,15 @@
+2017-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Make StoredCredentials an enum class and rename its header
+        https://bugs.webkit.org/show_bug.cgi?id=177455
+
+        Reviewed by Youenn Fablet.
+
+        Follow-up to r222467, actually make it an enum *class*.
+
+        * platform/network/StoredCredentialsPolicy.h:
+        (): Deleted.
+
 2017-09-26  Daniel Bates  <dabates@apple.com>
 
         Remove extraneous includes of TextRun.h
