@@ -1,3 +1,12 @@
+2017-09-26  Per Arne Vollan  <pvollan@apple.com>
+
+        Set LF eol-style on Windows shell script, because the script failed on one of the EWS
+        bots, when it had the 'native' style.
+
+        Unreviewed Windows EWS fix. 
+
+        * EWSTools/start-queue-win.sh: Modified property svn:eol-style.
+
 2017-09-26  Jonathan Bedard  <jbedard@apple.com>
 
         webkitpy: Notify parent process when a worker is spawned
