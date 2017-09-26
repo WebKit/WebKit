@@ -562,6 +562,16 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setLoadsImagesAutomatically(loadsImagesAutomatically);
 }
 
+- (BOOL)_peerConnectionEnabled
+{
+    return _preferences->peerConnectionEnabled();
+}
+
+- (void)_setPeerConnectionEnabled:(BOOL)enabled
+{
+    _preferences->setPeerConnectionEnabled(enabled);
+}
+
 - (BOOL)_mediaDevicesEnabled
 {
     return _preferences->mediaDevicesEnabled();

@@ -1,3 +1,16 @@
+2017-09-26  Youenn Fablet  <youenn@apple.com>
+
+        [Cocoa] Add a modern WKPreferences switch to disable WebRTC
+        https://bugs.webkit.org/show_bug.cgi?id=176638
+        <rdar://problem/34335158>
+
+        Reviewed by Alex Christensen.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _peerConnectionEnabled]):
+        (-[WKPreferences _setPeerConnectionEnabled:]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-09-26  Brent Fulgham  <bfulgham@apple.com>
 
         Harden our access to the vector of URL schemes.
