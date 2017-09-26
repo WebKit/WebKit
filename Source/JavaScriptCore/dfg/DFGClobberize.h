@@ -1486,11 +1486,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         }
         def(PureValue(node));
         return;
-
-    case CompareBelow:
-    case CompareBelowEq:
-        def(PureValue(node));
-        return;
         
     case CompareEq:
     case CompareLess:

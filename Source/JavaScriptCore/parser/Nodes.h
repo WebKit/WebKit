@@ -188,7 +188,6 @@ namespace JSC {
         virtual bool isImportNode() const { return false; }
         virtual bool isNewTarget() const { return false; }
         virtual bool isBytecodeIntrinsicNode() const { return false; }
-        virtual bool isBinaryOpNode() const { return false; }
 
         virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label&, Label&, FallThroughMode);
 
@@ -1065,8 +1064,6 @@ namespace JSC {
         ExpressionNode* lhs() { return m_expr1; };
         ExpressionNode* rhs() { return m_expr2; };
 
-        bool isBinaryOpNode() const override { return true; }
-
     private:
         void tryFoldToBranch(BytecodeGenerator&, TriState& branchCondition, ExpressionNode*& branchExpression);
         RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0) override;
@@ -1081,7 +1078,6 @@ namespace JSC {
         OpcodeID m_opcodeID;
     protected:
         bool m_rightHasAssignments;
-        bool m_shouldToUnsignedResult { true };
     };
 
     class PowNode : public BinaryOpNode {

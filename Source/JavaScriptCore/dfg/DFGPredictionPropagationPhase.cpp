@@ -818,8 +818,6 @@ private:
         case CompareLessEq:
         case CompareGreater:
         case CompareGreaterEq:
-        case CompareBelow:
-        case CompareBelowEq:
         case CompareEq:
         case CompareStrictEq:
         case CompareEqPtr:

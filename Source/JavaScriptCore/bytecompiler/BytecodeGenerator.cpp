@@ -1364,7 +1364,7 @@ void BytecodeGenerator::emitJump(Label& target)
 
 void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
 {
-    auto fuseCompareAndJump = [&] (OpcodeID jumpID) {
+    if (m_lastOpcodeID == op_less) {
         int dstIndex;
         int src1Index;
         int src2Index;
@@ -1375,33 +1375,63 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(jumpID);
+            emitOpcode(op_jless);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target.bind(begin, instructions().size()));
-            return true;
+            return;
         }
-        return false;
-    };
-
-    if (m_lastOpcodeID == op_less) {
-        if (fuseCompareAndJump(op_jless))
-            return;
     } else if (m_lastOpcodeID == op_lesseq) {
-        if (fuseCompareAndJump(op_jlesseq))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jlesseq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
+        }
     } else if (m_lastOpcodeID == op_greater) {
-        if (fuseCompareAndJump(op_jgreater))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jgreater);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
+        }
     } else if (m_lastOpcodeID == op_greatereq) {
-        if (fuseCompareAndJump(op_jgreatereq))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jgreatereq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
-    } else if (m_lastOpcodeID == op_below) {
-        if (fuseCompareAndJump(op_jbelow))
-            return;
-    } else if (m_lastOpcodeID == op_beloweq) {
-        if (fuseCompareAndJump(op_jbeloweq))
-            return;
+        }
     } else if (m_lastOpcodeID == op_eq_null && target.isForward()) {
         int dstIndex;
         int srcIndex;
@@ -1443,7 +1473,7 @@ void BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label& target)
 
 void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
 {
-    auto fuseCompareAndJump = [&] (OpcodeID jumpID, bool replaceOperands) {
+    if (m_lastOpcodeID == op_less && target.isForward()) {
         int dstIndex;
         int src1Index;
         int src2Index;
@@ -1454,36 +1484,63 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(jumpID);
-            // Since op_below and op_beloweq only accepts Int32, replacing operands is not observable to users.
-            if (replaceOperands)
-                std::swap(src1Index, src2Index);
+            emitOpcode(op_jnless);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target.bind(begin, instructions().size()));
-            return true;
+            return;
         }
-        return false;
-    };
-
-    if (m_lastOpcodeID == op_less && target.isForward()) {
-        if (fuseCompareAndJump(op_jnless, false))
-            return;
     } else if (m_lastOpcodeID == op_lesseq && target.isForward()) {
-        if (fuseCompareAndJump(op_jnlesseq, false))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jnlesseq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
+        }
     } else if (m_lastOpcodeID == op_greater && target.isForward()) {
-        if (fuseCompareAndJump(op_jngreater, false))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jngreater);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
+        }
     } else if (m_lastOpcodeID == op_greatereq && target.isForward()) {
-        if (fuseCompareAndJump(op_jngreatereq, false))
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+
+            size_t begin = instructions().size();
+            emitOpcode(op_jngreatereq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target.bind(begin, instructions().size()));
             return;
-    } else if (m_lastOpcodeID == op_below && target.isForward()) {
-        if (fuseCompareAndJump(op_jbeloweq, true))
-            return;
-    } else if (m_lastOpcodeID == op_beloweq && target.isForward()) {
-        if (fuseCompareAndJump(op_jbelow, true))
-            return;
+        }
     } else if (m_lastOpcodeID == op_not) {
         int dstIndex;
         int srcIndex;
