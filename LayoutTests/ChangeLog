@@ -1,3 +1,17 @@
+2017-09-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222474. rdar://problem/34646376
+
+    2017-09-25  Per Arne Vollan  <pvollan@apple.com>
+
+            Crash in WebCore::TreeScope::documentScope
+            https://bugs.webkit.org/show_bug.cgi?id=176159
+
+            Reviewed by Ryosuke Niwa.
+
+            * fast/dom/crash-moving-subtree-between-documents-expected.txt: Added.
+            * fast/dom/crash-moving-subtree-between-documents.html: Added.
+
 2017-09-25  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222304. rdar://problem/34646370
