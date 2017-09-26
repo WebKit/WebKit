@@ -52,7 +52,7 @@ if (TARGET WebKitLegacyGUID)
 endif ()
 
 if (APPLE)
-    set_target_properties(WebKitLegacy PROPERTIES LINK_FLAGS "-umbrella WebKitLegacy")
+    set_target_properties(WebKitLegacy PROPERTIES LINK_FLAGS "-umbrella WebKit")
 endif ()
 
 if (MSVC)

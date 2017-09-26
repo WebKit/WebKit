@@ -1,3 +1,20 @@
+2017-09-25  Timothy Horton  <timothy_horton@apple.com>
+
+        Fix the macOS WebKit CMake build
+
+        * CMakeLists.txt:
+        Before r222194, this -umbrella flag mentioned "WebKit" twice:
+        first, the name of the target to affect; second, the name of the
+        umbrella framework. In r222194, the targets were renamed. It turns
+        out that a global find and replace isn't a great way to do this,
+        because it caught the name of the umbrella framework too.
+
+        Put it back; the umbrella framework will always be named "WebKit".
+
+        This makes it once again possible to link WebKit (before, it was
+        complaining about us linking directly to WebKitLegacy instead of the
+        nonsensical WebKitLegacy umbrella framework).
+
 2017-09-25  Chris Dumez  <cdumez@apple.com>
 
         Make StoredCredentials an enum class and rename its header
