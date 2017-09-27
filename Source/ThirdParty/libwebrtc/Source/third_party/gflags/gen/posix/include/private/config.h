@@ -9,9 +9,7 @@
 /* #undef OS_WINDOWS */
 
 // Define if you have the <stdint.h> header file.
-#if !defined HAVE_STDINT_H
 #define HAVE_STDINT_H
-#endif
 
 // Define if you have the <sys/types.h> header file.
 #define HAVE_SYS_TYPES_H
