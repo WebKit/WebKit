@@ -1,3 +1,94 @@
+2017-09-27  Jonathan Bedard  <jbedard@apple.com>
+
+        Build fix for High Sierra 32 bit Mac
+        https://bugs.webkit.org/show_bug.cgi?id=177551
+        <rdar://problem/34690283>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some assertions have been removed from the SDK. Replace these assertions with equivalent
+        WTF assert code.  Since the files in this patch are using tabs, some style changes were
+        also made.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        (+[CarbonWindowAdapter frameViewClassForStyleMask:]):
+        (-[CarbonWindowAdapter initWithContentRect:styleMask:backing:defer:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+        (-[CarbonWindowAdapter setViewsNeedDisplay:]):
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:]):
+        (-[CarbonWindowAdapter dealloc]):
+        (-[CarbonWindowAdapter windowRef]):
+        (-[CarbonWindowAdapter _hasWindowRef]):
+        (-[CarbonWindowAdapter _managesWindowRef]):
+        (-[CarbonWindowAdapter _removeWindowRef]):
+        (-[CarbonWindowAdapter _carbonWindowClass]):
+        (-[CarbonWindowAdapter reconcileToCarbonWindowBounds]):
+        (-[CarbonWindowAdapter sendSuperEvent:]):
+        (-[CarbonWindowAdapter relinquishFocus]):
+        (-[CarbonWindowAdapter _cancelKey:]):
+        (-[CarbonWindowAdapter _commonAwake]):
+        (-[CarbonWindowAdapter _destroyRealWindow:]):
+        (-[CarbonWindowAdapter _oldPlaceWindow:]):
+        (-[CarbonWindowAdapter _termWindowIfOwner]):
+        (-[CarbonWindowAdapter _windowMovedToRect:]):
+        (-[CarbonWindowAdapter constrainFrameRect:toScreen:]):
+        (-[CarbonWindowAdapter selectKeyViewFollowingView:]):
+        (-[CarbonWindowAdapter selectKeyViewPrecedingView:]):
+        (-[CarbonWindowAdapter canBecomeKeyWindow]):
+        (-[CarbonWindowAdapter canBecomeMainWindow]):
+        (-[CarbonWindowAdapter encodeWithCoder:]):
+        (-[CarbonWindowAdapter initWithCoder:]):
+        (-[CarbonWindowAdapter setContentView:]):
+        (-[CarbonWindowAdapter worksWhenModal]):
+        (-[CarbonWindowAdapter _setModalWindowLevel]):
+        (-[CarbonWindowAdapter _clearModalWindowLevel]):
+        (-[CarbonWindowAdapter carbonHICommandIDFromActionSelector:]):
+        (-[CarbonWindowAdapter sendCarbonProcessHICommandEvent:]):
+        (-[CarbonWindowAdapter sendCarbonUpdateHICommandStatusEvent:withMenuRef:andMenuItemIndex:]):
+        (-[CarbonWindowAdapter _handleRootBoundsChanged]):
+        (-[CarbonWindowAdapter _handleContentBoundsChanged]):
+        (-[CarbonWindowAdapter _handleCarbonEvent:callRef:]):
+        (NSCarbonWindowHandleEvent):
+        (-[CarbonWindowAdapter _reallyDoOrderWindow:relativeTo:findKey:forCounter:force:isModal:]):
+        (-[CarbonWindowAdapter _growBoxRect]):
+        * Carbon/HIWebView.mm:
+        (HIWebViewGetWebView):
+        (HIWebViewConstructor):
+        (HIWebViewDestructor):
+        (HIWebViewRegisterClass):
+        (GetBehaviors):
+        (Draw):
+        (HitTest):
+        (GetRegion):
+        (GetWindowRef):
+        (CreateNSEventAdoptingCGEvent):
+        (CopyEventCGEvent):
+        (CreateNSEventWithCarbonClickEvent):
+        (Click):
+        (CreateNSEventWithCarbonEvent):
+        (MouseUp):
+        (CreateNSEventWithCarbonMouseMoveEvent):
+        (MouseMoved):
+        (MouseDragged):
+        (MouseWheelMoved):
+        (ContextMenuClick):
+        (GetKind):
+        (BoundsChanged):
+        (OwningWindowChanged):
+        (WindowHandler):
+        (SyncFrame):
+        (SetFocusPart):
+        (AdvanceFocus):
+        (RelinquishFocus):
+        (ActiveStateChanged):
+        (ProcessCommand):
+        (UpdateCommandStatus):
+        (_NSSelectorForHICommand):
+        (HIWebViewEventHandler):
+        (StartUpdateObserver):
+        (StopUpdateObserver):
+        (UpdateObserver):
+
 2017-09-25  Alex Christensen  <achristensen@webkit.org>
 
         Make PolicyAction an encodable enum class
