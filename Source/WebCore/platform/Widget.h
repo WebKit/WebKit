@@ -47,20 +47,14 @@
 OBJC_CLASS NSView;
 OBJC_CLASS NSWindow;
 typedef NSView *PlatformWidget;
-#endif
-
-#if PLATFORM(WIN)
+#elif PLATFORM(WIN)
 typedef struct HWND__* HWND;
 typedef HWND PlatformWidget;
-#endif
-
-#if PLATFORM(GTK)
+#elif PLATFORM(GTK)
 typedef struct _GtkWidget GtkWidget;
 typedef struct _GtkContainer GtkContainer;
 typedef GtkWidget* PlatformWidget;
-#endif
-
-#if PLATFORM(WPE)
+#else
 typedef void* PlatformWidget;
 #endif
 

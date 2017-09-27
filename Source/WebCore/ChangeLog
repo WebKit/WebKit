@@ -1,3 +1,16 @@
+2017-09-27  Don Olmstead  <don.olmstead@sony.com>
+
+        Default to void* for platform widgets
+        https://bugs.webkit.org/show_bug.cgi?id=177518
+
+        Reviewed by Michael Catanzaro.
+
+        No new tests. No change in behavior.
+
+        * platform/Cursor.h:
+        * platform/DragData.h:
+        * platform/Widget.h:
+
 2017-09-27  Youenn Fablet  <youenn@apple.com>
 
         [Fetch API] Cloning an opaque response should not assert

@@ -53,7 +53,7 @@ namespace WebCore {
 class SelectionData;
 }
 typedef WebCore::SelectionData* DragDataRef;
-#elif PLATFORM(IOS) || PLATFORM(WPE)
+#else
 typedef void* DragDataRef;
 #endif
 
