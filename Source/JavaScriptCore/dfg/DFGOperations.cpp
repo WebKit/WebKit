@@ -869,7 +869,7 @@ EncodedJSValue JIT_OPERATION operationArrayPush(ExecState* exec, EncodedJSValue 
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    array->push(exec, JSValue::decode(encodedValue));
+    array->pushInline(exec, JSValue::decode(encodedValue));
     return JSValue::encode(jsNumber(array->length()));
 }
 
@@ -878,7 +878,51 @@ EncodedJSValue JIT_OPERATION operationArrayPushDouble(ExecState* exec, double va
     VM* vm = &exec->vm();
     NativeCallFrameTracer tracer(vm, exec);
     
-    array->push(exec, JSValue(JSValue::EncodeAsDouble, value));
+    array->pushInline(exec, JSValue(JSValue::EncodeAsDouble, value));
+    return JSValue::encode(jsNumber(array->length()));
+}
+
+EncodedJSValue JIT_OPERATION operationArrayPushMultiple(ExecState* exec, JSArray* array, void* buffer, int32_t elementCount)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // We assume that multiple JSArray::push calls with ArrayWithInt32/ArrayWithContiguous do not cause JS traps.
+    // If it can cause any JS interactions, we can call the caller JS function of this function and overwrite the
+    // content of ScratchBuffer. If the IndexingType is now ArrayWithInt32/ArrayWithContiguous, we can ensure
+    // that there is no indexed accessors in this object and its prototype chain.
+    //
+    // ArrayWithArrayStorage is also OK. It can have indexed accessors. But if you define an indexed accessor, the array's length
+    // becomes larger than that index. So Array#push never overlaps with this accessor. So accessors are never called unless
+    // the IndexingType is ArrayWithSlowPutArrayStorage which could have an indexed accessor in a prototype chain.
+    RELEASE_ASSERT(!shouldUseSlowPut(array->indexingType()));
+
+    EncodedJSValue* values = static_cast<EncodedJSValue*>(buffer);
+    for (int32_t i = 0; i < elementCount; ++i) {
+        array->pushInline(exec, JSValue::decode(values[i]));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
+    return JSValue::encode(jsNumber(array->length()));
+}
+
+EncodedJSValue JIT_OPERATION operationArrayPushDoubleMultiple(ExecState* exec, JSArray* array, void* buffer, int32_t elementCount)
+{
+    VM& vm = exec->vm();
+    NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // We assume that multiple JSArray::push calls with ArrayWithDouble do not cause JS traps.
+    // If it can cause any JS interactions, we can call the caller JS function of this function and overwrite the
+    // content of ScratchBuffer. If the IndexingType is now ArrayWithDouble, we can ensure
+    // that there is no indexed accessors in this object and its prototype chain.
+    ASSERT(array->indexingType() == ArrayWithDouble);
+
+    double* values = static_cast<double*>(buffer);
+    for (int32_t i = 0; i < elementCount; ++i) {
+        array->pushInline(exec, JSValue(JSValue::EncodeAsDouble, values[i]));
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    }
     return JSValue::encode(jsNumber(array->length()));
 }
 

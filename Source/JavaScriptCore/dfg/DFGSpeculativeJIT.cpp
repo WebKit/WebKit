@@ -7866,6 +7866,278 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
     }
 }
 
+void SpeculativeJIT::compileArrayPush(Node* node)
+{
+    ASSERT(node->arrayMode().isJSArray());
+
+    Edge& storageEdge = m_jit.graph().varArgChild(node, 0);
+    Edge& arrayEdge = m_jit.graph().varArgChild(node, 1);
+
+    SpeculateCellOperand base(this, arrayEdge);
+    GPRTemporary storageLength(this);
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg storageLengthGPR = storageLength.gpr();
+
+    StorageOperand storage(this, storageEdge);
+    GPRReg storageGPR = storage.gpr();
+    unsigned elementOffset = 2;
+    unsigned elementCount = node->numChildren() - elementOffset;
+
+#if USE(JSVALUE32_64)
+    GPRTemporary tag(this);
+    GPRReg tagGPR = tag.gpr();
+    JSValueRegs resultRegs { tagGPR, storageLengthGPR };
+#else
+    JSValueRegs resultRegs { storageLengthGPR };
+#endif
+
+    auto getStorageBufferAddress = [&] (GPRReg storageGPR, GPRReg indexGPR, int32_t offset, GPRReg bufferGPR) {
+#if USE(JSVALUE32_64)
+        static_assert(sizeof(JSValue) == 8 && 1 << 3 == 8, "This is strongly assumed in the code below.");
+        m_jit.move(indexGPR, bufferGPR);
+        m_jit.lshift32(TrustedImm32(3), bufferGPR);
+        m_jit.add32(storageGPR, bufferGPR);
+        if (offset)
+            m_jit.add32(TrustedImm32(offset), bufferGPR);
+#else
+        m_jit.getEffectiveAddress64(MacroAssembler::BaseIndex(storageGPR, indexGPR, MacroAssembler::TimesEight, offset), bufferGPR);
+#endif
+    };
+
+    switch (node->arrayMode().type()) {
+    case Array::Int32:
+    case Array::Contiguous: {
+        if (elementCount == 1) {
+            Edge& element = m_jit.graph().varArgChild(node, elementOffset);
+            JSValueOperand value(this, element, ManualOperandSpeculation);
+            JSValueRegs valueRegs = value.jsValueRegs();
+
+            if (node->arrayMode().type() == Array::Int32)
+                RELEASE_ASSERT(!needsTypeCheck(element, SpecInt32Only));
+
+            m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+            m_jit.storeValue(valueRegs, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+            m_jit.boxInt32(storageLengthGPR, resultRegs);
+
+            addSlowPathGenerator(
+                slowPathCall(slowPath, this, operationArrayPush, resultRegs, valueRegs, baseGPR));
+
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        GPRTemporary buffer(this);
+        GPRReg bufferGPR = buffer.gpr();
+
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+        m_jit.move(storageLengthGPR, bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), bufferGPR);
+        MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::Above, bufferGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+
+        m_jit.store32(bufferGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+        getStorageBufferAddress(storageGPR, storageLengthGPR, 0, bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), storageLengthGPR);
+        m_jit.boxInt32(storageLengthGPR, resultRegs);
+        auto storageDone = m_jit.jump();
+
+        slowPath.link(&m_jit);
+
+        size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+        ScratchBuffer* scratchBuffer = m_jit.vm()->scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
+        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
+
+        storageDone.link(&m_jit);
+        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+            Edge& element = m_jit.graph().varArgChild(node, elementIndex + elementOffset);
+            JSValueOperand value(this, element, ManualOperandSpeculation);
+            JSValueRegs valueRegs = value.jsValueRegs();
+
+            if (node->arrayMode().type() == Array::Int32)
+                RELEASE_ASSERT(!needsTypeCheck(element, SpecInt32Only));
+
+            m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
+            value.use();
+        }
+
+        MacroAssembler::Jump fastPath = m_jit.branchPtr(MacroAssembler::NotEqual, bufferGPR, TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
+
+        addSlowPathGenerator(slowPathCall(m_jit.jump(), this, operationArrayPushMultiple, resultRegs, baseGPR, bufferGPR, TrustedImm32(elementCount)));
+
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
+        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
+
+        base.use();
+        storage.use();
+
+        fastPath.link(&m_jit);
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        return;
+    }
+
+    case Array::Double: {
+        if (elementCount == 1) {
+            Edge& element = m_jit.graph().varArgChild(node, elementOffset);
+            SpeculateDoubleOperand value(this, element);
+            FPRReg valueFPR = value.fpr();
+
+            RELEASE_ASSERT(!needsTypeCheck(element, SpecDoubleReal));
+
+            m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+            m_jit.storeDouble(valueFPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+            m_jit.boxInt32(storageLengthGPR, resultRegs);
+
+            addSlowPathGenerator(
+                slowPathCall(slowPath, this, operationArrayPushDouble, resultRegs, valueFPR, baseGPR));
+
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        GPRTemporary buffer(this);
+        GPRReg bufferGPR = buffer.gpr();
+
+        m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+        m_jit.move(storageLengthGPR, bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), bufferGPR);
+        MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::Above, bufferGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+
+        m_jit.store32(bufferGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+        getStorageBufferAddress(storageGPR, storageLengthGPR, 0, bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), storageLengthGPR);
+        m_jit.boxInt32(storageLengthGPR, resultRegs);
+        auto storageDone = m_jit.jump();
+
+        slowPath.link(&m_jit);
+
+        size_t scratchSize = sizeof(double) * elementCount;
+        ScratchBuffer* scratchBuffer = m_jit.vm()->scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
+        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
+
+        storageDone.link(&m_jit);
+        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+            Edge& element = m_jit.graph().varArgChild(node, elementIndex + elementOffset);
+            SpeculateDoubleOperand value(this, element);
+            FPRReg valueFPR = value.fpr();
+
+            RELEASE_ASSERT(!needsTypeCheck(element, SpecDoubleReal));
+
+            m_jit.storeDouble(valueFPR, MacroAssembler::Address(bufferGPR, sizeof(double) * elementIndex));
+            value.use();
+        }
+
+        MacroAssembler::Jump fastPath = m_jit.branchPtr(MacroAssembler::NotEqual, bufferGPR, TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
+
+        addSlowPathGenerator(slowPathCall(m_jit.jump(), this, operationArrayPushDoubleMultiple, resultRegs, baseGPR, bufferGPR, TrustedImm32(elementCount)));
+
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
+        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
+
+        base.use();
+        storage.use();
+
+        fastPath.link(&m_jit);
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        return;
+    }
+
+    case Array::ArrayStorage: {
+        // This ensures that the result of ArrayPush is Int32 in AI.
+        int32_t largestPositiveInt32Length = 0x7fffffff - elementCount;
+        if (elementCount == 1) {
+            Edge& element = m_jit.graph().varArgChild(node, elementOffset);
+            JSValueOperand value(this, element);
+            JSValueRegs valueRegs = value.jsValueRegs();
+
+            m_jit.load32(MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()), storageLengthGPR);
+
+            // Refuse to handle bizarre lengths.
+            speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::Above, storageLengthGPR, TrustedImm32(largestPositiveInt32Length)));
+
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::vectorLengthOffset()));
+
+            m_jit.storeValue(valueRegs, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset()));
+
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()));
+            m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+            m_jit.boxInt32(storageLengthGPR, resultRegs);
+
+            addSlowPathGenerator(
+                slowPathCall(slowPath, this, operationArrayPush, resultRegs, valueRegs, baseGPR));
+
+            jsValueResult(resultRegs, node);
+            return;
+        }
+
+        GPRTemporary buffer(this);
+        GPRReg bufferGPR = buffer.gpr();
+
+        m_jit.load32(MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()), storageLengthGPR);
+
+        // Refuse to handle bizarre lengths.
+        speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::Above, storageLengthGPR, TrustedImm32(largestPositiveInt32Length)));
+
+        m_jit.move(storageLengthGPR, bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), bufferGPR);
+        MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::Above, bufferGPR, MacroAssembler::Address(storageGPR, ArrayStorage::vectorLengthOffset()));
+
+        m_jit.store32(bufferGPR, MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()));
+        getStorageBufferAddress(storageGPR, storageLengthGPR, ArrayStorage::vectorOffset(), bufferGPR);
+        m_jit.add32(TrustedImm32(elementCount), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+        m_jit.add32(TrustedImm32(elementCount), storageLengthGPR);
+        m_jit.boxInt32(storageLengthGPR, resultRegs);
+        auto storageDone = m_jit.jump();
+
+        slowPath.link(&m_jit);
+
+        size_t scratchSize = sizeof(EncodedJSValue) * elementCount;
+        ScratchBuffer* scratchBuffer = m_jit.vm()->scratchBufferForSize(scratchSize);
+        m_jit.move(TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())), bufferGPR);
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), storageLengthGPR);
+        m_jit.storePtr(TrustedImmPtr(scratchSize), MacroAssembler::Address(storageLengthGPR));
+
+        storageDone.link(&m_jit);
+        for (unsigned elementIndex = 0; elementIndex < elementCount; ++elementIndex) {
+            Edge& element = m_jit.graph().varArgChild(node, elementIndex + elementOffset);
+            JSValueOperand value(this, element);
+            JSValueRegs valueRegs = value.jsValueRegs();
+
+            m_jit.storeValue(valueRegs, MacroAssembler::Address(bufferGPR, sizeof(EncodedJSValue) * elementIndex));
+            value.use();
+        }
+
+        MacroAssembler::Jump fastPath = m_jit.branchPtr(MacroAssembler::NotEqual, bufferGPR, TrustedImmPtr(static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer())));
+
+        addSlowPathGenerator(
+            slowPathCall(m_jit.jump(), this, operationArrayPushMultiple, resultRegs, baseGPR, bufferGPR, TrustedImm32(elementCount)));
+
+        m_jit.move(TrustedImmPtr(scratchBuffer->addressOfActiveLength()), bufferGPR);
+        m_jit.storePtr(TrustedImmPtr(nullptr), MacroAssembler::Address(bufferGPR));
+
+        base.use();
+        storage.use();
+
+        fastPath.link(&m_jit);
+        jsValueResult(resultRegs, node, DataFormatJS, UseChildrenCalledExplicitly);
+        return;
+    }
+
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 void SpeculativeJIT::compileNotifyWrite(Node* node)
 {
     WatchpointSet* set = node->watchpointSet();

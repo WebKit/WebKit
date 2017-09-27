@@ -250,9 +250,16 @@ private:
             case ArrayPush: {
                 switch (m_node->arrayMode().type()) {
                 case Array::Contiguous:
-                case Array::ArrayStorage:
-                    considerBarrier(m_node->child1(), m_node->child2());
+                case Array::ArrayStorage: {
+                    unsigned elementOffset = 2;
+                    unsigned elementCount = m_node->numChildren() - elementOffset;
+                    Edge& arrayEdge = m_graph.varArgChild(m_node, 1);
+                    for (unsigned i = 0; i < elementCount; ++i) {
+                        Edge& element = m_graph.varArgChild(m_node, i + elementOffset);
+                        considerBarrier(arrayEdge, element);
+                    }
                     break;
+                }
                 default:
                     break;
                 }
