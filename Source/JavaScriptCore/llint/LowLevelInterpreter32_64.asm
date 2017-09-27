@@ -1796,6 +1796,32 @@ _llint_op_jneq_ptr:
     dispatch(constexpr op_jneq_ptr_length)
 
 
+macro compareUnsignedJump(integerCompare)
+    loadi 4[PC], t2
+    loadi 8[PC], t3
+    loadConstantOrVariable(t2, t0, t1)
+    loadConstantOrVariable2Reg(t3, t2, t3)
+    integerCompare(t1, t3, .jumpTarget)
+    dispatch(4)
+
+.jumpTarget:
+    dispatchBranch(12[PC])
+end
+
+
+macro compareUnsigned(integerCompareAndSet)
+    loadi 12[PC], t2
+    loadi 8[PC], t0
+    loadConstantOrVariable(t2, t3, t1)
+    loadConstantOrVariable2Reg(t0, t2, t0)
+    integerCompareAndSet(t0, t1, t0)
+    loadi 4[PC], t2
+    storei BooleanTag, TagOffset[cfr, t2, 8]
+    storei t0, PayloadOffset[cfr, t2, 8]
+    dispatch(4)
+end
+
+
 macro compare(integerCompare, doubleCompare, slowPath)
     loadi 4[PC], t2
     loadi 8[PC], t3

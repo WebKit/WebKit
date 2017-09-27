@@ -151,6 +151,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_lesseq:
     case op_greater:
     case op_greatereq:
+    case op_below:
+    case op_beloweq:
     case op_eq:
     case op_eq_null:
     case op_stricteq:
@@ -192,6 +194,8 @@ CapabilityLevel capabilityLevel(OpcodeID opcodeID, CodeBlock* codeBlock, Instruc
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_jbelow:
+    case op_jbeloweq:
     case op_loop_hint:
     case op_check_traps:
     case op_nop:

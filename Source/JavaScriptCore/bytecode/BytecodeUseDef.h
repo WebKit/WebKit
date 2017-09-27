@@ -85,6 +85,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_jngreater:
     case op_jngreatereq:
     case op_jless:
+    case op_jbelow:
+    case op_jbeloweq:
     case op_set_function_name:
     case op_log_shadow_chicken_tail: {
         ASSERT(opcodeLengths[opcodeID] > 2);
@@ -237,6 +239,8 @@ void computeUsesForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_lesseq:
     case op_greater:
     case op_greatereq:
+    case op_below:
+    case op_beloweq:
     case op_nstricteq:
     case op_stricteq:
     case op_neq:
@@ -343,6 +347,8 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_jnlesseq:
     case op_jngreater:
     case op_jngreatereq:
+    case op_jbelow:
+    case op_jbeloweq:
     case op_loop_hint:
     case op_switch_imm:
     case op_switch_char:
@@ -463,6 +469,8 @@ void computeDefsForBytecodeOffset(Block* codeBlock, OpcodeID opcodeID, Instructi
     case op_lesseq:
     case op_greater:
     case op_greatereq:
+    case op_below:
+    case op_beloweq:
     case op_neq_null:
     case op_eq_null:
     case op_not:

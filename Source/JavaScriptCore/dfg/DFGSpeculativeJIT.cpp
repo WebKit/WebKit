@@ -5710,6 +5710,11 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
     return false;
 }
 
+void SpeculativeJIT::compileCompareUnsigned(Node* node, MacroAssembler::RelationalCondition condition)
+{
+    compileInt32Compare(node, condition);
+}
+
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
     // FIXME: Currently, we have op_jless, op_jgreater etc. But we don't have op_jeq, op_jstricteq etc.

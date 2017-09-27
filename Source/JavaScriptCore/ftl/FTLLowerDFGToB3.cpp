@@ -932,6 +932,12 @@ private:
         case CompareGreaterEq:
             compileCompareGreaterEq();
             break;
+        case CompareBelow:
+            compileCompareBelow();
+            break;
+        case CompareBelowEq:
+            compileCompareBelowEq();
+            break;
         case CompareEqPtr:
             compileCompareEqPtr();
             break;
@@ -6403,6 +6409,16 @@ private:
             operationCompareStringImplGreaterEq,
             operationCompareStringGreaterEq,
             operationCompareGreaterEq);
+    }
+
+    void compileCompareBelow()
+    {
+        setBoolean(m_out.below(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+    }
+    
+    void compileCompareBelowEq()
+    {
+        setBoolean(m_out.belowOrEqual(lowInt32(m_node->child1()), lowInt32(m_node->child2())));
     }
     
     void compileLogicalNot()

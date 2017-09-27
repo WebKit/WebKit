@@ -75,6 +75,8 @@ public:
     }
 
 private:
+    enum class UInt32Result { UInt32, Constant };
+
     void handleNode()
     {
         switch (m_node->op()) {
@@ -262,6 +264,66 @@ private:
                     break;
                 }
                 break;
+            }
+            break;
+        }
+
+        case CompareEq:
+        case CompareLess:
+        case CompareLessEq:
+        case CompareGreater:
+        case CompareGreaterEq: {
+            if (m_node->isBinaryUseKind(Int32Use)) {
+                auto isUInt32 = [&] (Edge& edge) -> std::optional<UInt32Result> {
+                    if (edge->op() == UInt32ToNumber)
+                        return UInt32Result::UInt32;
+                    if (edge->isInt32Constant()) {
+                        if (edge->asInt32() >= 0)
+                            return UInt32Result::Constant;
+                    }
+                    return std::nullopt;
+                };
+
+                auto child1Result = isUInt32(m_node->child1());
+                auto child2Result = isUInt32(m_node->child2());
+                if ((child1Result && child2Result) && (child1Result.value() == UInt32Result::UInt32 || child2Result.value() == UInt32Result::UInt32)) {
+                    NodeType op = m_node->op();
+                    bool replaceOperands = false;
+                    switch (m_node->op()) {
+                    case CompareEq:
+                        op = CompareEq;
+                        break;
+                    case CompareLess:
+                        op = CompareBelow;
+                        break;
+                    case CompareLessEq:
+                        op = CompareBelowEq;
+                        break;
+                    case CompareGreater:
+                        op = CompareBelow;
+                        replaceOperands = true;
+                        break;
+                    case CompareGreaterEq:
+                        op = CompareBelowEq;
+                        replaceOperands = true;
+                        break;
+                    default:
+                        RELEASE_ASSERT_NOT_REACHED();
+                    }
+
+                    auto extractChild = [&] (Edge& edge) {
+                        if (edge->op() == UInt32ToNumber)
+                            return edge->child1().node();
+                        return edge.node();
+                    };
+
+                    m_node->setOp(op);
+                    m_node->child1() = Edge(extractChild(m_node->child1()), Int32Use);
+                    m_node->child2() = Edge(extractChild(m_node->child2()), Int32Use);
+                    if (replaceOperands)
+                        std::swap(m_node->child1(), m_node->child2());
+                    m_changed = true;
+                }
             }
             break;
         }

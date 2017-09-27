@@ -1,3 +1,134 @@
+2017-09-27  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        Add Above/Below comparisons for UInt32 patterns
+        https://bugs.webkit.org/show_bug.cgi?id=177281
+
+        Reviewed by Saam Barati.
+
+        Sometimes, we would like to have UInt32 operations in JS. While VM does
+        not support UInt32 nicely, VM supports efficient Int32 operations. As long
+        as signedness does not matter, we can just perform Int32 operations instead
+        and recognize its bit pattern as UInt32.
+
+        But of course, some operations respect signedness. The most frequently
+        used one is comparison. Octane/zlib performs UInt32 comparison by performing
+        `val >>> 0`. It emits op_urshift and op_unsigned. op_urshift produces
+        UInt32 in Int32 form. And op_unsigned will generate Double value if
+        the generated Int32 is < 0 (which should be UInt32).
+
+        There is a chance for optimization. The given code pattern is the following.
+
+            op_unsigned(op_urshift(@1)) lessThan:< op_unsigned(op_urshift(@2))
+
+        This can be converted to the following.
+
+            op_urshift(@1) below:< op_urshift(@2)
+
+        The above conversion is nice since
+
+        1. We can avoid op_unsigned. This could be unsignedness check in DFG. Since
+        this check depends on the value of Int32, dropping this check is not as easy as
+        removing Int32 edge filters.
+
+        2. We can perform unsigned comparison in Int32 form. We do not need to convert
+        them to DoubleRep.
+
+        Since the above comparison exists in Octane/zlib's *super* hot path, dropping
+        op_unsigned offers huge win.
+
+        At first, my patch attempts to convert the above thing in DFG pipeline.
+        However it poses several problems.
+
+        1. MovHint is not well removed. It makes UInt32ToNumber (which is for op_unsigned) live.
+        2. UInt32ToNumber could cause an OSR exit. So if we have the following nodes,
+
+            2: UInt32ToNumber(@0)
+            3: MovHint(@2, xxx)
+            4: UInt32ToNumber(@1)
+            5: MovHint(@1, xxx)
+
+        we could drop @5's MovHint. But @3 is difficult since @4 can exit.
+
+        So, instead, we start introducing a simple optimization in the bytecode compiler.
+        It performs pattern matching for op_urshift and comparison to drop op_unsigned.
+        We adds op_below and op_above families to bytecodes. They only accept Int32 and
+        perform unsigned comparison.
+
+        This offers 4% performance improvement in Octane/zlib.
+
+                                    baseline                  patched
+
+        zlib           x2     431.07483+-16.28434       414.33407+-9.38375         might be 1.0404x faster
+
+        * bytecode/BytecodeDumper.cpp:
+        (JSC::BytecodeDumper<Block>::printCompareJump):
+        (JSC::BytecodeDumper<Block>::dumpBytecode):
+        * bytecode/BytecodeDumper.h:
+        * bytecode/BytecodeList.json:
+        * bytecode/BytecodeUseDef.h:
+        (JSC::computeUsesForBytecodeOffset):
+        (JSC::computeDefsForBytecodeOffset):
+        * bytecode/Opcode.h:
+        (JSC::isBranch):
+        * bytecode/PreciseJumpTargetsInlines.h:
+        (JSC::extractStoredJumpTargetsForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        * dfg/DFGAbstractInterpreterInlines.h:
+        (JSC::DFG::AbstractInterpreter<AbstractStateType>::executeEffects):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::capabilityLevel):
+        * dfg/DFGClobberize.h:
+        (JSC::DFG::clobberize):
+        * dfg/DFGDoesGC.cpp:
+        (JSC::DFG::doesGC):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGIntegerRangeOptimizationPhase.cpp:
+        * dfg/DFGNodeType.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        * dfg/DFGSafeToExecute.h:
+        (JSC::DFG::safeToExecute):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileCompareUnsigned):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStrengthReductionPhase.cpp:
+        (JSC::DFG::StrengthReductionPhase::handleNode):
+        * dfg/DFGValidate.cpp:
+        * ftl/FTLCapabilities.cpp:
+        (JSC::FTL::canCompile):
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileNode):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareBelow):
+        (JSC::FTL::DFG::LowerDFGToB3::compileCompareBelowEq):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_below):
+        (JSC::JIT::emit_op_beloweq):
+        (JSC::JIT::emit_op_jbelow):
+        (JSC::JIT::emit_op_jbeloweq):
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareUnsigned):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_compareUnsignedAndJump):
+        (JSC::JIT::emit_compareUnsigned):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isBinaryOpNode const):
+
 2017-09-25  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         [DFG] Support ArrayPush with multiple args
