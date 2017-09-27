@@ -1,3 +1,14 @@
+2017-09-27  Lucas Forschler  <lforschler@apple.com>
+
+        Add macOS High Sierra and iOS Simulator 11 support to bisect-builds.
+        https://bugs.webkit.org/show_bug.cgi?id=177578
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Scripts/bisect-builds:
+        (minified_platforms):
+        (unminified_platforms):
+
 2017-09-27  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestResultsServer for High Sierra queues.

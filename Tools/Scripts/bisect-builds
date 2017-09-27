@@ -192,12 +192,12 @@ def test_archive(options, revision):
 
 def minified_platforms():
     # FIXME: query this dynamically from API
-    return  ['mac-elcapitan', 'mac-sierra', 'ios-simulator-10']
+    return  ['mac-elcapitan', 'mac-sierra', 'mac-highsierra', 'ios-simulator-10', 'ios-simulator-11']
 
 
 def unminified_platforms():
     # FIXME: query this dynamically from API
-    return ['gtk', 'ios-simulator-10', 'mac-elcapitan', 'mac-sierra', 'win', 'wpe']
+    return ['gtk', 'ios-simulator-10', 'ios-simulator-11', 'mac-elcapitan', 'mac-sierra', 'mac-highsierra', 'win', 'wpe']
 
 
 def is_supported_platform(options):
