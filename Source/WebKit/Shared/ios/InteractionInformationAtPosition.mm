@@ -144,8 +144,11 @@ bool InteractionInformationAtPosition::decode(IPC::Decoder& decoder, Interaction
     if (!decoder.decode(result.textAfter))
         return false;
     
-    if (!decoder.decode(result.linkIndicator))
+    std::optional<WebCore::TextIndicatorData> linkIndicator;
+    decoder >> linkIndicator;
+    if (!linkIndicator)
         return false;
+    result.linkIndicator = WTFMove(*linkIndicator);
 
     ShareableBitmap::Handle handle;
     if (!decoder.decode(handle))

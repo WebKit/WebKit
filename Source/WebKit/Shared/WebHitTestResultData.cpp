@@ -164,11 +164,12 @@ bool WebHitTestResultData::decode(IPC::Decoder& decoder, WebHitTestResultData& h
         return false;
 
     if (hasLinkTextIndicator) {
-        WebCore::TextIndicatorData indicatorData;
-        if (!decoder.decode(indicatorData))
+        std::optional<WebCore::TextIndicatorData> indicatorData;
+        decoder >> indicatorData;
+        if (!indicatorData)
             return false;
 
-        hitTestResultData.linkTextIndicator = WebCore::TextIndicator::create(indicatorData);
+        hitTestResultData.linkTextIndicator = WebCore::TextIndicator::create(*indicatorData);
     }
 
     return platformDecode(decoder, hitTestResultData);

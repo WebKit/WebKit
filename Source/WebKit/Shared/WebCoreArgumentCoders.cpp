@@ -559,6 +559,13 @@ bool ArgumentCoder<FloatPoint>::decode(Decoder& decoder, FloatPoint& floatPoint)
     return SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint);
 }
 
+std::optional<FloatPoint> ArgumentCoder<FloatPoint>::decode(Decoder& decoder)
+{
+    FloatPoint floatPoint;
+    if (!SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint))
+        return std::nullopt;
+    return WTFMove(floatPoint);
+}
 
 void ArgumentCoder<FloatPoint3D>::encode(Encoder& encoder, const FloatPoint3D& floatPoint)
 {
@@ -658,6 +665,13 @@ bool ArgumentCoder<IntPoint>::decode(Decoder& decoder, IntPoint& intPoint)
     return SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint);
 }
 
+std::optional<WebCore::IntPoint> ArgumentCoder<IntPoint>::decode(Decoder& decoder)
+{
+    IntPoint intPoint;
+    if (!SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint))
+        return std::nullopt;
+    return WTFMove(intPoint);
+}
 
 void ArgumentCoder<IntRect>::encode(Encoder& encoder, const IntRect& intRect)
 {
@@ -677,7 +691,6 @@ std::optional<IntRect> ArgumentCoder<IntRect>::decode(Decoder& decoder)
     return WTFMove(rect);
 }
 
-
 void ArgumentCoder<IntSize>::encode(Encoder& encoder, const IntSize& intSize)
 {
     SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
@@ -688,6 +701,13 @@ bool ArgumentCoder<IntSize>::decode(Decoder& decoder, IntSize& intSize)
     return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
 }
 
+std::optional<IntSize> ArgumentCoder<IntSize>::decode(Decoder& decoder)
+{
+    IntSize intSize;
+    if (!SimpleArgumentCoder<IntSize>::decode(decoder, intSize))
+        return std::nullopt;
+    return WTFMove(intSize);
+}
 
 void ArgumentCoder<LayoutSize>::encode(Encoder& encoder, const LayoutSize& layoutSize)
 {
@@ -2298,44 +2318,45 @@ void ArgumentCoder<TextIndicatorData>::encode(Encoder& encoder, const TextIndica
     encodeOptionalImage(encoder, textIndicatorData.contentImageWithoutSelection.get());
 }
 
-bool ArgumentCoder<TextIndicatorData>::decode(Decoder& decoder, TextIndicatorData& textIndicatorData)
+std::optional<TextIndicatorData> ArgumentCoder<TextIndicatorData>::decode(Decoder& decoder)
 {
+    TextIndicatorData textIndicatorData;
     if (!decoder.decode(textIndicatorData.selectionRectInRootViewCoordinates))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(textIndicatorData.textBoundingRectInRootViewCoordinates))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(textIndicatorData.textRectsInBoundingRectCoordinates))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(textIndicatorData.contentImageWithoutSelectionRectInRootViewCoordinates))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(textIndicatorData.contentImageScaleFactor))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decode(textIndicatorData.estimatedBackgroundColor))
-        return false;
+        return std::nullopt;
 
     if (!decoder.decodeEnum(textIndicatorData.presentationTransition))
-        return false;
+        return std::nullopt;
 
     uint64_t options;
     if (!decoder.decode(options))
-        return false;
+        return std::nullopt;
     textIndicatorData.options = static_cast<TextIndicatorOptions>(options);
 
     if (!decodeOptionalImage(decoder, textIndicatorData.contentImage))
-        return false;
+        return std::nullopt;
 
     if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithHighlight))
-        return false;
+        return std::nullopt;
 
     if (!decodeOptionalImage(decoder, textIndicatorData.contentImageWithoutSelection))
-        return false;
+        return std::nullopt;
 
-    return true;
+    return WTFMove(textIndicatorData);
 }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -2408,8 +2429,11 @@ bool ArgumentCoder<DictionaryPopupInfo>::decode(IPC::Decoder& decoder, Dictionar
     if (!decoder.decode(result.origin))
         return false;
 
-    if (!decoder.decode(result.textIndicator))
+    std::optional<TextIndicatorData> textIndicator;
+    decoder >> textIndicator;
+    if (!textIndicator)
         return false;
+    result.textIndicator = WTFMove(*textIndicator);
 
 #if PLATFORM(COCOA)
     bool hadOptions;

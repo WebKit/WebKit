@@ -191,8 +191,13 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
         return std::nullopt;
     if (!decoder.decodeEnum(parameters.scrollPinningBehavior))
         return std::nullopt;
-    if (!decoder.decode(parameters.scrollbarOverlayStyle))
+
+    std::optional<std::optional<uint32_t>> scrollbarOverlayStyle;
+    decoder >> scrollbarOverlayStyle;
+    if (!scrollbarOverlayStyle)
         return std::nullopt;
+    parameters.scrollbarOverlayStyle = WTFMove(*scrollbarOverlayStyle);
+
     if (!decoder.decode(parameters.backgroundExtendsBeyondPage))
         return std::nullopt;
     if (!decoder.decodeEnum(parameters.layerHostingMode))
@@ -246,8 +251,11 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.overrideContentSecurityPolicy))
         return std::nullopt;
 
-    if (!decoder.decode(parameters.cpuLimit))
+    std::optional<std::optional<double>> cpuLimit;
+    decoder >> cpuLimit;
+    if (!cpuLimit)
         return std::nullopt;
+    parameters.cpuLimit = WTFMove(*cpuLimit);
 
     if (!decoder.decode(parameters.urlSchemeHandlers))
         return std::nullopt;

@@ -1,3 +1,25 @@
+2017-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Allow modern decoding of std::optional<T>
+        https://bugs.webkit.org/show_bug.cgi?id=177519
+
+        Reviewed by Tim Horton.
+
+        * Platform/IPC/ArgumentCoders.h:
+        (IPC::ArgumentCoder<std::optional<T>>::decode):
+        * Shared/Cocoa/WebCoreArgumentCodersCocoa.mm:
+        (IPC::ArgumentCoder<WebCore::PaymentAuthorizationResult>::decode):
+        (IPC::ArgumentCoder<WebCore::PaymentError>::decode):
+        (IPC::ArgumentCoder<WebCore::PaymentMethodUpdate>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingContactUpdate>::decode):
+        (IPC::ArgumentCoder<WebCore::ShippingMethodUpdate>::decode):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<IntPoint>::decode):
+        (IPC::ArgumentCoder<IntSize>::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::decode):
+
 2017-09-27  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222541.

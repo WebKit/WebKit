@@ -1,3 +1,13 @@
+2017-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Allow modern decoding of std::optional<T>
+        https://bugs.webkit.org/show_bug.cgi?id=177519
+
+        Reviewed by Tim Horton.
+
+        * platform/DragItem.h:
+        (WebCore::DragItem::decode):
+
 2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         "Tag" codepoints require the complex text codepath

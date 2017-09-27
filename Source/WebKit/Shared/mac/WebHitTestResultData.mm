@@ -97,11 +97,12 @@ bool WebHitTestResultData::platformDecode(IPC::Decoder& decoder, WebHitTestResul
         return false;
 
     if (hasDetectedDataTextIndicator) {
-        WebCore::TextIndicatorData indicatorData;
-        if (!decoder.decode(indicatorData))
+        std::optional<WebCore::TextIndicatorData> indicatorData;
+        decoder >> indicatorData;
+        if (!indicatorData)
             return false;
 
-        hitTestResultData.detectedDataTextIndicator = WebCore::TextIndicator::create(indicatorData);
+        hitTestResultData.detectedDataTextIndicator = WebCore::TextIndicator::create(*indicatorData);
     }
 
     return true;

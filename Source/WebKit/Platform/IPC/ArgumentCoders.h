@@ -110,6 +110,22 @@ template<typename T> struct ArgumentCoder<std::optional<T>> {
         optional = WTFMove(value);
         return true;
     }
+    
+    static std::optional<std::optional<T>> decode(Decoder& decoder)
+    {
+        std::optional<bool> isEngaged;
+        decoder >> isEngaged;
+        if (!isEngaged)
+            return std::nullopt;
+        if (*isEngaged) {
+            std::optional<T> value;
+            decoder >> value;
+            if (!value)
+                return std::nullopt;
+            return std::optional<std::optional<T>>(WTFMove(*value));
+        }
+        return std::optional<std::optional<T>>(std::optional<T>(std::nullopt));
+    }
 };
 
 template<typename T, typename U> struct ArgumentCoder<std::pair<T, U>> {

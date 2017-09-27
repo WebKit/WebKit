@@ -92,10 +92,11 @@ bool DragItem::decode(Decoder& decoder, DragItem& result)
     if (!decoder.decode(hasIndicatorData))
         return false;
     if (hasIndicatorData) {
-        TextIndicatorData indicatorData;
-        if (!decoder.decode(indicatorData))
+        std::optional<TextIndicatorData> indicatorData;
+        decoder >> indicatorData;
+        if (!indicatorData)
             return false;
-        result.image.setIndicatorData(indicatorData);
+        result.image.setIndicatorData(*indicatorData);
     }
     return true;
 }
