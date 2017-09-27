@@ -287,7 +287,7 @@ void FetchBodyOwner::BlobLoader::didFail(const ResourceError&)
 
 RefPtr<ReadableStream> FetchBodyOwner::readableStream(JSC::ExecState& state)
 {
-    if (isBodyNull())
+    if (isBodyNullOrOpaque())
         return nullptr;
 
     if (!m_body->hasReadableStream()) {

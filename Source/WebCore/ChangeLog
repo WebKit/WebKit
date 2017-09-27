@@ -1,3 +1,18 @@
+2017-09-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Cloning an opaque response should not assert
+        https://bugs.webkit.org/show_bug.cgi?id=177548
+
+        Reviewed by Sam Weinig.
+
+        Test: http/wpt/fetch/response-opaque-clone.html
+
+        * Modules/fetch/FetchBodyOwner.cpp:
+        (WebCore::FetchBodyOwner::readableStream): Returning null if response is opaque.
+        * Modules/fetch/FetchResponse.cpp:
+        (WebCore::FetchResponse::clone): Making sure cloned responses keep their opaque state.
+        (WebCore::FetchResponse::consumeBodyAsStream): Removing assertion as we need to create a stream for cloning.
+
 2017-09-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove unused parameter of Page.reload

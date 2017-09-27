@@ -157,6 +157,8 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(ScriptExecutionContext& con
 
     auto clone = adoptRef(*new FetchResponse(context, std::nullopt, FetchHeaders::create(headers()), ResourceResponse(m_response)));
     clone->cloneBody(*this);
+    if (isBodyOpaque())
+        clone->setBodyAsOpaque();
     return WTFMove(clone);
 }
 
@@ -350,7 +352,6 @@ void FetchResponse::consumeChunk(Ref<JSC::Uint8Array>&& chunk)
 
 void FetchResponse::consumeBodyAsStream()
 {
-    ASSERT(!isBodyOpaque());
     ASSERT(m_readableStreamSource);
     if (!isLoading()) {
         FetchBodyOwner::consumeBodyAsStream();

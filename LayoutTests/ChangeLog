@@ -1,3 +1,13 @@
+2017-09-27  Youenn Fablet  <youenn@apple.com>
+
+        [Fetch API] Cloning an opaque response should not assert
+        https://bugs.webkit.org/show_bug.cgi?id=177548
+
+        Reviewed by Sam Weinig.
+
+        * http/wpt/fetch/response-opaque-clone-expected.txt: Added.
+        * http/wpt/fetch/response-opaque-clone.html: Added.
+
 2017-09-27  Chris Dumez  <cdumez@apple.com>
 
         cssFloat missing in CSSPropertyDeclaration.prototype
