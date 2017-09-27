@@ -1,3 +1,19 @@
+2017-09-27  Lucas Forschler  <lforschler@apple.com>
+
+        bisect-builds:add a README to the archive.
+        https://bugs.webkit.org/show_bug.cgi?id=177376
+
+        Reviewed by Alexey Proskuryakov & Jon Davis.
+
+        * BuildSlaveSupport/built-product-archive:
+        (addFilesToArchive): refactor function (was previously addLauncherToArchive)
+        (createZip): Teach function to add the README
+        (addLauncherToArchive): Deleted. (refactored to addFilesToArchive)
+        * BuildSlaveSupport/run-webkit-archive: Deleted. (Moved to WebKitArchiveSupport)
+        * WebKitArchiveSupport: Added.
+        * WebKitArchiveSupport/README: Added. README which will be packaged up with the archive.
+        * WebKitArchiveSupport/run-webkit-archive: Added. (Moved from BuildSlaveSupport)
+
 2017-09-26  Tim Horton  <timothy_horton@apple.com>
 
         Mac CMake bot should provide verbose build output
