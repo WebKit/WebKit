@@ -1,5 +1,35 @@
 2017-09-26  Youenn Fablet  <youenn@apple.com>
 
+        Build libwebrtc unit tests executables
+        https://bugs.webkit.org/show_bug.cgi?id=177211
+
+        Reviewed by Alex Christensen.
+
+        Adding support for a new target called unittests that will be several executables.
+        Each executable run unit tests dedicated to a part of libwebrtc.
+
+        Adding one target/executable per unit test suite.
+        Adding one composite target to build all unit test targets.
+        Adding a target to build a static libwebrtctest library.
+        The static libwebrtctest library is then linked to each unit test executable which is also linked to libwebrtc dylib.
+
+        Some unit tests require a default codec (VP8) that is disabled in libwebrtc.
+        This ends up making some tests crashing.
+        An additional work should follow to execute only the meaningful subset of tests.
+
+        * Configurations/libwebrtc-base.xcconfig: Added.
+        * Configurations/libwebrtc-test-static.xcconfig: Added.
+        * Configurations/rtc_pc_unittests.xcconfig: Added.
+        * Source/third_party/gflags/gen/posix/include/private/config.h:
+        * Source/webrtc/modules/audio_coding/neteq/tools/neteq_test.cc: Replacing FATAL by RTC_FATAL.
+        * Source/webrtc/sdk/objc/Framework/Classes/Common/helpers.mm: Removing UIKit dependency.
+        * Source/webrtc/test/gmock.h: Using googletest version instead of checking in testing folder.
+        * Source/webrtc/test/gtest.h: Ditto.
+        * Source/webrtc/test/rtp_file_reader.cc: Replacing FATAL by RTC_FATAL.
+        * libwebrtc.xcodeproj/project.pbxproj:
+
+2017-09-26  Youenn Fablet  <youenn@apple.com>
+
         Remove unnecessary libwebrtc dependencies
         https://bugs.webkit.org/show_bug.cgi?id=177494
 
