@@ -87,6 +87,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderFlexibleBox.h"
 #include "RenderFlowThread.h"
+#include "RenderFragmentContainer.h"
 #include "RenderGeometryMap.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -96,7 +97,6 @@
 #include "RenderLayerFilterInfo.h"
 #include "RenderMarquee.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderRegion.h"
 #include "RenderReplica.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
@@ -2092,9 +2092,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     if (adjustForColumns == RenderLayer::AdjustForColumns) {
         if (RenderLayer* parentLayer = layer->parent()) {
             if (is<RenderMultiColumnFlowThread>(parentLayer->renderer())) {
-                RenderRegion* region = downcast<RenderMultiColumnFlowThread>(parentLayer->renderer()).physicalTranslationFromFlowToRegion(location);
-                if (region)
-                    location.moveBy(region->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
+                RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlowThread>(parentLayer->renderer()).physicalTranslationFromFlowToFragment(location);
+                if (fragment)
+                    location.moveBy(fragment->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
             }
         }
     }
@@ -5529,7 +5529,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
                 backgroundRect.intersect(layerBoundsWithVisualOverflow);
         } else {
             // Shift the bounds to be for our region only.
-            LayoutRect bounds = renderBox()->borderBoxRectInRegion(nullptr);
+            LayoutRect bounds = renderBox()->borderBoxRectInFragment(nullptr);
 
             bounds.move(offsetFromRootLocal);
             if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)

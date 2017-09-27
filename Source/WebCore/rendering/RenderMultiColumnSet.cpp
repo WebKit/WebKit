@@ -29,7 +29,7 @@
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "PaintInfo.h"
-#include "RenderBoxRegionInfo.h"
+#include "RenderBoxFragmentInfo.h"
 #include "RenderLayer.h"
 #include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
@@ -38,7 +38,7 @@
 namespace WebCore {
 
 RenderMultiColumnSet::RenderMultiColumnSet(RenderFlowThread& flowThread, RenderStyle&& style)
-    : RenderRegionSet(flowThread.document(), WTFMove(style), flowThread)
+    : RenderFragmentContainerSet(flowThread.document(), WTFMove(style), flowThread)
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)
@@ -309,10 +309,10 @@ void RenderMultiColumnSet::recordSpaceShortage(LayoutUnit spaceShortage)
 
 void RenderMultiColumnSet::updateLogicalWidth()
 {
-    setComputedColumnWidthAndCount(multiColumnFlowThread()->columnWidth(), multiColumnFlowThread()->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+    setComputedColumnWidthAndCount(multiColumnFlowThread()->columnWidth(), multiColumnFlowThread()->columnCount()); // FIXME: This will eventually vary if we are contained inside fragments.
     
-    // FIXME: When we add regions support, we'll start it off at the width of the multi-column
-    // block in that particular region.
+    // FIXME: When we add fragments support, we'll start it off at the width of the multi-column
+    // block in that particular fragment.
     setLogicalWidth(parentBox()->contentLogicalWidth());
 }
 
@@ -374,7 +374,7 @@ void RenderMultiColumnSet::beginFlow(RenderBlock* container)
 
     // At this point layout is exactly at the beginning of this set. Store block offset from flow
     // thread start.
-    LayoutUnit logicalTopInFlowThread = flowThread->offsetFromLogicalTopOfFirstRegion(container) + container->logicalHeight();
+    LayoutUnit logicalTopInFlowThread = flowThread->offsetFromLogicalTopOfFirstFragment(container) + container->logicalHeight();
     setLogicalTopInFlowThread(logicalTopInFlowThread);
 }
 
@@ -386,7 +386,7 @@ void RenderMultiColumnSet::endFlow(RenderBlock* container, LayoutUnit bottomInCo
     // start. Also note that a new column height may have affected the height used in the flow
     // thread (because of struts), which may affect the number of columns. So we also need to update
     // the flow thread portion height in order to be able to calculate actual column-count.
-    LayoutUnit logicalBottomInFlowThread = flowThread->offsetFromLogicalTopOfFirstRegion(container) + bottomInContainer;
+    LayoutUnit logicalBottomInFlowThread = flowThread->offsetFromLogicalTopOfFirstFragment(container) + bottomInContainer;
     setLogicalBottomInFlowThread(logicalBottomInFlowThread);
     container->setLogicalHeight(bottomInContainer);
 }
@@ -400,8 +400,8 @@ void RenderMultiColumnSet::layout()
     m_maxColumnHeight = calculateMaxColumnHeight();
 
     if (!nextSiblingMultiColumnSet()) {
-        // This is the last set, i.e. the last region. Seize the opportunity to validate them.
-        multiColumnFlowThread()->validateRegions();
+        // This is the last set, i.e. the last fragment. Seize the opportunity to validate them.
+        multiColumnFlowThread()->validateFragments();
     }
 }
 
@@ -541,7 +541,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     //
     // FIXME: Eventually we will know overflow on a per-column basis, but we can't do this until we have a painting
     // mode that understands not to paint contents from a previous column in the overflow area of a following column.
-    // This problem applies to regions and pages as well and is not unique to columns.
+    // This problem applies to fragments and pages as well and is not unique to columns.
 
     bool progressionReversed = multiColumnFlowThread()->progressionIsReversed();
 
@@ -552,7 +552,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
 
     // Calculate the overflow rectangle, based on the flow thread's, clipped at column logical
     // top/bottom unless it's the first/last column.
-    LayoutRect overflowRect = overflowRectForFlowThreadPortion(portionRect, isFirstColumn && isFirstRegion(), isLastColumn && isLastRegion(), VisualOverflow);
+    LayoutRect overflowRect = overflowRectForFlowThreadPortion(portionRect, isFirstColumn && isFirstFragment(), isLastColumn && isLastFragment(), VisualOverflow);
 
     // For RenderViews only (i.e., iBooks), avoid overflowing into neighboring columns, by clipping in the middle of adjacent column gaps. Also make sure that we avoid rounding errors.
     if (&view() == parent()) {
@@ -666,7 +666,7 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
     // Now we can compare this rect with the flow thread portions owned by each column. First let's
     // just see if the repaint rect intersects our flow thread portion at all.
     LayoutRect clippedRect(flowThreadRepaintRect);
-    clippedRect.intersect(RenderRegion::flowThreadPortionOverflowRect());
+    clippedRect.intersect(RenderFragmentContainer::flowThreadPortionOverflowRect());
     if (clippedRect.isEmpty())
         return;
     
@@ -743,7 +743,7 @@ void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, cons
     // Now we can compare with the flow thread portions owned by each column. First let's
     // see if the rect intersects our flow thread portion at all.
     LayoutRect clippedRect(layerBoundsInFlowThread);
-    clippedRect.intersect(RenderRegion::flowThreadPortionOverflowRect());
+    clippedRect.intersect(RenderFragmentContainer::flowThreadPortionOverflowRect());
     if (clippedRect.isEmpty())
         return;
     
@@ -861,7 +861,7 @@ LayoutPoint RenderMultiColumnSet::columnTranslationForOffset(const LayoutUnit& o
     return translationOffset;
 }
 
-void RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect&) const
+void RenderMultiColumnSet::adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect&) const
 {
     // This only fires for named flow thread compositing code, so let's make sure to ASSERT if this ever gets invoked.
     ASSERT_NOT_REACHED();
@@ -880,12 +880,12 @@ void RenderMultiColumnSet::addOverflowFromChildren()
         addVisualOverflow(lastRect);
 }
 
-VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, const RenderRegion*)
+VisiblePosition RenderMultiColumnSet::positionForPoint(const LayoutPoint& logicalPoint, const RenderFragmentContainer*)
 {
-    return multiColumnFlowThread()->positionForPoint(translateRegionPointToFlowThread(logicalPoint, ClampHitTestTranslationToColumns), this);
+    return multiColumnFlowThread()->positionForPoint(translateFragmentPointToFlowThread(logicalPoint, ClampHitTestTranslationToColumns), this);
 }
 
-LayoutPoint RenderMultiColumnSet::translateRegionPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode clampMode) const
+LayoutPoint RenderMultiColumnSet::translateFragmentPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode clampMode) const
 {
     // Determine which columns we intersect.
     LayoutUnit colGap = columnGap();
@@ -973,7 +973,7 @@ void RenderMultiColumnSet::updateHitTestResult(HitTestResult& result, const Layo
         result.setInnerNode(node);
         if (!result.innerNonSharedNode())
             result.setInnerNonSharedNode(node);
-        LayoutPoint adjustedPoint = translateRegionPointToFlowThread(point);
+        LayoutPoint adjustedPoint = translateFragmentPointToFlowThread(point);
         view().offsetForContents(adjustedPoint);
         result.setLocalPoint(adjustedPoint);
     }

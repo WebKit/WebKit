@@ -1,245 +1,474 @@
-2017-09-27  Antti Koivisto  <antti@apple.com>
+2017-09-27  David Hyatt  <hyatt@apple.com>
 
-        REGRESSION (r222040): Crash navigating out of gfycat.com url
-        https://bugs.webkit.org/show_bug.cgi?id=177531
-        <rdar://problem/34602601>
-
-        Reviewed by Geoff Garen.
-
-        Animation structures are normally removed when the render tree is torn down.
-        However there are cases where we can instantiate animation without creating a renderer
-        and we need to make sure animations are canceled in these cases too.
-
-        CompositeAnimations should also ref the element but that can be done separately.
-
-        Test: fast/animation/animation-element-removal.html
-
-        * dom/Element.cpp:
-        (WebCore::Element::removedFrom):
-
-            Ensure animations are canceled when element is removed from the tree.
-
-        (WebCore::Element::clearHasPendingResources):
-        (WebCore::Element::hasCSSAnimation const):
-        (WebCore::Element::setHasCSSAnimation):
-        (WebCore::Element::clearHasCSSAnimation):
-
-            Add a bit so we don't need to do hash lookups for every removal.
-
-        * dom/Element.h:
-        * dom/ElementRareData.h:
-        (WebCore::ElementRareData::hasCSSAnimation const):
-        (WebCore::ElementRareData::setHasCSSAnimation):
-        (WebCore::ElementRareData::ElementRareData):
-        * page/animation/CSSAnimationController.cpp:
-        (WebCore::CSSAnimationControllerPrivate::ensureCompositeAnimation):
-
-            Test for the bit.
-
-        (WebCore::CSSAnimationControllerPrivate::clear):
-        (WebCore::CSSAnimationController::cancelAnimations):
-
-2017-09-27  Joanmarie Diggs  <jdiggs@igalia.com>
-
-        [ATK] atk_table_cell_get_position() should return values of aria-rowindex and aria-colindex, if present
-        https://bugs.webkit.org/show_bug.cgi?id=171176
-
-        Reviewed by Chris Fleizach.
-
-        Modify webKitAccessibleTableCellGetPosition() to prefer the ARIA value
-        over the DOM-based value.
-
-        No new tests needed: We have coverage through aria-table-attributes.html.
-        Platform expectations for this test were updated.
-
-        * accessibility/atk/WebKitAccessibleInterfaceTableCell.cpp:
-        (webkitAccessibleTableCellGetPosition):
-
-2017-09-27  Alicia Boya García  <aboya@igalia.com>
-
-        Add initial experimental support for webm in WebKitGTK+ with VP8, VP9,
-        Vorbis and Opus formats, as long as suitable plugins are installed in
-        GStreamer.
-        https://bugs.webkit.org/show_bug.cgi?id=177355
-
-        Reviewed by Xabier Rodriguez-Calvar.
-
-        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
-        (WebCore::AppendPipeline::AppendPipeline):
-        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
-
-2017-09-26  Zalan Bujtas  <zalan@apple.com>
-
-        AX: Defer RenderImage's imageChanged event until after layout is done.
-        https://bugs.webkit.org/show_bug.cgi?id=177446
-
-        Reviewed by Dean Jackson.
-
-        This is to avoid unintentional tree mutation during layout.
-
-        Covered by existing tests.
-
-        * rendering/RenderImage.cpp:
-        (WebCore::RenderImage::imageChanged):
-
-2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
-
-        AX: Several ARIA roles with presentational children are exposing children
-        https://bugs.webkit.org/show_bug.cgi?id=177502
-
-        Reviewed by Chris Fleizach.
-
-        Add MenuItemCheckboxRole, MenuItemRadioRole, and SplitterRole to the list
-        of AccessibilityRole types which cannot have children. In the case of
-        DocumentMathRole, only treat children as presentational (excluded from the
-        accessibility tree) if the element is not MathML.
-
-        Test: accessibility/presentational-children.html
-
-        * accessibility/AccessibilityNodeObject.cpp:
-        (WebCore::AccessibilityNodeObject::canHaveChildren const):
-
-2017-09-26  Zalan Bujtas  <zalan@apple.com>
-
-        Fall back to normal line layout position, when simple line layout fails to find one.
-        https://bugs.webkit.org/show_bug.cgi?id=176220
-        <rdar://problem/34205774>
-
-        Reviewed by Brent Fulgham.
-
-        In case of empty content, let's just fall back to normal line layout and try to
-        find the visually correct one.
-
-        Test: fast/text/invalid-positionForPoint-offset.html
-
-        * rendering/RenderText.cpp:
-        (WebCore::RenderText::positionForPoint):
-        * rendering/SimpleLineLayoutResolver.cpp:
-        (WebCore::SimpleLineLayout::RunResolver::runForPoint const):
-
-2017-09-26  Matt Lewis  <jlewis3@apple.com>
-
-        Unreviewed, rolling out r222525.
-
-        This caused a consistent failure in the test
-        inspector/dom/getAccessibilityPropertiesForNode.html .
-
-        Reverted changeset:
-
-        "AX: Several ARIA roles with presentational children are
-        exposing children"
-        https://bugs.webkit.org/show_bug.cgi?id=177502
-        http://trac.webkit.org/changeset/222525
-
-2017-09-26  Daniel Bates  <dabates@apple.com>
-
-        Make fontToUse() a member function of InlineTextBox
-        https://bugs.webkit.org/show_bug.cgi?id=177495
-
-        Reviewed by Myles C. Maxfield.
-
-        Following bug #177493 we can write fontToUse() in terms of InlineTextBox::combinedText().
-
-        No functionality changed. So, no new tests.
-
-        * rendering/InlineTextBox.cpp:
-        (WebCore::InlineTextBox::lineFont const): Added; extracted from fontToUse().
-        (WebCore::InlineTextBox::combinedText const): Mark inline to give a hint to the compiler
-        that this function is small and seems reasonable to inline.
-        (WebCore::InlineTextBox::localSelectionRect const): Modified to call lineFont().
-        (WebCore::InlineTextBox::paint): Ditto.
-        (WebCore::InlineTextBox::offsetForPosition const): Ditto.
-        (WebCore::InlineTextBox::positionForOffset const): Ditto. Remove an extraneous
-        if-statement while I am here.
-        (WebCore::fontToUse): Deleted; moved logic to InlineTextBox::lineFont().
-        * rendering/InlineTextBox.h:
-
-2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
-
-        Followup (r222427): SynchronizedFixedQueue should not have a public constructor
-        https://bugs.webkit.org/show_bug.cgi?id=177458
-
-        Reviewed by Tim Horton.
-
-        ImageFrameCache::decodingQueue() and frameRequestQueue() should return
-        raw references instead of Ref objects.
-
-        * platform/graphics/ImageFrameCache.cpp:
-        (WebCore::ImageFrameCache::decodingQueue):
-        (WebCore::ImageFrameCache::frameRequestQueue):
-        (WebCore::ImageFrameCache::startAsyncDecodingQueue):
-        * platform/graphics/ImageFrameCache.h:
-
-2017-09-26  Daniel Bates  <dabates@apple.com>
-
-        Extract out combined text query into a member function
-        https://bugs.webkit.org/show_bug.cgi?id=177493
+        Rename "Region" to "Fragment" for RenderRegion and associated classes/methods.
+        https://bugs.webkit.org/show_bug.cgi?id=177506
 
         Reviewed by Zalan Bujtas.
 
-        Towards removing duplication throughout the paint code extract the
-        querying for the combined text of an inline text box into a member
-        function.
-
-        For a similar reason, update functions to query lineStyle() instead
-        of passing this information an argument.
-
-        No functionality changed. So, no new tests.
-
-        * rendering/InlineTextBox.cpp:
-        (WebCore::InlineTextBox::paint): Extract logic to query for combined text
-        from here to InlineTextBox::combinedText() and modify code to call this
-        member function.
-        (WebCore::InlineTextBox::paintTextSubrangeBackground): Query for line style
-        instead of taking it as an argument.
-        (WebCore::InlineTextBox::paintCompositionBackground): Ditto.
-        (WebCore::InlineTextBox::paintTextMatchMarker): Ditto.
-        (WebCore::InlineTextBox::paintDecoration): Update code to query combinedText()
-        instead of taking RenderCombineText as an argument. While I am here make use of
-        GraphicsContextStateSaver to save and restore the graphics context state when
-        we have a non-empty clip rect.
-        (WebCore::InlineTextBox::paintDocumentMarker): Query for line style instead of
-        taking it as an argument.
-        (WebCore::InlineTextBox::paintDocumentMarkers): Ditto.
-        (WebCore::InlineTextBox::combinedText const): Added; extracted from InlineTextBox::paint().
-        * rendering/InlineTextBox.h:
-        * rendering/TextPainter.h:
-        (WebCore::TextPainter::setEmphasisMark): Modified to take a const RenderCombineText*
-        as opposed to a pointer to a non-const RenderCombineText.
-
-2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
-
-        AX: ARIA grids claim to be multiselectable even with aria-multiselectable is set to false
-        https://bugs.webkit.org/show_bug.cgi?id=177498
-
-        Reviewed by Chris Fleizach.
-
-        AccessibilityARIAGrid::isMultiSelectable() was unconditionally returning
-        true. Modify it to return false if aria-multiselectable has been set to
-        false by the author.
-
-        Test: accessibility/aria-multiselectable-grid.html
-
-        * accessibility/AccessibilityARIAGrid.cpp:
-        (WebCore::AccessibilityARIAGrid::isMultiSelectable const):
-        * accessibility/AccessibilityARIAGrid.h:
-
-2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
-
-        AX: Several ARIA roles with presentational children are exposing children
-        https://bugs.webkit.org/show_bug.cgi?id=177502
-
-        Reviewed by Chris Fleizach.
-
-        Add MenuItemCheckboxRole, MenuItemRadioRole, and SplitterRole to the list
-        of AccessibilityRole types which cannot have children. In the case of
-        DocumentMathRole, only treat children as presentational (excluded from the
-        accessibility tree) if the element is not MathML.
-
-        Test: accessibility/presentational-children.html
-
-        * accessibility/AccessibilityNodeObject.cpp:
-        (WebCore::AccessibilityNodeObject::canHaveChildren const):
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator BreakInside const):
+        * css/CSSValueKeywords.in:
+        * dom/Element.cpp:
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        * rendering/FixedTableLayout.cpp:
+        (WebCore::FixedTableLayout::calcWidthArray):
+        * rendering/GridTrackSizingAlgorithm.cpp:
+        (WebCore::computeMarginLogicalSizeForChild):
+        (WebCore::IndefiniteSizeStrategy::minLogicalWidthForChild const):
+        (WebCore::DefiniteSizeStrategy::minLogicalWidthForChild const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::preparePaginationBeforeBlockLayout):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::clearLayoutOverflow):
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::markFixedPositionObjectForLayoutIfNeeded):
+        (WebCore::RenderBlock::layoutPositionedObject):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent const):
+        (WebCore::RenderBlock::logicalRightOffsetForContent const):
+        (WebCore::RenderBlock::adjustLogicalLeftOffsetForLine const):
+        (WebCore::RenderBlock::adjustLogicalRightOffsetForLine const):
+        (WebCore::RenderBlock::positionForPointWithInlineChildren):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::positionForPoint):
+        (WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage const):
+        (WebCore::RenderBlock::fragmentAtBlockOffset const):
+        (WebCore::canComputeFragmentRangeForBox):
+        (WebCore::RenderBlock::computeFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::estimateFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::updateFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::regionAtBlockOffset const): Deleted.
+        (WebCore::canComputeRegionRangeForBox): Deleted.
+        (WebCore::RenderBlock::computeRegionRangeForBoxChild const): Deleted.
+        (WebCore::RenderBlock::estimateRegionRangeForBoxChild const): Deleted.
+        (WebCore::RenderBlock::updateRegionRangeForBoxChild const): Deleted.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::availableLogicalWidthForLineInFragment const):
+        (WebCore::RenderBlock::logicalRightOffsetForLineInFragment const):
+        (WebCore::RenderBlock::logicalLeftOffsetForLineInFragment const):
+        (WebCore::RenderBlock::startOffsetForLineInFragment const):
+        (WebCore::RenderBlock::endOffsetForLineInFragment const):
+        (WebCore::RenderBlock::availableLogicalWidthForLine const):
+        (WebCore::RenderBlock::availableLogicalWidthForContent const):
+        (WebCore::RenderBlock::startOffsetForContent const):
+        (WebCore::RenderBlock::endOffsetForContent const):
+        (WebCore::RenderBlock::logicalLeftOffsetForContent const):
+        (WebCore::RenderBlock::logicalRightOffsetForContent const):
+        (WebCore::RenderBlock::availableLogicalWidthForLineInRegion const): Deleted.
+        (WebCore::RenderBlock::logicalRightOffsetForLineInRegion const): Deleted.
+        (WebCore::RenderBlock::logicalLeftOffsetForLineInRegion const): Deleted.
+        (WebCore::RenderBlock::startOffsetForLineInRegion const): Deleted.
+        (WebCore::RenderBlock::endOffsetForLineInRegion const): Deleted.
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::setStaticInlinePositionForChild):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::hasNextPage const):
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild):
+        (WebCore::RenderBlockFlow::pushToNextPageWithMinimumLogicalHeight const):
+        (WebCore::RenderBlockFlow::positionNewFloats):
+        (WebCore::RenderBlockFlow::getClearDelta):
+        (WebCore::RenderBlockFlow::needsLayoutAfterFragmentRangeChange const):
+        (WebCore::RenderBlockFlow::findClosestTextAtAbsolutePoint):
+        (WebCore::RenderBlockFlow::positionForPointWithInlineChildren):
+        (WebCore::RenderBlockFlow::positionForPoint):
+        (WebCore::RenderBlockFlow::layoutExcludedChildren):
+        (WebCore::RenderBlockFlow::needsLayoutAfterRegionRangeChange const): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+        (WebCore::RenderBlockFlow::lineWidthForPaginatedLineChanged const):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::positionNewFloatOnLine):
+        (WebCore::RenderBlockFlow::updateFragmentForLine const):
+        (WebCore::RenderBlockFlow::updateRegionForLine const): Deleted.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clampToStartAndEndFragments const):
+        (WebCore::RenderBox::hasFragmentRangeInFlowThread const):
+        (WebCore::RenderBox::clientBoxRectInFragment const):
+        (WebCore::RenderBox::borderBoxRectInFragment const):
+        (WebCore::RenderBox::constrainLogicalWidthInFragmentByMinMax const):
+        (WebCore::RenderBox::nodeAtPoint):
+        (WebCore::RenderBox::paintBoxDecorations):
+        (WebCore::RenderBox::overflowClipRect):
+        (WebCore::RenderBox::clipRect):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats const):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInFragment const):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInFragment const):
+        (WebCore::RenderBox::offsetFromContainer const):
+        (WebCore::RenderBox::computeRectForRepaint const):
+        (WebCore::RenderBox::updateLogicalWidth):
+        (WebCore::RenderBox::computeLogicalWidthInFragment const):
+        (WebCore::RenderBox::computeLogicalWidthInFragmentUsing const):
+        (WebCore::RenderBox::renderBoxFragmentInfo const):
+        (WebCore::tableCellShouldHaveZeroInitialSize):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned const):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth const):
+        (WebCore::RenderBox::computePositionedLogicalHeight const):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced const):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::addVisualEffectOverflow):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::clearOverflow):
+        (WebCore::RenderBox::clampToStartAndEndRegions const): Deleted.
+        (WebCore::RenderBox::hasRegionRangeInFlowThread const): Deleted.
+        (WebCore::RenderBox::clientBoxRectInRegion const): Deleted.
+        (WebCore::RenderBox::borderBoxRectInRegion const): Deleted.
+        (WebCore::RenderBox::constrainLogicalWidthInRegionByMinMax const): Deleted.
+        (WebCore::RenderBox::containingBlockLogicalWidthForContentInRegion const): Deleted.
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInRegion const): Deleted.
+        (WebCore::RenderBox::computeLogicalWidthInRegion const): Deleted.
+        (WebCore::RenderBox::computeLogicalWidthInRegionUsing const): Deleted.
+        (WebCore::RenderBox::renderBoxRegionInfo const): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::overflowClipRectForChildLayers):
+        (WebCore::RenderBox::canHaveOutsideFragmentRange const):
+        (WebCore::RenderBox::needsLayoutAfterFragmentRangeChange const):
+        (WebCore::RenderBox::canHaveOutsideRegionRange const): Deleted.
+        (WebCore::RenderBox::needsLayoutAfterRegionRangeChange const): Deleted.
+        * rendering/RenderBoxFragmentInfo.h: Copied from rendering/RenderBoxRegionInfo.h.
+        (WebCore::RenderBoxFragmentInfo::RenderBoxFragmentInfo):
+        (WebCore::RenderBoxRegionInfo::RenderBoxRegionInfo): Deleted.
+        (WebCore::RenderBoxRegionInfo::logicalLeft const): Deleted.
+        (WebCore::RenderBoxRegionInfo::logicalWidth const): Deleted.
+        (WebCore::RenderBoxRegionInfo::shiftLogicalLeft): Deleted.
+        (WebCore::RenderBoxRegionInfo::isShifted const): Deleted.
+        (WebCore::RenderBoxRegionInfo::createOverflow): Deleted.
+        (WebCore::RenderBoxRegionInfo::overflow const): Deleted.
+        (WebCore::RenderBoxRegionInfo::clearOverflow): Deleted.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint const):
+        * rendering/RenderBoxModelObject.h:
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInFragment const):
+        (WebCore::RenderBoxModelObject::canHaveBoxInfoInRegion const): Deleted.
+        * rendering/RenderBoxRegionInfo.h: Removed.
+        * rendering/RenderElement.cpp:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::positionForPoint):
+        * rendering/RenderFileUploadControl.h:
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::computeMainAxisExtentForChild):
+        (WebCore::RenderFlexibleBox::applyStretchAlignmentToChild):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::styleDidChange):
+        (WebCore::RenderFlowThread::removeFlowChildInfo):
+        (WebCore::RenderFlowThread::removeFragmentFromThread):
+        (WebCore::RenderFlowThread::invalidateFragments):
+        (WebCore::RenderFlowThread::validateFragments):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::updateLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight const):
+        (WebCore::RenderFlowThread::repaintRectangleInFragments const):
+        (WebCore::RenderFlowThread::fragmentAtBlockOffset const):
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderFlowThread::pageLogicalTopForOffset const):
+        (WebCore::RenderFlowThread::pageLogicalWidthForOffset const):
+        (WebCore::RenderFlowThread::pageLogicalHeightForOffset const):
+        (WebCore::RenderFlowThread::pageRemainingLogicalHeightForOffset const):
+        (WebCore::RenderFlowThread::mapFromFlowToFragment const):
+        (WebCore::RenderFlowThread::removeRenderBoxFragmentInfo):
+        (WebCore::RenderFlowThread::removeLineFragmentInfo):
+        (WebCore::RenderFlowThread::logicalWidthChangedInFragmentsForBlock):
+        (WebCore::RenderFlowThread::contentLogicalWidthOfFirstFragment const):
+        (WebCore::RenderFlowThread::contentLogicalHeightOfFirstFragment const):
+        (WebCore::RenderFlowThread::contentLogicalLeftOfFirstFragment const):
+        (WebCore::RenderFlowThread::firstFragment const):
+        (WebCore::RenderFlowThread::lastFragment const):
+        (WebCore::RenderFlowThread::clearRenderBoxFragmentInfoAndCustomStyle):
+        (WebCore::RenderFlowThread::setFragmentRangeForBox):
+        (WebCore::RenderFlowThread::hasCachedFragmentRangeForBox const):
+        (WebCore::RenderFlowThread::getFragmentRangeForBoxFromCachedInfo const):
+        (WebCore::RenderFlowThread::getFragmentRangeForBox const):
+        (WebCore::RenderFlowThread::computedFragmentRangeForBox const):
+        (WebCore::RenderFlowThread::fragmentInRange const):
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowFragment const):
+        (WebCore::RenderFlowThread::objectInFlowFragment const):
+        (WebCore::RenderFlowThread::checkLinesConsistency const):
+        (WebCore::RenderFlowThread::clearLinesToFragmentMap):
+        (WebCore::RenderFlowThread::deleteLines):
+        (WebCore::RenderFlowThread::willBeDestroyed):
+        (WebCore::RenderFlowThread::markFragmentsForOverflowLayoutIfNeeded):
+        (WebCore::RenderFlowThread::updateFragmentsFlowThreadPortionRect):
+        (WebCore::RenderFlowThread::addForcedFragmentBreak):
+        (WebCore::RenderFlowThread::collectLayerFragments):
+        (WebCore::RenderFlowThread::fragmentsBoundingBox):
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstFragment const):
+        (WebCore::RenderFlowThread::FragmentSearchAdapter::collectIfNeeded):
+        (WebCore::RenderFlowThread::mapLocalToContainer const):
+        (WebCore::RenderFlowThread::addFragmentsVisualEffectOverflow):
+        (WebCore::RenderFlowThread::addFragmentsVisualOverflowFromTheme):
+        (WebCore::RenderFlowThread::addFragmentsOverflowFromChild):
+        (WebCore::RenderFlowThread::addFragmentsLayoutOverflow):
+        (WebCore::RenderFlowThread::addFragmentsVisualOverflow):
+        (WebCore::RenderFlowThread::clearFragmentsOverflow):
+        (WebCore::RenderFlowThread::currentFragment const):
+        (WebCore::RenderFlowThread::containingFragmentMap):
+        (WebCore::RenderFlowThread::removeRegionFromThread): Deleted.
+        (WebCore::RenderFlowThread::invalidateRegions): Deleted.
+        (WebCore::RenderFlowThread::validateRegions): Deleted.
+        (WebCore::RenderFlowThread::repaintRectangleInRegions const): Deleted.
+        (WebCore::RenderFlowThread::regionAtBlockOffset const): Deleted.
+        (WebCore::RenderFlowThread::mapFromFlowToRegion const): Deleted.
+        (WebCore::RenderFlowThread::removeRenderBoxRegionInfo): Deleted.
+        (WebCore::RenderFlowThread::removeLineRegionInfo): Deleted.
+        (WebCore::RenderFlowThread::logicalWidthChangedInRegionsForBlock): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalWidthOfFirstRegion const): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalHeightOfFirstRegion const): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalLeftOfFirstRegion const): Deleted.
+        (WebCore::RenderFlowThread::firstRegion const): Deleted.
+        (WebCore::RenderFlowThread::lastRegion const): Deleted.
+        (WebCore::RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle): Deleted.
+        (WebCore::RenderFlowThread::setRegionRangeForBox): Deleted.
+        (WebCore::RenderFlowThread::hasCachedRegionRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::getRegionRangeForBoxFromCachedInfo const): Deleted.
+        (WebCore::RenderFlowThread::getRegionRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::computedRegionRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::regionInRange const): Deleted.
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowRegion const): Deleted.
+        (WebCore::RenderFlowThread::objectInFlowRegion const): Deleted.
+        (WebCore::RenderFlowThread::clearLinesToRegionMap): Deleted.
+        (WebCore::RenderFlowThread::markRegionsForOverflowLayoutIfNeeded): Deleted.
+        (WebCore::RenderFlowThread::updateRegionsFlowThreadPortionRect): Deleted.
+        (WebCore::RenderFlowThread::addForcedRegionBreak): Deleted.
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstRegion const): Deleted.
+        (WebCore::RenderFlowThread::RegionSearchAdapter::collectIfNeeded): Deleted.
+        (WebCore::RenderFlowThread::addRegionsVisualEffectOverflow): Deleted.
+        (WebCore::RenderFlowThread::addRegionsVisualOverflowFromTheme): Deleted.
+        (WebCore::RenderFlowThread::addRegionsOverflowFromChild): Deleted.
+        (WebCore::RenderFlowThread::addRegionsLayoutOverflow): Deleted.
+        (WebCore::RenderFlowThread::addRegionsVisualOverflow): Deleted.
+        (WebCore::RenderFlowThread::clearRegionsOverflow): Deleted.
+        (WebCore::RenderFlowThread::currentRegion const): Deleted.
+        (WebCore::RenderFlowThread::containingRegionMap): Deleted.
+        * rendering/RenderFlowThread.h:
+        (WTF::ValueToString<WebCore::RenderFragmentContainer::string):
+        (WTF::ValueToString<WebCore::RenderRegion::string): Deleted.
+        * rendering/RenderFragmentContainer.cpp: Copied from rendering/RenderRegion.cpp.
+        (WebCore::RenderFragmentContainer::RenderFragmentContainer):
+        (WebCore::RenderFragmentContainer::mapFragmentPointIntoFlowThreadCoordinates):
+        (WebCore::RenderFragmentContainer::positionForPoint):
+        (WebCore::RenderFragmentContainer::pageLogicalWidth const):
+        (WebCore::RenderFragmentContainer::pageLogicalHeight const):
+        (WebCore::RenderFragmentContainer::logicalHeightOfAllFlowThreadContent const):
+        (WebCore::RenderFragmentContainer::flowThreadPortionOverflowRect):
+        (WebCore::RenderFragmentContainer::flowThreadPortionLocation const):
+        (WebCore::RenderFragmentContainer::overflowRectForFlowThreadPortion):
+        (WebCore::RenderFragmentContainer::pageLogicalTopForOffset const):
+        (WebCore::RenderFragmentContainer::isFirstFragment const):
+        (WebCore::RenderFragmentContainer::isLastFragment const):
+        (WebCore::RenderFragmentContainer::shouldClipFlowThreadContent const):
+        (WebCore::RenderFragmentContainer::styleDidChange):
+        (WebCore::RenderFragmentContainer::computeOverflowFromFlowThread):
+        (WebCore::RenderFragmentContainer::repaintFlowThreadContent):
+        (WebCore::RenderFragmentContainer::repaintFlowThreadContentRectangle):
+        (WebCore::RenderFragmentContainer::installFlowThread):
+        (WebCore::RenderFragmentContainer::attachFragment):
+        (WebCore::RenderFragmentContainer::detachFragment):
+        (WebCore::RenderFragmentContainer::renderBoxFragmentInfo const):
+        (WebCore::RenderFragmentContainer::setRenderBoxFragmentInfo):
+        (WebCore::RenderFragmentContainer::takeRenderBoxFragmentInfo):
+        (WebCore::RenderFragmentContainer::removeRenderBoxFragmentInfo):
+        (WebCore::RenderFragmentContainer::deleteAllRenderBoxFragmentInfo):
+        (WebCore::RenderFragmentContainer::logicalTopOfFlowThreadContentRect const):
+        (WebCore::RenderFragmentContainer::logicalBottomOfFlowThreadContentRect const):
+        (WebCore::RenderFragmentContainer::insertedIntoTree):
+        (WebCore::RenderFragmentContainer::willBeRemovedFromTree):
+        (WebCore::RenderFragmentContainer::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderFragmentContainer::computePreferredLogicalWidths):
+        (WebCore::RenderFragmentContainer::adjustFragmentBoundsFromFlowThreadPortionRect const):
+        (WebCore::RenderFragmentContainer::ensureOverflowForBox):
+        (WebCore::RenderFragmentContainer::rectFlowPortionForBox const):
+        (WebCore::RenderFragmentContainer::addLayoutOverflowForBox):
+        (WebCore::RenderFragmentContainer::addVisualOverflowForBox):
+        (WebCore::RenderFragmentContainer::layoutOverflowRectForBox):
+        (WebCore::RenderFragmentContainer::visualOverflowRectForBox):
+        (WebCore::RenderFragmentContainer::layoutOverflowRectForBoxForPropagation):
+        (WebCore::RenderFragmentContainer::visualOverflowRectForBoxForPropagation):
+        (WebCore::CurrentRenderFragmentContainerMaintainer::CurrentRenderFragmentContainerMaintainer):
+        (WebCore::CurrentRenderFragmentContainerMaintainer::~CurrentRenderFragmentContainerMaintainer):
+        (WebCore::RenderRegion::RenderRegion): Deleted.
+        (WebCore::RenderRegion::mapRegionPointIntoFlowThreadCoordinates): Deleted.
+        (WebCore::RenderRegion::positionForPoint): Deleted.
+        (WebCore::RenderRegion::pageLogicalWidth const): Deleted.
+        (WebCore::RenderRegion::pageLogicalHeight const): Deleted.
+        (WebCore::RenderRegion::logicalHeightOfAllFlowThreadContent const): Deleted.
+        (WebCore::RenderRegion::flowThreadPortionOverflowRect): Deleted.
+        (WebCore::RenderRegion::flowThreadPortionLocation const): Deleted.
+        (WebCore::RenderRegion::overflowRectForFlowThreadPortion): Deleted.
+        (WebCore::RenderRegion::pageLogicalTopForOffset const): Deleted.
+        (WebCore::RenderRegion::isFirstRegion const): Deleted.
+        (WebCore::RenderRegion::isLastRegion const): Deleted.
+        (WebCore::RenderRegion::shouldClipFlowThreadContent const): Deleted.
+        (WebCore::RenderRegion::styleDidChange): Deleted.
+        (WebCore::RenderRegion::computeOverflowFromFlowThread): Deleted.
+        (WebCore::RenderRegion::repaintFlowThreadContent): Deleted.
+        (WebCore::RenderRegion::repaintFlowThreadContentRectangle): Deleted.
+        (WebCore::RenderRegion::installFlowThread): Deleted.
+        (WebCore::RenderRegion::attachRegion): Deleted.
+        (WebCore::RenderRegion::detachRegion): Deleted.
+        (WebCore::RenderRegion::renderBoxRegionInfo const): Deleted.
+        (WebCore::RenderRegion::setRenderBoxRegionInfo): Deleted.
+        (WebCore::RenderRegion::takeRenderBoxRegionInfo): Deleted.
+        (WebCore::RenderRegion::removeRenderBoxRegionInfo): Deleted.
+        (WebCore::RenderRegion::deleteAllRenderBoxRegionInfo): Deleted.
+        (WebCore::RenderRegion::logicalTopOfFlowThreadContentRect const): Deleted.
+        (WebCore::RenderRegion::logicalBottomOfFlowThreadContentRect const): Deleted.
+        (WebCore::RenderRegion::insertedIntoTree): Deleted.
+        (WebCore::RenderRegion::willBeRemovedFromTree): Deleted.
+        (WebCore::RenderRegion::computeIntrinsicLogicalWidths const): Deleted.
+        (WebCore::RenderRegion::computePreferredLogicalWidths): Deleted.
+        (WebCore::RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect const): Deleted.
+        (WebCore::RenderRegion::ensureOverflowForBox): Deleted.
+        (WebCore::RenderRegion::rectFlowPortionForBox const): Deleted.
+        (WebCore::RenderRegion::addLayoutOverflowForBox): Deleted.
+        (WebCore::RenderRegion::addVisualOverflowForBox): Deleted.
+        (WebCore::RenderRegion::layoutOverflowRectForBox): Deleted.
+        (WebCore::RenderRegion::visualOverflowRectForBox): Deleted.
+        (WebCore::RenderRegion::layoutOverflowRectForBoxForPropagation): Deleted.
+        (WebCore::RenderRegion::visualOverflowRectForBoxForPropagation): Deleted.
+        (WebCore::CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer): Deleted.
+        (WebCore::CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer): Deleted.
+        * rendering/RenderFragmentContainer.h: Copied from rendering/RenderRegion.h.
+        (WebCore::RenderFragmentContainer::isRenderFragmentContainerSet const):
+        (WebCore::RenderFragmentContainer::absoluteQuadsForBoxInFragment):
+        (WebCore::CurrentRenderFragmentContainerMaintainer::fragment const):
+        (WebCore::RenderRegion::setFlowThreadPortionRect): Deleted.
+        (WebCore::RenderRegion::flowThreadPortionRect const): Deleted.
+        (WebCore::RenderRegion::flowThread const): Deleted.
+        (WebCore::RenderRegion::isValid const): Deleted.
+        (WebCore::RenderRegion::setIsValid): Deleted.
+        (WebCore::RenderRegion::logicalTopForFlowThreadContent const): Deleted.
+        (WebCore::RenderRegion::logicalBottomForFlowThreadContent const): Deleted.
+        (WebCore::RenderRegion::isRenderRegionSet const): Deleted.
+        (WebCore::RenderRegion::collectLayerFragments): Deleted.
+        (WebCore::RenderRegion::absoluteQuadsForBoxInRegion): Deleted.
+        (WebCore::CurrentRenderRegionMaintainer::region const): Deleted.
+        * rendering/RenderFragmentContainerSet.cpp: Copied from rendering/RenderRegionSet.cpp.
+        (WebCore::RenderFragmentContainerSet::RenderFragmentContainerSet):
+        (WebCore::RenderFragmentContainerSet::installFlowThread):
+        (WebCore::RenderFragmentContainerSet::expandToEncompassFlowThreadContentsIfNeeded):
+        (WebCore::RenderRegionSet::RenderRegionSet): Deleted.
+        (WebCore::RenderRegionSet::installFlowThread): Deleted.
+        (WebCore::RenderRegionSet::expandToEncompassFlowThreadContentsIfNeeded): Deleted.
+        * rendering/RenderFragmentContainerSet.h: Copied from rendering/RenderRegionSet.h.
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computeMarginLogicalSizeForChild const):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::positionForPoint):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBoxInFragment const):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBoxInRegion const): Deleted.
+        * rendering/RenderInline.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::calculateClipRects const):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canBeComposited const):
+        * rendering/RenderLineBreak.cpp:
+        (WebCore::RenderLineBreak::positionForPoint):
+        * rendering/RenderLineBreak.h:
+        * rendering/RenderMultiColumnFlowThread.cpp:
+        (WebCore::RenderMultiColumnFlowThread::addFragmentToThread):
+        (WebCore::RenderMultiColumnFlowThread::willBeRemovedFromTree):
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved):
+        (WebCore::RenderMultiColumnFlowThread::setPageBreak):
+        (WebCore::RenderMultiColumnFlowThread::updateMinimumPageHeight):
+        (WebCore::RenderMultiColumnFlowThread::fragmentAtBlockOffset const):
+        (WebCore::RenderMultiColumnFlowThread::setFragmentRangeForBox):
+        (WebCore::RenderMultiColumnFlowThread::addForcedFragmentBreak):
+        (WebCore::RenderMultiColumnFlowThread::offsetFromContainer const):
+        (WebCore::RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint const):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFragmentToFlow const):
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlowThread::addRegionToThread): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::regionAtBlockOffset const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::setRegionRangeForBox): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::addForcedRegionBreak): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromRegionToFlow const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToRegion const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion const): Deleted.
+        * rendering/RenderMultiColumnFlowThread.h:
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        (WebCore::RenderMultiColumnSet::beginFlow):
+        (WebCore::RenderMultiColumnSet::endFlow):
+        (WebCore::RenderMultiColumnSet::layout):
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect):
+        (WebCore::RenderMultiColumnSet::repaintFlowThreadContent):
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::adjustFragmentBoundsFromFlowThreadPortionRect const):
+        (WebCore::RenderMultiColumnSet::positionForPoint):
+        (WebCore::RenderMultiColumnSet::translateFragmentPointToFlowThread const):
+        (WebCore::RenderMultiColumnSet::updateHitTestResult):
+        (WebCore::RenderMultiColumnSet::adjustRegionBoundsFromFlowThreadPortionRect const): Deleted.
+        (WebCore::RenderMultiColumnSet::translateRegionPointToFlowThread const): Deleted.
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint const):
+        (WebCore::RenderObject::repaintUsingContainer const):
+        (WebCore::RenderObject::outputRegionsInformation const):
+        (WebCore::RenderObject::positionForPoint):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderFragmentContainer const):
+        (WebCore::RenderObject::isRenderRegion const): Deleted.
+        * rendering/RenderRegion.cpp: Removed.
+        * rendering/RenderRegion.h: Removed.
+        * rendering/RenderRegionSet.cpp: Removed.
+        * rendering/RenderRegionSet.h: Removed.
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::updateLogicalWidth):
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint):
+        * rendering/RenderText.h:
+        * rendering/RenderTreeAsText.cpp:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::containingFragmentMap):
+        (WebCore::RootInlineBox::~RootInlineBox):
+        (WebCore::RootInlineBox::containingFragment const):
+        (WebCore::RootInlineBox::clearContainingFragment):
+        (WebCore::RootInlineBox::setContainingFragment):
+        (WebCore::containingRegionMap): Deleted.
+        (WebCore::RootInlineBox::containingRegion const): Deleted.
+        (WebCore::RootInlineBox::clearContainingRegion): Deleted.
+        (WebCore::RootInlineBox::setContainingRegion): Deleted.
+        * rendering/RootInlineBox.h:
+        * rendering/shapes/ShapeOutsideInfo.cpp:
+        (WebCore::ShapeOutsideInfo::logicalLeftOffset const):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::positionForPoint):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/RenderSVGText.h:
 
 2017-09-26  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 

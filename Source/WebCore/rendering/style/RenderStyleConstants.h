@@ -482,7 +482,7 @@ enum BreakBetween {
 bool alwaysPageBreak(BreakBetween);
     
 enum BreakInside {
-    AutoBreakInside, AvoidBreakInside, AvoidColumnBreakInside, AvoidPageBreakInside, AvoidRegionBreakInside
+    AutoBreakInside, AvoidBreakInside, AvoidColumnBreakInside, AvoidPageBreakInside
 };
 
 enum HangingPunctuation {

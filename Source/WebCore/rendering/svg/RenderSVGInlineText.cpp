@@ -165,7 +165,7 @@ bool RenderSVGInlineText::characterStartsNewTextChunk(int position) const
     return it->value.x != SVGTextLayoutAttributes::emptyValue() || it->value.y != SVGTextLayoutAttributes::emptyValue();
 }
 
-VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, const RenderRegion*)
+VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer*)
 {
     if (!firstTextBox() || !textLength())
         return createVisiblePosition(0, DOWNSTREAM);

@@ -35,20 +35,20 @@
 
 namespace WebCore {
 
-class CurrentRenderRegionMaintainer;
+class CurrentRenderFragmentContainerMaintainer;
 class RenderFlowThread;
 class RenderStyle;
-class RenderRegion;
+class RenderFragmentContainer;
 class RootInlineBox;
 
-typedef ListHashSet<RenderRegion*> RenderRegionList;
+typedef ListHashSet<RenderFragmentContainer*> RenderFragmentContainerList;
 typedef Vector<RenderLayer*> RenderLayerList;
-typedef HashMap<const RootInlineBox*, RenderRegion*> ContainingRegionMap;
+typedef HashMap<const RootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
-// directly to screen. Instead, RenderRegion objects will redirect their paint 
-// and nodeAtPoint methods to this object. Each RenderRegion will actually be a viewPort
+// directly to screen. Instead, RenderFragmentContainer objects will redirect their paint 
+// and nodeAtPoint methods to this object. Each RenderFragmentContainer will actually be a viewPort
 // of the RenderFlowThread.
 
 class RenderFlowThread: public RenderBlockFlow {
@@ -57,7 +57,7 @@ public:
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG
-    bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_regionRangeMap.contains(downcast<RenderBox>(child)); }
+    bool hasChildInfo(RenderObject* child) const { return is<RenderBox>(child) && m_fragmentRangeMap.contains(downcast<RenderBox>(child)); }
 #endif
 
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
@@ -66,21 +66,21 @@ public:
     
     void deleteLines() override;
 
-    virtual void addRegionToThread(RenderRegion*) = 0;
-    virtual void removeRegionFromThread(RenderRegion*);
-    const RenderRegionList& renderRegionList() const { return m_regionList; }
+    virtual void addFragmentToThread(RenderFragmentContainer*) = 0;
+    virtual void removeFragmentFromThread(RenderFragmentContainer*);
+    const RenderFragmentContainerList& renderFragmentContainerList() const { return m_fragmentList; }
 
     void updateLogicalWidth() final;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
-    bool hasRegions() const { return m_regionList.size(); }
-    virtual void regionChangedWritingMode(RenderRegion*) { }
+    bool hasFragments() const { return m_fragmentList.size(); }
+    virtual void fragmentChangedWritingMode(RenderFragmentContainer*) { }
 
-    void validateRegions();
-    void invalidateRegions(MarkingBehavior = MarkContainingBlockChain);
-    bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
+    void validateFragments();
+    void invalidateFragments(MarkingBehavior = MarkContainingBlockChain);
+    bool hasValidFragmentInfo() const { return !m_fragmentsInvalidated && !m_fragmentList.isEmpty(); }
 
     // Some renderers (column spanners) are moved out of the flow thread to live among column
     // sets. If |child| is such a renderer, resolve it to the placeholder that lives at the original
@@ -97,7 +97,7 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    void repaintRectangleInRegions(const LayoutRect&) const;
+    void repaintRectangleInFragments(const LayoutRect&) const;
     
     LayoutPoint adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject&, const LayoutPoint&) const;
 
@@ -109,36 +109,36 @@ public:
     virtual void setPageBreak(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*spaceShortage*/) { }
     virtual void updateMinimumPageHeight(const RenderBlock*, LayoutUnit /*offset*/, LayoutUnit /*minHeight*/) { }
 
-    virtual RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false) const;
+    virtual RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const;
 
-    bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
-    bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
+    bool fragmentsHaveUniformLogicalWidth() const { return m_fragmentsHaveUniformLogicalWidth; }
+    bool fragmentsHaveUniformLogicalHeight() const { return m_fragmentsHaveUniformLogicalHeight; }
 
-    virtual RenderRegion* mapFromFlowToRegion(TransformState&) const;
+    virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
 
-    void logicalWidthChangedInRegionsForBlock(const RenderBlock*, bool&);
+    void logicalWidthChangedInFragmentsForBlock(const RenderBlock*, bool&);
 
-    LayoutUnit contentLogicalWidthOfFirstRegion() const;
-    LayoutUnit contentLogicalHeightOfFirstRegion() const;
-    LayoutUnit contentLogicalLeftOfFirstRegion() const;
+    LayoutUnit contentLogicalWidthOfFirstFragment() const;
+    LayoutUnit contentLogicalHeightOfFirstFragment() const;
+    LayoutUnit contentLogicalLeftOfFirstFragment() const;
     
-    RenderRegion* firstRegion() const;
-    RenderRegion* lastRegion() const;
+    RenderFragmentContainer* firstFragment() const;
+    RenderFragmentContainer* lastFragment() const;
 
-    virtual void setRegionRangeForBox(const RenderBox&, RenderRegion*, RenderRegion*);
-    bool getRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
-    bool computedRegionRangeForBox(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
-    bool hasCachedRegionRangeForBox(const RenderBox&) const;
+    virtual void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*);
+    bool getFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool computedFragmentRangeForBox(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
+    bool hasCachedFragmentRangeForBox(const RenderBox&) const;
 
-    // Check if the object is in region and the region is part of this flow thread.
-    bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
+    // Check if the object is in fragment and the fragment is part of this flow thread.
+    bool objectInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
     
-    // Check if the object should be painted in this region and if the region is part of this flow thread.
-    bool objectShouldFragmentInFlowRegion(const RenderObject*, const RenderRegion*) const;
+    // Check if the object should be painted in this fragment and if the fragment is part of this flow thread.
+    bool objectShouldFragmentInFlowFragment(const RenderObject*, const RenderFragmentContainer*) const;
 
-    void markRegionsForOverflowLayoutIfNeeded();
+    void markFragmentsForOverflowLayoutIfNeeded();
 
-    virtual bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
+    virtual bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
     virtual void applyBreakAfterContent(LayoutUnit) { }
 
     virtual bool isPageLogicalHeightKnown() const { return true; }
@@ -147,15 +147,15 @@ public:
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect);
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox);
 
-    LayoutUnit offsetFromLogicalTopOfFirstRegion(const RenderBlock*) const;
-    void clearRenderBoxRegionInfoAndCustomStyle(const RenderBox&, const RenderRegion*, const RenderRegion*, const RenderRegion*, const RenderRegion*);
+    LayoutUnit offsetFromLogicalTopOfFirstFragment(const RenderBlock*) const;
+    void clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox&, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*, const RenderFragmentContainer*);
 
-    void addRegionsVisualEffectOverflow(const RenderBox*);
-    void addRegionsVisualOverflowFromTheme(const RenderBlock*);
-    void addRegionsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
-    void addRegionsLayoutOverflow(const RenderBox*, const LayoutRect&);
-    void addRegionsVisualOverflow(const RenderBox*, const LayoutRect&);
-    void clearRegionsOverflow(const RenderBox*);
+    void addFragmentsVisualEffectOverflow(const RenderBox*);
+    void addFragmentsVisualOverflowFromTheme(const RenderBlock*);
+    void addFragmentsOverflowFromChild(const RenderBox*, const RenderBox*, const LayoutSize&);
+    void addFragmentsLayoutOverflow(const RenderBox*, const LayoutRect&);
+    void addFragmentsVisualOverflow(const RenderBox*, const LayoutRect&);
+    void clearFragmentsOverflow(const RenderBox*);
 
     LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
     LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
@@ -165,20 +165,20 @@ public:
     // Used to estimate the maximum height of the flow thread.
     static LayoutUnit maxLogicalHeight() { return LayoutUnit::max() / 2; }
 
-    bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
+    bool fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const;
 
     virtual bool absoluteQuadsForBox(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) const { return false; }
 
     void layout() override;
 
-    void setCurrentRegionMaintainer(CurrentRenderRegionMaintainer* currentRegionMaintainer) { m_currentRegionMaintainer = currentRegionMaintainer; }
-    RenderRegion* currentRegion() const;
+    void setCurrentFragmentMaintainer(CurrentRenderFragmentContainerMaintainer* currentFragmentMaintainer) { m_currentFragmentMaintainer = currentFragmentMaintainer; }
+    RenderFragmentContainer* currentFragment() const;
 
-    ContainingRegionMap& containingRegionMap();
+    ContainingFragmentMap& containingFragmentMap();
 
     bool cachedFlowThreadContainingBlockNeedsUpdate() const override { return false; }
 
-    // FIXME: Eventually as column and region flow threads start nesting, this may end up changing.
+    // FIXME: Eventually as column and fragment flow threads start nesting, this may end up changing.
     virtual bool shouldCheckColumnBreaks() const { return false; }
 
 private:
@@ -194,60 +194,60 @@ protected:
     const char* renderName() const override = 0;
 
     // Overridden by columns/pages to set up an initial logical width of the page width even when
-    // no regions have been generated yet.
+    // no fragments have been generated yet.
     virtual LayoutUnit initialLogicalWidth() const { return 0; };
     
-    void clearLinesToRegionMap();
+    void clearLinesToFragmentMap();
     void willBeDestroyed() override;
 
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 
-    void updateRegionsFlowThreadPortionRect();
+    void updateFragmentsFlowThreadPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
-    bool getRegionRangeForBoxFromCachedInfo(const RenderBox*, RenderRegion*& startRegion, RenderRegion*& endRegion) const;
+    bool getFragmentRangeForBoxFromCachedInfo(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
 
-    void removeRenderBoxRegionInfo(RenderBox&);
-    void removeLineRegionInfo(const RenderBlockFlow&);
+    void removeRenderBoxFragmentInfo(RenderBox&);
+    void removeLineFragmentInfo(const RenderBlockFlow&);
 
-    RenderRegionList m_regionList;
+    RenderFragmentContainerList m_fragmentList;
 
-    class RenderRegionRange {
+    class RenderFragmentContainerRange {
     public:
-        RenderRegionRange()
+        RenderFragmentContainerRange()
         {
             setRange(nullptr, nullptr);
         }
 
-        RenderRegionRange(RenderRegion* start, RenderRegion* end)
+        RenderFragmentContainerRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
         {
             setRange(start, end);
         }
         
-        void setRange(RenderRegion* start, RenderRegion* end)
+        void setRange(RenderFragmentContainer* start, RenderFragmentContainer* end)
         {
-            m_startRegion = start;
-            m_endRegion = end;
+            m_startFragment = start;
+            m_endFragment = end;
             m_rangeInvalidated = true;
         }
 
-        RenderRegion* startRegion() const { return m_startRegion; }
-        RenderRegion* endRegion() const { return m_endRegion; }
+        RenderFragmentContainer* startFragment() const { return m_startFragment; }
+        RenderFragmentContainer* endFragment() const { return m_endFragment; }
         bool rangeInvalidated() const { return m_rangeInvalidated; }
         void clearRangeInvalidated() { m_rangeInvalidated = false; }
 
     private:
-        RenderRegion* m_startRegion;
-        RenderRegion* m_endRegion;
+        RenderFragmentContainer* m_startFragment;
+        RenderFragmentContainer* m_endFragment;
         bool m_rangeInvalidated;
     };
 
-    typedef PODInterval<LayoutUnit, RenderRegion*> RegionInterval;
-    typedef PODIntervalTree<LayoutUnit, RenderRegion*> RegionIntervalTree;
+    typedef PODInterval<LayoutUnit, RenderFragmentContainer*> FragmentInterval;
+    typedef PODIntervalTree<LayoutUnit, RenderFragmentContainer*> FragmentIntervalTree;
 
-    class RegionSearchAdapter {
+    class FragmentSearchAdapter {
     public:
-        RegionSearchAdapter(LayoutUnit offset)
+        FragmentSearchAdapter(LayoutUnit offset)
             : m_offset(offset)
             , m_result(nullptr)
         {
@@ -255,34 +255,34 @@ protected:
         
         const LayoutUnit& lowValue() const { return m_offset; }
         const LayoutUnit& highValue() const { return m_offset; }
-        void collectIfNeeded(const RegionInterval&);
+        void collectIfNeeded(const FragmentInterval&);
 
-        RenderRegion* result() const { return m_result; }
+        RenderFragmentContainer* result() const { return m_result; }
 
     private:
         LayoutUnit m_offset;
-        RenderRegion* m_result;
+        RenderFragmentContainer* m_result;
     };
 
-    // Map a line to its containing region.
-    std::unique_ptr<ContainingRegionMap> m_lineToRegionMap;
+    // Map a line to its containing fragment.
+    std::unique_ptr<ContainingFragmentMap> m_lineToFragmentMap;
 
-    // Map a box to the list of regions in which the box is rendered.
-    typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
-    RenderRegionRangeMap m_regionRangeMap;
+    // Map a box to the list of fragments in which the box is rendered.
+    typedef HashMap<const RenderBox*, RenderFragmentContainerRange> RenderFragmentContainerRangeMap;
+    RenderFragmentContainerRangeMap m_fragmentRangeMap;
 
-    // Map a box with a region break to the auto height region affected by that break. 
-    typedef HashMap<RenderBox*, RenderRegion*> RenderBoxToRegionMap;
-    RenderBoxToRegionMap m_breakBeforeToRegionMap;
-    RenderBoxToRegionMap m_breakAfterToRegionMap;
+    // Map a box with a fragment break to the auto height fragment affected by that break. 
+    typedef HashMap<RenderBox*, RenderFragmentContainer*> RenderBoxToFragmentMap;
+    RenderBoxToFragmentMap m_breakBeforeToFragmentMap;
+    RenderBoxToFragmentMap m_breakAfterToFragmentMap;
 
-    RegionIntervalTree m_regionIntervalTree;
+    FragmentIntervalTree m_fragmentIntervalTree;
 
-    CurrentRenderRegionMaintainer* m_currentRegionMaintainer;
+    CurrentRenderFragmentContainerMaintainer* m_currentFragmentMaintainer;
 
-    bool m_regionsInvalidated : 1;
-    bool m_regionsHaveUniformLogicalWidth : 1;
-    bool m_regionsHaveUniformLogicalHeight : 1;
+    bool m_fragmentsInvalidated : 1;
+    bool m_fragmentsHaveUniformLogicalWidth : 1;
+    bool m_fragmentsHaveUniformLogicalHeight : 1;
     bool m_pageLogicalSizeChanged : 1;
 };
 
@@ -292,8 +292,8 @@ protected:
 #ifndef NDEBUG
 namespace WTF {
 
-template <> struct ValueToString<WebCore::RenderRegion*> {
-    static String string(const WebCore::RenderRegion* value) { return String::format("%p", value); }
+template <> struct ValueToString<WebCore::RenderFragmentContainer*> {
+    static String string(const WebCore::RenderFragmentContainer* value) { return String::format("%p", value); }
 };
 
 } // namespace WTF

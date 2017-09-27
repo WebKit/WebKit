@@ -2285,9 +2285,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BreakInside e)
     case AvoidPageBreakInside:
         m_value.valueID = CSSValueAvoidPage;
         break;
-    case AvoidRegionBreakInside:
-        m_value.valueID = CSSValueAvoidRegion;
-        break;
     }
 }
 
@@ -2304,8 +2301,6 @@ template<> inline CSSPrimitiveValue::operator BreakInside() const
         return AvoidColumnBreakInside;
     case CSSValueAvoidPage:
         return AvoidPageBreakInside;
-    case CSSValueAvoidRegion:
-        return AvoidRegionBreakInside;
     default:
         break;
     }

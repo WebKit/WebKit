@@ -29,7 +29,7 @@
 namespace WebCore {
 
 class Position;
-class RenderRegion;
+class RenderFragmentContainer;
 
 class RenderInline : public RenderBoxModelObject {
 public:
@@ -59,7 +59,7 @@ public:
 
     WEBCORE_EXPORT IntRect linesBoundingBox() const;
     LayoutRect linesVisualOverflowBoundingBox() const;
-    LayoutRect linesVisualOverflowBoundingBoxInRegion(const RenderRegion*) const;
+    LayoutRect linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer*) const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
 
@@ -149,7 +149,7 @@ private:
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
     const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const override;
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) final;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) final;
 
     LayoutRect frameRectForStickyPositioning() const final { return linesBoundingBox(); }
 

@@ -552,8 +552,8 @@ std::optional<LayoutUnit> RenderFlexibleBox::computeMainAxisExtentForChild(const
     }
     
     // FIXME: Figure out how this should work for regions and pass in the appropriate values.
-    RenderRegion* region = nullptr;
-    return child.computeLogicalWidthInRegionUsing(sizeType, size, contentLogicalWidth(), *this, region) - borderAndPadding;
+    RenderFragmentContainer* fragment = nullptr;
+    return child.computeLogicalWidthInFragmentUsing(sizeType, size, contentLogicalWidth(), *this, fragment) - borderAndPadding;
 }
 
     
@@ -1826,7 +1826,7 @@ void RenderFlexibleBox::applyStretchAlignmentToChild(RenderBox& child, LayoutUni
         }
     } else if (hasOrthogonalFlow(child) && child.style().logicalWidth().isAuto()) {
         LayoutUnit childWidth = std::max(LayoutUnit(), lineCrossAxisExtent - crossAxisMarginExtentForChild(child));
-        childWidth = child.constrainLogicalWidthInRegionByMinMax(childWidth, crossAxisContentExtent(), *this, nullptr);
+        childWidth = child.constrainLogicalWidthInFragmentByMinMax(childWidth, crossAxisContentExtent(), *this, nullptr);
         
         if (childWidth != child.logicalWidth()) {
             child.setOverrideLogicalContentWidth(childWidth - child.borderAndPaddingLogicalWidth());

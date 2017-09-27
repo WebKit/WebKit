@@ -140,7 +140,7 @@ float FixedTableLayout::calcWidthArray()
         unsigned span = cell->colSpan();
         float fixedBorderBoxLogicalWidth = 0;
         // FIXME: Support other length types. If the width is non-auto, it should probably just use
-        // RenderBox::computeLogicalWidthInRegionUsing to compute the width.
+        // RenderBox::computeLogicalWidthInFragmentUsing to compute the width.
         if (logicalWidth.isFixed() && logicalWidth.isPositive()) {
             fixedBorderBoxLogicalWidth = cell->adjustBorderBoxLogicalWidthForBoxSizing(logicalWidth.value());
             logicalWidth.setValue(Fixed, fixedBorderBoxLogicalWidth);

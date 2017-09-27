@@ -59,7 +59,7 @@
 #if !ASSERT_DISABLED
 #include "RenderListMarker.h"
 #endif
-#include "RenderRegion.h"
+#include "RenderFragmentContainer.h"
 #include "RenderTableCaption.h"
 #include "RenderTableCell.h"
 #include "RenderTableCol.h"

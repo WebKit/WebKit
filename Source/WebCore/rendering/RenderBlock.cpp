@@ -45,18 +45,18 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
-#include "RenderBoxRegionInfo.h"
+#include "RenderBoxFragmentInfo.h"
 #include "RenderButton.h"
 #include "RenderChildIterator.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFragmentContainer.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
 #include "RenderMenuList.h"
-#include "RenderRegion.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderTableCell.h"
 #include "RenderTextFragment.h"
@@ -1090,10 +1090,10 @@ static RenderBlockRareData& ensureBlockRareData(const RenderBlock& block)
 
 void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
 {
-    // Regions changing widths can force us to relayout our children.
+    // Fragments changing widths can force us to relayout our children.
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (flowThread)
-        flowThread->logicalWidthChangedInRegionsForBlock(this, relayoutChildren);
+        flowThread->logicalWidthChangedInFragmentsForBlock(this, relayoutChildren);
 }
 
 bool RenderBlock::recomputeLogicalWidth()
@@ -1121,10 +1121,10 @@ void RenderBlock::addOverflowFromChildren()
     else
         addOverflowFromBlockChildren();
     
-    // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing regions.
+    // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
     if (m_overflow) {
         if (RenderFlowThread* containingFlowThread = flowThreadContainingBlock())
-            containingFlowThread->addRegionsVisualOverflow(this, m_overflow->visualOverflowRect());
+            containingFlowThread->addFragmentsVisualOverflow(this, m_overflow->visualOverflowRect());
     }
 }
 
@@ -1165,7 +1165,7 @@ void RenderBlock::clearLayoutOverflow()
         return;
     
     if (visualOverflowRect() == borderBoxRect()) {
-        // FIXME: Implement complete solution for regions overflow.
+        // FIXME: Implement complete solution for fragments overflow.
         clearOverflow();
         return;
     }
@@ -1206,22 +1206,22 @@ void RenderBlock::addVisualOverflowFromTheme()
     addVisualOverflow(snappedIntRect(LayoutRect(inflatedRect)));
 
     if (RenderFlowThread* flowThread = flowThreadContainingBlock())
-        flowThread->addRegionsVisualOverflowFromTheme(this);
+        flowThread->addFragmentsVisualOverflowFromTheme(this);
 }
 
-LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox& child, LayoutUnit childMarginStart, RenderRegion* region)
+LayoutUnit RenderBlock::computeStartPositionDeltaForChildAvoidingFloats(const RenderBox& child, LayoutUnit childMarginStart, RenderFragmentContainer* fragment)
 {
-    LayoutUnit startPosition = startOffsetForContent(region);
+    LayoutUnit startPosition = startOffsetForContent(fragment);
 
     // Add in our start margin.
     LayoutUnit oldPosition = startPosition + childMarginStart;
     LayoutUnit newPosition = oldPosition;
 
     LayoutUnit blockOffset = logicalTopForChild(child);
-    if (region)
-        blockOffset = std::max(blockOffset, blockOffset + (region->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage()));
+    if (fragment)
+        blockOffset = std::max(blockOffset, blockOffset + (fragment->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage()));
 
-    LayoutUnit startOff = startOffsetForLineInRegion(blockOffset, DoNotIndentText, region, logicalHeightForChild(child));
+    LayoutUnit startOff = startOffsetForLineInFragment(blockOffset, DoNotIndentText, fragment, logicalHeightForChild(child));
 
     if (style().textAlign() != WEBKIT_CENTER && !child.style().marginStartUsing(&style()).isAuto()) {
         if (childMarginStart < 0)
@@ -1355,7 +1355,7 @@ bool RenderBlock::simplifiedLayout()
         simplifiedNormalFlowLayout();
 
     // Make sure a forced break is applied after the content if we are a flow thread in a simplified layout.
-    // This ensures the size information is correctly computed for the last auto-height region receiving content.
+    // This ensures the size information is correctly computed for the last auto-height fragment receiving content.
     if (is<RenderFlowThread>(*this))
         downcast<RenderFlowThread>(*this).applyBreakAfterContent(clientLogicalBottom());
 
@@ -1406,7 +1406,7 @@ void RenderBlock::markFixedPositionObjectForLayoutIfNeeded(RenderBox& positioned
 
     if (hasStaticInlinePosition) {
         LogicalExtentComputedValues computedValues;
-        positionedChild.computeLogicalWidthInRegion(computedValues);
+        positionedChild.computeLogicalWidthInFragment(computedValues);
         LayoutUnit newLeft = computedValues.m_position;
         if (newLeft != positionedChild.logicalLeft())
             positionedChild.setChildNeedsLayout(MarkOnlyThis);
@@ -1435,7 +1435,7 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    estimateRegionRangeForBoxChild(r);
+    estimateFragmentRangeForBoxChild(r);
 
     // A fixed position element with an absolute positioned ancestor has no way of knowing if the latter has changed position. So
     // if this is a fixed position element, mark it for layout if it has an abspos ancestor and needs to move with that ancestor, i.e. 
@@ -1494,7 +1494,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
         r.layoutIfNeeded();
     }
 
-    if (updateRegionRangeForBoxChild(r)) {
+    if (updateFragmentRangeForBoxChild(r)) {
         r.setNeedsLayout(MarkOnlyThis);
         r.layoutIfNeeded();
     }
@@ -1974,7 +1974,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock& rootBlock, const LayoutPoint& r
         clipOutFloatingObjects(rootBlock, paintInfo, rootBlockPhysicalPosition, offsetFromRootBlock);
     }
 
-    // FIXME: overflow: auto/scroll regions need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
+    // FIXME: overflow: auto/scroll fragments need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
     // fixed).
     GapRects result;
     if (!isRenderBlockFlow()) // FIXME: Make multi-column selection gap filling work someday.
@@ -2307,26 +2307,26 @@ LayoutUnit RenderBlock::textIndentOffset() const
     return minimumValueForLength(style().textIndent(), cw);
 }
 
-LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderRegion* region) const
+LayoutUnit RenderBlock::logicalLeftOffsetForContent(RenderFragmentContainer* fragment) const
 {
     LayoutUnit logicalLeftOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
     if (shouldPlaceBlockDirectionScrollbarOnLeft())
         logicalLeftOffset += verticalScrollbarWidth();
-    if (!region)
+    if (!fragment)
         return logicalLeftOffset;
-    LayoutRect boxRect = borderBoxRectInRegion(region);
+    LayoutRect boxRect = borderBoxRectInFragment(fragment);
     return logicalLeftOffset + (isHorizontalWritingMode() ? boxRect.x() : boxRect.y());
 }
 
-LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderRegion* region) const
+LayoutUnit RenderBlock::logicalRightOffsetForContent(RenderFragmentContainer* fragment) const
 {
     LayoutUnit logicalRightOffset = style().isHorizontalWritingMode() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
     if (shouldPlaceBlockDirectionScrollbarOnLeft())
         logicalRightOffset += verticalScrollbarWidth();
     logicalRightOffset += availableLogicalWidth();
-    if (!region)
+    if (!fragment)
         return logicalRightOffset;
-    LayoutRect boxRect = borderBoxRectInRegion(region);
+    LayoutRect boxRect = borderBoxRectInFragment(fragment);
     return logicalRightOffset - (logicalWidth() - (isHorizontalWritingMode() ? boxRect.maxX() : boxRect.maxY()));
 }
 
@@ -2361,7 +2361,7 @@ LayoutUnit RenderBlock::adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloa
     // FIXME: Should be patched when subpixel layout lands, since this calculation doesn't have to pixel snap
     // any more (https://bugs.webkit.org/show_bug.cgi?id=79946).
     // FIXME: This is wrong for RTL (https://bugs.webkit.org/show_bug.cgi?id=79945).
-    // FIXME: This doesn't work with columns or regions (https://bugs.webkit.org/show_bug.cgi?id=79942).
+    // FIXME: This doesn't work with columns or fragments (https://bugs.webkit.org/show_bug.cgi?id=79942).
     // FIXME: This doesn't work when the inline position of the object isn't set ahead of time.
     // FIXME: Dynamic changes to the font or to the inline position need to result in a deep relayout.
     // (https://bugs.webkit.org/show_bug.cgi?id=79944)
@@ -2401,7 +2401,7 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
     // FIXME: Should be patched when subpixel layout lands, since this calculation doesn't have to pixel snap
     // any more (https://bugs.webkit.org/show_bug.cgi?id=79946).
     // FIXME: This is wrong for RTL (https://bugs.webkit.org/show_bug.cgi?id=79945).
-    // FIXME: This doesn't work with columns or regions (https://bugs.webkit.org/show_bug.cgi?id=79942).
+    // FIXME: This doesn't work with columns or fragments (https://bugs.webkit.org/show_bug.cgi?id=79942).
     // FIXME: This doesn't work when the inline position of the object isn't set ahead of time.
     // FIXME: Dynamic changes to the font or to the inline position need to result in a deep relayout.
     // (https://bugs.webkit.org/show_bug.cgi?id=79944)
@@ -2594,7 +2594,7 @@ VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock& parent,
     return ancestor->createVisiblePosition(childElement->computeNodeIndex() + 1, UPSTREAM);
 }
 
-VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint&, const RenderRegion*)
+VisiblePosition RenderBlock::positionForPointWithInlineChildren(const LayoutPoint&, const RenderFragmentContainer*)
 {
     ASSERT_NOT_REACHED();
     return VisiblePosition();
@@ -2605,21 +2605,21 @@ static inline bool isChildHitTestCandidate(const RenderBox& box)
     return box.height() && box.style().visibility() == VISIBLE && !box.isOutOfFlowPositioned() && !box.isInFlowRenderFlowThread();
 }
 
-// Valid candidates in a FlowThread must be rendered by the region.
-static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderRegion* region, const LayoutPoint& point)
+// Valid candidates in a FlowThread must be rendered by the fragment.
+static inline bool isChildHitTestCandidate(const RenderBox& box, const RenderFragmentContainer* fragment, const LayoutPoint& point)
 {
     if (!isChildHitTestCandidate(box))
         return false;
-    if (!region)
+    if (!fragment)
         return true;
     const RenderBlock& block = is<RenderBlock>(box) ? downcast<RenderBlock>(box) : *box.containingBlock();
-    return block.regionAtBlockOffset(point.y()) == region;
+    return block.fragmentAtBlockOffset(point.y()) == fragment;
 }
 
-VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
+VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
     if (isTable())
-        return RenderBox::positionForPoint(point, region);
+        return RenderBox::positionForPoint(point, fragment);
 
     if (isReplaced()) {
         // FIXME: This seems wrong when the object's writing-mode doesn't match the line's writing-mode.
@@ -2639,14 +2639,14 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
 
     if (childrenInline())
-        return positionForPointWithInlineChildren(pointInLogicalContents, region);
+        return positionForPointWithInlineChildren(pointInLogicalContents, fragment);
 
     RenderBox* lastCandidateBox = lastChildBox();
 
-    if (!region)
-        region = regionAtBlockOffset(pointInLogicalContents.y());
+    if (!fragment)
+        fragment = fragmentAtBlockOffset(pointInLogicalContents.y());
 
-    while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, region, pointInLogicalContents))
+    while (lastCandidateBox && !isChildHitTestCandidate(*lastCandidateBox, fragment, pointInLogicalContents))
         lastCandidateBox = lastCandidateBox->previousSiblingBox();
 
     bool blocksAreFlipped = style().isFlippedBlocksWritingMode();
@@ -2656,20 +2656,20 @@ VisiblePosition RenderBlock::positionForPoint(const LayoutPoint& point, const Re
             return positionForPointRespectingEditingBoundaries(*this, *lastCandidateBox, pointInContents);
 
         for (auto* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
-            if (!isChildHitTestCandidate(*childBox, region, pointInLogicalContents))
+            if (!isChildHitTestCandidate(*childBox, fragment, pointInLogicalContents))
                 continue;
             LayoutUnit childLogicalBottom = logicalTopForChild(*childBox) + logicalHeightForChild(*childBox);
             if (is<RenderBlockFlow>(childBox))
                 childLogicalBottom += downcast<RenderBlockFlow>(childBox)->lowestFloatLogicalBottom();
             // We hit child if our click is above the bottom of its padding box (like IE6/7 and FF3).
-            if (isChildHitTestCandidate(*childBox, region, pointInLogicalContents) && (pointInLogicalContents.y() < childLogicalBottom
+            if (isChildHitTestCandidate(*childBox, fragment, pointInLogicalContents) && (pointInLogicalContents.y() < childLogicalBottom
                 || (blocksAreFlipped && pointInLogicalContents.y() == childLogicalBottom)))
                 return positionForPointRespectingEditingBoundaries(*this, *childBox, pointInContents);
         }
     }
 
     // We only get here if there are no hit test candidate children below the click.
-    return RenderBox::positionForPoint(point, region);
+    return RenderBox::positionForPoint(point, fragment);
 }
 
 void RenderBlock::offsetForContents(LayoutPoint& offset) const
@@ -3361,7 +3361,7 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 
     RenderFlowThread* flowThread = flowThreadContainingBlock();
     if (flowThread)
-        return flowThread->offsetFromLogicalTopOfFirstRegion(this);
+        return flowThread->offsetFromLogicalTopOfFirstFragment(this);
 
     if (layoutState) {
         ASSERT(layoutState->m_renderer == this);
@@ -3374,27 +3374,27 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
     return 0;
 }
 
-RenderRegion* RenderBlock::regionAtBlockOffset(LayoutUnit blockOffset) const
+RenderFragmentContainer* RenderBlock::fragmentAtBlockOffset(LayoutUnit blockOffset) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread || !flowThread->hasValidRegionInfo())
+    if (!flowThread || !flowThread->hasValidFragmentInfo())
         return 0;
 
-    return flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+    return flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
 }
 
-static bool canComputeRegionRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
+static bool canComputeFragmentRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFlowThread* flowThreadContainingBlock)
 {
     if (!flowThreadContainingBlock)
         return false;
 
-    if (!flowThreadContainingBlock->hasRegions())
+    if (!flowThreadContainingBlock->hasFragments())
         return false;
 
-    if (!childBox.canHaveOutsideRegionRange())
+    if (!childBox.canHaveOutsideFragmentRange())
         return false;
 
-    return flowThreadContainingBlock->hasCachedRegionRangeForBox(parentBlock);
+    return flowThreadContainingBlock->hasCachedFragmentRangeForBox(parentBlock);
 }
 
 bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child) const
@@ -3407,67 +3407,67 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
         || (checkPageBreaks && child.style().breakInside() == AvoidPageBreakInside);
 }
 
-void RenderBlock::computeRegionRangeForBoxChild(const RenderBox& box) const
+void RenderBlock::computeFragmentRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    ASSERT(canComputeRegionRangeForBox(*this, box, flowThread));
+    ASSERT(canComputeFragmentRangeForBox(*this, box, flowThread));
 
-    RenderRegion* startRegion;
-    RenderRegion* endRegion;
-    LayoutUnit offsetFromLogicalTopOfFirstRegion = box.offsetFromLogicalTopOfFirstPage();
+    RenderFragmentContainer* startFragment;
+    RenderFragmentContainer* endFragment;
+    LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
     if (childBoxIsUnsplittableForFragmentation(box))
-        startRegion = endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
+        startFragment = endFragment = flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
     else {
-        startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
-        endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + logicalHeightForChild(box), true);
+        startFragment = flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
+        endFragment = flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + logicalHeightForChild(box), true);
     }
 
-    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
+    flowThread->setFragmentRangeForBox(box, startFragment, endFragment);
 }
 
-void RenderBlock::estimateRegionRangeForBoxChild(const RenderBox& box) const
+void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!canComputeRegionRangeForBox(*this, box, flowThread))
+    if (!canComputeFragmentRangeForBox(*this, box, flowThread))
         return;
 
     if (childBoxIsUnsplittableForFragmentation(box)) {
-        computeRegionRangeForBoxChild(box);
+        computeFragmentRangeForBoxChild(box);
         return;
     }
 
     auto estimatedValues = box.computeLogicalHeight(RenderFlowThread::maxLogicalHeight(), logicalTopForChild(box));
-    LayoutUnit offsetFromLogicalTopOfFirstRegion = box.offsetFromLogicalTopOfFirstPage();
-    RenderRegion* startRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion, true);
-    RenderRegion* endRegion = flowThread->regionAtBlockOffset(this, offsetFromLogicalTopOfFirstRegion + estimatedValues.m_extent, true);
+    LayoutUnit offsetFromLogicalTopOfFirstFragment = box.offsetFromLogicalTopOfFirstPage();
+    RenderFragmentContainer* startFragment = flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment, true);
+    RenderFragmentContainer* endFragment = flowThread->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstFragment + estimatedValues.m_extent, true);
 
-    flowThread->setRegionRangeForBox(box, startRegion, endRegion);
+    flowThread->setFragmentRangeForBox(box, startFragment, endFragment);
 }
 
-bool RenderBlock::updateRegionRangeForBoxChild(const RenderBox& box) const
+bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
 {
     RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!canComputeRegionRangeForBox(*this, box, flowThread))
+    if (!canComputeFragmentRangeForBox(*this, box, flowThread))
         return false;
 
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    flowThread->getRegionRangeForBox(&box, startRegion, endRegion);
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    flowThread->getFragmentRangeForBox(&box, startFragment, endFragment);
 
-    computeRegionRangeForBoxChild(box);
+    computeFragmentRangeForBoxChild(box);
 
-    RenderRegion* newStartRegion = nullptr;
-    RenderRegion* newEndRegion = nullptr;
-    flowThread->getRegionRangeForBox(&box, newStartRegion, newEndRegion);
+    RenderFragmentContainer* newStartFragment = nullptr;
+    RenderFragmentContainer* newEndFragment = nullptr;
+    flowThread->getFragmentRangeForBox(&box, newStartFragment, newEndFragment);
 
 
-    // Changing the start region means we shift everything and a relayout is needed.
-    if (newStartRegion != startRegion)
+    // Changing the start fragment means we shift everything and a relayout is needed.
+    if (newStartFragment != startFragment)
         return true;
 
-    // The region range of the box has changed. Some boxes (e.g floats) may have been positioned assuming
+    // The fragment range of the box has changed. Some boxes (e.g floats) may have been positioned assuming
     // a different range.
-    if (box.needsLayoutAfterRegionRangeChange() && newEndRegion != endRegion)
+    if (box.needsLayoutAfterFragmentRangeChange() && newEndFragment != endFragment)
         return true;
 
     return false;

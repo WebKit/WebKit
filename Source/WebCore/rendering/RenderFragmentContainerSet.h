@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include "RenderRegion.h"
+#include "RenderFragmentContainer.h"
 
 namespace WebCore {
 
 class RenderFlowThread;
 
-// RenderRegionSet represents a set of regions that all have the same width and height. It is a "composite region box" that
+// RenderFragmentContainerSet represents a set of regions that all have the same width and height. It is a "composite region box" that
 // can be used to represent a single run of contiguous regions.
 //
 // By combining runs of same-size columns or pages into a single object, we significantly reduce the number of unique RenderObjects
@@ -40,21 +40,21 @@ class RenderFlowThread;
 // This class is abstract and is only intended for use by renderers that generate anonymous runs of identical regions, i.e.,
 // columns and printing. RenderMultiColumnSet and RenderPageSet represent runs of columns and pages respectively.
 //
-// FIXME: For now we derive from RenderRegion, but this may change at some point.
+// FIXME: For now we derive from RenderFragmentContainer, but this may change at some point.
 
-class RenderRegionSet : public RenderRegion {
+class RenderFragmentContainerSet : public RenderFragmentContainer {
 public:
     void expandToEncompassFlowThreadContentsIfNeeded();
 
 protected:
-    RenderRegionSet(Document&, RenderStyle&&, RenderFlowThread&);
+    RenderFragmentContainerSet(Document&, RenderStyle&&, RenderFlowThread&);
 
 private:
     void installFlowThread() final;
 
     const char* renderName() const override = 0;
     
-    bool isRenderRegionSet() const final { return true; }
+    bool isRenderFragmentContainerSet() const final { return true; }
 };
 
 } // namespace WebCore

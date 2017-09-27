@@ -36,8 +36,8 @@
 #include "LengthFunctions.h"
 #include "RenderBlockFlow.h"
 #include "RenderBox.h"
+#include "RenderFragmentContainer.h"
 #include "RenderImage.h"
-#include "RenderRegion.h"
 
 namespace WebCore {
 
@@ -268,7 +268,7 @@ static inline LayoutUnit borderAndPaddingStartWithStyleForWritingMode(const Rend
 
 LayoutUnit ShapeOutsideInfo::logicalLeftOffset() const
 {
-    if (m_renderer.isRenderRegion())
+    if (m_renderer.isRenderFragmentContainer())
         return LayoutUnit();
     
     switch (referenceBox(*m_renderer.style().shapeOutside())) {

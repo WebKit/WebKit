@@ -2674,6 +2674,8 @@ set(WebCore_SOURCES
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
     rendering/RenderFlowThread.cpp
+    rendering/RenderFragmentContainer.cpp
+    rendering/RenderFragmentContainerSet.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp
@@ -2708,8 +2710,6 @@ set(WebCore_SOURCES
     rendering/RenderObject.cpp
     rendering/RenderProgress.cpp
     rendering/RenderQuote.cpp
-    rendering/RenderRegion.cpp
-    rendering/RenderRegionSet.cpp
     rendering/RenderReplaced.cpp
     rendering/RenderReplica.cpp
     rendering/RenderRuby.cpp

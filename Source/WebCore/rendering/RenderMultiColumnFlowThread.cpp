@@ -201,16 +201,16 @@ void RenderMultiColumnFlowThread::evacuateAndDestroy()
     destroy();
 }
 
-void RenderMultiColumnFlowThread::addRegionToThread(RenderRegion* renderRegion)
+void RenderMultiColumnFlowThread::addFragmentToThread(RenderFragmentContainer* RenderFragmentContainer)
 {
-    auto* columnSet = downcast<RenderMultiColumnSet>(renderRegion);
+    auto* columnSet = downcast<RenderMultiColumnSet>(RenderFragmentContainer);
     if (RenderMultiColumnSet* nextSet = columnSet->nextSiblingMultiColumnSet()) {
-        RenderRegionList::iterator it = m_regionList.find(nextSet);
-        ASSERT(it != m_regionList.end());
-        m_regionList.insertBefore(it, columnSet);
+        RenderFragmentContainerList::iterator it = m_fragmentList.find(nextSet);
+        ASSERT(it != m_fragmentList.end());
+        m_fragmentList.insertBefore(it, columnSet);
     } else
-        m_regionList.add(columnSet);
-    renderRegion->setIsValid(true);
+        m_fragmentList.add(columnSet);
+    RenderFragmentContainer->setIsValid(true);
 }
 
 void RenderMultiColumnFlowThread::willBeRemovedFromTree()
@@ -219,7 +219,7 @@ void RenderMultiColumnFlowThread::willBeRemovedFromTree()
     // are siblings of this object, and there may be pointers to this object's sibling somewhere
     // further up on the call stack.
     for (RenderMultiColumnSet* columnSet = firstMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet())
-        columnSet->detachRegion();
+        columnSet->detachFragment();
     multiColumnBlockFlow()->setMultiColumnFlowThread(nullptr);
     RenderFlowThread::willBeRemovedFromTree();
 }
@@ -392,7 +392,7 @@ RenderObject* RenderMultiColumnFlowThread::processPossibleSpannerDescendant(Rend
     RenderMultiColumnSet* newSet = new RenderMultiColumnSet(*this, RenderStyle::createAnonymousStyleWithDisplay(multicolContainer->style(), BLOCK));
     newSet->initializeStyle();
     multicolContainer->RenderBlock::addChild(newSet, insertBeforeMulticolChild);
-    invalidateRegions();
+    invalidateFragments();
 
     // We cannot handle immediate column set siblings at the moment (and there's no need for
     // it, either). There has to be at least one spanner separating them.
@@ -469,7 +469,7 @@ void RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved(RenderObject& 
 {
     if (m_beingEvacuated)
         return;
-    invalidateRegions();
+    invalidateFragments();
     if (is<RenderMultiColumnSpannerPlaceholder>(relative)) {
         // Remove the map entry for this spanner, but leave the actual spanner renderer alone. Also
         // keep the reference to the spanner, since the placeholder may be about to be re-inserted
@@ -525,28 +525,28 @@ LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const
 
 void RenderMultiColumnFlowThread::setPageBreak(const RenderBlock* block, LayoutUnit offset, LayoutUnit spaceShortage)
 {
-    if (auto* multicolSet = downcast<RenderMultiColumnSet>(regionAtBlockOffset(block, offset)))
+    if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset)))
         multicolSet->recordSpaceShortage(spaceShortage);
 }
 
 void RenderMultiColumnFlowThread::updateMinimumPageHeight(const RenderBlock* block, LayoutUnit offset, LayoutUnit minHeight)
 {
-    if (auto* multicolSet = downcast<RenderMultiColumnSet>(regionAtBlockOffset(block, offset)))
+    if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset)))
         multicolSet->updateMinimumColumnHeight(minHeight);
 }
 
-RenderRegion* RenderMultiColumnFlowThread::regionAtBlockOffset(const RenderBox* box, LayoutUnit offset, bool extendLastRegion) const
+RenderFragmentContainer* RenderMultiColumnFlowThread::fragmentAtBlockOffset(const RenderBox* box, LayoutUnit offset, bool extendLastFragment) const
 {
     if (!m_inLayout)
-        return RenderFlowThread::regionAtBlockOffset(box, offset, extendLastRegion);
+        return RenderFlowThread::fragmentAtBlockOffset(box, offset, extendLastFragment);
 
-    // Layout in progress. We are calculating the set heights as we speak, so the region range
+    // Layout in progress. We are calculating the set heights as we speak, so the fragment range
     // information is not up-to-date.
 
     RenderMultiColumnSet* columnSet = m_lastSetWorkedOn ? m_lastSetWorkedOn : firstMultiColumnSet();
     if (!columnSet) {
         // If there's no set, bail. This multicol is empty or only consists of spanners. There
-        // are no regions.
+        // are no fragments.
         return nullptr;
     }
     // The last set worked on is a good guess. But if we're not within the bounds, search for the
@@ -569,29 +569,29 @@ RenderRegion* RenderMultiColumnFlowThread::regionAtBlockOffset(const RenderBox* 
     return columnSet;
 }
 
-void RenderMultiColumnFlowThread::setRegionRangeForBox(const RenderBox& box, RenderRegion* startRegion, RenderRegion* endRegion)
+void RenderMultiColumnFlowThread::setFragmentRangeForBox(const RenderBox& box, RenderFragmentContainer* startFragment, RenderFragmentContainer* endFragment)
 {
     // Some column sets may have zero height, which means that two or more sets may start at the
     // exact same flow thread position, which means that some parts of the code may believe that a
     // given box lives in sets that it doesn't really live in. Make some adjustments here and
-    // include such sets if they are adjacent to the start and/or end regions.
-    for (RenderMultiColumnSet* columnSet = downcast<RenderMultiColumnSet>(*startRegion).previousSiblingMultiColumnSet(); columnSet; columnSet = columnSet->previousSiblingMultiColumnSet()) {
+    // include such sets if they are adjacent to the start and/or end fragments.
+    for (RenderMultiColumnSet* columnSet = downcast<RenderMultiColumnSet>(*startFragment).previousSiblingMultiColumnSet(); columnSet; columnSet = columnSet->previousSiblingMultiColumnSet()) {
         if (columnSet->logicalHeightInFlowThread())
             break;
-        startRegion = columnSet;
+        startFragment = columnSet;
     }
-    for (RenderMultiColumnSet* columnSet = downcast<RenderMultiColumnSet>(*startRegion).nextSiblingMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet()) {
+    for (RenderMultiColumnSet* columnSet = downcast<RenderMultiColumnSet>(*startFragment).nextSiblingMultiColumnSet(); columnSet; columnSet = columnSet->nextSiblingMultiColumnSet()) {
         if (columnSet->logicalHeightInFlowThread())
             break;
-        endRegion = columnSet;
+        endFragment = columnSet;
     }
 
-    RenderFlowThread::setRegionRangeForBox(box, startRegion, endRegion);
+    RenderFlowThread::setFragmentRangeForBox(box, startFragment, endFragment);
 }
 
-bool RenderMultiColumnFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offset, RenderBox* /*breakChild*/, bool /*isBefore*/, LayoutUnit* offsetBreakAdjustment)
+bool RenderMultiColumnFlowThread::addForcedFragmentBreak(const RenderBlock* block, LayoutUnit offset, RenderBox* /*breakChild*/, bool /*isBefore*/, LayoutUnit* offsetBreakAdjustment)
 {
-    if (auto* multicolSet = downcast<RenderMultiColumnSet>(regionAtBlockOffset(block, offset))) {
+    if (auto* multicolSet = downcast<RenderMultiColumnSet>(fragmentAtBlockOffset(block, offset))) {
         multicolSet->addForcedBreak(offset);
         if (offsetBreakAdjustment)
             *offsetBreakAdjustment = pageLogicalHeightForOffset(offset) ? pageRemainingLogicalHeightForOffset(offset, IncludePageBoundary) : LayoutUnit::fromPixel(0);
@@ -654,8 +654,8 @@ LayoutSize RenderMultiColumnFlowThread::offsetFromContainer(RenderElement& enclo
         *offsetDependsOnPoint = true;
     
     LayoutPoint translatedPhysicalPoint(physicalPoint);
-    if (RenderRegion* region = physicalTranslationFromFlowToRegion(translatedPhysicalPoint))
-        translatedPhysicalPoint.moveBy(region->topLeftLocation());
+    if (RenderFragmentContainer* fragment = physicalTranslationFromFlowToFragment(translatedPhysicalPoint))
+        translatedPhysicalPoint.moveBy(fragment->topLeftLocation());
     
     LayoutSize offset(translatedPhysicalPoint.x(), translatedPhysicalPoint.y());
     if (is<RenderBox>(enclosingContainer))
@@ -669,7 +669,7 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
     parent()->mapAbsoluteToLocalPoint(mode, transformState);
     LayoutPoint transformPoint(transformState.mappedPoint());
     
-    // Now walk through each region.
+    // Now walk through each fragment.
     const RenderMultiColumnSet* candidateColumnSet = nullptr;
     LayoutPoint candidatePoint;
     LayoutSize candidateContainerOffset;
@@ -680,16 +680,16 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
         candidatePoint = transformPoint - candidateContainerOffset;
         candidateColumnSet = &columnSet;
         
-        // We really have no clue what to do with overflow. We'll just use the closest region to the point in that case.
+        // We really have no clue what to do with overflow. We'll just use the closest fragment to the point in that case.
         LayoutUnit pointOffset = isHorizontalWritingMode() ? candidatePoint.y() : candidatePoint.x();
-        LayoutUnit regionOffset = isHorizontalWritingMode() ? columnSet.topLeftLocation().y() : columnSet.topLeftLocation().x();
-        if (pointOffset < regionOffset + columnSet.logicalHeight())
+        LayoutUnit fragmentOffset = isHorizontalWritingMode() ? columnSet.topLeftLocation().y() : columnSet.topLeftLocation().x();
+        if (pointOffset < fragmentOffset + columnSet.logicalHeight())
             break;
     }
     
-    // Once we have a good guess as to which region we hit tested through (and yes, this was just a heuristic, but it's
-    // the best we could do), then we can map from the region into the flow thread.
-    LayoutSize translationOffset = physicalTranslationFromRegionToFlow(candidateColumnSet, candidatePoint) + candidateContainerOffset;
+    // Once we have a good guess as to which fragment we hit tested through (and yes, this was just a heuristic, but it's
+    // the best we could do), then we can map from the fragment into the flow thread.
+    LayoutSize translationOffset = physicalTranslationFromFragmentToFlow(candidateColumnSet, candidatePoint) + candidateContainerOffset;
     bool preserve3D = mode & UseTransforms && (parent()->style().preserves3D() || style().preserves3D());
     if (mode & UseTransforms && shouldUseTransformFromContainer(parent())) {
         TransformationMatrix t;
@@ -699,41 +699,41 @@ void RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint(MapCoordinatesFlags mo
         transformState.move(translationOffset.width(), translationOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
 }
 
-LayoutSize RenderMultiColumnFlowThread::physicalTranslationFromRegionToFlow(const RenderMultiColumnSet* columnSet, const LayoutPoint& physicalPoint) const
+LayoutSize RenderMultiColumnFlowThread::physicalTranslationFromFragmentToFlow(const RenderMultiColumnSet* columnSet, const LayoutPoint& physicalPoint) const
 {
     LayoutPoint logicalPoint = columnSet->flipForWritingMode(physicalPoint);
-    LayoutPoint translatedPoint = columnSet->translateRegionPointToFlowThread(logicalPoint);
+    LayoutPoint translatedPoint = columnSet->translateFragmentPointToFlowThread(logicalPoint);
     LayoutPoint physicalTranslatedPoint = columnSet->flipForWritingMode(translatedPoint);
     return physicalPoint - physicalTranslatedPoint;
 }
 
-RenderRegion* RenderMultiColumnFlowThread::mapFromFlowToRegion(TransformState& transformState) const
+RenderFragmentContainer* RenderMultiColumnFlowThread::mapFromFlowToFragment(TransformState& transformState) const
 {
-    if (!hasValidRegionInfo())
+    if (!hasValidFragmentInfo())
         return nullptr;
 
     // Get back into our local flow thread space.
     LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
     flipForWritingMode(boxRect);
 
-    // FIXME: We need to refactor RenderObject::absoluteQuads to be able to split the quads across regions,
+    // FIXME: We need to refactor RenderObject::absoluteQuads to be able to split the quads across fragments,
     // for now we just take the center of the mapped enclosing box and map it to a column.
     LayoutPoint centerPoint = boxRect.center();
     LayoutUnit centerLogicalOffset = isHorizontalWritingMode() ? centerPoint.y() : centerPoint.x();
-    RenderRegion* renderRegion = regionAtBlockOffset(this, centerLogicalOffset, true);
-    if (!renderRegion)
+    RenderFragmentContainer* RenderFragmentContainer = fragmentAtBlockOffset(this, centerLogicalOffset, true);
+    if (!RenderFragmentContainer)
         return nullptr;
-    transformState.move(physicalTranslationOffsetFromFlowToRegion(renderRegion, centerLogicalOffset));
-    return renderRegion;
+    transformState.move(physicalTranslationOffsetFromFlowToFragment(RenderFragmentContainer, centerLogicalOffset));
+    return RenderFragmentContainer;
 }
 
-LayoutSize RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegion(const RenderRegion* renderRegion, const LayoutUnit logicalOffset) const
+LayoutSize RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToFragment(const RenderFragmentContainer* RenderFragmentContainer, const LayoutUnit logicalOffset) const
 {
     // Now that we know which multicolumn set we hit, we need to get the appropriate translation offset for the column.
-    const auto* columnSet = downcast<RenderMultiColumnSet>(renderRegion);
+    const auto* columnSet = downcast<RenderMultiColumnSet>(RenderFragmentContainer);
     LayoutPoint translationOffset = columnSet->columnTranslationForOffset(logicalOffset);
     
-    // Now we know how we want the rect to be translated into the region. At this point we're converting
+    // Now we know how we want the rect to be translated into the fragment. At this point we're converting
     // back to physical coordinates.
     if (style().isFlippedBlocksWritingMode()) {
         LayoutRect portionRect(columnSet->flowThreadPortionRect());
@@ -753,27 +753,27 @@ LayoutSize RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToRegio
     return LayoutSize(translationOffset.x(), translationOffset.y());
 }
 
-RenderRegion* RenderMultiColumnFlowThread::physicalTranslationFromFlowToRegion(LayoutPoint& physicalPoint) const
+RenderFragmentContainer* RenderMultiColumnFlowThread::physicalTranslationFromFlowToFragment(LayoutPoint& physicalPoint) const
 {
-    if (!hasValidRegionInfo())
+    if (!hasValidFragmentInfo())
         return nullptr;
     
     // Put the physical point into the flow thread's coordinate space.
     LayoutPoint logicalPoint = flipForWritingMode(physicalPoint);
     
-    // Now get the region that we are in.
+    // Now get the fragment that we are in.
     LayoutUnit logicalOffset = isHorizontalWritingMode() ? logicalPoint.y() : logicalPoint.x();
-    RenderRegion* renderRegion = regionAtBlockOffset(this, logicalOffset, true);
-    if (!renderRegion)
+    RenderFragmentContainer* RenderFragmentContainer = fragmentAtBlockOffset(this, logicalOffset, true);
+    if (!RenderFragmentContainer)
         return nullptr;
     
-    // Translate to the coordinate space of the region.
-    LayoutSize translationOffset = physicalTranslationOffsetFromFlowToRegion(renderRegion, logicalOffset);
+    // Translate to the coordinate space of the fragment.
+    LayoutSize translationOffset = physicalTranslationOffsetFromFlowToFragment(RenderFragmentContainer, logicalOffset);
     
-    // Now shift the physical point into the region's coordinate space.
+    // Now shift the physical point into the fragment's coordinate space.
     physicalPoint += translationOffset;
     
-    return renderRegion;
+    return RenderFragmentContainer;
 }
 
 bool RenderMultiColumnFlowThread::isPageLogicalHeightKnown() const

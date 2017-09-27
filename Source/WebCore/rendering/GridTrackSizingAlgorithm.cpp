@@ -129,7 +129,7 @@ static LayoutUnit computeMarginLogicalSizeForChild(GridTrackSizingDirection dire
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
     if (direction == ForColumns)
-        child.computeInlineDirectionMargins(renderGrid, child.containingBlockLogicalWidthForContentInRegion(nullptr), child.logicalWidth(), marginStart, marginEnd);
+        child.computeInlineDirectionMargins(renderGrid, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
     else
         child.computeBlockDirectionMargins(renderGrid, marginStart, marginEnd);
 
@@ -824,7 +824,7 @@ private:
 
 LayoutUnit IndefiniteSizeStrategy::minLogicalWidthForChild(RenderBox& child, Length childMinSize, GridTrackSizingDirection childInlineDirection) const
 {
-    return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, overrideContainingBlockContentSizeForChild(child, childInlineDirection).value_or(0), *renderGrid(), nullptr) + marginIntrinsicLogicalWidthForChild(renderGrid(), child);
+    return child.computeLogicalWidthInFragmentUsing(MinSize, childMinSize, overrideContainingBlockContentSizeForChild(child, childInlineDirection).value_or(0), *renderGrid(), nullptr) + marginIntrinsicLogicalWidthForChild(renderGrid(), child);
 }
 
 void IndefiniteSizeStrategy::layoutGridItemForMinSizeComputation(RenderBox& child, bool overrideSizeHasChanged) const
@@ -923,7 +923,7 @@ LayoutUnit DefiniteSizeStrategy::minLogicalWidthForChild(RenderBox& child, Lengt
 {
     LayoutUnit marginLogicalWidth =
         computeMarginLogicalSizeForChild(childInlineDirection, *renderGrid(), child);
-    return child.computeLogicalWidthInRegionUsing(MinSize, childMinSize, overrideContainingBlockContentSizeForChild(child, childInlineDirection).value_or(0), *renderGrid(), nullptr) + marginLogicalWidth;
+    return child.computeLogicalWidthInFragmentUsing(MinSize, childMinSize, overrideContainingBlockContentSizeForChild(child, childInlineDirection).value_or(0), *renderGrid(), nullptr) + marginLogicalWidth;
 }
 
 void DefiniteSizeStrategy::maximizeTracks(Vector<GridTrack>& tracks, std::optional<LayoutUnit>& freeSpace)

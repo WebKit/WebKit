@@ -59,7 +59,7 @@ class RenderFlowThread;
 class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
-class RenderRegion;
+class RenderFragmentContainer;
 class RenderTheme;
 class SelectionSubtreeRoot;
 class TransformState;
@@ -238,7 +238,7 @@ public:
     virtual bool isRenderButton() const { return false; }
     virtual bool isRenderIFrame() const { return false; }
     virtual bool isRenderImage() const { return false; }
-    virtual bool isRenderRegion() const { return false; }
+    virtual bool isRenderFragmentContainer() const { return false; }
     virtual bool isReplica() const { return false; }
 
     virtual bool isRubyInline() const { return false; }
@@ -570,7 +570,7 @@ public:
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     virtual Position positionForPoint(const LayoutPoint&);
-    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*);
+    virtual VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*);
     VisiblePosition createVisiblePosition(int offset, EAffinity) const;
     VisiblePosition createVisiblePosition(const Position&) const;
 

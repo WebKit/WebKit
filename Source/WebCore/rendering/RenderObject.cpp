@@ -793,7 +793,7 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
         }
     }
 
-    // If we have a flow thread, then we need to do individual repaints within the RenderRegions instead.
+    // If we have a flow thread, then we need to do individual repaints within the RenderFragmentContainers instead.
     // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
     // repainting to do individual region repaints.
     RenderFlowThread* parentRenderFlowThread = flowThreadContainingBlock();
@@ -848,7 +848,7 @@ void RenderObject::repaintUsingContainer(const RenderLayerModelObject* repaintCo
         repaintContainer = &view();
 
     if (is<RenderFlowThread>(*repaintContainer)) {
-        downcast<RenderFlowThread>(*repaintContainer).repaintRectangleInRegions(r);
+        downcast<RenderFlowThread>(*repaintContainer).repaintRectangleInFragments(r);
         return;
     }
 
@@ -1048,9 +1048,9 @@ void RenderObject::outputRegionsInformation(TextStream& stream) const
     if (!ftcb)
         return;
 
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    ftcb->getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
+    RenderFragmentContainer* startRegion = nullptr;
+    RenderFragmentContainer* endRegion = nullptr;
+    ftcb->getFragmentRangeForBox(downcast<RenderBox>(this), startRegion, endRegion);
     stream << " [Rs:" << startRegion << " Re:" << endRegion << "]";
 }
 
@@ -1539,7 +1539,7 @@ Position RenderObject::positionForPoint(const LayoutPoint& point)
     return positionForPoint(point, nullptr).deepEquivalent();
 }
 
-VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderRegion*)
+VisiblePosition RenderObject::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
 {
     return createVisiblePosition(caretMinOffset(), DOWNSTREAM);
 }

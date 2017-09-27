@@ -1154,7 +1154,7 @@ LayoutUnit RenderGrid::computeMarginLogicalSizeForChild(GridTrackSizingDirection
     LayoutUnit marginStart;
     LayoutUnit marginEnd;
     if (direction == ForColumns)
-        child.computeInlineDirectionMargins(*this, child.containingBlockLogicalWidthForContentInRegion(nullptr), child.logicalWidth(), marginStart, marginEnd);
+        child.computeInlineDirectionMargins(*this, child.containingBlockLogicalWidthForContentInFragment(nullptr), child.logicalWidth(), marginStart, marginEnd);
     else
         child.computeBlockDirectionMargins(*this, marginStart, marginEnd);
 

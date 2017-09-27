@@ -151,7 +151,7 @@ bool RenderLineBreak::canBeSelectionLeaf() const
     return true;
 }
 
-VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const RenderRegion*)
+VisiblePosition RenderLineBreak::positionForPoint(const LayoutPoint&, const RenderFragmentContainer*)
 {
     ensureLineBoxes();
     return createVisiblePosition(0, DOWNSTREAM);

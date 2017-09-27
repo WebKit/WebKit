@@ -85,30 +85,30 @@ public:
     
     void computeLineGridPaginationOrigin(LayoutState&) const;
     
-    RenderRegion* mapFromFlowToRegion(TransformState&) const override;
+    RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const override;
     
     // This method takes a logical offset and returns a physical translation that can be applied to map
-    // a physical point (corresponding to the logical offset) into the region's physical coordinate space.
-    LayoutSize physicalTranslationOffsetFromFlowToRegion(const RenderRegion*, const LayoutUnit) const;
+    // a physical point (corresponding to the logical offset) into the fragment's physical coordinate space.
+    LayoutSize physicalTranslationOffsetFromFlowToFragment(const RenderFragmentContainer*, const LayoutUnit) const;
     
-    // The point is physical, and the result is a physical location within the region.
-    RenderRegion* physicalTranslationFromFlowToRegion(LayoutPoint&) const;
+    // The point is physical, and the result is a physical location within the fragment.
+    RenderFragmentContainer* physicalTranslationFromFlowToFragment(LayoutPoint&) const;
     
-    // This method is the inverse of the previous method and goes from region to flow.
-    LayoutSize physicalTranslationFromRegionToFlow(const RenderMultiColumnSet*, const LayoutPoint&) const;
+    // This method is the inverse of the previous method and goes from fragment to flow.
+    LayoutSize physicalTranslationFromFragmentToFlow(const RenderMultiColumnSet*, const LayoutPoint&) const;
     
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
     
     void mapAbsoluteToLocalPoint(MapCoordinatesFlags, TransformState&) const override;
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     
-    // FIXME: Eventually as column and region flow threads start nesting, this will end up changing.
+    // FIXME: Eventually as column and fragment flow threads start nesting, this will end up changing.
     bool shouldCheckColumnBreaks() const override;
 
 private:
     bool isRenderMultiColumnFlowThread() const override { return true; }
     const char* renderName() const override;
-    void addRegionToThread(RenderRegion*) override;
+    void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree() override;
     RenderObject* resolveMovedChild(RenderObject* child) const override;
     void flowThreadDescendantInserted(RenderObject&) override;
@@ -118,9 +118,9 @@ private:
     LayoutUnit initialLogicalWidth() const override;
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
     void updateMinimumPageHeight(const RenderBlock*, LayoutUnit offset, LayoutUnit minHeight) override;
-    RenderRegion* regionAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastRegion = false) const override;
-    void setRegionRangeForBox(const RenderBox&, RenderRegion*, RenderRegion*) override;
-    bool addForcedRegionBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
+    RenderFragmentContainer* fragmentAtBlockOffset(const RenderBox*, LayoutUnit, bool extendLastFragment = false) const override;
+    void setFragmentRangeForBox(const RenderBox&, RenderFragmentContainer*, RenderFragmentContainer*) override;
+    bool addForcedFragmentBreak(const RenderBlock*, LayoutUnit, RenderBox* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0) override;
     bool isPageLogicalHeightKnown() const override;
 
     void handleSpannerRemoval(RenderObject& spanner);
@@ -136,7 +136,7 @@ private:
     RenderMultiColumnSet* m_lastSetWorkedOn;
 
     unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
-    LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
+    LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or fragments will have different column counts and widths in each.
                               // These values will be cached (eventually) for multi-column blocks.
     LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
     bool m_inLayout; // Set while we're laying out the flow thread, during which colum set heights are unknown.

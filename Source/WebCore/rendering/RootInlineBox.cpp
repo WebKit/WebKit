@@ -51,10 +51,10 @@ COMPILE_ASSERT(sizeof(RootInlineBox) == sizeof(SameSizeAsRootInlineBox), RootInl
 typedef WTF::HashMap<const RootInlineBox*, std::unique_ptr<EllipsisBox>> EllipsisBoxMap;
 static EllipsisBoxMap* gEllipsisBoxMap;
 
-static ContainingRegionMap& containingRegionMap(RenderBlockFlow& block)
+static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 {
     ASSERT(block.flowThreadContainingBlock());
-    return block.flowThreadContainingBlock()->containingRegionMap();
+    return block.flowThreadContainingBlock()->containingFragmentMap();
 }
 
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
@@ -70,7 +70,7 @@ RootInlineBox::~RootInlineBox()
     detachEllipsisBox();
 
     if (blockFlow().flowThreadContainingBlock())
-        containingRegionMap(blockFlow()).remove(this);
+        containingFragmentMap(blockFlow()).remove(this);
 }
 
 void RootInlineBox::detachEllipsisBox()
@@ -202,38 +202,38 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
-RenderRegion* RootInlineBox::containingRegion() const
+RenderFragmentContainer* RootInlineBox::containingFragment() const
 {
-    ContainingRegionMap& regionMap = containingRegionMap(blockFlow());
-    bool hasContainingRegion = regionMap.contains(this);
-    RenderRegion* region = hasContainingRegion ? regionMap.get(this) : nullptr;
+    ContainingFragmentMap& fragmentMap = containingFragmentMap(blockFlow());
+    bool hasContainingFragment = fragmentMap.contains(this);
+    RenderFragmentContainer* fragment = hasContainingFragment ? fragmentMap.get(this) : nullptr;
 
 #ifndef NDEBUG
-    if (hasContainingRegion) {
+    if (hasContainingFragment) {
         RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
-        const RenderRegionList& regionList = flowThread->renderRegionList();
-        ASSERT_WITH_SECURITY_IMPLICATION(regionList.contains(region));
+        const RenderFragmentContainerList& fragmentList = flowThread->renderFragmentContainerList();
+        ASSERT_WITH_SECURITY_IMPLICATION(fragmentList.contains(fragment));
     }
 #endif
 
-    return region;
+    return fragment;
 }
 
-void RootInlineBox::clearContainingRegion()
+void RootInlineBox::clearContainingFragment()
 {
     ASSERT(!isDirty());
 
-    if (!containingRegionMap(blockFlow()).contains(this))
+    if (!containingFragmentMap(blockFlow()).contains(this))
         return;
 
-    containingRegionMap(blockFlow()).remove(this);
+    containingFragmentMap(blockFlow()).remove(this);
 }
 
-void RootInlineBox::setContainingRegion(RenderRegion& region)
+void RootInlineBox::setContainingFragment(RenderFragmentContainer& fragment)
 {
     ASSERT(!isDirty());
 
-    containingRegionMap(blockFlow()).set(this, &region);
+    containingFragmentMap(blockFlow()).set(this, &fragment);
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)

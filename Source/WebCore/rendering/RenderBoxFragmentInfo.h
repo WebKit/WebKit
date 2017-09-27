@@ -29,11 +29,11 @@
 
 namespace WebCore {
 
-class RenderBoxRegionInfo {
+class RenderBoxFragmentInfo {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(RenderBoxRegionInfo);
+    WTF_MAKE_NONCOPYABLE(RenderBoxFragmentInfo);
 public:
-    RenderBoxRegionInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
+    RenderBoxFragmentInfo(LayoutUnit logicalLeft, LayoutUnit logicalWidth, bool isShifted)
         : m_logicalLeft(logicalLeft)
         , m_logicalWidth(logicalWidth)
         , m_isShifted(isShifted)

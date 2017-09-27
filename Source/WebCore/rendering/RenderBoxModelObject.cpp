@@ -43,12 +43,12 @@
 #include "Path.h"
 #include "RenderBlock.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFragmentContainer.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderRegion.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
@@ -414,9 +414,9 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
                 
                 if (is<RenderMultiColumnFlowThread>(*ancestor)) {
                     // We need to apply a translation based off what region we are inside.
-                    RenderRegion* region = downcast<RenderMultiColumnFlowThread>(*ancestor).physicalTranslationFromFlowToRegion(referencePoint);
-                    if (region)
-                        referencePoint.moveBy(region->topLeftLocation());
+                    RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlowThread>(*ancestor).physicalTranslationFromFlowToFragment(referencePoint);
+                    if (fragment)
+                        referencePoint.moveBy(fragment->topLeftLocation());
                 } else if (!isOutOfFlowPositioned()) {
                     if (is<RenderBox>(*ancestor) && !is<RenderTableRow>(*ancestor))
                         referencePoint.moveBy(downcast<RenderBox>(*ancestor).topLeftLocation());
@@ -2563,10 +2563,10 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     // The point inside a box that's inside a region has its coordinates relative to the region,
     // not the FlowThread that is its container in the RenderObject tree.
     if (is<RenderBox>(*this) && container->isOutOfFlowRenderFlowThread()) {
-        RenderRegion* startRegion = nullptr;
-        RenderRegion* endRegion = nullptr;
-        if (downcast<RenderFlowThread>(*container).getRegionRangeForBox(downcast<RenderBox>(this), startRegion, endRegion))
-            container = startRegion;
+        RenderFragmentContainer* startFragment = nullptr;
+        RenderFragmentContainer* endFragment = nullptr;
+        if (downcast<RenderFlowThread>(*container).getFragmentRangeForBox(downcast<RenderBox>(this), startFragment, endFragment))
+            container = startFragment;
     }
 
     container->mapAbsoluteToLocalPoint(mode, transformState);

@@ -58,7 +58,7 @@ private:
 
     bool isSVGInlineText() const override { return true; }
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
     LayoutRect localCaretRect(InlineBox*, unsigned caretOffset, LayoutUnit* extraWidthToEndOfLine = 0) override;
     IntRect linesBoundingBox() const override;
     std::unique_ptr<InlineTextBox> createTextBox() override;

@@ -857,7 +857,6 @@ env
 //
 avoid-column
 avoid-page
-avoid-region
 page
 recto
 region
@@ -1098,8 +1097,6 @@ x
 y
 #endif
 
-// -webkit-region-fragment
-// auto
 break
 
 wrap

@@ -904,14 +904,14 @@ bool RenderInline::hitTestCulledInline(const HitTestRequest& request, HitTestRes
     return false;
 }
 
-VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
+VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
     // FIXME: Does not deal with relative or sticky positioned inlines (should it?)
     RenderBlock& containingBlock = *this->containingBlock();
     if (firstLineBox()) {
         // This inline actually has a line box.  We must have clicked in the border/padding of one of these boxes.  We
         // should try to find a result by asking our containing block.
-        return containingBlock.positionForPoint(point, region);
+        return containingBlock.positionForPoint(point, fragment);
     }
 
     // Translate the coords from the pre-anonymous block to the post-anonymous block.
@@ -920,11 +920,11 @@ VisiblePosition RenderInline::positionForPoint(const LayoutPoint& point, const R
     while (continuation) {
         RenderBlock* currentBlock = continuation->isInline() ? continuation->containingBlock() : downcast<RenderBlock>(continuation);
         if (continuation->isInline() || continuation->firstChild())
-            return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), region);
+            return continuation->positionForPoint(parentBlockPoint - currentBlock->locationOffset(), fragment);
         continuation = downcast<RenderBlock>(*continuation).inlineElementContinuation();
     }
     
-    return RenderBoxModelObject::positionForPoint(point, region);
+    return RenderBoxModelObject::positionForPoint(point, fragment);
 }
 
 namespace {
@@ -1110,10 +1110,10 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
     return rect;
 }
 
-LayoutRect RenderInline::linesVisualOverflowBoundingBoxInRegion(const RenderRegion* region) const
+LayoutRect RenderInline::linesVisualOverflowBoundingBoxInFragment(const RenderFragmentContainer* fragment) const
 {
     ASSERT(alwaysCreateLineBoxes());
-    ASSERT(region);
+    ASSERT(fragment);
 
     if (!firstLineBox() || !lastLineBox())
         return LayoutRect();
@@ -1123,28 +1123,28 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBoxInRegion(const RenderRegi
     LayoutUnit logicalRightSide = LayoutUnit::min();
     LayoutUnit logicalTop;
     LayoutUnit logicalHeight;
-    InlineFlowBox* lastInlineInRegion = 0;
+    InlineFlowBox* lastInlineInFragment = 0;
     for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox()) {
         const RootInlineBox& root = curr->root();
-        if (root.containingRegion() != region) {
-            if (lastInlineInRegion)
+        if (root.containingFragment() != fragment) {
+            if (lastInlineInFragment)
                 break;
             continue;
         }
 
-        if (!lastInlineInRegion)
+        if (!lastInlineInFragment)
             logicalTop = curr->logicalTopVisualOverflow(root.lineTop());
 
-        lastInlineInRegion = curr;
+        lastInlineInFragment = curr;
 
         logicalLeftSide = std::min(logicalLeftSide, curr->logicalLeftVisualOverflow());
         logicalRightSide = std::max(logicalRightSide, curr->logicalRightVisualOverflow());
     }
 
-    if (!lastInlineInRegion)
+    if (!lastInlineInFragment)
         return LayoutRect();
 
-    logicalHeight = lastInlineInRegion->logicalBottomVisualOverflow(lastInlineInRegion->root().lineBottom()) - logicalTop;
+    logicalHeight = lastInlineInFragment->logicalBottomVisualOverflow(lastInlineInFragment->root().lineBottom()) - logicalTop;
     
     LayoutUnit logicalWidth = logicalRightSide - logicalLeftSide;
     

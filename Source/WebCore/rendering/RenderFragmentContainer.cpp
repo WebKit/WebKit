@@ -28,14 +28,14 @@
  */
 
 #include "config.h"
-#include "RenderRegion.h"
+#include "RenderFragmentContainer.h"
 
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "IntRect.h"
 #include "LayoutRepainter.h"
 #include "Range.h"
-#include "RenderBoxRegionInfo.h"
+#include "RenderBoxFragmentInfo.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
@@ -45,26 +45,26 @@
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Element& element, RenderStyle&& style, RenderFlowThread* flowThread)
+RenderFragmentContainer::RenderFragmentContainer(Element& element, RenderStyle&& style, RenderFlowThread* flowThread)
     : RenderBlockFlow(element, WTFMove(style))
     , m_flowThread(flowThread)
     , m_isValid(false)
 {
 }
 
-RenderRegion::RenderRegion(Document& document, RenderStyle&& style, RenderFlowThread* flowThread)
+RenderFragmentContainer::RenderFragmentContainer(Document& document, RenderStyle&& style, RenderFlowThread* flowThread)
     : RenderBlockFlow(document, WTFMove(style))
     , m_flowThread(flowThread)
     , m_isValid(false)
 {
 }
 
-LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPoint& point)
+LayoutPoint RenderFragmentContainer::mapFragmentPointIntoFlowThreadCoordinates(const LayoutPoint& point)
 {
-    // Assuming the point is relative to the region block, 3 cases will be considered:
+    // Assuming the point is relative to the fragment block, 3 cases will be considered:
     // a) top margin, padding or border.
     // b) bottom margin, padding or border.
-    // c) non-content region area.
+    // c) non-content fragment area.
 
     LayoutUnit pointLogicalTop(isHorizontalWritingMode() ? point.y() : point.x());
     LayoutUnit pointLogicalLeft(isHorizontalWritingMode() ? point.x() : point.y());
@@ -99,37 +99,37 @@ LayoutPoint RenderRegion::mapRegionPointIntoFlowThreadCoordinates(const LayoutPo
     return isHorizontalWritingMode() ? pointInThread : pointInThread.transposedPoint();
 }
 
-VisiblePosition RenderRegion::positionForPoint(const LayoutPoint& point, const RenderRegion* region)
+VisiblePosition RenderFragmentContainer::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer* fragment)
 {
-    if (!isValid() || !m_flowThread->firstChild()) // checking for empty region blocks.
-        return RenderBlock::positionForPoint(point, region);
+    if (!isValid() || !m_flowThread->firstChild()) // checking for empty fragment blocks.
+        return RenderBlock::positionForPoint(point, fragment);
 
-    return m_flowThread->positionForPoint(mapRegionPointIntoFlowThreadCoordinates(point), this);
+    return m_flowThread->positionForPoint(mapFragmentPointIntoFlowThreadCoordinates(point), this);
 }
 
-LayoutUnit RenderRegion::pageLogicalWidth() const
+LayoutUnit RenderFragmentContainer::pageLogicalWidth() const
 {
     ASSERT(isValid());
     return m_flowThread->isHorizontalWritingMode() ? contentWidth() : contentHeight();
 }
 
-LayoutUnit RenderRegion::pageLogicalHeight() const
+LayoutUnit RenderFragmentContainer::pageLogicalHeight() const
 {
     ASSERT(isValid());
     return m_flowThread->isHorizontalWritingMode() ? contentHeight() : contentWidth();
 }
 
-LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
+LayoutUnit RenderFragmentContainer::logicalHeightOfAllFlowThreadContent() const
 {
     return pageLogicalHeight();
 }
 
-LayoutRect RenderRegion::flowThreadPortionOverflowRect()
+LayoutRect RenderFragmentContainer::flowThreadPortionOverflowRect()
 {
-    return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstRegion(), isLastRegion(), VisualOverflow);
+    return overflowRectForFlowThreadPortion(flowThreadPortionRect(), isFirstFragment(), isLastFragment(), VisualOverflow);
 }
 
-LayoutPoint RenderRegion::flowThreadPortionLocation() const
+LayoutPoint RenderFragmentContainer::flowThreadPortionLocation() const
 {
     LayoutPoint portionLocation;
     LayoutRect portionRect = flowThreadPortionRect();
@@ -144,7 +144,7 @@ LayoutPoint RenderRegion::flowThreadPortionLocation() const
     return portionLocation;
 }
 
-LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType)
+LayoutRect RenderFragmentContainer::overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType overflowType)
 {
     ASSERT(isValid());
     if (shouldClipFlowThreadContent())
@@ -170,31 +170,31 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(const LayoutRect& flow
     return clipRect;
 }
 
-LayoutUnit RenderRegion::pageLogicalTopForOffset(LayoutUnit /* offset */) const
+LayoutUnit RenderFragmentContainer::pageLogicalTopForOffset(LayoutUnit /* offset */) const
 {
     return flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().y() : flowThreadPortionRect().x();
 }
 
-bool RenderRegion::isFirstRegion() const
+bool RenderFragmentContainer::isFirstFragment() const
 {
     ASSERT(isValid());
 
-    return m_flowThread->firstRegion() == this;
+    return m_flowThread->firstFragment() == this;
 }
 
-bool RenderRegion::isLastRegion() const
+bool RenderFragmentContainer::isLastFragment() const
 {
     ASSERT(isValid());
 
-    return m_flowThread->lastRegion() == this;
+    return m_flowThread->lastFragment() == this;
 }
 
-bool RenderRegion::shouldClipFlowThreadContent() const
+bool RenderFragmentContainer::shouldClipFlowThreadContent() const
 {
     return hasOverflowClip();
 }
 
-void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void RenderFragmentContainer::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
@@ -202,10 +202,10 @@ void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
         return;
 
     if (oldStyle && oldStyle->writingMode() != style().writingMode())
-        m_flowThread->regionChangedWritingMode(this);
+        m_flowThread->fragmentChangedWritingMode(this);
 }
 
-void RenderRegion::computeOverflowFromFlowThread()
+void RenderFragmentContainer::computeOverflowFromFlowThread()
 {
     ASSERT(isValid());
 
@@ -216,22 +216,22 @@ void RenderRegion::computeOverflowFromFlowThread()
     addLayoutOverflow(layoutRect);
     RenderFlowThread* enclosingRenderFlowThread = flowThreadContainingBlock();
     if (enclosingRenderFlowThread)
-        enclosingRenderFlowThread->addRegionsLayoutOverflow(this, layoutRect);
+        enclosingRenderFlowThread->addFragmentsLayoutOverflow(this, layoutRect);
 
     updateLayerTransform();
     updateScrollInfoAfterLayout();
 }
 
-void RenderRegion::repaintFlowThreadContent(const LayoutRect& repaintRect)
+void RenderFragmentContainer::repaintFlowThreadContent(const LayoutRect& repaintRect)
 {
     repaintFlowThreadContentRectangle(repaintRect, flowThreadPortionRect(), contentBoxRect().location());
 }
 
-void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect)
+void RenderFragmentContainer::repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* flowThreadPortionClipRect)
 {
     ASSERT(isValid());
 
-    // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
+    // We only have to issue a repaint in this fragment if the fragment rect intersects the repaint rect.
     LayoutRect clippedRect(repaintRect);
 
     if (flowThreadPortionClipRect) {
@@ -244,107 +244,107 @@ void RenderRegion::repaintFlowThreadContentRectangle(const LayoutRect& repaintRe
         return;
 
     LayoutRect flippedFlowThreadPortionRect(flowThreadPortionRect);
-    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the region rects into physical coordinates.
+    flowThread()->flipForWritingMode(flippedFlowThreadPortionRect); // Put the fragment rects into physical coordinates.
 
-    // Put the region rect into the region's physical coordinate space.
-    clippedRect.setLocation(regionLocation + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
+    // Put the fragment rect into the fragment's physical coordinate space.
+    clippedRect.setLocation(fragmentLocation + (clippedRect.location() - flippedFlowThreadPortionRect.location()));
 
-    // Now switch to the region's writing mode coordinate space and let it repaint itself.
+    // Now switch to the fragment's writing mode coordinate space and let it repaint itself.
     flipForWritingMode(clippedRect);
     
     // Issue the repaint.
     repaintRectangle(clippedRect);
 }
 
-void RenderRegion::installFlowThread()
+void RenderFragmentContainer::installFlowThread()
 {
     ASSERT_NOT_REACHED();
 }
 
-void RenderRegion::attachRegion()
+void RenderFragmentContainer::attachFragment()
 {
     if (renderTreeBeingDestroyed())
         return;
     
-    // A region starts off invalid.
+    // A fragment starts off invalid.
     setIsValid(false);
 
     // Initialize the flow thread reference and create the flow thread object if needed.
-    // The flow thread lifetime is influenced by the number of regions attached to it,
-    // and we are attaching the region to the flow thread.
+    // The flow thread lifetime is influenced by the number of fragments attached to it,
+    // and we are attaching the fragment to the flow thread.
     installFlowThread();
     
     if (!m_flowThread)
         return;
 
-    // Only after adding the region to the thread, the region is marked to be valid.
-    m_flowThread->addRegionToThread(this);
+    // Only after adding the fragment to the thread, the fragment is marked to be valid.
+    m_flowThread->addFragmentToThread(this);
 }
 
-void RenderRegion::detachRegion()
+void RenderFragmentContainer::detachFragment()
 {
     if (m_flowThread)
-        m_flowThread->removeRegionFromThread(this);
+        m_flowThread->removeFragmentFromThread(this);
     m_flowThread = nullptr;
 }
 
-RenderBoxRegionInfo* RenderRegion::renderBoxRegionInfo(const RenderBox* box) const
+RenderBoxFragmentInfo* RenderFragmentContainer::renderBoxFragmentInfo(const RenderBox* box) const
 {
     ASSERT(isValid());
-    return m_renderBoxRegionInfo.get(box);
+    return m_renderBoxFragmentInfo.get(box);
 }
 
-RenderBoxRegionInfo* RenderRegion::setRenderBoxRegionInfo(const RenderBox* box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
+RenderBoxFragmentInfo* RenderFragmentContainer::setRenderBoxFragmentInfo(const RenderBox* box, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
     bool containingBlockChainIsInset)
 {
     ASSERT(isValid());
 
-    std::unique_ptr<RenderBoxRegionInfo>& boxInfo = m_renderBoxRegionInfo.add(box, std::make_unique<RenderBoxRegionInfo>(logicalLeftInset, logicalRightInset, containingBlockChainIsInset)).iterator->value;
+    std::unique_ptr<RenderBoxFragmentInfo>& boxInfo = m_renderBoxFragmentInfo.add(box, std::make_unique<RenderBoxFragmentInfo>(logicalLeftInset, logicalRightInset, containingBlockChainIsInset)).iterator->value;
     return boxInfo.get();
 }
 
-std::unique_ptr<RenderBoxRegionInfo> RenderRegion::takeRenderBoxRegionInfo(const RenderBox* box)
+std::unique_ptr<RenderBoxFragmentInfo> RenderFragmentContainer::takeRenderBoxFragmentInfo(const RenderBox* box)
 {
-    return m_renderBoxRegionInfo.take(box);
+    return m_renderBoxFragmentInfo.take(box);
 }
 
-void RenderRegion::removeRenderBoxRegionInfo(const RenderBox& box)
+void RenderFragmentContainer::removeRenderBoxFragmentInfo(const RenderBox& box)
 {
-    m_renderBoxRegionInfo.remove(&box);
+    m_renderBoxFragmentInfo.remove(&box);
 }
 
-void RenderRegion::deleteAllRenderBoxRegionInfo()
+void RenderFragmentContainer::deleteAllRenderBoxFragmentInfo()
 {
-    m_renderBoxRegionInfo.clear();
+    m_renderBoxFragmentInfo.clear();
 }
 
-LayoutUnit RenderRegion::logicalTopOfFlowThreadContentRect(const LayoutRect& rect) const
+LayoutUnit RenderFragmentContainer::logicalTopOfFlowThreadContentRect(const LayoutRect& rect) const
 {
     ASSERT(isValid());
     return flowThread()->isHorizontalWritingMode() ? rect.y() : rect.x();
 }
 
-LayoutUnit RenderRegion::logicalBottomOfFlowThreadContentRect(const LayoutRect& rect) const
+LayoutUnit RenderFragmentContainer::logicalBottomOfFlowThreadContentRect(const LayoutRect& rect) const
 {
     ASSERT(isValid());
     return flowThread()->isHorizontalWritingMode() ? rect.maxY() : rect.maxX();
 }
 
-void RenderRegion::insertedIntoTree()
+void RenderFragmentContainer::insertedIntoTree()
 {
-    attachRegion();
+    attachFragment();
     if (isValid())
         RenderBlockFlow::insertedIntoTree();
 }
 
-void RenderRegion::willBeRemovedFromTree()
+void RenderFragmentContainer::willBeRemovedFromTree()
 {
     RenderBlockFlow::willBeRemovedFromTree();
 
-    detachRegion();
+    detachFragment();
 }
 
-void RenderRegion::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
+void RenderFragmentContainer::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
     if (!isValid()) {
         RenderBlockFlow::computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
@@ -355,7 +355,7 @@ void RenderRegion::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, La
     maxLogicalWidth = m_flowThread->maxPreferredLogicalWidth();
 }
 
-void RenderRegion::computePreferredLogicalWidths()
+void RenderFragmentContainer::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
@@ -390,19 +390,19 @@ void RenderRegion::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderRegion::adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const
+void RenderFragmentContainer::adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect& fragmentBounds) const
 {
     LayoutRect flippedFlowThreadPortionRect = flowThreadPortionRect();
     flowThread()->flipForWritingMode(flippedFlowThreadPortionRect);
-    regionBounds.moveBy(flippedFlowThreadPortionRect.location());
+    fragmentBounds.moveBy(flippedFlowThreadPortionRect.location());
 }
 
-void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)
+void RenderFragmentContainer::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverflow>& overflow, bool forceCreation)
 {
-    ASSERT(m_flowThread->renderRegionList().contains(this));
+    ASSERT(m_flowThread->renderFragmentContainerList().contains(this));
     ASSERT(isValid());
 
-    RenderBoxRegionInfo* boxInfo = renderBoxRegionInfo(box);
+    RenderBoxFragmentInfo* boxInfo = renderBoxFragmentInfo(box);
     if (!boxInfo && !forceCreation)
         return;
 
@@ -411,14 +411,14 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
         return;
     }
     
-    LayoutRect borderBox = box->borderBoxRectInRegion(this);
+    LayoutRect borderBox = box->borderBoxRectInFragment(this);
     LayoutRect clientBox;
-    ASSERT(m_flowThread->objectShouldFragmentInFlowRegion(box, this));
+    ASSERT(m_flowThread->objectShouldFragmentInFlowFragment(box, this));
 
     if (!borderBox.isEmpty()) {
         borderBox = rectFlowPortionForBox(box, borderBox);
         
-        clientBox = box->clientBoxRectInRegion(this);
+        clientBox = box->clientBoxRectInFragment(this);
         clientBox = rectFlowPortionForBox(box, clientBox);
         
         m_flowThread->flipForWritingModeLocalCoordinates(borderBox);
@@ -432,22 +432,22 @@ void RenderRegion::ensureOverflowForBox(const RenderBox* box, RefPtr<RenderOverf
         overflow = adoptRef(new RenderOverflow(clientBox, borderBox));
 }
 
-LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
+LayoutRect RenderFragmentContainer::rectFlowPortionForBox(const RenderBox* box, const LayoutRect& rect) const
 {
     LayoutRect mappedRect = m_flowThread->mapFromLocalToFlowThread(box, rect);
 
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (m_flowThread->getRegionRangeForBox(box, startRegion, endRegion)) {
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (m_flowThread->getFragmentRangeForBox(box, startFragment, endFragment)) {
         if (flowThread()->isHorizontalWritingMode()) {
-            if (this != startRegion)
+            if (this != startFragment)
                 mappedRect.shiftYEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.y()));
-            if (this != endRegion)
+            if (this != endFragment)
                 mappedRect.setHeight(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.y(), mappedRect.height())));
         } else {
-            if (this != startRegion)
+            if (this != startFragment)
                 mappedRect.shiftXEdgeTo(std::max<LayoutUnit>(logicalTopForFlowThreadContent(), mappedRect.x()));
-            if (this != endRegion)
+            if (this != endFragment)
                 mappedRect.setWidth(std::max<LayoutUnit>(0, std::min<LayoutUnit>(logicalBottomForFlowThreadContent() - mappedRect.x(), mappedRect.width())));
         }
     }
@@ -455,37 +455,37 @@ LayoutRect RenderRegion::rectFlowPortionForBox(const RenderBox* box, const Layou
     return m_flowThread->mapFromFlowThreadToLocal(box, mappedRect);
 }
 
-void RenderRegion::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addLayoutOverflowForBox(const RenderBox* box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
 
-    RefPtr<RenderOverflow> regionOverflow;
-    ensureOverflowForBox(box, regionOverflow, false);
+    RefPtr<RenderOverflow> fragmentOverflow;
+    ensureOverflowForBox(box, fragmentOverflow, false);
 
-    if (!regionOverflow)
+    if (!fragmentOverflow)
         return;
 
-    regionOverflow->addLayoutOverflow(rect);
+    fragmentOverflow->addLayoutOverflow(rect);
 }
 
-void RenderRegion::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
+void RenderFragmentContainer::addVisualOverflowForBox(const RenderBox* box, const LayoutRect& rect)
 {
     if (rect.isEmpty())
         return;
 
-    RefPtr<RenderOverflow> regionOverflow;
-    ensureOverflowForBox(box, regionOverflow, false);
+    RefPtr<RenderOverflow> fragmentOverflow;
+    ensureOverflowForBox(box, fragmentOverflow, false);
 
-    if (!regionOverflow)
+    if (!fragmentOverflow)
         return;
 
     LayoutRect flippedRect = rect;
     flowThread()->flipForWritingModeLocalCoordinates(flippedRect);
-    regionOverflow->addVisualOverflow(flippedRect);
+    fragmentOverflow->addVisualOverflow(flippedRect);
 }
 
-LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
+LayoutRect RenderFragmentContainer::layoutOverflowRectForBox(const RenderBox* box)
 {
     RefPtr<RenderOverflow> overflow;
     ensureOverflowForBox(box, overflow, true);
@@ -494,11 +494,11 @@ LayoutRect RenderRegion::layoutOverflowRectForBox(const RenderBox* box)
     return overflow->layoutOverflowRect();
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBoxModelObject& box)
+LayoutRect RenderFragmentContainer::visualOverflowRectForBox(const RenderBoxModelObject& box)
 {
     if (is<RenderInline>(box)) {
         const RenderInline& inlineBox = downcast<RenderInline>(box);
-        return inlineBox.linesVisualOverflowBoundingBoxInRegion(this);
+        return inlineBox.linesVisualOverflowBoundingBoxInFragment(this);
     }
 
     if (is<RenderBox>(box)) {
@@ -514,10 +514,10 @@ LayoutRect RenderRegion::visualOverflowRectForBox(const RenderBoxModelObject& bo
 }
 
 // FIXME: This doesn't work for writing modes.
-LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox* box)
+LayoutRect RenderFragmentContainer::layoutOverflowRectForBoxForPropagation(const RenderBox* box)
 {
     // Only propagate interior layout overflow if we don't clip it.
-    LayoutRect rect = box->borderBoxRectInRegion(this);
+    LayoutRect rect = box->borderBoxRectInFragment(this);
     rect = rectFlowPortionForBox(box, rect);
     if (!box->hasOverflowClip())
         rect.unite(layoutOverflowRectForBox(box));
@@ -534,7 +534,7 @@ LayoutRect RenderRegion::layoutOverflowRectForBoxForPropagation(const RenderBox*
     return rect;
 }
 
-LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject& box)
+LayoutRect RenderFragmentContainer::visualOverflowRectForBoxForPropagation(const RenderBoxModelObject& box)
 {
     LayoutRect rect = visualOverflowRectForBox(box);
     flowThread()->flipForWritingModeLocalCoordinates(rect);
@@ -542,19 +542,19 @@ LayoutRect RenderRegion::visualOverflowRectForBoxForPropagation(const RenderBoxM
     return rect;
 }
 
-CurrentRenderRegionMaintainer::CurrentRenderRegionMaintainer(RenderRegion& region)
-    : m_region(region)
+CurrentRenderFragmentContainerMaintainer::CurrentRenderFragmentContainerMaintainer(RenderFragmentContainer& fragment)
+    : m_fragment(fragment)
 {
-    RenderFlowThread* flowThread = region.flowThread();
-    // A flow thread can have only one current region.
-    ASSERT(!flowThread->currentRegion());
-    flowThread->setCurrentRegionMaintainer(this);
+    RenderFlowThread* flowThread = fragment.flowThread();
+    // A flow thread can have only one current fragment.
+    ASSERT(!flowThread->currentFragment());
+    flowThread->setCurrentFragmentMaintainer(this);
 }
 
-CurrentRenderRegionMaintainer::~CurrentRenderRegionMaintainer()
+CurrentRenderFragmentContainerMaintainer::~CurrentRenderFragmentContainerMaintainer()
 {
-    RenderFlowThread* flowThread = m_region.flowThread();
-    flowThread->setCurrentRegionMaintainer(nullptr);
+    RenderFlowThread* flowThread = m_fragment.flowThread();
+    flowThread->setCurrentFragmentMaintainer(nullptr);
 }
 
 } // namespace WebCore

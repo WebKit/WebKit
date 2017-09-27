@@ -35,11 +35,11 @@
 #include "InlineElementBox.h"
 #include "Node.h"
 #include "PODIntervalTree.h"
-#include "RenderBoxRegionInfo.h"
+#include "RenderBoxFragmentInfo.h"
+#include "RenderFragmentContainer.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
-#include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTableSection.h"
 #include "RenderTheme.h"
@@ -51,10 +51,10 @@ namespace WebCore {
 
 RenderFlowThread::RenderFlowThread(Document& document, RenderStyle&& style)
     : RenderBlockFlow(document, WTFMove(style))
-    , m_currentRegionMaintainer(nullptr)
-    , m_regionsInvalidated(false)
-    , m_regionsHaveUniformLogicalWidth(true)
-    , m_regionsHaveUniformLogicalHeight(true)
+    , m_currentFragmentMaintainer(nullptr)
+    , m_fragmentsInvalidated(false)
+    , m_fragmentsHaveUniformLogicalWidth(true)
+    , m_fragmentsHaveUniformLogicalHeight(true)
     , m_pageLogicalSizeChanged(false)
 {
     setIsRenderFlowThread(true);
@@ -80,87 +80,87 @@ void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* o
     RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     if (oldStyle && oldStyle->writingMode() != style().writingMode())
-        invalidateRegions();
+        invalidateFragments();
 }
 
 void RenderFlowThread::removeFlowChildInfo(RenderElement& child)
 {
     if (is<RenderBlockFlow>(child))
-        removeLineRegionInfo(downcast<RenderBlockFlow>(child));
+        removeLineFragmentInfo(downcast<RenderBlockFlow>(child));
     if (is<RenderBox>(child))
-        removeRenderBoxRegionInfo(downcast<RenderBox>(child));
+        removeRenderBoxFragmentInfo(downcast<RenderBox>(child));
 }
 
-void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
+void RenderFlowThread::removeFragmentFromThread(RenderFragmentContainer* RenderFragmentContainer)
 {
-    ASSERT(renderRegion);
-    m_regionList.remove(renderRegion);
+    ASSERT(RenderFragmentContainer);
+    m_fragmentList.remove(RenderFragmentContainer);
 }
 
-void RenderFlowThread::invalidateRegions(MarkingBehavior markingParents)
+void RenderFlowThread::invalidateFragments(MarkingBehavior markingParents)
 {
-    if (m_regionsInvalidated) {
+    if (m_fragmentsInvalidated) {
         ASSERT(selfNeedsLayout());
         return;
     }
 
-    m_regionRangeMap.clear();
-    m_breakBeforeToRegionMap.clear();
-    m_breakAfterToRegionMap.clear();
-    if (m_lineToRegionMap)
-        m_lineToRegionMap->clear();
+    m_fragmentRangeMap.clear();
+    m_breakBeforeToFragmentMap.clear();
+    m_breakAfterToFragmentMap.clear();
+    if (m_lineToFragmentMap)
+        m_lineToFragmentMap->clear();
     setNeedsLayout(markingParents);
 
-    m_regionsInvalidated = true;
+    m_fragmentsInvalidated = true;
 }
 
-void RenderFlowThread::validateRegions()
+void RenderFlowThread::validateFragments()
 {
-    if (m_regionsInvalidated) {
-        m_regionsInvalidated = false;
-        m_regionsHaveUniformLogicalWidth = true;
-        m_regionsHaveUniformLogicalHeight = true;
+    if (m_fragmentsInvalidated) {
+        m_fragmentsInvalidated = false;
+        m_fragmentsHaveUniformLogicalWidth = true;
+        m_fragmentsHaveUniformLogicalHeight = true;
 
-        if (hasRegions()) {
-            LayoutUnit previousRegionLogicalWidth = 0;
-            LayoutUnit previousRegionLogicalHeight = 0;
-            bool firstRegionVisited = false;
+        if (hasFragments()) {
+            LayoutUnit previousFragmentLogicalWidth = 0;
+            LayoutUnit previousFragmentLogicalHeight = 0;
+            bool firstFragmentVisited = false;
             
-            for (auto& region : m_regionList) {
-                ASSERT(!region->needsLayout() || region->isRenderRegionSet());
+            for (auto& fragment : m_fragmentList) {
+                ASSERT(!fragment->needsLayout() || fragment->isRenderFragmentContainerSet());
 
-                region->deleteAllRenderBoxRegionInfo();
+                fragment->deleteAllRenderBoxFragmentInfo();
 
-                LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-                LayoutUnit regionLogicalHeight = region->pageLogicalHeight();
+                LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
+                LayoutUnit fragmentLogicalHeight = fragment->pageLogicalHeight();
 
-                if (!firstRegionVisited)
-                    firstRegionVisited = true;
+                if (!firstFragmentVisited)
+                    firstFragmentVisited = true;
                 else {
-                    if (m_regionsHaveUniformLogicalWidth && previousRegionLogicalWidth != regionLogicalWidth)
-                        m_regionsHaveUniformLogicalWidth = false;
-                    if (m_regionsHaveUniformLogicalHeight && previousRegionLogicalHeight != regionLogicalHeight)
-                        m_regionsHaveUniformLogicalHeight = false;
+                    if (m_fragmentsHaveUniformLogicalWidth && previousFragmentLogicalWidth != fragmentLogicalWidth)
+                        m_fragmentsHaveUniformLogicalWidth = false;
+                    if (m_fragmentsHaveUniformLogicalHeight && previousFragmentLogicalHeight != fragmentLogicalHeight)
+                        m_fragmentsHaveUniformLogicalHeight = false;
                 }
 
-                previousRegionLogicalWidth = regionLogicalWidth;
+                previousFragmentLogicalWidth = fragmentLogicalWidth;
             }
 
-            setRegionRangeForBox(*this, m_regionList.first(), m_regionList.last());
+            setFragmentRangeForBox(*this, m_fragmentList.first(), m_fragmentList.last());
         }
     }
 
-    updateLogicalWidth(); // Called to get the maximum logical width for the region.
-    updateRegionsFlowThreadPortionRect();
+    updateLogicalWidth(); // Called to get the maximum logical width for the fragment.
+    updateFragmentsFlowThreadPortionRect();
 }
 
 void RenderFlowThread::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    m_pageLogicalSizeChanged = m_regionsInvalidated && everHadLayout();
+    m_pageLogicalSizeChanged = m_fragmentsInvalidated && everHadLayout();
 
-    validateRegions();
+    validateFragments();
 
     RenderBlockFlow::layout();
 
@@ -170,17 +170,17 @@ void RenderFlowThread::layout()
 void RenderFlowThread::updateLogicalWidth()
 {
     LayoutUnit logicalWidth = initialLogicalWidth();
-    for (auto& region : m_regionList) {
-        ASSERT(!region->needsLayout() || region->isRenderRegionSet());
-        logicalWidth = std::max(region->pageLogicalWidth(), logicalWidth);
+    for (auto& fragment : m_fragmentList) {
+        ASSERT(!fragment->needsLayout() || fragment->isRenderFragmentContainerSet());
+        logicalWidth = std::max(fragment->pageLogicalWidth(), logicalWidth);
     }
     setLogicalWidth(logicalWidth);
 
-    // If the regions have non-uniform logical widths, then insert inset information for the RenderFlowThread.
-    for (auto& region : m_regionList) {
-        LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-        LayoutUnit logicalLeft = style().direction() == LTR ? LayoutUnit() : logicalWidth - regionLogicalWidth;
-        region->setRenderBoxRegionInfo(this, logicalLeft, regionLogicalWidth, false);
+    // If the fragments have non-uniform logical widths, then insert inset information for the RenderFlowThread.
+    for (auto& fragment : m_fragmentList) {
+        LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
+        LayoutUnit logicalLeft = style().direction() == LTR ? LayoutUnit() : logicalWidth - fragmentLogicalWidth;
+        fragment->setRenderBoxFragmentInfo(this, logicalLeft, fragmentLogicalWidth, false);
     }
 }
 
@@ -191,11 +191,11 @@ RenderBox::LogicalExtentComputedValues RenderFlowThread::computeLogicalHeight(La
     computedValues.m_extent = 0;
 
     const LayoutUnit maxFlowSize = RenderFlowThread::maxLogicalHeight();
-    for (auto& region : m_regionList) {
-        ASSERT(!region->needsLayout() || region->isRenderRegionSet());
+    for (auto& fragment : m_fragmentList) {
+        ASSERT(!fragment->needsLayout() || fragment->isRenderFragmentContainerSet());
 
         LayoutUnit distanceToMaxSize = maxFlowSize - computedValues.m_extent;
-        computedValues.m_extent += std::min(distanceToMaxSize, region->logicalHeightOfAllFlowThreadContent());
+        computedValues.m_extent += std::min(distanceToMaxSize, fragment->logicalHeightOfAllFlowThreadContent());
 
         // If we reached the maximum size there's no point in going further.
         if (computedValues.m_extent == maxFlowSize)
@@ -219,42 +219,42 @@ bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
     return true;
 }
 
-void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect) const
+void RenderFlowThread::repaintRectangleInFragments(const LayoutRect& repaintRect) const
 {
-    if (!shouldRepaint(repaintRect) || !hasValidRegionInfo())
+    if (!shouldRepaint(repaintRect) || !hasValidFragmentInfo())
         return;
 
-    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the regions are somewhere else.
+    LayoutStateDisabler layoutStateDisabler(view()); // We can't use layout state to repaint, since the fragments are somewhere else.
 
-    for (auto& region : m_regionList)
-        region->repaintFlowThreadContent(repaintRect);
+    for (auto& fragment : m_fragmentList)
+        fragment->repaintFlowThreadContent(repaintRect);
 }
 
-RenderRegion* RenderFlowThread::regionAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastRegion) const
+RenderFragmentContainer* RenderFlowThread::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const
 {
-    ASSERT(!m_regionsInvalidated);
+    ASSERT(!m_fragmentsInvalidated);
 
-    if (m_regionList.isEmpty())
+    if (m_fragmentList.isEmpty())
         return nullptr;
 
-    if (m_regionList.size() == 1 && extendLastRegion)
-        return m_regionList.first();
+    if (m_fragmentList.size() == 1 && extendLastFragment)
+        return m_fragmentList.first();
 
     if (offset <= 0)
-        return clampBox ? clampBox->clampToStartAndEndRegions(m_regionList.first()) : m_regionList.first();
+        return clampBox ? clampBox->clampToStartAndEndFragments(m_fragmentList.first()) : m_fragmentList.first();
 
-    RegionSearchAdapter adapter(offset);
-    m_regionIntervalTree.allOverlapsWithAdapter<RegionSearchAdapter>(adapter);
+    FragmentSearchAdapter adapter(offset);
+    m_fragmentIntervalTree.allOverlapsWithAdapter<FragmentSearchAdapter>(adapter);
 
-    // If no region was found, the offset is in the flow thread overflow.
-    // The last region will contain the offset if extendLastRegion is set or if the last region is a set.
-    if (!adapter.result() && (extendLastRegion || m_regionList.last()->isRenderRegionSet()))
-        return clampBox ? clampBox->clampToStartAndEndRegions(m_regionList.last()) : m_regionList.last();
+    // If no fragment was found, the offset is in the flow thread overflow.
+    // The last fragment will contain the offset if extendLastFragment is set or if the last fragment is a set.
+    if (!adapter.result() && (extendLastFragment || m_fragmentList.last()->isRenderFragmentContainerSet()))
+        return clampBox ? clampBox->clampToStartAndEndFragments(m_fragmentList.last()) : m_fragmentList.last();
 
-    RenderRegion* region = adapter.result();
+    RenderFragmentContainer* fragment = adapter.result();
     if (!clampBox)
-        return region;
-    return region ? clampBox->clampToStartAndEndRegions(region) : nullptr;
+        return fragment;
+    return fragment ? clampBox->clampToStartAndEndFragments(fragment) : nullptr;
 }
 
 LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const RenderBoxModelObject& boxModelObject, const LayoutPoint& startPoint) const
@@ -263,42 +263,42 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
     
     const RenderBlock* objContainingBlock = boxModelObject.containingBlock();
     // FIXME: This needs to be adapted for different writing modes inside the flow thread.
-    RenderRegion* startRegion = regionAtBlockOffset(objContainingBlock, referencePoint.y());
-    if (startRegion) {
-        // Take into account the offset coordinates of the region.
-        RenderBoxModelObject* startRegionBox = startRegion;
-        RenderBoxModelObject* currObject = startRegionBox;
+    RenderFragmentContainer* startFragment = fragmentAtBlockOffset(objContainingBlock, referencePoint.y());
+    if (startFragment) {
+        // Take into account the offset coordinates of the fragment.
+        RenderBoxModelObject* startFragmentBox = startFragment;
+        RenderBoxModelObject* currObject = startFragmentBox;
         RenderBoxModelObject* currOffsetParent;
         while ((currOffsetParent = currObject->offsetParent())) {
             referencePoint.move(currObject->offsetLeft(), currObject->offsetTop());
             
             // Since we're looking for the offset relative to the body, we must also
-            // take into consideration the borders of the region's offsetParent.
+            // take into consideration the borders of the fragment's offsetParent.
             if (is<RenderBox>(*currOffsetParent) && !currOffsetParent->isBody())
                 referencePoint.move(downcast<RenderBox>(*currOffsetParent).borderLeft(), downcast<RenderBox>(*currOffsetParent).borderTop());
             
             currObject = currOffsetParent;
         }
         
-        // We need to check if any of this box's containing blocks start in a different region
+        // We need to check if any of this box's containing blocks start in a different fragment
         // and if so, drop the object's top position (which was computed relative to its containing block
-        // and is no longer valid) and recompute it using the region in which it flows as reference.
-        bool wasComputedRelativeToOtherRegion = false;
+        // and is no longer valid) and recompute it using the fragment in which it flows as reference.
+        bool wasComputedRelativeToOtherFragment = false;
         while (objContainingBlock && !is<RenderView>(*objContainingBlock)) {
-            // Check if this object is in a different region.
-            RenderRegion* parentStartRegion = nullptr;
-            RenderRegion* parentEndRegion = nullptr;
-            if (getRegionRangeForBox(objContainingBlock, parentStartRegion, parentEndRegion) && parentStartRegion != startRegion) {
-                wasComputedRelativeToOtherRegion = true;
+            // Check if this object is in a different fragment.
+            RenderFragmentContainer* parentStartFragment = nullptr;
+            RenderFragmentContainer* parentEndFragment = nullptr;
+            if (getFragmentRangeForBox(objContainingBlock, parentStartFragment, parentEndFragment) && parentStartFragment != startFragment) {
+                wasComputedRelativeToOtherFragment = true;
                 break;
             }
             objContainingBlock = objContainingBlock->containingBlock();
         }
         
-        if (wasComputedRelativeToOtherRegion) {
+        if (wasComputedRelativeToOtherFragment) {
             if (is<RenderBox>(boxModelObject)) {
-                // Use borderBoxRectInRegion to account for variations such as percentage margins.
-                LayoutRect borderBoxRect = downcast<RenderBox>(boxModelObject).borderBoxRectInRegion(startRegion, RenderBox::DoNotCacheRenderBoxRegionInfo);
+                // Use borderBoxRectInFragment to account for variations such as percentage margins.
+                LayoutRect borderBoxRect = downcast<RenderBox>(boxModelObject).borderBoxRectInFragment(startFragment, RenderBox::DoNotCacheRenderBoxFragmentInfo);
                 referencePoint.move(borderBoxRect.location().x(), 0);
             }
             
@@ -316,11 +316,11 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
                     top -= downcast<RenderInline>(boxModelObject).borderTop();
             }
             
-            // Get the logical top of the region this object starts in
-            // and compute the object's top, relative to the region's top.
-            LayoutUnit regionLogicalTop = startRegion->pageLogicalTopForOffset(top);
-            LayoutUnit topRelativeToRegion = top - regionLogicalTop;
-            referencePoint.setY(startRegionBox->offsetTop() + topRelativeToRegion);
+            // Get the logical top of the fragment this object starts in
+            // and compute the object's top, relative to the fragment's top.
+            LayoutUnit fragmentLogicalTop = startFragment->pageLogicalTopForOffset(top);
+            LayoutUnit topRelativeToFragment = top - fragmentLogicalTop;
+            referencePoint.setY(startFragmentBox->offsetTop() + topRelativeToFragment);
             
             // Since the top has been overriden, check if the
             // relative/sticky positioning must be reconsidered.
@@ -331,8 +331,8 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
         }
         
         // Since we're looking for the offset relative to the body, we must also
-        // take into consideration the borders of the region.
-        referencePoint.move(startRegionBox->borderLeft(), startRegionBox->borderTop());
+        // take into consideration the borders of the fragment.
+        referencePoint.move(startFragmentBox->borderLeft(), startFragmentBox->borderTop());
     }
     
     return referencePoint;
@@ -340,119 +340,119 @@ LayoutPoint RenderFlowThread::adjustedPositionRelativeToOffsetParent(const Rende
 
 LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false);
-    return region ? region->pageLogicalTopForOffset(offset) : LayoutUnit();
+    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    return fragment ? fragment->pageLogicalTopForOffset(offset) : LayoutUnit();
 }
 
 LayoutUnit RenderFlowThread::pageLogicalWidthForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, true);
-    return region ? region->pageLogicalWidth() : contentLogicalWidth();
+    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, true);
+    return fragment ? fragment->pageLogicalWidth() : contentLogicalWidth();
 }
 
 LayoutUnit RenderFlowThread::pageLogicalHeightForOffset(LayoutUnit offset) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false);
-    if (!region)
+    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    if (!fragment)
         return 0;
 
-    return region->pageLogicalHeight();
+    return fragment->pageLogicalHeight();
 }
 
 LayoutUnit RenderFlowThread::pageRemainingLogicalHeightForOffset(LayoutUnit offset, PageBoundaryRule pageBoundaryRule) const
 {
-    RenderRegion* region = regionAtBlockOffset(0, offset, false);
-    if (!region)
+    RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, false);
+    if (!fragment)
         return 0;
 
-    LayoutUnit pageLogicalTop = region->pageLogicalTopForOffset(offset);
-    LayoutUnit pageLogicalHeight = region->pageLogicalHeight();
+    LayoutUnit pageLogicalTop = fragment->pageLogicalTopForOffset(offset);
+    LayoutUnit pageLogicalHeight = fragment->pageLogicalHeight();
     LayoutUnit pageLogicalBottom = pageLogicalTop + pageLogicalHeight;
     LayoutUnit remainingHeight = pageLogicalBottom - offset;
     if (pageBoundaryRule == IncludePageBoundary) {
         // If IncludePageBoundary is set, the line exactly on the top edge of a
-        // region will act as being part of the previous region.
+        // fragment will act as being part of the previous fragment.
         remainingHeight = intMod(remainingHeight, pageLogicalHeight);
     }
     return remainingHeight;
 }
 
-RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformState) const
+RenderFragmentContainer* RenderFlowThread::mapFromFlowToFragment(TransformState& transformState) const
 {
-    if (!hasValidRegionInfo())
+    if (!hasValidFragmentInfo())
         return nullptr;
 
-    RenderRegion* renderRegion = currentRegion();
-    if (!renderRegion) {
+    RenderFragmentContainer* RenderFragmentContainer = currentFragment();
+    if (!RenderFragmentContainer) {
         LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
         flipForWritingMode(boxRect);
 
         LayoutPoint center = boxRect.center();
-        renderRegion = regionAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true);
-        if (!renderRegion)
+        RenderFragmentContainer = fragmentAtBlockOffset(this, isHorizontalWritingMode() ? center.y() : center.x(), true);
+        if (!RenderFragmentContainer)
             return nullptr;
     }
 
-    LayoutRect flippedRegionRect(renderRegion->flowThreadPortionRect());
-    flipForWritingMode(flippedRegionRect);
+    LayoutRect flippedFragmentRect(RenderFragmentContainer->flowThreadPortionRect());
+    flipForWritingMode(flippedFragmentRect);
 
-    transformState.move(renderRegion->contentBoxRect().location() - flippedRegionRect.location());
+    transformState.move(RenderFragmentContainer->contentBoxRect().location() - flippedFragmentRect.location());
 
-    return renderRegion;
+    return RenderFragmentContainer;
 }
 
-void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox& box)
+void RenderFlowThread::removeRenderBoxFragmentInfo(RenderBox& box)
 {
-    if (!hasRegions())
+    if (!hasFragments())
         return;
 
-    // If the region chain was invalidated the next layout will clear the box information from all the regions.
-    if (m_regionsInvalidated) {
+    // If the fragment chain was invalidated the next layout will clear the box information from all the fragments.
+    if (m_fragmentsInvalidated) {
         ASSERT(selfNeedsLayout());
         return;
     }
 
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (getRegionRangeForBox(&box, startRegion, endRegion)) {
-        for (auto it = m_regionList.find(startRegion), end = m_regionList.end(); it != end; ++it) {
-            RenderRegion* region = *it;
-            region->removeRenderBoxRegionInfo(box);
-            if (region == endRegion)
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (getFragmentRangeForBox(&box, startFragment, endFragment)) {
+        for (auto it = m_fragmentList.find(startFragment), end = m_fragmentList.end(); it != end; ++it) {
+            RenderFragmentContainer* fragment = *it;
+            fragment->removeRenderBoxFragmentInfo(box);
+            if (fragment == endFragment)
                 break;
         }
     }
 
 #ifndef NDEBUG
-    // We have to make sure we did not leave any RenderBoxRegionInfo attached.
-    for (auto& region : m_regionList)
-        ASSERT(!region->renderBoxRegionInfo(&box));
+    // We have to make sure we did not leave any RenderBoxFragmentInfo attached.
+    for (auto& fragment : m_fragmentList)
+        ASSERT(!fragment->renderBoxFragmentInfo(&box));
 #endif
 
-    m_regionRangeMap.remove(&box);
+    m_fragmentRangeMap.remove(&box);
 }
 
-void RenderFlowThread::removeLineRegionInfo(const RenderBlockFlow& blockFlow)
+void RenderFlowThread::removeLineFragmentInfo(const RenderBlockFlow& blockFlow)
 {
-    if (!m_lineToRegionMap || blockFlow.lineLayoutPath() == SimpleLinesPath)
+    if (!m_lineToFragmentMap || blockFlow.lineLayoutPath() == SimpleLinesPath)
         return;
 
     for (auto* curr = blockFlow.firstRootBox(); curr; curr = curr->nextRootBox())
-        m_lineToRegionMap->remove(curr);
+        m_lineToFragmentMap->remove(curr);
 
     ASSERT_WITH_SECURITY_IMPLICATION(checkLinesConsistency(blockFlow));
 }
 
-void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* block, bool& relayoutChildren)
+void RenderFlowThread::logicalWidthChangedInFragmentsForBlock(const RenderBlock* block, bool& relayoutChildren)
 {
-    if (!hasValidRegionInfo())
+    if (!hasValidFragmentInfo())
         return;
 
-    auto it = m_regionRangeMap.find(block);
-    if (it == m_regionRangeMap.end())
+    auto it = m_fragmentRangeMap.find(block);
+    if (it == m_fragmentRangeMap.end())
         return;
 
-    RenderRegionRange& range = it->value;
+    RenderFragmentContainerRange& range = it->value;
     bool rangeInvalidated = range.rangeInvalidated();
     range.clearRangeInvalidated();
 
@@ -462,198 +462,198 @@ void RenderFlowThread::logicalWidthChangedInRegionsForBlock(const RenderBlock* b
         return;
 
     // Not necessary for the flow thread, since we already computed the correct info for it.
-    // If the regions have changed invalidate the children.
+    // If the fragments have changed invalidate the children.
     if (block == this) {
         relayoutChildren = m_pageLogicalSizeChanged;
         return;
     }
 
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(block, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(block, startFragment, endFragment))
         return;
 
-    for (auto it = m_regionList.find(startRegion), end = m_regionList.end(); it != end; ++it) {
-        RenderRegion* region = *it;
-        ASSERT(!region->needsLayout() || region->isRenderRegionSet());
+    for (auto it = m_fragmentList.find(startFragment), end = m_fragmentList.end(); it != end; ++it) {
+        RenderFragmentContainer* fragment = *it;
+        ASSERT(!fragment->needsLayout() || fragment->isRenderFragmentContainerSet());
 
-        // We have no information computed for this region so we need to do it.
-        std::unique_ptr<RenderBoxRegionInfo> oldInfo = region->takeRenderBoxRegionInfo(block);
+        // We have no information computed for this fragment so we need to do it.
+        std::unique_ptr<RenderBoxFragmentInfo> oldInfo = fragment->takeRenderBoxFragmentInfo(block);
         if (!oldInfo) {
             relayoutChildren = rangeInvalidated;
             return;
         }
 
         LayoutUnit oldLogicalWidth = oldInfo->logicalWidth();
-        RenderBoxRegionInfo* newInfo = block->renderBoxRegionInfo(region);
+        RenderBoxFragmentInfo* newInfo = block->renderBoxFragmentInfo(fragment);
         if (!newInfo || newInfo->logicalWidth() != oldLogicalWidth) {
             relayoutChildren = true;
             return;
         }
 
-        if (region == endRegion)
+        if (fragment == endFragment)
             break;
     }
 }
 
-LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstRegion() const
+LayoutUnit RenderFlowThread::contentLogicalWidthOfFirstFragment() const
 {
-    RenderRegion* firstValidRegionInFlow = firstRegion();
-    if (!firstValidRegionInFlow)
+    RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
+    if (!firstValidFragmentInFlow)
         return 0;
-    return isHorizontalWritingMode() ? firstValidRegionInFlow->contentWidth() : firstValidRegionInFlow->contentHeight();
+    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentWidth() : firstValidFragmentInFlow->contentHeight();
 }
 
-LayoutUnit RenderFlowThread::contentLogicalHeightOfFirstRegion() const
+LayoutUnit RenderFlowThread::contentLogicalHeightOfFirstFragment() const
 {
-    RenderRegion* firstValidRegionInFlow = firstRegion();
-    if (!firstValidRegionInFlow)
+    RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
+    if (!firstValidFragmentInFlow)
         return 0;
-    return isHorizontalWritingMode() ? firstValidRegionInFlow->contentHeight() : firstValidRegionInFlow->contentWidth();
+    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentHeight() : firstValidFragmentInFlow->contentWidth();
 }
 
-LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstRegion() const
+LayoutUnit RenderFlowThread::contentLogicalLeftOfFirstFragment() const
 {
-    RenderRegion* firstValidRegionInFlow = firstRegion();
-    if (!firstValidRegionInFlow)
+    RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
+    if (!firstValidFragmentInFlow)
         return 0;
-    return isHorizontalWritingMode() ? firstValidRegionInFlow->flowThreadPortionRect().x() : firstValidRegionInFlow->flowThreadPortionRect().y();
+    return isHorizontalWritingMode() ? firstValidFragmentInFlow->flowThreadPortionRect().x() : firstValidFragmentInFlow->flowThreadPortionRect().y();
 }
 
-RenderRegion* RenderFlowThread::firstRegion() const
+RenderFragmentContainer* RenderFlowThread::firstFragment() const
 {
-    if (!hasRegions())
+    if (!hasFragments())
         return nullptr;
-    return m_regionList.first();
+    return m_fragmentList.first();
 }
 
-RenderRegion* RenderFlowThread::lastRegion() const
+RenderFragmentContainer* RenderFlowThread::lastFragment() const
 {
-    if (!hasRegions())
+    if (!hasFragments())
         return nullptr;
-    return m_regionList.last();
+    return m_fragmentList.last();
 }
 
-void RenderFlowThread::clearRenderBoxRegionInfoAndCustomStyle(const RenderBox& box,
-    const RenderRegion* newStartRegion, const RenderRegion* newEndRegion,
-    const RenderRegion* oldStartRegion, const RenderRegion* oldEndRegion)
+void RenderFlowThread::clearRenderBoxFragmentInfoAndCustomStyle(const RenderBox& box,
+    const RenderFragmentContainer* newStartFragment, const RenderFragmentContainer* newEndFragment,
+    const RenderFragmentContainer* oldStartFragment, const RenderFragmentContainer* oldEndFragment)
 {
-    ASSERT(newStartRegion && newEndRegion && oldStartRegion && oldEndRegion);
+    ASSERT(newStartFragment && newEndFragment && oldStartFragment && oldEndFragment);
 
-    bool insideOldRegionRange = false;
-    bool insideNewRegionRange = false;
-    for (auto& region : m_regionList) {
-        if (oldStartRegion == region)
-            insideOldRegionRange = true;
-        if (newStartRegion == region)
-            insideNewRegionRange = true;
+    bool insideOldFragmentRange = false;
+    bool insideNewFragmentRange = false;
+    for (auto& fragment : m_fragmentList) {
+        if (oldStartFragment == fragment)
+            insideOldFragmentRange = true;
+        if (newStartFragment == fragment)
+            insideNewFragmentRange = true;
 
-        if (!(insideOldRegionRange && insideNewRegionRange)) {
-            if (region->renderBoxRegionInfo(&box))
-                region->removeRenderBoxRegionInfo(box);
+        if (!(insideOldFragmentRange && insideNewFragmentRange)) {
+            if (fragment->renderBoxFragmentInfo(&box))
+                fragment->removeRenderBoxFragmentInfo(box);
         }
 
-        if (oldEndRegion == region)
-            insideOldRegionRange = false;
-        if (newEndRegion == region)
-            insideNewRegionRange = false;
+        if (oldEndFragment == fragment)
+            insideOldFragmentRange = false;
+        if (newEndFragment == fragment)
+            insideNewFragmentRange = false;
     }
 }
 
-void RenderFlowThread::setRegionRangeForBox(const RenderBox& box, RenderRegion* startRegion, RenderRegion* endRegion)
+void RenderFlowThread::setFragmentRangeForBox(const RenderBox& box, RenderFragmentContainer* startFragment, RenderFragmentContainer* endFragment)
 {
-    ASSERT(hasRegions());
-    ASSERT(startRegion && endRegion && startRegion->flowThread() == this && endRegion->flowThread() == this);
+    ASSERT(hasFragments());
+    ASSERT(startFragment && endFragment && startFragment->flowThread() == this && endFragment->flowThread() == this);
 
-    auto it = m_regionRangeMap.find(&box);
-    if (it == m_regionRangeMap.end()) {
-        m_regionRangeMap.set(&box, RenderRegionRange(startRegion, endRegion));
+    auto it = m_fragmentRangeMap.find(&box);
+    if (it == m_fragmentRangeMap.end()) {
+        m_fragmentRangeMap.set(&box, RenderFragmentContainerRange(startFragment, endFragment));
         return;
     }
 
     // If nothing changed, just bail.
-    RenderRegionRange& range = it->value;
-    if (range.startRegion() == startRegion && range.endRegion() == endRegion)
+    RenderFragmentContainerRange& range = it->value;
+    if (range.startFragment() == startFragment && range.endFragment() == endFragment)
         return;
 
-    clearRenderBoxRegionInfoAndCustomStyle(box, startRegion, endRegion, range.startRegion(), range.endRegion());
-    range.setRange(startRegion, endRegion);
+    clearRenderBoxFragmentInfoAndCustomStyle(box, startFragment, endFragment, range.startFragment(), range.endFragment());
+    range.setRange(startFragment, endFragment);
 }
 
-bool RenderFlowThread::hasCachedRegionRangeForBox(const RenderBox& box) const
+bool RenderFlowThread::hasCachedFragmentRangeForBox(const RenderBox& box) const
 {
-    return m_regionRangeMap.contains(&box);
+    return m_fragmentRangeMap.contains(&box);
 }
 
-bool RenderFlowThread::getRegionRangeForBoxFromCachedInfo(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
+bool RenderFlowThread::getFragmentRangeForBoxFromCachedInfo(const RenderBox* box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
 {
     ASSERT(box);
-    ASSERT(hasValidRegionInfo());
-    ASSERT((startRegion == nullptr) && (endRegion == nullptr));
+    ASSERT(hasValidFragmentInfo());
+    ASSERT((startFragment == nullptr) && (endFragment == nullptr));
 
-    auto it = m_regionRangeMap.find(box);
-    if (it != m_regionRangeMap.end()) {
-        const RenderRegionRange& range = it->value;
-        startRegion = range.startRegion();
-        endRegion = range.endRegion();
-        ASSERT(m_regionList.contains(startRegion) && m_regionList.contains(endRegion));
+    auto it = m_fragmentRangeMap.find(box);
+    if (it != m_fragmentRangeMap.end()) {
+        const RenderFragmentContainerRange& range = it->value;
+        startFragment = range.startFragment();
+        endFragment = range.endFragment();
+        ASSERT(m_fragmentList.contains(startFragment) && m_fragmentList.contains(endFragment));
         return true;
     }
 
     return false;
 }
 
-bool RenderFlowThread::getRegionRangeForBox(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
+bool RenderFlowThread::getFragmentRangeForBox(const RenderBox* box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
 {
     ASSERT(box);
 
-    startRegion = endRegion = nullptr;
-    if (!hasValidRegionInfo()) // We clear the ranges when we invalidate the regions.
+    startFragment = endFragment = nullptr;
+    if (!hasValidFragmentInfo()) // We clear the ranges when we invalidate the fragments.
         return false;
 
-    if (m_regionList.size() == 1) {
-        startRegion = endRegion = m_regionList.first();
+    if (m_fragmentList.size() == 1) {
+        startFragment = endFragment = m_fragmentList.first();
         return true;
     }
 
-    if (getRegionRangeForBoxFromCachedInfo(box, startRegion, endRegion))
+    if (getFragmentRangeForBoxFromCachedInfo(box, startFragment, endFragment))
         return true;
 
     return false;
 }
 
-bool RenderFlowThread::computedRegionRangeForBox(const RenderBox* box, RenderRegion*& startRegion, RenderRegion*& endRegion) const
+bool RenderFlowThread::computedFragmentRangeForBox(const RenderBox* box, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const
 {
     ASSERT(box);
 
-    startRegion = endRegion = nullptr;
-    if (!hasValidRegionInfo()) // We clear the ranges when we invalidate the regions.
+    startFragment = endFragment = nullptr;
+    if (!hasValidFragmentInfo()) // We clear the ranges when we invalidate the fragments.
         return false;
 
-    if (getRegionRangeForBox(box, startRegion, endRegion))
+    if (getFragmentRangeForBox(box, startFragment, endFragment))
         return true;
 
-    // Search the region range using the information provided by the containing block chain.
+    // Search the fragment range using the information provided by the containing block chain.
     auto* containingBlock = const_cast<RenderBox*>(box);
     while (!containingBlock->isRenderFlowThread()) {
         InlineElementBox* boxWrapper = containingBlock->inlineBoxWrapper();
-        if (boxWrapper && boxWrapper->root().containingRegion()) {
-            startRegion = endRegion = boxWrapper->root().containingRegion();
-            ASSERT(m_regionList.contains(startRegion));
+        if (boxWrapper && boxWrapper->root().containingFragment()) {
+            startFragment = endFragment = boxWrapper->root().containingFragment();
+            ASSERT(m_fragmentList.contains(startFragment));
             return true;
         }
 
-        // FIXME: Use the containingBlock() value once we patch all the layout systems to be region range aware
+        // FIXME: Use the containingBlock() value once we patch all the layout systems to be fragment range aware
         // (e.g. if we use containingBlock() the shadow controls of a video element won't get the range from the
         // video box because it's not a block; they need to be patched separately).
         ASSERT(containingBlock->parent());
         containingBlock = &containingBlock->parent()->enclosingBox();
         ASSERT(containingBlock);
 
-        // If a box doesn't have a cached region range it usually means the box belongs to a line so startRegion should be equal with endRegion.
-        // FIXME: Find the cases when this startRegion should not be equal with endRegion and make sure these boxes have cached region ranges.
-        if (containingBlock && hasCachedRegionRangeForBox(*containingBlock)) {
-            startRegion = endRegion = regionAtBlockOffset(containingBlock, containingBlock->offsetFromLogicalTopOfFirstPage(), true);
+        // If a box doesn't have a cached fragment range it usually means the box belongs to a line so startFragment should be equal with endFragment.
+        // FIXME: Find the cases when this startFragment should not be equal with endFragment and make sure these boxes have cached fragment ranges.
+        if (containingBlock && hasCachedFragmentRangeForBox(*containingBlock)) {
+            startFragment = endFragment = fragmentAtBlockOffset(containingBlock, containingBlock->offsetFromLogicalTopOfFirstPage(), true);
             return true;
         }
     }
@@ -661,62 +661,62 @@ bool RenderFlowThread::computedRegionRangeForBox(const RenderBox* box, RenderReg
     return false;
 }
 
-bool RenderFlowThread::regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const
+bool RenderFlowThread::fragmentInRange(const RenderFragmentContainer* targetFragment, const RenderFragmentContainer* startFragment, const RenderFragmentContainer* endFragment) const
 {
-    ASSERT(targetRegion);
+    ASSERT(targetFragment);
 
-    for (auto it = m_regionList.find(const_cast<RenderRegion*>(startRegion)), end = m_regionList.end(); it != end; ++it) {
-        const RenderRegion* currRegion = *it;
-        if (targetRegion == currRegion)
+    for (auto it = m_fragmentList.find(const_cast<RenderFragmentContainer*>(startFragment)), end = m_fragmentList.end(); it != end; ++it) {
+        const RenderFragmentContainer* currFragment = *it;
+        if (targetFragment == currFragment)
             return true;
-        if (currRegion == endRegion)
+        if (currFragment == endFragment)
             break;
     }
 
     return false;
 }
 
-bool RenderFlowThread::objectShouldFragmentInFlowRegion(const RenderObject* object, const RenderRegion* region) const
+bool RenderFlowThread::objectShouldFragmentInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
 {
     ASSERT(object);
-    ASSERT(region);
+    ASSERT(fragment);
     
     RenderFlowThread* flowThread = object->flowThreadContainingBlock();
     if (flowThread != this)
         return false;
 
-    if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
+    if (!m_fragmentList.contains(const_cast<RenderFragmentContainer*>(fragment)))
         return false;
     
-    RenderRegion* enclosingBoxStartRegion = nullptr;
-    RenderRegion* enclosingBoxEndRegion = nullptr;
-    // If the box has no range, do not check regionInRange. Boxes inside inlines do not get ranges.
-    // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong region.
-    if (computedRegionRangeForBox(&object->enclosingBox(), enclosingBoxStartRegion, enclosingBoxEndRegion)
-        && !regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
+    RenderFragmentContainer* enclosingBoxStartFragment = nullptr;
+    RenderFragmentContainer* enclosingBoxEndFragment = nullptr;
+    // If the box has no range, do not check fragmentInRange. Boxes inside inlines do not get ranges.
+    // Instead, the containing RootInlineBox will abort when trying to paint inside the wrong fragment.
+    if (computedFragmentRangeForBox(&object->enclosingBox(), enclosingBoxStartFragment, enclosingBoxEndFragment)
+        && !fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
     
     return object->isBox() || object->isRenderInline();
 }
 
-bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const RenderRegion* region) const
+bool RenderFlowThread::objectInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
 {
     ASSERT(object);
-    ASSERT(region);
+    ASSERT(fragment);
 
     RenderFlowThread* flowThread = object->flowThreadContainingBlock();
     if (flowThread != this)
         return false;
 
-    if (!m_regionList.contains(const_cast<RenderRegion*>(region)))
+    if (!m_fragmentList.contains(const_cast<RenderFragmentContainer*>(fragment)))
         return false;
 
-    RenderRegion* enclosingBoxStartRegion = nullptr;
-    RenderRegion* enclosingBoxEndRegion = nullptr;
-    if (!getRegionRangeForBox(&object->enclosingBox(), enclosingBoxStartRegion, enclosingBoxEndRegion))
+    RenderFragmentContainer* enclosingBoxStartFragment = nullptr;
+    RenderFragmentContainer* enclosingBoxEndFragment = nullptr;
+    if (!getFragmentRangeForBox(&object->enclosingBox(), enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
 
-    if (!regionInRange(region, enclosingBoxStartRegion, enclosingBoxEndRegion))
+    if (!fragmentInRange(fragment, enclosingBoxStartFragment, enclosingBoxEndFragment))
         return false;
 
     if (object->isBox())
@@ -727,17 +727,17 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
         objectABBRect.setWidth(1);
     if (!objectABBRect.height())
         objectABBRect.setHeight(1); 
-    if (objectABBRect.intersects(region->absoluteBoundingBoxRect(true)))
+    if (objectABBRect.intersects(fragment->absoluteBoundingBoxRect(true)))
         return true;
 
-    if (region == lastRegion()) {
-        // If the object does not intersect any of the enclosing box regions
-        // then the object is in last region.
-        for (auto it = m_regionList.find(enclosingBoxStartRegion), end = m_regionList.end(); it != end; ++it) {
-            const RenderRegion* currRegion = *it;
-            if (currRegion == region)
+    if (fragment == lastFragment()) {
+        // If the object does not intersect any of the enclosing box fragments
+        // then the object is in last fragment.
+        for (auto it = m_fragmentList.find(enclosingBoxStartFragment), end = m_fragmentList.end(); it != end; ++it) {
+            const RenderFragmentContainer* currFragment = *it;
+            if (currFragment == fragment)
                 break;
-            if (objectABBRect.intersects(currRegion->absoluteBoundingBoxRect(true)))
+            if (objectABBRect.intersects(currFragment->absoluteBoundingBoxRect(true)))
                 return false;
         }
         return true;
@@ -749,17 +749,17 @@ bool RenderFlowThread::objectInFlowRegion(const RenderObject* object, const Rend
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
 bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow& removedBlock) const
 {
-    if (!m_lineToRegionMap)
+    if (!m_lineToFragmentMap)
         return true;
 
-    for (auto& linePair : *m_lineToRegionMap.get()) {
+    for (auto& linePair : *m_lineToFragmentMap.get()) {
         const RootInlineBox* line = linePair.key;
-        RenderRegion* region = linePair.value;
+        RenderFragmentContainer* fragment = linePair.value;
         if (&line->blockFlow() == &removedBlock)
             return false;
         if (line->blockFlow().flowThreadState() == NotInsideFlowThread)
             return false;
-        if (!m_regionList.contains(region))
+        if (!m_fragmentList.contains(fragment))
             return false;
     }
 
@@ -767,93 +767,93 @@ bool RenderFlowThread::checkLinesConsistency(const RenderBlockFlow& removedBlock
 }
 #endif
 
-void RenderFlowThread::clearLinesToRegionMap()
+void RenderFlowThread::clearLinesToFragmentMap()
 {
-    if (m_lineToRegionMap)
-        m_lineToRegionMap->clear();
+    if (m_lineToFragmentMap)
+        m_lineToFragmentMap->clear();
 }
 
 void RenderFlowThread::deleteLines()
 {
-    clearLinesToRegionMap();
+    clearLinesToFragmentMap();
     RenderBlockFlow::deleteLines();
 }
 
 void RenderFlowThread::willBeDestroyed()
 {
-    clearLinesToRegionMap();
+    clearLinesToFragmentMap();
     RenderBlockFlow::willBeDestroyed();
 }
 
-void RenderFlowThread::markRegionsForOverflowLayoutIfNeeded()
+void RenderFlowThread::markFragmentsForOverflowLayoutIfNeeded()
 {
-    if (!hasRegions())
+    if (!hasFragments())
         return;
 
-    for (auto& region : m_regionList)
-        region->setNeedsSimplifiedNormalFlowLayout();
+    for (auto& fragment : m_fragmentList)
+        fragment->setNeedsSimplifiedNormalFlowLayout();
 }
 
-void RenderFlowThread::updateRegionsFlowThreadPortionRect()
+void RenderFlowThread::updateFragmentsFlowThreadPortionRect()
 {
     LayoutUnit logicalHeight = 0;
     // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
-    m_regionIntervalTree.clear();
-    for (auto& region : m_regionList) {
-        LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-        LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
+    m_fragmentIntervalTree.clear();
+    for (auto& fragment : m_fragmentList) {
+        LayoutUnit fragmentLogicalWidth = fragment->pageLogicalWidth();
+        LayoutUnit fragmentLogicalHeight = std::min<LayoutUnit>(RenderFlowThread::maxLogicalHeight() - logicalHeight, fragment->logicalHeightOfAllFlowThreadContent());
 
-        LayoutRect regionRect(style().direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
+        LayoutRect fragmentRect(style().direction() == LTR ? LayoutUnit() : logicalWidth() - fragmentLogicalWidth, logicalHeight, fragmentLogicalWidth, fragmentLogicalHeight);
 
-        region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
+        fragment->setFlowThreadPortionRect(isHorizontalWritingMode() ? fragmentRect : fragmentRect.transposedRect());
 
-        m_regionIntervalTree.add(RegionIntervalTree::createInterval(logicalHeight, logicalHeight + regionLogicalHeight, region));
+        m_fragmentIntervalTree.add(FragmentIntervalTree::createInterval(logicalHeight, logicalHeight + fragmentLogicalHeight, fragment));
 
-        logicalHeight += regionLogicalHeight;
+        logicalHeight += fragmentLogicalHeight;
     }
 }
 
-// Even if we require the break to occur at offsetBreakInFlowThread, because regions may have min/max-height values,
+// Even if we require the break to occur at offsetBreakInFlowThread, because fragments may have min/max-height values,
 // it is possible that the break will occur at a different offset than the original one required.
 // offsetBreakAdjustment measures the different between the requested break offset and the current break offset.
-bool RenderFlowThread::addForcedRegionBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderBox*, bool, LayoutUnit* offsetBreakAdjustment)
+bool RenderFlowThread::addForcedFragmentBreak(const RenderBlock* block, LayoutUnit offsetBreakInFlowThread, RenderBox*, bool, LayoutUnit* offsetBreakAdjustment)
 {
-    // We need to update the regions flow thread portion rect because we are going to process
-    // a break on these regions.
-    updateRegionsFlowThreadPortionRect();
+    // We need to update the fragments flow thread portion rect because we are going to process
+    // a break on these fragments.
+    updateFragmentsFlowThreadPortionRect();
 
-    // Simulate a region break at offsetBreakInFlowThread. If it points inside an auto logical height region,
-    // then it determines the region computed auto height.
-    RenderRegion* region = regionAtBlockOffset(block, offsetBreakInFlowThread);
-    if (!region)
+    // Simulate a fragment break at offsetBreakInFlowThread. If it points inside an auto logical height fragment,
+    // then it determines the fragment computed auto height.
+    RenderFragmentContainer* fragment = fragmentAtBlockOffset(block, offsetBreakInFlowThread);
+    if (!fragment)
         return false;
 
-    LayoutUnit currentRegionOffsetInFlowThread = isHorizontalWritingMode() ? region->flowThreadPortionRect().y() : region->flowThreadPortionRect().x();
+    LayoutUnit currentFragmentOffsetInFlowThread = isHorizontalWritingMode() ? fragment->flowThreadPortionRect().y() : fragment->flowThreadPortionRect().x();
 
-    currentRegionOffsetInFlowThread += isHorizontalWritingMode() ? region->flowThreadPortionRect().height() : region->flowThreadPortionRect().width();
+    currentFragmentOffsetInFlowThread += isHorizontalWritingMode() ? fragment->flowThreadPortionRect().height() : fragment->flowThreadPortionRect().width();
 
     if (offsetBreakAdjustment)
-        *offsetBreakAdjustment = std::max<LayoutUnit>(0, currentRegionOffsetInFlowThread - offsetBreakInFlowThread);
+        *offsetBreakAdjustment = std::max<LayoutUnit>(0, currentFragmentOffsetInFlowThread - offsetBreakInFlowThread);
 
     return false;
 }
 
 void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
-    ASSERT(!m_regionsInvalidated);
+    ASSERT(!m_fragmentsInvalidated);
     
-    for (auto& region : m_regionList)
-        region->collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
+    for (auto& fragment : m_fragmentList)
+        fragment->collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
 }
 
 LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundingBox)
 {
-    ASSERT(!m_regionsInvalidated);
+    ASSERT(!m_fragmentsInvalidated);
     
     LayoutRect result;
-    for (auto& region : m_regionList) {
+    for (auto& fragment : m_fragmentList) {
         LayerFragments fragments;
-        region->collectLayerFragments(fragments, layerBoundingBox, LayoutRect::infiniteRect());
+        fragment->collectLayerFragments(fragments, layerBoundingBox, LayoutRect::infiniteRect());
         for (const auto& fragment : fragments) {
             LayoutRect fragmentRect(layerBoundingBox);
             fragmentRect.intersect(fragment.paginationClip);
@@ -865,7 +865,7 @@ LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundin
     return result;
 }
 
-LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock* currentBlock) const
+LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstFragment(const RenderBlock* currentBlock) const
 {
     // As a last resort, take the slow path.
     LayoutRect blockRect(0, 0, currentBlock->width(), currentBlock->height());
@@ -898,7 +898,7 @@ LayoutUnit RenderFlowThread::offsetFromLogicalTopOfFirstRegion(const RenderBlock
     return currentBlock->isHorizontalWritingMode() ? blockRect.y() : blockRect.x();
 }
 
-void RenderFlowThread::RegionSearchAdapter::collectIfNeeded(const RegionInterval& interval)
+void RenderFlowThread::FragmentSearchAdapter::collectIfNeeded(const FragmentInterval& interval)
 {
     if (m_result)
         return;
@@ -911,29 +911,29 @@ void RenderFlowThread::mapLocalToContainer(const RenderLayerModelObject* repaint
     if (this == repaintContainer)
         return;
 
-    if (RenderRegion* region = mapFromFlowToRegion(transformState)) {
+    if (RenderFragmentContainer* fragment = mapFromFlowToFragment(transformState)) {
         // FIXME: The cast below is probably not the best solution, we may need to find a better way.
-        const RenderObject* regionObject = static_cast<const RenderObject*>(region);
+        const RenderObject* fragmentObject = static_cast<const RenderObject*>(fragment);
 
         // If the repaint container is nullptr, we have to climb up to the RenderView, otherwise swap
-        // it with the region's repaint container.
-        repaintContainer = repaintContainer ? region->containerForRepaint() : nullptr;
+        // it with the fragment's repaint container.
+        repaintContainer = repaintContainer ? fragment->containerForRepaint() : nullptr;
 
-        if (RenderFlowThread* regionFlowThread = region->flowThreadContainingBlock()) {
-            RenderRegion* startRegion = nullptr;
-            RenderRegion* endRegion = nullptr;
-            if (regionFlowThread->getRegionRangeForBox(region, startRegion, endRegion)) {
-                CurrentRenderRegionMaintainer regionMaintainer(*startRegion);
-                regionObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+        if (RenderFlowThread* fragmentFlowThread = fragment->flowThreadContainingBlock()) {
+            RenderFragmentContainer* startFragment = nullptr;
+            RenderFragmentContainer* endFragment = nullptr;
+            if (fragmentFlowThread->getFragmentRangeForBox(fragment, startFragment, endFragment)) {
+                CurrentRenderFragmentContainerMaintainer fragmentMaintainer(*startFragment);
+                fragmentObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
                 return;
             }
         }
 
-        regionObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
+        fragmentObject->mapLocalToContainer(repaintContainer, transformState, mode, wasFixed);
     }
 }
 
-// FIXME: Make this function faster. Walking the render tree is slow, better use a caching mechanism (e.g. |cachedOffsetFromLogicalTopOfFirstRegion|).
+// FIXME: Make this function faster. Walking the render tree is slow, better use a caching mechanism (e.g. |cachedOffsetFromLogicalTopOfFirstFragment|).
 LayoutRect RenderFlowThread::mapFromLocalToFlowThread(const RenderBox* box, const LayoutRect& localRect) const
 {
     LayoutRect boxRect = localRect;
@@ -955,7 +955,7 @@ LayoutRect RenderFlowThread::mapFromLocalToFlowThread(const RenderBox* box, cons
     return boxRect;
 }
 
-// FIXME: Make this function faster. Walking the render tree is slow, better use a caching mechanism (e.g. |cachedOffsetFromLogicalTopOfFirstRegion|).
+// FIXME: Make this function faster. Walking the render tree is slow, better use a caching mechanism (e.g. |cachedOffsetFromLogicalTopOfFirstFragment|).
 LayoutRect RenderFlowThread::mapFromFlowThreadToLocal(const RenderBox* box, const LayoutRect& rect) const
 {
     LayoutRect localRect = rect;
@@ -988,152 +988,152 @@ void RenderFlowThread::flipForWritingModeLocalCoordinates(LayoutRect& rect) cons
         rect.setX(0 - rect.maxX());
 }
 
-void RenderFlowThread::addRegionsVisualEffectOverflow(const RenderBox* box)
+void RenderFlowThread::addFragmentsVisualEffectOverflow(const RenderBox* box)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(box, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
 
-    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
+    for (auto iter = m_fragmentList.find(startFragment), end = m_fragmentList.end(); iter != end; ++iter) {
+        RenderFragmentContainer* fragment = *iter;
 
-        LayoutRect borderBox = box->borderBoxRectInRegion(region);
+        LayoutRect borderBox = box->borderBoxRectInFragment(fragment);
         borderBox = box->applyVisualEffectOverflow(borderBox);
-        borderBox = region->rectFlowPortionForBox(box, borderBox);
+        borderBox = fragment->rectFlowPortionForBox(box, borderBox);
 
-        region->addVisualOverflowForBox(box, borderBox);
-        if (region == endRegion)
+        fragment->addVisualOverflowForBox(box, borderBox);
+        if (fragment == endFragment)
             break;
     }
 }
 
-void RenderFlowThread::addRegionsVisualOverflowFromTheme(const RenderBlock* block)
+void RenderFlowThread::addFragmentsVisualOverflowFromTheme(const RenderBlock* block)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(block, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(block, startFragment, endFragment))
         return;
 
-    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
+    for (auto iter = m_fragmentList.find(startFragment), end = m_fragmentList.end(); iter != end; ++iter) {
+        RenderFragmentContainer* fragment = *iter;
 
-        LayoutRect borderBox = block->borderBoxRectInRegion(region);
-        borderBox = region->rectFlowPortionForBox(block, borderBox);
+        LayoutRect borderBox = block->borderBoxRectInFragment(fragment);
+        borderBox = fragment->rectFlowPortionForBox(block, borderBox);
 
         FloatRect inflatedRect = borderBox;
         block->theme().adjustRepaintRect(*block, inflatedRect);
 
-        region->addVisualOverflowForBox(block, snappedIntRect(LayoutRect(inflatedRect)));
-        if (region == endRegion)
+        fragment->addVisualOverflowForBox(block, snappedIntRect(LayoutRect(inflatedRect)));
+        if (fragment == endFragment)
             break;
     }
 }
 
-void RenderFlowThread::addRegionsOverflowFromChild(const RenderBox* box, const RenderBox* child, const LayoutSize& delta)
+void RenderFlowThread::addFragmentsOverflowFromChild(const RenderBox* box, const RenderBox* child, const LayoutSize& delta)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(child, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(child, startFragment, endFragment))
         return;
 
-    RenderRegion* containerStartRegion = nullptr;
-    RenderRegion* containerEndRegion = nullptr;
-    if (!getRegionRangeForBox(box, containerStartRegion, containerEndRegion))
+    RenderFragmentContainer* containerStartFragment = nullptr;
+    RenderFragmentContainer* containerEndFragment = nullptr;
+    if (!getFragmentRangeForBox(box, containerStartFragment, containerEndFragment))
         return;
 
-    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
-        if (!regionInRange(region, containerStartRegion, containerEndRegion)) {
-            if (region == endRegion)
+    for (auto iter = m_fragmentList.find(startFragment), end = m_fragmentList.end(); iter != end; ++iter) {
+        RenderFragmentContainer* fragment = *iter;
+        if (!fragmentInRange(fragment, containerStartFragment, containerEndFragment)) {
+            if (fragment == endFragment)
                 break;
             continue;
         }
 
-        LayoutRect childLayoutOverflowRect = region->layoutOverflowRectForBoxForPropagation(child);
+        LayoutRect childLayoutOverflowRect = fragment->layoutOverflowRectForBoxForPropagation(child);
         childLayoutOverflowRect.move(delta);
         
-        region->addLayoutOverflowForBox(box, childLayoutOverflowRect);
+        fragment->addLayoutOverflowForBox(box, childLayoutOverflowRect);
 
         if (child->hasSelfPaintingLayer() || box->hasOverflowClip()) {
-            if (region == endRegion)
+            if (fragment == endFragment)
                 break;
             continue;
         }
-        LayoutRect childVisualOverflowRect = region->visualOverflowRectForBoxForPropagation(*child);
+        LayoutRect childVisualOverflowRect = fragment->visualOverflowRectForBoxForPropagation(*child);
         childVisualOverflowRect.move(delta);
-        region->addVisualOverflowForBox(box, childVisualOverflowRect);
+        fragment->addVisualOverflowForBox(box, childVisualOverflowRect);
 
-        if (region == endRegion)
+        if (fragment == endFragment)
             break;
     }
 }
     
-void RenderFlowThread::addRegionsLayoutOverflow(const RenderBox* box, const LayoutRect& layoutOverflow)
+void RenderFlowThread::addFragmentsLayoutOverflow(const RenderBox* box, const LayoutRect& layoutOverflow)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(box, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
 
-    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
-        LayoutRect layoutOverflowInRegion = region->rectFlowPortionForBox(box, layoutOverflow);
+    for (auto iter = m_fragmentList.find(startFragment), end = m_fragmentList.end(); iter != end; ++iter) {
+        RenderFragmentContainer* fragment = *iter;
+        LayoutRect layoutOverflowInFragment = fragment->rectFlowPortionForBox(box, layoutOverflow);
 
-        region->addLayoutOverflowForBox(box, layoutOverflowInRegion);
+        fragment->addLayoutOverflowForBox(box, layoutOverflowInFragment);
 
-        if (region == endRegion)
+        if (fragment == endFragment)
             break;
     }
 }
 
-void RenderFlowThread::addRegionsVisualOverflow(const RenderBox* box, const LayoutRect& visualOverflow)
+void RenderFlowThread::addFragmentsVisualOverflow(const RenderBox* box, const LayoutRect& visualOverflow)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(box, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
     
-    for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
-        RenderRegion* region = *iter;
-        LayoutRect visualOverflowInRegion = region->rectFlowPortionForBox(box, visualOverflow);
+    for (RenderFragmentContainerList::iterator iter = m_fragmentList.find(startFragment); iter != m_fragmentList.end(); ++iter) {
+        RenderFragmentContainer* fragment = *iter;
+        LayoutRect visualOverflowInFragment = fragment->rectFlowPortionForBox(box, visualOverflow);
         
-        region->addVisualOverflowForBox(box, visualOverflowInRegion);
+        fragment->addVisualOverflowForBox(box, visualOverflowInFragment);
         
-        if (region == endRegion)
+        if (fragment == endFragment)
             break;
     }
 }
 
-void RenderFlowThread::clearRegionsOverflow(const RenderBox* box)
+void RenderFlowThread::clearFragmentsOverflow(const RenderBox* box)
 {
-    RenderRegion* startRegion = nullptr;
-    RenderRegion* endRegion = nullptr;
-    if (!getRegionRangeForBox(box, startRegion, endRegion))
+    RenderFragmentContainer* startFragment = nullptr;
+    RenderFragmentContainer* endFragment = nullptr;
+    if (!getFragmentRangeForBox(box, startFragment, endFragment))
         return;
 
-    for (auto iter = m_regionList.find(startRegion), end = m_regionList.end(); iter != end; ++iter) {
-        RenderRegion* region = *iter;
-        RenderBoxRegionInfo* boxInfo = region->renderBoxRegionInfo(box);
+    for (auto iter = m_fragmentList.find(startFragment), end = m_fragmentList.end(); iter != end; ++iter) {
+        RenderFragmentContainer* fragment = *iter;
+        RenderBoxFragmentInfo* boxInfo = fragment->renderBoxFragmentInfo(box);
         if (boxInfo && boxInfo->overflow())
             boxInfo->clearOverflow();
 
-        if (region == endRegion)
+        if (fragment == endFragment)
             break;
     }
 }
 
-RenderRegion* RenderFlowThread::currentRegion() const
+RenderFragmentContainer* RenderFlowThread::currentFragment() const
 {
-    return m_currentRegionMaintainer ? &m_currentRegionMaintainer->region() : nullptr;
+    return m_currentFragmentMaintainer ? &m_currentFragmentMaintainer->fragment() : nullptr;
 }
 
-ContainingRegionMap& RenderFlowThread::containingRegionMap()
+ContainingFragmentMap& RenderFlowThread::containingFragmentMap()
 {
-    if (!m_lineToRegionMap)
-        m_lineToRegionMap = std::make_unique<ContainingRegionMap>();
+    if (!m_lineToFragmentMap)
+        m_lineToFragmentMap = std::make_unique<ContainingFragmentMap>();
 
-    return *m_lineToRegionMap.get();
+    return *m_lineToFragmentMap.get();
 }
 
 

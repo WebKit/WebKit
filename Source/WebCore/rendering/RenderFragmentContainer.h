@@ -38,10 +38,10 @@ namespace WebCore {
 
 class Element;
 class RenderBox;
-class RenderBoxRegionInfo;
+class RenderBoxFragmentInfo;
 class RenderFlowThread;
 
-class RenderRegion : public RenderBlockFlow {
+class RenderFragmentContainer : public RenderBlockFlow {
 public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -51,29 +51,29 @@ public:
 
     LayoutPoint flowThreadPortionLocation() const;
 
-    virtual void attachRegion();
-    virtual void detachRegion();
+    virtual void attachFragment();
+    virtual void detachFragment();
 
     RenderFlowThread* flowThread() const { return m_flowThread; }
 
-    // Valid regions do not create circular dependencies with other flows.
+    // Valid fragments do not create circular dependencies with other flows.
     bool isValid() const { return m_isValid; }
     void setIsValid(bool valid) { m_isValid = valid; }
 
-    RenderBoxRegionInfo* renderBoxRegionInfo(const RenderBox*) const;
-    RenderBoxRegionInfo* setRenderBoxRegionInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
+    RenderBoxFragmentInfo* renderBoxFragmentInfo(const RenderBox*) const;
+    RenderBoxFragmentInfo* setRenderBoxFragmentInfo(const RenderBox*, LayoutUnit logicalLeftInset, LayoutUnit logicalRightInset,
         bool containingBlockChainIsInset);
-    std::unique_ptr<RenderBoxRegionInfo> takeRenderBoxRegionInfo(const RenderBox*);
-    void removeRenderBoxRegionInfo(const RenderBox&);
+    std::unique_ptr<RenderBoxFragmentInfo> takeRenderBoxFragmentInfo(const RenderBox*);
+    void removeRenderBoxFragmentInfo(const RenderBox&);
 
-    void deleteAllRenderBoxRegionInfo();
+    void deleteAllRenderBoxFragmentInfo();
 
-    bool isFirstRegion() const;
-    bool isLastRegion() const;
+    bool isFirstFragment() const;
+    bool isLastFragment() const;
     virtual bool shouldClipFlowThreadContent() const;
 
-    // These methods represent the width and height of a "page" and for a RenderRegion they are just the
-    // content width and content height of a region. For RenderRegionSets, however, they will be the width and
+    // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
+    // content width and content height of a fragment. For RenderFragmentContainerSets, however, they will be the width and
     // height of a single column or page in the set.
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
@@ -83,24 +83,24 @@ public:
     LayoutUnit logicalTopForFlowThreadContent() const { return logicalTopOfFlowThreadContentRect(flowThreadPortionRect()); };
     LayoutUnit logicalBottomForFlowThreadContent() const { return logicalBottomOfFlowThreadContentRect(flowThreadPortionRect()); };
 
-    // This method represents the logical height of the entire flow thread portion used by the region or set.
-    // For RenderRegions it matches logicalPaginationHeight(), but for sets it is the height of all the pages
+    // This method represents the logical height of the entire flow thread portion used by the fragment or set.
+    // For RenderFragmentContainers it matches logicalPaginationHeight(), but for sets it is the height of all the pages
     // or columns added together.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
 
-    // The top of the nearest page inside the region. For RenderRegions, this is just the logical top of the
+    // The top of the nearest page inside the fragment. For RenderFragmentContainers, this is just the logical top of the
     // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
     // page.
     virtual LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const;
 
-    // Whether or not this region is a set.
-    virtual bool isRenderRegionSet() const { return false; }
+    // Whether or not this fragment is a set.
+    virtual bool isRenderFragmentContainerSet() const { return false; }
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect);
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    virtual void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const;
+    virtual void adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect& fragmentBounds) const;
 
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
@@ -111,18 +111,18 @@ public:
 
     LayoutRect rectFlowPortionForBox(const RenderBox*, const LayoutRect&) const;
     
-    void setRegionObjectsRegionStyle();
-    void restoreRegionObjectsOriginalStyle();
+    void setFragmentObjectsFragmentStyle();
+    void restoreFragmentObjectsOriginalStyle();
 
     bool canHaveChildren() const override { return false; }
     bool canHaveGeneratedChildren() const override { return true; }
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
-    virtual void absoluteQuadsForBoxInRegion(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
+    virtual void absoluteQuadsForBoxInFragment(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
 protected:
-    RenderRegion(Element&, RenderStyle&&, RenderFlowThread*);
-    RenderRegion(Document&, RenderStyle&&, RenderFlowThread*);
+    RenderFragmentContainer(Element&, RenderStyle&&, RenderFlowThread*);
+    RenderFragmentContainer(Document&, RenderStyle&&, RenderFlowThread*);
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
 
@@ -135,20 +135,20 @@ protected:
     };
 
     LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
-    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& regionLocation, const LayoutRect* flowThreadPortionClipRect = 0);
+    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* flowThreadPortionClipRect = 0);
 
     void computeOverflowFromFlowThread();
 
 private:
-    bool isRenderRegion() const final { return true; }
-    const char* renderName() const override { return "RenderRegion"; }
+    bool isRenderFragmentContainer() const final { return true; }
+    const char* renderName() const override { return "RenderFragmentContainer"; }
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
     virtual void installFlowThread();
 
-    LayoutPoint mapRegionPointIntoFlowThreadCoordinates(const LayoutPoint&);
+    LayoutPoint mapFragmentPointIntoFlowThreadCoordinates(const LayoutPoint&);
 
 protected:
     RenderFlowThread* m_flowThread;
@@ -156,27 +156,27 @@ protected:
 private:
     LayoutRect m_flowThreadPortionRect;
 
-    // This map holds unique information about a block that is split across regions.
-    // A RenderBoxRegionInfo* tells us about any layout information for a RenderBox that
-    // is unique to the region. For now it just holds logical width information for RenderBlocks, but eventually
-    // it will also hold a custom style for any box (for region styling).
-    typedef HashMap<const RenderBox*, std::unique_ptr<RenderBoxRegionInfo>> RenderBoxRegionInfoMap;
-    RenderBoxRegionInfoMap m_renderBoxRegionInfo;
+    // This map holds unique information about a block that is split across fragments.
+    // A RenderBoxFragmentInfo* tells us about any layout information for a RenderBox that
+    // is unique to the fragment. For now it just holds logical width information for RenderBlocks, but eventually
+    // it will also hold a custom style for any box (for fragment styling).
+    typedef HashMap<const RenderBox*, std::unique_ptr<RenderBoxFragmentInfo>> RenderBoxFragmentInfoMap;
+    RenderBoxFragmentInfoMap m_renderBoxFragmentInfo;
 
     bool m_isValid : 1;
 };
 
-class CurrentRenderRegionMaintainer {
-    WTF_MAKE_NONCOPYABLE(CurrentRenderRegionMaintainer);
+class CurrentRenderFragmentContainerMaintainer {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFragmentContainerMaintainer);
 public:
-    CurrentRenderRegionMaintainer(RenderRegion&);
-    ~CurrentRenderRegionMaintainer();
+    CurrentRenderFragmentContainerMaintainer(RenderFragmentContainer&);
+    ~CurrentRenderFragmentContainerMaintainer();
 
-    RenderRegion& region() const { return m_region; }
+    RenderFragmentContainer& fragment() const { return m_fragment; }
 private:
-    RenderRegion& m_region;
+    RenderFragmentContainer& m_fragment;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderRegion, isRenderRegion())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentContainer, isRenderFragmentContainer())

@@ -30,7 +30,7 @@ class EllipsisBox;
 class HitTestResult;
 class LogicalSelectionOffsetCaches;
 class RenderBlockFlow;
-class RenderRegion;
+class RenderFragmentContainer;
 
 struct BidiStatus;
 struct GapRects;
@@ -65,11 +65,11 @@ public:
     LayoutUnit paginatedLineWidth() const { return m_paginatedLineWidth; }
     void setPaginatedLineWidth(LayoutUnit width) { m_paginatedLineWidth = width; }
 
-    // It should not be assumed the containingRegion() is always valid.
-    // It can also be nullptr if the flow has no region chain.
-    RenderRegion* containingRegion() const;
-    void setContainingRegion(RenderRegion&);
-    void clearContainingRegion();
+    // It should not be assumed the containingFragment() is always valid.
+    // It can also be nullptr if the flow has no fragment chain.
+    RenderFragmentContainer* containingFragment() const;
+    void setContainingFragment(RenderFragmentContainer&);
+    void clearContainingFragment();
 
     LayoutUnit selectionTop() const;
     LayoutUnit selectionBottom() const;

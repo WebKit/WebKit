@@ -24,25 +24,25 @@
  */
 
 #include "config.h"
-#include "RenderRegionSet.h"
+#include "RenderFragmentContainerSet.h"
 
-#include "RenderBoxRegionInfo.h"
+#include "RenderBoxFragmentInfo.h"
 #include "RenderFlowThread.h"
 
 namespace WebCore {
 
-RenderRegionSet::RenderRegionSet(Document& document, RenderStyle&& style, RenderFlowThread& flowThread)
-    : RenderRegion(document, WTFMove(style), &flowThread)
+RenderFragmentContainerSet::RenderFragmentContainerSet(Document& document, RenderStyle&& style, RenderFlowThread& flowThread)
+    : RenderFragmentContainer(document, WTFMove(style), &flowThread)
 {
 }
 
-void RenderRegionSet::installFlowThread()
+void RenderFragmentContainerSet::installFlowThread()
 {
     // We don't have to do anything, since we were able to connect the flow thread
     // in the constructor.
 }
 
-void RenderRegionSet::expandToEncompassFlowThreadContentsIfNeeded()
+void RenderFragmentContainerSet::expandToEncompassFlowThreadContentsIfNeeded()
 {
     // Whenever the last region is a set, it always expands its region rect to consume all
     // of the flow thread content. This is because it is always capable of generating an

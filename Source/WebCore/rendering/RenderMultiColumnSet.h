@@ -26,8 +26,8 @@
 #pragma once
 
 #include "LayerFragment.h"
+#include "RenderFragmentContainerSet.h"
 #include "RenderMultiColumnFlowThread.h"
-#include "RenderRegionSet.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -40,9 +40,9 @@ namespace WebCore {
 // for the 2nd to n-1 pages, and then one last column set that will hold the shorter columns on the final page (that may have to be balanced
 // as well).
 //
-// Column spans result in the creation of new column sets as well, since a spanning region has to be placed in between the column sets that
+// Column spans result in the creation of new column sets as well, since a spanning fragment has to be placed in between the column sets that
 // come before and after the span.
-class RenderMultiColumnSet final : public RenderRegionSet {
+class RenderMultiColumnSet final : public RenderFragmentContainerSet {
 public:
     RenderMultiColumnSet(RenderFlowThread&, RenderStyle&&);
 
@@ -121,7 +121,7 @@ public:
         ClampHitTestTranslationToColumns,
         DoNotClampHitTestTranslationToColumns
     };
-    LayoutPoint translateRegionPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
+    LayoutPoint translateFragmentPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
     
@@ -150,9 +150,9 @@ private:
 
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    void adjustRegionBoundsFromFlowThreadPortionRect(LayoutRect& regionBounds) const override;
+    void adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect& fragmentBounds) const override;
 
-    VisiblePosition positionForPoint(const LayoutPoint&, const RenderRegion*) override;
+    VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
     const char* renderName() const override;
 

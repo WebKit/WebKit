@@ -457,7 +457,7 @@ Position RenderText::positionForPoint(const LayoutPoint& point)
     return positionForPoint(point, nullptr).deepEquivalent();
 }
 
-VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const RenderRegion*)
+VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, const RenderFragmentContainer*)
 {
     ensureLineBoxes();
     return m_lineBoxes.positionForPoint(*this, point);
