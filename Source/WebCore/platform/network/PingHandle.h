@@ -28,6 +28,7 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "Timer.h"
+#include <wtf/CompletionHandler.h>
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
         No,
     };
     
-    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::Function<void(const ResourceError&)>&& completionHandler)
+    PingHandle(NetworkingContext* networkingContext, const ResourceRequest& request, bool shouldUseCredentialStorage, UsesAsyncCallbacks useAsyncCallbacks, bool shouldFollowRedirects, WTF::CompletionHandler<void(const ResourceError&)>&& completionHandler)
         : m_currentRequest(request)
         , m_timeoutTimer(*this, &PingHandle::timeoutTimerFired)
         , m_shouldUseCredentialStorage(shouldUseCredentialStorage)
@@ -103,7 +104,7 @@ private:
     bool m_shouldUseCredentialStorage;
     bool m_shouldFollowRedirects;
     UsesAsyncCallbacks m_usesAsyncCallbacks;
-    WTF::Function<void(const ResourceError&)> m_completionHandler;
+    WTF::CompletionHandler<void(const ResourceError&)> m_completionHandler;
 };
 
 } // namespace WebCore

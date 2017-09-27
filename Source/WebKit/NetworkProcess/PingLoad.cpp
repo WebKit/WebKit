@@ -31,7 +31,6 @@
 #include "AuthenticationManager.h"
 #include "Logging.h"
 #include "NetworkCORSPreflightChecker.h"
-#include "NetworkConnectionToWebProcess.h"
 #include "SessionTracker.h"
 #include "WebCompiledContentRuleList.h"
 #include "WebErrors.h"
@@ -45,10 +44,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& originalRequestHeaders, Ref<NetworkConnectionToWebProcess>&& connection)
+PingLoad::PingLoad(NetworkResourceLoadParameters&& parameters, HTTPHeaderMap&& originalRequestHeaders, WTF::CompletionHandler<void(const ResourceError&)>&& completionHandler)
     : m_parameters(WTFMove(parameters))
     , m_originalRequestHeaders(WTFMove(originalRequestHeaders))
-    , m_connection(WTFMove(connection))
+    , m_completionHandler(WTFMove(completionHandler))
     , m_timeoutTimer(*this, &PingLoad::timeoutTimerFired)
     , m_isSameOriginRequest(securityOrigin().canRequest(m_parameters.request.url()))
 {
@@ -80,7 +79,7 @@ PingLoad::~PingLoad()
 
 void PingLoad::didFinish(const ResourceError& error)
 {
-    m_connection->didFinishPingLoad(m_parameters.identifier, error);
+    m_completionHandler(error);
     delete this;
 }
 

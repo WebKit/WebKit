@@ -237,17 +237,19 @@ void NetworkConnectionToWebProcess::performSynchronousLoad(const NetworkResource
 
 void NetworkConnectionToWebProcess::loadPing(NetworkResourceLoadParameters&& loadParameters, HTTPHeaderMap&& originalRequestHeaders)
 {
+    auto completionHandler = [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error) {
+        didFinishPingLoad(identifier, error);
+    };
+
 #if USE(NETWORK_SESSION)
     // PingLoad manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders), *this);
+    new PingLoad(WTFMove(loadParameters), WTFMove(originalRequestHeaders), WTFMove(completionHandler));
 #else
     UNUSED_PARAM(originalRequestHeaders);
-    RefPtr<NetworkingContext> context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
+    auto context = RemoteNetworkingContext::create(loadParameters.sessionID, loadParameters.shouldClearReferrerOnHTTPSToHTTPRedirect);
 
     // PingHandle manages its own lifetime, deleting itself when its purpose has been fulfilled.
-    new PingHandle(context.get(), loadParameters.request, loadParameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects, [this, protectedThis = makeRef(*this), identifier = loadParameters.identifier] (const ResourceError& error) {
-        didFinishPingLoad(identifier, error);
-    });
+    new PingHandle(context.ptr(), loadParameters.request, loadParameters.storedCredentialsPolicy == StoredCredentialsPolicy::Use, PingHandle::UsesAsyncCallbacks::Yes, loadParameters.shouldFollowRedirects, WTFMove(completionHandler));
 #endif
 }
 
