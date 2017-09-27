@@ -191,7 +191,7 @@
                     },
                     { "name": "Apple El Capitan CMake Debug (Build)", "type": "Build", "builddir": "elcapitan-cmake-debug",
                       "platform": "mac-elcapitan", "configuration": "debug", "architectures": ["x86_64"],
-                      "additionalArguments": ["--cmake"],
+                      "additionalArguments": ["--cmake", "--verbose"],
                       "slavenames": ["bot170"]
                     },
                     { "name": "Apple El Capitan Debug JSC (Tests)", "type": "TestJSC", "builddir": "elcapitan-debug-tests-jsc",

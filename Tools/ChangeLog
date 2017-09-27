@@ -1,5 +1,17 @@
 2017-09-26  Tim Horton  <timothy_horton@apple.com>
 
+        Mac CMake bot should provide verbose build output
+        https://bugs.webkit.org/show_bug.cgi?id=177512
+
+        Reviewed by Alexey Proskuryakov.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        It's hard to diagnose weird bot-only build problems without the
+        full verbose build output, so turn that on. The Xcode builders
+        do it too, so why not CMake!
+
+2017-09-26  Tim Horton  <timothy_horton@apple.com>
+
         Make it possible to easily get verbose ninja output from build-webkit
         https://bugs.webkit.org/show_bug.cgi?id=177511
 
