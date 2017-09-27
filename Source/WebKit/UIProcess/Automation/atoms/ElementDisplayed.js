@@ -132,6 +132,9 @@ function isShown(element) {
         if (!elementOverflowsContainer(element))
             return false;
 
+        if (!element.childNodes.length)
+            return false;
+
         // This element's subtree is hidden by overflow if all child subtrees are as well.
         return Array.from(element.childNodes).every((childNode) => {
             // Returns true if the child node is overflowed or otherwise hidden.
