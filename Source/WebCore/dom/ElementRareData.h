@@ -107,6 +107,9 @@ public:
     bool hasPendingResources() const { return m_hasPendingResources; }
     void setHasPendingResources(bool has) { m_hasPendingResources = has; }
 
+    bool hasCSSAnimation() const { return m_hasCSSAnimation; }
+    void setHasCSSAnimation(bool value) { m_hasCSSAnimation = value; }
+
 private:
     int m_tabIndex;
     unsigned short m_childIndex;
@@ -118,6 +121,7 @@ private:
     unsigned m_containsFullScreenElement : 1;
 #endif
     unsigned m_hasPendingResources : 1;
+    unsigned m_hasCSSAnimation : 1;
     unsigned m_childrenAffectedByHover : 1;
     unsigned m_childrenAffectedByDrag : 1;
     // Bits for dynamic child matching.
@@ -160,6 +164,7 @@ inline ElementRareData::ElementRareData(RenderElement* renderer)
     , m_containsFullScreenElement(false)
 #endif
     , m_hasPendingResources(false)
+    , m_hasCSSAnimation(false)
     , m_childrenAffectedByHover(false)
     , m_childrenAffectedByDrag(false)
     , m_childrenAffectedByLastChildRules(false)

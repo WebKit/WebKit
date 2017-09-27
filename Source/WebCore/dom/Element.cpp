@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "AttributeChangeInvalidation.h"
+#include "CSSAnimationController.h"
 #include "CSSParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -1764,9 +1765,12 @@ void Element::removedFrom(ContainerNode& insertionPoint)
     if (hasPendingResources())
         document().accessSVGExtensions().removeElementFromPendingResources(this);
 
+    Frame* frame = document().frame();
+    if (frame)
+        frame->animation().cancelAnimations(*this);
 
 #if PLATFORM(MAC)
-    if (Frame* frame = document().frame())
+    if (frame)
         frame->mainFrame().removeLatchingStateForTarget(*this);
 #endif
 }
@@ -3531,7 +3535,26 @@ void Element::setHasPendingResources()
 
 void Element::clearHasPendingResources()
 {
-    ensureElementRareData().setHasPendingResources(false);
+    if (!hasRareData())
+        return;
+    elementRareData()->setHasPendingResources(false);
+}
+
+bool Element::hasCSSAnimation() const
+{
+    return hasRareData() && elementRareData()->hasCSSAnimation();
+}
+
+void Element::setHasCSSAnimation()
+{
+    ensureElementRareData().setHasCSSAnimation(true);
+}
+
+void Element::clearHasCSSAnimation()
+{
+    if (!hasRareData())
+        return;
+    elementRareData()->setHasCSSAnimation(false);
 }
 
 bool Element::canContainRangeEndPoint() const

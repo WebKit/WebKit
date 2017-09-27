@@ -1,0 +1,24 @@
+<html>
+<head>
+<style>
+foo { animation: anim 0s infinite alternate;}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function js() {
+var test = document.getElementById("test");
+document.createElement("div").insertAdjacentElement("afterBegin",test);
+window.onpageshow = function() {
+	setTimeout(() => {
+        location.href = `data:text/html,<body onload="testRunner.notifyDone()">This test passes if it doesn't hit an assert`;
+    }, 10);
+};
+}
+</script>
+</head>
+<body onload=js()>
+<svg>
+<foo id="test">

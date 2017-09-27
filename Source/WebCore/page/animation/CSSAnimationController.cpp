@@ -85,6 +85,8 @@ CSSAnimationControllerPrivate::~CSSAnimationControllerPrivate()
 
 CompositeAnimation& CSSAnimationControllerPrivate::ensureCompositeAnimation(Element& element)
 {
+    element.setHasCSSAnimation();
+
     auto result = m_compositeAnimations.ensure(&element, [&] {
         return CompositeAnimation::create(*this);
     });
@@ -97,6 +99,12 @@ CompositeAnimation& CSSAnimationControllerPrivate::ensureCompositeAnimation(Elem
 
 bool CSSAnimationControllerPrivate::clear(Element& element)
 {
+    ASSERT(element.hasCSSAnimation() == m_compositeAnimations.contains(&element));
+
+    if (!element.hasCSSAnimation())
+        return false;
+    element.clearHasCSSAnimation();
+
     auto it = m_compositeAnimations.find(&element);
     if (it == m_compositeAnimations.end())
         return false;

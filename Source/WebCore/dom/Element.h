@@ -449,6 +449,10 @@ public:
     void clearHasPendingResources();
     virtual void buildPendingResource() { };
 
+    bool hasCSSAnimation() const;
+    void setHasCSSAnimation();
+    void clearHasCSSAnimation();
+
 #if ENABLE(FULLSCREEN_API)
     WEBCORE_EXPORT bool containsFullScreenElement() const;
     void setContainsFullScreenElement(bool);

@@ -1,3 +1,44 @@
+2017-09-27  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION (r222040): Crash navigating out of gfycat.com url
+        https://bugs.webkit.org/show_bug.cgi?id=177531
+        <rdar://problem/34602601>
+
+        Reviewed by Geoff Garen.
+
+        Animation structures are normally removed when the render tree is torn down.
+        However there are cases where we can instantiate animation without creating a renderer
+        and we need to make sure animations are canceled in these cases too.
+
+        CompositeAnimations should also ref the element but that can be done separately.
+
+        Test: fast/animation/animation-element-removal.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+
+            Ensure animations are canceled when element is removed from the tree.
+
+        (WebCore::Element::clearHasPendingResources):
+        (WebCore::Element::hasCSSAnimation const):
+        (WebCore::Element::setHasCSSAnimation):
+        (WebCore::Element::clearHasCSSAnimation):
+
+            Add a bit so we don't need to do hash lookups for every removal.
+
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::hasCSSAnimation const):
+        (WebCore::ElementRareData::setHasCSSAnimation):
+        (WebCore::ElementRareData::ElementRareData):
+        * page/animation/CSSAnimationController.cpp:
+        (WebCore::CSSAnimationControllerPrivate::ensureCompositeAnimation):
+
+            Test for the bit.
+
+        (WebCore::CSSAnimationControllerPrivate::clear):
+        (WebCore::CSSAnimationController::cancelAnimations):
+
 2017-09-27  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [ATK] atk_table_cell_get_position() should return values of aria-rowindex and aria-colindex, if present
