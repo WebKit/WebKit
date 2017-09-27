@@ -1,3 +1,60 @@
+2017-09-27  Matt Baker  <mattbaker@apple.com>
+
+        Web Inspector: Create ResourceCollectionContentView and make CollectionContentView easier to extend
+        https://bugs.webkit.org/show_bug.cgi?id=177419
+
+        Reviewed by Devin Rousso.
+
+        CollectionContentView should be generic, work with any represented object
+        Collection, and not perform any type checking. It should just map items
+        to ContentViews using the provided ContentView constructor.
+
+        The behavior when clicking a ContentView in the collection has been extended.
+        If selection is enabled, clicking a ContentView will cause a "selected" class
+        to be applied to its element, and a SupplementalRepresentedObjectsDidChange
+        event is dispatched.
+
+        * Localizations/en.lproj/localizedStrings.js:
+        * UserInterface/Main.html:
+        New file, move CollectionContentView above subclasses.
+
+        * UserInterface/Models/ResourceCollection.js:
+        (WI.ResourceCollection.prototype.get resourceType):
+        Make resource type publicly available.
+
+        * UserInterface/Views/CollectionContentView.js:
+        Move type checking of the collection out of the base class and assert
+        that ContentViews are created when invoking `contentViewConstructor`.
+        (WI.CollectionContentView):
+        (WI.CollectionContentView.titleForCollection):
+        (WI.CollectionContentView.prototype.get supplementalRepresentedObjects):
+        (WI.CollectionContentView.prototype.get selectionEnabled):
+        (WI.CollectionContentView.prototype.set selectionEnabled):
+        (WI.CollectionContentView.prototype.addContentViewForItem):
+        (WI.CollectionContentView.prototype.removeContentViewForItem):
+        (WI.CollectionContentView.prototype.contentViewAdded):
+        (WI.CollectionContentView.prototype.contentViewRemoved):
+        (WI.CollectionContentView.prototype.initialLayout):
+        (WI.CollectionContentView.prototype.attached):
+        (WI.CollectionContentView.prototype.detached):
+        (WI.CollectionContentView.prototype._handleItemAdded):
+        (WI.CollectionContentView.prototype._handleItemRemoved):
+        (WI.CollectionContentView.prototype._selectItem):
+        (WI.CollectionContentView.prototype._addContentViewForItem): Deleted.
+        (WI.CollectionContentView.prototype._removeContentViewForItem): Deleted.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.createFromRepresentedObject):
+        Create a ResourceCollectionContentView. In the future, additional
+        Collection types can be mapped to their associated CollectionContentView.
+
+        * UserInterface/Views/ResourceCollectionContentView.js: Added.
+        New class for resource-specific logic previously in CollectionContentView.
+        (WI.ResourceCollectionContentView):
+        (WI.ResourceCollectionContentView.prototype.contentViewAdded):
+        (WI.ResourceCollectionContentView.prototype._handleContentError):
+        Remove ContentView without removing the resource from its collection.
+
 2017-09-27  Ross Kirsling  <ross.kirsling@sony.com>
 
         Web Inspector: Fix Layers tab sidebar popover.

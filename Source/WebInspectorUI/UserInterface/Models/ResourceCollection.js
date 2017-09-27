@@ -64,6 +64,8 @@ WI.ResourceCollection = class ResourceCollection extends WI.Collection
 
     // Public
 
+    get resourceType() { return this._resourceType; }
+
     resourceForURL(url)
     {
         return this._resourceURLMap.get(url) || null;

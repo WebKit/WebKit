@@ -161,6 +161,9 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.Recording)
             return new WI.RecordingContentView(representedObject, extraArguments);
 
+        if (representedObject instanceof WI.ResourceCollection)
+            return new WI.ResourceCollectionContentView(representedObject, extraArguments);
+
         if (representedObject instanceof WI.Collection)
             return new WI.CollectionContentView(representedObject, extraArguments);
 
