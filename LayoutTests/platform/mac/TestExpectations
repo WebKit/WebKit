@@ -1772,3 +1772,6 @@ webkit.org/b/177322 [ Debug ] imported/w3c/web-platform-tests/html/semantics/doc
 webkit.org/b/177323 imported/w3c/web-platform-tests/fetch/security/embedded-credentials.tentative.sub.html [ Pass Failure ]
 
 webkit.org/b/177520 accessibility/image-load-on-delay.html [ Pass Failure ]
+
+webkit.org/b/177388 inspector/canvas/shaderProgram-add-remove-webgl.html [ Pass Failure ]
+
