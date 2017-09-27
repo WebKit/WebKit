@@ -55,6 +55,11 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         return !!layers.length;
     }
 
+    willDismissPopover()
+    {
+        this._popover = null;
+    }
+
     // Private
 
     _buildDataGrid()
@@ -88,7 +93,6 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
 
         this._dataGrid.element.addEventListener("focus", this._dataGridFocused.bind(this), false);
         this._dataGrid.element.addEventListener("blur", this._dataGridBlurred.bind(this), false);
-        this._dataGrid.element.addEventListener("click", this._dataGridClicked.bind(this), false);
 
         this.contentView.addSubview(this._dataGrid);
     }
@@ -116,7 +120,6 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         }
 
         this._dataGrid.sortNodes(comparator);
-        this._updatePopoverForSelectedNode();
     }
 
     _dataGridSelectedNodeChanged()
@@ -124,28 +127,18 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
         if (this._dataGrid.selectedNode) {
             this._highlightSelectedNode();
             this._showPopoverForSelectedNode();
-        } else {
+        } else
             WI.domTreeManager.hideDOMNodeHighlight();
-            this._hidePopover();
-        }
     }
 
     _dataGridFocused(event)
     {
         this._highlightSelectedNode();
-        this._showPopoverForSelectedNode();
     }
 
     _dataGridBlurred(event)
     {
         WI.domTreeManager.hideDOMNodeHighlight();
-        this._hidePopover();
-    }
-
-    _dataGridClicked(event)
-    {
-        if (this._dataGrid.selectedNode && event.target.parentNode.classList.contains("filler"))
-            this._dataGrid.selectedNode.deselect();
     }
 
     _highlightSelectedNode()
@@ -228,33 +221,21 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
             return;
 
         this._contentForPopover(dataGridNode.layer, (content) => {
-            if (dataGridNode === this._dataGrid.selectedNode)
-                this._updatePopoverForSelectedNode(content);
+            if (dataGridNode !== this._dataGrid.selectedNode)
+                return;
+
+            this._popover = this._popover || new WI.Popover(this);
+            this._popover.content = content;
+            this._popover.windowResizeHandler = () => { this._presentPopover(); };
+
+            this._presentPopover();
         });
     }
 
-    _updatePopoverForSelectedNode(content)
+    _presentPopover()
     {
-        if (!this._dataGrid.selectedNode)
-            return;
-
-        if (!this._popover) {
-            this._popover = new WI.Popover;
-            this._popover.windowResizeHandler = () => { this._updatePopoverForSelectedNode(); };
-        }
-
         let targetFrame = WI.Rect.rectFromClientRect(this._dataGrid.selectedNode.element.getBoundingClientRect());
-
-        if (content)
-            this._popover.content = content;
-
         this._popover.present(targetFrame.pad(2), [WI.RectEdge.MIN_X]);
-    }
-
-    _hidePopover()
-    {
-        if (this._popover)
-            this._popover.dismiss();
     }
 
     _contentForPopover(layer, callback)

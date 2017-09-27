@@ -1,3 +1,23 @@
+2017-09-27  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Fix Layers tab sidebar popover.
+        https://bugs.webkit.org/show_bug.cgi?id=177477
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/LayerDetailsSidebarPanel.js:
+        (WI.LayerDetailsSidebarPanel.prototype.willDismissPopover): Added.
+        (WI.LayerDetailsSidebarPanel.prototype._buildDataGrid):
+        (WI.LayerDetailsSidebarPanel.prototype._sortDataGrid):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridSelectedNodeChanged):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridFocused):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridBlurred):
+        (WI.LayerDetailsSidebarPanel.prototype._showPopoverForSelectedNode): Refactored.
+        (WI.LayerDetailsSidebarPanel.prototype._presentPopover):
+        (WI.LayerDetailsSidebarPanel.prototype._dataGridClicked): Deleted -- not actually desired behavior.
+        (WI.LayerDetailsSidebarPanel.prototype._updatePopoverForSelectedNode): Deleted -- code simplification.
+        (WI.LayerDetailsSidebarPanel.prototype._hidePopover): Deleted -- no longer needed.
+
 2017-09-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [GTK] Web Inspector: Add Canvas2D.svg and Canvas3D.svg
