@@ -1,3 +1,20 @@
+2017-09-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Put g_gigacageBasePtr into its own page and make it read-only
+        https://bugs.webkit.org/show_bug.cgi?id=174972
+
+        Reviewed by Michael Saboff.
+        
+        This puts the gigacage base pointers into their own page and makes that page read-only.
+
+        * bmalloc/Gigacage.cpp:
+        (Gigacage::ensureGigacage):
+        (Gigacage::disablePrimitiveGigacage):
+        (Gigacage::addPrimitiveDisableCallback):
+        * bmalloc/Gigacage.h:
+        (Gigacage::basePtr):
+        (Gigacage::basePtrs):
+
 2017-09-04  Adrian Perez de Castro  <aperez@igalia.com>
 
         Unreviewed build fix for Clang with libc++

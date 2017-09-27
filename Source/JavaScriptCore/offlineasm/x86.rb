@@ -466,7 +466,7 @@ class LabelReference
         # FIXME: Implement this on platforms that aren't Mach-O.
         # https://bugs.webkit.org/show_bug.cgi?id=175104
         $asm.puts "movq #{asmLabel}@GOTPCREL(%rip), #{dst.x86Operand(:ptr)}"
-        "(#{dst.x86Operand(kind)})"
+        "#{offset}(#{dst.x86Operand(kind)})"
     end
 end
 

@@ -57,11 +57,17 @@
 #define GIGACAGE_ENABLED 0
 #endif
 
-extern "C" BEXPORT void* g_primitiveGigacageBasePtr;
-extern "C" BEXPORT void* g_jsValueGigacageBasePtr;
-extern "C" BEXPORT void* g_stringGigacageBasePtr;
+#define GIGACAGE_BASE_PTRS_SIZE 8192
+
+extern "C" BEXPORT char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 
 namespace Gigacage {
+
+struct BasePtrs {
+    void* primitive;
+    void* jsValue;
+    void* string;
+};
 
 enum Kind {
     Primitive,
@@ -97,18 +103,28 @@ BINLINE const char* name(Kind kind)
     return nullptr;
 }
 
-BINLINE void*& basePtr(Kind kind)
+BINLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
 {
     switch (kind) {
     case Primitive:
-        return g_primitiveGigacageBasePtr;
+        return basePtrs.primitive;
     case JSValue:
-        return g_jsValueGigacageBasePtr;
+        return basePtrs.jsValue;
     case String:
-        return g_stringGigacageBasePtr;
+        return basePtrs.string;
     }
     BCRASH();
-    return g_primitiveGigacageBasePtr;
+    return basePtrs.primitive;
+}
+
+BINLINE BasePtrs& basePtrs()
+{
+    return *reinterpret_cast<BasePtrs*>(g_gigacageBasePtrs);
+}
+
+BINLINE void*& basePtr(Kind kind)
+{
+    return basePtr(basePtrs(), kind);
 }
 
 BINLINE size_t size(Kind kind)

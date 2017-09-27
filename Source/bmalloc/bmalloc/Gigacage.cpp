@@ -33,17 +33,43 @@
 #include <cstdio>
 #include <mutex>
 
-// FIXME: Ask dyld to put this in its own page, and mprotect the page after we ensure the gigacage.
-// https://bugs.webkit.org/show_bug.cgi?id=174972
-void* g_primitiveGigacageBasePtr;
-void* g_jsValueGigacageBasePtr;
-void* g_stringGigacageBasePtr;
+char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 
 using namespace bmalloc;
 
 namespace Gigacage {
 
-static bool s_isDisablingPrimitiveGigacageDisabled;
+namespace {
+
+bool s_isDisablingPrimitiveGigacageDisabled;
+
+void protectGigacageBasePtrs()
+{
+    uintptr_t basePtrs = reinterpret_cast<uintptr_t>(g_gigacageBasePtrs);
+    // We might only get page size alignment, but that's also the minimum we need.
+    RELEASE_BASSERT(!(basePtrs & (vmPageSize() - 1)));
+    mprotect(g_gigacageBasePtrs, GIGACAGE_BASE_PTRS_SIZE, PROT_READ);
+}
+
+void unprotectGigacageBasePtrs()
+{
+    mprotect(g_gigacageBasePtrs, GIGACAGE_BASE_PTRS_SIZE, PROT_READ | PROT_WRITE);
+}
+
+class UnprotectGigacageBasePtrsScope {
+public:
+    UnprotectGigacageBasePtrsScope()
+    {
+        unprotectGigacageBasePtrs();
+    }
+    
+    ~UnprotectGigacageBasePtrsScope()
+    {
+        protectGigacageBasePtrs();
+    }
+};
+
+} // anonymous namespce
 
 struct Callback {
     Callback() { }
@@ -86,6 +112,8 @@ void ensureGigacage()
                     
                     vmDeallocatePhysicalPages(basePtr(kind), totalSize(kind));
                 });
+            
+            protectGigacageBasePtrs();
         });
 #endif // GIGACAGE_ENABLED
 }
@@ -93,7 +121,7 @@ void ensureGigacage()
 void disablePrimitiveGigacage()
 {
     ensureGigacage();
-    if (!g_primitiveGigacageBasePtr) {
+    if (!basePtrs().primitive) {
         // It was never enabled. That means that we never even saved any callbacks. Or, we had already disabled
         // it before, and already called the callbacks.
         return;
@@ -104,13 +132,14 @@ void disablePrimitiveGigacage()
     for (Callback& callback : callbacks.callbacks)
         callback.function(callback.argument);
     callbacks.callbacks.shrink(0);
-    g_primitiveGigacageBasePtr = nullptr;
+    UnprotectGigacageBasePtrsScope unprotectScope;
+    basePtrs().primitive = nullptr;
 }
 
 void addPrimitiveDisableCallback(void (*function)(void*), void* argument)
 {
     ensureGigacage();
-    if (!g_primitiveGigacageBasePtr) {
+    if (!basePtrs().primitive) {
         // It was already disabled or we were never able to enable it.
         function(argument);
         return;

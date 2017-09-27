@@ -312,6 +312,10 @@ class AddImmediates
     def fold
         @left = @left.fold
         @right = @right.fold
+        
+        return right.plusOffset(@left.value) if @left.is_a? Immediate and @right.is_a? LabelReference
+        return left.plusOffset(@right.value) if @left.is_a? LabelReference and @right.is_a? Immediate
+        
         return self unless @left.is_a? Immediate
         return self unless @right.is_a? Immediate
         Immediate.new(codeOrigin, @left.value + @right.value)
@@ -322,6 +326,9 @@ class SubImmediates
     def fold
         @left = @left.fold
         @right = @right.fold
+        
+        return left.plusOffset(-@right.value) if @left.is_a? LabelReference and @right.is_a? Immediate
+        
         return self unless @left.is_a? Immediate
         return self unless @right.is_a? Immediate
         Immediate.new(codeOrigin, @left.value - @right.value)
