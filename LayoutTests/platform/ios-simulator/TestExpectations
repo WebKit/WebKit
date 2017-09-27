@@ -153,3 +153,6 @@ webgl/1.0.2/conformance/uniforms/uniform-default-values.html [ Failure ]
 
 # This test requires Skia, which isn't available on iOS.
 webkit.org/b/174079 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
+
+# <rdar://problem/33731086>
+media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
