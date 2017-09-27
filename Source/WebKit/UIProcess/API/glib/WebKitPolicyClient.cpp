@@ -38,20 +38,23 @@ public:
     }
 
 private:
-    void decidePolicyForNavigationAction(WebPageProxy&, WebFrameProxy*, const NavigationActionData& navigationActionData, WebFrameProxy* /*originatingFrame*/, const WebCore::ResourceRequest& /*originalRequest*/, const WebCore::ResourceRequest& request, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* /*userData*/) override
+    void decidePolicyForNavigationAction(WebPageProxy&, WebFrameProxy*, const NavigationActionData& navigationActionData, WebFrameProxy* /*originatingFrame*/, const WebCore::ResourceRequest& /*originalRequest*/, const WebCore::ResourceRequest& request, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* /*userData*/) override
     {
+        auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
         GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitNavigationPolicyDecisionCreate(navigationActionData, request, listener.ptr()));
         webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION, decision.get());
     }
 
-    void decidePolicyForNewWindowAction(WebPageProxy&, WebFrameProxy&, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& request, const String& frameName, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* /*userData*/) override
+    void decidePolicyForNewWindowAction(WebPageProxy&, WebFrameProxy&, const NavigationActionData& navigationActionData, const WebCore::ResourceRequest& request, const String& frameName, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* /*userData*/) override
     {
+        auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
         GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitNewWindowPolicyDecisionCreate(navigationActionData, request, frameName, listener.ptr()));
         webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION, decision.get());
     }
 
-    void decidePolicyForResponse(WebPageProxy&, WebFrameProxy&, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* /*userData*/) override
+    void decidePolicyForResponse(WebPageProxy&, WebFrameProxy&, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* /*userData*/) override
     {
+        auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
         GRefPtr<WebKitPolicyDecision> decision = adoptGRef(webkitResponsePolicyDecisionCreate(request, response, canShowMIMEType, listener.ptr()));
         webkitWebViewMakePolicyDecision(m_webView, WEBKIT_POLICY_DECISION_TYPE_RESPONSE, decision.get());
     }

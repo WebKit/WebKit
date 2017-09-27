@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APINavigation.h"
 #import "DrawingAreaProxy.h"
 #import "FrameLoadState.h"
 #import "Logging.h"

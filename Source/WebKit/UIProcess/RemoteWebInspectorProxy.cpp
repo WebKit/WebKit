@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoteWebInspectorProxy.h"
 
+#include "APINavigation.h"
 #include "RemoteWebInspectorProxyMessages.h"
 #include "RemoteWebInspectorUIMessages.h"
 #include "WebInspectorProxy.h"

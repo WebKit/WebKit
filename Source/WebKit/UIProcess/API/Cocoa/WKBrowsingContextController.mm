@@ -29,6 +29,7 @@
 #if WK_API_ENABLED
 
 #import "APIData.h"
+#import "APINavigation.h"
 #import "ObjCObjectGraph.h"
 #import "PageLoadStateObserver.h"
 #import "RemoteObjectRegistry.h"

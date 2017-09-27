@@ -26,29 +26,38 @@
 #include "config.h"
 #include "WebFramePolicyListenerProxy.h"
 
-#include "WebFrameProxy.h"
 #include "WebsitePolicies.h"
+#include <WebCore/FrameLoaderTypes.h>
+#include <wtf/Function.h>
 
 namespace WebKit {
 
-WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
-    : WebFrameListenerProxy(frame, listenerID)
+Ref<WebFramePolicyListenerProxy> WebFramePolicyListenerProxy::create(Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&& completionHandler)
+{
+    return adoptRef(*new WebFramePolicyListenerProxy(WTFMove(completionHandler)));
+}
+
+WebFramePolicyListenerProxy::WebFramePolicyListenerProxy(Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&& completionHandler)
+    : m_completionHandler(WTFMove(completionHandler))
 {
 }
 
-void WebFramePolicyListenerProxy::use(const WebsitePolicies& websitePolicies)
+void WebFramePolicyListenerProxy::use(std::optional<WebsitePolicies>&& websitePolicies)
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Use, websitePolicies);
+    if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        completionHandler(WebCore::PolicyAction::Use, WTFMove(websitePolicies));
 }
 
 void WebFramePolicyListenerProxy::download()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Download, { });
+    if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        completionHandler(WebCore::PolicyAction::Download, std::nullopt);
 }
 
 void WebFramePolicyListenerProxy::ignore()
 {
-    receivedPolicyDecision(WebCore::PolicyAction::Ignore, { });
+    if (auto completionHandler = std::exchange(m_completionHandler, nullptr))
+        completionHandler(WebCore::PolicyAction::Ignore, std::nullopt);
 }
 
 } // namespace WebKit

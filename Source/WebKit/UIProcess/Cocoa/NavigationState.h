@@ -121,8 +121,8 @@ private:
         void resolveWebGLLoadPolicy(WebPageProxy&, const WebCore::URL&, WTF::Function<void(WebCore::WebGLLoadPolicy)>&& completionHandler) const final;
 #endif
 
-        void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
-        void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Ref<WebFramePolicyListenerProxy>&&, API::Object* userData) override;
+        void decidePolicyForNavigationAction(WebPageProxy&, Ref<API::NavigationAction>&&, Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&&, API::Object* userData) override;
+        void decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse&, Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&&, API::Object* userData) override;
 
         NavigationState& m_navigationState;
     };

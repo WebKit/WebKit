@@ -44,9 +44,10 @@ void WKFramePolicyListenerUse(WKFramePolicyListenerRef policyListenerRef)
     toImpl(policyListenerRef)->use({ });
 }
 
-void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePolicies)
+void WKFramePolicyListenerUseWithPolicies(WKFramePolicyListenerRef policyListenerRef, WKWebsitePoliciesRef websitePoliciesRef)
 {
-    toImpl(policyListenerRef)->use(toImpl(websitePolicies)->websitePolicies());
+    auto websitePolicies = toImpl(websitePoliciesRef)->websitePolicies();
+    toImpl(policyListenerRef)->use(WTFMove(websitePolicies));
 }
 
 void WKFramePolicyListenerDownload(WKFramePolicyListenerRef policyListenerRef)

@@ -1,3 +1,67 @@
+2017-09-26  Alex Christensen  <achristensen@webkit.org>
+
+        Pass a completion handler instead of a WebFramePolicyListenerProxy during policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=177509
+
+        Reviewed by Tim Horton.
+
+        This makes WebFramePolicyListenerProxy just a wrapper around a WTF::Function which is only needed for the C and glib APIs.
+        This is a step towards making WebPageProxy::DecidePolicyForResponseSync and WebPageProxy::DecidePolicyForNavigationAction asynchronous.
+
+        This patch has no change in behavior.
+
+        * CMakeLists.txt:
+        * UIProcess/API/APINavigationClient.h:
+        (API::NavigationClient::decidePolicyForNavigationAction):
+        (API::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/API/APIPolicyClient.h:
+        (API::PolicyClient::decidePolicyForNavigationAction):
+        (API::PolicyClient::decidePolicyForNewWindowAction):
+        (API::PolicyClient::decidePolicyForResponse):
+        * UIProcess/API/C/WKFramePolicyListener.cpp:
+        (WKFramePolicyListenerUseWithPolicies):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPagePolicyClient):
+        (WKPageSetPageNavigationClient):
+        * UIProcess/API/Cocoa/WKBrowsingContextController.mm:
+        * UIProcess/API/glib/WebKitPolicyClient.cpp:
+        * UIProcess/Automation/WebAutomationSession.cpp:
+        * UIProcess/Cocoa/NavigationState.h:
+        * UIProcess/Cocoa/NavigationState.mm:
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationAction):
+        (WebKit::NavigationState::NavigationClient::decidePolicyForNavigationResponse):
+        * UIProcess/Cocoa/WebViewImpl.mm:
+        * UIProcess/RemoteWebInspectorProxy.cpp:
+        * UIProcess/WebFormSubmissionListenerProxy.h:
+        * UIProcess/WebFrameListenerProxy.cpp: Removed.
+        * UIProcess/WebFrameListenerProxy.h: Removed.
+        * UIProcess/WebFramePolicyListenerProxy.cpp:
+        (WebKit::WebFramePolicyListenerProxy::WebFramePolicyListenerProxy):
+        (WebKit::WebFramePolicyListenerProxy::~WebFramePolicyListenerProxy):
+        (WebKit::WebFramePolicyListenerProxy::create):
+        (WebKit::WebFramePolicyListenerProxy::use):
+        (WebKit::WebFramePolicyListenerProxy::download):
+        (WebKit::WebFramePolicyListenerProxy::ignore):
+        * UIProcess/WebFramePolicyListenerProxy.h:
+        (WebKit::WebFramePolicyListenerProxy::create): Deleted.
+        (): Deleted.
+        (WebKit::WebFramePolicyListenerProxy::operator new): Deleted.
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::webProcessWillShutDown):
+        (WebKit::WebFrameProxy::receivedPolicyDecision): Deleted.
+        (WebKit::WebFrameProxy::setUpPolicyListenerProxy): Deleted.
+        * UIProcess/WebFrameProxy.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForNewWindowAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        (WebKit::WebPageProxy::receivedPolicyDecision): Deleted.
+        (WebKit::WebPageProxy::decidePolicyForResponse): Deleted.
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/ViewGestureControllerMac.mm:
+        * WebKit.xcodeproj/project.pbxproj:
+
 2017-09-26  Brian Burg  <bburg@apple.com>
 
         Web Automation: overflow:hidden elements with no children are mistakenly reported as not visible

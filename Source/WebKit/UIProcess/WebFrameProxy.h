@@ -28,7 +28,6 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "GenericCallback.h"
-#include "WebFrameListenerProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -49,7 +48,6 @@ class Decoder;
 
 namespace WebKit {
 class WebCertificateInfo;
-class WebFramePolicyListenerProxy;
 class WebPageProxy;
 struct WebsitePolicies;
 
@@ -113,10 +111,6 @@ public:
     void didSameDocumentNavigation(const WebCore::URL&); // eg. anchor navigation, session state change.
     void didChangeTitle(const String&);
 
-    // Policy operations.
-    void receivedPolicyDecision(WebCore::PolicyAction, uint64_t listenerID, API::Navigation*, const WebsitePolicies&);
-    WebFramePolicyListenerProxy& setUpPolicyListenerProxy(uint64_t listenerID);
-
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(WebCore::ContentFilterUnblockHandler contentFilterUnblockHandler) { m_contentFilterUnblockHandler = WTFMove(contentFilterUnblockHandler); }
     bool didHandleContentFilterUnblockNavigation(const WebCore::ResourceRequest&);
@@ -138,7 +132,6 @@ private:
     bool m_isFrameSet;
     bool m_containsPluginDocument { false };
     RefPtr<WebCertificateInfo> m_certificateInfo;
-    RefPtr<WebFrameListenerProxy> m_activeListener;
     uint64_t m_frameID;
 #if ENABLE(CONTENT_FILTERING)
     WebCore::ContentFilterUnblockHandler m_contentFilterUnblockHandler;

@@ -25,39 +25,30 @@
 
 #pragma once
 
-#include "WebFrameListenerProxy.h"
+#include "APIObject.h"
+#include <wtf/Function.h>
+#include <wtf/Optional.h>
 
-#if PLATFORM(COCOA)
-#include "WKFoundation.h"
-#endif
-
-#define DELEGATE_REF_COUNTING_TO_COCOA (PLATFORM(COCOA) && WK_API_ENABLED)
+namespace WebCore {
+enum class PolicyAction;
+}
 
 namespace WebKit {
 
-class WebFramePolicyListenerProxy : public WebFrameListenerProxy {
+struct WebsitePolicies;
+
+class WebFramePolicyListenerProxy : public API::ObjectImpl<API::Object::Type::FramePolicyListener> {
 public:
-    static const Type APIType = Type::FramePolicyListener;
+    static Ref<WebFramePolicyListenerProxy> create(Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&&);
 
-    static Ref<WebFramePolicyListenerProxy> create(WebFrameProxy* frame, uint64_t listenerID)
-    {
-        return adoptRef(*new WebFramePolicyListenerProxy(frame, listenerID));
-    }
-
-    void use(const WebsitePolicies&);
+    void use(std::optional<WebsitePolicies>&&);
     void download();
     void ignore();
 
 private:
-    WebFramePolicyListenerProxy(WebFrameProxy*, uint64_t listenerID);
+    WebFramePolicyListenerProxy(Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&&);
 
-    Type type() const override { return APIType; }
-
-#if DELEGATE_REF_COUNTING_TO_COCOA
-    void* operator new(size_t size) { return newObject(size, APIType); }
-#endif
+    Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)> m_completionHandler;
 };
 
 } // namespace WebKit
-
-#undef DELEGATE_REF_COUNTING_TO_COCOA

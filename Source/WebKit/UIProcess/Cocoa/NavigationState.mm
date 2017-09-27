@@ -360,32 +360,31 @@ static void tryAppLink(RefPtr<API::NavigationAction>&& navigationAction, const S
 #endif
 }
 
-void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
+void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&& completionHandler, API::Object* userData)
 {
     String mainFrameURLString = webPageProxy.mainFrame()->url();
 
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandler
         && !m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies) {
         Ref<API::NavigationAction> localNavigationAction = navigationAction.copyRef();
-        RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
 
-        tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [webPage = RefPtr<WebPageProxy>(&webPageProxy), localListener, localNavigationAction = navigationAction.copyRef()] (bool followedLinkToApp) {
+        tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [webPage = RefPtr<WebPageProxy>(&webPageProxy), completionHandler = WTFMove(completionHandler), localNavigationAction = navigationAction.copyRef()] (bool followedLinkToApp) {
             if (followedLinkToApp) {
-                localListener->ignore();
+                completionHandler(PolicyAction::Ignore, std::nullopt);
                 return;
             }
 
             if (!localNavigationAction->targetFrame()) {
-                localListener->use({ });
+                completionHandler(PolicyAction::Use, std::nullopt);
                 return;
             }
 
             RetainPtr<NSURLRequest> nsURLRequest = adoptNS(wrapper(API::URLRequest::create(localNavigationAction->request()).leakRef()));
             if ([NSURLConnection canHandleRequest:nsURLRequest.get()] || webPage->urlSchemeHandlerForScheme([nsURLRequest URL].scheme)) {
                 if (localNavigationAction->shouldPerformDownload())
-                    localListener->download();
+                    completionHandler(PolicyAction::Download, std::nullopt);
                 else
-                    localListener->use({ });
+                    completionHandler(PolicyAction::Use, std::nullopt);
                 return;
             }
 
@@ -395,7 +394,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
             if (![[nsURLRequest URL] isFileURL])
                 [[NSWorkspace sharedWorkspace] openURL:[nsURLRequest URL]];
 #endif
-            localListener->ignore();
+            completionHandler(PolicyAction::Ignore, std::nullopt);
         });
 
         return;
@@ -407,43 +406,43 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 
     bool delegateHasWebsitePolicies = m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationActionDecisionHandlerWebsitePolicies;
     
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
+    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), delegateHasWebsitePolicies ? @selector(_webView:decidePolicyForNavigationAction:decisionHandler:) : @selector(webView:decidePolicyForNavigationAction:decisionHandler:));
     
-    auto decisionHandlerWithPolicies = [localListener = RefPtr<WebFramePolicyListenerProxy>(WTFMove(listener)), localNavigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
+    auto decisionHandlerWithPolicies = [completionHandler = WTFMove(completionHandler), localNavigationAction = navigationAction.copyRef(), checker = WTFMove(checker), mainFrameURLString](WKNavigationActionPolicy actionPolicy, _WKWebsitePolicies *websitePolicies) mutable {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
 
-        WebsitePolicies policies;
+        std::optional<WebsitePolicies> policies;
         if (websitePolicies)
             policies = websitePolicies->_websitePolicies->websitePolicies();
 
         switch (actionPolicy) {
         case WKNavigationActionPolicyAllow:
-            tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [localListener = WTFMove(localListener), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
+            tryAppLink(WTFMove(localNavigationAction), mainFrameURLString, [completionHandler = WTFMove(completionHandler), policies = WTFMove(policies)](bool followedLinkToApp) mutable {
                 if (followedLinkToApp) {
-                    localListener->ignore();
+                    completionHandler(PolicyAction::Ignore, std::nullopt);
                     return;
                 }
 
-                localListener->use(policies);
+                completionHandler(PolicyAction::Use, WTFMove(policies));
             });
         
             break;
 
         case WKNavigationActionPolicyCancel:
-            localListener->ignore();
+            completionHandler(PolicyAction::Ignore, std::nullopt);
             break;
 
 // FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationActionPolicyDownload:
-            localListener->download();
+            completionHandler(PolicyAction::Download, std::nullopt);
             break;
         case _WKNavigationActionPolicyAllowWithoutTryingAppLink:
 #pragma clang diagnostic pop
-            localListener->use(policies);
+            completionHandler(PolicyAction::Use, WTFMove(policies));
             break;
         }
     };
@@ -458,7 +457,7 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
     }
 }
 
-void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse& navigationResponse, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData)
+void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPageProxy&, API::NavigationResponse& navigationResponse, Function<void(WebCore::PolicyAction, std::optional<WebsitePolicies>&&)>&& completionHandler, API::Object* userData)
 {
     if (!m_navigationState.m_navigationDelegateMethods.webViewDecidePolicyForNavigationResponseDecisionHandler) {
         NSURL *url = navigationResponse.response().nsURLResponse().URL;
@@ -467,16 +466,16 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
             BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
             if (exists && !isDirectory && navigationResponse.canShowMIMEType())
-                listener->use({ });
+                completionHandler(PolicyAction::Use, std::nullopt);
             else
-                listener->ignore();
+                completionHandler(PolicyAction::Ignore, std::nullopt);
             return;
         }
 
         if (navigationResponse.canShowMIMEType())
-            listener->use({ });
+            completionHandler(PolicyAction::Use, std::nullopt);
         else
-            listener->ignore();
+            completionHandler(PolicyAction::Ignore, std::nullopt);
         return;
     }
 
@@ -484,20 +483,19 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
     if (!navigationDelegate)
         return;
 
-    RefPtr<WebFramePolicyListenerProxy> localListener = WTFMove(listener);
-    RefPtr<CompletionHandlerCallChecker> checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
-    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:[localListener, checker](WKNavigationResponsePolicy responsePolicy) {
+    auto checker = CompletionHandlerCallChecker::create(navigationDelegate.get(), @selector(webView:decidePolicyForNavigationResponse:decisionHandler:));
+    [navigationDelegate webView:m_navigationState.m_webView decidePolicyForNavigationResponse:wrapper(navigationResponse) decisionHandler:BlockPtr<void(WKNavigationResponsePolicy)>::fromCallable([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)](WKNavigationResponsePolicy responsePolicy) {
         if (checker->completionHandlerHasBeenCalled())
             return;
         checker->didCallCompletionHandler();
 
         switch (responsePolicy) {
         case WKNavigationResponsePolicyAllow:
-            localListener->use({ });
+            completionHandler(PolicyAction::Use, std::nullopt);
             break;
 
         case WKNavigationResponsePolicyCancel:
-            localListener->ignore();
+            completionHandler(PolicyAction::Ignore, std::nullopt);
             break;
 
 // FIXME: Once we have a new enough compiler everywhere we don't need to ignore -Wswitch.
@@ -505,10 +503,10 @@ void NavigationState::NavigationClient::decidePolicyForNavigationResponse(WebPag
 #pragma clang diagnostic ignored "-Wswitch"
         case _WKNavigationResponsePolicyBecomeDownload:
 #pragma clang diagnostic pop
-            localListener->download();
+            completionHandler(PolicyAction::Download, std::nullopt);
             break;
         }
-    }];
+    }).get()];
 }
 
 void NavigationState::NavigationClient::didStartProvisionalNavigation(WebPageProxy& page, API::Navigation* navigation, API::Object*)

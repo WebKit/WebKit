@@ -26,7 +26,6 @@
 #pragma once
 
 #include "WebEvent.h"
-#include "WebFramePolicyListenerProxy.h"
 #include "WebsitePolicies.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
@@ -38,10 +37,10 @@ class ResourceResponse;
 }
 
 namespace WebKit {
+class DownloadID;
 struct NavigationActionData;
 class WebPageProxy;
 class WebFrameProxy;
-class WebFramePolicyListenerProxy;
 }
 
 namespace API {
@@ -51,17 +50,17 @@ class PolicyClient {
 public:
     virtual ~PolicyClient() { }
 
-    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object*)
+    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, WebKit::WebFrameProxy*, const WebKit::NavigationActionData&, WebKit::WebFrameProxy*, const WebCore::ResourceRequest&, const WebCore::ResourceRequest&, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object*)
     {
-        listener->use({ });
+        completionHandler(WebCore::PolicyAction::Use, std::nullopt);
     }
-    virtual void decidePolicyForNewWindowAction(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const WTF::String&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object*)
+    virtual void decidePolicyForNewWindowAction(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebKit::NavigationActionData&, const WebCore::ResourceRequest&, const WTF::String&, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object*)
     {
-        listener->use({ });
+        completionHandler(WebCore::PolicyAction::Use, std::nullopt);
     }
-    virtual void decidePolicyForResponse(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object*)
+    virtual void decidePolicyForResponse(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object*)
     {
-        listener->use({ });
+        completionHandler(WebCore::PolicyAction::Use, std::nullopt);
     }
     virtual void unableToImplementPolicy(WebKit::WebPageProxy&, WebKit::WebFrameProxy&, const WebCore::ResourceError&, API::Object*) { }
 };
