@@ -278,7 +278,7 @@ FAIL CSSStyleDeclaration interface: operation setPropertyValue(CSSOMString, CSSO
 FAIL CSSStyleDeclaration interface: operation setPropertyPriority(CSSOMString, CSSOMString) assert_own_property: interface prototype object missing non-static operation expected property "setPropertyPriority" missing
 PASS CSSStyleDeclaration interface: operation removeProperty(CSSOMString) 
 PASS CSSStyleDeclaration interface: attribute parentRule 
-FAIL CSSStyleDeclaration interface: attribute cssFloat assert_true: The prototype object must have a property "cssFloat" expected true got false
+PASS CSSStyleDeclaration interface: attribute cssFloat 
 PASS CSSStyleDeclaration must be primary interface of style_element.sheet.cssRules[4].style 
 PASS Stringification of style_element.sheet.cssRules[4].style 
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[4].style must inherit property "cssText" with the proper type 
@@ -298,7 +298,7 @@ FAIL CSSStyleDeclaration interface: calling setPropertyPriority(CSSOMString, CSS
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[4].style must inherit property "removeProperty(CSSOMString)" with the proper type 
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on style_element.sheet.cssRules[4].style with too few arguments must throw TypeError 
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[4].style must inherit property "parentRule" with the proper type 
-FAIL CSSStyleDeclaration interface: style_element.sheet.cssRules[4].style must inherit property "cssFloat" with the proper type assert_inherits: property "cssFloat" found on object expected in prototype chain
+PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[4].style must inherit property "cssFloat" with the proper type 
 PASS CSSStyleDeclaration must be primary interface of style_element.sheet.cssRules[2].style 
 PASS Stringification of style_element.sheet.cssRules[2].style 
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[2].style must inherit property "cssText" with the proper type 
@@ -318,7 +318,7 @@ FAIL CSSStyleDeclaration interface: calling setPropertyPriority(CSSOMString, CSS
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[2].style must inherit property "removeProperty(CSSOMString)" with the proper type 
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on style_element.sheet.cssRules[2].style with too few arguments must throw TypeError 
 PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[2].style must inherit property "parentRule" with the proper type 
-FAIL CSSStyleDeclaration interface: style_element.sheet.cssRules[2].style must inherit property "cssFloat" with the proper type assert_inherits: property "cssFloat" found on object expected in prototype chain
+PASS CSSStyleDeclaration interface: style_element.sheet.cssRules[2].style must inherit property "cssFloat" with the proper type 
 FAIL CSSStyleDeclaration must be primary interface of style_element.sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'style_element.sheet.cssRules[2].cssRules[0]')"
 FAIL Stringification of style_element.sheet.cssRules[2].cssRules[0].style assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'style_element.sheet.cssRules[2].cssRules[0]')"
 FAIL CSSStyleDeclaration interface: style_element.sheet.cssRules[2].cssRules[0].style must inherit property "cssText" with the proper type assert_equals: Unexpected exception when evaluating object expected null but got object "TypeError: undefined is not an object (evaluating 'style_element.sheet.cssRules[2].cssRules[0]')"
@@ -358,7 +358,7 @@ FAIL CSSStyleDeclaration interface: calling setPropertyPriority(CSSOMString, CSS
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "removeProperty(CSSOMString)" with the proper type 
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on style_element.style with too few arguments must throw TypeError 
 PASS CSSStyleDeclaration interface: style_element.style must inherit property "parentRule" with the proper type 
-FAIL CSSStyleDeclaration interface: style_element.style must inherit property "cssFloat" with the proper type assert_inherits: property "cssFloat" found on object expected in prototype chain
+PASS CSSStyleDeclaration interface: style_element.style must inherit property "cssFloat" with the proper type 
 PASS CSSStyleDeclaration must be primary interface of svg_element.style 
 PASS Stringification of svg_element.style 
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "cssText" with the proper type 
@@ -378,7 +378,7 @@ FAIL CSSStyleDeclaration interface: calling setPropertyPriority(CSSOMString, CSS
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "removeProperty(CSSOMString)" with the proper type 
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on svg_element.style with too few arguments must throw TypeError 
 PASS CSSStyleDeclaration interface: svg_element.style must inherit property "parentRule" with the proper type 
-FAIL CSSStyleDeclaration interface: svg_element.style must inherit property "cssFloat" with the proper type assert_inherits: property "cssFloat" found on object expected in prototype chain
+PASS CSSStyleDeclaration interface: svg_element.style must inherit property "cssFloat" with the proper type 
 PASS CSSStyleDeclaration must be primary interface of getComputedStyle(svg_element) 
 PASS Stringification of getComputedStyle(svg_element) 
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssText" with the proper type 
@@ -398,7 +398,7 @@ FAIL CSSStyleDeclaration interface: calling setPropertyPriority(CSSOMString, CSS
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "removeProperty(CSSOMString)" with the proper type 
 PASS CSSStyleDeclaration interface: calling removeProperty(CSSOMString) on getComputedStyle(svg_element) with too few arguments must throw TypeError 
 PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "parentRule" with the proper type 
-FAIL CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssFloat" with the proper type assert_inherits: property "cssFloat" found on object expected in prototype chain
+PASS CSSStyleDeclaration interface: getComputedStyle(svg_element) must inherit property "cssFloat" with the proper type 
 PASS CSS interface: existence and properties of interface object 
 PASS CSS interface object length 
 PASS CSS interface object name 

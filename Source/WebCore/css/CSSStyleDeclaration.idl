@@ -39,6 +39,8 @@
     getter DOMString item(unsigned long index);
     readonly attribute CSSRule? parentRule;
 
+    [CEReactions] attribute [TreatNullAs=EmptyString] DOMString cssFloat;
+
     // FIXME: Using "undefined" as default parameter value is wrong.
     DOMString? getPropertyShorthand(optional DOMString propertyName = "undefined");
     boolean isPropertyImplicit(optional DOMString propertyName = "undefined");

@@ -1,3 +1,15 @@
+2017-09-27  Chris Dumez  <cdumez@apple.com>
+
+        cssFloat missing in CSSPropertyDeclaration.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=177487
+
+        Reviewed by Sam Weinig.
+
+        Add layout test coverage.
+
+        * fast/css/CSSStyleDeclaration-cssFloat-expected.txt: Added.
+        * fast/css/CSSStyleDeclaration-cssFloat.html: Added.
+
 2017-09-27  Antti Koivisto  <antti@apple.com>
 
         REGRESSION (r222040): Crash navigating out of gfycat.com url

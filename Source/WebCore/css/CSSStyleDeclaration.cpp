@@ -323,4 +323,17 @@ Vector<AtomicString> CSSStyleDeclaration::supportedPropertyNames() const
     return result;
 }
 
+String CSSStyleDeclaration::cssFloat()
+{
+    return getPropertyValueInternal(CSSPropertyFloat);
+}
+
+ExceptionOr<void> CSSStyleDeclaration::setCssFloat(const String& value)
+{
+    auto result = setPropertyInternal(CSSPropertyFloat, value, false /* important */);
+    if (result.hasException())
+        return result.releaseException();
+    return { };
+}
+
 }

@@ -1,3 +1,21 @@
+2017-09-27  Chris Dumez  <cdumez@apple.com>
+
+        cssFloat missing in CSSPropertyDeclaration.prototype
+        https://bugs.webkit.org/show_bug.cgi?id=177487
+
+        Reviewed by Sam Weinig.
+
+        Add support for cssFloat attribute on CSSPropertyDeclaration, as per:
+        - https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-cssfloat
+
+        Test: fast/css/CSSStyleDeclaration-cssFloat.html
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::cssFloat):
+        (WebCore::CSSStyleDeclaration::setCssFloat):
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleDeclaration.idl:
+
 2017-09-27  Antti Koivisto  <antti@apple.com>
 
         Ref element keys in CSSAnimationControllerPrivate
