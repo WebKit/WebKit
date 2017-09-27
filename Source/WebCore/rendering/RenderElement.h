@@ -214,8 +214,8 @@ public:
 
     RespectImageOrientationEnum shouldRespectImageOrientation() const;
 
-    void removeFromRenderFlowThread();
-    virtual void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread*);
+    void removeFromRenderFragmentedFlow();
+    virtual void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow*);
 
     // Called before anonymousChild.setStyle(). Override to set custom styles for
     // the child.
@@ -276,8 +276,8 @@ protected:
     void paintOutline(PaintInfo&, const LayoutRect&);
     void updateOutlineAutoAncestor(bool hasOutlineAuto);
 
-    void removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState);
-    void adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
+    void removeFromRenderFragmentedFlowIncludingDescendants(bool shouldUpdateState);
+    void adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
     
     bool noLongerAffectsParentBlock() const { return s_noLongerAffectsParentBlock; }
     bool isVisibleInViewport() const;
@@ -425,7 +425,7 @@ inline bool RenderElement::canContainFixedPositionObjects() const
     return isRenderView()
         || (hasTransform() && isRenderBlock())
         || isSVGForeignObject()
-        || isOutOfFlowRenderFlowThread();
+        || isOutOfFlowRenderFragmentedFlow();
 }
 
 inline bool RenderElement::canContainAbsolutelyPositionedObjects() const

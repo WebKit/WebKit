@@ -269,7 +269,7 @@ private:
     bool pushLayoutState(RenderBox& renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
-        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.flowThreadContainingBlock()
+        if (!doingFullRepaint() || m_layoutState->isPaginated() || renderer.enclosingFragmentedFlow()
             || m_layoutState->lineGrid() || (renderer.style().lineGrid() != RenderStyle::initialLineGrid() && renderer.isRenderBlockFlow())) {
             m_layoutState = std::make_unique<LayoutState>(WTFMove(m_layoutState), &renderer, offset, pageHeight, pageHeightChanged);
             return true;

@@ -35,8 +35,8 @@
 #include "LineLayoutState.h"
 #include "Logging.h"
 #include "RenderBlockFlow.h"
-#include "RenderFlowThread.h"
 #include "RenderFragmentContainer.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderLineBreak.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyText.h"
@@ -1423,7 +1423,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
                 layoutState.marginInfo().setAtBeforeSideOfBlock(false);
 
                 if (paginated)
-                    adjustLinePositionForPagination(lineBox, adjustment, overflowsFragment, layoutState.flowThread());
+                    adjustLinePositionForPagination(lineBox, adjustment, overflowsFragment, layoutState.fragmentedFlow());
                 if (adjustment) {
                     IndentTextOrNot shouldIndentText = layoutState.lineInfo().isFirstLine() ? IndentText : DoNotIndentText;
                     LayoutUnit oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, shouldIndentText);
@@ -1442,7 +1442,7 @@ void RenderBlockFlow::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, I
                 }
                     
                 if (paginated) {
-                    if (layoutState.flowThread())
+                    if (layoutState.fragmentedFlow())
                         updateFragmentForLine(lineBox);
                 }
             }
@@ -1577,13 +1577,13 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 if (paginated) {
                     delta -= line->paginationStrut();
                     bool overflowsFragment;
-                    adjustLinePositionForPagination(line, delta, overflowsFragment, layoutState.flowThread());
+                    adjustLinePositionForPagination(line, delta, overflowsFragment, layoutState.fragmentedFlow());
                 }
                 if (delta) {
                     layoutState.updateRepaintRangeFromBox(line, delta);
                     line->adjustBlockDirectionPosition(delta);
                 }
-                if (layoutState.flowThread())
+                if (layoutState.fragmentedFlow())
                     updateFragmentForLine(line);
                 reattachCleanLineFloats(*line, delta, line == firstCleanLine);
             }
@@ -1614,7 +1614,7 @@ void RenderBlockFlow::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             LayoutRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
-            if (layoutState.flowThread())
+            if (layoutState.fragmentedFlow())
                 updateFragmentForLine(trailingFloatsLineBox);
         }
 
@@ -1643,13 +1643,13 @@ void RenderBlockFlow::layoutLineBoxes(bool relayoutChildren, LayoutUnit& repaint
     if (view().layoutState() && view().layoutState()->lineGrid() == this)
         layoutLineGridBox();
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    bool clearLinesForPagination = firstRootBox() && flowThread && !flowThread->hasFragments();
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    bool clearLinesForPagination = firstRootBox() && fragmentedFlow && !fragmentedFlow->hasFragments();
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
     bool isFullLayout = !firstRootBox() || selfNeedsLayout() || relayoutChildren || clearLinesForPagination;
-    LineLayoutState layoutState(*this, isFullLayout, repaintLogicalTop, repaintLogicalBottom, flowThread);
+    LineLayoutState layoutState(*this, isFullLayout, repaintLogicalTop, repaintLogicalBottom, fragmentedFlow);
 
     if (isFullLayout)
         lineBoxes().deleteLineBoxes();
@@ -1796,13 +1796,13 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
         auto end = floats.end();
         for (currentLine = firstRootBox(); currentLine && !currentLine->isDirty(); currentLine = currentLine->nextRootBox()) {
             if (paginated) {
-                if (lineWidthForPaginatedLineChanged(currentLine, 0, layoutState.flowThread())) {
+                if (lineWidthForPaginatedLineChanged(currentLine, 0, layoutState.fragmentedFlow())) {
                     currentLine->markDirty();
                     break;
                 }
                 paginationDelta -= currentLine->paginationStrut();
                 bool overflowsFragment;
-                adjustLinePositionForPagination(currentLine, paginationDelta, overflowsFragment, layoutState.flowThread());
+                adjustLinePositionForPagination(currentLine, paginationDelta, overflowsFragment, layoutState.fragmentedFlow());
                 if (paginationDelta) {
                     if (containsFloats() || !floats.isEmpty()) {
                         // FIXME: Do better eventually.  For now if we ever shift because of pagination and floats are present just go to a full layout.
@@ -1813,7 +1813,7 @@ RootInlineBox* RenderBlockFlow::determineStartPosition(LineLayoutState& layoutSt
                     layoutState.updateRepaintRangeFromBox(currentLine, paginationDelta);
                     currentLine->adjustBlockDirectionPosition(paginationDelta);
                 }
-                if (layoutState.flowThread())
+                if (layoutState.fragmentedFlow())
                     updateFragmentForLine(currentLine);
             }
 
@@ -1958,7 +1958,7 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
     LayoutUnit lineDelta = logicalHeight() - layoutState.endLineLogicalTop();
 
     bool paginated = view().layoutState() && view().layoutState()->isPaginated();
-    if (paginated && layoutState.flowThread()) {
+    if (paginated && layoutState.fragmentedFlow()) {
         // Check all lines from here to the end, and see if the hypothetical new position for the lines will result
         // in a different available line width.
         for (RootInlineBox* lineBox = layoutState.endLine(); lineBox; lineBox = lineBox->nextRootBox()) {
@@ -1968,10 +1968,10 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
                 LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
                 bool overflowsFragment;
                 lineDelta -= oldPaginationStrut;
-                adjustLinePositionForPagination(lineBox, lineDelta, overflowsFragment, layoutState.flowThread());
+                adjustLinePositionForPagination(lineBox, lineDelta, overflowsFragment, layoutState.fragmentedFlow());
                 lineBox->setPaginationStrut(oldPaginationStrut);
             }
-            if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.flowThread()))
+            if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.fragmentedFlow()))
                 return false;
         }
     }
@@ -1999,9 +1999,9 @@ bool RenderBlockFlow::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutS
     return true;
 }
 
-bool RenderBlockFlow::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, LayoutUnit lineDelta, RenderFlowThread* flowThread) const
+bool RenderBlockFlow::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, LayoutUnit lineDelta, RenderFragmentedFlow* fragmentedFlow) const
 {
-    if (!flowThread)
+    if (!fragmentedFlow)
         return false;
 
     RenderFragmentContainer* currentFragment = fragmentAtBlockOffset(rootBox->lineTopWithLeading() + lineDelta);
@@ -2072,7 +2072,7 @@ void RenderBlockFlow::addOverflowFromInlineChildren()
         endPadding = 1;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
         addLayoutOverflow(curr->paddedLayoutOverflowRect(endPadding));
-        RenderFragmentContainer* fragment = flowThreadContainingBlock() ? curr->containingFragment() : nullptr;
+        RenderFragmentContainer* fragment = enclosingFragmentedFlow() ? curr->containingFragment() : nullptr;
         if (fragment)
             fragment->addLayoutOverflowForBox(this, curr->paddedLayoutOverflowRect(endPadding));
         if (!hasOverflowClip()) {
@@ -2252,7 +2252,7 @@ void RenderBlockFlow::updateFragmentForLine(RootInlineBox* lineBox) const
 {
     ASSERT(lineBox);
 
-    if (!hasFragmentRangeInFlowThread())
+    if (!hasFragmentRangeInFragmentedFlow())
         lineBox->clearContainingFragment();
     else {
         if (auto containingFragment = fragmentAtBlockOffset(lineBox->lineTopWithLeading()))

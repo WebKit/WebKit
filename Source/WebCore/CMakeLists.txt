@@ -2673,7 +2673,7 @@ set(WebCore_SOURCES
     rendering/RenderEmbeddedObject.cpp
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
-    rendering/RenderFlowThread.cpp
+    rendering/RenderFragmentedFlow.cpp
     rendering/RenderFragmentContainer.cpp
     rendering/RenderFragmentContainerSet.cpp
     rendering/RenderFrame.cpp
@@ -2704,7 +2704,7 @@ set(WebCore_SOURCES
     rendering/RenderMediaControls.cpp
     rendering/RenderMenuList.cpp
     rendering/RenderMeter.cpp
-    rendering/RenderMultiColumnFlowThread.cpp
+    rendering/RenderMultiColumnFlow.cpp
     rendering/RenderMultiColumnSet.cpp
     rendering/RenderMultiColumnSpannerPlaceholder.cpp
     rendering/RenderObject.cpp

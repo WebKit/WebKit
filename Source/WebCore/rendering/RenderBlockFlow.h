@@ -36,7 +36,7 @@ class FloatWithRect;
 class LayoutStateMaintainer;
 class LineBreaker;
 class LineInfo;
-class RenderMultiColumnFlowThread;
+class RenderMultiColumnFlow;
 class RenderRubyRun;
 
 struct WordMeasurement;
@@ -118,7 +118,7 @@ public:
         RenderBlockFlowRareData(const RenderBlockFlow& block)
             : m_margins(positiveMarginBeforeDefault(block), negativeMarginBeforeDefault(block), positiveMarginAfterDefault(block), negativeMarginAfterDefault(block))
             , m_lineBreakToAvoidWidow(-1)
-            , m_multiColumnFlowThread(nullptr)
+            , m_multiColumnFlow(nullptr)
             , m_discardMarginBefore(false)
             , m_discardMarginAfter(false)
             , m_didBreakAtLineToAvoidWidow(false)
@@ -150,7 +150,7 @@ public:
         int m_lineBreakToAvoidWidow;
         std::unique_ptr<RootInlineBox> m_lineGridBox;
 
-        RenderMultiColumnFlowThread* m_multiColumnFlowThread;
+        RenderMultiColumnFlow* m_multiColumnFlow;
         
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
@@ -271,8 +271,8 @@ public:
     }
     void layoutLineGridBox();
 
-    RenderMultiColumnFlowThread* multiColumnFlowThread() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlowThread : nullptr; }
-    void setMultiColumnFlowThread(RenderMultiColumnFlowThread*);
+    RenderMultiColumnFlow* multiColumnFlow() const { return hasRareBlockFlowData() ? rareBlockFlowData()->m_multiColumnFlow : nullptr; }
+    void setMultiColumnFlow(RenderMultiColumnFlow*);
     bool willCreateColumns(std::optional<unsigned> desiredColumnCount = std::nullopt) const;
     virtual bool requiresColumns(int) const;
 
@@ -447,7 +447,7 @@ protected:
     std::optional<int> firstLineBaseline() const override;
     std::optional<int> inlineBlockBaseline(LineDirectionMode) const override;
 
-    bool isMultiColumnBlockFlow() const override { return multiColumnFlowThread(); }
+    bool isMultiColumnBlockFlow() const override { return multiColumnFlow(); }
     
     void setComputedColumnCountAndWidth(int, LayoutUnit);
 
@@ -582,7 +582,7 @@ private:
     // This function is called to test a line box that has moved in the block direction to see if it has ended up in a new
     // page/column that has a different available line width than the old one. Used to know when you have to dirty a
     // line, i.e., that it can't be re-used.
-    bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFlowThread*) const;
+    bool lineWidthForPaginatedLineChanged(RootInlineBox*, LayoutUnit lineDelta, RenderFragmentedFlow*) const;
     void updateLogicalWidthForAlignment(const ETextAlign&, const RootInlineBox*, BidiRun* trailingSpaceRun, float& logicalLeft, float& totalLogicalWidth, float& availableLogicalWidth, int expansionOpportunityCount);
 // END METHODS DEFINED IN RenderBlockLineLayout
 
@@ -600,7 +600,7 @@ private:
 
 public:
     // FIXME-BLOCKFLOW: These can be made protected again once all callers have been moved here.
-    void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsFragment, RenderFlowThread*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
+    void adjustLinePositionForPagination(RootInlineBox*, LayoutUnit& deltaOffset, bool& overflowsFragment, RenderFragmentedFlow*); // Computes a deltaOffset value that put a line at the top of the next page if it doesn't fit on the current page.
     void updateFragmentForLine(RootInlineBox*) const;
 
     // Pagination routines.

@@ -66,7 +66,7 @@ class FilterOperations;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
-class RenderFlowThread;
+class RenderFragmentedFlow;
 class RenderGeometryMap;
 class RenderLayerBacking;
 class RenderLayerCompositor;
@@ -701,16 +701,16 @@ public:
     void setViewportConstrainedNotCompositedReason(ViewportConstrainedNotCompositedReason reason) { m_viewportConstrainedNotCompositedReason = reason; }
     ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason() const { return static_cast<ViewportConstrainedNotCompositedReason>(m_viewportConstrainedNotCompositedReason); }
     
-    bool isRenderFlowThread() const { return renderer().isRenderFlowThread(); }
-    bool isOutOfFlowRenderFlowThread() const { return renderer().isOutOfFlowRenderFlowThread(); }
-    bool isInsideFlowThread() const { return renderer().flowThreadState() != RenderObject::NotInsideFlowThread; }
-    bool isDirtyRenderFlowThread() const
+    bool isRenderFragmentedFlow() const { return renderer().isRenderFragmentedFlow(); }
+    bool isOutOfFlowRenderFragmentedFlow() const { return renderer().isOutOfFlowRenderFragmentedFlow(); }
+    bool isInsideFragmentedFlow() const { return renderer().fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow; }
+    bool isDirtyRenderFragmentedFlow() const
     {
-        ASSERT(isRenderFlowThread());
+        ASSERT(isRenderFragmentedFlow());
         return m_zOrderListsDirty || m_normalFlowListDirty;
     }
 
-    RenderLayer* enclosingFlowThreadAncestor() const;
+    RenderLayer* enclosingFragmentedFlowAncestor() const;
 
     bool shouldPlaceBlockDirectionScrollbarOnLeft() const final { return renderer().shouldPlaceBlockDirectionScrollbarOnLeft(); }
 

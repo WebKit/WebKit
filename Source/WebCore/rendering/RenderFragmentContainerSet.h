@@ -29,7 +29,7 @@
 
 namespace WebCore {
 
-class RenderFlowThread;
+class RenderFragmentedFlow;
 
 // RenderFragmentContainerSet represents a set of regions that all have the same width and height. It is a "composite region box" that
 // can be used to represent a single run of contiguous regions.
@@ -44,13 +44,13 @@ class RenderFlowThread;
 
 class RenderFragmentContainerSet : public RenderFragmentContainer {
 public:
-    void expandToEncompassFlowThreadContentsIfNeeded();
+    void expandToEncompassFragmentedFlowContentsIfNeeded();
 
 protected:
-    RenderFragmentContainerSet(Document&, RenderStyle&&, RenderFlowThread&);
+    RenderFragmentContainerSet(Document&, RenderStyle&&, RenderFragmentedFlow&);
 
 private:
-    void installFlowThread() final;
+    void installFragmentedFlow() final;
 
     const char* renderName() const override = 0;
     

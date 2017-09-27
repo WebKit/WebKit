@@ -46,7 +46,7 @@
 #include "Page.h"
 #include "PageOverlayController.h"
 #include "RenderEmbeddedObject.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIFrame.h"
@@ -2073,12 +2073,12 @@ bool RenderLayerCompositor::requiresCompositingLayer(const RenderLayer& layer, R
 bool RenderLayerCompositor::canBeComposited(const RenderLayer& layer) const
 {
     if (m_hasAcceleratedCompositing && layer.isSelfPaintingLayer()) {
-        if (!layer.isInsideFlowThread())
+        if (!layer.isInsideFragmentedFlow())
             return true;
 
         // CSS Regions flow threads do not need to be composited as we use composited RenderFragmentContainers
-        // to render the background of the RenderFlowThread.
-        if (layer.isRenderFlowThread())
+        // to render the background of the RenderFragmentedFlow.
+        if (layer.isRenderFragmentedFlow())
             return false;
 
         return true;

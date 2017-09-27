@@ -27,38 +27,38 @@
 #include "RenderFragmentContainerSet.h"
 
 #include "RenderBoxFragmentInfo.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 
 namespace WebCore {
 
-RenderFragmentContainerSet::RenderFragmentContainerSet(Document& document, RenderStyle&& style, RenderFlowThread& flowThread)
-    : RenderFragmentContainer(document, WTFMove(style), &flowThread)
+RenderFragmentContainerSet::RenderFragmentContainerSet(Document& document, RenderStyle&& style, RenderFragmentedFlow& fragmentedFlow)
+    : RenderFragmentContainer(document, WTFMove(style), &fragmentedFlow)
 {
 }
 
-void RenderFragmentContainerSet::installFlowThread()
+void RenderFragmentContainerSet::installFragmentedFlow()
 {
     // We don't have to do anything, since we were able to connect the flow thread
     // in the constructor.
 }
 
-void RenderFragmentContainerSet::expandToEncompassFlowThreadContentsIfNeeded()
+void RenderFragmentContainerSet::expandToEncompassFragmentedFlowContentsIfNeeded()
 {
     // Whenever the last region is a set, it always expands its region rect to consume all
     // of the flow thread content. This is because it is always capable of generating an
     // infinite number of boxes in order to hold all of the remaining content.
-    LayoutRect rect(flowThreadPortionRect());
+    LayoutRect rect(fragmentedFlowPortionRect());
     
     // Get the offset within the flow thread in its block progression direction. Then get the
     // flow thread's remaining logical height including its overflow and expand our rect
     // to encompass that remaining height and overflow. The idea is that we will generate
     // additional columns and pages to hold that overflow, since people do write bad
     // content like <body style="height:0px"> in multi-column layouts.
-    bool isHorizontal = flowThread()->isHorizontalWritingMode();
+    bool isHorizontal = fragmentedFlow()->isHorizontalWritingMode();
     LayoutUnit logicalTopOffset = isHorizontal ? rect.y() : rect.x();
-    LayoutRect layoutRect = flowThread()->layoutOverflowRect();
+    LayoutRect layoutRect = fragmentedFlow()->layoutOverflowRect();
     LayoutUnit logicalHeightWithOverflow = (isHorizontal ? layoutRect.maxY() : layoutRect.maxX()) - logicalTopOffset;
-    setFlowThreadPortionRect(LayoutRect(rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height()));
+    setFragmentedFlowPortionRect(LayoutRect(rect.x(), rect.y(), isHorizontal ? rect.width() : logicalHeightWithOverflow, isHorizontal ? logicalHeightWithOverflow : rect.height()));
 }
 
 }

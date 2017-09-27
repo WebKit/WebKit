@@ -47,7 +47,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderDescendantIterator.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -393,9 +393,9 @@ void RenderElement::setStyle(RenderStyle&& style, StyleDifference minimalStyleDi
     bool detachedFromParent = !parent();
 
     // Make sure we invalidate the containing block cache for flows when the contianing block context changes
-    // so that styleDidChange can safely use RenderBlock::locateFlowThreadContainingBlock()
+    // so that styleDidChange can safely use RenderBlock::locateEnclosingFragmentedFlow()
     if (oldStyle.position() != m_style.position())
-        adjustFlowThreadStateOnContainingBlockChangeIfNeeded();
+        adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded();
 
     styleDidChange(diff, &oldStyle);
 
@@ -544,7 +544,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         m_lastChild = newChild;
     }
 
-    newChild->initializeFlowThreadStateOnInsertion();
+    newChild->initializeFragmentedFlowStateOnInsertion();
     if (!renderTreeBeingDestroyed()) {
         if (notifyChildren == NotifyChildren)
             newChild->insertedIntoTree();
@@ -604,7 +604,7 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
     if (!renderTreeBeingDestroyed() && notifyChildren == NotifyChildren)
         oldChild.willBeRemovedFromTree();
 
-    oldChild.resetFlowThreadStateOnRemoval();
+    oldChild.resetFragmentedFlowStateOnRemoval();
 
     // WARNING: There should be no code running between willBeRemovedFromTree and the actual removal below.
     // This is needed to avoid race conditions where willBeRemovedFromTree would dirty the tree's structure
@@ -786,8 +786,8 @@ void RenderElement::propagateStyleToAnonymousChildren(StylePropagationType propa
             continue;
 #endif
 
-        // RenderFlowThreads are updated through the RenderView::styleDidChange function.
-        if (is<RenderFlowThread>(elementChild))
+        // RenderFragmentedFlows are updated through the RenderView::styleDidChange function.
+        if (is<RenderFragmentedFlow>(elementChild))
             continue;
 
         auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(style(), elementChild.style().display());
@@ -2174,73 +2174,73 @@ RespectImageOrientationEnum RenderElement::shouldRespectImageOrientation() const
     return settings().shouldRespectImageOrientation() && is<HTMLImageElement>(element()) ? RespectImageOrientation : DoNotRespectImageOrientation;
 }
 
-void RenderElement::adjustFlowThreadStateOnContainingBlockChangeIfNeeded()
+void RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded()
 {
-    if (flowThreadState() == NotInsideFlowThread)
+    if (fragmentedFlowState() == NotInsideFragmentedFlow)
         return;
 
     // Invalidate the containing block caches.
     if (is<RenderBlock>(*this))
-        downcast<RenderBlock>(*this).resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+        downcast<RenderBlock>(*this).resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
     
     // Adjust the flow tread state on the subtree.
-    setFlowThreadState(RenderObject::computedFlowThreadState(*this));
+    setFragmentedFlowState(RenderObject::computedFragmentedFlowState(*this));
     for (auto& descendant : descendantsOfType<RenderObject>(*this))
-        descendant.setFlowThreadState(RenderObject::computedFlowThreadState(descendant));
+        descendant.setFragmentedFlowState(RenderObject::computedFragmentedFlowState(descendant));
 }
 
-void RenderElement::removeFromRenderFlowThread()
+void RenderElement::removeFromRenderFragmentedFlow()
 {
-    ASSERT(flowThreadState() != NotInsideFlowThread);
+    ASSERT(fragmentedFlowState() != NotInsideFragmentedFlow);
     // Sometimes we remove the element from the flow, but it's not destroyed at that time.
     // It's only until later when we actually destroy it and remove all the children from it.
     // Currently, that happens for firstLetter elements and list markers.
     // Pass in the flow thread so that we don't have to look it up for all the children.
-    removeFromRenderFlowThreadIncludingDescendants(true);
+    removeFromRenderFragmentedFlowIncludingDescendants(true);
 }
 
-void RenderElement::removeFromRenderFlowThreadIncludingDescendants(bool shouldUpdateState)
+void RenderElement::removeFromRenderFragmentedFlowIncludingDescendants(bool shouldUpdateState)
 {
     // Once we reach another flow thread we don't need to update the flow thread state
     // but we have to continue cleanup the flow thread info.
-    if (isRenderFlowThread())
+    if (isRenderFragmentedFlow())
         shouldUpdateState = false;
 
     for (auto& child : childrenOfType<RenderObject>(*this)) {
         if (is<RenderElement>(child)) {
-            downcast<RenderElement>(child).removeFromRenderFlowThreadIncludingDescendants(shouldUpdateState);
+            downcast<RenderElement>(child).removeFromRenderFragmentedFlowIncludingDescendants(shouldUpdateState);
             continue;
         }
         if (shouldUpdateState)
-            child.setFlowThreadState(NotInsideFlowThread);
+            child.setFragmentedFlowState(NotInsideFragmentedFlow);
     }
 
     // We have to ask for our containing flow thread as it may be above the removed sub-tree.
-    RenderFlowThread* flowThreadContainingBlock = this->flowThreadContainingBlock();
-    while (flowThreadContainingBlock) {
-        flowThreadContainingBlock->removeFlowChildInfo(*this);
+    RenderFragmentedFlow* enclosingFragmentedFlow = this->enclosingFragmentedFlow();
+    while (enclosingFragmentedFlow) {
+        enclosingFragmentedFlow->removeFlowChildInfo(*this);
 
-        if (flowThreadContainingBlock->flowThreadState() == NotInsideFlowThread)
+        if (enclosingFragmentedFlow->fragmentedFlowState() == NotInsideFragmentedFlow)
             break;
-        auto* parent = flowThreadContainingBlock->parent();
+        auto* parent = enclosingFragmentedFlow->parent();
         if (!parent)
             break;
-        flowThreadContainingBlock = parent->flowThreadContainingBlock();
+        enclosingFragmentedFlow = parent->enclosingFragmentedFlow();
     }
     if (is<RenderBlock>(*this))
-        downcast<RenderBlock>(*this).setCachedFlowThreadContainingBlockNeedsUpdate();
+        downcast<RenderBlock>(*this).setCachedEnclosingFragmentedFlowNeedsUpdate();
 
     if (shouldUpdateState)
-        setFlowThreadState(NotInsideFlowThread);
+        setFragmentedFlowState(NotInsideFragmentedFlow);
 }
 
-void RenderElement::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread* flowThread)
+void RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* fragmentedFlow)
 {
-    if (flowThread)
-        flowThread->removeFlowChildInfo(*this);
+    if (fragmentedFlow)
+        fragmentedFlow->removeFlowChildInfo(*this);
 
     for (auto& child : childrenOfType<RenderElement>(*this))
-        child.resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(flowThread);
+        child.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(fragmentedFlow);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

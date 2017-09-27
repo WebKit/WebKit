@@ -36,7 +36,7 @@ public:
     static void update(RenderBlockFlow&);
 
 private:
-    static void createFlowThread(RenderBlockFlow&);
+    static void createFragmentedFlow(RenderBlockFlow&);
 };
 
 }

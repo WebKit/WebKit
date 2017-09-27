@@ -320,16 +320,16 @@ public:
     bool canHaveChildren() const override { return true; }
     virtual bool canDropAnonymousBlockChild() const { return true; }
 
-    RenderFlowThread* cachedFlowThreadContainingBlock() const;
-    void setCachedFlowThreadContainingBlockNeedsUpdate();
-    virtual bool cachedFlowThreadContainingBlockNeedsUpdate() const;
-    void resetFlowThreadContainingBlockAndChildInfoIncludingDescendants(RenderFlowThread* = nullptr) final;
+    RenderFragmentedFlow* cachedEnclosingFragmentedFlow() const;
+    void setCachedEnclosingFragmentedFlowNeedsUpdate();
+    virtual bool cachedEnclosingFragmentedFlowNeedsUpdate() const;
+    void resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants(RenderFragmentedFlow* = nullptr) final;
 
     std::optional<LayoutUnit> availableLogicalHeightForPercentageComputation() const;
     bool hasDefiniteLogicalHeight() const;
     
 protected:
-    RenderFlowThread* locateFlowThreadContainingBlock() const override;
+    RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     void willBeDestroyed() override;
 
     void layout() override;
@@ -511,7 +511,7 @@ private:
     RenderPtr<RenderBlock> clone() const;
     RenderBlock* continuationBefore(RenderObject* beforeChild);
 
-    RenderFlowThread* updateCachedFlowThreadContainingBlock(RenderFlowThread*) const;
+    RenderFragmentedFlow* updateCachedEnclosingFragmentedFlow(RenderFragmentedFlow*) const;
 
     void removePositionedObjectsIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle);
 

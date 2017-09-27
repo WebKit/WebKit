@@ -78,7 +78,7 @@ static inline bool isRubyChildForNormalRemoval(const RenderObject& object)
     return object.isRubyRun()
     || object.isBeforeContent()
     || object.isAfterContent()
-    || object.isRenderMultiColumnFlowThread()
+    || object.isRenderMultiColumnFlow()
     || object.isRenderMultiColumnSet()
     || isAnonymousRubyInlineBlock(&object);
 }

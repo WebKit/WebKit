@@ -27,7 +27,7 @@
 
 #include "LayerFragment.h"
 #include "RenderFragmentContainerSet.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -44,27 +44,27 @@ namespace WebCore {
 // come before and after the span.
 class RenderMultiColumnSet final : public RenderFragmentContainerSet {
 public:
-    RenderMultiColumnSet(RenderFlowThread&, RenderStyle&&);
+    RenderMultiColumnSet(RenderFragmentedFlow&, RenderStyle&&);
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
-    RenderMultiColumnFlowThread* multiColumnFlowThread() const { return static_cast<RenderMultiColumnFlowThread*>(flowThread()); }
+    RenderMultiColumnFlow* multiColumnFlow() const { return static_cast<RenderMultiColumnFlow*>(fragmentedFlow()); }
 
     RenderMultiColumnSet* nextSiblingMultiColumnSet() const;
     RenderMultiColumnSet* previousSiblingMultiColumnSet() const;
 
     // Return the first object in the flow thread that's rendered inside this set.
-    RenderObject* firstRendererInFlowThread() const;
+    RenderObject* firstRendererInFragmentedFlow() const;
     // Return the last object in the flow thread that's rendered inside this set.
-    RenderObject* lastRendererInFlowThread() const;
+    RenderObject* lastRendererInFragmentedFlow() const;
 
     // Return true if the specified renderer (descendant of the flow thread) is inside this column set.
-    bool containsRendererInFlowThread(const RenderObject&) const;
+    bool containsRendererInFragmentedFlow(const RenderObject&) const;
 
-    void setLogicalTopInFlowThread(LayoutUnit);
-    LayoutUnit logicalTopInFlowThread() const { return isHorizontalWritingMode() ? flowThreadPortionRect().y() : flowThreadPortionRect().x(); }
-    void setLogicalBottomInFlowThread(LayoutUnit);
-    LayoutUnit logicalBottomInFlowThread() const { return isHorizontalWritingMode() ? flowThreadPortionRect().maxY() : flowThreadPortionRect().maxX(); }
-    LayoutUnit logicalHeightInFlowThread() const { return isHorizontalWritingMode() ? flowThreadPortionRect().height() : flowThreadPortionRect().width(); }
+    void setLogicalTopInFragmentedFlow(LayoutUnit);
+    LayoutUnit logicalTopInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().y() : fragmentedFlowPortionRect().x(); }
+    void setLogicalBottomInFragmentedFlow(LayoutUnit);
+    LayoutUnit logicalBottomInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().maxY() : fragmentedFlowPortionRect().maxX(); }
+    LayoutUnit logicalHeightInFragmentedFlow() const { return isHorizontalWritingMode() ? fragmentedFlowPortionRect().height() : fragmentedFlowPortionRect().width(); }
 
     unsigned computedColumnCount() const { return m_computedColumnCount; }
     LayoutUnit computedColumnWidth() const { return m_computedColumnWidth; }
@@ -109,7 +109,7 @@ public:
     // when advancing to the next column set or spanner.
     void endFlow(RenderBlock* container, LayoutUnit bottomInContainer);
     // Has this set been flowed in this layout pass?
-    bool hasBeenFlowed() const { return logicalBottomInFlowThread() != RenderFlowThread::maxLogicalHeight(); }
+    bool hasBeenFlowed() const { return logicalBottomInFragmentedFlow() != RenderFragmentedFlow::maxLogicalHeight(); }
 
     bool requiresBalancing() const;
 
@@ -121,7 +121,7 @@ public:
         ClampHitTestTranslationToColumns,
         DoNotClampHitTestTranslationToColumns
     };
-    LayoutPoint translateFragmentPointToFlowThread(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
+    LayoutPoint translateFragmentPointToFragmentedFlow(const LayoutPoint & logicalPoint, ColumnHitTestTranslationMode = DoNotClampHitTestTranslationToColumns) const;
 
     void updateHitTestResult(HitTestResult&, const LayoutPoint&) override;
     
@@ -144,13 +144,13 @@ private:
 
     LayoutUnit pageLogicalTopForOffset(LayoutUnit offset) const override;
 
-    LayoutUnit logicalHeightOfAllFlowThreadContent() const override { return logicalHeightInFlowThread(); }
+    LayoutUnit logicalHeightOfAllFragmentedFlowContent() const override { return logicalHeightInFragmentedFlow(); }
 
-    void repaintFlowThreadContent(const LayoutRect& repaintRect) override;
+    void repaintFragmentedFlowContent(const LayoutRect& repaintRect) override;
 
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) override;
 
-    void adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect& fragmentBounds) const override;
+    void adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const override;
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) override;
 
@@ -162,8 +162,8 @@ private:
     LayoutUnit columnLogicalLeft(unsigned) const;
     LayoutUnit columnLogicalTop(unsigned) const;
 
-    LayoutRect flowThreadPortionRectAt(unsigned index) const;
-    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
+    LayoutRect fragmentedFlowPortionRectAt(unsigned index) const;
+    LayoutRect fragmentedFlowPortionOverflowRect(const LayoutRect& fragmentedFlowPortion, unsigned index, unsigned colCount, LayoutUnit colGap);
 
     LayoutUnit initialBlockOffsetForPainting() const;
 

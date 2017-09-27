@@ -32,7 +32,7 @@
 #include "InlineTextBox.h"
 #include "RenderBlock.h"
 #include "RenderChildIterator.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderFullScreen.h"
 #include "RenderGeometryMap.h"
 #include "RenderIterator.h"
@@ -273,8 +273,8 @@ LayoutRect RenderInline::localCaretRect(InlineBox* inlineBox, unsigned, LayoutUn
 void RenderInline::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     auto* beforeChildOrPlaceholder = beforeChild;
-    if (auto* flowThread = flowThreadContainingBlock())
-        beforeChildOrPlaceholder = flowThread->resolveMovedChild(beforeChild);
+    if (auto* fragmentedFlow = enclosingFragmentedFlow())
+        beforeChildOrPlaceholder = fragmentedFlow->resolveMovedChild(beforeChild);
     if (continuation())
         return addChildToContinuation(newChild, beforeChildOrPlaceholder);
     return addChildIgnoringContinuation(newChild, beforeChildOrPlaceholder);
@@ -355,7 +355,7 @@ RenderPtr<RenderInline> RenderInline::clone() const
 {
     RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(*element(), RenderStyle::clone(style()));
     cloneInline->initializeStyle();
-    cloneInline->setFlowThreadState(flowThreadState());
+    cloneInline->setFragmentedFlowState(fragmentedFlowState());
     cloneInline->setHasOutlineAutoAncestor(hasOutlineAutoAncestor());
     return cloneInline;
 }
@@ -462,7 +462,7 @@ void RenderInline::splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock,
 
     // Clear the flow thread containing blocks cached during the detached state insertions.
     for (auto& cloneBlockChild : childrenOfType<RenderBlock>(*cloneInline))
-        cloneBlockChild.resetFlowThreadContainingBlockAndChildInfoIncludingDescendants();
+        cloneBlockChild.resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants();
 
     // Now we are at the block level. We need to put the clone into the toBlock.
     toBlock->insertChildInternal(cloneInline.leakPtr(), nullptr, NotifyChildren);
@@ -1272,7 +1272,7 @@ LayoutSize RenderInline::offsetFromContainer(RenderElement& container, const Lay
         offset -= toLayoutSize(downcast<RenderBox>(container).scrollPosition());
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint = (is<RenderBox>(container) && container.style().isFlippedBlocksWritingMode()) || is<RenderFlowThread>(container);
+        *offsetDependsOnPoint = (is<RenderBox>(container) && container.style().isFlippedBlocksWritingMode()) || is<RenderFragmentedFlow>(container);
 
     return offset;
 }

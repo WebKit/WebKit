@@ -60,7 +60,7 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerCompositor.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -166,9 +166,9 @@ void RenderBox::willBeDestroyed()
 
 RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentContainer* fragment) const
 {
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
 
-    ASSERT(isRenderView() || (fragment && flowThread));
+    ASSERT(isRenderView() || (fragment && fragmentedFlow));
     if (isRenderView())
         return fragment;
 
@@ -178,24 +178,24 @@ RenderFragmentContainer* RenderBox::clampToStartAndEndFragments(RenderFragmentCo
     // they overflow into, which makes no sense when this block doesn't exist in |fragment| at all.
     RenderFragmentContainer* startFragment = nullptr;
     RenderFragmentContainer* endFragment = nullptr;
-    if (!flowThread->getFragmentRangeForBox(this, startFragment, endFragment))
+    if (!fragmentedFlow->getFragmentRangeForBox(this, startFragment, endFragment))
         return fragment;
 
-    if (fragment->logicalTopForFlowThreadContent() < startFragment->logicalTopForFlowThreadContent())
+    if (fragment->logicalTopForFragmentedFlowContent() < startFragment->logicalTopForFragmentedFlowContent())
         return startFragment;
-    if (fragment->logicalTopForFlowThreadContent() > endFragment->logicalTopForFlowThreadContent())
+    if (fragment->logicalTopForFragmentedFlowContent() > endFragment->logicalTopForFragmentedFlowContent())
         return endFragment;
 
     return fragment;
 }
 
-bool RenderBox::hasFragmentRangeInFlowThread() const
+bool RenderBox::hasFragmentRangeInFragmentedFlow() const
 {
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (!flowThread || !flowThread->hasValidFragmentInfo())
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (!fragmentedFlow || !fragmentedFlow->hasValidFragmentInfo())
         return false;
 
-    return flowThread->hasCachedFragmentRangeForBox(*this);
+    return fragmentedFlow->hasCachedFragmentRangeForBox(*this);
 }
 
 LayoutRect RenderBox::clientBoxRectInFragment(RenderFragmentContainer* fragment) const
@@ -374,14 +374,14 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         const Pagination& pagination = view().frameView().pagination();
         if (viewDirectionOrWritingModeChanged && pagination.mode != Pagination::Unpaginated) {
             viewStyle.setColumnStylesFromPaginationMode(pagination.mode);
-            if (view().multiColumnFlowThread())
+            if (view().multiColumnFlow())
                 view().updateColumnProgressionFromStyle(viewStyle);
         }
         
-        if (viewDirectionOrWritingModeChanged && view().multiColumnFlowThread())
+        if (viewDirectionOrWritingModeChanged && view().multiColumnFlow())
             view().updateStylesForColumnChildren();
         
-        if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlowThread())
+        if (rootStyleChanged && is<RenderBlockFlow>(rootRenderer) && downcast<RenderBlockFlow>(*rootRenderer).multiColumnFlow())
             downcast<RenderBlockFlow>(*rootRenderer).updateStylesForColumnChildren();
         
         if (isBodyRenderer && pagination.mode != Pagination::Unpaginated && page().paginationLineGridEnabled()) {
@@ -607,8 +607,8 @@ void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed) const
 {
     FloatRect localRect(0, 0, width(), height());
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && flowThread->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow && fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, this, localRect.y(), localRect.maxY()))
         return;
 
     quads.append(localToAbsoluteQuad(localRect, UseTransforms, wasFixed));
@@ -1805,7 +1805,7 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
     RenderFragmentContainer* containingBlockFragment = nullptr;
     LayoutUnit logicalTopPosition = logicalTop();
     if (fragment) {
-        LayoutUnit offsetFromLogicalTopOfFragment = fragment ? fragment->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
+        LayoutUnit offsetFromLogicalTopOfFragment = fragment ? fragment->logicalTopForFragmentedFlowContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
         logicalTopPosition = std::max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfFragment);
         containingBlockFragment = cb.clampToStartAndEndFragments(fragment);
     }
@@ -1887,7 +1887,7 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidthInFragment(RenderFragment
     RenderFragmentContainer* containingBlockFragment = nullptr;
     LayoutUnit logicalTopPosition = logicalTop();
     if (fragment) {
-        LayoutUnit offsetFromLogicalTopOfFragment = fragment ? fragment->logicalTopForFlowThreadContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
+        LayoutUnit offsetFromLogicalTopOfFragment = fragment ? fragment->logicalTopForFragmentedFlowContent() - offsetFromLogicalTopOfFirstPage() : LayoutUnit();
         logicalTopPosition = std::max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfFragment);
         containingBlockFragment = cb->clampToStartAndEndFragments(fragment);
     }
@@ -2041,7 +2041,7 @@ LayoutSize RenderBox::offsetFromContainer(RenderElement& renderer, const LayoutP
         offset += downcast<RenderInline>(renderer).offsetForInFlowPositionedInline(this);
 
     if (offsetDependsOnPoint)
-        *offsetDependsOnPoint |= is<RenderFlowThread>(renderer);
+        *offsetDependsOnPoint |= is<RenderFragmentedFlow>(renderer);
 
     return offset;
 }
@@ -2173,7 +2173,7 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     if (!container)
         return adjustedRect;
     
-    // This code isn't necessary for in-flow RenderFlowThreads.
+    // This code isn't necessary for in-flow RenderFragmentedFlows.
     // Don't add the location of the fragment in the flow thread for absolute positioned
     // elements because their absolute position already pushes them down through
     // the fragments so adding this here and then adding the topLeft again would cause
@@ -2181,11 +2181,11 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
     // The same logic applies for elements flowed directly into the flow thread. Their topLeft member
     // will already contain the portion rect of the fragment.
     EPosition position = styleToUse.position();
-    if (container->isOutOfFlowRenderFlowThread() && position != AbsolutePosition && containingBlock() != flowThreadContainingBlock()) {
+    if (container->isOutOfFlowRenderFragmentedFlow() && position != AbsolutePosition && containingBlock() != enclosingFragmentedFlow()) {
         RenderFragmentContainer* firstFragment = nullptr;
         RenderFragmentContainer* lastFragment = nullptr;
-        if (downcast<RenderFlowThread>(*container).getFragmentRangeForBox(this, firstFragment, lastFragment))
-            adjustedRect.moveBy(firstFragment->flowThreadPortionRect().location());
+        if (downcast<RenderFragmentedFlow>(*container).getFragmentRangeForBox(this, firstFragment, lastFragment))
+            adjustedRect.moveBy(firstFragment->fragmentedFlowPortionRect().location());
     }
 
     if (isWritingModeRoot()) {
@@ -2203,7 +2203,7 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         locationOffset = flooredLocationOffset;
     }
 
-    if (is<RenderMultiColumnFlowThread>(this)) {
+    if (is<RenderMultiColumnFlow>(this)) {
         // We won't normally run this code. Only when the repaintContainer is null (i.e., we're trying
         // to get the rect in view coordinates) will we come in here, since normally repaintContainer
         // will be set and we'll stop at the flow thread. This case is mainly hit by the check for whether
@@ -2211,7 +2211,7 @@ LayoutRect RenderBox::computeRectForRepaint(const LayoutRect& rect, const Render
         // FIXME: Just as with offsetFromContainer, we aren't really handling objects that span
         // multiple columns properly.
         LayoutPoint physicalPoint(flipForWritingMode(adjustedRect.location()));
-        if (auto* fragment = downcast<RenderMultiColumnFlowThread>(*this).physicalTranslationFromFlowToFragment((physicalPoint))) {
+        if (auto* fragment = downcast<RenderMultiColumnFlow>(*this).physicalTranslationFromFlowToFragment((physicalPoint))) {
             adjustedRect.setLocation(fragment->flipForWritingMode(physicalPoint));
             return fragment->computeRectForRepaint(adjustedRect, repaintContainer, context);
         }
@@ -2837,7 +2837,7 @@ bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& 
 {
     // Flow threads for multicol or paged overflow should be skipped. They are invisible to the DOM,
     // and percent heights of children should be resolved against the multicol or paged container.
-    if (containingBlock.isInFlowRenderFlowThread() && !isPerpendicularWritingMode)
+    if (containingBlock.isInFlowRenderFragmentedFlow() && !isPerpendicularWritingMode)
         return true;
 
     // Render view is not considered auto height.
@@ -3149,7 +3149,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
             return stretchedHeight.value();
     }
 
-    if (h.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFlowThread()) {
+    if (h.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
         LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(*containingBlock());
         return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
@@ -3216,8 +3216,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
     if (is<RenderBox>(containingBlock)) {
         bool isFixedPosition = style().position() == FixedPosition;
 
-        RenderFlowThread* flowThread = flowThreadContainingBlock();
-        if (!flowThread) {
+        RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+        if (!fragmentedFlow) {
             if (isFixedPosition && is<RenderView>(containingBlock))
                 return downcast<RenderView>(containingBlock).clientLogicalWidthForFixedPosition();
 
@@ -3230,15 +3230,15 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForPositioned(const RenderBoxMo
         const RenderBlock& cb = downcast<RenderBlock>(containingBlock);
         RenderBoxFragmentInfo* boxInfo = nullptr;
         if (!fragment) {
-            if (is<RenderFlowThread>(containingBlock) && !checkForPerpendicularWritingMode)
-                return downcast<RenderFlowThread>(containingBlock).contentLogicalWidthOfFirstFragment();
+            if (is<RenderFragmentedFlow>(containingBlock) && !checkForPerpendicularWritingMode)
+                return downcast<RenderFragmentedFlow>(containingBlock).contentLogicalWidthOfFirstFragment();
             if (isWritingModeRoot()) {
                 LayoutUnit cbPageOffset = cb.offsetFromLogicalTopOfFirstPage();
                 RenderFragmentContainer* cbFragment = cb.fragmentAtBlockOffset(cbPageOffset);
                 if (cbFragment)
                     boxInfo = cb.renderBoxFragmentInfo(cbFragment);
             }
-        } else if (flowThread->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode()) {
+        } else if (fragmentedFlow->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode()) {
             RenderFragmentContainer* containingBlockFragment = cb.clampToStartAndEndFragments(fragment);
             boxInfo = cb.renderBoxFragmentInfo(containingBlockFragment);
         }
@@ -3286,9 +3286,9 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
 
         const RenderBlock& cb = is<RenderBlock>(containingBlock) ? downcast<RenderBlock>(containingBlock) : *containingBlock.containingBlock();
         LayoutUnit result = cb.clientLogicalHeight();
-        RenderFlowThread* flowThread = flowThreadContainingBlock();
-        if (flowThread && is<RenderFlowThread>(containingBlock) && flowThread->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode())
-            return downcast<RenderFlowThread>(containingBlock).contentLogicalHeightOfFirstFragment();
+        RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+        if (fragmentedFlow && is<RenderFragmentedFlow>(containingBlock) && fragmentedFlow->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode())
+            return downcast<RenderFragmentedFlow>(containingBlock).contentLogicalHeightOfFirstFragment();
         return result;
     }
         
@@ -3509,8 +3509,8 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     
     // Adjust logicalLeft if we need to for the flipped version of our writing mode in fragments.
     // FIXME: Add support for other types of objects as containerBlock, not only RenderBlock.
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && !fragment && isWritingModeRoot() && isHorizontalWritingMode() == containerBlock.isHorizontalWritingMode() && is<RenderBlock>(containerBlock)) {
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow && !fragment && isWritingModeRoot() && isHorizontalWritingMode() == containerBlock.isHorizontalWritingMode() && is<RenderBlock>(containerBlock)) {
         ASSERT(containerBlock.canHaveBoxInfoInFragment());
         LayoutUnit logicalLeftPos = computedValues.m_position;
         const RenderBlock& renderBlock = downcast<RenderBlock>(containerBlock);
@@ -3834,8 +3834,8 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     
     // Adjust logicalTop if we need to for perpendicular writing modes in fragments.
     // FIXME: Add support for other types of objects as containerBlock, not only RenderBlock.
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && isHorizontalWritingMode() != containerBlock.isHorizontalWritingMode() && is<RenderBlock>(containerBlock)) {
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow && isHorizontalWritingMode() != containerBlock.isHorizontalWritingMode() && is<RenderBlock>(containerBlock)) {
         ASSERT(containerBlock.canHaveBoxInfoInFragment());
         LayoutUnit logicalTopPos = computedValues.m_position;
         const RenderBlock& renderBox = downcast<RenderBlock>(containerBlock);
@@ -4382,9 +4382,9 @@ VisiblePosition RenderBox::positionForPoint(const LayoutPoint& point, const Rend
         adjustedPoint.moveBy(location());
 
     for (auto& renderer : childrenOfType<RenderBox>(*this)) {
-        if (is<RenderFlowThread>(*this)) {
+        if (is<RenderFragmentedFlow>(*this)) {
             ASSERT(fragment);
-            if (!downcast<RenderFlowThread>(*this).objectShouldFragmentInFlowFragment(&renderer, fragment))
+            if (!downcast<RenderFragmentedFlow>(*this).objectShouldFragmentInFlowFragment(&renderer, fragment))
                 continue;
         }
 
@@ -4455,7 +4455,7 @@ bool RenderBox::shrinkToAvoidFloats() const
 bool RenderBox::createsNewFormattingContext() const
 {
     return isInlineBlockOrInlineTable() || isFloatingOrOutOfFlowPositioned() || hasOverflowClip() || isFlexItemIncludingDeprecated()
-        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFlowThread() || isRenderFragmentContainer()
+        || isTableCell() || isTableCaption() || isFieldset() || isWritingModeRoot() || isDocumentElementRenderer() || isRenderFragmentedFlow() || isRenderFragmentContainer()
         || isGridItem() || style().specifiesColumns() || style().columnSpan();
 }
 
@@ -4471,9 +4471,9 @@ void RenderBox::addVisualEffectOverflow()
 
     addVisualOverflow(applyVisualEffectOverflow(borderBoxRect()));
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread)
-        flowThread->addFragmentsVisualEffectOverflow(this);
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow)
+        fragmentedFlow->addFragmentsVisualEffectOverflow(this);
 }
 
 LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) const
@@ -4527,12 +4527,12 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox) con
 void RenderBox::addOverflowFromChild(const RenderBox* child, const LayoutSize& delta)
 {
     // Never allow flow threads to propagate overflow up to a parent.
-    if (child->isRenderFlowThread())
+    if (child->isRenderFragmentedFlow())
         return;
 
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread)
-        flowThread->addFragmentsOverflowFromChild(this, child, delta);
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow)
+        fragmentedFlow->addFragmentsOverflowFromChild(this, child, delta);
 
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it.  layoutOverflowRectForPropagation takes care of this
@@ -4602,9 +4602,9 @@ void RenderBox::addVisualOverflow(const LayoutRect& rect)
 void RenderBox::clearOverflow()
 {
     m_overflow = nullptr;
-    RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread)
-        flowThread->clearFragmentsOverflow(this);
+    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow)
+        fragmentedFlow->clearFragmentsOverflow(this);
 }
     
 bool RenderBox::percentageLogicalHeightIsResolvable() const
@@ -4959,7 +4959,7 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
 LayoutUnit RenderBox::offsetFromLogicalTopOfFirstPage() const
 {
     LayoutState* layoutState = view().layoutState();
-    if ((layoutState && !layoutState->isPaginated()) || (!layoutState && !flowThreadContainingBlock()))
+    if ((layoutState && !layoutState->isPaginated()) || (!layoutState && !enclosingFragmentedFlow()))
         return 0;
 
     RenderBlock* containerBlock = containingBlock();

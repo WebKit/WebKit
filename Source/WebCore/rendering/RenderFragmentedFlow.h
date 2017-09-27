@@ -36,7 +36,7 @@
 namespace WebCore {
 
 class CurrentRenderFragmentContainerMaintainer;
-class RenderFlowThread;
+class RenderFragmentedFlow;
 class RenderStyle;
 class RenderFragmentContainer;
 class RootInlineBox;
@@ -45,15 +45,15 @@ typedef ListHashSet<RenderFragmentContainer*> RenderFragmentContainerList;
 typedef Vector<RenderLayer*> RenderLayerList;
 typedef HashMap<const RootInlineBox*, RenderFragmentContainer*> ContainingFragmentMap;
 
-// RenderFlowThread is used to collect all the render objects that participate in a
+// RenderFragmentedFlow is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
 // directly to screen. Instead, RenderFragmentContainer objects will redirect their paint 
 // and nodeAtPoint methods to this object. Each RenderFragmentContainer will actually be a viewPort
-// of the RenderFlowThread.
+// of the RenderFragmentedFlow.
 
-class RenderFlowThread: public RenderBlockFlow {
+class RenderFragmentedFlow: public RenderBlockFlow {
 public:
-    virtual ~RenderFlowThread() { }
+    virtual ~RenderFragmentedFlow() { }
 
     virtual void removeFlowChildInfo(RenderElement&);
 #ifndef NDEBUG
@@ -87,13 +87,13 @@ public:
     // location in the tree.
     virtual RenderObject* resolveMovedChild(RenderObject* child) const { return child; }
     // Called when a descendant of the flow thread has been inserted.
-    virtual void flowThreadDescendantInserted(RenderObject&) { }
+    virtual void fragmentedFlowDescendantInserted(RenderObject&) { }
     // Called when a sibling or descendant of the flow thread is about to be removed.
-    virtual void flowThreadRelativeWillBeRemoved(RenderObject&) { }
+    virtual void fragmentedFlowRelativeWillBeRemoved(RenderObject&) { }
     // Called when a descendant box's layout is finished and it has been positioned within its container.
-    virtual void flowThreadDescendantBoxLaidOut(RenderBox*) { }
+    virtual void fragmentedFlowDescendantBoxLaidOut(RenderBox*) { }
 
-    static RenderStyle createFlowThreadStyle(const RenderStyle* parentStyle);
+    static RenderStyle createFragmentedFlowStyle(const RenderStyle* parentStyle);
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
@@ -157,8 +157,8 @@ public:
     void addFragmentsVisualOverflow(const RenderBox*, const LayoutRect&);
     void clearFragmentsOverflow(const RenderBox*);
 
-    LayoutRect mapFromFlowThreadToLocal(const RenderBox*, const LayoutRect&) const;
-    LayoutRect mapFromLocalToFlowThread(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromFragmentedFlowToLocal(const RenderBox*, const LayoutRect&) const;
+    LayoutRect mapFromLocalToFragmentedFlow(const RenderBox*, const LayoutRect&) const;
 
     void flipForWritingModeLocalCoordinates(LayoutRect&) const;
 
@@ -176,20 +176,20 @@ public:
 
     ContainingFragmentMap& containingFragmentMap();
 
-    bool cachedFlowThreadContainingBlockNeedsUpdate() const override { return false; }
+    bool cachedEnclosingFragmentedFlowNeedsUpdate() const override { return false; }
 
     // FIXME: Eventually as column and fragment flow threads start nesting, this may end up changing.
     virtual bool shouldCheckColumnBreaks() const { return false; }
 
 private:
-    // Always create a RenderLayer for the RenderFlowThread so that we
+    // Always create a RenderLayer for the RenderFragmentedFlow so that we
     // can easily avoid drawing the children directly.
     bool requiresLayer() const final { return true; }
 
 protected:
-    RenderFlowThread(Document&, RenderStyle&&);
+    RenderFragmentedFlow(Document&, RenderStyle&&);
 
-    RenderFlowThread* locateFlowThreadContainingBlock() const override { return const_cast<RenderFlowThread*>(this); }
+    RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override { return const_cast<RenderFragmentedFlow*>(this); }
 
     const char* renderName() const override = 0;
 
@@ -202,7 +202,7 @@ protected:
 
     void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags, bool* wasFixed) const override;
 
-    void updateFragmentsFlowThreadPortionRect();
+    void updateFragmentsFragmentedFlowPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
 
     bool getFragmentRangeForBoxFromCachedInfo(const RenderBox*, RenderFragmentContainer*& startFragment, RenderFragmentContainer*& endFragment) const;
@@ -299,4 +299,4 @@ template <> struct ValueToString<WebCore::RenderFragmentContainer*> {
 } // namespace WTF
 #endif
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFlowThread, isRenderFlowThread())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderFragmentedFlow, isRenderFragmentedFlow())

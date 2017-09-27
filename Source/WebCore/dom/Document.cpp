@@ -2055,7 +2055,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, DimensionsChe
                 }
             }
             
-            if (!currentBox->isRenderBlockFlow() || currentBox->flowThreadContainingBlock() || currentBox->isWritingModeRoot()) {
+            if (!currentBox->isRenderBlockFlow() || currentBox->enclosingFragmentedFlow() || currentBox->isWritingModeRoot()) {
                 // FIXME: For now require only block flows all the way back to the root. This limits the optimization
                 // for now, and we'll expand it in future patches to apply to more and more scenarios.
                 // Disallow columns from having the optimization.

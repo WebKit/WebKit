@@ -352,7 +352,7 @@ public:
     LayoutRect borderBoxRectInFragment(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = CacheRenderBoxFragmentInfo) const;
     LayoutRect clientBoxRectInFragment(RenderFragmentContainer*) const;
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
-    bool hasFragmentRangeInFlowThread() const;
+    bool hasFragmentRangeInFragmentedFlow() const;
     virtual LayoutUnit offsetFromLogicalTopOfFirstPage() const;
     
     void positionLineBox(InlineElementBox&);
@@ -610,7 +610,7 @@ public:
     }
 
     // True if this box can have a range in an outside fragmentation context.
-    bool canHaveOutsideFragmentRange() const { return !isInFlowRenderFlowThread(); }
+    bool canHaveOutsideFragmentRange() const { return !isInFlowRenderFragmentedFlow(); }
     virtual bool needsLayoutAfterFragmentRangeChange() const { return false; }
 
     const RenderBox* findEnclosingScrollableContainer() const;

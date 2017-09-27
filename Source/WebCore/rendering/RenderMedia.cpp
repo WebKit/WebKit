@@ -28,7 +28,7 @@
 #if ENABLE(VIDEO)
 #include "RenderMedia.h"
 
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderView.h"
 #include <wtf/StackStats.h>
 

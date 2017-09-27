@@ -39,22 +39,22 @@ namespace WebCore {
 class Element;
 class RenderBox;
 class RenderBoxFragmentInfo;
-class RenderFlowThread;
+class RenderFragmentedFlow;
 
 class RenderFragmentContainer : public RenderBlockFlow {
 public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    void setFlowThreadPortionRect(const LayoutRect& rect) { m_flowThreadPortionRect = rect; }
-    LayoutRect flowThreadPortionRect() const { return m_flowThreadPortionRect; }
-    LayoutRect flowThreadPortionOverflowRect();
+    void setFragmentedFlowPortionRect(const LayoutRect& rect) { m_fragmentedFlowPortionRect = rect; }
+    LayoutRect fragmentedFlowPortionRect() const { return m_fragmentedFlowPortionRect; }
+    LayoutRect fragmentedFlowPortionOverflowRect();
 
-    LayoutPoint flowThreadPortionLocation() const;
+    LayoutPoint fragmentedFlowPortionLocation() const;
 
     virtual void attachFragment();
     virtual void detachFragment();
 
-    RenderFlowThread* flowThread() const { return m_flowThread; }
+    RenderFragmentedFlow* fragmentedFlow() const { return m_fragmentedFlow; }
 
     // Valid fragments do not create circular dependencies with other flows.
     bool isValid() const { return m_isValid; }
@@ -70,7 +70,7 @@ public:
 
     bool isFirstFragment() const;
     bool isLastFragment() const;
-    virtual bool shouldClipFlowThreadContent() const;
+    virtual bool shouldClipFragmentedFlowContent() const;
 
     // These methods represent the width and height of a "page" and for a RenderFragmentContainer they are just the
     // content width and content height of a fragment. For RenderFragmentContainerSets, however, they will be the width and
@@ -78,15 +78,15 @@ public:
     virtual LayoutUnit pageLogicalWidth() const;
     virtual LayoutUnit pageLogicalHeight() const;
 
-    LayoutUnit logicalTopOfFlowThreadContentRect(const LayoutRect&) const;
-    LayoutUnit logicalBottomOfFlowThreadContentRect(const LayoutRect&) const;
-    LayoutUnit logicalTopForFlowThreadContent() const { return logicalTopOfFlowThreadContentRect(flowThreadPortionRect()); };
-    LayoutUnit logicalBottomForFlowThreadContent() const { return logicalBottomOfFlowThreadContentRect(flowThreadPortionRect()); };
+    LayoutUnit logicalTopOfFragmentedFlowContentRect(const LayoutRect&) const;
+    LayoutUnit logicalBottomOfFragmentedFlowContentRect(const LayoutRect&) const;
+    LayoutUnit logicalTopForFragmentedFlowContent() const { return logicalTopOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
+    LayoutUnit logicalBottomForFragmentedFlowContent() const { return logicalBottomOfFragmentedFlowContentRect(fragmentedFlowPortionRect()); };
 
     // This method represents the logical height of the entire flow thread portion used by the fragment or set.
     // For RenderFragmentContainers it matches logicalPaginationHeight(), but for sets it is the height of all the pages
     // or columns added together.
-    virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
+    virtual LayoutUnit logicalHeightOfAllFragmentedFlowContent() const;
 
     // The top of the nearest page inside the fragment. For RenderFragmentContainers, this is just the logical top of the
     // flow thread portion we contain. For sets, we have to figure out the top of the nearest column or
@@ -96,11 +96,11 @@ public:
     // Whether or not this fragment is a set.
     virtual bool isRenderFragmentContainerSet() const { return false; }
     
-    virtual void repaintFlowThreadContent(const LayoutRect& repaintRect);
+    virtual void repaintFragmentedFlowContent(const LayoutRect& repaintRect);
 
     virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
-    virtual void adjustFragmentBoundsFromFlowThreadPortionRect(LayoutRect& fragmentBounds) const;
+    virtual void adjustFragmentBoundsFromFragmentedFlowPortionRect(LayoutRect& fragmentBounds) const;
 
     void addLayoutOverflowForBox(const RenderBox*, const LayoutRect&);
     void addVisualOverflowForBox(const RenderBox*, const LayoutRect&);
@@ -121,8 +121,8 @@ public:
     virtual void absoluteQuadsForBoxInFragment(Vector<FloatQuad>&, bool*, const RenderBox*, float, float) { }
 
 protected:
-    RenderFragmentContainer(Element&, RenderStyle&&, RenderFlowThread*);
-    RenderFragmentContainer(Document&, RenderStyle&&, RenderFlowThread*);
+    RenderFragmentContainer(Element&, RenderStyle&&, RenderFragmentedFlow*);
+    RenderFragmentContainer(Document&, RenderStyle&&, RenderFragmentedFlow*);
 
     void ensureOverflowForBox(const RenderBox*, RefPtr<RenderOverflow>&, bool);
 
@@ -134,10 +134,10 @@ protected:
         VisualOverflow
     };
 
-    LayoutRect overflowRectForFlowThreadPortion(const LayoutRect& flowThreadPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
-    void repaintFlowThreadContentRectangle(const LayoutRect& repaintRect, const LayoutRect& flowThreadPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* flowThreadPortionClipRect = 0);
+    LayoutRect overflowRectForFragmentedFlowPortion(const LayoutRect& fragmentedFlowPortionRect, bool isFirstPortion, bool isLastPortion, OverflowType);
+    void repaintFragmentedFlowContentRectangle(const LayoutRect& repaintRect, const LayoutRect& fragmentedFlowPortionRect, const LayoutPoint& fragmentLocation, const LayoutRect* fragmentedFlowPortionClipRect = 0);
 
-    void computeOverflowFromFlowThread();
+    void computeOverflowFromFragmentedFlow();
 
 private:
     bool isRenderFragmentContainer() const final { return true; }
@@ -146,15 +146,15 @@ private:
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;
 
-    virtual void installFlowThread();
+    virtual void installFragmentedFlow();
 
-    LayoutPoint mapFragmentPointIntoFlowThreadCoordinates(const LayoutPoint&);
+    LayoutPoint mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint&);
 
 protected:
-    RenderFlowThread* m_flowThread;
+    RenderFragmentedFlow* m_fragmentedFlow;
 
 private:
-    LayoutRect m_flowThreadPortionRect;
+    LayoutRect m_fragmentedFlowPortionRect;
 
     // This map holds unique information about a block that is split across fragments.
     // A RenderBoxFragmentInfo* tells us about any layout information for a RenderBox that

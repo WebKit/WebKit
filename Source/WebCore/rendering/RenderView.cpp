@@ -43,7 +43,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderQuote.h"
@@ -223,8 +223,8 @@ LayoutUnit RenderView::availableLogicalHeight(AvailableLogicalHeightType) const
 {
     // Make sure block progression pagination for percentages uses the column extent and
     // not the view's extent. See https://bugs.webkit.org/show_bug.cgi?id=135204.
-    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
-        return multiColumnFlowThread()->firstMultiColumnSet()->computedColumnHeight();
+    if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
+        return multiColumnFlow()->firstMultiColumnSet()->computedColumnHeight();
 
 #if PLATFORM(IOS)
     // Workaround for <rdar://problem/7166808>.
@@ -322,7 +322,7 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
     if (document().printing())
         return m_pageLogicalSize->height();
     
-    if (multiColumnFlowThread() && !style().hasInlineColumnAxis()) {
+    if (multiColumnFlow() && !style().hasInlineColumnAxis()) {
         if (int pageLength = frameView().pagination().pageLength)
             return pageLength;
     }
@@ -1131,8 +1131,8 @@ void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& p
     if (result.innerNode())
         return;
 
-    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
-        return multiColumnFlowThread()->firstMultiColumnSet()->updateHitTestResult(result, point);
+    if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
+        return multiColumnFlow()->firstMultiColumnSet()->updateHitTestResult(result, point);
 
     Node* node = document().documentElement();
     if (node) {
@@ -1313,9 +1313,9 @@ unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const
     bool progressionIsInline = false;
     bool progressionIsReversed = false;
     
-    if (multiColumnFlowThread()) {
-        progressionIsInline = multiColumnFlowThread()->progressionIsInline();
-        progressionIsReversed = multiColumnFlowThread()->progressionIsReversed();
+    if (multiColumnFlow()) {
+        progressionIsInline = multiColumnFlow()->progressionIsInline();
+        progressionIsReversed = multiColumnFlow()->progressionIsReversed();
     } else
         return columnNumber;
     
@@ -1335,8 +1335,8 @@ unsigned RenderView::pageCount() const
     if (pagination.mode == Pagination::Unpaginated)
         return 0;
     
-    if (multiColumnFlowThread() && multiColumnFlowThread()->firstMultiColumnSet())
-        return multiColumnFlowThread()->firstMultiColumnSet()->columnCount();
+    if (multiColumnFlow() && multiColumnFlow()->firstMultiColumnSet())
+        return multiColumnFlow()->firstMultiColumnSet()->columnCount();
 
     return 0;
 }

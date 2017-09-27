@@ -50,8 +50,8 @@
 #include "PerformanceLoggingClient.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
-#include "RenderFlowThread.h"
 #include "RenderFragmentContainer.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderHTMLCanvas.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
@@ -889,7 +889,7 @@ LayoutRect RenderLayerBacking::computeParentGraphicsLayerRect(RenderLayer* compo
 
     auto* ancestorBackingLayer = compositedAncestor->backing();
     LayoutRect parentGraphicsLayerRect;
-    if (m_owningLayer.isInsideFlowThread()) {
+    if (m_owningLayer.isInsideFragmentedFlow()) {
         // FIXME: flows/columns need work.
         LayoutRect ancestorCompositedBounds = ancestorBackingLayer->compositedBounds();
         ancestorCompositedBounds.setLocation(LayoutPoint());

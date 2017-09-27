@@ -1073,11 +1073,11 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
 
             bool computedBounds = false;
             
-            if (RenderFlowThread* flowThread = box.flowThreadContainingBlock()) {
+            if (RenderFragmentedFlow* fragmentedFlow = box.enclosingFragmentedFlow()) {
                 bool wasFixed = false;
                 Vector<FloatQuad> quads;
                 FloatRect localRect(0, 0, box.width(), box.height());
-                if (flowThread->absoluteQuadsForBox(quads, &wasFixed, &box, localRect.y(), localRect.maxY())) {
+                if (fragmentedFlow->absoluteQuadsForBox(quads, &wasFixed, &box, localRect.y(), localRect.maxY())) {
                     FloatRect quadBounds = quads[0].boundingBox();
                     for (size_t i = 1; i < quads.size(); ++i)
                         quadBounds.unite(quads[i].boundingBox());
@@ -1087,7 +1087,7 @@ LayoutRect Element::absoluteEventBounds(bool& boundsIncludeAllDescendantElements
                 } else {
                     // Probably columns. Just return the bounds of the multicol block for now.
                     // FIXME: this doesn't handle nested columns.
-                    RenderElement* multicolContainer = flowThread->parent();
+                    RenderElement* multicolContainer = fragmentedFlow->parent();
                     if (multicolContainer && is<RenderBox>(multicolContainer)) {
                         auto overflowRect = downcast<RenderBox>(*multicolContainer).layoutOverflowRect();
                         result = LayoutRect(multicolContainer->localToAbsoluteQuad(FloatRect(overflowRect), UseTransforms, &includesFixedPositionElements).boundingBox());

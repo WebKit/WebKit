@@ -26,7 +26,7 @@
 
 #include "RenderChildIterator.h"
 #include "RenderListMarker.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderRuby.h"
 #include "RenderTable.h"
 
@@ -102,8 +102,8 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
         // in this case.
         if (currentParent && currentParent->isAnonymousBlock())
             return;
-        if (auto* multiColumnFlowThread = listItemRenderer.multiColumnFlowThread())
-            newParent = multiColumnFlowThread;
+        if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
+            newParent = multiColumnFlow;
         else
             newParent = &listItemRenderer;
     }

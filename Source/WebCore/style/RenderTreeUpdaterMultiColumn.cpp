@@ -25,34 +25,34 @@
 #include "RenderTreeUpdaterMultiColumn.h"
 
 #include "RenderBlockFlow.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 
 namespace WebCore {
 
 void RenderTreeUpdater::MultiColumn::update(RenderBlockFlow& flow)
 {
-    bool needsFlowThread = flow.requiresColumns(flow.style().columnCount());
-    auto* multiColumnFlowThread = flow.multiColumnFlowThread();
-    if (!needsFlowThread) {
-        if (multiColumnFlowThread) {
-            multiColumnFlowThread->evacuateAndDestroy();
-            ASSERT(!flow.multiColumnFlowThread());
+    bool needsFragmentedFlow = flow.requiresColumns(flow.style().columnCount());
+    auto* multiColumnFlow = flow.multiColumnFlow();
+    if (!needsFragmentedFlow) {
+        if (multiColumnFlow) {
+            multiColumnFlow->evacuateAndDestroy();
+            ASSERT(!flow.multiColumnFlow());
         }
         return;
     }
-    if (!multiColumnFlowThread)
-        createFlowThread(flow);
+    if (!multiColumnFlow)
+        createFragmentedFlow(flow);
 }
 
-void RenderTreeUpdater::MultiColumn::createFlowThread(RenderBlockFlow& flow)
+void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
 {
-    RenderMultiColumnFlowThread* flowThread = new RenderMultiColumnFlowThread(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
-    flowThread->initializeStyle();
+    RenderMultiColumnFlow* fragmentedFlow = new RenderMultiColumnFlow(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
+    fragmentedFlow->initializeStyle();
     flow.setChildrenInline(false); // Do this to avoid wrapping inline children that are just going to move into the flow thread.
     flow.deleteLines();
-    flow.RenderBlock::addChild(flowThread);
-    flowThread->populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
-    flow.setMultiColumnFlowThread(flowThread);
+    flow.RenderBlock::addChild(fragmentedFlow);
+    fragmentedFlow->populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
+    flow.setMultiColumnFlow(fragmentedFlow);
 }
 
 

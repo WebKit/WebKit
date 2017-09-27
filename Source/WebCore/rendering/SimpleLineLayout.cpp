@@ -40,9 +40,9 @@
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
 #include "RenderChildIterator.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderLineBreak.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderStyle.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
@@ -266,11 +266,11 @@ AvoidanceReasonFlags canUseForWithReason(const RenderBlockFlow& flow, IncludeRea
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoParent, reasons, includeReasons);
     if (!flow.firstChild())
         SET_REASON_AND_RETURN_IF_NEEDED(FlowHasNoChild, reasons, includeReasons);
-    if (flow.flowThreadState() != RenderObject::NotInsideFlowThread) {
-        auto* flowThread = flow.flowThreadContainingBlock();
-        if (!is<RenderMultiColumnFlowThread>(flowThread))
+    if (flow.fragmentedFlowState() != RenderObject::NotInsideFragmentedFlow) {
+        auto* fragmentedFlow = flow.enclosingFragmentedFlow();
+        if (!is<RenderMultiColumnFlow>(fragmentedFlow))
             SET_REASON_AND_RETURN_IF_NEEDED(FlowIsInsideANonMultiColumnThread, reasons, includeReasons);
-        auto& columnThread = downcast<RenderMultiColumnFlowThread>(*flowThread);
+        auto& columnThread = downcast<RenderMultiColumnFlow>(*fragmentedFlow);
         if (columnThread.parent() != &flow.view())
             SET_REASON_AND_RETURN_IF_NEEDED(MultiColumnFlowIsNotTopLevel, reasons, includeReasons);
         if (columnThread.hasColumnSpanner())

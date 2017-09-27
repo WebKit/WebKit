@@ -32,7 +32,7 @@
 #include "InlineElementBox.h"
 #include "LayoutRepainter.h"
 #include "RenderBlock.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderImage.h"
 #include "RenderLayer.h"
 #include "RenderTheme.h"

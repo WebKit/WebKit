@@ -47,7 +47,7 @@
 #include "InlineElementBox.h"
 #include "Page.h"
 #include "PaintInfo.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderView.h"
 #include "SVGImage.h"
@@ -723,9 +723,9 @@ void RenderImage::layoutShadowControls(const LayoutSize& oldSize)
     bool controlsNeedLayout = controlsRenderer->needsLayout();
     // If the region chain has changed we also need to relayout the controls to update the region box info.
     // FIXME: We can do better once we compute region box info for RenderReplaced, not only for RenderBlock.
-    const RenderFlowThread* flowThread = flowThreadContainingBlock();
-    if (flowThread && !controlsNeedLayout) {
-        if (flowThread->pageLogicalSizeChanged())
+    const RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    if (fragmentedFlow && !controlsNeedLayout) {
+        if (fragmentedFlow->pageLogicalSizeChanged())
             controlsNeedLayout = true;
     }
 

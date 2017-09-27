@@ -1,3 +1,579 @@
+2017-09-27  David Hyatt  <hyatt@apple.com>
+
+        Rename "FlowThread" to "FragmentedFlow"
+        https://bugs.webkit.org/show_bug.cgi?id=177557
+
+        Reviewed by Zalan Bujtas.
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::updateLayoutIfDimensionsOutOfDate):
+        * dom/Element.cpp:
+        (WebCore::Element::absoluteEventBounds):
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/LayoutState.h:
+        (WebCore::LayoutState::currentRenderFragmentedFlow const):
+        (WebCore::LayoutState::setCurrentRenderFragmentedFlow):
+        (WebCore::LayoutState::currentRenderFlowThread const): Deleted.
+        (WebCore::LayoutState::setCurrentRenderFlowThread): Deleted.
+        * rendering/LogicalSelectionOffsetCaches.h:
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::ContainingBlockInfo):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::setBlock):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalLeftSelectionOffset const):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::logicalRightSelectionOffset const):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::hasFloatsOrFragmentedFlows const):
+        (WebCore::LogicalSelectionOffsetCaches::LogicalSelectionOffsetCaches):
+        (WebCore::LogicalSelectionOffsetCaches::ContainingBlockInfo::hasFloatsOrFlowThreads const): Deleted.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::clone const):
+        (WebCore::RenderBlock::removeLeftoverAnonymousBlock):
+        (WebCore::RenderBlock::preparePaginationBeforeBlockLayout):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::addVisualOverflowFromTheme):
+        (WebCore::RenderBlock::computeStartPositionDeltaForChildAvoidingFloats):
+        (WebCore::RenderBlock::simplifiedLayout):
+        (WebCore::RenderBlock::isSelectionRoot const):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertPositionedObject):
+        (WebCore::isChildHitTestCandidate):
+        (WebCore::RenderBlock::cachedEnclosingFragmentedFlow const):
+        (WebCore::RenderBlock::cachedEnclosingFragmentedFlowNeedsUpdate const):
+        (WebCore::RenderBlock::setCachedEnclosingFragmentedFlowNeedsUpdate):
+        (WebCore::RenderBlock::updateCachedEnclosingFragmentedFlow const):
+        (WebCore::RenderBlock::locateEnclosingFragmentedFlow const):
+        (WebCore::RenderBlock::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants):
+        (WebCore::RenderBlock::absoluteQuads const):
+        (WebCore::RenderBlock::offsetFromLogicalTopOfFirstPage const):
+        (WebCore::RenderBlock::fragmentAtBlockOffset const):
+        (WebCore::canComputeFragmentRangeForBox):
+        (WebCore::RenderBlock::childBoxIsUnsplittableForFragmentation const):
+        (WebCore::RenderBlock::computeFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::estimateFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::updateFragmentRangeForBoxChild const):
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlock const): Deleted.
+        (WebCore::RenderBlock::cachedFlowThreadContainingBlockNeedsUpdate const): Deleted.
+        (WebCore::RenderBlock::setCachedFlowThreadContainingBlockNeedsUpdate): Deleted.
+        (WebCore::RenderBlock::updateCachedFlowThreadContainingBlock const): Deleted.
+        (WebCore::RenderBlock::locateFlowThreadContainingBlock const): Deleted.
+        (WebCore::RenderBlock::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants): Deleted.
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+        (WebCore::RenderBlockFlow::layoutBlock):
+        (WebCore::RenderBlockFlow::layoutBlockChild):
+        (WebCore::RenderBlockFlow::setStaticInlinePositionForChild):
+        (WebCore::inNormalFlow):
+        (WebCore::RenderBlockFlow::applyBeforeBreak):
+        (WebCore::RenderBlockFlow::applyAfterBreak):
+        (WebCore::RenderBlockFlow::adjustLinePositionForPagination):
+        (WebCore::RenderBlockFlow::hasNextPage const):
+        (WebCore::RenderBlockFlow::adjustForUnsplittableChild):
+        (WebCore::RenderBlockFlow::setPageBreak):
+        (WebCore::RenderBlockFlow::updateMinimumPageHeight):
+        (WebCore::RenderBlockFlow::pageLogicalTopForOffset const):
+        (WebCore::RenderBlockFlow::pageLogicalHeightForOffset const):
+        (WebCore::RenderBlockFlow::pageRemainingLogicalHeightForOffset const):
+        (WebCore::RenderBlockFlow::styleDidChange):
+        (WebCore::RenderBlockFlow::updateStylesForColumnChildren):
+        (WebCore::RenderBlockFlow::computeOverflow):
+        (WebCore::RenderBlockFlow::paintColumnRules):
+        (WebCore::RenderBlockFlow::computeLogicalLocationForFloat):
+        (WebCore::RenderBlockFlow::setMultiColumnFlow):
+        (WebCore::RenderBlockFlow::relayoutForPagination):
+        (WebCore::RenderBlockFlow::layoutExcludedChildren):
+        (WebCore::RenderBlockFlow::addChild):
+        (WebCore::RenderBlockFlow::removeChild):
+        (WebCore::RenderBlockFlow::checkForPaginationLogicalHeightChange):
+        (WebCore::RenderBlockFlow::setComputedColumnCountAndWidth):
+        (WebCore::RenderBlockFlow::updateColumnProgressionFromStyle):
+        (WebCore::RenderBlockFlow::computedColumnWidth const):
+        (WebCore::RenderBlockFlow::computedColumnCount const):
+        (WebCore::RenderBlockFlow::isTopLayoutOverflowAllowed const):
+        (WebCore::RenderBlockFlow::isLeftLayoutOverflowAllowed const):
+        (WebCore::RenderBlockFlow::setMultiColumnFlowThread): Deleted.
+        * rendering/RenderBlockFlow.h:
+        (WebCore::RenderBlockFlow::RenderBlockFlowRareData::RenderBlockFlowRareData):
+        (WebCore::RenderBlockFlow::multiColumnFlow const):
+        (WebCore::RenderBlockFlow::multiColumnFlowThread const): Deleted.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlockFlow::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlockFlow::linkToEndLineIfNeeded):
+        (WebCore::RenderBlockFlow::layoutLineBoxes):
+        (WebCore::RenderBlockFlow::determineStartPosition):
+        (WebCore::RenderBlockFlow::checkPaginationAndFloatsAtEndLine):
+        (WebCore::RenderBlockFlow::lineWidthForPaginatedLineChanged const):
+        (WebCore::RenderBlockFlow::addOverflowFromInlineChildren):
+        (WebCore::RenderBlockFlow::updateFragmentForLine const):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clampToStartAndEndFragments const):
+        (WebCore::RenderBox::hasFragmentRangeInFragmentedFlow const):
+        (WebCore::RenderBox::styleDidChange):
+        (WebCore::RenderBox::absoluteQuads const):
+        (WebCore::RenderBox::shrinkLogicalWidthToAvoidFloats const):
+        (WebCore::RenderBox::containingBlockAvailableLineWidthInFragment const):
+        (WebCore::RenderBox::offsetFromContainer const):
+        (WebCore::RenderBox::computeRectForRepaint const):
+        (WebCore::RenderBox::skipContainingBlockForPercentHeightCalculation const):
+        (WebCore::RenderBox::availableLogicalHeightUsing const):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned const):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned const):
+        (WebCore::RenderBox::computePositionedLogicalWidth const):
+        (WebCore::RenderBox::computePositionedLogicalHeight const):
+        (WebCore::RenderBox::positionForPoint):
+        (WebCore::RenderBox::createsNewFormattingContext const):
+        (WebCore::RenderBox::addVisualEffectOverflow):
+        (WebCore::RenderBox::addOverflowFromChild):
+        (WebCore::RenderBox::clearOverflow):
+        (WebCore::RenderBox::offsetFromLogicalTopOfFirstPage const):
+        (WebCore::RenderBox::hasFragmentRangeInFlowThread const): Deleted.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::canHaveOutsideFragmentRange const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderBoxModelObject::mapAbsoluteToLocalPoint const):
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::setStyle):
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::removeChildInternal):
+        (WebCore::RenderElement::propagateStyleToAnonymousChildren):
+        (WebCore::RenderElement::adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded):
+        (WebCore::RenderElement::removeFromRenderFragmentedFlow):
+        (WebCore::RenderElement::removeFromRenderFragmentedFlowIncludingDescendants):
+        (WebCore::RenderElement::resetEnclosingFragmentedFlowAndChildInfoIncludingDescendants):
+        (WebCore::RenderElement::adjustFlowThreadStateOnContainingBlockChangeIfNeeded): Deleted.
+        (WebCore::RenderElement::removeFromRenderFlowThread): Deleted.
+        (WebCore::RenderElement::removeFromRenderFlowThreadIncludingDescendants): Deleted.
+        (WebCore::RenderElement::resetFlowThreadContainingBlockAndChildInfoIncludingDescendants): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::canContainFixedPositionObjects const):
+        * rendering/RenderFlowThread.cpp: Removed.
+        * rendering/RenderFlowThread.h: Removed.
+        * rendering/RenderFragmentContainer.cpp:
+        (WebCore::RenderFragmentContainer::RenderFragmentContainer):
+        (WebCore::RenderFragmentContainer::mapFragmentPointIntoFragmentedFlowCoordinates):
+        (WebCore::RenderFragmentContainer::positionForPoint):
+        (WebCore::RenderFragmentContainer::pageLogicalWidth const):
+        (WebCore::RenderFragmentContainer::pageLogicalHeight const):
+        (WebCore::RenderFragmentContainer::logicalHeightOfAllFragmentedFlowContent const):
+        (WebCore::RenderFragmentContainer::fragmentedFlowPortionOverflowRect):
+        (WebCore::RenderFragmentContainer::fragmentedFlowPortionLocation const):
+        (WebCore::RenderFragmentContainer::overflowRectForFragmentedFlowPortion):
+        (WebCore::RenderFragmentContainer::pageLogicalTopForOffset const):
+        (WebCore::RenderFragmentContainer::isFirstFragment const):
+        (WebCore::RenderFragmentContainer::isLastFragment const):
+        (WebCore::RenderFragmentContainer::shouldClipFragmentedFlowContent const):
+        (WebCore::RenderFragmentContainer::styleDidChange):
+        (WebCore::RenderFragmentContainer::computeOverflowFromFragmentedFlow):
+        (WebCore::RenderFragmentContainer::repaintFragmentedFlowContent):
+        (WebCore::RenderFragmentContainer::repaintFragmentedFlowContentRectangle):
+        (WebCore::RenderFragmentContainer::installFragmentedFlow):
+        (WebCore::RenderFragmentContainer::attachFragment):
+        (WebCore::RenderFragmentContainer::detachFragment):
+        (WebCore::RenderFragmentContainer::logicalTopOfFragmentedFlowContentRect const):
+        (WebCore::RenderFragmentContainer::logicalBottomOfFragmentedFlowContentRect const):
+        (WebCore::RenderFragmentContainer::computeIntrinsicLogicalWidths const):
+        (WebCore::RenderFragmentContainer::adjustFragmentBoundsFromFragmentedFlowPortionRect const):
+        (WebCore::RenderFragmentContainer::ensureOverflowForBox):
+        (WebCore::RenderFragmentContainer::rectFlowPortionForBox const):
+        (WebCore::RenderFragmentContainer::addVisualOverflowForBox):
+        (WebCore::RenderFragmentContainer::visualOverflowRectForBoxForPropagation):
+        (WebCore::CurrentRenderFragmentContainerMaintainer::CurrentRenderFragmentContainerMaintainer):
+        (WebCore::CurrentRenderFragmentContainerMaintainer::~CurrentRenderFragmentContainerMaintainer):
+        (WebCore::RenderFragmentContainer::mapFragmentPointIntoFlowThreadCoordinates): Deleted.
+        (WebCore::RenderFragmentContainer::logicalHeightOfAllFlowThreadContent const): Deleted.
+        (WebCore::RenderFragmentContainer::flowThreadPortionOverflowRect): Deleted.
+        (WebCore::RenderFragmentContainer::flowThreadPortionLocation const): Deleted.
+        (WebCore::RenderFragmentContainer::overflowRectForFlowThreadPortion): Deleted.
+        (WebCore::RenderFragmentContainer::shouldClipFlowThreadContent const): Deleted.
+        (WebCore::RenderFragmentContainer::computeOverflowFromFlowThread): Deleted.
+        (WebCore::RenderFragmentContainer::repaintFlowThreadContent): Deleted.
+        (WebCore::RenderFragmentContainer::repaintFlowThreadContentRectangle): Deleted.
+        (WebCore::RenderFragmentContainer::installFlowThread): Deleted.
+        (WebCore::RenderFragmentContainer::logicalTopOfFlowThreadContentRect const): Deleted.
+        (WebCore::RenderFragmentContainer::logicalBottomOfFlowThreadContentRect const): Deleted.
+        (WebCore::RenderFragmentContainer::adjustFragmentBoundsFromFlowThreadPortionRect const): Deleted.
+        * rendering/RenderFragmentContainer.h:
+        (WebCore::RenderFragmentContainer::setFragmentedFlowPortionRect):
+        (WebCore::RenderFragmentContainer::fragmentedFlowPortionRect const):
+        (WebCore::RenderFragmentContainer::fragmentedFlow const):
+        (WebCore::RenderFragmentContainer::logicalTopForFragmentedFlowContent const):
+        (WebCore::RenderFragmentContainer::logicalBottomForFragmentedFlowContent const):
+        (WebCore::RenderFragmentContainer::setFlowThreadPortionRect): Deleted.
+        (WebCore::RenderFragmentContainer::flowThreadPortionRect const): Deleted.
+        (WebCore::RenderFragmentContainer::flowThread const): Deleted.
+        (WebCore::RenderFragmentContainer::logicalTopForFlowThreadContent const): Deleted.
+        (WebCore::RenderFragmentContainer::logicalBottomForFlowThreadContent const): Deleted.
+        * rendering/RenderFragmentContainerSet.cpp:
+        (WebCore::RenderFragmentContainerSet::RenderFragmentContainerSet):
+        (WebCore::RenderFragmentContainerSet::installFragmentedFlow):
+        (WebCore::RenderFragmentContainerSet::expandToEncompassFragmentedFlowContentsIfNeeded):
+        (WebCore::RenderFragmentContainerSet::installFlowThread): Deleted.
+        (WebCore::RenderFragmentContainerSet::expandToEncompassFlowThreadContentsIfNeeded): Deleted.
+        * rendering/RenderFragmentContainerSet.h:
+        * rendering/RenderFragmentedFlow.cpp: Copied from rendering/RenderFlowThread.cpp.
+        (WebCore::RenderFragmentedFlow::RenderFragmentedFlow):
+        (WebCore::RenderFragmentedFlow::createFragmentedFlowStyle):
+        (WebCore::RenderFragmentedFlow::styleDidChange):
+        (WebCore::RenderFragmentedFlow::removeFlowChildInfo):
+        (WebCore::RenderFragmentedFlow::removeFragmentFromThread):
+        (WebCore::RenderFragmentedFlow::invalidateFragments):
+        (WebCore::RenderFragmentedFlow::validateFragments):
+        (WebCore::RenderFragmentedFlow::layout):
+        (WebCore::RenderFragmentedFlow::updateLogicalWidth):
+        (WebCore::RenderFragmentedFlow::computeLogicalHeight const):
+        (WebCore::RenderFragmentedFlow::nodeAtPoint):
+        (WebCore::RenderFragmentedFlow::shouldRepaint const):
+        (WebCore::RenderFragmentedFlow::repaintRectangleInFragments const):
+        (WebCore::RenderFragmentedFlow::fragmentAtBlockOffset const):
+        (WebCore::RenderFragmentedFlow::adjustedPositionRelativeToOffsetParent const):
+        (WebCore::RenderFragmentedFlow::pageLogicalTopForOffset const):
+        (WebCore::RenderFragmentedFlow::pageLogicalWidthForOffset const):
+        (WebCore::RenderFragmentedFlow::pageLogicalHeightForOffset const):
+        (WebCore::RenderFragmentedFlow::pageRemainingLogicalHeightForOffset const):
+        (WebCore::RenderFragmentedFlow::mapFromFlowToFragment const):
+        (WebCore::RenderFragmentedFlow::removeRenderBoxFragmentInfo):
+        (WebCore::RenderFragmentedFlow::removeLineFragmentInfo):
+        (WebCore::RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock):
+        (WebCore::RenderFragmentedFlow::contentLogicalWidthOfFirstFragment const):
+        (WebCore::RenderFragmentedFlow::contentLogicalHeightOfFirstFragment const):
+        (WebCore::RenderFragmentedFlow::contentLogicalLeftOfFirstFragment const):
+        (WebCore::RenderFragmentedFlow::firstFragment const):
+        (WebCore::RenderFragmentedFlow::lastFragment const):
+        (WebCore::RenderFragmentedFlow::clearRenderBoxFragmentInfoAndCustomStyle):
+        (WebCore::RenderFragmentedFlow::setFragmentRangeForBox):
+        (WebCore::RenderFragmentedFlow::hasCachedFragmentRangeForBox const):
+        (WebCore::RenderFragmentedFlow::getFragmentRangeForBoxFromCachedInfo const):
+        (WebCore::RenderFragmentedFlow::getFragmentRangeForBox const):
+        (WebCore::RenderFragmentedFlow::computedFragmentRangeForBox const):
+        (WebCore::RenderFragmentedFlow::fragmentInRange const):
+        (WebCore::RenderFragmentedFlow::objectShouldFragmentInFlowFragment const):
+        (WebCore::RenderFragmentedFlow::objectInFlowFragment const):
+        (WebCore::RenderFragmentedFlow::checkLinesConsistency const):
+        (WebCore::RenderFragmentedFlow::clearLinesToFragmentMap):
+        (WebCore::RenderFragmentedFlow::deleteLines):
+        (WebCore::RenderFragmentedFlow::willBeDestroyed):
+        (WebCore::RenderFragmentedFlow::markFragmentsForOverflowLayoutIfNeeded):
+        (WebCore::RenderFragmentedFlow::updateFragmentsFragmentedFlowPortionRect):
+        (WebCore::RenderFragmentedFlow::addForcedFragmentBreak):
+        (WebCore::RenderFragmentedFlow::collectLayerFragments):
+        (WebCore::RenderFragmentedFlow::fragmentsBoundingBox):
+        (WebCore::RenderFragmentedFlow::offsetFromLogicalTopOfFirstFragment const):
+        (WebCore::RenderFragmentedFlow::FragmentSearchAdapter::collectIfNeeded):
+        (WebCore::RenderFragmentedFlow::mapLocalToContainer const):
+        (WebCore::RenderFragmentedFlow::mapFromLocalToFragmentedFlow const):
+        (WebCore::RenderFragmentedFlow::mapFromFragmentedFlowToLocal const):
+        (WebCore::RenderFragmentedFlow::flipForWritingModeLocalCoordinates const):
+        (WebCore::RenderFragmentedFlow::addFragmentsVisualEffectOverflow):
+        (WebCore::RenderFragmentedFlow::addFragmentsVisualOverflowFromTheme):
+        (WebCore::RenderFragmentedFlow::addFragmentsOverflowFromChild):
+        (WebCore::RenderFragmentedFlow::addFragmentsLayoutOverflow):
+        (WebCore::RenderFragmentedFlow::addFragmentsVisualOverflow):
+        (WebCore::RenderFragmentedFlow::clearFragmentsOverflow):
+        (WebCore::RenderFragmentedFlow::currentFragment const):
+        (WebCore::RenderFragmentedFlow::containingFragmentMap):
+        (WebCore::RenderFlowThread::RenderFlowThread): Deleted.
+        (WebCore::RenderFlowThread::createFlowThreadStyle): Deleted.
+        (WebCore::RenderFlowThread::styleDidChange): Deleted.
+        (WebCore::RenderFlowThread::removeFlowChildInfo): Deleted.
+        (WebCore::RenderFlowThread::removeFragmentFromThread): Deleted.
+        (WebCore::RenderFlowThread::invalidateFragments): Deleted.
+        (WebCore::RenderFlowThread::validateFragments): Deleted.
+        (WebCore::RenderFlowThread::layout): Deleted.
+        (WebCore::RenderFlowThread::updateLogicalWidth): Deleted.
+        (WebCore::RenderFlowThread::computeLogicalHeight const): Deleted.
+        (WebCore::RenderFlowThread::nodeAtPoint): Deleted.
+        (WebCore::RenderFlowThread::shouldRepaint const): Deleted.
+        (WebCore::RenderFlowThread::repaintRectangleInFragments const): Deleted.
+        (WebCore::RenderFlowThread::fragmentAtBlockOffset const): Deleted.
+        (WebCore::RenderFlowThread::adjustedPositionRelativeToOffsetParent const): Deleted.
+        (WebCore::RenderFlowThread::pageLogicalTopForOffset const): Deleted.
+        (WebCore::RenderFlowThread::pageLogicalWidthForOffset const): Deleted.
+        (WebCore::RenderFlowThread::pageLogicalHeightForOffset const): Deleted.
+        (WebCore::RenderFlowThread::pageRemainingLogicalHeightForOffset const): Deleted.
+        (WebCore::RenderFlowThread::mapFromFlowToFragment const): Deleted.
+        (WebCore::RenderFlowThread::removeRenderBoxFragmentInfo): Deleted.
+        (WebCore::RenderFlowThread::removeLineFragmentInfo): Deleted.
+        (WebCore::RenderFlowThread::logicalWidthChangedInFragmentsForBlock): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalWidthOfFirstFragment const): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalHeightOfFirstFragment const): Deleted.
+        (WebCore::RenderFlowThread::contentLogicalLeftOfFirstFragment const): Deleted.
+        (WebCore::RenderFlowThread::firstFragment const): Deleted.
+        (WebCore::RenderFlowThread::lastFragment const): Deleted.
+        (WebCore::RenderFlowThread::clearRenderBoxFragmentInfoAndCustomStyle): Deleted.
+        (WebCore::RenderFlowThread::setFragmentRangeForBox): Deleted.
+        (WebCore::RenderFlowThread::hasCachedFragmentRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::getFragmentRangeForBoxFromCachedInfo const): Deleted.
+        (WebCore::RenderFlowThread::getFragmentRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::computedFragmentRangeForBox const): Deleted.
+        (WebCore::RenderFlowThread::fragmentInRange const): Deleted.
+        (WebCore::RenderFlowThread::objectShouldFragmentInFlowFragment const): Deleted.
+        (WebCore::RenderFlowThread::objectInFlowFragment const): Deleted.
+        (WebCore::RenderFlowThread::checkLinesConsistency const): Deleted.
+        (WebCore::RenderFlowThread::clearLinesToFragmentMap): Deleted.
+        (WebCore::RenderFlowThread::deleteLines): Deleted.
+        (WebCore::RenderFlowThread::willBeDestroyed): Deleted.
+        (WebCore::RenderFlowThread::markFragmentsForOverflowLayoutIfNeeded): Deleted.
+        (WebCore::RenderFlowThread::updateFragmentsFlowThreadPortionRect): Deleted.
+        (WebCore::RenderFlowThread::addForcedFragmentBreak): Deleted.
+        (WebCore::RenderFlowThread::collectLayerFragments): Deleted.
+        (WebCore::RenderFlowThread::fragmentsBoundingBox): Deleted.
+        (WebCore::RenderFlowThread::offsetFromLogicalTopOfFirstFragment const): Deleted.
+        (WebCore::RenderFlowThread::FragmentSearchAdapter::collectIfNeeded): Deleted.
+        (WebCore::RenderFlowThread::mapLocalToContainer const): Deleted.
+        (WebCore::RenderFlowThread::mapFromLocalToFlowThread const): Deleted.
+        (WebCore::RenderFlowThread::mapFromFlowThreadToLocal const): Deleted.
+        (WebCore::RenderFlowThread::flipForWritingModeLocalCoordinates const): Deleted.
+        (WebCore::RenderFlowThread::addFragmentsVisualEffectOverflow): Deleted.
+        (WebCore::RenderFlowThread::addFragmentsVisualOverflowFromTheme): Deleted.
+        (WebCore::RenderFlowThread::addFragmentsOverflowFromChild): Deleted.
+        (WebCore::RenderFlowThread::addFragmentsLayoutOverflow): Deleted.
+        (WebCore::RenderFlowThread::addFragmentsVisualOverflow): Deleted.
+        (WebCore::RenderFlowThread::clearFragmentsOverflow): Deleted.
+        (WebCore::RenderFlowThread::currentFragment const): Deleted.
+        (WebCore::RenderFlowThread::containingFragmentMap): Deleted.
+        * rendering/RenderFragmentedFlow.h: Copied from rendering/RenderFlowThread.h.
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::canMapBetweenRenderersViaLayers):
+        (WebCore::RenderGeometryMap::pushRenderFragmentedFlow):
+        (WebCore::RenderGeometryMap::pushRenderFlowThread): Deleted.
+        * rendering/RenderGeometryMap.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::layoutShadowControls):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChild):
+        (WebCore::RenderInline::clone const):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::offsetFromContainer const):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updatePagination):
+        (WebCore::transparencyClipBox):
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::collectFragments):
+        (WebCore::RenderLayer::hitTest):
+        (WebCore::RenderLayer::enclosingFragmentedFlowAncestor const):
+        (WebCore::RenderLayer::hitTestContents const):
+        (WebCore::RenderLayer::calculateClipRects const):
+        (WebCore::RenderLayer::enclosingFlowThreadAncestor const): Deleted.
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::computeParentGraphicsLayerRect const):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::canBeComposited const):
+        * rendering/RenderMedia.cpp:
+        * rendering/RenderMultiColumnFlow.cpp: Copied from rendering/RenderMultiColumnFlowThread.cpp.
+        (WebCore::RenderMultiColumnFlow::RenderMultiColumnFlow):
+        (WebCore::RenderMultiColumnFlow::~RenderMultiColumnFlow):
+        (WebCore::RenderMultiColumnFlow::renderName const):
+        (WebCore::RenderMultiColumnFlow::firstMultiColumnSet const):
+        (WebCore::RenderMultiColumnFlow::lastMultiColumnSet const):
+        (WebCore::RenderMultiColumnFlow::firstColumnSetOrSpanner const):
+        (WebCore::RenderMultiColumnFlow::nextColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlow::previousColumnSetOrSpannerSiblingOf):
+        (WebCore::RenderMultiColumnFlow::layout):
+        (WebCore::findSetRendering):
+        (WebCore::RenderMultiColumnFlow::populate):
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlow::addFragmentToThread):
+        (WebCore::RenderMultiColumnFlow::willBeRemovedFromTree):
+        (WebCore::RenderMultiColumnFlow::resolveMovedChild const):
+        (WebCore::isValidColumnSpanner):
+        (WebCore::spannerPlacehoderCandidate):
+        (WebCore::RenderMultiColumnFlow::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowRelativeWillBeRemoved):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantBoxLaidOut):
+        (WebCore::RenderMultiColumnFlow::computeLogicalHeight const):
+        (WebCore::RenderMultiColumnFlow::initialLogicalWidth const):
+        (WebCore::RenderMultiColumnFlow::setPageBreak):
+        (WebCore::RenderMultiColumnFlow::updateMinimumPageHeight):
+        (WebCore::RenderMultiColumnFlow::fragmentAtBlockOffset const):
+        (WebCore::RenderMultiColumnFlow::setFragmentRangeForBox):
+        (WebCore::RenderMultiColumnFlow::addForcedFragmentBreak):
+        (WebCore::RenderMultiColumnFlow::computeLineGridPaginationOrigin const):
+        (WebCore::RenderMultiColumnFlow::offsetFromContainer const):
+        (WebCore::RenderMultiColumnFlow::mapAbsoluteToLocalPoint const):
+        (WebCore::RenderMultiColumnFlow::physicalTranslationFromFragmentToFlow const):
+        (WebCore::RenderMultiColumnFlow::mapFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlow::physicalTranslationOffsetFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlow::physicalTranslationFromFlowToFragment const):
+        (WebCore::RenderMultiColumnFlow::isPageLogicalHeightKnown const):
+        (WebCore::RenderMultiColumnFlow::nodeAtPoint):
+        (WebCore::RenderMultiColumnFlow::shouldCheckColumnBreaks const):
+        (WebCore::RenderMultiColumnFlowThread::RenderMultiColumnFlowThread): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::renderName const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::firstMultiColumnSet const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::lastMultiColumnSet const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::firstColumnSetOrSpanner const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::nextColumnSetOrSpannerSiblingOf): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::previousColumnSetOrSpannerSiblingOf): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::layout): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::populate): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::evacuateAndDestroy): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::addFragmentToThread): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::willBeRemovedFromTree): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::resolveMovedChild const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::processPossibleSpannerDescendant): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantInserted): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::handleSpannerRemoval): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::flowThreadRelativeWillBeRemoved): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::flowThreadDescendantBoxLaidOut): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::computeLogicalHeight const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::initialLogicalWidth const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::setPageBreak): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::updateMinimumPageHeight): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::fragmentAtBlockOffset const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::setFragmentRangeForBox): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::addForcedFragmentBreak): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::computeLineGridPaginationOrigin const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::offsetFromContainer const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::mapAbsoluteToLocalPoint const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFragmentToFlow const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::mapFromFlowToFragment const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationOffsetFromFlowToFragment const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::physicalTranslationFromFlowToFragment const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::isPageLogicalHeightKnown const): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::nodeAtPoint): Deleted.
+        (WebCore::RenderMultiColumnFlowThread::shouldCheckColumnBreaks const): Deleted.
+        * rendering/RenderMultiColumnFlow.h: Copied from rendering/RenderMultiColumnFlowThread.h.
+        * rendering/RenderMultiColumnFlowThread.cpp: Removed.
+        * rendering/RenderMultiColumnFlowThread.h: Removed.
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::firstRendererInFragmentedFlow const):
+        (WebCore::RenderMultiColumnSet::lastRendererInFragmentedFlow const):
+        (WebCore::RenderMultiColumnSet::containsRendererInFragmentedFlow const):
+        (WebCore::RenderMultiColumnSet::setLogicalTopInFragmentedFlow):
+        (WebCore::RenderMultiColumnSet::setLogicalBottomInFragmentedFlow):
+        (WebCore::RenderMultiColumnSet::pageLogicalTopForOffset const):
+        (WebCore::RenderMultiColumnSet::setAndConstrainColumnHeight):
+        (WebCore::RenderMultiColumnSet::distributeImplicitBreaks):
+        (WebCore::RenderMultiColumnSet::calculateBalancedHeight const):
+        (WebCore::RenderMultiColumnSet::recalculateColumnHeight):
+        (WebCore::RenderMultiColumnSet::updateLogicalWidth):
+        (WebCore::RenderMultiColumnSet::requiresBalancing const):
+        (WebCore::RenderMultiColumnSet::prepareForLayout):
+        (WebCore::RenderMultiColumnSet::beginFlow):
+        (WebCore::RenderMultiColumnSet::endFlow):
+        (WebCore::RenderMultiColumnSet::layout):
+        (WebCore::RenderMultiColumnSet::calculateMaxColumnHeight const):
+        (WebCore::RenderMultiColumnSet::columnCount const):
+        (WebCore::RenderMultiColumnSet::columnLogicalLeft const):
+        (WebCore::RenderMultiColumnSet::columnLogicalTop const):
+        (WebCore::RenderMultiColumnSet::columnIndexAtOffset const):
+        (WebCore::RenderMultiColumnSet::fragmentedFlowPortionRectAt const):
+        (WebCore::RenderMultiColumnSet::fragmentedFlowPortionOverflowRect):
+        (WebCore::RenderMultiColumnSet::paintColumnRules):
+        (WebCore::RenderMultiColumnSet::repaintFragmentedFlowContent):
+        (WebCore::RenderMultiColumnSet::initialBlockOffsetForPainting const):
+        (WebCore::RenderMultiColumnSet::collectLayerFragments):
+        (WebCore::RenderMultiColumnSet::columnTranslationForOffset const):
+        (WebCore::RenderMultiColumnSet::adjustFragmentBoundsFromFragmentedFlowPortionRect const):
+        (WebCore::RenderMultiColumnSet::positionForPoint):
+        (WebCore::RenderMultiColumnSet::translateFragmentPointToFragmentedFlow const):
+        (WebCore::RenderMultiColumnSet::updateHitTestResult):
+        (WebCore::RenderMultiColumnSet::firstRendererInFlowThread const): Deleted.
+        (WebCore::RenderMultiColumnSet::lastRendererInFlowThread const): Deleted.
+        (WebCore::RenderMultiColumnSet::containsRendererInFlowThread const): Deleted.
+        (WebCore::RenderMultiColumnSet::setLogicalTopInFlowThread): Deleted.
+        (WebCore::RenderMultiColumnSet::setLogicalBottomInFlowThread): Deleted.
+        (WebCore::RenderMultiColumnSet::flowThreadPortionRectAt const): Deleted.
+        (WebCore::RenderMultiColumnSet::flowThreadPortionOverflowRect): Deleted.
+        (WebCore::RenderMultiColumnSet::repaintFlowThreadContent): Deleted.
+        (WebCore::RenderMultiColumnSet::adjustFragmentBoundsFromFlowThreadPortionRect const): Deleted.
+        (WebCore::RenderMultiColumnSet::translateFragmentPointToFlowThread const): Deleted.
+        * rendering/RenderMultiColumnSet.h:
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        (WebCore::RenderMultiColumnSpannerPlaceholder::RenderMultiColumnSpannerPlaceholder):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setFragmentedFlowStateIncludingDescendants):
+        (WebCore::RenderObject::computedFragmentedFlowState):
+        (WebCore::RenderObject::initializeFragmentedFlowStateOnInsertion):
+        (WebCore::RenderObject::resetFragmentedFlowStateOnRemoval):
+        (WebCore::RenderObject::containerForRepaint const):
+        (WebCore::RenderObject::repaintUsingContainer const):
+        (WebCore::enclosingFragmentedFlowFromRenderer):
+        (WebCore::RenderObject::outputRegionsInformation const):
+        (WebCore::RenderObject::selectionRoot const):
+        (WebCore::RenderObject::offsetFromContainer const):
+        (WebCore::RenderObject::insertedIntoTree):
+        (WebCore::RenderObject::locateEnclosingFragmentedFlow const):
+        (WebCore::RenderObject::setIsRenderFragmentedFlow):
+        (WebCore::RenderObject::setFlowThreadStateIncludingDescendants): Deleted.
+        (WebCore::RenderObject::computedFlowThreadState): Deleted.
+        (WebCore::RenderObject::initializeFlowThreadStateOnInsertion): Deleted.
+        (WebCore::RenderObject::resetFlowThreadStateOnRemoval): Deleted.
+        (WebCore::flowThreadContainingBlockFromRenderer): Deleted.
+        (WebCore::RenderObject::locateFlowThreadContainingBlock const): Deleted.
+        (WebCore::RenderObject::setIsRenderFlowThread): Deleted.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::enclosingFragmentedFlow const):
+        (WebCore::RenderObject::isInFlowRenderFragmentedFlow const):
+        (WebCore::RenderObject::isOutOfFlowRenderFragmentedFlow const):
+        (WebCore::RenderObject::isRenderMultiColumnFlow const):
+        (WebCore::RenderObject::fragmentedFlowState const):
+        (WebCore::RenderObject::setFragmentedFlowState):
+        (WebCore::RenderObject::isAnonymousBlock const):
+        (WebCore::RenderObject::isRenderFragmentedFlow const):
+        (WebCore::RenderObject::RenderObjectBitfields::RenderObjectBitfields):
+        (WebCore::RenderObject::RenderObjectBitfields::fragmentedFlowState const):
+        (WebCore::RenderObject::RenderObjectBitfields::setFragmentedFlowState):
+        (WebCore::RenderObject::RenderObjectRareData::RenderObjectRareData):
+        (WebCore::RenderObject::flowThreadContainingBlock const): Deleted.
+        (WebCore::RenderObject::isInFlowRenderFlowThread const): Deleted.
+        (WebCore::RenderObject::isOutOfFlowRenderFlowThread const): Deleted.
+        (WebCore::RenderObject::isRenderMultiColumnFlowThread const): Deleted.
+        (WebCore::RenderObject::flowThreadState const): Deleted.
+        (WebCore::RenderObject::setFlowThreadState): Deleted.
+        (WebCore::RenderObject::isRenderFlowThread const): Deleted.
+        (WebCore::RenderObject::RenderObjectBitfields::flowThreadState const): Deleted.
+        (WebCore::RenderObject::RenderObjectBitfields::setFlowThreadState): Deleted.
+        * rendering/RenderReplaced.cpp:
+        * rendering/RenderRuby.cpp:
+        (WebCore::isRubyChildForNormalRemoval):
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::blockForAccompanyingFirstLetter):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::availableLogicalHeight const):
+        (WebCore::RenderView::pageOrViewLogicalHeight const):
+        (WebCore::RenderView::updateHitTestResult):
+        (WebCore::RenderView::pageNumberForBlockProgressionOffset const):
+        (WebCore::RenderView::pageCount const):
+        * rendering/RenderView.h:
+        * rendering/RenderingAllInOne.cpp:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::containingFragmentMap):
+        (WebCore::RootInlineBox::~RootInlineBox):
+        (WebCore::RootInlineBox::containingFragment const):
+        * rendering/SimpleLineLayout.cpp:
+        (WebCore::SimpleLineLayout::canUseForWithReason):
+        * rendering/line/LineLayoutState.h:
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::fragmentedFlow const):
+        (WebCore::LineLayoutState::setFragmentedFlow):
+        (WebCore::LineLayoutState::flowThread const): Deleted.
+        (WebCore::LineLayoutState::setFlowThread): Deleted.
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * style/RenderTreePosition.h:
+        * style/RenderTreeUpdaterListItem.cpp:
+        (WebCore::RenderTreeUpdater::ListItem::updateMarker):
+        * style/RenderTreeUpdaterMultiColumn.cpp:
+        (WebCore::RenderTreeUpdater::MultiColumn::update):
+        (WebCore::RenderTreeUpdater::MultiColumn::createFragmentedFlow):
+        (WebCore::RenderTreeUpdater::MultiColumn::createFlowThread): Deleted.
+        * style/RenderTreeUpdaterMultiColumn.h:
+        * style/StyleResolveForDocument.cpp:
+        (WebCore::Style::resolveForDocument):
+
 2017-09-27  Don Olmstead  <don.olmstead@sony.com>
 
         Default to void* for platform widgets

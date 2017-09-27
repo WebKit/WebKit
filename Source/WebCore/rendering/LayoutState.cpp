@@ -26,10 +26,10 @@
 #include "config.h"
 #include "LayoutState.h"
 
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -80,7 +80,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
 
     // If we establish a new page height, then cache the offset to the top of the first page.
     // We can compare this later on to figure out what part of the page we're actually on,
-    if (pageLogicalHeight || renderer->isRenderFlowThread()) {
+    if (pageLogicalHeight || renderer->isRenderFragmentedFlow()) {
         m_pageLogicalHeight = pageLogicalHeight;
         bool isFlipped = renderer->style().isFlippedBlocksWritingMode();
         m_pageOffset = LayoutSize(m_layoutOffset.width() + (!isFlipped ? renderer->borderLeft() + renderer->paddingLeft() : renderer->borderRight() + renderer->paddingRight()),
@@ -99,7 +99,7 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
             m_pageLogicalHeight = 0;
             m_isPaginated = false;
         } else
-            m_isPaginated = m_pageLogicalHeight || renderer->flowThreadContainingBlock();
+            m_isPaginated = m_pageLogicalHeight || renderer->enclosingFragmentedFlow();
     }
     
     // Propagate line grid information.
@@ -111,8 +111,8 @@ LayoutState::LayoutState(std::unique_ptr<LayoutState> next, RenderBox* renderer,
     m_layoutDeltaYSaturated = m_next->m_layoutDeltaYSaturated;
 #endif
 
-    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && is<RenderMultiColumnFlowThread>(*renderer))
-        downcast<RenderMultiColumnFlowThread>(*renderer).computeLineGridPaginationOrigin(*this);
+    if (lineGrid() && (lineGrid()->style().writingMode() == renderer->style().writingMode()) && is<RenderMultiColumnFlow>(*renderer))
+        downcast<RenderMultiColumnFlow>(*renderer).computeLineGridPaginationOrigin(*this);
 
     // If we have a new grid to track, then add it to our set.
     if (renderer->style().lineGrid() != RenderStyle::initialLineGrid() && is<RenderBlockFlow>(*renderer))

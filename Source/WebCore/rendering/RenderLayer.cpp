@@ -86,8 +86,8 @@
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderFlexibleBox.h"
-#include "RenderFlowThread.h"
 #include "RenderFragmentContainer.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderGeometryMap.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
@@ -96,7 +96,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerFilterInfo.h"
 #include "RenderMarquee.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderReplica.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderScrollbar.h"
@@ -552,7 +552,7 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
     if (isComposited())
         flags &= ~IsCompositingUpdateRoot;
 
-    if (renderer().isInFlowRenderFlowThread()) {
+    if (renderer().isInFlowRenderFragmentedFlow()) {
         updatePagination();
         flags |= UpdatePagination;
     }
@@ -1081,7 +1081,7 @@ void RenderLayer::updatePagination()
     // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
     // layers). We track an enclosingPaginationLayer instead of using a simple bit, since we want to be able to get back
     // to that layer easily.
-    if (renderer().isInFlowRenderFlowThread()) {
+    if (renderer().isInFlowRenderFragmentedFlow()) {
         m_enclosingPaginationLayer = this;
         return;
     }
@@ -1751,8 +1751,8 @@ static LayoutRect transparencyClipBox(const RenderLayer& layer, const RenderLaye
         // We have to break up the transformed extent across our columns.
         // Split our box up into the actual fragment boxes that render in the columns/pages and unite those together to
         // get our true bounding box.
-        auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
-        result = enclosingFlowThread.fragmentsBoundingBox(result);
+        auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
+        result = enclosingFragmentedFlow.fragmentsBoundingBox(result);
         result.move(paginationLayer->offsetFromAncestor(rootLayer));
         return result;
     }
@@ -1981,17 +1981,17 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     const RenderLayerModelObject& renderer = layer->renderer();
     EPosition position = renderer.style().position();
 
-    // FIXME: Special casing RenderFlowThread so much for fixed positioning here is not great.
-    RenderFlowThread* fixedFlowThreadContainer = position == FixedPosition ? renderer.flowThreadContainingBlock() : nullptr;
-    if (fixedFlowThreadContainer && !fixedFlowThreadContainer->isOutOfFlowPositioned())
-        fixedFlowThreadContainer = nullptr;
+    // FIXME: Special casing RenderFragmentedFlow so much for fixed positioning here is not great.
+    RenderFragmentedFlow* fixedFragmentedFlowContainer = position == FixedPosition ? renderer.enclosingFragmentedFlow() : nullptr;
+    if (fixedFragmentedFlowContainer && !fixedFragmentedFlowContainer->isOutOfFlowPositioned())
+        fixedFragmentedFlowContainer = nullptr;
 
-    // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFlowThread
+    // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFragmentedFlow
     // may need to be revisited in a future patch.
-    // If the fixed renderer is inside a RenderFlowThread, we should not compute location using localToAbsolute,
+    // If the fixed renderer is inside a RenderFragmentedFlow, we should not compute location using localToAbsolute,
     // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
     // positioned in a completely different place in the viewport (RenderView).
-    if (position == FixedPosition && !fixedFlowThreadContainer && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
+    if (position == FixedPosition && !fixedFragmentedFlowContainer && (!ancestorLayer || ancestorLayer == renderer.view().layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
         FloatPoint absPos = renderer.localToAbsolute(FloatPoint(), IsFixed);
@@ -2002,7 +2002,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     // For the fixed positioned elements inside a render flow thread, we should also skip the code path below
     // Otherwise, for the case of ancestorLayer == rootLayer and fixed positioned element child of a transformed
     // element in render flow thread, we will hit the fixed positioned container before hitting the ancestor layer.
-    if (position == FixedPosition && !fixedFlowThreadContainer) {
+    if (position == FixedPosition && !fixedFragmentedFlowContainer) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call offsetFromAncestor() across a layer with a transform,
         // so we should always find the ancestor at or before we find the fixed position container.
@@ -2029,9 +2029,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         }
     }
 
-    if (position == FixedPosition && fixedFlowThreadContainer) {
+    if (position == FixedPosition && fixedFragmentedFlowContainer) {
         ASSERT(ancestorLayer);
-        if (ancestorLayer->isOutOfFlowRenderFlowThread()) {
+        if (ancestorLayer->isOutOfFlowRenderFragmentedFlow()) {
             location += toLayoutSize(layer->location());
             return ancestorLayer;
         }
@@ -2053,8 +2053,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
         parentLayer = layer->parent();
         bool foundAncestorFirst = false;
         while (parentLayer) {
-            // RenderFlowThread is a positioned container, child of RenderView, positioned at (0,0).
-            // This implies that, for out-of-flow positioned elements inside a RenderFlowThread,
+            // RenderFragmentedFlow is a positioned container, child of RenderView, positioned at (0,0).
+            // This implies that, for out-of-flow positioned elements inside a RenderFragmentedFlow,
             // we are bailing out before reaching root layer.
             if (isContainerForPositioned(*parentLayer, position))
                 break;
@@ -2067,9 +2067,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
             parentLayer = parentLayer->parent();
         }
 
-        // We should not reach RenderView layer past the RenderFlowThread layer for any
-        // children of the RenderFlowThread.
-        if (renderer.flowThreadContainingBlock() && !layer->isOutOfFlowRenderFlowThread())
+        // We should not reach RenderView layer past the RenderFragmentedFlow layer for any
+        // children of the RenderFragmentedFlow.
+        if (renderer.enclosingFragmentedFlow() && !layer->isOutOfFlowRenderFragmentedFlow())
             ASSERT(parentLayer != renderer.view().layer());
 
         if (foundAncestorFirst) {
@@ -2091,8 +2091,8 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
     if (adjustForColumns == RenderLayer::AdjustForColumns) {
         if (RenderLayer* parentLayer = layer->parent()) {
-            if (is<RenderMultiColumnFlowThread>(parentLayer->renderer())) {
-                RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlowThread>(parentLayer->renderer()).physicalTranslationFromFlowToFragment(location);
+            if (is<RenderMultiColumnFlow>(parentLayer->renderer())) {
+                RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlow>(parentLayer->renderer()).physicalTranslationFromFlowToFragment(location);
                 if (fragment)
                     location.moveBy(fragment->topLeftLocation() + -parentLayer->renderBox()->topLeftLocation());
             }
@@ -4261,7 +4261,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     // Apply clip-path to context.
     LayoutSize columnAwareOffsetFromRoot = offsetFromRoot;
-    if (renderer().flowThreadContainingBlock() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
+    if (renderer().enclosingFragmentedFlow() && (renderer().hasClipPath() || hasFilterThatIsPainting(context, paintFlags)))
         columnAwareOffsetFromRoot = toLayoutSize(convertToLayerCoords(paintingInfo.rootLayer, LayoutPoint(), AdjustForColumns));
 
     bool hasClipPath = false;
@@ -4508,22 +4508,22 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     // Calculate clip rects relative to the enclosingPaginationLayer. The purpose of this call is to determine our bounds clipped to intermediate
     // layers between us and the pagination context. It's important to minimize the number of fragments we need to create and this helps with that.
     ClipRectsContext paginationClipRectsContext(paginationLayer, clipRectsType, inOverlayScrollbarSizeRelevancy, respectOverflowClip);
-    LayoutRect layerBoundsInFlowThread;
-    ClipRect backgroundRectInFlowThread;
-    ClipRect foregroundRectInFlowThread;
-    calculateRects(paginationClipRectsContext, LayoutRect::infiniteRect(), layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread,
+    LayoutRect layerBoundsInFragmentedFlow;
+    ClipRect backgroundRectInFragmentedFlow;
+    ClipRect foregroundRectInFragmentedFlow;
+    calculateRects(paginationClipRectsContext, LayoutRect::infiniteRect(), layerBoundsInFragmentedFlow, backgroundRectInFragmentedFlow, foregroundRectInFragmentedFlow,
         offsetWithinPaginatedLayer);
     
     // Take our bounding box within the flow thread and clip it.
-    LayoutRect layerBoundingBoxInFlowThread = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, offsetWithinPaginatedLayer);
-    layerBoundingBoxInFlowThread.intersect(backgroundRectInFlowThread.rect());
+    LayoutRect layerBoundingBoxInFragmentedFlow = layerBoundingBox ? *layerBoundingBox : boundingBox(paginationLayer, offsetWithinPaginatedLayer);
+    layerBoundingBoxInFragmentedFlow.intersect(backgroundRectInFragmentedFlow.rect());
     
-    auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
+    auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
     RenderLayer* parentPaginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(rootLayer, inclusionMode);
     LayerFragments ancestorFragments;
     if (parentPaginationLayer) {
         // Compute a bounding box accounting for fragments.
-        LayoutRect layerFragmentBoundingBoxInParentPaginationLayer = enclosingFlowThread.fragmentsBoundingBox(layerBoundingBoxInFlowThread);
+        LayoutRect layerFragmentBoundingBoxInParentPaginationLayer = enclosingFragmentedFlow.fragmentsBoundingBox(layerBoundingBoxInFragmentedFlow);
         
         // Convert to be in the ancestor pagination context's coordinate space.
         LayoutSize offsetWithinParentPaginatedLayer = paginationLayer->offsetFromAncestor(parentPaginationLayer);
@@ -4538,14 +4538,14 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
         
         for (auto& ancestorFragment : ancestorFragments) {
             // Shift the dirty rect into flow thread coordinates.
-            LayoutRect dirtyRectInFlowThread(dirtyRect);
-            dirtyRectInFlowThread.move(-offsetWithinParentPaginatedLayer - ancestorFragment.paginationOffset);
+            LayoutRect dirtyRectInFragmentedFlow(dirtyRect);
+            dirtyRectInFragmentedFlow.move(-offsetWithinParentPaginatedLayer - ancestorFragment.paginationOffset);
             
             size_t oldSize = fragments.size();
             
             // Tell the flow thread to collect the fragments. We pass enough information to create a minimal number of fragments based off the pages/columns
             // that intersect the actual dirtyRect as well as the pages/columns that intersect our layer's bounding box.
-            enclosingFlowThread.collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
+            enclosingFragmentedFlow.collectLayerFragments(fragments, layerBoundingBoxInFragmentedFlow, dirtyRectInFragmentedFlow);
             
             size_t newSize = fragments.size();
             
@@ -4556,7 +4556,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
                 LayerFragment& fragment = fragments.at(i);
                 
                 // Set our four rects with all clipping applied that was internal to the flow thread.
-                fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, &layerBoundingBoxInFlowThread);
+                fragment.setRects(layerBoundsInFragmentedFlow, backgroundRectInFragmentedFlow, foregroundRectInFragmentedFlow, &layerBoundingBoxInFragmentedFlow);
                 
                 // Shift to the root-relative physical position used when painting the flow thread in this fragment.
                 fragment.moveBy(toLayoutPoint(ancestorFragment.paginationOffset + fragment.paginationOffset + offsetWithinParentPaginatedLayer));
@@ -4579,12 +4579,12 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     
     // Shift the dirty rect into flow thread coordinates.
     LayoutSize offsetOfPaginationLayerFromRoot = enclosingPaginationLayer(inclusionMode)->offsetFromAncestor(rootLayer);
-    LayoutRect dirtyRectInFlowThread(dirtyRect);
-    dirtyRectInFlowThread.move(-offsetOfPaginationLayerFromRoot);
+    LayoutRect dirtyRectInFragmentedFlow(dirtyRect);
+    dirtyRectInFragmentedFlow.move(-offsetOfPaginationLayerFromRoot);
 
     // Tell the flow thread to collect the fragments. We pass enough information to create a minimal number of fragments based off the pages/columns
     // that intersect the actual dirtyRect as well as the pages/columns that intersect our layer's bounding box.
-    enclosingFlowThread.collectLayerFragments(fragments, layerBoundingBoxInFlowThread, dirtyRectInFlowThread);
+    enclosingFragmentedFlow.collectLayerFragments(fragments, layerBoundingBoxInFragmentedFlow, dirtyRectInFragmentedFlow);
     
     if (fragments.isEmpty())
         return;
@@ -4599,7 +4599,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
 
     for (auto& fragment : fragments) {
         // Set our four rects with all clipping applied that was internal to the flow thread.
-        fragment.setRects(layerBoundsInFlowThread, backgroundRectInFlowThread, foregroundRectInFlowThread, &layerBoundingBoxInFlowThread);
+        fragment.setRects(layerBoundsInFragmentedFlow, backgroundRectInFragmentedFlow, foregroundRectInFragmentedFlow, &layerBoundingBoxInFragmentedFlow);
         
         // Shift to the root-relative physical position used when painting the flow thread in this fragment.
         fragment.moveBy(toLayoutPoint(fragment.paginationOffset + offsetOfPaginationLayerFromRoot));
@@ -4843,7 +4843,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     
     updateLayerListsIfNeeded();
 
-    ASSERT(!isRenderFlowThread());
+    ASSERT(!isRenderFragmentedFlow());
     LayoutRect hitTestArea = renderer().view().documentRect();
     if (!request.ignoreClipping()) {
         if (renderer().settings().visualViewportEnabled()) {
@@ -4885,10 +4885,10 @@ Element* RenderLayer::enclosingElement() const
     return nullptr;
 }
 
-RenderLayer* RenderLayer::enclosingFlowThreadAncestor() const
+RenderLayer* RenderLayer::enclosingFragmentedFlowAncestor() const
 {
     RenderLayer* curr = parent();
-    for (; curr && !curr->isRenderFlowThread(); curr = curr->parent()) {
+    for (; curr && !curr->isRenderFragmentedFlow(); curr = curr->parent()) {
         if (curr->isStackingContainer() && curr->isComposited()) {
             // We only adjust the position of the first level of layers.
             return nullptr;
@@ -5255,7 +5255,7 @@ bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& 
     // the content in the layer has an element. So just walk up
     // the tree.
     if (!result.innerNode() || !result.innerNonSharedNode()) {
-        if (isOutOfFlowRenderFlowThread()) {
+        if (isOutOfFlowRenderFragmentedFlow()) {
             // The flowthread doesn't have an enclosing element, so when hitting the layer of the
             // flowthread (e.g. the descent area of the RootInlineBox for the image flowed alone
             // inside the flow thread) we're letting the hit testing continue so it will hit the region.
@@ -5492,7 +5492,7 @@ void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const
 
     LayoutSize offsetFromRootLocal = offsetFromRoot;
 
-    if (clipRectsContext.rootLayer->isOutOfFlowRenderFlowThread()) {
+    if (clipRectsContext.rootLayer->isOutOfFlowRenderFragmentedFlow()) {
         LayoutPoint absPos = LayoutPoint(renderer().view().localToAbsolute(FloatPoint(), IsFixed));
         offsetFromRootLocal += toLayoutSize(absPos);
     }
@@ -5716,8 +5716,8 @@ LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const Layo
         // get our true bounding box.
         result.move(childLayer->offsetFromAncestor(paginationLayer));
 
-        auto& enclosingFlowThread = downcast<RenderFlowThread>(paginationLayer->renderer());
-        result = enclosingFlowThread.fragmentsBoundingBox(result);
+        auto& enclosingFragmentedFlow = downcast<RenderFragmentedFlow>(paginationLayer->renderer());
+        result = enclosingFragmentedFlow.fragmentsBoundingBox(result);
         
         childLayer = paginationLayer;
         paginationLayer = paginationLayer->parent()->enclosingPaginationLayerInSubtree(ancestorLayer, inclusionMode);
@@ -6295,7 +6295,7 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
         || (renderer().style().specifiesColumns() && !isRenderViewLayer())
-        || renderer().isInFlowRenderFlowThread();
+        || renderer().isInFlowRenderFragmentedFlow();
 }
 
 bool RenderLayer::shouldBeSelfPaintingLayer() const
@@ -6310,7 +6310,7 @@ bool RenderLayer::shouldBeSelfPaintingLayer() const
         || renderer().isVideo()
         || renderer().isEmbeddedObject()
         || renderer().isRenderIFrame()
-        || renderer().isInFlowRenderFlowThread();
+        || renderer().isInFlowRenderFragmentedFlow();
 }
 
 void RenderLayer::updateSelfPaintingLayer()

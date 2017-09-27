@@ -48,7 +48,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
-#include "RenderMultiColumnFlowThread.h"
+#include "RenderMultiColumnFlow.h"
 #include "RenderTable.h"
 #include "RenderTableRow.h"
 #include "RenderText.h"
@@ -399,7 +399,7 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
     if (const RenderBoxModelObject* offsetParent = this->offsetParent()) {
         if (is<RenderBox>(*offsetParent) && !offsetParent->isBody() && !is<RenderTable>(*offsetParent))
             referencePoint.move(-downcast<RenderBox>(*offsetParent).borderLeft(), -downcast<RenderBox>(*offsetParent).borderTop());
-        if (!isOutOfFlowPositioned() || flowThreadContainingBlock()) {
+        if (!isOutOfFlowPositioned() || enclosingFragmentedFlow()) {
             if (isRelPositioned())
                 referencePoint.move(relativePositionOffset());
             else if (isStickyPositioned())
@@ -412,9 +412,9 @@ LayoutPoint RenderBoxModelObject::adjustedPositionRelativeToOffsetParent(const L
             while (ancestor != offsetParent) {
                 // FIXME: What are we supposed to do inside SVG content?
                 
-                if (is<RenderMultiColumnFlowThread>(*ancestor)) {
+                if (is<RenderMultiColumnFlow>(*ancestor)) {
                     // We need to apply a translation based off what region we are inside.
-                    RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlowThread>(*ancestor).physicalTranslationFromFlowToFragment(referencePoint);
+                    RenderFragmentContainer* fragment = downcast<RenderMultiColumnFlow>(*ancestor).physicalTranslationFromFlowToFragment(referencePoint);
                     if (fragment)
                         referencePoint.moveBy(fragment->topLeftLocation());
                 } else if (!isOutOfFlowPositioned()) {
@@ -2561,11 +2561,11 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     // We also don't want to run it for multicolumn flow threads, since we can use our knowledge of column
     // geometry to actually get a better result.
     // The point inside a box that's inside a region has its coordinates relative to the region,
-    // not the FlowThread that is its container in the RenderObject tree.
-    if (is<RenderBox>(*this) && container->isOutOfFlowRenderFlowThread()) {
+    // not the FragmentedFlow that is its container in the RenderObject tree.
+    if (is<RenderBox>(*this) && container->isOutOfFlowRenderFragmentedFlow()) {
         RenderFragmentContainer* startFragment = nullptr;
         RenderFragmentContainer* endFragment = nullptr;
-        if (downcast<RenderFlowThread>(*container).getFragmentRangeForBox(downcast<RenderBox>(this), startFragment, endFragment))
+        if (downcast<RenderFragmentedFlow>(*container).getFragmentRangeForBox(downcast<RenderBox>(this), startFragment, endFragment))
             container = startFragment;
     }
 

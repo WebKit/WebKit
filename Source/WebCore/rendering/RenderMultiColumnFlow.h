@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -33,10 +33,10 @@ namespace WebCore {
 class RenderMultiColumnSet;
 class RenderMultiColumnSpannerPlaceholder;
 
-class RenderMultiColumnFlowThread final : public RenderFlowThread {
+class RenderMultiColumnFlow final : public RenderFragmentedFlow {
 public:
-    RenderMultiColumnFlowThread(Document&, RenderStyle&&);
-    ~RenderMultiColumnFlowThread();
+    RenderMultiColumnFlow(Document&, RenderStyle&&);
+    ~RenderMultiColumnFlow();
 
     RenderBlockFlow* multiColumnBlockFlow() const { return downcast<RenderBlockFlow>(parent()); }
 
@@ -106,14 +106,14 @@ public:
     bool shouldCheckColumnBreaks() const override;
 
 private:
-    bool isRenderMultiColumnFlowThread() const override { return true; }
+    bool isRenderMultiColumnFlow() const override { return true; }
     const char* renderName() const override;
     void addFragmentToThread(RenderFragmentContainer*) override;
     void willBeRemovedFromTree() override;
     RenderObject* resolveMovedChild(RenderObject* child) const override;
-    void flowThreadDescendantInserted(RenderObject&) override;
-    void flowThreadRelativeWillBeRemoved(RenderObject&) override;
-    void flowThreadDescendantBoxLaidOut(RenderBox*) override;
+    void fragmentedFlowDescendantInserted(RenderObject&) override;
+    void fragmentedFlowRelativeWillBeRemoved(RenderObject&) override;
+    void fragmentedFlowDescendantBoxLaidOut(RenderBox*) override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
     LayoutUnit initialLogicalWidth() const override;
     void setPageBreak(const RenderBlock*, LayoutUnit offset, LayoutUnit spaceShortage) override;
@@ -135,9 +135,9 @@ private:
     // top location estimates (due to e.g. margin collapsing), and possibly for other reasons.
     RenderMultiColumnSet* m_lastSetWorkedOn;
 
-    unsigned m_columnCount;   // The default column count/width that are based off our containing block width. These values represent only the default,
-    LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or fragments will have different column counts and widths in each.
-                              // These values will be cached (eventually) for multi-column blocks.
+    unsigned m_columnCount; // The default column count/width that are based off our containing block width. These values represent only the default,
+    LayoutUnit m_columnWidth; // A multi-column block that is split across variable width pages or fragments will have different column counts and widths in each. These values will be cached (eventually) for multi-column blocks.
+
     LayoutUnit m_columnHeightAvailable; // Total height available to columns, or 0 if auto.
     bool m_inLayout; // Set while we're laying out the flow thread, during which colum set heights are unknown.
     bool m_inBalancingPass; // Guard to avoid re-entering column balancing.
@@ -152,4 +152,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnFlowThread, isRenderMultiColumnFlowThread())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderMultiColumnFlow, isRenderMultiColumnFlow())

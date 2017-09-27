@@ -34,7 +34,7 @@ class RenderBlock;
 class RenderBlockFlow;
 class RenderBox;
 class RenderElement;
-class RenderFlowThread;
+class RenderFragmentedFlow;
 class RenderObject;
 class ShapeInsideInfo;
 
@@ -77,8 +77,8 @@ public:
     
     bool needsBlockDirectionLocationSetBeforeLayout() const { return m_lineGrid || (m_isPaginated && m_pageLogicalHeight); }
 
-    RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
-    void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
+    RenderFragmentedFlow* currentRenderFragmentedFlow() const { return m_currentRenderFragmentedFlow; }
+    void setCurrentRenderFragmentedFlow(RenderFragmentedFlow* fragmentedFlow) { m_currentRenderFragmentedFlow = fragmentedFlow; }
 
 private:
     void propagateLineGridInfo(RenderBox*);
@@ -119,7 +119,7 @@ public:
     LayoutSize m_lineGridOffset;
     LayoutSize m_lineGridPaginationOrigin;
 
-    RenderFlowThread* m_currentRenderFlowThread { nullptr };
+    RenderFragmentedFlow* m_currentRenderFragmentedFlow { nullptr };
 
 #ifndef NDEBUG
     RenderObject* m_renderer { nullptr };

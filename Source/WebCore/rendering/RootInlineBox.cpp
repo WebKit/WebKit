@@ -31,7 +31,7 @@
 #include "InlineTextBox.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
-#include "RenderFlowThread.h"
+#include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
 #include "RenderRubyBase.h"
 #include "RenderRubyRun.h"
@@ -53,8 +53,8 @@ static EllipsisBoxMap* gEllipsisBoxMap;
 
 static ContainingFragmentMap& containingFragmentMap(RenderBlockFlow& block)
 {
-    ASSERT(block.flowThreadContainingBlock());
-    return block.flowThreadContainingBlock()->containingFragmentMap();
+    ASSERT(block.enclosingFragmentedFlow());
+    return block.enclosingFragmentedFlow()->containingFragmentMap();
 }
 
 RootInlineBox::RootInlineBox(RenderBlockFlow& block)
@@ -69,7 +69,7 @@ RootInlineBox::~RootInlineBox()
 {
     detachEllipsisBox();
 
-    if (blockFlow().flowThreadContainingBlock())
+    if (blockFlow().enclosingFragmentedFlow())
         containingFragmentMap(blockFlow()).remove(this);
 }
 
@@ -210,8 +210,8 @@ RenderFragmentContainer* RootInlineBox::containingFragment() const
 
 #ifndef NDEBUG
     if (hasContainingFragment) {
-        RenderFlowThread* flowThread = blockFlow().flowThreadContainingBlock();
-        const RenderFragmentContainerList& fragmentList = flowThread->renderFragmentContainerList();
+        RenderFragmentedFlow* fragmentedFlow = blockFlow().enclosingFragmentedFlow();
+        const RenderFragmentContainerList& fragmentList = fragmentedFlow->renderFragmentContainerList();
         ASSERT_WITH_SECURITY_IMPLICATION(fragmentList.contains(fragment));
     }
 #endif
