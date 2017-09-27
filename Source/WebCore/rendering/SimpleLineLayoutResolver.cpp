@@ -239,6 +239,8 @@ RunResolver::Iterator RunResolver::runForPoint(const LayoutPoint& point) const
 {
     if (!m_lineHeight)
         return end();
+    if (begin() == end())
+        return end();
     unsigned lineIndex = lineIndexForHeight(point.y(), IndexType::Last);
     auto x = point.x() - m_borderAndPaddingBefore;
     auto it = begin();

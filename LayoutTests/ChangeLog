@@ -1,3 +1,18 @@
+2017-09-26  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222539. rdar://problem/34205774
+
+    2017-09-26  Zalan Bujtas  <zalan@apple.com>
+
+            Fall back to normal line layout position, when simple line layout fails to find one.
+            https://bugs.webkit.org/show_bug.cgi?id=176220
+            <rdar://problem/34205774>
+
+            Reviewed by Brent Fulgham.
+
+            * fast/text/invalid-positionForPoint-offset-expected.txt: Added.
+            * fast/text/invalid-positionForPoint-offset.html: Added.
+
 2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
 
         Cherry-pick r222399.

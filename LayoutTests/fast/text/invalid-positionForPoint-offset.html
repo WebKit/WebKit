@@ -1,0 +1,25 @@
+<style>
+* { 
+    border-bottom: green solid; 
+    margin: 0px; 
+}
+</style>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+function eventhandler() {
+    dd.before(a);
+    document.caretRangeFromPoint(0,0);
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+</script>
+<h6>
+<a id="a"></a>
+</h6>
+<dd id="dd"></dd>
+<svg>
+PASS if no crash.
+<set attributeName="dominant-baseline" onbegin="eventhandler()" />
