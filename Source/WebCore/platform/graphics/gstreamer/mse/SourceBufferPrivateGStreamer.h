@@ -2,8 +2,8 @@
  * Copyright (C) 2013 Google Inc. All rights reserved.
  * Copyright (C) 2013 Orange
  * Copyright (C) 2014 Sebastian Dröge <sebastian@centricular.com>
- * Copyright (C) 2015, 2016 Metrological Group B.V.
- * Copyright (C) 2015, 2016 Igalia, S.L
+ * Copyright (C) 2015, 2016, 2017 Metrological Group B.V.
+ * Copyright (C) 2015, 2016, 2017 Igalia, S.L
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -75,6 +75,8 @@ public:
     void didReceiveInitializationSegment(const SourceBufferPrivateClient::InitializationSegment&);
     void didReceiveSample(MediaSample&);
     void didReceiveAllPendingSamples();
+
+    ContentType type() const { return m_type; }
 
 private:
     SourceBufferPrivateGStreamer(MediaSourceGStreamer*, Ref<MediaSourceClientGStreamerMSE>, const ContentType&);

@@ -3,9 +3,9 @@
  * Copyright (C) 2007 Collabora Ltd.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
- * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2016 Igalia S.L
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013, 2016, 2017 Igalia S.L
  * Copyright (C) 2015 Sebastian Dröge <sebastian@centricular.com>
- * Copyright (C) 2015, 2016 Metrological Group B.V.
+ * Copyright (C) 2015, 2016, 2017 Metrological Group B.V.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -714,7 +714,9 @@ static HashSet<String, ASCIICaseInsensitiveHash>& mimeTypeCache()
         HashSet<String, ASCIICaseInsensitiveHash> set;
         const char* mimeTypes[] = {
             "video/mp4",
-            "audio/mp4"
+            "audio/mp4",
+            "video/webm",
+            "audio/webm"
         };
         for (auto& type : mimeTypes)
             set.add(type);
@@ -775,10 +777,14 @@ const static HashSet<AtomicString>& codecSet()
             Vector<AtomicString> webkitCodecs;
         };
 
-        std::array<GstCapsWebKitMapping, 3> mapping = { {
+        std::array<GstCapsWebKitMapping, 7> mapping = { {
             { VideoDecoder, "video/x-h264,  profile=(string){ constrained-baseline, baseline }", { "x-h264" } },
             { VideoDecoder, "video/x-h264, stream-format=avc", { "avc*"} },
-            { VideoDecoder, "video/mpeg, mpegversion=(int){1,2}, systemstream=(boolean)false", { "mpeg" } }
+            { VideoDecoder, "video/mpeg, mpegversion=(int){1,2}, systemstream=(boolean)false", { "mpeg" } },
+            { VideoDecoder, "video/x-vp8", { "vp8", "x-vp8" } },
+            { VideoDecoder, "video/x-vp9", { "vp9", "x-vp9" } },
+            { AudioDecoder, "audio/x-vorbis", { "vorbis", "x-vorbis" } },
+            { AudioDecoder, "audio/x-opus", { "opus", "x-opus" } }
         } };
 
         for (auto& current : mapping) {
@@ -864,9 +870,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateGStreamerMSE::supportsType(const Med
         return result;
 
     auto containerType = parameters.type.containerType();
-    // Disable VPX/Opus on MSE for now, mp4/avc1 seems way more reliable currently.
-    if (containerType.endsWith("webm"))
-        return result;
 
     // YouTube TV provides empty types for some videos and we want to be selected as best media engine for them.
     if (containerType.isEmpty()) {

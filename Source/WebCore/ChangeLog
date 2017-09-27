@@ -1,3 +1,16 @@
+2017-09-27  Alicia Boya García  <aboya@igalia.com>
+
+        Add initial experimental support for webm in WebKitGTK+ with VP8, VP9,
+        Vorbis and Opus formats, as long as suitable plugins are installed in
+        GStreamer.
+        https://bugs.webkit.org/show_bug.cgi?id=177355
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        * platform/graphics/gstreamer/mse/AppendPipeline.cpp:
+        (WebCore::AppendPipeline::AppendPipeline):
+        * platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.h:
+
 2017-09-26  Zalan Bujtas  <zalan@apple.com>
 
         AX: Defer RenderImage's imageChanged event until after layout is done.
