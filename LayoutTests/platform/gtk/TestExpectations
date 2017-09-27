@@ -934,7 +934,6 @@ webkit.org/b/141467 fast/multicol/pagination/RightToLeft-rl-hittest.html [ Failu
 webkit.org/b/141698 editing/pasteboard/5761530-1.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-disabled-rendering.html [ Failure ]
 webkit.org/b/141699 fast/attachment/attachment-rendering.html [ Failure ]
-webkit.org/b/141699 fast/attachment/attachment-respects-css-size.html [ ImageOnlyFailure ]
 
 webkit.org/b/141831 svg/animations/animate-text-nested-transforms.html [ Failure ]
 webkit.org/b/98653  svg/text/lengthAdjust-text-metrics.html [ Failure ]
@@ -1254,6 +1253,9 @@ webkit.org/b/175419 imported/w3c/web-platform-tests/streams/readable-byte-stream
 # Loading MP4 as an image is not supported by GTK
 fast/images/animated-image-mp4.html [ Skip ]
 
+webkit.org/b/177532 accessibility/image-load-on-delay.html [ Failure ]
+webkit.org/b/177533 webrtc/video-interruption.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1377,6 +1379,13 @@ webkit.org/b/176806 media/track/track-text-track-cue-list.html [ Crash ]
 webkit.org/b/176856 fast/mediastream/apply-constraints-video.html [ Crash ]
 webkit.org/b/176850 webrtc/clone-audio-track.html [ Failure Crash ]
 webkit.org/b/176861 imported/w3c/web-platform-tests/media-source/mediasource-sourcebuffer-mode.html [ Crash ]
+
+# See also webkit.org/b/141699
+webkit.org/b/177534 fast/attachment/attachment-respects-css-size.html [ Crash ImageOnlyFailure ]
+webkit.org/b/177535 fast/mediastream/media-device-info.html [ Crash Pass ]
+# See also webkit.org/b/163528 Threaded compositor failures caused by one of r203496, r203497, or r203498
+webkit.org/b/177536 media/video-object-fit.html [ Crash ImageOnlyFailure ]
+webkit.org/b/177537 http/tests/multipart/multipart-html.php [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -1943,6 +1952,11 @@ webkit.org/b/176757 fast/hidpi/filters-multiple.html [ Pass ImageOnlyFailure ]
 webkit.org/b/176758 animations/3d/transform-origin-vs-functions.html [ Pass Failure ]
 
 webkit.org/b/176759 crypto/subtle/rsa-oaep-import-key-wrap-jwk-oct-key.html [ Pass Failure ]
+
+webkit.org/b/177527 [ Release ] fast/hidpi/filters-blur.html [ Pass ImageOnlyFailure ]
+webkit.org/b/177528 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker.html [ Pass Failure ]
+webkit.org/b/177529 crypto/workers/subtle/rsa-oaep-import-key-encrypt.html [ Pass Failure ]
+webkit.org/b/177530 imported/w3c/web-platform-tests/XMLHttpRequest/setrequestheader-header-allowed.htm [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -3573,9 +3587,6 @@ webkit.org/b/160119 animations/negative-delay.html [ Pass Failure ]
 webkit.org/b/160119 css3/masking/mask-base64.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/160119 media/video-object-fit-change.html [ ImageOnlyFailure ]
-
-# Threaded compositor failures caused by one of r203496, r203497, or r203498
-webkit.org/b/163528 media/video-object-fit.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of tests failing due to THREADED COMPOSITOR enablement. Don't put random test
