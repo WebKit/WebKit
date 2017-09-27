@@ -1,3 +1,17 @@
+2017-09-27  Antti Koivisto  <antti@apple.com>
+
+        Ref element keys in CSSAnimationControllerPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=177543
+
+        Reviewed by Zalan Bujtas.
+
+        For safety.
+
+        * page/animation/CSSAnimationControllerPrivate.h:
+
+        This won't create ref cycle as elements are removed from the m_compositeAnimations maps when they
+        are removed from the tree. We have assertions that verify the map is always cleared.
+
 2017-09-27  David Hyatt  <hyatt@apple.com>
 
         Rename "Region" to "Fragment" for RenderRegion and associated classes/methods.

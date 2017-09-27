@@ -124,7 +124,7 @@ private:
     void fireEventsAndUpdateStyle();
     void startTimeResponse(double t);
 
-    HashMap<Element*, RefPtr<CompositeAnimation>> m_compositeAnimations;
+    HashMap<RefPtr<Element>, RefPtr<CompositeAnimation>> m_compositeAnimations;
     Timer m_animationTimer;
     Timer m_updateStyleIfNeededDispatcher;
     Frame& m_frame;
