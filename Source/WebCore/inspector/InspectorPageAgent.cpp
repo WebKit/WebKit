@@ -40,7 +40,6 @@
 #include "CachedScript.h"
 #include "Cookie.h"
 #include "CookieJar.h"
-#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -376,10 +375,8 @@ void InspectorPageAgent::disable(ErrorString&)
     setEmulatedMedia(unused, emptyString());
 }
 
-void InspectorPageAgent::reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources, const String* optionalScriptToEvaluateOnLoad)
+void InspectorPageAgent::reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources)
 {
-    m_pendingScriptToEvaluateOnLoadOnce = optionalScriptToEvaluateOnLoad ? *optionalScriptToEvaluateOnLoad : emptyString();
-
     bool reloadFromOrigin = optionalReloadFromOrigin && *optionalReloadFromOrigin;
     bool revalidateAllResources = optionalRevalidateAllResources && *optionalRevalidateAllResources;
 
@@ -639,15 +636,6 @@ void InspectorPageAgent::setShowPaintRects(ErrorString&, bool show)
     m_overlay->setShowingPaintRects(show);
 }
 
-void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld& world)
-{
-    if (&world != &mainThreadNormalWorld())
-        return;
-
-    if (!m_scriptToEvaluateOnLoadOnce.isEmpty())
-        frame->script().executeScript(m_scriptToEvaluateOnLoadOnce);
-}
-
 void InspectorPageAgent::domContentEventFired()
 {
     m_isFirstLayoutAfterOnLoad = true;
@@ -661,10 +649,6 @@ void InspectorPageAgent::loadEventFired()
 
 void InspectorPageAgent::frameNavigated(Frame& frame)
 {
-    if (frame.isMainFrame()) {
-        m_scriptToEvaluateOnLoadOnce = m_pendingScriptToEvaluateOnLoadOnce;
-        m_pendingScriptToEvaluateOnLoadOnce = String();
-    }
     m_frontendDispatcher->frameNavigated(buildObjectForFrame(&frame));
 }
 

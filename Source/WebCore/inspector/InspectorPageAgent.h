@@ -46,7 +46,6 @@ class InspectorObject;
 namespace WebCore {
 
 class CachedResource;
-class DOMWrapperWorld;
 class DocumentLoader;
 class Frame;
 class InspectorClient;
@@ -92,7 +91,7 @@ public:
     // Page API for InspectorFrontend
     void enable(ErrorString&) override;
     void disable(ErrorString&) override;
-    void reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources, const String* const optionalScriptToEvaluateOnLoad) override;
+    void reload(ErrorString&, const bool* const optionalReloadFromOrigin, const bool* const optionalRevalidateAllResources) override;
     void navigate(ErrorString&, const String& url) override;
     void getCookies(ErrorString&, RefPtr<Inspector::Protocol::Array<Inspector::Protocol::Page::Cookie>>& cookies) override;
     void deleteCookie(ErrorString&, const String& cookieName, const String& url) override;
@@ -109,7 +108,6 @@ public:
     void archive(ErrorString&, String* data) override;
 
     // InspectorInstrumentation
-    void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld&);
     void domContentEventFired();
     void loadEventFired();
     void frameNavigated(Frame&);
@@ -156,8 +154,6 @@ private:
     InspectorClient* m_client { nullptr };
     InspectorOverlay* m_overlay { nullptr };
 
-    String m_pendingScriptToEvaluateOnLoadOnce;
-    String m_scriptToEvaluateOnLoadOnce;
     HashMap<Frame*, String> m_frameToIdentifier;
     HashMap<String, Frame*> m_identifierToFrame;
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;

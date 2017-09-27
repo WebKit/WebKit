@@ -118,8 +118,6 @@ static Frame* frameForScriptExecutionContext(ScriptExecutionContext& context)
 void InspectorInstrumentation::didClearWindowObjectInWorldImpl(InstrumentingAgents& instrumentingAgents, Frame& frame, DOMWrapperWorld& world)
 {
     InspectorPageAgent* pageAgent = instrumentingAgents.inspectorPageAgent();
-    if (pageAgent)
-        pageAgent->didClearWindowObjectInWorld(&frame, world);
     if (PageDebuggerAgent* debuggerAgent = instrumentingAgents.pageDebuggerAgent()) {
         if (pageAgent && &world == &mainThreadNormalWorld() && &frame == &pageAgent->mainFrame())
             debuggerAgent->didClearMainFrameWindowObject();

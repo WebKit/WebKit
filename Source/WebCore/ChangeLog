@@ -1,3 +1,18 @@
+2017-09-26  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Web Inspector: Remove unused parameter of Page.reload
+        https://bugs.webkit.org/show_bug.cgi?id=177522
+
+        Reviewed by Matt Baker.
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didClearWindowObjectInWorldImpl):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        (WebCore::InspectorPageAgent::didClearWindowObjectInWorld): Deleted.
+        * inspector/InspectorPageAgent.h:
+
 2017-09-27  Chris Dumez  <cdumez@apple.com>
 
         cssFloat missing in CSSPropertyDeclaration.prototype
