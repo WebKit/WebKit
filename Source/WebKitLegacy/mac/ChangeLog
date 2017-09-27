@@ -1,3 +1,15 @@
+2017-09-27  Matt Lewis  <jlewis3@apple.com>
+
+        Unreviewed, rolling out r222567.
+
+        This broke and internal build.
+
+        Reverted changeset:
+
+        "Build fix for High Sierra 32 bit Mac"
+        https://bugs.webkit.org/show_bug.cgi?id=177551
+        http://trac.webkit.org/changeset/222567
+
 2017-09-27  Jonathan Bedard  <jbedard@apple.com>
 
         Build fix for High Sierra 32 bit Mac
