@@ -1,3 +1,12 @@
+2017-09-27  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestResultsServer for High Sierra queues.
+        https://bugs.webkit.org/show_bug.cgi?id=177500
+
+        Reviewed by Alexey Proskuryakov.
+
+        * TestResultServer/static-dashboards/builders.jsonp:
+
 2017-09-27  Lucas Forschler  <lforschler@apple.com>
 
         bisect-builds:add a README to the archive.
