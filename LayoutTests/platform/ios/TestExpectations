@@ -407,6 +407,82 @@ webkit.org/b/167795 http/tests/security/bypassing-cors-checks-for-extension-urls
 svg/animations/animations-paused-when-inserted-in-hidden-document.html [ Skip ]
 svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
+# iOS does not enable ENABLE(TEXT_CARET). UIKit renders the text insertion caret.
+fast/css/caret-color-fallback-to-color.html [ Skip ]
+fast/css/caret-color-inherit.html [ Skip ]
+fast/css/caret-color-span-inside-editable-parent.html [ Skip ]
+fast/css/caret-color.html [ Skip ]
+fast/history/visited-link-caret-color.html [ Skip ]
+
+# Run webrtc tests on iOS 11
+webrtc [ Pass ]
+imported/w3c/web-platform-tests/webrtc [ Pass ]
+fast/events/constructors/media-stream-event-constructor.html [ Pass ]
+fast/mediastream/RTCIceCandidate.html [ Pass ]
+fast/mediastream/RTCPeerConnection-add-removeTrack.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addIceCandidate.html [ Pass ]
+fast/mediastream/RTCPeerConnection-AddRemoveStream.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addTrack-reuse-sender.html [ Pass ]
+fast/mediastream/RTCPeerConnection-addTransceiver.html [ Pass ]
+fast/mediastream/RTCPeerConnection-createAnswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-createOffer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-datachannel.html [ Pass ]
+fast/mediastream/RTCPeerConnection-getConfiguration.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-local-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-local-pranswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-remote-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-have-remote-pranswer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-inspect-answer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-inspect-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-legacy-stream-based-api.html [ Pass ]
+fast/mediastream/RTCPeerConnection-localDescription.html [ Pass ]
+fast/mediastream/RTCPeerConnection-media-setup-single-dialog.html [ Pass ]
+fast/mediastream/RTCPeerConnection-media-setup-two-dialogs.html [ Pass ]
+fast/mediastream/RTCPeerConnection-onnegotiationneeded.html [ Pass ]
+fast/mediastream/RTCPeerConnection-overloaded-operations.html [ Pass ]
+fast/mediastream/RTCPeerConnection-remoteDescription.html [ Pass ]
+fast/mediastream/RTCPeerConnection-remotely-assigned-transceiver-mid.html [ Pass ]
+fast/mediastream/RTCPeerConnection-setLocalDescription-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-setRemoteDescription-offer.html [ Pass ]
+fast/mediastream/RTCPeerConnection-stable.html [ Pass ]
+fast/mediastream/RTCPeerConnection-statsSelector.html [ Pass ]
+fast/mediastream/RTCPeerConnection.html [ Pass ]
+fast/mediastream/RTCSessionDescription.html [ Pass ]
+fast/mediastream/RTCTrackEvent-constructor.html [ Pass ]
+
+# WebCryptoAPI features that enabled only for iOS 11/High Sierra+
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker.html [ Pass Failure ]
+imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https.html [ Pass Failure ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-pkcs8.html [ Pass ]
+crypto/subtle/rsa-pss-generate-export-key-spki.html [ Pass ]
+crypto/subtle/rsa-pss-generate-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
+crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign-large-salt.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/subtle/rsa-pss-import-key-verify.html [ Pass ]
+crypto/subtle/rsa-pss-import-pkcs8-key.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key-empty-usages.html [ Pass ]
+crypto/subtle/rsa-pss-import-spki-key.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-sign.html [ Pass ]
+crypto/workers/subtle/rsa-pss-import-key-verify.html [ Pass ]
+
+# Depend on iOS 11 API.
+fast/viewport/ios/viewport-fit-contain.html [ Pass ]
+fast/viewport/ios/viewport-fit-cover.html [ Pass ]
+fast/viewport/ios/viewport-fit-auto.html [ Pass ]
+fast/css/variables/constants/ios [ Pass ]
+
 ###
 # Known failures
 ##
@@ -2191,6 +2267,7 @@ media/controls [ Skip ]
 # Local pasteboard is not implemented on iOS, so pasteboard tests interfere with each other.
 editing/pasteboard [ Skip ]
 editing/mac/pasteboard [ Skip ]
+
 editing/execCommand/find-after-replace.html [ Skip ]
 editing/execCommand/paste-1.html [ Skip ]
 editing/execCommand/paste-and-match-style-event.html [ Skip ]
@@ -2871,3 +2948,153 @@ webgl/1.0.2/conformance/uniforms/out-of-bounds-uniform-array-access.html [ Skip 
 
 webkit.org/b/174120 http/tests/loading/resourceLoadStatistics/user-interaction-in-cross-origin-sub-frame.html [ Skip ]
 
+webkit.org/b/175273 imported/w3c/web-platform-tests/html/browsers/windows/noreferrer-window-name.html [ Failure ]
+
+webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-004.html [ ImageOnlyFailure ]
+webkit.org/b/175353 imported/w3c/web-platform-tests/css/css-ui-3/outline-style-014.html [ ImageOnlyFailure ]
+
+webkit.org/b/170698 [ Release ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors.html [ Pass Failure ]
+
+# This test tests a feature that only exists on iOS.
+fast/text/accessibility-bold-system-font-2.html [ Pass ]
+
+# This test is specific to Core Text.
+fast/text/font-lookup-dot-prefix-case-sensitive.html [ Pass ]
+
+# Missing support for 521-bit elliptic curves.
+crypto/subtle/ec-import-pkcs8-key-export-pkcs8-key-p521.html
+crypto/subtle/ec-import-spki-key-export-spki-key-p521.html
+crypto/subtle/ecdh-generate-export-jwk-key-p521.html
+crypto/subtle/ecdh-generate-export-key-pkcs8-p521.html
+crypto/subtle/ecdh-generate-export-key-raw-p521.html
+crypto/subtle/ecdh-generate-export-key-spki-p521.html
+crypto/subtle/ecdh-generate-key-p521.html
+crypto/subtle/ecdh-import-jwk-private-key-p521.html
+crypto/subtle/ecdh-import-jwk-public-key-p521.html
+crypto/subtle/ecdh-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
+crypto/subtle/ecdh-import-pkcs8-key-p521.html
+crypto/subtle/ecdh-import-raw-key-p521.html
+crypto/subtle/ecdh-import-spki-key-p521.html
+crypto/subtle/ecdsa-generate-key-sign-verify-p521.html
+crypto/subtle/ecdsa-import-jwk-public-key-alg-521.html
+crypto/subtle/ecdsa-import-key-sign-p521.html
+crypto/subtle/ecdsa-import-key-verify-p521.html
+crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html
+
+webkit.org/b/155092 js/arraybuffer-wrappers.html [ Pass Timeout ]
+
+webkit.org/b/172052 [ Release ] imported/w3c/web-platform-tests/html/webappapis/timers/type-long-setinterval.html [ Pass Failure ]
+
+webkit.org/b/176878 [ Debug ] fast/multicol/spanner-crash-when-adding-summary.html [ Crash ]
+
+# <rdar://problem/32542437> REGRESSION (iOS 11): LayoutTest fast/events/ios/before-input-events-prevent-candidate-insertion.html is timing out
+fast/events/ios/before-input-events-prevent-candidate-insertion.html [ Timeout ]
+
+# <rdar://problem/32542300> REGRESSION (iOS 11): LayoutTest fast/events/ios/contenteditable-autocapitalize.html is failing
+fast/events/ios/contenteditable-autocapitalize.html [ Failure ]
+
+# <rdar://problem/32627945> PROGRESSION? (iOS 11): 4 mathml tests are failing
+mathml/presentation/mo-stretch.html [ ImageOnlyFailure ]
+mathml/presentation/multiscripts-equivalence.html [ ImageOnlyFailure ]
+mathml/presentation/roots.xhtml [ ImageOnlyFailure ]
+mathml/radical-fallback.html [ Failure ]
+
+# <rdar://problem/32632415> REGRESSION (ImageIO-1666): LayoutTests fast/images are failing together.
+canvas/philip/tests/2d.drawImage.animated.gif.html [ Failure ]
+canvas/philip/tests/2d.pattern.animated.gif.html [ Failure ]
+fast/images/slower-animation-than-decoding-image.html [ Failure ]
+fast/images/slower-decoding-than-animation-image.html [ Failure ]
+fast/images/reset-image-animation.html [ Failure ]
+fast/images/animated-image-loop-count.html [ ImageOnlyFailure ]
+fast/images/animated-image-different-dest-size.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32659595> iOS 11: LayoutTest fast/text/international/system-language/arabic-glyph-cache-fill-combine.html is failing
+fast/text/international/system-language/arabic-glyph-cache-fill-combine.html [ ImageOnlyFailure ]
+
+# <rdar://problem/32626498> REGRESSION (iOS 11/High Sierra): media/remote-control-command-seek.html is timing out
+media/remote-control-command-seek.html [ Timeout ]
+
+# <rdar://problem/32714935> iOS 11: LayoutTest security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html is timing out
+security/contentSecurityPolicy/video-with-data-url-allowed-by-media-src-star.html [ Timeout ]
+
+# <rdar://problem/32714919> iOS 11: http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html and allow-video.html are timing out
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Timeout ]
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Timeout ]
+
+# <rdar://problem/32715903> iOS 11: LayoutTest media/sources-fallback-codecs.html is failing
+media/sources-fallback-codecs.html [ Failure ]
+
+# <rdar://problem/32715902> iOS 11: LayoutTest media/video-src-blob-using-open-panel.html is failing
+media/video-src-blob-using-open-panel.html [ Failure ]
+
+# <rdar://problem/32799573> REGRESSION: LayoutTest fast/text/ipa-tone-letters.html is failing
+fast/text/ipa-tone-letters.html [ Failure ]
+
+# <rdar://problem/33251388> REGRESSION: Multiple imported/w3c/web-platform-tests/ are failing with blobs
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.html [ Failure ]
+imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker.html [ Failure ]
+imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type.html [ Failure ]
+
+# <rdar://problem/33602192> Text rendering issues in iOS 11
+fast/text/international/complex-character-based-fallback.html [ Failure ]
+
+# <rdar://problem/33250084> Text rendering issues in iOS 11
+fast/writing-mode/border-vertical-lr.html [ Failure ]
+fast/writing-mode/japanese-lr-text.html [ Failure ]
+fast/writing-mode/japanese-rl-text.html [ Failure ]
+fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure ]
+fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure ]
+fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure ]
+fast/writing-mode/vertical-align-table-baseline.html [ Failure ]
+fast/writing-mode/vertical-baseline-alignment.html [ Failure ]
+
+# <rdar://problem/33630526> http/tests/websocket/tests/hybi/deflate-frame-parameter.html is failing on iOS 11
+http/tests/websocket/tests/hybi/deflate-frame-parameter.html [ Failure ]
+
+# <rdar://problem/33630063> Multiple platform/ios/ios/fast/text/ are failing on iOS 11.
+platform/ios/ios/fast/text/opticalFontWithTextStyle.html [ Failure ]
+platform/ios/ios/fast/text/opticalFontWithWeight.html [ Failure ]
+
+# <rdar://problem/34051745>
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-idl.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-setLocalDescription.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/getstats.html [ Failure ]
+imported/w3c/web-platform-tests/webrtc/rtcpeerconnection/rtcpeerconnection-idl.html [ Failure ]
+webrtc/video-mute.html [ Failure ]
+webrtc/video-replace-track.html [ Failure ]
+webrtc/video-rotation.html [ Failure ]
+
+# <rdar://problem/34209038>
+webgl/1.0.2/conformance/ogles/GL/log/log_001_to_008.html [ Skip ]
+webgl/1.0.2/conformance/ogles/GL/log2/log2_001_to_008.html [ Skip ]
+
+# <rdar://problem/33135669>
+webgl/1.0.2/conformance/textures/gl-teximage.html [ Failure ]
+fast/canvas/webgl/gl-teximage.html [ Failure ]
+
+# <rdar://problem/30517283>
+security/block-test.html
+security/block-test-no-port.html
+
+# <rdar://problem/29031509>
+svg/W3C-SVG-1.1/text-intro-01-t.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-02-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
+svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
+svg/custom/acid3-test-77.html [ Failure ]
+
+# <rdar://problem/33731086>
+media/modern-media-controls/time-labels-support/elapsed-time.html [ Skip ]
+
+# <rdar://problem/33381269> REGRESSION: Multiple Layout test from webgl/1.0.2/conformance are timing out.
+webgl/1.0.2/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip  ]
+webgl/1.0.2/conformance/ogles/GL/acos/acos_001_to_006.html [ Skip  ]
+webgl/1.0.2/conformance/ogles/GL/asin/asin_001_to_006.html [ Skip  ]
+
+# <rdar://problem/28504406> LayoutTest fast/attachment/attachment-folder-icon.html failing
+fast/attachment/attachment-folder-icon.html [ ImageOnlyFailure ]
+
+fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
+
+# <rdar://problem/28835343> REGRESSION: LayoutTest http/tests/multipart/load-last-non-html-frame.php failing
+http/tests/multipart/load-last-non-html-frame.php [ Failure  ]

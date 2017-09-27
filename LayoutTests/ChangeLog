@@ -1,3 +1,77 @@
+2017-09-25  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Cherry-pick r222390.
+
+    2017-09-22  Ryan Haddad  <ryanhaddad@apple.com>
+
+            Move test expectations from 'ios-11' to 'ios' directory.
+            https://bugs.webkit.org/show_bug.cgi?id=177167
+
+            Unreviewed test gardening.
+
+            * platform/ios-11/TestExpectations: Removed.
+            * platform/ios-11/fast/text/emoji-expected.txt: Removed.
+            * platform/ios-11/fast/text/international/system-language/system-font-punctuation-expected.txt: Removed.
+            * platform/ios-11/http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt: Removed.
+            * platform/ios-11/http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt: Removed.
+            * platform/ios-11/mathml/presentation/mo-stretch-expected.txt: Removed.
+            * platform/ios-11/mathml/presentation/roots-expected.txt: Removed.
+            * platform/ios-11/mathml/radical-fallback-expected.txt: Removed.
+            * platform/ios/TestExpectations:
+            * platform/ios/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/ios-11/crypto/subtle/rsa-generate-key-malformed-parameters-expected.txt.
+            * platform/ios/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt: Renamed from LayoutTests/platform/ios-11/crypto/subtle/rsa-import-key-malformed-parameters-expected.txt.
+            * platform/ios/fast/css/getComputedStyle/computed-style-font-family-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/css/getComputedStyle/computed-style-font-family-expected.txt.
+            * platform/ios/fast/text/font-selection-font-face-parse-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/text/font-selection-font-face-parse-expected.txt.
+            * platform/ios/fast/text/font-selection-font-loading-api-parse-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/text/font-selection-font-loading-api-parse-expected.txt.
+            * platform/ios/fast/text/font-stretch-parse-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/text/font-stretch-parse-expected.txt.
+            * platform/ios/fast/text/font-style-parse-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/text/font-style-parse-expected.txt.
+            * platform/ios/fast/text/font-weight-parse-expected.txt: Renamed from LayoutTests/platform/ios-11/fast/text/font-weight-parse-expected.txt.
+            * platform/ios/fast/text/international/system-language/system-font-punctuation-expected.txt:
+            * platform/ios/http/tests/quicklook/at-import-stylesheet-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/at-import-stylesheet-blocked-expected.txt.
+            * platform/ios/http/tests/quicklook/base-url-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/base-url-blocked-expected.txt.
+            * platform/ios/http/tests/quicklook/cross-origin-iframe-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/cross-origin-iframe-blocked-expected.txt.
+            * platform/ios/http/tests/quicklook/csp-header-ignored-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/csp-header-ignored-expected.txt.
+            * platform/ios/http/tests/quicklook/document-domain-is-empty-string-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/document-domain-is-empty-string-expected.txt.
+            * platform/ios/http/tests/quicklook/external-stylesheet-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/external-stylesheet-blocked-expected.txt.
+            * platform/ios/http/tests/quicklook/hide-referer-on-navigation-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/hide-referer-on-navigation-expected.txt.
+            * platform/ios/http/tests/quicklook/submit-form-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/submit-form-blocked-expected.txt.
+            * platform/ios/http/tests/quicklook/top-navigation-blocked-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/quicklook/top-navigation-blocked-expected.txt.
+            * platform/ios/http/tests/security/contentSecurityPolicy/audio-redirect-blocked-expected.txt:
+            * platform/ios/http/tests/security/contentSecurityPolicy/video-redirect-blocked-expected.txt:
+            * platform/ios/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt: Renamed from LayoutTests/platform/ios-11/http/tests/websocket/tests/hybi/secure-cookie-secure-connection-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_long_empty.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/test_pbkdf2_short_empty.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/failures_RSA-PSS.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_failures_RSA-PSS.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/test_successes_RSA-PSS.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/rsa_importKey.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/import_export/test_rsa_importKey.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pkcs.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/rsa_pss.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pkcs.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/test_rsa_pss.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/test_wrapKey_unwrapKey.https-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/WebCryptoAPI/wrapKey_unwrapKey/wrapKey_unwrapKey.worker-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/XMLHttpRequest/send-blob-with-no-mime-type-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any-expected.txt.
+            * platform/ios/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt: Renamed from LayoutTests/platform/ios-11/imported/w3c/web-platform-tests/fetch/api/basic/request-headers.any.worker-expected.txt.
+            * platform/ios/mathml/presentation/mo-stretch-expected.txt:
+            * platform/ios/mathml/presentation/roots-expected.txt:
+            * platform/ios/mathml/radical-fallback-expected.txt:
+            * platform/ios/platform/ios/ios/fast/text/opticalFont-expected.txt: Renamed from LayoutTests/platform/ios-11/platform/ios/ios/fast/text/opticalFont-expected.txt.
+            * platform/ios/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt: Renamed from LayoutTests/platform/ios-11/platform/ios/ios/fast/text/opticalFontWithTextStyle-expected.txt.
+            * platform/ios/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt: Renamed from LayoutTests/platform/ios-11/platform/ios/ios/fast/text/opticalFontWithWeight-expected.txt.
+            * platform/ios/quicklook/excel-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/excel-expected.txt.
+            * platform/ios/quicklook/excel-legacy-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/excel-legacy-expected.txt.
+            * platform/ios/quicklook/excel-macro-enabled-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/excel-macro-enabled-expected.txt.
+            * platform/ios/quicklook/powerpoint-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/powerpoint-expected.txt.
+            * platform/ios/quicklook/powerpoint-legacy-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/powerpoint-legacy-expected.txt.
+            * platform/ios/quicklook/word-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/word-expected.txt.
+            * platform/ios/quicklook/word-legacy-expected.txt: Renamed from LayoutTests/platform/ios-11/quicklook/word-legacy-expected.txt.
+
 2017-09-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222474. rdar://problem/34646376
