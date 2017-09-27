@@ -1,5 +1,19 @@
 2017-09-27  Matt Baker  <mattbaker@apple.com>
 
+        Web Inspector: Missing checks in DebuggerSidebarPanel for DOM debugging support
+        https://bugs.webkit.org/show_bug.cgi?id=177574
+
+        Reviewed by Joseph Pecoraro.
+
+        Check before using class members that are conditionally constructed based
+        on DOM debugging support.
+
+        * UserInterface/Views/DebuggerSidebarPanel.js:
+        (WI.DebuggerSidebarPanel.prototype.closed):
+        (WI.DebuggerSidebarPanel.prototype.restoreStateFromCookie):
+
+2017-09-27  Matt Baker  <mattbaker@apple.com>
+
         Web Inspector: Create ResourceCollectionContentView and make CollectionContentView easier to extend
         https://bugs.webkit.org/show_bug.cgi?id=177419
 
