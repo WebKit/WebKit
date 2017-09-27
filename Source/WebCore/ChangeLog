@@ -1,3 +1,20 @@
+2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Several ARIA roles with presentational children are exposing children
+        https://bugs.webkit.org/show_bug.cgi?id=177502
+
+        Reviewed by Chris Fleizach.
+
+        Add MenuItemCheckboxRole, MenuItemRadioRole, and SplitterRole to the list
+        of AccessibilityRole types which cannot have children. In the case of
+        DocumentMathRole, only treat children as presentational (excluded from the
+        accessibility tree) if the element is not MathML.
+
+        Test: accessibility/presentational-children.html
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::canHaveChildren const):
+
 2017-09-26  Zalan Bujtas  <zalan@apple.com>
 
         Fall back to normal line layout position, when simple line layout fails to find one.

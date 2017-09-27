@@ -1,3 +1,17 @@
+2017-09-26  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        AX: Several ARIA roles with presentational children are exposing children
+        https://bugs.webkit.org/show_bug.cgi?id=177502
+
+        Reviewed by Chris Fleizach.
+
+        New test. Also update the results for the inspector because ARIA separators
+        and their subclass roles should not expose (claim to have) children.
+
+        * accessibility/presentational-children-expected.txt: Added.
+        * accessibility/presentational-children.html: Added.
+        * inspector/dom/getAccessibilityPropertiesForNode-expected.txt: Updated.
+
 2017-09-26  Zalan Bujtas  <zalan@apple.com>
 
         Fall back to normal line layout position, when simple line layout fails to find one.

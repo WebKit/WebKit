@@ -484,7 +484,6 @@ Total elements to be tested: 122.
     exists: true
     label: 
     role: separator
-    childNodeIds.length: 1
     parentNodeId: exists
 
 <div role="doc-notice">doc-notice</div>
