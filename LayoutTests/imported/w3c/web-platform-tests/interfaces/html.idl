@@ -1113,7 +1113,7 @@ interface CanvasTransform {
 
   [NewObject] DOMMatrix getTransform();
   void setTransform(unrestricted double a, unrestricted double b, unrestricted double c, unrestricted double d, unrestricted double e, unrestricted double f);
-  void setTransform(optional DOMMatrixInit transform);
+  void setTransform(optional DOMMatrix2DInit transform);
   void resetTransform();
 
 };
@@ -1271,7 +1271,7 @@ interface CanvasGradient {
 [Exposed=(Window,Worker)]
 interface CanvasPattern {
   // opaque object
-  void setTransform(optional DOMMatrixInit transform);
+  void setTransform(optional DOMMatrix2DInit transform);
 };
 
 interface TextMetrics {
@@ -1305,9 +1305,10 @@ interface ImageData {
 [Constructor,
  Constructor(Path2D path),
  Constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero"),
- Constructor(DOMString d), Exposed=(Window,Worker)]
+ Constructor(DOMString d),
+ Exposed=(Window,Worker)]
 interface Path2D {
-  void addPath(Path2D path, optional DOMMatrixInit transform);
+  void addPath(Path2D path, optional DOMMatrix2DInit transform);
 };
 Path2D implements CanvasPath;
 
@@ -1776,13 +1777,8 @@ interface NavigatorLanguage {
 
 [NoInterfaceObject]
 interface NavigatorContentUtils {
-  // content handler registration
   void registerProtocolHandler(DOMString scheme, USVString url, DOMString title);
-  void registerContentHandler(DOMString mimeType, USVString url, DOMString title);
-  DOMString isProtocolHandlerRegistered(DOMString scheme, USVString url);
-  DOMString isContentHandlerRegistered(DOMString mimeType, USVString url);
   void unregisterProtocolHandler(DOMString scheme, USVString url);
-  void unregisterContentHandler(DOMString mimeType, USVString url);
 };
 
 [NoInterfaceObject]

@@ -1,3 +1,25 @@
+2017-09-26  Chris Dumez  <cdumez@apple.com>
+
+        Update web-platform-tests IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=177515
+
+        Reviewed by Youenn Fablet.
+
+        Update web-platform-tests IDL files and rebaseline tests.
+
+        * web-platform-tests/WebIDL/interfaces-expected.txt:
+        * web-platform-tests/cssom-view/interfaces-expected.txt:
+        * web-platform-tests/cssom/interfaces-expected.txt:
+        * web-platform-tests/html/dom/interfaces-expected.txt:
+        * web-platform-tests/interfaces/cssom-view.idl: Added.
+        * web-platform-tests/interfaces/cssom.idl:
+        * web-platform-tests/interfaces/dom.idl:
+        * web-platform-tests/interfaces/geometry.idl:
+        * web-platform-tests/interfaces/html.idl:
+        * web-platform-tests/interfaces/payment-handler.idl: Added.
+        * web-platform-tests/interfaces/payment-request.idl: Added.
+        * web-platform-tests/interfaces/webidl.idl: Added.
+
 2017-09-25  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [css-grid] fit-content() tracks shouldn't stretch

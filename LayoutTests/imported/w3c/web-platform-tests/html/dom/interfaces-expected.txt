@@ -4088,7 +4088,7 @@ PASS CanvasRenderingContext2D interface: operation translate(unrestricted double
 PASS CanvasRenderingContext2D interface: operation transform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
 PASS CanvasRenderingContext2D interface: operation getTransform() 
 PASS CanvasRenderingContext2D interface: operation setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) 
-PASS CanvasRenderingContext2D interface: operation setTransform(DOMMatrixInit) 
+PASS CanvasRenderingContext2D interface: operation setTransform(DOMMatrix2DInit) 
 PASS CanvasRenderingContext2D interface: operation resetTransform() 
 PASS CanvasRenderingContext2D interface: attribute globalAlpha 
 PASS CanvasRenderingContext2D interface: attribute globalCompositeOperation 
@@ -4171,8 +4171,8 @@ PASS CanvasRenderingContext2D interface: calling transform(unrestricted double, 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "getTransform()" with the proper type 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double)" with the proper type 
 PASS CanvasRenderingContext2D interface: calling setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
-PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform(DOMMatrixInit)" with the proper type 
-PASS CanvasRenderingContext2D interface: calling setTransform(DOMMatrixInit) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "setTransform(DOMMatrix2DInit)" with the proper type 
+PASS CanvasRenderingContext2D interface: calling setTransform(DOMMatrix2DInit) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "resetTransform()" with the proper type 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalAlpha" with the proper type 
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "globalCompositeOperation" with the proper type 
@@ -4289,7 +4289,7 @@ PASS CanvasPattern interface object length
 PASS CanvasPattern interface object name 
 PASS CanvasPattern interface: existence and properties of interface prototype object 
 PASS CanvasPattern interface: existence and properties of interface prototype object's "constructor" property 
-FAIL CanvasPattern interface: operation setTransform(DOMMatrixInit) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
+FAIL CanvasPattern interface: operation setTransform(DOMMatrix2DInit) assert_own_property: interface prototype object missing non-static operation expected property "setTransform" missing
 PASS TextMetrics interface: existence and properties of interface object 
 PASS TextMetrics interface object length 
 PASS TextMetrics interface object name 
@@ -4320,7 +4320,7 @@ PASS Path2D interface object length
 PASS Path2D interface object name 
 PASS Path2D interface: existence and properties of interface prototype object 
 PASS Path2D interface: existence and properties of interface prototype object's "constructor" property 
-PASS Path2D interface: operation addPath(Path2D, DOMMatrixInit) 
+PASS Path2D interface: operation addPath(Path2D, DOMMatrix2DInit) 
 PASS Path2D interface: operation closePath() 
 PASS Path2D interface: operation moveTo(unrestricted double, unrestricted double) 
 PASS Path2D interface: operation lineTo(unrestricted double, unrestricted double) 
@@ -4363,7 +4363,7 @@ FAIL OffscreenCanvasRenderingContext2D interface: operation translate(unrestrict
 FAIL OffscreenCanvasRenderingContext2D interface: operation transform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation getTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double, unrestricted double) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
-FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(DOMMatrixInit) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
+FAIL OffscreenCanvasRenderingContext2D interface: operation setTransform(DOMMatrix2DInit) assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: operation resetTransform() assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute globalAlpha assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute globalCompositeOperation assert_own_property: self does not have own property "OffscreenCanvasRenderingContext2D" expected property "OffscreenCanvasRenderingContext2D" missing
@@ -4921,11 +4921,7 @@ PASS Navigator interface: attribute language
 PASS Navigator interface: attribute languages 
 PASS Navigator interface: attribute onLine 
 FAIL Navigator interface: operation registerProtocolHandler(DOMString, USVString, DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerProtocolHandler" missing
-FAIL Navigator interface: operation registerContentHandler(DOMString, USVString, DOMString) assert_own_property: interface prototype object missing non-static operation expected property "registerContentHandler" missing
-FAIL Navigator interface: operation isProtocolHandlerRegistered(DOMString, USVString) assert_own_property: interface prototype object missing non-static operation expected property "isProtocolHandlerRegistered" missing
-FAIL Navigator interface: operation isContentHandlerRegistered(DOMString, USVString) assert_own_property: interface prototype object missing non-static operation expected property "isContentHandlerRegistered" missing
 FAIL Navigator interface: operation unregisterProtocolHandler(DOMString, USVString) assert_own_property: interface prototype object missing non-static operation expected property "unregisterProtocolHandler" missing
-FAIL Navigator interface: operation unregisterContentHandler(DOMString, USVString) assert_own_property: interface prototype object missing non-static operation expected property "unregisterContentHandler" missing
 PASS Navigator interface: attribute cookieEnabled 
 PASS Navigator interface: attribute plugins 
 PASS Navigator interface: attribute mimeTypes 
@@ -4949,16 +4945,8 @@ PASS Navigator interface: window.navigator must inherit property "languages" wit
 PASS Navigator interface: window.navigator must inherit property "onLine" with the proper type 
 FAIL Navigator interface: window.navigator must inherit property "registerProtocolHandler(DOMString, USVString, DOMString)" with the proper type assert_inherits: property "registerProtocolHandler" not found in prototype chain
 FAIL Navigator interface: calling registerProtocolHandler(DOMString, USVString, DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "registerProtocolHandler" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "registerContentHandler(DOMString, USVString, DOMString)" with the proper type assert_inherits: property "registerContentHandler" not found in prototype chain
-FAIL Navigator interface: calling registerContentHandler(DOMString, USVString, DOMString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "registerContentHandler" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "isProtocolHandlerRegistered(DOMString, USVString)" with the proper type assert_inherits: property "isProtocolHandlerRegistered" not found in prototype chain
-FAIL Navigator interface: calling isProtocolHandlerRegistered(DOMString, USVString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "isProtocolHandlerRegistered" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "isContentHandlerRegistered(DOMString, USVString)" with the proper type assert_inherits: property "isContentHandlerRegistered" not found in prototype chain
-FAIL Navigator interface: calling isContentHandlerRegistered(DOMString, USVString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "isContentHandlerRegistered" not found in prototype chain
 FAIL Navigator interface: window.navigator must inherit property "unregisterProtocolHandler(DOMString, USVString)" with the proper type assert_inherits: property "unregisterProtocolHandler" not found in prototype chain
 FAIL Navigator interface: calling unregisterProtocolHandler(DOMString, USVString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "unregisterProtocolHandler" not found in prototype chain
-FAIL Navigator interface: window.navigator must inherit property "unregisterContentHandler(DOMString, USVString)" with the proper type assert_inherits: property "unregisterContentHandler" not found in prototype chain
-FAIL Navigator interface: calling unregisterContentHandler(DOMString, USVString) on window.navigator with too few arguments must throw TypeError assert_inherits: property "unregisterContentHandler" not found in prototype chain
 PASS Navigator interface: window.navigator must inherit property "cookieEnabled" with the proper type 
 PASS Navigator interface: window.navigator must inherit property "plugins" with the proper type 
 PASS Navigator interface: window.navigator must inherit property "mimeTypes" with the proper type 
