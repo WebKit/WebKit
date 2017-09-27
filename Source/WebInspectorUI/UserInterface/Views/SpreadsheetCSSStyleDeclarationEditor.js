@@ -85,7 +85,6 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
         this._property = property;
         this._element = document.createElement("div");
-        this._element.classList.add("property");
 
         this._update();
     }
@@ -99,7 +98,47 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
     _update()
     {
         this.element.removeChildren();
-        this.element.classList.toggle("disabled", !this._property.enabled);
+        this.element.className = "";
+
+        let duplicatePropertyExistsBelow = (cssProperty) => {
+            let propertyFound = false;
+
+            for (let property of this._property.ownerStyle.properties) {
+                if (property === cssProperty)
+                    propertyFound = true;
+                else if (property.name === cssProperty.name && propertyFound)
+                    return true;
+            }
+
+            return false;
+        };
+
+        let classNames = ["property"];
+
+        if (this._property.overridden)
+            classNames.push("overridden");
+
+        if (this._property.implicit)
+            classNames.push("implicit");
+
+        if (this._property.ownerStyle.inherited && !this._property.inherited)
+            classNames.push("not-inherited");
+
+        if (!this._property.valid && this._property.hasOtherVendorNameOrKeyword())
+            classNames.push("other-vendor");
+        else if (!this._property.valid) {
+            let propertyNameIsValid = false;
+            if (WI.CSSCompletions.cssNameCompletions)
+                propertyNameIsValid = WI.CSSCompletions.cssNameCompletions.isValidPropertyName(this._property.name);
+
+            if (!propertyNameIsValid || duplicatePropertyExistsBelow(this._property))
+                classNames.push("invalid");
+        }
+
+        if (!this._property.enabled)
+            classNames.push("disabled");
+
+        this._element.classList.add(...classNames);
 
         if (this._property.editable) {
             this._checkboxElement = this.element.appendChild(document.createElement("input"));

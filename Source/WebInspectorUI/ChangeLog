@@ -1,3 +1,25 @@
+2017-09-26  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: Style unused, overridden, and invalid properties differently
+        https://bugs.webkit.org/show_bug.cgi?id=177461
+
+        Reviewed by Matt Baker.
+
+        Style properties the same way as in the current styles sidebar with two minor changes:
+        - Commented out properties are never strikethrough.
+        - Non-inherited properties of inherited rules are no longer strikethrough (but still semi-transparent).
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.css:
+        (.spreadsheet-style-declaration-editor .property:matches(.invalid, .other-vendor, .overridden):not(.disabled)):
+        Use the same styles as in the old sidebar, with exception of `-webkit-text-stroke-width: 0.000000000000001px`
+        hack, which was replaced by -webkit-text-decoration-color.
+
+        (.spreadsheet-style-declaration-editor .property.invalid:not(.disabled)):
+        (.spreadsheet-style-declaration-editor .property.not-inherited):
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetStyleProperty):
+        (WI.SpreadsheetStyleProperty.prototype._update):
+
 2017-09-26  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Improve Table scrolling performance
