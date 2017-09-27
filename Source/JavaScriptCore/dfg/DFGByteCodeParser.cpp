@@ -2334,6 +2334,13 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     }
         
     case ArrayPushIntrinsic: {
+#if USE(JSVALUE32_64)
+        if (isX86() || isMIPS()) {
+            if (argumentCountIncludingThis > 2)
+                return false;
+        }
+#endif
+
         if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
             return false;
         
