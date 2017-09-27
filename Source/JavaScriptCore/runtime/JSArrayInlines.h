@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Error.h"
 #include "JSArray.h"
 #include "JSCellInlines.h"
 #include "Structure.h"
