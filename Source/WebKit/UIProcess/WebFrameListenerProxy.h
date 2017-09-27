@@ -25,24 +25,35 @@
 
 #pragma once
 
-#include "WebFrameListenerProxy.h"
+#include "APINavigation.h"
+#include "APIObject.h"
+#include <WebCore/FrameLoaderTypes.h>
+#include <wtf/Ref.h>
+#include <wtf/RefPtr.h>
 
 namespace WebKit {
 
-class WebFormSubmissionListenerProxy : public API::ObjectImpl<API::Object::Type::FormSubmissionListener> {
-public:
-    static Ref<WebFormSubmissionListenerProxy> create(WTF::Function<void(void)>&& completionHandler)
-    {
-        return adoptRef(*new WebFormSubmissionListenerProxy(WTFMove(completionHandler)));
-    }
+class WebFrameProxy;
+struct WebsitePolicies;
 
-    void continueSubmission();
+class WebFrameListenerProxy : public API::Object {
+public:
+    virtual ~WebFrameListenerProxy();
+
+    void invalidate();
+    uint64_t listenerID() const { return m_listenerID; }
+
+    void setNavigation(Ref<API::Navigation>&& navigation) { m_navigation = WTFMove(navigation); }
+
+protected:
+    WebFrameListenerProxy(WebFrameProxy*, uint64_t listenerID);
+
+    void receivedPolicyDecision(WebCore::PolicyAction, const WebsitePolicies&);
 
 private:
-    WebFormSubmissionListenerProxy(WTF::Function<void(void)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
-    { }
-    WTF::Function<void(void)> m_completionHandler;
+    RefPtr<WebFrameProxy> m_frame;
+    uint64_t m_listenerID;
+    RefPtr<API::Navigation> m_navigation;
 };
 
 } // namespace WebKit

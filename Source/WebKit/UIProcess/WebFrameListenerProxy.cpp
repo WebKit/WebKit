@@ -23,26 +23,35 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#include "config.h"
 #include "WebFrameListenerProxy.h"
+
+#include "WebFrameProxy.h"
 
 namespace WebKit {
 
-class WebFormSubmissionListenerProxy : public API::ObjectImpl<API::Object::Type::FormSubmissionListener> {
-public:
-    static Ref<WebFormSubmissionListenerProxy> create(WTF::Function<void(void)>&& completionHandler)
-    {
-        return adoptRef(*new WebFormSubmissionListenerProxy(WTFMove(completionHandler)));
-    }
+WebFrameListenerProxy::WebFrameListenerProxy(WebFrameProxy* frame, uint64_t listenerID)
+    : m_frame(frame)
+    , m_listenerID(listenerID)
+{
+}
 
-    void continueSubmission();
+WebFrameListenerProxy::~WebFrameListenerProxy()
+{
+}
 
-private:
-    WebFormSubmissionListenerProxy(WTF::Function<void(void)>&& completionHandler)
-        : m_completionHandler(WTFMove(completionHandler))
-    { }
-    WTF::Function<void(void)> m_completionHandler;
-};
+void WebFrameListenerProxy::invalidate()
+{
+    m_frame = nullptr;
+}
+
+void WebFrameListenerProxy::receivedPolicyDecision(WebCore::PolicyAction action, const WebsitePolicies& websitePolicies)
+{
+    if (!m_frame)
+        return;
+
+    m_frame->receivedPolicyDecision(action, m_listenerID, m_navigation.get(), websitePolicies);
+    m_frame = nullptr;
+}
 
 } // namespace WebKit

@@ -26,8 +26,8 @@
 #include "config.h"
 #include "WebFrameProxy.h"
 
-#include "APINavigation.h"
 #include "WebCertificateInfo.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPasteboardProxy.h"
@@ -60,6 +60,11 @@ WebFrameProxy::~WebFrameProxy()
 void WebFrameProxy::webProcessWillShutDown()
 {
     m_page = nullptr;
+
+    if (m_activeListener) {
+        m_activeListener->invalidate();
+        m_activeListener = nullptr;
+    }
 }
 
 bool WebFrameProxy::isMainFrame() const
@@ -168,6 +173,24 @@ void WebFrameProxy::didSameDocumentNavigation(const URL& url)
 void WebFrameProxy::didChangeTitle(const String& title)
 {
     m_title = title;
+}
+
+void WebFrameProxy::receivedPolicyDecision(PolicyAction action, uint64_t listenerID, API::Navigation* navigation, const WebsitePolicies& websitePolicies)
+{
+    if (!m_page)
+        return;
+
+    ASSERT(m_activeListener);
+    ASSERT(m_activeListener->listenerID() == listenerID);
+    m_page->receivedPolicyDecision(action, *this, listenerID, navigation, websitePolicies);
+}
+
+WebFramePolicyListenerProxy& WebFrameProxy::setUpPolicyListenerProxy(uint64_t listenerID)
+{
+    if (m_activeListener)
+        m_activeListener->invalidate();
+    m_activeListener = WebFramePolicyListenerProxy::create(this, listenerID);
+    return *static_cast<WebFramePolicyListenerProxy*>(m_activeListener.get());
 }
 
 void WebFrameProxy::getWebArchive(Function<void (API::Data*, CallbackBase::Error)>&& callbackFunction)

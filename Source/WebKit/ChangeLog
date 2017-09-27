@@ -1,3 +1,18 @@
+2017-09-27  Commit Queue  <commit-queue@webkit.org>
+
+        Unreviewed, rolling out r222541.
+        https://bugs.webkit.org/show_bug.cgi?id=177580
+
+        WebCore isn't ready for the asynchronousness this was going to
+        enable (Requested by alexchristensen on #webkit).
+
+        Reverted changeset:
+
+        "Pass a completion handler instead of a
+        WebFramePolicyListenerProxy during policy decisions"
+        https://bugs.webkit.org/show_bug.cgi?id=177509
+        http://trac.webkit.org/changeset/222541
+
 2017-09-27  Tina Liu  <iting_liu@apple.com>
 
         Expose setShouldSuppressFirstResponderChanges() as WKView SPI

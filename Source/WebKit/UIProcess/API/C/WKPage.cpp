@@ -38,7 +38,6 @@
 #include "APIGeometry.h"
 #include "APIHitTestResult.h"
 #include "APILoaderClient.h"
-#include "APINavigation.h"
 #include "APINavigationAction.h"
 #include "APINavigationClient.h"
 #include "APINavigationResponse.h"
@@ -63,7 +62,6 @@
 #include "WKPluginInformation.h"
 #include "WebBackForwardList.h"
 #include "WebFormClient.h"
-#include "WebFramePolicyListenerProxy.h"
 #include "WebImage.h"
 #include "WebInspectorProxy.h"
 #include "WebOpenPanelResultListenerProxy.h"
@@ -1350,14 +1348,13 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
         }
 
     private:
-        void decidePolicyForNavigationAction(WebPageProxy& page, WebFrameProxy* frame, const NavigationActionData& navigationActionData, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* userData) override
+        void decidePolicyForNavigationAction(WebPageProxy& page, WebFrameProxy* frame, const NavigationActionData& navigationActionData, WebFrameProxy* originatingFrame, const WebCore::ResourceRequest& originalResourceRequest, const WebCore::ResourceRequest& resourceRequest, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForNavigationAction_deprecatedForUseWithV0 && !m_client.decidePolicyForNavigationAction_deprecatedForUseWithV1 && !m_client.decidePolicyForNavigationAction) {
-                completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+                listener->use({ });
                 return;
             }
 
-            auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
             Ref<API::URLRequest> originalRequest = API::URLRequest::create(originalResourceRequest);
             Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
@@ -1369,27 +1366,25 @@ void WKPageSetPagePolicyClient(WKPageRef pageRef, const WKPagePolicyClientBase* 
                 m_client.decidePolicyForNavigationAction(toAPI(&page), toAPI(frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(originatingFrame), toAPI(originalRequest.ptr()), toAPI(request.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void decidePolicyForNewWindowAction(WebPageProxy& page, WebFrameProxy& frame, const NavigationActionData& navigationActionData, const ResourceRequest& resourceRequest, const String& frameName, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* userData) override
+        void decidePolicyForNewWindowAction(WebPageProxy& page, WebFrameProxy& frame, const NavigationActionData& navigationActionData, const ResourceRequest& resourceRequest, const String& frameName, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForNewWindowAction) {
-                completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+                listener->use({ });
                 return;
             }
 
-            auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
             Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
             m_client.decidePolicyForNewWindowAction(toAPI(&page), toAPI(&frame), toAPI(navigationActionData.navigationType), toAPI(navigationActionData.modifiers), toAPI(navigationActionData.mouseButton), toAPI(request.ptr()), toAPI(frameName.impl()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void decidePolicyForResponse(WebPageProxy& page, WebFrameProxy& frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* userData) override
+        void decidePolicyForResponse(WebPageProxy& page, WebFrameProxy& frame, const ResourceResponse& resourceResponse, const ResourceRequest& resourceRequest, bool canShowMIMEType, Ref<WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForResponse_deprecatedForUseWithV0 && !m_client.decidePolicyForResponse) {
-                completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+                listener->use({ });
                 return;
             }
 
-            auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
             Ref<API::URLResponse> response = API::URLResponse::create(resourceResponse);
             Ref<API::URLRequest> request = API::URLRequest::create(resourceRequest);
 
@@ -2145,23 +2140,21 @@ void WKPageSetPageNavigationClient(WKPageRef pageRef, const WKPageNavigationClie
         }
 
     private:
-        void decidePolicyForNavigationAction(WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* userData) final
+        void decidePolicyForNavigationAction(WebPageProxy& page, Ref<API::NavigationAction>&& navigationAction, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object* userData) final
         {
             if (!m_client.decidePolicyForNavigationAction) {
-                completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+                listener->use({ });
                 return;
             }
-            auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
             m_client.decidePolicyForNavigationAction(toAPI(&page), toAPI(navigationAction.ptr()), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 
-        void decidePolicyForNavigationResponse(WebPageProxy& page, API::NavigationResponse& navigationResponse, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, API::Object* userData) override
+        void decidePolicyForNavigationResponse(WebPageProxy& page, API::NavigationResponse& navigationResponse, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, API::Object* userData) override
         {
             if (!m_client.decidePolicyForNavigationResponse) {
-                completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+                listener->use({ });
                 return;
             }
-            auto listener = WebFramePolicyListenerProxy::create(WTFMove(completionHandler));
             m_client.decidePolicyForNavigationResponse(toAPI(&page), toAPI(&navigationResponse), toAPI(listener.ptr()), toAPI(userData), m_client.base.clientInfo);
         }
 

@@ -28,7 +28,6 @@
 
 #include "APIArray.h"
 #include "APIAutomationSessionClient.h"
-#include "APINavigation.h"
 #include "APIOpenPanelParameters.h"
 #include "AutomationProtocolObjects.h"
 #include "WebAutomationSessionMacros.h"

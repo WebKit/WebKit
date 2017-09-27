@@ -26,11 +26,11 @@
 #pragma once
 
 #include "APIData.h"
-#include "DownloadID.h"
 #include "PluginModuleInfo.h"
 #include "ProcessTerminationReason.h"
 #include "SameDocumentNavigationType.h"
 #include "WebEvent.h"
+#include "WebFramePolicyListenerProxy.h"
 #include "WebsitePolicies.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LayoutMilestones.h>
@@ -40,15 +40,14 @@ namespace WebCore {
 class ResourceError;
 class ResourceRequest;
 class ResourceResponse;
-class URL;
 struct SecurityOriginData;
 }
 
 namespace WebKit {
 class AuthenticationChallengeProxy;
-class DownloadID;
 class QuickLookDocumentData;
 class WebBackForwardListItem;
+class WebFramePolicyListenerProxy;
 class WebFrameProxy;
 class WebPageProxy;
 class WebProtectionSpace;
@@ -97,14 +96,14 @@ public:
     virtual void didFinishLoadForQuickLookDocumentInMainFrame(const WebKit::QuickLookDocumentData&) { }
 #endif
 
-    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, Object*)
+    virtual void decidePolicyForNavigationAction(WebKit::WebPageProxy&, Ref<NavigationAction>&&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
-        completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+        listener->use({ });
     }
 
-    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, NavigationResponse&, Function<void(WebCore::PolicyAction, std::optional<WebKit::WebsitePolicies>&&)>&& completionHandler, Object*)
+    virtual void decidePolicyForNavigationResponse(WebKit::WebPageProxy&, NavigationResponse&, Ref<WebKit::WebFramePolicyListenerProxy>&& listener, Object*)
     {
-        completionHandler(WebCore::PolicyAction::Use, std::nullopt);
+        listener->use({ });
     }
     
 #if ENABLE(NETSCAPE_PLUGIN_API)
