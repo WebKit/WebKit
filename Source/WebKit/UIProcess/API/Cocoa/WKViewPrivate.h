@@ -132,6 +132,8 @@
 
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event;
 
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+
 @property (nonatomic, readwrite, setter=_setWantsMediaPlaybackControlsView:) BOOL _wantsMediaPlaybackControlsView;
 @property (nonatomic, readonly)  id _mediaPlaybackControlsView;
 - (void)_addMediaPlaybackControlsView:(id)mediaPlaybackControlsView;

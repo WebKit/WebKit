@@ -1,3 +1,18 @@
+2017-09-27  Tina Liu  <iting_liu@apple.com>
+
+        Expose setShouldSuppressFirstResponderChanges() as WKView SPI
+        https://bugs.webkit.org/show_bug.cgi?id=177513
+        <rdar://problem/34669220>
+
+        Reviewed by Wenson Hsieh.
+
+        We already have setShouldSuppressFirstResponderChanges() SPI on WKWebView; Expose it on
+        WKView as well for clients using legacy WebKit.
+
+        * UIProcess/API/Cocoa/WKViewPrivate.h:
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setShouldSuppressFirstResponderChanges:]):
+
 2017-09-27  Chris Dumez  <cdumez@apple.com>
 
         Have PingLoad take a CompletionHandler

@@ -1605,6 +1605,10 @@ static _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::Scrol
     });
 }
 
+- (void)_setShouldSuppressFirstResponderChanges:(BOOL)shouldSuppress
+{
+    _data->_impl->setShouldSuppressFirstResponderChanges(shouldSuppress);
+}
 @end
 
 #endif // PLATFORM(MAC)
