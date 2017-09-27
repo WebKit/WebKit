@@ -1,5 +1,27 @@
 2017-09-26  Jason Marcell  <jmarcell@apple.com>
 
+        Cherry-pick r222539. rdar://problem/34205774
+
+    2017-09-26  Zalan Bujtas  <zalan@apple.com>
+
+            Fall back to normal line layout position, when simple line layout fails to find one.
+            https://bugs.webkit.org/show_bug.cgi?id=176220
+            <rdar://problem/34205774>
+
+            Reviewed by Brent Fulgham.
+
+            In case of empty content, let's just fall back to normal line layout and try to
+            find the visually correct one.
+
+            Test: fast/text/invalid-positionForPoint-offset.html
+
+            * rendering/RenderText.cpp:
+            (WebCore::RenderText::positionForPoint):
+            * rendering/SimpleLineLayoutResolver.cpp:
+            (WebCore::SimpleLineLayout::RunResolver::runForPoint const):
+
+2017-09-26  Jason Marcell  <jmarcell@apple.com>
+
         Cherry-pick r222474. rdar://problem/34646376
 
     2017-09-25  Per Arne Vollan  <pvollan@apple.com>
