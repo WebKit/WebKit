@@ -2104,31 +2104,31 @@ sub generateBuildSystemFromCMakeProject
 
 sub buildCMakeGeneratedProject($)
 {
-    my ($makeArgs) = @_;
+    my (@makeArgs) = @_;
     my $config = configuration();
     my $buildPath = File::Spec->catdir(baseProductDir(), $config);
     if (! -d $buildPath) {
         die "Must call generateBuildSystemFromCMakeProject() before building CMake project.";
     }
 
+    if ($ENV{VERBOSE} && canUseNinja()) {
+        push @makeArgs, "-v";
+        push @makeArgs, "-d keeprsp" if (version->parse(determineNinjaVersion()) >= version->parse("1.4.0"));
+    }
+
     my $command = "cmake";
     my @args = ("--build", $buildPath, "--config", $config);
-    push @args, ("--", $makeArgs) if $makeArgs;
+    push @args, ("--", @makeArgs) if @makeArgs;
 
     # GTK and JSCOnly can use a build script to preserve colors and pretty-printing.
     if ((isGtk() || isJSCOnly()) && -e "$buildPath/build.sh") {
         chdir "$buildPath" or die;
         $command = "$buildPath/build.sh";
-        @args = ($makeArgs);
-    }
-
-    if ($ENV{VERBOSE} && canUseNinja()) {
-        push @args, "-v";
-        push @args, "-d keeprsp" if (version->parse(determineNinjaVersion()) >= version->parse("1.4.0"));
+        @args = (@makeArgs);
     }
 
     # We call system("cmake @args") instead of system("cmake", @args) so that @args is
-    # parsed for shell metacharacters. In particular, $makeArgs may contain such metacharacters.
+    # parsed for shell metacharacters. In particular, @makeArgs may contain such metacharacters.
     my $wrapper = join(" ", wrapperPrefixIfNeeded()) . " ";
     return systemVerbose($wrapper . "$command @args");
 }

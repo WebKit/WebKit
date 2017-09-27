@@ -51,6 +51,7 @@ my $originalWorkingDirectory = getcwd();
 chdirWebKit();
 
 my $showHelp = 0;
+my $verbose = 0;
 my $clean = 0;
 my $defaultCMakeFeatures = 0;
 my $minimal = 0;
@@ -88,6 +89,7 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
+  --verbose                         Show verbose build output
   --clean                           Cleanup the build directory
   --generate-project-only           Only generate project files
   --debug                           Compile with Debug configuration
@@ -119,6 +121,7 @@ EOF
 
 my %options = (
     'help' => \$showHelp,
+    'v|verbose' => \$verbose,
     'clean' => \$clean,
     'install-headers=s' => \$installHeaders,
     'install-libs=s' => \$installLibs,
@@ -145,6 +148,8 @@ if ($showHelp) {
    print STDERR $usage;
    exit 1;
 }
+
+$ENV{'VERBOSE'} = 1 if $verbose;
 
 checkRequiredSystemConfig();
 setConfiguration();

@@ -1,3 +1,21 @@
+2017-09-26  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to easily get verbose ninja output from build-webkit
+        https://bugs.webkit.org/show_bug.cgi?id=177511
+
+        Reviewed by Sam Weinig.
+
+        * Scripts/build-webkit:
+        Add a -v/--verbose argument to build-webkit, which sets the environment
+        variable VERBOSE=1, which buildCMakeGeneratedProject already checks.
+
+        * Scripts/webkitdirs.pm:
+        (buildCMakeGeneratedProject):
+        Add ninja verbosity arguments to @makeArgs, which are appended
+        after the -- and thus handed to ninja; the previous implementation
+        (appending to @args) would only work if @makeArgs was non-empty and thus
+        the -- was included.
+
 2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r222427): SynchronizedFixedQueue should not have a public constructor
