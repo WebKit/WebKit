@@ -268,7 +268,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (UNLIKELY(AXObjectCache::accessibilityEnabled())) {
         if (AXObjectCache* cache = document().existingAXObjectCache())
-            cache->recomputeIsIgnored(this);
+            cache->deferRecomputeIsIgnored(element());
     }
 
     repaintOrMarkForLayout(imageSizeChange, rect);
