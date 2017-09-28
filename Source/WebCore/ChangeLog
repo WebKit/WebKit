@@ -1,5 +1,15 @@
 2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, fix the internal build after r222596 and r222595.
+
+        Guarding code in PlatformPasteboardIOS.mm TARGET_OS_IPHONE did not have the intended effect.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Unreviewed, fix the internal build after r222595.
 
         Add missing iOS compiler guards.

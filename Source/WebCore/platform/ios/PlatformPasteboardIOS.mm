@@ -436,7 +436,7 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
 
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
 {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
     ListHashSet<String> domPasteboardTypes;
     for (NSItemProvider *provider in [m_pasteboard itemProviders]) {
         if (!provider.teamData.length)
@@ -483,7 +483,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
 
 long PlatformPasteboard::write(const PasteboardCustomData& data)
 {
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
     [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
