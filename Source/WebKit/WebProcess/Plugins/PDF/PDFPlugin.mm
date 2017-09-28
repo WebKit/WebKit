@@ -1033,9 +1033,11 @@ void PDFPlugin::pdfDocumentDidLoad()
     if ([document isLocked])
         createPasswordEntryForm();
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101304
-    String pdfURLFragment = webFrame()->url().fragmentIdentifier();
-    [m_pdfLayerController setURLFragment:pdfURLFragment];
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300
+    if ([m_pdfLayerController respondsToSelector:@selector(setURLFragment:)]) {
+        String pdfURLFragment = webFrame()->url().fragmentIdentifier();
+        [m_pdfLayerController setURLFragment:pdfURLFragment];
+    }
 #endif
 }
     

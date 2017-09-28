@@ -1,3 +1,13 @@
+2017-09-28  Timothy Horton  <timothy_horton@apple.com>
+
+        Revise deployment target macros from r222620
+
+        Rubber-stamped by Wenson Hsieh.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerSPI.h:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad):
+
 2017-09-28  Aishwarya Nirmal  <anirmal@apple.com>
 
         Request for PDF URL targets for specific pages, sections, etc.
