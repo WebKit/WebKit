@@ -1,3 +1,71 @@
+2017-09-28  Mark Lam  <mark.lam@apple.com>
+
+        Add missing exception checks and book-keeping for exception check validation.
+        https://bugs.webkit.org/show_bug.cgi?id=177609
+        <rdar://problem/34717972>
+
+        Reviewed by Keith Miller.
+
+        This resolves exception check validation failures when running test262 tests and
+        a few other tests.
+
+        * API/APIUtils.h:
+        (handleExceptionIfNeeded):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectMakeArray):
+        (JSObjectMakeDate):
+        (JSObjectMakeError):
+        (JSObjectMakeRegExp):
+        (JSObjectSetPrototype):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * API/JSTypedArray.cpp:
+        (JSObjectMakeTypedArray):
+        (JSObjectMakeTypedArrayWithBytesNoCopy):
+        (JSObjectMakeTypedArrayWithArrayBuffer):
+        (JSObjectMakeTypedArrayWithArrayBufferAndOffset):
+        (JSObjectMakeArrayBufferWithBytesNoCopy):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueCreateJSONString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::executeProgram):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncIndexOf):
+        (JSC::arrayProtoFuncLastIndexOf):
+        * runtime/DatePrototype.cpp:
+        (JSC::fillStructuresUsingTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSGenericTypedArrayViewConstructorInlines.h:
+        (JSC::constructGenericTypedArrayViewWithArguments):
+        * runtime/JSModuleEnvironment.cpp:
+        (JSC::JSModuleEnvironment::put):
+        * runtime/ProgramExecutable.cpp:
+        (JSC::ProgramExecutable::initializeGlobalProperties):
+        * runtime/ProxyObject.cpp:
+        (JSC::ProxyObject::toStringName):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncCharAt):
+        (JSC::stringProtoFuncCharCodeAt):
+        (JSC::stringProtoFuncIndexOf):
+        (JSC::stringProtoFuncLastIndexOf):
+        (JSC::stringProtoFuncSlice):
+        (JSC::stringProtoFuncSplitFast):
+        (JSC::stringProtoFuncSubstr):
+
 2017-09-27  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match

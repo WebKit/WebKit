@@ -37,10 +37,8 @@ enum class ExceptionStatus {
     DidNotThrow
 };
 
-inline ExceptionStatus handleExceptionIfNeeded(JSC::ExecState* exec, JSValueRef* returnedExceptionRef)
+inline ExceptionStatus handleExceptionIfNeeded(JSC::CatchScope& scope, JSC::ExecState* exec, JSValueRef* returnedExceptionRef)
 {
-    JSC::VM& vm = exec->vm();
-    auto scope = DECLARE_CATCH_SCOPE(vm);
     if (UNLIKELY(scope.exception())) {
         JSC::Exception* exception = scope.exception();
         if (returnedExceptionRef)

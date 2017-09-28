@@ -931,7 +931,8 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_val)
         LLINT_CHECK_EXCEPTION();
         couldDelete = baseObject->methodTable(vm)->deleteProperty(baseObject, exec, property);
     }
-    
+    LLINT_CHECK_EXCEPTION();
+
     if (!couldDelete && exec->codeBlock()->isStrictMode())
         LLINT_THROW(createTypeError(exec, UnableToDeletePropertyError));
     

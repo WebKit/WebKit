@@ -1120,9 +1120,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncIndexOf(ExecState* exec)
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (!e)
             continue;
-        if (JSValue::strictEqual(exec, searchElement, e))
-            return JSValue::encode(jsNumber(index));
+        bool isEqual = JSValue::strictEqual(exec, searchElement, e);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
+        if (isEqual)
+            return JSValue::encode(jsNumber(index));
     }
 
     return JSValue::encode(jsNumber(-1));
@@ -1146,6 +1147,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncLastIndexOf(ExecState* exec)
     if (exec->argumentCount() >= 2) {
         JSValue fromValue = exec->uncheckedArgument(1);
         double fromDouble = fromValue.toInteger(exec);
+        RETURN_IF_EXCEPTION(scope, encodedJSValue());
         if (fromDouble < 0) {
             fromDouble += length;
             if (fromDouble < 0)

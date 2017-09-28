@@ -126,6 +126,7 @@ bool JSModuleEnvironment::put(JSCell* cell, ExecState* exec, PropertyName proper
         throwTypeError(exec, scope, ASCIILiteral(ReadonlyPropertyWriteError));
         return false;
     }
+    scope.release();
     return Base::put(thisObject, exec, propertyName, value, slot);
 }
 

@@ -58,10 +58,13 @@ String ProxyObject::toStringName(const JSObject* object, ExecState* exec)
     const ProxyObject* proxy = jsCast<const ProxyObject*>(object);
     while (proxy) {
         const JSObject* target = proxy->target();
-        if (isArray(exec, target))
-            return target->classInfo(vm)->methodTable.toStringName(target, exec);
+        bool targetIsArray = isArray(exec, target);
         if (UNLIKELY(scope.exception()))
             break;
+        if (targetIsArray) {
+            scope.release();
+            return target->classInfo(vm)->methodTable.toStringName(target, exec);
+        }
 
         proxy = jsDynamicCast<const ProxyObject*>(vm, target);
     }

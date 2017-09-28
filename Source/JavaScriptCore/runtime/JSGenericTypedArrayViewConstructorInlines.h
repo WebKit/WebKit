@@ -161,6 +161,7 @@ inline JSObject* constructGenericTypedArrayViewWithArguments(ExecState* exec, St
                     || lengthSlot.isAccessor() || lengthSlot.isCustom() || lengthSlot.isTaintedByOpaqueObject()
                     || hasAnyArrayStorage(object->indexingType()))) {
 
+                    scope.release();
                     return constructGenericTypedArrayViewFromIterator<ViewClass>(exec, structure, object, iteratorFunc);
             }
 

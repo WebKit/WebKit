@@ -130,10 +130,12 @@ JSObject* ProgramExecutable::initializeGlobalProperties(VM& vm, CallFrame* callF
         // It's an error to introduce a shadow.
         for (auto& entry : lexicalDeclarations) {
             // The ES6 spec says that RestrictedGlobalProperty can't be shadowed.
-            if (hasRestrictedGlobalProperty(exec, globalObject, entry.key.get()))
+            bool hasProperty = hasRestrictedGlobalProperty(exec, globalObject, entry.key.get());
+            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            if (hasProperty)
                 return createSyntaxError(exec, makeString("Can't create duplicate variable that shadows a global property: '", String(entry.key.get()), "'"));
 
-            bool hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
+            hasProperty = globalLexicalEnvironment->hasProperty(exec, entry.key.get());
             RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
             if (hasProperty) {
                 if (UNLIKELY(entry.value.isConst() && !vm.globalConstRedeclarationShouldThrow() && !isStrictMode())) {

@@ -343,6 +343,9 @@ static EncodedJSValue formateDateInstance(ExecState* exec, DateTimeFormat format
 // Format of member function: f([hour,] [min,] [sec,] [ms])
 static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms, GregorianDateTime* t)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     double milliseconds = 0;
     bool ok = true;
     int idx = 0;
@@ -356,6 +359,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 4 && idx < numArgs) {
         t->setHour(0);
         double hours = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(hours);
         milliseconds += hours * msPerHour;
     }
@@ -364,6 +368,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->setMinute(0);
         double minutes = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(minutes);
         milliseconds += minutes * msPerMinute;
     }
@@ -372,6 +377,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->setSecond(0);
         double seconds = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(seconds);
         milliseconds += seconds * msPerSecond;
     }
@@ -382,6 +388,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // milliseconds
     if (idx < numArgs) {
         double millis = exec->uncheckedArgument(idx).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(millis);
         milliseconds += millis;
     } else
@@ -1006,7 +1013,9 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
         gregorianDateTime.copyFrom(*other);
     }
     
-    if (!fillStructuresUsingDateArgs(exec, numArgsToUse, &ms, &gregorianDateTime)) {
+    bool success = fillStructuresUsingDateArgs(exec, numArgsToUse, &ms, &gregorianDateTime);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    if (!success) {
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(vm, result);
         return JSValue::encode(result);
@@ -1119,6 +1128,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     }
 
     double year = exec->argument(0).toIntegerPreserveNaN(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (!std::isfinite(year)) {
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(vm, result);

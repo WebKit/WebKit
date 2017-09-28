@@ -157,7 +157,9 @@ JSTypedArrayType JSValueGetTypedArrayType(JSContextRef ctx, JSValueRef valueRef,
 JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType, size_t length, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -166,7 +168,7 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
 
     auto buffer = ArrayBuffer::tryCreate(length, elementByteSize);
     JSObject* result = createTypedArray(exec, arrayType, WTFMove(buffer), 0, length);
-    if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
 }
@@ -174,7 +176,9 @@ JSObjectRef JSObjectMakeTypedArray(JSContextRef ctx, JSTypedArrayType arrayType,
 JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArrayType arrayType, void* bytes, size_t length, JSTypedArrayBytesDeallocator destructor, void* destructorContext, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
-    JSLockHolder locker(exec);
+    VM& vm = exec->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -186,7 +190,7 @@ JSObjectRef JSObjectMakeTypedArrayWithBytesNoCopy(JSContextRef ctx, JSTypedArray
             destructor(p, destructorContext);
     });
     JSObject* result = createTypedArray(exec, arrayType, WTFMove(buffer), 0, length / elementByteSize);
-    if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
 }
@@ -196,6 +200,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     ExecState* exec = toJS(ctx);
     VM& vm = exec->vm();
     JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -210,7 +215,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBuffer(JSContextRef ctx, JSTypedArray
     unsigned elementByteSize = elementSize(toTypedArrayType(arrayType));
 
     JSObject* result = createTypedArray(exec, arrayType, WTFMove(buffer), 0, buffer->byteLength() / elementByteSize);
-    if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
 }
@@ -220,6 +225,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     ExecState* exec = toJS(ctx);
     VM& vm = exec->vm();
     JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     if (arrayType == kJSTypedArrayTypeNone || arrayType == kJSTypedArrayTypeArrayBuffer)
         return nullptr;
@@ -231,7 +237,7 @@ JSObjectRef JSObjectMakeTypedArrayWithArrayBufferAndOffset(JSContextRef ctx, JST
     }
 
     JSObject* result = createTypedArray(exec, arrayType, jsBuffer->impl(), offset, length);
-    if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
     return toRef(result);
 }
@@ -305,6 +311,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     ExecState* exec = toJS(ctx);
     VM& vm = exec->vm();
     JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
 
     auto buffer = ArrayBuffer::createFromBytes(bytes, byteLength, [=](void* p) {
         if (bytesDeallocator)
@@ -312,7 +319,7 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
     });
 
     JSArrayBuffer* jsBuffer = JSArrayBuffer::create(vm, exec->lexicalGlobalObject()->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer));
-    if (handleExceptionIfNeeded(exec, exception) == ExceptionStatus::DidThrow)
+    if (handleExceptionIfNeeded(scope, exec, exception) == ExceptionStatus::DidThrow)
         return nullptr;
 
     return toRef(jsBuffer);

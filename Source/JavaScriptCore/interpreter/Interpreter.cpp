@@ -815,8 +815,10 @@ JSValue Interpreter::executeProgram(const SourceCode& source, CallFrame* callFra
             JSValue JSONPValue = JSONPData[entry].m_value.get();
             if (JSONPPath.size() == 1 && JSONPPath[0].m_type == JSONPPathEntryTypeDeclare) {
                 globalObject->addVar(callFrame, JSONPPath[0].m_pathEntryName);
+                RETURN_IF_EXCEPTION(throwScope, { });
                 PutPropertySlot slot(globalObject);
                 globalObject->methodTable(vm)->put(globalObject, callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                RETURN_IF_EXCEPTION(throwScope, { });
                 result = jsUndefined();
                 continue;
             }

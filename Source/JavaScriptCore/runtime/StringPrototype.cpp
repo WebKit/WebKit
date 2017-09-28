@@ -1020,6 +1020,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharAt(ExecState* exec)
         return JSValue::encode(jsEmptyString(exec));
     }
     double dpos = a0.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsSingleCharacterString(exec, view[static_cast<unsigned>(dpos)]));
     return JSValue::encode(jsEmptyString(exec));
@@ -1044,6 +1045,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncCharCodeAt(ExecState* exec)
         return JSValue::encode(jsNaN());
     }
     double dpos = a0.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (dpos >= 0 && dpos < view.length())
         return JSValue::encode(jsNumber(view[static_cast<int>(dpos)]));
     return JSValue::encode(jsNaN());
@@ -1114,6 +1116,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncIndexOf(ExecState* exec)
             pos = std::min<uint32_t>(a1.asUInt32(), len);
         else {
             double dpos = a1.toInteger(exec);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
             if (dpos < 0)
                 dpos = 0;
             else if (dpos > len)
@@ -1154,6 +1157,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncLastIndexOf(ExecState* exec)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     double dpos = a1.toIntegerPreserveNaN(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     unsigned startPosition;
     if (dpos < 0)
         startPosition = 0;
@@ -1196,7 +1200,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSlice(ExecState* exec)
 
     // The arg processing is very much like ArrayProtoFunc::Slice
     double start = a0.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double end = a1.isUndefined() ? len : a1.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double from = start < 0 ? len + start : start;
     double to = end < 0 ? len + end : end;
     if (to > from && to > 0 && from < len) {
@@ -1268,6 +1274,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplitFast(ExecState* exec)
     // 6. If limit is undefined, let lim = 2^32-1; else let lim = ToUint32(limit).
     JSValue limitValue = exec->uncheckedArgument(1);
     unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     // 8. Let p = 0.
     size_t position = 0;
@@ -1403,7 +1410,9 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSubstr(ExecState* exec)
     JSValue a1 = exec->argument(1);
 
     double start = a0.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     double length = a1.isUndefined() ? len : a1.toInteger(exec);
+    RETURN_IF_EXCEPTION(scope, encodedJSValue());
     if (start >= len || length <= 0)
         return JSValue::encode(jsEmptyString(exec));
     if (start < 0) {
