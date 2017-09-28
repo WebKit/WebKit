@@ -1,3 +1,21 @@
+2017-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WeakPtrFactory should allow downcasting
+        https://bugs.webkit.org/show_bug.cgi?id=177389
+        <rdar://problem/34604174>
+
+        Reviewed by Geoffrey Garen.
+
+        In this patch, WeakPtrFactory is enhanced with the ability to create WeakPtrs
+        of its owner's sub classes and have them point to the same WeakReference.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakPtr::WeakPtr):
+        We cannot determine the base class of type T, thus no friends. It is made public
+        such that WeakPtrFactory with a base class type U can create a derived type T
+        WeakPtr.
+        (WTF::WeakPtrFactory::createWeakPtr const):
+
 2017-09-28  Don Olmstead  <don.olmstead@sony.com>
 
         Sync SYSTEM_MALLOC implementation of Gigacage

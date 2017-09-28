@@ -68,7 +68,7 @@ public:
     WeakPtr() : m_ref(WeakReference<T>::create(nullptr)) { }
     WeakPtr(std::nullptr_t) : m_ref(WeakReference<T>::create(nullptr)) { }
     WeakPtr(const WeakPtr& o) : m_ref(o.m_ref.copyRef()) { }
-    template<typename U> WeakPtr(const WeakPtr<U>& o) : m_ref(o.m_ref.copyRef()) { }
+    WeakPtr(Ref<WeakReference<T>>&& ref) : m_ref(std::forward<Ref<WeakReference<T>>>(ref)) { }
 
     T* get() const { return m_ref->get(); }
     operator bool() const { return m_ref->get(); }
@@ -81,9 +81,6 @@ public:
     void clear() { m_ref = WeakReference<T>::create(nullptr); }
 
 private:
-    friend class WeakPtrFactory<T>;
-    WeakPtr(Ref<WeakReference<T>>&& ref) : m_ref(std::forward<Ref<WeakReference<T>>>(ref)) { }
-
     Ref<WeakReference<T>> m_ref;
 };
 
@@ -100,12 +97,14 @@ public:
         m_ref->clear();
     }
 
-    WeakPtr<T> createWeakPtr(T& ptr) const
+    template<typename U = T>
+    WeakPtr<U> createWeakPtr(T& ptr) const
     {
         if (!m_ref)
             m_ref = WeakReference<T>::create(&ptr);
         ASSERT(&ptr == m_ref->get());
-        return WeakPtr<T>(Ref<WeakReference<T>>(*m_ref));
+        static_assert(std::is_convertible<U*, T*>::value, "T* must be convertible to U*");
+        return WeakPtr<U>(Ref<WeakReference<U>>(reinterpret_cast<WeakReference<U>&>(*m_ref)));
     }
 
     void revokeAll()

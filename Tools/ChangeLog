@@ -1,3 +1,18 @@
+2017-09-28  Jiewen Tan  <jiewen_tan@apple.com>
+
+        WeakPtrFactory should allow downcasting
+        https://bugs.webkit.org/show_bug.cgi?id=177389
+        <rdar://problem/34604174>
+
+        Reviewed by Geoffrey Garen.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WeakPtr.cpp:
+        (TestWebKitAPI::Base::foo):
+        (TestWebKitAPI::Base::createWeakPtr):
+        (TestWebKitAPI::Derived::foo):
+        (TestWebKitAPI::TEST):
+
 2017-09-28  Megan Gardner  <megan_gardner@apple.com>
 
         Add debug flag to WebKitTestRunner to show where touches are being generated
