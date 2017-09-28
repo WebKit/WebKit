@@ -1,3 +1,17 @@
+2017-09-27  Saam Barati  <sbarati@apple.com>
+
+        Propagate hasBeenFlattenedBefore in Structure's transition constructor and fix our for-in caching to fail when the prototype chain has an object with a dictionary structure
+        https://bugs.webkit.org/show_bug.cgi?id=177523
+
+        Reviewed by Mark Lam.
+
+        * stress/prototype-chain-has-dictionary-structure-for-in-caching.js: Added.
+        (assert):
+        (Test):
+        (addMethods.Test.prototype.string_appeared_here.i.methodNumber):
+        (addMethods):
+        (i.Test.prototype.propName):
+
 2017-09-27  Mark Lam  <mark.lam@apple.com>
 
         Yarr::Parser::tryConsumeGroupName() should check for the end of the pattern.

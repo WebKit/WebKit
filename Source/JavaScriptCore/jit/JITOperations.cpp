@@ -2407,9 +2407,12 @@ JSCell* JIT_OPERATION operationGetPropertyEnumerator(ExecState* exec, JSCell* ce
 {
     VM& vm = exec->vm();
     NativeCallFrameTracer tracer(&vm, exec);
+    auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSObject* base = cell->toObject(exec, exec->lexicalGlobalObject());
+    RETURN_IF_EXCEPTION(scope, { });
 
+    scope.release();
     return propertyNameEnumerator(exec, base);
 }
 

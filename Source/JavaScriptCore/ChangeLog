@@ -1,3 +1,27 @@
+2017-09-27  Saam Barati  <sbarati@apple.com>
+
+        Propagate hasBeenFlattenedBefore in Structure's transition constructor and fix our for-in caching to fail when the prototype chain has an object with a dictionary structure
+        https://bugs.webkit.org/show_bug.cgi?id=177523
+
+        Reviewed by Mark Lam.
+
+        There was a bug in Structure's transition constructor where it didn't
+        propagate forward the hasBeenFlattenedBefore bit. In practice, this meant
+        that every time we asked a dictionary structure if it has been flattened
+        before, it would return false. This patch fixes this bug. It also fixes
+        a bug that this uncovers in our for-in implementation. Our implementation
+        would cache the property name enumerator even when the prototype chain
+        included a structure that is as dictionary. This is wrong because that
+        prototype object may add properties without transitioning, and the for-in
+        loop would vend a stale set of prototype properties.
+
+        * jit/JITOperations.cpp:
+        * runtime/JSPropertyNameEnumerator.h:
+        (JSC::propertyNameEnumerator):
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::canCachePropertyNameEnumerator const):
+
 2017-09-27  Mark Lam  <mark.lam@apple.com>
 
         Yarr::Parser::tryConsumeGroupName() should check for the end of the pattern.

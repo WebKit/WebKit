@@ -253,7 +253,8 @@ Structure::Structure(VM& vm, Structure* previous, DeferredStructureTransitionWat
     , m_offset(invalidOffset)
 {
     setDictionaryKind(previous->dictionaryKind());
-    setIsPinnedPropertyTable(previous->hasBeenFlattenedBefore());
+    setIsPinnedPropertyTable(false);
+    setHasBeenFlattenedBefore(previous->hasBeenFlattenedBefore());
     setHasGetterSetterProperties(previous->hasGetterSetterProperties());
     setHasCustomGetterSetterProperties(previous->hasCustomGetterSetterProperties());
     setHasReadOnlyOrGetterSetterPropertiesExcludingProto(previous->hasReadOnlyOrGetterSetterPropertiesExcludingProto());
@@ -1287,6 +1288,8 @@ bool Structure::canCachePropertyNameEnumerator() const
     while (true) {
         if (!structure->get())
             break;
+        if (structure->get()->isDictionary())
+            return false;
         if (structure->get()->typeInfo().overridesGetPropertyNames())
             return false;
         structure++;
