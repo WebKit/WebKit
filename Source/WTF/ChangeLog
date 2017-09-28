@@ -1,3 +1,14 @@
+2017-09-27  Per Arne Vollan  <pvollan@apple.com>
+
+        [Win64] Compile error, 'BasePtrs' is undefined.
+        https://bugs.webkit.org/show_bug.cgi?id=177565
+
+        Reviewed by Mark Lam.
+
+        Copy definition of 'BasePtrs' from bmalloc/GigaCage.h.
+
+        * wtf/Gigacage.h:
+
 2017-09-26  Said Abou-Hallawa  <sabouhallawa@apple.com>
 
         Followup (r222427): SynchronizedFixedQueue should not have a public constructor

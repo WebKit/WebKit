@@ -38,6 +38,12 @@ extern WTF_EXPORTDATA void* g_gigacageBasePtr;
 
 namespace Gigacage {
 
+struct BasePtrs {
+    void* primitive;
+    void* jsValue;
+    void* string;
+};
+
 enum Kind {
     Primitive,
     JSValue,
