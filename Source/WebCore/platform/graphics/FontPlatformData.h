@@ -36,7 +36,6 @@
 
 #if USE(CAIRO)
 #include "RefPtrCairo.h"
-#include <cairo.h>
 #endif
 
 #if USE(FREETYPE)

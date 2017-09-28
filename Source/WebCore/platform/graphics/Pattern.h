@@ -40,7 +40,7 @@ typedef CGPatternRef PlatformPatternPtr;
 interface ID2D1BitmapBrush;
 typedef ID2D1BitmapBrush* PlatformPatternPtr;
 #elif USE(CAIRO)
-#include <cairo.h>
+typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
 #elif USE(WINGDI)
 typedef void* PlatformPatternPtr;
