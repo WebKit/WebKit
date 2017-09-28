@@ -32,6 +32,7 @@
 #include "WebImage.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/PlatformContextCairo.h>
+#include <cairo.h>
 
 using namespace WebKit;
 using namespace WebCore;

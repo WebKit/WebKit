@@ -364,11 +364,7 @@ inline GlyphBuffer DrawGlyphs::generateGlyphBuffer() const
 {
     GlyphBuffer result;
     for (size_t i = 0; i < m_glyphs.size(); ++i) {
-#if USE(CAIRO)
-        result.add(m_glyphs[i].index, &m_font.get(), m_advances[i]);
-#else
         result.add(m_glyphs[i], &m_font.get(), m_advances[i]);
-#endif
     }
     return result;
 }

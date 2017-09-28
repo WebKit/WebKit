@@ -38,6 +38,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/PlatformContextCairo.h>
+#include <cairo.h>
 
 using namespace WebCore;
 
