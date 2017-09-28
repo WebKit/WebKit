@@ -105,6 +105,8 @@ WK_EXPORT void WKContextSetMemoryCacheDisabled(WKContextRef, bool disabled);
 
 WK_EXPORT void WKContextSetFontWhitelist(WKContextRef, WKArrayRef);
 
+WK_EXPORT void WKContextPreconnectToServer(WKContextRef context, WKURLRef serverURL);
+
 WK_EXPORT WKProcessID WKContextGetNetworkProcessIdentifier(WKContextRef context);
 WK_EXPORT WKProcessID WKContextGetDatabaseProcessIdentifier(WKContextRef context);
 

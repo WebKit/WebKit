@@ -168,6 +168,7 @@ class SelectorQuery;
 class SelectorQueryCache;
 class SerializedScriptValue;
 class Settings;
+class StringCallback;
 class StyleResolver;
 class StyleSheet;
 class StyleSheetContents;
@@ -1359,6 +1360,8 @@ public:
     void requestStorageAccess(Ref<DeferredPromise>&& passedPromise);
     void setUserGrantsStorageAccessOverride(bool value) { m_grantStorageAccessOverride = value; }
 
+    WEBCORE_EXPORT void setConsoleMessageListener(RefPtr<StringCallback>&&); // For testing.
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     Document(Frame*, const URL&, unsigned = DefaultDocumentClass, unsigned constructionFlags = 0);
@@ -1808,6 +1811,7 @@ private:
     OrientationNotifier m_orientationNotifier;
     mutable PAL::SessionID m_sessionID;
     mutable RefPtr<PAL::Logger> m_logger;
+    RefPtr<StringCallback> m_consoleMessageListener;
 
     static bool hasEverCreatedAnAXObjectCache;
 

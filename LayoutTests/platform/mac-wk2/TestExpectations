@@ -793,6 +793,9 @@ webkit.org/b/176122 media/video-controls-drop-and-restore-timeline.html [ Pass F
 # <rdar://problem/33555759>
 [ HighSierra+ ] http/tests/media/video-buffered-range-contains-currentTime.html [ Pass ImageOnlyFailure ]
 
+# Link preconnect is disabled on pre-High Sierra because the CFNetwork SPI is missing.
+[ ElCapitan Sierra ] http/tests/preconnect [ Skip ]
+
 webkit.org/b/176486 [ ElCapitan Debug ] imported/w3c/web-platform-tests/background-fetch/interfaces-worker.https.html [ Pass Failure ]
 
 webkit.org/b/171839 [ Debug ] tiled-drawing/scrolling/scroll-snap/scroll-snap-mandatory-mainframe-vertical-then-horizontal.html [ Pass Failure ]

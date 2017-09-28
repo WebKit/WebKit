@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName, WTF::Function<bool(StringView)>&& isSupportedToken)
+DOMTokenList::DOMTokenList(Element& element, const QualifiedName& attributeName, IsSupportedTokenFunction&& isSupportedToken)
     : m_element(element)
     , m_attributeName(attributeName)
     , m_isSupportedToken(WTFMove(isSupportedToken))
@@ -191,7 +191,7 @@ ExceptionOr<bool> DOMTokenList::supports(StringView token)
 {
     if (!m_isSupportedToken)
         return Exception { TypeError };
-    return m_isSupportedToken(token);
+    return m_isSupportedToken(m_element.document(), token);
 }
 
 // https://dom.spec.whatwg.org/#dom-domtokenlist-value

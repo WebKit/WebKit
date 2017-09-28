@@ -186,7 +186,7 @@
             }
         },
         "ExportMacro": {
-            "contextsAllowed": ["interface", "dictionary", "enum"],
+            "contextsAllowed": ["interface", "dictionary", "enum", "callback-function"],
             "values": ["WEBCORE_EXPORT", "WEBCORE_TESTSUPPORT_EXPORT"]
         },
         "ExportToWrappedFunction": {

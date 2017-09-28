@@ -403,6 +403,9 @@ fast/images/low-memory-decode.html [ Skip ]
 
 http/tests/workers/service [ Skip ]
 
+# Link preconnect is disabled on WebKit1 because it does not use NETWORK_SESSION.
+http/tests/preconnect [ Skip ]
+
 webkit.org/b/175345 fast/images/animated-gif-scrolling-crash.html [ Pass Timeout ]
 
 webkit.org/b/175554 [ Sierra ] fullscreen/full-screen-iframe-legacy.html [ Pass Failure ]

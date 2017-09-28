@@ -33,6 +33,8 @@
 
 namespace WebKit {
 
+enum class PreconnectOnly { No, Yes };
+
 class NetworkLoadParameters {
 public:
     uint64_t webPageID { 0 };
@@ -49,6 +51,7 @@ public:
 #if USE(NETWORK_SESSION)
     Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
 #endif
+    PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
 };
 
 } // namespace WebKit

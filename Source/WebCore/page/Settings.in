@@ -291,6 +291,8 @@ langAttributeAwareFormControlUIEnabled initial=false
 
 subresourceIntegrityEnabled initial=true
 
+linkPreconnectEnabled initial=false
+
 beaconAPIEnabled initial=false
 
 constantPropertiesEnabled initial=false

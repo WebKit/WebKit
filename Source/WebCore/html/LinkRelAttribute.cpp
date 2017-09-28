@@ -32,8 +32,10 @@
 #include "config.h"
 #include "LinkRelAttribute.h"
 
+#include "Document.h"
 #include "LinkIconType.h"
 #include "RuntimeEnabledFeatures.h"
+#include "Settings.h"
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
 
@@ -44,7 +46,7 @@ LinkRelAttribute::LinkRelAttribute()
 }
 
 // Keep LinkRelAttribute::isSupported() in sync when updating this constructor.
-LinkRelAttribute::LinkRelAttribute(const String& rel)
+LinkRelAttribute::LinkRelAttribute(Document& document, const String& rel)
 {
     if (equalLettersIgnoringASCIICase(rel, "stylesheet"))
         isStyleSheet = true;
@@ -56,6 +58,8 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
         iconType = LinkIconType::TouchPrecomposedIcon;
     else if (equalLettersIgnoringASCIICase(rel, "dns-prefetch"))
         isDNSPrefetch = true;
+    else if (document.settings().linkPreconnectEnabled() && equalLettersIgnoringASCIICase(rel, "preconnect"))
+        isLinkPreconnect = true;
     else if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalLettersIgnoringASCIICase(rel, "preload"))
         isLinkPreload = true;
     else if (equalLettersIgnoringASCIICase(rel, "alternate stylesheet") || equalLettersIgnoringASCIICase(rel, "stylesheet alternate")) {
@@ -87,7 +91,7 @@ LinkRelAttribute::LinkRelAttribute(const String& rel)
 }
 
 // https://html.spec.whatwg.org/#linkTypes
-bool LinkRelAttribute::isSupported(StringView attribute)
+bool LinkRelAttribute::isSupported(Document& document, StringView attribute)
 {
     static const char* const supportedAttributes[] = {
         "alternate", "dns-prefetch", "icon", "stylesheet", "apple-touch-icon", "apple-touch-icon-precomposed",
@@ -100,6 +104,9 @@ bool LinkRelAttribute::isSupported(StringView attribute)
         if (equalIgnoringASCIICase(attribute, supportedAttribute))
             return true;
     }
+
+    if (document.settings().linkPreconnectEnabled() && equalIgnoringASCIICase(attribute, "preconnect"))
+        return true;
 
     if (RuntimeEnabledFeatures::sharedFeatures().linkPreloadEnabled() && equalIgnoringASCIICase(attribute, "preload"))
         return true;

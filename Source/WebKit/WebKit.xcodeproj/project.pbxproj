@@ -1380,6 +1380,8 @@
 		839902031BE9A02B000F3653 /* NetworkLoad.h in Headers */ = {isa = PBXBuildFile; fileRef = 839901FE1BE9A01B000F3653 /* NetworkLoad.h */; };
 		839A2F311E2067450039057E /* HighPerformanceGraphicsUsageSampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */; };
 		839A2F321E2067450039057E /* HighPerformanceGraphicsUsageSampler.h in Headers */ = {isa = PBXBuildFile; fileRef = 839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */; };
+		83A0ED341F747CCD003299EB /* PreconnectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83A0ED331F747CC7003299EB /* PreconnectTask.cpp */; };
+		83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 83A0ED321F747CC6003299EB /* PreconnectTask.h */; };
 		83BDCCB91AC5FDB6003F6441 /* NetworkCacheStatistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */; };
 		83BFAC421D96137C00433490 /* BlobDownloadClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 83BFAC401D96136000433490 /* BlobDownloadClient.h */; };
 		83BFAC431D96137C00433490 /* BlobDownloadClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 83BFAC411D96136000433490 /* BlobDownloadClient.cpp */; };
@@ -3733,6 +3735,8 @@
 		839901FF1BE9A01B000F3653 /* NetworkLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkLoad.cpp; path = NetworkProcess/NetworkLoad.cpp; sourceTree = "<group>"; };
 		839A2F2F1E2067390039057E /* HighPerformanceGraphicsUsageSampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HighPerformanceGraphicsUsageSampler.cpp; sourceTree = "<group>"; };
 		839A2F301E2067390039057E /* HighPerformanceGraphicsUsageSampler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HighPerformanceGraphicsUsageSampler.h; sourceTree = "<group>"; };
+		83A0ED321F747CC6003299EB /* PreconnectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreconnectTask.h; path = NetworkProcess/PreconnectTask.h; sourceTree = "<group>"; };
+		83A0ED331F747CC7003299EB /* PreconnectTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PreconnectTask.cpp; path = NetworkProcess/PreconnectTask.cpp; sourceTree = "<group>"; };
 		83BDCCB81AC5FDB6003F6441 /* NetworkCacheStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkCacheStatistics.cpp; sourceTree = "<group>"; };
 		83BFAC401D96136000433490 /* BlobDownloadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDownloadClient.h; path = NetworkProcess/Downloads/BlobDownloadClient.h; sourceTree = "<group>"; };
 		83BFAC411D96136000433490 /* BlobDownloadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobDownloadClient.cpp; path = NetworkProcess/Downloads/BlobDownloadClient.cpp; sourceTree = "<group>"; };
@@ -6115,6 +6119,8 @@
 				5C0B177F1E7C886700E9123C /* NetworkSocketStream.messages.in */,
 				462107D71F38DBD300DD7810 /* PingLoad.cpp */,
 				5CE85B1F1C88E6430070BFCE /* PingLoad.h */,
+				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
+				83A0ED321F747CC6003299EB /* PreconnectTask.h */,
 				E1B78470163F24690007B692 /* RemoteNetworkingContext.h */,
 			);
 			name = NetworkProcess;
@@ -8709,6 +8715,7 @@
 				1A4A9F3312B844E2008FE984 /* PluginQuirks.h in Headers */,
 				7CD622781739D863005BD7FF /* PluginSandboxProfile.h in Headers */,
 				1A6FB7AF11E64B6800DB1371 /* PluginView.h in Headers */,
+				83A0ED351F747CCF003299EB /* PreconnectTask.h in Headers */,
 				E1CC1B9012D7EADF00625838 /* PrintInfo.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
@@ -10290,6 +10297,7 @@
 				7CD622771739D863005BD7FF /* PluginSandboxProfile.mm in Sources */,
 				BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */,
 				1A6FB7AE11E64B6800DB1371 /* PluginView.cpp in Sources */,
+				83A0ED341F747CCD003299EB /* PreconnectTask.cpp in Sources */,
 				E18C92F412DB9E7100CF2AEB /* PrintInfo.cpp in Sources */,
 				E1CC1B9112D7EADF00625838 /* PrintInfoMac.mm in Sources */,
 				37716A5A195B910500EE8B1B /* ProcessAssertion.cpp in Sources */,

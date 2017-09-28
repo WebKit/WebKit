@@ -1,3 +1,25 @@
+2017-09-28  Chris Dumez  <cdumez@apple.com>
+
+        Add support for <link rel=preconnect>
+        https://bugs.webkit.org/show_bug.cgi?id=177474
+        <rdar://problem/33141380>
+
+        Reviewed by Alex Christensen.
+
+        * fast/dom/HTMLLinkElement/preconnect-support-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/preconnect-support.html: Added.
+        * http/tests/preconnect/link-rel-preconnect-http-expected.txt: Added.
+        * http/tests/preconnect/link-rel-preconnect-http.html: Added.
+        * http/tests/preconnect/link-rel-preconnect-https-expected.txt: Added.
+        * http/tests/preconnect/link-rel-preconnect-https.html: Added.
+        Add layout test coverage.
+
+        * platform/mac-elcapitan-wk2/fast/dom/HTMLLinkElement/preconnect-support-expected.txt: Added.
+        * platform/mac-wk1/TestExpectations:
+        * platform/mac-wk1/fast/dom/HTMLLinkElement/preconnect-support-expected.txt: Added.
+        * platform/mac-wk2/TestExpectations:
+        Skip or land failure expectations for platforms where the feature is disabled.
+
 2017-09-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Update TestExpectations for two http/tests/xmlhttprequest/response-* tests.

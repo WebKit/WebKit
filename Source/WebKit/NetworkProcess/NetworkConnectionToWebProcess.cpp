@@ -43,9 +43,11 @@
 #include "NetworkResourceLoaderMessages.h"
 #include "NetworkSocketStream.h"
 #include "NetworkSocketStreamMessages.h"
+#include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
+#include "WebErrors.h"
 #include "WebsiteDataStoreParameters.h"
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/PingHandle.h>
@@ -287,6 +289,26 @@ void NetworkConnectionToWebProcess::setDefersLoading(ResourceLoadIdentifier iden
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
     NetworkProcess::singleton().prefetchDNS(hostname);
+}
+
+void NetworkConnectionToWebProcess::preconnectTo(PAL::SessionID sessionID, uint64_t preconnectionIdentifier, const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    new PreconnectTask(sessionID, url, storedCredentialsPolicy, [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
+        didFinishPreconnection(identifier, error);
+    });
+#else
+    UNUSED_PARAM(storedCredentialsPolicy);
+    didFinishPreconnection(preconnectionIdentifier, internalError(url));
+#endif
+}
+
+void NetworkConnectionToWebProcess::didFinishPreconnection(uint64_t preconnectionIdentifier, const ResourceError& error)
+{
+    if (!m_connection->isValid())
+        return;
+
+    m_connection->send(Messages::NetworkProcessConnection::DidFinishPreconnection(preconnectionIdentifier, error), 0);
 }
 
 static NetworkStorageSession& storageSession(PAL::SessionID sessionID)

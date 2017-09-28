@@ -77,6 +77,7 @@ class RTCPeerConnection;
 class SVGSVGElement;
 class SerializedScriptValue;
 class SourceBuffer;
+class StringCallback;
 class StyleSheet;
 class TimeRanges;
 class TypeConversions;
@@ -602,6 +603,8 @@ public:
 
     void clearCacheStorageMemoryRepresentation(DOMPromiseDeferred<void>&&);
     void cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString>&&);
+
+    void setConsoleMessageListener(RefPtr<StringCallback>&&);
 
 private:
     explicit Internals(Document&);

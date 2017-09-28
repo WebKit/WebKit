@@ -82,6 +82,8 @@ messages -> NetworkProcess LegacyReceiver {
 
     DidGrantSandboxExtensionsToStorageProcessForBlobs(uint64_t requestID)
 
+    PreconnectTo(WebCore::URL url, enum WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
+
 #if HAVE(CFNETWORK_STORAGE_PARTITIONING)
     UpdatePrevalentDomainsToPartitionOrBlockCookies(PAL::SessionID sessionID, Vector<String> domainsToPartition, Vector<String> domainsToBlock, Vector<String> domainsToNeitherPartitionNorBlock, bool shouldClearFirst)
     RemovePrevalentDomains(PAL::SessionID sessionID, Vector<String> domainsWithInteraction);

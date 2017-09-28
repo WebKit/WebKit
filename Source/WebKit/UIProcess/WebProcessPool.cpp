@@ -1157,6 +1157,14 @@ void WebProcessPool::setCanHandleHTTPSServerTrustEvaluation(bool value)
     }
 }
 
+void WebProcessPool::preconnectToServer(const URL& url)
+{
+    if (!url.isValid() || !url.protocolIsInHTTPFamily())
+        return;
+
+    ensureNetworkProcess().send(Messages::NetworkProcess::PreconnectTo(url, StoredCredentialsPolicy::Use), 0);
+}
+
 void WebProcessPool::registerURLSchemeAsLocal(const String& urlScheme)
 {
     m_schemesToRegisterAsLocal.add(urlScheme);

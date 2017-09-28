@@ -156,7 +156,7 @@ void HTMLLinkElement::setDisabledState(bool disabled)
 void HTMLLinkElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == relAttr) {
-        m_relAttribute = LinkRelAttribute(value);
+        m_relAttribute = LinkRelAttribute(document(), value);
         if (m_relList)
             m_relList->associatedAttributeValueChanged(value);
         process();
@@ -498,8 +498,8 @@ void HTMLLinkElement::dispatchPendingEvent(LinkEventSender* eventSender)
 DOMTokenList& HTMLLinkElement::relList()
 {
     if (!m_relList) 
-        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](StringView token) {
-            return LinkRelAttribute::isSupported(token);
+        m_relList = std::make_unique<DOMTokenList>(*this, HTMLNames::relAttr, [](Document& document, StringView token) {
+            return LinkRelAttribute::isSupported(document, token);
         });
     return *m_relList;
 }

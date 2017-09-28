@@ -45,6 +45,12 @@
 #define DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED false
 #endif
 
+#if ENABLE(SERVER_PRECONNECT)
+#define DEFAULT_LINK_PRECONNECT_ENABLED true
+#else
+#define DEFAULT_LINK_PRECONNECT_ENABLED false
+#endif
+
 #if PLATFORM(COCOA)
 #define DEFAULT_PDFPLUGIN_ENABLED true
 #else
@@ -181,6 +187,7 @@
     macro(DOMPasteAllowed, domPasteAllowed, Bool, bool, false, "", "") \
     macro(JavaScriptCanAccessClipboard, javaScriptCanAccessClipboard, Bool, bool, false, "", "") \
     macro(ShouldPrintBackgrounds, shouldPrintBackgrounds, Bool, bool, DEFAULT_SHOULD_PRINT_BACKGROUNDS, "", "") \
+    macro(LinkPreconnect, linkPreconnect, Bool, bool, DEFAULT_LINK_PRECONNECT_ENABLED, "", "") \
     macro(FullScreenEnabled, fullScreenEnabled, Bool, bool, false, "", "") \
     macro(AsynchronousSpellCheckingEnabled, asynchronousSpellCheckingEnabled, Bool, bool, false, "", "") \
     macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true, "", "") \

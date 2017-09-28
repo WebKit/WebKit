@@ -415,6 +415,11 @@ static NSDictionary *policiesHashMapToDictionary(const HashMap<String, HashMap<S
     return _processPool->processes().size();
 }
 
+- (void)_preconnectToServer:(NSURL *)serverURL
+{
+    _processPool->preconnectToServer(serverURL);
+}
+
 - (size_t)_pluginProcessCount
 {
 #if !PLATFORM(IOS)

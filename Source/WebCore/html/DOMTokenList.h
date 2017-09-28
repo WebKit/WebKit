@@ -32,7 +32,8 @@ namespace WebCore {
 class DOMTokenList {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    DOMTokenList(Element&, const QualifiedName& attributeName, WTF::Function<bool(StringView)>&& isSupportedToken = { });
+    using IsSupportedTokenFunction = WTF::Function<bool(Document&, StringView)>;
+    DOMTokenList(Element&, const QualifiedName& attributeName, IsSupportedTokenFunction&& isSupportedToken = { });
 
     void associatedAttributeValueChanged(const AtomicString&);
 
@@ -73,7 +74,7 @@ private:
     bool m_inUpdateAssociatedAttributeFromTokens { false };
     bool m_tokensNeedUpdating { true };
     Vector<AtomicString> m_tokens;
-    WTF::Function<bool(StringView)> m_isSupportedToken;
+    IsSupportedTokenFunction m_isSupportedToken;
 };
 
 inline unsigned DOMTokenList::length() const

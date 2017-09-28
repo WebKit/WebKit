@@ -54,6 +54,8 @@ class ProtectionSpace;
 class SecurityOrigin;
 struct SecurityOriginData;
 struct SoupNetworkProxySettings;
+enum class StoredCredentialsPolicy;
+class URL;
 }
 
 namespace WebKit {
@@ -136,6 +138,8 @@ public:
 
     Seconds loadThrottleLatency() const { return m_loadThrottleLatency; }
     String cacheStorageDirectory(PAL::SessionID) const;
+
+    void preconnectTo(const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
 private:
     NetworkProcess();

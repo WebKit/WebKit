@@ -40,6 +40,7 @@
 #include "NetworkProcessProxyMessages.h"
 #include "NetworkResourceLoader.h"
 #include "NetworkSession.h"
+#include "PreconnectTask.h"
 #include "RemoteNetworkingContext.h"
 #include "SessionTracker.h"
 #include "StatisticsData.h"
@@ -723,6 +724,16 @@ String NetworkProcess::cacheStorageDirectory(PAL::SessionID sessionID) const
         return { };
 
     return session->cacheStorageDirectory();
+}
+
+void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+{
+#if ENABLE(SERVER_PRECONNECT)
+    new PreconnectTask(PAL::SessionID::defaultSessionID(), url, storedCredentialsPolicy);
+#else
+    UNUSED_PARAM(url);
+    UNUSED_PARAM(storedCredentialsPolicy);
+#endif
 }
 
 #if !PLATFORM(COCOA)

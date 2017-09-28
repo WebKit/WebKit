@@ -548,5 +548,7 @@ enum EventThrottlingBehavior {
     Promise<void> clearCacheStorageMemoryRepresentation();
     Promise<DOMString> cacheStorageEngineRepresentation();
 
+    void setConsoleMessageListener(StringCallback callback);
+
     DOMString audioSessionCategory();
 };

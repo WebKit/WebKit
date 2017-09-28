@@ -51,7 +51,7 @@ Ref<HTMLIFrameElement> HTMLIFrameElement::create(const QualifiedName& tagName, D
 DOMTokenList& HTMLIFrameElement::sandbox()
 {
     if (!m_sandbox)
-        m_sandbox = std::make_unique<DOMTokenList>(*this, sandboxAttr, [](StringView token) {
+        m_sandbox = std::make_unique<DOMTokenList>(*this, sandboxAttr, [](Document&, StringView token) {
             return SecurityContext::isSupportedSandboxPolicy(token);
         });
     return *m_sandbox;

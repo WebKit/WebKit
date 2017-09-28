@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class Document;
 enum class LinkIconType;
 
 struct LinkRelAttribute {
@@ -45,15 +46,16 @@ struct LinkRelAttribute {
     bool isAlternate { false };
     bool isDNSPrefetch { false };
     bool isLinkPreload { false };
+    bool isLinkPreconnect { false };
 #if ENABLE(LINK_PREFETCH)
     bool isLinkPrefetch { false };
     bool isLinkSubresource { false };
 #endif
 
     LinkRelAttribute();
-    explicit LinkRelAttribute(const String&);
+    LinkRelAttribute(Document&, const String&);
 
-    static bool isSupported(StringView);
+    static bool isSupported(Document&, StringView);
 };
 
 }

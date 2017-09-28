@@ -113,6 +113,12 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 - (NSDictionary *)_timingData;
 @end
 
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 110000)
+@interface NSURLSessionTask (ResourceHints)
+@property (nonatomic, assign) BOOL _preconnect;
+@end
+#endif
+
 @interface NSHTTPCookie ()
 - (CFHTTPCookieRef)_CFHTTPCookie;
 + (CFArrayRef __nullable)_ns2cfCookies:(NSArray * __nullable)nsCookies CF_RETURNS_RETAINED;

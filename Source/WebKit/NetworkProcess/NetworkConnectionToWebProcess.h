@@ -76,6 +76,8 @@ public:
 private:
     NetworkConnectionToWebProcess(IPC::Connection::Identifier);
 
+    void didFinishPreconnection(uint64_t preconnectionIdentifier, const WebCore::ResourceError&);
+
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, std::unique_ptr<IPC::Encoder>&) override;
@@ -90,6 +92,7 @@ private:
     void performSynchronousLoad(const NetworkResourceLoadParameters&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
     void prefetchDNS(const String&);
+    void preconnectTo(PAL::SessionID, uint64_t preconnectionIdentifier, const WebCore::URL&, WebCore::StoredCredentialsPolicy);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);

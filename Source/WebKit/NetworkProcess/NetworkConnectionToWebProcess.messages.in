@@ -28,6 +28,7 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RemoveLoadIdentifier(uint64_t resourceLoadIdentifier)
     SetDefersLoading(uint64_t resourceLoadIdentifier, bool defers)
     PrefetchDNS(String hostname)
+    PreconnectTo(PAL::SessionID sessionID, uint64_t preconnectionIdentifier, WebCore::URL url, enum WebCore::StoredCredentialsPolicy storedCredentialsPolicy);
 
     StartDownload(PAL::SessionID sessionID, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, String suggestedName)
     ConvertMainResourceLoadToDownload(PAL::SessionID sessionID, uint64_t mainResourceLoadIdentifier, WebKit::DownloadID downloadID, WebCore::ResourceRequest request, WebCore::ResourceResponse response)

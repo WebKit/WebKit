@@ -5818,7 +5818,9 @@ sub GenerateCallbackHeaderContent
     $includesRef->{"<wtf/Forward.h>"} = 1;
     $includesRef->{"${name}.h"} = 1;
 
-    push(@$contentRef, "class $className final : public ${name} {\n");
+    my $exportMacro = GetExportMacroForJSClass($interfaceOrCallback);
+
+    push(@$contentRef, "class $exportMacro$className final : public ${name} {\n");
     push(@$contentRef, "public:\n");
 
     # The static create() method.
@@ -5875,7 +5877,7 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "};\n\n");
 
     # toJS().
-    push(@$contentRef, "JSC::JSValue toJS(${name}&);\n");
+    push(@$contentRef, $exportMacro . "JSC::JSValue toJS(${name}&);\n");
     push(@$contentRef, "inline JSC::JSValue toJS(${name}* impl) { return impl ? toJS(*impl) : JSC::jsNull(); }\n\n");
 }
 

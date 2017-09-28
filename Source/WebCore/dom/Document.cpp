@@ -173,6 +173,7 @@
 #include "ShadowRoot.h"
 #include "SocketProvider.h"
 #include "StorageEvent.h"
+#include "StringCallback.h"
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
@@ -5611,6 +5612,9 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
 
     if (Page* page = this->page())
         page->console().addMessage(source, level, message, requestIdentifier, this);
+
+    if (m_consoleMessageListener)
+        m_consoleMessageListener->scheduleCallback(*this, message);
 }
 
 void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, unsigned columnNumber, RefPtr<Inspector::ScriptCallStack>&& callStack, JSC::ExecState* state, unsigned long requestIdentifier)
@@ -7338,6 +7342,11 @@ void Document::requestStorageAccess(Ref<DeferredPromise>&& passedPromise)
     }
     
     promise->resolve<IDLBoolean>(false);
+}
+
+void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
+{
+    m_consoleMessageListener = listener;
 }
 
 } // namespace WebCore

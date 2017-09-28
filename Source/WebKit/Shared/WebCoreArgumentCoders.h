@@ -39,6 +39,7 @@
 #include <WebCore/PaymentHeaders.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/ScrollSnapOffsetsInfo.h>
+#include <WebCore/StoredCredentialsPolicy.h>
 
 namespace WTF {
 class MonotonicTime;
@@ -772,6 +773,14 @@ template<> struct EnumTraits<WebCore::MediaSelectionOption::Type> {
         WebCore::MediaSelectionOption::Type::Regular,
         WebCore::MediaSelectionOption::Type::LegibleOff,
         WebCore::MediaSelectionOption::Type::LegibleAuto
+    >;
+};
+
+template <> struct EnumTraits<WebCore::StoredCredentialsPolicy> {
+    using values = EnumValues<
+        WebCore::StoredCredentialsPolicy,
+        WebCore::StoredCredentialsPolicy::DoNotUse,
+        WebCore::StoredCredentialsPolicy::Use
     >;
 };
 

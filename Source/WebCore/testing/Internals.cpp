@@ -130,6 +130,7 @@
 #include "SourceBuffer.h"
 #include "SpellChecker.h"
 #include "StaticNodeList.h"
+#include "StringCallback.h"
 #include "StyleRule.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
@@ -503,6 +504,8 @@ Internals::Internals(Document& document)
         setAutomaticLinkDetectionEnabled(false);
         setAutomaticTextReplacementEnabled(true);
     }
+
+    setConsoleMessageListener(nullptr);
 }
 
 Document* Internals::contextDocument() const
@@ -4175,6 +4178,14 @@ void Internals::cacheStorageEngineRepresentation(DOMPromiseDeferred<IDLDOMString
     m_cacheStorageConnection->engineRepresentation([promise = WTFMove(promise)](const String& result) mutable {
         promise.resolve(result);
     });
+}
+
+void Internals::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
+{
+    if (!contextDocument())
+        return;
+
+    contextDocument()->setConsoleMessageListener(WTFMove(listener));
 }
 
 } // namespace WebCore

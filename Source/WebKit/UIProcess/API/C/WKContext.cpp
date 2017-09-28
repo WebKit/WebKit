@@ -407,6 +407,11 @@ void WKContextSetDiskCacheSpeculativeValidationEnabled(WKContextRef contextRef, 
     toImpl(contextRef)->configuration().setDiskCacheSpeculativeValidationEnabled(value);
 }
 
+void WKContextPreconnectToServer(WKContextRef contextRef, WKURLRef serverURLRef)
+{
+    toImpl(contextRef)->preconnectToServer(URL(URL(), toWTFString(serverURLRef)));
+}
+
 WKCookieManagerRef WKContextGetCookieManager(WKContextRef contextRef)
 {
     return toAPI(toImpl(contextRef)->supplement<WebCookieManagerProxy>());
