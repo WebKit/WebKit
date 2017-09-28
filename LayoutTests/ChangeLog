@@ -1,3 +1,11 @@
+2017-09-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Update TestExpectations for two http/tests/xmlhttprequest/response-* tests.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-27  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [REGRESSION] word-spacing property is incorrectly applied
