@@ -1,3 +1,9 @@
+2017-09-28  Ryan Haddad  <ryanhaddad@apple.com>
+
+        Unreviewed, fix a test name in TestExpectations.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-28  Brent Fulgham  <bfulgham@apple.com>
 
         Add ports 6679 and 6697 (IRC SSL) to port blacklist
