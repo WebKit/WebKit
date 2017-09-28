@@ -1,3 +1,24 @@
+2017-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        AX: Defer RenderListBox selectionChanged event until after layout is done.
+        https://bugs.webkit.org/show_bug.cgi?id=177589
+        <rdar://problem/34705785>
+
+        Reviewed by Chris Fleizach.
+
+        Defer AX update when the selection changed event is followed by a layout.
+
+        Covered by existing tests.
+
+        * accessibility/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::remove):
+        (WebCore::AXObjectCache::performDeferredCacheUpdate):
+        (WebCore::AXObjectCache::deferSelectedChildrenChangedIfNeeded):
+        * accessibility/AXObjectCache.h:
+        (WebCore::AXObjectCache::deferSelectedChildrenChangedIfNeeded):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::selectionChanged):
+
 2017-09-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [Cairo] Remove the cairo_glyph_t complexity from GlyphBuffer
