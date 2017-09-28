@@ -1,3 +1,14 @@
+2017-09-28  Devin Rousso  <webkit@devinrousso.com>
+
+        WebInspector: Uncaught Exception: TypeError: this._delegate.completionControllerCSSFunctionValuesNeeded is not a function.
+        https://bugs.webkit.org/show_bug.cgi?id=177619
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Controllers/CodeMirrorCompletionController.js:
+        (WI.CodeMirrorCompletionController.prototype._generateCSSCompletions):
+        Remove accidental `typeof` keyword.
+
 2017-09-28  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Remove Error icon in error message for resources it looks poor
