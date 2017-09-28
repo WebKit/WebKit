@@ -129,6 +129,10 @@ http://255.255.255.255:6668/test.jpg - willSendRequest <NSURLRequest URL http://
 http://255.255.255.255:6668/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6668/test.jpg">
 http://255.255.255.255:6669/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:6669/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:6669/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6669/test.jpg">
+http://255.255.255.255:6679/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:6679/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+http://255.255.255.255:6679/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6679/test.jpg">
+http://255.255.255.255:6697/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:6697/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
+http://255.255.255.255:6697/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:6697/test.jpg">
 http://255.255.255.255:65535/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:65535/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
 http://255.255.255.255:65535/test.jpg - didFailLoadingWithError: <NSError domain WebKitErrorDomain, code 103, failing URL "http://255.255.255.255:65535/test.jpg">
 http://255.255.255.255:0/test.jpg - willSendRequest <NSURLRequest URL http://255.255.255.255:0/test.jpg, main document URL block-test.html, http method GET> redirectResponse (null)
