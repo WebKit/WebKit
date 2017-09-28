@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2014-2016 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -998,20 +998,27 @@ private:
 
     std::optional<String> tryConsumeGroupName()
     {
+        if (atEndOfPattern())
+            return std::nullopt;
+
         ParseState state = saveState();
-        StringBuilder identifierBuilder;
+        
+        int ch = tryConsumeIdentifierCharacter();
 
-        while (!atEndOfPattern()) {
-            int ch = tryConsumeIdentifierCharacter();
-            if (ch == '>') {
-                if (identifierBuilder.length())
-                    return std::optional<String>(identifierBuilder.toString());
-                break;
-            }
-            if (!isIdentifierPart(ch))
-                break;
-
+        if (isIdentifierStart(ch)) {
+            StringBuilder identifierBuilder;
             identifierBuilder.append(ch);
+
+            while (!atEndOfPattern()) {
+                ch = tryConsumeIdentifierCharacter();
+                if (ch == '>')
+                    return std::optional<String>(identifierBuilder.toString());
+
+                if (!isIdentifierPart(ch))
+                    break;
+
+                identifierBuilder.append(ch);
+            }
         }
 
         restoreState(state);
