@@ -1,5 +1,19 @@
 2017-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Unreviewed, rolling out r222606.
+
+        The debug assertion hit in these API tests should be fixed by
+        r222608.
+
+        Reverted changeset:
+
+        "REGRESSION(r222595): Assertion failure in
+        _preLoadedDataConformingToType"
+        https://bugs.webkit.org/show_bug.cgi?id=177599
+        http://trac.webkit.org/changeset/222606
+
+2017-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         [iOS WK2] DataTransfer DataInteractionTests debug assert under -_preLoadedDataConformingToType:forItemProviderAtIndex:
         https://bugs.webkit.org/show_bug.cgi?id=177594
 
