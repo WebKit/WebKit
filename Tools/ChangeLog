@@ -1,3 +1,13 @@
+2017-09-28  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [WinCairo][MiniBrowser] Add ca-bundle to display secure pages.
+        Copy cacert.pem file into bundle directory.
+        https://bugs.webkit.org/show_bug.cgi?id=168486
+
+        Reviewed by Brent Fulgham.
+
+        * MiniBrowser/win/CMakeLists.txt:
+
 2017-09-28  Lucas Forschler  <lforschler@apple.com>
 
         check in AWS Lambda code used for WebKitArchiveSupport
