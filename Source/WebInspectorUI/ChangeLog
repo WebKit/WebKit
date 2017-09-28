@@ -1,3 +1,21 @@
+2017-09-27  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Uncaught Exception: Attempted to assign to readonly property (at ContentView.js:​206:​34)​
+        https://bugs.webkit.org/show_bug.cgi?id=177587
+
+        Reviewed by Matt Baker.
+
+        We allow a representedObject to be a string. In strict mode attempting to set
+        a property on a string results in a TypeError. So we should be careful not to
+        do this in the rare cases where our representedObject is the a string.
+
+        * UserInterface/Views/ContentView.js:
+        (WI.ContentView.contentViewForRepresentedObject):
+        (WI.ContentView.closedContentViewForRepresentedObject):
+        Avoid setting a property on strings. ContentViews backed by a String aren't typically
+        shared anyways, so the property case would not be useful. If a client really wants
+        to share they could use `new String(...)` as the representedObject.
+
 2017-09-27  Matt Baker  <mattbaker@apple.com>
 
         Web Inspector: Missing checks in DebuggerSidebarPanel for DOM debugging support

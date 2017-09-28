@@ -199,14 +199,16 @@ WI.ContentView = class ContentView extends WI.View
             return null;
 
         console.assert(newContentView.representedObject === resolvedRepresentedObject, "createFromRepresentedObject and resolvedRepresentedObjectForRepresentedObject are out of sync for type", representedObject.constructor.name);
-        newContentView.representedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = newContentView;
+        if (typeof resolvedRepresentedObject === "object")
+            newContentView.representedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = newContentView;
         return newContentView;
     }
 
     static closedContentViewForRepresentedObject(representedObject)
     {
         let resolvedRepresentedObject = WI.ContentView.resolvedRepresentedObjectForRepresentedObject(representedObject);
-        resolvedRepresentedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = null;
+        if (typeof resolvedRepresentedObject === "object")
+            resolvedRepresentedObject[WI.ContentView.ContentViewForRepresentedObjectSymbol] = null;
     }
 
     static resolvedRepresentedObjectForRepresentedObject(representedObject)
