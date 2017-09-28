@@ -1,3 +1,18 @@
+2017-09-27  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222576. rdar://problem/34553953
+
+    2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            "Tag" codepoints require the complex text codepath
+            https://bugs.webkit.org/show_bug.cgi?id=177251
+            <rdar://problem/34384001>
+
+            Reviewed by David Hyatt.
+
+            * fast/text/flag-codepoint-expected.html: Added.
+            * fast/text/flag-codepoint.html: Added.
+
 2017-09-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222539. rdar://problem/34205774

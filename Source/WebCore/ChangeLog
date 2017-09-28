@@ -1,3 +1,26 @@
+2017-09-27  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222576. rdar://problem/34553953
+
+    2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            "Tag" codepoints require the complex text codepath
+            https://bugs.webkit.org/show_bug.cgi?id=177251
+            <rdar://problem/34384001>
+
+            Reviewed by David Hyatt.
+
+            Previously, Tag codepoints (U+E0000 - U+E007F) weren't triggering the
+            complex text codepath.
+
+            Eventually, we should migrate the default from simple to complex. I'll do
+            that in a separate patch.
+
+            Test: fast/text/flag-codepoint.html
+
+            * platform/graphics/FontCascade.cpp:
+            (WebCore::FontCascade::characterRangeCodePath):
+
 2017-09-26  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222539. rdar://problem/34205774
