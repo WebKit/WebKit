@@ -143,7 +143,7 @@ private:
     bool m_needsOptionsWidthUpdate;
     int m_optionsWidth;
 
-    int m_lastActiveIndex;
+    std::optional<int> m_lastActiveIndex;
 
     std::unique_ptr<RenderStyle> m_optionStyle;
 

@@ -1,3 +1,17 @@
+2017-09-28  Zalan Bujtas  <zalan@apple.com>
+
+        Small cleanup in RenderMenuList::didUpdateActiveOption
+        https://bugs.webkit.org/show_bug.cgi?id=177610
+
+        Reviewed by Dean Jackson.
+
+        No change in functionality.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (RenderMenuList::didUpdateActiveOption):
+        * rendering/RenderMenuList.h:
+
 2017-09-28  Ross Kirsling  <ross.kirsling@sony.com>
 
         [PAL] Move HysteresisActivity into PAL

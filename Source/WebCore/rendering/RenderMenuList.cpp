@@ -75,7 +75,6 @@ RenderMenuList::RenderMenuList(HTMLSelectElement& element, RenderStyle&& style)
     , m_innerBlock(nullptr)
     , m_needsOptionsWidthUpdate(true)
     , m_optionsWidth(0)
-    , m_lastActiveIndex(-1)
 #if !PLATFORM(IOS)
     , m_popupIsVisible(false)
 #endif
@@ -422,10 +421,14 @@ void RenderMenuList::didSetSelectedIndex(int listIndex)
 
 void RenderMenuList::didUpdateActiveOption(int optionIndex)
 {
-    if (!AXObjectCache::accessibilityEnabled() || !document().existingAXObjectCache())
+    if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    if (m_lastActiveIndex == optionIndex)
+    auto* axCache = document().existingAXObjectCache();
+    if (!axCache)
+        return;
+
+    if (m_lastActiveIndex && *m_lastActiveIndex == optionIndex)
         return;
     m_lastActiveIndex = optionIndex;
 
@@ -433,10 +436,8 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (listIndex < 0 || listIndex >= static_cast<int>(selectElement().listItems().size()))
         return;
 
-    if (AXObjectCache* cache = document().existingAXObjectCache()) {
-        if (AccessibilityMenuList* menuList = downcast<AccessibilityMenuList>(cache->get(this)))
-            menuList->didUpdateActiveOption(optionIndex);
-    }
+    if (AccessibilityMenuList* menuList = downcast<AccessibilityMenuList>(axCache->get(this)))
+        menuList->didUpdateActiveOption(optionIndex);
 }
 
 String RenderMenuList::itemText(unsigned listIndex) const
