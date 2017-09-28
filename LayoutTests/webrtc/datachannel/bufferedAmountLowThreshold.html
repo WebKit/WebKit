@@ -66,29 +66,6 @@ promise_test((test) => {
         closeDataChannels();
     });
 }, "Large buffer threshold reached");
-
-promise_test((test) => {
-    counter = 0;
-    var gotEvent = false;
-    return new Promise((resolve, reject) => {
-        createConnections((localConnection) => {
-            localChannel = localConnection.createDataChannel('sendDataChannel');
-            localChannel.onopen = () => {
-                sendContinuouslyMessages(localChannel);
-                localChannel.onbufferedamountlow = () => {
-                    reject();
-                }
-            };
-            localChannel.bufferedAmountLowThreshold = 10;
-        }, (remoteConnection) => {
-            remoteConnection.ondatachannel = (event) => {
-                remoteChannel = event.channel;
-                remoteChannel.onmessage = receiveMessages;
-            };
-        });
-        setTimeout(resolve, 50);
-    });
-}, "Medium buffer threshold not reached");
     </script>
   </body>
 </html>
