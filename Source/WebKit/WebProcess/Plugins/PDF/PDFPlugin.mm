@@ -1032,8 +1032,13 @@ void PDFPlugin::pdfDocumentDidLoad()
 
     if ([document isLocked])
         createPasswordEntryForm();
-}
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 101304
+    String pdfURLFragment = webFrame()->url().fragmentIdentifier();
+    [m_pdfLayerController setURLFragment:pdfURLFragment];
+#endif
+}
+    
 void PDFPlugin::streamDidReceiveResponse(uint64_t streamID, const URL&, uint32_t, uint32_t, const String& mimeType, const String&, const String& suggestedFilename)
 {
     ASSERT_UNUSED(streamID, streamID == pdfDocumentRequestID);
