@@ -32,9 +32,17 @@
 #include <cstddef>
 #include <inttypes.h>
 
+#if BCPU(ARM64)
+// FIXME: This can probably be a lot bigger on iOS. I just haven't tried to make it bigger yet.
+// https://bugs.webkit.org/show_bug.cgi?id=177605
+#define PRIMITIVE_GIGACAGE_SIZE 0x40000000llu
+#define JSVALUE_GIGACAGE_SIZE 0x40000000llu
+#define STRING_GIGACAGE_SIZE 0x40000000llu
+#else
 #define PRIMITIVE_GIGACAGE_SIZE 0x800000000llu
 #define JSVALUE_GIGACAGE_SIZE 0x400000000llu
 #define STRING_GIGACAGE_SIZE 0x400000000llu
+#endif
 
 #define GIGACAGE_SIZE_TO_MASK(size) ((size) - 1)
 
@@ -42,22 +50,32 @@
 #define JSVALUE_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(JSVALUE_GIGACAGE_SIZE)
 #define STRING_GIGACAGE_MASK GIGACAGE_SIZE_TO_MASK(STRING_GIGACAGE_SIZE)
 
+#if BCPU(ARM64)
+// FIXME: There is no good reason for ARM64 to be special.
+// https://bugs.webkit.org/show_bug.cgi?id=177605
+#define PRIMITIVE_GIGACAGE_RUNWAY 0
+#else
 // FIXME: Consider making this 32GB, in case unsigned 32-bit indices find their way into indexed accesses.
 // https://bugs.webkit.org/show_bug.cgi?id=175062
 #define PRIMITIVE_GIGACAGE_RUNWAY (16llu * 1024 * 1024 * 1024)
+#endif
 
 // FIXME: Reconsider this.
 // https://bugs.webkit.org/show_bug.cgi?id=175921
 #define JSVALUE_GIGACAGE_RUNWAY 0
 #define STRING_GIGACAGE_RUNWAY 0
 
-#if BOS(DARWIN) && BCPU(X86_64)
+#if BOS(DARWIN) && (BCPU(ARM64) || BCPU(X86_64))
 #define GIGACAGE_ENABLED 1
 #else
 #define GIGACAGE_ENABLED 0
 #endif
 
-#define GIGACAGE_BASE_PTRS_SIZE 8192
+#if BCPU(ARM64)
+#define GIGACAGE_BASE_PTRS_SIZE 16384
+#else
+#define GIGACAGE_BASE_PTRS_SIZE 4096
+#endif
 
 extern "C" BEXPORT char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE] __attribute__((aligned(GIGACAGE_BASE_PTRS_SIZE)));
 

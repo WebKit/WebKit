@@ -1,3 +1,18 @@
+2017-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable gigacage on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177586
+
+        Reviewed by Michael Saboff.
+        
+        The hardest part of enabling Gigacage on iOS is that it requires loading global variables whil
+        executing JS, so the LLInt needs to know how to load from global variables on all platforms that
+        have Gigacage. So, this teaches ARM64 how to load from global variables.
+
+        * offlineasm/arm64.rb:
+        * offlineasm/asm.rb:
+        * offlineasm/instructions.rb:
+
 2017-09-28  Mark Lam  <mark.lam@apple.com>
 
         Add missing exception checks and book-keeping for exception check validation.

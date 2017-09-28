@@ -1,3 +1,15 @@
+2017-09-28  Filip Pizlo  <fpizlo@apple.com>
+
+        Enable gigacage on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=177586
+
+        Reviewed by Michael Saboff.
+        
+        This enables Gigacage on iOS using a much smaller cage size. It's not necessary for it to be so
+        small, but this is a good conservative starting point to start to exercise the code.
+
+        * bmalloc/Gigacage.h:
+
 2017-09-26  Filip Pizlo  <fpizlo@apple.com>
 
         Put g_gigacageBasePtr into its own page and make it read-only
