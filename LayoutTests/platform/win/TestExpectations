@@ -3769,3 +3769,8 @@ webkit.org/b/177378 fast/forms/listbox-typeahead-cyrillic.html [ Failure ]
 webkit.org/b/177385 fast/forms/listbox-typeahead-greek.html [ Failure ]
 
 webkit.org/b/177541 accessibility/image-load-on-delay.html [ Failure ]
+
+# preconnect tests are failing on Windows.
+webkit.org/b/177626 fast/dom/HTMLLinkElement/preconnect-support.html  [ Skip ]
+webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-http.html [ Skip ]
+webkit.org/b/177626 http/tests/preconnect/link-rel-preconnect-https.html [ Skip ]

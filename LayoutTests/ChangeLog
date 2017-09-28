@@ -1,3 +1,12 @@
+2017-09-28  Per Arne Vollan  <pvollan@apple.com>
+
+        Skip failing preconnect tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=177626
+
+        Unreviewed test gardening.
+
+        * platform/win/TestExpectations:
+
 2017-09-28  Ryan Haddad  <ryanhaddad@apple.com>
 
         Mark http/tests/storageAccess/request-storage-access-top-frame.html as flaky on iOS.
