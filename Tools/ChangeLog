@@ -1,3 +1,20 @@
+2017-09-28  Lucas Forschler  <lforschler@apple.com>
+
+        check in AWS Lambda code used for WebKitArchiveSupport
+        https://bugs.webkit.org/show_bug.cgi?id=177614
+        
+        Rubber-stamped by Alexey Proskuryakov.
+
+        * WebKitArchiveSupport/lambda: Added.
+        * WebKitArchiveSupport/lambda/delete-minified-s3-archive-from-dynamodb.py: Added.
+        (lambda_handler):
+        * WebKitArchiveSupport/lambda/delete-s3-archive-from-dynamodb.py: Added.
+        (lambda_handler):
+        * WebKitArchiveSupport/lambda/register-archive-in-dynamodb.py: Added.
+        (lambda_handler):
+        * WebKitArchiveSupport/lambda/register-minified-s3-archive-in-dynamodb.py: Added.
+        (lambda_handler):
+
 2017-09-28  Jiewen Tan  <jiewen_tan@apple.com>
 
         WeakPtrFactory should allow downcasting
