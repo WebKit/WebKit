@@ -6,8 +6,8 @@
         Reviewed by Filip Pizlo.
 
         The change in r210837 neglected to change the check in Interpreter::backtrackParentheses() that
-        greedy parenthesis have backtracked as far as possible.  Prior to r210837 when non-zero minimum greedy
-        parenthesis were factored into a fixed component and then a zero-based variable component.  After
+        greedy parenthesis have backtracked as far as possible.  Prior to r210837, non-zero minimum greedy
+        parenthesis were factored into a fixed component and a zero-based variable component.  After
         r210837, the variable component is not zero based and the check needs to compare the
         backTrack->matchAmount with the quantity iminimum count.
 
