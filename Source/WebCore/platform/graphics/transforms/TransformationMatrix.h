@@ -37,8 +37,6 @@ typedef struct CATransform3D CATransform3D;
 #endif
 #if USE(CG)
 typedef struct CGAffineTransform CGAffineTransform;
-#elif USE(CAIRO)
-#include <cairo.h>
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))
@@ -360,8 +358,6 @@ public:
 #if USE(CG)
     WEBCORE_EXPORT TransformationMatrix(const CGAffineTransform&);
     WEBCORE_EXPORT operator CGAffineTransform() const;
-#elif USE(CAIRO)
-    operator cairo_matrix_t() const;
 #endif
 
 #if PLATFORM(WIN) || (PLATFORM(GTK) && OS(WINDOWS))

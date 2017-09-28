@@ -45,6 +45,7 @@
 #include "SelectionData.h"
 #include "XLinkNames.h"
 #include "markup.h"
+#include <cairo.h>
 
 namespace WebCore {
 

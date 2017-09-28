@@ -822,7 +822,7 @@ void GraphicsContext::concatCTM(const AffineTransform& transform)
     }
 
     cairo_t* cr = platformContext()->cr();
-    const cairo_matrix_t matrix = cairo_matrix_t(transform);
+    const cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_transform(cr, &matrix);
     m_data->concatCTM(transform);
 }
@@ -838,7 +838,7 @@ void GraphicsContext::setCTM(const AffineTransform& transform)
     }
 
     cairo_t* cr = platformContext()->cr();
-    const cairo_matrix_t matrix = cairo_matrix_t(transform);
+    const cairo_matrix_t matrix = toCairoMatrix(transform);
     cairo_set_matrix(cr, &matrix);
     m_data->setCTM(transform);
 }

@@ -254,7 +254,7 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
     // are drawing a repeated pattern. This means that, assuming that (w, h) is the size of the pattern, samplig it at (x, y) is the same
     // than sampling it at (x mod w, y mod h), so we transform the translation component of the pattern matrix in that way.
 
-    cairo_matrix_t patternMatrix = cairo_matrix_t(patternTransform);
+    cairo_matrix_t patternMatrix = toCairoMatrix(patternTransform);
     // dx and dy are added here as well to compensate the previous translation of the destination rectangle.
     double phaseOffsetX = phase.x() + tileRect.x() * patternTransform.a() + dx;
     double phaseOffsetY = phase.y() + tileRect.y() * patternTransform.d() + dy;
@@ -383,6 +383,11 @@ RefPtr<cairo_region_t> toCairoRegion(const Region& region)
         cairo_region_union_rectangle(cairoRegion.get(), &cairoRect);
     }
     return cairoRegion;
+}
+
+cairo_matrix_t toCairoMatrix(const AffineTransform& transform)
+{
+    return cairo_matrix_t { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
 }
 
 } // namespace WebCore
