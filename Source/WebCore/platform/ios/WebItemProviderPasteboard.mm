@@ -371,10 +371,8 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
 
 - (NSData *)_preLoadedDataConformingToType:(NSString *)typeIdentifier forItemProviderAtIndex:(NSUInteger)index
 {
-    if (_loadResults.size() != [_itemProviders count]) {
-        ASSERT_NOT_REACHED();
+    if (_loadResults.size() != [_itemProviders count])
         return nil;
-    }
 
     WebItemProviderLoadResult *loadResult = _loadResults[index].get();
     for (NSString *loadedType in loadResult.loadedTypeIdentifiers) {
