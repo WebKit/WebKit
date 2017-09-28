@@ -34,7 +34,6 @@ media/mac [ Skip ]
 media/ios [ Skip ]
 media/controls/ipad [ Skip ]
 fast/text-autosizing [ Skip ]
-fast/css/variables/constants/ios [ Skip ]
 fast/css/variables/env/ios [ Skip ]
 http/tests/preload/viewport [ Skip ]
 
