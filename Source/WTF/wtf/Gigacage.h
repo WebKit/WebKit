@@ -31,9 +31,10 @@
 #define GIGACAGE_ENABLED 0
 #define PRIMITIVE_GIGACAGE_MASK 0
 #define JSVALUE_GIGACAGE_MASK 0
+#define GIGACAGE_BASE_PTRS_SIZE 8192
 
 extern "C" {
-extern WTF_EXPORTDATA void* g_gigacageBasePtr;
+extern WTF_EXPORTDATA char g_gigacageBasePtrs[GIGACAGE_BASE_PTRS_SIZE];
 }
 
 namespace Gigacage {
@@ -77,9 +78,23 @@ ALWAYS_INLINE const char* name(Kind kind)
     return nullptr;
 }
 
-ALWAYS_INLINE void*& basePtr(Kind)
+ALWAYS_INLINE void*& basePtr(BasePtrs& basePtrs, Kind kind)
 {
-    return g_gigacageBasePtr;
+    switch (kind) {
+    case Primitive:
+        return basePtrs.primitive;
+    case JSValue:
+        return basePtrs.jsValue;
+    case String:
+        return basePtrs.string;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return basePtrs.primitive;
+}
+
+ALWAYS_INLINE BasePtrs& basePtrs()
+{
+    return *reinterpret_cast<BasePtrs*>(g_gigacageBasePtrs);
 }
 
 ALWAYS_INLINE size_t mask(Kind) { return 0; }

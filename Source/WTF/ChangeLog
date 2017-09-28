@@ -1,3 +1,14 @@
+2017-09-28  Don Olmstead  <don.olmstead@sony.com>
+
+        Sync SYSTEM_MALLOC implementation of Gigacage
+        https://bugs.webkit.org/show_bug.cgi?id=177569
+
+        Reviewed by Mark Lam.
+
+        * wtf/Gigacage.h:
+        (Gigacage::basePtr):
+        (Gigacage::basePtrs):
+
 2017-09-27  Per Arne Vollan  <pvollan@apple.com>
 
         [Win64] Compile error, 'BasePtrs' is undefined.
