@@ -1,3 +1,32 @@
+2017-09-28  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] DataTransfer DataInteractionTests debug assert under -_preLoadedDataConformingToType:forItemProviderAtIndex:
+        https://bugs.webkit.org/show_bug.cgi?id=177594
+
+        Reviewed by Tim Horton.
+
+        Currently, some API tests added in r222595 currently hit debug assertions under -preloadedDataConformingToType:
+        forItemProviderAtIndex:. This is because the page may call DataTransfer.types, which now calls into
+        PlatformPasteboard::typesSafeForDOMToReadAndWrite(). This calls on the AbstractPasteboard (either the
+        UIPasteboard or WebItemProviderPasteboard, in the case of drag and drop) to fetch the custom WebKit pasteboard
+        data blob, if it exists. For WebItemProviderPasteboard, this ends up calling into -[WebItemProviderPasteboard
+        _preLoadedDataConformingToType:forItemProviderAtIndex:], which was previously only called after loading data off
+        of the item providers. There's an existing sanity check in this preloaded data helper to make sure that the
+        number of load results is equal to the number of item providers loaded from, but this sanity check only makes
+        sense *after* the drop has happened, not before, since we should only attempt to read dropped data after any
+        data at all has been dropped.
+
+        We need to check whether or not this custom data blob exists in PlatformPasteboard::typesSafeForDOMToReadAndWrite
+        to fetch the list of DOM-exposed types to propagate back to the page. So to fix this, we make the helper methods
+        for fetching dropped data (-dataForPasteboardType:inItemSet: and -valuesForPasteboardType:inItemSet:) fail
+        gracefully when invoked prior to drop, when PlatformPasteboard::typesSafeForDOMToReadAndWrite is invoked.
+
+        No new tests; fixes iOS drag and drop API tests that currently hit this debug assertion.
+
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderPasteboard dataForPasteboardType:inItemSet:]):
+        (-[WebItemProviderPasteboard valuesForPasteboardType:inItemSet:]):
+
 2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r222595): Assertion failure in _preLoadedDataConformingToType
