@@ -396,10 +396,6 @@ TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTe
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
-
-    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
-    run.setCharactersLength(renderer().textLength() - fragment.characterOffset);
-    ASSERT(run.charactersLength() >= run.length());
     return run;
 }
 

@@ -78,8 +78,6 @@ private:
     static TextRun constructTextRun(RenderText& text, float xPos)
     {
         TextRun run = RenderBlock::constructTextRun(text, text.style());
-        run.setCharactersLength(text.textLength());
-        ASSERT(run.charactersLength() >= run.length());
         run.setXPos(xPos);
         return run;
     }

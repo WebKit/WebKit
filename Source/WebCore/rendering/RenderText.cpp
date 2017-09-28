@@ -514,9 +514,6 @@ ALWAYS_INLINE float RenderText::widthFromCache(const FontCascade& f, unsigned st
     }
 
     TextRun run = RenderBlock::constructTextRun(*this, start, len, style);
-    run.setCharactersLength(textLength() - start);
-    ASSERT(run.charactersLength() >= run.length());
-
     run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
     run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     run.setXPos(xPos);
@@ -781,7 +778,6 @@ static float maxWordFragmentWidth(RenderText& renderer, const RenderStyle& style
         fragmentWithHyphen.append(style.hyphenString());
 
         TextRun run = RenderBlock::constructTextRun(fragmentWithHyphen.toString(), style);
-        run.setCharactersLength(fragmentWithHyphen.length());
         run.setCharacterScanForCodePath(!renderer.canUseSimpleFontCodePath());
         float fragmentWidth = font.width(run, &fallbackFonts, &glyphOverflow);
 
@@ -1007,8 +1003,6 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
                 currMaxWidth = 0;
             } else {
                 TextRun run = RenderBlock::constructTextRun(*this, i, 1, style);
-                run.setCharactersLength(len - i);
-                ASSERT(run.charactersLength() >= run.length());
                 run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
                 run.setXPos(leadWidth + currMaxWidth);
 
@@ -1395,12 +1389,10 @@ float RenderText::width(unsigned from, unsigned len, const FontCascade& f, float
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow, style);
     } else {
         TextRun run = RenderBlock::constructTextRun(*this, from, len, style);
-        run.setCharactersLength(textLength() - from);
-        ASSERT(run.charactersLength() >= run.length());
-
         run.setCharacterScanForCodePath(!canUseSimpleFontCodePath());
         run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         run.setXPos(xPos);
+
         w = f.width(run, fallbackFonts, glyphOverflow);
     }
 

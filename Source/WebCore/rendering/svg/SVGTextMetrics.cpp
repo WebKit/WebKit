@@ -73,10 +73,6 @@ TextRun SVGTextMetrics::constructTextRun(RenderSVGInlineText& text, unsigned pos
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
-
-    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
-    run.setCharactersLength(text.textLength() - position);
-    ASSERT(run.charactersLength() >= run.length());
     return run;
 }
 

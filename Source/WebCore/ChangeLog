@@ -1,3 +1,48 @@
+2017-09-28  Daniel Bates  <dabates@apple.com>
+
+        Remove TextRun::setCharactersLength() and TextRun::charactersLength()
+        https://bugs.webkit.org/show_bug.cgi?id=177620
+
+        Reviewed by Zalan Bujtas.
+
+        The purpose of TextRun::setCharactersLength() and TextRun::charactersLength() predate the
+        use of WidthIterator to safely iterate over characters in a TextRun that may contain
+        surrogate halves due to how it was created (without thought of surrogate pairs). Historically
+        TextRun::charactersLength() complemented TextRun::length() and represented the length of the
+        text to render ignoring and respecting truncation, respectively. We not longer need either
+        of these member functions with the advent of WidthIterator.
+
+        No functionality changed. So, no new tests.
+
+        * platform/graphics/ComplexTextController.cpp:
+        (WebCore::TextLayout::constructTextRun):
+        * platform/graphics/TextRun.cpp: Remove one unsigned field from ExpectedTextRunSize as we
+        reduced the size of TextRun with the removal of TextRun::m_charactersLength.
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::charactersLength const): Deleted.
+        (WebCore::TextRun::setCharactersLength): Deleted.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::constructTextRun const):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::constructTextRun): Deleted overload that took const RenderStyle& style
+        and StringView.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache const):
+        (WebCore::maxWordFragmentWidth):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::width const):
+        * rendering/line/BreakingContext.h:
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::constructTextRun const):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::constructTextRun):
+        * rendering/svg/SVGTextMetricsBuilder.cpp:
+        (WebCore::SVGTextMetricsBuilder::currentCharacterStartsSurrogatePair const): Use TextRun::length().
+        (WebCore::SVGTextMetricsBuilder::advance): Ditto.
+
 2017-09-28  Tim Horton  <timothy_horton@apple.com>
 
         Remove constant() in favor of env()

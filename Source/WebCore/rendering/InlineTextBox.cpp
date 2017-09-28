@@ -1091,22 +1091,14 @@ String InlineTextBox::hyphenatedStringForTextRun(const RenderStyle& style, std::
 
 TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView alternateStringToRender, std::optional<unsigned> alternateLength) const
 {
+    auto actuallyConstructTextRun = [&] (StringView string) {
+        TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
+        run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+        return run;
+    };
     if (alternateStringToRender.isNull())
-        return constructTextRun(style, substringToRender(alternateLength), renderer().textLength() - start());
-    return constructTextRun(style, alternateStringToRender, alternateStringToRender.length());
-}
-
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView string, unsigned maximumLength) const
-{
-    ASSERT(maximumLength >= string.length());
-
-    TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
-    run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-
-    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
-    run.setCharactersLength(maximumLength);
-    ASSERT(run.charactersLength() >= run.length());
-    return run;
+        return actuallyConstructTextRun(substringToRender(alternateLength));
+    return actuallyConstructTextRun(alternateStringToRender);
 }
 
 inline const RenderCombineText* InlineTextBox::combinedText() const

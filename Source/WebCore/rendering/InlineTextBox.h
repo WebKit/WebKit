@@ -110,7 +110,6 @@ private:
     StringView substringToRender(std::optional<unsigned> overridingLength = { }) const;
     String hyphenatedStringForTextRun(const RenderStyle&, std::optional<unsigned> alternateLength = { }) const;
     TextRun constructTextRun(const RenderStyle&, StringView alternateStringToRender = { }, std::optional<unsigned> alternateLength = { }) const;
-    TextRun constructTextRun(const RenderStyle&, StringView, unsigned maximumLength) const;
 
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }

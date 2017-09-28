@@ -46,7 +46,6 @@ class TextRun {
 public:
     explicit TextRun(StringView text, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = DefaultExpansion, TextDirection direction = LTR, bool directionalOverride = false, bool characterScanForCodePath = true)
         : m_text(text)
-        , m_charactersLength(text.length())
         , m_tabSize(0)
         , m_xpos(xpos)
         , m_horizontalGlyphStretch(1)
@@ -83,13 +82,11 @@ public:
 
     bool is8Bit() const { return m_text.is8Bit(); }
     unsigned length() const { return m_text.length(); }
-    unsigned charactersLength() const { return m_charactersLength; }
     String string() const { return m_text.toString(); }
 
     void setText(const LChar* c, unsigned len) { m_text = StringView(c, len); }
     void setText(const UChar* c, unsigned len) { m_text = StringView(c, len); }
     void setText(StringView stringView) { m_text = stringView; }
-    void setCharactersLength(unsigned charactersLength) { m_charactersLength = charactersLength; }
 
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
     void setHorizontalGlyphStretch(float scale) { m_horizontalGlyphStretch = scale; }
@@ -117,7 +114,6 @@ public:
 
 private:
     StringView m_text;
-    unsigned m_charactersLength; // Marks the end of the characters buffer. Default equals to length of m_text.
 
     unsigned m_tabSize;
 
