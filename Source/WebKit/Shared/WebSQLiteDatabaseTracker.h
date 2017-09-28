@@ -26,8 +26,8 @@
 #ifndef WebSQLiteDatabaseTracker_h
 #define WebSQLiteDatabaseTracker_h
 
-#include <WebCore/HysteresisActivity.h>
 #include <WebCore/SQLiteDatabaseTrackerClient.h>
+#include <pal/HysteresisActivity.h>
 #include <wtf/Noncopyable.h>
 
 namespace WebKit {
@@ -47,10 +47,10 @@ public:
     void didFinishLastTransaction() override;
 
 private:
-    void hysteresisUpdated(WebCore::HysteresisState);
+    void hysteresisUpdated(PAL::HysteresisState);
 
     ChildProcess& m_process;
-    WebCore::HysteresisActivity m_hysteresis;
+    PAL::HysteresisActivity m_hysteresis;
     enum class ChildProcessType { Network, WebContent };
     ChildProcessType m_childProcessType;
 };

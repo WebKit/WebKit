@@ -50,7 +50,7 @@ WebSQLiteDatabaseTrackerClient& WebSQLiteDatabaseTrackerClient::sharedWebSQLiteD
 }
 
 WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient()
-    : m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); }, hysteresisDuration)
+    : m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); }, hysteresisDuration)
 {
 }
 
@@ -72,9 +72,9 @@ void WebSQLiteDatabaseTrackerClient::didFinishLastTransaction()
     });
 }
 
-void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(HysteresisState state)
+void WebSQLiteDatabaseTrackerClient::hysteresisUpdated(PAL::HysteresisState state)
 {
-    if (state == HysteresisState::Started)
+    if (state == PAL::HysteresisState::Started)
         [WebDatabaseTransactionBackgroundTaskController startBackgroundTask];
     else
         [WebDatabaseTransactionBackgroundTaskController endBackgroundTask];

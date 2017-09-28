@@ -34,7 +34,7 @@
 #include "NetworkCacheSubresourcesEntry.h"
 #include "NetworkProcess.h"
 #include <WebCore/DiagnosticLoggingKeys.h>
-#include <WebCore/HysteresisActivity.h>
+#include <pal/HysteresisActivity.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RefCounted.h>
@@ -207,7 +207,7 @@ private:
         : m_storage(storage)
         , m_mainResourceKey(mainResourceKey)
         , m_loadCompletionHandler(WTFMove(loadCompletionHandler))
-        , m_loadHysteresisActivity([this](HysteresisState state) { if (state == HysteresisState::Stopped) markLoadAsCompleted(); })
+        , m_loadHysteresisActivity([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) markLoadAsCompleted(); })
     {
         m_loadHysteresisActivity.impulse();
     }
@@ -239,7 +239,7 @@ private:
     Key m_mainResourceKey;
     Vector<std::unique_ptr<SubresourceLoad>> m_subresourceLoads;
     WTF::Function<void()> m_loadCompletionHandler;
-    HysteresisActivity m_loadHysteresisActivity;
+    PAL::HysteresisActivity m_loadHysteresisActivity;
     std::unique_ptr<SubresourcesEntry> m_existingEntry;
     bool m_didFinishLoad { false };
     bool m_didRetrieveExistingEntry { false };

@@ -39,7 +39,7 @@ namespace WebKit {
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(NetworkProcess& process)
     : m_process(process)
-    , m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); })
+    , m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
     , m_childProcessType(ChildProcessType::Network)
 {
     SQLiteDatabaseTracker::setClient(this);
@@ -47,7 +47,7 @@ WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(NetworkProcess& process)
 
 WebSQLiteDatabaseTracker::WebSQLiteDatabaseTracker(WebProcess& process)
     : m_process(process)
-    , m_hysteresis([this](HysteresisState state) { hysteresisUpdated(state); })
+    , m_hysteresis([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
     , m_childProcessType(ChildProcessType::WebContent)
 {
     SQLiteDatabaseTracker::setClient(this);
@@ -67,14 +67,14 @@ void WebSQLiteDatabaseTracker::didFinishLastTransaction()
     });
 }
 
-void WebSQLiteDatabaseTracker::hysteresisUpdated(HysteresisState state)
+void WebSQLiteDatabaseTracker::hysteresisUpdated(PAL::HysteresisState state)
 {
     switch (m_childProcessType) {
     case ChildProcessType::WebContent:
-        m_process.parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(state == HysteresisState::Started), 0);
+        m_process.parentProcessConnection()->send(Messages::WebProcessProxy::SetIsHoldingLockedFiles(state == PAL::HysteresisState::Started), 0);
         break;
     case ChildProcessType::Network:
-        m_process.parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsHoldingLockedFiles(state == HysteresisState::Started), 0);
+        m_process.parentProcessConnection()->send(Messages::NetworkProcessProxy::SetIsHoldingLockedFiles(state == PAL::HysteresisState::Started), 0);
         break;
     }
 }

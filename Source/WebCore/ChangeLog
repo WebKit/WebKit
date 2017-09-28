@@ -1,3 +1,23 @@
+2017-09-28  Ross Kirsling  <ross.kirsling@sony.com>
+
+        [PAL] Move HysteresisActivity into PAL
+        https://bugs.webkit.org/show_bug.cgi?id=177516
+
+        Reviewed by Alex Christensen.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/UserActivity.cpp:
+        (WebCore::UserActivity::UserActivity):
+        (WebCore::UserActivity::hysteresisUpdated):
+        * platform/UserActivity.h:
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.cpp:
+        (WebCore::BackingStoreBackendCairoImpl::BackingStoreBackendCairoImpl):
+        * platform/graphics/cairo/BackingStoreBackendCairoImpl.h:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.h:
+        * platform/ios/WebSQLiteDatabaseTrackerClient.mm:
+        (WebCore::WebSQLiteDatabaseTrackerClient::WebSQLiteDatabaseTrackerClient):
+        (WebCore::WebSQLiteDatabaseTrackerClient::hysteresisUpdated):
+
 2017-09-28  Chris Dumez  <cdumez@apple.com>
 
         Add support for <link rel=preconnect>

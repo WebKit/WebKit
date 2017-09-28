@@ -23,13 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HysteresisActivity_h
-#define HysteresisActivity_h
+#pragma once
 
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 
-namespace WebCore {
+namespace PAL {
 
 static const Seconds defaultHysteresisDuration { 5_s };
 
@@ -95,6 +94,4 @@ private:
     RunLoop::Timer<HysteresisActivity> m_timer;
 };
 
-} // namespace WebCore
-
-#endif // HysteresisActivity_h
+} // namespace PAL

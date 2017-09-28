@@ -45,14 +45,14 @@ void UserActivity::Impl::endActivity()
 #endif
 
 UserActivity::UserActivity(const char* description)
-    : HysteresisActivity([this](HysteresisState state) { hysteresisUpdated(state); })
+    : PAL::HysteresisActivity([this](PAL::HysteresisState state) { hysteresisUpdated(state); })
     , m_impl(description)
 {
 }
 
-void UserActivity::hysteresisUpdated(HysteresisState state)
+void UserActivity::hysteresisUpdated(PAL::HysteresisState state)
 {
-    if (state == HysteresisState::Started)
+    if (state == PAL::HysteresisState::Started)
         m_impl.beginActivity();
     else
         m_impl.endActivity();

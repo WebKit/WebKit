@@ -127,6 +127,7 @@
 		A3788E981F05B6CE00679425 /* Sound.h in Headers */ = {isa = PBXBuildFile; fileRef = A3788E971F05B6CE00679425 /* Sound.h */; };
 		A3788E9C1F05B78200679425 /* Sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9B1F05B78200679425 /* Sound.cpp */; };
 		A3788E9E1F05B78E00679425 /* SoundMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A3788E9D1F05B78E00679425 /* SoundMac.mm */; };
+		A39DE74E1F7C443D007BCB00 /* HysteresisActivity.h in Headers */ = {isa = PBXBuildFile; fileRef = A39DE74D1F7C443C007BCB00 /* HysteresisActivity.h */; };
 		A3AB6E521F3D1DC5009C14B1 /* SleepDisabler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */; };
 		A3AB6E561F3D1DDB009C14B1 /* SleepDisabler.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */; };
 		A3AB6E571F3D1DDB009C14B1 /* SystemSleepListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AB6E541F3D1DDB009C14B1 /* SystemSleepListener.cpp */; };
@@ -262,6 +263,7 @@
 		A3788E971F05B6CE00679425 /* Sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sound.h; sourceTree = "<group>"; };
 		A3788E9B1F05B78200679425 /* Sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sound.cpp; sourceTree = "<group>"; };
 		A3788E9D1F05B78E00679425 /* SoundMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SoundMac.mm; sourceTree = "<group>"; };
+		A39DE74D1F7C443C007BCB00 /* HysteresisActivity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HysteresisActivity.h; sourceTree = "<group>"; };
 		A3AB6E511F3D1DC5009C14B1 /* SleepDisabler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SleepDisabler.cpp; sourceTree = "<group>"; };
 		A3AB6E531F3D1DDB009C14B1 /* SleepDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SleepDisabler.h; sourceTree = "<group>"; };
 		A3AB6E541F3D1DDB009C14B1 /* SystemSleepListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemSleepListener.cpp; sourceTree = "<group>"; };
@@ -429,8 +431,7 @@
 				0CF99CA61F738436007EE793 /* CoreMediaSoftLink.cpp */,
 				0CF99CA71F738437007EE793 /* CoreMediaSoftLink.h */,
 			);
-			name = cf;
-			path = "New Group";
+			path = cf;
 			sourceTree = "<group>";
 		};
 		1C09D0341E31C32800725F18 = {
@@ -461,6 +462,7 @@
 				A3788E9F1F05B7CE00679425 /* system */,
 				A30D411D1F0DD0AC00B71954 /* text */,
 				0C2D9E721EEF5AF600DBC317 /* ExportMacros.h */,
+				A39DE74D1F7C443C007BCB00 /* HysteresisActivity.h */,
 				0708AC321F4C874A001F788F /* Logger.h */,
 				07377ADB1F5777D70027F16D /* LoggerHelper.h */,
 				A3C66CDA1F462D6A009E6EE9 /* SessionID.cpp */,
@@ -593,6 +595,7 @@
 				0C5AF91B1F43A4C7002EAC02 /* GraphicsServicesSPI.h in Headers */,
 				A102658E1F567E9D00B4C844 /* HIServicesSPI.h in Headers */,
 				A10265891F56747A00B4C844 /* HIToolboxSPI.h in Headers */,
+				A39DE74E1F7C443D007BCB00 /* HysteresisActivity.h in Headers */,
 				0C2DA11F1F3BE9E000DBC317 /* ImageIOSPI.h in Headers */,
 				0C2DA1421F3BEB4900DBC317 /* IOPMLibSPI.h in Headers */,
 				0C2DA1431F3BEB4900DBC317 /* IOPSLibSPI.h in Headers */,

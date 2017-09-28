@@ -27,8 +27,8 @@
 
 #if PLATFORM(IOS)
 
-#include "HysteresisActivity.h"
 #include "SQLiteDatabaseTrackerClient.h"
+#include <pal/HysteresisActivity.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 
@@ -47,9 +47,9 @@ private:
     WebSQLiteDatabaseTrackerClient();
     virtual ~WebSQLiteDatabaseTrackerClient();
 
-    void hysteresisUpdated(HysteresisState);
+    void hysteresisUpdated(PAL::HysteresisState);
 
-    HysteresisActivity m_hysteresis;
+    PAL::HysteresisActivity m_hysteresis;
 };
 
 }

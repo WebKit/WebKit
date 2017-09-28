@@ -339,7 +339,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(MEDIA_STREAM)
     , m_userMediaPermissionRequestManager { std::make_unique<UserMediaPermissionRequestManager>(*this) }
 #endif
-    , m_pageScrolledHysteresis([this](HysteresisState state) { if (state == HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisDuration)
+    , m_pageScrolledHysteresis([this](PAL::HysteresisState state) { if (state == PAL::HysteresisState::Stopped) pageStoppedScrolling(); }, pageScrollHysteresisDuration)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
 #if PLATFORM(IOS)
@@ -352,7 +352,7 @@ WebPage::WebPage(uint64_t pageID, WebPageCreationParameters&& parameters)
     , m_activityState(parameters.activityState)
     , m_processSuppressionEnabled(true)
     , m_userActivity("Process suppression disabled for page.")
-    , m_userActivityHysteresis([this](HysteresisState) { updateUserActivity(); })
+    , m_userActivityHysteresis([this](PAL::HysteresisState) { updateUserActivity(); })
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { parameters.overrideContentSecurityPolicy }
     , m_cpuLimit(parameters.cpuLimit)
@@ -620,7 +620,7 @@ void WebPage::updateThrottleState()
 
 void WebPage::updateUserActivity()
 {
-    if (m_userActivityHysteresis.state() == HysteresisState::Started)
+    if (m_userActivityHysteresis.state() == PAL::HysteresisState::Started)
         m_userActivity.start();
     else
         m_userActivity.stop();
