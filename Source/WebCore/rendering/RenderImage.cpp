@@ -265,13 +265,9 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
         }
         imageSizeChange = setImageSizeForAltText(cachedImage());
     }
-
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled())) {
-        if (AXObjectCache* cache = document().existingAXObjectCache())
-            cache->deferRecomputeIsIgnored(element());
-    }
-
     repaintOrMarkForLayout(imageSizeChange, rect);
+    if (AXObjectCache* cache = document().existingAXObjectCache())
+        cache->deferRecomputeIsIgnoredIfNeeded(element());
 }
 
 void RenderImage::updateIntrinsicSizeIfNeeded(const LayoutSize& newSize)
