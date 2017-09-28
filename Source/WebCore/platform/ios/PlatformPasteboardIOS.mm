@@ -436,6 +436,7 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
 
 Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
 {
+#if TARGET_OS_IPHONE
     ListHashSet<String> domPasteboardTypes;
     for (NSItemProvider *provider in [m_pasteboard itemProviders]) {
         if (!provider.teamData.length)
@@ -475,10 +476,14 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
     Vector<String> result;
     copyToVector(domPasteboardTypes, result);
     return result;
+#else
+    return { };
+#endif
 }
 
 long PlatformPasteboard::write(const PasteboardCustomData& data)
 {
+#if TARGET_OS_IPHONE
     auto representationsToRegister = adoptNS([[WebItemProviderRegistrationInfoList alloc] init]);
     [representationsToRegister setPreferredPresentationStyle:WebPreferredPresentationStyleInline];
 
@@ -514,6 +519,9 @@ long PlatformPasteboard::write(const PasteboardCustomData& data)
 
     registerItemToPasteboard(representationsToRegister.get(), m_pasteboard.get());
     return [m_pasteboard changeCount];
+#else
+    UNUSED_PARAM(data);
+#endif
 }
 
 int PlatformPasteboard::count()
