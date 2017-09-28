@@ -369,6 +369,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_paths = options.paths;
     m_allowedHosts = options.allowedHosts;
     m_shouldShowWebView = options.shouldShowWebView;
+    m_shouldShowTouches = options.shouldShowTouches;
 
     if (options.printSupportedFeatures) {
         // FIXME: On Windows, DumpRenderTree uses this to expose whether it supports 3d

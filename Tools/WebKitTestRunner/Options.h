@@ -48,6 +48,7 @@ struct Options {
     bool shouldUseAcceleratedDrawing;
     bool shouldUseRemoteLayerTree;
     bool shouldShowWebView;
+    bool shouldShowTouches;
     std::vector<std::string> paths;
     std::vector<std::string> allowedHosts;
 };

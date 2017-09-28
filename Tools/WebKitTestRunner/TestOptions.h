@@ -50,6 +50,7 @@ struct TestOptions {
     bool enableCredentialManagement { false };
     bool enableIsSecureContextAttribute { true };
     bool enableInspectorAdditions { false };
+    bool shouldShowTouches { false };
 
     float deviceScaleFactor { 1 };
     Vector<String> overrideLanguages;

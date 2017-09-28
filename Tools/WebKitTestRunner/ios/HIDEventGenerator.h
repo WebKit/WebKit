@@ -67,6 +67,8 @@ extern NSString* const HIDEventPhaseCanceled;
 
 @interface HIDEventGenerator : NSObject
 
+@property (nonatomic, assign) BOOL shouldShowTouches;
+
 + (HIDEventGenerator *)sharedHIDEventGenerator;
 
 // Touches

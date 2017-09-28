@@ -80,6 +80,9 @@ static const IOHIDFloat defaultPathPressure = 0;
 static const NSUInteger maxTouchCount = 5;
 static const long nanosecondsPerSecond = 1e9;
 
+static const NSUInteger debugTouchDotRadius = 5;
+static const NSUInteger debugTouchDotSize = debugTouchDotRadius * 2;
+
 static int fingerIdentifiers[maxTouchCount] = { 2, 3, 4, 5, 1 };
 
 typedef enum {
@@ -149,6 +152,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
 @interface HIDEventGenerator ()
 @property (nonatomic, strong) NSMutableDictionary *eventCallbacks;
+@property (nonatomic, strong) NSArray<UIView *> *debugTouchViews;
 @end
 
 @implementation HIDEventGenerator {
@@ -184,6 +188,32 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     _eventCallbacks = [[NSMutableDictionary alloc] init];
 
     return self;
+}
+
+- (void)dealloc
+{
+    [_eventCallbacks release];
+    [_debugTouchViews release];
+    [super dealloc];
+}
+
+- (void)initDebugViewsIfNeeded
+{
+    if (!self.shouldShowTouches || self.debugTouchViews)
+        return;
+
+    NSMutableArray *debugViews = [NSMutableArray arrayWithCapacity:maxTouchCount];
+    
+    for (NSUInteger i = 0; i < maxTouchCount; ++i) {
+        auto newView = adoptNS([[UIView alloc] initWithFrame:CGRectMake(10, 10, debugTouchDotSize, debugTouchDotSize)]);
+        [newView setUserInteractionEnabled:NO];
+        [newView layer].cornerRadius = debugTouchDotRadius;
+        [newView setBackgroundColor:[UIColor colorWithRed:1.0-i*.05 green:0.0 blue:1.0-i*.05 alpha:0.5]];
+        [newView setHidden:YES];
+        debugViews[i] = newView.get();
+        [[[UIApplication sharedApplication] keyWindow] addSubview:debugViews[i]];
+    }
+    self.debugTouchViews = [NSArray arrayWithArray:debugViews];
 }
 
 - (void)_sendIOHIDKeyboardEvent:(uint64_t)timestamp usage:(uint32_t)usage isKeyDown:(bool)isKeyDown
@@ -273,6 +303,14 @@ static InterpolationType interpolationFromString(NSString *string)
     return 0;
 }
 
+- (void)updateDebugIndicatorForTouch:(NSUInteger)index withPoint:(CGPoint)point isTouching:(BOOL)isTouching
+{
+    [self initDebugViewsIfNeeded];
+    
+    self.debugTouchViews[index].hidden = !isTouching;
+    self.debugTouchViews[index].center = point;
+}
+
 // FIXME: callers of _createIOHIDEventType could switch to this.
 - (IOHIDEventRef)_createIOHIDEventWithInfo:(NSDictionary *)info
 {
@@ -303,7 +341,9 @@ static InterpolationType interpolationFromString(NSString *string)
 
     NSArray *childEvents = info[HIDEventTouchesKey];
     for (NSDictionary *touchInfo in childEvents) {
-
+        if (self.shouldShowTouches)
+            [self updateDebugIndicatorForTouch:[touchInfo[HIDEventTouchIDKey] intValue] withPoint:CGPointMake([touchInfo[HIDEventXKey] floatValue], [touchInfo[HIDEventYKey] floatValue]) isTouching:(BOOL)touch];
+        
         IOHIDDigitizerEventMask childEventMask = 0;
 
         UITouchPhase phase = phaseFromString(touchInfo[HIDEventPhaseKey]);
@@ -390,6 +430,9 @@ static InterpolationType interpolationFromString(NSString *string)
 
         CGPoint point = pointInfo->point;
         point = CGPointMake(roundf(point.x), roundf(point.y));
+        if (self.shouldShowTouches)
+            [self updateDebugIndicatorForTouch:i withPoint:point isTouching:isTouching];
+
         RetainPtr<IOHIDEventRef> subEvent;
         if (pointInfo->isStylus) {
             if (eventType == StylusEventTouched) {
@@ -504,8 +547,11 @@ static InterpolationType interpolationFromString(NSString *string)
     _activePointCount = count;
 
     // Update point locations.
-    for (NSUInteger i = 0; i < count; ++i)
+    for (NSUInteger i = 0; i < count; ++i) {
         _activePoints[i].point = points[i];
+        if (self.shouldShowTouches)
+            [self updateDebugIndicatorForTouch:i withPoint:points[i] isTouching:YES];
+    }
     
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
     [self _sendHIDEvent:eventRef.get()];
@@ -520,6 +566,9 @@ static InterpolationType interpolationFromString(NSString *string)
     for (NSUInteger index = 0; index < touchCount; ++index) {
         _activePoints[index].point = locations[index];
         _activePoints[index].isStylus = NO;
+        
+        if (self.shouldShowTouches)
+            [self updateDebugIndicatorForTouch:index withPoint:locations[index] isTouching:YES];
     }
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
@@ -550,8 +599,11 @@ static InterpolationType interpolationFromString(NSString *string)
 
     NSUInteger newPointCount = _activePointCount - touchCount;
 
-    for (NSUInteger index = 0; index < touchCount; ++index)
+    for (NSUInteger index = 0; index < touchCount; ++index) {
         _activePoints[newPointCount + index].point = locations[index];
+        if (self.shouldShowTouches)
+            self.debugTouchViews[index].hidden = YES;
+    }
     
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);
     [self _sendHIDEvent:eventRef.get()];

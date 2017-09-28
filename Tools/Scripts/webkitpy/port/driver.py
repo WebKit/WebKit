@@ -423,6 +423,8 @@ class Driver(object):
             cmd.append('--threaded')
         if self._no_timeout:
             cmd.append('--no-timeout')
+        if self._port.get_option('show_touches'):
+            cmd.append('--show-touches')
 
         for allowed_host in self._port.allowed_hosts():
             cmd.append('--allowed-host')

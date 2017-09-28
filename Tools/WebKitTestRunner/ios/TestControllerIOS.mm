@@ -127,8 +127,11 @@ void TestController::platformConfigureViewForTest(const TestInvocation& test)
     // WKBundlePageSetUseTestingViewportConfiguration(false).
 }
 
-void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions&, const std::string&) const
+void TestController::updatePlatformSpecificTestOptionsForTest(TestOptions& options, const std::string&) const
 {
+    
+    options.shouldShowTouches = shouldShowTouches();
+    [[HIDEventGenerator sharedHIDEventGenerator] setShouldShowTouches:options.shouldShowTouches];
 }
 
 void TestController::platformInitializeContext()

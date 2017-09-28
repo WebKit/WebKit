@@ -43,6 +43,7 @@ Options::Options()
     , shouldUseAcceleratedDrawing(false)
     , shouldUseRemoteLayerTree(false)
     , shouldShowWebView(false)
+    , shouldShowTouches(false)
 {
 }
 
@@ -100,6 +101,12 @@ bool handleOptionShowWebView(Options& options, const char*, const char*)
     options.shouldShowWebView = true;
     return true;
 }
+    
+bool handleOptionShowTouches(Options& options, const char*, const char*)
+{
+    options.shouldShowTouches = true;
+    return true;
+}
 
 bool handleOptionAllowedHost(Options& options, const char*, const char* host)
 {
@@ -128,7 +135,8 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--accelerated-drawing", "Use accelerated drawing.", handleOptionAcceleratedDrawing));
     optionList.append(Option("--remote-layer-tree", "Use remote layer tree.", handleOptionRemoteLayerTree));
     optionList.append(Option("--allowed-host", "Allows access to the specified host from tests.", handleOptionAllowedHost, true));
-    optionList.append(Option("--show-webview", "Show the WebView during test runs (for Debugging)", handleOptionShowWebView));
+    optionList.append(Option("--show-webview", "Show the WebView during test runs (for debugging)", handleOptionShowWebView));
+    optionList.append(Option("--show-touches", "Show the touches during test runs (for debugging)", handleOptionShowTouches));
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }

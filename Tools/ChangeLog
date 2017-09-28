@@ -1,3 +1,47 @@
+2017-09-28  Megan Gardner  <megan_gardner@apple.com>
+
+        Add debug flag to WebKitTestRunner to show where touches are being generated
+        https://bugs.webkit.org/show_bug.cgi?id=177583
+
+        Reviewed by Tim Horton and Wenson Hsieh.
+
+        Add a flag, and the ability to paint a dot where the HIDEventGenerator is creating fake touches to
+        send through UIKit. This will help in debugging touch tests, because it will be easier to see if
+        one is actually sending the touches at the locations that they expect. This will help differentiate between
+        problems in the locations of the touches, and other problems that can come up when writing tests.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+        * Scripts/webkitpy/port/driver.py:
+        (Driver.cmd_line):
+        * WebKitTestRunner/Options.cpp:
+        (WTR::Options::Options):
+        (WTR::handleOptionShowTouches):
+        (WTR::OptionsHandler::OptionsHandler):
+        * WebKitTestRunner/Options.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+        * WebKitTestRunner/TestController.h:
+        (WTR::TestController::shouldShowTouches const):
+        * WebKitTestRunner/TestOptions.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.h:
+        * WebKitTestRunner/ios/HIDEventGenerator.mm:
+        (-[DebugTouchView pointInside:withEvent:]):
+        (-[HIDEventGenerator setShouldShowTouches:]):
+        (-[HIDEventGenerator initDebugViews]):
+        (-[HIDEventGenerator updateDebugUI:withPoint:isTouching:]):
+        (-[HIDEventGenerator _createIOHIDEventWithInfo:]):
+        (-[HIDEventGenerator _createIOHIDEventType:]):
+        (-[HIDEventGenerator _updateTouchPoints:count:]):
+        (-[HIDEventGenerator touchDownAtPoints:touchCount:]):
+        (-[HIDEventGenerator liftUpAtPoints:touchCount:]):
+        (-[HIDEventGenerator moveToPoints:touchCount:duration:]):
+        (-[HIDEventGenerator markerEventReceived:]):
+        * WebKitTestRunner/ios/TestControllerIOS.mm:
+        (WTR::TestController::updatePlatformSpecificTestOptionsForTest const):
+        * WebKitTestRunner/ios/mainIOS.mm:
+        (-[WebKitTestRunnerApp _runTestController]):
+
 2017-09-28  Mark Lam  <mark.lam@apple.com>
 
         [Re-landing] Turn on exception scope verification for JSC tests.
