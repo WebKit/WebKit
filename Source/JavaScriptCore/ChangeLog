@@ -1,3 +1,17 @@
+2017-09-28  Mark Lam  <mark.lam@apple.com>
+
+        test262: Unexpected passes after r222617 and r222618.
+        https://bugs.webkit.org/show_bug.cgi?id=177622
+        <rdar://problem/34725960>
+
+        Reviewed by Saam Barati.
+
+        Now that these tests are marked as "normal", we will run them and discover a few
+        missing exception checks.  This patch also adds those missing exception checks.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::fillStructuresUsingDateArgs):
+
 2017-09-28  Filip Pizlo  <fpizlo@apple.com>
 
         Enable gigacage on iOS

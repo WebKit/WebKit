@@ -1,3 +1,15 @@
+2017-09-28  Mark Lam  <mark.lam@apple.com>
+
+        test262: Unexpected passes after r222617 and r222618.
+        https://bugs.webkit.org/show_bug.cgi?id=177622
+        <rdar://problem/34725960>
+
+        Reviewed by Saam Barati.
+
+        Update test262.yaml for tests that are now passing.
+
+        * test262.yaml:
+
 2017-09-27  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION(210837): RegExp containing failed non-zero minimum greedy groups incorrectly match

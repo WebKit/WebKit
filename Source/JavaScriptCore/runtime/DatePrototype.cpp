@@ -404,6 +404,9 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
 // Format of member function: f([years,] [months,] [days])
 static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms, GregorianDateTime *t)
 {
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
     int idx = 0;
     bool ok = true;
     int numArgs = exec->argumentCount();
@@ -415,18 +418,21 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms
     // years
     if (maxArgs >= 3 && idx < numArgs) {
         double years = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(years);
         t->setYear(toInt32(years));
     }
     // months
     if (maxArgs >= 2 && idx < numArgs && ok) {
         double months = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(months);
         t->setMonth(toInt32(months));
     }
     // days
     if (idx < numArgs && ok) {
         double days = exec->uncheckedArgument(idx++).toIntegerPreserveNaN(exec);
+        RETURN_IF_EXCEPTION(scope, false);
         ok = std::isfinite(days);
         t->setMonthDay(0);
         *ms += days * msPerDay;
