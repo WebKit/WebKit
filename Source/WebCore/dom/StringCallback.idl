@@ -29,5 +29,5 @@
  */
 
 [
-    ExportMacro=WEBCORE_TESTSUPPORT_EXPORT
+    ExportMacro=WEBCORE_EXPORT
 ] callback StringCallback = void (DOMString data);
