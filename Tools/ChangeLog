@@ -1,3 +1,31 @@
+2017-09-27  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKContentRuleList notify action type
+        https://bugs.webkit.org/show_bug.cgi?id=177013
+        <rdar://problem/31073936>
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/ContentExtensions.cpp:
+        (WebCore::ContentExtensions::operator<<):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::create):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::data):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::InMemoryCompiledContentExtension):
+        (TestWebKitAPI::makeBackend):
+        (TestWebKitAPI::TEST_F):
+        (TestWebKitAPI::actionsEqual):
+        (TestWebKitAPI::sequenceInstances):
+        (TestWebKitAPI::InMemoryCompiledContentExtension::createFromFilter): Deleted.
+        (TestWebKitAPI::InMemoryCompiledContentExtension::~InMemoryCompiledContentExtension): Deleted.
+        * TestWebKitAPI/Tests/WebKitCocoa/ContentRuleListNotification.mm: Added.
+        (-[ContentRuleListNotificationDelegate _webView:URL:contentRuleListIdentifiers:notifications:]):
+        (-[ContentRuleListNotificationDelegate webView:startURLSchemeTask:]):
+        (-[ContentRuleListNotificationDelegate webView:stopURLSchemeTask:]):
+        (-[ContentRuleListNotificationDelegate webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (makeWarnContentRuleList):
+        (TEST):
+
 2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Drag event DataTransfer has unexpected types "dyn.ah62d4..."

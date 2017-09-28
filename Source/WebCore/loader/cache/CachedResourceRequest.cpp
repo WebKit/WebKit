@@ -212,9 +212,9 @@ void CachedResourceRequest::removeFragmentIdentifierIfNeeded()
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedStatus& blockedStatus)
+void CachedResourceRequest::applyBlockedStatus(const ContentExtensions::BlockedStatus& blockedStatus, Page* page)
 {
-    ContentExtensions::applyBlockedStatusToRequest(blockedStatus, m_resourceRequest);
+    ContentExtensions::applyBlockedStatusToRequest(blockedStatus, page, m_resourceRequest);
 }
 
 #endif

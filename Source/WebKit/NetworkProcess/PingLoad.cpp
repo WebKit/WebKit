@@ -323,7 +323,7 @@ ContentExtensions::ContentExtensionsBackend& PingLoad::contentExtensionsBackend(
 ContentExtensions::BlockedStatus PingLoad::processContentExtensionRulesForLoad(ResourceRequest& request)
 {
     auto status = contentExtensionsBackend().processContentExtensionRulesForPingLoad(request.url(), m_parameters.mainDocumentURL);
-    applyBlockedStatusToRequest(status, request);
+    applyBlockedStatusToRequest(status, nullptr, request);
     return status;
 }
 

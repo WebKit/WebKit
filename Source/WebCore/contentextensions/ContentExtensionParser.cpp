@@ -248,11 +248,11 @@ static Expected<std::optional<Action>, std::error_code> loadAction(ExecState& ex
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     const JSValue actionObject = ruleObject.get(&exec, Identifier::fromString(&exec, "action"));
-    if (!actionObject || scope.exception() || !actionObject.isObject())
+    if (scope.exception() || !actionObject.isObject())
         return makeUnexpected(ContentExtensionError::JSONInvalidAction);
 
     const JSValue typeObject = actionObject.get(&exec, Identifier::fromString(&exec, "type"));
-    if (!typeObject || scope.exception() || !typeObject.isString())
+    if (scope.exception() || !typeObject.isString())
         return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 
     String actionType = asString(typeObject)->value(&exec);
@@ -265,7 +265,7 @@ static Expected<std::optional<Action>, std::error_code> loadAction(ExecState& ex
         return {{ ActionType::BlockCookies }};
     if (actionType == "css-display-none") {
         JSValue selector = actionObject.get(&exec, Identifier::fromString(&exec, "selector"));
-        if (!selector || scope.exception() || !selector.isString())
+        if (scope.exception() || !selector.isString())
             return makeUnexpected(ContentExtensionError::JSONInvalidCSSDisplayNoneActionType);
 
         String selectorString = asString(selector)->value(&exec);
@@ -277,6 +277,12 @@ static Expected<std::optional<Action>, std::error_code> loadAction(ExecState& ex
     }
     if (actionType == "make-https")
         return {{ ActionType::MakeHTTPS }};
+    if (actionType == "notify") {
+        JSValue notification = actionObject.get(&exec, Identifier::fromString(&exec, "notification"));
+        if (scope.exception() || !notification.isString())
+            return makeUnexpected(ContentExtensionError::JSONInvalidNotification);
+        return { Action(ActionType::Notify, asString(notification)->value(&exec)) };
+    }
     return makeUnexpected(ContentExtensionError::JSONInvalidActionType);
 }
 

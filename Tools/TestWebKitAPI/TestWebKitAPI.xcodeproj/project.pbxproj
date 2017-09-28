@@ -238,6 +238,7 @@
 		5C9E59421D3EB5AC00E3C62E /* ApplicationCache.db-shm in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */; };
 		5C9E59431D3EB5AC00E3C62E /* ApplicationCache.db-wal in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */; };
 		5CA1DEC81F71F70100E71BD3 /* HTTPHeaderField.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */; };
+		5CA1DED91F74A91A00E71BD3 /* ContentRuleListNotification.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */; };
 		5CB18BA81F5645E300EE23C4 /* ClickAutoFillButton.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */; };
 		5CB40B4E1F4B98D3007DC7B9 /* UIDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */; };
 		5CE354D91E70DA5C00BEFE3B /* WKContentExtensionStore.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */; };
@@ -1341,6 +1342,7 @@
 		5C9E593F1D3EB1DE00E3C62E /* ApplicationCache.db-shm */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-shm"; sourceTree = "<group>"; };
 		5C9E59401D3EB1DE00E3C62E /* ApplicationCache.db-wal */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ApplicationCache.db-wal"; sourceTree = "<group>"; };
 		5CA1DEC71F71F40700E71BD3 /* HTTPHeaderField.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPHeaderField.cpp; sourceTree = "<group>"; };
+		5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ContentRuleListNotification.mm; sourceTree = "<group>"; };
 		5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClickAutoFillButton.mm; sourceTree = "<group>"; };
 		5CB40B4D1F4B98BE007DC7B9 /* UIDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIDelegate.mm; sourceTree = "<group>"; };
 		5CE354D81E70D9C300BEFE3B /* WKContentExtensionStore.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKContentExtensionStore.mm; sourceTree = "<group>"; };
@@ -1947,6 +1949,7 @@
 				A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */,
 				A14FC5861B8991B600D107EB /* ContentFiltering.mm */,
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
+				5CA1DED81F74A87100E71BD3 /* ContentRuleListNotification.mm */,
 				5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */,
 				9999108A1F393C8B008AD455 /* Copying.mm */,
 				2DC4CF761D2D9DD800ECCC94 /* DataDetection.mm */,
@@ -3170,6 +3173,7 @@
 				7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */,
 				A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */,
 				A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */,
+				5CA1DED91F74A91A00E71BD3 /* ContentRuleListNotification.mm in Sources */,
 				7CCE7EB81A411A7E00447C4C /* ContextMenuCanCopyURL.mm in Sources */,
 				37FB72971DB2E82F00E41BE4 /* ContextMenuDefaultItemsHaveTags.mm in Sources */,
 				8349D3C21DB96DDE004A9F65 /* ContextMenuDownload.mm in Sources */,

@@ -106,6 +106,8 @@ public:
         listener->use({ });
     }
     
+    virtual void contentRuleListNotification(WebKit::WebPageProxy&, WebCore::URL&&, Vector<WTF::String>&&, Vector<WTF::String>&&) { };
+    
 #if ENABLE(NETSCAPE_PLUGIN_API)
     virtual WebKit::PluginModuleLoadPolicy decidePolicyForPluginLoad(WebKit::WebPageProxy&, WebKit::PluginModuleLoadPolicy currentPluginLoadPolicy, Dictionary*, WTF::String&)
     {
