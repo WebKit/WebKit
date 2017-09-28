@@ -71,6 +71,7 @@ WEBCORE_EXPORT @interface WebItemProviderRegistrationInfoList : NSObject
 @property (nonatomic, readonly, nullable) UIItemProvider *itemProvider;
 
 @property (nonatomic) WebPreferredPresentationStyle preferredPresentationStyle;
+@property (nonatomic, copy) NSData *teamData;
 
 - (NSUInteger)numberOfItems;
 - (nullable WebItemProviderRegistrationInfo *)itemAtIndex:(NSUInteger)index;

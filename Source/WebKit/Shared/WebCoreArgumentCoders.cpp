@@ -91,7 +91,7 @@
 #include <WebCore/SharedBuffer.h>
 #endif // PLATFORM(IOS)
 
-#if PLATFORM(IOS) || PLATFORM(WPE)
+#if PLATFORM(COCOA) || PLATFORM(WPE) || PLATFORM(GTK)
 #include <WebCore/Pasteboard.h>
 #endif
 
@@ -1578,6 +1578,27 @@ bool ArgumentCoder<DatabaseDetails>::decode(Decoder& decoder, DatabaseDetails& d
     return true;
 }
 
+void ArgumentCoder<PasteboardCustomData>::encode(Encoder& encoder, const PasteboardCustomData& data)
+{
+    encoder << data.orderedTypes;
+    encoder << data.platformData;
+    encoder << data.sameOriginCustomData;
+}
+
+bool ArgumentCoder<PasteboardCustomData>::decode(Decoder& decoder, PasteboardCustomData& data)
+{
+    if (!decoder.decode(data.orderedTypes))
+        return false;
+
+    if (!decoder.decode(data.platformData))
+        return false;
+
+    if (!decoder.decode(data.sameOriginCustomData))
+        return false;
+
+    return true;
+}
+
 #if PLATFORM(IOS)
 
 void ArgumentCoder<Highlight>::encode(Encoder& encoder, const Highlight& highlight)
@@ -1664,6 +1685,7 @@ void ArgumentCoder<PasteboardWebContent>::encode(Encoder& encoder, const Pastebo
 {
     encoder << content.canSmartCopyOrDelete;
     encoder << content.dataInStringFormat;
+    encoder << content.dataInHTMLFormat;
 
     encodeSharedBuffer(encoder, content.dataInWebArchiveFormat.get());
     encodeSharedBuffer(encoder, content.dataInRTFDFormat.get());
@@ -1678,6 +1700,8 @@ bool ArgumentCoder<PasteboardWebContent>::decode(Decoder& decoder, PasteboardWeb
     if (!decoder.decode(content.canSmartCopyOrDelete))
         return false;
     if (!decoder.decode(content.dataInStringFormat))
+        return false;
+    if (!decoder.decode(content.dataInHTMLFormat))
         return false;
     if (!decodeSharedBuffer(decoder, content.dataInWebArchiveFormat))
         return false;

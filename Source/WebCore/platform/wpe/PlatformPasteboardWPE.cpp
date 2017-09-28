@@ -116,4 +116,14 @@ void PlatformPasteboard::write(const String& type, const String& string)
     wpe_pasteboard_string_free(&pairs[0].string);
 }
 
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+{
+    return { };
+}
+
+long PlatformPasteboard::write(const PasteboardCustomData&)
+{
+    return 0;
+}
+
 } // namespace WebCore

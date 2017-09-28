@@ -718,22 +718,6 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
     return m_activationEventNumber == event.eventNumber();
 }
 
-#if ENABLE(DRAG_SUPPORT)
-
-Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
-{
-    // Must be done before ondragstart adds types and data to the pboard,
-    // also done for security, as it erases data from the last drag.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    auto pasteboard = std::make_unique<Pasteboard>(NSDragPboard);
-#pragma clang diagnostic pop
-    pasteboard->clear();
-    return DataTransfer::createForDrag();
-}
-
-#endif
-
 bool EventHandler::tabsToAllFormControls(KeyboardEvent& event) const
 {
     Page* page = m_frame.page();

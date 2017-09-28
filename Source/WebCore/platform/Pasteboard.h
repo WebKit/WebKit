@@ -27,6 +27,7 @@
 
 #include "DragImage.h"
 #include "URL.h"
+#include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -145,6 +146,22 @@ struct PasteboardPlainText {
 #endif
 };
 
+// FIXME: We need to ensure that the contents of sameOriginCustomData are not accessible across different origins.
+struct PasteboardCustomData {
+    Vector<String> orderedTypes;
+    HashMap<String, String> platformData;
+    HashMap<String, String> sameOriginCustomData;
+};
+
+WEBCORE_EXPORT Ref<SharedBuffer> sharedBufferFromCustomData(const PasteboardCustomData&);
+WEBCORE_EXPORT PasteboardCustomData customDataFromSharedBuffer(const SharedBuffer&);
+
+#if PLATFORM(COCOA)
+const char customWebKitPasteboardDataType[] = "com.apple.WebKit.custom-pasteboard-data";
+#endif
+
+bool isSafeTypeForDOMToReadAndWrite(const String& type);
+
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -168,7 +185,7 @@ public:
 
     virtual bool hasData();
     virtual Vector<String> types();
-    virtual String readString(const String& type);
+    virtual String readStringForBindings(const String& type);
 
     virtual void writeString(const String& type, const String& data);
     virtual void clear();
@@ -231,6 +248,8 @@ public:
     void writeImageToDataObject(Element&, const URL&); // FIXME: Layering violation.
 #endif
 
+    void writeCustomData(const PasteboardCustomData&);
+
 private:
 #if PLATFORM(IOS)
     bool respectsUTIFidelities() const;
@@ -242,6 +261,10 @@ private:
     void writeRangeToDataObject(Range&, Frame&); // FIXME: Layering violation.
     void writeURLToDataObject(const URL&, const String&);
     void writePlainTextToDataObject(const String&, SmartReplaceOption);
+#endif
+
+#if PLATFORM(COCOA)
+    String readStringForPlatformType(const String&);
 #endif
 
 #if PLATFORM(GTK)

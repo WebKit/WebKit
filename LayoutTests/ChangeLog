@@ -1,3 +1,41 @@
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag event DataTransfer has unexpected types "dyn.ah62d4..."
+        https://bugs.webkit.org/show_bug.cgi?id=172526
+        <rdar://problem/32396081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add new layout tests on Mac and iOS to test various cases of using DataTransfer.setData, DataTransfer.getData,
+        and DataTransfer.types for drag-and-drop (tests for Mac WK1 only) and copy-and-paste (all platforms).
+
+        * TestExpectations:
+        * editing/pasteboard/data-transfer-get-data-on-drop-custom-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-custom.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-plain-text-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-plain-text.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-rich-text.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-url-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-drop-url.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-custom-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-custom.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-plain-text-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Added.
+        * editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html: Added.
+        * platform/ios-simulator-wk1/TestExpectations:
+
+        Mark new copy and paste tests as [ Pass ], since editing/pasteboard/ is skipped by default for iOS WK1.
+
+        * platform/ios-wk1/editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Added.
+        * platform/ios-wk2/editing/pasteboard/data-transfer-get-data-on-paste-rich-text-expected.txt: Added.
+
+        Add iOS-specific baselines. This is due to the generated HTML markup for "text/html" being slightly different
+        when pasting.
+
+        * platform/mac-wk1/TestExpectations:
+
 2017-09-27  Zalan Bujtas  <zalan@apple.com>
 
         Deferred image size change makes image-load-on-delay.html flaky.

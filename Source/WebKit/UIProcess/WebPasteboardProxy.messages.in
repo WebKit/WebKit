@@ -35,6 +35,9 @@ messages -> WebPasteboardProxy {
     GetPasteboardTypesByFidelityForItemAtIndex(uint64_t index, String pasteboardName) -> (Vector<String> types)
 #endif
 
+    WriteCustomData(struct WebCore::PasteboardCustomData data, String pasteboardName) -> (uint64_t changeCount)
+    TypesSafeForDOMToReadAndWrite(String pasteboardName) -> (Vector<String> types)
+
 #if PLATFORM(COCOA)
     # Pasteboard messages.
     GetNumberOfFiles(String pasteboardName) -> (uint64_t numberOfFiles)

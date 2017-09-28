@@ -43,8 +43,10 @@
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
 #import "PasteboardStrategy.h"
+#import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
 #import "RenderImage.h"
+#import "Settings.h"
 #import "Text.h"
 #import "URL.h"
 #import "UTIUtilities.h"
@@ -193,6 +195,11 @@ void Pasteboard::write(const PasteboardWebContent& content)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInHTMLFormat, NSHTMLPboardType, m_pasteboardName);
     if (!content.dataInStringFormat.isNull())
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, NSStringPboardType, m_pasteboardName);
+}
+
+void Pasteboard::writeCustomData(const PasteboardCustomData& data)
+{
+    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_pasteboardName);
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
@@ -460,12 +467,9 @@ bool Pasteboard::hasData()
 
 static String cocoaTypeFromHTMLClipboardType(const String& type)
 {
-    // Ignore any trailing charset - strings are already UTF-16, and the charset issue has already been dealt with.
-    if (type == "text/plain")
-        return NSStringPboardType;
-    if (type == "text/uri-list") {
-        // Special case because UTI doesn't work with Cocoa's URL type.
-        return NSURLPboardType;
+    if (NSString *platformType = PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(type)) {
+        if (platformType.length)
+            return platformType;
     }
 
     // Blacklist types that might contain subframe information.
@@ -507,22 +511,36 @@ static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboa
     return urls;
 }
 
-String Pasteboard::readString(const String& type)
+static String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
 {
-    const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
+    const String& cocoaType = cocoaTypeFromHTMLClipboardType(domType);
     String cocoaValue;
 
     if (cocoaType == String(NSStringPboardType))
-        cocoaValue = [platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName) precomposedStringWithCanonicalMapping];
+        cocoaValue = [platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, pasteboardName) precomposedStringWithCanonicalMapping];
     else if (!cocoaType.isEmpty())
-        cocoaValue = platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, m_pasteboardName);
+        cocoaValue = platformStrategies()->pasteboardStrategy()->stringForType(cocoaType, pasteboardName);
 
     // Enforce changeCount ourselves for security.  We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
-    if (!cocoaValue.isEmpty() && m_changeCount == platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+    if (!cocoaValue.isEmpty() && changeCount == platformStrategies()->pasteboardStrategy()->changeCount(pasteboardName))
         return cocoaValue;
 
     return String();
+}
+
+String Pasteboard::readStringForBindings(const String& type)
+{
+    if (!Settings::customPasteboardDataEnabled() || isSafeTypeForDOMToReadAndWrite(type))
+        return readPlatformValueAsString(type, m_changeCount, m_pasteboardName);
+
+    if (auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(customWebKitPasteboardDataType, m_pasteboardName)) {
+        NSString *customDataValue = customDataFromSharedBuffer(*buffer).sameOriginCustomData.get(type);
+        if (customDataValue.length)
+            return customDataValue;
+    }
+
+    return { };
 }
 
 static String utiTypeFromCocoaType(const String& type)
@@ -594,12 +612,18 @@ void Pasteboard::writeString(const String& type, const String& data)
 Vector<String> Pasteboard::types()
 {
     Vector<String> types;
-    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+    if (Settings::customPasteboardDataEnabled())
+        types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName);
+    else
+        platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
 
     // Enforce changeCount ourselves for security. We check after reading instead of before to be
     // sure it doesn't change between our testing the change count and accessing the data.
     if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return Vector<String>();
+        return { };
+
+    if (Settings::customPasteboardDataEnabled())
+        return types;
 
     ListHashSet<String> result;
     // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types

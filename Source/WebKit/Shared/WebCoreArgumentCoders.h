@@ -99,6 +99,7 @@ struct Length;
 struct GrammarDetail;
 struct MimeClassInfo;
 struct PasteboardImage;
+struct PasteboardCustomData;
 struct PasteboardURL;
 struct PluginInfo;
 struct RecentSearch;
@@ -424,6 +425,11 @@ template<> struct ArgumentCoder<WebCore::PasteboardImage> {
     static bool decode(Decoder&, WebCore::PasteboardImage&);
 };
 #endif
+
+template<> struct ArgumentCoder<WebCore::PasteboardCustomData> {
+    static void encode(Encoder&, const WebCore::PasteboardCustomData&);
+    static bool decode(Decoder&, WebCore::PasteboardCustomData&);
+};
 
 #if USE(SOUP)
 template<> struct ArgumentCoder<WebCore::SoupNetworkProxySettings> {

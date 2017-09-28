@@ -277,7 +277,7 @@ Vector<String> Pasteboard::types()
     return vector;
 }
 
-String Pasteboard::readString(const String& type)
+String Pasteboard::readStringForBindings(const String& type)
 {
     if (!m_dataObject && m_dragDataMap.isEmpty())
         return "";
@@ -1051,6 +1051,10 @@ void Pasteboard::read(PasteboardWebContentReader&)
 }
 
 void Pasteboard::write(const PasteboardImage&)
+{
+}
+
+void Pasteboard::writeCustomData(const PasteboardCustomData&)
 {
 }
 

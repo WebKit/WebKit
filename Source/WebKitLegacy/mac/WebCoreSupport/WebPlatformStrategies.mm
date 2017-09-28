@@ -179,6 +179,16 @@ int WebPlatformStrategies::getNumberOfFiles(const String& pasteboardName)
     return PlatformPasteboard(pasteboardName).numberOfFiles();
 }
 
+Vector<String> WebPlatformStrategies::typesSafeForDOMToReadAndWrite(const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).typesSafeForDOMToReadAndWrite();
+}
+
+long WebPlatformStrategies::writeCustomData(const WebCore::PasteboardCustomData& data, const String& pasteboardName)
+{
+    return PlatformPasteboard(pasteboardName).write(data);
+}
+
 #if PLATFORM(IOS)
 void WebPlatformStrategies::getTypesByFidelityForItemAtIndex(Vector<String>& types, uint64_t index, const String& pasteboardName)
 {

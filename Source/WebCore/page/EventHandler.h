@@ -324,7 +324,6 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     static DragState& dragState();
     static const Seconds TextDragDelay;
-    Ref<DataTransfer> createDraggingDataTransfer() const;
 #endif
 
     bool eventActivatedView(const PlatformMouseEvent&) const;
@@ -405,7 +404,7 @@ private:
     void clearDragState();
 
     bool dispatchDragSrcEvent(const AtomicString& eventType, const PlatformMouseEvent&);
-    bool dispatchDragStartEvent(HasNonDefaultPasteboardData&);
+    bool dispatchDragStartEventOnSourceElement(DataTransfer&);
 
     bool dragHysteresisExceeded(const FloatPoint&) const;
     bool dragHysteresisExceeded(const IntPoint&) const;

@@ -48,6 +48,10 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/spi/darwin/dyldSPI.h>
+#endif
+
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 #include "RealtimeMediaSourceCenterMac.h"
 #endif
@@ -115,6 +119,7 @@ bool Settings::gAVKitEnabled = false;
 bool Settings::gShouldOptOutOfNetworkStateObservation = false;
 #endif
 bool Settings::gManageAudioSession = false;
+bool Settings::gCustomPasteboardDataEnabled = false;
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
@@ -137,6 +142,22 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
     EditingMacBehavior
 #endif
     ;
+}
+
+bool Settings::customPasteboardDataEnabled()
+{
+    static std::once_flag initializeCustomPasteboardDataToDefaultValue;
+    std::call_once(initializeCustomPasteboardDataToDefaultValue, [] {
+#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110300
+        gCustomPasteboardDataEnabled = IOSApplication::isMobileSafari() || dyld_get_program_sdk_version() >= DYLD_IOS_VERSION_11_3;
+#elif PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101304
+        // FIXME: Update this linked-on check once the correct macro is in the SDK.
+        gCustomPasteboardDataEnabled = MacApplication::isSafari() || dyld_get_program_sdk_version() > DYLD_MACOSX_VERSION_10_13;
+#else
+        gCustomPasteboardDataEnabled = false;
+#endif
+    });
+    return gCustomPasteboardDataEnabled;
 }
 
 #if PLATFORM(COCOA)

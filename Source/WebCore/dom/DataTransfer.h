@@ -80,6 +80,7 @@ public:
 
 #if ENABLE(DRAG_SUPPORT)
     static Ref<DataTransfer> createForDrag();
+    static Ref<DataTransfer> createForDragStartEvent();
     static Ref<DataTransfer> createForDrop(StoreMode, const DragData&);
 
     bool dropEffectIsUninitialized() const { return m_dropEffect == "uninitialized"; }
@@ -93,6 +94,9 @@ public:
     DragImageRef createDragImage(IntPoint& dragLocation) const;
     void updateDragImage();
     RefPtr<Element> dragImageElement() const;
+
+    void moveDragState(Ref<DataTransfer>&&);
+    bool hasDragImage() const;
 #endif
 
 private:

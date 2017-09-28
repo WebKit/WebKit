@@ -182,11 +182,6 @@ void Editor::replaceNodeFromPasteboard(Node* node, const String& pasteboardName)
     client()->setInsertionPasteboard(String());
 }
 
-String Editor::selectionInHTMLFormat()
-{
-    return createMarkup(*selectedRange(), nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
-}
-
 RefPtr<SharedBuffer> Editor::imageInWebArchiveFormat(Element& imageElement)
 {
     RefPtr<LegacyWebArchive> archive = LegacyWebArchive::create(imageElement);

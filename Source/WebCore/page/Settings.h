@@ -304,6 +304,9 @@ public:
     static bool shouldManageAudioSessionCategory() { return gManageAudioSession; }
 #endif
 
+    static void setCustomPasteboardDataEnabled(bool enabled) { gCustomPasteboardDataEnabled = enabled; }
+    WEBCORE_EXPORT static bool customPasteboardDataEnabled();
+
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     void setMediaKeysStorageDirectory(const String& directory) { m_mediaKeysStorageDirectory = directory; }
     const String& mediaKeysStorageDirectory() const { return m_mediaKeysStorageDirectory; }
@@ -419,6 +422,7 @@ private:
     WEBCORE_EXPORT static bool gShouldOptOutOfNetworkStateObservation;
 #endif
     WEBCORE_EXPORT static bool gManageAudioSession;
+    WEBCORE_EXPORT static bool gCustomPasteboardDataEnabled;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     String m_mediaKeysStorageDirectory;

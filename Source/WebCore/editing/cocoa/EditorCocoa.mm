@@ -50,6 +50,7 @@
 #import "Text.h"
 #import "WebContentReader.h"
 #import "WebCoreNSURLExtras.h"
+#import "markup.h"
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 
@@ -143,6 +144,13 @@ static RefPtr<SharedBuffer> archivedDataForAttributedString(NSAttributedString *
     return SharedBuffer::create([NSKeyedArchiver archivedDataWithRootObject:attributedString]);
 }
 
+String Editor::selectionInHTMLFormat()
+{
+    if (auto range = selectedRange())
+        return createMarkup(*range, nullptr, AnnotateForInterchange, false, ResolveNonLocalURLs);
+    return { };
+}
+
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     NSAttributedString *attributedString = attributedStringFromRange(*selectedRange());
@@ -153,10 +161,7 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     content.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
     content.dataInRTFFormat = dataInRTFFormat(attributedString);
     content.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
-    // FIXME: Why don't we want this on iOS?
-#if PLATFORM(MAC)
     content.dataInHTMLFormat = selectionInHTMLFormat();
-#endif
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), content.clientTypes, content.clientData);
 
@@ -173,10 +178,7 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     webContent.dataInRTFDFormat = attributedString.containsAttachments ? dataInRTFDFormat(attributedString) : nullptr;
     webContent.dataInRTFFormat = dataInRTFFormat(attributedString);
     webContent.dataInAttributedStringFormat = archivedDataForAttributedString(attributedString);
-    // FIXME: Why don't we want this on iOS?
-#if PLATFORM(MAC)
     webContent.dataInHTMLFormat = selectionInHTMLFormat();
-#endif
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardDataForRange(selectedRange().get(), webContent.clientTypes, webContent.clientData);
 

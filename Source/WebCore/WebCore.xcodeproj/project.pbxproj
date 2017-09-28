@@ -1340,6 +1340,7 @@
 		2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */; };
 		2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369B122C94B4002F7D4E /* FileReaderSync.h */; };
+		2EE02A1F1F7324280006AF72 /* Pasteboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EE02A1E1F7324280006AF72 /* Pasteboard.cpp */; };
 		2EEEE55C1B66A047008E2CBC /* WheelEventDeltaFilterMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2EEEE55B1B66A047008E2CBC /* WheelEventDeltaFilterMac.mm */; };
 		2EF1BFEA121C9F4200C27627 /* FileStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EF1BFE8121C9F4200C27627 /* FileStream.cpp */; };
 		2EF1BFEB121C9F4200C27627 /* FileStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EF1BFE9121C9F4200C27627 /* FileStream.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9067,6 +9068,7 @@
 		2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlobRegistryImpl.h; sourceTree = "<group>"; };
 		2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileReaderSync.cpp; sourceTree = "<group>"; };
 		2EDF369B122C94B4002F7D4E /* FileReaderSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileReaderSync.h; sourceTree = "<group>"; };
+		2EE02A1E1F7324280006AF72 /* Pasteboard.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Pasteboard.cpp; sourceTree = "<group>"; };
 		2EEEE55B1B66A047008E2CBC /* WheelEventDeltaFilterMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WheelEventDeltaFilterMac.mm; sourceTree = "<group>"; };
 		2EF1BFE8121C9F4200C27627 /* FileStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileStream.cpp; sourceTree = "<group>"; };
 		2EF1BFE9121C9F4200C27627 /* FileStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileStream.h; sourceTree = "<group>"; };
@@ -24642,6 +24644,7 @@
 				E1513D501677F08800149FCB /* NotImplemented.cpp */,
 				98EB1F941313FE0500D0E1EA /* NotImplemented.h */,
 				4184F5151EAF059800F18BF0 /* OrientationNotifier.h */,
+				2EE02A1E1F7324280006AF72 /* Pasteboard.cpp */,
 				4B2708C50AF19EE40065127F /* Pasteboard.h */,
 				C5F765B414E1D414006C899B /* PasteboardStrategy.h */,
 				1AF5E4D21E56735A004A1F01 /* PasteboardWriterData.cpp */,
@@ -25892,9 +25895,9 @@
 				BCEA4813097D93020094C9E4 /* RenderBlockLineLayout.cpp */,
 				BCEA4822097D93020094C9E4 /* RenderBox.cpp */,
 				BCEA4823097D93020094C9E4 /* RenderBox.h */,
+				BCEB179B143379F50052EAE9 /* RenderBoxFragmentInfo.h */,
 				BC96DB450F3A882200573CB3 /* RenderBoxModelObject.cpp */,
 				BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */,
-				BCEB179B143379F50052EAE9 /* RenderBoxFragmentInfo.h */,
 				BCEA4826097D93020094C9E4 /* RenderButton.cpp */,
 				BCEA4827097D93020094C9E4 /* RenderButton.h */,
 				B56579B41824D12A00E79F23 /* RenderChildIterator.h */,
@@ -25915,6 +25918,10 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
+				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,
+				D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */,
+				BCE93F461517C6D5008CCF74 /* RenderFragmentContainerSet.cpp */,
+				BCE93F441517C567008CCF74 /* RenderFragmentContainerSet.h */,
 				508CCA4E13CF106B003151F3 /* RenderFragmentedFlow.cpp */,
 				508CCA4D13CF106B003151F3 /* RenderFragmentedFlow.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
@@ -25989,10 +25996,6 @@
 				ADE16736181050C300463A2E /* RenderPtr.h */,
 				5A574F22131DB93900471B88 /* RenderQuote.cpp */,
 				5A574F23131DB93900471B88 /* RenderQuote.h */,
-				D70AD65513E1342B005B50B4 /* RenderFragmentContainer.cpp */,
-				D70AD65613E1342B005B50B4 /* RenderFragmentContainer.h */,
-				BCE93F461517C6D5008CCF74 /* RenderFragmentContainerSet.cpp */,
-				BCE93F441517C567008CCF74 /* RenderFragmentContainerSet.h */,
 				A871DFDE0A15376B00B12A68 /* RenderReplaced.cpp */,
 				A871DFDF0A15376B00B12A68 /* RenderReplaced.h */,
 				BCA846D40DC67A350026C309 /* RenderReplica.cpp */,
@@ -29657,8 +29660,8 @@
 				BCEA4860097D93020094C9E4 /* RenderBlock.h in Headers */,
 				BC10D76817D8EE71005E2626 /* RenderBlockFlow.h in Headers */,
 				BCEA4862097D93020094C9E4 /* RenderBox.h in Headers */,
-				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
 				BCEB179C143379F50052EAE9 /* RenderBoxFragmentInfo.h in Headers */,
+				BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */,
 				BCEA4866097D93020094C9E4 /* RenderButton.h in Headers */,
 				B56579B51824D12A00E79F23 /* RenderChildIterator.h in Headers */,
 				BCE4413412F748E2009B84B8 /* RenderCombineText.h in Headers */,
@@ -29672,6 +29675,8 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
+				D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */,
+				BCE93F451517C567008CCF74 /* RenderFragmentContainerSet.h in Headers */,
 				508CCA4F13CF106B003151F3 /* RenderFragmentedFlow.h in Headers */,
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
@@ -29722,8 +29727,6 @@
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				B5B65874186FDE4C009C26E8 /* RenderPtr.h in Headers */,
 				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
-				D70AD65813E1342B005B50B4 /* RenderFragmentContainer.h in Headers */,
-				BCE93F451517C567008CCF74 /* RenderFragmentContainerSet.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
 				1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */,
@@ -33487,6 +33490,7 @@
 				447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */,
 				57B5F7EC1E57F1E300F34F90 /* PasswordCredential.cpp in Sources */,
 				F55B3DC91251F12D003EF269 /* PasswordInputType.cpp in Sources */,
+				2EE02A1F1F7324280006AF72 /* Pasteboard.cpp in Sources */,
 				E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */,
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,
 				1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */,
@@ -33633,6 +33637,8 @@
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
 				53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */,
+				D70AD65713E1342B005B50B4 /* RenderFragmentContainer.cpp in Sources */,
+				BCE93F471517C6D5008CCF74 /* RenderFragmentContainerSet.cpp in Sources */,
 				508CCA5013CF106B003151F3 /* RenderFragmentedFlow.cpp in Sources */,
 				A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
@@ -33682,8 +33688,6 @@
 				BCEA487F097D93020094C9E4 /* RenderObject.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
-				D70AD65713E1342B005B50B4 /* RenderFragmentContainer.cpp in Sources */,
-				BCE93F471517C6D5008CCF74 /* RenderFragmentContainerSet.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,
 				1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */,

@@ -1,3 +1,299 @@
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag event DataTransfer has unexpected types "dyn.ah62d4..."
+        https://bugs.webkit.org/show_bug.cgi?id=172526
+        <rdar://problem/32396081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Currently, the pasteboard types we expose to web content are simply the types that appear on the platform
+        pasteboard (i.e. the general NSPasteboard on Mac, and either the general UIPasteboard or a UIDragSession's
+        NSItemProviders on iOS). This leads to DataTransfer.types exposing many private pasteboard types written by apps
+        around the system to the page, such as dynamic UTIs, CorePasteboardFlavorTypes, or the "Apple WebKit dummy
+        pasteboard type". These are not only confusing and not useful for web content (since they mostly hold values of
+        empty string anyways), but can additionally pose privacy concerns by exposing information meant only for native
+        applications to unvetted web content.
+
+        To address this problem, other browsers (e.g. Chrome and Firefox on Mac) white-list MIME types in DataTransfer's
+        list of types. By default, when dragging or copying, these are "text/plain", "text/html" and "text/uri-list".
+        However, this policy alone is insufficient, because the page may also supply its own types, in which case our
+        naive whitelist would prevent us from delivering them to the page. To address this additional constraint, both
+        Chrome and Firefox write any custom data supplied by the page to custom pasteboard UTIs
+        (org.chromium.drag-dummy-type and org.mozilla.custom-clipdata, respectively). The corresponding data is a map
+        of custom UTI => custom data supplied by the page; upon drop or paste, this mapping is consulted if the page
+        calls getData() with a custom UTI.
+
+        This patch adopts this same approach in WebKit, and introduces the com.apple.WebKit.custom-pasteboard-data UTI
+        (refer to per-method comments below for more information). These changes are covered by 18 new layout and API
+        tests, as well as existing drag-and-drop tests.
+
+        Tests: editing/pasteboard/data-transfer-get-data-on-drop-custom.html
+               editing/pasteboard/data-transfer-get-data-on-drop-plain-text.html
+               editing/pasteboard/data-transfer-get-data-on-drop-rich-text.html
+               editing/pasteboard/data-transfer-get-data-on-drop-url.html
+               editing/pasteboard/data-transfer-get-data-on-paste-custom.html
+               editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html
+               editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html
+               DataInteractionTests.DataTransferGetDataWhenDroppingPlainText
+               DataInteractionTests.DataTransferGetDataWhenDroppingCustomData
+               DataInteractionTests.DataTransferGetDataWhenDroppingURL
+               DataInteractionTests.DataTransferGetDataWhenDroppingImageWithFileURL
+               DataInteractionTests.DataTransferGetDataWhenDroppingRespectsPresentationStyle
+               DataInteractionTests.DataTransferSetDataCannotWritePlatformTypes
+               DataInteractionTests.DataTransferGetDataCannotReadPrivatePlatformTypes
+               UIPasteboardTests.DataTransferGetDataWhenPastingURL
+               UIPasteboardTests.DataTransferGetDataWhenPastingPlatformRepresentations
+               UIPasteboardTests.DataTransferSetDataCannotWritePlatformTypes
+               UIPasteboardTests.DataTransferGetDataCannotReadPrivatePlatformTypes
+
+        * CMakeLists.txt:
+
+        Add Pasteboard.cpp to the WebCore CMakeList.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::getData const):
+        (WebCore::DataTransfer::createForDragStartEvent):
+
+        Make a new static helper function to create a StaticPasteboard-backed DataTransfer when dispatching a dragstart
+        event. Any data supplied by the page will be written to the static pasteboard of this DataTransfer.
+
+        (WebCore::DataTransfer::moveDragState):
+
+        Add a new helper on DataTransfer to transfer the data required to initiate a drag from one DataTransfer to
+        another. This is used in EventHandler to transfer the contents of the temporary DataTransfer modified by the
+        page during the dragstart event over to the DataTransfer used for the rest of the drag initiation codepath,
+        which is actually connected to the platform. This includes committing the contents of the other
+        DataTransfer's StaticPasteboard to the new platform-connected Pasteboard.
+
+        (WebCore::DataTransfer::hasDragImage const):
+        * dom/DataTransfer.h:
+        * editing/cocoa/EditorCocoa.mm:
+        (WebCore::Editor::selectionInHTMLFormat):
+        (WebCore::Editor::writeSelectionToPasteboard):
+        (WebCore::Editor::writeSelection):
+
+        Write an additional HTML markup string on iOS. We already do this for Mac, but this data previously had no use
+        on iOS. This is needed for to vend the "text/html" representation to the page on iOS when pasting.
+
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::selectionInHTMLFormat): Deleted.
+        * editing/wpe/EditorWPE.cpp:
+        (WebCore::createFragmentFromPasteboardData):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragStartEventOnSourceElement):
+
+        Renamed from dispatchDragStartEvent to dispatchDragStartEventOnSourceElement. Additionally, simplified the logic
+        significantly, so that we now just check to see if the StaticPasteboard exposed to the page has any data,
+        instead of using platform-dependent logic to compare changeCounts. We can do this because StaticPasteboard is
+        guaranteed to only contain content that the page has supplied during the dragstart event, since it is empty
+        upon initialization and cannot be written to by the rest of the platform.
+
+        (WebCore::EventHandler::handleDrag):
+
+        Tweak dispatchDragStartEvent to take a DataTransfer to expose to bindings; at the call site in handleDrag,
+        create a new DataTransfer backed by a StaticPasteboard that the page may mutate over the course of the dragstart
+        event. After dispatching to the page, move the dragging information present on the drag start DataTransfer over
+        to the DragState's DataTransfer. If the drag image has not been set, compute and set the default drag image
+        element on the DragState's DataTransfer.
+
+        (WebCore::EventHandler::dispatchDragStartEvent): Deleted.
+        * page/EventHandler.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::customPasteboardDataEnabled):
+        * page/Settings.h:
+        (WebCore::Settings::setCustomPasteboardDataEnabled):
+        * page/ios/EventHandlerIOS.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer const): Deleted.
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingDataTransfer const): Deleted.
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingDataTransfer const): Deleted.
+
+        Remove this helper on both iOS and Mac. This only called createForDrag() before, with the addition of clearing
+        the platform pasteboard prior to returning. Now that a StaticPasteboard is used when starting a drag, we clear
+        out the platform pasteboard in platform-invariant code in EventHandler::handleDrag, so these helpers are no
+        longer useful.
+
+        * platform/Pasteboard.cpp: Added.
+        (WebCore::isSafeTypeForDOMToReadAndWrite):
+
+        Add a new helper to determine whether or not a pasteboard type is one of the standard DOM-exposed types. These
+        are "text/plain", "text/html" and "text/uri-list".
+
+        (WebCore::sharedBufferFromCustomData):
+        (WebCore::customDataFromSharedBuffer):
+
+        Add helper methods to serialize and deserialize custom data. The serialized data blob consists of: (1)
+        versioning information, (2) a dictionary mapping each custom type to a value, and (3) a full list of types
+        written by the page, in the order they were written.
+
+        * platform/Pasteboard.h:
+
+        Rename Pasteboard::readString to Pasteboard::readStringForBindings, to reflect that the string being read and
+        the given type are exposed to and from the DOM.
+
+        * platform/PasteboardStrategy.h:
+        * platform/PasteboardWriterData.h:
+        * platform/PlatformPasteboard.h:
+        * platform/StaticPasteboard.cpp:
+
+        Split m_stringContents out into m_platformData and m_customData. The former contains type-to-data entries for
+        the DOM-exposed types, while the second contains entries that don't belong in the former.
+
+        (WebCore::StaticPasteboard::hasData):
+        (WebCore::StaticPasteboard::readStringForBindings):
+        (WebCore::StaticPasteboard::writeString):
+        (WebCore::StaticPasteboard::clear):
+        (WebCore::StaticPasteboard::commitToPasteboard):
+
+        Rather than propagate each entry to the client layer one at a time, populate a new PasteboardCustomData struct
+        and send it to the client layer in one go. This new struct consists of an array of types in the order they were
+        written by the page, a dictionary of public types (types we want to write directly to the platform pasteboard)
+        and private types (custom types we want to package under our custom data blob).
+
+        (WebCore::StaticPasteboard::readString): Deleted.
+        * platform/StaticPasteboard.h:
+        * platform/glib/EventHandlerGLib.cpp:
+        (WebCore::EventHandler::createDraggingDataTransfer const): Deleted.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::readStringForBindings):
+        (WebCore::Pasteboard::writeCustomData):
+        (WebCore::Pasteboard::readString): Deleted.
+        * platform/gtk/PlatformPasteboardGtk.cpp:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+
+        Add stub implementations for new custom pasteboard data methods.
+
+        * platform/ios/AbstractPasteboard.h:
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeCustomData):
+
+        Add new plumbing to ship a custom data (PasteboardCustomData) struct from WebCore to the client layer.
+
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        (WebCore::readPlatformValueAsString):
+        (WebCore::Pasteboard::readStringForBindings):
+        (WebCore::Pasteboard::types):
+
+        Rewritten to ask the client layer for DOM-exposed types rather than all types, in the case where custom
+        pasteboard data is enabled in Settings.
+
+        (WebCore::Pasteboard::readString): Deleted.
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::bufferForType):
+        (WebCore::PlatformPasteboard::getPathnamesForType const):
+        (WebCore::PlatformPasteboard::numberOfFiles const):
+        (WebCore::PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite):
+
+        Add a new helper to map DOM-safe pasteboard types to their platform counterparts.
+
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+
+        Add a new helper to map platform pasteboard types to their DOM-safe counterparts.
+
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
+        Fetch a list of DOM-exposed types. On iOS, for drag and drop, we have the additional constraint of not being
+        able to read any data before the drop happens. This is problematic, since the page needs to know the list of
+        types during 'dragover' events. To support this, we instead keep the array of types in the teamData property of
+        the generated item provider, which is immediately available, even when dragging across different apps. Note that
+        we still need to check if the pasteboard contains the full custom data blob here to handle the case where we
+        copy on Mac and perform a continuity paste on iOS, since teamData does not exist on Mac.
+
+        (WebCore::PlatformPasteboard::readString):
+
+        Tweak to account for how UIPasteboard may return data blobs when reading values.
+
+        (WebCore::PlatformPasteboard::getPathnamesForType): Deleted.
+        (WebCore::PlatformPasteboard::numberOfFiles): Deleted.
+        * platform/ios/WebItemProviderPasteboard.h:
+        * platform/ios/WebItemProviderPasteboard.mm:
+        (-[WebItemProviderRegistrationInfoList itemProvider]):
+        (+[WebItemProviderLoadResult loadResultWithItemProvider:typesToLoad:]):
+        (-[WebItemProviderLoadResult initWithItemProvider:typesToLoad:]):
+        (-[WebItemProviderLoadResult typesToLoad]):
+        (-[WebItemProviderLoadResult setFileURL:forType:]):
+        (-[WebItemProviderLoadResult itemProvider]):
+        (-[WebItemProviderPasteboard setItemProviders:]):
+        (-[WebItemProviderPasteboard dataForPasteboardType:]):
+        (-[WebItemProviderPasteboard typeIdentifiersToLoadForRegisteredTypeIdentfiers:]):
+        (-[WebItemProviderPasteboard doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout:]):
+        (+[WebItemProviderLoadResult emptyLoadResult]): Deleted.
+        (+[WebItemProviderLoadResult loadResultWithFileURLMap:presentationStyle:]): Deleted.
+        (-[WebItemProviderLoadResult initWithFileURLMap:presentationStyle:]): Deleted.
+        (-[WebItemProviderPasteboard typeIdentifierToLoadForRegisteredTypeIdentfiers:]): Deleted.
+
+        In the case of drag and drop on iOS, we cannot load any data prior to performing the drop; additionally, any
+        attempts to load data immediately after the drop is performed in the UI process will fail. This means any and
+        all data that the web process may require in the future when handling the drop must be loaded out of the item
+        providers and saved when the drop is being handled in the UI process.
+
+        Currently, we only load the highest fidelity type we can handle (or, if we don't know what we can handle, we
+        select the highest fidelity representation conforming to "public.content"). This is a problematic for supporting
+        DataTransfer.getData() on drop on iOS, because the page can ask for any of the three web-exposed types. To
+        address this, we refactor WebItemProviderPasteboard to support loading multiple representations per item being
+        dropped. At minimum, we will load anything conforming to "public.html", "public.plain-text", "public.url", and
+        the new "com.apple.WebKit.custom-pasteboard-data" so we have means to answer any question that the page could
+        ask via DataTransfer.getData(). We additonally load the highest fidelity supported (or content-conformant) type,
+        if it has not already been loaded as a result of the former.
+
+        To make this possible, we refactor WebItemProviderLoadResult to take an item provider and a list of types to
+        load. -doAfterLoadingProvidedContentIntoFileURLs:synchronousTimeout: then creates a list of load results and
+        uses each one to represent the results of loading data from its item provider (i.e. a map of UTI => file URL).
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeCustomData):
+        (WebCore::cocoaTypeFromHTMLClipboardType):
+        (WebCore::readPlatformValueAsString):
+        (WebCore::Pasteboard::readStringForBindings):
+
+        Change readStringForBindings (formerly, readString) so that if support for custom pasteboard data is enabled,
+        we only allow reading directly from the platform pasteboard if the given type is DOM-safe; otherwise, we consult
+        the custom data blob, if it exists. Otherwise, if support for custom pasteboard data is disabled, we fall back
+        to our current behavior.
+
+        (WebCore::Pasteboard::types):
+        (WebCore::Pasteboard::readString): Deleted.
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::numberOfFiles const):
+        (WebCore::PlatformPasteboard::getPathnamesForType const):
+        (WebCore::PlatformPasteboard::stringForType):
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+
+        Add support for reading DOM-exposed types and fetching DOM-exposed data off of the pasteboard. The overall idea
+        here is similar to iOS, though implementation details vary (e.g. no item provider support).
+
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite):
+        (WebCore::PlatformPasteboard::numberOfFiles): Deleted.
+        (WebCore::PlatformPasteboard::getPathnamesForType): Deleted.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::readStringForBindings):
+        (WebCore::Pasteboard::writeCustomData):
+        (WebCore::Pasteboard::readString): Deleted.
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::readStringForBindings):
+        (WebCore::Pasteboard::writeCustomData):
+        (WebCore::Pasteboard::readString): Deleted.
+        * platform/wpe/PlatformPasteboardWPE.cpp:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::write):
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::Backup::Backup):
+        (WebCore::InternalSettings::Backup::restoreTo):
+        (WebCore::InternalSettings::setCustomPasteboardDataEnabled):
+
+        Add a new internal settings hook for layout tests to opt in to using custom pasteboard data. By default, custom
+        pasteboard data is enabled only in Safari, or on applications linked on or after certain releases of iOS and
+        macOS.
+
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl:
+
 2017-09-27  Zalan Bujtas  <zalan@apple.com>
 
         Deferred image size change makes image-load-on-delay.html flaky.

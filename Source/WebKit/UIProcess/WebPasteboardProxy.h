@@ -32,6 +32,7 @@
 
 namespace WebCore {
 class Color;
+struct PasteboardCustomData;
 struct PasteboardImage;
 struct PasteboardURL;
 struct PasteboardWebContent;
@@ -95,6 +96,9 @@ private:
     void setPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, const String&, uint64_t& newChangeCount);
     void setPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, const SharedMemory::Handle&, uint64_t size, uint64_t& newChangeCount);
 #endif
+
+    void writeCustomData(const WebCore::PasteboardCustomData&, const String& pasteboardName, uint64_t& newChangeCount);
+    void typesSafeForDOMToReadAndWrite(const String& pasteboardName, Vector<String>& types);
 
 #if PLATFORM(GTK)
     void writeToClipboard(const String& pasteboardName, const WebSelectionData&);

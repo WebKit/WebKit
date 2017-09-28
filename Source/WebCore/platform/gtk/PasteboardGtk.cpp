@@ -285,7 +285,7 @@ Vector<String> Pasteboard::types()
     return types;
 }
 
-String Pasteboard::readString(const String& type)
+String Pasteboard::readStringForBindings(const String& type)
 {
     readFromClipboard();
 
@@ -314,6 +314,10 @@ Vector<String> Pasteboard::readFilenames()
 }
 
 void Pasteboard::writeMarkup(const String&)
+{
+}
+
+void Pasteboard::writeCustomData(const PasteboardCustomData&)
 {
 }
 

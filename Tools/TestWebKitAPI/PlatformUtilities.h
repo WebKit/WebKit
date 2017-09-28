@@ -36,6 +36,7 @@
 
 #if USE(FOUNDATION)
 OBJC_CLASS NSString;
+OBJC_CLASS NSDictionary;
 #endif
 
 namespace TestWebKitAPI {
@@ -48,6 +49,7 @@ void sleep(double seconds);
 std::string toSTD(const char*);
 #if USE(FOUNDATION)
 std::string toSTD(NSString *);
+bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected);
 #endif
 
 #if WK_HAVE_C_SPI

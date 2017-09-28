@@ -2330,6 +2330,7 @@ set(WebCore_SOURCES
     platform/MIMETypeRegistry.cpp
     platform/MainThreadSharedTimer.cpp
     platform/NotImplemented.cpp
+    platform/Pasteboard.cpp
     platform/PasteboardWriterData.cpp
     platform/PlatformSpeechSynthesisUtterance.cpp
     platform/PlatformSpeechSynthesisVoice.cpp

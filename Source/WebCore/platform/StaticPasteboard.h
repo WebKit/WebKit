@@ -42,7 +42,7 @@ public:
 
     bool hasData() final;
     Vector<String> types() final { return m_types; }
-    String readString(const String& type) final;
+    String readStringForBindings(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
     void clear() final;
@@ -67,7 +67,8 @@ public:
 
 private:
     Vector<String> m_types;
-    HashMap<String, String> m_stringContents;
+    HashMap<String, String> m_platformData;
+    HashMap<String, String> m_customData;
 };
 
 }

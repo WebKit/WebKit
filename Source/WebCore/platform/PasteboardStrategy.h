@@ -37,6 +37,7 @@ class URL;
 struct PasteboardImage;
 struct PasteboardURL;
 struct PasteboardWebContent;
+struct PasteboardCustomData;
 
 class PasteboardStrategy {
 public:
@@ -70,6 +71,9 @@ public:
     virtual long setPathnamesForType(const Vector<String>&, const String& pasteboardType, const String& pasteboardName) = 0;
     virtual long setStringForType(const String&, const String& pasteboardType, const String& pasteboardName) = 0;
 #endif
+
+    virtual Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName) = 0;
+    virtual long writeCustomData(const PasteboardCustomData&, const String& pasteboardName) = 0;
 
 #if PLATFORM(GTK)
     virtual void writeToClipboard(const String& pasteboardName, const SelectionData&) = 0;

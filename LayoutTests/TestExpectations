@@ -67,6 +67,10 @@ fast/events/autoscroll-main-document.html [ Skip ]
 
 # Drag and drop via EventSender is only supported on Mac WK1
 editing/pasteboard/drag-drop-href-as-text-data.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-drop-custom.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-drop-plain-text.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-drop-rich-text.html [ Skip ]
+editing/pasteboard/data-transfer-get-data-on-drop-url.html [ Skip ]
 
 # Only iOS supports QuickLook
 quicklook [ Skip ]

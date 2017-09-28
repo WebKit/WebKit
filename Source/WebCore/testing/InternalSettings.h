@@ -97,6 +97,7 @@ public:
     ExceptionOr<void> setSystemLayoutDirection(const String&);
     ExceptionOr<void> setShouldMockBoldSystemFontForAccessibility(bool);
     ExceptionOr<void> setShouldManageAudioSessionCategory(bool);
+    ExceptionOr<void> setCustomPasteboardDataEnabled(bool);
 
     enum class FrameFlatteningValue { Disabled, EnabledForNonFullScreenIFrames, FullyEnabled };
     ExceptionOr<void> setFrameFlattening(const FrameFlatteningValue&);
@@ -204,6 +205,7 @@ private:
 #if USE(AUDIO_SESSION)
         bool m_shouldManageAudioSessionCategory;
 #endif
+        bool m_customPasteboardDataEnabled;
     };
 
     Page* m_page;

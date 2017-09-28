@@ -1,3 +1,18 @@
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag event DataTransfer has unexpected types "dyn.ah62d4..."
+        https://bugs.webkit.org/show_bug.cgi?id=172526
+        <rdar://problem/32396081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adjust for changes in WebCore. See WebCore ChangeLog for more details.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::webExposedTypes):
+        (WebPlatformStrategies::writeCustomData):
+
 2017-09-27  Matt Lewis  <jlewis3@apple.com>
 
         Unreviewed, rolling out r222567.

@@ -114,6 +114,7 @@ InternalSettings::Backup::Backup(Settings& settings)
 #if USE(AUDIO_SESSION)
     , m_shouldManageAudioSessionCategory(Settings::shouldManageAudioSessionCategory())
 #endif
+    , m_customPasteboardDataEnabled(Settings::customPasteboardDataEnabled())
 {
 }
 
@@ -210,6 +211,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
 #if USE(AUDIO_SESSION)
     Settings::setShouldManageAudioSessionCategory(m_shouldManageAudioSessionCategory);
 #endif
+    Settings::setCustomPasteboardDataEnabled(m_customPasteboardDataEnabled);
 }
 
 class InternalSettingsWrapper : public Supplement<Page> {
@@ -850,6 +852,12 @@ ExceptionOr<void> InternalSettings::setShouldManageAudioSessionCategory(bool sho
     UNUSED_PARAM(should);
     return Exception { InvalidAccessError };
 #endif
+}
+
+ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
+{
+    Settings::setCustomPasteboardDataEnabled(enabled);
+    return { };
 }
 
 static InternalSettings::ForcedAccessibilityValue settingsToInternalSettingsValue(Settings::ForcedAccessibilityValue value)

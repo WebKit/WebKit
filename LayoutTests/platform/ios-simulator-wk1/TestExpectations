@@ -7,3 +7,6 @@ fast/events/offsetX-offsetY.html [ Timeout ]
 
 # Untriage pasteboard test failures
 editing/pasteboard/
+editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Pass ]
+editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Pass ]
+editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Pass ]

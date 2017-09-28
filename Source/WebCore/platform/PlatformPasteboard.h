@@ -49,6 +49,7 @@ class Color;
 class SelectionData;
 class SharedBuffer;
 class URL;
+struct PasteboardCustomData;
 struct PasteboardImage;
 struct PasteboardURL;
 struct PasteboardWebContent;
@@ -64,9 +65,11 @@ public:
 #endif
     WEBCORE_EXPORT static String uniqueName();
 
+    WEBCORE_EXPORT static String platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType);
+
     WEBCORE_EXPORT void getTypes(Vector<String>& types);
     WEBCORE_EXPORT RefPtr<SharedBuffer> bufferForType(const String& pasteboardType);
-    WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType);
+    WEBCORE_EXPORT void getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const;
     WEBCORE_EXPORT String stringForType(const String& pasteboardType);
     WEBCORE_EXPORT long changeCount() const;
     WEBCORE_EXPORT Color color();
@@ -89,7 +92,10 @@ public:
     WEBCORE_EXPORT String readString(int index, const String& pasteboardType);
     WEBCORE_EXPORT URL readURL(int index, const String& pasteboardType, String& title);
     WEBCORE_EXPORT int count();
-    WEBCORE_EXPORT int numberOfFiles();
+    WEBCORE_EXPORT int numberOfFiles() const;
+
+    WEBCORE_EXPORT long write(const PasteboardCustomData&);
+    WEBCORE_EXPORT Vector<String> typesSafeForDOMToReadAndWrite() const;
 
 #if PLATFORM(GTK)
     WEBCORE_EXPORT void writeToClipboard(const SelectionData&, WTF::Function<void()>&& primarySelectionCleared);

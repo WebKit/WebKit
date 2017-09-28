@@ -140,7 +140,7 @@ String DataTransfer::getData(const String& type) const
         return { };
 #endif
 
-    return m_pasteboard->readString(normalizeType(type));
+    return m_pasteboard->readStringForBindings(normalizeType(type));
 }
 
 void DataTransfer::setData(const String& type, const String& data)
@@ -255,6 +255,11 @@ void DataTransfer::setDragImage(Element*, int, int)
 Ref<DataTransfer> DataTransfer::createForDrag()
 {
     return adoptRef(*new DataTransfer(StoreMode::ReadWrite, Pasteboard::createForDragAndDrop(), Type::DragAndDropData));
+}
+
+Ref<DataTransfer> DataTransfer::createForDragStartEvent()
+{
+    return adoptRef(*new DataTransfer(StoreMode::ReadWrite, std::make_unique<StaticPasteboard>(), Type::DragAndDropData));
 }
 
 Ref<DataTransfer> DataTransfer::createForDrop(StoreMode accessMode, const DragData& dragData)
@@ -458,6 +463,31 @@ void DataTransfer::setEffectAllowed(const String& effect)
         return;
 
     m_effectAllowed = effect;
+}
+
+void DataTransfer::moveDragState(Ref<DataTransfer>&& other)
+{
+    RELEASE_ASSERT(is<StaticPasteboard>(other->pasteboard()));
+    // We clear the platform pasteboard here to ensure that the pasteboard doesn't contain any data
+    // that may have been written before starting the drag, and after ending the last drag session.
+    // After pushing the static pasteboard's contents to the platform, the pasteboard should only
+    // contain data that was in the static pasteboard.
+    m_pasteboard->clear();
+    downcast<StaticPasteboard>(other->pasteboard()).commitToPasteboard(*m_pasteboard);
+
+    m_dropEffect = other->m_dropEffect;
+    m_effectAllowed = other->m_effectAllowed;
+    m_dragLocation = other->m_dragLocation;
+    m_dragImage = other->m_dragImage;
+    m_dragImageElement = WTFMove(other->m_dragImageElement);
+    m_dragImageLoader = WTFMove(other->m_dragImageLoader);
+    m_itemList = WTFMove(other->m_itemList);
+    m_fileList = WTFMove(other->m_fileList);
+}
+
+bool DataTransfer::hasDragImage() const
+{
+    return m_dragImage || m_dragImageElement;
 }
 
 #endif // ENABLE(DRAG_SUPPORT)

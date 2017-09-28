@@ -561,12 +561,6 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 
 #if ENABLE(DRAG_SUPPORT)
 
-Ref<DataTransfer> EventHandler::createDraggingDataTransfer() const
-{
-    Pasteboard("data interaction pasteboard").clear();
-    return DataTransfer::createForDrag();
-}
-
 bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResults&)
 {
     return false;

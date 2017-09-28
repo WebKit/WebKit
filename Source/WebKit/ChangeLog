@@ -1,3 +1,41 @@
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag event DataTransfer has unexpected types "dyn.ah62d4..."
+        https://bugs.webkit.org/show_bug.cgi?id=172526
+        <rdar://problem/32396081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add boilerplate plumbing and encoder/decoder support for new pasteboard codepaths. See WebCore ChangeLog for
+        more details.
+
+        * Scripts/webkit/messages.py:
+        (headers_for_type):
+        * Shared/WebCoreArgumentCoders.cpp:
+        (IPC::ArgumentCoder<PasteboardCustomData>::encode):
+        (IPC::ArgumentCoder<PasteboardCustomData>::decode):
+
+        Add encoder/decoder support for PasteboardCustomData.
+
+        (IPC::ArgumentCoder<PasteboardWebContent>::encode):
+        (IPC::ArgumentCoder<PasteboardWebContent>::decode):
+
+        Encode and decode dataInHTMLFormat.
+
+        * Shared/WebCoreArgumentCoders.h:
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * UIProcess/WebPasteboardProxy.cpp:
+        (WebKit::WebPasteboardProxy::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPasteboardProxy::writeCustomData):
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::typesSafeForDOMToReadAndWrite):
+        (WebKit::WebPlatformStrategies::writeCustomData):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+
 2017-09-27  Alex Christensen  <achristensen@webkit.org>
 
         Allow modern decoding of std::optional<T>

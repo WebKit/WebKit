@@ -97,6 +97,7 @@
 		2E7765CD16C4D80A00BA2BB1 /* mainIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CC16C4D80A00BA2BB1 /* mainIOS.mm */; };
 		2E7765CF16C4D81100BA2BB1 /* mainMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E7765CE16C4D81100BA2BB1 /* mainMac.mm */; };
 		2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2E9896141D8F092B00739892 /* text-and-password-inputs.html */; };
+		2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */; };
 		2ECFF5551D9B12F800B55394 /* NowPlayingControlsTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */; };
 		2EFF06C31D88621E0004BB30 /* large-video-offscreen.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C21D8862120004BB30 /* large-video-offscreen.html */; };
 		2EFF06C51D8867760004BB30 /* change-video-source-on-click.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */; };
@@ -845,6 +846,7 @@
 				F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */,
 				F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */,
 				F4194AD11F5A320100ADD83F /* drop-targets.html in Copy Resources */,
+				2EB29D5E1F762DB90023A5F1 /* dump-datatransfer-types.html in Copy Resources */,
 				A155022C1E050D0300A24C57 /* duplicate-completion-handler-calls.html in Copy Resources */,
 				9984FACE1CFFB090008D198C /* editable-body.html in Copy Resources */,
 				F44D06451F395C26001A0E29 /* editor-state-test-harness.html in Copy Resources */,
@@ -1146,6 +1148,7 @@
 		2E7765CE16C4D81100BA2BB1 /* mainMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = mainMac.mm; sourceTree = "<group>"; };
 		2E7EF7AC1F266A8100DFB67C /* AppKitSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSPI.h; sourceTree = "<group>"; };
 		2E9896141D8F092B00739892 /* text-and-password-inputs.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "text-and-password-inputs.html"; sourceTree = "<group>"; };
+		2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "dump-datatransfer-types.html"; sourceTree = "<group>"; };
 		2ECFF5541D9B12F800B55394 /* NowPlayingControlsTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NowPlayingControlsTests.mm; sourceTree = "<group>"; };
 		2EFF06C21D8862120004BB30 /* large-video-offscreen.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "large-video-offscreen.html"; sourceTree = "<group>"; };
 		2EFF06C41D8867700004BB30 /* change-video-source-on-click.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "change-video-source-on-click.html"; sourceTree = "<group>"; };
@@ -2202,6 +2205,7 @@
 				F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */,
 				F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */,
 				F4194AD01F5A2EA500ADD83F /* drop-targets.html */,
+				2EB29D5D1F762DA50023A5F1 /* dump-datatransfer-types.html */,
 				A155022B1E050BC500A24C57 /* duplicate-completion-handler-calls.html */,
 				9984FACD1CFFB038008D198C /* editable-body.html */,
 				F44D06441F395C0D001A0E29 /* editor-state-test-harness.html */,

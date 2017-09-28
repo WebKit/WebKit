@@ -86,6 +86,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
+#include "StaticPasteboard.h"
 #include "StyleCachedImage.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
@@ -3547,21 +3548,9 @@ bool EventHandler::dispatchDragSrcEvent(const AtomicString& eventType, const Pla
     return !dispatchDragEvent(eventType, *dragState().source, event, dragState().dataTransfer.get());
 }
 
-bool EventHandler::dispatchDragStartEvent(HasNonDefaultPasteboardData& hasNonDefaultPasteboardData)
+bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
 {
-#if PLATFORM(COCOA)
-    auto changeCountBeforeDragStart = dragState().dataTransfer->pasteboard().changeCount();
-#endif
-
-    bool mayStartDrag = dispatchDragSrcEvent(eventNames().dragstartEvent, m_mouseDown);
-
-#if PLATFORM(COCOA)
-    hasNonDefaultPasteboardData = changeCountBeforeDragStart != dragState().dataTransfer->pasteboard().changeCount() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
-#else
-    hasNonDefaultPasteboardData = dragState().dataTransfer->pasteboard().hasData() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
-#endif
-
-    return mayStartDrag && !m_frame.selection().selection().isInPasswordField();
+    return !dispatchDragEvent(eventNames().dragstartEvent, *dragState().source, m_mouseDown, &dataTransfer) && !m_frame.selection().selection().isInPasswordField();
 }
     
 static bool ExactlyOneBitSet(DragSourceAction n)
@@ -3667,29 +3656,29 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     // This does work only if we missed a dragEnd. Do it anyway, just to make sure the old dataTransfer gets numbed.
     invalidateDataTransfer();
 
-    dragState().dataTransfer = createDraggingDataTransfer();
+    dragState().dataTransfer = DataTransfer::createForDrag();
     HasNonDefaultPasteboardData hasNonDefaultPasteboardData = HasNonDefaultPasteboardData::No;
     
     if (dragState().shouldDispatchEvents) {
-        // Check to see if the is a DOM based drag. If it is, get the DOM specified drag image and offset.
-        if (dragState().type == DragSourceActionDHTML) {
-            if (RenderObject* renderer = dragState().source->renderer()) {
-                // FIXME: This doesn't work correctly with transforms.
-                FloatPoint absPos = renderer->localToAbsolute();
-                IntSize delta = m_mouseDownPos - roundedIntPoint(absPos);
+        auto dragStartDataTransfer = DataTransfer::createForDragStartEvent();
+        m_mouseDownMayStartDrag = dispatchDragStartEventOnSourceElement(dragStartDataTransfer);
+        hasNonDefaultPasteboardData = dragStartDataTransfer->pasteboard().hasData() ? HasNonDefaultPasteboardData::Yes : HasNonDefaultPasteboardData::No;
+        dragState().dataTransfer->moveDragState(WTFMove(dragStartDataTransfer));
+
+        if (dragState().source && dragState().type == DragSourceActionDHTML && !dragState().dataTransfer->hasDragImage()) {
+            dragState().source->document().updateStyleIfNeeded();
+            if (auto* renderer = dragState().source->renderer()) {
+                auto absolutePosition = renderer->localToAbsolute();
+                auto delta = m_mouseDownPos - roundedIntPoint(absolutePosition);
                 dragState().dataTransfer->setDragImage(dragState().source.get(), delta.width(), delta.height());
             } else {
-                // The renderer has disappeared, this can happen if the onStartDrag handler has hidden
-                // the element in some way.  In this case we just kill the drag.
+                dispatchDragSrcEvent(eventNames().dragendEvent, event.event());
                 m_mouseDownMayStartDrag = false;
                 invalidateDataTransfer();
                 dragState().source = nullptr;
-
                 return true;
             }
-        } 
-
-        m_mouseDownMayStartDrag = dispatchDragStartEvent(hasNonDefaultPasteboardData);
+        }
 
         dragState().dataTransfer->makeInvalidForSecurity();
 

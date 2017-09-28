@@ -125,11 +125,11 @@ static void checkTypeIdentifierPrecedesOtherTypeIdentifier(DataInteractionSimula
     EXPECT_TRUE([registeredTypes indexOfObject:firstType] < [registeredTypes indexOfObject:secondType]);
 }
 
-static void checkTypeIdentifierAndIsNotOtherTypeIdentifier(DataInteractionSimulator *simulator, NSString *firstType, NSString *secondType)
+static void checkFirstTypeIsPresentAndSecondTypeIsMissing(DataInteractionSimulator *simulator, CFStringRef firstType, CFStringRef secondType)
 {
     NSArray *registeredTypes = [simulator.sourceItemProviders.firstObject registeredTypeIdentifiers];
-    EXPECT_TRUE([registeredTypes containsObject:firstType]);
-    EXPECT_FALSE([registeredTypes containsObject:secondType]);
+    EXPECT_TRUE([registeredTypes containsObject:(NSString *)firstType]);
+    EXPECT_FALSE([registeredTypes containsObject:(NSString *)secondType]);
 }
 
 static void checkTypeIdentifierIsRegisteredAtIndex(DataInteractionSimulator *simulator, NSString *type, NSUInteger index)
@@ -173,6 +173,18 @@ static void checkDragCaretRectIsContainedInRect(CGRect caretRect, CGRect contain
     if (!contained)
         NSLog(@"Expected caret rect: %@ to fit within container rect: %@", NSStringFromCGRect(caretRect), NSStringFromCGRect(containerRect));
 }
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+
+static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
+{
+    BOOL success = TestWebKitAPI::Util::jsonMatchesExpectedValues(jsonString, expected);
+    EXPECT_TRUE(success);
+    if (!success)
+        NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
+}
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 static void runTestWithTemporaryTextFile(void(^runTest)(NSURL *fileURL))
 {
@@ -240,7 +252,7 @@ TEST(DataInteractionTests, ImageToContentEditable)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
     checkSelectionRectsWithLogging(@[ makeCGRectValue(1, 201, 215, 174) ], [dataInteractionSimulator finalSelectionRects]);
-    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
     checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
 }
 
@@ -270,7 +282,7 @@ TEST(DataInteractionTests, ImageToTextarea)
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionEnterEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionOverEventName]);
     EXPECT_TRUE([observedEventNames containsObject:DataInteractionPerformOperationEventName]);
-    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
     checkEstimatedSize(dataInteractionSimulator.get(), { 215, 174 });
 }
 
@@ -1207,7 +1219,7 @@ TEST(DataInteractionTests, LargeImageToTargetDiv)
     auto dataInteractionSimulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
     [dataInteractionSimulator runFrom:CGPointMake(200, 400) to:CGPointMake(200, 150)];
     EXPECT_WK_STREQ("PASS", [webView stringByEvaluatingJavaScript:@"target.textContent"].UTF8String);
-    checkTypeIdentifierAndIsNotOtherTypeIdentifier(dataInteractionSimulator.get(), (NSString *)kUTTypePNG, (NSString *)kUTTypeFileURL);
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(dataInteractionSimulator.get(), kUTTypePNG, kUTTypeFileURL);
     checkEstimatedSize(dataInteractionSimulator.get(), { 2000, 2000 });
 }
 
@@ -1466,6 +1478,171 @@ TEST(DataInteractionTests, DragLiftPreviewDataTransferSetDragImage)
     [simulator runFrom:CGPointMake(50, 450) to:CGPointMake(250, 450)];
     checkCGRectIsEqualToCGRectWithLogging({{0, 400}, {215, 174}}, [simulator liftPreviews][0].view.frame);
 }
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingPlainText)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView stringByEvaluatingJavaScript:@"select(plain)"];
+    [simulator runFrom:CGPointMake(50, 75) to:CGPointMake(50, 375)];
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{ @"text/plain" : @"" },
+        @"drop": @{ @"text/plain" : @"Plain text" }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingCustomData)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView stringByEvaluatingJavaScript:@"select(rich)"];
+    [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
+    [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover" : @{
+            @"text/plain" : @"",
+            @"foo/plain" : @"",
+            @"text/html" : @"",
+            @"bar/html" : @"",
+            @"text/uri-list" : @"",
+            @"baz/uri-list" : @""
+        },
+        @"drop" : @{
+            @"text/plain" : @"ben bitdiddle",
+            @"foo/plain" : @"eva lu ator",
+            @"text/html" : @"<b>bold text</b>",
+            @"bar/html" : @"<i>italic text</i>",
+            @"text/uri-list" : @"https://www.apple.com/",
+            @"baz/uri-list" : @"https://www.webkit.org"
+        }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingURL)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView stringByEvaluatingJavaScript:@"rich.innerHTML = '<a href=\"https://www.apple.com/\">This is a link.</a>'"];
+    [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{ @"text/uri-list" : @"" },
+        @"drop": @{ @"text/uri-list" : @"https://www.apple.com/" }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    NSURL *iconURL = [[NSBundle mainBundle] URLForResource:@"icon" withExtension:@"png" subdirectory:@"TestWebKitAPI.resources"];
+    [itemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypePNG fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedIconURL = retainPtr(iconURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+        completionHandler(protectedIconURL.get(), NO, nil);
+        return nil;
+    }];
+    [itemProvider registerObject:iconURL visibility:UIItemProviderRepresentationOptionsVisibilityAll];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+
+    [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
+
+    // File URLs should never be exposed directly to web content, so DataTransfer.getData should return an empty string here.
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{ @"text/uri-list" : @"" },
+        @"drop": @{ @"text/uri-list" : @"" }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataWhenDroppingRespectsPresentationStyle)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    runTestWithTemporaryTextFile(^(NSURL *fileURL) {
+        auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+        [itemProvider registerFileRepresentationForTypeIdentifier:(NSString *)kUTTypeUTF8PlainText fileOptions:0 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:[protectedFileURL = retainPtr(fileURL)] (FileLoadCompletionBlock completionHandler) -> NSProgress * {
+            completionHandler(protectedFileURL.get(), NO, nil);
+            return nil;
+        }];
+        [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+
+        [itemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
+        [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
+        checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+            @"dragover": @{ @"text/plain" : @"" },
+            @"drop": @{ @"text/plain" : @"" }
+        });
+
+        [itemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleInline];
+        [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
+        checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+            @"dragover": @{ @"text/plain" : @"" },
+            @"drop": @{ @"text/plain" : @"This is a tiny blob of text." }
+        });
+    });
+}
+
+TEST(DataInteractionTests, DataTransferSetDataCannotWritePlatformTypes)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    [webView stringByEvaluatingJavaScript:@"select(rich)"];
+    [webView stringByEvaluatingJavaScript:@"customData = { 'text/plain' : 'foo', 'com.adobe.pdf' : 'try and decode me!' }"];
+    [webView stringByEvaluatingJavaScript:@"writeCustomData = true"];
+
+    [simulator runFrom:CGPointMake(50, 225) to:CGPointMake(50, 375)];
+    checkFirstTypeIsPresentAndSecondTypeIsMissing(simulator.get(), kUTTypeUTF8PlainText, kUTTypePDF);
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{
+            @"text/plain": @"",
+            @"com.adobe.pdf": @""
+        },
+        @"drop": @{
+            @"text/plain": @"foo",
+            @"com.adobe.pdf": @"try and decode me!"
+        }
+    });
+}
+
+TEST(DataInteractionTests, DataTransferGetDataCannotReadPrivateArbitraryTypes)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadTestPageNamed:@"dump-datatransfer-types"];
+    auto simulator = adoptNS([[DataInteractionSimulator alloc] initWithWebView:webView.get()]);
+
+    auto itemProvider = adoptNS([[UIItemProvider alloc] init]);
+    [itemProvider registerDataRepresentationForTypeIdentifier:(NSString *)kUTTypeMP3 visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    {
+        completionHandler([@"this is a test" dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+    [itemProvider registerDataRepresentationForTypeIdentifier:@"org.WebKit.TestWebKitAPI.custom-pasteboard-type" visibility:NSItemProviderRepresentationVisibilityAll loadHandler:^NSProgress *(DataLoadCompletionBlock completionHandler)
+    {
+        completionHandler([@"this is another test" dataUsingEncoding:NSUTF8StringEncoding], nil);
+        return nil;
+    }];
+    [simulator setExternalItemProviders:@[ itemProvider.get() ]];
+    [itemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleInline];
+    [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
+    checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
+        @"dragover": @{ },
+        @"drop": @{ }
+    });
+}
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 } // namespace TestWebKitAPI
 

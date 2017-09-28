@@ -96,6 +96,9 @@ private:
     void writeToPasteboard(const WebCore::PasteboardWebContent&) override;
     void writeToPasteboard(const String& pasteboardType, const String&) override;
 #endif
+
+    Vector<String> typesSafeForDOMToReadAndWrite(const String& pasteboardName) override;
+    long writeCustomData(const WebCore::PasteboardCustomData&, const String&) override;
 };
 
 } // namespace WebKit

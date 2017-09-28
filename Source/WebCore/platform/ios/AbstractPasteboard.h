@@ -43,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
 
 - (NSArray<NSString *> *)pasteboardTypes;
+- (NSData *)dataForPasteboardType:(NSString *)pasteboardType;
 - (NSArray *)dataForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
 - (NSArray *)valuesForPasteboardType:(NSString *)pasteboardType inItemSet:(NSIndexSet *)itemSet;
 - (NSInteger)changeCount;

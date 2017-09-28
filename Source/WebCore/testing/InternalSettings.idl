@@ -106,5 +106,6 @@ enum FrameFlatteningValue { "Disabled", "EnabledForNonFullScreenIFrames", "Fully
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
 
     [MayThrowException] void setShouldManageAudioSessionCategory(boolean should);
+    [MayThrowException] void setCustomPasteboardDataEnabled(boolean enabled);
 };
 

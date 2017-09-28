@@ -1,3 +1,34 @@
+2017-09-27  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Drag event DataTransfer has unexpected types "dyn.ah62d4..."
+        https://bugs.webkit.org/show_bug.cgi?id=172526
+        <rdar://problem/32396081>
+
+        Reviewed by Ryosuke Niwa.
+
+        Adds new API tests on iOS to cover various cases of using DataTransfer.setData, DataTransfer.getData, and
+        DataTransfer.types, as well as their interaction with platform objects (source NSItemProviders in the case of
+        drag and drop, and the general UIPasteboard for copy and paste).
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/dump-datatransfer-types.html: Added.
+
+        Introduce a new API test harness that both drag-and-drop and copy-and-paste tests use to dump DataTransfer's
+        web-exposed types and values.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+        (checkFirstTypeIsPresentAndSecondTypeIsMissing):
+        (checkJSONWithLogging):
+        (TestWebKitAPI::TEST):
+        (checkTypeIdentifierAndIsNotOtherTypeIdentifier): Deleted.
+        * TestWebKitAPI/Tests/ios/UIPasteboardTests.mm:
+        (TestWebKitAPI::checkJSONWithLogging):
+        (TestWebKitAPI::setUpWebViewForPasteboardTests):
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/cocoa/PlatformUtilitiesCocoa.mm:
+        (TestWebKitAPI::Util::jsonMatchesExpectedValues):
+
 2017-09-27  Lucas Forschler  <lforschler@apple.com>
 
         Add macOS High Sierra and iOS Simulator 11 support to bisect-builds.

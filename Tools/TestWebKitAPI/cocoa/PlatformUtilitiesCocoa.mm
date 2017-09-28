@@ -44,6 +44,15 @@ std::string toSTD(NSString *string)
     return std::string(buffer.get(), stringLength);
 }
 
+bool jsonMatchesExpectedValues(NSString *jsonString, NSDictionary *expected)
+{
+    NSError *error = nil;
+    id result = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:&error];
+    if (error)
+        NSLog(@"Encountered error: %@ while serializing JSON string.", error);
+    return [expected isEqualToDictionary:result];
+}
+
 #if WK_API_ENABLED
 NSString * const TestPlugInClassNameParameter = @"TestPlugInPrincipalClassName";
 #endif

@@ -56,7 +56,7 @@ Vector<String> Pasteboard::types()
     return types;
 }
 
-String Pasteboard::readString(const String& type)
+String Pasteboard::readStringForBindings(const String& type)
 {
     return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type);
 }
@@ -120,6 +120,10 @@ void Pasteboard::writeMarkup(const String&)
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption)
 {
     writeString("text/plain;charset=utf-8", text);
+}
+
+void Pasteboard::writeCustomData(const PasteboardCustomData&)
+{
 }
 
 } // namespace WebCore

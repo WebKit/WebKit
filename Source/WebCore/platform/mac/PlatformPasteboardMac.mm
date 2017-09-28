@@ -24,10 +24,16 @@
  */
 
 #import "config.h"
-#import "Color.h"
-#import "URL.h"
 #import "PlatformPasteboard.h"
+
+#import "Color.h"
+#import "Pasteboard.h"
+#import "Settings.h"
+#import "URL.h"
 #import "SharedBuffer.h"
+#import <wtf/HashCountedSet.h>
+#import <wtf/ListHashSet.h>
+#import <wtf/text/StringHash.h>
 
 namespace WebCore {
 
@@ -53,7 +59,7 @@ RefPtr<SharedBuffer> PlatformPasteboard::bufferForType(const String& pasteboardT
     return SharedBuffer::create([[data copy] autorelease]);
 }
 
-int PlatformPasteboard::numberOfFiles()
+int PlatformPasteboard::numberOfFiles() const
 {
     Vector<String> files;
     getPathnamesForType(files, String(NSFilenamesPboardType));
@@ -62,7 +68,7 @@ int PlatformPasteboard::numberOfFiles()
     return files.size();
 }
 
-void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType)
+void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const String& pasteboardType) const
 {
     NSArray* paths = [m_pasteboard.get() propertyListForType:pasteboardType];
     if ([paths isKindOfClass:[NSString class]]) {
@@ -75,15 +81,107 @@ void PlatformPasteboard::getPathnamesForType(Vector<String>& pathnames, const St
 
 String PlatformPasteboard::stringForType(const String& pasteboardType)
 {
-    if (pasteboardType == String(NSURLPboardType))
-        return [[NSURL URLFromPasteboard:m_pasteboard.get()] absoluteString];
+    if (pasteboardType == String(NSURLPboardType)) {
+        if (NSURL *urlFromPasteboard = [NSURL URLFromPasteboard:m_pasteboard.get()])
+            return urlFromPasteboard.absoluteString;
 
-    return [m_pasteboard.get() stringForType:pasteboardType];
+        URL url([NSURL URLWithString:[m_pasteboard stringForType:NSURLPboardType]]);
+        if (!url.isValid())
+            return { };
+        return url.string();
+    }
+
+    return [m_pasteboard stringForType:pasteboardType];
+}
+
+static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& platformType)
+{
+    if (platformType == String(NSStringPboardType) || platformType == String(NSPasteboardTypeString))
+        return ASCIILiteral("text/plain");
+
+    if (platformType == String(NSURLPboardType))
+        return ASCIILiteral("text/uri-list");
+
+    if (platformType == String(NSHTMLPboardType))
+        return ASCIILiteral("text/html");
+
+    if (platformType == String(NSFilenamesPboardType) || platformType == String(NSFilesPromisePboardType))
+        return ASCIILiteral("Files");
+
+    return nullptr;
+}
+
+Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
+{
+    ListHashSet<String> domPasteboardTypes;
+    if (NSData *serializedCustomData = [m_pasteboard dataForType:@(customWebKitPasteboardDataType)]) {
+        auto buffer = SharedBuffer::create(serializedCustomData);
+        for (auto& type : customDataFromSharedBuffer(buffer.get()).orderedTypes)
+            domPasteboardTypes.add(type);
+    }
+
+    NSArray<NSString *> *allTypes = [m_pasteboard types];
+    for (NSString *type in allTypes) {
+        if ([type isEqualToString:@(customWebKitPasteboardDataType)])
+            continue;
+
+        if (isSafeTypeForDOMToReadAndWrite(type))
+            domPasteboardTypes.add(type);
+        else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
+            auto coercedType = String::fromUTF8(domType);
+            if (coercedType == "Files" && !numberOfFiles())
+                continue;
+            domPasteboardTypes.add(WTFMove(coercedType));
+        }
+    }
+
+    Vector<String> result;
+    copyToVector(domPasteboardTypes, result);
+    return result;
+}
+
+long PlatformPasteboard::write(const PasteboardCustomData& data)
+{
+    NSMutableArray *types = [NSMutableArray array];
+    for (auto& entry : data.platformData)
+        [types addObject:platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(entry.key)];
+    if (data.sameOriginCustomData.size())
+        [types addObject:@(customWebKitPasteboardDataType)];
+
+    [m_pasteboard declareTypes:types owner:nil];
+
+    for (auto& entry : data.platformData) {
+        auto platformType = platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(entry.key);
+        ASSERT(!platformType.isEmpty());
+        if (!platformType.isEmpty())
+            [m_pasteboard setString:entry.value forType:platformType];
+    }
+
+    if (data.sameOriginCustomData.size()) {
+        if (auto serializedCustomData = sharedBufferFromCustomData(data)->createNSData())
+            [m_pasteboard setData:serializedCustomData.get() forType:@(customWebKitPasteboardDataType)];
+    }
+
+    return changeCount();
 }
 
 long PlatformPasteboard::changeCount() const
 {
     return [m_pasteboard.get() changeCount];
+}
+
+String PlatformPasteboard::platformPasteboardTypeForSafeTypeForDOMToReadAndWrite(const String& domType)
+{
+    if (domType == "text/plain")
+        return NSStringPboardType;
+
+    if (domType == "text/html")
+        return NSHTMLPboardType;
+
+    if (domType == "text/uri-list")
+        return NSURLPboardType;
+
+    return { };
 }
 
 String PlatformPasteboard::uniqueName()
