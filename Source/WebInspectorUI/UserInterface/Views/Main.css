@@ -195,20 +195,6 @@ body.docked:matches(.right, .left) #navigation-sidebar.collapsed > .resizer {
     color: hsl(0, 86%, 47%);
 }
 
-.message-text-view.error::before {
-    display: inline-block;
-
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    margin-right: 4px;
-    vertical-align: bottom;
-
-    background-image: url(../Images/Error.svg);
-    background-size: 100% 100%;
-    content: "";
-}
-
 .resource-link {
     display: block;
 }
