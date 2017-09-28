@@ -1,3 +1,9 @@
+2017-09-27  Tim Horton  <timothy_horton@apple.com>
+
+        Try to fix the Mac CMake build
+
+        * PlatformMac.cmake:
+
 2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
 
         Minimum font size may cause elements to have an infinite line-height
