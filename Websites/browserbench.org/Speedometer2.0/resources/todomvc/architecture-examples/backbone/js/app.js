@@ -9,4 +9,8 @@ $(function () {
 
     // kick things off by creating the `App`
     window.appView = new app.AppView();
+
+    var dummyNodeToNotifyAppIsReady = document.createElement('div');
+    dummyNodeToNotifyAppIsReady.id = 'appIsReady';
+    document.body.appendChild(dummyNodeToNotifyAppIsReady);
 });

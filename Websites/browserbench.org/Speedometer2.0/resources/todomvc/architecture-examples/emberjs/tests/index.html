@@ -7,35 +7,27 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <base href="/" />
-<meta name="todomvc/config/environment" content="%7B%22modulePrefix%22%3A%22todomvc%22%2C%22environment%22%3A%22test%22%2C%22baseURL%22%3A%22/%22%2C%22locationType%22%3A%22none%22%2C%22EmberENV%22%3A%7B%22FEATURES%22%3A%7B%7D%7D%2C%22APP%22%3A%7B%22LOG_ACTIVE_GENERATION%22%3Afalse%2C%22LOG_VIEW_LOOKUPS%22%3Afalse%2C%22rootElement%22%3A%22%23ember-testing%22%2C%22name%22%3A%22todomvc%22%2C%22version%22%3A%220.0.0+%22%7D%2C%22exportApplicationGlobal%22%3Atrue%7D" />
-    
+    {{content-for "head"}}
+    {{content-for "test-head"}}
 
-    <link rel="stylesheet" href="assets/vendor.css">
-    <link rel="stylesheet" href="assets/todomvc.css">
-    <link rel="stylesheet" href="assets/test-support.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/todomvc.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/test-support.css">
 
-    
-    
+    {{content-for "head-footer"}}
+    {{content-for "test-head-footer"}}
   </head>
   <body>
-    
-    <div id="qunit"></div>
-<div id="qunit-fixture"></div>
+    {{content-for "body"}}
+    {{content-for "test-body"}}
 
-<div id="ember-testing-container">
-  <div id="ember-testing"></div>
-</div>
+    <script src="/testem.js" integrity=""></script>
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/test-support.js"></script>
+    <script src="{{rootURL}}assets/todomvc.js"></script>
+    <script src="{{rootURL}}assets/tests.js"></script>
 
-
-    <script src="testem.js" integrity=""></script>
-    <script src="assets/vendor.js"></script>
-    <script src="assets/test-support.js"></script>
-    <script src="assets/todomvc.js"></script>
-    <script src="assets/tests.js"></script>
-    <script src="assets/test-loader.js"></script>
-
-    
-    <script>Ember.assert('The tests file was not loaded. Make sure your tests index.html includes "assets/tests.js".', EmberENV.TESTS_FILE_LOADED);</script>
+    {{content-for "body-footer"}}
+    {{content-for "test-body-footer"}}
   </body>
 </html>

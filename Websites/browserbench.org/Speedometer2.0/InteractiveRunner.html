@@ -141,7 +141,10 @@ function startTest() {
                 }
                 results += suiteName + ' : ' + suiteResults.total + ' ms\n';
             }
+            results += 'Arithmetic Mean : ' + measuredValues.mean  + ' ms\n';
+            results += 'Geometric Mean : ' + measuredValues.geomean  + ' ms\n';
             results += 'Total : ' + measuredValues.total + ' ms\n';
+            results += 'Score : ' + measuredValues.score + ' rpm\n';
 
             if (!results)
                 return;

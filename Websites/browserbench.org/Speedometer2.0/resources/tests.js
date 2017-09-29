@@ -166,7 +166,36 @@ Suites.push({
 
 Suites.push({
     name: 'EmberJS-TodoMVC',
-    url: 'todomvc/architecture-examples/emberjs/index.html',
+    url: 'todomvc/architecture-examples/emberjs/dist/index.html',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                newTodo.value = 'Something to do ' + i;
+                triggerEnter(newTodo, 'keydown');
+            }
+        }),
+        new BenchmarkTestStep('CompletingAllItems', function (params, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }),
+        new BenchmarkTestStep('DeletingItems', function (params, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        }),
+    ]
+});
+
+Suites.push({
+    name: 'EmberJS-Debug-TodoMVC',
+    url: 'todomvc/architecture-examples/emberjs-debug/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('#new-todo').then(function (element) {
             element.focus();
@@ -198,9 +227,10 @@ Suites.push({
     url: 'todomvc/architecture-examples/backbone/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
     contentWindow.Backbone.sync = function () {}
-        return runner.waitForElement('.new-todo').then(function (element) {
-            element.focus();
-            return element;
+        return runner.waitForElement('#appIsReady').then(function (element) {
+            var newTodo = contentDocument.querySelector('.new-todo');
+            newTodo.focus();
+            return newTodo;
         });
     },
     tests: [
@@ -212,12 +242,12 @@ Suites.push({
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++)
+            for (var i = 0; i < numberOfItemsToAdd; i++)
                 checkboxes[i].click();
         }),
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++)
+            for (var i = 0; i < numberOfItemsToAdd; i++)
                 deleteButtons[i].click();
         }),
     ]
@@ -326,9 +356,10 @@ Suites.push({
     name: 'jQuery-TodoMVC',
     url: 'todomvc/architecture-examples/jquery/index.html',
     prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
+        return runner.waitForElement('#appIsReady').then(function (element) {
+            var newTodo = contentDocument.getElementById('new-todo');
+            newTodo.focus();
+            return newTodo;
         });
     },
     tests: [

@@ -46,6 +46,10 @@ jQuery(function ($) {
                     this.render();
                 }.bind(this)
             }).init('/all');
+
+            var dummyNodeToNotifyAppIsReady = document.createElement('div');
+            dummyNodeToNotifyAppIsReady.id = 'appIsReady';
+            document.body.appendChild(dummyNodeToNotifyAppIsReady);
         },
         bindEvents: function () {
             $('#new-todo').on('keyup', this.create.bind(this));
