@@ -60,7 +60,7 @@ public:
 
     void pause() override;
     bool seeking() const override;
-    void seek(float) override;
+    void seek(const MediaTime&) override;
     void configurePlaySink() override;
     bool changePipelineState(GstState) override;
 
@@ -69,7 +69,7 @@ public:
 
     void setRate(float) override;
     std::unique_ptr<PlatformTimeRanges> buffered() const override;
-    float maxTimeSeekable() const override;
+    MediaTime maxMediaTimeSeekable() const override;
 
     void sourceChanged() override;
 
@@ -98,7 +98,7 @@ private:
     // FIXME: Reduce code duplication.
     void updateStates() override;
 
-    bool doSeek(gint64, float, GstSeekFlags) override;
+    bool doSeek(const MediaTime&, float, GstSeekFlags) override;
     bool doSeek();
     void maybeFinishSeek();
     void updatePlaybackRate() override;

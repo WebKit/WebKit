@@ -28,7 +28,6 @@
 
 #include <gst/audio/audio-info.h>
 #include <gst/gst.h>
-#include <wtf/MathExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if ENABLE(VIDEO_TRACK) && USE(GSTREAMER_MPEGTS)
@@ -175,16 +174,15 @@ unsigned getGstPlayFlag(const char* nick)
     return flag->value;
 }
 
-GstClockTime toGstClockTime(float time)
+// Convert a MediaTime in seconds to a GstClockTime. Note that we can get MediaTime objects with a time scale that isn't a GST_SECOND, since they can come to
+// us through the internal testing API, the DOM and internally. It would be nice to assert the format of the incoming time, but all the media APIs assume time
+// is passed around in fractional seconds, so we'll just have to assume the same.
+uint64_t toGstUnsigned64Time(const MediaTime& mediaTime)
 {
-    // Extract the integer part of the time (seconds) and the fractional part (microseconds). Attempt to
-    // round the microseconds so no floating point precision is lost and we can perform an accurate seek.
-    float seconds;
-    float microSeconds = modff(time, &seconds) * 1000000;
-    GTimeVal timeValue;
-    timeValue.tv_sec = static_cast<glong>(seconds);
-    timeValue.tv_usec = static_cast<glong>(floor(microSeconds + 0.5));
-    return GST_TIMEVAL_TO_TIME(timeValue);
+    MediaTime time = mediaTime.toTimeScale(GST_SECOND);
+    if (time.isInvalid())
+        return GST_CLOCK_TIME_NONE;
+    return time.timeValue();
 }
 
 bool gstRegistryHasElementForMediaType(GList* elementFactories, const char* capsString)

@@ -1,3 +1,77 @@
+2017-09-29  Enrique Ocaña González  <eocanha@igalia.com>
+
+        [GStreamer] Refactor media player to use MediaTime consistently
+        https://bugs.webkit.org/show_bug.cgi?id=174817
+
+        Reviewed by Xabier Rodriguez-Calvar.
+
+        Make consistent use of the MediaTime class in the GStreamer media
+        player implementations.
+
+        This patch is authored by Charlie Turner <cturner@igalia.com> plus
+        some minor modifications by Enrique: migration of m_cachedPosition,
+        usage of m_seekTime as MediaTime in the MSE player and more logging
+        using toString().
+
+        Covered by existing tests.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::toGstUnsigned64Time): Scales MediaTime to the precision used
+        by GStreamer and returns a value compatible with GstClockTime.
+        (WebCore::toGstClockTime): Deleted.
+        * platform/graphics/gstreamer/GStreamerUtilities.h:
+        (WebCore::toGstClockTime): Inlined, now it takes MediaTime and converts
+        to GstClockTime.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        Several changes to use MediaTime instead of float and to log MediaTime
+        values converting them toString().
+        (WebCore::MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer):
+        (WebCore::MediaPlayerPrivateGStreamer::load):
+        (WebCore::MediaPlayerPrivateGStreamer::playbackPosition const):
+        (WebCore::MediaPlayerPrivateGStreamer::durationMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamer::seek): Uses MediaTime.
+        (WebCore::MediaPlayerPrivateGStreamer::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamer::updatePlaybackRate):
+        (WebCore::MediaPlayerPrivateGStreamer::buffered const):
+        (WebCore::MediaPlayerPrivateGStreamer::fillTimerFired):
+        (WebCore::MediaPlayerPrivateGStreamer::maxMediaTimeSeekable const):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeLoaded const):
+        (WebCore::MediaPlayerPrivateGStreamer::didLoadingProgress const):
+        (WebCore::MediaPlayerPrivateGStreamer::asyncStateChangeDone):
+        (WebCore::MediaPlayerPrivateGStreamer::updateStates):
+        (WebCore::MediaPlayerPrivateGStreamer::didEnd):
+        (WebCore::MediaPlayerPrivateGStreamer::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamer::maxTimeSeekable const): Deleted.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.h: Changed
+        seek(), playBackposition(), m_cachedPosition, m_durationAtEOS,
+        m_seekTime and m_timeOfOverlappingSeek to be of MediaTime type.
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.h:
+        Prefer the methods based on MediaTime over those based on fload/double.
+        (WebCore::MediaPlayerPrivateGStreamerBase::maxTimeLoaded const):
+        * platform/graphics/gstreamer/mse/GStreamerMediaSample.cpp:
+        (WebCore::GStreamerMediaSample::offsetTimestampsBy): toGstClockTime()
+        now can handle MediaTime.
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        Several changes to use MediaTime instead of float and to log MediaTime
+        values converting them toString().
+        (WebCore::MediaPlayerPrivateGStreamerMSE::seek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::notifySeekNeedsDataForTime):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::doSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maybeFinishSeek):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::isTimeBuffered const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::durationChanged):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::currentMediaTime const):
+        (WebCore::MediaPlayerPrivateGStreamerMSE::maxTimeSeekable const):
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.h:
+        seek() now takes a MediaTime argument.
+        * platform/graphics/gstreamer/mse/PlaybackPipeline.cpp:
+        (WebCore::PlaybackPipeline::enqueueSample): Use MediaTime values in
+        MediaSample.
+        * platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp:
+        (webKitMediaSrcQueryWithParent): Use MediaTime values in
+        durationMediaTime().
+
 2017-09-28  Sam Weinig  <sam@webkit.org>
 
         Re-write Settings generation in python for some reason

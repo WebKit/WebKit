@@ -93,8 +93,8 @@ void GStreamerMediaSample::offsetTimestampsBy(const MediaTime& timestampOffset)
     m_dts += timestampOffset;
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
     if (buffer) {
-        GST_BUFFER_PTS(buffer) = toGstClockTime(m_pts.toFloat());
-        GST_BUFFER_DTS(buffer) = toGstClockTime(m_dts.toFloat());
+        GST_BUFFER_PTS(buffer) = toGstClockTime(m_pts);
+        GST_BUFFER_DTS(buffer) = toGstClockTime(m_dts);
     }
 }
 
