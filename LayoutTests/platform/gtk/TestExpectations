@@ -1256,6 +1256,12 @@ fast/images/animated-image-mp4.html [ Skip ]
 webkit.org/b/177532 accessibility/image-load-on-delay.html [ Failure ]
 webkit.org/b/177533 webrtc/video-interruption.html [ Failure ]
 
+webkit.org/b/177632 fast/text/flag-codepoint.html [ ImageOnlyFailure ]
+
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-rich-text.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-plain-text.html [ Failure ]
+webkit.org/b/177633 editing/pasteboard/data-transfer-get-data-on-paste-custom.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
