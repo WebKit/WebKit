@@ -13,6 +13,7 @@
 
 #include <memory>
 
+#include "webrtc/common_audio/resampler/push_sinc_resampler.h"
 #include "webrtc/typedefs.h"
 
 namespace webrtc {
@@ -24,8 +25,8 @@ class PushSincResampler;
 template <typename T>
 class PushResampler {
  public:
-  PushResampler();
-  virtual ~PushResampler();
+  PushResampler() = default;
+  virtual ~PushResampler() { }
 
   // Must be called whenever the parameters change. Free to be called at any
   // time as it is a no-op if parameters have not changed since the last call.
@@ -39,9 +40,9 @@ class PushResampler {
  private:
   std::unique_ptr<PushSincResampler> sinc_resampler_;
   std::unique_ptr<PushSincResampler> sinc_resampler_right_;
-  int src_sample_rate_hz_;
-  int dst_sample_rate_hz_;
-  size_t num_channels_;
+  int src_sample_rate_hz_ { 0 };
+  int dst_sample_rate_hz_ { 0 };
+  size_t num_channels_ { 0 };
   std::unique_ptr<T[]> src_left_;
   std::unique_ptr<T[]> src_right_;
   std::unique_ptr<T[]> dst_left_;

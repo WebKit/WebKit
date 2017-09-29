@@ -1,0 +1,3 @@
+#include "libwebrtc-base.xcconfig"
+
+OTHER_LDFLAGS = $(inherited) -Xlinker --no-demangle;
