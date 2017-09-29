@@ -203,7 +203,7 @@ endmacro()
 
 
 macro(GENERATE_SETTINGS_MACROS _infile _outfile)
-    set(NAMES_GENERATOR ${WEBCORE_DIR}/page/make_settings.pl)
+    set(NAMES_GENERATOR ${WEBCORE_DIR}/Scripts/GenerateSettings.py)
 
     # Do not list the output in more than one independent target that may
     # build in parallel or the two instances of the rule may conflict.
@@ -213,12 +213,23 @@ macro(GENERATE_SETTINGS_MACROS _infile _outfile)
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.cpp
         ${DERIVED_SOURCES_WEBCORE_DIR}/InternalSettingsGenerated.idl
     )
+
+    set(GENERATE_SETTINGS_SCRIPTS
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettings.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/Settings.py
+        ${WEBCORE_DIR}/Scripts/GenerateSettings/__init__.py
+    )
+
     set(_args BYPRODUCTS ${_extra_output})
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/${_outfile}
         MAIN_DEPENDENCY ${_infile}
-        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS}
-        COMMAND ${PERL_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
+        DEPENDS ${NAMES_GENERATOR} ${GENERATE_SETTINGS_SCRIPTS} ${SCRIPTS_BINDINGS}
+        COMMAND ${PYTHON_EXECUTABLE} ${NAMES_GENERATOR} --input ${_infile} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR}
         VERBATIM ${_args})
 endmacro()
 

@@ -75,12 +75,12 @@ VPATH = \
     $(WebCore)/platform/network \
     $(WebCore)/plugins \
     $(WebCore)/storage \
-    $(WebCore)/xml \
-    $(WebCore)/workers \
-    $(WebCore)/workers/service \
     $(WebCore)/svg \
     $(WebCore)/testing \
     $(WebCore)/websockets \
+    $(WebCore)/workers \
+    $(WebCore)/workers/service \
+    $(WebCore)/xml \
 #
 
 JS_BINDING_IDLS = \
@@ -1373,9 +1373,18 @@ JSMathMLElementWrapperFactory%cpp JSMathMLElementWrapperFactory%h MathMLElementF
 
 # Internal Settings
 
+GENERATE_SETTINGS_SCRIPTS = \
+    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py \
+    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py \
+    $(WebCore)/Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py \
+    $(WebCore)/Scripts/GenerateSettings/GenerateSettings.py \
+    $(WebCore)/Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py \
+    $(WebCore)/Scripts/GenerateSettings/Settings.py \
+    $(WebCore)/Scripts/GenerateSettings/__init__.py
+
 all : InternalSettingsGenerated.idl InternalSettingsGenerated.cpp InternalSettingsGenerated.h SettingsMacros.h
-InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h SettingsMacros%h : page/make_settings.pl page/Settings.in
-	$(PERL) $< --input $(WebCore)/page/Settings.in
+InternalSettingsGenerated%idl InternalSettingsGenerated%cpp InternalSettingsGenerated%h SettingsMacros%h : $(WebCore)/Scripts/GenerateSettings.py $(GENERATE_SETTINGS_SCRIPTS) page/Settings.in
+	$(PYTHON) $< --input $(WebCore)/page/Settings.in
 
 # --------
 

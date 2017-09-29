@@ -1,3 +1,26 @@
+2017-09-28  Sam Weinig  <sam@webkit.org>
+
+        Re-write Settings generation in python for some reason
+        https://bugs.webkit.org/show_bug.cgi?id=177621
+
+        Reviewed by Tim Horton.
+
+        Re-writes and splits up generation of InternalSettingsGenerated.{h|cpp|idl}
+        and SettingsMacros.h in python in preparation for larger changes.
+
+        * DerivedSources.make:
+        * Scripts/GenerateSettings: Added.
+        * Scripts/GenerateSettings.py: Added.
+        * Scripts/GenerateSettings/GenerateInternalSettingsHeaderFile.py: Added.
+        * Scripts/GenerateSettings/GenerateInternalSettingsIDLFile.py: Added.
+        * Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py: Added.
+        * Scripts/GenerateSettings/GenerateSettings.py: Added.
+        * Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py: Added.
+        * Scripts/GenerateSettings/Settings.py: Added.
+        * Scripts/GenerateSettings/__init__.py: Added.
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/make_settings.pl: Removed.
+
 2017-09-28  Don Olmstead  <don.olmstead@sony.com>
 
         Simplify PLATFORM ifdefs within Editor around writing selections
