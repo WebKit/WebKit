@@ -118,6 +118,7 @@ set(WebKit_SOURCES
     NetworkProcess/NetworkSession.cpp
     NetworkProcess/NetworkSocketStream.cpp
     NetworkProcess/PingLoad.cpp
+    NetworkProcess/PreconnectTask.cpp
 
     NetworkProcess/cache/CacheStorageEngine.cpp
     NetworkProcess/cache/CacheStorageEngineCache.cpp

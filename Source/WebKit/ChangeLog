@@ -1,5 +1,11 @@
 2017-09-28  Timothy Horton  <timothy_horton@apple.com>
 
+        Fix the macOS CMake build
+
+        * CMakeLists.txt:
+
+2017-09-28  Timothy Horton  <timothy_horton@apple.com>
+
         Revise deployment target macros from r222620
 
         Rubber-stamped by Wenson Hsieh.
