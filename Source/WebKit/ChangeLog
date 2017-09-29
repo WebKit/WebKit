@@ -1,3 +1,21 @@
+2017-09-28  Alex Christensen  <achristensen@webkit.org>
+
+        Add WKWebViewConfiguration SPI equivalent to WKPageConfigurationSetBackgroundCPULimit
+        https://bugs.webkit.org/show_bug.cgi?id=177644
+        <rdar://problem/34338698>
+
+        Reviewed by Geoffrey Garen.
+
+        WKPageConfigurationSetBackgroundCPULimit is a setter of a std::optional<double> with no accessor.
+        It's never set to 0 in practice, so I guess the ObjC equivalent is a double that is zero or nonzero.
+
+        * UIProcess/API/Cocoa/WKWebView.mm:
+        (-[WKWebView _initializeWithConfiguration:]):
+        * UIProcess/API/Cocoa/WKWebViewConfiguration.mm:
+        (-[WKWebViewConfiguration _setCPULimit:]):
+        (-[WKWebViewConfiguration _cpuLimit]):
+        * UIProcess/API/Cocoa/WKWebViewConfigurationPrivate.h:
+
 2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
