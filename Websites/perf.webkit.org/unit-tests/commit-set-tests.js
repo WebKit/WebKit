@@ -77,6 +77,11 @@ describe('CustomCommitSet', () => {
             const commitSet = customCommitSetWithoutOwnedCommit();
             assert.deepEqual(commitSet.repositories(), [MockModels.osx, MockModels.webkit]);
         });
+
+        it('should return only top level repositories', () => {
+            const commitSet = customCommitSetWithoutOwnedCommit();
+            assert.deepEqual(commitSet.topLevelRepositories(), [MockModels.osx, MockModels.webkit]);
+        });
     });
 
     describe('Test custom commit set with owned commit', () => {
@@ -105,6 +110,11 @@ describe('CustomCommitSet', () => {
             const commitSet = customCommitSetWithOwnedCommit();
             assert.deepEqual(commitSet.repositories(), [MockModels.osx, MockModels.ownerRepository, MockModels.ownedRepository]);
         });
+
+        it('should return only top level repositories', () => {
+            const commitSet = customCommitSetWithOwnedCommit();
+            assert.deepEqual(commitSet.topLevelRepositories(), [MockModels.osx, MockModels.ownerRepository]);
+        });
     });
 
     describe('Test custom commit set with patch', () => {
@@ -129,6 +139,11 @@ describe('CustomCommitSet', () => {
         it('should return all repositories in it', () => {
             const commitSet = customCommitSetWithPatch();
             assert.deepEqual(commitSet.repositories(), [MockModels.osx, MockModels.webkit]);
+        });
+
+        it('should return only top level repositories', () => {
+            const commitSet = customCommitSetWithPatch();
+            assert.deepEqual(commitSet.topLevelRepositories(), [MockModels.osx, MockModels.webkit]);
         });
     });
 
@@ -157,6 +172,11 @@ describe('CustomCommitSet', () => {
         it('should return all repositories in it', () => {
             const commitSet = customCommitSetWithOwnedRepositoryHasSameNameAsNotOwnedRepository();
             assert.deepEqual(commitSet.repositories(), [MockModels.osx, MockModels.webkit, MockModels.ownedWebkit]);
+        });
+
+        it('should return only top level repositories', () => {
+            const commitSet = customCommitSetWithOwnedRepositoryHasSameNameAsNotOwnedRepository();
+            assert.deepEqual(commitSet.topLevelRepositories(), [MockModels.osx, MockModels.webkit]);
         });
     });
 

@@ -1,3 +1,35 @@
+2017-09-28  Dewei Zhu  <dewei_zhu@apple.com>
+
+        Update syncing script to be able to build binary for commit set with owned commits.
+        https://bugs.webkit.org/show_bug.cgi?id=177225
+
+        Reviewed by Ryosuke Niwa.
+
+        Added support for syncing script to be able to schedule builds to build binary for owned commits.
+        Introduces 'ifRepositorySet' and 'ownedRevisions' in 'buildProperties'.
+        'ifRepositorySet' will conditionaly set a build property if at least one of the repositories it specified requires build.
+        'ownedRevisions' specifies owned commits revision informations.
+
+        * public/v3/models/commit-set.js:
+        (CommitSet): Added '_ownerRepositoryToOwnedRepositoriesMap'.
+        (CommitSet.prototype.updateSingleton): Reset '_ownerRepositoryToOwnedRepositoriesMap'.
+        (CommitSet.prototype._updateFromObject): Only update '_repositoryToCommitOwnerMap' and '_ownerRepositoryToOwnedRepositoriesMap' when 'commitOwner' exists.
+        (CommitSet.prototype.ownerCommitForRepository): Returns a sorted list of top level repositories.
+        (CommitSet.prototype.ownedRepositoriesForOwnerRepository): Returns owned repositories given a owner repository.
+        (CustomCommitSet.prototype.ownerCommitForRepository): Returns a sorted list of top level repositories.
+        * public/v3/models/triggerable.js:
+        (prototype.accepts): It should only check against top-level repositories. Removed a deprecated 'FIXME'.
+        * server-tests/tools-sync-buildbot-integration-tests.js: Added unit test for building owned commits binary.
+        (createTriggerable): Added conditional 'ifRepositorySet' and 'ownedRevisions' in the repository groups.
+        * tools/js/buildbot-syncer.js:
+        (BuildbotSyncer.prototype._propertiesForBuildRequest):
+            Added logic to conditionaly create build property for 'ifRepositorySet'.
+            Added logic to create 'ownedRevisions' based on the owner repositories it specified.
+        (BuildbotSyncer._parseRepositoryGroup): Build property template should be able to handle 'ifRepositorySet' and 'ownedRevisions'.
+        * unit-tests/buildbot-syncer-tests.js: Added unit tests for 'ifRepositorySet' and 'ownedRevisions'.
+        * unit-tests/commit-set-tests.js: Added unit tests for 'topLevelRepositoriesSortedByNamePreferringOnesWithURL'.
+        * unit-tests/resources/mock-v3-models.js: Added a repository group contains 'ios', 'webkit' and 'ownerRepository'.
+
 2017-09-19  Dewei Zhu  <dewei_zhu@apple.com>
 
         Use 'owned commit' instead of 'sub commit' whenever refers to a commit owned by another commit.

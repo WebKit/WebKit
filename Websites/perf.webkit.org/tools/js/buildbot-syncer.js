@@ -260,10 +260,30 @@ class BuildbotSyncer {
                     continue;
                 value = JSON.stringify(rootFiles.map((file) => ({url: file.url()})));
                 break;
+            case 'ownedRevisions':
+                const ownedRepositories = commitSet.ownedRepositoriesForOwnerRepository(value.ownerRepository);
+                if (!ownedRepositories)
+                    continue;
+
+                const revisionInfo = {};
+                revisionInfo[value.ownerRepository.name()] = ownedRepositories.map((ownedRepository) => {
+                    return {
+                        'revision': commitSet.revisionForRepository(ownedRepository),
+                        'repository': ownedRepository.name(),
+                        'ownerRevision': commitSet.ownerRevisionForRepository(ownedRepository)
+                    };
+                });
+                value = JSON.stringify(revisionInfo);
+                break;
             case 'conditional':
                 switch (value.condition) {
                 case 'built':
                     if (!requestsInGroup.some((otherRequest) => otherRequest.isBuild() && otherRequest.commitSet() == buildRequest.commitSet()))
+                        continue;
+                    break;
+                case 'requiresBuild':
+                    const requiresBuild = value.repositoriesToCheck.some((repository) => commitSet.requiresBuildForRepository(repository));
+                    if (!requiresBuild)
                         continue;
                     break;
                 }
@@ -438,17 +458,24 @@ class BuildbotSyncer {
             assert(group.acceptsRoots, `Repository group "${name}" specifies the properties for building but does not accept roots in testing`);
             const revisionRepositories = new Set;
             const patchRepositories = new Set;
-            buildPropertiesTemplate = this._parseRepositoryGroupPropertyTemplate('build', name, group.buildProperties, (type, value) => {
+            buildPropertiesTemplate = this._parseRepositoryGroupPropertyTemplate('build', name, group.buildProperties, (type, value, condition) => {
                 assert(type != 'roots', `Repository group "${name}" specifies roots in the properties for building`);
-                const repository = resolveRepository(value);
+                let repository = null;
                 switch (type) {
                 case 'patch':
+                    repository = resolveRepository(value);
                     assert(patchAcceptingRepositoryList.has(repository), `Repository group "${name}" specifies a patch for "${value}" but it does not accept a patch`);
                     patchRepositories.add(repository);
                     return {type, repository};
                 case 'revision':
+                    repository = resolveRepository(value);
                     revisionRepositories.add(repository);
                     return {type, repository};
+                case 'ownedRevisions':
+                    return {type, ownerRepository: resolveRepository(value)};
+                case 'ifRepositorySet':
+                    assert(condition, 'condition must set if type is "ifRepositorySet"');
+                    return {type: 'conditional', condition: 'requiresBuild', value, repositoriesToCheck: condition.map(resolveRepository)};
                 }
                 return null;
             });
@@ -483,10 +510,22 @@ class BuildbotSyncer {
             }
 
             const keys = Object.keys(value);
-            assert.equal(keys.length, 1,
-                `Repository group "${groupName}" specifies more than one type in property "${propertyName}": "${keys.join('", "')}"`);
-            const type = keys[0];
-            const option = makeOption(type, value[type]);
+            assert(keys.length == 1 || keys.length == 2,
+                `Repository group "${groupName}" specifies more than two types in property "${propertyName}": "${keys.join('", "')}"`);
+            let type;
+            let condition = null;
+            let optionValue;
+            if (keys.length == 2) {
+                assert(keys.includes('value'), `Repository group "${groupName}" with two types in property "${propertyName}": "${keys.join('", "')}" should contains 'value' as one type`);
+                type = keys.find((key) => key != 'value');
+                optionValue = value.value;
+                condition = value[type];
+            }
+            else {
+                type = keys[0];
+                optionValue = value[type];
+            }
+            const option = makeOption(type, optionValue, condition);
             assert(option, `Repository group "${groupName}" specifies an invalid type "${type}" in property "${propertyName}"`);
             propertiesTemplate[propertyName] = option;
         }

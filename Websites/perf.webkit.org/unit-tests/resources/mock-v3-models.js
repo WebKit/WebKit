@@ -57,8 +57,13 @@ var MockModels = {
                 name: 'ios-git-webkit',
                 repositories: [{repository: MockModels.ios}, {repository: MockModels.webkitGit}, {repository: MockModels.sharedRepository}]
             });
+            MockModels.svnRepositoryWithOwnedRepositoryGroup = new TriggerableRepositoryGroup(34, {
+                name: 'ios-svn-webkit-with-owned-commit',
+                repositories: [{repository: MockModels.ios}, {repository: MockModels.webkit, acceptsPatch: true}, {repository: MockModels.ownerRepository}],
+                acceptsCustomRoots: true,
+            });
             MockModels.triggerable = new Triggerable(3, {name: 'build-webkit',
-                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup],
+                repositoryGroups: [MockModels.osRepositoryGroup, MockModels.svnRepositoryGroup, MockModels.gitRepositoryGroup, MockModels.svnRepositoryWithOwnedRepositoryGroup],
                 configurations: [{test: MockModels.iPhonePLT, platform: MockModels.iphone}]});
 
         });

@@ -11,6 +11,7 @@ class CommitSet extends DataModelObject {
         this._repositoryToRootMap = new Map;
         this._repositoryToCommitOwnerMap = new Map;
         this._repositoryRequiresBuildMap = new Map;
+        this._ownerRepositoryToOwnedRepositoriesMap = new Map;
         this._latestCommitTime = null;
         this._customRoots = [];
         this._allRootFiles = [];
@@ -28,6 +29,7 @@ class CommitSet extends DataModelObject {
         this._repositoryToRootMap.clear();
         this._repositoryToCommitOwnerMap.clear();
         this._repositoryRequiresBuildMap.clear();
+        this._ownerRepositoryToOwnedRepositoriesMap.clear();
         this._repositories = [];
         this._updateFromObject(object);
     }
@@ -44,7 +46,14 @@ class CommitSet extends DataModelObject {
             const repository = commit.repository();
             this._repositoryToCommitMap.set(repository, commit);
             this._repositoryToPatchMap.set(repository, item.patch);
-            this._repositoryToCommitOwnerMap.set(repository, item.commitOwner);
+            if (item.commitOwner) {
+                this._repositoryToCommitOwnerMap.set(repository, item.commitOwner);
+                const ownerRepository = item.commitOwner.repository();
+                if (!this._ownerRepositoryToOwnedRepositoriesMap.get(ownerRepository))
+                    this._ownerRepositoryToOwnedRepositoriesMap.set(ownerRepository, [repository]);
+                else
+                    this._ownerRepositoryToOwnedRepositoriesMap.get(ownerRepository).push(repository);
+            }
             this._repositoryRequiresBuildMap.set(repository, item.requiresBuild);
             this._repositoryToRootMap.set(repository, item.rootFile);
             if (item.rootFile)
@@ -59,6 +68,10 @@ class CommitSet extends DataModelObject {
     customRoots() { return this._customRoots; }
     allRootFiles() { return this._allRootFiles; }
     commitForRepository(repository) { return this._repositoryToCommitMap.get(repository); }
+    ownerCommitForRepository(repository) { return this._repositoryToCommitOwnerMap.get(repository); }
+    topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this._repositories.filter((repository) => !this.ownerRevisionForRepository(repository))); }
+
+    ownedRepositoriesForOwnerRepository(repository) { return this._ownerRepositoryToOwnedRepositoriesMap.get(repository); }
 
     revisionForRepository(repository)
     {
@@ -204,6 +217,7 @@ class CustomCommitSet {
     }
 
     repositories() { return Array.from(this._revisionListByRepository.keys()); }
+    topLevelRepositories() { return Repository.sortByNamePreferringOnesWithURL(this.repositories().filter((repository) => !this.ownerRevisionForRepository(repository))); }
     revisionForRepository(repository)
     {
         const entry = this._revisionListByRepository.get(repository);
