@@ -2007,6 +2007,9 @@ WI._clear = function(event)
 WI._populateFind = function(event)
 {
     let focusedContentView = this._focusedContentView();
+    if (!focusedContentView)
+        return;
+
     if (focusedContentView.supportsCustomFindBanner) {
         focusedContentView.handlePopulateFindShortcut();
         return;
@@ -2022,6 +2025,9 @@ WI._populateFind = function(event)
 WI._findNext = function(event)
 {
     let focusedContentView = this._focusedContentView();
+    if (!focusedContentView)
+        return;
+
     if (focusedContentView.supportsCustomFindBanner) {
         focusedContentView.handleFindNextShortcut();
         return;
@@ -2037,6 +2043,9 @@ WI._findNext = function(event)
 WI._findPrevious = function(event)
 {
     let focusedContentView = this._focusedContentView();
+    if (!focusedContentView)
+        return;
+
     if (focusedContentView.supportsCustomFindBanner) {
         focusedContentView.handleFindPreviousShortcut();
         return;
