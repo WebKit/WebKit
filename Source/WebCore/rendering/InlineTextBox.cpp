@@ -190,6 +190,7 @@ inline const FontCascade& InlineTextBox::lineFont() const
     return combinedText() ? combinedText()->textCombineFont() : lineStyle().fontCascade();
 }
 
+// FIXME: Share more code with paintSelection().
 LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos) const
 {
     unsigned sPos = clampedOffset(startPos);
@@ -204,19 +205,20 @@ LayoutRect InlineTextBox::localSelectionRect(unsigned startPos, unsigned endPos)
 
     LayoutUnit selectionTop = this->selectionTop();
     LayoutUnit selectionHeight = this->selectionHeight();
-    const RenderStyle& lineStyle = this->lineStyle();
-    const FontCascade& font = lineFont();
 
-    String hyphenatedString;
-    bool respectHyphen = ePos == m_len && hasHyphen();
-    if (respectHyphen)
-        hyphenatedString = hyphenatedStringForTextRun(lineStyle);
-    TextRun textRun = constructTextRun(lineStyle, hyphenatedString);
+    // FIXME: Adjust selection rect with respect to combined text.
+    bool ignoreCombinedText = true;
+    auto text = this->text(ignoreCombinedText);
+    TextRun textRun = createTextRun(text);
+    // FIXME: Shouldn't we adjust ePos to textRun.length() if ePos == (m_truncation != cNoTruncation ? m_truncation : m_len)
+    // so that the selection spans the hypen/combined text?
 
     LayoutRect selectionRect = LayoutRect(LayoutPoint(logicalLeft(), selectionTop), LayoutSize(m_logicalWidth, selectionHeight));
     // Avoid computing the font width when the entire line box is selected as an optimization.
     if (sPos || ePos != m_len)
-        font.adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+        lineFont().adjustSelectionRectForText(textRun, selectionRect, sPos, ePos);
+    // FIXME: The computation of the snapped selection rect differs from the computation of this rect
+    // in paintSelection(). See <https://bugs.webkit.org/show_bug.cgi?id=138913>.
     IntRect snappedSelectionRect = enclosingIntRect(selectionRect);
     LayoutUnit logicalWidth = snappedSelectionRect.width();
     if (snappedSelectionRect.x() > logicalRight())
@@ -488,7 +490,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         paintDocumentMarkers(context, boxOrigin, font, true);
 
         if (haveSelection && !useCustomUnderlines)
-            paintSelection(context, boxOrigin, lineStyle, font, selectionPaintStyle.fillColor);
+            paintSelection(context, boxOrigin, font, selectionPaintStyle.fillColor);
     }
 
     // FIXME: Right now, InlineTextBoxes never call addRelevantUnpaintedObject() even though they might
@@ -499,13 +501,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
         renderer().page().addRelevantRepaintedObject(&renderer(), IntRect(boxOrigin.x(), boxOrigin.y(), logicalWidth(), logicalHeight()));
 
     // 2. Now paint the foreground, including text and decorations like underline/overline (in quirks mode only).
-    String alternateStringToRender;
-    if (combinedText)
-        alternateStringToRender = combinedText->combinedStringForRendering();
-    else if (hasHyphen())
-        alternateStringToRender = hyphenatedStringForTextRun(lineStyle);
-
-    TextRun textRun = constructTextRun(lineStyle, alternateStringToRender);
+    auto text = this->text();
+    TextRun textRun = createTextRun(text);
     unsigned length = textRun.length();
 
     unsigned selectionStart = 0;
@@ -652,7 +649,7 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     return { clampedOffset(start), clampedOffset(end) };
 }
 
-void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const RenderStyle& style, const FontCascade& font, const Color& textColor)
+void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& boxOrigin, const FontCascade& font, const Color& textColor)
 {
 #if ENABLE(TEXT_SELECTION)
     if (context.paintingDisabled())
@@ -677,19 +674,16 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
     GraphicsContextStateSaver stateSaver(context);
     updateGraphicsContext(context, TextPaintStyle(c)); // Don't draw text at all!
 
-    // If the text is truncated, let the thing being painted in the truncation
+    // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own highlight.
 
-    unsigned length = m_truncation != cNoTruncation ? m_truncation : len();
-
     // FIXME: Adjust text run for combined text.
-    String hyphenatedString;
-    bool respectHyphen = selectionEnd == length && hasHyphen();
-    if (respectHyphen)
-        hyphenatedString = hyphenatedStringForTextRun(style, length);
-    TextRun textRun = constructTextRun(style, hyphenatedString, std::optional<unsigned>(length));
-    if (respectHyphen)
-        selectionEnd = textRun.length();
+    bool ignoreCombinedText = true;
+    auto text = this->text(ignoreCombinedText);
+    TextRun textRun = createTextRun(text);
+    unsigned endOfLineIgnoringHyphenAndCombinedText = m_truncation != cNoTruncation ? m_truncation : m_len;
+    if (selectionEnd == endOfLineIgnoringHyphenAndCombinedText)
+        selectionEnd = textRun.length(); // Extend selection to include hyphen/combined text.
 
     const RootInlineBox& rootBox = root();
     LayoutUnit selectionBottom = rootBox.selectionBottom();
@@ -704,7 +698,6 @@ void InlineTextBox::paintSelection(GraphicsContext& context, const FloatPoint& b
 #else
     UNUSED_PARAM(context);
     UNUSED_PARAM(boxOrigin);
-    UNUSED_PARAM(style);
     UNUSED_PARAM(font);
     UNUSED_PARAM(textColor);
 #endif
@@ -726,7 +719,10 @@ inline void InlineTextBox::paintTextSubrangeBackground(GraphicsContext& context,
     LayoutRect selectionRect = LayoutRect(boxOrigin.x(), boxOrigin.y() - deltaY, 0, selectionHeight());
 
     // FIXME: Adjust text run for combined text and hyphenation.
-    TextRun textRun = constructTextRun(lineStyle());
+    bool ignoreCombinedText = true;
+    bool ignoreHyphen = true;
+    auto text = this->text(ignoreCombinedText, ignoreHyphen);
+    TextRun textRun = createTextRun(text);
     font.adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
     context.fillRect(snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()), color);
 }
@@ -824,10 +820,13 @@ void InlineTextBox::paintDocumentMarker(GraphicsContext& context, const FloatPoi
 
         // Calculate start & width
         // FIXME: Adjust text run for combined text and hyphenation.
+        bool ignoreCombinedText = true;
+        bool ignoreHyphen = true;
         int deltaY = renderer().style().isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run = constructTextRun(lineStyle());
+        auto text = this->text(ignoreCombinedText, ignoreHyphen);
+        TextRun run = createTextRun(text);
 
         LayoutRect selectionRect = LayoutRect(startPoint, FloatSize(0, selHeight));
         font.adjustSelectionRectForText(run, selectionRect, startPosition, endPosition);
@@ -1050,7 +1049,10 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
         return isLeftToRightDirection() ? len() : 0;
     if (lineOffset - logicalLeft() < 0)
         return isLeftToRightDirection() ? 0 : len();
-    return lineFont().offsetForPosition(constructTextRun(lineStyle()), lineOffset - logicalLeft(), includePartialGlyphs);
+    bool ignoreCombinedText = true;
+    bool ignoreHyphen = true;
+    auto text = this->text(ignoreCombinedText, ignoreHyphen);
+    return lineFont().offsetForPosition(createTextRun(text), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 float InlineTextBox::positionForOffset(unsigned offset) const
@@ -1073,32 +1075,37 @@ float InlineTextBox::positionForOffset(unsigned offset) const
 
     // FIXME: Do we need to add rightBearing here?
     LayoutRect selectionRect = LayoutRect(logicalLeft(), 0, 0, 0);
-    TextRun textRun = constructTextRun(lineStyle());
+    bool ignoreCombinedText = true;
+    bool ignoreHyphen = true;
+    auto text = this->text(ignoreCombinedText, ignoreHyphen);
+    TextRun textRun = createTextRun(text);
     lineFont().adjustSelectionRectForText(textRun, selectionRect, startOffset, endOffset);
     return snapRectToDevicePixelsWithWritingDirection(selectionRect, renderer().document().deviceScaleFactor(), textRun.ltr()).maxX();
 }
 
-StringView InlineTextBox::substringToRender(std::optional<unsigned> overridingLength) const
+TextRun InlineTextBox::createTextRun(String& string) const
 {
-    return StringView(renderer().text()).substring(start(), overridingLength.value_or(len()));
+    const auto& style = lineStyle();
+    TextRun textRun { string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath() };
+    textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
+    return textRun;
 }
 
-String InlineTextBox::hyphenatedStringForTextRun(const RenderStyle& style, std::optional<unsigned> alternateLength) const
+String InlineTextBox::text(bool ignoreCombinedText, bool ignoreHyphen) const
 {
-    ASSERT(hasHyphen());
-    return makeString(substringToRender(alternateLength), style.hyphenString());
-}
-
-TextRun InlineTextBox::constructTextRun(const RenderStyle& style, StringView alternateStringToRender, std::optional<unsigned> alternateLength) const
-{
-    auto actuallyConstructTextRun = [&] (StringView string) {
-        TextRun run(string, textPos(), expansion(), expansionBehavior(), direction(), dirOverride() || style.rtlOrdering() == VisualOrder, !renderer().canUseSimpleFontCodePath());
-        run.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
-        return run;
-    };
-    if (alternateStringToRender.isNull())
-        return actuallyConstructTextRun(substringToRender(alternateLength));
-    return actuallyConstructTextRun(alternateStringToRender);
+    if (UNLIKELY(m_truncation == cFullTruncation))
+        return emptyString();
+    if (auto* combinedText = this->combinedText()) {
+        if (ignoreCombinedText)
+            return renderer().text()->substring(m_start, m_len);
+        return combinedText->combinedStringForRendering();
+    }
+    if (hasHyphen()) {
+        if (ignoreHyphen)
+            return renderer().text()->substring(m_start, m_len);
+        return makeString(StringView(renderer().text()).substring(m_start, m_len), lineStyle().hyphenString());
+    }
+    return renderer().text()->substring(m_start, m_truncation != cNoTruncation ? m_truncation : m_len);
 }
 
 inline const RenderCombineText* InlineTextBox::combinedText() const

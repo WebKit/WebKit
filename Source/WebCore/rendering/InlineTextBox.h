@@ -107,10 +107,6 @@ private:
     LayoutUnit selectionBottom() const;
     LayoutUnit selectionHeight() const;
 
-    StringView substringToRender(std::optional<unsigned> overridingLength = { }) const;
-    String hyphenatedStringForTextRun(const RenderStyle&, std::optional<unsigned> alternateLength = { }) const;
-    TextRun constructTextRun(const RenderStyle&, StringView alternateStringToRender = { }, std::optional<unsigned> alternateLength = { }) const;
-
 public:
     FloatRect calculateBoundaries() const override { return FloatRect(x(), y(), width(), height()); }
 
@@ -156,7 +152,7 @@ public:
 private:
     void paintDecoration(GraphicsContext&, const FontCascade&, const TextRun&, const FloatPoint& textOrigin, const FloatRect& boxRect,
         TextDecoration, TextPaintStyle, const ShadowData*, const FloatRect& clipOutRect);
-    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const RenderStyle&, const FontCascade&, const Color&);
+    void paintSelection(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const Color&);
 
     void paintDocumentMarker(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, const MarkerSubrange&);
     void paintDocumentMarkers(GraphicsContext&, const FloatPoint& boxOrigin, const FontCascade&, bool background);
@@ -169,6 +165,9 @@ private:
 
     const RenderCombineText* combinedText() const;
     const FontCascade& lineFont() const;
+
+    String text(bool ignoreCombinedText = false, bool ignoreHyphen = false) const; // The text to render.
+    TextRun createTextRun(String&) const;
 
     ExpansionBehavior expansionBehavior() const;
 

@@ -1,3 +1,44 @@
+2017-09-29  Daniel Bates  <dabates@apple.com>
+
+        Extract logic to compute text to render into common function
+        https://bugs.webkit.org/show_bug.cgi?id=177607
+
+        Reviewed by Zalan Bujtas.
+
+        Currently we duplicate the logic to compute the text to render
+        throughout InlineTextBox. Instead we should move this common
+        code into a member function. This will allow us to audit the
+        the code paths that render text and ensure such code paths
+        account for hyphenation and combined text, if applicable.
+
+        Note that a TextRun does not own the text. The caller owns it.
+
+        No functionality changed. So, no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect const): Modified to
+        use text() and createTextRun() to compute the text to render
+        and the text run for it.
+        (WebCore::InlineTextBox::paint): Ditto.
+        (WebCore::InlineTextBox::paintSelection): Ditto. Additionally query
+        lineStyle() for the style of the line instead of requiring it to be
+        passed as an argument.
+        (WebCore::InlineTextBox::paintTextSubrangeBackground): Modified
+        to use text() and createTextRun() to compute the text to render
+        and the text run for it.
+        (WebCore::InlineTextBox::paintDocumentMarker): Ditto.
+        (WebCore::InlineTextBox::offsetForPosition const): Ditto.
+        (WebCore::InlineTextBox::positionForOffset const): Ditto.
+        (WebCore::InlineTextBox::createTextRun const): Added; formerly named constructTextRun.
+        (WebCore::InlineTextBox::text const): Added.
+        (WebCore::InlineTextBox::substringToRender const): Deleted.
+        (WebCore::InlineTextBox::hyphenatedStringForTextRun const): Deleted.
+        (WebCore::InlineTextBox::constructTextRun const): Deleted.
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::substringToRender): Deleted.
+        (WebCore::InlineTextBox::hyphenatedStringForTextRun): Deleted.
+        (WebCore::InlineTextBox::constructTextRun): Deleted; renamed to createTextRun.
+
 2017-09-29  Zalan Bujtas  <zalan@apple.com>
 
         Remove SelectionSubtreeRoot::RenderSubtreesMap
