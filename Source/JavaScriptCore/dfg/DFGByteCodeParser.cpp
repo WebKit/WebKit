@@ -2334,14 +2334,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
     }
         
     case ArrayPushIntrinsic: {
-#if USE(JSVALUE32_64)
-        if (isX86() || isMIPS()) {
-            if (argumentCountIncludingThis > 2)
-                return false;
-        }
-#endif
-
-        if (static_cast<unsigned>(argumentCountIncludingThis) >= MIN_SPARSE_ARRAY_INDEX)
+        if (argumentCountIncludingThis != 2)
             return false;
         
         ArrayMode arrayMode = getArrayMode(m_currentInstruction[OPCODE_LENGTH(op_call) - 2].u.arrayProfile);
@@ -2353,11 +2346,7 @@ bool ByteCodeParser::handleIntrinsicCall(Node* callee, int resultOperand, Intrin
         case Array::Contiguous:
         case Array::ArrayStorage: {
             insertChecks();
-
-            addVarArgChild(nullptr); // For storage.
-            for (int i = 0; i < argumentCountIncludingThis; ++i)
-                addVarArgChild(get(virtualRegisterForArgument(i, registerOffset)));
-            Node* arrayPush = addToGraph(Node::VarArg, ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+            Node* arrayPush = addToGraph(ArrayPush, OpInfo(arrayMode.asWord()), OpInfo(prediction), get(virtualRegisterForArgument(0, registerOffset)), get(virtualRegisterForArgument(1, registerOffset)));
             set(VirtualRegister(resultOperand), arrayPush);
             
             return true;

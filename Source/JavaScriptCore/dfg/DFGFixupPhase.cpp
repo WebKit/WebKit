@@ -1008,53 +1008,28 @@ private:
             // ignored. That's because ArrayPush can't handle any array modes that aren't
             // array-related - so if refine() turned this into a "Generic" ArrayPush then
             // that would break things.
-            Edge& storageEdge = m_graph.varArgChild(node, 0);
-            Edge& arrayEdge = m_graph.varArgChild(node, 1);
-            unsigned elementOffset = 2;
-            unsigned elementCount = node->numChildren() - elementOffset;
-            for (unsigned i = 0; i < elementCount; ++i) {
-                Edge& element = m_graph.varArgChild(node, i + elementOffset);
-                node->setArrayMode(
-                    node->arrayMode().refine(
-                        m_graph, node,
-                        arrayEdge->prediction() & SpecCell,
-                        SpecInt32Only,
-                        element->prediction()));
-            }
-            blessArrayOperation(arrayEdge, Edge(), storageEdge);
-            fixEdge<KnownCellUse>(arrayEdge);
-
-            // Convert `array.push()` to GetArrayLength.
-            ASSERT(node->arrayMode().supportsSelfLength());
-            if (!elementCount) {
-                node->setOpAndDefaultFlags(GetArrayLength);
-                node->child1() = arrayEdge;
-                node->child2() = storageEdge;
-                fixEdge<KnownCellUse>(node->child1());
+            node->setArrayMode(
+                node->arrayMode().refine(
+                    m_graph, node,
+                    node->child1()->prediction() & SpecCell,
+                    SpecInt32Only,
+                    node->child2()->prediction()));
+            blessArrayOperation(node->child1(), Edge(), node->child3());
+            fixEdge<KnownCellUse>(node->child1());
+            
+            switch (node->arrayMode().type()) {
+            case Array::Int32:
+                fixEdge<Int32Use>(node->child2());
                 break;
-            }
-
-            // We do not want to perform osr exit and retry for ArrayPush. We insert Check with appropriate type,
-            // and ArrayPush uses the edge as known typed edge. Therefore, ArrayPush do not need to perform type checks.
-            for (unsigned i = 0; i < elementCount; ++i) {
-                Edge& element = m_graph.varArgChild(node, i + elementOffset);
-                switch (node->arrayMode().type()) {
-                case Array::Int32:
-                    insertCheck<Int32Use>(element.node());
-                    fixEdge<KnownInt32Use>(element);
-                    break;
-                case Array::Double:
-                    insertCheck<DoubleRepRealUse>(element.node());
-                    fixEdge<DoubleRepUse>(element);
-                    break;
-                case Array::Contiguous:
-                case Array::ArrayStorage:
-                    speculateForBarrier(element);
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
-                ASSERT(shouldNotHaveTypeCheck(element.useKind()));
+            case Array::Double:
+                fixEdge<DoubleRepRealUse>(node->child2());
+                break;
+            case Array::Contiguous:
+            case Array::ArrayStorage:
+                speculateForBarrier(node->child2());
+                break;
+            default:
+                break;
             }
             break;
         }

@@ -40,7 +40,7 @@ using namespace WTF;
 
 namespace JSC {
 
-const char* const LengthExceededTheMaximumArrayLengthError = "Length exceeded the maximum array length";
+static const char* const LengthExceededTheMaximumArrayLengthError = "Length exceeded the maximum array length";
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSArray);
 
@@ -725,9 +725,153 @@ JSValue JSArray::pop(ExecState* exec)
 // Push & putIndex are almost identical, with two small differences.
 //  - we always are writing beyond the current array bounds, so it is always necessary to update m_length & m_numValuesInVector.
 //  - pushing to an array of length 2^32-1 stores the property, but throws a range error.
-NEVER_INLINE void JSArray::push(ExecState* exec, JSValue value)
+void JSArray::push(ExecState* exec, JSValue value)
 {
-    pushInline(exec, value);
+    VM& vm = exec->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Butterfly* butterfly = m_butterfly.getMayBeNull();
+    
+    switch (indexingType()) {
+    case ArrayClass: {
+        createInitialUndecided(vm, 0);
+        FALLTHROUGH;
+    }
+        
+    case ArrayWithUndecided: {
+        convertUndecidedForValue(vm, value);
+        scope.release();
+        push(exec, value);
+        return;
+    }
+        
+    case ArrayWithInt32: {
+        if (!value.isInt32()) {
+            convertInt32ForValue(vm, value);
+            scope.release();
+            push(exec, value);
+            return;
+        }
+
+        unsigned length = butterfly->publicLength();
+        ASSERT(length <= butterfly->vectorLength());
+        if (length < butterfly->vectorLength()) {
+            butterfly->contiguousInt32()[length].setWithoutWriteBarrier(value);
+            butterfly->setPublicLength(length + 1);
+            return;
+        }
+        
+        if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
+            methodTable(vm)->putByIndex(this, exec, length, value, true);
+            if (!scope.exception())
+                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+            return;
+        }
+
+        scope.release();
+        putByIndexBeyondVectorLengthWithoutAttributes<Int32Shape>(exec, length, value);
+        return;
+    }
+
+    case ArrayWithContiguous: {
+        unsigned length = butterfly->publicLength();
+        ASSERT(length <= butterfly->vectorLength());
+        if (length < butterfly->vectorLength()) {
+            butterfly->contiguous()[length].set(vm, this, value);
+            butterfly->setPublicLength(length + 1);
+            return;
+        }
+        
+        if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
+            methodTable(vm)->putByIndex(this, exec, length, value, true);
+            if (!scope.exception())
+                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+            return;
+        }
+
+        scope.release();
+        putByIndexBeyondVectorLengthWithoutAttributes<ContiguousShape>(exec, length, value);
+        return;
+    }
+        
+    case ArrayWithDouble: {
+        if (!value.isNumber()) {
+            convertDoubleToContiguous(vm);
+            scope.release();
+            push(exec, value);
+            return;
+        }
+        double valueAsDouble = value.asNumber();
+        if (valueAsDouble != valueAsDouble) {
+            convertDoubleToContiguous(vm);
+            scope.release();
+            push(exec, value);
+            return;
+        }
+
+        unsigned length = butterfly->publicLength();
+        ASSERT(length <= butterfly->vectorLength());
+        if (length < butterfly->vectorLength()) {
+            butterfly->contiguousDouble()[length] = valueAsDouble;
+            butterfly->setPublicLength(length + 1);
+            return;
+        }
+        
+        if (UNLIKELY(length > MAX_ARRAY_INDEX)) {
+            methodTable(vm)->putByIndex(this, exec, length, value, true);
+            if (!scope.exception())
+                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+            return;
+        }
+
+        scope.release();
+        putByIndexBeyondVectorLengthWithoutAttributes<DoubleShape>(exec, length, value);
+        return;
+    }
+        
+    case ArrayWithSlowPutArrayStorage: {
+        unsigned oldLength = length();
+        bool putResult = false;
+        if (attemptToInterceptPutByIndexOnHole(exec, oldLength, value, true, putResult)) {
+            if (!scope.exception() && oldLength < 0xFFFFFFFFu) {
+                scope.release();
+                setLength(exec, oldLength + 1, true);
+            }
+            return;
+        }
+        FALLTHROUGH;
+    }
+        
+    case ArrayWithArrayStorage: {
+        ArrayStorage* storage = butterfly->arrayStorage();
+
+        // Fast case - push within vector, always update m_length & m_numValuesInVector.
+        unsigned length = storage->length();
+        if (length < storage->vectorLength()) {
+            storage->m_vector[length].set(vm, this, value);
+            storage->setLength(length + 1);
+            ++storage->m_numValuesInVector;
+            return;
+        }
+
+        // Pushing to an array of invalid length (2^31-1) stores the property, but throws a range error.
+        if (UNLIKELY(storage->length() > MAX_ARRAY_INDEX)) {
+            methodTable(vm)->putByIndex(this, exec, storage->length(), value, true);
+            // Per ES5.1 15.4.4.7 step 6 & 15.4.5.1 step 3.d.
+            if (!scope.exception())
+                throwException(exec, scope, createRangeError(exec, ASCIILiteral(LengthExceededTheMaximumArrayLengthError)));
+            return;
+        }
+
+        // Handled the same as putIndex.
+        scope.release();
+        putByIndexBeyondVectorLengthWithArrayStorage(exec, storage->length(), value, true, storage);
+        return;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
 }
 
 JSArray* JSArray::fastSlice(ExecState& exec, unsigned startIndex, unsigned count)

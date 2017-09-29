@@ -764,10 +764,10 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue thisValue = exec->thisValue().toThis(exec, StrictMode);
 
-    if (LIKELY(isJSArray(thisValue) && exec->argumentCount() == 1)) {
+    if (isJSArray(thisValue) && exec->argumentCount() == 1) {
         JSArray* array = asArray(thisValue);
         scope.release();
-        array->pushInline(exec, exec->uncheckedArgument(0));
+        array->push(exec, exec->uncheckedArgument(0));
         return JSValue::encode(jsNumber(array->length()));
     }
     

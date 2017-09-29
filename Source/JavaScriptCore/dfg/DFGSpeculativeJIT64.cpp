@@ -3663,7 +3663,101 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ArrayPush: {
-        compileArrayPush(node);
+        ASSERT(node->arrayMode().isJSArray());
+        
+        SpeculateCellOperand base(this, node->child1());
+        GPRTemporary storageLength(this);
+        
+        GPRReg baseGPR = base.gpr();
+        GPRReg storageLengthGPR = storageLength.gpr();
+        
+        StorageOperand storage(this, node->child3());
+        GPRReg storageGPR = storage.gpr();
+
+        switch (node->arrayMode().type()) {
+        case Array::Int32:
+        case Array::Contiguous: {
+            JSValueOperand value(this, node->child2(), ManualOperandSpeculation);
+            GPRReg valueGPR = value.gpr();
+
+            if (node->arrayMode().type() == Array::Int32) {
+                DFG_TYPE_CHECK(
+                    JSValueRegs(valueGPR), node->child2(), SpecInt32Only,
+                    m_jit.branch64(
+                        MacroAssembler::Below, valueGPR, GPRInfo::tagTypeNumberRegister));
+            }
+
+            m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+            m_jit.store64(valueGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, storageLengthGPR);
+            
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationArrayPush, storageLengthGPR,
+                    valueGPR, baseGPR));
+        
+            jsValueResult(storageLengthGPR, node);
+            break;
+        }
+            
+        case Array::Double: {
+            SpeculateDoubleOperand value(this, node->child2());
+            FPRReg valueFPR = value.fpr();
+
+            DFG_TYPE_CHECK(
+                JSValueRegs(), node->child2(), SpecDoubleReal,
+                m_jit.branchDouble(MacroAssembler::DoubleNotEqualOrUnordered, valueFPR, valueFPR));
+            
+            m_jit.load32(MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()), storageLengthGPR);
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfVectorLength()));
+            m_jit.storeDouble(valueFPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight));
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, Butterfly::offsetOfPublicLength()));
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, storageLengthGPR);
+            
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationArrayPushDouble, storageLengthGPR,
+                    valueFPR, baseGPR));
+        
+            jsValueResult(storageLengthGPR, node);
+            break;
+        }
+            
+        case Array::ArrayStorage: {
+            JSValueOperand value(this, node->child2());
+            GPRReg valueGPR = value.gpr();
+
+            m_jit.load32(MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()), storageLengthGPR);
+        
+            // Refuse to handle bizarre lengths.
+            speculationCheck(Uncountable, JSValueRegs(), 0, m_jit.branch32(MacroAssembler::Above, storageLengthGPR, TrustedImm32(0x7ffffffe)));
+        
+            MacroAssembler::Jump slowPath = m_jit.branch32(MacroAssembler::AboveOrEqual, storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::vectorLengthOffset()));
+        
+            m_jit.store64(valueGPR, MacroAssembler::BaseIndex(storageGPR, storageLengthGPR, MacroAssembler::TimesEight, ArrayStorage::vectorOffset()));
+        
+            m_jit.add32(TrustedImm32(1), storageLengthGPR);
+            m_jit.store32(storageLengthGPR, MacroAssembler::Address(storageGPR, ArrayStorage::lengthOffset()));
+            m_jit.add32(TrustedImm32(1), MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_numValuesInVector)));
+            m_jit.or64(GPRInfo::tagTypeNumberRegister, storageLengthGPR);
+        
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowPath, this, operationArrayPush, NoResult, storageLengthGPR,
+                    valueGPR, baseGPR));
+        
+            jsValueResult(storageLengthGPR, node);
+            break;
+        }
+            
+        default:
+            CRASH();
+            break;
+        }
         break;
     }
 

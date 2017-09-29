@@ -31,8 +31,6 @@ namespace JSC {
 class JSArray;
 class LLIntOffsetsExtractor;
 
-extern const char* const LengthExceededTheMaximumArrayLengthError;
-
 class JSArray : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;
     friend class Walker;
@@ -92,7 +90,6 @@ public:
     // OK to use on new arrays, but not if it might be a RegExpMatchArray or RuntimeArray.
     JS_EXPORT_PRIVATE bool setLength(ExecState*, unsigned, bool throwException = false);
 
-    void pushInline(ExecState*, JSValue);
     JS_EXPORT_PRIVATE void push(ExecState*, JSValue);
     JS_EXPORT_PRIVATE JSValue pop(ExecState*);
 
