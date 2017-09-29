@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="editor" contenteditable></div>
+<script>
+const editor = document.getElementById('editor');
+editor.focus();
+
+var dataTransfer = {};
+editor.addEventListener('paste', (event) => {
+    dataTransfer.types = Array.from(event.clipboardData.types);
+    dataTransfer.files = Array.from(event.clipboardData.files);
+    dataTransfer.items = Array.from(event.clipboardData.items).map(cloneItem);
+});
+
+function cloneItem(item) {
+    return {
+        kind: item.kind,
+        type: item.type,
+        file: item.getAsFile(),
+    }
+}
+
+var imageElement;
+function insertFileAsImage(file) {
+    imageElement = document.createElement('img');
+    imageElement.onload = () => window.webkit.messageHandlers.testHandler.postMessage('loaded');
+    imageElement.src = URL.createObjectURL(file);
+    document.body.appendChild(imageElement);
+}
+
+</script>
+</body>
+</html>

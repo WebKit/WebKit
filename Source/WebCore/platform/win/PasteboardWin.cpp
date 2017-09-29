@@ -243,7 +243,7 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
     }
 }
 
-Vector<String> Pasteboard::types()
+Vector<String> Pasteboard::typesForBindings()
 {
     ListHashSet<String> results;
 
@@ -275,6 +275,11 @@ Vector<String> Pasteboard::types()
     Vector<String> vector;
     copyToVector(results, vector);
     return vector;
+}
+
+Vector<String> Pasteboard::typesTreatedAsFiles()
+{
+    return { };
 }
 
 String Pasteboard::readStringForBindings(const String& type)
@@ -1047,6 +1052,10 @@ void Pasteboard::write(const PasteboardWebContent&)
 }
 
 void Pasteboard::read(PasteboardWebContentReader&)
+{
+}
+
+void Pasteboard::read(PasteboardFileReader&)
 {
 }
 

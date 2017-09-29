@@ -1,3 +1,22 @@
+2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
+        https://bugs.webkit.org/show_bug.cgi?id=170449
+        <rdar://problem/31432525>
+
+        Reviewed by Wenson Hsieh.
+
+        Add sandbox extensions for files in the pasteboard to make copying & pasting image files work.
+        This is what we do for drag & drop but we should consider adding a mechanism to rekoke the extension in the future.
+
+        * UIProcess/Cocoa/WebPasteboardProxyCocoa.mm:
+        (WebKit::WebPasteboardProxy::getPasteboardPathnamesForType): Add sandbox extensions to the pasted files.
+        * UIProcess/WebPasteboardProxy.h:
+        * UIProcess/WebPasteboardProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::getPathnamesForType): Consume the sandbox tokens sent by the UI process permanently
+        since WebCore will now create File objects for these pasted files.
+
 2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Implement -[WKContentView hasText] for compatibility with the UITextInput protocol

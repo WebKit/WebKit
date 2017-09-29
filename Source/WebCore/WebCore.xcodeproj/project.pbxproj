@@ -4345,8 +4345,10 @@
 		9BD8A95A18BEFC7600987E9A /* CollectionIndexCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */; };
 		9BDA64D71B975CE5009C4387 /* JSShadowRoot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B6BC9601B975966005AE1F0 /* JSShadowRoot.cpp */; };
 		9BDA64D81B975CF2009C4387 /* JSShadowRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B6BC9611B975966005AE1F0 /* JSShadowRoot.h */; };
+		9BDD18271F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD18261F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp */; };
 		9BE6710B1D5AEB2100345514 /* JSCustomElementRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */; };
 		9BE6710C1D5AEB2500345514 /* JSCustomElementRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */; };
+		9BED2CB11F7CC06200666018 /* PasteboardCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9BED2CAF1F7CC06200666018 /* PasteboardCocoa.mm */; };
 		9BF9A8801648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */; };
 		9BF9A8811648DD2F001C6B23 /* JSHTMLFormControlsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */; };
 		9D6380101AF173220031A15C /* StyleSelfAlignmentData.h in Headers */ = {isa = PBXBuildFile; fileRef = 9D63800F1AF16E160031A15C /* StyleSelfAlignmentData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12788,8 +12790,11 @@
 		9BD4E9181C462CFC005065BC /* CustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomElementRegistry.cpp; sourceTree = "<group>"; };
 		9BD4E9191C462CFC005065BC /* CustomElementRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomElementRegistry.h; sourceTree = "<group>"; };
 		9BD8A95918BEFC7600987E9A /* CollectionIndexCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CollectionIndexCache.cpp; sourceTree = "<group>"; };
+		9BDD18251F7E059900E8E577 /* WebCorePasteboardFileReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebCorePasteboardFileReader.h; sourceTree = "<group>"; };
+		9BDD18261F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebCorePasteboardFileReader.cpp; sourceTree = "<group>"; };
 		9BE671091D5AEB0400345514 /* JSCustomElementRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomElementRegistry.cpp; sourceTree = "<group>"; };
 		9BE6710A1D5AEB0400345514 /* JSCustomElementRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomElementRegistry.h; sourceTree = "<group>"; };
+		9BED2CAF1F7CC06200666018 /* PasteboardCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PasteboardCocoa.mm; sourceTree = "<group>"; };
 		9BF433761F67619B00E1FD71 /* WebContentReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContentReader.h; sourceTree = "<group>"; };
 		9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormControlsCollection.h; sourceTree = "<group>"; };
@@ -20601,6 +20606,8 @@
 				93309DCF099E64910056E581 /* VisibleUnits.h */,
 				9B6116491F6A593300E923B8 /* WebContentReader.cpp */,
 				9BF433761F67619B00E1FD71 /* WebContentReader.h */,
+				9BDD18261F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp */,
+				9BDD18251F7E059900E8E577 /* WebCorePasteboardFileReader.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
 				9BAF3B2312C1A39800014BF1 /* WritingDirection.h */,
@@ -21773,6 +21780,7 @@
 				A19D93481AA11B1E00B46C24 /* NetworkExtensionContentFilter.mm */,
 				A18890AD1AA13F250026C301 /* ParentalControlsContentFilter.h */,
 				A18890AC1AA13F250026C301 /* ParentalControlsContentFilter.mm */,
+				9BED2CAF1F7CC06200666018 /* PasteboardCocoa.mm */,
 				52B0D4BD1C57FD1E0077CE53 /* PlatformView.h */,
 				CDA29A081CBD99F400901CCF /* PlaybackSessionInterface.h */,
 				CDA29A0A1CBD9A7400901CCF /* PlaybackSessionModel.h */,
@@ -33489,6 +33497,7 @@
 				57B5F7EC1E57F1E300F34F90 /* PasswordCredential.cpp in Sources */,
 				F55B3DC91251F12D003EF269 /* PasswordInputType.cpp in Sources */,
 				2EE02A1F1F7324280006AF72 /* Pasteboard.cpp in Sources */,
+				9BED2CB11F7CC06200666018 /* PasteboardCocoa.mm in Sources */,
 				E453901E0EAFCACA003695C8 /* PasteboardIOS.mm in Sources */,
 				4B2709830AF2E5E00065127F /* PasteboardMac.mm in Sources */,
 				1AF5E4E21E5779B1004A1F01 /* PasteboardWriter.mm in Sources */,
@@ -34426,6 +34435,7 @@
 				C5B4C24E1509236C00A6EF37 /* WebCoreNSURLExtras.mm in Sources */,
 				CD225C0B1C46FBF400140761 /* WebCoreNSURLSession.mm in Sources */,
 				B50F5B810E96CD9900AD71A6 /* WebCoreObjCExtras.mm in Sources */,
+				9BDD18271F7E05F400E8E577 /* WebCorePasteboardFileReader.cpp in Sources */,
 				E180810E16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm in Sources */,
 				E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */,
 				93EB169509F880B00091F8FF /* WebCoreSystemInterface.mm in Sources */,

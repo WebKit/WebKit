@@ -63,15 +63,6 @@ std::unique_ptr<Pasteboard> Pasteboard::createForDragAndDrop(const DragData& dra
 }
 #endif
 
-// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
-PasteboardImage::PasteboardImage()
-{
-}
-
-PasteboardImage::~PasteboardImage()
-{
-}
-
 Pasteboard::Pasteboard(SelectionData& selectionData)
     : m_selectionData(selectionData)
 {
@@ -251,13 +242,17 @@ void Pasteboard::read(PasteboardWebContentReader&)
 {
 }
 
+void Pasteboard::read(PasteboardFileReader&)
+{
+}
+
 bool Pasteboard::hasData()
 {
     readFromClipboard();
     return m_selectionData->hasText() || m_selectionData->hasMarkup() || m_selectionData->hasURIList() || m_selectionData->hasImage() || m_selectionData->hasUnknownTypeData();
 }
 
-Vector<String> Pasteboard::types()
+Vector<String> Pasteboard::typesForBindings()
 {
     readFromClipboard();
 
@@ -283,6 +278,11 @@ Vector<String> Pasteboard::types()
         types.append(key);
 
     return types;
+}
+
+Vector<String> Pasteboard::typesTreatedAsFiles()
+{
+    return { };
 }
 
 String Pasteboard::readStringForBindings(const String& type)

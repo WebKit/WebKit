@@ -49,11 +49,16 @@ bool Pasteboard::hasData()
     return !types.isEmpty();
 }
 
-Vector<String> Pasteboard::types()
+Vector<String> Pasteboard::typesForBindings()
 {
     Vector<String> types;
     platformStrategies()->pasteboardStrategy()->getTypes(types);
     return types;
+}
+
+Vector<String> Pasteboard::typesTreatedAsFiles()
+{
+    return { };
 }
 
 String Pasteboard::readStringForBindings(const String& type)
@@ -82,6 +87,10 @@ void Pasteboard::read(PasteboardPlainText& text)
 void Pasteboard::read(PasteboardWebContentReader&)
 {
     notImplemented();
+}
+
+void Pasteboard::read(PasteboardFileReader&)
+{
 }
 
 void Pasteboard::write(const PasteboardURL& url)

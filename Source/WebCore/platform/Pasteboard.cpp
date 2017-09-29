@@ -35,6 +35,10 @@
 
 namespace WebCore {
 
+// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
+PasteboardImage::PasteboardImage() = default;
+PasteboardImage::~PasteboardImage() = default;
+
 bool isSafeTypeForDOMToReadAndWrite(const String& type)
 {
     return type == "text/plain" || type == "text/html" || type == "text/uri-list";

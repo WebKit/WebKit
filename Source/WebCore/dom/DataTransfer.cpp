@@ -38,6 +38,7 @@
 #include "Image.h"
 #include "Pasteboard.h"
 #include "StaticPasteboard.h"
+#include "WebCorePasteboardFileReader.h"
 
 namespace WebCore {
 
@@ -171,7 +172,7 @@ Vector<String> DataTransfer::types() const
     if (!canReadTypes())
         return { };
 
-    return m_pasteboard->types();
+    return m_pasteboard->typesForBindings();
 }
 
 FileList& DataTransfer::files() const
@@ -195,6 +196,14 @@ FileList& DataTransfer::files() const
     if (newlyCreatedFileList) {
         for (auto& filename : m_pasteboard->readFilenames())
             m_fileList->append(File::create(filename));
+        if (m_fileList->isEmpty()) {
+            for (auto& type : m_pasteboard->typesTreatedAsFiles()) {
+                WebCorePasteboardFileReader reader(type);
+                m_pasteboard->read(reader);
+                if (reader.file)
+                    m_fileList->append(reader.file.releaseNonNull());
+            }
+        }
     }
     return *m_fileList;
 }

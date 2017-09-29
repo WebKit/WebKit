@@ -70,24 +70,6 @@ const char WebSmartPastePboardType[] = "NeXT smart paste pasteboard type";
 const char WebURLPboardType[] = "public.url";
 const char WebURLsWithTitlesPboardType[] = "WebURLsWithTitlesPboardType";
 
-// Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
-PasteboardWebContent::PasteboardWebContent()
-{
-}
-
-PasteboardWebContent::~PasteboardWebContent()
-{
-}
-
-// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
-PasteboardImage::PasteboardImage()
-{
-}
-
-PasteboardImage::~PasteboardImage()
-{
-}
-
 static const Vector<String> writableTypesForURL()
 {
     Vector<String> types;
@@ -554,6 +536,9 @@ static String utiTypeFromCocoaType(const String& type)
 
 static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
+    if (cocoaType == "NeXT plain ascii pasteboard type")
+        return; // Skip this ancient type that gets auto-supplied by some system conversion.
+
     // UTI may not do these right, so make sure we get the right, predictable result
     if (cocoaType == String(NSStringPboardType) || cocoaType == String(NSPasteboardTypeString)) {
         resultTypes.add(ASCIILiteral("text/plain"));
@@ -571,6 +556,10 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
         platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
         if (!fileList.isEmpty())
             resultTypes.add(ASCIILiteral("Files"));
+        return;
+    }
+    if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType)) {
+        resultTypes.add(ASCIILiteral("Files"));
         return;
     }
     String utiType = utiTypeFromCocoaType(cocoaType);
@@ -609,7 +598,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     }
 }
 
-Vector<String> Pasteboard::types()
+Vector<String> Pasteboard::typesForBindings()
 {
     Vector<String> types;
     if (Settings::customPasteboardDataEnabled())
@@ -626,14 +615,8 @@ Vector<String> Pasteboard::types()
         return types;
 
     ListHashSet<String> result;
-    // FIXME: This loop could be split into two stages. One which adds all the HTML5 specified types
-    // and a second which adds all the extra types from the cocoa clipboard (which is Mac-only behavior).
-    for (size_t i = 0; i < types.size(); i++) {
-        if (types[i] == "NeXT plain ascii pasteboard type")
-            continue;   // skip this ancient type that gets auto-supplied by some system conversion
-
-        addHTMLClipboardTypesForCocoaType(result, types[i], m_pasteboardName);
-    }
+    for (auto& cocoaType : types)
+        addHTMLClipboardTypesForCocoaType(result, cocoaType, m_pasteboardName);
 
     copyToVector(result, types);
     return types;

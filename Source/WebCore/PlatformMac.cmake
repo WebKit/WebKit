@@ -321,6 +321,7 @@ list(APPEND WebCore_SOURCES
     platform/cocoa/MachSendRight.cpp
     platform/cocoa/NetworkExtensionContentFilter.mm
     platform/cocoa/ParentalControlsContentFilter.mm
+    platform/cocoa/PasteboardCocoa.mm
     platform/cocoa/RuntimeApplicationChecksCocoa.mm
     platform/cocoa/ScrollController.mm
     platform/cocoa/ScrollSnapAnimatorState.mm

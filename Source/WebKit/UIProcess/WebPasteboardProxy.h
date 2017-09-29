@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MessageReceiver.h"
+#include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -82,7 +83,7 @@ private:
 #if PLATFORM(COCOA)
     void getNumberOfFiles(const String& pasteboardName, uint64_t& numberOfFiles);
     void getPasteboardTypes(const String& pasteboardName, Vector<String>& pasteboardTypes);
-    void getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames);
+    void getPasteboardPathnamesForType(IPC::Connection&, const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames, SandboxExtension::HandleArray&);
     void getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String&);
     void getPasteboardBufferForType(const String& pasteboardName, const String& pasteboardType, SharedMemory::Handle&, uint64_t& size);
     void pasteboardCopy(const String& fromPasteboard, const String& toPasteboard, uint64_t& newChangeCount);

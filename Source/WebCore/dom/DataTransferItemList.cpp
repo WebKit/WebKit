@@ -131,11 +131,8 @@ Vector<Ref<DataTransferItem>>& DataTransferItemList::ensureItems() const
             items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), lowercasedType));
     }
 
-    for (auto& file : m_dataTransfer.files().files()) {
-        auto type = File::contentTypeForFile(file->path()).convertToASCIILowercase();
-        if (isSupportedType(type) || file->isDirectory())
-            items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), type, file.copyRef()));
-    }
+    for (auto& file : m_dataTransfer.files().files())
+        items.append(DataTransferItem::create(m_weakPtrFactory.createWeakPtr(*const_cast<DataTransferItemList*>(this)), file->type(), file.copyRef()));
 
     m_items = WTFMove(items);
 

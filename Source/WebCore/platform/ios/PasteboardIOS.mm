@@ -98,24 +98,6 @@ static long changeCountForPasteboard(const String& pasteboardName = { })
 // FIXME: Does this need to be declared in the header file?
 WEBCORE_EXPORT NSString *WebArchivePboardType = @"Apple Web Archive pasteboard type";
 
-// Making this non-inline so that WebKit 2's decoding doesn't have to include SharedBuffer.h.
-PasteboardWebContent::PasteboardWebContent()
-{
-}
-
-PasteboardWebContent::~PasteboardWebContent()
-{
-}
-    
-// Making this non-inline so that WebKit 2's decoding doesn't have to include Image.h.
-PasteboardImage::PasteboardImage()
-{
-}
-
-PasteboardImage::~PasteboardImage()
-{
-}
-
 Pasteboard::Pasteboard()
     : m_changeCount(0)
 {
@@ -417,6 +399,10 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
         resultTypes.add(ASCIILiteral("text/uri-list"));
         return;
     }
+    if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType)) {
+        resultTypes.add(ASCIILiteral("Files"));
+        return;
+    }
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
         resultTypes.add(utiType);
@@ -435,7 +421,7 @@ void Pasteboard::writeString(const String& type, const String& data)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), data, m_pasteboardName);
 }
 
-Vector<String> Pasteboard::types()
+Vector<String> Pasteboard::typesForBindings()
 {
     Vector<String> types;
     if (Settings::customPasteboardDataEnabled())

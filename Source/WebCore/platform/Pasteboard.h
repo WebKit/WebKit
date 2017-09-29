@@ -66,7 +66,7 @@ enum ShouldSerializeSelectedTextForDataTransfer { DefaultSelectedTextType, Inclu
 // For writing to the pasteboard. Generally sorted with the richest formats on top.
 
 struct PasteboardWebContent {
-#if !(PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(WPE))
+#if PLATFORM(COCOA)
     WEBCORE_EXPORT PasteboardWebContent();
     WEBCORE_EXPORT ~PasteboardWebContent();
     bool canSmartCopyOrDelete;
@@ -146,6 +146,17 @@ struct PasteboardPlainText {
 #endif
 };
 
+struct PasteboardFileReader {
+    PasteboardFileReader(const String& type)
+        : type(type)
+    { }
+    virtual ~PasteboardFileReader() = default;
+
+    virtual void read(const String&, Ref<SharedBuffer>&&) = 0;
+
+    const String type;
+};
+
 // FIXME: We need to ensure that the contents of sameOriginCustomData are not accessible across different origins.
 struct PasteboardCustomData {
     Vector<String> orderedTypes;
@@ -184,7 +195,8 @@ public:
     virtual bool isStatic() const { return false; }
 
     virtual bool hasData();
-    virtual Vector<String> types();
+    virtual Vector<String> typesForBindings();
+    virtual Vector<String> typesTreatedAsFiles();
     virtual String readStringForBindings(const String& type);
 
     virtual void writeString(const String& type, const String& data);
@@ -193,6 +205,7 @@ public:
 
     virtual void read(PasteboardPlainText&);
     virtual void read(PasteboardWebContentReader&);
+    virtual void read(PasteboardFileReader&);
 
     virtual void write(const PasteboardURL&);
     virtual void writeTrustworthyWebURLsPboardType(const PasteboardURL&);
@@ -234,6 +247,7 @@ public:
 #if PLATFORM(COCOA)
     explicit Pasteboard(const String& pasteboardName);
 
+    static bool shouldTreatCocoaTypeAsFile(const String&);
     WEBCORE_EXPORT static NSArray *supportedFileUploadPasteboardTypes();
     const String& name() const { return m_pasteboardName; }
     long changeCount() const;

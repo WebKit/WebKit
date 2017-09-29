@@ -1557,8 +1557,8 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 
     // File URLs should never be exposed directly to web content, so DataTransfer.getData should return an empty string here.
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-        @"dragover": @{ @"text/uri-list" : @"" },
-        @"drop": @{ @"text/uri-list" : @"" }
+        @"dragover": @{ @"Files": @"", @"text/uri-list" : @"" },
+        @"drop": @{ @"Files": @"", @"text/uri-list" : @"" }
     });
 }
 

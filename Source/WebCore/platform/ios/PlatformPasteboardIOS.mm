@@ -431,6 +431,9 @@ static const char *safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (UTTypeConformsTo(cfType.get(), kUTTypeURL))
         return ASCIILiteral("text/uri-list");
 
+    if (Pasteboard::shouldTreatCocoaTypeAsFile(platformType))
+        return ASCIILiteral("Files");
+
     return nullptr;
 }
 

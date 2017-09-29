@@ -1,3 +1,104 @@
+2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
+        https://bugs.webkit.org/show_bug.cgi?id=170449
+        <rdar://problem/31432525>
+
+        Reviewed by Wenson Hsieh.
+
+        The bug was caused by image types in NSPasteboard or UIPasteboard not being treated as file items in dataTransfer.
+        Because there is no Web API to get binary data out of dataTransfer unlike text data, we need to treat any image
+        data as files even if they're entirely in the memory.
+
+        This patch introduces the notion of pasteboard types to be treated as files and expose them on dataTransfer.files
+        as well as dataTransfer.items of type "file". Because in-memory images are stored as TIFF in macOS and websites
+        don't typically support image/tiff, we convert all such in-memory TIFF images into PNG images ourselves for
+        a better web compatibility. This is done inside read(PasteboardFileReader&) in PasteboardCocoa.mm.
+
+        Note that PasteboardFileReader cannot directly have RefPtr<File> as a member variable as code in WebCore/platform
+        including Pasteboard code is not supposed to depend on WebCore types. WebCorePasteboardFileReader, a subclass of
+        PasteboardFileReader was introduced to resolve this reverse dependency.
+
+        In addition, this patch removes the restriction on dataTransfer.items that it only includes files of the supported
+        MIME types. This was unwarranted since 1. we don't have any restriction on what an user can drag & drop into a web
+        page via input element so there is no security benefit in this, and 2. the user should be able to copy & paste
+        whatever file he/she desires regardless of the MIME type on websites like Google Drive.
+
+        Tests: PasteImage
+
+        * CMakeLists.txt:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore/PlatformMac.cmake:
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::types const): Now excludes image/gif, image/png, image/jpeg, and image/tiff.
+        (WebCore::DataTransfer::files const): Add fake files we create for in-memory images but only when there are no real
+        files in the pasteboard since it's expensive to copy image data across UI/Web processes to create a blob URL.
+        * dom/DataTransferItemList.cpp:
+        (WebCore::DataTransferItemList::ensureItems const): Just expose every file type. If the user had decided to paste
+        a file, it's okay for the page to access that file regardless of whether it's a zip file, JPEG image, etc...
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCorePasteboardFileReader::~WebCorePasteboardFileReader):
+        (WebCorePasteboardFileReader::read):
+        * editing/WebCorePasteboardFileReader.h:
+        (WebCorePasteboardFileReader):
+        * platform/Pasteboard.cpp:
+        (WebCore::PasteboardImage::PasteboardImage): Moved from platform specific translation units.
+        (WebCore::PasteboardImage::~PasteboardImage): Ditto.
+        * platform/Pasteboard.h:
+        (PasteboardFileReader): Added.
+        (* platform/StaticPasteboard.h:
+        (StaticPasteboard::typesForBindings): Added.
+        (StaticPasteboard::typesTreatedAsFiles): Added. Returns an empty list we don't support the web content writing image
+        files into pasteboard at the moment.
+        * platform/cocoa/PasteboardCocoa.mm: Added.
+        (WebCore::PasteboardWebContent::PasteboardWebContent): Moved from PasteboardMac.mm and PasteboardIOS.mm.
+        (WebCore::PasteboardWebContent::~PasteboardWebContent):
+        (WebCore::cocoaTypeToImageType): Added.
+        (WebCore::imageTypeToMIMEType): Added. Pretends to have image/png when the Cocoa type is image/tiff since most of
+        websites don't support image/tiff.
+        (WebCore::imageTypeToFakeFilename): Added.
+        (WebCore::mimeTypeToImageType): Added.
+        (WebCore::Pasteboard::shouldTreatCocoaTypeAsFile): Added. Pasteboard::typesForBindings excludes the type for which
+        this function returns true.
+        (WebCore::Pasteboard::typesTreatedAsFiles): Returns the list of all in-memory image types in the pasteboard.
+        (WebCore::Pasteboard::read): Added. On macOS, we convert TIFF to PNG for web compatibility. We don't do this rather
+        memory intensive coercion on iOS where most of apps like Photos put PNG file into the pasteboard in the first place.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::PasteboardImage::PasteboardImage): Deleted.
+        (WebCore::PasteboardImage::~PasteboardImage): Deleted.
+        (WebCore::Pasteboard::read):
+        (WebCore::Pasteboard::typesForBindings): Renamed from types.
+        (WebCore::Pasteboard::typesTreatedAsFiles):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::addHTMLClipboardTypesForCocoaType):
+        (WebCore::Pasteboard::typesForBindings):
+        (WebCore::PasteboardWebContent::PasteboardWebContent): Deleted.
+        (WebCore::PasteboardWebContent::~PasteboardWebContent): Deleted.
+        (WebCore::PasteboardImage::PasteboardImage): Deleted.
+        (WebCore::PasteboardImage::~PasteboardImage): Deleted.
+        (WebCore::Pasteboard::types): Deleted.
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType): Add "Files" to dataTransfer.types when there is an in-memory
+        image type in the pasteboard.
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::PasteboardWebContent::PasteboardWebContent): Deleted.
+        (WebCore::PasteboardWebContent::~PasteboardWebContent): Deleted.
+        (WebCore::PasteboardImage::PasteboardImage): Deleted.
+        (WebCore::PasteboardImage::~PasteboardImage): Deleted.
+        (WebCore::addHTMLClipboardTypesForCocoaType): Moved the check for the legacy NeXT plain text check here. Also add
+        "Files" to dataTransfer.types when there is an in-memory image type in the pasteboard.
+        (WebCore::Pasteboard::typesForBindings): Renamed from types.
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::safeTypeForDOMToReadAndWriteForPlatformType): Ditto to add "Files".
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::typesForBindings): Renamed from types.
+        (WebCore::Pasteboard::typesTreatedAsFiles):
+        (WebCore::Pasteboard::read):
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::typesForBindings): Renamed from types.
+        (WebCore::Pasteboard::typesTreatedAsFiles):
+        (WebCore::Pasteboard::read):
+
 2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Implement -[WKContentView hasText] for compatibility with the UITextInput protocol

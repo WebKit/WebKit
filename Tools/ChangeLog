@@ -1,3 +1,26 @@
+2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
+        https://bugs.webkit.org/show_bug.cgi?id=170449
+        <rdar://problem/31432525>
+
+        Reviewed by Wenson Hsieh.
+
+        Added an API test to paste an image from pasteboard. The test is shared between iOS and macOS.
+
+        The tests to paste image files are only enabled on macOS since putting files into pasteboard isn't a thing on iOS.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/PasteImage.mm: Added.
+        (writeImageDataToPasteboard):
+        (writeBundleFileToPasteboard):
+        * TestWebKitAPI/Tests/WebKitCocoa/paste-image.html: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/sunset-in-cupertino-100px.tiff: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/sunset-in-cupertino-200px.png: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/sunset-in-cupertino-400px.gif: Added.
+        * TestWebKitAPI/Tests/WebKitCocoa/sunset-in-cupertino-600px.jpg: Added.
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm: Rebaselined the test now that types contain "Files".
+
 2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] Implement -[WKContentView hasText] for compatibility with the UITextInput protocol

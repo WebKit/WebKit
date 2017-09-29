@@ -105,7 +105,7 @@ static const char* safeTypeForDOMToReadAndWriteForPlatformType(const String& pla
     if (platformType == String(NSHTMLPboardType))
         return ASCIILiteral("text/html");
 
-    if (platformType == String(NSFilenamesPboardType) || platformType == String(NSFilesPromisePboardType))
+    if (platformType == String(NSFilenamesPboardType) || platformType == String(NSFilesPromisePboardType) || Pasteboard::shouldTreatCocoaTypeAsFile(platformType))
         return ASCIILiteral("Files");
 
     return nullptr;

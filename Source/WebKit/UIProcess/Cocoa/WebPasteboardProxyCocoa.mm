@@ -25,8 +25,9 @@
 
 #import "config.h"
 #import "WebPasteboardProxy.h"
-#import "WebProcessProxy.h"
 
+#import "SandboxExtension.h"
+#import "WebProcessProxy.h"
 #import <WebCore/Color.h>
 #import <WebCore/PlatformPasteboard.h>
 #import <WebCore/SharedBuffer.h>
@@ -41,9 +42,26 @@ void WebPasteboardProxy::getPasteboardTypes(const String& pasteboardName, Vector
     PlatformPasteboard(pasteboardName).getTypes(pasteboardTypes);
 }
 
-void WebPasteboardProxy::getPasteboardPathnamesForType(const String& pasteboardName, const String& pasteboardType, Vector<String>& pathnames)
+void WebPasteboardProxy::getPasteboardPathnamesForType(IPC::Connection& connection, const String& pasteboardName, const String& pasteboardType,
+    Vector<String>& pathnames, SandboxExtension::HandleArray& sandboxExtensions)
 {
-    PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
+    for (auto* webProcessProxy : m_webProcessProxyList) {
+        if (!webProcessProxy->hasConnection(connection))
+            continue;
+
+        PlatformPasteboard(pasteboardName).getPathnamesForType(pathnames, pasteboardType);
+
+#if PLATFORM(MAC)
+        // On iOS, files are copied into app's container upon paste.
+        sandboxExtensions.allocate(pathnames.size());
+        for (size_t i = 0; i < pathnames.size(); i++) {
+            auto& filename = pathnames[i];
+            if (![[NSFileManager defaultManager] fileExistsAtPath:filename])
+                continue;
+            SandboxExtension::createHandle(filename, SandboxExtension::Type::ReadOnly, sandboxExtensions[i]);
+        }
+#endif
+    }
 }
 
 void WebPasteboardProxy::getPasteboardStringForType(const String& pasteboardName, const String& pasteboardType, String& string)
