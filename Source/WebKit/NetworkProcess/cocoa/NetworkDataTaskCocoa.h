@@ -67,8 +67,6 @@ public:
     void setPendingDownloadLocation(const String&, const SandboxExtension::Handle&, bool /*allowOverwrite*/) override;
     String suggestedFilename() const override;
 
-    bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&) override;
-
     WebCore::NetworkLoadMetrics& networkLoadMetrics() { return m_networkLoadMetrics; }
 
 private:

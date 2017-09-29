@@ -29,6 +29,7 @@
 #include "AuthenticationManager.h"
 #include "DownloadProxyMessages.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include "SessionTracker.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -316,18 +317,6 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& response, Resour
 
 void NetworkLoad::didReceiveChallenge(const AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    // Handle server trust evaluation at platform-level if requested, for performance reasons.
-#if PLATFORM(COCOA)
-    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested
-        && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
-        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(challenge));
-        else
-            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        return;
-    }
-#endif
-
     m_challenge = challenge;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     m_challengeCompletionHandler = WTFMove(completionHandler);
@@ -360,7 +349,7 @@ void NetworkLoad::continueCanAuthenticateAgainstProtectionSpace(bool result)
     ASSERT(m_challengeCompletionHandler);
     auto completionHandler = std::exchange(m_challengeCompletionHandler, nullptr);
     if (!result) {
-        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(*m_challenge))
+        if (NetworkSession::allowsSpecificHTTPSCertificateForHost(*m_challenge))
             completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(*m_challenge));
         else
             completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });

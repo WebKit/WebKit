@@ -89,6 +89,15 @@ void NetworkSession::invalidateAndCancel()
         task->invalidateAndCancel();
 }
 
+bool NetworkSession::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
+{
+#if PLATFORM(COCOA)
+    return NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge);
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit
 
 #endif // USE(NETWORK_SESSION)

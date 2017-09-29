@@ -33,6 +33,7 @@
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
+class AuthenticationChallenge;
 class NetworkStorageSession;
 }
 
@@ -55,6 +56,8 @@ public:
 
     void registerNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.add(&task); }
     void unregisterNetworkDataTask(NetworkDataTask& task) { m_dataTaskSet.remove(&task); }
+
+    static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
 
 protected:
     NetworkSession(PAL::SessionID);

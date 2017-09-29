@@ -77,13 +77,6 @@ void PreconnectTask::willPerformHTTPRedirection(WebCore::ResourceResponse&&, Web
 
 void PreconnectTask::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    if (challenge.protectionSpace().authenticationScheme() == ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested) {
-        if (m_task && m_task->allowsSpecificHTTPSCertificateForHost(challenge))
-            completionHandler(AuthenticationChallengeDisposition::UseCredential, serverTrustCredential(challenge));
-        else
-            completionHandler(AuthenticationChallengeDisposition::RejectProtectionSpace, { });
-        return;
-    }
     ASSERT_NOT_REACHED();
 }
 

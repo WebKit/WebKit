@@ -173,13 +173,6 @@ void NetworkDataTaskCocoa::didSendData(uint64_t totalBytesSent, uint64_t totalBy
 
 void NetworkDataTaskCocoa::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
 {
-    // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
-    // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
-    if (challenge.protectionSpace().isProxy()) {
-        completionHandler(AuthenticationChallengeDisposition::UseCredential, { });
-        return;
-    }
-
     if (tryPasswordBasedAuthentication(challenge, completionHandler))
         return;
 
@@ -318,53 +311,6 @@ bool NetworkDataTaskCocoa::tryPasswordBasedAuthentication(const WebCore::Authent
 void NetworkDataTaskCocoa::transferSandboxExtensionToDownload(Download& download)
 {
     download.setSandboxExtension(WTFMove(m_sandboxExtension));
-}
-
-#if !USE(CFURLCONNECTION)
-static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
-{
-    if (!trust1 || !trust2)
-        return false;
-
-    CFIndex count1 = SecTrustGetCertificateCount(trust1);
-    CFIndex count2 = SecTrustGetCertificateCount(trust2);
-    if (count1 != count2)
-        return false;
-
-    for (CFIndex i = 0; i < count1; i++) {
-        auto cert1 = SecTrustGetCertificateAtIndex(trust1, i);
-        auto cert2 = SecTrustGetCertificateAtIndex(trust2, i);
-        RELEASE_ASSERT(cert1);
-        RELEASE_ASSERT(cert2);
-        if (!CFEqual(cert1, cert2))
-            return false;
-    }
-
-    return true;
-}
-#endif
-
-bool NetworkDataTaskCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
-{
-    const String& host = challenge.protectionSpace().host();
-    NSArray *certificates = [NSURLRequest allowsSpecificHTTPSCertificateForHost:host];
-    if (!certificates)
-        return false;
-    
-    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
-    RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateSSL(requireServerCertificates, host.createCFString().get()));
-    
-    SecTrustRef trustRef = nullptr;
-    if (SecTrustCreateWithCertificates((CFArrayRef)certificates, policy.get(), &trustRef) != noErr)
-        return false;
-    RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
-
-#if USE(CFURLCONNECTION)
-    notImplemented();
-    return false;
-#else
-    return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
-#endif
 }
 
 String NetworkDataTaskCocoa::suggestedFilename() const

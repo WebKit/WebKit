@@ -63,6 +63,8 @@ public:
     DownloadID downloadID(NetworkDataTaskCocoa::TaskIdentifier);
     DownloadID takeDownloadID(NetworkDataTaskCocoa::TaskIdentifier);
 
+    static bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&);
+
 private:
     NetworkSessionCocoa(PAL::SessionID, LegacyCustomProtocolManager*);
 

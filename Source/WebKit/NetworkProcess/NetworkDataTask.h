@@ -126,7 +126,6 @@ public:
     const WebCore::ResourceRequest& firstRequest() const { return m_firstRequest; }
     virtual String suggestedFilename() const { return String(); }
     void setSuggestedFilename(const String& suggestedName) { m_suggestedFilename = suggestedName; }
-    virtual bool allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge&) { return false; }
     const String& partition() { return m_partition; }
 
 protected:

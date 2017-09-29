@@ -222,6 +222,22 @@ static WebCore::NetworkLoadPriority toNetworkLoadPriority(float priority)
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveChallenge", taskIdentifier);
     
+    // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
+    // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
+    if (challenge.protectionSpace.isProxy) {
+        completionHandler(NSURLSessionAuthChallengeUseCredential, nil);
+        return;
+    }
+
+    // Handle server trust evaluation at platform-level if requested, for performance reasons.
+    if ([challenge.protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust] && !NetworkProcess::singleton().canHandleHTTPSServerTrustEvaluation()) {
+        if (NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(challenge))
+            completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
+        else
+            completionHandler(NSURLSessionAuthChallengeRejectProtectionSpace, nil);
+        return;
+    }
+
     if (auto* networkDataTask = [self existingTask:task]) {
         WebCore::AuthenticationChallenge authenticationChallenge(challenge);
         auto completionHandlerCopy = Block_copy(completionHandler);
@@ -663,6 +679,46 @@ DownloadID NetworkSessionCocoa::takeDownloadID(NetworkDataTaskCocoa::TaskIdentif
 {
     auto downloadID = m_downloadMap.take(taskIdentifier);
     return downloadID;
+}
+
+static bool certificatesMatch(SecTrustRef trust1, SecTrustRef trust2)
+{
+    if (!trust1 || !trust2)
+        return false;
+
+    CFIndex count1 = SecTrustGetCertificateCount(trust1);
+    CFIndex count2 = SecTrustGetCertificateCount(trust2);
+    if (count1 != count2)
+        return false;
+
+    for (CFIndex i = 0; i < count1; i++) {
+        auto cert1 = SecTrustGetCertificateAtIndex(trust1, i);
+        auto cert2 = SecTrustGetCertificateAtIndex(trust2, i);
+        RELEASE_ASSERT(cert1);
+        RELEASE_ASSERT(cert2);
+        if (!CFEqual(cert1, cert2))
+            return false;
+    }
+
+    return true;
+}
+
+bool NetworkSessionCocoa::allowsSpecificHTTPSCertificateForHost(const WebCore::AuthenticationChallenge& challenge)
+{
+    const String& host = challenge.protectionSpace().host();
+    NSArray *certificates = [NSURLRequest allowsSpecificHTTPSCertificateForHost:host];
+    if (!certificates)
+        return false;
+
+    bool requireServerCertificates = challenge.protectionSpace().authenticationScheme() == WebCore::ProtectionSpaceAuthenticationScheme::ProtectionSpaceAuthenticationSchemeServerTrustEvaluationRequested;
+    RetainPtr<SecPolicyRef> policy = adoptCF(SecPolicyCreateSSL(requireServerCertificates, host.createCFString().get()));
+
+    SecTrustRef trustRef = nullptr;
+    if (SecTrustCreateWithCertificates((CFArrayRef)certificates, policy.get(), &trustRef) != noErr)
+        return false;
+    RetainPtr<SecTrustRef> trust = adoptCF(trustRef);
+
+    return certificatesMatch(trust.get(), challenge.nsURLAuthenticationChallenge().protectionSpace.serverTrust);
 }
 
 }
