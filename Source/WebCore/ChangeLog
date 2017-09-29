@@ -1,3 +1,17 @@
+2017-09-28  Don Olmstead  <don.olmstead@sony.com>
+
+        Simplify PLATFORM ifdefs within Editor around writing selections
+        https://bugs.webkit.org/show_bug.cgi?id=177624
+
+        Reviewed by Alex Christensen.
+
+        No new tests. No change in behavior.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::performCutOrCopy):
+        (WebCore::Editor::copyImage):
+        * editing/Editor.h:
+
 2017-09-28  Joanmarie Diggs  <jdiggs@igalia.com>
 
         AX: [ATK] object:state-changed notifications missing for multiple ARIA attributes
