@@ -446,7 +446,7 @@ static InlineCacheAction tryCachePutByID(const GCSafeConcurrentJSLocker& locker,
 
             if (slot.base() != baseValue) {
                 conditionSet =
-                    generateConditionsForPrototypePropertyHitCustom(
+                    generateConditionsForPrototypePropertyHit(
                         vm, codeBlock, exec, structure, slot.base(), ident.impl());
                 if (!conditionSet.isValid())
                     return GiveUpOnCache;

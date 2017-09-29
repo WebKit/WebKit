@@ -1,3 +1,60 @@
+2017-09-29  Saam Barati  <sbarati@apple.com>
+
+        Custom GetterSetterAccessCase does not use the correct slotBase when making call
+        https://bugs.webkit.org/show_bug.cgi?id=177639
+
+        Reviewed by Geoffrey Garen.
+
+        The bug occurred when you had a custom set value. Custom set/get
+        values are passed the property holder, not the base of the access.
+        If we had an object chain like this:
+        o = {__proto__: thingWithCustomSetValue}
+        
+        We would end up not providing thingWithCustomSetValue as the argument
+        to the PutValueFunc. The reason is, we would use generateConditionsForPrototypePropertyHitCustom
+        for custom sets. This would return to us an empty ConditionSet, because
+        the property holder was only one level up the prototype chain. The reason
+        is, it didn't generate a condition for the slot holder, because the
+        protocol for custom set/get is that if an object responds to a custom
+        setter/getter, it will continue to respond to that getter/setter for
+        the lifetime of that object. Therefore, it's not strictly necessary to
+        generate an OPC for the slot base for custom accesses. However, AccessCase
+        uses !m_conditionSet.isEmtpy() to indicate that the IC is doing a prototype
+        access. With the above object "o", we were doing a prototype access, but we
+        had an empty condition set. This lead us to passing the base instead of
+        the property holder to the custom set value function, which is incorrect.
+        
+        With custom getters, we never called to into the generateConditionsForPrototypePropertyHitCustom
+        API. Gets would always call into generateConditionsForPrototypePropertyHit, which
+        will generate an OPC on the slot base, even if it isn't strictly necessary for custom accessors.
+        This patch simply removes generateConditionsForPrototypePropertyHitCustom
+        and aligns the set case with the get case. It makes us properly detect
+        when we're doing a prototype access with the above object "o". If we find
+        that generateConditionsForPrototypePropertyHitCustom was a worthwhile
+        optimization to have, we can re-introduce it. We'll just need to pipe through
+        a new notion of when we're doing prototype accesses that doesn't rely solely
+        on !m_conditionSet.isEmpty().
+
+        * bytecode/ObjectPropertyConditionSet.cpp:
+        (JSC::generateConditionsForPrototypePropertyHitCustom): Deleted.
+        * bytecode/ObjectPropertyConditionSet.h:
+        * jit/Repatch.cpp:
+        (JSC::tryCachePutByID):
+        * jsc.cpp:
+        (JSTestCustomGetterSetter::JSTestCustomGetterSetter):
+        (JSTestCustomGetterSetter::create):
+        (JSTestCustomGetterSetter::createStructure):
+        (customGetAccessor):
+        (customGetValue):
+        (customSetAccessor):
+        (customSetValue):
+        (JSTestCustomGetterSetter::finishCreation):
+        (GlobalObject::finishCreation):
+        (functionLoadGetterFromGetterSetter):
+        (functionCreateCustomTestGetterSetter):
+        * runtime/PropertySlot.h:
+        (JSC::PropertySlot::setCustomGetterSetter):
+
 2017-09-29  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222563, r222565, and r222581.

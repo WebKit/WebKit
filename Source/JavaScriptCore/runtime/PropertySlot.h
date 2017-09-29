@@ -26,6 +26,7 @@
 #include "PropertyOffset.h"
 #include "ScopeOffset.h"
 #include <wtf/Assertions.h>
+#include <wtf/ForbidHeapAllocation.h>
 
 namespace JSC {
 class ExecState;
@@ -80,6 +81,12 @@ inline unsigned attributesForStructure(unsigned attributes)
 }
 
 class PropertySlot {
+
+    // We rely on PropertySlot being stack allocated when used. This is needed
+    // because we rely on some of its fields being a GC root. For example, it
+    // may be the only thing that points to the CustomGetterSetter property it has.
+    WTF_FORBID_HEAP_ALLOCATION;
+
     enum PropertyType : uint8_t {
         TypeUnset,
         TypeValue,
@@ -290,6 +297,8 @@ public:
     void setCustomGetterSetter(JSObject* slotBase, unsigned attributes, CustomGetterSetter* getterSetter)
     {
         ASSERT(attributes == attributesForStructure(attributes));
+
+        disableCaching();
 
         ASSERT(getterSetter);
         m_data.customAccessor.getterSetter = getterSetter;

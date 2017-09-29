@@ -1057,6 +1057,84 @@ private:
     Deque<String> m_reports;
 };
 
+class JSTestCustomGetterSetter : public JSNonFinalObject {
+public:
+    using Base = JSNonFinalObject;
+    static const unsigned StructureFlags = Base::StructureFlags;
+
+    JSTestCustomGetterSetter(VM& vm, Structure* structure)
+        : Base(vm, structure)
+    { }
+
+    static JSTestCustomGetterSetter* create(VM& vm, JSGlobalObject*, Structure* structure)
+    {
+        JSTestCustomGetterSetter* result = new (NotNull, allocateCell<JSTestCustomGetterSetter>(vm.heap, sizeof(JSTestCustomGetterSetter))) JSTestCustomGetterSetter(vm, structure);
+        result->finishCreation(vm);
+        return result;
+    }
+
+    void finishCreation(VM& vm);
+
+    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject)
+    {
+        return Structure::create(vm, globalObject, globalObject->objectPrototype(), TypeInfo(ObjectType, StructureFlags), info());
+    }
+
+    DECLARE_INFO;
+};
+
+
+static EncodedJSValue customGetAccessor(ExecState*, EncodedJSValue thisValue, PropertyName)
+{
+    // Passed |this|
+    return thisValue;
+}
+
+static EncodedJSValue customGetValue(ExecState* exec, EncodedJSValue slotValue, PropertyName)
+{
+    RELEASE_ASSERT(JSValue::decode(slotValue).inherits(exec->vm(), JSTestCustomGetterSetter::info()));
+    // Passed property holder.
+    return slotValue;
+}
+
+static bool customSetAccessor(ExecState* exec, EncodedJSValue thisObject, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+
+    JSValue value = JSValue::decode(encodedValue);
+    RELEASE_ASSERT(value.isObject());
+    JSObject* object = asObject(value);
+    PutPropertySlot slot(object);
+    object->put(object, exec, Identifier::fromString(&vm, "result"), JSValue::decode(thisObject), slot);
+
+    return true;
+}
+
+static bool customSetValue(ExecState* exec, EncodedJSValue slotValue, EncodedJSValue encodedValue)
+{
+    VM& vm = exec->vm();
+
+    RELEASE_ASSERT(JSValue::decode(slotValue).inherits(exec->vm(), JSTestCustomGetterSetter::info()));
+
+    JSValue value = JSValue::decode(encodedValue);
+    RELEASE_ASSERT(value.isObject());
+    JSObject* object = asObject(value);
+    PutPropertySlot slot(object);
+    object->put(object, exec, Identifier::fromString(&vm, "result"), JSValue::decode(slotValue), slot);
+
+    return true;
+}
+
+void JSTestCustomGetterSetter::finishCreation(VM& vm)
+{
+    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customValue"),
+        CustomGetterSetter::create(vm, customGetValue, customSetValue), 0);
+    putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customAccessor"),
+        CustomGetterSetter::create(vm, customGetAccessor, customSetAccessor), static_cast<unsigned>(PropertyAttribute::CustomAccessor));
+}
+
+const ClassInfo JSTestCustomGetterSetter::s_info = { "JSTestCustomGetterSetter", &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestCustomGetterSetter) };
+
 static EncodedJSValue JSC_HOST_CALL functionCreateProxy(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateRuntimeArray(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCreateImpureGetter(ExecState*);
@@ -1177,6 +1255,8 @@ static EncodedJSValue JSC_HOST_CALL functionDollarAgentLeaving(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionWaitForReport(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionHeapCapacity(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionLoadGetterFromGetterSetter(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionCreateCustomTestGetterSetter(ExecState*);
 
 struct Script {
     enum class StrictMode {
@@ -1466,6 +1546,9 @@ protected:
 
         addFunction(vm, "heapCapacity", functionHeapCapacity, 0);
         addFunction(vm, "flashHeapAccess", functionFlashHeapAccess, 0);
+
+        addFunction(vm, "loadGetterFromGetterSetter", functionLoadGetterFromGetterSetter, 1);
+        addFunction(vm, "createCustomTestGetterSetter", functionCreateCustomTestGetterSetter, 1);
     }
     
     void addFunction(VM& vm, JSObject* object, const char* name, NativeFunction function, unsigned arguments)
@@ -2830,6 +2913,24 @@ EncodedJSValue JSC_HOST_CALL functionFlashHeapAccess(ExecState* exec)
     }
     vm.heap.acquireAccess();
     return JSValue::encode(jsUndefined());
+}
+
+EncodedJSValue JSC_HOST_CALL functionLoadGetterFromGetterSetter(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    RELEASE_ASSERT(exec->argumentCount() >= 1);
+    GetterSetter* getterSetter = jsDynamicCast<GetterSetter*>(vm, exec->argument(0));
+    RELEASE_ASSERT(getterSetter);
+    JSObject* getter = getterSetter->getter();
+    RELEASE_ASSERT(getter);
+    return JSValue::encode(getter);
+}
+
+EncodedJSValue JSC_HOST_CALL functionCreateCustomTestGetterSetter(ExecState* exec)
+{
+    VM& vm = exec->vm();
+    JSGlobalObject* globalObject = exec->lexicalGlobalObject();
+    return JSValue::encode(JSTestCustomGetterSetter::create(vm, globalObject, JSTestCustomGetterSetter::createStructure(vm, globalObject)));
 }
 
 template<typename ValueType>
