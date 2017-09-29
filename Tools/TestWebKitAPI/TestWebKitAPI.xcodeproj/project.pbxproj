@@ -228,6 +228,7 @@
 		5C0BF8951DD599CD00B00328 /* NavigatorLanguage.mm in Sources */ = {isa = PBXBuildFile; fileRef = E19DB9781B32137C00DB38D4 /* NavigatorLanguage.mm */; };
 		5C2936931D5BF70D00DEAB1E /* CookieAcceptPolicy.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */; };
 		5C2936961D5C00ED00DEAB1E /* CookieMessage.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 5C2936941D5BFD1900DEAB1E /* CookieMessage.html */; };
+		5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C4A84941F7EEFD400ACFC54 /* Configuration.mm */; };
 		5C6E65441D5CEFD400F7862E /* URLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C6E65411D5CEF8500F7862E /* URLParser.cpp */; };
 		5C726D6F1D3EE06E00C5E1A1 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C726D6E1D3EE06800C5E1A1 /* InstanceMethodSwizzler.mm */; };
 		5C7964101EB0278D0075D74C /* EventModifiers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C79640F1EB0269B0075D74C /* EventModifiers.cpp */; };
@@ -1342,6 +1343,7 @@
 		5C0BF88F1DD5999B00B00328 /* WebViewCanPasteZeroPng.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewCanPasteZeroPng.mm; sourceTree = "<group>"; };
 		5C2936911D5BF63E00DEAB1E /* CookieAcceptPolicy.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieAcceptPolicy.mm; sourceTree = "<group>"; };
 		5C2936941D5BFD1900DEAB1E /* CookieMessage.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = CookieMessage.html; sourceTree = "<group>"; };
+		5C4A84941F7EEFD400ACFC54 /* Configuration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Configuration.mm; sourceTree = "<group>"; };
 		5C5E633D1D0B67940085A025 /* UniqueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UniqueRef.cpp; sourceTree = "<group>"; };
 		5C6E65411D5CEF8500F7862E /* URLParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLParser.cpp; sourceTree = "<group>"; };
 		5C726D6D1D3EE06800C5E1A1 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstanceMethodSwizzler.h; path = cocoa/InstanceMethodSwizzler.h; sourceTree = "<group>"; };
@@ -1964,6 +1966,7 @@
 				5CB18BA71F5645B200EE23C4 /* ClickAutoFillButton.mm */,
 				1AAD19F51C7CE20300831E47 /* Coding.mm */,
 				7C3DB8E21D12129B00AE8CC3 /* CommandBackForward.mm */,
+				5C4A84941F7EEFD400ACFC54 /* Configuration.mm */,
 				A18AA8CC1C3FA218009B2B97 /* ContentFiltering.h */,
 				A14FC5861B8991B600D107EB /* ContentFiltering.mm */,
 				A14FC5891B89927100D107EB /* ContentFilteringPlugIn.mm */,
@@ -3195,6 +3198,7 @@
 				7C3965061CDD74F90094DBB8 /* Color.cpp in Sources */,
 				7C3DB8E41D12129B00AE8CC3 /* CommandBackForward.mm in Sources */,
 				1C9EB8411E380DA1005C6442 /* ComplexTextController.cpp in Sources */,
+				5C4A84951F7EEFFC00ACFC54 /* Configuration.mm in Sources */,
 				7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */,
 				A1146A8D1D2D7115000FE710 /* ContentFiltering.mm in Sources */,
 				A14FC5881B8991BF00D107EB /* ContentFiltering.mm in Sources */,

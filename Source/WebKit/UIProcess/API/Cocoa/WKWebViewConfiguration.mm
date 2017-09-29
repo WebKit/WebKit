@@ -193,6 +193,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
 #endif
 
 #if PLATFORM(MAC)
+    _cpuLimit = 0;
     _printsBackgrounds = NO;
     _respectsImageOrientation = NO;
     _showsURLsInToolTips = NO;
@@ -339,6 +340,7 @@ static _WKDragLiftDelay toDragLiftDelay(NSUInteger value)
     configuration->_dragLiftDelay = self->_dragLiftDelay;
 #endif
 #if PLATFORM(MAC)
+    configuration->_cpuLimit = self->_cpuLimit;
     configuration->_userInterfaceDirectionPolicy = self->_userInterfaceDirectionPolicy;
     configuration->_showsURLsInToolTips = self->_showsURLsInToolTips;
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;

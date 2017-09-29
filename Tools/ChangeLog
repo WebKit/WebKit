@@ -1,3 +1,12 @@
+2017-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Fix WKWebViewConfigurationPrivate after r222663
+        https://bugs.webkit.org/show_bug.cgi?id=177644
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKitCocoa/Configuration.mm: Added.
+        (TEST):
+
 2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
