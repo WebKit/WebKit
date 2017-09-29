@@ -1,3 +1,9 @@
+2017-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Unreviewed, temporarily mark http/tests/preconnect/link-rel-preconnect-https.html as flaky.
+
+        * platform/wk2/TestExpectations:
+
 2017-09-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Re-enable more pasteboard tests on iOS after r222595
