@@ -1,3 +1,14 @@
+2017-09-29  Don Olmstead  <don.olmstead@sony.com>
+
+        [WinCairo] Fix build after rev 222610
+        https://bugs.webkit.org/show_bug.cgi?id=177674
+
+        Reviewed by Per Arne Vollan.
+
+        No new tests. No change in behavior.
+
+        * platform/graphics/win/MediaPlayerPrivateMediaFoundation.cpp:
+
 2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS] Remove unused pre-iOS 11 codepaths for writing to the pasteboard

@@ -35,6 +35,7 @@
 #include "NotImplemented.h"
 #if USE(CAIRO)
 #include "PlatformContextCairo.h"
+#include <cairo.h>
 #endif
 #include <wtf/SoftLinking.h>
 
