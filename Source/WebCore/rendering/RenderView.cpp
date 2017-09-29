@@ -708,23 +708,23 @@ static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset
 
 IntRect RenderView::selectionBounds(bool clipToVisibleContent) const
 {
-    LayoutRect selRect = subtreeSelectionBounds(*this, clipToVisibleContent);
+    LayoutRect selRect = subtreeSelectionBounds(clipToVisibleContent);
     return snappedIntRect(selRect);
 }
 
-LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, bool clipToVisibleContent) const
+LayoutRect RenderView::subtreeSelectionBounds(bool clipToVisibleContent) const
 {
     typedef HashMap<RenderObject*, std::unique_ptr<RenderSelectionInfo>> SelectionMap;
     SelectionMap selectedObjects;
 
-    RenderObject* os = root.selectionData().selectionStart();
-    auto* selectionEnd = root.selectionData().selectionEnd();
+    RenderObject* os = selectionData().selectionStart();
+    auto* selectionEnd = selectionData().selectionEnd();
     RenderObject* stop = nullptr;
     if (selectionEnd)
-        stop = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
+        stop = rendererAfterPosition(selectionEnd, selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(os);
     while (os && os != stop) {
-        if ((os->canBeSelectionLeaf() || os == root.selectionData().selectionStart() || os == root.selectionData().selectionEnd()) && os->selectionState() != SelectionNone) {
+        if ((os->canBeSelectionLeaf() || os == selectionData().selectionStart() || os == selectionData().selectionEnd()) && os->selectionState() != SelectionNone) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
             selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, clipToVisibleContent));
             RenderBlock* cb = os->containingBlock();
@@ -758,20 +758,20 @@ LayoutRect RenderView::subtreeSelectionBounds(const SelectionSubtreeRoot& root, 
 
 void RenderView::repaintSelection() const
 {
-    repaintSubtreeSelection(*this);
+    repaintSubtreeSelection();
 }
 
-void RenderView::repaintSubtreeSelection(const SelectionSubtreeRoot& root) const
+void RenderView::repaintSubtreeSelection() const
 {
     HashSet<RenderBlock*> processedBlocks;
 
-    auto* selectionEnd = root.selectionData().selectionEnd();
+    auto* selectionEnd = selectionData().selectionEnd();
     RenderObject* end = nullptr;
     if (selectionEnd)
-        end = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
-    SelectionIterator selectionIterator(root.selectionData().selectionStart());
+        end = rendererAfterPosition(selectionEnd, selectionData().selectionEndPos().value());
+    SelectionIterator selectionIterator(selectionData().selectionStart());
     for (RenderObject* o = selectionIterator.current(); o && o != end; o = selectionIterator.next()) {
-        if (!o->canBeSelectionLeaf() && o != root.selectionData().selectionStart() && o != root.selectionData().selectionEnd())
+        if (!o->canBeSelectionLeaf() && o != selectionData().selectionStart() && o != selectionData().selectionEnd())
             continue;
         if (o->selectionState() == SelectionNone)
             continue;
@@ -812,59 +812,36 @@ void RenderView::setSelection(RenderObject* start, std::optional<unsigned> start
     m_selectionUnsplitStartPos = startPos;
     m_selectionUnsplitEnd = end;
     m_selectionUnsplitEndPos = endPos;
-
-    RenderSubtreesMap singleSubtreeMap;
-    singleSubtreeMap.set(this, SelectionSubtreeData(start, startPos, end, endPos));
-    updateSelectionForSubtrees(singleSubtreeMap, blockRepaintMode);
+    auto oldSelectionData = std::make_unique<OldSelectionData>();
+    clearSubtreeSelection(blockRepaintMode, *oldSelectionData);
+    setSelectionData(SelectionSubtreeData(start, startPos, end, endPos));
+    applySubtreeSelection(blockRepaintMode, *oldSelectionData);
 }
 
-void RenderView::updateSelectionForSubtrees(RenderSubtreesMap& renderSubtreesMap, SelectionRepaintMode blockRepaintMode)
+static inline bool isValidObjectForNewSelection(const RenderView& view, const RenderObject& object)
 {
-    SubtreeOldSelectionDataMap oldSelectionDataMap;
-    for (auto& subtreeSelectionInfo : renderSubtreesMap) {
-        SelectionSubtreeRoot& root = *subtreeSelectionInfo.key;
-        std::unique_ptr<OldSelectionData> oldSelectionData = std::make_unique<OldSelectionData>();
-
-        clearSubtreeSelection(root, blockRepaintMode, *oldSelectionData);
-        oldSelectionDataMap.set(&root, WTFMove(oldSelectionData));
-
-        root.setSelectionData(subtreeSelectionInfo.value);
-    }
-
-    // Update selection status for the objects inside the selection subtrees.
-    // This needs to be done after the previous loop updated the selectionStart/End
-    // parameters of all subtrees because we're going to be climbing up the containing
-    // block chain and we might end up in a different selection subtree.
-    for (const auto* subtreeSelectionRoot : renderSubtreesMap.keys()) {
-        OldSelectionData& oldSelectionData = *oldSelectionDataMap.get(subtreeSelectionRoot);
-        applySubtreeSelection(*subtreeSelectionRoot, blockRepaintMode, oldSelectionData);
-    }
+    return (object.canBeSelectionLeaf() || &object == view.selectionData().selectionStart() || &object == view.selectionData().selectionEnd()) && object.selectionState() != RenderObject::SelectionNone && object.containingBlock();
 }
 
-static inline bool isValidObjectForNewSelection(const SelectionSubtreeRoot& root, const RenderObject& object)
-{
-    return (object.canBeSelectionLeaf() || &object == root.selectionData().selectionStart() || &object == root.selectionData().selectionEnd()) && object.selectionState() != RenderObject::SelectionNone && object.containingBlock();
-}
-
-void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, SelectionRepaintMode blockRepaintMode, OldSelectionData& oldSelectionData) const
+void RenderView::clearSubtreeSelection(SelectionRepaintMode blockRepaintMode, OldSelectionData& oldSelectionData) const
 {
     // Record the old selected objects.  These will be used later
     // when we compare against the new selected objects.
-    oldSelectionData.selectionStartPos = root.selectionData().selectionStartPos();
-    oldSelectionData.selectionEndPos = root.selectionData().selectionEndPos();
+    oldSelectionData.selectionStartPos = selectionData().selectionStartPos();
+    oldSelectionData.selectionEndPos = selectionData().selectionEndPos();
     
     // Blocks contain selected objects and fill gaps between them, either on the left, right, or in between lines and blocks.
     // In order to get the repaint rect right, we have to examine left, middle, and right rects individually, since otherwise
     // the union of those rects might remain the same even when changes have occurred.
 
-    RenderObject* os = root.selectionData().selectionStart();
-    auto* selectionEnd = root.selectionData().selectionEnd();
+    RenderObject* os = selectionData().selectionStart();
+    auto* selectionEnd = selectionData().selectionEnd();
     RenderObject* stop = nullptr;
     if (selectionEnd)
-        stop = rendererAfterPosition(selectionEnd, root.selectionData().selectionEndPos().value());
+        stop = rendererAfterPosition(selectionEnd, selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(os);
     while (os && os != stop) {
-        if (isValidObjectForNewSelection(root, *os)) {
+        if (isValidObjectForNewSelection(*this, *os)) {
             // Blocks are responsible for painting line gaps and margin gaps.  They must be examined as well.
             oldSelectionData.selectedObjects.set(os, std::make_unique<RenderSelectionInfo>(*os, true));
             if (blockRepaintMode == RepaintNewXOROld) {
@@ -886,31 +863,28 @@ void RenderView::clearSubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         selectedObject->setSelectionStateIfNeeded(SelectionNone);
 }
 
-void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, SelectionRepaintMode blockRepaintMode, const OldSelectionData& oldSelectionData)
+void RenderView::applySubtreeSelection(SelectionRepaintMode blockRepaintMode, const OldSelectionData& oldSelectionData)
 {
     // Update the selection status of all objects between selectionStart and selectionEnd
-    if (root.selectionData().selectionStart() && root.selectionData().selectionStart() == root.selectionData().selectionEnd())
-        root.selectionData().selectionStart()->setSelectionStateIfNeeded(SelectionBoth);
+    if (selectionData().selectionStart() && selectionData().selectionStart() == selectionData().selectionEnd())
+        selectionData().selectionStart()->setSelectionStateIfNeeded(SelectionBoth);
     else {
-        if (root.selectionData().selectionStart())
-            root.selectionData().selectionStart()->setSelectionStateIfNeeded(SelectionStart);
-        if (root.selectionData().selectionEnd())
-            root.selectionData().selectionEnd()->setSelectionStateIfNeeded(SelectionEnd);
+        if (selectionData().selectionStart())
+            selectionData().selectionStart()->setSelectionStateIfNeeded(SelectionStart);
+        if (selectionData().selectionEnd())
+            selectionData().selectionEnd()->setSelectionStateIfNeeded(SelectionEnd);
     }
 
-    RenderObject* selectionStart = root.selectionData().selectionStart();
-    auto* selectionDataEnd = root.selectionData().selectionEnd();
+    RenderObject* selectionStart = selectionData().selectionStart();
+    auto* selectionDataEnd = selectionData().selectionEnd();
     RenderObject* selectionEnd = nullptr;
     if (selectionDataEnd)
-        selectionEnd = rendererAfterPosition(selectionDataEnd, root.selectionData().selectionEndPos().value());
+        selectionEnd = rendererAfterPosition(selectionDataEnd, selectionData().selectionEndPos().value());
     SelectionIterator selectionIterator(selectionStart);
     for (RenderObject* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
-        if (currentRenderer == root.selectionData().selectionStart() || currentRenderer == root.selectionData().selectionEnd())
+        if (currentRenderer == selectionData().selectionStart() || currentRenderer == selectionData().selectionEnd())
             continue;
         if (!currentRenderer->canBeSelectionLeaf())
-            continue;
-        // FIXME: Move this logic to SelectionIterator::next()
-        if (&currentRenderer->selectionRoot() != &root)
             continue;
         currentRenderer->setSelectionStateIfNeeded(SelectionInside);
     }
@@ -924,7 +898,7 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
     SelectedBlockMap newSelectedBlocks;
     selectionIterator = SelectionIterator(selectionStart);
     for (RenderObject* currentRenderer = selectionStart; currentRenderer && currentRenderer != selectionEnd; currentRenderer = selectionIterator.next()) {
-        if (isValidObjectForNewSelection(root, *currentRenderer)) {
+        if (isValidObjectForNewSelection(*this, *currentRenderer)) {
             std::unique_ptr<RenderSelectionInfo> selectionInfo = std::make_unique<RenderSelectionInfo>(*currentRenderer, true);
 
 #if ENABLE(SERVICE_CONTROLS)
@@ -960,8 +934,8 @@ void RenderView::applySubtreeSelection(const SelectionSubtreeRoot& root, Selecti
         RenderSelectionInfo* newInfo = newSelectedObjects.get(obj);
         RenderSelectionInfo* oldInfo = selectedObjectInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
-            || (root.selectionData().selectionStart() == obj && oldSelectionData.selectionStartPos != root.selectionData().selectionStartPos())
-            || (root.selectionData().selectionEnd() == obj && oldSelectionData.selectionEndPos != root.selectionData().selectionEndPos())) {
+            || (selectionData().selectionStart() == obj && oldSelectionData.selectionStartPos != selectionData().selectionStartPos())
+            || (selectionData().selectionEnd() == obj && oldSelectionData.selectionEndPos != selectionData().selectionEndPos())) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();

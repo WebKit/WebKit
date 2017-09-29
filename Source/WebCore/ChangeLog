@@ -1,3 +1,28 @@
+2017-09-29  Zalan Bujtas  <zalan@apple.com>
+
+        Remove SelectionSubtreeRoot::RenderSubtreesMap
+        https://bugs.webkit.org/show_bug.cgi?id=177685
+
+        Reviewed by Andy Estes.
+
+        This is in preparation of removing redundant SelectionSubtreeRoot.
+        (Now that we removed regions, RenderView is the only selection root) 
+
+        No change in functionality.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::selectionBounds const):
+        (WebCore::RenderView::subtreeSelectionBounds const):
+        (WebCore::RenderView::repaintSelection const):
+        (WebCore::RenderView::repaintSubtreeSelection const):
+        (WebCore::RenderView::setSelection):
+        (WebCore::isValidObjectForNewSelection):
+        (WebCore::RenderView::clearSubtreeSelection const):
+        (WebCore::RenderView::applySubtreeSelection):
+        (WebCore::RenderView::updateSelectionForSubtrees): Deleted.
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.h:
+
 2017-09-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
 
         [Curl] Extract a features to manage HTTP communication from ResourceHandle

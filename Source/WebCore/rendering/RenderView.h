@@ -311,11 +311,10 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
-    void clearSubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, OldSelectionData&) const;
-    void updateSelectionForSubtrees(RenderSubtreesMap&, SelectionRepaintMode);
-    void applySubtreeSelection(const SelectionSubtreeRoot&, SelectionRepaintMode, const OldSelectionData&);
-    LayoutRect subtreeSelectionBounds(const SelectionSubtreeRoot&, bool clipToVisibleContent = true) const;
-    void repaintSubtreeSelection(const SelectionSubtreeRoot&) const;
+    void clearSubtreeSelection(SelectionRepaintMode blockRepaintMode, OldSelectionData&) const;
+    void applySubtreeSelection(SelectionRepaintMode, const OldSelectionData&);
+    LayoutRect subtreeSelectionBounds(bool clipToVisibleContent = true) const;
+    void repaintSubtreeSelection() const;
 
 private:
     FrameView& m_frameView;

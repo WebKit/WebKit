@@ -89,9 +89,6 @@ public:
         std::optional<unsigned> m_selectionEndPos;
     };
 
-    typedef HashMap<SelectionSubtreeRoot*, SelectionSubtreeData> RenderSubtreesMap;
-    typedef HashMap<const SelectionSubtreeRoot*, std::unique_ptr<OldSelectionData>> SubtreeOldSelectionDataMap;
-
     SelectionSubtreeRoot();
 
     SelectionSubtreeData& selectionData() { return m_selectionSubtreeData; }
