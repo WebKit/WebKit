@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,42 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "SharedMemory.h"
+#include "SharedStringHashTable.h"
+#include <WebCore/SharedStringHash.h>
 #include <wtf/HashSet.h>
-#include <wtf/RefCounted.h>
+#include <wtf/RunLoop.h>
 
-namespace WebCore {
+namespace WebKit {
 
-typedef uint64_t SharedStringHash;
-class Page;
-class URL;
-
-class VisitedLinkStore : public RefCounted<VisitedLinkStore> {
+class SharedStringHashStore {
 public:
-    WEBCORE_EXPORT VisitedLinkStore();
-    WEBCORE_EXPORT virtual ~VisitedLinkStore();
+    class Client {
+    public:
+        virtual ~Client() { }
 
-    // FIXME: These two members should only take the link hash.
-    virtual bool isLinkVisited(Page&, SharedStringHash, const URL& baseURL, const AtomicString& attributeURL) = 0;
-    virtual void addVisitedLink(Page&, SharedStringHash) = 0;
+        virtual void didInvalidateSharedMemory() = 0;
+        virtual void didAddSharedStringHashes(const Vector<WebCore::SharedStringHash>&) = 0;
+    };
 
-    void addPage(Page&);
-    void removePage(Page&);
+    SharedStringHashStore(Client&);
 
-    WEBCORE_EXPORT void invalidateStylesForAllLinks();
-    WEBCORE_EXPORT void invalidateStylesForLink(SharedStringHash);
+    bool createSharedMemoryHandle(SharedMemory::Handle&);
+    void add(WebCore::SharedStringHash);
+    void clear();
+
+    bool isEmpty() const { return !m_keyCount; }
 
 private:
-    HashSet<Page*> m_pages;
+    void resizeTable(unsigned newTableSize);
+    void pendingSharedStringHashesTimerFired();
+
+    Client& m_client;
+    unsigned m_keyCount { 0 };
+    unsigned m_tableSize { 0 };
+    SharedStringHashTable m_table;
+    HashSet<WebCore::SharedStringHash, WebCore::SharedStringHashHash> m_pendingSharedStringHashes;
+    RunLoop::Timer<SharedStringHashStore> m_pendingSharedStringHashesTimer;
 };
 
-} // namespace WebCore
+} // namespace WebKit

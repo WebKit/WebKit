@@ -71,14 +71,14 @@ VisitedLinkTableController::~VisitedLinkTableController()
     visitedLinkTableControllers().remove(m_identifier);
 }
 
-bool VisitedLinkTableController::isLinkVisited(Page&, LinkHash linkHash, const URL&, const AtomicString&)
+bool VisitedLinkTableController::isLinkVisited(Page&, SharedStringHash linkHash, const URL&, const AtomicString&)
 {
-    return m_visitedLinkTable.isLinkVisited(linkHash);
+    return m_visitedLinkTable.contains(linkHash);
 }
 
-void VisitedLinkTableController::addVisitedLink(Page& page, LinkHash linkHash)
+void VisitedLinkTableController::addVisitedLink(Page& page, SharedStringHash linkHash)
 {
-    if (m_visitedLinkTable.isLinkVisited(linkHash))
+    if (m_visitedLinkTable.contains(linkHash))
         return;
 
     WebPage* webPage = WebPage::fromCorePage(&page);
@@ -99,7 +99,7 @@ void VisitedLinkTableController::setVisitedLinkTable(const SharedMemory::Handle&
     invalidateStylesForAllLinks();
 }
 
-void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::LinkHash>& linkHashes)
+void VisitedLinkTableController::visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>& linkHashes)
 {
     for (auto linkHash : linkHashes)
         invalidateStylesForLink(linkHash);

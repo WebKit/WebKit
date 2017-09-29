@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkStore_h
-#define VisitedLinkStore_h
+#pragma once
 
 #include "APIObject.h"
 #include "MessageReceiver.h"
-#include "VisitedLinkTable.h"
+#include "SharedStringHashStore.h"
 #include "WebPageProxy.h"
 #include "WebProcessLifetimeObserver.h"
-#include <WebCore/LinkHash.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Identified.h>
 #include <wtf/RefCounted.h>
-#include <wtf/RunLoop.h>
 
 namespace WebKit {
 
 class WebPageProxy;
 class WebProcessProxy;
     
-class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public WebProcessLifetimeObserver, public Identified<VisitedLinkStore>  {
+class VisitedLinkStore final : public API::ObjectImpl<API::Object::Type::VisitedLinkStore>, private IPC::MessageReceiver, public WebProcessLifetimeObserver, public Identified<VisitedLinkStore>, private SharedStringHashStore::Client {
 public:
     static Ref<VisitedLinkStore> create();
 
@@ -53,34 +50,27 @@ public:
     void addProcess(WebProcessProxy&);
     void removeProcess(WebProcessProxy&);
 
-    void addVisitedLinkHash(WebCore::LinkHash);
+    void addVisitedLinkHash(WebCore::SharedStringHash);
     void removeAll();
 
 private:
     // IPC::MessageReceiver
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     // WebProcessLifetimeObserver
-    void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) override;
-    void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) override;
+    void webProcessWillOpenConnection(WebProcessProxy&, IPC::Connection&) final;
+    void webProcessDidCloseConnection(WebProcessProxy&, IPC::Connection&) final;
 
-    void addVisitedLinkHashFromPage(uint64_t pageID, WebCore::LinkHash);
+    // SharedStringHashStore::Client
+    void didInvalidateSharedMemory() final;
+    void didAddSharedStringHashes(const Vector<WebCore::SharedStringHash>&) final;
 
-    void pendingVisitedLinksTimerFired();
+    void addVisitedLinkHashFromPage(uint64_t pageID, WebCore::SharedStringHash);
 
-    void resizeTable(unsigned newTableSize);
-    void sendTable(WebProcessProxy&);
+    void sendStoreHandleToProcess(WebProcessProxy&);
 
     HashSet<WebProcessProxy*> m_processes;
-
-    unsigned m_keyCount;
-    unsigned m_tableSize;
-    VisitedLinkTable m_table;
-
-    HashSet<WebCore::LinkHash, WebCore::LinkHashHash> m_pendingVisitedLinks;
-    RunLoop::Timer<VisitedLinkStore> m_pendingVisitedLinksTimer;
+    SharedStringHashStore m_linkHashStore;
 };
 
 } // namespace WebKit
-
-#endif // VisitedLinkStore_h

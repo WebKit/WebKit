@@ -131,7 +131,7 @@ class ActivityStateChangeObserver;
 class VisitedLinkStore;
 class WebGLStateTracker;
 
-typedef uint64_t LinkHash;
+typedef uint64_t SharedStringHash;
 
 enum FindDirection {
     FindDirectionForward,
@@ -398,7 +398,7 @@ public:
     JSC::Debugger* debugger() const { return m_debugger; }
 
     WEBCORE_EXPORT void invalidateStylesForAllLinks();
-    WEBCORE_EXPORT void invalidateStylesForLink(LinkHash);
+    WEBCORE_EXPORT void invalidateStylesForLink(SharedStringHash);
 
     void invalidateInjectedStyleSheetCacheInAllFrames();
 

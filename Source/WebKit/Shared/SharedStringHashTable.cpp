@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "VisitedLinkTable.h"
+#include "SharedStringHashTable.h"
 
 #include "SharedMemory.h"
 
@@ -32,14 +32,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-VisitedLinkTable::VisitedLinkTable()
-    : m_tableSize(0)
-    , m_tableSizeMask(0)
-    , m_table(nullptr)
+SharedStringHashTable::SharedStringHashTable()
 {
 }
 
-VisitedLinkTable::~VisitedLinkTable()
+SharedStringHashTable::~SharedStringHashTable()
 {
 }
 
@@ -52,15 +49,15 @@ static inline bool isPowerOf2(unsigned v)
 }
 #endif
 
-void VisitedLinkTable::setSharedMemory(Ref<SharedMemory>&& sharedMemory)
+void SharedStringHashTable::setSharedMemory(Ref<SharedMemory>&& sharedMemory)
 {
     m_sharedMemory = WTFMove(sharedMemory);
     
     ASSERT(m_sharedMemory);
-    ASSERT(!(m_sharedMemory->size() % sizeof(LinkHash)));
+    ASSERT(!(m_sharedMemory->size() % sizeof(SharedStringHash)));
 
-    m_table = static_cast<LinkHash*>(m_sharedMemory->data());
-    m_tableSize = m_sharedMemory->size() / sizeof(LinkHash);
+    m_table = static_cast<SharedStringHash*>(m_sharedMemory->data());
+    m_tableSize = m_sharedMemory->size() / sizeof(SharedStringHash);
     ASSERT(isPowerOf2(m_tableSize));
     
     m_tableSizeMask = m_tableSize - 1;
@@ -76,17 +73,17 @@ static inline unsigned doubleHash(unsigned key)
     return key;
 }
     
-bool VisitedLinkTable::addLinkHash(LinkHash linkHash)
+bool SharedStringHashTable::add(SharedStringHash sharedStringHash)
 {
     ASSERT(m_sharedMemory);
 
     int k = 0;
-    LinkHash* table = m_table;
+    SharedStringHash* table = m_table;
     int sizeMask = m_tableSizeMask;
-    unsigned h = static_cast<unsigned>(linkHash);
+    unsigned h = static_cast<unsigned>(sharedStringHash);
     int i = h & sizeMask;
-  
-    LinkHash* entry;
+
+    SharedStringHash* entry;
     while (1) {
         entry = table + i;
 
@@ -95,7 +92,7 @@ bool VisitedLinkTable::addLinkHash(LinkHash linkHash)
             break;
 
         // Check if the same link hash is in the table already.
-        if (*entry == linkHash)
+        if (*entry == sharedStringHash)
             return false;
 
         if (!k)
@@ -103,22 +100,22 @@ bool VisitedLinkTable::addLinkHash(LinkHash linkHash)
         i = (i + k) & sizeMask;
     }
 
-    *entry = linkHash;
+    *entry = sharedStringHash;
     return true;
 }
 
-bool VisitedLinkTable::isLinkVisited(LinkHash linkHash) const
+bool SharedStringHashTable::contains(SharedStringHash sharedStringHash) const
 {
     if (!m_sharedMemory)
         return false;
 
     int k = 0;
-    LinkHash* table = m_table;
+    SharedStringHash* table = m_table;
     int sizeMask = m_tableSizeMask;
-    unsigned h = static_cast<unsigned>(linkHash);
+    unsigned h = static_cast<unsigned>(sharedStringHash);
     int i = h & sizeMask;
     
-    LinkHash* entry;
+    SharedStringHash* entry;
     while (1) {
         entry = table + i;
 
@@ -126,7 +123,7 @@ bool VisitedLinkTable::isLinkVisited(LinkHash linkHash) const
         if (!*entry)
             break;
         
-        if (*entry == linkHash)
+        if (*entry == sharedStringHash)
             return true;
         
         if (!k)
@@ -137,7 +134,7 @@ bool VisitedLinkTable::isLinkVisited(LinkHash linkHash) const
     return false;
 }
 
-void VisitedLinkTable::clear()
+void SharedStringHashTable::clear()
 {
     m_tableSize = 0;
     m_tableSizeMask = 0;

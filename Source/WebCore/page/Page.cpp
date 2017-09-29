@@ -1201,7 +1201,7 @@ void Page::invalidateStylesForAllLinks()
     }
 }
 
-void Page::invalidateStylesForLink(LinkHash linkHash)
+void Page::invalidateStylesForLink(SharedStringHash linkHash)
 {
     for (Frame* frame = &m_mainFrame.get(); frame; frame = frame->tree().traverseNext()) {
         if (!frame->document())

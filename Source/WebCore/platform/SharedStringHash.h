@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef LinkHash_h
-#define LinkHash_h
+#pragma once
 
 #include <wtf/Forward.h>
 #include <wtf/text/StringHash.h>
@@ -33,16 +32,16 @@ namespace WebCore {
 
 class URL;
 
-typedef uint64_t LinkHash;
+typedef uint64_t SharedStringHash;
 
-// Use the low 32-bits of the 64-bit LinkHash as the key for HashSets.
-struct LinkHashHash {
-    static unsigned hash(LinkHash key) { return static_cast<unsigned>(key); }
-    static bool equal(LinkHash a, LinkHash b) { return a == b; }
+// Use the low 32-bits of the 64-bit SharedStringHash as the key for HashSets.
+struct SharedStringHashHash {
+    static unsigned hash(SharedStringHash key) { return static_cast<unsigned>(key); }
+    static bool equal(SharedStringHash a, SharedStringHash b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 
     // See AlreadyHashed::avoidDeletedValue.
-    static unsigned avoidDeletedValue(LinkHash hash64)
+    static unsigned avoidDeletedValue(SharedStringHash hash64)
     {
         ASSERT(hash64);
         unsigned hash = static_cast<unsigned>(hash64);
@@ -54,15 +53,13 @@ struct LinkHashHash {
 };
 
 // Returns the hash of the string that will be used for visited link coloring.
-WEBCORE_EXPORT LinkHash visitedLinkHash(const String& url);
-WEBCORE_EXPORT LinkHash visitedLinkHash(const UChar* url, unsigned length);
+WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const String& url);
+WEBCORE_EXPORT SharedStringHash computeSharedStringHash(const UChar* url, unsigned length);
 
 // Resolves the potentially relative URL "attributeURL" relative to the given
 // base URL, and returns the hash of the string that will be used for visited
 // link coloring. It will return the special value of 0 if attributeURL does not
 // look like a relative URL.
-LinkHash visitedLinkHash(const URL& base, const AtomicString& attributeURL);
+SharedStringHash computeSharedStringHash(const URL& base, const AtomicString& attributeURL);
 
-}  // namespace WebCore
-
-#endif  // LinkHash_h
+} // namespace WebCore

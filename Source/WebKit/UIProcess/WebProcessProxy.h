@@ -38,7 +38,7 @@
 #include "VisibleWebPageCounter.h"
 #include "WebConnectionToWebProcess.h"
 #include "WebProcessProxyMessages.h"
-#include <WebCore/LinkHash.h>
+#include <WebCore/SharedStringHash.h>
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>

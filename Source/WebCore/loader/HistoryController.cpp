@@ -41,13 +41,13 @@
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "HistoryItem.h"
-#include "LinkHash.h"
 #include "Logging.h"
 #include "MainFrame.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "ScrollingCoordinator.h"
 #include "SerializedScriptValue.h"
+#include "SharedStringHash.h"
 #include "VisitedLinkStore.h"
 #include <wtf/text/CString.h>
 
@@ -55,7 +55,7 @@ namespace WebCore {
 
 static inline void addVisitedLink(Page& page, const URL& url)
 {
-    page.visitedLinkStore().addVisitedLink(page, visitedLinkHash(url.string()));
+    page.visitedLinkStore().addVisitedLink(page, computeSharedStringHash(url.string()));
 }
 
 HistoryController::HistoryController(Frame& frame)

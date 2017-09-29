@@ -66,16 +66,16 @@ void VisitedLinkState::invalidateStyleForAllLinks()
     }
 }
 
-inline static LinkHash linkHashForElement(Document& document, const Element& element)
+inline static SharedStringHash linkHashForElement(Document& document, const Element& element)
 {
     if (is<HTMLAnchorElement>(element))
         return downcast<HTMLAnchorElement>(element).visitedLinkHash();
     if (const AtomicString* attribute = linkAttribute(element))
-        return WebCore::visitedLinkHash(document.baseURL(), *attribute);
+        return WebCore::computeSharedStringHash(document.baseURL(), *attribute);
     return 0;
 }
 
-void VisitedLinkState::invalidateStyleForLink(LinkHash linkHash)
+void VisitedLinkState::invalidateStyleForLink(SharedStringHash linkHash)
 {
     if (!m_linksCheckedForVisitedState.contains(linkHash))
         return;
@@ -98,11 +98,11 @@ EInsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (attribute->isEmpty())
         return InsideVisitedLink;
 
-    LinkHash hash;
+    SharedStringHash hash;
     if (is<HTMLAnchorElement>(element))
         hash = downcast<HTMLAnchorElement>(element).visitedLinkHash();
     else
-        hash = WebCore::visitedLinkHash(element.document().baseURL(), *attribute);
+        hash = WebCore::computeSharedStringHash(element.document().baseURL(), *attribute);
 
     if (!hash)
         return InsideUnvisitedLink;

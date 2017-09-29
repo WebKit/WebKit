@@ -567,8 +567,8 @@ class EmptyUserContentProvider final : public UserContentProvider {
 };
 
 class EmptyVisitedLinkStore final : public VisitedLinkStore {
-    bool isLinkVisited(Page&, LinkHash, const URL&, const AtomicString&) final { return false; }
-    void addVisitedLink(Page&, LinkHash) final { }
+    bool isLinkVisited(Page&, SharedStringHash, const URL&, const AtomicString&) final { return false; }
+    void addVisitedLink(Page&, SharedStringHash) final { }
 };
 
 RefPtr<PopupMenu> EmptyChromeClient::createPopupMenu(PopupMenuClient&) const

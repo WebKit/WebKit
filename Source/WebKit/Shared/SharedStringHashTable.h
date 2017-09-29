@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef VisitedLinkTable_h
-#define VisitedLinkTable_h
+#pragma once
 
-#include <WebCore/LinkHash.h>
+#include <WebCore/SharedStringHash.h>
 #include <wtf/RefPtr.h>
 
 namespace WebKit {
 
 class SharedMemory;
 
-class VisitedLinkTable {
+class SharedStringHashTable {
 public:
-    VisitedLinkTable();
-    ~VisitedLinkTable();
+    SharedStringHashTable();
+    ~SharedStringHashTable();
 
     void setSharedMemory(Ref<SharedMemory>&&);
 
-    // This should only be called from the UI process.
-    bool addLinkHash(WebCore::LinkHash);
+    // Can only be called if the underlying shared memory is in read / write mode.
+    bool add(WebCore::SharedStringHash);
 
-    bool isLinkVisited(WebCore::LinkHash) const;
+    bool contains(WebCore::SharedStringHash) const;
 
     SharedMemory* sharedMemory() const { return m_sharedMemory.get(); }
     void clear();
@@ -51,11 +50,9 @@ public:
 private:
     RefPtr<SharedMemory> m_sharedMemory;
 
-    unsigned m_tableSize;
-    unsigned m_tableSizeMask;
-    WebCore::LinkHash* m_table;
+    unsigned m_tableSize { 0 };
+    unsigned m_tableSizeMask { 0 };
+    WebCore::SharedStringHash* m_table { nullptr };
 };
 
 }
-
-#endif // VisitedLinkTable_h

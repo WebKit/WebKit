@@ -2324,7 +2324,6 @@ set(WebCore_SOURCES
     platform/LengthBox.cpp
     platform/LengthPoint.cpp
     platform/LengthSize.cpp
-    platform/LinkHash.cpp
     platform/LocalizedStrings.cpp
     platform/Logging.cpp
     platform/LowPowerModeNotifier.cpp
@@ -2348,6 +2347,7 @@ set(WebCore_SOURCES
     platform/ScrollbarThemeComposite.cpp
     platform/SharedBuffer.cpp
     platform/SharedBufferChunkReader.cpp
+    platform/SharedStringHash.cpp
     platform/StaticPasteboard.cpp
     platform/Theme.cpp
     platform/ThreadGlobalData.cpp

@@ -180,10 +180,11 @@ set(WebKit_SOURCES
     Shared/SessionTracker.cpp
     Shared/ShareableBitmap.cpp
     Shared/ShareableResource.cpp
+    Shared/SharedStringHashStore.cpp
+    Shared/SharedStringHashTable.cpp
     Shared/StatisticsData.cpp
     Shared/UpdateInfo.cpp
     Shared/UserData.cpp
-    Shared/VisitedLinkTable.cpp
     Shared/WebBackForwardListItem.cpp
     Shared/WebCompiledContentRuleList.cpp
     Shared/WebCompiledContentRuleListData.cpp

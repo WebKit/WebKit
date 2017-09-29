@@ -75,17 +75,17 @@ void WebVisitedLinkStore::removeAllVisitedLinks()
 
 void WebVisitedLinkStore::addVisitedLink(const String& urlString)
 {
-    addVisitedLinkHash(visitedLinkHash(urlString));
+    addVisitedLinkHash(computeSharedStringHash(urlString));
 }
 
-bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 
     return m_visitedLinkHashes.contains(linkHash);
 }
 
-void WebVisitedLinkStore::addVisitedLink(Page&, LinkHash linkHash)
+void WebVisitedLinkStore::addVisitedLink(Page&, SharedStringHash linkHash)
 {
     if (!s_shouldTrackVisitedLinks)
         return;
@@ -117,7 +117,7 @@ void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& sourcePage)
     history->addVisitedLinksToVisitedLinkStore(*this);
 }
 
-void WebVisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
+void WebVisitedLinkStore::addVisitedLinkHash(SharedStringHash linkHash)
 {
     ASSERT(s_shouldTrackVisitedLinks);
     m_visitedLinkHashes.add(linkHash);

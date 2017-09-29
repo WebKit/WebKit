@@ -1,3 +1,62 @@
+2017-09-29  Chris Dumez  <cdumez@apple.com>
+
+        Split some logic out of VisitedLinkStore and make it reusable
+        https://bugs.webkit.org/show_bug.cgi?id=177575
+
+        Reviewed by Alex Christensen.
+
+        Split some logic out of VisitedLinkStore and make it reusable for other purposes than
+        visited links and from other processes than the UIProcess.
+
+        The plan is to reuse the new SharedStringHashStore for Service Worker registration
+        on StorageProcess side and querying on WebContent process side.
+
+        * CMakeLists.txt:
+        * Shared/SharedStringHashStore.cpp: Added.
+        (WebKit::nextPowerOf2):
+        (WebKit::tableSizeForKeyCount):
+        (WebKit::SharedStringHashStore::SharedStringHashStore):
+        (WebKit::SharedStringHashStore::createSharedMemoryHandle):
+        (WebKit::SharedStringHashStore::add):
+        (WebKit::SharedStringHashStore::clear):
+        (WebKit::SharedStringHashStore::resizeTable):
+        (WebKit::SharedStringHashStore::pendingSharedStringHashesTimerFired):
+        * Shared/SharedStringHashStore.h: Copied from Source/WebKit/WebProcess/WebPage/VisitedLinkTableController.h.
+        (WebKit::SharedStringHashStore::Client::~Client):
+        (WebKit::SharedStringHashStore::isEmpty const):
+        * Shared/SharedStringHashTable.cpp: Renamed from Source/WebKit/Shared/VisitedLinkTable.cpp.
+        (WebKit::SharedStringHashTable::SharedStringHashTable):
+        (WebKit::SharedStringHashTable::~SharedStringHashTable):
+        (WebKit::SharedStringHashTable::setSharedMemory):
+        (WebKit::SharedStringHashTable::add):
+        (WebKit::SharedStringHashTable::contains const):
+        (WebKit::SharedStringHashTable::clear):
+        * Shared/SharedStringHashTable.h: Renamed from Source/WebKit/Shared/VisitedLinkTable.h.
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextAddVisitedLink):
+        * UIProcess/API/Cocoa/_WKVisitedLinkStore.mm:
+        (-[_WKVisitedLinkStore addVisitedLinkWithURL:]):
+        * UIProcess/VisitedLinkStore.cpp:
+        (WebKit::VisitedLinkStore::VisitedLinkStore):
+        (WebKit::VisitedLinkStore::addProcess):
+        (WebKit::VisitedLinkStore::addVisitedLinkHash):
+        (WebKit::VisitedLinkStore::removeAll):
+        (WebKit::VisitedLinkStore::addVisitedLinkHashFromPage):
+        (WebKit::VisitedLinkStore::sendStoreHandleToProcess):
+        (WebKit::VisitedLinkStore::didInvalidateSharedMemory):
+        (WebKit::VisitedLinkStore::didAddSharedStringHashes):
+        * UIProcess/VisitedLinkStore.h:
+        * UIProcess/WebProcessPool.cpp:
+        * UIProcess/WebProcessPool.h:
+        * UIProcess/WebProcessProxy.h:
+        * WebKit.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/VisitedLinkTableController.cpp:
+        (WebKit::VisitedLinkTableController::isLinkVisited):
+        (WebKit::VisitedLinkTableController::addVisitedLink):
+        (WebKit::VisitedLinkTableController::visitedLinkStateChanged):
+        * WebProcess/WebPage/VisitedLinkTableController.h:
+        * WebProcess/WebPage/VisitedLinkTableController.messages.in:
+
 2017-09-28  Alex Christensen  <achristensen@webkit.org>
 
         Add WKWebViewConfiguration SPI equivalent to WKPageConfigurationSetBackgroundCPULimit

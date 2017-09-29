@@ -27,7 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "SharedMemory.h"
-#include "VisitedLinkTable.h"
+#include "SharedStringHashTable.h"
 #include <WebCore/VisitedLinkStore.h>
 
 namespace WebKit {
@@ -41,19 +41,19 @@ private:
     explicit VisitedLinkTableController(uint64_t identifier);
 
     // WebCore::VisitedLinkStore.
-    bool isLinkVisited(WebCore::Page&, WebCore::LinkHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
-    void addVisitedLink(WebCore::Page&, WebCore::LinkHash) override;
+    bool isLinkVisited(WebCore::Page&, WebCore::SharedStringHash, const WebCore::URL& baseURL, const AtomicString& attributeURL) override;
+    void addVisitedLink(WebCore::Page&, WebCore::SharedStringHash) override;
 
     // IPC::MessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     void setVisitedLinkTable(const SharedMemory::Handle&);
-    void visitedLinkStateChanged(const Vector<WebCore::LinkHash>&);
+    void visitedLinkStateChanged(const Vector<WebCore::SharedStringHash>&);
     void allVisitedLinkStateChanged();
     void removeAllVisitedLinks();
 
     uint64_t m_identifier;
-    VisitedLinkTable m_visitedLinkTable;
+    SharedStringHashTable m_visitedLinkTable;
 };
 
 } // namespace WebKit

@@ -315,7 +315,7 @@ void WKContextAddVisitedLink(WKContextRef contextRef, WKStringRef visitedURL)
     if (visitedURLString.isEmpty())
         return;
 
-    toImpl(contextRef)->visitedLinkStore().addVisitedLinkHash(visitedLinkHash(visitedURLString));
+    toImpl(contextRef)->visitedLinkStore().addVisitedLinkHash(computeSharedStringHash(visitedURLString));
 }
 
 void WKContextClearVisitedLinks(WKContextRef contextRef)

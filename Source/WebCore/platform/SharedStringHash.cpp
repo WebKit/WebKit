@@ -22,8 +22,9 @@
  */
 
 #include "config.h"
+#include "SharedStringHash.h"
+
 #include "URL.h"
-#include "LinkHash.h"
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/StringView.h>
@@ -183,13 +184,9 @@ static inline bool needsTrailingSlash(const CharacterType* characters, unsigned 
 {
     if (length < 6)
         return false;
-    if (!matchLetter(characters[0], 'h')
-            || !matchLetter(characters[1], 't')
-            || !matchLetter(characters[2], 't')
-            || !matchLetter(characters[3], 'p'))
+    if (!matchLetter(characters[0], 'h') || !matchLetter(characters[1], 't') || !matchLetter(characters[2], 't') || !matchLetter(characters[3], 'p'))
         return false;
-    if (!(characters[4] == ':'
-            || (matchLetter(characters[4], 's') && characters[5] == ':')))
+    if (!(characters[4] == ':' || (matchLetter(characters[4], 's') && characters[5] == ':')))
         return false;
 
     unsigned pos = characters[4] == ':' ? 5 : 6;
@@ -206,26 +203,26 @@ static inline bool needsTrailingSlash(const CharacterType* characters, unsigned 
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE LinkHash visitedLinkHashInline(const CharacterType* url, unsigned length)
+static ALWAYS_INLINE SharedStringHash computeSharedStringHashInline(const CharacterType* url, unsigned length)
 {
     return AlreadyHashed::avoidDeletedValue(StringHasher::computeHash(url, length));
 }
 
-LinkHash visitedLinkHash(const String& url)
+SharedStringHash computeSharedStringHash(const String& url)
 {
     unsigned length = url.length();
     if (!length || url.is8Bit())
-        return visitedLinkHashInline(url.characters8(), length);
-    return visitedLinkHashInline(url.characters16(), length);
+        return computeSharedStringHashInline(url.characters8(), length);
+    return computeSharedStringHashInline(url.characters16(), length);
 }
 
-LinkHash visitedLinkHash(const UChar* url, unsigned length)
+SharedStringHash computeSharedStringHash(const UChar* url, unsigned length)
 {
-    return visitedLinkHashInline(url, length);
+    return computeSharedStringHashInline(url, length);
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE void visitedURLInline(const URL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
+static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
 {
     if (!length)
         return;
@@ -261,15 +258,15 @@ static ALWAYS_INLINE void visitedURLInline(const URL& base, const CharacterType*
         append(buffer, base.string());
     else {
         switch (characters[0]) {
-            case '/':
-                append(buffer, StringView(base.string()).substring(0, base.pathStart()));
-                break;
-            case '#':
-                append(buffer, StringView(base.string()).substring(0, base.pathEnd()));
-                break;
-            default:
-                append(buffer, StringView(base.string()).substring(0, base.pathAfterLastSlash()));
-                break;
+        case '/':
+            append(buffer, StringView(base.string()).substring(0, base.pathStart()));
+            break;
+        case '#':
+            append(buffer, StringView(base.string()).substring(0, base.pathEnd()));
+            break;
+        default:
+            append(buffer, StringView(base.string()).substring(0, base.pathAfterLastSlash()));
+            break;
         }
     }
     buffer.append(characters, length);
@@ -283,28 +280,28 @@ static ALWAYS_INLINE void visitedURLInline(const URL& base, const CharacterType*
     return;
 }
 
-LinkHash visitedLinkHash(const URL& base, const AtomicString& attributeURL)
+SharedStringHash computeSharedStringHash(const URL& base, const AtomicString& attributeURL)
 {
     if (attributeURL.isEmpty())
         return 0;
 
     if (!base.string().isEmpty() && base.string().is8Bit() && attributeURL.is8Bit()) {
         Vector<LChar, 512> url;
-        visitedURLInline(base, attributeURL.characters8(), attributeURL.length(), url);
+        computeSharedStringHashInline(base, attributeURL.characters8(), attributeURL.length(), url);
         if (url.isEmpty())
             return 0;
 
-        return visitedLinkHashInline(url.data(), url.size());
+        return computeSharedStringHashInline(url.data(), url.size());
     }
 
     Vector<UChar, 512> url;
     auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
-    visitedURLInline(base, characters, attributeURL.length(), url);
+    computeSharedStringHashInline(base, characters, attributeURL.length(), url);
     if (url.isEmpty())
         return 0;
 
-    return visitedLinkHashInline(url.data(), url.size());
+    return computeSharedStringHashInline(url.data(), url.size());
 }
 
-}  // namespace WebCore
+} // namespace WebCore

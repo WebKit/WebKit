@@ -84,19 +84,19 @@ void WebVisitedLinkStore::addVisitedLink(NSString *urlString)
     size_t length = urlString.length;
 
     if (const UChar* characters = CFStringGetCharactersPtr((__bridge CFStringRef)urlString)) {
-        addVisitedLinkHash(visitedLinkHash(characters, length));
+        addVisitedLinkHash(computeSharedStringHash(characters, length));
         return;
     }
 
     Vector<UChar, 512> buffer(length);
     [urlString getCharacters:buffer.data()];
 
-    addVisitedLinkHash(visitedLinkHash(buffer.data(), length));
+    addVisitedLinkHash(computeSharedStringHash(buffer.data(), length));
 }
 
 void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
 {
-    LinkHash linkHash = visitedLinkHash(urlString);
+    auto linkHash = computeSharedStringHash(urlString);
 
     ASSERT(m_visitedLinkHashes.contains(linkHash));
     m_visitedLinkHashes.remove(linkHash);
@@ -104,14 +104,14 @@ void WebVisitedLinkStore::removeVisitedLink(NSString *urlString)
     invalidateStylesForLink(linkHash);
 }
 
-bool WebVisitedLinkStore::isLinkVisited(Page& page, LinkHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
+bool WebVisitedLinkStore::isLinkVisited(Page& page, SharedStringHash linkHash, const URL& baseURL, const AtomicString& attributeURL)
 {
     populateVisitedLinksIfNeeded(page);
 
     return m_visitedLinkHashes.contains(linkHash);
 }
 
-void WebVisitedLinkStore::addVisitedLink(Page& sourcePage, LinkHash linkHash)
+void WebVisitedLinkStore::addVisitedLink(Page& sourcePage, SharedStringHash linkHash)
 {
     if (!s_shouldTrackVisitedLinks)
         return;
@@ -143,7 +143,7 @@ void WebVisitedLinkStore::populateVisitedLinksIfNeeded(Page& page)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebVisitedLinkStore::addVisitedLinkHash(LinkHash linkHash)
+void WebVisitedLinkStore::addVisitedLinkHash(SharedStringHash linkHash)
 {
     ASSERT(s_shouldTrackVisitedLinks);
 

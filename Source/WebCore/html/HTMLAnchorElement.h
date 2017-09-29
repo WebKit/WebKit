@@ -25,7 +25,7 @@
 
 #include "HTMLElement.h"
 #include "HTMLNames.h"
-#include "LinkHash.h"
+#include "SharedStringHash.h"
 #include "URLUtils.h"
 #include <wtf/OptionSet.h>
 
@@ -62,7 +62,7 @@ public:
 
     bool hasRel(Relation) const;
     
-    LinkHash visitedLinkHash() const;
+    SharedStringHash visitedLinkHash() const;
     void invalidateCachedVisitedLinkHash() { m_cachedVisitedLinkHash = 0; }
 
     WEBCORE_EXPORT DOMTokenList& relList();
@@ -104,15 +104,15 @@ private:
     bool m_hasRootEditableElementForSelectionOnMouseDown;
     bool m_wasShiftKeyDownOnMouseDown;
     OptionSet<Relation> m_linkRelations;
-    mutable LinkHash m_cachedVisitedLinkHash;
+    mutable SharedStringHash m_cachedVisitedLinkHash;
 
     std::unique_ptr<DOMTokenList> m_relList;
 };
 
-inline LinkHash HTMLAnchorElement::visitedLinkHash() const
+inline SharedStringHash HTMLAnchorElement::visitedLinkHash() const
 {
     if (!m_cachedVisitedLinkHash)
-        m_cachedVisitedLinkHash = WebCore::visitedLinkHash(document().baseURL(), attributeWithoutSynchronization(HTMLNames::hrefAttr));
+        m_cachedVisitedLinkHash = WebCore::computeSharedStringHash(document().baseURL(), attributeWithoutSynchronization(HTMLNames::hrefAttr));
     return m_cachedVisitedLinkHash; 
 }
 
