@@ -1,3 +1,21 @@
+2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS] Remove unused pre-iOS 11 codepaths for writing to the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=177669
+
+        Reviewed by Tim Horton.
+
+        Now that PlatformPasteboardIOS codepaths for writing data on drag and copy have been unified to both use
+        NSItemProviders, we can remove the legacy codepath that called -setItems on UIPasteboard, since nothing uses it
+        any more. No change in behavior.
+
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::write):
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        (WebCore::PlatformPasteboard::allowReadingURLAtIndex const):
+        (WebCore::PlatformPasteboard::readURL):
+        (WebCore::richTextRepresentationsForPasteboardWebContent): Deleted.
+
 2017-09-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Image pasting is not working on tineye.com / gmail.com / GitHub.com due to lack of support for DataTransfer.items
