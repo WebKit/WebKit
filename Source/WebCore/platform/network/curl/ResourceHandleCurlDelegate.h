@@ -29,24 +29,17 @@
 #if USE(CURL)
 
 #include "Credential.h"
-#include "CurlJobManager.h"
-#include "CurlResponse.h"
-#include "CurlSSLVerifier.h"
-#include "FormDataStreamCurl.h"
+#include "CurlRequestDelegate.h"
 #include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include <wtf/Condition.h>
-#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
+class CurlRequest;
 class MultipartHandle;
-class ProtectionSpace;
-class ResourceError;
 class ResourceHandle;
-class SharedBuffer;
+class ResourceResponse;
 
-class ResourceHandleCurlDelegate final : public ThreadSafeRefCounted<ResourceHandleCurlDelegate>, public CurlJobClient {
+class ResourceHandleCurlDelegate final : public ThreadSafeRefCounted<ResourceHandleCurlDelegate>, public CurlRequestDelegate {
 public:
     ResourceHandleCurlDelegate(ResourceHandle*);
     ~ResourceHandleCurlDelegate();
@@ -54,7 +47,7 @@ public:
     bool hasHandle() const;
     void releaseHandle();
 
-    bool start() { start(false); return true; }
+    bool start();
     void cancel();
 
     void setDefersLoading(bool);
@@ -63,73 +56,35 @@ public:
     void dispatchSynchronousJob();
 
 private:
-    void retain() override;
-    void release() override;
-
-    CURL* handle() override { return m_curlHandle ? m_curlHandle->handle() : nullptr; }
-    CURL* setupTransfer() override;
-    void didCompleteTransfer(CURLcode) override;
-    void didCancelTransfer() override;
-
     // Called from main thread.
     ResourceResponse& response();
 
-    void start(bool isSyncRequest);
+    std::pair<String, String> getCredential(ResourceRequest&, bool);
 
-    void setupAuthentication();
+    bool cancelledOrClientless();
 
-    void didReceiveAllHeaders(const CurlResponse&);
-    void didReceiveContentData(Ref<SharedBuffer>&&);
-    void handleLocalReceiveResponse();
-    void prepareSendData(char*, size_t blockSize, size_t numberOfBlocks);
-
-    void didFinish(NetworkLoadMetrics);
-    void didFail(const ResourceError&);
+    RefPtr<CurlRequest> createCurlRequest(ResourceRequest&);
+    void curlDidReceiveResponse(const CurlResponse&) override;
+    void curlDidReceiveBuffer(Ref<SharedBuffer>&&) override;
+    void curlDidComplete() override;
+    void curlDidFailWithError(const ResourceError&) override;
 
     void handleDataURL();
 
-    // Called from worker thread.
-    void setupPOST();
-    void setupPUT();
-    size_t getFormElementsCount();
-    void setupFormData(bool);
-    void applyAuthentication();
-    NetworkLoadMetrics getNetworkLoadMetrics();
-
-    CURLcode willSetupSslCtx(void*);
-    size_t didReceiveHeader(String&&);
-    size_t didReceiveData(Ref<SharedBuffer>&&);
-    size_t willSendData(char*, size_t blockSize, size_t numberOfBlocks);
-
-    static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
-    static size_t didReceiveHeaderCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
-    static size_t didReceiveDataCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
-    static size_t willSendDataCallback(char*, size_t blockSize, size_t numberOfBlocks, void*);
-
     // Used by main thread.
     ResourceHandle* m_handle;
-    std::unique_ptr<FormDataStream> m_formDataStream;
     std::unique_ptr<MultipartHandle> m_multipartHandle;
-    unsigned short m_authFailureCount { 0 };
+    unsigned m_authFailureCount { 0 };
     // Used by worker thread.
     ResourceRequest m_firstRequest;
-    HTTPHeaderMap m_customHTTPHeaderFields;
+    ResourceRequest m_currentRequest;
     bool m_shouldUseCredentialStorage;
     String m_user;
     String m_pass;
     Credential m_initialCredential;
     bool m_defersLoading;
     bool m_addedCacheValidationHeaders { false };
-    Vector<char> m_postBytes;
-    std::unique_ptr<CurlHandle> m_curlHandle;
-    CurlSSLVerifier m_sslVerifier;
-    CurlResponse m_response;
-    bool m_didNotifyResponse { false };
-    // Used by both threads.
-    bool m_isSyncRequest { false };
-    Condition m_workerThreadConditionVariable;
-    Lock m_workerThreadMutex;
-    size_t m_sendBytes { 0 };
+    RefPtr<CurlRequest> m_curlRequest;
 };
 
 } // namespace WebCore

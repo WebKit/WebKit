@@ -1,3 +1,95 @@
+2017-09-29  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Extract a features to manage HTTP communication from ResourceHandle
+        https://bugs.webkit.org/show_bug.cgi?id=175148
+
+        Reviewed by Alex Christensen.
+
+        * platform/Curl.cmake:
+        * platform/network/curl/CurlRequest.cpp: Added.
+        (WebCore::CurlRequest::CurlRequest):
+        (WebCore::CurlRequest::setUserPass):
+        (WebCore::CurlRequest::start):
+        (WebCore::CurlRequest::startWithJobManager):
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::suspend):
+        (WebCore::CurlRequest::resume):
+        (WebCore::CurlRequest::callDelegate):
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::willSetupSslCtx):
+        (WebCore::CurlRequest::willSendData):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::didCancelTransfer):
+        (WebCore::CurlRequest::resolveBlobReferences):
+        (WebCore::CurlRequest::setupPUT):
+        (WebCore::CurlRequest::setupPOST):
+        (WebCore::CurlRequest::setupFormData):
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        (WebCore::CurlRequest::invokeDidReceiveResponse):
+        (WebCore::CurlRequest::setPaused):
+        (WebCore::CurlRequest::willSetupSslCtxCallback):
+        (WebCore::CurlRequest::willSendDataCallback):
+        (WebCore::CurlRequest::didReceiveHeaderCallback):
+        (WebCore::CurlRequest::didReceiveDataCallback):
+        * platform/network/curl/CurlRequest.h: Added.
+        (WebCore::CurlRequest::~CurlRequest):
+        (WebCore::CurlRequest::setDelegate):
+        (WebCore::CurlRequest::isSyncRequest):
+        (WebCore::CurlRequest::getNetworkLoadMetrics):
+        * platform/network/curl/CurlRequestDelegate.h: Added.
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::cancel):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge):
+        (WebCore::ResourceHandle::receivedCredential):
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::receivedCancellation):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::ResourceHandleCurlDelegate):
+        (WebCore::ResourceHandleCurlDelegate::~ResourceHandleCurlDelegate):
+        (WebCore::ResourceHandleCurlDelegate::start):
+        (WebCore::ResourceHandleCurlDelegate::cancel):
+        (WebCore::ResourceHandleCurlDelegate::setDefersLoading):
+        (WebCore::ResourceHandleCurlDelegate::setAuthentication):
+        (WebCore::ResourceHandleCurlDelegate::dispatchSynchronousJob):
+        (WebCore::ResourceHandleCurlDelegate::createCurlRequest):
+        (WebCore::ResourceHandleCurlDelegate::cancelledOrClientless):
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveBuffer):
+        (WebCore::ResourceHandleCurlDelegate::curlDidComplete):
+        (WebCore::ResourceHandleCurlDelegate::curlDidFailWithError):
+        (WebCore::ResourceHandleCurlDelegate::response):
+        (WebCore::ResourceHandleCurlDelegate::getCredential):
+        (WebCore::ResourceHandleCurlDelegate::retain): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::release): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::setupTransfer): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didCompleteTransfer): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didCancelTransfer): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::setupAuthentication): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveAllHeaders): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveContentData): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::handleLocalReceiveResponse): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::prepareSendData): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didFinish): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didFail): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::setupPOST): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::setupPUT): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::getFormElementsCount): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::setupFormData): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::applyAuthentication): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::getNetworkLoadMetrics): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::willSetupSslCtx): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeader): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveData): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::willSendData): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::willSetupSslCtxCallback): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveHeaderCallback): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::didReceiveDataCallback): Deleted.
+        (WebCore::ResourceHandleCurlDelegate::willSendDataCallback): Deleted.
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
         Split some logic out of VisitedLinkStore and make it reusable
