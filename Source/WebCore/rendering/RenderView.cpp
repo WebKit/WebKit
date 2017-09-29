@@ -1288,19 +1288,19 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     if (!rootRenderView)
         return;
 
-    m_rootView = rootRenderView->createWeakPtr();
-    m_wasAccumulatingRepaintRegion = !!m_rootView->m_accumulatedRepaintRegion;
+    m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
-        m_rootView->m_accumulatedRepaintRegion = std::make_unique<Region>();
+        rootRenderView->m_accumulatedRepaintRegion = std::make_unique<Region>();
+    m_rootView = rootRenderView->createWeakPtr<RenderView>();
 }
 
 RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
 {
-    if (!m_rootView)
-        return;
     if (m_wasAccumulatingRepaintRegion)
         return;
-    m_rootView->flushAccumulatedRepaintRegion();
+    if (!m_rootView)
+        return;
+    m_rootView.get()->flushAccumulatedRepaintRegion();
 }
 
 unsigned RenderView::pageNumberForBlockProgressionOffset(int offset) const

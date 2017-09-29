@@ -233,8 +233,6 @@ public:
         bool m_wasAccumulatingRepaintRegion;
     };
 
-    WeakPtr<RenderView> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
-
     void scheduleLazyRepaint(RenderBox&);
     void unscheduleLazyRepaint(RenderBox&);
 
@@ -322,7 +320,6 @@ private:
 private:
     FrameView& m_frameView;
 
-    WeakPtrFactory<RenderView> m_weakFactory;
     RenderObject* m_selectionUnsplitStart { nullptr };
     RenderObject* m_selectionUnsplitEnd { nullptr };
     std::optional<unsigned> m_selectionUnsplitStartPos;

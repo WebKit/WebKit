@@ -36,6 +36,7 @@
 #include "ScrollAlignment.h"
 #include "StyleImage.h"
 #include "TextAffinity.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -107,6 +108,9 @@ public:
     // marked as anonymous in the constructor.
     explicit RenderObject(Node&);
     virtual ~RenderObject();
+
+    template<typename T>
+    WeakPtr<T> createWeakPtr() { return m_weakFactory.createWeakPtr<T>(*this); }
 
     RenderTheme& theme() const;
 
@@ -833,6 +837,8 @@ private:
     RenderElement* m_parent;
     RenderObject* m_previous;
     RenderObject* m_next;
+
+    WeakPtrFactory<RenderObject> m_weakFactory;
 
 #ifndef NDEBUG
     bool m_hasAXObject             : 1;

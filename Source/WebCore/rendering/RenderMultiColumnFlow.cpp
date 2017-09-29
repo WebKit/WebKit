@@ -438,7 +438,7 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
             }
             
             ASSERT(!m_spannerMap.get(placeholder.spanner()));
-            m_spannerMap.add(placeholder.spanner(), placeholder.createWeakPtr());
+            m_spannerMap.add(placeholder.spanner(), placeholder.createWeakPtr<RenderMultiColumnSpannerPlaceholder>());
             ASSERT(!placeholder.firstChild()); // There should be no children here, but if there are, we ought to skip them.
             continue;
         }

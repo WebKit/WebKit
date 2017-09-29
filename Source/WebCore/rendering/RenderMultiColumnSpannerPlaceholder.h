@@ -31,8 +31,6 @@
 
 #include "RenderBox.h"
 
-#include <wtf/WeakPtr.h>
-
 namespace WebCore {
 
 class RenderMultiColumnFlow;
@@ -43,7 +41,6 @@ public:
 
     RenderBox* spanner() const { return m_spanner; }
     RenderMultiColumnFlow* fragmentedFlow() const { return m_fragmentedFlow; }
-    WeakPtr<RenderMultiColumnSpannerPlaceholder> createWeakPtr() { return m_weakPtrFactory.createWeakPtr(*this); }
 
 private:
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow*, RenderBox& spanner, RenderStyle&&);
@@ -55,7 +52,6 @@ private:
 
     RenderBox* m_spanner;
     RenderMultiColumnFlow* m_fragmentedFlow;
-    WeakPtrFactory<RenderMultiColumnSpannerPlaceholder> m_weakPtrFactory;
 };
 
 } // namespace WebCore
