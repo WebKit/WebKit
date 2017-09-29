@@ -1,3 +1,12 @@
+2017-09-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-enable more pasteboard tests on iOS after r222595
+        https://bugs.webkit.org/show_bug.cgi?id=177637
+
+        Reviewed by Wenson Hsieh.
+
+        * platform/ios/TestExpectations:
+
 2017-09-28  Carlos Alberto Lopez Perez  <clopez@igalia.com>
 
         [GTK] Test gardening
