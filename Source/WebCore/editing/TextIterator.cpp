@@ -2634,6 +2634,15 @@ bool TextIterator::getLocationAndLengthFromRange(Node* scope, const Range* range
 
 // --------
 
+bool hasAnyPlainText(const Range& range, TextIteratorBehavior behavior)
+{
+    for (TextIterator iterator { &range, behavior }; !iterator.atEnd(); iterator.advance()) {
+        if (!iterator.text().isEmpty())
+            return true;
+    }
+    return false;
+}
+
 String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDisplayString)
 {
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192

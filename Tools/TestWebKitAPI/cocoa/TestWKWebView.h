@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if WK_API_ENABLED
+
 #import <WebKit/WebKit.h>
 #import <wtf/RetainPtr.h>
-
-#if WK_API_ENABLED
 
 @class _WKProcessPoolConfiguration;
 
@@ -53,6 +53,7 @@
 
 #if PLATFORM(IOS)
 @interface TestWKWebView (IOSOnly)
+@property (nonatomic, readonly) UIView <UITextInput> *textInputContentView;
 @property (nonatomic, readonly) RetainPtr<NSArray> selectionRectsAfterPresentationUpdate;
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position;
 @end

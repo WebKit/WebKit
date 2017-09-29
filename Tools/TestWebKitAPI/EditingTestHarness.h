@@ -41,6 +41,11 @@
 @property (nonatomic, readonly) NSDictionary *latestEditorState;
 @property (nonatomic, readonly) NSArray<NSDictionary *> *editorStateHistory;
 
+- (void)insertParagraph;
+- (void)insertText:(NSString *)text;
+- (void)insertHTML:(NSString *)html;
+- (void)selectAll;
+- (void)deleteBackwards;
 - (void)insertParagraphAndExpectEditorStateWith:(NSDictionary<NSString *, id> *)entries;
 - (void)insertText:(NSString *)text andExpectEditorStateWith:(NSDictionary<NSString *, id> *)entries;
 - (void)insertHTML:(NSString *)html andExpectEditorStateWith:(NSDictionary<NSString *, id> *)entries;

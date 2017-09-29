@@ -101,6 +101,7 @@ struct EditorState {
         bool hasContent { false };
         bool isStableStateUpdate { false };
         bool insideFixedPosition { false };
+        bool hasPlainText { false };
 #endif
 #if PLATFORM(MAC)
         uint64_t candidateRequestStartPosition { 0 };

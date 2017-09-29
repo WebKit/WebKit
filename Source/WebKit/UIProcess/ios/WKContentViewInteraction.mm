@@ -3182,7 +3182,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
 
 - (BOOL)hasText
 {
-    return YES;
+    auto& editorState = _page->editorState();
+    return !editorState.isMissingPostLayoutData && editorState.postLayoutData().hasPlainText;
 }
 
 // end of UITextInput protocol implementation

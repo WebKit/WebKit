@@ -45,6 +45,7 @@
 #endif
 
 #if PLATFORM(IOS)
+#import <UIKit/UIKit.h>
 #import <wtf/SoftLinking.h>
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS(UIKit, UIWindow)
@@ -291,6 +292,11 @@ NSEventMask __simulated_forceClickAssociatedEventsMask(id self, SEL _cmd)
 #if PLATFORM(IOS)
 
 @implementation TestWKWebView (IOSOnly)
+
+- (UIView <UITextInput> *)textInputContentView
+{
+    return (UIView <UITextInput> *)[self valueForKey:@"_currentContentView"];
+}
 
 - (RetainPtr<NSArray>)selectionRectsAfterPresentationUpdate
 {

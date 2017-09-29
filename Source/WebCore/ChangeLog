@@ -1,3 +1,25 @@
+2017-09-29  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] Implement -[WKContentView hasText] for compatibility with the UITextInput protocol
+        https://bugs.webkit.org/show_bug.cgi?id=177662
+        <rdar://problem/33410373>
+
+        Reviewed by Tim Horton.
+
+        Adds a new TextIterator helper function to determine whether a Range has any plain text.
+
+        Tests: EditorStateTests.ContentViewHasTextInContentEditableElement
+               EditorStateTests.ContentViewHasTextInTextarea
+
+        * editing/TextIterator.cpp:
+        (WebCore::hasAnyPlainText):
+
+        Add a new helper to determine whether a Range contains any plain text. While inspired by and very similar to the
+        plainText() helper function, this variant does not create a new string buffer when invoked, and is therefore
+        more efficient for the purposes of determining whether there is any plain text at all.
+
+        * editing/TextIterator.h:
+
 2017-09-29  Zalan Bujtas  <zalan@apple.com>
 
         Add WeakPtr support to RenderObject.

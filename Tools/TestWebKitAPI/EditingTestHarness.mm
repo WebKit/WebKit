@@ -67,6 +67,31 @@
     return _editorStateHistory.get();
 }
 
+- (void)insertParagraph
+{
+    [self insertParagraphAndExpectEditorStateWith:nil];
+}
+
+- (void)insertText:(NSString *)text
+{
+    [self insertText:text andExpectEditorStateWith:nil];
+}
+
+- (void)insertHTML:(NSString *)html
+{
+    [self insertHTML:html andExpectEditorStateWith:nil];
+}
+
+- (void)selectAll
+{
+    [self selectAllAndExpectEditorStateWith:nil];
+}
+
+- (void)deleteBackwards
+{
+    [self deleteBackwardAndExpectEditorStateWith:nil];
+}
+
 - (void)insertText:(NSString *)text andExpectEditorStateWith:(NSDictionary<NSString *, id> *)entries
 {
     [self _execCommand:@"InsertText" argument:text expectEntries:entries];
