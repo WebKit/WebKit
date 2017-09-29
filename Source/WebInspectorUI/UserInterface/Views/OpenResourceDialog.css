@@ -163,6 +163,21 @@ body[dir=rtl] .open-resource-dialog > .field > img {
     --open-resource-dialog-tree-outline-item-padding-start: 10px;
 }
 
+.open-resource-dialog > .tree-outline.large .item {
+    height: 44px;
+    line-height: 42px;
+}
+
+.open-resource-dialog > .tree-outline.large .item .icon {
+    width: 32px;
+    height: 32px;
+    margin-top: 6px;
+}
+
+.open-resource-dialog .tree-outline.large .item .titles {
+    top: 14px;
+}
+
 body[dir=ltr] .open-resource-dialog > .tree-outline .item {
     padding-left: var(--open-resource-dialog-tree-outline-item-padding-start);
 }

@@ -1,5 +1,19 @@
 2017-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
+        Web Inspector: Open Resource Dialog icons are blurry (24x24 instead of 32x32)
+        https://bugs.webkit.org/show_bug.cgi?id=177631
+        <rdar://problem/34729636>
+
+        Reviewed by Matt Baker.
+
+        * UserInterface/Views/OpenResourceDialog.css:
+        (.open-resource-dialog > .tree-outline.large .item):
+        (.open-resource-dialog > .tree-outline.large .item .icon):
+        (.open-resource-dialog .tree-outline.large .item .titles):
+        Make the rows large enough to fit the full 32x32 icon instead of a blurry 24x24.
+
+2017-09-29  Joseph Pecoraro  <pecoraro@apple.com>
+
         Web Inspector: Uncaught exception with populate find keyboard shortcut
         https://bugs.webkit.org/show_bug.cgi?id=177672
 
