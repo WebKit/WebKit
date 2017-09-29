@@ -1,4 +1,4 @@
-function pressAtPoint(x, y)
+function longPressAtPoint(x, y)
 {
     return `
     (function() {
@@ -8,7 +8,17 @@ function pressAtPoint(x, y)
     })();`
 }
 
-function dragFromPointToPoint(startX, startY, endX, endY)
+function tapAtPoint(x, y)
+{
+    return `
+    (function() {
+        uiController.singleTapAtPoint(${x}, ${y}, function() {
+            uiController.uiScriptComplete();
+        });
+    })();`
+}
+
+function touchAndDragFromPointToPoint(startX, startY, endX, endY)
 {
     return `
     (function() {

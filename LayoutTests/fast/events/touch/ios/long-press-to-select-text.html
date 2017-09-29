@@ -2,20 +2,11 @@
 
 <html>
 <head>
+    <script src="resources/basic-gestures.js"></script>
     <script>
         if (window.testRunner) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-        }
-
-        function getUIScript()
-        {
-            return `
-            (function() {
-                uiController.longPressAtPoint(30, 20, function() {
-                    uiController.uiScriptComplete("Done");
-                });
-            })();`
         }
 
         function runTest()
@@ -24,15 +15,15 @@
                 return;
 
             var output = '';
-            var target = document.getElementById('target');
-            target.addEventListener('touchend', function(event) {
-                output += 'PASS: successfully selected the word ';
-            });
-            if (testRunner.runUIScript) {
-                testRunner.runUIScript(getUIScript(), function(result) {
-                    var selectionText = document.getSelection().toString();
-                    if (selectionText !== "")
-                        output += selectionText;
+            var targetRect = document.getElementById('selection').getBoundingClientRect();
+            
+            var pressPointX = targetRect.x + targetRect.width / 2;
+            var pressPointY = targetRect.y + targetRect.height / 2;
+            
+            if (testRunner.runUIScript) {                
+                testRunner.runUIScript(longPressAtPoint(pressPointX, pressPointY), function(result) {
+                    if (document.getSelection().toString() == "PressMe")
+                        output += 'PASS: Correct Selection';
                     else
                         output += 'FAIL: failed to select a word as a result of a long press';
                     output += '<br>';
@@ -56,7 +47,7 @@
 </head>
 <body>
 <div id="target">
-	<p>PressMe</p>
+	<p><span id="selection">PressMe</span></p>
     This test requires UIScriptController to run.
 </div>
 </body>

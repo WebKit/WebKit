@@ -1,2 +1,2 @@
-PASS: successfully selected the word PressMe
-Done
+PASS: Correct Selection
+

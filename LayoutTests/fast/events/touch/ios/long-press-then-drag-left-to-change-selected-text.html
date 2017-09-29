@@ -13,51 +13,61 @@
         {
             if (!testRunner.runUIScript)
                 return;
-
+        
             var output = '';
-            var target = document.getElementById('target');
-            
+            var firstTargetRect = document.getElementById('firstSelection').getBoundingClientRect();
+            var secondTargetRect = document.getElementById('secondSelection').getBoundingClientRect();
+            var thirdTargetRect = document.getElementById('thirdSelection').getBoundingClientRect();
+        
+            var pressPointX = firstTargetRect.x+firstTargetRect.width / 2;
+            var pressPointY = firstTargetRect.y+firstTargetRect.height / 2;
+            var dragY = firstTargetRect.y;
+            var dragX = firstTargetRect.x;
+            var dragX2 = secondTargetRect.x;
+            var dragX3 = thirdTargetRect.x;
+            var dragX4 = firstTargetRect.x + firstTargetRect.width;
+        
             if (testRunner.runUIScript) {
-                testRunner.runUIScript(pressAtPoint(181, 104), function(result) {
+                testRunner.runUIScript(longPressAtPoint(pressPointX, pressPointY), function(result) {
                     if (document.getSelection().toString() == "aliqua")
                         output += 'PASS: Correct Selection';
                     else
-                        output += 'FAIL: failed to select a word as a result of a long press';
+                        output += 'FAIL: failed to select a word as a result of a long press. Incorrect Selection: ' + document.getSelection().toString();
                     output += '<br>';
-
-                    testRunner.runUIScript(dragFromPointToPoint(149,90,84,90), function(result) {
+            
+                    testRunner.runUIScript(touchAndDragFromPointToPoint(dragX, dragY, dragX2, dragY), function(result) {
                         if (document.getSelection().toString() == "magna aliqua")
                             output += 'PASS: Correct Selection';
                         else
-                            output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()
+                            output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
                         output += '<br>';
-                                          
-                        testRunner.runUIScript(dragFromPointToPoint(84,90,8,90), function(result) {
+                                       
+                        testRunner.runUIScript(touchAndDragFromPointToPoint(dragX2, dragY, dragX3, dragY), function(result) {
                             if (document.getSelection().toString() == "dolore magna aliqua")
                                 output += 'PASS: Correct Selection';
                             else
-                                output += 'FAIL: failed to select additional line after a drag.' + document.getSelection().toString()
+                                output += 'FAIL: failed to select additional word after a drag. Incorrect Selection: ' + document.getSelection().toString();
                             output += '<br>';
-
-                            testRunner.runUIScript(dragFromPointToPoint(8,90,84,90), function(result) {
+                                           
+                            testRunner.runUIScript(touchAndDragFromPointToPoint(dragX3, dragY, dragX2, dragY), function(result) {
                                 if (document.getSelection().toString() == "magna aliqua")
                                     output += 'PASS: Correct Selection';
                                 else
-                                    output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
+                                    output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
                                 output += '<br>';
-
-                                testRunner.runUIScript(dragFromPointToPoint(84,90,149,90), function(result) {
+                        
+                                testRunner.runUIScript(touchAndDragFromPointToPoint(dragX2, dragY, dragX, dragY), function(result) {
                                     if (document.getSelection().toString() == "aliqua")
                                         output += 'PASS: Correct Selection';
                                     else
-                                        output += 'FAIL: failed to deselect line after a drag.' + document.getSelection().toString()
+                                        output += 'FAIL: failed to deselect word after a drag. Incorrect Selection: ' + document.getSelection().toString();
                                     output += '<br>';
                             
-                                    testRunner.runUIScript(dragFromPointToPoint(149,90,250,90), function(result) {
+                                    testRunner.runUIScript(touchAndDragFromPointToPoint(dragX, dragY, dragX4, dragY), function(result) {
                                         if (document.getSelection().toString() == "a")
                                             output += 'PASS: Correct Selection';
                                         else
-                                            output += 'FAIL: failed to reduce selection to a single character by dragging up.'
+                                            output += 'FAIL: failed to reduce selection to a single character by dragging right. Incorrect Selection: ' +     document.getSelection().toString();
                                         output += '<br>';
                                         output += result;
                                         document.getElementById('target').innerHTML = output;
@@ -70,7 +80,7 @@
                 });
             }
         }
-
+    
         window.addEventListener('load', runTest, false);
     </script>
     <style>
@@ -82,12 +92,13 @@
             font-size: 18px;
         }
     </style>
+    <meta name="viewport" content="initial-scale=1">
 </head>
 <body>
-<div id="target">
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-
-    This test requires UIScriptController to run.
-</div>
+    <div id="target">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et <span id="thirdSelection"></span>dolore <span id="secondSelection"></span>magna <span id="firstSelection">aliqua</span>. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        
+        This test requires UIScriptController to run.
+    </div>
 </body>
 </html>
