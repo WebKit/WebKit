@@ -1,3 +1,16 @@
+2017-09-29  Alex Christensen  <achristensen@webkit.org>
+
+        Expose WebPreferences::webGLEnabled through WKPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=177692
+        <rdar://problem/24110556>
+
+        Reviewed by Andy Estes.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setWebGLEnabled:]):
+        (-[WKPreferences _webGLEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
         [WK2][NETWORK_SESSION] Move some authentication-related code to avoid duplication

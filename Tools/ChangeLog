@@ -1,5 +1,18 @@
 2017-09-29  Alex Christensen  <achristensen@webkit.org>
 
+        Expose WebPreferences::webGLEnabled through WKPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=177692
+        <rdar://problem/24110556>
+
+        Reviewed by Andy Estes.
+
+        * TestWebKitAPI/Tests/WebKitCocoa/Preferences.mm:
+        (-[AlertSaver alert]):
+        (-[AlertSaver webView:runJavaScriptAlertPanelWithMessage:initiatedByFrame:completionHandler:]):
+        (TEST):
+
+2017-09-29  Alex Christensen  <achristensen@webkit.org>
+
         Fix WKWebViewConfigurationPrivate after r222663
         https://bugs.webkit.org/show_bug.cgi?id=177644
 

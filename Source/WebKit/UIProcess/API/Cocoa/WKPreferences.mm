@@ -647,6 +647,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     _preferences->setJavaScriptCanAccessClipboard(javaScriptCanAccessClipboard);
 }
 
+#if PLATFORM(MAC)
 - (void)_setPlugInsEnabled:(BOOL)enabled
 {
     _preferences->setPluginsEnabled(enabled);
@@ -656,6 +657,17 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 {
     return _preferences->pluginsEnabled();
 }
+
+- (void)_setWebGLEnabled:(BOOL)enabled
+{
+    _preferences->setWebGLEnabled(enabled);
+}
+
+- (BOOL)_webGLEnabled
+{
+    return _preferences->webGLEnabled();
+}
+#endif // PLATFORM(MAC)
 
 - (BOOL)_javaScriptCanAccessClipboard
 {

@@ -120,6 +120,7 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 
 #if !TARGET_OS_IPHONE
 @property (nonatomic, setter=_setPlugInsEnabled:) BOOL _plugInsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
+@property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 #endif
 
 @end
