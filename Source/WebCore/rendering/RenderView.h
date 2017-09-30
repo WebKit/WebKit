@@ -93,6 +93,7 @@ public:
     RenderObject* selectionUnsplitEnd() const { return m_selectionUnsplitEnd; }
     IntRect selectionBounds(bool clipToVisibleContent = true) const;
     void repaintSelection() const;
+    void getSelectionStartEnd(unsigned& start, unsigned& end) const { selectionData().selectionStartEndPositions(start, end); }
 
     bool printing() const;
 

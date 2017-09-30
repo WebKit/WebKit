@@ -651,7 +651,7 @@ bool RenderReplaced::isSelected() const
         return true;
 
     unsigned selectionStart, selectionEnd;
-    selectionStartEnd(selectionStart, selectionEnd);
+    view().getSelectionStartEnd(selectionStart, selectionEnd);
     if (s == SelectionStart)
         return selectionStart == 0;
         

@@ -1,3 +1,28 @@
+2017-09-29  Zalan Bujtas  <zalan@apple.com>
+
+        Remove redundant RenderObject::selectionRoot and dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=177696
+
+        Reviewed by Ryosuke Niwa.
+
+        There's only one selection root (RenderView).
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState):
+        (WebCore::InlineTextBox::selectionStartEnd const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::selectionRoot const): Deleted.
+        (WebCore::RenderObject::selectionStartEnd const): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::isSelected const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRectsForLineBoxes):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::setSelectionState):
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.h:
+
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
         http/tests/preconnect/link-rel-preconnect-https.html is flaky

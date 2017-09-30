@@ -1202,26 +1202,6 @@ void RenderObject::outputRenderSubTreeAndMark(TextStream& stream, const RenderOb
 
 #endif // NDEBUG
 
-SelectionSubtreeRoot& RenderObject::selectionRoot() const
-{
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow)
-        return view();
-
-    if (is<RenderMultiColumnFlow>(*fragmentedFlow)) {
-        if (!fragmentedFlow->containingBlock())
-            return view();
-        return fragmentedFlow->containingBlock()->selectionRoot();
-    }
-    ASSERT_NOT_REACHED();
-    return view();
-}
-
-void RenderObject::selectionStartEnd(unsigned& spos, unsigned& epos) const
-{
-    selectionRoot().selectionData().selectionStartEndPositions(spos, epos);
-}
-
 FloatPoint RenderObject::localToAbsolute(const FloatPoint& localPoint, MapCoordinatesFlags mode, bool* wasFixed) const
 {
     TransformState transformState(TransformState::ApplyTransformDirection, localPoint);

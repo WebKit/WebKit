@@ -1447,7 +1447,7 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
         startPos = 0;
         endPos = textLength();
     } else {
-        selectionStartEnd(startPos, endPos);
+        view().getSelectionStartEnd(startPos, endPos);
         if (selectionState() == SelectionStart)
             endPos = textLength();
         else if (selectionState() == SelectionEnd)

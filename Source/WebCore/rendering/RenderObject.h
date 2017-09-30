@@ -752,9 +752,6 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    SelectionSubtreeRoot& selectionRoot() const;
-    void selectionStartEnd(unsigned& spos, unsigned& epos) const;
-    
     void removeFromParent();
 
     CSSAnimationController& animation() const;
