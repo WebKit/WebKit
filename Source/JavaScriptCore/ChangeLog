@@ -1,3 +1,67 @@
+2017-09-29  Yusuke Suzuki  <utatane.tea@gmail.com>
+
+        [DFG] Support ArrayPush with multiple args
+        https://bugs.webkit.org/show_bug.cgi?id=175823
+
+        Reviewed by Saam Barati.
+
+        Reviewed by Saam Barati.
+
+        This patch implements ArrayPush(with multiple arguments) in DFG and FTL. Previously, they are not handled
+        by ArrayPush. Then they go to generic direct call to Array#push and it does in slow path. This patch
+        extends ArrayPush to push multiple arguments in a bulk push manner.
+
+        The problem of ArrayPush is that we need to perform ArrayPush atomically: If OSR exit occurs in the middle
+        of ArrayPush, we incorrectly push pushed elements twice. Once we start pushing values, we should not exit.
+        But we do not want to iterate elements twice, once for type checks and once for actually pushing it. It
+        could move elements between registers and memory back and forth.
+
+        This patch achieves the above goal by separating type checks from ArrayPush. When starting ArrayPush, type
+        checks for elements are already done by separately emitted Check nodes.
+
+        We also add JSArray::pushInline for DFG operations just calling JSArray::push. And we also use it in
+        arrayProtoFuncPush's fast path.
+
+        This patch significantly improves performance of `push(multiple args)`.
+
+                                            baseline                  patched
+            Microbenchmarks:
+                array-push-0            461.8455+-28.9995    ^    151.3438+-6.5653        ^ definitely 3.0516x faster
+                array-push-1            133.8845+-7.0349     ?    136.1775+-5.8327        ? might be 1.0171x slower
+                array-push-2            675.6555+-13.4645    ^    145.8747+-6.4621        ^ definitely 4.6318x faster
+                array-push-3            849.5284+-15.2540    ^    253.4421+-9.1249        ^ definitely 3.3520x faster
+
+                                            baseline                  patched
+            SixSpeed:
+                spread-literal.es5       90.3482+-6.6514     ^     24.8123+-2.3304        ^ definitely 3.6413x faster
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleIntrinsicCall):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileArrayPush):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStoreBarrierInsertionPhase.cpp:
+        * ftl/FTLLowerDFGToB3.cpp:
+        (JSC::FTL::DFG::LowerDFGToB3::compileArrayPush):
+        * jit/JITOperations.h:
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPush):
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::push):
+        * runtime/JSArray.h:
+        * runtime/JSArrayInlines.h:
+        (JSC::JSArray::pushInline):
+
 2017-09-29  Saam Barati  <sbarati@apple.com>
 
         Custom GetterSetterAccessCase does not use the correct slotBase when making call
