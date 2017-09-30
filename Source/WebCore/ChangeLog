@@ -1,3 +1,74 @@
+2017-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Share more pasteboard code between iOS and macOS and remove dependency on Settings
+        https://bugs.webkit.org/show_bug.cgi?id=177700
+
+        Reviewed by Wenson Hsieh.
+
+        Moved more code from PasteboardIOS.mm and PasteboardMac.mm into PasteboardCocoa.mm to share code.
+
+        This patch also removes the layering violation inadvertently introduced in r222595 whereby which
+        Pasteboard code depends on Settings. To do this, this patch splits readStringForBindings is into
+        readString and readStringInCustomData and typesForBindings into typesSafeForBindings and
+        typesForLegacyUnsafeBindings, and moves the logic to decide whether a given type or string is read
+        off of the native pasteboard entry or our custom data entry is moved to DataTransfer.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::getData const): Moved the code to decide whether string is
+        read off of custom data or native pasteboard from readStringForBindings.
+        (WebCore::DataTransfer::types const): Ditto from typesForBindings.
+        * platform/Pasteboard.cpp:
+        (WebCore::Pasteboard::isSafeTypeForDOMToReadAndWrite): Moved into Pasteboard.
+        * platform/Pasteboard.h:
+        * platform/StaticPasteboard.cpp:
+        (WebCore::StaticPasteboard::readString): Renamed from readStringForBindings.
+        (WebCore::StaticPasteboard::readStringInCustomData): Added.
+        (WebCore::StaticPasteboard::writeString):
+        * platform/StaticPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::Pasteboard::typesSafeForBindings): Extracted out of typesForBindings in PasteboardIOS.mm
+        and PasteboardMac.mm.
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings): Ditto.
+        (WebCore::Pasteboard::readString): Ditto.
+        (WebCore::Pasteboard::readStringInCustomData): Ditto.
+        (WebCore::Pasteboard::writeCustomData): Moved here from PasteboardIOS.mm and PasteboardCocoa.mm.
+        (WebCore::Pasteboard::changeCount const): Ditto.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::typesSafeForBindings): Added.
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings): Renamed from readStringForBindings.
+        (WebCore::Pasteboard::readString):
+        (WebCore::Pasteboard::readStringInCustomData): Added.
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::writeCustomData): Moved to PasteboardCocoa.mm.
+        (WebCore::Pasteboard::changeCount const): Ditto.
+        (WebCore::Pasteboard::readPlatformValueAsString): Moved into Pasteboard.
+        (WebCore::Pasteboard::addHTMLClipboardTypesForCocoaType): Ditto.
+        (WebCore::Pasteboard::readStringForBindings): Moved to PasteboardCocoa.mm.
+        (WebCore::Pasteboard::typesForBindings): Ditto.
+        * platform/ios/PlatformPasteboardIOS.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::changeCount const): Moved to PasteboardCocoa.mm.
+        (WebCore::Pasteboard::writeCustomData): Ditto.
+        (WebCore::Pasteboard::readPlatformValueAsString): Moved into Pasteboard.
+        (WebCore::Pasteboard::readStringForBindings): Moved to PasteboardCocoa.mm.
+        (WebCore::Pasteboard::addHTMLClipboardTypesForCocoaType): Moved into Pasteboard.
+        (WebCore::Pasteboard::typesForBindings): Moved to PasteboardCocoa.mm.
+        * platform/mac/PlatformPasteboardMac.mm:
+        (WebCore::PlatformPasteboard::typesSafeForDOMToReadAndWrite const):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::typesSafeForBindings): Added.
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings): Renamed from readStringForBindings.
+        (WebCore::Pasteboard::readString): Renamed from readStringForBindings.
+        (WebCore::Pasteboard::readStringInCustomData): Added.
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::typesSafeForBindings): Added.
+        (WebCore::PasteboardtypesForLegacyUnsafeBindings): Renamed from readStringForBindings.
+        (WebCore::Pasteboard::readString): Renamed from readStringForBindings.
+        (WebCore::Pasteboard::readStringInCustomData): Added.
+
 2017-09-29  Antti Koivisto  <antti@apple.com>
 
         Use smart pointers for creating, adding and removing renderers

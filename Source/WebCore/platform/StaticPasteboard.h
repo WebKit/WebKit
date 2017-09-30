@@ -41,9 +41,11 @@ public:
     bool isStatic() const final { return true; }
 
     bool hasData() final;
-    Vector<String> typesForBindings() final { return m_types; }
+    Vector<String> typesSafeForBindings() final { return m_types; }
+    Vector<String> typesForLegacyUnsafeBindings() final { return m_types; }
     Vector<String> typesTreatedAsFiles() final { return { }; }
-    String readStringForBindings(const String& type) final;
+    String readString(const String& type) final;
+    String readStringInCustomData(const String& type) final;
 
     void writeString(const String& type, const String& data) final;
     void clear() final;

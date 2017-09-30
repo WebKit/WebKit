@@ -28,7 +28,6 @@
 
 #import "Color.h"
 #import "Pasteboard.h"
-#import "Settings.h"
 #import "URL.h"
 #import "SharedBuffer.h"
 #import <wtf/HashCountedSet.h>
@@ -125,7 +124,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
         if ([type isEqualToString:@(customWebKitPasteboardDataType)])
             continue;
 
-        if (isSafeTypeForDOMToReadAndWrite(type))
+        if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type))
             domPasteboardTypes.add(type);
         else if (auto* domType = safeTypeForDOMToReadAndWriteForPlatformType(type)) {
             auto coercedType = String::fromUTF8(domType);

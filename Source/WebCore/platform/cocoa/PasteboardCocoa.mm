@@ -151,6 +151,36 @@ Vector<String> Pasteboard::typesTreatedAsFiles()
     return types;
 }
 
+Vector<String> Pasteboard::typesSafeForBindings()
+{
+    Vector<String> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName);
+
+    // Enforce changeCount ourselves for security. We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+        return { };
+
+    return types;
+}
+
+Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
+{
+    Vector<String> types;
+    platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
+
+    // Enforce changeCount ourselves for security. We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+        return { };
+
+    ListHashSet<String> result;
+    for (auto& cocoaType : types)
+        addHTMLClipboardTypesForCocoaType(result, cocoaType, m_pasteboardName);
+
+    copyToVector(result, types);
+    return types;
+}
+
 void Pasteboard::read(PasteboardFileReader& reader)
 {
     auto imageType = mimeTypeToImageType(reader.type);
@@ -192,6 +222,33 @@ void Pasteboard::read(PasteboardFileReader& reader)
     }
 #endif
     reader.read(imageTypeToFakeFilename(imageType), buffer.releaseNonNull());
+}
+
+String Pasteboard::readString(const String& type)
+{
+    return readPlatformValueAsString(type, m_changeCount, m_pasteboardName);
+}
+
+String Pasteboard::readStringInCustomData(const String& type)
+{
+    auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(customWebKitPasteboardDataType, m_pasteboardName);
+    if (!buffer)
+        return { };
+
+    NSString *customDataValue = customDataFromSharedBuffer(*buffer).sameOriginCustomData.get(type);
+    if (!customDataValue.length)
+        return { };
+    return customDataValue;
+}
+
+void Pasteboard::writeCustomData(const PasteboardCustomData& data)
+{
+    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_pasteboardName);
+}
+
+long Pasteboard::changeCount() const
+{
+    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
 }
 
 }

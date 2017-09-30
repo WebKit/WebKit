@@ -40,20 +40,19 @@ bool StaticPasteboard::hasData()
     return !m_platformData.isEmpty() || !m_customData.isEmpty();
 }
 
-String StaticPasteboard::readStringForBindings(const String& type)
+String StaticPasteboard::readString(const String& type)
 {
-    if (m_platformData.contains(type))
-        return m_platformData.get(type);
+    return m_platformData.get(type);
+}
 
-    if (m_customData.contains(type))
-        return m_customData.get(type);
-
-    return { };
+String StaticPasteboard::readStringInCustomData(const String& type)
+{
+    return m_customData.get(type);
 }
 
 void StaticPasteboard::writeString(const String& type, const String& value)
 {
-    auto& pasteboardData = isSafeTypeForDOMToReadAndWrite(type) ? m_platformData : m_customData;
+    auto& pasteboardData = Pasteboard::isSafeTypeForDOMToReadAndWrite(type) ? m_platformData : m_customData;
     if (pasteboardData.set(type, value).isNewEntry)
         m_types.append(type);
     else {

@@ -25,35 +25,18 @@
 #import "config.h"
 #import "Pasteboard.h"
 
-#import "CachedImage.h"
-#import "Document.h"
-#import "DocumentFragment.h"
-#import "DocumentLoader.h"
 #import "DragData.h"
-#import "Editing.h"
-#import "Editor.h"
-#import "EditorClient.h"
-#import "Frame.h"
-#import "FrameLoader.h"
-#import "FrameLoaderClient.h"
-#import "HTMLElement.h"
-#import "HTMLParserIdioms.h"
 #import "Image.h"
-#import "LegacyWebArchive.h"
 #import "NotImplemented.h"
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
-#import "RenderImage.h"
-#import "RuntimeApplicationChecks.h"
-#import "Settings.h"
 #import "SharedBuffer.h"
-#import "Text.h"
 #import "URL.h"
 #import "UTIUtilities.h"
 #import "WebNSAttributedStringExtras.h"
-#import "markup.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <wtf/text/StringHash.h>
 
 @interface NSAttributedString (NSAttributedStringKitAdditions)
 - (id)initWithRTF:(NSData *)data documentAttributes:(NSDictionary **)dict;
@@ -115,11 +98,6 @@ void Pasteboard::writeMarkup(const String&)
 std::unique_ptr<Pasteboard> Pasteboard::createForCopyAndPaste()
 {
     return std::make_unique<Pasteboard>(changeCountForPasteboard());
-}
-
-void Pasteboard::writeCustomData(const PasteboardCustomData& data)
-{
-    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_pasteboardName);
 }
 
 void Pasteboard::write(const PasteboardWebContent& content)
@@ -279,11 +257,6 @@ void Pasteboard::readRespectingUTIFidelities(PasteboardWebContentReader& reader)
     }
 }
 
-long Pasteboard::changeCount() const
-{
-    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
-}
-
 NSArray *Pasteboard::supportedWebContentPasteboardTypes()
 {
     return @[(id)WebArchivePboardType, (id)kUTTypeFlatRTFD, (id)kUTTypeRTF, (id)kUTTypeHTML, (id)kUTTypePNG, (id)kUTTypeTIFF, (id)kUTTypeJPEG, (id)kUTTypeGIF, (id)kUTTypeURL, (id)kUTTypeText];
@@ -338,7 +311,7 @@ void Pasteboard::clear()
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(String(), String(), m_pasteboardName);
 }
 
-static String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
+String Pasteboard::readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
 {
     PasteboardStrategy& strategy = *platformStrategies()->pasteboardStrategy();
 
@@ -372,21 +345,7 @@ static String readPlatformValueAsString(const String& domType, long changeCount,
     return String();
 }
 
-String Pasteboard::readStringForBindings(const String& type)
-{
-    if (!Settings::customPasteboardDataEnabled() || isSafeTypeForDOMToReadAndWrite(type))
-        return readPlatformValueAsString(type, m_changeCount, m_pasteboardName);
-
-    if (auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(customWebKitPasteboardDataType, m_pasteboardName)) {
-        NSString *customDataValue = customDataFromSharedBuffer(*buffer).sameOriginCustomData.get(type);
-        if (customDataValue.length)
-            return customDataValue;
-    }
-
-    return { };
-}
-
-static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, NSString *cocoaType)
+void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String&)
 {
     // UTI may not do these right, so make sure we get the right, predictable result.
     if ([cocoaType isEqualToString:(NSString *)kUTTypePlainText]
@@ -419,32 +378,6 @@ void Pasteboard::writeString(const String& type, const String& data)
         return;
 
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(cocoaType.get(), data, m_pasteboardName);
-}
-
-Vector<String> Pasteboard::typesForBindings()
-{
-    Vector<String> types;
-    if (Settings::customPasteboardDataEnabled())
-        types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName);
-    else
-        platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-
-    // Enforce changeCount ourselves for security. We check after reading instead of before to be
-    // sure it doesn't change between our testing the change count and accessing the data.
-    auto changeCount = changeCountForPasteboard(m_pasteboardName);
-    if (m_changeCount != changeCount)
-        return { };
-
-    if (Settings::customPasteboardDataEnabled())
-        return types;
-
-    ListHashSet<String> result;
-    for (auto cocoaType : types)
-        addHTMLClipboardTypesForCocoaType(result, cocoaType);
-
-    Vector<String> vector;
-    copyToVector(result, vector);
-    return vector;
 }
 
 Vector<String> Pasteboard::readFilenames()

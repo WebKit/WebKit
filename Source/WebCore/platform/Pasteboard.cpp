@@ -39,7 +39,7 @@ namespace WebCore {
 PasteboardImage::PasteboardImage() = default;
 PasteboardImage::~PasteboardImage() = default;
 
-bool isSafeTypeForDOMToReadAndWrite(const String& type)
+bool Pasteboard::isSafeTypeForDOMToReadAndWrite(const String& type)
 {
     return type == "text/plain" || type == "text/html" || type == "text/uri-list";
 }

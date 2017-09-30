@@ -28,6 +28,7 @@
 #include "DragImage.h"
 #include "URL.h"
 #include <wtf/HashMap.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -171,8 +172,6 @@ WEBCORE_EXPORT PasteboardCustomData customDataFromSharedBuffer(const SharedBuffe
 const char customWebKitPasteboardDataType[] = "com.apple.WebKit.custom-pasteboard-data";
 #endif
 
-bool isSafeTypeForDOMToReadAndWrite(const String& type);
-
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -192,12 +191,16 @@ public:
 
     WEBCORE_EXPORT static std::unique_ptr<Pasteboard> createForCopyAndPaste();
 
+    static bool isSafeTypeForDOMToReadAndWrite(const String&);
+
     virtual bool isStatic() const { return false; }
 
     virtual bool hasData();
-    virtual Vector<String> typesForBindings();
+    virtual Vector<String> typesSafeForBindings();
+    virtual Vector<String> typesForLegacyUnsafeBindings();
     virtual Vector<String> typesTreatedAsFiles();
-    virtual String readStringForBindings(const String& type);
+    virtual String readString(const String& type);
+    virtual String readStringInCustomData(const String& type);
 
     virtual void writeString(const String& type, const String& data);
     virtual void clear();
@@ -278,6 +281,8 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName);
+    static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName);
     String readStringForPlatformType(const String&);
 #endif
 

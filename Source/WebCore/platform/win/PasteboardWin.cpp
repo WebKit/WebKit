@@ -243,7 +243,13 @@ static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC&
     }
 }
 
-Vector<String> Pasteboard::typesForBindings()
+Vector<String> Pasteboard::typesSafeForBindings()
+{
+    notImplemented();
+    return { };
+}
+
+Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 {
     ListHashSet<String> results;
 
@@ -282,7 +288,7 @@ Vector<String> Pasteboard::typesTreatedAsFiles()
     return { };
 }
 
-String Pasteboard::readStringForBindings(const String& type)
+String Pasteboard::readString(const String& type)
 {
     if (!m_dataObject && m_dragDataMap.isEmpty())
         return "";
@@ -300,6 +306,12 @@ String Pasteboard::readStringForBindings(const String& type)
     }
 
     return "";
+}
+
+String Pasteboard::readStringInCustomData(const String&)
+{
+    notImplemented();
+    return { };
 }
 
 Vector<String> Pasteboard::readFilenames()

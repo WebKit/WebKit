@@ -26,34 +26,18 @@
 #import "config.h"
 #import "Pasteboard.h"
 
-#import "CachedImage.h"
-#import "Document.h"
-#import "DocumentFragment.h"
-#import "DocumentLoader.h"
 #import "DragData.h"
-#import "Editing.h"
-#import "Editor.h"
-#import "EditorClient.h"
-#import "Frame.h"
-#import "FrameLoaderClient.h"
-#import "FrameView.h"
-#import "HitTestResult.h"
 #import "Image.h"
-#import "LegacyWebArchive.h"
 #import "LoaderNSURLExtras.h"
 #import "MIMETypeRegistry.h"
 #import "PasteboardStrategy.h"
 #import "PlatformPasteboard.h"
 #import "PlatformStrategies.h"
-#import "RenderImage.h"
-#import "Settings.h"
-#import "Text.h"
+#import "SharedBuffer.h"
 #import "URL.h"
 #import "UTIUtilities.h"
 #import "WebCoreNSStringExtras.h"
-#import "WebCoreSystemInterface.h"
 #import "WebNSAttributedStringExtras.h"
-#import "markup.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/mac/HIServicesSPI.h>
 #import <wtf/RetainPtr.h>
@@ -89,11 +73,6 @@ static Vector<String> writableTypesForImage()
     types.appendVector(writableTypesForURL());
     types.append(String(NSRTFDPboardType));
     return types;
-}
-
-long Pasteboard::changeCount() const
-{
-    return platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName);
 }
 
 NSArray *Pasteboard::supportedFileUploadPasteboardTypes()
@@ -177,11 +156,6 @@ void Pasteboard::write(const PasteboardWebContent& content)
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInHTMLFormat, NSHTMLPboardType, m_pasteboardName);
     if (!content.dataInStringFormat.isNull())
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(content.dataInStringFormat, NSStringPboardType, m_pasteboardName);
-}
-
-void Pasteboard::writeCustomData(const PasteboardCustomData& data)
-{
-    m_changeCount = platformStrategies()->pasteboardStrategy()->writeCustomData(data, m_pasteboardName);
 }
 
 void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartReplaceOption)
@@ -493,7 +467,7 @@ static Vector<String> absoluteURLsFromPasteboardFilenames(const String& pasteboa
     return urls;
 }
 
-static String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
+String Pasteboard::readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName)
 {
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(domType);
     String cocoaValue;
@@ -511,20 +485,6 @@ static String readPlatformValueAsString(const String& domType, long changeCount,
     return String();
 }
 
-String Pasteboard::readStringForBindings(const String& type)
-{
-    if (!Settings::customPasteboardDataEnabled() || isSafeTypeForDOMToReadAndWrite(type))
-        return readPlatformValueAsString(type, m_changeCount, m_pasteboardName);
-
-    if (auto buffer = platformStrategies()->pasteboardStrategy()->bufferForType(customWebKitPasteboardDataType, m_pasteboardName)) {
-        NSString *customDataValue = customDataFromSharedBuffer(*buffer).sameOriginCustomData.get(type);
-        if (customDataValue.length)
-            return customDataValue;
-    }
-
-    return { };
-}
-
 static String utiTypeFromCocoaType(const String& type)
 {
     if (RetainPtr<CFStringRef> utiType = adoptCF(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, type.createCFString().get(), 0))) {
@@ -534,7 +494,7 @@ static String utiTypeFromCocoaType(const String& type)
     return String();
 }
 
-static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
+void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
 {
     if (cocoaType == "NeXT plain ascii pasteboard type")
         return; // Skip this ancient type that gets auto-supplied by some system conversion.
@@ -596,30 +556,6 @@ void Pasteboard::writeString(const String& type, const String& data)
         platformStrategies()->pasteboardStrategy()->addTypes(types, m_pasteboardName);
         m_changeCount = platformStrategies()->pasteboardStrategy()->setStringForType(cocoaData, cocoaType, m_pasteboardName);
     }
-}
-
-Vector<String> Pasteboard::typesForBindings()
-{
-    Vector<String> types;
-    if (Settings::customPasteboardDataEnabled())
-        types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName);
-    else
-        platformStrategies()->pasteboardStrategy()->getTypes(types, m_pasteboardName);
-
-    // Enforce changeCount ourselves for security. We check after reading instead of before to be
-    // sure it doesn't change between our testing the change count and accessing the data.
-    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
-        return { };
-
-    if (Settings::customPasteboardDataEnabled())
-        return types;
-
-    ListHashSet<String> result;
-    for (auto& cocoaType : types)
-        addHTMLClipboardTypesForCocoaType(result, cocoaType, m_pasteboardName);
-
-    copyToVector(result, types);
-    return types;
 }
 
 Vector<String> Pasteboard::readFilenames()

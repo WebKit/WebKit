@@ -37,6 +37,7 @@
 #include "HTMLImageElement.h"
 #include "Image.h"
 #include "Pasteboard.h"
+#include "Settings.h"
 #include "StaticPasteboard.h"
 #include "WebCorePasteboardFileReader.h"
 
@@ -141,7 +142,10 @@ String DataTransfer::getData(const String& type) const
         return { };
 #endif
 
-    return m_pasteboard->readStringForBindings(normalizeType(type));
+    auto normalizedType = normalizeType(type);
+    if (Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(normalizedType))
+        return m_pasteboard->readStringInCustomData(normalizedType);
+    return m_pasteboard->readString(normalizedType);
 }
 
 void DataTransfer::setData(const String& type, const String& data)
@@ -172,7 +176,7 @@ Vector<String> DataTransfer::types() const
     if (!canReadTypes())
         return { };
 
-    return m_pasteboard->typesForBindings();
+    return Settings::customPasteboardDataEnabled() ? m_pasteboard->typesSafeForBindings() : m_pasteboard->typesForLegacyUnsafeBindings();
 }
 
 FileList& DataTransfer::files() const

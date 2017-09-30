@@ -375,7 +375,7 @@ Vector<String> PlatformPasteboard::typesSafeForDOMToReadAndWrite() const
         if ([type isEqualToString:@(customWebKitPasteboardDataType)])
             continue;
 
-        if (isSafeTypeForDOMToReadAndWrite(type)) {
+        if (Pasteboard::isSafeTypeForDOMToReadAndWrite(type)) {
             domPasteboardTypes.add(type);
             continue;
         }
