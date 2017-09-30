@@ -76,7 +76,8 @@ public:
     WeakPtr& operator=(const WeakPtr& o) { m_ref = o.m_ref.copyRef(); return *this; }
     WeakPtr& operator=(std::nullptr_t) { m_ref = WeakReference<T>::create(nullptr); return *this; }
 
-    T* operator->() const { return m_ref->get(); }
+    T* operator->() const { return get(); }
+    T& operator*() const { return *get(); }
 
     void clear() { m_ref = WeakReference<T>::create(nullptr); }
 
@@ -120,6 +121,11 @@ private:
     mutable RefPtr<WeakReference<T>> m_ref;
 };
 
+template <typename T> inline WeakPtr<T> makeWeakPtr(T& ref)
+{
+    return ref.weakPtrFactory().template createWeakPtr<T>(ref);
+}
+
 template<typename T, typename U> inline bool operator==(const WeakPtr<T>& a, const WeakPtr<U>& b)
 {
     return a.get() == b.get();
@@ -155,5 +161,6 @@ template<typename T, typename U> inline bool operator!=(T* a, const WeakPtr<U>& 
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;
 using WTF::WeakReference;
+using WTF::makeWeakPtr;
 
 #endif

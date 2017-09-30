@@ -109,8 +109,7 @@ public:
     explicit RenderObject(Node&);
     virtual ~RenderObject();
 
-    template<typename T>
-    WeakPtr<T> createWeakPtr() { return m_weakFactory.createWeakPtr<T>(*this); }
+    auto& weakPtrFactory() const { return m_weakFactory; }
 
     RenderTheme& theme() const;
 

@@ -128,7 +128,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 
     m_clipRect = clipRect;
 
-    auto weakThis = createWeakPtr<RenderWidget>();
+    auto weakThis = makeWeakPtr(*this);
     // These calls *may* cause this renderer to disappear from underneath...
     if (boundsChanged)
         m_widget->setFrameRect(newFrameRect);
@@ -178,7 +178,7 @@ void RenderWidget::setWidget(RefPtr<Widget>&& widget)
         // widget immediately, but we have to have really been fully constructed.
         if (hasInitializedStyle()) {
             if (!needsLayout()) {
-                auto weakThis = createWeakPtr<RenderWidget>();
+                auto weakThis = makeWeakPtr(*this);
                 updateWidgetGeometry();
                 if (!weakThis)
                     return;
@@ -322,7 +322,7 @@ RenderWidget::ChildWidgetState RenderWidget::updateWidgetPosition()
     if (!m_widget)
         return ChildWidgetState::Destroyed;
 
-    auto weakThis = createWeakPtr<RenderWidget>();
+    auto weakThis = makeWeakPtr(*this);
     bool widgetSizeChanged = updateWidgetGeometry();
     if (!weakThis || !m_widget)
         return ChildWidgetState::Destroyed;

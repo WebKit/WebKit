@@ -1,3 +1,28 @@
+2017-09-30  Antti Koivisto  <antti@apple.com>
+
+        Add makeWeakPtr for easier WeakPtr construction
+        https://bugs.webkit.org/show_bug.cgi?id=177706
+
+        Reviewed by Sam Weinig.
+
+        Use it in render tree.
+
+        * loader/SubframeLoader.cpp:
+        (WebCore::SubframeLoader::loadPlugin):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateEmbeddedObject):
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::weakFactory const):
+        (WebCore::RenderObject::createWeakPtr): Deleted.
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidgetGeometry):
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::updateWidgetPosition):
+
 2017-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Share more pasteboard code between iOS and macOS and remove dependency on Settings

@@ -3441,7 +3441,7 @@ void FrameView::updateEmbeddedObject(RenderEmbeddedObject& embeddedObject)
         return;
     }
 
-    auto weakRenderer = embeddedObject.createWeakPtr<RenderEmbeddedObject>();
+    auto weakRenderer = makeWeakPtr(embeddedObject);
 
     // FIXME: This could turn into a real virtual dispatch if we defined
     // updateWidget(PluginCreationOption) on HTMLElement.

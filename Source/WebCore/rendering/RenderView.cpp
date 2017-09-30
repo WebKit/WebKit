@@ -1265,7 +1265,7 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
         rootRenderView->m_accumulatedRepaintRegion = std::make_unique<Region>();
-    m_rootView = rootRenderView->createWeakPtr<RenderView>();
+    m_rootView = makeWeakPtr(*rootRenderView);
 }
 
 RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()
