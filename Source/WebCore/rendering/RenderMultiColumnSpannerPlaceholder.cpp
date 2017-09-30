@@ -34,11 +34,11 @@
 
 namespace WebCore {
 
-RenderMultiColumnSpannerPlaceholder* RenderMultiColumnSpannerPlaceholder::createAnonymous(RenderMultiColumnFlow* fragmentedFlow, RenderBox& spanner, const RenderStyle* parentStyle)
+RenderPtr<RenderMultiColumnSpannerPlaceholder> RenderMultiColumnSpannerPlaceholder::createAnonymous(RenderMultiColumnFlow* fragmentedFlow, RenderBox& spanner, const RenderStyle* parentStyle)
 {
     auto newStyle = RenderStyle::createAnonymousStyleWithDisplay(*parentStyle, BLOCK);
     newStyle.setClear(CBOTH); // We don't want floats in the row preceding the spanner to continue on the other side.
-    auto placeholder = new RenderMultiColumnSpannerPlaceholder(fragmentedFlow, spanner, WTFMove(newStyle));
+    auto placeholder = createRenderer<RenderMultiColumnSpannerPlaceholder>(fragmentedFlow, spanner, WTFMove(newStyle));
     placeholder->initializeStyle();
     return placeholder;
 }

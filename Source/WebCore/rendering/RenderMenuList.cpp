@@ -107,9 +107,10 @@ void RenderMenuList::createInnerBlock()
 
     // Create an anonymous block.
     ASSERT(!firstChild());
-    m_innerBlock = createAnonymousBlock();
+    auto newInnerBlock = createAnonymousBlock();
+    m_innerBlock = newInnerBlock.get();
     adjustInnerStyle();
-    RenderFlexibleBox::addChild(m_innerBlock);
+    RenderFlexibleBox::addChild(WTFMove(newInnerBlock));
 }
 
 void RenderMenuList::adjustInnerStyle()
@@ -171,23 +172,24 @@ HTMLSelectElement& RenderMenuList::selectElement() const
     return downcast<HTMLSelectElement>(nodeForNonAnonymous());
 }
 
-void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderMenuList::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     createInnerBlock();
-    m_innerBlock->addChild(newChild, beforeChild);
+    auto& child = *newChild;
+    m_innerBlock->addChild(WTFMove(newChild), beforeChild);
     ASSERT(m_innerBlock == firstChild());
 
     if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->childrenChanged(this, newChild);
+        cache->childrenChanged(this, &child);
 }
 
-void RenderMenuList::removeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderMenuList::takeChild(RenderObject& oldChild)
 {
     if (&oldChild == m_innerBlock || !m_innerBlock) {
-        RenderFlexibleBox::removeChild(oldChild);
         m_innerBlock = 0;
-    } else
-        m_innerBlock->removeChild(oldChild);
+        return RenderFlexibleBox::takeChild(oldChild);
+    }
+    return m_innerBlock->takeChild(oldChild);
 }
 
 void RenderMenuList::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -294,9 +296,11 @@ void RenderMenuList::setText(const String& s)
     if (m_buttonText)
         m_buttonText->setText(textToUse.impl(), true);
     else {
-        m_buttonText = new RenderText(document(), textToUse);
-        addChild(m_buttonText);
+        auto newButtonText = createRenderer<RenderText>(document(), textToUse);
+        m_buttonText = newButtonText.get();
+        addChild(WTFMove(newButtonText));
     }
+
     adjustInnerStyle();
 }
 

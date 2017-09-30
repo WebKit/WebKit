@@ -455,23 +455,26 @@ bool RenderElement::childRequiresTable(const RenderObject& child) const
     return false;
 }
 
-void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderElement::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    if (childRequiresTable(*newChild)) {
+    auto& child = *newChild;
+    if (childRequiresTable(child)) {
         RenderTable* table;
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : m_lastChild;
         if (afterChild && afterChild->isAnonymous() && is<RenderTable>(*afterChild) && !afterChild->isBeforeContent())
             table = downcast<RenderTable>(afterChild);
         else {
-            table = RenderTable::createAnonymousWithParentRenderer(*this).release();
-            addChild(table, beforeChild);
+            auto newTable =  RenderTable::createAnonymousWithParentRenderer(*this);
+            table = newTable.get();
+            addChild(WTFMove(newTable), beforeChild);
         }
-        table->addChild(newChild);
-    } else
-        insertChildInternal(newChild, beforeChild, NotifyChildren);
 
-    if (is<RenderText>(*newChild))
-        downcast<RenderText>(*newChild).styleDidChange(StyleDifferenceEqual, nullptr);
+        table->addChild(WTFMove(newChild));
+    } else
+        insertChildInternal(WTFMove(newChild), beforeChild, NotifyChildren);
+
+    if (is<RenderText>(child))
+        downcast<RenderText>(child).styleDidChange(StyleDifferenceEqual, nullptr);
 
     // SVG creates renderers for <g display="none">, as SVG requires children of hidden
     // <g>s to have renderers - at least that's how our implementation works. Consider:
@@ -481,22 +484,30 @@ void RenderElement::addChild(RenderObject* newChild, RenderObject* beforeChild)
     //   know that it's inside a "hidden SVG subtree", and thus paints, even if it shouldn't.
     // To avoid the problem alltogether, detect early if we're inside a hidden SVG subtree
     // and stop creating layers at all for these cases - they're not used anyways.
-    if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
-        downcast<RenderLayerModelObject>(*newChild).layer()->removeOnlyThisLayer();
+    if (child.hasLayer() && !layerCreationAllowedForSubtree())
+        downcast<RenderLayerModelObject>(child).layer()->removeOnlyThisLayer();
 
-    SVGRenderSupport::childAdded(*this, *newChild);
+    SVGRenderSupport::childAdded(*this, child);
 }
 
-void RenderElement::removeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderElement::takeChild(RenderObject& oldChild)
 {
-    removeChildInternal(oldChild, NotifyChildren);
+    return takeChildInternal(oldChild, NotifyChildren);
+}
+
+void RenderElement::removeAndDestroyChild(RenderObject& oldChild)
+{
+    auto toDestroy = takeChild(oldChild);
 }
 
 void RenderElement::destroyLeftoverChildren()
 {
     while (m_firstChild) {
         if (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()) {
-            m_firstChild->removeFromParent(); // :first-letter fragment renderers are destroyed by their remaining text fragment.
+            // FIXME: Memory management.
+            auto firstLetter = takeChild(*m_firstChild); // :first-letter fragment renderers are destroyed by their remaining text fragment.
+            auto* leakedPtr = firstLetter.leakPtr();
+            UNUSED_PARAM(leakedPtr);
         } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
             if (m_firstChild->node())
@@ -506,24 +517,21 @@ void RenderElement::destroyLeftoverChildren()
     }
 }
 
-void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* beforeChild, NotifyChildrenType notifyChildren)
+void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, RenderObject* beforeChild, NotifyChildrenType notifyChildren)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!view().layoutState(), "Layout must not mutate render tree");
 
     ASSERT(canHaveChildren() || canHaveGeneratedChildren());
-    ASSERT(!newChild->parent());
-    ASSERT(!isRenderBlockFlow() || (!newChild->isTableSection() && !newChild->isTableRow() && !newChild->isTableCell()));
+    ASSERT(!newChildPtr->parent());
+    ASSERT(!isRenderBlockFlow() || (!newChildPtr->isTableSection() && !newChildPtr->isTableRow() && !newChildPtr->isTableCell()));
 
     while (beforeChild && beforeChild->parent() && beforeChild->parent() != this)
         beforeChild = beforeChild->parent();
 
-    // This should never happen, but if it does prevent render tree corruption
-    // where child->parent() ends up being owner but child->nextSibling()->parent()
-    // is not owner.
-    if (beforeChild && beforeChild->parent() != this) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
+    ASSERT(!beforeChild || beforeChild->parent() == this);
+
+    // Take the ownership.
+    auto* newChild = newChildPtr.leakPtr();
 
     newChild->setParent(this);
 
@@ -565,7 +573,7 @@ void RenderElement::insertChildInternal(RenderObject* newChild, RenderObject* be
         newChild->setHasOutlineAutoAncestor();
 }
 
-void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
+RenderPtr<RenderObject> RenderElement::takeChildInternal(RenderObject& oldChild, NotifyChildrenType notifyChildren)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!view().layoutState(), "Layout must not mutate render tree");
 
@@ -638,6 +646,8 @@ void RenderElement::removeChildInternal(RenderObject& oldChild, NotifyChildrenTy
     if (is<RenderListMarker>(oldChild))
         ASSERT(m_reparentingChild || !downcast<RenderListMarker>(oldChild).listItem().inLayout());
 #endif
+
+    return RenderPtr<RenderObject>(&oldChild);
 }
 
 RenderBlock* RenderElement::containingBlockForFixedPosition() const
@@ -937,10 +947,11 @@ void RenderElement::handleDynamicFloatPositionChange()
             downcast<RenderBoxModelObject>(*parent()).childBecameNonInline(*this);
         else {
             // An anonymous block must be made to wrap this inline.
-            RenderBlock* block = downcast<RenderBlock>(*parent()).createAnonymousBlock();
-            parent()->insertChildInternal(block, this, RenderElement::NotifyChildren);
-            parent()->removeChildInternal(*this, RenderElement::NotifyChildren);
-            block->insertChildInternal(this, nullptr, RenderElement::NotifyChildren);
+            auto newBlock = downcast<RenderBlock>(*parent()).createAnonymousBlock();
+            auto& block = *newBlock;
+            parent()->insertChildInternal(WTFMove(newBlock), this, RenderElement::NotifyChildren);
+            auto thisToMove = parent()->takeChildInternal(*this, RenderElement::NotifyChildren);
+            block.insertChildInternal(WTFMove(thisToMove), nullptr, RenderElement::NotifyChildren);
         }
     }
 }

@@ -37,12 +37,14 @@ class RenderMultiColumnFlow;
 
 class RenderMultiColumnSpannerPlaceholder final : public RenderBox {
 public:
-    static RenderMultiColumnSpannerPlaceholder* createAnonymous(RenderMultiColumnFlow*, RenderBox& spanner, const RenderStyle* parentStyle);
+    static RenderPtr<RenderMultiColumnSpannerPlaceholder> createAnonymous(RenderMultiColumnFlow*, RenderBox& spanner, const RenderStyle* parentStyle);
 
     RenderBox* spanner() const { return m_spanner; }
     RenderMultiColumnFlow* fragmentedFlow() const { return m_fragmentedFlow; }
 
 private:
+    template<class T, class... Args> friend RenderPtr<T> createRenderer(Args&&...);
+
     RenderMultiColumnSpannerPlaceholder(RenderMultiColumnFlow*, RenderBox& spanner, RenderStyle&&);
     bool isRenderMultiColumnSpannerPlaceholder() const override { return true; }
 

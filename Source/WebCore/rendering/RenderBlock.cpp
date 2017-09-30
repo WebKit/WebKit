@@ -475,7 +475,7 @@ RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
     return last;
 }
 
-void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild)
+void RenderBlock::addChildToContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     RenderBlock* flow = continuationBefore(beforeChild);
     ASSERT(!beforeChild || is<RenderBlock>(*beforeChild->parent()));
@@ -491,7 +491,7 @@ void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* b
     }
 
     if (newChild->isFloatingOrOutOfFlowPositioned()) {
-        beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+        beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
         return;
     }
 
@@ -500,21 +500,21 @@ void RenderBlock::addChildToContinuation(RenderObject* newChild, RenderObject* b
     bool flowIsNormal = flow->isInline() || !flow->style().columnSpan();
 
     if (flow == beforeChildParent) {
-        flow->addChildIgnoringContinuation(newChild, beforeChild);
+        flow->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
         return;
     }
     
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
     if (childIsNormal == bcpIsNormal) {
-        beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+        beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
         return;
     }
     if (flowIsNormal == childIsNormal) {
-        flow->addChildIgnoringContinuation(newChild, 0); // Just treat like an append.
+        flow->addChildIgnoringContinuation(WTFMove(newChild), 0); // Just treat like an append.
         return;
     }
-    beforeChildParent->addChildIgnoringContinuation(newChild, beforeChild);
+    beforeChildParent->addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
 }
 
 RenderPtr<RenderBlock> RenderBlock::clone() const
@@ -537,15 +537,15 @@ RenderPtr<RenderBlock> RenderBlock::clone() const
     return cloneBlock;
 }
 
-void RenderBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderBlock::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (continuation() && !isAnonymousBlock())
-        addChildToContinuation(newChild, beforeChild);
+        addChildToContinuation(WTFMove(newChild), beforeChild);
     else
-        addChildIgnoringContinuation(newChild, beforeChild);
+        addChildIgnoringContinuation(WTFMove(newChild), beforeChild);
 }
 
-void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild)
+void RenderBlock::addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() != this) {
         RenderElement* beforeChildContainer = beforeChild->parent();
@@ -566,16 +566,16 @@ void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObj
                 ) {
                 // Insert the child into the anonymous block box instead of here.
                 if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-                    beforeChild->parent()->addChild(newChild, beforeChild);
+                    beforeChild->parent()->addChild(WTFMove(newChild), beforeChild);
                 else
-                    addChild(newChild, beforeChild->parent());
+                    addChild(WTFMove(newChild), beforeChild->parent());
                 return;
             }
 
             ASSERT(beforeChildAnonymousContainer->isTable());
             if (newChild->isTablePart()) {
                 // Insert into the anonymous table.
-                beforeChildAnonymousContainer->addChild(newChild, beforeChild);
+                beforeChildAnonymousContainer->addChild(WTFMove(newChild), beforeChild);
                 return;
             }
 
@@ -612,22 +612,23 @@ void RenderBlock::addChildIgnoringContinuation(RenderObject* newChild, RenderObj
         RenderObject* afterChild = beforeChild ? beforeChild->previousSibling() : lastChild();
 
         if (afterChild && afterChild->isAnonymousBlock()) {
-            downcast<RenderBlock>(*afterChild).addChild(newChild);
+            downcast<RenderBlock>(*afterChild).addChild(WTFMove(newChild));
             return;
         }
 
         if (newChild->isInline()) {
             // No suitable existing anonymous box - create a new one.
-            RenderBlock* newBox = createAnonymousBlock();
-            RenderBox::addChild(newBox, beforeChild);
-            newBox->addChild(newChild);
+            auto newBox = createAnonymousBlock();
+            auto& box = *newBox;
+            RenderBox::addChild(WTFMove(newBox), beforeChild);
+            box.addChild(WTFMove(newChild));
             return;
         }
     }
 
     invalidateLineLayoutPath();
 
-    RenderBox::addChild(newChild, beforeChild);
+    RenderBox::addChild(WTFMove(newChild), beforeChild);
  
     if (madeBoxesNonInline && is<RenderBlock>(parent()) && isAnonymousBlock())
         downcast<RenderBlock>(*parent()).removeLeftoverAnonymousBlock(this);
@@ -710,9 +711,10 @@ void RenderBlock::makeChildrenNonInline(RenderObject* insertionPoint)
 
         child = inlineRunEnd->nextSibling();
 
-        RenderBlock* block = createAnonymousBlock();
-        insertChildInternal(block, inlineRunStart, NotifyChildren);
-        moveChildrenTo(block, inlineRunStart, child);
+        auto newBlock = createAnonymousBlock();
+        auto& block = *newBlock;
+        insertChildInternal(WTFMove(newBlock), inlineRunStart, NotifyChildren);
+        moveChildrenTo(&block, inlineRunStart, child);
     }
 
 #ifndef NDEBUG
@@ -811,21 +813,19 @@ void RenderBlock::dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child)
     parent.setNeedsLayoutAndPrefWidthsRecalc();
     parent.setChildrenInline(child.childrenInline());
     RenderObject* nextSibling = child.nextSibling();
-    parent.removeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
+
+    auto toBeDeleted = parent.takeChildInternal(child, child.hasLayer() ? NotifyChildren : DontNotifyChildren);
     child.moveAllChildrenTo(&parent, nextSibling, child.hasLayer());
     // Delete the now-empty block's lines and nuke it.
     child.deleteLines();
-    child.destroy();
 }
 
-void RenderBlock::removeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderBlock::takeChild(RenderObject& oldChild)
 {
     // No need to waste time in merging or removing empty anonymous blocks.
     // We can just bail out if our document is getting destroyed.
-    if (renderTreeBeingDestroyed()) {
-        RenderBox::removeChild(oldChild);
-        return;
-    }
+    if (renderTreeBeingDestroyed())
+        return RenderBox::takeChild(oldChild);
 
     // If this child is a block, and if our previous and next siblings are both anonymous blocks
     // with inline content, then we can fold the inline content back together.
@@ -849,11 +849,11 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             // Cache this value as it might get changed in setStyle() call.
             bool inlineChildrenBlockHasLayer = inlineChildrenBlock.hasLayer();
             inlineChildrenBlock.setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
-            removeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
+            auto blockToMove = takeChildInternal(inlineChildrenBlock, inlineChildrenBlockHasLayer ? NotifyChildren : DontNotifyChildren);
             
             // Now just put the inlineChildrenBlock inside the blockChildrenBlock.
             RenderObject* beforeChild = prev == &inlineChildrenBlock ? blockChildrenBlock.firstChild() : nullptr;
-            blockChildrenBlock.insertChildInternal(&inlineChildrenBlock, beforeChild,
+            blockChildrenBlock.insertChildInternal(WTFMove(blockToMove), beforeChild,
                 (inlineChildrenBlockHasLayer || blockChildrenBlock.hasLayer()) ? NotifyChildren : DontNotifyChildren);
             next->setNeedsLayoutAndPrefWidthsRecalc();
             
@@ -877,7 +877,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
 
     invalidateLineLayoutPath();
 
-    RenderBox::removeChild(oldChild);
+    auto takenChild = RenderBox::takeChild(oldChild);
 
     RenderObject* child = prev ? prev : next;
     if (canMergeAnonymousBlocks && child && !child->previousSibling() && !child->nextSibling() && canDropAnonymousBlockChild()) {
@@ -934,6 +934,7 @@ void RenderBlock::removeChild(RenderObject& oldChild)
             destroy();
         }
     }
+    return takenChild;
 }
 
 bool RenderBlock::childrenPreventSelfCollapsing() const
@@ -3340,14 +3341,14 @@ void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint
         inlineElementContinuation()->addFocusRingRects(rects, flooredLayoutPoint(LayoutPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location())), paintContainer);
 }
 
-std::unique_ptr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Document& document, const RenderStyle& style, EDisplay display)
+RenderPtr<RenderBlock> RenderBlock::createAnonymousBlockWithStyleAndDisplay(Document& document, const RenderStyle& style, EDisplay display)
 {
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
-    std::unique_ptr<RenderBlock> newBox;
+    RenderPtr<RenderBlock> newBox;
     if (display == FLEX || display == INLINE_FLEX)
-        newBox = std::make_unique<RenderFlexibleBox>(document, RenderStyle::createAnonymousStyleWithDisplay(style, FLEX));
+        newBox = createRenderer<RenderFlexibleBox>(document, RenderStyle::createAnonymousStyleWithDisplay(style, FLEX));
     else
-        newBox = std::make_unique<RenderBlockFlow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, BLOCK));
+        newBox = createRenderer<RenderBlockFlow>(document, RenderStyle::createAnonymousStyleWithDisplay(style, BLOCK));
     
     newBox->initializeStyle();
     return newBox;

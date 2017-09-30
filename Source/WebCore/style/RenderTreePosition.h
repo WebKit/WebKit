@@ -46,7 +46,7 @@ public:
     }
 
     RenderElement& parent() const { return m_parent; }
-    void insert(RenderObject&);
+    void insert(RenderPtr<RenderObject>);
     bool canInsert(RenderElement&) const;
     bool canInsert(RenderText&) const;
 
@@ -78,10 +78,10 @@ inline bool RenderTreePosition::canInsert(RenderText& renderer) const
     return m_parent.isChildAllowed(renderer, m_parent.style());
 }
 
-inline void RenderTreePosition::insert(RenderObject& renderer)
+inline void RenderTreePosition::insert(RenderPtr<RenderObject> renderer)
 {
     ASSERT(m_hasValidNextSibling);
-    m_parent.addChild(&renderer, m_nextSibling);
+    m_parent.addChild(WTFMove(renderer), m_nextSibling);
 }
 
 } // namespace WebCore

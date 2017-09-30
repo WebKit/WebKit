@@ -752,7 +752,7 @@ public:
     void imageChanged(CachedImage*, const IntRect* = nullptr) override;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = nullptr) { }
 
-    void removeFromParent();
+    void removeFromParentAndDestroy();
 
     CSSAnimationController& animation() const;
 

@@ -241,10 +241,10 @@ void RenderObject::setParent(RenderElement* parent)
     m_parent = parent;
 }
 
-void RenderObject::removeFromParent()
+void RenderObject::removeFromParentAndDestroy()
 {
-    if (parent())
-        parent()->removeChild(*this);
+    ASSERT(m_parent);
+    m_parent->removeAndDestroyChild(*this);
 }
 
 RenderObject* RenderObject::nextInPreOrder() const
@@ -1428,7 +1428,12 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache* cache = document().existingAXObjectCache())
         cache->childrenChanged(this->parent());
 
-    removeFromParent();
+    if (m_parent) {
+        // FIXME: We should have always been removed from the parent before being destroyed.
+        auto takenThis = m_parent->takeChild(*this);
+        auto* leakedPtr = takenThis.leakPtr();
+        UNUSED_PARAM(leakedPtr);
+    }
 
     ASSERT(renderTreeBeingDestroyed() || !is<RenderElement>(*this) || !view().frameView().hasSlowRepaintObject(downcast<RenderElement>(*this)));
 
@@ -1498,6 +1503,7 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
 
 void RenderObject::destroy()
 {
+    ASSERT(!m_bitfields.beingDestroyed());
     m_bitfields.setBeingDestroyed(true);
 
 #if PLATFORM(IOS)

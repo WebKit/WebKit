@@ -2596,12 +2596,12 @@ void RenderBoxModelObject::moveChildTo(RenderBoxModelObject* toBoxModelObject, R
     if (fullRemoveInsert && (toBoxModelObject->isRenderBlock() || toBoxModelObject->isRenderInline())) {
         // Takes care of adding the new child correctly if toBlock and fromBlock
         // have different kind of children (block vs inline).
-        removeChildInternal(*child, NotifyChildren);
-        toBoxModelObject->addChild(child, beforeChild);
+        auto childToMove = takeChildInternal(*child, NotifyChildren);
+        toBoxModelObject->addChild(WTFMove(childToMove), beforeChild);
     } else {
         NotifyChildrenType notifyType = fullRemoveInsert ? NotifyChildren : DontNotifyChildren;
-        removeChildInternal(*child, notifyType);
-        toBoxModelObject->insertChildInternal(child, beforeChild, notifyType);
+        auto childToMove = takeChildInternal(*child, notifyType);
+        toBoxModelObject->insertChildInternal(WTFMove(childToMove), beforeChild, notifyType);
     }
 }
 

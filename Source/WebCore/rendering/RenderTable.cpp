@@ -136,7 +136,7 @@ static inline void resetSectionPointerIfNotBefore(RenderTableSection*& ptr, Rend
         ptr = 0;
 }
 
-void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderTable::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     bool wrapInAnonymousSection = !child->isOutOfFlowPositioned();
 
@@ -150,18 +150,18 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             case TABLE_HEADER_GROUP:
                 resetSectionPointerIfNotBefore(m_head, beforeChild);
                 if (!m_head) {
-                    m_head = downcast<RenderTableSection>(child);
+                    m_head = downcast<RenderTableSection>(child.get());
                 } else {
                     resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                     if (!m_firstBody) 
-                        m_firstBody = downcast<RenderTableSection>(child);
+                        m_firstBody = downcast<RenderTableSection>(child.get());
                 }
                 wrapInAnonymousSection = false;
                 break;
             case TABLE_FOOTER_GROUP:
                 resetSectionPointerIfNotBefore(m_foot, beforeChild);
                 if (!m_foot) {
-                    m_foot = downcast<RenderTableSection>(child);
+                    m_foot = downcast<RenderTableSection>(child.get());
                     wrapInAnonymousSection = false;
                     break;
                 }
@@ -169,7 +169,7 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
             case TABLE_ROW_GROUP:
                 resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
                 if (!m_firstBody)
-                    m_firstBody = downcast<RenderTableSection>(child);
+                    m_firstBody = downcast<RenderTableSection>(child.get());
                 wrapInAnonymousSection = false;
                 break;
             default:
@@ -187,19 +187,19 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         if (beforeChild && beforeChild->parent() != this)
             beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
-        RenderBox::addChild(child, beforeChild);
+        RenderBox::addChild(WTFMove(child), beforeChild);
         return;
     }
 
     if (!beforeChild && is<RenderTableSection>(lastChild()) && lastChild()->isAnonymous() && !lastChild()->isBeforeContent()) {
-        downcast<RenderTableSection>(*lastChild()).addChild(child);
+        downcast<RenderTableSection>(*lastChild()).addChild(WTFMove(child));
         return;
     }
 
     if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
         RenderObject* section = beforeChild->previousSibling();
         if (is<RenderTableSection>(section) && section->isAnonymous()) {
-            downcast<RenderTableSection>(*section).addChild(child);
+            downcast<RenderTableSection>(*section).addChild(WTFMove(child));
             return;
         }
     }
@@ -211,16 +211,17 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
         RenderTableSection& section = downcast<RenderTableSection>(*lastBox);
         if (beforeChild == &section)
             beforeChild = section.firstRow();
-        section.addChild(child, beforeChild);
+        section.addChild(WTFMove(child), beforeChild);
         return;
     }
 
     if (beforeChild && !is<RenderTableSection>(*beforeChild) && beforeChild->style().display() != TABLE_CAPTION && beforeChild->style().display() != TABLE_COLUMN_GROUP)
         beforeChild = nullptr;
 
-    auto section = RenderTableSection::createAnonymousWithParentRenderer(*this).release();
-    addChild(section, beforeChild);
-    section->addChild(child);
+    auto newSection = RenderTableSection::createAnonymousWithParentRenderer(*this);
+    auto& section = *newSection;
+    addChild(WTFMove(newSection), beforeChild);
+    section.addChild(WTFMove(child));
 }
 
 void RenderTable::addCaption(const RenderTableCaption* caption)
@@ -1577,14 +1578,14 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-std::unique_ptr<RenderTable> RenderTable::createTableWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTable> RenderTable::createTableWithStyle(Document& document, const RenderStyle& style)
 {
-    auto table = std::make_unique<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == INLINE ? INLINE_TABLE : TABLE));
+    auto table = createRenderer<RenderTable>(document, RenderStyle::createAnonymousStyleWithDisplay(style, style.display() == INLINE ? INLINE_TABLE : TABLE));
     table->initializeStyle();
     return table;
 }
 
-std::unique_ptr<RenderTable> RenderTable::createAnonymousWithParentRenderer(const RenderElement& parent)
+RenderPtr<RenderTable> RenderTable::createAnonymousWithParentRenderer(const RenderElement& parent)
 {
     return RenderTable::createTableWithStyle(parent.document(), parent.style());
 }

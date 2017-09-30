@@ -300,16 +300,17 @@ void RenderSVGRoot::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     SVGResourcesCache::clientStyleChanged(*this, diff, style());
 }
 
-void RenderSVGRoot::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderSVGRoot::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    RenderReplaced::addChild(child, beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(*child);
+    auto& child = *newChild;
+    RenderReplaced::addChild(WTFMove(newChild), beforeChild);
+    SVGResourcesCache::clientWasAddedToTree(child);
 }
 
-void RenderSVGRoot::removeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderSVGRoot::takeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    RenderReplaced::removeChild(child);
+    return RenderReplaced::takeChild(child);
 }
 
 // RenderBox methods will expect coordinates w/o any transforms in coordinates

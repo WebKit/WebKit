@@ -361,7 +361,7 @@ void RenderQuote::updateTextRenderer()
         renderText->dirtyLineBoxes(false);
         return;
     }
-    addChild(new RenderTextFragment(document(), m_text));
+    addChild(createRenderer<RenderTextFragment>(document(), m_text));
 }
 
 String RenderQuote::computeText() const

@@ -3835,24 +3835,24 @@ void RenderBlockFlow::layoutExcludedChildren(bool relayoutChildren)
     determineLogicalLeftPositionForChild(*fragmentedFlow);
 }
 
-void RenderBlockFlow::addChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderBlockFlow::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
     if (multiColumnFlow() && (!isFieldset() || !newChild->isLegend()))
-        return multiColumnFlow()->addChild(newChild, beforeChild);
+        return multiColumnFlow()->addChild(WTFMove(newChild), beforeChild);
     auto* beforeChildOrPlaceholder = beforeChild;
     if (auto* containingFragmentedFlow = enclosingFragmentedFlow())
         beforeChildOrPlaceholder = containingFragmentedFlow->resolveMovedChild(beforeChild);
-    RenderBlock::addChild(newChild, beforeChildOrPlaceholder);
+    RenderBlock::addChild(WTFMove(newChild), beforeChildOrPlaceholder);
 }
 
-void RenderBlockFlow::removeChild(RenderObject& oldChild)
+RenderPtr<RenderObject> RenderBlockFlow::takeChild(RenderObject& oldChild)
 {
     if (!renderTreeBeingDestroyed()) {
         RenderFragmentedFlow* fragmentedFlow = multiColumnFlow();
         if (fragmentedFlow && fragmentedFlow != &oldChild)
             fragmentedFlow->fragmentedFlowRelativeWillBeRemoved(oldChild);
     }
-    RenderBlock::removeChild(oldChild);
+    return RenderBlock::takeChild(oldChild);
 }
 
 void RenderBlockFlow::checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged)

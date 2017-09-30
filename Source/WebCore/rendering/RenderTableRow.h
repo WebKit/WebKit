@@ -46,8 +46,8 @@ public:
 
     void paintOutlineForRowIfNeeded(PaintInfo&, const LayoutPoint&);
 
-    static std::unique_ptr<RenderTableRow> createAnonymousWithParentRenderer(const RenderTableSection&);
-    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
+    static RenderPtr<RenderTableRow> createAnonymousWithParentRenderer(const RenderTableSection&);
+    RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
     void setRowIndex(unsigned);
     bool rowIndexWasSet() const { return m_rowIndex != unsetRowIndex; }
@@ -58,14 +58,14 @@ public:
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell&) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell&) const;
 
-    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) override;
 
     void destroyAndCollapseAnonymousSiblingRows();
 
 private:
-    static std::unique_ptr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
+    static RenderPtr<RenderTableRow> createTableRowWithStyle(Document&, const RenderStyle&);
 
     const char* renderName() const override { return (isAnonymous() || isPseudoElement()) ? "RenderTableRow (anonymous)" : "RenderTableRow"; }
 
@@ -150,7 +150,7 @@ inline RenderTableRow* RenderTableSection::lastRow() const
     return downcast<RenderTableRow>(RenderBox::lastChild());
 }
 
-inline std::unique_ptr<RenderBox> RenderTableRow::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+inline RenderPtr<RenderBox> RenderTableRow::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
 {
     return RenderTableRow::createTableRowWithStyle(renderer.document(), renderer.style());
 }

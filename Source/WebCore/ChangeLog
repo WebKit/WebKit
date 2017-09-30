@@ -1,3 +1,206 @@
+2017-09-29  Antti Koivisto  <antti@apple.com>
+
+        Use smart pointers for creating, adding and removing renderers
+        https://bugs.webkit.org/show_bug.cgi?id=177603
+
+        Reviewed by Zalan Bujtas.
+
+        With this patch RenderObject ownership is consistently managed using RenderPtrs. It also
+        clarifies that in-tree renderers are always owned by the parent renderer.
+
+        - renderers are constructed with createRenderer<> which returns RenderPtr
+        - addChild and related functions take RenderPtrs
+        - removeChild is replaced with takeChild that returns a RenderPtr
+        - only addChildInternal/takeChildInternal deal with raw ownder renderer pointers.
+
+        There are still a few exception left, noted below, to be fixed later.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToContinuation):
+        (WebCore::RenderBlock::addChild):
+        (WebCore::RenderBlock::addChildIgnoringContinuation):
+        (WebCore::RenderBlock::makeChildrenNonInline):
+        (WebCore::RenderBlock::dropAnonymousBoxChild):
+        (WebCore::RenderBlock::takeChild):
+        (WebCore::RenderBlock::createAnonymousBlockWithStyleAndDisplay):
+        (WebCore::RenderBlock::removeChild): Deleted.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::createAnonymousWithParentRendererAndDisplay):
+        (WebCore::RenderBlock::createAnonymousBoxWithSameTypeAs const):
+        (WebCore::RenderBlock::createAnonymousBlock const):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::addChild):
+        (WebCore::RenderBlockFlow::takeChild):
+        (WebCore::RenderBlockFlow::removeChild): Deleted.
+        * rendering/RenderBlockFlow.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::splitAnonymousBoxesAroundChild):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::createAnonymousBoxWithSameTypeAs const):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::moveChildTo):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::addChild):
+        (WebCore::RenderButton::takeChild):
+        (WebCore::RenderButton::setText):
+        (WebCore::RenderButton::removeChild): Deleted.
+        * rendering/RenderButton.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::addChild):
+        (WebCore::RenderElement::takeChild):
+        (WebCore::RenderElement::removeAndDestroyChild):
+        (WebCore::RenderElement::destroyLeftoverChildren):
+
+            Keep the existing behavior and leak the firstLetter renderer. The comment claims they get destroyed by RenderTextFragment.
+            To be cleaned up later.
+
+        (WebCore::RenderElement::insertChildInternal):
+        (WebCore::RenderElement::takeChildInternal):
+        (WebCore::RenderElement::handleDynamicFloatPositionChange):
+        (WebCore::RenderElement::removeChild): Deleted.
+        (WebCore::RenderElement::removeChildInternal): Deleted.
+        * rendering/RenderElement.h:
+        (WebCore::RenderElement::addChildIgnoringContinuation):
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::willBeDestroyed):
+        (WebCore::RenderFullScreen::wrapNewRenderer):
+        (WebCore::RenderFullScreen::wrapExistingRenderer):
+
+            Split wrapRenderer() into two functions, wrapNewRenderer() and wrapExistingRenderer().
+            The first one deals with adding new renderers to the tree while the latter mutates
+            existing render tree in-place.
+
+        (WebCore::RenderFullScreen::unwrapRenderer):
+        (WebCore::RenderFullScreen::createPlaceholder):
+        (WebCore::RenderFullScreen::wrapRenderer): Deleted.
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::addChild):
+        (WebCore::RenderGrid::takeChild):
+        (WebCore::RenderGrid::removeChild): Deleted.
+        * rendering/RenderGrid.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addChild):
+        (WebCore::RenderInline::addChildIgnoringContinuation):
+        (WebCore::RenderInline::splitInlines):
+        (WebCore::RenderInline::splitFlow):
+        (WebCore::RenderInline::addChildToContinuation):
+        (WebCore::RenderInline::childBecameNonInline):
+        * rendering/RenderInline.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::createInnerBlock):
+        (RenderMenuList::addChild):
+        (RenderMenuList::takeChild):
+        (RenderMenuList::setText):
+        (RenderMenuList::removeChild): Deleted.
+        * rendering/RenderMenuList.h:
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+        (WebCore::RenderMultiColumnFlow::processPossibleSpannerDescendant):
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+
+            Keep the existing behavior and leak the placeholder renderer.
+            To be cleaned up later.
+
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+
+            Keep the existing behavior and leak the placeholder renderer.
+            To be cleaned up later.
+
+        * rendering/RenderMultiColumnSpannerPlaceholder.cpp:
+        (WebCore::RenderMultiColumnSpannerPlaceholder::createAnonymous):
+        * rendering/RenderMultiColumnSpannerPlaceholder.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::removeFromParentAndDestroy):
+        (WebCore::RenderObject::willBeDestroyed):
+        (WebCore::RenderObject::destroy):
+        (WebCore::RenderObject::removeFromParent): Deleted.
+        * rendering/RenderObject.h:
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::updateTextRenderer):
+        * rendering/RenderRuby.cpp:
+        (WebCore::createAnonymousRubyInlineBlock):
+        (WebCore::RenderRubyAsInline::addChild):
+        (WebCore::RenderRubyAsInline::takeChild):
+        (WebCore::RenderRubyAsBlock::addChild):
+        (WebCore::RenderRubyAsBlock::takeChild):
+        (WebCore::RenderRubyAsInline::removeChild): Deleted.
+        (WebCore::RenderRubyAsBlock::removeChild): Deleted.
+        * rendering/RenderRuby.h:
+        * rendering/RenderRubyBase.cpp:
+        (WebCore::RenderRubyBase::moveInlineChildren):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::rubyBaseSafe):
+        (WebCore::RenderRubyRun::addChild):
+        (WebCore::RenderRubyRun::takeChild):
+        (WebCore::RenderRubyRun::createRubyBase const):
+        (WebCore::RenderRubyRun::staticCreateRubyRun):
+        (WebCore::RenderRubyRun::removeChild): Deleted.
+        * rendering/RenderRubyRun.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild):
+        (WebCore::RenderTable::createTableWithStyle):
+        (WebCore::RenderTable::createAnonymousWithParentRenderer):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::createAnonymousBoxWithSameTypeAs const):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::createTableCellWithStyle):
+        (WebCore::RenderTableCell::createAnonymousWithParentRenderer):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::createAnonymousBoxWithSameTypeAs const):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild):
+        (WebCore::RenderTableRow::createTableRowWithStyle):
+        (WebCore::RenderTableRow::createAnonymousWithParentRenderer):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::createAnonymousBoxWithSameTypeAs const):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild):
+        (WebCore::RenderTableSection::createTableSectionWithStyle):
+        (WebCore::RenderTableSection::createAnonymousWithParentRenderer):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::createAnonymousBoxWithSameTypeAs const):
+        * rendering/mathml/RenderMathMLFenced.cpp:
+        (WebCore::RenderMathMLFenced::makeFences):
+        (WebCore::RenderMathMLFenced::addChild):
+        * rendering/mathml/RenderMathMLFenced.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addChild):
+        (WebCore::RenderSVGContainer::takeChild):
+        (WebCore::RenderSVGContainer::removeChild): Deleted.
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::addChild):
+        (WebCore::RenderSVGInline::takeChild):
+        (WebCore::RenderSVGInline::removeChild): Deleted.
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::addChild):
+        (WebCore::RenderSVGRoot::takeChild):
+        (WebCore::RenderSVGRoot::removeChild): Deleted.
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::addChild):
+        (WebCore::RenderSVGText::takeChild):
+        (WebCore::RenderSVGText::removeChild): Deleted.
+        * rendering/svg/RenderSVGText.h:
+        * style/RenderTreePosition.h:
+        (WebCore::RenderTreePosition::insert):
+        * style/RenderTreeUpdater.cpp:
+        (WebCore::RenderTreeUpdater::createRenderer):
+        (WebCore::createTextRenderer):
+        * style/RenderTreeUpdaterFirstLetter.cpp:
+        (WebCore::updateFirstLetterStyle):
+        (WebCore::createFirstLetterRenderer):
+        * style/RenderTreeUpdaterGeneratedContent.cpp:
+        (WebCore::createContentRenderers):
+        * style/RenderTreeUpdaterListItem.cpp:
+        (WebCore::RenderTreeUpdater::ListItem::updateMarker):
+        * style/RenderTreeUpdaterMultiColumn.cpp:
+        (WebCore::RenderTreeUpdater::MultiColumn::createFragmentedFlow):
+
 2017-09-29  Zalan Bujtas  <zalan@apple.com>
 
         Remove redundant RenderObject::selectionRoot and dependencies

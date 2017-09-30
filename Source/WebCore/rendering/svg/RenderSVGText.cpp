@@ -517,22 +517,24 @@ FloatRect RenderSVGText::repaintRectInLocalCoordinates() const
     return repaintRect;
 }
 
-void RenderSVGText::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderSVGText::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    RenderSVGBlock::addChild(child, beforeChild);
+    auto& child = *newChild;
+    RenderSVGBlock::addChild(WTFMove(newChild), beforeChild);
 
-    SVGResourcesCache::clientWasAddedToTree(*child);
-    subtreeChildWasAdded(child);
+    SVGResourcesCache::clientWasAddedToTree(child);
+    subtreeChildWasAdded(&child);
 }
 
-void RenderSVGText::removeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderSVGText::takeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
 
     Vector<SVGTextLayoutAttributes*, 2> affectedAttributes;
     subtreeChildWillBeRemoved(&child, affectedAttributes);
-    RenderSVGBlock::removeChild(child);
+    auto takenChild = RenderSVGBlock::takeChild(child);
     subtreeChildWasRemoved(affectedAttributes);
+    return takenChild;
 }
 
 // Fix for <rdar://problem/8048875>. We should not render :first-line CSS Style

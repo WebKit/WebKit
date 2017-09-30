@@ -359,27 +359,25 @@ void RenderTreeUpdater::createRenderer(Element& element, RenderStyle&& style)
         return;
 
     RenderTreePosition insertionPosition = computeInsertionPosition();
-    RenderElement* newRenderer = element.createElementRenderer(WTFMove(style), insertionPosition).leakPtr();
+    auto newRenderer = element.createElementRenderer(WTFMove(style), insertionPosition);
     if (!newRenderer)
         return;
-    if (!insertionPosition.canInsert(*newRenderer)) {
-        newRenderer->destroy();
+    if (!insertionPosition.canInsert(*newRenderer))
         return;
-    }
 
-    element.setRenderer(newRenderer);
+    element.setRenderer(newRenderer.get());
 
     newRenderer->initializeStyle();
 
 #if ENABLE(FULLSCREEN_API)
     if (m_document.webkitIsFullScreen() && m_document.webkitCurrentFullScreenElement() == &element) {
-        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, &insertionPosition.parent(), m_document);
+        newRenderer = RenderFullScreen::wrapNewRenderer(WTFMove(newRenderer), insertionPosition.parent(), m_document);
         if (!newRenderer)
             return;
     }
 #endif
-    // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    insertionPosition.insert(*newRenderer);
+
+    insertionPosition.insert(WTFMove(newRenderer));
 
     if (AXObjectCache* cache = m_document.axObjectCache())
         cache->updateCacheAfterNodeIsAttached(&element);
@@ -441,7 +439,7 @@ static void createTextRenderer(Text& textNode, RenderTreePosition& renderTreePos
         return;
 
     textNode.setRenderer(newRenderer.get());
-    renderTreePosition.insert(*newRenderer.leakPtr());
+    renderTreePosition.insert(WTFMove(newRenderer));
 }
 
 void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* textUpdate)

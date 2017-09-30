@@ -1365,14 +1365,14 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         setIntrinsicPaddingAfter(intrinsicPaddingAfter() - scrollbarHeight);
 }
 
-std::unique_ptr<RenderTableCell> RenderTableCell::createTableCellWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTableCell> RenderTableCell::createTableCellWithStyle(Document& document, const RenderStyle& style)
 {
-    auto cell = std::make_unique<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_CELL));
+    auto cell = createRenderer<RenderTableCell>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_CELL));
     cell->initializeStyle();
     return cell;
 }
 
-std::unique_ptr<RenderTableCell> RenderTableCell::createAnonymousWithParentRenderer(const RenderTableRow& parent)
+RenderPtr<RenderTableCell> RenderTableCell::createAnonymousWithParentRenderer(const RenderTableRow& parent)
 {
     return RenderTableCell::createTableCellWithStyle(parent.document(), parent.style());
 }

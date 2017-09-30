@@ -88,18 +88,18 @@ void RenderSVGContainer::layout()
     clearNeedsLayout();
 }
 
-void RenderSVGContainer::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderSVGContainer::addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild)
 {
-    RenderSVGModelObject::addChild(child, beforeChild);
-    SVGResourcesCache::clientWasAddedToTree(*child);
+    auto& child = *newChild;
+    RenderSVGModelObject::addChild(WTFMove(newChild), beforeChild);
+    SVGResourcesCache::clientWasAddedToTree(child);
 }
 
-void RenderSVGContainer::removeChild(RenderObject& child)
+RenderPtr<RenderObject> RenderSVGContainer::takeChild(RenderObject& child)
 {
     SVGResourcesCache::clientWillBeRemovedFromTree(child);
-    RenderSVGModelObject::removeChild(child);
+    return RenderSVGModelObject::takeChild(child);
 }
-
 
 bool RenderSVGContainer::selfWillPaint()
 {

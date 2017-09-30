@@ -108,11 +108,11 @@ static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject
 
     if (Style::determineChange(firstLetter->style(), pseudoStyle) == Style::Detach) {
         // The first-letter renderer needs to be replaced. Create a new renderer of the right type.
-        RenderBoxModelObject* newFirstLetter;
+        RenderPtr<RenderBoxModelObject> newFirstLetter;
         if (pseudoStyle.display() == INLINE)
-            newFirstLetter = new RenderInline(firstLetterBlock.document(), WTFMove(pseudoStyle));
+            newFirstLetter = createRenderer<RenderInline>(firstLetterBlock.document(), WTFMove(pseudoStyle));
         else
-            newFirstLetter = new RenderBlockFlow(firstLetterBlock.document(), WTFMove(pseudoStyle));
+            newFirstLetter = createRenderer<RenderBlockFlow>(firstLetterBlock.document(), WTFMove(pseudoStyle));
         newFirstLetter->initializeStyle();
 
         // Move the first letter into the new renderer.
@@ -120,8 +120,8 @@ static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject
         while (RenderObject* child = firstLetter->firstChild()) {
             if (is<RenderText>(*child))
                 downcast<RenderText>(*child).removeAndDestroyTextBoxes();
-            firstLetter->removeChild(*child);
-            newFirstLetter->addChild(child, nullptr);
+            auto toMove = firstLetter->takeChild(*child);
+            newFirstLetter->addChild(WTFMove(toMove));
         }
 
         RenderObject* nextSibling = firstLetter->nextSibling();
@@ -131,12 +131,8 @@ static void updateFirstLetterStyle(RenderElement& firstLetterBlock, RenderObject
             remainingText->setFirstLetter(*newFirstLetter);
             newFirstLetter->setFirstLetterRemainingText(remainingText);
         }
-        // To prevent removal of single anonymous block in RenderBlock::removeChild and causing
-        // |nextSibling| to go stale, we remove the old first letter using removeChildNode first.
-        firstLetterContainer->removeChildInternal(*firstLetter, RenderElement::NotifyChildren);
-        firstLetter->destroy();
-        firstLetter = newFirstLetter;
-        firstLetterContainer->addChild(firstLetter, nextSibling);
+        firstLetterContainer->removeAndDestroyChild(*firstLetter);
+        firstLetterContainer->addChild(WTFMove(newFirstLetter), nextSibling);
     } else
         firstLetter->setStyle(WTFMove(pseudoStyle));
 }
@@ -145,13 +141,14 @@ static void createFirstLetterRenderer(RenderElement& firstLetterBlock, RenderTex
 {
     RenderElement* firstLetterContainer = currentTextChild.parent();
     auto pseudoStyle = styleForFirstLetter(firstLetterBlock, *firstLetterContainer);
-    RenderBoxModelObject* firstLetter = nullptr;
+    RenderPtr<RenderBoxModelObject> newFirstLetter;
     if (pseudoStyle.display() == INLINE)
-        firstLetter = new RenderInline(firstLetterBlock.document(), WTFMove(pseudoStyle));
+        newFirstLetter = createRenderer<RenderInline>(firstLetterBlock.document(), WTFMove(pseudoStyle));
     else
-        firstLetter = new RenderBlockFlow(firstLetterBlock.document(), WTFMove(pseudoStyle));
-    firstLetter->initializeStyle();
-    firstLetterContainer->addChild(firstLetter, &currentTextChild);
+        newFirstLetter = createRenderer<RenderBlockFlow>(firstLetterBlock.document(), WTFMove(pseudoStyle));
+    newFirstLetter->initializeStyle();
+    auto& firstLetter = *newFirstLetter;
+    firstLetterContainer->addChild(WTFMove(newFirstLetter), &currentTextChild);
 
     // The original string is going to be either a generated content string or a DOM node's
     // string. We want the original string before it got transformed in case first-letter has
@@ -183,30 +180,29 @@ static void createFirstLetterRenderer(RenderElement& firstLetterBlock, RenderTex
 
         // Construct a text fragment for the text after the first letter.
         // This text fragment might be empty.
-        RenderTextFragment* remainingText;
+        RenderPtr<RenderTextFragment> newRemainingText;
         if (currentTextChild.textNode())
-            remainingText = new RenderTextFragment(*currentTextChild.textNode(), oldText, length, oldText.length() - length);
+            newRemainingText = createRenderer<RenderTextFragment>(*currentTextChild.textNode(), oldText, length, oldText.length() - length);
         else
-            remainingText = new RenderTextFragment(firstLetterBlock.document(), oldText, length, oldText.length() - length);
+            newRemainingText = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, length, oldText.length() - length);
 
-        if (remainingText->textNode())
-            remainingText->textNode()->setRenderer(remainingText);
+        if (newRemainingText->textNode())
+            newRemainingText->textNode()->setRenderer(newRemainingText.get());
 
-        firstLetterContainer->addChild(remainingText, &currentTextChild);
-        firstLetterContainer->removeChild(currentTextChild);
-        remainingText->setFirstLetter(*firstLetter);
-        firstLetter->setFirstLetterRemainingText(remainingText);
+        RenderTextFragment& remainingText = *newRemainingText;
+        firstLetterContainer->addChild(WTFMove(newRemainingText), &currentTextChild);
+        firstLetterContainer->removeAndDestroyChild(currentTextChild);
+        remainingText.setFirstLetter(firstLetter);
+        firstLetter.setFirstLetterRemainingText(&remainingText);
 
         // construct text fragment for the first letter
-        RenderTextFragment* letter;
-        if (remainingText->textNode())
-            letter = new RenderTextFragment(*remainingText->textNode(), oldText, 0, length);
+        RenderPtr<RenderTextFragment> letter;
+        if (remainingText.textNode())
+            letter = createRenderer<RenderTextFragment>(*remainingText.textNode(), oldText, 0, length);
         else
-            letter = new RenderTextFragment(firstLetterBlock.document(), oldText, 0, length);
+            letter = createRenderer<RenderTextFragment>(firstLetterBlock.document(), oldText, 0, length);
 
-        firstLetter->addChild(letter);
-
-        currentTextChild.destroy();
+        firstLetter.addChild(WTFMove(letter));
     }
 }
 

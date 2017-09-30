@@ -84,12 +84,14 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
     }
 
     auto newStyle = listItemRenderer.computeMarkerStyle();
+    RenderPtr<RenderListMarker> newMarkerRenderer;
     auto* markerRenderer = listItemRenderer.markerRenderer();
     if (markerRenderer)
         markerRenderer->setStyle(WTFMove(newStyle));
     else {
-        markerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTFMove(newStyle)).leakPtr();
-        markerRenderer->initializeStyle();
+        newMarkerRenderer = WebCore::createRenderer<RenderListMarker>(listItemRenderer, WTFMove(newStyle));
+        newMarkerRenderer->initializeStyle();
+        markerRenderer = newMarkerRenderer.get();
         listItemRenderer.setMarkerRenderer(markerRenderer);
     }
 
@@ -109,8 +111,11 @@ void RenderTreeUpdater::ListItem::updateMarker(RenderListItem& listItemRenderer)
     }
 
     if (newParent != currentParent) {
-        markerRenderer->removeFromParent();
-        newParent->addChild(markerRenderer, firstNonMarkerChild(*newParent));
+        if (currentParent)
+            newParent->addChild(currentParent->takeChild(*markerRenderer), firstNonMarkerChild(*newParent));
+        else
+            newParent->addChild(WTFMove(newMarkerRenderer), firstNonMarkerChild(*newParent));
+
         // If current parent is an anonymous block that has lost all its children, destroy it.
         if (currentParent && currentParent->isAnonymousBlock() && !currentParent->firstChild() && !downcast<RenderBlock>(*currentParent).continuation())
             currentParent->destroy();

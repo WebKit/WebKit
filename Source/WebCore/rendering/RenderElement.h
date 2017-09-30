@@ -85,9 +85,10 @@ public:
     bool isRenderInline() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = nullptr);
-    virtual void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild = nullptr) { return addChild(newChild, beforeChild); }
-    virtual void removeChild(RenderObject&);
+    virtual void addChild(RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
+    virtual void addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild = nullptr) { addChild(WTFMove(newChild), beforeChild); }
+    virtual RenderPtr<RenderObject> takeChild(RenderObject&) WARN_UNUSED_RETURN;
+    void removeAndDestroyChild(RenderObject&);
 
     // The following functions are used when the render tree hierarchy changes to make sure layers get
     // properly added and removed. Since containership can be implemented by any subclass, and since a hierarchy
@@ -98,8 +99,8 @@ public:
     RenderLayer* findNextLayer(RenderLayer* parentLayer, RenderObject* startPoint, bool checkParent = true);
 
     enum NotifyChildrenType { NotifyChildren, DontNotifyChildren };
-    void insertChildInternal(RenderObject*, RenderObject* beforeChild, NotifyChildrenType);
-    void removeChildInternal(RenderObject&, NotifyChildrenType);
+    void insertChildInternal(RenderPtr<RenderObject>, RenderObject* beforeChild, NotifyChildrenType);
+    RenderPtr<RenderObject> takeChildInternal(RenderObject&, NotifyChildrenType) WARN_UNUSED_RETURN;
 
     virtual RenderElement* hoverAncestor() const;
 

@@ -40,8 +40,8 @@ public:
 
     bool canBeSelectionLeaf() const override;
 
-    void addChild(RenderObject* newChild, RenderObject *beforeChild = 0) override;
-    void removeChild(RenderObject&) override;
+    void addChild(RenderPtr<RenderObject> newChild, RenderObject *beforeChild = 0) override;
+    RenderPtr<RenderObject> takeChild(RenderObject&) override;
     void removeLeftoverAnonymousBlock(RenderBlock*) override { }
     bool createsAnonymousWrapper() const override { return true; }
 

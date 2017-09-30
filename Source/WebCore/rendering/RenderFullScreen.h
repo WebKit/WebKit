@@ -40,7 +40,8 @@ public:
     RenderBlock* placeholder() { return m_placeholder; }
     void createPlaceholder(std::unique_ptr<RenderStyle>, const LayoutRect& frameRect);
 
-    static RenderFullScreen* wrapRenderer(RenderObject*, RenderElement*, Document&);
+    static RenderPtr<RenderFullScreen> wrapNewRenderer(RenderPtr<RenderElement>, RenderElement& parent, Document&);
+    static void wrapExistingRenderer(RenderElement&, Document&);
     void unwrapRenderer(bool& requiresRenderTreeRebuild);
 
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* = nullptr) const override { return ItemPositionCenter; }

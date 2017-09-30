@@ -118,7 +118,7 @@ void RenderTableSection::willBeRemovedFromTree()
     setNeedsCellRecalc();
 }
 
-void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderTableSection::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     if (!is<RenderTableRow>(*child)) {
         RenderObject* last = beforeChild;
@@ -128,14 +128,14 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
             RenderTableRow& row = downcast<RenderTableRow>(*last);
             if (beforeChild == &row)
                 beforeChild = row.firstCell();
-            row.addChild(child, beforeChild);
+            row.addChild(WTFMove(child), beforeChild);
             return;
         }
 
         if (beforeChild && !beforeChild->isAnonymous() && beforeChild->parent() == this) {
             RenderObject* row = beforeChild->previousSibling();
             if (is<RenderTableRow>(row) && row->isAnonymous()) {
-                downcast<RenderTableRow>(*row).addChild(child);
+                downcast<RenderTableRow>(*row).addChild(WTFMove(child));
                 return;
             }
         }
@@ -146,13 +146,14 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         while (lastBox && lastBox->parent()->isAnonymous() && !is<RenderTableRow>(*lastBox))
             lastBox = lastBox->parent();
         if (lastBox && lastBox->isAnonymous() && !lastBox->isBeforeOrAfterContent()) {
-            downcast<RenderTableRow>(*lastBox).addChild(child, beforeChild);
+            downcast<RenderTableRow>(*lastBox).addChild(WTFMove(child), beforeChild);
             return;
         }
 
-        auto* row = RenderTableRow::createAnonymousWithParentRenderer(*this).release();
-        addChild(row, beforeChild);
-        row->addChild(child);
+        auto newRow = RenderTableRow::createAnonymousWithParentRenderer(*this);
+        auto& row = *newRow;
+        addChild(WTFMove(newRow), beforeChild);
+        row.addChild(WTFMove(child));
         return;
     }
 
@@ -176,7 +177,7 @@ void RenderTableSection::addChild(RenderObject* child, RenderObject* beforeChild
         beforeChild = splitAnonymousBoxesAroundChild(beforeChild);
 
     ASSERT(!beforeChild || is<RenderTableRow>(*beforeChild));
-    RenderBox::addChild(child, beforeChild);
+    RenderBox::addChild(WTFMove(child), beforeChild);
 }
 
 void RenderTableSection::ensureRows(unsigned numRows)
@@ -1590,14 +1591,14 @@ CollapsedBorderValue RenderTableSection::cachedCollapsedBorder(const RenderTable
     return it->value;
 }
 
-std::unique_ptr<RenderTableSection> RenderTableSection::createTableSectionWithStyle(Document& document, const RenderStyle& style)
+RenderPtr<RenderTableSection> RenderTableSection::createTableSectionWithStyle(Document& document, const RenderStyle& style)
 {
-    auto section = std::make_unique<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_ROW_GROUP));
+    auto section = createRenderer<RenderTableSection>(document, RenderStyle::createAnonymousStyleWithDisplay(style, TABLE_ROW_GROUP));
     section->initializeStyle();
     return section;
 }
 
-std::unique_ptr<RenderTableSection> RenderTableSection::createAnonymousWithParentRenderer(const RenderTable& parent)
+RenderPtr<RenderTableSection> RenderTableSection::createAnonymousWithParentRenderer(const RenderTable& parent)
 {
     return RenderTableSection::createTableSectionWithStyle(parent.document(), parent.style());
 }

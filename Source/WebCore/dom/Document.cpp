@@ -6048,8 +6048,8 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
         m_savedPlaceholderRenderStyle = RenderStyle::clonePtr(renderer->style());
     }
 
-    if (m_fullScreenElement != documentElement())
-        RenderFullScreen::wrapRenderer(renderer, renderer ? renderer->parent() : nullptr, *this);
+    if (m_fullScreenElement != documentElement() && renderer)
+        RenderFullScreen::wrapExistingRenderer(*renderer, *this);
 
     m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 

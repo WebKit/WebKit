@@ -46,13 +46,14 @@ void RenderTreeUpdater::MultiColumn::update(RenderBlockFlow& flow)
 
 void RenderTreeUpdater::MultiColumn::createFragmentedFlow(RenderBlockFlow& flow)
 {
-    RenderMultiColumnFlow* fragmentedFlow = new RenderMultiColumnFlow(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
-    fragmentedFlow->initializeStyle();
+    auto newFragmentedFlow = WebCore::createRenderer<RenderMultiColumnFlow>(flow.document(), RenderStyle::createAnonymousStyleWithDisplay(flow.style(), BLOCK));
+    newFragmentedFlow->initializeStyle();
     flow.setChildrenInline(false); // Do this to avoid wrapping inline children that are just going to move into the flow thread.
     flow.deleteLines();
-    flow.RenderBlock::addChild(fragmentedFlow);
-    fragmentedFlow->populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
-    flow.setMultiColumnFlow(fragmentedFlow);
+    auto& fragmentedFlow = *newFragmentedFlow;
+    flow.RenderBlock::addChild(WTFMove(newFragmentedFlow));
+    fragmentedFlow.populate(); // Called after the flow thread is inserted so that we are reachable by the flow thread.
+    flow.setMultiColumnFlow(&fragmentedFlow);
 }
 
 

@@ -72,8 +72,8 @@ public:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void deleteLines();
 
-    void addChild(RenderObject* newChild, RenderObject* beforeChild = 0) override;
-    void removeChild(RenderObject&) override;
+    void addChild(RenderPtr<RenderObject> newChild, RenderObject* beforeChild = 0) override;
+    RenderPtr<RenderObject> takeChild(RenderObject&) override;
 
     virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0);
 
@@ -196,11 +196,11 @@ public:
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
 
-    static std::unique_ptr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
-    RenderBlock* createAnonymousBlock(EDisplay = BLOCK) const;
+    static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay = BLOCK);
+    RenderPtr<RenderBlock> createAnonymousBlock(EDisplay = BLOCK) const;
     static void dropAnonymousBoxChild(RenderBlock& parent, RenderBlock& child);
 
-    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
+    RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 
     static bool shouldSkipCreatingRunsForObject(RenderObject& obj)
     {
@@ -428,7 +428,7 @@ protected:
     void blockWillBeDestroyed();
 
 private:
-    static std::unique_ptr<RenderBlock> createAnonymousBlockWithStyleAndDisplay(Document&, const RenderStyle&, EDisplay);
+    static RenderPtr<RenderBlock> createAnonymousBlockWithStyleAndDisplay(Document&, const RenderStyle&, EDisplay);
 
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual LayoutUnit logicalRightFloatOffsetForLine(LayoutUnit, LayoutUnit fixedOffset, LayoutUnit) const { return fixedOffset; };
@@ -447,8 +447,8 @@ private:
     // FIXME-BLOCKFLOW: Remove virtualizaion when all callers have moved to RenderBlockFlow
     virtual void moveAllChildrenIncludingFloatsTo(RenderBlock& toBlock, bool fullRemoveInsert) { moveAllChildrenTo(&toBlock, fullRemoveInsert); }
 
-    void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
-    void addChildIgnoringContinuation(RenderObject* newChild, RenderObject* beforeChild) override;
+    void addChildToContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild);
+    void addChildIgnoringContinuation(RenderPtr<RenderObject> newChild, RenderObject* beforeChild) override;
 
     bool isSelfCollapsingBlock() const override;
     virtual bool childrenPreventSelfCollapsing() const;
@@ -547,19 +547,19 @@ LayoutUnit blockDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offset
 LayoutUnit inlineDirectionOffset(RenderBlock& rootBlock, const LayoutSize& offsetFromRootBlock);
 VisiblePosition positionForPointRespectingEditingBoundaries(RenderBlock&, RenderBox&, const LayoutPoint&);
 
-inline std::unique_ptr<RenderBlock> RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay display)
+inline RenderPtr<RenderBlock> RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, EDisplay display)
 {
     return createAnonymousBlockWithStyleAndDisplay(parent.document(), parent.style(), display);
 }
 
-inline std::unique_ptr<RenderBox> RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+inline RenderPtr<RenderBox> RenderBlock::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
 {
     return createAnonymousBlockWithStyleAndDisplay(document(), renderer.style(), style().display());
 }
 
-inline RenderBlock* RenderBlock::createAnonymousBlock(EDisplay display) const
+inline RenderPtr<RenderBlock> RenderBlock::createAnonymousBlock(EDisplay display) const
 {
-    return createAnonymousBlockWithStyleAndDisplay(document(), style(), display).release();
+    return createAnonymousBlockWithStyleAndDisplay(document(), style(), display);
 }
 
 } // namespace WebCore

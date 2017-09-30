@@ -87,7 +87,7 @@ static void createContentRenderers(RenderElement& renderer)
     for (const ContentData* content = style.contentData(); content; content = content->next()) {
         auto child = content->createContentRenderer(renderer.document(), style);
         if (renderer.isChildAllowed(*child, style))
-            renderer.addChild(child.leakPtr());
+            renderer.addChild(WTFMove(child));
     }
 }
 

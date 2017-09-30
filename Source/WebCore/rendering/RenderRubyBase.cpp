@@ -96,8 +96,9 @@ void RenderRubyBase::moveInlineChildren(RenderRubyBase* toBase, RenderObject* be
         if (lastChild && lastChild->isAnonymousBlock() && lastChild->childrenInline())
             toBlock = downcast<RenderBlock>(lastChild);
         else {
-            toBlock = toBase->createAnonymousBlock();
-            toBase->insertChildInternal(toBlock, nullptr, NotifyChildren);
+            auto newToBlock = toBase->createAnonymousBlock();
+            toBlock = newToBlock.get();
+            toBase->insertChildInternal(WTFMove(newToBlock), nullptr, NotifyChildren);
         }
     }
     // Move our inline children into the target block we determined above.

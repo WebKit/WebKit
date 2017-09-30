@@ -93,15 +93,15 @@ RenderPtr<RenderMathMLFencedOperator> RenderMathMLFenced::createMathMLOperator(c
 
 void RenderMathMLFenced::makeFences()
 {
-    RenderPtr<RenderMathMLFencedOperator> openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
-    RenderMathMLRow::addChild(openFence.leakPtr(), firstChild());
+    auto openFence = createMathMLOperator(m_open, MathMLOperatorDictionary::Prefix, MathMLOperatorDictionary::Fence);
+    RenderMathMLRow::addChild(WTFMove(openFence), firstChild());
 
-    RenderPtr<RenderMathMLFencedOperator> closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
+    auto closeFence = createMathMLOperator(m_close, MathMLOperatorDictionary::Postfix, MathMLOperatorDictionary::Fence);
     m_closeFenceRenderer = closeFence.get();
-    RenderMathMLRow::addChild(closeFence.leakPtr());
+    RenderMathMLRow::addChild(WTFMove(closeFence));
 }
 
-void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild)
+void RenderMathMLFenced::addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild)
 {
     // make the fences if the render object is empty
     if (!firstChild())
@@ -139,14 +139,14 @@ void RenderMathMLFenced::addChild(RenderObject* child, RenderObject* beforeChild
 
     if (beforeChild) {
         // Adding |x| before an existing |y| e.g. in element (y) - first insert our new child |x|, then its separator, to get (x, y).
-        RenderMathMLRow::addChild(child, beforeChild);
+        RenderMathMLRow::addChild(WTFMove(child), beforeChild);
         if (separatorRenderer)
-            RenderMathMLRow::addChild(separatorRenderer.leakPtr(), beforeChild);
+            RenderMathMLRow::addChild(WTFMove(separatorRenderer), beforeChild);
     } else {
         // Adding |y| at the end of an existing element e.g. (x) - insert the separator first before the closing fence, then |y|, to get (x, y).
         if (separatorRenderer)
-            RenderMathMLRow::addChild(separatorRenderer.leakPtr(), m_closeFenceRenderer);
-        RenderMathMLRow::addChild(child, m_closeFenceRenderer);
+            RenderMathMLRow::addChild(WTFMove(separatorRenderer), m_closeFenceRenderer);
+        RenderMathMLRow::addChild(WTFMove(child), m_closeFenceRenderer);
     }
 }
 

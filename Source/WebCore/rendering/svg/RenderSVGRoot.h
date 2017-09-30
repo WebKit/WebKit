@@ -81,8 +81,8 @@ private:
     void willBeRemovedFromTree() override;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    void addChild(RenderObject* child, RenderObject* beforeChild = 0) override;
-    void removeChild(RenderObject&) override;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) override;
+    RenderPtr<RenderObject> takeChild(RenderObject&) override;
 
     const AffineTransform& localToParentTransform() const override;
 

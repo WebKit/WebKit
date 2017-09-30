@@ -126,7 +126,7 @@ public:
     LayoutUnit calcBorderEnd() const;
     void recalcBordersInRowDirection();
 
-    void addChild(RenderObject* child, RenderObject* beforeChild = 0) final;
+    void addChild(RenderPtr<RenderObject> child, RenderObject* beforeChild = 0) final;
 
     struct ColumnStruct {
         explicit ColumnStruct(unsigned initialSpan = 1)
@@ -250,8 +250,8 @@ public:
             recalcSections();
     }
 
-    static std::unique_ptr<RenderTable> createAnonymousWithParentRenderer(const RenderElement&);
-    std::unique_ptr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const override;
+    static RenderPtr<RenderTable> createAnonymousWithParentRenderer(const RenderElement&);
+    RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const override;
 
     const BorderValue& tableStartBorderAdjoiningCell(const RenderTableCell&) const;
     const BorderValue& tableEndBorderAdjoiningCell(const RenderTableCell&) const;
@@ -273,7 +273,7 @@ protected:
     void simplifiedNormalFlowLayout() final;
 
 private:
-    static std::unique_ptr<RenderTable> createTableWithStyle(Document&, const RenderStyle&);
+    static RenderPtr<RenderTable> createTableWithStyle(Document&, const RenderStyle&);
 
     const char* renderName() const override { return "RenderTable"; }
 
@@ -380,7 +380,7 @@ inline RenderTableSection* RenderTable::topSection() const
 
 inline bool isDirectionSame(const RenderBox* tableItem, const RenderBox* otherTableItem) { return tableItem && otherTableItem ? tableItem->style().direction() == otherTableItem->style().direction() : true; }
 
-inline std::unique_ptr<RenderBox> RenderTable::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
+inline RenderPtr<RenderBox> RenderTable::createAnonymousBoxWithSameTypeAs(const RenderBox& renderer) const
 {
     return RenderTable::createTableWithStyle(renderer.document(), renderer.style());
 }
