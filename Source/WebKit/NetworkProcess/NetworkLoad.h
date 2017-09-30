@@ -67,6 +67,8 @@ public:
     const WebCore::ResourceRequest& currentRequest() const { return m_currentRequest; }
     void clearCurrentRequest() { m_currentRequest = WebCore::ResourceRequest(); }
 
+    const NetworkLoadParameters& parameters() const { return m_parameters; }
+
     void continueWillSendRequest(WebCore::ResourceRequest&&);
     void continueDidReceiveResponse();
 

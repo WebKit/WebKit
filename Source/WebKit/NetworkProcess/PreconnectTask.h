@@ -27,37 +27,45 @@
 
 #if ENABLE(SERVER_PRECONNECT)
 
-#include "NetworkDataTask.h"
+#include "NetworkLoadClient.h"
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
-
-namespace PAL {
-class SessionID;
-}
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class PreconnectTask final : private NetworkDataTaskClient {
+class NetworkLoad;
+class NetworkLoadParameters;
+
+class PreconnectTask final : public NetworkLoadClient {
 public:
-    explicit PreconnectTask(PAL::SessionID, const WebCore::URL&, WebCore::StoredCredentialsPolicy, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
+    explicit PreconnectTask(NetworkLoadParameters&&, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler = { });
     ~PreconnectTask();
 
+    uint64_t frameID() const;
+    uint64_t pageID() const;
+
+    void continueCanAuthenticateAgainstProtectionSpace(bool);
+
+    WeakPtr<PreconnectTask> createWeakPtr() { return m_weakFactory.createWeakPtr(*this); }
+
 private:
-    // NetworkDataTaskClient.
-    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;
-    void didReceiveChallenge(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&&) final;
-    void didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&) final;
-    void didReceiveData(Ref<WebCore::SharedBuffer>&&) final;
-    void didCompleteWithError(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&) final;
-    void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final;
-    void wasBlocked() final;
-    void cannotShowURL() final;
+    // NetworkLoadClient.
+    bool isSynchronous() const final { return false; }
+    void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) final;
+    void canAuthenticateAgainstProtectionSpaceAsync(const WebCore::ProtectionSpace&) final;
+    void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) final;
+    ShouldContinueDidReceiveResponse didReceiveResponse(WebCore::ResourceResponse&&) final;
+    void didReceiveBuffer(Ref<WebCore::SharedBuffer>&&, int reportedEncodedDataLength) final;
+    void didFinishLoading(const WebCore::NetworkLoadMetrics&) final;
+    void didFailLoading(const WebCore::ResourceError&) final;
 
     void didFinish(const WebCore::ResourceError&);
 
-    RefPtr<NetworkDataTask> m_task;
+    std::unique_ptr<NetworkLoad> m_networkLoad;
     WTF::CompletionHandler<void(const WebCore::ResourceError&)> m_completionHandler;
     WebCore::Timer m_timeoutTimer;
+    WeakPtrFactory<PreconnectTask> m_weakFactory;
 };
 
 } // namespace WebKit

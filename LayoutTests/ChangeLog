@@ -1,5 +1,18 @@
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
+        http/tests/preconnect/link-rel-preconnect-https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=177673
+
+        Reviewed by Alex Christensen.
+
+        * http/tests/preconnect/link-rel-preconnect-https-expected.txt:
+        Rebaseline test now that it is passing.
+
+        * platform/wk2/TestExpectations:
+        Uskip test as it should no longer be flaky.
+
+2017-09-29  Chris Dumez  <cdumez@apple.com>
+
         Unreviewed, temporarily mark http/tests/preconnect/link-rel-preconnect-https.html as flaky.
 
         * platform/wk2/TestExpectations:

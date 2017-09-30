@@ -505,18 +505,42 @@ void NetworkProcess::cancelDownload(DownloadID downloadID)
 }
     
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void NetworkProcess::canAuthenticateAgainstProtectionSpace(NetworkResourceLoader& loader, const WebCore::ProtectionSpace& protectionSpace)
+static uint64_t generateCanAuthenticateIdentifier()
 {
     static uint64_t lastLoaderID = 0;
-    uint64_t loaderID = ++lastLoaderID;
-    m_waitingNetworkResourceLoaders.set(lastLoaderID, loader);
+    return ++lastLoaderID;
+}
+
+void NetworkProcess::canAuthenticateAgainstProtectionSpace(NetworkResourceLoader& loader, const WebCore::ProtectionSpace& protectionSpace)
+{
+    uint64_t loaderID = generateCanAuthenticateIdentifier();
+    m_waitingNetworkResourceLoaders.set(loaderID, loader);
     parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(loaderID, loader.pageID(), loader.frameID(), protectionSpace), 0);
 }
 
+#if ENABLE(SERVER_PRECONNECT)
+void NetworkProcess::canAuthenticateAgainstProtectionSpace(PreconnectTask& preconnectTask, const WebCore::ProtectionSpace& protectionSpace)
+{
+    uint64_t loaderID = generateCanAuthenticateIdentifier();
+    m_waitingPreconnectTasks.set(loaderID, preconnectTask.createWeakPtr());
+    parentProcessConnection()->send(Messages::NetworkProcessProxy::CanAuthenticateAgainstProtectionSpace(loaderID, preconnectTask.pageID(), preconnectTask.frameID(), protectionSpace), 0);
+}
+#endif
+
 void NetworkProcess::continueCanAuthenticateAgainstProtectionSpace(uint64_t loaderID, bool canAuthenticate)
 {
-    m_waitingNetworkResourceLoaders.take(loaderID).value()->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+    if (auto resourceLoader = m_waitingNetworkResourceLoaders.take(loaderID)) {
+        resourceLoader.value()->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+        return;
+    }
+#if ENABLE(SERVER_PRECONNECT)
+    if (auto preconnectTask = m_waitingPreconnectTasks.take(loaderID)) {
+        preconnectTask->continueCanAuthenticateAgainstProtectionSpace(canAuthenticate);
+        return;
+    }
+#endif
 }
+
 #endif
 
 #if USE(NETWORK_SESSION)
@@ -729,7 +753,13 @@ String NetworkProcess::cacheStorageDirectory(PAL::SessionID sessionID) const
 void NetworkProcess::preconnectTo(const WebCore::URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
 {
 #if ENABLE(SERVER_PRECONNECT)
-    new PreconnectTask(PAL::SessionID::defaultSessionID(), url, storedCredentialsPolicy);
+    NetworkLoadParameters parameters;
+    parameters.request = ResourceRequest { url };
+    parameters.sessionID = PAL::SessionID::defaultSessionID();
+    parameters.storedCredentialsPolicy = storedCredentialsPolicy;
+    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
+
+    new PreconnectTask(WTFMove(parameters));
 #else
     UNUSED_PARAM(url);
     UNUSED_PARAM(storedCredentialsPolicy);

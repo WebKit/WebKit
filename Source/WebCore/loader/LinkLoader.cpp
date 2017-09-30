@@ -253,12 +253,13 @@ bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const URL& href,
             document.frame()->loader().client().prefetchDNS(href.host());
     }
 
-    if (relAttribute.isLinkPreconnect && href.isValid() && href.protocolIsInHTTPFamily()) {
+    if (relAttribute.isLinkPreconnect && href.isValid() && href.protocolIsInHTTPFamily() && document.frame()) {
         ASSERT(document.settings().linkPreconnectEnabled());
         StoredCredentialsPolicy storageCredentialsPolicy = StoredCredentialsPolicy::Use;
         if (equalIgnoringASCIICase(crossOrigin, "anonymous") && document.securityOrigin().canAccess(SecurityOrigin::create(href)))
             storageCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
-        platformStrategies()->loaderStrategy()->preconnectTo(document.sessionID(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
+        ASSERT(document.frame()->loader().networkingContext());
+        platformStrategies()->loaderStrategy()->preconnectTo(*document.frame()->loader().networkingContext(), href, storageCredentialsPolicy, [weakDocument = document.createWeakPtr(), href](ResourceError error) {
             if (!weakDocument)
                 return;
 

@@ -28,93 +28,82 @@
 
 #if ENABLE(SERVER_PRECONNECT)
 
-#include "AuthenticationManager.h"
 #include "Logging.h"
+#include "NetworkLoad.h"
 #include "NetworkLoadParameters.h"
-#include "NetworkSession.h"
+#include "NetworkProcess.h"
 #include "SessionTracker.h"
-#include "WebErrors.h"
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/ResourceError.h>
-
-#if PLATFORM(COCOA)
-#include "NetworkDataTaskCocoa.h"
-#endif
 
 namespace WebKit {
 
 using namespace WebCore;
 
-PreconnectTask::PreconnectTask(PAL::SessionID sessionID, const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, WTF::CompletionHandler<void(const WebCore::ResourceError&)>&& completionHandler)
+PreconnectTask::PreconnectTask(NetworkLoadParameters&& parameters, WTF::CompletionHandler<void(const ResourceError&)>&& completionHandler)
     : m_completionHandler(WTFMove(completionHandler))
-    , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_task->firstRequest().url(), ASCIILiteral("Preconnection timed out"), ResourceError::Type::Timeout }); })
+    , m_timeoutTimer([this] { didFinish(ResourceError { String(), 0, m_networkLoad->parameters().request.url(), ASCIILiteral("Preconnection timed out"), ResourceError::Type::Timeout }); })
 {
-    auto* networkSession = SessionTracker::networkSession(sessionID);
+    RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
+
+    auto* networkSession = SessionTracker::networkSession(parameters.sessionID);
     ASSERT(networkSession);
 
-    RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
-    NetworkLoadParameters parameters;
-    parameters.request = ResourceRequest(url);
-    parameters.shouldPreconnectOnly = PreconnectOnly::Yes;
-    parameters.storedCredentialsPolicy = storedCredentialsPolicy;
-    m_task = NetworkDataTask::create(*networkSession, *this, parameters);
-    m_task->resume();
+    ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
+    m_networkLoad = std::make_unique<NetworkLoad>(*this, WTFMove(parameters), *networkSession);
 
     m_timeoutTimer.startOneShot(60000_s);
 }
 
 PreconnectTask::~PreconnectTask()
 {
-    ASSERT(m_task->client() == this);
-    m_task->clearClient();
-    m_task->cancel();
 }
 
-void PreconnectTask::willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&)
+void PreconnectTask::willSendRedirectedRequest(ResourceRequest&&, ResourceRequest&& redirectRequest, ResourceResponse&& redirectResponse)
 {
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::didReceiveChallenge(const WebCore::AuthenticationChallenge& challenge, ChallengeCompletionHandler&& completionHandler)
+auto PreconnectTask::didReceiveResponse(ResourceResponse&&) -> ShouldContinueDidReceiveResponse
+{
+    ASSERT_NOT_REACHED();
+    return ShouldContinueDidReceiveResponse::No;
+}
+
+void PreconnectTask::didReceiveBuffer(Ref<SharedBuffer>&&, int reportedEncodedDataLength)
 {
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::didReceiveResponseNetworkSession(WebCore::ResourceResponse&&, ResponseCompletionHandler&&)
+void PreconnectTask::didFinishLoading(const NetworkLoadMetrics&)
 {
-    ASSERT_NOT_REACHED();
+    RELEASE_LOG(Network, "%p - PreconnectTask::didFinishLoading", this);
+    didFinish({ });
 }
 
-void PreconnectTask::didReceiveData(Ref<WebCore::SharedBuffer>&&)
+void PreconnectTask::didFailLoading(const ResourceError& error)
 {
-    ASSERT_NOT_REACHED();
-}
-
-void PreconnectTask::didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics&)
-{
-    if (error.isNull())
-        RELEASE_LOG(Network, "%p - PreconnectTask::didComplete", this);
-    else
-        RELEASE_LOG(Network, "%p - PreconnectTask::didCompleteWithError, error_code: %d", this, error.errorCode());
-
+    RELEASE_LOG(Network, "%p - PreconnectTask::didFailLoading, error_code: %d", this, error.errorCode());
     didFinish(error);
 }
 
-void PreconnectTask::didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend)
+void PreconnectTask::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
 {
     ASSERT_NOT_REACHED();
 }
 
-void PreconnectTask::wasBlocked()
+void PreconnectTask::canAuthenticateAgainstProtectionSpaceAsync(const ProtectionSpace& protectionSpace)
 {
-    RELEASE_LOG(Network, "%p - PreconnectTask::wasBlocked()", this);
-    didFinish(blockedError(m_task->firstRequest()));
+    if (!pageID()) {
+        // The preconnect was started by the UIProcess.
+        continueCanAuthenticateAgainstProtectionSpace(false);
+        return;
+    }
+    NetworkProcess::singleton().canAuthenticateAgainstProtectionSpace(*this, protectionSpace);
 }
 
-void PreconnectTask::cannotShowURL()
+void PreconnectTask::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    RELEASE_LOG(Network, "%p - PreconnectTask::cannotShowURL()", this);
-    didFinish(cannotShowURLError(m_task->firstRequest()));
+    m_networkLoad->continueCanAuthenticateAgainstProtectionSpace(result);
 }
 
 void PreconnectTask::didFinish(const ResourceError& error)
@@ -122,6 +111,16 @@ void PreconnectTask::didFinish(const ResourceError& error)
     if (m_completionHandler)
         m_completionHandler(error);
     delete this;
+}
+
+uint64_t PreconnectTask::frameID() const
+{
+    return m_networkLoad->parameters().webFrameID;
+}
+
+uint64_t PreconnectTask::pageID() const
+{
+    return m_networkLoad->parameters().webPageID;
 }
 
 } // namespace WebKit

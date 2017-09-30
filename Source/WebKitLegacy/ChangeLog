@@ -1,3 +1,14 @@
+2017-09-29  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/preconnect/link-rel-preconnect-https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=177673
+
+        Reviewed by Alex Christensen.
+
+        * WebCoreSupport/WebResourceLoadScheduler.cpp:
+        (WebResourceLoadScheduler::preconnectTo):
+        * WebCoreSupport/WebResourceLoadScheduler.h:
+
 2017-09-28  Chris Dumez  <cdumez@apple.com>
 
         Add support for <link rel=preconnect>

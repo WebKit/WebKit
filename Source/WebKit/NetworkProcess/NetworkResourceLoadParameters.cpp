@@ -76,6 +76,7 @@ void NetworkResourceLoadParameters::encode(IPC::Encoder& encoder) const
     encoder.encodeEnum(contentSniffingPolicy);
     encoder.encodeEnum(storedCredentialsPolicy);
     encoder.encodeEnum(clientCredentialPolicy);
+    encoder.encodeEnum(shouldPreconnectOnly);
     encoder << shouldFollowRedirects;
     encoder << shouldClearReferrerOnHTTPSToHTTPRedirect;
     encoder << defersLoading;
@@ -143,6 +144,8 @@ bool NetworkResourceLoadParameters::decode(IPC::Decoder& decoder, NetworkResourc
     if (!decoder.decodeEnum(result.storedCredentialsPolicy))
         return false;
     if (!decoder.decodeEnum(result.clientCredentialPolicy))
+        return false;
+    if (!decoder.decodeEnum(result.shouldPreconnectOnly))
         return false;
     if (!decoder.decode(result.shouldFollowRedirects))
         return false;

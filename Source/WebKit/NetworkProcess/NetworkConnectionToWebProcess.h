@@ -47,6 +47,7 @@ enum class IncludeSecureCookies;
 namespace WebKit {
 
 class NetworkConnectionToWebProcess;
+class NetworkLoadParameters;
 class NetworkResourceLoader;
 class NetworkSocketStream;
 class SyncNetworkResourceLoader;
@@ -92,7 +93,7 @@ private:
     void performSynchronousLoad(const NetworkResourceLoadParameters&, Ref<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>&&);
     void loadPing(NetworkResourceLoadParameters&&, WebCore::HTTPHeaderMap&& originalRequestHeaders);
     void prefetchDNS(const String&);
-    void preconnectTo(PAL::SessionID, uint64_t preconnectionIdentifier, const WebCore::URL&, WebCore::StoredCredentialsPolicy);
+    void preconnectTo(uint64_t preconnectionIdentifier, NetworkLoadParameters&&);
 
     void removeLoadIdentifier(ResourceLoadIdentifier);
     void setDefersLoading(ResourceLoadIdentifier, bool);

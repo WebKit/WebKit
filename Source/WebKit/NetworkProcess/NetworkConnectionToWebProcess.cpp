@@ -291,15 +291,15 @@ void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
     NetworkProcess::singleton().prefetchDNS(hostname);
 }
 
-void NetworkConnectionToWebProcess::preconnectTo(PAL::SessionID sessionID, uint64_t preconnectionIdentifier, const URL& url, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+void NetworkConnectionToWebProcess::preconnectTo(uint64_t preconnectionIdentifier, NetworkLoadParameters&& parameters)
 {
 #if ENABLE(SERVER_PRECONNECT)
-    new PreconnectTask(sessionID, url, storedCredentialsPolicy, [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
+    new PreconnectTask(WTFMove(parameters), [this, protectedThis = makeRef(*this), identifier = preconnectionIdentifier] (const ResourceError& error) {
         didFinishPreconnection(identifier, error);
     });
 #else
-    UNUSED_PARAM(storedCredentialsPolicy);
-    didFinishPreconnection(preconnectionIdentifier, internalError(url));
+    UNUSED_PARAM(parameters);
+    didFinishPreconnection(preconnectionIdentifier, internalError(parameters.request.url()));
 #endif
 }
 

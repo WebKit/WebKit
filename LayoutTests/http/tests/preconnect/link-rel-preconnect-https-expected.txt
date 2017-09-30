@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Failed to preconnect to https://localhost:8443/. Error: The certificate for this server is invalid. You might be connecting to a server that is pretending to be “localhost” which could put your confidential information at risk.
+CONSOLE MESSAGE: Successfuly preconnected to https://localhost:8443/
 Tests that Link's rel=preconnect works as expected over HTTPS.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

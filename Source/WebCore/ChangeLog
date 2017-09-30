@@ -1,3 +1,16 @@
+2017-09-29  Chris Dumez  <cdumez@apple.com>
+
+        http/tests/preconnect/link-rel-preconnect-https.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=177673
+
+        Reviewed by Alex Christensen.
+
+        No new tests, unskipped test that is now passing consistently.
+
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::loadLink):
+        * loader/LoaderStrategy.h:
+
 2017-09-29  Daniel Bates  <dabates@apple.com>
 
         Extract logic to compute text to render into common function
