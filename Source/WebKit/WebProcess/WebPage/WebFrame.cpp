@@ -223,6 +223,7 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
 uint64_t WebFrame::setUpWillSubmitFormListener(WTF::Function<void(void)>&& completionHandler)
 {
     uint64_t identifier = generateListenerID();
+    invalidatePolicyListener();
     m_willSubmitFormCompletionHandlers.set(identifier, WTFMove(completionHandler));
     return identifier;
 }
@@ -231,6 +232,7 @@ void WebFrame::continueWillSubmitForm(uint64_t listenerID)
 {
     if (auto completionHandler = m_willSubmitFormCompletionHandlers.take(listenerID))
         completionHandler();
+    invalidatePolicyListener();
 }
 
 void WebFrame::invalidatePolicyListener()
@@ -242,6 +244,9 @@ void WebFrame::invalidatePolicyListener()
     m_policyListenerID = 0;
     if (auto function = std::exchange(m_policyFunction, nullptr))
         function(PolicyAction::Ignore);
+    for (auto& function : m_willSubmitFormCompletionHandlers.values())
+        function();
+    m_willSubmitFormCompletionHandlers.clear();
 }
 
 void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)
