@@ -68,6 +68,9 @@ WI.isEventTargetAnEditableField = function(event)
     if (event.target instanceof HTMLTextAreaElement)
         return true;
 
+    if (event.target.isContentEditable)
+        return true;
+
     if (event.target.enclosingNodeOrSelfWithClass("text-prompt"))
         return true;
 

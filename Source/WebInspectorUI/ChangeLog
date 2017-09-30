@@ -1,3 +1,26 @@
+2017-09-29  Nikita Vasilyev  <nvasilyev@apple.com>
+
+        Web Inspector: Styles Redesign: support undo/redo of manual edits
+        https://bugs.webkit.org/show_bug.cgi?id=177314
+
+        Reviewed by Joseph Pecoraro.
+
+        Make sure Command-Z and Command-Shift-Z undo changes in the styles sidebar
+        when not focused on a contentEditable field.
+
+        * UserInterface/Views/EditingSupport.js:
+        (WI.isEventTargetAnEditableField):
+        Make sure WI._undoKeyboardShortcut doesn't call WI.undo() when editing inside of a contentEditable element.
+
+        * UserInterface/Views/SpreadsheetCSSStyleDeclarationEditor.js:
+        (WI.SpreadsheetCSSStyleDeclarationEditor):
+        Call style setter to setup event listeners during instantiation.
+
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype.set style):
+        (WI.SpreadsheetCSSStyleDeclarationEditor.prototype._propertiesChanged):
+        Update style declaration section when it isn't focused.
+        This is the same logic as in the old styles sidebar (CSSStyleDeclarationTextEditor style setter).
+
 2017-09-29  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Open Resource Dialog icons are blurry (24x24 instead of 32x32)

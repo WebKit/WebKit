@@ -31,7 +31,7 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
 
         this.element.classList.add(WI.SpreadsheetCSSStyleDeclarationEditor.StyleClassName);
 
-        this._style = style;
+        this.style = style;
     }
 
     // Public
@@ -59,7 +59,13 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
         if (this._style === style)
             return;
 
+        if (this._style)
+            this._style.removeEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._propertiesChanged, this);
+
         this._style = style || null;
+
+        if (this._style)
+            this._style.addEventListener(WI.CSSStyleDeclaration.Event.PropertiesChanged, this._propertiesChanged, this);
 
         this.needsLayout();
     }
@@ -72,6 +78,14 @@ WI.SpreadsheetCSSStyleDeclarationEditor = class SpreadsheetCSSStyleDeclarationEd
             return this._style.allVisibleProperties;
 
         return this._style.allProperties;
+    }
+
+    _propertiesChanged(event)
+    {
+        let focusedElement = document.activeElement;
+        let isFocused = focusedElement && focusedElement.isSelfOrDescendant(this.element);
+        if (!isFocused)
+            this.needsLayout();
     }
 };
 
