@@ -1,3 +1,12 @@
+2017-09-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Follow-up to https://trac.webkit.org/r222239 to fix crashes.
+        rdar://problem/34705779
+
+        Addressing review comments that I somehow landed without.
+
+        * WebView/WebHTMLView.mm: Undo adding #if guards around -_web_uniqueWebDataURL
+
 2017-09-29  Chris Dumez  <cdumez@apple.com>
 
         Split some logic out of VisitedLinkStore and make it reusable
