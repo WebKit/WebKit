@@ -77,6 +77,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(IPC::Connection::Id
 
 NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
 {
+    m_connection->invalidate();
 #if USE(LIBWEBRTC)
     if (m_rtcProvider)
         m_rtcProvider->close();

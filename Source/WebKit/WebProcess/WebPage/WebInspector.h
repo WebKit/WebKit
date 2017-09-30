@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPage;
 
-class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, public IPC::Connection::Client, public Inspector::FrontendChannel {
+class WebInspector : public API::ObjectImpl<API::Object::Type::BundleInspector>, private IPC::Connection::Client, public Inspector::FrontendChannel {
 public:
     static Ref<WebInspector> create(WebPage*);
 
