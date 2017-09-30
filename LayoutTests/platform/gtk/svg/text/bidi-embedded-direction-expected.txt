@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 150x275
-  RenderSVGRoot {svg} at (9,50) size 119x200
+  RenderSVGRoot {svg} at (9,50) size 117x200
     RenderSVGPath {line} at (9,50) size 2x200 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=10.00] [y1=25.00] [x2=10.00] [y2=225.00]
-    RenderSVGText {text} at (10,28) size 118x28 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (56,0) size 62x27
-        chunk 1 text run 1 at (66.00,50.00) startOffset 0 endOffset 5 width 62.00 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD} "
+    RenderSVGText {text} at (10,28) size 116x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (56,0) size 60x27
+        chunk 1 text run 1 at (66.00,50.00) startOffset 0 endOffset 5 width 60.00 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD} "
       RenderSVGTSpan {tspan} at (0,0) size 56x27
         RenderSVGInlineText {#text} at (0,0) size 56x27
           chunk 1 text run 1 at (10.00,50.00) startOffset 0 endOffset 5 width 56.00: "world"
       RenderSVGInlineText {#text} at (0,0) size 0x0
-    RenderSVGText {text} at (10,78) size 118x28 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (-10,-78) size 118x27
+    RenderSVGText {text} at (10,78) size 116x28 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (-10,-78) size 116x27
         chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 1 width 0.00 RTL: "\x{202C}"
         chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 6 width 56.00: "\x{202A}world"
-        chunk 1 text run 1 at (66.00,100.00) startOffset 0 endOffset 6 width 62.00 RTL: "\x{202B}\x{5E9}\x{5DC}\x{5D5}\x{5DD} "
-        chunk 1 text run 1 at (128.00,100.00) startOffset 0 endOffset 1 width 0.00: "\x{202C}"
+        chunk 1 text run 1 at (66.00,100.00) startOffset 0 endOffset 6 width 60.00 RTL: "\x{202B}\x{5E9}\x{5DC}\x{5D5}\x{5DD} "
+        chunk 1 text run 1 at (126.00,100.00) startOffset 0 endOffset 1 width 0.00: "\x{202C}"
     RenderSVGText {text} at (10,128) size 112x28 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (56,0) size 56x27
         chunk 1 text run 1 at (66.00,150.00) startOffset 0 endOffset 6 width 56.00 RTL override: "hello "

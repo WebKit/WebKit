@@ -13,5 +13,5 @@ layer at (0,0) size 800x600
           text run at (87,36) width 640: "This test is making sure we don't make incorrect assumptions based off the fact that we would have to"
           text run at (0,54) width 264: "synthesize bold for the first font in the list."
       RenderBlock {P} at (0,200) size 784x128
-        RenderText {#text} at (0,0) size 81x128
-          text run at (0,0) width 81 RTL: "\x{5D0}"
+        RenderText {#text} at (0,0) size 87x128
+          text run at (0,0) width 87 RTL: "\x{5D0}"

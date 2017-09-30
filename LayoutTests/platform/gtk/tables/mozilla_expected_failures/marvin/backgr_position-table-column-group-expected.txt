@@ -1,26 +1,26 @@
-layer at (0,0) size 785x1282
+layer at (0,0) size 785x1281
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1282
-  RenderBlock {HTML} at (0,0) size 785x1283
-    RenderBody {BODY} at (8,17) size 769x1258 [color=#00FF00] [bgcolor=#333333]
+layer at (0,0) size 785x1281
+  RenderBlock {HTML} at (0,0) size 785x1282
+    RenderBody {BODY} at (8,17) size 769x1257 [color=#00FF00] [bgcolor=#333333]
       RenderBlock {H1} at (0,0) size 769x30
         RenderText {#text} at (0,0) size 528x30
           text run at (0,0) width 528: "CSS2 Table Backgrounds Test Suite"
       RenderBlock {H2} at (0,47) size 769x24
         RenderText {#text} at (0,0) size 324x23
           text run at (0,0) width 324: "Part B: Background Position"
-      RenderBlock {H3} at (0,86) size 769x19
-        RenderText {#text} at (0,0) size 306x18
+      RenderBlock {H3} at (0,86) size 769x18
+        RenderText {#text} at (0,0) size 306x17
           text run at (0,0) width 306: "Background on 'table-column-group'"
-      RenderBlock {P} at (0,119) size 769x31
+      RenderBlock {P} at (0,118) size 769x31
         RenderText {#text} at (0,0) size 752x30
           text run at (0,0) width 752: "Three aqua stripes should run just inside the bottom border edge of the last cell in the first"
           text run at (0,15) width 608: "three columns and up the right border edge of the cells in the third column."
-      RenderBlock {P} at (0,162) size 769x31
+      RenderBlock {P} at (0,161) size 769x31
         RenderText {#text} at (0,0) size 768x30
           text run at (0,0) width 768: "Three aqua stripes should also run just inside the top border edge of the first cell in the last"
           text run at (0,15) width 520: "column and down the left border edge of each cell in that column."
-      RenderBlock {DL} at (0,205) size 769x91
+      RenderBlock {DL} at (0,204) size 769x91
         RenderBlock {DT} at (0,0) size 769x15
           RenderText {#text} at (0,0) size 32x15
             text run at (0,0) width 32: "next"
@@ -45,7 +45,7 @@ layer at (0,0) size 785x1282
             RenderText {#text} at (0,0) size 136x15
               text run at (0,0) width 136: "Table of Contents"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,308) size 618x467 [color=#FFFFFF] [border: (1px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,307) size 618x467 [color=#FFFFFF] [border: (1px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 618x22
           RenderText {#text} at (163,0) size 292x21
             text run at (163,0) width 292: "With 'border-collapse: separate'"
@@ -104,7 +104,7 @@ layer at (0,0) size 785x1282
             RenderTableCell {TD} at (496,144) size 113x26 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 43x21
                 text run at (2,2) width 43: "TD L"
-      RenderTable {TABLE} at (0,774) size 578x433 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
+      RenderTable {TABLE} at (0,773) size 578x433 [color=#FFFFFF] [border: (6px dotted #FFFFFF)]
         RenderBlock {CAPTION} at (0,0) size 578x22
           RenderText {#text} at (144,0) size 290x21
             text run at (144,0) width 290: "With 'border-collapse: collapse'"
@@ -160,10 +160,10 @@ layer at (0,0) size 785x1282
             RenderTableCell {TD} at (465,136) size 112x25 [border: (1px dotted #FFFFFF)] [r=1 c=3 rs=1 cs=1]
               RenderText {#text} at (2,2) size 43x21
                 text run at (2,2) width 43: "TD L"
-      RenderBlock {DIV} at (0,1206) size 769x36
+      RenderBlock {DIV} at (0,1205) size 769x36
         RenderInline {A} at (0,0) size 88x15 [color=#FFFF00]
           RenderImage {IMG} at (0,0) size 88x31
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {ADDRESS} at (0,1241) size 769x16
+      RenderBlock {ADDRESS} at (0,1240) size 769x16
         RenderText {#text} at (0,0) size 704x15
           text run at (0,0) width 704: "CSS2 Table Backgrounds Test Suite designed and written by fantasai <fantasai@escape.com>"

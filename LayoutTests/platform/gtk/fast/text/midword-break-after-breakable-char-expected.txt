@@ -34,7 +34,7 @@ layer at (0,0) size 800x600
           text run at (0,90) width 56: "eetnon"
           text run at (0,108) width 294: "suscipitsed,sapien.Phasellusvehicula,"
           text run at (0,126) width 300: "sematposuerevehicula,auguenibhmol"
-          text run at (0,144) width 69: "estienisl\x{AD}" + hyphen string "\x{2010}"
+          text run at (0,144) width 70: "estienisl\x{AD}" + hyphen string "-"
           text run at (0,162) width 298: "necullamcorperlacusantevulputatepe"
           text run at (0,180) width 202: "de.Nasceturridiculusmus."
       RenderBlock (floating) {DIV} at (312,160) size 300x234 [bgcolor=#FFFFE0]

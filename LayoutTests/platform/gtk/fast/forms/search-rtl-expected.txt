@@ -43,20 +43,20 @@ layer at (0,0) size 800x600
           text run at (0,0) width 39: "PASS"
 layer at (44,47) size 185x18
   RenderBlock {DIV} at (0,0) size 185x18
-    RenderText {#text} at (9,0) size 176x17
-      text run at (9,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (37,0) width 26: "she"
-      text run at (63,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (119,0) width 18: "he"
-      text run at (137,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (12,0) size 173x17
+      text run at (12,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (39,0) width 26: "she"
+      text run at (65,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (120,0) width 18: "he"
+      text run at (138,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (44,75) size 275x18
   RenderBlock {DIV} at (0,0) size 275x18
-    RenderText {#text} at (99,0) size 176x17
-      text run at (99,0) width 28 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
-      text run at (127,0) width 26: "she"
-      text run at (153,0) width 56 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
-      text run at (209,0) width 18: "he"
-      text run at (227,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
+    RenderText {#text} at (102,0) size 173x17
+      text run at (102,0) width 27 RTL: " \x{5D5}\x{5D6}\x{5D4}\x{5D5}"
+      text run at (129,0) width 26: "she"
+      text run at (155,0) width 55 RTL: " \x{5D5}\x{5D4}\x{5D9}\x{5D0} \x{5D6}\x{5D4} "
+      text run at (210,0) width 18: "he"
+      text run at (228,0) width 47 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (44,103) size 185x18
   RenderBlock {DIV} at (0,0) size 185x18
 caret: position 0 of child 0 {DIV} of child 1 {DIV} of child 0 {DIV} of {#document-fragment} of child 9 {INPUT} of child 3 {P} of body

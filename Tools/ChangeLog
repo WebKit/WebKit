@@ -1,3 +1,11 @@
+2017-09-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Upgrade webkitgtk-test-fonts to version 0.0.7.
+
+        This version upgrades liberation fonts to version 2, that has a wider glyph coverage.
+
+        * gtk/jhbuild.modules:
+
 2017-09-29  Alex Christensen  <achristensen@webkit.org>
 
         Expose WebPreferences::webGLEnabled through WKPreferences
