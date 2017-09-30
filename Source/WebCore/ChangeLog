@@ -1,3 +1,32 @@
+2017-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        [iOS WK2] API test EditorStateTests.ContentViewHasTextInContentEditableElement is a flaky failure
+        https://bugs.webkit.org/show_bug.cgi?id=177698
+
+        Reviewed by Ryosuke Niwa.
+
+        The WebKit2 API test EditorStateTests.ContentViewHasTextInContentEditableElement is currently hitting
+        intermittent failures on test runners. After inserting just an image in the editable element, we would expect
+        that -hasText should return NO because the text content is an empty string, but we find that -hasText is YES.
+        This is because we're bailing on an early return in computeEditableRootHasContentAndPlainText because the
+        EditorState's PostLayoutData contains non-zero characters near the selection, which is incorrect.
+
+        However, upon closer inspection, this is due to a latent bug in the charactersAroundPosition helper function.
+        This function attempts to compute characters before and after the current selection by initializing a Vector
+        of size 3 with the relevant character data, and then sets oneAfter, oneBefore and twoBefore to the UChar32
+        values in the vector. However, in the case where there are less than three characters, we end up assigning
+        the uninitialized values in the vector to one or more of oneAfter, oneBefore and twoBefore, which causes the
+        helper added in r222654 to bail early when it should not.
+
+        To fix this, we initialize the values in `characters` to 0 (which is the initial value for the 3 corresponding
+        members in the PostLayoutData struct). We also turn `characters` into a UChar32 array on the stack, to avoid the
+        heap allocations using a Vector<UChar32>.
+
+        No new tests; fixes a flaky API test.
+
+        * editing/VisibleUnits.cpp:
+        (WebCore::charactersAroundPosition):
+
 2017-09-30  Antti Koivisto  <antti@apple.com>
 
         Add makeWeakPtr for easier WeakPtr construction

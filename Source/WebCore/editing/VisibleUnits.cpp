@@ -1892,7 +1892,7 @@ int distanceBetweenPositions(const VisiblePosition& vp, const VisiblePosition& o
 void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore)
 {
     const int maxCharacters = 3;
-    Vector<UChar32> characters(maxCharacters);
+    UChar32 characters[maxCharacters] = { 0 };
 
     if (position.isNull() || isStartOfDocument(position))
         return;
