@@ -31,33 +31,34 @@ html, body {
 
 function handleCopy1(event) {
     event.clipboardData.setData("Text", "");
-    event.clipboardData.setData("URL", "http://www.apple.com/");
-    event.clipboardData.setData("text/html;charset=utf-8", "<b style='color: green'></b>");
+    event.clipboardData.setData(" URL\r", "http://www.apple.com/");
+    event.clipboardData.setData(" text/html;charset=utf-8 ", "<b style='color: green'></b>");
+    event.clipboardData.setData("custom type\t\n", "custom data");
     event.preventDefault();
 }
 
 function handleCopy2(event) {
-    event.clipboardData.setData("text/plain;", "");
-    event.clipboardData.setData("text/uri-list;", "http://www.apple.com/");
-    event.clipboardData.setData("text/html;", "<b style='color: green'></b>");
+    event.clipboardData.setData("text/plain;\t", "");
+    event.clipboardData.setData("text/uri-list;\n", "http://www.apple.com/");
+    event.clipboardData.setData("text/html;    ", "<b style='color: green'></b>");
+    event.clipboardData.setData("custom type", "custom data");
     event.preventDefault();
 }
 
+function getDataWithTypesFromEvent(event, types) {
+    const result = {};
+    for (const type of types)
+        result[type] = event.clipboardData.getData(type);
+    return result;
+}
+
 function handlePaste1(event) {
-    output.textContent += JSON.stringify({
-        "text/plain;": event.clipboardData.getData("text/plain;"),
-        "text/uri-list;": event.clipboardData.getData("text/uri-list;"),
-        "text/html;": event.clipboardData.getData("text/html;")
-    }, null, "    ") + "\n";
+    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, [" text/plain; ", "text/uri-list; ", "text/html; ", "\fcustom type\v"]), null, "    ") + "\n";
     event.preventDefault();
 }
 
 function handlePaste2(event) {
-    output.textContent += JSON.stringify({
-        "Text": event.clipboardData.getData("Text"),
-        "URL": event.clipboardData.getData("URL"),
-        "text/html;charset=utf-8": event.clipboardData.getData("text/html;charset=utf-8")
-    }, null, "    ") + "\n"
+    output.textContent += JSON.stringify(getDataWithTypesFromEvent(event, ["\tText", "\r\nURL", "    text/html;charset=utf-8 ", " custom type\t\n"]), null, "    ") + "\n";
     event.preventDefault();
 }
 

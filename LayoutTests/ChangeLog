@@ -1,5 +1,18 @@
 2017-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
+        Augment editing/pasteboard/data-transfer-get-data-non-normalized-types.html to check whitespace stripping
+        https://bugs.webkit.org/show_bug.cgi?id=177707
+
+        Reviewed by Ryosuke Niwa.
+
+        Augment an existing layout test to check that whitespace is stripped from types passed into DataTransfer's
+        getData and setData methods.
+
+        * editing/pasteboard/data-transfer-get-data-non-normalized-types-expected.txt:
+        * editing/pasteboard/data-transfer-get-data-non-normalized-types.html:
+
+2017-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
+
         Add a layout test test that exercises setData and getData for non-normalized types
         https://bugs.webkit.org/show_bug.cgi?id=177707
 
