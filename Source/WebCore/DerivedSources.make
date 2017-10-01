@@ -407,7 +407,10 @@ JS_BINDING_IDLS = \
     $(WebCore)/css/StyleSheetList.idl \
     $(WebCore)/css/WebKitCSSMatrix.idl \
     $(WebCore)/css/WebKitCSSViewportRule.idl \
+    $(WebCore)/dom/AbortController.idl \
+    $(WebCore)/dom/AbortController.idl \
     $(WebCore)/dom/AnimationEvent.idl \
+    $(WebCore)/dom/AbortSignal.idl \
     $(WebCore)/dom/Attr.idl \
     $(WebCore)/dom/BeforeLoadEvent.idl \
     $(WebCore)/dom/BeforeUnloadEvent.idl \

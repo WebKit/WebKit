@@ -3199,6 +3199,10 @@
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
 		7C2FA6111EA95A3900A03108 /* ResourceCryptographicDigest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */; };
 		7C2FA6121EA95A3C00A03108 /* ResourceCryptographicDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2FA6101EA95A3200A03108 /* ResourceCryptographicDigest.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7C30D9831F815AEC00268356 /* JSAbortController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C30D97E1F815AC000268356 /* JSAbortController.cpp */; };
+		7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C30D9801F815AC100268356 /* JSAbortController.h */; };
+		7C30D9851F815AEC00268356 /* JSAbortSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C30D9821F815AC200268356 /* JSAbortSignal.cpp */; };
+		7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C30D9811F815AC100268356 /* JSAbortSignal.h */; };
 		7C330A021DF8FAC600D3395C /* GraphicsContext3DAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C330A011DF8FAC600D3395C /* GraphicsContext3DAttributes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C330A071DF9F95100D3395C /* JSPositionOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C330A051DF9F95100D3395C /* JSPositionOptions.cpp */; };
 		7C330A081DF9F95100D3395C /* JSPositionOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C330A061DF9F95100D3395C /* JSPositionOptions.h */; };
@@ -3367,6 +3371,10 @@
 		7CCEBFC01DD8F6AB002C40B8 /* SVGLengthValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE58D531DD7B09300128552 /* SVGLengthValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD0BA041B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */; };
 		7CD0BA051B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */; };
+		7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2B51F80A4820016A4CE /* AbortController.h */; };
+		7CD0E2B91F80A4820016A4CE /* AbortController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0E2B61F80A4820016A4CE /* AbortController.cpp */; };
+		7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */; };
+		7CD0E2C01F80A56E0016A4CE /* AbortSignal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */; };
 		7CD344161F3183A5000DCD49 /* JSMutationCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD344121F3108E2000DCD49 /* JSMutationCallback.cpp */; };
 		7CD494CC1A86EB1D000A87EC /* RenderAttachment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CD494CA1A86EB1D000A87EC /* RenderAttachment.cpp */; };
 		7CD494CD1A86EB1D000A87EC /* RenderAttachment.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD494CB1A86EB1D000A87EC /* RenderAttachment.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11422,6 +11430,10 @@
 		7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMGlobalObjectTask.h; sourceTree = "<group>"; };
 		7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceCryptographicDigest.cpp; sourceTree = "<group>"; };
 		7C2FA6101EA95A3200A03108 /* ResourceCryptographicDigest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceCryptographicDigest.h; sourceTree = "<group>"; };
+		7C30D97E1F815AC000268356 /* JSAbortController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortController.cpp; sourceTree = "<group>"; };
+		7C30D9801F815AC100268356 /* JSAbortController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortController.h; sourceTree = "<group>"; };
+		7C30D9811F815AC100268356 /* JSAbortSignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAbortSignal.h; sourceTree = "<group>"; };
+		7C30D9821F815AC200268356 /* JSAbortSignal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAbortSignal.cpp; sourceTree = "<group>"; };
 		7C330A011DF8FAC600D3395C /* GraphicsContext3DAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsContext3DAttributes.h; sourceTree = "<group>"; };
 		7C330A031DF9E95B00D3395C /* PositionOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = PositionOptions.idl; sourceTree = "<group>"; };
 		7C330A051DF9F95100D3395C /* JSPositionOptions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPositionOptions.cpp; sourceTree = "<group>"; };
@@ -11630,6 +11642,12 @@
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
 		7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallbackMicrotask.cpp; sourceTree = "<group>"; };
 		7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMCallbackMicrotask.h; sourceTree = "<group>"; };
+		7CD0E2B51F80A4820016A4CE /* AbortController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortController.h; sourceTree = "<group>"; };
+		7CD0E2B61F80A4820016A4CE /* AbortController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortController.cpp; sourceTree = "<group>"; };
+		7CD0E2B71F80A4820016A4CE /* AbortController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AbortController.idl; sourceTree = "<group>"; };
+		7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortSignal.h; sourceTree = "<group>"; };
+		7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AbortSignal.cpp; sourceTree = "<group>"; };
+		7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = AbortSignal.idl; sourceTree = "<group>"; };
 		7CD3440D1F310836000DCD49 /* MutationCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MutationCallback.idl; sourceTree = "<group>"; };
 		7CD344111F3108DD000DCD49 /* JSMutationCallback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSMutationCallback.h; sourceTree = "<group>"; };
 		7CD344121F3108E2000DCD49 /* JSMutationCallback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSMutationCallback.cpp; sourceTree = "<group>"; };
@@ -22644,6 +22662,10 @@
 		A83B79100CCB001B000B0825 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				7C30D97E1F815AC000268356 /* JSAbortController.cpp */,
+				7C30D9801F815AC100268356 /* JSAbortController.h */,
+				7C30D9821F815AC200268356 /* JSAbortSignal.cpp */,
+				7C30D9811F815AC100268356 /* JSAbortSignal.h */,
 				65DF31D809D1C122000BE325 /* JSAttr.cpp */,
 				65DF31D909D1C123000BE325 /* JSAttr.h */,
 				93F9B79E0BA6032600854064 /* JSCDATASection.cpp */,
@@ -26151,6 +26173,12 @@
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				83BB5C871D5D6F3A005A71F4 /* AllDescendantsCollection.h */,
+				7CD0E2B51F80A4820016A4CE /* AbortController.h */,
+				7CD0E2B61F80A4820016A4CE /* AbortController.cpp */,
+				7CD0E2B71F80A4820016A4CE /* AbortController.idl */,
+				7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */,
+				7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */,
+				7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */,
 				319847FE1A1D816700A13318 /* AnimationEvent.cpp */,
 				319847FF1A1D816700A13318 /* AnimationEvent.h */,
 				319848001A1D816700A13318 /* AnimationEvent.idl */,
@@ -29359,6 +29387,7 @@
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
+				7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */,
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
@@ -30252,6 +30281,7 @@
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
 				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
+				7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */,
 				08FB3F8413BC754C0099FC18 /* SVGAttributeToPropertyMap.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,
 				B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */,
@@ -30295,6 +30325,7 @@
 				B2227A060D00BF220071B782 /* SVGFETileElement.h in Headers */,
 				B2227A090D00BF220071B782 /* SVGFETurbulenceElement.h in Headers */,
 				845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */,
+				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				081EBF3B0FD34F4100DA7559 /* SVGFilterBuilder.h in Headers */,
 				B2227A0C0D00BF220071B782 /* SVGFilterElement.h in Headers */,
 				B2227A0F0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.h in Headers */,
@@ -30752,6 +30783,7 @@
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
 				316BDB8C1E6E153000DE0D5A /* WebGPULayer.h in Headers */,
 				A5E2123C1E4924A400CE1044 /* WebHeapAgent.h in Headers */,
+				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
 				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
@@ -31518,6 +31550,7 @@
 				CE2849891CA3614600B4A57F /* ContentSecurityPolicyDirectiveNames.cpp in Sources */,
 				CE799FA71C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp in Sources */,
 				CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */,
+				7C30D9851F815AEC00268356 /* JSAbortSignal.cpp in Sources */,
 				CE799F9F1C6A4C160097B518 /* ContentSecurityPolicySource.cpp in Sources */,
 				CE799F971C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp in Sources */,
 				CE799FAB1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp in Sources */,
@@ -31589,6 +31622,7 @@
 				E1233F10185A4130008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp in Sources */,
 				E1BD3319182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp in Sources */,
 				E1C266D818317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp in Sources */,
+				7C30D9831F815AEC00268356 /* JSAbortController.cpp in Sources */,
 				E125F82B1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp in Sources */,
 				E19AC3EE1824DC7900349426 /* CryptoAlgorithmSHA224.cpp in Sources */,
 				E19AC3F01824DC7900349426 /* CryptoAlgorithmSHA256.cpp in Sources */,
@@ -32447,6 +32481,7 @@
 				A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */,
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
 				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
+				7CD0E2C01F80A56E0016A4CE /* AbortSignal.cpp in Sources */,
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */,
@@ -32539,6 +32574,7 @@
 				836ACED21ECAAB19004BD012 /* JSDOMMatrix.cpp in Sources */,
 				7CBBBCCB1F56180D005EFAAC /* JSDOMMatrix2DInit.cpp in Sources */,
 				835657C71ECAB10700CDE72D /* JSDOMMatrixInit.cpp in Sources */,
+				7CD0E2B91F80A4820016A4CE /* AbortController.cpp in Sources */,
 				836ACED51ECAAB19004BD012 /* JSDOMMatrixReadOnly.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSDOMMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSDOMMimeTypeArray.cpp in Sources */,

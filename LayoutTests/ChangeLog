@@ -1,3 +1,14 @@
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
+        Add support for DOM aborting (https://dom.spec.whatwg.org/#aborting-ongoing-activities)
+        https://bugs.webkit.org/show_bug.cgi?id=177718
+
+        Reviewed by Darin Adler.
+
+        * js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
+            Update test results.
+
 2017-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't reveal file URL when pasting an image

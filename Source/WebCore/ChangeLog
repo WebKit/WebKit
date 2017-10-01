@@ -1,3 +1,32 @@
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
+        Add support for DOM aborting (https://dom.spec.whatwg.org/#aborting-ongoing-activities)
+        https://bugs.webkit.org/show_bug.cgi?id=177718
+
+        Reviewed by Darin Adler.
+
+        Adds standalone support for AbortController and AbortSignal. No integration
+        with other specs yet.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        
+            Add new files.
+        
+        * dom/AbortController.cpp: Added.
+        * dom/AbortController.h: Added.
+        * dom/AbortController.idl: Added.
+        * dom/AbortSignal.cpp: Added.
+        * dom/AbortSignal.h: Added.
+        * dom/AbortSignal.idl: Added.
+        
+            Add basic support AbortController and AbortSignal.
+        
+        * dom/EventTargetFactory.in:
+        
+            Add AbortSignal to the list of EventTargets.
+
 2017-10-01  Antti Koivisto  <antti@apple.com>
 
         Use WeakPtr for first-letter memory management

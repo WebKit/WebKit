@@ -1,5 +1,6 @@
 namespace="EventTarget"
 
+AbortSignal
 ApplePaySession conditional=APPLE_PAY
 AudioNode conditional=WEB_AUDIO
 AudioContext conditional=WEB_AUDIO

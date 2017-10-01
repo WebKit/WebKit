@@ -490,6 +490,8 @@ set(WebCore_NON_SVG_IDL_FILES
     css/WebKitCSSMatrix.idl
     css/WebKitCSSViewportRule.idl
 
+    dom/AbortController.idl
+    dom/AbortSignal.idl
     dom/AnimationEvent.idl
     dom/Attr.idl
     dom/BeforeLoadEvent.idl
@@ -1583,6 +1585,8 @@ set(WebCore_SOURCES
 
     cssjit/SelectorCompiler.cpp
 
+    dom/AbortController.cpp
+    dom/AbortSignal.cpp
     dom/ActiveDOMCallback.cpp
     dom/ActiveDOMCallbackMicrotask.cpp
     dom/ActiveDOMObject.cpp
