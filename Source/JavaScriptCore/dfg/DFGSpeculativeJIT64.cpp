@@ -2664,14 +2664,6 @@ void SpeculativeJIT::compile(Node* node)
             return;
         break;
 
-    case CompareBelow:
-        compileCompareUnsigned(node, JITCompiler::Below);
-        break;
-
-    case CompareBelowEq:
-        compileCompareUnsigned(node, JITCompiler::BelowOrEqual);
-        break;
-
     case CompareEq:
         if (compare(node, JITCompiler::Equal, JITCompiler::DoubleEqual, operationCompareEq))
             return;

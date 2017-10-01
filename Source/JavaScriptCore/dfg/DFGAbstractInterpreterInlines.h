@@ -1407,48 +1407,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         forNode(node).setType(m_graph, SpecStringIdent);
         break;
     }
-
-    case CompareBelow:
-    case CompareBelowEq: {
-        JSValue leftConst = forNode(node->child1()).value();
-        JSValue rightConst = forNode(node->child2()).value();
-        if (leftConst && rightConst) {
-            if (leftConst.isInt32() && rightConst.isInt32()) {
-                uint32_t a = static_cast<uint32_t>(leftConst.asInt32());
-                uint32_t b = static_cast<uint32_t>(rightConst.asInt32());
-                switch (node->op()) {
-                case CompareBelow:
-                    setConstant(node, jsBoolean(a < b));
-                    break;
-                case CompareBelowEq:
-                    setConstant(node, jsBoolean(a <= b));
-                    break;
-                default:
-                    RELEASE_ASSERT_NOT_REACHED();
-                    break;
-                }
-                break;
-            }
-        }
-
-        if (node->child1() == node->child2()) {
-            switch (node->op()) {
-            case CompareBelow:
-                setConstant(node, jsBoolean(false));
-                break;
-            case CompareBelowEq:
-                setConstant(node, jsBoolean(true));
-                break;
-            default:
-                DFG_CRASH(m_graph, node, "Unexpected node type");
-                break;
-            }
-            break;
-        }
-        forNode(node).setType(SpecBoolean);
-        break;
-    }
-
+            
     case CompareLess:
     case CompareLessEq:
     case CompareGreater:

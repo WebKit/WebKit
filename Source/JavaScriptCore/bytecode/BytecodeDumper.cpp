@@ -360,16 +360,6 @@ void BytecodeDumper<Block>::printConditionalJump(PrintStream& out, const typenam
 }
 
 template<class Block>
-void BytecodeDumper<Block>::printCompareJump(PrintStream& out, const typename Block::Instruction*, const typename Block::Instruction*& it, int location, const char* op)
-{
-    int r0 = (++it)->u.operand;
-    int r1 = (++it)->u.operand;
-    int offset = (++it)->u.operand;
-    printLocationAndOp(out, location, it, op);
-    out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
-}
-
-template<class Block>
 void BytecodeDumper<Block>::printGetByIdOp(PrintStream& out, int location, const typename Block::Instruction*& it)
 {
     const char* op;
@@ -844,14 +834,6 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         printBinaryOp(out, location, it, "greatereq");
         break;
     }
-    case op_below: {
-        printBinaryOp(out, location, it, "below");
-        break;
-    }
-    case op_beloweq: {
-        printBinaryOp(out, location, it, "beloweq");
-        break;
-    }
     case op_inc: {
         int r0 = (++it)->u.operand;
         printLocationOpAndRegisterOperand(out, location, it, "inc", r0);
@@ -1215,43 +1197,67 @@ void BytecodeDumper<Block>::dumpBytecode(PrintStream& out, const typename Block:
         break;
     }
     case op_jless: {
-        printCompareJump(out, begin, it, location, "jless");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jless");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jlesseq: {
-        printCompareJump(out, begin, it, location, "jlesseq");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jlesseq");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jgreater: {
-        printCompareJump(out, begin, it, location, "jgreater");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jgreater");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jgreatereq: {
-        printCompareJump(out, begin, it, location, "jgreatereq");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jgreatereq");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jnless: {
-        printCompareJump(out, begin, it, location, "jnless");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jnless");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jnlesseq: {
-        printCompareJump(out, begin, it, location, "jnlesseq");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jnlesseq");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jngreater: {
-        printCompareJump(out, begin, it, location, "jngreater");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jngreater");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_jngreatereq: {
-        printCompareJump(out, begin, it, location, "jngreatereq");
-        break;
-    }
-    case op_jbelow: {
-        printCompareJump(out, begin, it, location, "jbelow");
-        break;
-    }
-    case op_jbeloweq: {
-        printCompareJump(out, begin, it, location, "jbeloweq");
+        int r0 = (++it)->u.operand;
+        int r1 = (++it)->u.operand;
+        int offset = (++it)->u.operand;
+        printLocationAndOp(out, location, it, "jngreatereq");
+        out.printf("%s, %s, %d(->%d)", registerName(r0).data(), registerName(r1).data(), offset, location + offset);
         break;
     }
     case op_loop_hint: {

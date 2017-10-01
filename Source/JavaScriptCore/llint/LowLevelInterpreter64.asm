@@ -1813,33 +1813,6 @@ macro compare(integerCompare, doubleCompare, slowPath)
 end
 
 
-macro compareUnsignedJump(integerCompare)
-    loadisFromInstruction(1, t2)
-    loadisFromInstruction(2, t3)
-    loadConstantOrVariable(t2, t0)
-    loadConstantOrVariable(t3, t1)
-    integerCompare(t0, t1, .jumpTarget)
-    dispatch(4)
-
-.jumpTarget:
-    dispatchIntIndirect(3)
-end
-
-
-macro compareUnsigned(integerCompareAndSet)
-    traceExecution()
-    loadisFromInstruction(3, t0)
-    loadisFromInstruction(2, t2)
-    loadisFromInstruction(1, t3)
-    loadConstantOrVariable(t0, t1)
-    loadConstantOrVariable(t2, t0)
-    integerCompareAndSet(t0, t1, t0)
-    orq ValueFalse, t0
-    storeq t0, [cfr, t3, 8]
-    dispatch(4)
-end
-
-
 _llint_op_switch_imm:
     traceExecution()
     loadisFromInstruction(3, t2)
