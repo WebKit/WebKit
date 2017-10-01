@@ -26,88 +26,28 @@
 
 #pragma once
 
-#include "ClipboardAccessPolicy.h"
 #include "ContentType.h"
-#include "EditingBehaviorTypes.h"
-#include "IntSize.h"
 #include "SecurityOrigin.h"
-#include "SettingsMacros.h"
+#include "SettingsDefaultValues.h"
+#include "SettingsGenerated.h"
 #include "TextFlags.h"
 #include "Timer.h"
 #include "URL.h"
-#include "WritingMode.h"
-#include <runtime/RuntimeFlags.h>
 #include <unicode/uscript.h>
 #include <wtf/HashMap.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/AtomicStringHash.h>
-
-#if ENABLE(DATA_DETECTION)
-#include "DataDetection.h"
-#endif
 
 namespace WebCore {
 
 class FontGenericFamilies;
-class Page;
 
-enum EditableLinkBehavior {
-    EditableLinkDefaultBehavior,
-    EditableLinkAlwaysLive,
-    EditableLinkOnlyLiveWithShiftKey,
-    EditableLinkLiveWhenNotFocused,
-    EditableLinkNeverLive
-};
-
-enum TextDirectionSubmenuInclusionBehavior {
-    TextDirectionSubmenuNeverIncluded,
-    TextDirectionSubmenuAutomaticallyIncluded,
-    TextDirectionSubmenuAlwaysIncluded
-};
-
-enum DebugOverlayRegionFlags {
-    NonFastScrollableRegion = 1 << 0,
-    WheelEventHandlerRegion = 1 << 1,
-};
-
-enum class UserInterfaceDirectionPolicy {
-    Content,
-    System
-};
-
-enum PDFImageCachingPolicy {
-    PDFImageCachingEnabled,
-    PDFImageCachingBelowMemoryLimit,
-    PDFImageCachingDisabled,
-    PDFImageCachingClipBoundsOnly,
-#if PLATFORM(IOS)
-    PDFImageCachingDefault = PDFImageCachingBelowMemoryLimit
-#else
-    PDFImageCachingDefault = PDFImageCachingEnabled
-#endif
-};
-
-enum FrameFlattening {
-    FrameFlatteningDisabled,
-    FrameFlatteningEnabledForNonFullScreenIFrames,
-    FrameFlatteningFullyEnabled
-};
-
-typedef unsigned DebugOverlayRegions;
-
-class Settings : public RefCounted<Settings> {
-    WTF_MAKE_NONCOPYABLE(Settings); WTF_MAKE_FAST_ALLOCATED;
+class Settings : public SettingsGenerated {
 public:
     static Ref<Settings> create(Page*);
     ~Settings();
 
     void pageDestroyed() { m_page = nullptr; }
-
-    enum class ForcedAccessibilityValue { System, On, Off };
-    static const Settings::ForcedAccessibilityValue defaultForcedColorsAreInvertedAccessibilityValue = ForcedAccessibilityValue::System;
-    static const Settings::ForcedAccessibilityValue defaultForcedDisplayIsMonochromeAccessibilityValue = ForcedAccessibilityValue::System;
-    static const Settings::ForcedAccessibilityValue defaultForcedPrefersReducedMotionAccessibilityValue = ForcedAccessibilityValue::System;
 
     WEBCORE_EXPORT void setStandardFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
     WEBCORE_EXPORT const AtomicString& standardFontFamily(UScriptCode = USCRIPT_COMMON) const;
@@ -147,8 +87,6 @@ public:
     // HTML sandbox, plug-in sandboxing, and other important details.
     bool isScriptEnabled() const { return m_isScriptEnabled; }
     WEBCORE_EXPORT void setScriptEnabled(bool);
-
-    SETTINGS_GETTERS_AND_SETTERS
 
     WEBCORE_EXPORT void setJavaEnabled(bool);
     bool isJavaEnabled() const { return m_isJavaEnabled; }
@@ -235,9 +173,6 @@ public:
     WEBCORE_EXPORT static void setGStreamerEnabled(bool flag);
     static bool isGStreamerEnabled() { return gGStreamerEnabled; }
 #endif
-
-    static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
-    static const unsigned defaultMaximumRenderTreeDepth = 512;
 
     WEBCORE_EXPORT static void setMockScrollbarsEnabled(bool flag);
     WEBCORE_EXPORT static bool mockScrollbarsEnabled();
@@ -347,16 +282,12 @@ private:
 
     void initializeDefaultFontFamilies();
 
-    Page* m_page;
-
     String m_mediaTypeOverride;
     URL m_userStyleSheetLocation;
     const std::unique_ptr<FontGenericFamilies> m_fontGenericFamilies;
     SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
     Seconds m_layoutInterval;
     Seconds m_minimumDOMTimerInterval;
-
-    SETTINGS_MEMBER_VARIABLES
 
     bool m_isJavaEnabled : 1;
     bool m_isJavaEnabledForLocalFiles : 1;

@@ -1,3 +1,103 @@
+2017-09-30  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Replace SettingsMacros.h with a generated base class for Settings
+        https://bugs.webkit.org/show_bug.cgi?id=177681
+
+        Reviewed by Darin Adler.
+
+        - Adds a SettingsGenerated class that Settings inherits from. The new class
+          has the members and getters/setters for all the generated bindings.
+        - Some default values for settings are literals in Settings.in, but rather
+          constants or functions defined externally. These have all been moved to
+          SettingsDefaultValues.h to allow for the script to include them all for
+          SettingsGenerated.
+        - Previously, a few enums were declared in Settings.h for use by Settings.
+          Now that SettingsGenerated needs access, we standarize the same way that
+          exists for the IDL generator; expecting the enum to be in a header of the
+          same name.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreMacros.cmake:
+
+            Add new files / generation steps.
+        
+        * Scripts/GenerateSettings.py:
+        * Scripts/GenerateSettings/GenerateSettings.py:
+        * Scripts/GenerateSettings/GenerateSettingsHeaderFile.py: Added.
+        * Scripts/GenerateSettings/GenerateSettingsImplementationFile.py: Added.
+        * Scripts/GenerateSettings/GenerateSettingsMacrosHeader.py: Removed.
+        * Scripts/GenerateSettings/Settings.py:
+        
+            Replace script to generate SettingsMacros.h with scripts to generate a SettingsGenerated.{h,cpp}.
+        
+        * accessibility/ForcedAccessibilityValue.h: Added.
+        * editing/EditableLinkBehavior.h: Added.
+        * editing/EditingBehavior.h:
+        * editing/EditingBehaviorType.h: Copied from editing/EditingBehaviorTypes.h.
+        * editing/EditingBehaviorTypes.h: Removed.
+        * editing/cocoa/DataDetection.h:
+        * editing/cocoa/DataDetectorTypes.h: Added.
+        * page/DebugOverlayRegions.h: Added.
+        * page/FrameFlattening.h: Added.
+        * page/PDFImageCachingPolicy.h: Added.
+        * page/TextDirectionSubmenuInclusionBehavior.h: Added.
+        * page/UserInterfaceDirectionPolicy.h: Added.
+        * platform/text/TextDirection.h: Added.
+        * platform/text/WritingMode.h:
+
+            Split out enums from Settings.h
+
+        * css/MediaQueryEvaluator.cpp:
+
+            Update for new name of ForcedAccessibilityValue.
+
+        * html/parser/HTMLParserOptions.cpp:
+
+            Update for new name of defaultMaximumHTMLParserDOMTreeDepth.
+
+        * page/Settings.cpp:
+        * page/Settings.h:
+        
+            - Move defaults to SettingsDefaultValues.h (and SettingsDefaultValuesCocoa.mm for defaultTextAutosizingEnabled).
+            - Move enums to their own files.
+            - Inherit from SettingsGenerated.h
+        
+        * page/Settings.in:
+        
+            - Use new 'include' option for javaScriptRuntimeFlags setting to include <runtime/RuntimeFlags.h>,
+              as it doesn't fit the normal idiomatic model.
+            - Replace call to defaultMinimumZoomFontSize() with direct constant access.
+
+        * page/SettingsDefaultValues.h: Added.
+        * page/cocoa/SettingsDefaultValuesCocoa.mm: Added.
+
+            Move default values from Settings to this new file.
+
+        * page/cocoa/SettingsCocoa.mm:
+        
+            Move defaultTextAutosizingEnabled() out of here and into SettingsDefaultValuesCocoa.mm.
+        
+        * style/StyleTreeResolver.cpp:
+
+            - Update for new scoping of defaultMaximumRenderTreeDepth.
+            - Move defaultMaximumRenderTreeDepth from Settings here. This is the only use.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::forcedColorsAreInvertedAccessibilityValue const):
+        (WebCore::InternalSettings::setForcedColorsAreInvertedAccessibilityValue):
+        (WebCore::InternalSettings::forcedDisplayIsMonochromeAccessibilityValue const):
+        (WebCore::InternalSettings::setForcedDisplayIsMonochromeAccessibilityValue):
+        (WebCore::InternalSettings::forcedPrefersReducedMotionAccessibilityValue const):
+        (WebCore::InternalSettings::setForcedPrefersReducedMotionAccessibilityValue):
+        (WebCore::settingsToInternalSettingsValue): Deleted.
+        (WebCore::internalSettingsToSettingsValue): Deleted.
+        * testing/InternalSettings.h:
+        
+            Replace duplicate definition of ForcedAccessibilityValue with a using declaration
+            and simplify code now that it doesn't need to map between the two enums.
+
 2017-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         [iOS WK2] API test EditorStateTests.ContentViewHasTextInContentEditableElement is a flaky failure

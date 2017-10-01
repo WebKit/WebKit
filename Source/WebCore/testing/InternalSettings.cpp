@@ -860,64 +860,34 @@ ExceptionOr<void> InternalSettings::setCustomPasteboardDataEnabled(bool enabled)
     return { };
 }
 
-static InternalSettings::ForcedAccessibilityValue settingsToInternalSettingsValue(Settings::ForcedAccessibilityValue value)
+ForcedAccessibilityValue InternalSettings::forcedColorsAreInvertedAccessibilityValue() const
 {
-    switch (value) {
-    case Settings::ForcedAccessibilityValue::System:
-        return InternalSettings::ForcedAccessibilityValue::System;
-    case Settings::ForcedAccessibilityValue::On:
-        return InternalSettings::ForcedAccessibilityValue::On;
-    case Settings::ForcedAccessibilityValue::Off:
-        return InternalSettings::ForcedAccessibilityValue::Off;
-    }
-
-    ASSERT_NOT_REACHED();
-    return InternalSettings::ForcedAccessibilityValue::Off;
+    return settings().forcedColorsAreInvertedAccessibilityValue();
 }
 
-static Settings::ForcedAccessibilityValue internalSettingsToSettingsValue(InternalSettings::ForcedAccessibilityValue value)
+void InternalSettings::setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue value)
 {
-    switch (value) {
-    case InternalSettings::ForcedAccessibilityValue::System:
-        return Settings::ForcedAccessibilityValue::System;
-    case InternalSettings::ForcedAccessibilityValue::On:
-        return Settings::ForcedAccessibilityValue::On;
-    case InternalSettings::ForcedAccessibilityValue::Off:
-        return Settings::ForcedAccessibilityValue::Off;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Settings::ForcedAccessibilityValue::Off;
+    settings().setForcedColorsAreInvertedAccessibilityValue(value);
 }
 
-InternalSettings::ForcedAccessibilityValue InternalSettings::forcedColorsAreInvertedAccessibilityValue() const
+ForcedAccessibilityValue InternalSettings::forcedDisplayIsMonochromeAccessibilityValue() const
 {
-    return settingsToInternalSettingsValue(settings().forcedColorsAreInvertedAccessibilityValue());
+    return settings().forcedDisplayIsMonochromeAccessibilityValue();
 }
 
-void InternalSettings::setForcedColorsAreInvertedAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
+void InternalSettings::setForcedDisplayIsMonochromeAccessibilityValue(ForcedAccessibilityValue value)
 {
-    settings().setForcedColorsAreInvertedAccessibilityValue(internalSettingsToSettingsValue(value));
+    settings().setForcedDisplayIsMonochromeAccessibilityValue(value);
 }
 
-InternalSettings::ForcedAccessibilityValue InternalSettings::forcedDisplayIsMonochromeAccessibilityValue() const
+ForcedAccessibilityValue InternalSettings::forcedPrefersReducedMotionAccessibilityValue() const
 {
-    return settingsToInternalSettingsValue(settings().forcedDisplayIsMonochromeAccessibilityValue());
+    return settings().forcedPrefersReducedMotionAccessibilityValue();
 }
 
-void InternalSettings::setForcedDisplayIsMonochromeAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
+void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue value)
 {
-    settings().setForcedDisplayIsMonochromeAccessibilityValue(internalSettingsToSettingsValue(value));
-}
-
-InternalSettings::ForcedAccessibilityValue InternalSettings::forcedPrefersReducedMotionAccessibilityValue() const
-{
-    return settingsToInternalSettingsValue(settings().forcedPrefersReducedMotionAccessibilityValue());
-}
-
-void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
-{
-    settings().setForcedPrefersReducedMotionAccessibilityValue(internalSettingsToSettingsValue(value));
+    settings().setForcedPrefersReducedMotionAccessibilityValue(value);
 }
 
 // If you add to this class, make sure that you update the Backup class for test reproducability!

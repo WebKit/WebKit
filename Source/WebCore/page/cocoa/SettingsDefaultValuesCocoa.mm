@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "SettingsDefaultValues.h"
 
-#if ENABLE(DATA_DETECTION)
+#if PLATFORM(COCOA)
 
-#import "DataDetectorTypes.h"
-#import <wtf/RefPtr.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
+#if PLATFORM(IOS)
+#include "Device.h"
+#include <pal/spi/ios/UIKitSPI.h>
+#include <wtf/SoftLinking.h>
 
-OBJC_CLASS DDActionContext;
-OBJC_CLASS NSArray;
-OBJC_CLASS NSDictionary;
+SOFT_LINK_FRAMEWORK(UIKit)
+SOFT_LINK_CLASS(UIKit, UIApplication)
+#endif
 
 namespace WebCore {
 
-class Element;
-class FloatRect;
-class HitTestResult;
-class Range;
-class URL;
-
-class DataDetection {
-public:
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
-#endif
-    WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes, NSDictionary *context);
 #if PLATFORM(IOS)
-    WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
-    WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
-    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element&);
-    WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
+bool defaultTextAutosizingEnabled()
+{
+    return !deviceHasIPadCapability() || [[getUIApplicationClass() sharedApplication] _isClassic];
+}
 #endif
 
-    static const String& dataDetectorURLProtocol();
-    static bool isDataDetectorURL(const URL&);
-};
+}
 
-} // namespace WebCore
-
-#endif
-
+#endif // PLATFORM(COCOA)

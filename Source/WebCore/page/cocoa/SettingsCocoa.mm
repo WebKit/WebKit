@@ -28,17 +28,6 @@
 
 #include <wtf/NeverDestroyed.h>
 
-#if PLATFORM(IOS)
-#include "Device.h"
-#include <pal/spi/ios/UIKitSPI.h>
-#include <wtf/SoftLinking.h>
-#endif
-
-#if PLATFORM(IOS)
-SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS(UIKit, UIApplication)
-#endif
-
 namespace WebCore {
 
 static inline const char* sansSerifTraditionalHanFontFamily()
@@ -126,11 +115,6 @@ void Settings::initializeDefaultFontFamilies()
     setFixedFontFamily("Courier", USCRIPT_COMMON);
     setSerifFontFamily("Times", USCRIPT_COMMON);
     setSansSerifFontFamily("Helvetica", USCRIPT_COMMON);
-}
-
-bool Settings::defaultTextAutosizingEnabled()
-{
-    return !deviceHasIPadCapability() || [[getUIApplicationClass() sharedApplication] _isClassic];
 }
 
 #endif

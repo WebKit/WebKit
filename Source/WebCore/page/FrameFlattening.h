@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,12 @@
 
 #pragma once
 
-#if ENABLE(DATA_DETECTION)
-
-#import "DataDetectorTypes.h"
-#import <wtf/RefPtr.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/WTFString.h>
-
-OBJC_CLASS DDActionContext;
-OBJC_CLASS NSArray;
-OBJC_CLASS NSDictionary;
-
 namespace WebCore {
 
-class Element;
-class FloatRect;
-class HitTestResult;
-class Range;
-class URL;
-
-class DataDetection {
-public:
-#if PLATFORM(MAC)
-    WEBCORE_EXPORT static RetainPtr<DDActionContext> detectItemAroundHitTestResult(const HitTestResult&, FloatRect& detectedDataBoundingBox, RefPtr<Range>& detectedDataRange);
-#endif
-    WEBCORE_EXPORT static NSArray *detectContentInRange(RefPtr<Range>& contextRange, DataDetectorTypes, NSDictionary *context);
-#if PLATFORM(IOS)
-    WEBCORE_EXPORT static bool isDataDetectorLink(Element&);
-    WEBCORE_EXPORT static String dataDetectorIdentifier(Element&);
-    WEBCORE_EXPORT static bool shouldCancelDefaultAction(Element&);
-    WEBCORE_EXPORT static bool requiresExtendedContext(Element&);
-#endif
-
-    static const String& dataDetectorURLProtocol();
-    static bool isDataDetectorURL(const URL&);
+enum FrameFlattening {
+    FrameFlatteningDisabled,
+    FrameFlatteningEnabledForNonFullScreenIFrames,
+    FrameFlatteningFullyEnabled
 };
 
-} // namespace WebCore
-
-#endif
-
+}

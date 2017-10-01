@@ -93,7 +93,7 @@ acceleratedDrawingEnabled initial=false
 displayListDrawingEnabled initial=false
 acceleratedFiltersEnabled initial=false
 useLegacyTextAlignPositionedElementBehavior initial=false
-javaScriptRuntimeFlags type=JSC::RuntimeFlags
+javaScriptRuntimeFlags type=JSC::RuntimeFlags, include=<runtime/RuntimeFlags.h>
 
 # FIXME: This should really be disabled by default as it makes platforms that don't support the feature download files
 # they can't use by. Leaving enabled for now to not change existing behavior.
@@ -200,7 +200,7 @@ fixedBackgroundsPaintRelativeToDocument initial=defaultFixedBackgroundsPaintRela
 
 textAutosizingEnabled initial=defaultTextAutosizingEnabled(), setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
 textAutosizingWindowSizeOverride type=IntSize, setNeedsStyleRecalcInAllFrames=1, conditional=TEXT_AUTOSIZING
-minimumZoomFontSize type=float, initial=defaultMinimumZoomFontSize(), conditional=TEXT_AUTOSIZING
+minimumZoomFontSize type=float, initial=defaultMinimumZoomFontSize, conditional=TEXT_AUTOSIZING
 
 subpixelAntialiasedLayerTextEnabled initial=false, setNeedsStyleRecalcInAllFrames=1
 simpleLineLayoutEnabled initial=true, setNeedsStyleRecalcInAllFrames=1

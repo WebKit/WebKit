@@ -29,9 +29,10 @@
 // FIXME (121927): This include should not be needed.
 #include <wtf/text/AtomicStringHash.h>
 
-#include "EditingBehaviorTypes.h"
+#include "EditingBehaviorType.h"
 #include "ExceptionOr.h"
 #include "FontGenericFamilies.h"
+#include "ForcedAccessibilityValue.h"
 #include "IntSize.h"
 #include "InternalSettingsGenerated.h"
 #include "SecurityOrigin.h"
@@ -107,7 +108,7 @@ public:
     ExceptionOr<bool> deferredCSSParserEnabled();
     ExceptionOr<void> setDeferredCSSParserEnabled(bool);
 
-    enum class ForcedAccessibilityValue { System, On, Off };
+    using ForcedAccessibilityValue = WebCore::ForcedAccessibilityValue;
     ForcedAccessibilityValue forcedColorsAreInvertedAccessibilityValue() const;
     void setForcedColorsAreInvertedAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue() const;
@@ -189,9 +190,9 @@ private:
         UserInterfaceDirectionPolicy m_userInterfaceDirectionPolicy;
         TextDirection m_systemLayoutDirection;
         PDFImageCachingPolicy m_pdfImageCachingPolicy;
-        Settings::ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
-        Settings::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
-        Settings::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
+        ForcedAccessibilityValue m_forcedColorsAreInvertedAccessibilityValue;
+        ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
+        ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
         FrameFlattening m_frameFlattening;
 
         // Runtime enabled settings.

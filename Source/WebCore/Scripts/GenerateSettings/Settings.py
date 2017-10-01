@@ -65,6 +65,7 @@ class Setting:
         self.initial = None
         self.conditional = None
         self.setNeedsStyleRecalcInAllFrames = None
+        self.include = None
 
     def __str__(self):
         result = self.name + " TYPE:" + self.type
@@ -74,6 +75,8 @@ class Setting:
             result += " COND:" + self.conditional
         if (self.setNeedsStyleRecalcInAllFrames):
             result += " RECALC:" + self.setNeedsStyleRecalcInAllFrames
+        if (self.include):
+            result += " INCLUDE:" + self.include
         return result
 
 
@@ -118,7 +121,6 @@ def parseInput(input):
     settings = {}
     for line in open(input, "r"):
         if not line.startswith("#") and not line.isspace():
-
             (name, optionsString) = line.rstrip().split(' ', 1)
 
             options = re.split(r' *, *', optionsString)
@@ -134,6 +136,8 @@ def parseInput(input):
                     setting.conditional = value
                 if (name == 'setNeedsStyleRecalcInAllFrames'):
                     setting.setNeedsStyleRecalcInAllFrames = value
+                if (name == 'include'):
+                    setting.include = value
 
             # FIXME: ASSERT something about setting.initial
 

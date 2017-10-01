@@ -31,6 +31,7 @@
 #include "FrameLoader.h"
 #include "ScriptController.h"
 #include "Settings.h"
+#include "SettingsDefaultValues.h"
 #include "SubframeLoader.h"
 
 namespace WebCore {
@@ -39,7 +40,7 @@ HTMLParserOptions::HTMLParserOptions()
     : scriptEnabled(false)
     , pluginsEnabled(false)
     , usePreHTML5ParserQuirks(false)
-    , maximumDOMTreeDepth(Settings::defaultMaximumHTMLParserDOMTreeDepth)
+    , maximumDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
 {
 }
 

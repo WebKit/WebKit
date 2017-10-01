@@ -121,29 +121,6 @@ bool Settings::gShouldOptOutOfNetworkStateObservation = false;
 bool Settings::gManageAudioSession = false;
 bool Settings::gCustomPasteboardDataEnabled = false;
 
-// NOTEs
-//  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
-//  2) EditingWindowsBehavior comprises Win32 build;
-//  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS (and then abusing the terminology);
-// 99) MacEditingBehavior is used as a fallback.
-static EditingBehaviorType editingBehaviorTypeForPlatform()
-{
-    return
-#if PLATFORM(IOS)
-    EditingIOSBehavior
-#elif OS(DARWIN)
-    EditingMacBehavior
-#elif OS(WINDOWS)
-    EditingWindowsBehavior
-#elif OS(UNIX)
-    EditingUnixBehavior
-#else
-    // Fallback
-    EditingMacBehavior
-#endif
-    ;
-}
-
 bool Settings::customPasteboardDataEnabled()
 {
     static std::once_flag initializeCustomPasteboardDataToDefaultValue;
@@ -160,66 +137,17 @@ bool Settings::customPasteboardDataEnabled()
     return gCustomPasteboardDataEnabled;
 }
 
-#if PLATFORM(COCOA)
-static const bool defaultYouTubeFlashPluginReplacementEnabled = true;
-#else
-static const bool defaultYouTubeFlashPluginReplacementEnabled = false;
-#endif
-
-#if PLATFORM(IOS)
-static const bool defaultFixedBackgroundsPaintRelativeToDocument = true;
-static const bool defaultAcceleratedCompositingForFixedPositionEnabled = true;
-static const bool defaultAllowsInlineMediaPlayback = false;
-static const bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute = true;
-static const bool defaultVideoPlaybackRequiresUserGesture = true;
-static const bool defaultAudioPlaybackRequiresUserGesture = true;
-static const bool defaultMediaDataLoadsAutomatically = false;
-static const bool defaultShouldRespectImageOrientation = true;
-static const bool defaultImageSubsamplingEnabled = true;
-static const bool defaultScrollingTreeIncludesFrames = true;
-static const bool defaultMediaControlsScaleWithPageZoom = true;
-static const bool defaultQuickTimePluginReplacementEnabled = true;
-#else
-static const bool defaultFixedBackgroundsPaintRelativeToDocument = false;
-static const bool defaultAcceleratedCompositingForFixedPositionEnabled = false;
-static const bool defaultAllowsInlineMediaPlayback = true;
-static const bool defaultInlineMediaPlaybackRequiresPlaysInlineAttribute = false;
-static const bool defaultVideoPlaybackRequiresUserGesture = false;
-static const bool defaultAudioPlaybackRequiresUserGesture = false;
-static const bool defaultMediaDataLoadsAutomatically = true;
-static const bool defaultShouldRespectImageOrientation = false;
-static const bool defaultImageSubsamplingEnabled = false;
-static const bool defaultScrollingTreeIncludesFrames = false;
-static const bool defaultMediaControlsScaleWithPageZoom = true;
-static const bool defaultQuickTimePluginReplacementEnabled = false;
-#endif
-
-static const bool defaultRequiresUserGestureToLoadVideo = true;
-
-static const bool defaultAllowsPictureInPictureMediaPlayback = true;
-
-static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
-#if USE(UNIFIED_TEXT_CHECKING)
-static const bool defaultUnifiedTextCheckerEnabled = true;
-#else
-static const bool defaultUnifiedTextCheckerEnabled = false;
-#endif
-static const bool defaultSmartInsertDeleteEnabled = true;
-static const bool defaultSelectTrailingWhitespaceEnabled = false;
-
 // This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
 // FIXME: For faster machines this value can really be lowered to 200. 250 is adequate, but a little high
 // for dual G5s. :)
 static const Seconds layoutScheduleThreshold = 250_ms;
 
 Settings::Settings(Page* page)
-    : m_page(nullptr)
-    , m_mediaTypeOverride("screen")
+    : m_mediaTypeOverride("screen")
     , m_fontGenericFamilies(std::make_unique<FontGenericFamilies>())
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-    SETTINGS_INITIALIZER_LIST
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
@@ -248,8 +176,11 @@ Settings::Settings(Page* page)
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
     AtomicString::init();
+
     initializeDefaultFontFamilies();
-    m_page = page; // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
+
+    // Page is not yet fully initialized when constructing Settings, so keeping m_page null over initializeDefaultFontFamilies() call.
+    m_page = page;
 }
 
 Settings::~Settings()
@@ -260,8 +191,6 @@ Ref<Settings> Settings::create(Page* page)
 {
     return adoptRef(*new Settings(page));
 }
-
-SETTINGS_SETTER_BODIES
 
 #if !PLATFORM(COCOA)
 void Settings::initializeDefaultFontFamilies()
@@ -354,17 +283,15 @@ void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode s
         invalidateAfterGenericFamilyChange(m_page);
 }
 
-float Settings::defaultMinimumZoomFontSize()
-{
-    return 15;
-}
-
-#if !PLATFORM(IOS)
 bool Settings::defaultTextAutosizingEnabled()
 {
-    return false;
+    return WebCore::defaultTextAutosizingEnabled();
 }
-#endif
+
+float Settings::defaultMinimumZoomFontSize()
+{
+    return WebCore::defaultMinimumZoomFontSize;
+}
 
 void Settings::setMediaTypeOverride(const String& mediaTypeOverride)
 {

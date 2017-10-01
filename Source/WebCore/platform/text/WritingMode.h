@@ -31,14 +31,9 @@
 
 #pragma once
 
+#include "TextDirection.h"
+
 namespace WebCore {
-
-enum TextDirection { LTR, RTL };
-
-inline bool isLeftToRightDirection(TextDirection direction)
-{
-    return direction == LTR;
-}
 
 enum WritingMode {
     TopToBottomWritingMode = 0, // horizontal-tb
