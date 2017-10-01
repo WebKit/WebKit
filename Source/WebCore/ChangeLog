@@ -1,3 +1,24 @@
+2017-10-01  Antti Koivisto  <antti@apple.com>
+
+        Use WeakPtr for first-letter memory management
+        https://bugs.webkit.org/show_bug.cgi?id=177716
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::destroyLeftoverChildren):
+
+            Remove first-letter special case.
+            Use removeAndDestroyChild instead of calling destroy() directly. The latter should
+            eventually stop calling takeChild and assert that the renderer is not in the tree.
+
+        * rendering/RenderTextFragment.cpp:
+        (WebCore::RenderTextFragment::willBeDestroyed):
+        (WebCore::RenderTextFragment::setText):
+        * rendering/RenderTextFragment.h:
+
+            Use WeakPtr.
+
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
         XMLHttpRequest's responseXML should be annotated with [Exposed=Window]

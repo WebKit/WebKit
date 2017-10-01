@@ -503,17 +503,9 @@ void RenderElement::removeAndDestroyChild(RenderObject& oldChild)
 void RenderElement::destroyLeftoverChildren()
 {
     while (m_firstChild) {
-        if (m_firstChild->style().styleType() == FIRST_LETTER && !m_firstChild->isText()) {
-            // FIXME: Memory management.
-            auto firstLetter = takeChild(*m_firstChild); // :first-letter fragment renderers are destroyed by their remaining text fragment.
-            auto* leakedPtr = firstLetter.leakPtr();
-            UNUSED_PARAM(leakedPtr);
-        } else {
-            // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
-            if (m_firstChild->node())
-                m_firstChild->node()->setRenderer(nullptr);
-            m_firstChild->destroy();
-        }
+        if (auto* node = m_firstChild->node())
+            node->setRenderer(nullptr);
+        removeAndDestroyChild(*m_firstChild);
     }
 }
 

@@ -75,7 +75,7 @@ void RenderTextFragment::styleDidChange(StyleDifference diff, const RenderStyle*
 void RenderTextFragment::willBeDestroyed()
 {
     if (m_firstLetter)
-        m_firstLetter->destroy();
+        m_firstLetter->removeFromParentAndDestroy();
     RenderText::willBeDestroyed();
 }
 
@@ -87,8 +87,8 @@ void RenderTextFragment::setText(const String& text, bool force)
     m_end = textLength();
     if (!m_firstLetter)
         return;
-    m_firstLetter->destroy();
-    m_firstLetter = 0;
+    m_firstLetter->removeFromParentAndDestroy();
+    ASSERT(!m_firstLetter);
     if (!textNode())
         return;
     ASSERT(!textNode()->renderer());

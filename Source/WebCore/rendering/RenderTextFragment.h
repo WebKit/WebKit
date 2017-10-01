@@ -43,8 +43,8 @@ public:
     unsigned start() const { return m_start; }
     unsigned end() const { return m_end; }
 
-    RenderBoxModelObject* firstLetter() const { return m_firstLetter; }
-    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = &firstLetter; }
+    RenderBoxModelObject* firstLetter() const { return m_firstLetter.get(); }
+    void setFirstLetter(RenderBoxModelObject& firstLetter) { m_firstLetter = makeWeakPtr(firstLetter); }
     
     RenderBlock* blockForAccompanyingFirstLetter();
 
@@ -68,7 +68,7 @@ private:
     // Alternative description that can be used for accessibility instead of the native text.
     String m_altText;
     String m_contentString;
-    RenderBoxModelObject* m_firstLetter;
+    WeakPtr<RenderBoxModelObject> m_firstLetter;
 };
 
 } // namespace WebCore
