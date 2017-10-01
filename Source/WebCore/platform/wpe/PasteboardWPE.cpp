@@ -124,8 +124,15 @@ void Pasteboard::write(const PasteboardWebContent& content)
     platformStrategies()->pasteboardStrategy()->writeToPasteboard(content);
 }
 
+bool Pasteboard::containsFiles()
+{
+    notImplemented();
+    return false;
+}
+
 Vector<String> Pasteboard::readFilenames()
 {
+    notImplemented();
     return Vector<String>();
 }
 

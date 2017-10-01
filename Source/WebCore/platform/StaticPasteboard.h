@@ -58,6 +58,7 @@ public:
     void write(const PasteboardImage&) final { }
     void write(const PasteboardWebContent&) final { }
 
+    bool containsFiles() final { return false; }
     Vector<String> readFilenames() final { return { }; }
     bool canSmartReplace() final { return false; }
 

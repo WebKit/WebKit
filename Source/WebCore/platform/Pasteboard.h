@@ -215,6 +215,7 @@ public:
     virtual void write(const PasteboardImage&);
     virtual void write(const PasteboardWebContent&);
 
+    virtual bool containsFiles();
     virtual Vector<String> readFilenames();
     virtual bool canSmartReplace();
 

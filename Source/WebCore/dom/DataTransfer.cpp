@@ -137,10 +137,8 @@ String DataTransfer::getData(const String& type) const
     if (!canReadData())
         return String();
 
-#if ENABLE(DRAG_SUPPORT)
-    if (forFileDrag() && m_pasteboard->readFilenames().size())
+    if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
         return { };
-#endif
 
     auto normalizedType = normalizeType(type);
     if (Settings::customPasteboardDataEnabled() && !Pasteboard::isSafeTypeForDOMToReadAndWrite(normalizedType))
@@ -153,10 +151,8 @@ void DataTransfer::setData(const String& type, const String& data)
     if (!canWriteData())
         return;
 
-#if ENABLE(DRAG_SUPPORT)
-    if (forFileDrag() && m_pasteboard->readFilenames().size())
+    if ((forFileDrag() || Settings::customPasteboardDataEnabled()) && m_pasteboard->containsFiles())
         return;
-#endif
 
     String normalizedType = normalizeType(type);
     m_pasteboard->writeString(normalizedType, data);
@@ -175,8 +171,13 @@ Vector<String> DataTransfer::types() const
 {
     if (!canReadTypes())
         return { };
+    
+    if (!Settings::customPasteboardDataEnabled())
+        return m_pasteboard->typesForLegacyUnsafeBindings();
 
-    return Settings::customPasteboardDataEnabled() ? m_pasteboard->typesSafeForBindings() : m_pasteboard->typesForLegacyUnsafeBindings();
+    if (m_pasteboard->containsFiles())
+        return { "Files" };
+    return m_pasteboard->typesSafeForBindings();
 }
 
 FileList& DataTransfer::files() const

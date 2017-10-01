@@ -319,6 +319,11 @@ String Pasteboard::readStringInCustomData(const String&)
     return { };
 }
 
+bool Pasteboard::containsFiles()
+{
+    return readFilenames().size();
+}
+
 Vector<String> Pasteboard::readFilenames()
 {
     readFromClipboard();

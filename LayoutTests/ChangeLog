@@ -1,3 +1,17 @@
+2017-09-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't reveal file URL when pasting an image
+        https://bugs.webkit.org/show_bug.cgi?id=177710
+        <rdar://problem/34757924>
+
+        Reviewed by Wenson Hsieh.
+
+        Added a regression test for pasting an image. We enable this protection only when custom data is enabled
+        to preserve the backwards compatibility.
+
+        * editing/pasteboard/paste-image-does-not-reveal-file-url-expected.txt: Added.
+        * editing/pasteboard/paste-image-does-not-reveal-file-url.html: Added.
+
 2017-09-30  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Augment editing/pasteboard/data-transfer-get-data-non-normalized-types.html to check whitespace stripping

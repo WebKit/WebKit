@@ -106,6 +106,9 @@ private:
 #if ENABLE(DRAG_SUPPORT)
     bool forDrag() const { return m_type == Type::DragAndDropData || m_type == Type::DragAndDropFiles; }
     bool forFileDrag() const { return m_type == Type::DragAndDropFiles; }
+#else
+    bool forDrag() const { return false; }
+    bool forFileDrag() const { return false; }
 #endif
 
     StoreMode m_storeMode;

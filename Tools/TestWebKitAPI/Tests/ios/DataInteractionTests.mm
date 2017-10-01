@@ -1036,7 +1036,6 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetFolderAsEntry)
 TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry)
 {
     NSArray<NSString *> *expectedOutput = @[
-        @"Found data transfer item (kind: 'string', type: 'text/plain')",
         @"Found data transfer item (kind: 'file', type: 'text/plain')",
         @"FILE: /foo.txt ('text/plain', 28 bytes)"
     ];
@@ -1557,8 +1556,8 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingImageWithFileURL)
 
     // File URLs should never be exposed directly to web content, so DataTransfer.getData should return an empty string here.
     checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-        @"dragover": @{ @"Files": @"", @"text/uri-list" : @"" },
-        @"drop": @{ @"Files": @"", @"text/uri-list" : @"" }
+        @"dragover": @{ @"Files": @"" },
+        @"drop": @{ @"Files": @"" }
     });
 }
 
@@ -1579,8 +1578,8 @@ TEST(DataInteractionTests, DataTransferGetDataWhenDroppingRespectsPresentationSt
         [itemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleAttachment];
         [simulator runFrom:CGPointMake(300, 375) to:CGPointMake(50, 375)];
         checkJSONWithLogging([webView stringByEvaluatingJavaScript:@"output.value"], @{
-            @"dragover": @{ @"text/plain" : @"" },
-            @"drop": @{ @"text/plain" : @"" }
+            @"dragover": @{ @"Files" : @"" },
+            @"drop": @{ @"Files" : @"" }
         });
 
         [itemProvider setPreferredPresentationStyle:UIPreferredPresentationStyleInline];

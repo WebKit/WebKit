@@ -314,6 +314,11 @@ String Pasteboard::readStringInCustomData(const String&)
     return { };
 }
 
+bool Pasteboard::containsFiles()
+{
+    return readFilenames().size(); // FIXME: Make this code more efficient.
+}
+
 Vector<String> Pasteboard::readFilenames()
 {
     Vector<String> fileNames;

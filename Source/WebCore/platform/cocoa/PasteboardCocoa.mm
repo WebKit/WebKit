@@ -151,6 +151,23 @@ Vector<String> Pasteboard::typesTreatedAsFiles()
     return types;
 }
 
+bool Pasteboard::containsFiles()
+{
+    if (!platformStrategies()->pasteboardStrategy()->getNumberOfFiles(m_pasteboardName)) {
+        Vector<String> cocoaTypes;
+        platformStrategies()->pasteboardStrategy()->getTypes(cocoaTypes, m_pasteboardName);
+        if (cocoaTypes.findMatching([](const String& cocoaType) { return shouldTreatCocoaTypeAsFile(cocoaType); }) == notFound)
+            return false;
+    }
+
+    // Enforce changeCount ourselves for security. We check after reading instead of before to be
+    // sure it doesn't change between our testing the change count and accessing the data.
+    if (m_changeCount != platformStrategies()->pasteboardStrategy()->changeCount(m_pasteboardName))
+        return false;
+
+    return true;
+}
+
 Vector<String> Pasteboard::typesSafeForBindings()
 {
     Vector<String> types = platformStrategies()->pasteboardStrategy()->typesSafeForDOMToReadAndWrite(m_pasteboardName);
