@@ -169,6 +169,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/response-json.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/response-method.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responseText-status.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responseType-document-in-worker.html
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responseXML-unavailable-in-worker.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsetext-decoding.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responsetype.html
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/responseurl.html

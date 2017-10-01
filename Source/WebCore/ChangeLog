@@ -1,3 +1,29 @@
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
+        XMLHttpRequest's responseXML should be annotated with [Exposed=Window]
+        https://bugs.webkit.org/show_bug.cgi?id=177714
+
+        Reviewed by Darin Adler.
+
+        Tests: imported/w3c/web-platform-tests/XMLHttpRequest/responseType-document-in-worker.html
+               imported/w3c/web-platform-tests/XMLHttpRequest/responseXML-unavailable-in-worker.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::responseXML):
+        
+            Replace returning null for non-document contexts with an assertion now
+            that the bindings layer ensures this doesn't get called.
+        
+        (WebCore::XMLHttpRequest::setResponseType):
+        
+            Match the spec and turn attempts to set a responseType of 'document' in
+            non-documents contexts as a no-op.
+        
+        * xml/XMLHttpRequest.idl:
+        
+            Address FIXME and annotate responseXML with [Exposed=Window] now that it
+            is supported.
+
 2017-09-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't reveal file URL when pasting an image

@@ -1,3 +1,21 @@
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
+        XMLHttpRequest's responseXML should be annotated with [Exposed=Window]
+        https://bugs.webkit.org/show_bug.cgi?id=177714
+
+        Reviewed by Darin Adler.
+
+        * web-platform-tests/XMLHttpRequest/resources/responseType-document-in-worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/responseXML-unavailable-in-worker.js: Added.
+        * web-platform-tests/XMLHttpRequest/resources/w3c-import.log:
+        * web-platform-tests/XMLHttpRequest/responseType-document-in-worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/responseXML-unavailable-in-worker.html: Added.
+        * web-platform-tests/XMLHttpRequest/w3c-import.log:
+
+            Import latest XMLHttpRequest tests that include tests for responseXML not
+            being available in workers and setting a responseType of 'document' being
+            a no-op in workers.
+
 2017-09-27  Chris Dumez  <cdumez@apple.com>
 
         cssFloat missing in CSSPropertyDeclaration.prototype

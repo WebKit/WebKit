@@ -71,6 +71,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/redirect.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/requri.py
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/reset-token.py
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/responseType-document-in-worker.js
+/LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/responseXML-unavailable-in-worker.js
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-1.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-2.htm
 /LayoutTests/imported/w3c/web-platform-tests/XMLHttpRequest/resources/send-after-setting-document-domain-window-helper.js

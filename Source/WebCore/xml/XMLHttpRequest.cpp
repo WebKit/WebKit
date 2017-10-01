@@ -172,6 +172,8 @@ void XMLHttpRequest::didCacheResponse()
 
 ExceptionOr<Document*> XMLHttpRequest::responseXML()
 {
+    ASSERT(scriptExecutionContext()->isDocument());
+    
     if (m_responseType != ResponseType::EmptyString && m_responseType != ResponseType::Document)
         return Exception { InvalidStateError };
 
@@ -185,8 +187,7 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
         // The W3C spec requires the final MIME type to be some valid XML type, or text/html.
         // If it is text/html, then the responseType of "document" must have been supplied explicitly.
         if ((m_response.isHTTP() && !responseIsXML() && !isHTML)
-            || (isHTML && m_responseType == ResponseType::EmptyString)
-            || scriptExecutionContext()->isWorkerGlobalScope()) {
+            || (isHTML && m_responseType == ResponseType::EmptyString)) {
             m_responseDocument = nullptr;
         } else {
             if (isHTML)
@@ -252,6 +253,9 @@ ExceptionOr<void> XMLHttpRequest::setTimeout(unsigned timeout)
 
 ExceptionOr<void> XMLHttpRequest::setResponseType(ResponseType type)
 {
+    if (!scriptExecutionContext()->isDocument() && type == ResponseType::Document)
+        return { };
+
     if (m_state >= LOADING)
         return Exception { InvalidStateError };
 

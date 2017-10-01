@@ -79,6 +79,5 @@ enum XMLHttpRequestResponseType {
     attribute XMLHttpRequestResponseType responseType;
     [CachedAttribute, CustomGetter] readonly attribute any response;
     readonly attribute USVString responseText;
-    // FIXME: responseXML should be annotated with [Exposed=Window].
-    readonly attribute Document? responseXML;
+    [Exposed=Window] readonly attribute Document? responseXML;
 };
