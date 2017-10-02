@@ -211,14 +211,15 @@ WI.Popover = class Popover extends WI.Object
 
         this._dismissing = false;
 
+        if (this._edge !== null)
+            this._element.classList.remove(this._cssClassNameForEdge());
+
         if (this._contentNeedsUpdate) {
             // Reset CSS properties on element so that the element may be sized to fit its content.
             this._element.style.removeProperty("left");
             this._element.style.removeProperty("top");
             this._element.style.removeProperty("width");
             this._element.style.removeProperty("height");
-            if (this._edge !== null)
-                this._element.classList.remove(this._cssClassNameForEdge());
 
             // Add the content in place of the wrapper to get the raw metrics.
             this._container.replaceWith(this._content);

@@ -1,3 +1,13 @@
+2017-10-02  Ross Kirsling  <ross.kirsling@sony.com>
+
+        Web Inspector: Ensure popovers are not malformed on window resize.
+        https://bugs.webkit.org/show_bug.cgi?id=177771
+
+        Reviewed by Joseph Pecoraro.
+
+        * UserInterface/Views/Popover.js:
+        Ensure stale `arrow-*` CSS classes are removed on update, even if our content didn't change.
+
 2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Beacon and Ping requests in Network tab
