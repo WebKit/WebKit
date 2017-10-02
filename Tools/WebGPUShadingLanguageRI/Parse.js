@@ -300,8 +300,8 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return consume(...addressSpaces).text;
         }
         
-        while (token = tryConsume("^", "[")) {
-            if (token.text == "^") {
+        while (token = tryConsume("*", "[")) {
+            if (token.text == "*") {
                 type = new PtrType(token, getAddressSpace(), type);
                 continue;
             }
@@ -462,7 +462,7 @@ function parse(program, origin, originKind, lineNumberOffset, text)
             return parsePreIncrement();
         if (token = tryConsume("+", "-", "~"))
             return new CallExpression(token, "operator" + token.text, [], [parsePossiblePrefix()]);
-        if (token = tryConsume("^"))
+        if (token = tryConsume("*"))
             return new DereferenceExpression(token, parsePossiblePrefix());
         if (token = tryConsume("&"))
             return new MakePtrExpression(token, parsePossiblePrefix());

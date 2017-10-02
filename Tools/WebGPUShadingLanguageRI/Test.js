@@ -358,9 +358,9 @@ tests.simpleDefault = function()
 tests.simpleDereference = function()
 {
     let program = doPrep(`
-        int foo(device int^ p)
+        int foo(device int* p)
         {
-            return ^p;
+            return *p;
         }
     `);
     let buffer = new EBuffer(1);
@@ -371,9 +371,9 @@ tests.simpleDereference = function()
 tests.dereferenceStore = function()
 {
     let program = doPrep(`
-        void foo(device int^ p)
+        void foo(device int* p)
         {
-            ^p = 52;
+            *p = 52;
         }
     `);
     let buffer = new EBuffer(1);
@@ -386,7 +386,7 @@ tests.dereferenceStore = function()
 tests.simpleMakePtr = function()
 {
     let program = doPrep(`
-        thread int^ foo()
+        thread int* foo()
         {
             int x = 42;
             return &x;
@@ -724,7 +724,7 @@ tests.loadNull = function()
     checkFail(
         () => doPrep(`
             void sink<T>(T) { }
-            void foo() { sink(^null); }
+            void foo() { sink(*null); }
         `),
         (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
 }
@@ -733,7 +733,7 @@ tests.storeNull = function()
 {
     checkFail(
         () => doPrep(`
-            void foo() { ^null = 42; }
+            void foo() { *null = 42; }
         `),
         (e) => e instanceof WTypeError && e.message.indexOf("Type passed to dereference is not a pointer: null") != -1);
 }
@@ -741,7 +741,7 @@ tests.storeNull = function()
 tests.returnNull = function()
 {
     let program = doPrep(`
-        thread int^ foo() { return null; }
+        thread int* foo() { return null; }
     `);
     let result = callFunction(program, "foo", [], []);
     if (!result.type.isPtr)
@@ -757,8 +757,8 @@ tests.dereferenceDefaultNull = function()
     let program = doPrep(`
         int foo()
         {
-            thread int^ p;
-            return ^p;
+            thread int* p;
+            return *p;
         }
     `);
     checkFail(
@@ -771,8 +771,8 @@ tests.defaultInitializedNull = function()
     let program = doPrep(`
         int foo()
         {
-            thread int^ p = null;;
-            return ^p;
+            thread int* p = null;;
+            return *p;
         }
     `);
     checkFail(
@@ -783,9 +783,9 @@ tests.defaultInitializedNull = function()
 tests.passNullToPtrMonomorphic = function()
 {
     let program = doPrep(`
-        int foo(thread int^ ptr)
+        int foo(thread int* ptr)
         {
-            return ^ptr;
+            return *ptr;
         }
         int bar()
         {
@@ -801,9 +801,9 @@ tests.passNullToPtrPolymorphic = function()
 {
     checkFail(
         () => doPrep(`
-            T foo<T>(thread T^ ptr)
+            T foo<T>(thread T* ptr)
             {
-                return ^ptr;
+                return *ptr;
             }
             int bar()
             {
@@ -973,11 +973,11 @@ tests.badIntLiteralForDouble = function()
 tests.passNullAndNotNull = function()
 {
     let program = doPrep(`
-        T bar<T>(device T^ p, device T^)
+        T bar<T>(device T* p, device T*)
         {
-            return ^p;
+            return *p;
         }
-        int foo(device int^ p)
+        int foo(device int* p)
         {
             return bar(p, null);
         }
@@ -994,9 +994,9 @@ tests.passNullAndNotNullFullPoly = function()
         {
             return p;
         }
-        int foo(device int^ p)
+        int foo(device int* p)
         {
-            return ^bar(p, null);
+            return *bar(p, null);
         }
     `);
     let buffer = new EBuffer(1);
@@ -1011,9 +1011,9 @@ tests.passNullAndNotNullFullPolyReverse = function()
         {
             return p;
         }
-        int foo(device int^ p)
+        int foo(device int* p)
         {
-            return ^bar(null, p);
+            return *bar(null, p);
         }
     `);
     let buffer = new EBuffer(1);
@@ -2002,9 +2002,9 @@ tests.chainGeneric = function()
         {
             return x;
         }
-        T bar<T>(thread T^ ptr)
+        T bar<T>(thread T* ptr)
         {
-            return ^foo(ptr);
+            return *foo(ptr);
         }
         int baz(int x)
         {
@@ -2021,11 +2021,11 @@ tests.chainStruct = function()
             T f;
         }
         struct Bar<T> {
-            Foo<thread T^> f;
+            Foo<thread T*> f;
         }
-        int foo(thread Bar<int>^ x)
+        int foo(thread Bar<int>* x)
         {
-            return ^x->f.f;
+            return *x->f.f;
         }
         int bar(int a)
         {
@@ -2044,13 +2044,13 @@ tests.chainStructNewlyValid = function()
             T f;
         }
         struct Bar<T> {
-            Foo<device T^> f;
+            Foo<device T*> f;
         }
-        int foo(thread Bar<int>^ x)
+        int foo(thread Bar<int>* x)
         {
-            return ^x->f.f;
+            return *x->f.f;
         }
-        int bar(device int^ a)
+        int bar(device int* a)
         {
             Bar<int> x;
             x.f.f = a;
@@ -2069,13 +2069,13 @@ tests.chainStructDevice = function()
             T f;
         }
         struct Bar<T> {
-            Foo<device T^> f;
+            Foo<device T*> f;
         }
-        int foo(thread Bar<int>^ x)
+        int foo(thread Bar<int>* x)
         {
-            return ^x->f.f;
+            return *x->f.f;
         }
-        int bar(device int^ a)
+        int bar(device int* a)
         {
             Bar<int> x;
             x.f.f = a;
@@ -2096,13 +2096,13 @@ tests.paramChainStructDevice = function()
         struct Bar<T> {
             Foo<T> f;
         }
-        int foo(thread Bar<device int^>^ x)
+        int foo(thread Bar<device int*>* x)
         {
-            return ^x->f.f;
+            return *x->f.f;
         }
-        int bar(device int^ a)
+        int bar(device int* a)
         {
-            Bar<device int^> x;
+            Bar<device int*> x;
             x.f.f = a;
             return foo(&x);
         }
@@ -2116,27 +2116,27 @@ tests.simpleProtocolExtends = function()
 {
     let program = doPrep(`
         protocol Foo {
-            void foo(thread Foo^);
+            void foo(thread Foo*);
         }
         protocol Bar : Foo {
-            void bar(thread Bar^);
+            void bar(thread Bar*);
         }
-        void fuzz<T:Foo>(thread T^ p)
+        void fuzz<T:Foo>(thread T* p)
         {
             foo(p);
         }
-        void buzz<T:Bar>(thread T^ p)
+        void buzz<T:Bar>(thread T* p)
         {
             fuzz(p);
             bar(p);
         }
-        void foo(thread int^ p)
+        void foo(thread int* p)
         {
-            ^p = ^p + 743;
+            *p = *p + 743;
         }
-        void bar(thread int^ p)
+        void bar(thread int* p)
         {
-            ^p = ^p + 91;
+            *p = *p + 91;
         }
         int thingy(int a)
         {
@@ -2151,39 +2151,39 @@ tests.protocolExtendsTwo = function()
 {
     let program = doPrep(`
         protocol Foo {
-            void foo(thread Foo^);
+            void foo(thread Foo*);
         }
         protocol Bar {
-            void bar(thread Bar^);
+            void bar(thread Bar*);
         }
         protocol Baz : Foo, Bar {
-            void baz(thread Baz^);
+            void baz(thread Baz*);
         }
-        void fuzz<T:Foo>(thread T^ p)
+        void fuzz<T:Foo>(thread T* p)
         {
             foo(p);
         }
-        void buzz<T:Bar>(thread T^ p)
+        void buzz<T:Bar>(thread T* p)
         {
             bar(p);
         }
-        void xuzz<T:Baz>(thread T^ p)
+        void xuzz<T:Baz>(thread T* p)
         {
             fuzz(p);
             buzz(p);
             baz(p);
         }
-        void foo(thread int^ p)
+        void foo(thread int* p)
         {
-            ^p = ^p + 743;
+            *p = *p + 743;
         }
-        void bar(thread int^ p)
+        void bar(thread int* p)
         {
-            ^p = ^p + 91;
+            *p = *p + 91;
         }
-        void baz(thread int^ p)
+        void baz(thread int* p)
         {
-            ^p = ^p + 39;
+            *p = *p + 39;
         }
         int thingy(int a)
         {
@@ -2506,7 +2506,7 @@ tests.overrideSubscriptStruct = function()
             int x;
             int y;
         }
-        thread int^ operator&[](thread Foo^ foo, uint index)
+        thread int* operator&[](thread Foo* foo, uint index)
         {
             if (index == 0)
                 return &foo->x;
@@ -2532,7 +2532,7 @@ tests.overrideSubscriptStructAndDoStores = function()
             int x;
             int y;
         }
-        thread int^ operator&[](thread Foo^ foo, uint index)
+        thread int* operator&[](thread Foo* foo, uint index)
         {
             if (index == 0)
                 return &foo->x;
@@ -2558,7 +2558,7 @@ tests.overrideSubscriptStructAndUsePointers = function()
             int x;
             int y;
         }
-        thread int^ operator&[](thread Foo^ foo, uint index)
+        thread int* operator&[](thread Foo* foo, uint index)
         {
             if (index == 0)
                 return &foo->x;
@@ -2566,9 +2566,9 @@ tests.overrideSubscriptStructAndUsePointers = function()
                 return &foo->y;
             return null;
         }
-        int bar(thread Foo^ foo)
+        int bar(thread Foo* foo)
         {
-            return (^foo)[0] + (^foo)[1];
+            return (*foo)[0] + (*foo)[1];
         }
         int foo()
         {
@@ -2589,7 +2589,7 @@ tests.overrideSubscriptStructAndUsePointersIncorrectly = function()
                 int x;
                 int y;
             }
-            thread int^ operator&[](thread Foo^ foo, uint index)
+            thread int* operator&[](thread Foo* foo, uint index)
             {
                 if (index == 0)
                     return &foo->x;
@@ -2597,7 +2597,7 @@ tests.overrideSubscriptStructAndUsePointersIncorrectly = function()
                     return &foo->y;
                 return null;
             }
-            int bar(thread Foo^ foo)
+            int bar(thread Foo* foo)
             {
                 return foo[0] + foo[1];
             }
@@ -2635,7 +2635,7 @@ tests.makeArrayRefFromPointer = function()
         {
             return ref[0];
         }
-        int baz(thread int^ ptr)
+        int baz(thread int* ptr)
         {
             return bar(@ptr);
         }
@@ -2697,7 +2697,7 @@ tests.nonArrayRefArrayLengthFail = function()
 {
     checkFail(
         () => doPrep(`
-            thread uint^ lengthPtr()
+            thread uint* lengthPtr()
             {
                 int[42] array;
                 return &(array.length);
@@ -2710,7 +2710,7 @@ tests.constexprIsNotLValuePtr = function()
 {
     checkFail(
         () => doPrep(`
-            thread int^ foo<int x>()
+            thread int* foo<int x>()
             {
                 return &x;
             }
@@ -2856,7 +2856,7 @@ tests.genericAccessors = function()
             result.y = y;
             return result;
         }
-        void setup(thread Foo<int>^ foo)
+        void setup(thread Foo<int>* foo)
         {
             foo->x = 1;
             foo->y[0] = 2;
@@ -3118,12 +3118,12 @@ tests.nestedSubscriptLValueEmulationSimple = function()
                 result += sum(baz[i]);
             return result;
         }
-        void setValues(thread Baz^ baz)
+        void setValues(thread Baz* baz)
         {
             for (uint i = baz->length; i--;) {
-                for (uint j = (^baz)[i].length; j--;) {
-                    for (uint k = (^baz)[i][j].length; k--;)
-                        (^baz)[i][j][k] = int(i + j + k);
+                for (uint j = (*baz)[i].length; j--;) {
+                    for (uint k = (*baz)[i][j].length; k--;)
+                        (*baz)[i][j][k] = int(i + j + k);
                 }
             }
         }
@@ -3229,12 +3229,12 @@ tests.nestedSubscriptLValueEmulationGeneric = function()
             operator MyConvertibleFromUint(uint);
         }
         protocol SetValuable : MyAddable, MyConvertibleFromUint { }
-        void setValues<T:SetValuable>(thread Baz<T>^ baz)
+        void setValues<T:SetValuable>(thread Baz<T>* baz)
         {
             for (uint i = baz->length; i--;) {
-                for (uint j = (^baz)[i].length; j--;) {
-                    for (uint k = (^baz)[i][j].length; k--;)
-                        (^baz)[i][j][k] = T(i + j + k);
+                for (uint j = (*baz)[i].length; j--;) {
+                    for (uint k = (*baz)[i][j].length; k--;)
+                        (*baz)[i][j][k] = T(i + j + k);
                 }
             }
         }
@@ -3868,7 +3868,7 @@ tests.shaderTypes = function()
             struct Foo {
                 float4 x;
             }
-            vertex Foo bar(device Foo^ x)
+            vertex Foo bar(device Foo* x)
             {
                 return Foo();
             }
@@ -3881,7 +3881,7 @@ tests.shaderTypes = function()
             }
             struct Foo {
                 float4 x;
-                device Boo^ y;
+                device Boo* y;
             }
             vertex Foo bar()
             {
@@ -3895,7 +3895,7 @@ tests.shaderTypes = function()
                 float4 x;
             }
             struct Boo {
-                device Foo^ y;
+                device Foo* y;
             }
             vertex Foo bar(Boo b)
             {
@@ -3908,7 +3908,7 @@ tests.shaderTypes = function()
             struct Foo {
                 float4 x;
             }
-            vertex Foo bar(device Foo^ x)
+            vertex Foo bar(device Foo* x)
             {
                 return Foo();
             }
@@ -3930,7 +3930,7 @@ tests.shaderTypes = function()
             struct Foo {
                 float4 x;
             }
-            fragment Foo bar(device Foo^ stageIn)
+            fragment Foo bar(device Foo* stageIn)
             {
                 return Foo();
             }
@@ -3943,7 +3943,7 @@ tests.shaderTypes = function()
             }
             struct Foo {
                 float4 x;
-                device Boo^ y;
+                device Boo* y;
             }
             fragment Boo bar(Foo stageIn)
             {
@@ -3958,7 +3958,7 @@ tests.shaderTypes = function()
             }
             struct Foo {
                 float4 x;
-                device Boo^ y;
+                device Boo* y;
             }
             fragment Foo bar(Boo stageIn)
             {
@@ -4836,7 +4836,7 @@ tests.enumPtrBase = function()
 {
     checkFail(
         () => doPrep(`
-            enum Foo : thread int^ {
+            enum Foo : thread int* {
                 Bar
             }
         `),
@@ -5101,11 +5101,11 @@ tests.mutuallyRecursiveStructWithPointersBroken = function()
 {
     let program = doPrep(`
         struct Foo {
-            thread Bar^ bar;
+            thread Bar* bar;
             int foo;
         }
         struct Bar {
-            thread Foo^ foo;
+            thread Foo* foo;
             int bar;
         }
         int foo()
@@ -5126,11 +5126,11 @@ tests.mutuallyRecursiveStructWithPointers = function()
 {
     let program = doPrep(`
         struct Foo {
-            thread Bar^ bar;
+            thread Bar* bar;
             int foo;
         }
         struct Bar {
-            thread Foo^ foo;
+            thread Foo* foo;
             int bar;
         }
         int foo()
@@ -5151,7 +5151,7 @@ tests.linkedList = function()
 {
     let program = doPrep(`
         struct Node {
-            thread Node^ next;
+            thread Node* next;
             int value;
         }
         int foo()
@@ -5174,16 +5174,16 @@ tests.pointerToPointer = function()
         int foo()
         {
             int x;
-            thread int^ p = &x;
-            thread int^^ pp = &p;
-            int^thread^thread qq = pp;
+            thread int* p = &x;
+            thread int** pp = &p;
+            int*thread*thread qq = pp;
             int result = 0;
             x = 42;
-            ^p = 76;
+            *p = 76;
             result += x;
-            ^^pp = 39;
+            **pp = 39;
             result += x;
-            ^^qq = 83;
+            **qq = 83;
             result += x;
             return result;
         }
@@ -5218,7 +5218,7 @@ tests.pointerGetter = function()
 {
     checkFail(
         () => doPrep(`
-            int operator.foo(device int^)
+            int operator.foo(device int*)
             {
                 return 543;
             }
@@ -5226,7 +5226,7 @@ tests.pointerGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator.foo(thread int^)
+            int operator.foo(thread int*)
             {
                 return 543;
             }
@@ -5234,7 +5234,7 @@ tests.pointerGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator.foo(threadgroup int^)
+            int operator.foo(threadgroup int*)
             {
                 return 543;
             }
@@ -5242,7 +5242,7 @@ tests.pointerGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator.foo(constant int^)
+            int operator.foo(constant int*)
             {
                 return 543;
             }
@@ -5357,11 +5357,11 @@ tests.operatorCastWithTypeVariableInferredFromReturnType = function()
             int x;
         }
         protocol Barable {
-            void bar(thread Barable^, int);
+            void bar(thread Barable*, int);
         }
-        void bar(thread double^ result, int value)
+        void bar(thread double* result, int value)
         {
-            ^result = double(value);
+            *result = double(value);
         }
         operator<T:Barable> T(Foo foo)
         {
@@ -5811,7 +5811,7 @@ tests.loneSetterPointer = function()
 {
     checkFail(
         () => doPrep(`
-            thread int^ operator.foo=(thread int^ ptr, int)
+            thread int* operator.foo=(thread int* ptr, int)
             {
                 return ptr;
             }
@@ -5858,7 +5858,7 @@ tests.anderWithNothingWrong = function()
         struct Foo {
             int x;
         }
-        thread int^ operator&.foo(thread Foo^ foo)
+        thread int* operator&.foo(thread Foo* foo)
         {
             return &foo->x;
         }
@@ -5876,7 +5876,7 @@ tests.anderWithWrongNumberOfArguments = function()
 {
     checkFail(
         () => doPrep(`
-            thread int^ operator&.foo()
+            thread int* operator&.foo()
             {
                 int x;
                 return &x;
@@ -5888,7 +5888,7 @@ tests.anderWithWrongNumberOfArguments = function()
             struct Foo {
                 int x;
             }
-            thread int^ operator&.foo(thread Foo^ foo, int blah)
+            thread int* operator&.foo(thread Foo* foo, int blah)
             {
                 return &foo->x;
             }
@@ -5903,7 +5903,7 @@ tests.anderDoesntReturnPointer = function()
             struct Foo {
                 int x;
             }
-            int operator&.foo(thread Foo^ foo)
+            int operator&.foo(thread Foo* foo)
             {
                 return foo->x;
             }
@@ -5918,7 +5918,7 @@ tests.anderDoesntTakeReference = function()
             struct Foo {
                 int x;
             }
-            thread int^ operator&.foo(Foo foo)
+            thread int* operator&.foo(Foo foo)
             {
                 return &foo.x;
             }
@@ -5932,7 +5932,7 @@ tests.anderWithArrayRef = function()
         struct Foo {
             int x;
         }
-        thread int^ operator&.foo(thread Foo[] foo)
+        thread int* operator&.foo(thread Foo[] foo)
         {
             return &foo[0].x;
         }
@@ -5950,7 +5950,7 @@ tests.pointerIndexGetter = function()
 {
     checkFail(
         () => doPrep(`
-            int operator[](device int^, uint)
+            int operator[](device int*, uint)
             {
                 return 543;
             }
@@ -5958,7 +5958,7 @@ tests.pointerIndexGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator[](thread int^, uint)
+            int operator[](thread int*, uint)
             {
                 return 543;
             }
@@ -5966,7 +5966,7 @@ tests.pointerIndexGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator[](threadgroup int^, uint)
+            int operator[](threadgroup int*, uint)
             {
                 return 543;
             }
@@ -5974,7 +5974,7 @@ tests.pointerIndexGetter = function()
         e => e instanceof WTypeError);
     checkFail(
         () => doPrep(`
-            int operator[](constant int^, uint)
+            int operator[](constant int*, uint)
             {
                 return 543;
             }
@@ -6071,7 +6071,7 @@ tests.loneIndexSetterPointer = function()
 {
     checkFail(
         () => doPrep(`
-            thread int^ operator[]=(thread int^ ptr, uint, int)
+            thread int* operator[]=(thread int* ptr, uint, int)
             {
                 return ptr;
             }
@@ -6118,7 +6118,7 @@ tests.indexAnderWithNothingWrong = function()
         struct Foo {
             int x;
         }
-        thread int^ operator&[](thread Foo^ foo, uint)
+        thread int* operator&[](thread Foo* foo, uint)
         {
             return &foo->x;
         }
@@ -6136,7 +6136,7 @@ tests.indexAnderWithWrongNumberOfArguments = function()
 {
     checkFail(
         () => doPrep(`
-            thread int^ operator&[]()
+            thread int* operator&[]()
             {
                 int x;
                 return &x;
@@ -6148,7 +6148,7 @@ tests.indexAnderWithWrongNumberOfArguments = function()
             struct Foo {
                 int x;
             }
-            thread int^ operator&[](thread Foo^ foo)
+            thread int* operator&[](thread Foo* foo)
             {
                 return &foo->x;
             }
@@ -6159,7 +6159,7 @@ tests.indexAnderWithWrongNumberOfArguments = function()
             struct Foo {
                 int x;
             }
-            thread int^ operator&[](thread Foo^ foo, uint, uint)
+            thread int* operator&[](thread Foo* foo, uint, uint)
             {
                 return &foo->x;
             }
@@ -6174,7 +6174,7 @@ tests.indexAnderDoesntReturnPointer = function()
             struct Foo {
                 int x;
             }
-            int operator&[](thread Foo^ foo, uint)
+            int operator&[](thread Foo* foo, uint)
             {
                 return foo->x;
             }
@@ -6189,7 +6189,7 @@ tests.indexAnderDoesntTakeReference = function()
             struct Foo {
                 int x;
             }
-            thread int^ operator&[](Foo foo, uint)
+            thread int* operator&[](Foo foo, uint)
             {
                 return &foo.x;
             }
@@ -6203,7 +6203,7 @@ tests.indexAnderWithArrayRef = function()
         struct Foo {
             int x;
         }
-        thread int^ operator&[](thread Foo[] array, double index)
+        thread int* operator&[](thread Foo[] array, double index)
         {
             return &array[uint(index + 1)].x;
         }
@@ -6223,10 +6223,10 @@ tests.devicePtrPtr = function()
         () => doPrep(`
             void foo()
             {
-                device int^^ p;
+                device int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ device^ device") != -1);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* device* device") != -1);
 }
 
 tests.threadgroupPtrPtr = function()
@@ -6235,10 +6235,10 @@ tests.threadgroupPtrPtr = function()
         () => doPrep(`
             void foo()
             {
-                threadgroup int^^ p;
+                threadgroup int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ threadgroup^ threadgroup") != -1);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* threadgroup* threadgroup") != -1);
 }
 
 tests.constantPtrPtr = function()
@@ -6247,10 +6247,10 @@ tests.constantPtrPtr = function()
         () => doPrep(`
             void foo()
             {
-                constant int^^ p;
+                constant int** p;
             }
         `),
-        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32^ constant^ constant") != -1);
+        e => e instanceof WTypeError && e.message.indexOf("Illegal pointer to non-primitive type: int32* constant* constant") != -1);
 }
 
 tests.pointerIndexGetterInProtocol = function()
@@ -6259,7 +6259,7 @@ tests.pointerIndexGetterInProtocol = function()
         checkFail(
             () => doPrep(`
                 protocol Foo {
-                    int operator[](${addressSpace} Foo^, uint);
+                    int operator[](${addressSpace} Foo*, uint);
                 }
                 struct Bar { }
                 int operator[](Bar, uint) { return 42; }
@@ -6390,7 +6390,7 @@ tests.loneIndexSetterPointerInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                thread int^ operator[]=(thread Foo^ ptr, uint, int);
+                thread int* operator[]=(thread Foo* ptr, uint, int);
             }
             struct Bar { }
             int operator[](Bar, uint) { return 42; }
@@ -6431,14 +6431,14 @@ tests.indexAnderWithNothingWrongInProtocol = function()
 {
     let program = doPrep(`
         protocol Foo {
-            thread int^ operator&[](thread Foo^ foo, uint);
+            thread int* operator&[](thread Foo* foo, uint);
         }
         int bar<T:Foo>(T x)
         {
             return x[42];
         }
         struct Bar { }
-        thread int^ operator&[](thread Bar^, uint)
+        thread int* operator&[](thread Bar*, uint)
         {
             int result = 1234;
             return &result;
@@ -6456,10 +6456,10 @@ tests.indexAnderWithWrongNumberOfArgumentsInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                thread int^ operator&[]();
+                thread int* operator&[]();
             }
             struct Bar { }
-            thread int^ operator&[](thread Bar^, uint)
+            thread int* operator&[](thread Bar*, uint)
             {
                 int result = 1234;
                 return &result;
@@ -6469,10 +6469,10 @@ tests.indexAnderWithWrongNumberOfArgumentsInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                thread int^ operator&[](thread Foo^ foo);
+                thread int* operator&[](thread Foo* foo);
             }
             struct Bar { }
-            thread int^ operator&[](thread Bar^, uint)
+            thread int* operator&[](thread Bar*, uint)
             {
                 int result = 1234;
                 return &result;
@@ -6482,10 +6482,10 @@ tests.indexAnderWithWrongNumberOfArgumentsInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                thread int^ operator&[](thread Foo^ foo, uint, uint);
+                thread int* operator&[](thread Foo* foo, uint, uint);
             }
             struct Bar { }
-            thread int^ operator&[](thread Bar^, uint)
+            thread int* operator&[](thread Bar*, uint)
             {
                 int result = 1234;
                 return &result;
@@ -6499,10 +6499,10 @@ tests.indexAnderDoesntReturnPointerInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                int operator&[](thread Foo^ foo, uint);
+                int operator&[](thread Foo* foo, uint);
             }
             struct Bar { }
-            thread int^ operator&[](thread Bar^, uint)
+            thread int* operator&[](thread Bar*, uint)
             {
                 int result = 1234;
                 return &result;
@@ -6516,10 +6516,10 @@ tests.indexAnderDoesntTakeReferenceInProtocol = function()
     checkFail(
         () => doPrep(`
             protocol Foo {
-                thread int^ operator&[](Foo foo, uint);
+                thread int* operator&[](Foo foo, uint);
             }
             struct Bar { }
-            thread int^ operator&[](thread Bar^, uint)
+            thread int* operator&[](thread Bar*, uint)
             {
                 int result = 1234;
                 return &result;
@@ -6532,14 +6532,14 @@ tests.indexAnderWithArrayRefInProtocol = function()
 {
     let program = doPrep(`
         protocol Foo {
-            thread int^ operator&[](thread Foo[] array, double index);
+            thread int* operator&[](thread Foo[] array, double index);
         }
         int bar<T:Foo>(thread T[] x)
         {
             return x[1.5];
         }
         struct Bar { }
-        thread int^ operator&[](thread Bar[], double)
+        thread int* operator&[](thread Bar[], double)
         {
             int result = 1234;
             return &result;
@@ -6564,8 +6564,8 @@ tests.andReturnedArrayRef = function()
         }
         int foo()
         {
-            thread int^ ptr = &getArray()[5];
-            return ^ptr;
+            thread int* ptr = &getArray()[5];
+            return *ptr;
         }
     `);
     checkInt(program, callFunction(program, "foo", [], []), 354);

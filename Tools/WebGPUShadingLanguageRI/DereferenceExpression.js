@@ -38,6 +38,6 @@ class DereferenceExpression extends Expression {
     
     toString()
     {
-        return "^(" + this.ptr + ")";
+        return "*(" + this.ptr + ")";
     }
 }

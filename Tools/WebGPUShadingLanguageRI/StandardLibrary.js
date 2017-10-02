@@ -211,7 +211,7 @@ bool operator==<T:Equatable>(vec2<T> a, vec2<T> b)
     return a.x == b.x && a.y == b.y;
 }
 
-thread T^ operator&[]<T>(thread vec2<T>^ foo, uint index)
+thread T* operator&[]<T>(thread vec2<T>* foo, uint index)
 {
     if (index == 0)
         return &foo->x;
@@ -263,7 +263,7 @@ bool operator==<T:Equatable>(vec3<T> a, vec3<T> b)
     return a.x == b.x && a.y == b.y && a.z == b.z;
 }
 
-thread T^ operator&[]<T>(thread vec3<T>^ foo, uint index)
+thread T* operator&[]<T>(thread vec3<T>* foo, uint index)
 {
     if (index == 0)
         return &foo->x;
@@ -361,7 +361,7 @@ bool operator==<T:Equatable>(vec4<T> a, vec4<T> b)
     return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
 }
 
-thread T^ operator&[]<T>(thread vec4<T>^ foo, uint index)
+thread T* operator&[]<T>(thread vec4<T>* foo, uint index)
 {
     if (index == 0)
         return &foo->x;
@@ -374,10 +374,10 @@ thread T^ operator&[]<T>(thread vec4<T>^ foo, uint index)
     trap;
 }
 
-native thread T^ operator&[]<T>(thread T[], uint);
-native threadgroup T^ operator&[]<T>(threadgroup T[], uint);
-native device T^ operator&[]<T>(device T[], uint);
-native constant T^ operator&[]<T>(constant T[], uint);
+native thread T* operator&[]<T>(thread T[], uint);
+native threadgroup T* operator&[]<T>(threadgroup T[], uint);
+native device T* operator&[]<T>(device T[], uint);
+native constant T* operator&[]<T>(constant T[], uint);
 
 native uint operator.length<T>(thread T[]);
 native uint operator.length<T>(threadgroup T[]);

@@ -630,7 +630,7 @@ class Intrinsics {
         
         for (let addressSpace of addressSpaces) {
             this._map.set(
-                `native T^ ${addressSpace} operator&[]<T>(T[] ${addressSpace},uint)`,
+                `native T* ${addressSpace} operator&[]<T>(T[] ${addressSpace},uint)`,
                 func => {
                     func.implementation = ([ref, index], node) => {
                         ref = ref.loadValue();

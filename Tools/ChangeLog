@@ -1,5 +1,91 @@
 2017-10-02  Filip Pizlo  <fpizlo@apple.com>
 
+        WSL ^ should be *
+        https://bugs.webkit.org/show_bug.cgi?id=177705
+
+        Rubber stamped by Keith Miller.
+        
+        When I first wrote the prototype, I thought it would be cool to use ^ for pointers. Nobody agrees. I've
+        gotten so much feedback to use *. This changes pointers to use *.
+
+        * WebGPUShadingLanguageRI/DereferenceExpression.js:
+        (DereferenceExpression.prototype.toString):
+        (DereferenceExpression):
+        * WebGPUShadingLanguageRI/Intrinsics.js:
+        (Intrinsics):
+        * WebGPUShadingLanguageRI/Parse.js:
+        (parseType):
+        (parsePossiblePrefix):
+        * WebGPUShadingLanguageRI/PtrType.js:
+        (PtrType.prototype.toString):
+        (PtrType):
+        * WebGPUShadingLanguageRI/StandardLibrary.js:
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.simpleDereference):
+        (tests.dereferenceStore):
+        (tests.simpleMakePtr):
+        (tests.loadNull):
+        (tests.storeNull):
+        (tests.returnNull):
+        (tests.dereferenceDefaultNull):
+        (tests.defaultInitializedNull):
+        (tests.passNullToPtrMonomorphic):
+        (tests.passNullToPtrPolymorphic):
+        (tests.passNullAndNotNull):
+        (tests.passNullAndNotNullFullPoly):
+        (tests.passNullAndNotNullFullPolyReverse):
+        (tests.chainGeneric):
+        (tests.chainStruct):
+        (tests.chainStructNewlyValid):
+        (tests.chainStructDevice):
+        (tests.paramChainStructDevice):
+        (tests.simpleProtocolExtends):
+        (tests.protocolExtendsTwo):
+        (tests.overrideSubscriptStruct):
+        (tests.overrideSubscriptStructAndDoStores):
+        (tests.overrideSubscriptStructAndUsePointers):
+        (tests.overrideSubscriptStructAndUsePointersIncorrectly):
+        (tests.makeArrayRefFromPointer):
+        (tests.nonArrayRefArrayLengthFail):
+        (tests.constexprIsNotLValuePtr):
+        (tests.genericAccessors):
+        (tests.nestedSubscriptLValueEmulationSimple):
+        (tests.nestedSubscriptLValueEmulationGeneric):
+        (tests.shaderTypes):
+        (tests.enumPtrBase):
+        (tests.mutuallyRecursiveStructWithPointersBroken):
+        (tests.mutuallyRecursiveStructWithPointers):
+        (tests.linkedList):
+        (tests.pointerToPointer):
+        (tests.pointerGetter):
+        (tests.operatorCastWithTypeVariableInferredFromReturnType):
+        (tests.loneSetterPointer):
+        (tests.anderWithNothingWrong):
+        (tests.anderWithWrongNumberOfArguments):
+        (tests.anderDoesntReturnPointer):
+        (tests.anderDoesntTakeReference):
+        (tests.anderWithArrayRef):
+        (tests.pointerIndexGetter):
+        (tests.loneIndexSetterPointer):
+        (tests.indexAnderWithNothingWrong):
+        (tests.indexAnderWithWrongNumberOfArguments):
+        (tests.indexAnderDoesntReturnPointer):
+        (tests.indexAnderDoesntTakeReference):
+        (tests.indexAnderWithArrayRef):
+        (tests.devicePtrPtr):
+        (tests.threadgroupPtrPtr):
+        (tests.constantPtrPtr):
+        (tests.pointerIndexGetterInProtocol):
+        (tests.loneIndexSetterPointerInProtocol):
+        (tests.indexAnderWithNothingWrongInProtocol):
+        (tests.indexAnderWithWrongNumberOfArgumentsInProtocol):
+        (tests.indexAnderDoesntReturnPointerInProtocol):
+        (tests.indexAnderDoesntTakeReferenceInProtocol):
+        (tests.indexAnderWithArrayRefInProtocol):
+        (tests.andReturnedArrayRef):
+
+2017-10-02  Filip Pizlo  <fpizlo@apple.com>
+
         WSL should be fine with &foo()[i] if foo() returns a []
         https://bugs.webkit.org/show_bug.cgi?id=177704
 
