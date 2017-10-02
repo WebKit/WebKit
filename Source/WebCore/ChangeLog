@@ -1,3 +1,29 @@
+2017-10-01  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222588. rdar://problem/34717517
+
+    2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Minimum font size may cause elements to have an infinite line-height
+            https://bugs.webkit.org/show_bug.cgi?id=177573
+            <rdar://problem/34573792>
+
+            Reviewed by Dan Bernstein.
+
+            When minimum font size is specified, we were trying to preserve the ratio of specified font-size
+            and specified line-height in order to boost the computed font size proportionately to the font-size
+            boost. However, this doesn't work when the specified font-size is 0, because the ratio between
+            line-height and font-size is infinite.
+
+            The most straightforward solution is just to make small font-sizes opt out of the line-height
+            adjustment because the result would be too big.
+
+            Test: fast/text/line-height-minimumFontSize-text-small-font-size.html
+
+            * css/StyleBuilderCustom.h:
+            (WebCore::computeLineHeightMultiplierDueToFontSize):
+            (WebCore::StyleBuilderCustom::applyValueLineHeight):
+
 2017-09-27  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222576. rdar://problem/34553953

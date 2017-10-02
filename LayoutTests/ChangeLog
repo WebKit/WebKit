@@ -1,3 +1,18 @@
+2017-10-01  Jason Marcell  <jmarcell@apple.com>
+
+        Cherry-pick r222588. rdar://problem/34717517
+
+    2017-09-27  Myles C. Maxfield  <mmaxfield@apple.com>
+
+            Minimum font size may cause elements to have an infinite line-height
+            https://bugs.webkit.org/show_bug.cgi?id=177573
+            <rdar://problem/34573792>
+
+            Reviewed by Dan Bernstein.
+
+            * fast/text/line-height-minimumFontSize-text-small-font-size-expected.txt: Added.
+            * fast/text/line-height-minimumFontSize-text-small-font-size.html: Added.
+
 2017-09-27  Jason Marcell  <jmarcell@apple.com>
 
         Cherry-pick r222576. rdar://problem/34553953
