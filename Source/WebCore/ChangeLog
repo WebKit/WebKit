@@ -1,3 +1,23 @@
+2017-10-02  Antti Koivisto  <antti@apple.com>
+
+        Fix memory leaks in RenderMultiColumnFlow
+        https://bugs.webkit.org/show_bug.cgi?id=177735
+
+        Reviewed by Zalan Bujtas.
+
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::evacuateAndDestroy):
+
+            Switch from destroy() to removeFromParentAndDestroy() (they are currently equivalent in practice).
+
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+
+            Destroy the placeholders instead of leaking them.
+
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+
+            Destroy the placeholder instead of leaking it.
+
 2017-10-02  Charles Turner  <cturner@igalia.com>
 
         Try to play AVC codec even if H.264 decoder only advertises byte-stream profile.

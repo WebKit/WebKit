@@ -189,16 +189,16 @@ void RenderMultiColumnFlow::evacuateAndDestroy()
         if (RenderMultiColumnSpannerPlaceholder* placeholder = it->value.get()) {
             RenderBlockFlow& originalContainer = downcast<RenderBlockFlow>(*placeholder->parent());
             originalContainer.addChild(WTFMove(takenSpanner), placeholder);
-            placeholder->destroy();
+            placeholder->removeFromParentAndDestroy();
         }
         m_spannerMap.remove(it);
     }
 
     // Remove all sets.
     while (RenderMultiColumnSet* columnSet = firstMultiColumnSet())
-        columnSet->destroy();
+        columnSet->removeFromParentAndDestroy();
     
-    destroy();
+    removeFromParentAndDestroy();
 }
 
 void RenderMultiColumnFlow::addFragmentToThread(RenderFragmentContainer* RenderFragmentContainer)
@@ -407,6 +407,9 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
 {
     if (gShiftingSpanner || m_beingEvacuated || newDescendant.isInFlowRenderFragmentedFlow())
         return;
+
+    Vector<RenderPtr<RenderObject>> spannersToDelete;
+
     RenderObject* subtreeRoot = &newDescendant;
     for (auto* descendant = &newDescendant; descendant; descendant = (descendant ? descendant->nextInPreOrder(subtreeRoot) : nullptr)) {
         if (is<RenderMultiColumnSpannerPlaceholder>(*descendant)) {
@@ -430,10 +433,7 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
                 // we shifted the placeholder down into this flow thread.
                 placeholder.fragmentedFlow()->m_spannerMap.remove(spanner);
 
-                auto takenChild = placeholder.parent()->takeChild(placeholder);
-                // FIXME: Memory management.
-                auto* leakenPtr = takenChild.leakPtr();
-                UNUSED_PARAM(leakenPtr);
+                spannersToDelete.append(placeholder.parent()->takeChild(placeholder));
 
                 if (subtreeRoot == descendant)
                     subtreeRoot = spanner;
@@ -454,20 +454,14 @@ void RenderMultiColumnFlow::fragmentedFlowDescendantInserted(RenderObject& newDe
 void RenderMultiColumnFlow::handleSpannerRemoval(RenderObject& spanner)
 {
     // The placeholder may already have been removed, but if it hasn't, do so now.
-    if (RenderMultiColumnSpannerPlaceholder* placeholder = m_spannerMap.get(&downcast<RenderBox>(spanner)).get()) {
-        auto takenChild = placeholder->parent()->takeChild(*placeholder);
-        // FIXME: Memory management.
-        auto* leakenPtr = takenChild.leakPtr();
-        UNUSED_PARAM(leakenPtr);
-
-        m_spannerMap.remove(&downcast<RenderBox>(spanner));
-    }
+    if (auto placeholder = m_spannerMap.take(&downcast<RenderBox>(spanner)))
+        placeholder->removeFromParentAndDestroy();
 
     if (RenderObject* next = spanner.nextSibling()) {
         if (RenderObject* previous = spanner.previousSibling()) {
             if (previous->isRenderMultiColumnSet() && next->isRenderMultiColumnSet()) {
                 // Merge two sets that no longer will be separated by a spanner.
-                next->destroy();
+                next->removeFromParentAndDestroy();
                 previous->setNeedsLayout();
             }
         }
