@@ -1,5 +1,18 @@
 2017-10-02  Alex Christensen  <achristensen@webkit.org>
 
+        Remove unnecessary copy of SessionID in WebPageProxy
+        https://bugs.webkit.org/show_bug.cgi?id=177702
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::sessionID const):
+        (WebKit::WebPageProxy::creationParameters):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::sessionID const): Deleted.
+
+2017-10-02  Alex Christensen  <achristensen@webkit.org>
+
         Expose more WKPreferences SPI to match C SPI
         https://bugs.webkit.org/show_bug.cgi?id=177697
         <rdar://problem/24110556>

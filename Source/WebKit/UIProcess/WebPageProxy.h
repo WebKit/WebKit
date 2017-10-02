@@ -296,8 +296,7 @@ public:
 
     uint64_t pageID() const { return m_pageID; }
 
-    // FIXME: Don't keep a separate sessionID - Rely on the WebsiteDataStore
-    PAL::SessionID sessionID() const { return m_sessionID; }
+    PAL::SessionID sessionID() const;
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
@@ -1855,9 +1854,6 @@ private:
 #endif
 
     const uint64_t m_pageID;
-
-    // FIXME: Don't keep a separate sessionID - Rely on the WebsiteDataStore
-    const PAL::SessionID m_sessionID;
 
     bool m_isPageSuspended { false };
     bool m_addsVisitedLinks { true };
