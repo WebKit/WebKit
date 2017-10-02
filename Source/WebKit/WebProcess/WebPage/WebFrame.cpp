@@ -209,7 +209,7 @@ void WebFrame::invalidate()
     m_coreFrame = 0;
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
 {
     // FIXME: <rdar://5634381> We need to support multiple active policy listeners.
 
@@ -217,6 +217,7 @@ uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunc
 
     m_policyListenerID = generateListenerID();
     m_policyFunction = WTFMove(policyFunction);
+    m_policyFunctionForNavigationAction = forNavigationAction;
     return m_policyListenerID;
 }
 
@@ -244,12 +245,13 @@ void WebFrame::invalidatePolicyListener()
     m_policyListenerID = 0;
     if (auto function = std::exchange(m_policyFunction, nullptr))
         function(PolicyAction::Ignore);
+    m_policyFunctionForNavigationAction = ForNavigationAction::No;
     for (auto& function : m_willSubmitFormCompletionHandlers.values())
         function();
     m_willSubmitFormCompletionHandlers.clear();
 }
 
-void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID)
+void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action, uint64_t navigationID, DownloadID downloadID, const WebsitePolicies& websitePolicies)
 {
     if (!m_coreFrame)
         return;
@@ -264,8 +266,12 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyAction action
         return;
 
     FramePolicyFunction function = WTFMove(m_policyFunction);
+    bool forNavigationAction = m_policyFunctionForNavigationAction == ForNavigationAction::Yes;
 
     invalidatePolicyListener();
+
+    if (forNavigationAction && m_frameLoaderClient)
+        m_frameLoaderClient->applyToDocumentLoader(websitePolicies);
 
     m_policyDownloadID = downloadID;
     if (navigationID) {

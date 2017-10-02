@@ -1,5 +1,42 @@
 2017-10-02  Alex Christensen  <achristensen@webkit.org>
 
+        REGRESSION(r214201): WebProcess hangs during policy decisions
+        https://bugs.webkit.org/show_bug.cgi?id=177590
+        <rdar://problem/33362929>
+
+        Reviewed by Andy Estes.
+
+        This is like r222431 but for trunk instead of a branch.
+        It includes the same regression API test so I don't make the same mistake again.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageNavigationClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        (WebKit::WebPageProxy::decidePolicyForNavigationAction):
+        (WebKit::WebPageProxy::decidePolicyForResponseSync):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForResponse):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::WebFrameLoaderClient::applyToDocumentLoader):
+        (WebKit::WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        * WebProcess/WebPage/WebDocumentLoader.cpp:
+        (WebKit::WebDocumentLoader::setNavigationID):
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::setUpPolicyListener):
+        (WebKit::WebFrame::invalidatePolicyListener):
+        (WebKit::WebFrame::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebFrame.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceivePolicyDecision):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2017-10-02  Alex Christensen  <achristensen@webkit.org>
+
         Remove unnecessary copy of SessionID in WebPageProxy
         https://bugs.webkit.org/show_bug.cgi?id=177702
 
