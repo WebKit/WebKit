@@ -1127,6 +1127,8 @@ static bool customSetValue(ExecState* exec, EncodedJSValue slotValue, EncodedJSV
 
 void JSTestCustomGetterSetter::finishCreation(VM& vm)
 {
+    Base::finishCreation(vm);
+
     putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customValue"),
         CustomGetterSetter::create(vm, customGetValue, customSetValue), 0);
     putDirectCustomAccessor(vm, Identifier::fromString(&vm, "customAccessor"),

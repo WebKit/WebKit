@@ -1,3 +1,12 @@
+2017-10-02  Saam Barati  <sbarati@apple.com>
+
+        Unreviewed. Fix debug assertion after r222671. 
+
+        JSTestCustomGetterSetter::finishCreation needs to call its base's finishCreation implementation.
+
+        * jsc.cpp:
+        (JSTestCustomGetterSetter::finishCreation):
+
 2017-10-01  Commit Queue  <commit-queue@webkit.org>
 
         Unreviewed, rolling out r222564.
