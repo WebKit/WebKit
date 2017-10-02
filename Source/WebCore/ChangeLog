@@ -1,3 +1,28 @@
+2017-10-02  Daniel Bates  <dabates@apple.com>
+
+        Remove length argument from TextPainter::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=177758
+
+        Reviewed by Alex Christensen.
+
+        Have TextPainter.paint() use the length of the specified TextRun as opposed to
+        taking an explicit argument for the length of the TextRun.
+
+        Following r222670 InlineTextBox creates a TextRun with respect to the truncated
+        line. Prior to r222670 InlineTextBox did not do this and hence it had to pass both
+        the TextRun and truncated length to TextPainter.paint() to have the line painted.
+        Code that needs to paint a substring of a TextRun can still do so by using TextPainter.paintRange().
+
+        No functionality changed. So, no new tests.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/SimpleLineLayoutFunctions.cpp:
+        (WebCore::SimpleLineLayout::paintFlow):
+        * rendering/TextPainter.cpp:
+        (WebCore::TextPainter::paint):
+        * rendering/TextPainter.h:
+
 2017-10-02  Fujii Hironori  <Hironori.Fujii@sony.com>
 
         [curl] Crashes in CurlRequest::setupPUT()

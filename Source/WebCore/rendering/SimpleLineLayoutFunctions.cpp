@@ -120,7 +120,7 @@ void paintFlow(const RenderBlockFlow& flow, const Layout& layout, PaintInfo& pai
         TextRun textRun(run.hasHyphen() ? textWithHyphen : run.text(), 0, run.expansion(), run.expansionBehavior());
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         FloatPoint textOrigin = FloatPoint(rect.x() + paintOffset.x(), roundToDevicePixel(run.baselinePosition() + paintOffset.y(), deviceScaleFactor));
-        textPainter.paint(textRun, textRun.length(), rect, textOrigin);
+        textPainter.paint(textRun, rect, textOrigin);
         if (textDecorationPainter) {
             textDecorationPainter->setWidth(rect.width());
             textDecorationPainter->paintTextDecoration(textRun, textOrigin, rect.location() + paintOffset);
