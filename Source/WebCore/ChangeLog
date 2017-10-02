@@ -1,3 +1,37 @@
+2017-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [CURL] Should handle redirects in WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=21242
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/ResourceHandle.cpp:
+        * platform/network/curl/CurlContext.cpp:
+        (WebCore::CurlHandle::enableAutoReferer): Deleted.
+        * platform/network/curl/CurlContext.h:
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::setupTransfer):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didReceiveData):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::continueDidReceiveResponse):
+        (WebCore::ResourceHandle::continueWillSendRequest):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::shouldRedirectAsGET):
+        (WebCore::ResourceHandleCurlDelegate::willSendRequest):
+        (WebCore::ResourceHandleCurlDelegate::continueWillSendRequest):
+        (WebCore::ResourceHandleCurlDelegate::continueAfterWillSendRequest):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+        * platform/network/curl/ResourceResponse.h:
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::shouldRedirect):
+        (WebCore::ResourceResponse::isMovedPermanently const):
+        (WebCore::ResourceResponse::isFound const):
+        (WebCore::ResourceResponse::isSeeOther const):
+        (WebCore::ResourceResponse::isRedirection const): Deleted.
+
 2017-10-02  Antti Koivisto  <antti@apple.com>
 
         Crashes with guard malloc under RenderFullScreen::unwrapRenderer

@@ -248,7 +248,6 @@ public:
     void enableAllowedProtocols();
 
     void enableFollowLocation();
-    void enableAutoReferer();
 
     void enableHttpAuthentication(long);
     void setHttpAuthUserPass(const String&, const String&);

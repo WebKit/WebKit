@@ -170,7 +170,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
     }
 }
 
-#if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP)
+#if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP) && !USE(CURL)
 // ResourceHandle never uses async client calls on these platforms yet.
 void ResourceHandle::continueWillSendRequest(ResourceRequest&&)
 {

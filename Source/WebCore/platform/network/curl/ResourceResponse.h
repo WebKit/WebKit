@@ -52,7 +52,10 @@ public:
 
     void setDeprecatedNetworkLoadMetrics(const NetworkLoadMetrics& networkLoadMetrics) { m_networkLoadMetrics = networkLoadMetrics; }
 
-    bool isRedirection() const;
+    bool shouldRedirect();
+    bool isMovedPermanently() const;
+    bool isFound() const;
+    bool isSeeOther() const;
     bool isNotModified() const;
     bool isUnauthorized() const;
 

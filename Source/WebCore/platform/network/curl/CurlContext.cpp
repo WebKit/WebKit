@@ -425,11 +425,6 @@ void CurlHandle::enableFollowLocation()
     curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS, maxNumberOfRedirectCount);
 }
 
-void CurlHandle::enableAutoReferer()
-{
-    curl_easy_setopt(m_handle, CURLOPT_AUTOREFERER, 1L);
-}
-
 void CurlHandle::enableHttpAuthentication(long option)
 {
     curl_easy_setopt(m_handle, CURLOPT_HTTPAUTH, option);

@@ -169,8 +169,6 @@ CURL* CurlRequest::setupTransfer()
     m_curlHandle->enableAcceptEncoding();
     m_curlHandle->enableTimeout();
 
-    m_curlHandle->enableAutoReferer();
-    m_curlHandle->enableFollowLocation();
     m_curlHandle->enableProxyIfExists();
     m_curlHandle->enableCookieJarIfExists();
 
@@ -275,11 +273,7 @@ size_t CurlRequest::didReceiveHeader(String&& header)
         return receiveBytes;
     }
 
-    // If the FOLLOWLOCATION option is enabled for the curl handle then
-    // curl will follow the redirections internally. Thus this header callback
-    // will be called more than one time with the line starting "HTTP" for one job.
-
-    m_response.url = m_curlHandle->getEffectiveURL();
+    m_response.url = m_request.url();
     m_response.statusCode = statusCode;
 
     if (auto length = m_curlHandle->getContentLength())
@@ -307,13 +301,6 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
         return 0;
 
     auto receiveBytes = buffer->size();
-
-    // this shouldn't be necessary but apparently is. CURL writes the data
-    // of html page even if it is a redirect that was handled internally
-    // can be observed e.g. on gmail.com
-    auto statusCode = m_curlHandle->getResponseCode();
-    if (statusCode && (300 <= *statusCode) && (*statusCode < 400))
-        return receiveBytes;
 
     if (receiveBytes) {
         callDelegate([this, buffer = WTFMove(buffer)](CurlRequestDelegate* delegate) mutable {

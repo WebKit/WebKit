@@ -201,22 +201,9 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
             m_multipartHandle = std::make_unique<MultipartHandle>(m_handle, boundary);
     }
 
-    // HTTP redirection
-    if (response().isRedirection()) {
-        String location = response().httpHeaderField(HTTPHeaderName::Location);
-        if (!location.isEmpty()) {
-            URL newURL = URL(m_firstRequest.url(), location);
-
-            ResourceRequest redirectedRequest = m_firstRequest;
-            redirectedRequest.setURL(newURL);
-            ResourceResponse localResponse = response();
-            if (m_handle->client())
-                m_handle->client()->willSendRequest(m_handle, WTFMove(redirectedRequest), WTFMove(localResponse));
-
-            m_firstRequest.setURL(newURL);
-
-            return;
-        }
+    if (response().shouldRedirect()) {
+        willSendRequest();
+        return;
     }
 
     if (response().isUnauthorized()) {
@@ -287,6 +274,105 @@ void ResourceHandleCurlDelegate::curlDidFailWithError(const ResourceError& resou
 
     CurlCacheManager::getInstance().didFail(*m_handle);
     m_handle->client()->didFail(m_handle, resourceError);
+}
+
+bool ResourceHandleCurlDelegate::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
+{
+    if ((request.httpMethod() == "GET") || (request.httpMethod() == "HEAD"))
+        return false;
+
+    if (!request.url().protocolIsInHTTPFamily())
+        return true;
+
+    if (response().isSeeOther())
+        return true;
+
+    if ((response().isMovedPermanently() || response().isFound()) && (request.httpMethod() == "POST"))
+        return true;
+
+    if (crossOrigin && (request.httpMethod() == "DELETE"))
+        return true;
+
+    return false;
+}
+
+void ResourceHandleCurlDelegate::willSendRequest()
+{
+    ASSERT(isMainThread());
+
+    static const int maxRedirects = 20;
+
+    if (m_redirectCount++ > maxRedirects) {
+        m_handle->client()->didFail(m_handle, ResourceError::httpError(CURLE_TOO_MANY_REDIRECTS, response().url()));
+        return;
+    }
+
+    String location = response().httpHeaderField(HTTPHeaderName::Location);
+    URL newURL = URL(m_firstRequest.url(), location);
+    bool crossOrigin = !protocolHostAndPortAreEqual(m_firstRequest.url(), newURL);
+
+    ResourceRequest newRequest = m_firstRequest;
+    newRequest.setURL(newURL);
+
+    if (shouldRedirectAsGET(newRequest, crossOrigin)) {
+        newRequest.setHTTPMethod("GET");
+        newRequest.setHTTPBody(nullptr);
+        newRequest.clearHTTPContentType();
+    }
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!newURL.protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+        newRequest.clearHTTPReferrer();
+
+    m_user = newURL.user();
+    m_pass = newURL.pass();
+    newRequest.removeCredentials();
+
+    if (crossOrigin) {
+        // If the network layer carries over authentication headers from the original request
+        // in a cross-origin redirect, we want to clear those headers here. 
+        newRequest.clearHTTPAuthorization();
+        newRequest.clearHTTPOrigin();
+    }
+
+    ResourceResponse responseCopy = response();
+    if (m_handle->client()->usesAsyncCallbacks())
+        m_handle->client()->willSendRequestAsync(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+    else {
+        auto request = m_handle->client()->willSendRequest(m_handle, WTFMove(newRequest), WTFMove(responseCopy));
+        continueAfterWillSendRequest(WTFMove(request));
+    }
+}
+
+void ResourceHandleCurlDelegate::continueWillSendRequest(ResourceRequest&& request)
+{
+    ASSERT(isMainThread());
+
+    continueAfterWillSendRequest(WTFMove(request));
+}
+
+void ResourceHandleCurlDelegate::continueAfterWillSendRequest(ResourceRequest&& request)
+{
+    ASSERT(isMainThread());
+
+    // willSendRequest might cancel the load.
+    if (cancelledOrClientless() || !m_curlRequest)
+        return;
+
+    m_currentRequest = WTFMove(request);
+
+    bool isSyncRequest = m_curlRequest->isSyncRequest();
+    m_curlRequest->cancel();
+    m_curlRequest->setDelegate(nullptr);
+
+    m_curlRequest = createCurlRequest(m_currentRequest);
+
+    if (protocolHostAndPortAreEqual(m_currentRequest.url(), response().url())) {
+        auto credential = getCredential(m_currentRequest, true);
+        m_curlRequest->setUserPass(credential.first, credential.second);
+    }
+
+    m_curlRequest->start(isSyncRequest);
 }
 
 ResourceResponse& ResourceHandleCurlDelegate::response()
