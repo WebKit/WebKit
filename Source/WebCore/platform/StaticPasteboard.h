@@ -43,7 +43,6 @@ public:
     bool hasData() final;
     Vector<String> typesSafeForBindings() final { return m_types; }
     Vector<String> typesForLegacyUnsafeBindings() final { return m_types; }
-    Vector<String> typesTreatedAsFiles() final { return { }; }
     String readString(const String& type) final;
     String readStringInCustomData(const String& type) final;
 
@@ -59,7 +58,6 @@ public:
     void write(const PasteboardWebContent&) final { }
 
     bool containsFiles() final { return false; }
-    Vector<String> readFilenames() final { return { }; }
     bool canSmartReplace() final { return false; }
 
     void writeMarkup(const String&) final { }

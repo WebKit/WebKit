@@ -242,8 +242,11 @@ void Pasteboard::read(PasteboardWebContentReader&)
 {
 }
 
-void Pasteboard::read(PasteboardFileReader&)
+void Pasteboard::read(PasteboardFileReader& reader)
 {
+    readFromClipboard();
+    for (auto& filename : m_selectionData->filenames())
+        reader.readFilename(filename);
 }
 
 bool Pasteboard::hasData()
@@ -286,11 +289,6 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     return types;
 }
 
-Vector<String> Pasteboard::typesTreatedAsFiles()
-{
-    return { };
-}
-
 String Pasteboard::readString(const String& type)
 {
     readFromClipboard();
@@ -321,13 +319,8 @@ String Pasteboard::readStringInCustomData(const String&)
 
 bool Pasteboard::containsFiles()
 {
-    return readFilenames().size();
-}
-
-Vector<String> Pasteboard::readFilenames()
-{
     readFromClipboard();
-    return m_selectionData->filenames();
+    return !m_selectionData->filenames().isEmpty();
 }
 
 void Pasteboard::writeMarkup(const String&)

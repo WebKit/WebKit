@@ -33,11 +33,16 @@ namespace WebCore {
 
 WebCorePasteboardFileReader::~WebCorePasteboardFileReader() = default;
 
-void WebCorePasteboardFileReader::read(const String& filename, Ref<SharedBuffer>&& buffer)
+void WebCorePasteboardFileReader::readFilename(const String& filename)
+{
+    files.append(File::create(filename));
+}
+
+void WebCorePasteboardFileReader::readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&& buffer)
 {
     Vector<uint8_t> data;
     data.append(buffer->data(), buffer->size());
-    file = File::create(Blob::create(WTFMove(data), type), filename);
+    files.append(File::create(Blob::create(WTFMove(data), type), filename));
 }
 
 }

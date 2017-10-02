@@ -62,11 +62,6 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     return types;
 }
 
-Vector<String> Pasteboard::typesTreatedAsFiles()
-{
-    return { };
-}
-
 String Pasteboard::readString(const String& type)
 {
     return platformStrategies()->pasteboardStrategy()->readStringFromPasteboard(0, type);
@@ -128,12 +123,6 @@ bool Pasteboard::containsFiles()
 {
     notImplemented();
     return false;
-}
-
-Vector<String> Pasteboard::readFilenames()
-{
-    notImplemented();
-    return Vector<String>();
 }
 
 bool Pasteboard::canSmartReplace()

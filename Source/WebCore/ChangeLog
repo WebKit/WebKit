@@ -1,3 +1,68 @@
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge readFilenames() and read(PasteboardFileReader)
+        https://bugs.webkit.org/show_bug.cgi?id=177728
+        <rdar://problem/34761725>
+
+        Reviewed by Sam Weinig.
+
+        Generalized PasteboardFileReader to return multiple files instead of just one file, and replaced the use
+        of Pasteboard::readFilenames() with it. Because eliminates the need for finding the list of types to read
+        as files in addition to file names, this patch also removes Pasteboard::typesTreatedAsFiles().
+
+        Note that Pasteboard::readFilenames() continues to exist in macOS and iOS as it's internally used by
+        Pasteboard::read(PasteboardFileReader) in PasteboardCocoa.mm.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::files const): Now makes a single call to Pasteboard::read(PasteboardFileReader)
+        instead of reading filenames and then falling back to it. Also got rid of if-def for drag drop checks
+        since forDrag() and forFileDrag() are always defined since r222688.
+        (WebCore::PasteboardFileTypeReader): Added. Gets the list of all file types.
+        (WebCore::PasteboardFileTypeReader::readFilename): Added. Gets the list of all file types.
+        (WebCore::PasteboardFileTypeReader::readBuffer): Added. Gets the list of all file types.
+        (WebCore::DataTransfer::hasFileOfType): Reimplemented using PasteboardFileTypeReader.
+        * editing/WebCorePasteboardFileReader.cpp:
+        (WebCore::WebCorePasteboardFileReader::readFilename): Added.
+        (WebCore::WebCorePasteboardFileReader::readBuffer): Renamed from read.
+        * editing/WebCorePasteboardFileReader.h:
+        * platform/Pasteboard.h:
+        (WebCore::PasteboardFileReader): Removed the constructor since we no longer specify a specific type to
+        read off of pasteboard, and renamed the existing read function to readBuffer, and added a new variant
+        which takes a filename.
+        * platform/StaticPasteboard.h:
+        * platform/cocoa/PasteboardCocoa.mm:
+        (WebCore::imageTypeToFakeFilename): Return "image/png" for ImageType::TIFF (to do TIFF-to-PNG conversion;
+        see r222656 for why this is needed) now that this function is used to convert directly from image type
+        converted from cocoa type instead of the one reverse-converted from MIME type.
+        (WebCore::mimeTypeToImageType): Deleted.
+        (WebCore::Pasteboard::typesTreatedAsFiles): Deleted.
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings): Use newly added readTypesWithSecurityCheck.
+        (WebCore::convertTIFFToPNG): Extracted out of read(PasteboardFileReader).
+        (WebCore::Pasteboard::read): Generalized to add filenames as well as image buffers as files. Because now
+        we're concerting Cocoa types to ImageType, we no longer have to detect when TIFF-as-PNG conversion is
+        happening here. We just treat ImageType::TIFF as PNG and do the conversion.
+        (WebCore::Pasteboard::readStringInCustomData): Use newly added readBufferForTypeWithSecurityCheck.
+        (WebCore::Pasteboard::readTypesWithSecurityCheck): Added.
+        (WebCore::Pasteboard::readBufferForTypeWithSecurityCheck): Added.
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::read): Implemented.
+        (WebCore::Pasteboard::typesTreatedAsFiles): Deleted.
+        (WebCore::Pasteboard::containsFiles): Implemented without calling readFilenames, which has been deleted.
+        (WebCore::Pasteboard::readFilenames): Deleted.
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::typesTreatedAsFiles): Deleted.
+        (WebCore::PasteboardFileCounter): Added. Used to counts the number of files in the pasteboard.
+        (WebCore::PasteboardFileCounter::readFilename):
+        (WebCore::PasteboardFileCounter::readBuffer):
+        (WebCore::Pasteboard::containsFiles):
+        (WebCore::Pasteboard::read): Moved the code to extract filenames out of readFilenames.
+        (WebCore::Pasteboard::readFilenames): Deleted.
+        * platform/wpe/PasteboardWPE.cpp:
+        (WebCore::Pasteboard::typesTreatedAsFiles): Deleted.
+        (WebCore::Pasteboard::readFilenames): Deleted.
+
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
         [Settings] Move remaining simple settings to Settings.in

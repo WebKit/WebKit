@@ -283,11 +283,6 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
     return vector;
 }
 
-Vector<String> Pasteboard::typesTreatedAsFiles()
-{
-    return { };
-}
-
 String Pasteboard::readString(const String& type)
 {
     if (!m_dataObject && m_dragDataMap.isEmpty())
@@ -314,43 +309,54 @@ String Pasteboard::readStringInCustomData(const String&)
     return { };
 }
 
+struct PasteboardFileCounter final : PasteboardFileReader {
+    void readFilename(const String&) final { ++count; }
+    void readBuffer(const String&, const String&, Ref<SharedBuffer>&&) final { ++count; }
+
+    unsigned count { 0 };
+};
+
 bool Pasteboard::containsFiles()
 {
-    return readFilenames().size(); // FIXME: Make this code more efficient.
+    // FIXME: This implementation can be slightly more efficient by avoiding calls to DragQueryFileW.
+    PasteboardFileCounter reader;
+    read(reader);
+    return reader.count;
 }
 
-Vector<String> Pasteboard::readFilenames()
+void Pasteboard::read(PasteboardFileReader& reader)
 {
-    Vector<String> fileNames;
-
 #if USE(CF)
     if (m_dataObject) {
         STGMEDIUM medium;
         if (FAILED(m_dataObject->GetData(cfHDropFormat(), &medium)))
-            return fileNames;
+            return;
 
         HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal));
         if (!hdrop)
-            return fileNames;
+            return;
 
         WCHAR filename[MAX_PATH];
         UINT fileCount = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
         for (UINT i = 0; i < fileCount; i++) {
             if (!DragQueryFileW(hdrop, i, filename, WTF_ARRAY_LENGTH(filename)))
                 continue;
-            fileNames.append(filename);
+            reader.readFilename(filename);
         }
 
         GlobalUnlock(medium.hGlobal);
         ReleaseStgMedium(&medium);
-        return fileNames;
+        return;
     }
-    if (!m_dragDataMap.contains(cfHDropFormat()->cfFormat))
-        return fileNames;
-    return m_dragDataMap.get(cfHDropFormat()->cfFormat);
+    auto list = m_dragDataMap.find(cfHDropFormat()->cfFormat);
+    if (list == m_dragDataMap.end())
+        return;
+
+    for (auto& filename : list->value)
+        reader.readFilename(filename);
 #else
     notImplemented();
-    return fileNames;
+    return { };
 #endif
 }
 
@@ -1069,10 +1075,6 @@ void Pasteboard::write(const PasteboardWebContent&)
 }
 
 void Pasteboard::read(PasteboardWebContentReader&)
-{
-}
-
-void Pasteboard::read(PasteboardFileReader&)
 {
 }
 

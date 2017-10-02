@@ -182,47 +182,50 @@ Vector<String> DataTransfer::types() const
 
 FileList& DataTransfer::files() const
 {
-    bool newlyCreatedFileList = !m_fileList;
-    if (!m_fileList)
-        m_fileList = FileList::create();
-
     if (!canReadData()) {
-        m_fileList->clear();
+        if (m_fileList)
+            m_fileList->clear();
+        else
+            m_fileList = FileList::create();
         return *m_fileList;
     }
 
-#if ENABLE(DRAG_SUPPORT)
     if (forDrag() && !forFileDrag()) {
-        ASSERT(m_fileList->isEmpty());
+        if (m_fileList)
+            ASSERT(m_fileList->isEmpty());
+        else
+            m_fileList = FileList::create();
         return *m_fileList;
     }
-#endif
 
-    if (newlyCreatedFileList) {
-        for (auto& filename : m_pasteboard->readFilenames())
-            m_fileList->append(File::create(filename));
-        if (m_fileList->isEmpty()) {
-            for (auto& type : m_pasteboard->typesTreatedAsFiles()) {
-                WebCorePasteboardFileReader reader(type);
-                m_pasteboard->read(reader);
-                if (reader.file)
-                    m_fileList->append(reader.file.releaseNonNull());
-            }
-        }
+    if (!m_fileList) {
+        WebCorePasteboardFileReader reader;
+        m_pasteboard->read(reader);
+        m_fileList = FileList::create(WTFMove(reader.files));
     }
     return *m_fileList;
 }
 
+struct PasteboardFileTypeReader final : PasteboardFileReader {
+    void readFilename(const String& filename)
+    {
+        types.add(File::contentTypeForFile(filename));
+    }
+
+    void readBuffer(const String&, const String& type, Ref<SharedBuffer>&&)
+    {
+        types.add(type);
+    }
+
+    HashSet<String, ASCIICaseInsensitiveHash> types;
+};
+
 bool DataTransfer::hasFileOfType(const String& type)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(canReadTypes());
-
-    for (auto& path : m_pasteboard->readFilenames()) {
-        if (equalIgnoringASCIICase(File::contentTypeForFile(path), type))
-            return true;
-    }
-
-    return false;
+    PasteboardFileTypeReader reader;
+    m_pasteboard->read(reader);
+    return reader.types.contains(type);
 }
 
 bool DataTransfer::hasStringOfType(const String& type)

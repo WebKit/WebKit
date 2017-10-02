@@ -32,15 +32,12 @@ namespace WebCore {
 class File;
 
 struct WebCorePasteboardFileReader final : PasteboardFileReader {
-    WebCorePasteboardFileReader(const String& type)
-        : PasteboardFileReader(type)
-    { }
-
     ~WebCorePasteboardFileReader();
 
-    void read(const String&, Ref<SharedBuffer>&&) final;
+    void readFilename(const String&) final;
+    void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) final;
 
-    RefPtr<File> file;
+    Vector<Ref<File>> files;
 };
 
 }

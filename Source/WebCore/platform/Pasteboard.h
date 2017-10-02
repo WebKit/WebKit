@@ -58,6 +58,7 @@ class DocumentFragment;
 class DragData;
 class Element;
 class Frame;
+class PasteboardStrategy;
 class Range;
 class SelectionData;
 class SharedBuffer;
@@ -148,14 +149,9 @@ struct PasteboardPlainText {
 };
 
 struct PasteboardFileReader {
-    PasteboardFileReader(const String& type)
-        : type(type)
-    { }
     virtual ~PasteboardFileReader() = default;
-
-    virtual void read(const String&, Ref<SharedBuffer>&&) = 0;
-
-    const String type;
+    virtual void readFilename(const String&) = 0;
+    virtual void readBuffer(const String& filename, const String& type, Ref<SharedBuffer>&&) = 0;
 };
 
 // FIXME: We need to ensure that the contents of sameOriginCustomData are not accessible across different origins.
@@ -198,7 +194,6 @@ public:
     virtual bool hasData();
     virtual Vector<String> typesSafeForBindings();
     virtual Vector<String> typesForLegacyUnsafeBindings();
-    virtual Vector<String> typesTreatedAsFiles();
     virtual String readString(const String& type);
     virtual String readStringInCustomData(const String& type);
 
@@ -216,7 +211,6 @@ public:
     virtual void write(const PasteboardWebContent&);
 
     virtual bool containsFiles();
-    virtual Vector<String> readFilenames();
     virtual bool canSmartReplace();
 
     virtual void writeMarkup(const String& markup);
@@ -282,9 +276,12 @@ private:
 #endif
 
 #if PLATFORM(COCOA)
+    Vector<String> readFilenames();
     String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName);
     static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName);
     String readStringForPlatformType(const String&);
+    Vector<String> readTypesWithSecurityCheck();
+    RefPtr<SharedBuffer> readBufferForTypeWithSecurityCheck(const String&);
 #endif
 
 #if PLATFORM(GTK)
