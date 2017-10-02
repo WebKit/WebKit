@@ -96,6 +96,15 @@ test(() => {
     "\t\na-b",
     "a-b ",
     "a-b\n\t",
+    "basic-card?not-really",
+    "basic-card://not-ok",
+    "basic card",
+    "/basic card/",
+    "BaSicCarD",
+    "BASIC-CARD",
+    " basic-card ",
+    "this is not supported",
+    " ",
   ];
   for (const invalidMethod of invalidMethods) {
     assert_throws(

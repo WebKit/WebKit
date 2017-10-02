@@ -1,3 +1,12 @@
+2017-10-02  Andy Estes  <aestes@apple.com>
+
+        [Payment Request] Update payment-request imported tests
+        https://bugs.webkit.org/show_bug.cgi?id=177786
+
+        Reviewed by Zalan Bujtas.
+
+        * platform/mac-wk2/TestExpectations:
+
 2017-10-02  Matt Lewis  <jlewis3@apple.com>
 
         Additional rebaselining of js/dom/global-constructors-attributes.html.

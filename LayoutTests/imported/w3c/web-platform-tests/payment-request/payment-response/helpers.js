@@ -113,6 +113,10 @@ async function runManualTest(button, options, expected = {}, id = undefined) {
         `Expected response ${attribute} attribute to be ${value}`
       );
     }
+    assert_idl_attribute(response, "details");
+    assert_equals(typeof response.details, "object", "Expected an object");
+    // Testing that this does not throw:
+    response.toJSON();
     if (options && options.requestShipping) {
       assert_equals(
         response.shippingOption,

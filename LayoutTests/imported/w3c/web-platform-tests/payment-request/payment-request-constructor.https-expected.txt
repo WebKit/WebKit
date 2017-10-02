@@ -13,15 +13,13 @@ PASS If the first character of details.total.amount.value is U+002D HYPHEN-MINUS
 PASS For each item in details.displayItems: if item.amount.value is not a valid decimal monetary value, then throw a TypeError 
 PASS Negative values are allowed for displayItems.amount.value, irrespective of total amount 
 PASS it handles high precision currency values without throwing 
-FAIL For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value, then throw a TypeError "-" is not a valid decimal monetary value.
+PASS For each option in details.shippingOptions: if option.amount.value is not a valid decimal monetary value, then throw a TypeError 
 PASS If there is no selected shipping option, then PaymentRequest.shippingOption remains null 
 FAIL If there is a selected shipping option, and requestShipping is set, then that option becomes synchronously selected assert_equals: Must be null when no shipping is requested (defaults to false) expected (object) null but got (string) "the-id"
 FAIL If requestShipping is set, and if there is a multiple selected shipping options, only the last is selected. assert_equals: shippingOption must be null, as requestShipping is false expected (object) null but got (string) "the-id"
-FAIL If there are any duplicate shipping option ids, and shipping is requested, then throw a TypeError Test bug: unrecognized DOMException code "() => {
-    const request = new PaymentRequest(defaultMethods, details, {
-      requestShipping: true,
-    });
-  }" passed to assert_throws()
+FAIL If there are any duplicate shipping option ids, and shipping is requested, then throw a TypeError assert_throws: Expected to throw a TypeError because duplicate IDs function "() => {
+      new PaymentRequest(defaultMethods, details, { requestShipping: true });
+    }" did not throw
 FAIL Throw when there are duplicate shippingOption ids, even if other values are different assert_throws: Expected to throw a TypeError because duplicate IDs function "() => {
       new PaymentRequest(defaultMethods, details, { requestShipping: true });
     }" did not throw
