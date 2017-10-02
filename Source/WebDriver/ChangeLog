@@ -1,3 +1,18 @@
+2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        WebDriver: HTTP status code is not correct for some of the errors
+        https://bugs.webkit.org/show_bug.cgi?id=177354
+
+        Reviewed by Brian Burg.
+
+        I think this changed in the spec at some point. The thing is that no such alert, frame and window and stale
+        element reference errors should return 404 instead of 400.
+
+        https://w3c.github.io/webdriver/webdriver-spec.html#handling-errors
+
+        * CommandResult.cpp:
+        (WebDriver::CommandResult::httpStatusCode const):
+
 2017-09-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         WebDriver: Implement commands to get and set the window rect
