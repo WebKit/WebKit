@@ -1,3 +1,13 @@
+2017-10-02  Zalan Bujtas  <zalan@apple.com>
+
+        Addressing post-review comments after r222621
+        https://bugs.webkit.org/show_bug.cgi?id=177610
+
+        Reviewed by Darin Adler.
+
+        * rendering/RenderMenuList.cpp:
+        (RenderMenuList::didUpdateActiveOption):
+
 2017-10-02  Daniel Bates  <dabates@apple.com>
 
         Remove length argument from TextPainter::paint()

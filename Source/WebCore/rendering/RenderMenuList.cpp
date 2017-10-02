@@ -432,7 +432,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (!axCache)
         return;
 
-    if (m_lastActiveIndex && *m_lastActiveIndex == optionIndex)
+    if (m_lastActiveIndex == optionIndex)
         return;
     m_lastActiveIndex = optionIndex;
 
@@ -440,7 +440,7 @@ void RenderMenuList::didUpdateActiveOption(int optionIndex)
     if (listIndex < 0 || listIndex >= static_cast<int>(selectElement().listItems().size()))
         return;
 
-    if (AccessibilityMenuList* menuList = downcast<AccessibilityMenuList>(axCache->get(this)))
+    if (auto* menuList = downcast<AccessibilityMenuList>(axCache->get(this)))
         menuList->didUpdateActiveOption(optionIndex);
 }
 
