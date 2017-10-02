@@ -1,3 +1,11 @@
+2017-10-02  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaseline of js/dom/global-constructors-attributes-dedicated-worker.html after r222692.
+
+        Unreviewed test gardening.
+
+        * platform/mac-wk1/js/dom/global-constructors-attributes-dedicated-worker-expected.txt:
+
 2017-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed WPE gardening.
