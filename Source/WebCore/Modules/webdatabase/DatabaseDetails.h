@@ -28,7 +28,7 @@
 
 #pragma once
 
-#include <thread>
+#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ public:
         , m_creationTime(0)
         , m_modificationTime(0)
 #ifndef NDEBUG
-        , m_threadID(std::this_thread::get_id())
+        , m_threadID(Thread::currentID())
 #endif
     {
     }
@@ -54,7 +54,7 @@ public:
         , m_creationTime(creationTime)
         , m_modificationTime(modificationTime)
 #ifndef NDEBUG
-        , m_threadID(std::this_thread::get_id())
+        , m_threadID(Thread::currentID())
 #endif
     {
     }
@@ -66,7 +66,7 @@ public:
     double creationTime() const { return m_creationTime; }
     double modificationTime() const { return m_modificationTime; }
 #ifndef NDEBUG
-    std::thread::id threadID() const { return m_threadID; }
+    ThreadIdentifier threadID() const { return m_threadID; }
 #endif
 
 private:
@@ -77,7 +77,7 @@ private:
     double m_creationTime;
     double m_modificationTime;
 #ifndef NDEBUG
-    std::thread::id m_threadID;
+    ThreadIdentifier m_threadID;
 #endif
 };
 
