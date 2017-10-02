@@ -184,8 +184,6 @@ static void checkJSONWithLogging(NSString *jsonString, NSDictionary *expected)
         NSLog(@"Expected JSON: %@ to match values: %@", jsonString, expected);
 }
 
-#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
-
 static void runTestWithTemporaryTextFile(void(^runTest)(NSURL *fileURL))
 {
     NSString *fileName = [NSString stringWithFormat:@"drag-drop-text-file-%@.txt", [NSUUID UUID].UUIDString];
@@ -234,6 +232,8 @@ static void runTestWithTemporaryFolder(void(^runTest)(NSURL *folderURL))
         [[NSFileManager defaultManager] removeItemAtURL:temporaryFolder.get() error:nil];
     }
 }
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 namespace TestWebKitAPI {
 
@@ -983,6 +983,8 @@ TEST(DataInteractionTests, ExternalSourceOverrideDropFileUpload)
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
 }
 
+#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
+
 static RetainPtr<TestWKWebView> setUpTestWebViewForDataTransferItems()
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
@@ -1062,6 +1064,8 @@ TEST(DataInteractionTests, ExternalSourceDataTransferItemGetPlainTextFileAsEntry
     TestWebKitAPI::Util::run(&done);
     EXPECT_WK_STREQ([expectedOutput componentsJoinedByString:@"\n"], [webView stringByEvaluatingJavaScript:@"output.value"]);
 }
+
+#endif // __IPHONE_OS_VERSION_MIN_REQUIRED >= 110300
 
 TEST(DataInteractionTests, ExternalSourceOverrideDropInsertURL)
 {

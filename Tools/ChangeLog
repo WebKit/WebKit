@@ -1,3 +1,12 @@
+2017-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
+
+        Guard iOS webkitGetAsEntry API tests on older iOS versions
+
+        Unreviewed test gardening. After r222688, these tests require custom pasteboard data to be enabled by default,
+        so don't run them against shipping iOS.
+
+        * TestWebKitAPI/Tests/ios/DataInteractionTests.mm:
+
 2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WPE][GTK] Crash in webkit_web_resource_get_data_finish()
