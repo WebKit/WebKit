@@ -1,5 +1,12 @@
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
+        Add missing results from r222690.
+
+        * web-platform-tests/XMLHttpRequest/responseType-document-in-worker-expected.txt: Added.
+        * web-platform-tests/XMLHttpRequest/responseXML-unavailable-in-worker-expected.txt: Added.
+
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
         Add support for DOM aborting (https://dom.spec.whatwg.org/#aborting-ongoing-activities)
         https://bugs.webkit.org/show_bug.cgi?id=177718
 
