@@ -514,7 +514,6 @@ void InlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, 
     if (m_truncation != cNoTruncation) {
         selectionStart = std::min(selectionStart, static_cast<unsigned>(m_truncation));
         selectionEnd = std::min(selectionEnd, static_cast<unsigned>(m_truncation));
-        length = m_truncation;
     }
 
     float emphasisMarkOffset = 0;
