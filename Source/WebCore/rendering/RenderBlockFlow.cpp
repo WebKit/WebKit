@@ -430,8 +430,12 @@ bool RenderBlockFlow::willCreateColumns(std::optional<unsigned> desiredColumnCou
     // The following types are not supposed to create multicol context.
     if (isFileUploadControl() || isTextControl() || isListBox())
         return false;
-    if (isRenderSVGBlock() || isRenderMathMLBlock() || isRubyRun())
+    if (isRenderSVGBlock() || isRubyRun())
         return false;
+#if ENABLE(MATHML)
+    if (isRenderMathMLBlock())
+        return false;
+#endif // ENABLE(MATHML)
 
     if (!firstChild())
         return false;

@@ -1,3 +1,17 @@
+2017-10-02  Olivier Blin  <olivier.blin@softathome.com>
+
+        Fix build with MathML disabled
+        https://bugs.webkit.org/show_bug.cgi?id=177744
+
+        Reviewed by Michael Catanzaro.
+
+        These are regressions from r217549 (StyleResolver) and r221379 (RenderBlockFlow), which do not guard MathML usage.
+
+        * css/StyleResolver.cpp:
+        (WebCore::hasEffectiveDisplayNoneForDisplayContents):
+        * rendering/RenderBlockFlow.cpp:
+        (WebCore::RenderBlockFlow::willCreateColumns const):
+
 2017-10-02  Yusuke Suzuki  <utatane.tea@gmail.com>
 
         Use ThreadIdentifier instead of thread::this_thread::get_id
