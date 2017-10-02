@@ -658,6 +658,286 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
     return _preferences->pluginsEnabled();
 }
 
+- (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
+{
+    _preferences->setJavaEnabledForLocalFiles(enabled);
+}
+
+- (BOOL)_javaEnabledForLocalFiles
+{
+    return _preferences->pluginsEnabled();
+}
+
+- (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
+{
+    _preferences->setCanvasUsesAcceleratedDrawing(enabled);
+}
+
+- (BOOL)_canvasUsesAcceleratedDrawing
+{
+    return _preferences->canvasUsesAcceleratedDrawing();
+}
+
+- (void)_setAcceleratedCompositingEnabled:(BOOL)enabled
+{
+    _preferences->setAcceleratedCompositingEnabled(enabled);
+}
+
+- (BOOL)_acceleratedCompositingEnabled
+{
+    return _preferences->acceleratedCompositingEnabled();
+}
+
+- (void)_setDefaultTextEncodingName:(NSString *)name
+{
+    _preferences->setDefaultTextEncodingName(name);
+}
+
+- (NSString *)_defaultTextEncodingName
+{
+    return _preferences->defaultTextEncodingName();
+}
+
+- (void)_setNeedsSiteSpecificQuirks:(BOOL)enabled
+{
+    _preferences->setNeedsSiteSpecificQuirks(enabled);
+}
+
+- (BOOL)_needsSiteSpecificQuirks
+{
+    return _preferences->needsSiteSpecificQuirks();
+}
+
+- (void)_setAuthorAndUserStylesEnabled:(BOOL)enabled
+{
+    _preferences->setAuthorAndUserStylesEnabled(enabled);
+}
+
+- (BOOL)_authorAndUserStylesEnabled
+{
+    return _preferences->authorAndUserStylesEnabled();
+}
+
+- (void)_setDOMTimersThrottlingEnabled:(BOOL)enabled
+{
+    _preferences->setDOMTimersThrottlingEnabled(enabled);
+}
+
+- (BOOL)_domTimersThrottlingEnabled
+{
+    return _preferences->domTimersThrottlingEnabled();
+}
+
+- (void)_setWebArchiveDebugModeEnabled:(BOOL)enabled
+{
+    _preferences->setWebArchiveDebugModeEnabled(enabled);
+}
+
+- (BOOL)_webArchiveDebugModeEnabled
+{
+    return _preferences->webArchiveDebugModeEnabled();
+}
+
+- (void)_setLocalFileContentSniffingEnabled:(BOOL)enabled
+{
+    _preferences->setLocalFileContentSniffingEnabled(enabled);
+}
+
+- (BOOL)_localFileContentSniffingEnabled
+{
+    return _preferences->localFileContentSniffingEnabled();
+}
+
+- (void)_setUsesPageCache:(BOOL)enabled
+{
+    _preferences->setUsesPageCache(enabled);
+}
+
+- (BOOL)_usesPageCache
+{
+    return _preferences->usesPageCache();
+}
+
+- (void)_setPageCacheSupportsPlugins:(BOOL)enabled
+{
+    _preferences->setPageCacheSupportsPlugins(enabled);
+}
+
+- (BOOL)_pageCacheSupportsPlugins
+{
+    return _preferences->pageCacheSupportsPlugins();
+}
+
+- (void)_setShouldPrintBackgrounds:(BOOL)enabled
+{
+    _preferences->setShouldPrintBackgrounds(enabled);
+}
+
+- (BOOL)_shouldPrintBackgrounds
+{
+    return _preferences->shouldPrintBackgrounds();
+}
+
+- (void)_setWebSecurityEnabled:(BOOL)enabled
+{
+    _preferences->setWebSecurityEnabled(enabled);
+}
+
+- (BOOL)_webSecurityEnabled
+{
+    return _preferences->webSecurityEnabled();
+}
+
+- (void)_setUniversalAccessFromFileURLsAllowed:(BOOL)enabled
+{
+    _preferences->setAllowUniversalAccessFromFileURLs(enabled);
+}
+
+- (BOOL)_universalAccessFromFileURLsAllowed
+{
+    return _preferences->allowUniversalAccessFromFileURLs();
+}
+
+- (void)_setAVFoundationEnabled:(BOOL)enabled
+{
+    _preferences->setAVFoundationEnabled(enabled);
+}
+
+- (BOOL)_avFoundationEnabled
+{
+    return _preferences->isAVFoundationEnabled();
+}
+
+- (void)_setSuppressesIncrementalRendering:(BOOL)enabled
+{
+    _preferences->setSuppressesIncrementalRendering(enabled);
+}
+
+- (BOOL)_suppressesIncrementalRendering
+{
+    return _preferences->suppressesIncrementalRendering();
+}
+
+- (void)_setAsynchronousPluginInitializationEnabled:(BOOL)enabled
+{
+    _preferences->setAsynchronousPluginInitializationEnabled(enabled);
+}
+
+- (BOOL)_asynchronousPluginInitializationEnabled
+{
+    return _preferences->asynchronousPluginInitializationEnabled();
+}
+
+- (void)_setArtificialPluginInitializationDelayEnabled:(BOOL)enabled
+{
+    _preferences->setArtificialPluginInitializationDelayEnabled(enabled);
+}
+
+- (BOOL)_artificialPluginInitializationDelayEnabled
+{
+    return _preferences->artificialPluginInitializationDelayEnabled();
+}
+
+- (void)_setCookieEnabled:(BOOL)enabled
+{
+    _preferences->setCookieEnabled(enabled);
+}
+
+- (BOOL)_cookieEnabled
+{
+    return _preferences->cookieEnabled();
+}
+
+- (void)_setPlugInSnapshottingEnabled:(BOOL)enabled
+{
+    _preferences->setPlugInSnapshottingEnabled(enabled);
+}
+
+- (BOOL)_plugInSnapshottingEnabled
+{
+    return _preferences->plugInSnapshottingEnabled();
+}
+
+- (void)_setQTKitEnabled:(BOOL)enabled
+{
+    _preferences->setQTKitEnabled(enabled);
+}
+
+- (BOOL)_qtKitEnabled
+{
+    return _preferences->isQTKitEnabled();
+}
+
+- (void)_setSubpixelCSSOMElementMetricsEnabled:(BOOL)enabled
+{
+    _preferences->setSubpixelCSSOMElementMetricsEnabled(enabled);
+}
+
+- (BOOL)_subpixelCSSOMElementMetricsEnabled
+{
+    return _preferences->subpixelCSSOMElementMetricsEnabled();
+}
+
+- (void)_setMediaSourceEnabled:(BOOL)enabled
+{
+    _preferences->setMediaSourceEnabled(enabled);
+}
+
+- (BOOL)_mediaSourceEnabled
+{
+    return _preferences->mediaSourceEnabled();
+}
+
+- (void)_setViewGestureDebuggingEnabled:(BOOL)enabled
+{
+    _preferences->setViewGestureDebuggingEnabled(enabled);
+}
+
+- (BOOL)_viewGestureDebuggingEnabled
+{
+    return _preferences->viewGestureDebuggingEnabled();
+}
+
+- (void)_setCSSAnimationTriggersEnabled:(BOOL)enabled
+{
+    _preferences->setCSSAnimationTriggersEnabled(enabled);
+}
+
+- (BOOL)_cssAnimationTriggersEnabled
+{
+    return _preferences->cssAnimationTriggersEnabled();
+}
+
+- (void)_setStandardFontFamily:(NSString *)family
+{
+    _preferences->setStandardFontFamily(family);
+}
+
+- (NSString *)_standardFontFamily
+{
+    return _preferences->standardFontFamily();
+}
+
+- (void)_setNotificationsEnabled:(BOOL)enabled
+{
+    _preferences->setNotificationsEnabled(enabled);
+}
+
+- (BOOL)_notificationsEnabled
+{
+    return _preferences->notificationsEnabled();
+}
+
+- (void)_setBackspaceKeyNavigationEnabled:(BOOL)enabled
+{
+    _preferences->setBackspaceKeyNavigationEnabled(enabled);
+}
+
+- (BOOL)_backspaceKeyNavigationEnabled
+{
+    return _preferences->backspaceKeyNavigationEnabled();
+}
+
 - (void)_setWebGLEnabled:(BOOL)enabled
 {
     _preferences->setWebGLEnabled(enabled);

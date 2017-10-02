@@ -1,3 +1,70 @@
+2017-10-02  Alex Christensen  <achristensen@webkit.org>
+
+        Expose more WKPreferences SPI to match C SPI
+        https://bugs.webkit.org/show_bug.cgi?id=177697
+        <rdar://problem/24110556>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _setJavaEnabledForLocalFiles:]):
+        (-[WKPreferences _javaEnabledForLocalFiles]):
+        (-[WKPreferences _setCanvasUsesAcceleratedDrawing:]):
+        (-[WKPreferences _canvasUsesAcceleratedDrawing]):
+        (-[WKPreferences _setAcceleratedCompositingEnabled:]):
+        (-[WKPreferences _acceleratedCompositingEnabled]):
+        (-[WKPreferences _setDefaultTextEncodingName:]):
+        (-[WKPreferences _defaultTextEncodingName]):
+        (-[WKPreferences _setNeedsSiteSpecificQuirks:]):
+        (-[WKPreferences _needsSiteSpecificQuirks]):
+        (-[WKPreferences _setAuthorAndUserStylesEnabled:]):
+        (-[WKPreferences _authorAndUserStylesEnabled]):
+        (-[WKPreferences _setDOMTimersThrottlingEnabled:]):
+        (-[WKPreferences _domTimersThrottlingEnabled]):
+        (-[WKPreferences _setWebArchiveDebugModeEnabled:]):
+        (-[WKPreferences _webArchiveDebugModeEnabled]):
+        (-[WKPreferences _setLocalFileContentSniffingEnabled:]):
+        (-[WKPreferences _localFileContentSniffingEnabled]):
+        (-[WKPreferences _setUsesPageCache:]):
+        (-[WKPreferences _usesPageCache]):
+        (-[WKPreferences _setPageCacheSupportsPlugins:]):
+        (-[WKPreferences _pageCacheSupportsPlugins]):
+        (-[WKPreferences _setShouldPrintBackgrounds:]):
+        (-[WKPreferences _shouldPrintBackgrounds]):
+        (-[WKPreferences _setWebSecurityEnabled:]):
+        (-[WKPreferences _webSecurityEnabled]):
+        (-[WKPreferences _setUniversalAccessFromFileURLsAllowed:]):
+        (-[WKPreferences _universalAccessFromFileURLsAllowed]):
+        (-[WKPreferences _setAVFoundationEnabled:]):
+        (-[WKPreferences _avFoundationEnabled]):
+        (-[WKPreferences _setSuppressesIncrementalRendering:]):
+        (-[WKPreferences _suppressesIncrementalRendering]):
+        (-[WKPreferences _setAsynchronousPluginInitializationEnabled:]):
+        (-[WKPreferences _asynchronousPluginInitializationEnabled]):
+        (-[WKPreferences _setArtificialPluginInitializationDelayEnabled:]):
+        (-[WKPreferences _artificialPluginInitializationDelayEnabled]):
+        (-[WKPreferences _setCookieEnabled:]):
+        (-[WKPreferences _cookieEnabled]):
+        (-[WKPreferences _setPlugInSnapshottingEnabled:]):
+        (-[WKPreferences _plugInSnapshottingEnabled]):
+        (-[WKPreferences _setQTKitEnabled:]):
+        (-[WKPreferences _qtKitEnabled]):
+        (-[WKPreferences _setSubpixelCSSOMElementMetricsEnabled:]):
+        (-[WKPreferences _subpixelCSSOMElementMetricsEnabled]):
+        (-[WKPreferences _setMediaSourceEnabled:]):
+        (-[WKPreferences _mediaSourceEnabled]):
+        (-[WKPreferences _setViewGestureDebuggingEnabled:]):
+        (-[WKPreferences _viewGestureDebuggingEnabled]):
+        (-[WKPreferences _setCSSAnimationTriggersEnabled:]):
+        (-[WKPreferences _cssAnimationTriggersEnabled]):
+        (-[WKPreferences _setStandardFontFamily:]):
+        (-[WKPreferences _standardFontFamily]):
+        (-[WKPreferences _setNotificationsEnabled:]):
+        (-[WKPreferences _notificationsEnabled]):
+        (-[WKPreferences _setBackspaceKeyNavigationEnabled:]):
+        (-[WKPreferences _backspaceKeyNavigationEnabled]):
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+
 2017-10-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][WPE] Enable interactive forms validation by default
