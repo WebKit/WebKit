@@ -1,3 +1,45 @@
+2017-10-02  Filip Pizlo  <fpizlo@apple.com>
+
+        WSL should be fine with &foo()[i] if foo() returns a []
+        https://bugs.webkit.org/show_bug.cgi?id=177704
+
+        Reviewed by Saam Barati.
+        
+        Previously, we'd determine if a property access expression (base.field or base[index]) was an lvalue by
+        asking if its base was an lvalue. This is right in all cases except if the base is of type []. Then, the
+        property access expression is an lvalue so long as there is a setter or ander.
+        
+        This fixes the issue and adds a test.
+        
+        Also, this makes error messages in the case that something is not an lvalue a lot better. If something
+        is not an lvalue because we could not find anders or setters, then we will tell you why we could not
+        find them.
+
+        * WebGPUShadingLanguageRI/Checker.js:
+        (Checker.prototype.visitAssignment):
+        (Checker.prototype.visitReadModifyWriteExpression):
+        (Checker.prototype.visitMakePtrExpression):
+        (Checker.prototype._finishVisitingPropertyAccess):
+        * WebGPUShadingLanguageRI/DotExpression.js:
+        (DotExpression.prototype.get fieldName):
+        (DotExpression.prototype.get isLValue): Deleted.
+        (DotExpression.prototype.get addressSpace): Deleted.
+        * WebGPUShadingLanguageRI/IndexExpression.js:
+        (IndexExpression.prototype.get index):
+        (IndexExpression.prototype.get isLValue): Deleted.
+        (IndexExpression.prototype.get addressSpace): Deleted.
+        * WebGPUShadingLanguageRI/PropertyAccessExpression.js:
+        (PropertyAccessExpression):
+        (PropertyAccessExpression.prototype.get isLValue):
+        (PropertyAccessExpression.prototype.set isLValue):
+        * WebGPUShadingLanguageRI/PropertyResolver.js:
+        (PropertyResolver.prototype._visitRValuesWithinLValue.RValueFinder.prototype.visitMakeArrayRefExpression):
+        (PropertyResolver.prototype._visitRValuesWithinLValue.RValueFinder):
+        (PropertyResolver.prototype._visitRValuesWithinLValue):
+        * WebGPUShadingLanguageRI/Test.js:
+        (tests.storeNullArrayRef):
+        (tests.andReturnedArrayRef):
+
 2017-10-02  Wenson Hsieh  <wenson_hsieh@apple.com>
 
         Guard iOS webkitGetAsEntry API tests on older iOS versions

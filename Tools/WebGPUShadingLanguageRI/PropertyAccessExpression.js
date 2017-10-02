@@ -29,9 +29,16 @@ class PropertyAccessExpression extends Expression {
     {
         super(origin);
         this.base = base;
+        this._isLValue = null; // We use null to indicate that we don't know yet.
+        this.addressSpace = null;
+        this._notLValueReason = null;
     }
     
     get resultType() { return this.resultTypeForGet ? this.resultTypeForGet : this.resultTypeForAnd; }
+    get isLValue() { return this._isLValue; }
+    set isLValue(value) { this._isLValue = value; }
+    get notLValueReason() { return this._notLValueReason; }
+    set notLValueReason(value) { this._notLValueReason = value; }
     
     rewriteAfterCloning()
     {

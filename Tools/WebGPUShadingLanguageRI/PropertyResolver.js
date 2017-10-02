@@ -54,6 +54,11 @@ class PropertyResolver extends Visitor {
             {
                 node.target.visit(this);
             }
+            
+            visitMakeArrayRefExpression(node)
+            {
+                visit(node.lValue);
+            }
         }
         
         node.visit(new RValueFinder());

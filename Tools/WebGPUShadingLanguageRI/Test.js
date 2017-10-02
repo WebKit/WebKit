@@ -845,7 +845,7 @@ tests.storeNullArrayRef = function()
         () => doPrep(`
             void foo() { null[0u] = 42; }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("Cannot resolve access") != -1);
 }
 
 tests.returnNullArrayRef = function()
@@ -2752,7 +2752,7 @@ tests.assignLength = function()
                 (@array).length = 42;
             }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("LHS of assignment is not an LValue") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("Have neither ander nor setter") != -1);
 }
 
 tests.assignLengthHelper = function()
@@ -2769,7 +2769,7 @@ tests.assignLengthHelper = function()
                 bar(@array);
             }
         `),
-        (e) => e instanceof WTypeError && e.message.indexOf("Cannot emit set because: Did not find any functions named operator.length=") != -1);
+        (e) => e instanceof WTypeError && e.message.indexOf("Have neither ander nor setter") != -1);
 }
 
 tests.simpleGetter = function()
@@ -6551,6 +6551,24 @@ tests.indexAnderWithArrayRefInProtocol = function()
         }
     `);
     checkInt(program, callFunction(program, "foo", [], []), 1234);
+}
+
+tests.andReturnedArrayRef = function()
+{
+    let program = doPrep(`
+        thread int[] getArray()
+        {
+            int[10] x;
+            x[5] = 354;
+            return @x;
+        }
+        int foo()
+        {
+            thread int^ ptr = &getArray()[5];
+            return ^ptr;
+        }
+    `);
+    checkInt(program, callFunction(program, "foo", [], []), 354);
 }
 
 okToTest = true;

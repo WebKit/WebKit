@@ -329,9 +329,9 @@ class Checker extends Visitor {
     
     visitAssignment(node)
     {
-        if (!node.lhs.isLValue)
-            throw new WTypeError(node.origin.originString, "LHS of assignment is not an LValue: " + node.lhs);
         let lhsType = node.lhs.visit(this);
+        if (!node.lhs.isLValue)
+            throw new WTypeError(node.origin.originString, "LHS of assignment is not an LValue: " + node.lhs + node.lhs.notLValueReasonString);
         let rhsType = node.rhs.visit(this);
         if (!lhsType.equalsWithCommit(rhsType))
             throw new WTypeError(node.origin.originString, "Type mismatch in assignment: " + lhsType + " versus " + rhsType);
@@ -346,9 +346,9 @@ class Checker extends Visitor {
     
     visitReadModifyWriteExpression(node)
     {
-        if (!node.lValue.isLValue)
-            throw new WTypeError(node.origin.originString, "LHS of read-modify-write is not an LValue: " + node.lValue);
         let lhsType = node.lValue.visit(this);
+        if (!node.lValue.isLValue)
+            throw new WTypeError(node.origin.originString, "LHS of read-modify-write is not an LValue: " + node.lValue + node.lValue.notLValueReasonString);
         node.oldValueVar.type = lhsType;
         node.newValueVar.type = lhsType;
         node.oldValueVar.visit(this);
@@ -379,10 +379,9 @@ class Checker extends Visitor {
     
     visitMakePtrExpression(node)
     {
-        if (!node.lValue.isLValue)
-            throw new WTypeError(node.origin.originString, "Operand to & is not an LValue: " + node.lValue);
-        
         let elementType = node.lValue.visit(this).unifyNode;
+        if (!node.lValue.isLValue)
+            throw new WTypeError(node.origin.originString, "Operand to & is not an LValue: " + node.lValue + node.lValue.notLValueReasonString);
         
         return new PtrType(node.origin, node.lValue.addressSpace, elementType);
     }
@@ -396,7 +395,7 @@ class Checker extends Visitor {
         }
         
         if (!node.lValue.isLValue)
-            throw new WTypeError(node.origin.originString, "Operand to @ is not an LValue: " + node.lValue);
+            throw new WTypeError(node.origin.originString, "Operand to @ is not an LValue: " + node.lValue + node.lValue.notLValueReasonString);
         
         if (elementType.isArray) {
             node.numElements = elementType.numElements;
@@ -456,9 +455,9 @@ class Checker extends Visitor {
             throw new WTypeError(
                 node.origin.originString,
                 "Cannot resolve access; tried by-value:\n" +
-                errorForGet.message + "\n" +
+                errorForGet.typeErrorMessage + "\n" +
                 "and tried by-pointer:\n" +
-                errorForAnd.message);
+                errorForAnd.typeErrorMessage);
         }
         
         if (node.resultTypeForGet && node.resultTypeForAnd
@@ -476,6 +475,24 @@ class Checker extends Visitor {
             if (!(e instanceof WTypeError))
                 throw e;
             node.errorForSet = e;
+        }
+        
+        // OK, now we need to determine if we are an lvalue. We are an lvalue if we can be assigned to. We can
+        // be assigned to if we have an ander or setter. But it's weirder than that. We also need the base to be
+        // an lvalue, except unless the base is an array reference.
+        if (!node.callForAnd && !node.callForSet) {
+            node.isLValue = false;
+            node.notLValueReason =
+                "Have neither ander nor setter. Tried setter:\n" +
+                node.errorForSet.typeErrorMessage + "\n" +
+                "and tried ander:\n" +
+                errorForAnd.typeErrorMessage;
+        } else if (!node.base.isLValue && !baseType.isArrayRef) {
+            node.isLValue = false;
+            node.notLValueReason = "Base of property access is neither a lvalue nor an array reference";
+        } else {
+            node.isLValue = true;
+            node.addressSpace = node.base.isLValue ? node.base.addressSpace : baseType.addressSpace;
         }
         
         return node.resultType;

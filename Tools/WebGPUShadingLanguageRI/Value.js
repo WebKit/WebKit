@@ -28,6 +28,15 @@ class Value extends Node {
     get kind() { return Value; }
     get isConstexpr() { return false; }
     get isLValue() { return false; }
+    get notLValueReason() { return null; }
+    
+    get notLValueReasonString()
+    {
+        let result = this.notLValueReason;
+        if (result)
+            return "\n" + result;
+        return "";
+    }
     
     become(otherValue)
     {

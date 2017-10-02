@@ -33,8 +33,6 @@ class IndexExpression extends PropertyAccessExpression {
     
     get array() { return this.base; }
     get index() { return this._index; }
-    get isLValue() { return this.array.isLValue; }
-    get addressSpace() { return this.array.addressSpace; }
     
     get getFuncName() { return "operator[]"; }
     get andFuncName() { return "operator&[]"; }

@@ -33,8 +33,6 @@ class DotExpression extends PropertyAccessExpression {
     
     get struct() { return this.base; }
     get fieldName() { return this._fieldName; }
-    get isLValue() { return this.struct.isLValue; }
-    get addressSpace() { return this.struct.addressSpace; }
     
     get getFuncName() { return "operator." + this.fieldName; }
     get andFuncName() { return "operator&." + this.fieldName; }
