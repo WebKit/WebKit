@@ -225,17 +225,19 @@ WI.LayerDetailsSidebarPanel = class LayerDetailsSidebarPanel extends WI.DetailsS
                 return;
 
             this._popover = this._popover || new WI.Popover(this);
-            this._popover.content = content;
             this._popover.windowResizeHandler = () => { this._presentPopover(); };
 
-            this._presentPopover();
+            this._presentPopover(content);
         });
     }
 
-    _presentPopover()
+    _presentPopover(content)
     {
         let targetFrame = WI.Rect.rectFromClientRect(this._dataGrid.selectedNode.element.getBoundingClientRect());
-        this._popover.present(targetFrame.pad(2), [WI.RectEdge.MIN_X]);
+        if (content)
+            this._popover.presentNewContentWithFrame(content, targetFrame.pad(2), [WI.RectEdge.MIN_X]);
+        else
+            this._popover.present(targetFrame.pad(2), [WI.RectEdge.MIN_X]);
     }
 
     _contentForPopover(layer, callback)

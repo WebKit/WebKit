@@ -347,9 +347,9 @@ WI.LayerTreeDetailsSidebarPanel = class LayerTreeDetailsSidebarPanel extends WI.
         var targetFrame = WI.Rect.rectFromClientRect(dataGridNode.element.getBoundingClientRect());
 
         if (content)
-            popover.content = content;
-
-        popover.present(targetFrame.pad(2), [WI.RectEdge.MIN_X]);
+            this._popover.presentNewContentWithFrame(content, targetFrame.pad(2), [WI.RectEdge.MIN_X]);
+        else
+            popover.present(targetFrame.pad(2), [WI.RectEdge.MIN_X]);
     }
 
     _hidePopover()
