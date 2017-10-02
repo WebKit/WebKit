@@ -1,3 +1,17 @@
+2017-10-02  Michael Catanzaro  <mcatanzaro@igalia.com>
+
+        Remove ENABLE_CSS_REGIONS
+        https://bugs.webkit.org/show_bug.cgi?id=177689
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.cpp:
+        (webkit_dom_element_get_webkit_region_overset):
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMDeprecated.h:
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.cpp:
+        (webkit_dom_element_get_webkit_region_overset): Deleted.
+        * WebProcess/InjectedBundle/API/gtk/DOM/WebKitDOMElement.h:
+
 2017-09-30  Darin Adler  <darin@apple.com>
 
         Have IPC::Connection::Client objects consistently invalidate the connection when destroyed

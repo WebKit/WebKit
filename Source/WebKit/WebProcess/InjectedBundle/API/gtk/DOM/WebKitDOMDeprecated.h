@@ -470,6 +470,19 @@ webkit_dom_html_base_font_element_get_size(WebKitDOMHTMLBaseFontElement* self);
 WEBKIT_DEPRECATED void
 webkit_dom_html_base_font_element_set_size(WebKitDOMHTMLBaseFontElement* self, glong value);
 
+/**
+ * webkit_dom_element_get_webkit_region_overset:
+ * @self: A #WebKitDOMElement
+ *
+ * CSS Regions support has been removed. This function does nothing.
+ *
+ * Returns: %NULL
+ *
+ * Deprecated: 2.20
+**/
+WEBKIT_DEPRECATED gchar*
+webkit_dom_element_get_webkit_region_overset(WebKitDOMElement* self);
+
 G_END_DECLS
 
 #endif /* WEBKIT_DISABLE_DEPRECATED */

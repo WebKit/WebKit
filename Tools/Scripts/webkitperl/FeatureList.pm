@@ -62,7 +62,6 @@ my (
     $cssImageOrientationSupport,
     $cssImageResolutionSupport,
     $cssImageSetSupport,
-    $cssRegionsSupport,
     $cssShapesSupport,
     $customElementsSupport,
     $customSchemeHandlerSupport,
@@ -174,9 +173,6 @@ my @features = (
 
     { option => "css-image-set", desc => "Toggle CSS image-set support",
       define => "ENABLE_CSS_IMAGE_SET", default => (isGtk() || isWPE()), value => \$cssImageSetSupport },
-
-    { option => "css-regions", desc => "Toggle CSS Regions support",
-      define => "ENABLE_CSS_REGIONS", default => 0, value => \$cssRegionsSupport },
 
     { option => "css-shapes", desc => "Toggle CSS Shapes support",
       define => "ENABLE_CSS_SHAPES", default => 1, value => \$cssShapesSupport },

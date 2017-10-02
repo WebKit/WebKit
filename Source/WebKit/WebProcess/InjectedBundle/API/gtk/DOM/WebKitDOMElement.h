@@ -786,17 +786,6 @@ webkit_dom_element_remove(WebKitDOMElement* self, GError** error);
 WEBKIT_API WebKitDOMDOMTokenList*
 webkit_dom_element_get_class_list(WebKitDOMElement* self);
 
-/**
- * webkit_dom_element_get_webkit_region_overset:
- * @self: A #WebKitDOMElement
- *
- * Returns: A #gchar
- *
- * Since: 2.16
-**/
-WEBKIT_API gchar*
-webkit_dom_element_get_webkit_region_overset(WebKitDOMElement* self);
-
 G_END_DECLS
 
 #endif /* WebKitDOMElement_h */

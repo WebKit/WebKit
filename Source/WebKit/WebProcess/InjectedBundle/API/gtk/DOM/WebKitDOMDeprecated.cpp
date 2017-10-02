@@ -319,3 +319,9 @@ void webkit_dom_html_base_font_element_set_size(WebKitDOMHTMLBaseFontElement*, g
 {
     g_warning("%s: HTMLBaseFont has been removed from DOM spec, this function does nothing.", __func__);
 }
+
+gchar* webkit_dom_element_get_webkit_region_overset(WebKitDOMElement*)
+{
+    g_warning("%s: CSS Regions support has been removed, this function does nothing.", __func__);
+    return nullptr;
+}

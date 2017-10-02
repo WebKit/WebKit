@@ -246,7 +246,8 @@ static void webkit_dom_element_get_property(GObject* object, guint propertyId, G
         g_value_set_object(value, webkit_dom_element_get_class_list(self));
         break;
     case PROP_WEBKIT_REGION_OVERSET:
-        g_value_take_string(value, webkit_dom_element_get_webkit_region_overset(self));
+        g_warning("%s: CSS Regions support has been removed, the webkit-region-overset property no longer works.", __func__);
+        g_value_set_static_string(value, nullptr);
         break;
     case PROP_PREVIOUS_ELEMENT_SIBLING:
         g_value_set_object(value, webkit_dom_element_get_previous_element_sibling(self));
@@ -518,6 +519,13 @@ static void webkit_dom_element_class_init(WebKitDOMElementClass* requestClass)
             WEBKIT_DOM_TYPE_DOM_TOKEN_LIST,
             WEBKIT_PARAM_READABLE));
 
+    /**
+     * WebKitDOMElement:webkit-region-overset:
+     *
+     * This property is always %NULL.
+     *
+     * Deprecated: 2.20
+     */
     g_object_class_install_property(
         gobjectClass,
         PROP_WEBKIT_REGION_OVERSET,
@@ -1324,21 +1332,6 @@ WebKitDOMDOMTokenList* webkit_dom_element_get_class_list(WebKitDOMElement* self)
     WebCore::Element* item = WebKit::core(self);
     RefPtr<WebCore::DOMTokenList> gobjectResult = WTF::getPtr(item->classList());
     return WebKit::kit(gobjectResult.get());
-}
-
-gchar* webkit_dom_element_get_webkit_region_overset(WebKitDOMElement* self)
-{
-#if ENABLE(CSS_REGIONS)
-    WebCore::JSMainThreadNullState state;
-    g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
-    WebCore::Element* item = WebKit::core(self);
-    gchar* result = convertToUTF8String(item->webkitRegionOverset());
-    return result;
-#else
-    UNUSED_PARAM(self);
-    WEBKIT_WARN_FEATURE_NOT_PRESENT("Css Regions")
-    return 0;
-#endif /* ENABLE(CSS_REGIONS) */
 }
 
 WebKitDOMElement* webkit_dom_element_get_previous_element_sibling(WebKitDOMElement* self)
