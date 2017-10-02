@@ -1,3 +1,21 @@
+2017-10-02  Charles Turner  <cturner@igalia.com>
+
+        Try to play AVC codec even if H.264 decoder only advertises byte-stream profile.
+        https://bugs.webkit.org/show_bug.cgi?id=177550
+
+        GStreamer's element factory filters will claim they can't play videos with AVC
+        codec strings, but the elements really are capable of playing them when filters
+        like videoconvert are inserted by playbin. Videos of this variety are in the YouTube
+        2018 EME conformance tests.
+
+        Also replace std::array with a stack array, this saves having to count
+        the number of elements (the compiler does that now) and reduces braces.
+
+        Reviewed by Carlos Alberto Lopez Perez.
+
+        * platform/graphics/gstreamer/mse/MediaPlayerPrivateGStreamerMSE.cpp:
+        (WebCore::codecSet):
+
 2017-10-02  Tomas Popela  <tpopela@redhat.com>
 
         [SOUP] Default kerberos authentication credentials are used in ephemeral (private) mode
