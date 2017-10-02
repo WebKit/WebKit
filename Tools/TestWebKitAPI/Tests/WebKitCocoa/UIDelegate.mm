@@ -419,7 +419,7 @@ TEST(WebKit, NotificationPermission)
 TEST(WebKit, UnavailablePlugIn)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    [[configuration preferences] _setPlugInsEnabled:YES];
+    [[configuration preferences] setPlugInsEnabled:YES];
     auto delegate = adoptNS([[PlugInDelegate alloc] init]);
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
     [webView setUIDelegate:delegate.get()];
