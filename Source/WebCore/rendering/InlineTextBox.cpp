@@ -144,8 +144,9 @@ RenderObject::SelectionState InlineTextBox::selectionState()
 {
     RenderObject::SelectionState state = renderer().selectionState();
     if (state == RenderObject::SelectionStart || state == RenderObject::SelectionEnd || state == RenderObject::SelectionBoth) {
-        unsigned startPos, endPos;
-        renderer().view().getSelectionStartEnd(startPos, endPos);
+        auto& selection = renderer().view().selection();
+        auto startPos = selection.startPosition();
+        auto endPos = selection.endPosition();
         // The position after a hard line break is considered to be past its end.
         ASSERT(start() + len() >= (isLineBreak() ? 1 : 0));
         unsigned lastSelectable = start() + len() - (isLineBreak() ? 1 : 0);
@@ -639,9 +640,8 @@ std::pair<unsigned, unsigned> InlineTextBox::selectionStartEnd() const
     if (selectionState == RenderObject::SelectionInside)
         return { 0, m_len };
     
-    unsigned start;
-    unsigned end;
-    renderer().view().getSelectionStartEnd(start, end);
+    auto start = renderer().view().selection().startPosition();
+    auto end = renderer().view().selection().endPosition();
     if (selectionState == RenderObject::SelectionStart)
         end = renderer().textLength();
     else if (selectionState == RenderObject::SelectionEnd)

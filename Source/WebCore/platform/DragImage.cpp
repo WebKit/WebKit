@@ -135,21 +135,20 @@ struct ScopedFrameSelectionState {
     ScopedFrameSelectionState(Frame& frame)
         : frame(frame)
     {
-        if (RenderView* root = frame.contentRenderer())
-            root->getSelection(startRenderer, startOffset, endRenderer, endOffset);
+        if (auto* renderView = frame.contentRenderer())
+            selection = renderView->selection().get();
     }
 
     ~ScopedFrameSelectionState()
     {
-        if (RenderView* root = frame.contentRenderer())
-            root->setSelection(startRenderer, startOffset, endRenderer, endOffset, RenderView::RepaintNothing);
+        if (auto* renderView = frame.contentRenderer()) {
+            ASSERT(selection);
+            renderView->selection().set(selection.value(), SelectionRangeData::RepaintMode::Nothing);
+        }
     }
 
     const Frame& frame;
-    RenderObject* startRenderer;
-    RenderObject* endRenderer;
-    std::optional<unsigned> startOffset;
-    std::optional<unsigned> endOffset;
+    std::optional<SelectionRangeData::Context> selection;
 };
 
 #if !PLATFORM(IOS)
@@ -186,10 +185,10 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
     int startOffset = start.deprecatedEditingOffset();
     int endOffset = end.deprecatedEditingOffset();
     ASSERT(startOffset >= 0 && endOffset >= 0);
-    view->setSelection(startRenderer, startOffset, endRenderer, endOffset, RenderView::RepaintNothing);
+    view->selection().set({ startRenderer, endRenderer, startOffset, endOffset }, SelectionRangeData::RepaintMode::Nothing);
     // We capture using snapshotFrameRect() because we fake up the selection using
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
-    return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selectionBounds(), options), nullptr);
+    return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), options), nullptr);
 }
 
 #endif

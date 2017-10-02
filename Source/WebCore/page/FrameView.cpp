@@ -4522,8 +4522,8 @@ void FrameView::paintContentsForSnapshot(GraphicsContext& context, const IntRect
     // after we paint the snapshot.
     if (shouldPaintSelection == ExcludeSelection) {
         for (auto* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
-            if (RenderView* root = frame->contentRenderer())
-                root->clearSelection();
+            if (auto* renderView = frame->contentRenderer())
+                renderView->selection().clear();
         }
     }
 

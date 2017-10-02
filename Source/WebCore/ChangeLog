@@ -1,3 +1,98 @@
+2017-10-01  Zalan Bujtas  <zalan@apple.com>
+
+        RenderView does not need to be a SelectionSubtreeRoot
+        https://bugs.webkit.org/show_bug.cgi?id=177713
+
+        Reviewed by Darin Adler and Antti Koivisto.
+
+        1. SelectionSubtreeRoot -> SelectionRangeData 
+        2. Move all selection logic from RenderView to SelectionRangeData
+        3. class RenderView : public SelectionSubtreeRoot -> SelectionRangeData m_selection;
+        4. Remove redundant code
+        5. General modernization
+ 
+        No change in functionality.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setNeedsSelectionUpdate):
+        (WebCore::DragCaretController::nodeWillBeRemoved):
+        (WebCore::FrameSelection::respondToNodeModification):
+        (WebCore::FrameSelection::prepareForDestruction):
+        (WebCore::FrameSelection::focusedOrActiveStateChanged):
+        (WebCore::FrameSelection::updateAppearance):
+        (WebCore::FrameSelection::selectionBounds const):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::paintContentsForSnapshot):
+        * platform/DragImage.cpp:
+        (WebCore::ScopedFrameSelectionState::ScopedFrameSelectionState):
+        (WebCore::ScopedFrameSelectionState::~ScopedFrameSelectionState):
+        (WebCore::createDragImageForRange):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionState):
+        (WebCore::InlineTextBox::selectionStartEnd const):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot const):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::isSelectionBorder const):
+        * rendering/RenderObject.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::isSelected const):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::collectSelectionRectsForLineBoxes):
+        * rendering/RenderTextLineBoxes.cpp:
+        (WebCore::RenderTextLineBoxes::setSelectionState):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::SelectionIterator::SelectionIterator): Deleted.
+        (WebCore::SelectionIterator::current const): Deleted.
+        (WebCore::SelectionIterator::next): Deleted.
+        (WebCore::SelectionIterator::checkForSpanner): Deleted.
+        (WebCore::rendererAfterPosition): Deleted.
+        (WebCore::RenderView::selectionBounds const): Deleted.
+        (WebCore::RenderView::subtreeSelectionBounds const): Deleted.
+        (WebCore::RenderView::repaintSelection const): Deleted.
+        (WebCore::RenderView::repaintSubtreeSelection const): Deleted.
+        (WebCore::RenderView::setSelection): Deleted.
+        (WebCore::isValidObjectForNewSelection): Deleted.
+        (WebCore::RenderView::clearSubtreeSelection const): Deleted.
+        (WebCore::RenderView::applySubtreeSelection): Deleted.
+        (WebCore::RenderView::getSelection const): Deleted.
+        (WebCore::RenderView::clearSelection): Deleted.
+        * rendering/RenderView.h:
+        * rendering/SelectionSubtreeRoot.cpp:
+        (WebCore::rendererAfterPosition):
+        (WebCore::SelectionIterator::SelectionIterator):
+        (WebCore::SelectionIterator::current const):
+        (WebCore::SelectionIterator::next):
+        (WebCore::SelectionIterator::checkForSpanner):
+        (WebCore::SelectionRangeData::SelectionRangeData):
+        (WebCore::SelectionRangeData::set):
+        (WebCore::SelectionRangeData::clear):
+        (WebCore::SelectionRangeData::repaint const):
+        (WebCore::SelectionRangeData::bounds const):
+        (WebCore::SelectionRangeData::collectAndClear const):
+        (WebCore::SelectionRangeData::apply):
+        (WebCore::SelectionRangeData::isValidRendererForNewSelection const):
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeRoot): Deleted.
+        * rendering/SelectionSubtreeRoot.h:
+        (WebCore::SelectionRangeData::Context::operator== const):
+        (WebCore::SelectionRangeData::get const):
+        (WebCore::SelectionRangeData::start const):
+        (WebCore::SelectionRangeData::end const):
+        (WebCore::SelectionRangeData::startPosition const):
+        (WebCore::SelectionRangeData::endPosition const):
+        (WebCore::SelectionSubtreeRoot::OldSelectionData::OldSelectionData): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::SelectionSubtreeData): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStart const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStartPos const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionEnd const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionEndPos const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::selectionStartEndPositions const): Deleted.
+        (WebCore::SelectionSubtreeRoot::SelectionSubtreeData::clearSelection): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionData): Deleted.
+        (WebCore::SelectionSubtreeRoot::selectionData const): Deleted.
+        (WebCore::SelectionSubtreeRoot::setSelectionData): Deleted.
+
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
         [Settings] Enums should not be passed by const reference

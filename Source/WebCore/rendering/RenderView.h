@@ -26,14 +26,10 @@
 #include "Region.h"
 #include "RenderBlockFlow.h"
 #include "RenderWidget.h"
-#include "SelectionSubtreeRoot.h"
+#include "SelectionRangeData.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
-
-#if ENABLE(SERVICE_CONTROLS)
-#include "SelectionRectGatherer.h"
-#endif
 
 namespace WebCore {
 
@@ -41,7 +37,7 @@ class ImageQualityController;
 class RenderLayerCompositor;
 class RenderQuote;
 
-class RenderView final : public RenderBlockFlow, public SelectionSubtreeRoot {
+class RenderView final : public RenderBlockFlow {
 public:
     RenderView(Document&, RenderStyle&&);
     virtual ~RenderView();
@@ -85,15 +81,7 @@ public:
     // Return the renderer whose background style is used to paint the root background.
     RenderElement* rendererForRootBackground() const;
 
-    enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld, RepaintNothing };
-    void setSelection(RenderObject* start, std::optional<unsigned> startPos, RenderObject* endObject, std::optional<unsigned> endPos, SelectionRepaintMode = RepaintNewXOROld);
-    void getSelection(RenderObject*& startRenderer, std::optional<unsigned>& startOffset, RenderObject*& endRenderer, std::optional<unsigned>& endOffset) const;
-    void clearSelection();
-    RenderObject* selectionUnsplitStart() const { return m_selectionUnsplitStart; }
-    RenderObject* selectionUnsplitEnd() const { return m_selectionUnsplitEnd; }
-    IntRect selectionBounds(bool clipToVisibleContent = true) const;
-    void repaintSelection() const;
-    void getSelectionStartEnd(unsigned& start, unsigned& end) const { selectionData().selectionStartEndPositions(start, end); }
+    SelectionRangeData& selection() { return m_selection; }
 
     bool printing() const;
 
@@ -312,23 +300,14 @@ private:
 
     bool isScrollableOrRubberbandableBox() const override;
 
-    void clearSubtreeSelection(SelectionRepaintMode blockRepaintMode, OldSelectionData&) const;
-    void applySubtreeSelection(SelectionRepaintMode, const OldSelectionData&);
-    LayoutRect subtreeSelectionBounds(bool clipToVisibleContent = true) const;
-    void repaintSubtreeSelection() const;
-
 private:
     FrameView& m_frameView;
-
-    RenderObject* m_selectionUnsplitStart { nullptr };
-    RenderObject* m_selectionUnsplitEnd { nullptr };
-    std::optional<unsigned> m_selectionUnsplitStartPos;
-    std::optional<unsigned> m_selectionUnsplitEndPos;
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
+    SelectionRangeData m_selection;
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {
@@ -360,7 +339,6 @@ private:
     unsigned m_renderCounterCount { 0 };
     unsigned m_renderTreeInternalMutationCounter { 0 };
 
-    bool m_selectionWasCaret { false };
     bool m_hasSoftwareFilters { false };
     bool m_usesFirstLineRules { false };
     bool m_usesFirstLetterRules { false };
@@ -372,9 +350,6 @@ private:
     HashSet<RenderElement*> m_visibleInViewportRenderers;
     Vector<RefPtr<RenderWidget>> m_protectedRenderWidgets;
 
-#if ENABLE(SERVICE_CONTROLS)
-    SelectionRectGatherer m_selectionRectGatherer;
-#endif
 #if ENABLE(CSS_SCROLL_SNAP)
     HashSet<const RenderBox*> m_boxesWithScrollSnapPositions;
 #endif

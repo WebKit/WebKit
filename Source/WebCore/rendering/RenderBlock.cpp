@@ -1865,8 +1865,8 @@ bool RenderBlock::isSelectionRoot() const
         || isRenderFragmentedFlow() || style().columnSpan() == ColumnSpanAll)
         return true;
     
-    if (view().selectionUnsplitStart()) {
-        Node* startElement = view().selectionUnsplitStart()->node();
+    if (view().selection().start()) {
+        Node* startElement = view().selection().start()->node();
         if (startElement && startElement->rootEditableElement() == element())
             return true;
     }

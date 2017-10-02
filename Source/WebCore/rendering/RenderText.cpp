@@ -1441,13 +1441,15 @@ LayoutRect RenderText::collectSelectionRectsForLineBoxes(const RenderLayerModelO
 
     // Now calculate startPos and endPos for painting selection.
     // We include a selection while endPos > 0
-    unsigned startPos, endPos;
+    unsigned startPos;
+    unsigned endPos;
     if (selectionState() == SelectionInside) {
         // We are fully selected.
         startPos = 0;
         endPos = textLength();
     } else {
-        view().getSelectionStartEnd(startPos, endPos);
+        startPos = view().selection().startPosition();
+        endPos = view().selection().endPosition();
         if (selectionState() == SelectionStart)
             endPos = textLength();
         else if (selectionState() == SelectionEnd)

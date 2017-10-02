@@ -387,7 +387,7 @@ void FrameSelection::setNeedsSelectionUpdate()
 {
     m_pendingSelectionUpdate = true;
     if (RenderView* view = m_frame->contentRenderer())
-        view->clearSelection();
+        view->selection().clear();
 }
 
 void FrameSelection::updateAndRevealSelection(const AXTextStateChangeIntent& intent)
@@ -443,7 +443,7 @@ void DragCaretController::nodeWillBeRemoved(Node& node)
         return;
 
     if (RenderView* view = node.document().renderView())
-        view->clearSelection();
+        view->selection().clear();
 
     clear();
 }
@@ -506,7 +506,7 @@ void FrameSelection::respondToNodeModification(Node& node, bool baseRemoved, boo
 
     if (clearRenderTreeSelection) {
         if (auto* renderView = node.document().renderView()) {
-            renderView->clearSelection();
+            renderView->selection().clear();
 
             // Trigger a selection update so the selection will be set again.
             m_pendingSelectionUpdate = true;
@@ -1517,9 +1517,8 @@ void FrameSelection::prepareForDestruction()
     m_caretBlinkTimer.stop();
 #endif
 
-    RenderView* view = m_frame->contentRenderer();
-    if (view)
-        view->clearSelection();
+    if (auto* view = m_frame->contentRenderer())
+        view->selection().clear();
 
     setSelectionWithoutUpdatingAppearance(VisibleSelection(), defaultSetSelectionOptions(), AlignCursorOnScrollIfNeeded, CharacterGranularity);
     m_previousCaretNode = nullptr;
@@ -1995,7 +1994,7 @@ void FrameSelection::focusedOrActiveStateChanged()
     // RenderObject::selectionForegroundColor() check if the frame is active,
     // we have to update places those colors were painted.
     if (RenderView* view = document->renderView())
-        view->repaintSelection();
+        view->selection().repaint();
 
     // Caret appears in the active frame.
     if (activeAndFocused)
@@ -2090,7 +2089,7 @@ void FrameSelection::updateAppearance()
 #endif
 
     if (!selection.isRange()) {
-        view->clearSelection();
+        view->selection().clear();
         return;
     }
 
@@ -2115,7 +2114,7 @@ void FrameSelection::updateAppearance()
         RenderObject* endRenderer = endPos.deprecatedNode()->renderer();
         int endOffset = endPos.deprecatedEditingOffset();
         ASSERT(startOffset >= 0 && endOffset >= 0);
-        view->setSelection(startRenderer, startOffset, endRenderer, endOffset);
+        view->selection().set({ startRenderer, endRenderer, startOffset, endOffset });
     }
 }
 
@@ -2232,13 +2231,13 @@ FloatRect FrameSelection::selectionBounds(bool clipToVisibleContent) const
         return LayoutRect();
 
     updateSelectionByUpdatingLayoutOrStyle(*m_frame);
-    RenderView* root = m_frame->contentRenderer();
-    FrameView* view = m_frame->view();
-    if (!root || !view)
+    auto* renderView = m_frame->contentRenderer();
+    if (!renderView)
         return LayoutRect();
 
-    LayoutRect selectionRect = root->selectionBounds(clipToVisibleContent);
-    return clipToVisibleContent ? intersection(selectionRect, view->visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect)) : selectionRect;
+    auto& selection = renderView->selection();
+    auto selectionRect = clipToVisibleContent ? selection.boundsClippedToVisibleContent() : selection.bounds();
+    return clipToVisibleContent ? intersection(selectionRect, renderView->frameView().visibleContentRect(ScrollableArea::LegacyIOSDocumentVisibleRect)) : selectionRect;
 }
 
 void FrameSelection::getClippedVisibleTextRectangles(Vector<FloatRect>& rectangles, TextRectangleHeight textRectHeight) const

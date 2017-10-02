@@ -2749,7 +2749,7 @@ set(WebCore_SOURCES
     rendering/RenderWidget.cpp
     rendering/RootInlineBox.cpp
     rendering/ScrollAlignment.cpp
-    rendering/SelectionSubtreeRoot.cpp
+    rendering/SelectionRangeData.cpp
     rendering/SimpleLineLayout.cpp
     rendering/SimpleLineLayoutCoverage.cpp
     rendering/SimpleLineLayoutFlowContents.cpp

@@ -1417,8 +1417,8 @@ bool RenderObject::isSelectionBorder() const
     return st == SelectionStart
         || st == SelectionEnd
         || st == SelectionBoth
-        || view().selectionUnsplitStart() == this
-        || view().selectionUnsplitEnd() == this;
+        || view().selection().start() == this
+        || view().selection().end() == this;
 }
 
 void RenderObject::willBeDestroyed()

@@ -62,7 +62,7 @@ class RenderLayer;
 class RenderLayerModelObject;
 class RenderFragmentContainer;
 class RenderTheme;
-class SelectionSubtreeRoot;
+class SelectionRangeData;
 class TransformState;
 class VisiblePosition;
 

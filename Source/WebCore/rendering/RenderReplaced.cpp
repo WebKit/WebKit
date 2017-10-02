@@ -644,23 +644,22 @@ void RenderReplaced::setSelectionState(SelectionState state)
 
 bool RenderReplaced::isSelected() const
 {
-    SelectionState s = selectionState();
-    if (s == SelectionNone)
+    SelectionState state = selectionState();
+    if (state == SelectionNone)
         return false;
-    if (s == SelectionInside)
+    if (state == SelectionInside)
         return true;
 
-    unsigned selectionStart, selectionEnd;
-    view().getSelectionStartEnd(selectionStart, selectionEnd);
-    if (s == SelectionStart)
-        return selectionStart == 0;
-        
+    auto selectionStart = view().selection().startPosition();
+    auto selectionEnd = view().selection().endPosition();
+    if (state == SelectionStart)
+        return !selectionStart;
+
     unsigned end = element()->hasChildNodes() ? element()->countChildNodes() : 1;
-    if (s == SelectionEnd)
+    if (state == SelectionEnd)
         return selectionEnd == end;
-    if (s == SelectionBoth)
-        return selectionStart == 0 && selectionEnd == end;
-        
+    if (state == SelectionBoth)
+        return !selectionStart && selectionEnd == end;
     ASSERT_NOT_REACHED();
     return false;
 }
