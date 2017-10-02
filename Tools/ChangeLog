@@ -1,3 +1,25 @@
+2017-10-02  Jonathan Bedard  <jbedard@apple.com>
+
+        Log stack-trace for run-webkit-tests when interrupted
+        https://bugs.webkit.org/show_bug.cgi?id=176393
+        <rdar://problem/34262310>
+
+        Reviewed by Darin Adler.
+
+        When run-webkit-tests is stuck, it is difficult to immediately tell
+        why. Saving a stack-trace when run-webkit-tests is terminated
+        or stopped with CNTRL-C will make such issues easier to debug.
+
+        * Scripts/webkitpy/common/interupt_debugging.py: Added.
+        (log_stack_trace): Given a Python frame object, log a stack trace to
+        the provided file.
+        (log_stack_trace_on_term): Attach a listener to SIGTERM so that a
+        stack-trace can be logged when a program is terminated.
+        (log_stack_trace_on_cntrl_c): Attach a listener to SIGINT so that a
+        stack-trace can be logged when a program is CNTRL-Ced. 
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main): Set handlers to log stack trace on interruption.
+
 2017-10-02  Michael Catanzaro  <mcatanzaro@igalia.com>
 
         Remove ENABLE_CSS_REGIONS
