@@ -278,7 +278,7 @@ private:
 #if PLATFORM(COCOA)
     Vector<String> readFilenames();
     String readPlatformValueAsString(const String& domType, long changeCount, const String& pasteboardName);
-    static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName);
+    static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType);
     String readStringForPlatformType(const String&);
     Vector<String> readTypesWithSecurityCheck();
     RefPtr<SharedBuffer> readBufferForTypeWithSecurityCheck(const String&);

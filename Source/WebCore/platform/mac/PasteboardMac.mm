@@ -494,7 +494,7 @@ static String utiTypeFromCocoaType(const String& type)
     return String();
 }
 
-void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String& pasteboardName)
+void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType)
 {
     if (cocoaType == "NeXT plain ascii pasteboard type")
         return; // Skip this ancient type that gets auto-supplied by some system conversion.
@@ -508,20 +508,8 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
         resultTypes.add(ASCIILiteral("text/uri-list"));
         return;
     }
-    if (cocoaType == String(NSFilenamesPboardType)) {
-        // If file list is empty, add nothing.
-        // Note that there is a chance that the file list count could have changed since we grabbed the types array.
-        // However, this is not really an issue for us doing a sanity check here.
-        Vector<String> fileList;
-        platformStrategies()->pasteboardStrategy()->getPathnamesForType(fileList, String(NSFilenamesPboardType), pasteboardName);
-        if (!fileList.isEmpty())
-            resultTypes.add(ASCIILiteral("Files"));
+    if (cocoaType == String(NSFilenamesPboardType) || Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))
         return;
-    }
-    if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType)) {
-        resultTypes.add(ASCIILiteral("Files"));
-        return;
-    }
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
         resultTypes.add(utiType);

@@ -345,7 +345,7 @@ String Pasteboard::readPlatformValueAsString(const String& domType, long changeC
     return String();
 }
 
-void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType, const String&)
+void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, const String& cocoaType)
 {
     // UTI may not do these right, so make sure we get the right, predictable result.
     if ([cocoaType isEqualToString:(NSString *)kUTTypePlainText]
@@ -358,10 +358,8 @@ void Pasteboard::addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTy
         resultTypes.add(ASCIILiteral("text/uri-list"));
         return;
     }
-    if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType)) {
-        resultTypes.add(ASCIILiteral("Files"));
+    if (Pasteboard::shouldTreatCocoaTypeAsFile(cocoaType))
         return;
-    }
     String utiType = utiTypeFromCocoaType(cocoaType);
     if (!utiType.isEmpty()) {
         resultTypes.add(utiType);

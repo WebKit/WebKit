@@ -1,3 +1,28 @@
+2017-10-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Pasteboard shouldn't add "Files" as a type
+        https://bugs.webkit.org/show_bug.cgi?id=177731
+
+        Reviewed by Wenson Hsieh.
+
+        Removed the platform specific code to add "Files" when there is a file present in platform's pasteboard.
+        DataTransfer::types now adds "Files" automatically when Pasteboard::containsFiles returns true.
+
+        No new tests since there should be no behavioral change.
+
+        * dom/DataTransfer.cpp:
+        (WebCore::DataTransfer::types const):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::typesForLegacyUnsafeBindings):
+        * platform/ios/PasteboardIOS.mm:
+        (WebCore::Pasteboard::addHTMLClipboardTypesForCocoaType):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::addHTMLClipboardTypesForCocoaType):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::addMimeTypesForFormat): Removed the code to add "Text" and "URL" as separate types since
+        this is not what the rest of ports do, and this type normalization is now taken care of by DataTransfer
+        since r221063.
+
 2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another attempt to fix Windows build after r222697.

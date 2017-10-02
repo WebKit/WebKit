@@ -280,9 +280,6 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
         types.append(ASCIILiteral("URL"));
     }
 
-    if (m_selectionData->hasFilenames())
-        types.append(ASCIILiteral("Files"));
-
     for (auto& key : m_selectionData->unknownTypes().keys())
         types.append(key);
 

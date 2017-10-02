@@ -158,7 +158,7 @@ Vector<String> Pasteboard::typesForLegacyUnsafeBindings()
 
     ListHashSet<String> result;
     for (auto& cocoaType : cocoaTypes)
-        addHTMLClipboardTypesForCocoaType(result, cocoaType, m_pasteboardName);
+        addHTMLClipboardTypesForCocoaType(result, cocoaType);
 
     Vector<String> types;
     copyToVector(result, types);

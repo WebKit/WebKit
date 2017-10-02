@@ -172,12 +172,22 @@ Vector<String> DataTransfer::types() const
     if (!canReadTypes())
         return { };
     
-    if (!Settings::customPasteboardDataEnabled())
-        return m_pasteboard->typesForLegacyUnsafeBindings();
+    if (!Settings::customPasteboardDataEnabled()) {
+        auto types = m_pasteboard->typesForLegacyUnsafeBindings();
+        ASSERT(!types.contains("Files"));
+        if (m_pasteboard->containsFiles())
+            types.append("Files");
+        return types;
+    }
 
-    if (m_pasteboard->containsFiles())
+    if (m_pasteboard->containsFiles()) {
+        ASSERT(!m_pasteboard->typesSafeForBindings().contains("Files"));
         return { "Files" };
-    return m_pasteboard->typesSafeForBindings();
+    }
+
+    auto types = m_pasteboard->typesSafeForBindings();
+    ASSERT(!types.contains("Files"));
+    return types;
 }
 
 FileList& DataTransfer::files() const

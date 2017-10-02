@@ -231,16 +231,10 @@ bool Pasteboard::hasData()
 
 static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC& format)
 {
-    // URL and Text are provided for compatibility with IE's model
-    if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat) {
-        results.add("URL");
+    if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat)
         results.add("text/uri-list");
-    }
-
-    if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat) {
-        results.add("Text");
+    if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat)
         results.add("text/plain");
-    }
 }
 
 Vector<String> Pasteboard::typesSafeForBindings()
