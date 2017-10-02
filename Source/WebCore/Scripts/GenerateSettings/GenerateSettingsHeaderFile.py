@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, makeSetterFunctionName, includeForSetting, typeIsAggregate
+from Settings import license, makeConditionalString, makeSetterFunctionName, makeGetterFunctionName, includeForSetting, typeIsValueType
 
 
 def generateSettingsHeaderFile(outputDirectory, settings):
@@ -112,21 +112,22 @@ def printIncludes(outputFile, sortedUnconditionalSettingsNames, sortedConditiona
 
 def printGetterAndSetter(outputFile, setting):
     setterFunctionName = makeSetterFunctionName(setting)
+    getterFunctionName = makeGetterFunctionName(setting)
 
     # Export is only needed if the definition is not in the header.
     webcoreExport = "WEBCORE_EXPORT " if setting.setNeedsStyleRecalcInAllFrames else ""
 
-    if not typeIsAggregate(setting):
-        outputFile.write("    " + setting.type + " " + setting.name + "() const { return m_" + setting.name + "; } \n")
+    if not typeIsValueType(setting):
+        outputFile.write("    " + setting.type + " " + getterFunctionName + "() const { return m_" + setting.name + "; } \n")
         outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(" + setting.type + " " + setting.name + ")")
     else:
-        outputFile.write("    const " + setting.type + "& " + setting.name + "() const { return m_" + setting.name + "; } \n")
+        outputFile.write("    const " + setting.type + "& " + getterFunctionName + "() const { return m_" + setting.name + "; } \n")
         outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(const " + setting.type + "& " + setting.name + ")")
 
     if setting.setNeedsStyleRecalcInAllFrames:
-        outputFile.write("; \n")
+        outputFile.write(";\n\n")
     else:
-        outputFile.write(" { m_" + setting.name + " = " + setting.name + "; } \n")
+        outputFile.write(" { m_" + setting.name + " = " + setting.name + "; }\n\n")
 
 
 def printGettersAndSetters(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings):

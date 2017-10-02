@@ -66,6 +66,7 @@ acceleratedCompositedAnimationsEnabled initial=true, setNeedsStyleRecalcInAllFra
 showDebugBorders initial=false, setNeedsStyleRecalcInAllFrames=1
 showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
 visibleDebugOverlayRegions type=DebugOverlayRegions, initial=0
+showTiledScrollingIndicator initial=false
 
 # This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
 # making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,
@@ -301,7 +302,32 @@ viewportFitEnabled initial=false
 
 allowMediaContentTypesRequiringHardwareSupportAsFallback initial=false
 
-paymentRequestEnabled initial=false, conditional=PAYMENT_REQUEST
-
 storageAccessAPIEnabled initial=false
 
+timeWithoutMouseMovementBeforeHidingControls type=Seconds, initial=3_s 
+
+fontFallbackPrefersPictographs initial=false, setNeedsStyleRecalcInAllFrames=1
+webFontsAlwaysFallBack initial=false
+
+paymentRequestEnabled initial=false, conditional=PAYMENT_REQUEST
+
+applePayEnabled initial=false, conditional=APPLE_PAY
+applePayCapabilityDisclosureAllowed initial=true, conditional=APPLE_PAY
+
+javaEnabled initial=false, getter=isJavaEnabled
+javaEnabledForLocalFiles initial=true, getter=isJavaEnabledForLocalFiles
+
+fontRenderingMode type=FontRenderingMode, initial=FontRenderingMode::Normal
+
+preferMIMETypeForImages initial=false
+
+forcePendingWebGLPolicy initial=false, getter=isForcePendingWebGLPolicy
+
+mediaKeysStorageDirectory type=String, conditional=LEGACY_ENCRYPTED_MEDIA
+mediaDeviceIdentifierStorageDirectory type=String, conditional=MEDIA_STREAM
+
+# FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
+# can fix the bug from their end.
+needsAdobeFrameReloadingQuirk initial=false, getter=needsAcrobatFrameReloadingQuirk
+
+touchEventEmulationEnabled initial=false, getter=isTouchEventEmulationEnabled, conditional=TOUCH_EVENTS

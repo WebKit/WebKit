@@ -43,7 +43,6 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "RuntimeApplicationChecks.h"
-#include "StorageMap.h"
 #include <limits>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
@@ -148,30 +147,17 @@ Settings::Settings(Page* page)
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
     , m_layoutInterval(layoutScheduleThreshold)
     , m_minimumDOMTimerInterval(DOMTimer::defaultMinimumInterval())
-    , m_isJavaEnabled(false)
-    , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
     , m_areImagesEnabled(true)
-    , m_preferMIMETypeForImages(false)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
-    , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
-    , m_fontRenderingMode(0)
-    , m_showTiledScrollingIndicator(false)
     , m_backgroundShouldExtendBeyondPage(false)
     , m_dnsPrefetchingEnabled(false)
-#if ENABLE(TOUCH_EVENTS)
-    , m_touchEventEmulationEnabled(false)
-#endif
     , m_scrollingPerformanceLoggingEnabled(false)
-    , m_timeWithoutMouseMovementBeforeHidingControls(3_s)
     , m_setImageLoadingSettingsTimer(*this, &Settings::imageLoadingSettingsTimerFired)
     , m_hiddenPageDOMTimerThrottlingEnabled(false)
     , m_hiddenPageCSSAnimationSuspensionEnabled(false)
-    , m_fontFallbackPrefersPictographs(false)
-    , m_webFontsAlwaysFallBack(false)
-    , m_forcePendingWebGLPolicy(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -344,32 +330,12 @@ void Settings::setScriptEnabled(bool isScriptEnabled)
 #endif
 }
 
-void Settings::setJavaEnabled(bool isJavaEnabled)
-{
-    m_isJavaEnabled = isJavaEnabled;
-}
-
-void Settings::setJavaEnabledForLocalFiles(bool isJavaEnabledForLocalFiles)
-{
-    m_isJavaEnabledForLocalFiles = isJavaEnabledForLocalFiles;
-}
-
 void Settings::setImagesEnabled(bool areImagesEnabled)
 {
     m_areImagesEnabled = areImagesEnabled;
 
     // See comment in setLoadsImagesAutomatically.
     m_setImageLoadingSettingsTimer.startOneShot(0_s);
-}
-
-void Settings::setPreferMIMETypeForImages(bool preferMIMETypeForImages)
-{
-    m_preferMIMETypeForImages = preferMIMETypeForImages;
-}
-
-void Settings::setForcePendingWebGLPolicy(bool forced)
-{
-    m_forcePendingWebGLPolicy = forced;
 }
 
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
@@ -390,13 +356,6 @@ void Settings::setUserStyleSheetLocation(const URL& userStyleSheetLocation)
 
     if (m_page)
         m_page->userStyleSheetLocationChanged();
-}
-
-// FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
-// can fix the bug from their end.
-void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
-{
-    m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
 }
 
 void Settings::setMinimumDOMTimerInterval(Seconds interval)
@@ -433,20 +392,6 @@ void Settings::setUsesPageCache(bool usesPageCache)
         PageCache::singleton().pruneToSizeNow(0, PruningReason::None);
 }
 
-void Settings::setFontRenderingMode(FontRenderingMode mode)
-{
-    if (fontRenderingMode() == mode)
-        return;
-    m_fontRenderingMode = static_cast<int>(mode);
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-FontRenderingMode Settings::fontRenderingMode() const
-{
-    return static_cast<FontRenderingMode>(m_fontRenderingMode);
-}
-
 void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 {
     if (m_dnsPrefetchingEnabled == dnsPrefetchingEnabled)
@@ -455,14 +400,6 @@ void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
     m_dnsPrefetchingEnabled = dnsPrefetchingEnabled;
     if (m_page)
         m_page->dnsPrefetchingStateChanged();
-}
-
-void Settings::setShowTiledScrollingIndicator(bool enabled)
-{
-    if (m_showTiledScrollingIndicator == enabled)
-        return;
-        
-    m_showTiledScrollingIndicator = enabled;
 }
 
 #if ENABLE(RESOURCE_USAGE)
@@ -648,24 +585,6 @@ void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
     m_hiddenPageCSSAnimationSuspensionEnabled = flag;
     if (m_page)
         m_page->hiddenPageCSSAnimationSuspensionStateChanged();
-}
-
-void Settings::setFontFallbackPrefersPictographs(bool preferPictographs)
-{
-    if (m_fontFallbackPrefersPictographs == preferPictographs)
-        return;
-
-    m_fontFallbackPrefersPictographs = preferPictographs;
-    if (m_page)
-        m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setWebFontsAlwaysFallBack(bool enable)
-{
-    if (m_webFontsAlwaysFallBack == enable)
-        return;
-
-    m_webFontsAlwaysFallBack = enable;
 }
 
 void Settings::setLowPowerVideoAudioBufferSizeEnabled(bool flag)

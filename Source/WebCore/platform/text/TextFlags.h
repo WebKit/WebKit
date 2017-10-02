@@ -25,15 +25,13 @@
 
 #pragma once
 
+#include "FontRenderingMode.h"
+
 namespace WebCore {
 
 enum TextRenderingMode { AutoTextRendering, OptimizeSpeed, OptimizeLegibility, GeometricPrecision };
 
 enum FontSmoothingMode { AutoSmoothing, NoSmoothing, Antialiased, SubpixelAntialiased };
-
-// This setting is used to provide ways of switching between multiple rendering modes that may have different
-// metrics. It is used to switch between CG and GDI text on Windows.
-enum class FontRenderingMode { Normal, Alternate };
 
 enum FontOrientation { Horizontal, Vertical };
 

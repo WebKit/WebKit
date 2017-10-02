@@ -1,3 +1,68 @@
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
+        [Settings] Move remaining simple settings to Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=177730
+
+        Reviewed by Darin Adler.
+
+        - Adds new option type for Settings.in, 'getter', which allows you to specify
+          a custom name for the setting's getter. For instance, the setting javaEnabled
+          has a custom getter name, 'isJavaEnabled'.
+        - Adds support for WTF::Seconds as a type of setting. Used by only 
+          timeWithoutMouseMovementBeforeHidingControls at the moment.
+        - Moves non-generated settings from Settings.h/cpp that don't require custom
+          action when set, to Settings.in
+
+        * Scripts/GenerateSettings/GenerateInternalSettingsImplementationFile.py:
+        * Scripts/GenerateSettings/GenerateSettingsHeaderFile.py:
+        * Scripts/GenerateSettings/Settings.py:
+
+            Add support for 'getter' and the Seconds type.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/text/FontRenderingMode.h: Copied from Source/WebCore/platform/text/TextFlags.h.
+        * platform/text/TextFlags.h:
+        
+            Add FontRenderingMode.h. Moved out of TextFlags.h to be accessible by
+            the settings generator.
+        
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setJavaEnabled): Deleted.
+        (WebCore::Settings::setJavaEnabledForLocalFiles): Deleted.
+        (WebCore::Settings::setPreferMIMETypeForImages): Deleted.
+        (WebCore::Settings::setForcePendingWebGLPolicy): Deleted.
+        (WebCore::Settings::setNeedsAdobeFrameReloadingQuirk): Deleted.
+        (WebCore::Settings::setFontRenderingMode): Deleted.
+        (WebCore::Settings::fontRenderingMode const): Deleted.
+        (WebCore::Settings::setShowTiledScrollingIndicator): Deleted.
+        (WebCore::Settings::setFontFallbackPrefersPictographs): Deleted.
+        (WebCore::Settings::setWebFontsAlwaysFallBack): Deleted.
+        * page/Settings.h:
+        (WebCore::Settings::isJavaEnabled const): Deleted.
+        (WebCore::Settings::isJavaEnabledForLocalFiles const): Deleted.
+        (WebCore::Settings::preferMIMETypeForImages const): Deleted.
+        (WebCore::Settings::needsAcrobatFrameReloadingQuirk const): Deleted.
+        (WebCore::Settings::showTiledScrollingIndicator const): Deleted.
+        (WebCore::Settings::setTouchEventEmulationEnabled): Deleted.
+        (WebCore::Settings::isTouchEventEmulationEnabled const): Deleted.
+        (WebCore::Settings::setTimeWithoutMouseMovementBeforeHidingControls): Deleted.
+        (WebCore::Settings::timeWithoutMouseMovementBeforeHidingControls const): Deleted.
+        (WebCore::Settings::fontFallbackPrefersPictographs const): Deleted.
+        (WebCore::Settings::webFontsAlwaysFallBack const): Deleted.
+        (WebCore::Settings::setMediaKeysStorageDirectory): Deleted.
+        (WebCore::Settings::mediaKeysStorageDirectory const): Deleted.
+        (WebCore::Settings::setMediaDeviceIdentifierStorageDirectory): Deleted.
+        (WebCore::Settings::mediaDeviceIdentifierStorageDirectory const): Deleted.
+        (WebCore::Settings::applePayEnabled const): Deleted.
+        (WebCore::Settings::setApplePayEnabled): Deleted.
+        (WebCore::Settings::applePayCapabilityDisclosureAllowed const): Deleted.
+        (WebCore::Settings::setApplePayCapabilityDisclosureAllowed): Deleted.
+        (WebCore::Settings::isForcePendingWebGLPolicy const): Deleted.
+        * page/Settings.in:
+
+            Moved hand-written settings to be Settings.in based.
+
 2017-10-01  Zalan Bujtas  <zalan@apple.com>
 
         RenderView does not need to be a SelectionSubtreeRoot

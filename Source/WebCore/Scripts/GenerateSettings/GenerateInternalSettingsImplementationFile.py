@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeSetterFunctionName, makeConditionalString, mapToIDLType, makeConditionalString
+from Settings import license, makeSetterFunctionName, makeGetterFunctionName, makeConditionalString, mapToIDLType
 
 
 def generateInternalSettingsImplementationFile(outputDirectory, settings):
@@ -53,7 +53,7 @@ def generateInternalSettingsImplementationFile(outputDirectory, settings):
         if setting.conditional:
             outputFile.write("#if " + makeConditionalString(setting.conditional) + "\n")
 
-        outputFile.write("    , m_" + setting.name + "(page->settings()." + setting.name + "())\n")
+        outputFile.write("    , m_" + setting.name + "(page->settings()." + makeGetterFunctionName(setting) + "())\n")
 
         if setting.conditional:
             outputFile.write("#endif\n")

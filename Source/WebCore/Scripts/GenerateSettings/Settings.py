@@ -66,6 +66,7 @@ class Setting:
         self.conditional = None
         self.setNeedsStyleRecalcInAllFrames = None
         self.include = None
+        self.getter = None
 
     def __str__(self):
         result = self.name + " TYPE:" + self.type
@@ -77,6 +78,8 @@ class Setting:
             result += " RECALC:" + self.setNeedsStyleRecalcInAllFrames
         if (self.include):
             result += " INCLUDE:" + self.include
+        if (self.getter):
+            result += " GETTER:" + self.getter
         return result
 
 
@@ -89,6 +92,12 @@ def makeSetterFunctionName(setting):
         if setting.name.startswith(prefix):
             return "set" + uppercaseFirstN(setting.name, len(prefix))
     return "set" + uppercaseFirstN(setting.name, 1)
+
+
+def makeGetterFunctionName(setting):
+    if setting.getter:
+        return setting.getter
+    return setting.name
 
 
 def makePreferredConditional(conditional):
@@ -131,15 +140,10 @@ def typeIsPrimitive(setting):
     return False
 
 
-def typeIsAggregate(setting):
-    # Special case supported aggregates (e.g. classes/structs)
+def typeIsValueType(setting):
     if setting.type == 'String':
         return True
-    if setting.type == 'IntSize':
-        return True
 
-    # Everything else is an enum
-    # FIXME: Should we make it a requirement to annotate enums or classes/structs in someway?
     return False
 
 
@@ -152,10 +156,12 @@ def includeForSetting(setting):
     if typeIsPrimitive(setting):
         return None
 
-    # Special case String, as it doesn't follow the pattern of being in a file with the
+    # Special case String and Seconds, as they doesn't follow the pattern of being in a file with the
     # same name as the class.
     if setting.type == 'String':
         return "<wtf/text/WTFString.h>"
+    if setting.type == 'Seconds':
+        return "<wtf/Seconds.h>"
 
     # Default to using the type name for the include.
     return "\"" + setting.type + ".h\""
@@ -182,6 +188,8 @@ def parseInput(input):
                     setting.setNeedsStyleRecalcInAllFrames = value
                 if (name == 'include'):
                     setting.include = value
+                if (name == 'getter'):
+                    setting.getter = value
 
             # FIXME: ASSERT something about setting.initial
 

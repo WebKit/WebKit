@@ -3197,6 +3197,7 @@
 		7C1F5D591F22FF7300A8874F /* JSDOMConvertScheduledAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C1F5D581F22FF7300A8874F /* JSDOMConvertScheduledAction.h */; };
 		7C2BDD3D17C7F98C0038FF15 /* JSDOMGlobalObjectTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2BDD3B17C7F98B0038FF15 /* JSDOMGlobalObjectTask.cpp */; };
 		7C2BDD3E17C7F98C0038FF15 /* JSDOMGlobalObjectTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2BDD3C17C7F98B0038FF15 /* JSDOMGlobalObjectTask.h */; };
+		7C2F8BC21F81BF5B00305C32 /* FontRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CCB11D81F81B22000849AFD /* FontRenderingMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C2FA6111EA95A3900A03108 /* ResourceCryptographicDigest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C2FA60F1EA95A3200A03108 /* ResourceCryptographicDigest.cpp */; };
 		7C2FA6121EA95A3C00A03108 /* ResourceCryptographicDigest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C2FA6101EA95A3200A03108 /* ResourceCryptographicDigest.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7C30D9831F815AEC00268356 /* JSAbortController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C30D97E1F815AC000268356 /* JSAbortController.cpp */; };
@@ -11640,6 +11641,7 @@
 		7CC6993E191EC5F500AF2270 /* JSWebKitNamespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitNamespace.cpp; sourceTree = "<group>"; };
 		7CC6993F191EC5F500AF2270 /* JSWebKitNamespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitNamespace.h; sourceTree = "<group>"; };
 		7CC7E3D617208C0F003C5277 /* IDNScriptWhiteList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IDNScriptWhiteList.txt; sourceTree = "<group>"; };
+		7CCB11D81F81B22000849AFD /* FontRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontRenderingMode.h; sourceTree = "<group>"; };
 		7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActiveDOMCallbackMicrotask.cpp; sourceTree = "<group>"; };
 		7CD0BA031B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActiveDOMCallbackMicrotask.h; sourceTree = "<group>"; };
 		7CD0E2B51F80A4820016A4CE /* AbortController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbortController.h; sourceTree = "<group>"; };
@@ -23978,6 +23980,7 @@
 				0FDA7C2018832BCC00C954B5 /* DateTimeFormat.cpp */,
 				453EB635159C570400001BB7 /* DateTimeFormat.h */,
 				CECCFC3A141973D5002A0AC1 /* DecodeEscapeSequences.h */,
+				7CCB11D81F81B22000849AFD /* FontRenderingMode.h */,
 				375CD231119D43C800A2A859 /* Hyphenation.h */,
 				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
@@ -26166,6 +26169,12 @@
 			children = (
 				CE2616A4187E65C1007955F3 /* ios */,
 				2D5036661BCDDDC400E20BB3 /* mac */,
+				7CD0E2B61F80A4820016A4CE /* AbortController.cpp */,
+				7CD0E2B51F80A4820016A4CE /* AbortController.h */,
+				7CD0E2B71F80A4820016A4CE /* AbortController.idl */,
+				7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */,
+				7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */,
+				7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */,
 				7C5222971E1DAE16002CB8F7 /* ActiveDOMCallback.cpp */,
 				7C5222981E1DAE16002CB8F7 /* ActiveDOMCallback.h */,
 				7CD0BA021B8F79C9005CEBBE /* ActiveDOMCallbackMicrotask.cpp */,
@@ -26173,12 +26182,6 @@
 				E1C4DE6D0EA75C650023CCD6 /* ActiveDOMObject.cpp */,
 				E1C4DE680EA75C1E0023CCD6 /* ActiveDOMObject.h */,
 				83BB5C871D5D6F3A005A71F4 /* AllDescendantsCollection.h */,
-				7CD0E2B51F80A4820016A4CE /* AbortController.h */,
-				7CD0E2B61F80A4820016A4CE /* AbortController.cpp */,
-				7CD0E2B71F80A4820016A4CE /* AbortController.idl */,
-				7CD0E2BC1F80A56E0016A4CE /* AbortSignal.h */,
-				7CD0E2BD1F80A56E0016A4CE /* AbortSignal.cpp */,
-				7CD0E2BE1F80A56E0016A4CE /* AbortSignal.idl */,
 				319847FE1A1D816700A13318 /* AnimationEvent.cpp */,
 				319847FF1A1D816700A13318 /* AnimationEvent.h */,
 				319848001A1D816700A13318 /* AnimationEvent.idl */,
@@ -27073,6 +27076,8 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
+				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				F48223131E386E240066FC79 /* AbstractPasteboard.h in Headers */,
 				41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */,
 				29A8122E0FBB9C1D00510293 /* AccessibilityARIAGridCell.h in Headers */,
@@ -27959,6 +27964,7 @@
 				0845680812B90DA600960A9F /* FontMetrics.h in Headers */,
 				B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */,
 				371F4FFC0D25E7F300ECE0D5 /* FontRanges.h in Headers */,
+				7C2F8BC21F81BF5B00305C32 /* FontRenderingMode.h in Headers */,
 				C2AB0AF71E6B3C6C001348C5 /* FontSelectionAlgorithm.h in Headers */,
 				B2C3DA6B0D006CD600EF6F26 /* FontSelector.h in Headers */,
 				E419041F1CC6486B00C35F5D /* FontSelectorClient.h in Headers */,
@@ -28374,6 +28380,8 @@
 				2D0B4AAB18DA1CCD00434DE1 /* IOSurface.h in Headers */,
 				1C21E57D183ED1FF001C289D /* IOSurfacePool.h in Headers */,
 				07AC47021952102100EE9723 /* ISOVTTCue.h in Headers */,
+				7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */,
+				7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
 				5704405A1E53936200356601 /* JSAesCbcCfbParams.h in Headers */,
 				57E1E5AD1E8DD09B00EE37C9 /* JSAesCtrParams.h in Headers */,
@@ -29387,7 +29395,6 @@
 				52F10866162B6DA8009AC81E /* MixedContentChecker.h in Headers */,
 				CDF2B0111820540600F2B424 /* MockBox.h in Headers */,
 				CDF4B7241E03BF8100E235A2 /* MockCDMFactory.h in Headers */,
-				7C30D9841F815AEC00268356 /* JSAbortController.h in Headers */,
 				CDF4B7201E03BF6F00E235A2 /* MockCDMFactory.idl in Headers */,
 				51058AE01D67C229009A538C /* MockGamepad.h in Headers */,
 				51058AE21D67C229009A538C /* MockGamepadProvider.h in Headers */,
@@ -30281,7 +30288,6 @@
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
 				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
-				7C30D9861F815AEC00268356 /* JSAbortSignal.h in Headers */,
 				08FB3F8413BC754C0099FC18 /* SVGAttributeToPropertyMap.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,
 				B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */,
@@ -30325,7 +30331,6 @@
 				B2227A060D00BF220071B782 /* SVGFETileElement.h in Headers */,
 				B2227A090D00BF220071B782 /* SVGFETurbulenceElement.h in Headers */,
 				845E72FC0FD2623900A87D79 /* SVGFilter.h in Headers */,
-				7CD0E2BF1F80A56E0016A4CE /* AbortSignal.h in Headers */,
 				081EBF3B0FD34F4100DA7559 /* SVGFilterBuilder.h in Headers */,
 				B2227A0C0D00BF220071B782 /* SVGFilterElement.h in Headers */,
 				B2227A0F0D00BF220071B782 /* SVGFilterPrimitiveStandardAttributes.h in Headers */,
@@ -30783,7 +30788,6 @@
 				77A17A7812F28642004E02F6 /* WebGLVertexArrayObjectOES.h in Headers */,
 				316BDB8C1E6E153000DE0D5A /* WebGPULayer.h in Headers */,
 				A5E2123C1E4924A400CE1044 /* WebHeapAgent.h in Headers */,
-				7CD0E2B81F80A4820016A4CE /* AbortController.h in Headers */,
 				A5840E25187B8AC200843B10 /* WebInjectedScriptHost.h in Headers */,
 				A584FE301864CB8400843B10 /* WebInjectedScriptManager.h in Headers */,
 				F48223111E3869B80066FC79 /* WebItemProviderPasteboard.h in Headers */,
@@ -31273,6 +31277,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7CD0E2B91F80A4820016A4CE /* AbortController.cpp in Sources */,
+				7CD0E2C01F80A56E0016A4CE /* AbortSignal.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				37F57AB91A50726900876F98 /* AccessibilityARIAGrid.cpp in Sources */,
 				37F57ABA1A50726F00876F98 /* AccessibilityARIAGridCell.cpp in Sources */,
@@ -31550,7 +31556,6 @@
 				CE2849891CA3614600B4A57F /* ContentSecurityPolicyDirectiveNames.cpp in Sources */,
 				CE799FA71C6A50570097B518 /* ContentSecurityPolicyMediaListDirective.cpp in Sources */,
 				CE6DADF91C591E6A003F6A88 /* ContentSecurityPolicyResponseHeaders.cpp in Sources */,
-				7C30D9851F815AEC00268356 /* JSAbortSignal.cpp in Sources */,
 				CE799F9F1C6A4C160097B518 /* ContentSecurityPolicySource.cpp in Sources */,
 				CE799F971C6A46BC0097B518 /* ContentSecurityPolicySourceList.cpp in Sources */,
 				CE799FAB1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp in Sources */,
@@ -31622,7 +31627,6 @@
 				E1233F10185A4130008DFAF5 /* CryptoAlgorithmRSAES_PKCS1_v1_5Mac.cpp in Sources */,
 				E1BD3319182D8DDD00C05D9F /* CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp in Sources */,
 				E1C266D818317AB4003F8B33 /* CryptoAlgorithmRSASSA_PKCS1_v1_5Mac.cpp in Sources */,
-				7C30D9831F815AEC00268356 /* JSAbortController.cpp in Sources */,
 				E125F82B1822CFEC00D84CD9 /* CryptoAlgorithmSHA1.cpp in Sources */,
 				E19AC3EE1824DC7900349426 /* CryptoAlgorithmSHA224.cpp in Sources */,
 				E19AC3F01824DC7900349426 /* CryptoAlgorithmSHA256.cpp in Sources */,
@@ -32403,6 +32407,8 @@
 				1C21E57C183ED1FF001C289D /* IOSurfacePool.cpp in Sources */,
 				AD9FF6E11908391D003B61E0 /* IOSurfacePoolCocoa.mm in Sources */,
 				07AC47011952102100EE9723 /* ISOVTTCue.cpp in Sources */,
+				7C30D9831F815AEC00268356 /* JSAbortController.cpp in Sources */,
+				7C30D9851F815AEC00268356 /* JSAbortSignal.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
 				5704405C1E53937900356601 /* JSAesCbcCfbParams.cpp in Sources */,
 				57E1E5AC1E8DD09B00EE37C9 /* JSAesCtrParams.cpp in Sources */,
@@ -32481,7 +32487,6 @@
 				A584FE3B1864E2D800843B10 /* JSCommandLineAPIHost.cpp in Sources */,
 				93F9B6E00BA0FB7200854064 /* JSComment.cpp in Sources */,
 				79AC9218109945C80021266E /* JSCompositionEvent.cpp in Sources */,
-				7CD0E2C01F80A56E0016A4CE /* AbortSignal.cpp in Sources */,
 				FDA15EBD12B03F0B003A583A /* JSConvolverNode.cpp in Sources */,
 				FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */,
 				14DCF3B21B6BE2080062D4C2 /* JSCountQueuingStrategy.cpp in Sources */,
@@ -32574,7 +32579,6 @@
 				836ACED21ECAAB19004BD012 /* JSDOMMatrix.cpp in Sources */,
 				7CBBBCCB1F56180D005EFAAC /* JSDOMMatrix2DInit.cpp in Sources */,
 				835657C71ECAB10700CDE72D /* JSDOMMatrixInit.cpp in Sources */,
-				7CD0E2B91F80A4820016A4CE /* AbortController.cpp in Sources */,
 				836ACED51ECAAB19004BD012 /* JSDOMMatrixReadOnly.cpp in Sources */,
 				A9D248060D757E7D00FDF959 /* JSDOMMimeType.cpp in Sources */,
 				A9D248080D757E7D00FDF959 /* JSDOMMimeTypeArray.cpp in Sources */,
