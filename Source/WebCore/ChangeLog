@@ -1,5 +1,12 @@
 2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows build fix attempt after r222697.
+
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForRange):
+
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Merge readFilenames() and read(PasteboardFileReader)
         https://bugs.webkit.org/show_bug.cgi?id=177728
         <rdar://problem/34761725>
