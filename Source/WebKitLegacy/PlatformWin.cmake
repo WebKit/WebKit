@@ -431,7 +431,7 @@ add_library(WebKitLegacyGUID STATIC
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText_i.c"
     "${DERIVED_SOURCES_WEBKITLEGACY_DIR}/Interfaces/AccessibleText2_i.c"
 )
-set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitLegacyGUID${DEBUG_SUFFIX})
+set_target_properties(WebKitLegacyGUID PROPERTIES OUTPUT_NAME WebKitGUID${DEBUG_SUFFIX})
 
 list(APPEND WebKitLegacy_LIBRARIES
     PRIVATE Comctl32
