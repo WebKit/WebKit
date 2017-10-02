@@ -3,6 +3,16 @@ Test to ensure that global constructors (besides IndexedDB objects) have the rig
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+PASS Object.getOwnPropertyDescriptor(global, 'AbortController').value is AbortController
+PASS Object.getOwnPropertyDescriptor(global, 'AbortController').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortController').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortController').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortController').configurable is true
+PASS Object.getOwnPropertyDescriptor(global, 'AbortSignal').value is AbortSignal
+PASS Object.getOwnPropertyDescriptor(global, 'AbortSignal').hasOwnProperty('get') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortSignal').hasOwnProperty('set') is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortSignal').enumerable is false
+PASS Object.getOwnPropertyDescriptor(global, 'AbortSignal').configurable is true
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').value is AnalyserNode
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').hasOwnProperty('get') is false
 PASS Object.getOwnPropertyDescriptor(global, 'AnalyserNode').hasOwnProperty('set') is false

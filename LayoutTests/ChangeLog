@@ -1,3 +1,13 @@
+2017-10-02  Matt Lewis  <jlewis3@apple.com>
+
+        Additional rebaselining of js/dom/global-constructors-attributes.html.
+
+        Unreviewed test gardening.
+
+        * platform/mac-sierra-wk1/js/dom/global-constructors-attributes-expected.txt: Renamed from LayoutTests/platform/mac-sierra-wk2/js/dom/global-constructors-attributes-expected.txt.
+        * platform/mac-wk1/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-wk2/js/dom/global-constructors-attributes-expected.txt: Removed.
+
 2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Beacon and Ping requests in Network tab
