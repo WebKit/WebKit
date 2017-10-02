@@ -45,6 +45,16 @@ public:
     SelectionRangeData(RenderView&);
     
     struct Context {
+        Context()
+        { }
+
+        Context(RenderObject* startRenderer, RenderObject* endRenderer, unsigned startOffset, unsigned endOffset)
+            : start(startRenderer)
+            , end(endRenderer)
+            , startPosition(startOffset)
+            , endPosition(endOffset)
+        { }
+
         RenderObject* start { nullptr };
         RenderObject* end { nullptr };
         std::optional<unsigned> startPosition;

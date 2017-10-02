@@ -1,5 +1,18 @@
 2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another attempt to fix Windows build after r222697.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::updateAppearance):
+        * platform/DragImage.cpp:
+        (WebCore::createDragImageForRange):
+        * rendering/SelectionRangeData.cpp:
+        (WebCore::SelectionRangeData::clear):
+        * rendering/SelectionRangeData.h:
+        (WebCore::SelectionRangeData::Context::Context):
+
+2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Windows build fix attempt after r222697.
 
         * platform/DragImage.cpp:

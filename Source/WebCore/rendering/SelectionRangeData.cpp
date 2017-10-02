@@ -172,7 +172,7 @@ void SelectionRangeData::set(const Context& selection, RepaintMode blockRepaintM
 void SelectionRangeData::clear()
 {
     m_renderView.layer()->repaintBlockSelectionGaps();
-    set({nullptr, nullptr, std::nullopt, std::nullopt}, SelectionRangeData::RepaintMode::NewMinusOld);
+    set(SelectionRangeData::Context(), SelectionRangeData::RepaintMode::NewMinusOld);
 }
 
 void SelectionRangeData::repaint() const

@@ -185,7 +185,7 @@ DragImageRef createDragImageForRange(Frame& frame, Range& range, bool forceBlack
     int startOffset = start.deprecatedEditingOffset();
     int endOffset = end.deprecatedEditingOffset();
     ASSERT(startOffset >= 0 && endOffset >= 0);
-    view->selection().set(SelectionRangeData::Context { startRenderer, endRenderer, startOffset, endOffset }, SelectionRangeData::RepaintMode::Nothing);
+    view->selection().set(SelectionRangeData::Context(startRenderer, endRenderer, startOffset, endOffset), SelectionRangeData::RepaintMode::Nothing);
     // We capture using snapshotFrameRect() because we fake up the selection using
     // FrameView but snapshotSelection() uses the selection from the Frame itself.
     return createDragImageFromSnapshot(snapshotFrameRect(frame, view->selection().boundsClippedToVisibleContent(), options), nullptr);
