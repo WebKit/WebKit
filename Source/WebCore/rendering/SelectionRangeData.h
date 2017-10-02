@@ -48,8 +48,8 @@ public:
     public:
         Context() = default;
         Context(RenderObject* start, RenderObject* end, unsigned startOffset, unsigned endOffset)
-            : m_start(start ? makeWeakPtr(*start) : nullptr)
-            , m_end(end ? makeWeakPtr(*end) : nullptr)
+            : m_start(makeWeakPtr(start))
+            , m_end(makeWeakPtr(end))
             , m_startPosition(startOffset)
             , m_endPosition(endOffset)
         {

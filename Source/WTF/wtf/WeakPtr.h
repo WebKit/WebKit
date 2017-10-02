@@ -126,6 +126,13 @@ template <typename T> inline WeakPtr<T> makeWeakPtr(T& ref)
     return ref.weakPtrFactory().template createWeakPtr<T>(ref);
 }
 
+template <typename T> inline WeakPtr<T> makeWeakPtr(T* ptr)
+{
+    if (!ptr)
+        return { };
+    return makeWeakPtr(*ptr);
+}
+
 template<typename T, typename U> inline bool operator==(const WeakPtr<T>& a, const WeakPtr<U>& b)
 {
     return a.get() == b.get();
