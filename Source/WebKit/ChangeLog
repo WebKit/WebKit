@@ -1,5 +1,18 @@
 2017-10-02  Alex Christensen  <achristensen@webkit.org>
 
+        Expose more WKPreferences SPI to match C SPI
+        https://bugs.webkit.org/show_bug.cgi?id=177697
+
+        * UIProcess/API/Cocoa/WKPreferences.mm:
+        (-[WKPreferences _javaEnabledForLocalFiles]):
+        (-[WKPreferences _setPlugInsEnabled:]): Deleted.
+        (-[WKPreferences _plugInsEnabled]): Deleted.
+        * UIProcess/API/Cocoa/WKPreferencesPrivate.h:
+        _javaEnabledForLocalFiles should return the correct value.
+        _plugInsEnabled has public API.  This SPI is not needed.
+
+2017-10-02  Alex Christensen  <achristensen@webkit.org>
+
         REGRESSION(r214201): WebProcess hangs during policy decisions
         https://bugs.webkit.org/show_bug.cgi?id=177590
         <rdar://problem/33362929>

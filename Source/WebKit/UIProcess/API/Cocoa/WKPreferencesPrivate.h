@@ -119,7 +119,6 @@ typedef NS_OPTIONS(NSUInteger, _WKJavaScriptRuntimeFlags) {
 - (void)_setEnabled:(BOOL)value forFeature:(_WKExperimentalFeature *)feature WK_API_AVAILABLE(macosx(10.12), ios(10.0));
 
 #if !TARGET_OS_IPHONE
-@property (nonatomic, setter=_setPlugInsEnabled:) BOOL _plugInsEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setWebGLEnabled:) BOOL _webGLEnabled WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setJavaEnabledForLocalFiles:) BOOL _javaEnabledForLocalFiles WK_API_AVAILABLE(macosx(WK_MAC_TBA));
 @property (nonatomic, setter=_setCanvasUsesAcceleratedDrawing:) BOOL _canvasUsesAcceleratedDrawing WK_API_AVAILABLE(macosx(WK_MAC_TBA));

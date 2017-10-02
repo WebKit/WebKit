@@ -648,16 +648,6 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 }
 
 #if PLATFORM(MAC)
-- (void)_setPlugInsEnabled:(BOOL)enabled
-{
-    _preferences->setPluginsEnabled(enabled);
-}
-
-- (BOOL)_plugInsEnabled
-{
-    return _preferences->pluginsEnabled();
-}
-
 - (void)_setJavaEnabledForLocalFiles:(BOOL)enabled
 {
     _preferences->setJavaEnabledForLocalFiles(enabled);
@@ -665,7 +655,7 @@ static _WKStorageBlockingPolicy toAPI(WebCore::SecurityOrigin::StorageBlockingPo
 
 - (BOOL)_javaEnabledForLocalFiles
 {
-    return _preferences->pluginsEnabled();
+    return _preferences->javaEnabledForLocalFiles();
 }
 
 - (void)_setCanvasUsesAcceleratedDrawing:(BOOL)enabled
