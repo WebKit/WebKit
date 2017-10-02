@@ -1,3 +1,15 @@
+2017-10-02  Antti Koivisto  <antti@apple.com>
+
+        Crashes with guard malloc under RenderFullScreen::unwrapRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=177760
+
+        Unreviewed.
+
+        * rendering/RenderFullScreen.cpp:
+        (WebCore::RenderFullScreen::unwrapRenderer):
+
+        The assert accesses 'this' after it has been deleted. It is not very valuable so remove the assert.
+
 2017-10-02  Zan Dobersek  <zdobersek@igalia.com>
 
         GraphicsContext: remove unused ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)

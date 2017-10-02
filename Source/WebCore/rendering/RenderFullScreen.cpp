@@ -192,8 +192,6 @@ void RenderFullScreen::unwrapRenderer(bool& requiresRenderTreeRebuild)
     ASSERT(!placeholder());
 
     removeFromParentAndDestroy();
-    
-    ASSERT(!document().fullScreenRenderer());
 }
 
 void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
