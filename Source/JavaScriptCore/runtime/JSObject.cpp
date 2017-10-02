@@ -784,6 +784,7 @@ bool JSObject::putInlineSlow(ExecState* exec, PropertyName propertyName, JSValue
             }
             if (gs.isCustomGetterSetter()) {
                 bool result = callCustomSetter(exec, gs, attributes & PropertyAttribute::CustomAccessor, obj, slot.thisValue(), value);
+                RETURN_IF_EXCEPTION(scope, false);
                 if (attributes & PropertyAttribute::CustomAccessor)
                     slot.setCustomAccessor(obj, jsCast<CustomGetterSetter*>(gs.asCell())->setter());
                 else
