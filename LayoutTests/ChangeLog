@@ -1,3 +1,13 @@
+2017-10-02  Matt Lewis  <jlewis3@apple.com>
+
+        Rebaseline of js/dom/global-constructors-attributes.html after r222692.
+
+        Unreviewed test gardening.
+
+        * platform/mac-elcapitan-wk2/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac-sierra/js/dom/global-constructors-attributes-expected.txt:
+        * platform/mac/js/dom/global-constructors-attributes-expected.txt:
+
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
         Skip failing tests from r222692 that have different output on each run.
