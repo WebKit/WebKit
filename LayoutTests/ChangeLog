@@ -1,3 +1,10 @@
+2017-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed WPE gardening.
+
+        * platform/wpe/TestExpectations: Unskip some more tests, and add
+        failure expectations for whatever is still failing from that subset.
+
 2017-10-02  Matt Lewis  <jlewis3@apple.com>
 
         Rebaseline of js/dom/global-constructors-attributes.html after r222692.
