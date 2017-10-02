@@ -108,6 +108,11 @@ COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObj
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, renderObjectCounter, ("RenderObject"));
 
+void RenderObjectDeleter::operator() (RenderObject* renderer) const
+{
+    renderer->destroy();
+}
+
 RenderObject::RenderObject(Node& node)
     : CachedImageClient()
     , m_node(node)
@@ -1431,7 +1436,7 @@ void RenderObject::willBeDestroyed()
     if (m_parent) {
         // FIXME: We should have always been removed from the parent before being destroyed.
         auto takenThis = m_parent->takeChild(*this);
-        auto* leakedPtr = takenThis.leakPtr();
+        auto* leakedPtr = takenThis.release();
         UNUSED_PARAM(leakedPtr);
     }
 

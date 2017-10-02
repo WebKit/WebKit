@@ -1,3 +1,51 @@
+2017-10-02  Antti Koivisto  <antti@apple.com>
+
+        Make RenderPtr a type alias of std::unique_ptr
+        https://bugs.webkit.org/show_bug.cgi?id=177739
+
+        Reviewed by Sam Weinig.
+
+        It just needs a custom deleter.
+
+        * page/FrameView.h:
+        * rendering/RenderElement.cpp:
+        (WebCore::RenderElement::insertChildInternal):
+        * rendering/RenderMultiColumnFlow.cpp:
+        (WebCore::RenderMultiColumnFlow::fragmentedFlowDescendantInserted):
+        (WebCore::RenderMultiColumnFlow::handleSpannerRemoval):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObjectDeleter::operator() const):
+        (WebCore::RenderObject::willBeDestroyed):
+        * rendering/RenderPtr.h:
+        (WebCore::createRenderer):
+        (WebCore::static_pointer_cast):
+
+            Make this safer with downcast.
+
+        (WebCore::RenderPtr::RenderPtr): Deleted.
+        (WebCore::RenderPtr::~RenderPtr): Deleted.
+        (WebCore::RenderPtr::get const): Deleted.
+        (WebCore::RenderPtr::operator* const): Deleted.
+        (WebCore::RenderPtr::operator-> const): Deleted.
+        (WebCore::RenderPtr::operator! const): Deleted.
+        (WebCore::RenderPtr::operator UnspecifiedBoolType const): Deleted.
+        (WebCore::RenderPtr::operator=): Deleted.
+        (WebCore::RenderPtr::swap): Deleted.
+        (WebCore::RenderPtr::operator==): Deleted.
+        (WebCore::RenderPtr::operator!=): Deleted.
+        (WebCore::RenderPtr<T>::clear): Deleted.
+        (WebCore::RenderPtr<T>::leakPtr): Deleted.
+        (WebCore::RenderPtr<T>::RenderPtr): Deleted.
+        (WebCore::=): Deleted.
+        (WebCore::swap): Deleted.
+        (WebCore::operator==): Deleted.
+        (WebCore::operator!=): Deleted.
+        (WebCore::getPtr): Deleted.
+        (WTF::HashTraits<WebCore::RenderPtr<T>>::emptyValue): Deleted.
+        (WTF::HashTraits<WebCore::RenderPtr<T>>::peek): Deleted.
+
+            We already have hash traits for std::unique_ptr.
+
 2017-10-02  Joseph Pecoraro  <pecoraro@apple.com>
 
         Web Inspector: Include Beacon and Ping requests in Network tab

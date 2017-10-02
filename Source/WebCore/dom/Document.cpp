@@ -2259,7 +2259,10 @@ void Document::destroyRenderTree()
 
     unscheduleStyleRecalc();
 
-    m_renderView = nullptr;
+    // FIXME: RenderObject::view() uses m_renderView and we can't null it before destruction is completed
+    m_renderView->destroy();
+    m_renderView.release();
+
     Node::setRenderer(nullptr);
 
 #if ENABLE(TEXT_AUTOSIZING)

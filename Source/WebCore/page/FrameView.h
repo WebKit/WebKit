@@ -483,7 +483,7 @@ public:
     // Unlike client coordinates, layout viewport coordinates are affected by page zoom.
     FloatPoint clientToLayoutViewportPoint(FloatPoint) const;
 
-    bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner == &scrollCorner; }
+    bool isFrameViewScrollCorner(const RenderScrollbarPart& scrollCorner) const { return m_scrollCorner.get() == &scrollCorner; }
 
     // isScrollable() takes an optional Scrollability parameter that allows the caller to define what they mean by 'scrollable.'
     // Most callers are interested in the default value, Scrollability::Scrollable, which means that there is actually content

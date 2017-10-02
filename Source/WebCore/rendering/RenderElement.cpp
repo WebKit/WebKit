@@ -523,7 +523,7 @@ void RenderElement::insertChildInternal(RenderPtr<RenderObject> newChildPtr, Ren
     ASSERT(!beforeChild || beforeChild->parent() == this);
 
     // Take the ownership.
-    auto* newChild = newChildPtr.leakPtr();
+    auto* newChild = newChildPtr.release();
 
     newChild->setParent(this);
 
