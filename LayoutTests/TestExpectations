@@ -193,6 +193,10 @@ imported/w3c/web-platform-tests/html/dom/interfaces.worker.html [ Pass Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/payment-request/payment-request-show-method.https.html [ Pass Failure ]
 
+# The follow two tests change their output each run
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ Skip ]
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

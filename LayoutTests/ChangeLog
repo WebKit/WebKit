@@ -1,5 +1,14 @@
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
+        Skip failing tests from r222692 that have different output on each run.
+
+        * TestExpectations:
+        
+            Skips imported/w3c/web-platform-tests/fetch/api/abort/general.any.html
+            and imported/w3c/web-platform-tests/fetch/api/abort/general.any.worker.html
+
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
         Add support for DOM aborting (https://dom.spec.whatwg.org/#aborting-ongoing-activities)
         https://bugs.webkit.org/show_bug.cgi?id=177718
 
