@@ -1,5 +1,32 @@
 2017-10-01  Sam Weinig  <sam@webkit.org>
 
+        [Settings] Enums should not be passed by const reference
+        https://bugs.webkit.org/show_bug.cgi?id=177727
+
+        Reviewed by Darin Adler.
+
+        * Scripts/GenerateSettings/GenerateSettingsImplementationFile.py:
+        * Scripts/GenerateSettings/GenerateSettingsHeaderFile.py:
+        (printGetterAndSetter):
+        
+            Use the new typeIsAggregate predicate to determine whether to
+            use const reference or not.
+        
+        (includeForSetting): Deleted.
+
+            Move includeForSetting to Settings.py with the rest of the Setting
+            helpers.
+
+        * Scripts/GenerateSettings/Settings.py:
+        (mapToIDLType):
+        (typeIsPrimitive):
+        (typeIsAggregate):
+        
+            Add predicate to determine if a setting's type is an aggregate (struct or class)
+            or a primitive. Remove references to size_t, which is not used.
+
+2017-10-01  Sam Weinig  <sam@webkit.org>
+
         Add support for DOM aborting (https://dom.spec.whatwg.org/#aborting-ongoing-activities)
         https://bugs.webkit.org/show_bug.cgi?id=177718
 

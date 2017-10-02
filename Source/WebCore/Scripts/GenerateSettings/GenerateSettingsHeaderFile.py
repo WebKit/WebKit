@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, makeSetterFunctionName
+from Settings import license, makeConditionalString, makeSetterFunctionName, includeForSetting, typeIsAggregate
 
 
 def generateSettingsHeaderFile(outputDirectory, settings):
@@ -77,32 +77,6 @@ def generateSettingsHeaderFile(outputDirectory, settings):
     outputFile.close()
 
 
-def includeForSetting(setting):
-    # Always prefer an explicit include.
-    if setting.include:
-        return setting.include
-
-    # Include nothing for primitive types.
-    if setting.type == 'int':
-        return None
-    if setting.type == 'unsigned':
-        return None
-    if setting.type == 'double':
-        return None
-    if setting.type == 'float':
-        return None
-    if setting.type == 'bool':
-        return None
-
-    # Special case String, as it doesn't follow the pattern of being in a file with the
-    # same name as the class.
-    if setting.type == 'String':
-        return "<wtf/text/WTFString.h>"
-
-    # Default to using the type name for the include.
-    return "\"" + setting.type + ".h\""
-
-
 def printIncludes(outputFile, sortedUnconditionalSettingsNames, sortedConditionals, settingsByConditional, settings):
     unconditionalIncludes = set()
     includesByConditional = {}
@@ -142,7 +116,7 @@ def printGetterAndSetter(outputFile, setting):
     # Export is only needed if the definition is not in the header.
     webcoreExport = "WEBCORE_EXPORT " if setting.setNeedsStyleRecalcInAllFrames else ""
 
-    if setting.type[0].islower():
+    if not typeIsAggregate(setting):
         outputFile.write("    " + setting.type + " " + setting.name + "() const { return m_" + setting.name + "; } \n")
         outputFile.write("    " + webcoreExport + "void " + setterFunctionName + "(" + setting.type + " " + setting.name + ")")
     else:

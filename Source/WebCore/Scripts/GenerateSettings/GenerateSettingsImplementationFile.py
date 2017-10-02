@@ -25,7 +25,7 @@
 
 import os.path
 
-from Settings import license, makeConditionalString, makeSetterFunctionName
+from Settings import license, makeConditionalString, makeSetterFunctionName, typeIsAggregate
 
 
 def generateSettingsImplementationFile(outputDirectory, settings):
@@ -155,7 +155,7 @@ def printSetterBody(outputFile, setting):
 
     setterFunctionName = makeSetterFunctionName(setting)
 
-    if setting.type[0].islower():
+    if not typeIsAggregate(setting):
         outputFile.write("void SettingsGenerated::" + setterFunctionName + "(" + setting.type + " " + setting.name + ")\n")
     else:
         outputFile.write("void SettingsGenerated::" + setterFunctionName + "(const " + setting.type + "& " + setting.name + ")\n")

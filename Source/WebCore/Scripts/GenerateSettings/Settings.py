@@ -104,7 +104,7 @@ def mapToIDLType(setting):
     # FIXME: Add support for more types including enumerate types.
     if setting.type == 'int':
         return 'long'
-    if setting.type == 'unsigned' or setting.type == 'size_t':
+    if setting.type == 'unsigned':
         return 'unsigned long'
     if setting.type == 'double':
         return 'double'
@@ -115,6 +115,50 @@ def mapToIDLType(setting):
     if setting.type == 'bool':
         return 'boolean'
     return None
+
+
+def typeIsPrimitive(setting):
+    if setting.type == 'int':
+        return True
+    if setting.type == 'unsigned':
+        return True
+    if setting.type == 'double':
+        return True
+    if setting.type == 'float':
+        return True
+    if setting.type == 'bool':
+        return True
+    return False
+
+
+def typeIsAggregate(setting):
+    # Special case supported aggregates (e.g. classes/structs)
+    if setting.type == 'String':
+        return True
+    if setting.type == 'IntSize':
+        return True
+
+    # Everything else is an enum
+    # FIXME: Should we make it a requirement to annotate enums or classes/structs in someway?
+    return False
+
+
+def includeForSetting(setting):
+    # Always prefer an explicit include.
+    if setting.include:
+        return setting.include
+
+    # Include nothing for primitive types.
+    if typeIsPrimitive(setting):
+        return None
+
+    # Special case String, as it doesn't follow the pattern of being in a file with the
+    # same name as the class.
+    if setting.type == 'String':
+        return "<wtf/text/WTFString.h>"
+
+    # Default to using the type name for the include.
+    return "\"" + setting.type + ".h\""
 
 
 def parseInput(input):
