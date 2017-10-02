@@ -490,13 +490,6 @@ public:
     enum IncludeDeviceScale { DefinitelyIncludeDeviceScale, PossiblyIncludeDeviceScale };
     AffineTransform getCTM(IncludeDeviceScale includeScale = PossiblyIncludeDeviceScale) const;
 
-#if ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
-    // This is needed when using accelerated-compositing in software mode, like in TextureMapper.
-    void concat3DTransform(const TransformationMatrix&);
-    void set3DTransform(const TransformationMatrix&);
-    TransformationMatrix get3DTransform() const;
-#endif
-
     // This function applies the device scale factor to the context, making the context capable of
     // acting as a base-level context for a HiDPI environment.
     WEBCORE_EXPORT void applyDeviceScaleFactor(float);

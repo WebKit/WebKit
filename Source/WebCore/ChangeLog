@@ -1,3 +1,21 @@
+2017-10-02  Zan Dobersek  <zdobersek@igalia.com>
+
+        GraphicsContext: remove unused ENABLE(3D_TRANSFORMS) && USE(TEXTURE_MAPPER)
+        https://bugs.webkit.org/show_bug.cgi?id=177757
+
+        Reviewed by Michael Catanzaro.
+
+        Remove three methods from the GraphicsContext class that were conditioned
+        with the ENABLE(3D_TRANSFORMS) and USE(TEXTURE_MAPPER) guards. These aren't
+        used anywhere at this point, but apparently used to be in the TextureMapper
+        implementation.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::get3DTransform const): Deleted.
+        (WebCore::GraphicsContext::concat3DTransform): Deleted.
+        (WebCore::GraphicsContext::set3DTransform): Deleted.
+
 2017-10-02  Gustavo Noronha Silva  <gustavo.noronha@collabora.co.uk>
 
         [GLib] NetworkStateNotifier implementation missing
