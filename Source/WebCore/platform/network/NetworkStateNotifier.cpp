@@ -75,18 +75,4 @@ void NetworkStateNotifier::updateStateSoon()
     m_updateStateTimer.startOneShot(updateStateSoonInterval);
 }
 
-#if !PLATFORM(IOS) && !PLATFORM(MAC) && !PLATFORM(WIN)
-
-// Empty stubs for platforms where monitoring of network state is not yet implemented.
-
-void NetworkStateNotifier::updateStateWithoutNotifying()
-{
-}
-
-void NetworkStateNotifier::startObserving()
-{
-}
-
-#endif
-
 } // namespace WebCore
