@@ -136,7 +136,7 @@ String ResourceResponse::platformSuggestedFilename() const
 bool ResourceResponse::shouldRedirect()
 {
     auto statusCode = httpStatusCode();
-    if ((statusCode < 300) || (400 <= statusCode))
+    if (statusCode < 300 || 400 <= statusCode)
         return false;
 
     // Some 3xx status codes aren't actually redirects.
@@ -151,27 +151,27 @@ bool ResourceResponse::shouldRedirect()
 
 bool ResourceResponse::isMovedPermanently() const
 {
-    return (httpStatusCode() == 301);
+    return httpStatusCode() == 301;
 }
 
 bool ResourceResponse::isFound() const
 {
-    return (httpStatusCode() == 302);
+    return httpStatusCode() == 302;
 }
 
 bool ResourceResponse::isSeeOther() const
 {
-    return (httpStatusCode() == 303);
+    return httpStatusCode() == 303;
 }
 
 bool ResourceResponse::isNotModified() const
 {
-    return (httpStatusCode() == 304);
+    return httpStatusCode() == 304;
 }
 
 bool ResourceResponse::isUnauthorized() const
 {
-    return (httpStatusCode() == 401);
+    return httpStatusCode() == 401;
 }
 
 }

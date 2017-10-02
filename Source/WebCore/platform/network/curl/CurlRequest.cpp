@@ -56,6 +56,15 @@ void CurlRequest::setUserPass(const String& user, const String& password)
 
 void CurlRequest::start(bool isSyncRequest)
 {
+    // The pausing of transfer does not work with protocols, like file://.
+    // Therefore, PAUSE can not be done in didReceiveData().
+    // It means that the same logic as http:// can not be used.
+    // In the file scheme, invokeDidReceiveResponse() is done first. 
+    // Then StartWithJobManager is called with completeDidReceiveResponse and start transfer with libcurl.
+
+    // http : didReceiveHeader => didReceiveData[PAUSE] => invokeDidReceiveResponse => (MainThread)curlDidReceiveResponse => completeDidReceiveResponse[RESUME] => didReceiveData
+    // file : invokeDidReceiveResponseForFile => (MainThread)curlDidReceiveResponse => completeDidReceiveResponse => didReceiveData
+
     ASSERT(isMainThread());
 
     m_isSyncRequest = isSyncRequest;
@@ -66,8 +75,8 @@ void CurlRequest::start(bool isSyncRequest)
         // For asynchronous, use CurlJobManager. Curl processes runs on sub thread.
         if (url.isLocalFile())
             invokeDidReceiveResponseForFile(url);
-
-        startWithJobManager();
+        else
+            startWithJobManager();
     } else {
         // For synchronous, does not use CurlJobManager. Curl processes runs on main thread.
         // curl_easy_perform blocks until the transfer is finished.
@@ -101,21 +110,22 @@ void CurlRequest::cancel()
     if (!m_isSyncRequest)
         CurlJobManager::singleton().cancel(this);
 
-    setPaused(false);
+    setRequestPaused(false);
+    setCallbackPaused(false);
 }
 
 void CurlRequest::suspend()
 {
     ASSERT(isMainThread());
 
-    setPaused(true);
+    setRequestPaused(true);
 }
 
 void CurlRequest::resume()
 {
     ASSERT(isMainThread());
 
-    setPaused(false);
+    setRequestPaused(false);
 }
 
 /* `this` is protected inside this method. */
@@ -288,7 +298,8 @@ size_t CurlRequest::didReceiveHeader(String&& header)
     if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
         m_networkLoadMetrics = *metrics;
 
-    invokeDidReceiveResponse();
+    // Response will send at didReceiveData() or didCompleteTransfer()
+    // to receive continueDidRceiveResponse() for asynchronously.
 
     return receiveBytes;
 }
@@ -299,6 +310,19 @@ size_t CurlRequest::didReceiveData(Ref<SharedBuffer>&& buffer)
 {
     if (m_cancelled)
         return 0;
+
+    if (needToInvokeDidReceiveResponse()) {
+        if (!m_isSyncRequest) {
+            // For asynchronous, pause until completeDidReceiveResponse() is called.
+            setCallbackPaused(true);
+            invokeDidReceiveResponse(Action::ReceiveData);
+            return CURL_WRITEFUNC_PAUSE;
+        }
+
+        // For synchronous, completeDidReceiveResponse() is called in invokeDidReceiveResponse().
+        // In this case, pause is unnecessary.
+        invokeDidReceiveResponse(Action::None);
+    }
 
     auto receiveBytes = buffer->size();
 
@@ -320,29 +344,41 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     }
 
     if (result == CURLE_OK) {
-        if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
-            m_networkLoadMetrics = *metrics;
+        if (needToInvokeDidReceiveResponse()) {
+            // Processing of didReceiveResponse() has not been completed. (For example, HEAD method)
+            // When completeDidReceiveResponse() is called, didCompleteTransfer() will be called again.
 
-        callDelegate([this](CurlRequestDelegate* delegate) {
-            if (delegate)
-                delegate->curlDidComplete();
-        });
+            m_finishedResultCode = result;
+            invokeDidReceiveResponse(Action::FinishTransfer);
+        } else {
+            if (auto metrics = m_curlHandle->getNetworkLoadMetrics())
+                m_networkLoadMetrics = *metrics;
+
+            finalizeTransfer();
+            callDelegate([this](CurlRequestDelegate* delegate) {
+                if (delegate)
+                    delegate->curlDidComplete();
+            });
+        }
     } else {
         auto resourceError = ResourceError::httpError(result, m_request.url());
         if (m_sslVerifier.sslErrors())
             resourceError.setSslErrors(m_sslVerifier.sslErrors());
 
+        finalizeTransfer();
         callDelegate([this, error = resourceError.isolatedCopy()](CurlRequestDelegate* delegate) {
             if (delegate)
                 delegate->curlDidFailWithError(error);
         });
     }
-
-    m_formDataStream = nullptr;
-    m_curlHandle = nullptr;
 }
 
 void CurlRequest::didCancelTransfer()
+{
+    finalizeTransfer();
+}
+
+void CurlRequest::finalizeTransfer()
 {
     m_formDataStream = nullptr;
     m_curlHandle = nullptr;
@@ -454,35 +490,90 @@ void CurlRequest::invokeDidReceiveResponseForFile(URL& url)
     if (!m_isSyncRequest) {
         // DidReceiveResponse must not be called immediately
         CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this)]() {
-            protectedThis->invokeDidReceiveResponse();
+            protectedThis->invokeDidReceiveResponse(Action::StartTransfer);
         });
-    } else
-        invokeDidReceiveResponse();
+    } else {
+        // For synchronous, completeDidReceiveResponse() is called in platformContinueSynchronousDidReceiveResponse().
+        invokeDidReceiveResponse(Action::None);
+    }
 }
 
-void CurlRequest::invokeDidReceiveResponse()
+void CurlRequest::invokeDidReceiveResponse(Action behaviorAfterInvoke)
 {
+    ASSERT(!m_didNotifyResponse);
+
+    m_didNotifyResponse = true;
+    m_actionAfterInvoke = behaviorAfterInvoke;
+
     callDelegate([this, response = m_response.isolatedCopy()](CurlRequestDelegate* delegate) {
         if (delegate)
             delegate->curlDidReceiveResponse(response);
     });
 }
 
-void CurlRequest::setPaused(bool paused)
+void CurlRequest::completeDidReceiveResponse()
 {
+    ASSERT(isMainThread());
+    ASSERT(m_didNotifyResponse);
+    ASSERT(!m_didReturnFromNotify);
+
     if (m_cancelled)
         return;
 
-    if (paused == m_isPaused)
+    m_didReturnFromNotify = true;
+
+    if (m_actionAfterInvoke == Action::ReceiveData) {
+        // Resume transfer
+        setCallbackPaused(false);
+    } else if (m_actionAfterInvoke == Action::StartTransfer) {
+        // Start transfer for file scheme
+        startWithJobManager();
+    } else if (m_actionAfterInvoke == Action::FinishTransfer) {
+        // Keep the calling thread of didCompleteTransfer()
+        if (!m_isSyncRequest) {
+            CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this), finishedResultCode = m_finishedResultCode]() {
+                protectedThis->didCompleteTransfer(finishedResultCode);
+            });
+        } else
+            didCompleteTransfer(m_finishedResultCode);
+    }
+}
+
+void CurlRequest::setRequestPaused(bool paused)
+{
+    auto wasPaused = isPaused();
+
+    m_isPausedOfRequest = paused;
+
+    if (isPaused() == wasPaused)
         return;
 
-    m_isPaused = paused;
+    pausedStatusChanged();
+}
 
-    if (!m_curlHandle)
+void CurlRequest::setCallbackPaused(bool paused)
+{
+    auto wasPaused = isPaused();
+
+    m_isPausedOfCallback = paused;
+
+    if (isPaused() == wasPaused)
+        return;
+
+    // In this case, PAUSE will be executed within didReceiveData(). Change pause state and return.
+    if (paused)
+        return;
+
+    pausedStatusChanged();
+}
+
+void CurlRequest::pausedStatusChanged()
+{
+    if (m_cancelled || !m_curlHandle)
         return;
 
     if (!m_isSyncRequest && isMainThread()) {
-        CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this), paused = m_isPaused]() {
+        CurlJobManager::singleton().callOnJobThread([protectedThis = makeRef(*this), paused = isPaused()]() {
             if (protectedThis->m_cancelled)
                 return;
 
@@ -493,8 +584,8 @@ void CurlRequest::setPaused(bool paused)
             }
         });
     } else {
-        auto error = m_curlHandle->pause(m_isPaused ? CURLPAUSE_ALL : CURLPAUSE_CONT);
-        if ((error != CURLE_OK) && !m_isPaused)
+        auto error = m_curlHandle->pause(isPaused() ? CURLPAUSE_ALL : CURLPAUSE_CONT);
+        if ((error != CURLE_OK) && !isPaused())
             cancel();
     }
 }

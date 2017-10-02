@@ -1,3 +1,53 @@
+2017-10-02  Basuke Suzuki  <Basuke.Suzuki@sony.com>
+
+        [Curl] Implement missing async method in RecourceHandle and make it actually async
+        https://bugs.webkit.org/show_bug.cgi?id=173964
+
+        Reviewed by Alex Christensen.
+
+        * platform/network/ResourceHandle.cpp:
+        (WebCore::ResourceHandle::continueWillSendRequest): Deleted.
+        (WebCore::ResourceHandle::continueDidReceiveResponse): Deleted.
+        (WebCore::ResourceHandle::continueCanAuthenticateAgainstProtectionSpace): Deleted.
+        * platform/network/curl/CurlRequest.cpp:
+        (WebCore::CurlRequest::start):
+        (WebCore::CurlRequest::cancel):
+        (WebCore::CurlRequest::suspend):
+        (WebCore::CurlRequest::resume):
+        (WebCore::CurlRequest::didReceiveHeader):
+        (WebCore::CurlRequest::didReceiveData):
+        (WebCore::CurlRequest::didCompleteTransfer):
+        (WebCore::CurlRequest::didCancelTransfer):
+        (WebCore::CurlRequest::finalizeTransfer):
+        (WebCore::CurlRequest::invokeDidReceiveResponseForFile):
+        (WebCore::CurlRequest::invokeDidReceiveResponse):
+        (WebCore::CurlRequest::completeDidReceiveResponse):
+        (WebCore::CurlRequest::setRequestPaused):
+        (WebCore::CurlRequest::setCallbackPaused):
+        (WebCore::CurlRequest::pausedStatusChanged):
+        (WebCore::CurlRequest::setPaused): Deleted.
+        * platform/network/curl/CurlRequest.h:
+        (WebCore::CurlRequest::needToInvokeDidReceiveResponse const):
+        (WebCore::CurlRequest::isPaused const):
+        * platform/network/curl/ResourceHandleCurl.cpp:
+        (WebCore::ResourceHandle::receivedRequestToContinueWithoutCredential):
+        (WebCore::ResourceHandle::continueDidReceiveResponse):
+        (WebCore::ResourceHandle::platformContinueSynchronousDidReceiveResponse):
+        * platform/network/curl/ResourceHandleCurlDelegate.cpp:
+        (WebCore::ResourceHandleCurlDelegate::curlDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::continueDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::platformContinueSynchronousDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::continueAfterDidReceiveResponse):
+        (WebCore::ResourceHandleCurlDelegate::shouldRedirectAsGET):
+        * platform/network/curl/ResourceHandleCurlDelegate.h:
+        * platform/network/curl/ResourceResponseCurl.cpp:
+        (WebCore::ResourceResponse::shouldRedirect):
+        (WebCore::ResourceResponse::isMovedPermanently const):
+        (WebCore::ResourceResponse::isFound const):
+        (WebCore::ResourceResponse::isSeeOther const):
+        (WebCore::ResourceResponse::isNotModified const):
+        (WebCore::ResourceResponse::isUnauthorized const):
+
 2017-10-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         PasteImage tests are failing on debug builds

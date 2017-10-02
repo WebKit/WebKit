@@ -213,10 +213,10 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
     if (challenge != d->m_currentWebChallenge)
         return;
 
-    if (d->m_delegate)
-        d->m_delegate->setAuthentication("", "");
-
     clearAuthentication();
+
+    auto protectedThis = makeRef(*this);
+    didReceiveResponse(ResourceResponse(d->m_response));
 }
 
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
@@ -259,7 +259,18 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::continueDidReceiveResponse()
 {
-    notImplemented();
+    ASSERT(isMainThread());
+
+    if (d->m_delegate)
+        d->m_delegate->continueDidReceiveResponse();
+}
+
+void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
+{
+    ASSERT(isMainThread());
+
+    if (d->m_delegate)
+        d->m_delegate->platformContinueSynchronousDidReceiveResponse();
 }
 
 void ResourceHandle::continueWillSendRequest(ResourceRequest&& request)

@@ -170,27 +170,7 @@ void ResourceHandle::didReceiveResponse(ResourceResponse&& response)
     }
 }
 
-#if !PLATFORM(COCOA) && !USE(CFURLCONNECTION) && !USE(SOUP) && !USE(CURL)
-// ResourceHandle never uses async client calls on these platforms yet.
-void ResourceHandle::continueWillSendRequest(ResourceRequest&&)
-{
-    notImplemented();
-}
-
-void ResourceHandle::continueDidReceiveResponse()
-{
-    notImplemented();
-}
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool)
-{
-    notImplemented();
-}
-#endif
-#endif
-
-#if !USE(SOUP)
+#if !USE(SOUP) && !USE(CURL)
 void ResourceHandle::platformContinueSynchronousDidReceiveResponse()
 {
     // Do nothing.

@@ -55,6 +55,9 @@ public:
 
     void dispatchSynchronousJob();
 
+    void continueDidReceiveResponse();
+    void platformContinueSynchronousDidReceiveResponse();
+
     void continueWillSendRequest(ResourceRequest&&);
 
 private:
@@ -70,6 +73,8 @@ private:
     void curlDidReceiveBuffer(Ref<SharedBuffer>&&) override;
     void curlDidComplete() override;
     void curlDidFailWithError(const ResourceError&) override;
+
+    void continueAfterDidReceiveResponse();
 
     bool shouldRedirectAsGET(const ResourceRequest&, bool crossOrigin);
     void willSendRequest();

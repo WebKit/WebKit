@@ -56,9 +56,19 @@ public:
 
     bool isSyncRequest() { return m_isSyncRequest; }
 
+    // Processing for DidReceiveResponse
+    void completeDidReceiveResponse();
+
     NetworkLoadMetrics getNetworkLoadMetrics() { return m_networkLoadMetrics.isolatedCopy(); }
 
 private:
+    enum class Action {
+        None,
+        ReceiveData,
+        StartTransfer,
+        FinishTransfer
+    };
+
     void retain() override { ref(); }
     void release() override { deref(); }
     CURL* handle() override { return m_curlHandle ? m_curlHandle->handle() : nullptr; }
@@ -76,6 +86,7 @@ private:
     size_t didReceiveData(Ref<SharedBuffer>&&);
     void didCompleteTransfer(CURLcode) override;
     void didCancelTransfer() override;
+    void finalizeTransfer();
 
     // For POST and PUT method 
     void resolveBlobReferences(ResourceRequest&);
@@ -83,10 +94,14 @@ private:
     void setupPUT(ResourceRequest&);
     void setupFormData(ResourceRequest&, bool);
 
-    // Processing for DidResourceResponse
+    // Processing for DidReceiveResponse
+    bool needToInvokeDidReceiveResponse() const { return !m_didNotifyResponse || !m_didReturnFromNotify; }
     void invokeDidReceiveResponseForFile(URL&);
-    void invokeDidReceiveResponse();
-    void setPaused(bool);
+    void invokeDidReceiveResponse(Action);
+    void setRequestPaused(bool);
+    void setCallbackPaused(bool);
+    void pausedStatusChanged();
+    bool isPaused() const { return m_isPausedOfRequest || m_isPausedOfCallback; };
 
     // Callback functions for curl
     static CURLcode willSetupSslCtxCallback(CURL*, void*, void*);
@@ -111,7 +126,13 @@ private:
     CurlSSLVerifier m_sslVerifier;
     CurlResponse m_response;
 
-    bool m_isPaused { false };
+    bool m_didNotifyResponse { false };
+    bool m_didReturnFromNotify { false };
+    Action m_actionAfterInvoke { Action::None };
+    CURLcode m_finishedResultCode { CURLE_OK };
+
+    bool m_isPausedOfRequest { false };
+    bool m_isPausedOfCallback { false };
 
     NetworkLoadMetrics m_networkLoadMetrics;
 };

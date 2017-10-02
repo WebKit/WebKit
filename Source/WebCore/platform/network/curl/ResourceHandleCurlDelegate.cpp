@@ -227,7 +227,9 @@ void ResourceHandleCurlDelegate::curlDidReceiveResponse(const CurlResponse& rece
         }
 
         CurlCacheManager::getInstance().didReceiveResponse(*m_handle, response());
-        m_handle->client()->didReceiveResponse(m_handle, ResourceResponse(response()));
+
+        auto protectedThis = makeRef(*m_handle);
+        m_handle->didReceiveResponse(ResourceResponse(response()));
     }
 }
 
@@ -276,9 +278,34 @@ void ResourceHandleCurlDelegate::curlDidFailWithError(const ResourceError& resou
     m_handle->client()->didFail(m_handle, resourceError);
 }
 
+void ResourceHandleCurlDelegate::continueDidReceiveResponse()
+{
+    ASSERT(isMainThread());
+
+    continueAfterDidReceiveResponse();
+}
+
+void ResourceHandleCurlDelegate::platformContinueSynchronousDidReceiveResponse()
+{
+    ASSERT(isMainThread());
+
+    continueAfterDidReceiveResponse();
+}
+
+void ResourceHandleCurlDelegate::continueAfterDidReceiveResponse()
+{
+    ASSERT(isMainThread());
+
+    // continueDidReceiveResponse might cancel the load.
+    if (cancelledOrClientless() || !m_curlRequest)
+        return;
+
+    m_curlRequest->completeDidReceiveResponse();
+}
+
 bool ResourceHandleCurlDelegate::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
 {
-    if ((request.httpMethod() == "GET") || (request.httpMethod() == "HEAD"))
+    if (request.httpMethod() == "GET" || request.httpMethod() == "HEAD")
         return false;
 
     if (!request.url().protocolIsInHTTPFamily())
